@@ -37,7 +37,7 @@ var lineChart = {
         // The y property should be the ratio that we care about.
         // console.log('getDataForLineChart', combinedData, chartValues, activeOrgs);
         var dataForOrganisation = {}, allIds = [], series = [], hasActiveOrg;
-        combinedData.forEach(function(d) {
+        _.each(combinedData, function(d) {
             if (!(d.id in dataForOrganisation)) {
                 dataForOrganisation[d.id] = {
                     id: d.id,
