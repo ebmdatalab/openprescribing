@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load geojson_tags %}
+{% load humanize %}
+
+{% block title %}CCG: {{ ccg.name }}{% endblock %}
+{% block active_class %}pct{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<h1>CCG: {{ ccg.name }}</h1>
+
+<div class="row" id="summary">
+<div class="col-md-6">
+<p>Practices in this CCG:</p>
+<ul class="list-unstyled" id="practices">
+{% for p in practices %}
+<li
+{% if forloop.counter > 10 %}
+class='hidden'
+{% endif %}
+>
+<a href="{% url 'practice' p.code %}">{{ p }}</a>
+({{ p.get_setting_display }})
+</li>
+{% endfor %}
+</ul>
+{% if practices.count > 10 %}
+<a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
+{% endif %}
+</div>
+<div class="col-md-6">
+<div id="map-ccg"></div>
+</div>
+</div>
+
+<hr/>
+
+{% block extra_js %}
+<script>
+var boundary = {{ ccg.boundary|geojsonfeature|safe }};
+</script>
+{% endblock %}
+{% include '_dashboard.html' with orgType="CCG" orgId=ccg.code orgName=ccg.name practiceCount=practices.count %}
+
+<div id="download-data">
+<h3>Download raw data</h3>
+<p>
+<a href="{% url 'spending_by_ccg' %}?org={{ page_id }}">All spending by {{ ccg.name }}</a> or
+<a href="{% url 'spending_by_practice' %}?org={{ page_id }}">spending by practice in {{ ccg.name }}</a>.
+</p>
+</div>
+
+{% endblock %}

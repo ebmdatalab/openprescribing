@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}All CCGs{% endblock %}
+{% block active_class %}pct{% endblock %}
+
+{% block content %}
+
+<h1>All CCGs</h1>
+<p>Search for a CCG by name or code, and see how the CCG compares to the national mean for key prescribing indicators.</p>
+
+<input class="form-control" id="search" placeholder="Search by name or code" />
+
+<ul class="list-unstyled" id="all-results">
+{% for ccg in ccgs %}
+<li><a class="ccg" href="{% url 'ccg' ccg.code %}">{{ ccg.name }} ({{ ccg.code }})</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for ccg in ccgs %}
+var ccg = {
+    name: '{{ ccg.name }}',
+    code: '{{ ccg.code }}',
+    url: "{% url 'ccg' ccg.code %}"
+};
+allItems.push(ccg);
+{% endfor %}
+</script>
+{% if debug %}
+<script src="/static/js/list-filter.js"></script>
+{% else %}
+<script src="/static/js/list-filter.min.js"></script>
+{% endif %}
+{% endblock %}

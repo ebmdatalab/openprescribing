@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}API{% endblock %}
+{% block active_class %}api{% endblock %}
+
+{% block content %}
+
+<h1>API</h1>
+
+<p>You can use our RESTful API to download spending data and other useful information.</p>
+
+<p>While we are in beta, no registration is required, but please be aware this may change.</p>
+
+<p>You can retrieve data as CSV by appending <code>&format=csv</code> to the GET parameters, or JSON by appending <code>&format=json</code>.</p>
+
+<hr/>
+
+<h2>Spending API</h2>
+
+<p>Methods to calculate prescribing spending.</p>
+
+<p>Retrieve total spending and items by CCG or practice on a particular chemical, presentation or BNF section. (Spending is calculated using the <strong>actual_cost</strong> field in the HSCIC data, items using the <strong>total_items</strong> field.)</p>
+
+
+
+<h3>Spending by code</h3>
+
+<p>Queries from August 2010 to date and returns total spending and items by month.</p>
+
+<p>Total prescribing spending by month: <code><a href="/api/1.0/spending/">/api/1.0/spending</a></code></p>
+
+<p>Total by BNF code by month: <code><a href="/api/1.0/spending/?code=0212">/api/1.0/spending/?code=0212</a></code>, <code><a href="/api/1.0/spending/?code=0212000AA">/api/1.0/spending/?code=0212000AA</a></code>, <code><a href="/api/1.0/spending/?code=0212000AAAAABAB">/api/1.0/spending/?code=0212000AAAAABAB</a></code></p>
+
+<h3>Spending by CCG</h3>
+
+<p>Queries from April 2013 to date and returns spending and items by CCG by month.</p>
+
+<p>Spending by CCG on a chemical: <code><a href="/api/1.0/spending_by_ccg/?code=0212000AA">/api/1.0/spending_by_ccg/?code=0212000AA</a></code></p>
+
+<p>You can request individual CCGs by code: <code><a href="/api/1.0/spending_by_ccg/?code=0212000AA&org=03V">/api/1.0/spending_by_ccg/?code=0212000AA&org=03V</a></code></p>
+
+<h3>Spending by practice</h3>
+
+<p>Queries from August 2010 to date and returns total spending and items by practice by month.</p>
+
+<p>You must specify either an organisation, or a date.</p>
+
+<p>Spending by all practices on a BNF section: <code><a href="/api/1.0/spending_by_practice/?code=0212&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212&date=2015-04-01</a></code></p>
+
+<p>Spending by all practices on a chemical: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212000AA&date=2015-04-01</a></code></p>
+
+<p>Spending by all practices on a presentation: <code><a href="/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2015-04-01">/api/1.0/spending_by_practice/?code=0212000AAAAAAAA&date=2015-04-01</a></code></p>
+
+<p>You can request individual practices by code: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=H81068">/api/1.0/spending_by_practice/?code=0212000AA&org=H81068</a></code></p>
+
+<p>You can also request a CCG code to see spending by all <em>practices in that CCG</em>: <code><a href="/api/1.0/spending_by_practice/?code=0212000AA&org=99P">/api/1.0/spending_by_practice/?code=0212000AA&org=99P</a></code></p>
+
+<hr/>
+
+<h2>Information API</h2>
+
+<p>Methods to retrieve information about CCGs, practices, and BNF codes.</p>
+
+<h3>Drug details</h3>
+
+<p>Search for the official name and code of BNF sections, chemicals and presentations.</p>
+
+<p>All BNF sections, chemicals and presentations matching a name (case-insensitive): <code><a href="/api/1.0/bnf_code/?q=lipid">/api/1.0/bnf_code/?q=lipid</a></code></p>
+
+<p>All chemicals and presentations matching a code: <code><a href="/api/1.0/bnf_code/?q=0212000AA">/api/1.0/bnf_code/?q=0212000AA</a></code></p>
+
+<p>All BNF sections matching a code: <code><a href="/api/1.0/bnf_code/?q=2.4">/api/1.0/bnf_code/?q=2.4</a></code></p>
+
+<p>All BNF sections, chemicals and presentations exactly matching a name or code: <code><a href="/api/1.0/bnf_code/?q=0212000AA&exact=true">/api/1.0/bnf_code/?q=0212000AA&exact=true</a></code></p>
+
+<h3>Organisation codes</h3>
+
+<p>Search for details about an Area Team, CCG or practice by code or name.</p>
+
+<p>All organisations matching a code or name: <code><a href="/api/1.0/org_code/?q=Beaumont">/api/1.0/org_code/?q=Beaumont</a></code></p>
+
+<p>All Area Teams matching a code or name: <code><a href="/api/1.0/org_code/?q=Gloucester&org_type=AT">/api/1.0/org_code/?q=Gloucester&org_type=AT</a></code></p>
+
+<p>All CCGs matching a code or name: <code><a href="/api/1.0/org_code/?q=Gloucester&org_type=CCG">/api/1.0/org_code/?q=Gloucester&org_type=CCG</a></code></p>
+
+<p>All practices matching a code or name: <code><a href="/api/1.0/org_code/?q=Gloucester&org_type=practice">/api/1.0/org_code?q=Gloucester&org_type=practice</a></code></p>
+
+<p>All organisations exactly matching a code or name: <code><a href="/api/1.0/org_code/?exact=true&q=99H">/api/1.0/org_code/?exact=true&q=99H</a></code></p>
+
+<h3>List size and ASTRO-PUs by CCG or practice</h3>
+
+<p>Search for details about a CCG or practice by code or name. Returns values for all months available.</p>
+
+<p>Total list size for all CCGs: <code><a href="/api/1.0/org_details/?org_type=ccg">/api/1.0/org_details/?org_type=ccg</a></code></p>
+
+<p>Total list size for all practices by practice code, or CCG code: <code><a href="/api/1.0/org_details/?org_type=practice&org=99H">/api/1.0/org_details/?org_type=practice&org=99H</a></code></p>
+
+<h3>CCG boundaries</h3>
+
+<p>Search for the boundaries of a CCG, or location of a practice, by code. Returns GeoJSON.</p>
+
+<p>Practice locations are based on OpenStreetMap geocoding from <a href="http://opencagedata.com">OpenCageData</a>. Many thanks to OpenCageData!</p>
+
+<p>Boundaries of all CCGs: <code><a href="/api/1.0/org_location/?org_type=ccg">/api/1.0/org_location/?org_type=ccg</a></code></p>
+
+<p>Boundaries of an individual CCG: <code><a href="/api/1.0/org_location/?org_type=ccg&q=99H">/api/1.0/org_location/?org_type=ccg&q=99H</a></code></p>
+
+<p>Location (approximate) of a practice, or practices in a CCG, by code: <code><a href="/api/1.0/org_location/?q=99H,P87003">/api/1.0/org_location/?q=99H,P87003</a></code></p>
+
+{% endblock %}

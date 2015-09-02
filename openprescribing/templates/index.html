@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block active_class %}home{% endblock %}
+
+{% block content %}
+
+<h1>Explore GP prescribing data</h1>
+
+<p>Every month the NHS publishes <a href="">anonymised open data</a> about the drugs prescribed by GPs in England. But the raw data files are large and unwieldy. We're making it easier for CCGs, GPs and everyone to use - helping prescribers spot trends, savings and safety improvements.</p>
+
+<hr/>
+
+<h3>For CCGs</h3>
+
+<div class="row">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+<div class="panel-heading">Compare yourself with other CCGs</div>
+  <div class="panel-body">
+
+    <p>
+    <a href="/analyse/#org=CCG&orgIds=10Q&numIds=0212000AA&denomIds=2.12"><img src="/static/img/chart-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+    Use our flexible query form to <a href="/analyse/#org=CCG&orgIds=10Q&numIds=0212000AA&denomIds=2.12">compare a CCG visually</a> with other CCGs. Or see how <a href="/analyse/#org=practice&orgIds=10Q,12D&numIds=0212000AA&denomIds=0212000B0">all your practices compare</a> to other CCGs.</p>
+
+    <a href="{% url 'analyse' %}"><button class="btn-lg btn-info">Get started &raquo;</button></a>
+
+  </div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+<div class="panel-heading">Quick overview</div>
+  <div class="panel-body">
+      <a href="{% url 'all_ccgs' %}"><img src="/static/img/dashboard-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+    <p><em>Get a quick overview of how you're doing on six major prescribing indicators, compared to the national mean.</em></p>
+    <a href="{% url 'all_ccgs' %}"><button class="btn-lg btn-info">Find a CCG &raquo;</button></a>
+  </div>
+</div>
+</div>
+</div>
+
+<h3>For GPs</h3>
+
+<div class="row">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+<div class="panel-heading">Compare your practice with others</div>
+  <div class="panel-body">
+  <a href="/analyse/#org=practice&orgIds=L83089&numIds=0212000AA&denomIds=2.12"><img src="/static/img/map-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+    <p>Use our flexible query form to <a href="/analyse/#org=practice&orgIds=L83089&numIds=0212000AA&denomIds=2.12">compare a practice visually</a> within a CCG. Or compare yourself with practices elsewhere.</p>
+
+    <a href="{% url 'analyse' %}#org=practice"><button class="btn-lg btn-info">Get started &raquo;</button></a>
+
+  </div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+<div class="panel-heading">Quick overview</div>
+  <div class="panel-body">
+    <a href="{% url 'all_practices' %}"><img src="/static/img/dashboard-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+   <p><em>Get a quick overview of how you're doing on six major prescribing indicators, compared to the national mean.</em></p>
+    <a href="{% url 'all_practices' %}"><button class="btn-lg btn-info">Find a practice &raquo;</button></a>
+  </div>
+</div>
+</div>
+</div>
+
+<h3>For everyone</h3>
+
+<div class="row">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+    <div class="panel-heading">Spot national trends</div>
+    <div class="panel-body">
+        <a href="{% url 'all_chemicals' %}"><img src="/static/img/line-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+        <p>See overall spending on particular drugs - like the <a href="/chemical/0503040B0">fall in Tamiflu prescribing</a> since 2011, or trends in <a href="/bnf/0403">anti-depressant prescribing</a>. <em>Coming soon! Get a quick visual overview of all practices in the country.</em></p>
+    </div>
+</div>
+</div>
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="panel panel-info">
+    <div class="panel-heading">Get the data</div>
+    <div class="panel-body">
+    <a href="{% url 'api' %}"><img src="/static/img/csv-screenshot.png" alt="Screeenshot of bar chart of CCGS" class="img-rounded homepage-image"></a>
+        <p>Are you an analyst or a coder? Use our <a href="{% url 'api' %}">data API</a> to download CSVs. Query anything you like, and get the data with a few clicks.</p>
+        <a href="{% url 'api' %}"><button class="btn-lg btn-info">Use the API &raquo;</button></a>
+    </div>
+</div>
+</div>
+</div>
+
+<p>Find out more <a href="{% url 'about' %}">about us</a> or <a href="{% url 'about' %}#data">about the data</a>. And please read our <a href="{% url 'about' %}#guidelines">guidelines for using this data</a>.</p>
+
+{% endblock %}

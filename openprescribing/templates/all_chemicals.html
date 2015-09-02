@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}All chemicals{% endblock %}
+{% block active_class %}chemical{% endblock %}
+
+{% block content %}
+
+<h1>All chemicals</h1>
+<p>Search for a chemical by name or code, and get trends for total prescribing.</p>
+
+<input class="form-control" id="search" placeholder="Search by name or code" />
+
+<ul class="list-unstyled" id="all-results">
+{% for c in chemicals %}
+<li><a href="{% url 'chemical' c.bnf_code %}">{{ c.chem_name }}</a> ({{ c.bnf_code }})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for c in chemicals %}
+var chemical = {
+    name: '{{ c.chem_name }}',
+    code: '{{ c.bnf_code }}',
+    url: "{% url 'chemical' c.bnf_code %}"
+};
+allItems.push(chemical);
+{% endfor %}
+</script>
+{% if debug %}
+<script src="/static/js/list-filter.js"></script>
+{% else %}
+<script src="/static/js/list-filter.min.js"></script>
+{% endif %}
+{% endblock %}

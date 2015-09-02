@@ -1,0 +1,50 @@
+[
+  {
+    "model": "frontend.practice",
+    "pk": "P87629",
+    "fields": {
+      "code": "P87629",
+      "ccg": "03V",
+      "name": "1/ST ANDREWS MEDICAL PRACTICE",
+      "address1": "ST.ANDREWS MEDICAL CENTRE",
+      "address2": "30 RUSSELL STREET ECCLES",
+      "address3": "MANCHESTER",
+      "address4": null,
+      "postcode": "M30 0NU",
+      "location": "POINT (0.0 52.0)",
+      "setting": 4
+    }
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "N84014",
+    "fields": {
+      "code": "N84014",
+      "ccg": "03Q",
+      "name": "AINSDALE VILLAGE SURGERY",
+      "address1": "THE SURGERY",
+      "address2": "2 LEAMINGTON RD AINSDALE",
+      "address3": "SOUTHPORT",
+      "address4": "MERSEYSIDE",
+      "postcode": "PR8 3LB",
+      "location": "POINT (1.0 51.5)",
+      "setting": 4
+    }
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "K83059",
+    "fields": {
+      "code": "K83059",
+      "ccg": "03V",
+      "name": "DR KHALID & PARTNERS",
+      "address1": "WOODSEND MEDICAL CENTRE",
+      "address2": "SCHOOL PLACE",
+      "address3": "GAINSBOROUGH ROAD",
+      "address4": "CORBY NORTHAMPTONSHIRE",
+      "postcode": "NN18 0QP",
+      "location": "POINT (1.5 51.5)",
+      "setting": -1
+    }
+  }
+]

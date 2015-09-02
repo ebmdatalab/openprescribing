@@ -1,0 +1,90 @@
+/* Analyse form styles
+Responsive styling: http://jsfiddle.net/G58f5/51/
+-------------------------------------------------- */
+#analyse-options {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.form-row {
+  display: table;
+  width: 100%;
+  text-align: left;
+  vertical-align: top;
+  margin-bottom: 10px;
+}
+.col {
+  display: table-cell;
+  vertical-align: top;
+  margin-bottom: 5px;
+  min-height: 40px;
+}
+.left {
+    width: 170px;
+    min-width: 170px;
+    margin-left: 0;
+    padding-top: 5px;
+}
+.middle {
+  width: 220px;
+  min-width: 220px;
+}
+.right {
+  padding-left: 10px;
+}
+#org-help {
+  font-size: 0.8em;
+  display: none;
+}
+.help {
+    border-bottom: 1px dotted #000;
+    text-decoration: none;
+}
+
+@media (max-width: 1000px) {
+    .form-row, .col {
+      display: block;
+      width: 100%;
+      min-height: 25px;
+    }
+    .form-row .left {
+         width: 100%;
+         min-width: 100%;
+         font-weight: bold;
+         min-height: 30px;
+    }
+    .form-row .middle {
+         width: 100%;
+         min-width: 100%;
+    }
+    .form-row .right {
+        border-bottom: 1px dotted #ccc;
+        padding-top: 10px;
+        padding-left: 0;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+    #update {
+      width: 100%;
+    }
+}
+
+/* Select2 styles */
+.select2-container .select2-selection--single {
+    height: 36px !important;
+    padding-top: 3px;
+    padding-left: 3px;
+}
+.select2-selection__arrow {
+  top: 3px !important;
+}
+li.select2-search--inline {
+  min-width: 200px !important;
+  max-width: 90% !important;
+}
+li.select2-search--inline input.select2-search__field {
+  min-width: 200px !important;
+}
+.select2-container--default .select2-results__option[aria-selected=true] {
+  color: gray !important;
+  background-color: #ebebeb !important;
+}

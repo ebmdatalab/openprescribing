@@ -1,0 +1,77 @@
+body {
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  color: #222;
+  font-size: 16px;
+  background-image: url(/static/img/white_wall_hash.png);
+  background-repeat:repeat;
+}
+body > .container {
+  max-width: 1000px;
+}
+h1, h2, h3, h4, h5, h6, .navbar-brand, #navbar {
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  color: #222;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 1px 1px 1px rgba(150, 150, 150, 0.64);
+}
+p {
+  max-width: 800px;
+}
+.invisible {
+  visibility: hidden;
+}
+.disclaimer {
+  color: #727272;
+}
+.lead {
+  margin-bottom: 7px;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 100px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  background: #e6e6e6;
+  height: auto;
+  overflow: auto;
+
+  .logo {
+    float: left;
+    border: 3px solid #ccc;
+    margin-right: 10px;
+    margin-top: 2px;
+    height: 37px;
+    width: 92px;
+  }
+
+}
+@media (max-width: 1000px) {
+  body {
+    margin-bottom: 100px;
+  }
+  .footer {
+    height: 90px;
+    font-size: 0.8em;
+  }
+  .responsive {
+    display: none;
+  }
+}
+
+/* Fix for Django-debug-toolbar bug
+-------------------------------------------------- */
+#djDebugToolbarHandle {
+  top: 30px !important;
+}

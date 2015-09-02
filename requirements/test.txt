@@ -1,0 +1,4 @@
+-r base.txt
+coverage
+selenium
+pyquery

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ practice }}{% endblock %}
+{% block active_class %}practice{% endblock %}
+
+{% block content %}
+
+<h1>{{ practice }}</h1>
+<p class="lead">Address: {{ practice.address_pretty }}</p>
+{% if practice.ccg %}
+<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
+{% endif %}
+{% if practice.list_size_13 %}
+<p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
+{% endif %}
+<!-- <p class="lead">Dispensing status (2013/14):
+{% if practice.is_dispensing %}
+Was a dispensing practice
+{% else %}
+Not a dispensing practice
+{% endif %}
+</p> -->
+<p class="lead">Current practice type: {{ practice.get_setting_display }}</p>
+<hr/>
+
+{% if practice.setting != 4 %}
+<div class="alert alert-warning" role="alert" style="margin-top: 10px;">
+<strong>Warning!</strong> {{ practice.name }} is not a standard GP practice, so may have very low numbers for some of these dashboards. Don't be surprised if some of the graphs look strange.
+</div>
+{% endif %}
+
+{% include '_dashboard.html' with orgType="practice" orgId=practice.code orgName=practice.name %}
+
+<div id="download-data">
+<h3>Download raw data</h3>
+<p>
+<a href="{% url 'spending_by_practice' %}?org={{ page_id }}">All spending by {{ practice }}</a>.
+</p>
+</div>
+
+{% endblock %}

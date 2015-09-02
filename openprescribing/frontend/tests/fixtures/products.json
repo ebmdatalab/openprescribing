@@ -1,0 +1,29 @@
+[
+  {
+    "model": "frontend.product",
+    "pk": "0202010D0AA",
+    "fields": {
+      "bnf_code": "0202010D0AA",
+      "name": "Chloroth",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.product",
+    "pk": "0202010D0BD",
+    "fields": {
+      "bnf_code": "0202010D0BD",
+      "name": "Chlotride",
+      "is_generic": false
+    }
+  },
+  {
+    "model": "frontend.product",
+    "pk": "0202010D0BC",
+    "fields": {
+      "bnf_code": "0202010D0BC",
+      "name": "Diuril",
+      "is_generic": false
+    }
+  }
+]

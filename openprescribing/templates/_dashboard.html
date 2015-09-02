@@ -1,0 +1,119 @@
+<div id="dashboard">
+
+<h2>Prescribing dashboard</h2>
+
+<p>How this organisation performed on six prescribing measures, compared to the mean for all practices in NHS England. These are important measures, but they should be interpreted thoughtfully. It may be that the doctors working in that practice have different prescribing habits than their colleagues. However there may be other good reasons why a practice is prescribing more or less of something than other practices in the country: they may have a very different patient population to the national average, for example. Please read our notes on <a href="{% url 'about'%}#using-the-data">using the data</a>.</p>
+
+<hr/>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">Rosuvastatin Calcium vs. Atorvastatin</div>
+        <div class="panel-body">
+            <p>Prescribing of <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>.</p>
+            <div id="rosuvastatin" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of Rosuvastatin Calcium vs. Atorvastatin:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=0212000AA&denomIds=0212000B0">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=0212000AA&denomIds=0212000B0">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.
+            </p>
+        </div>
+    </div>
+  </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">Cerazette vs. Desogesterel</div>
+        <div class="panel-body">
+            <p>Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all <a href="{% url 'chemical' '0703021Q0' %}">Desogesterel (BNF code 0703021Q0)</a>.</p>
+            <div id="cerazette" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of branded Cerazette vs all Desogesterel:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=0703021Q0BB&denomIds=0703021Q0">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=0703021Q0BB&denomIds=0703021Q0">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.
+            </p>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">Cephalosporins per oral antibiotics STAR-PU</div>
+        <div class="panel-body">
+            <p>Prescribing of <a href="{% url 'bnf_section' '050102' %}">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}.</p>
+            <div id="cephalosporins" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of Cephalosporins etc per oral antibiotics STAR-PU:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=5.1.2&denom=star_pu_oral_antibac_items">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=5.1.2&denom=star_pu_oral_antibac_items">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.<br/>
+            We only have list size data (from which STAR-PUs are derived) back to April 2013: if you know a better source of openly licensed data please <a href="mailto:mail@openprescribing.net">get in touch</a>!
+            </p>
+        </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">All antibacterial drugs per oral antibiotics STAR-PU</div>
+        <div class="panel-body">
+            <p>Prescribing of <a href="{% url 'bnf_section' '0501' %}">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}.</p>
+            <div id="antibiotics" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of all antibacterial drugs per oral antibiotics STAR-PU:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=5.1&denom=star_pu_oral_antibac_items">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=5.1&denom=star_pu_oral_antibac_items">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.<br/>
+            We only have list size data (from which STAR-PUs are derived) back to April 2013: if you know a better source of openly licensed data please <a href="mailto:mail@openprescribing.net">get in touch</a>!
+            </p>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">Pioglitazone Hydrochloride vs. all Antidiabetic Drugs</div>
+        <div class="panel-body">
+            <p>Prescribing of <a href="{% url 'chemical' '0601023B0' %}">Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all <a href="{% url 'bnf_section' '060102' %}">Antidiabetic Drugs</a> (BNF code 6.1.2).</p>
+            <div id="pioglitazone" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of Pioglitazone Hydrochloride vs all Antidiabetic Drugs:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=0601023B0&denomIds=060102">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=0601023B0&denomIds=060102">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.
+            </p>
+        </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">Celecoxib vs. all NSAIDs </div>
+        <div class="panel-body">
+            <p>Prescribing of <a href="{% url 'chemical' '0801050AY' %}">Celecoxib (BNF code 0801050AY)</a> and <a href="{% url 'chemical' '1001010AH' %}">Celecoxib (BNF code 1001010AH)</a> compared with prescribing of all <a href="{% url 'bnf_section' '100101' %}">Non-Steroidal Anti-Inflammatory Drugs</a> (BNF section 1.1.1).</p>
+            <div id="celecoxib" class="chart">
+            <div class="status"></div>
+            </div>
+            <p>
+            Get more information on {{ orgName }}'s prescribing of Celecoxib vs all NSAIDs:
+            see <a href="/analyse#org={{ orgType }}&orgIds={{ orgId }}&numIds=0801050AY,1001010AH&denomIds=100101">how this {{ orgType }} compares to all {{ orgType}}s{% if orgType == 'practice' %} in the same CCG</a>{% else %}</a>, or <a href="/analyse#org=practice&orgIds={{ orgId }}&numIds=0801050AY,1001010AH&denomIds=100101">trends for all {{ practiceCount }} practices in this CCG</a>{% endif %}.
+            </p>
+        </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var orgId = '{{ orgId }}';
+var orgName = '{{ orgName }}';
+var orgType = '{{ orgType }}';
+</script>
+{% if debug %}
+<script src="/static/js/dashboard.js"></script>
+{% else %}
+<script src="/static/js/dashboard.min.js"></script>
+{% endif %}

@@ -1,0 +1,10 @@
+Django==1.8
+psycopg2==2.5.4
+django-geojson==2.6.0
+django-leaflet
+gunicorn==19.3.0
+requests[security]
+xlrd
+djangorestframework==3.2.2
+djangorestframework-csv==1.3.4
+django-rest-swagger==0.3.4

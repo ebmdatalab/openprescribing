@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Area Team: {{ area_team.code }}{% endblock %}
+{% block active_class %}at{% endblock %}
+
+{% block content %}
+
+<h1>Area Team: {{ area_team.code }}</h1>
+
+<p class="lead">{{ num_prescriptions }} prescriptions found. Showing the first 100 below.</p>
+
+{% if prescriptions %}
+    <table class="table table-bordered table-responsive">
+    	<tr>
+	    <th>Date</th>
+	    <th>Substance</th>
+        <th>Presentation</th>
+        <th>Quantity</th>
+	    <th>Total items</th>
+	    <th>Net cost</th>
+	    <th>Actual cost</th>
+	    </tr>
+    {% for p in prescriptions %}
+        <tr>
+        <td>{{ p.processing_date|date:"F Y" }}</td>
+        <td><a href="{% url 'chemical' p.chemical.bnf_code %}">{{ p.chemical.chem_name }}</a></td>
+        <td>{{ p.presentation_name }}</td>
+        <td>{{ p.quantity|floatformat }}</td>
+        <td>{{ p.total_items }}</td>
+        <td>£{{ p.net_cost|floatformat:"2" }}</td>
+        <td>£{{ p.actual_cost|floatformat:"2" }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No prescriptions found.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ chemical.chem_name }}: BNF Code {{ chemical.bnf_code }}{% endblock %}
+{% block active_class %}chemical{% endblock %}
+
+{% block content %}
+
+<h1>{{ chemical.chem_name }} ({{ chemical.bnf_code }})</h1>
+
+<p class="lead">Part of chapter
+<a href="{% url 'bnf_section' bnf_chapter.bnf_id %}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% if bnf_para %}, paragraph
+<a href="{% url 'bnf_section' bnf_para.bnf_id %}">{{ bnf_para.number_str }} {{ bnf_para.name }}</a>
+{% endif %}
+</p>
+
+<hr/>
+
+{% include '_chart.html' %}
+
+<div id="download-data">
+
+<h3>Analyse prescribing patterns</h3>
+<p>
+By CCG: <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={{ bnf_para.number_str }}">prescribing by CCG on {{ chemical.chem_name }} vs all items in the same BNF section</a>.
+</p>
+
+<h3>Download raw data</h3>
+<p>
+Download CSV or JSON:
+<a href="{% url 'total_spending' %}?code={{ page_id }}">all spending on {{ chemical.chem_name }}</a>,
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}">spending on {{ chemical.chem_name }} by CCG</a>, or
+<a href="{% url 'spending_by_practice' %}?code={{ page_id }}">spending on {{ chemical.chem_name }} by practice</a>.
+</p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var filename = "{% url 'total_spending' %}?format=csv&code={{ page_id }}";
+var pageType = 'chemical';
+</script>
+{% if debug %}
+<script src="/static/js/bar-chart.js"></script>
+{% else %}
+<script src="/static/js/bar-chart.min.js"></script>
+{% endif %}
+{% endblock %}

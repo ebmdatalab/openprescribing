@@ -1,0 +1,57 @@
+[
+  {
+    "model": "frontend.section",
+    "pk": "020201",
+    "fields": {
+      "bnf_id": "020201",
+      "name": "Thiazides And Related Diuretics",
+      "number_str": "2.2.1",
+      "bnf_chapter": 2,
+      "bnf_section": 2,
+      "bnf_para": 1
+    }
+  },
+  {
+    "model": "frontend.section",
+    "pk": "0202",
+    "fields": {
+      "bnf_id": "0204",
+      "name": "Beta-Adrenoceptor Blocking Drugs",
+      "number_str": "2.4",
+      "bnf_chapter": 2,
+      "bnf_section": 4
+    }
+  },
+  {
+    "model": "frontend.section",
+    "pk": "0202",
+    "fields": {
+      "bnf_id": "0202",
+      "name": "Diuretics",
+      "number_str": "2.2",
+      "bnf_chapter": 2,
+      "bnf_section": 2
+    }
+  },
+  {
+    "model": "frontend.section",
+    "pk": "02",
+    "fields": {
+      "bnf_id": "02",
+      "name": "Cardiovascular System",
+      "number_str": "2",
+      "bnf_chapter": 2
+    }
+  },
+  {
+    "model": "frontend.section",
+    "pk": "0503",
+    "fields": {
+      "bnf_id": "0503",
+      "name": "Antiviral Drugs",
+      "number_str": "5.3",
+      "bnf_chapter": 5,
+      "bnf_section": 3
+    }
+  }
+]

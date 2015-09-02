@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}All practices{% endblock %}
+{% block active_class %}practice{% endblock %}
+
+{% block content %}
+
+<h1>Find a practice</h1>
+
+<p>Search for a practice by name or code, and see how the practice compares to the national mean for key prescribing indicators.</p>
+
+<input class="form-control" id="search" placeholder="Search by name or code" />
+
+<ul class="list-unstyled" id="all-results">
+
+</ul>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for p in practices %}
+var practice = {
+    name: '{{ p.name }}',
+    code: '{{ p.postcode }}',
+    url: "{% url 'practice' p.code %}"
+};
+allItems.push(practice);
+{% endfor %}
+</script>
+{% if debug %}
+<script src="/static/js/list-filter.js"></script>
+{% else %}
+<script src="/static/js/list-filter.min.js"></script>
+{% endif %}
+{% endblock %}

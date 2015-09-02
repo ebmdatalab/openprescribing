@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Analyse{% endblock %}
+{% block active_class %}analyse{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/select2.css" rel="stylesheet">
+<link href="/static/css/jquery.nouislider.css" rel="stylesheet">
+<link href="/static/css/jquery.nouislider.pips.css" rel="stylesheet">
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock %}
+
+{% block content %}
+
+<h1>Search GP prescribing data</h1>
+
+<div id="loading-form">
+<p>Loading search form...</p>
+</div>
+<div id="analyse-options" class="invisible">
+
+    <div class="form-row">
+        <div class="col left">See prescribing by:</div>
+        <div class="col middle">
+            <select style="width: 100%" id="org" class="form-select not-searchable">
+                <!-- <option value="all" selected>everyone</option> -->
+                <option value="CCG">a CCG or CCGs</option>
+                <option value="practice">a practice or practices</option>
+            </select>
+        </div>
+        <div class="col right">
+            <div id="orgIds-container" style="display: none">
+                <select style="width: 100%" id="orgIds" multiple="multiple">
+                </select>
+                <p class="help-block" id="org-help">Hint: add a CCG to see all its practices</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col left">
+        <span class="help" id="numerator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">on:</span>
+        <div class="hidden" id="numerator-help-text">You can add BNF sections, chemicals, products or product format.<br/>For example:
+        <ul>
+        <li><em>Atorvastatin</em> will show all prescribing on the chemical, across multiple products</li>
+        <li><em>Lipitor (branded)</em> will show all prescribing on just that product</li>
+        <li><em>Lipitor_Tab 20mg</em> will show all prescribing on just that product format.</li>
+        </ul>
+        Add multiple items to see total prescribing on those items.
+        </div>
+            <!-- <span class="icon-up"></span>with a y-axis of: -->
+        </div>
+        <div class="col middle">
+            <select style="width: 100%" id="num" class="form-select not-searchable">
+                <option value="chemical" selected>drugs or BNF sections</option>
+                <!-- <option value="all">everything</option> -->
+            </select>
+        </div>
+        <div class="col right">
+            <div id="numIds-wrapper">
+                <select id="numIds" multiple="multiple" style="width: 100%"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col left">
+        <span class="help" id="denominator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">versus:</span>
+        <div class="hidden" id="denominator-help-text">Add another BNF section or drug as a comparator.<br/>Or use standardised prescribing units (STAR-PUs) as an approximate measure of prescribing need.</div>
+            <!-- <span class="icon-right"></span>and an x-axis of: -->
+        </div>
+        <div class="col middle">
+            <select style="width: 100%" id="denom" class="form-select not-searchable">
+                <option value="chemical" selected>drugs or BNF sections</option>
+                <option value="total_list_size" selected>total list size</option>
+                <option value="star_pu_oral_antibac_items">STAR-PUs for antibiotics</option>
+            </select>
+        </div>
+        <div class="col right">
+            <div id="denomIds-wrapper">
+                <select id="denomIds" multiple="multiple" style="width: 100%"></select>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" id="update" class="btn btn-primary" type="submit" data-loading-text="Fetching data..." data-loaded-text="Show me the data!">Show me the data!</button>
+        &nbsp;
+    </div>
+
+</div> <!-- /#analyse-options -->
+
+<div id="chart-loading">
+    <hr/>
+    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+    <br/>Fetching data...
+</div>
+
+<div id="error">
+<hr/><p id='error-message'></p>
+</div>
+
+<div id="results">
+<hr/>
+
+<ul id="tabs" class="nav nav-tabs" role="tablist">
+  <li role="presentation" id="summary-tab" class="summary-tab active">
+    <a href="#summary-panel" aria-controls="settings" role="tab" data-toggle="tab">Show summary</a>
+  </li>
+  <li role="presentation" id="chart-tab" class="chart-tab" class="invisible">
+    <a href="#chart-panel" aria-controls="settings" role="tab" data-toggle="tab">Show over time</a>
+  </li>
+  <li role="presentation" id="map-tab" class="map-tab">
+    <a href="#map-panel" aria-controls="settings" role="tab" data-toggle="tab">Show on map</a>
+  </li>
+  <li role="presentation" id="data-tab" class="data-tab hidden">
+    <a href="#data-panel" aria-controls="settings" role="tab" data-toggle="tab">Get raw data</a>
+  </li>
+</ul>
+<div class="tab-content">
+
+    <!-- Time slider and items toggle -->
+    <div id="chart-options">
+        <div id="chart-options-wrapper">
+            <div id="slider-wrapper"><div id="chart-date-slider"></div></div>
+            <div id="items-spending-toggle" class="btn-group btn-toggle" aria-label="Show spending or items on graph">
+                <button class="btn btn-default btn-sm" data-type="actual_cost">spending</button>
+                <button class="btn btn-info btn-sm" data-type="items">items</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab content -->
+    <div role="tabpanel" class="tab-pane fade in active" id="summary-panel" class="summary-tab">
+      <div class="chart-title-wrapper">
+        <div class="chart-title"></div>
+        <div class="chart-sub-title"></div>
+      </div>
+      <div class="chart-container">
+      <div id="summarychart"></div>
+      <div class="highcharts-attribution">Built with <a href="http://www.highcharts.com/">Highcharts</a></div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="chart-panel" class="chart-tab">
+        <div class="chart-container">
+<!--             <div class="form-row">
+                <div class="col" id="findItemWrapper" style="width: 100%" aria-label="Find an item in the chart">
+                        <select style="width: 100%" id="all-ccgs" class="chosen-multiple" data-placeholder="highlight organisation" multiple></select>
+                </div>
+                <div class="col" style="min-width: 210px; padding-left: 10px;">
+                    <div class="btn-group btn-toggle" id="useLogScale" aria-label="Linear or log scale">
+                    <button class="btn btn-info" id="linear">Linear scale</button>
+                    <button class="btn btn-default" id="log">Log scale</button>
+                    </div>
+                </div>
+            </div> -->
+            <div id="chart"></div>
+
+            <div class="highcharts-attribution">Built with <a href="http://www.highcharts.com/">Highcharts</a></div>
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="map-panel" class="map-tab">
+      <div class="chart-title-wrapper">
+        <p class="chart-title"></p>
+        <p class="chart-sub-title"></p>
+      </div>
+      <div id="map-wrapper">
+        <div id="map"></div>
+        <p class="disclaimer">CCG boundaries from <a href="http://www.england.nhs.uk/resources/ccg-maps/">NHS England</a>. Practice locations are approximate, based on postcode. Only practices with a known location are shown here.</p>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="data-panel" class="data-tab">
+      <p>If you use this data, please credit this site.</p>
+      <p><a id="data-link" href="#">Data as CSV</a> <span id="data-rows-count"></span></p>
+    </div>
+</div>
+
+</div>
+
+<br/>
+
+<p>Use this form to search for prescribing information by CCG or practice. You can search for any numerator over any denominator, to see the ratio. So for example: you can look at the <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">number of prescriptions for Rosuvastatin as a proportion of prescriptions for all lipid-regulating drugs</a>; or the <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=0212000B0">number of prescriptions for Rosuvastatin vs Atorvastatin</a>; or one inhaler vs another; or the <a target="_blank" href="{% url 'analyse' %}#numIds=0205051I0&denomIds=2.5.5">number of prescriptions for Enalapril as a proportion of all members of that class of drugs</a>; and so on.</p>
+
+<p>You can also look at the number of prescriptions for a drug or group of drugs compared to the size of population covered by that CCG or practice. Different practices and CCGs will have different populations: some will have more older people, and so on. There are various imperfect ways to correct for this. One is to calculate an "adjusted" population size, working from what you know about the number of men and women in each age band in that area.</p>
+
+<p>This works best when it is done for a specific class of treatments. For example, if you're interested in treatments to prevent heart attacks, then children aren't very likely to get any prescriptions, so they won't count for anything in your denominator; but much older people certainly will. These are called "STAR-PUs", they are imperfect but quick, and widely used, you can read about their strengths and weaknesses elsewhere. They take time to calculate, and they are different for each specific disease area, so we only have the STAR-PUs for antibiotics, as a demonstrator of the power of this approach.</p>
+
+<p>Add the name of a CCG or practice to check how an organisation compares with its peers. Don't forget to look at time trends, and maps!</p>
+
+
+{% endblock %}
+
+{% block extra_js %}
+{% if debug %}
+<script src="/static/js/openprescribing.js?q=123456"></script>
+{% else %}
+<script src="/static/js/openprescribing.js?q=123456"></script>
+{% endif %}
+{% endblock %}

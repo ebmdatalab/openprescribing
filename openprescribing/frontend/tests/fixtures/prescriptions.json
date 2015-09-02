@@ -1,0 +1,72 @@
+[
+    {
+        "model": "frontend.prescription",
+        "pk": 1000000,
+        "fields": {"presentation_code":"0202010F0AAAAAA","presentation_name":"Chlortalidone_Tab 50mg","total_items":2,"net_cost":3.28,"actual_cost":3.05,"quantity":56,"processing_date":"2013-04-01","price_per_unit":0.0544642857142857,"chemical":"0202010F0","pct":"03Q","practice":"N84014","sha":"Q48"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000001,
+        "fields": {"presentation_code":"0202010F0AAAAAA","presentation_name":"Chlortalidone_Tab 50mg","total_items":1,"net_cost":1.64,"actual_cost":1.53,"quantity":28,"processing_date":"2013-08-01","price_per_unit":0.0546428571428571,"chemical":"0202010F0","pct":"03Q","practice":"N84014","sha":"Q48"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000002,
+        "fields": {"presentation_code":"0202010F0AAAAAA","presentation_name":"Chlortalidone_Tab 50mg","total_items":1,"net_cost":12.84,"actual_cost":11.99,"quantity":28,"processing_date":"2014-09-01","price_per_unit":0.428214285714286,"chemical":"0202010F0","pct":"03Q","practice":"N84014","sha":"Q48"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000003,
+        "fields": {"presentation_code":"0202010F0AAAAAA","presentation_name":"Chlortalidone_Tab 50mg","total_items":1,"net_cost":2.84,"actual_cost":1.99,"quantity":28,"processing_date":"2014-09-01","price_per_unit":0.428214285714286,"chemical":"0202010F0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000004,
+        "fields": {"presentation_code":"0202010B0AAACAC","presentation_name":"Bendroflumethiazide_Tab 5mg","total_items":1,"net_cost":1.68,"actual_cost":1.56,"quantity":56,"processing_date":"2013-04-01","price_per_unit":0.0278571428571429,"chemical":"0202010B0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000005,
+        "fields": {"presentation_code":"0202010B0AAACAC","presentation_name":"Bendroflumethiazide_Tab 5mg","total_items":1,"net_cost":1.82,"actual_cost":1.69,"quantity":56,"processing_date":"2013-08-01","price_per_unit":0.0301785714285714,"chemical":"0202010B0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000006,
+        "fields": {"presentation_code":"0202010B0AAACAC","presentation_name":"Bendroflumethiazide_Tab 5mg","total_items":1,"net_cost":1.74,"actual_cost":1.62,"quantity":56,"processing_date":"2013-10-01","price_per_unit":0.0289285714285714,"chemical":"0202010B0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000007,
+        "fields": {"presentation_code":"0202010B0AAABAB","presentation_name":"Bendroflumethiazide_Tab 2.5mg","total_items":40,"net_cost":36.22,"actual_cost":36.29,"quantity":1177,"processing_date":"2014-09-01","price_per_unit":0.0308326253186066,"chemical":"0202010B0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000008,
+        "fields": {"presentation_code":"0202010B0AAABAB","presentation_name":"Bendroflumethiazide_Tab 2.5mg","total_items":50,"net_cost":60,"actual_cost":58.08,"quantity":1953,"processing_date":"2014-10-01","price_per_unit":0.0297388632872504,"chemical":"0202010B0","pct":"03Q","practice":"N84014","sha":"Q48"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000009,
+        "fields": {"presentation_code":"0202010B0AAABAB","presentation_name":"Bendroflumethiazide_Tab 2.5mg","total_items":38,"net_cost":43,"actual_cost":42.13,"quantity":1399,"processing_date":"2014-11-01","price_per_unit":0.0301143674052895,"chemical":"0202010B0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000010,
+        "fields": {"presentation_code":"0202010B0AAABAB","presentation_name":"Bendroflumethiazide_Tab 2.5mg","total_items":24,"net_cost":40,"actual_cost":12.13,"quantity":1389,"processing_date":"2014-11-01","price_per_unit":0.0301143674052895,"chemical":"0202010B0","pct":"03V","practice":"K83059","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000011,
+        "fields": {"presentation_code":"0204000I0BCAAAB","presentation_name":"Trandate_Tab 50mg","total_items":17,"net_cost":39,"actual_cost":22.13,"quantity":1200,"processing_date":"2014-11-01","price_per_unit":0.0301143674052895,"chemical":"0204000I0","pct":"03V","practice":"P87629","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000012,
+        "fields": {"presentation_code":"0204000I0BCAAAB","presentation_name":"Trandate_Tab 50mg","total_items":12,"net_cost":37,"actual_cost":10.13,"quantity":1150,"processing_date":"2014-11-01","price_per_unit":0.0301143674052895,"chemical":"0204000I0","pct":"03V","practice":"K83059","sha":"Q46"}
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000013,
+        "fields": {"presentation_code":"0204000I0AAALAL","presentation_name":"Labetalol 50mg","total_items":4,"net_cost":4.07,"actual_cost":4.02,"quantity":4,"processing_date":"2014-11-01","price_per_unit":0.0301143674052895,"chemical":"0204000I0","pct":"03V","practice":"K83059","sha":"Q46"}
+    }
+]

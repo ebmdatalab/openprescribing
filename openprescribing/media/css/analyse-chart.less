@@ -1,0 +1,108 @@
+#chart-loading {
+  display: none;
+  text-align: center;
+
+  img.loading {
+      -webkit-animation:spin 4s linear infinite;
+      -moz-animation:spin 4s linear infinite;
+      animation:spin 4s linear infinite;
+      margin-bottom: 10px;
+  }
+  @-moz-keyframes spin {
+    100% { -moz-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+    100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); }
+  }
+}
+
+.chart-container {
+  overflow: hidden;
+  background: white;
+  width: 100%;
+
+  #chart, #summarychart {
+    width: 100% !important;
+    cursor: pointer;
+    float: left;
+  }
+
+  #summarychart {
+    .highcharts-series-group rect:hover {
+      fill: #337ab7;
+    }
+  }
+
+  .highcharts-container {
+    width:100% !important;
+    height:100% !important;
+  }
+
+  .highcharts-attribution {
+    float: right;
+    font-size: 0.7em;
+    margin-top: 0.5em;
+    color: gray;
+  }
+}
+
+#chart-options {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  background-color: white;
+  padding: 10px 20px;
+
+  #chart-options-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    min-height: 70px;
+    position: relative;
+
+    #items-spending-toggle {
+      position: absolute;
+      top: 10px;
+      right: 0px;
+      width: 140px;
+    }
+
+    #slider-wrapper {
+      position: absolute;
+      width: 100%;
+      left: 0px;
+      padding-right: 170px;
+
+      #chart-date-slider {
+        .noUi-pips-horizontal {
+          padding: 10px 0 5px 0 !important;
+          height: 40px !important;
+        }
+        .noUi-value-horizontal.noUi-value-large {
+          font-size: 10px !important;
+          padding-top: 10px;
+        }
+        .noUi-marker-horizontal.noUi-marker-large {
+          height: 5px !important;
+        }
+        .noUi-marker-horizontal.noUi-marker-medium {
+          height: 2px !important;
+        }
+      }
+    }
+    @media (max-width: 1000px) {
+      #slider-wrapper {
+        padding-right: 0;
+      }
+      #items-spending-toggle {
+        top: 70px;
+      }
+    }
+  }
+
+  @media (max-width: 1000px) {
+    padding-bottom: 40px;
+  }
+}

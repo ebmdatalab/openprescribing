@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}All BNF sections{% endblock %}
+{% block active_class %}chemical{% endblock %}
+
+{% block content %}
+
+<h1>All BNF sections</h1>
+
+<p>Search for a BNF section by name or code, and get trends for total prescribing.</p>
+
+<input class="form-control" id="search" placeholder="Search by name or code" />
+
+<ul class="list-unstyled" id="all-results">
+{% for s in sections %}
+<li>
+{% if s.bnf_section %}&nbsp;&nbsp;{% endif %}
+{% if s.bnf_para %}&nbsp;&nbsp;{% endif %}
+<a href="{% url 'bnf_section' s.bnf_id %}">{{ s.number_str }}: {{ s.name }}</a>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for s in sections %}
+var section = {
+    name: '{{ s.name }}',
+    code: '{{ s.number_str }}',
+    url: "{% url 'bnf_section' s.bnf_id %}"
+};
+allItems.push(section);
+{% endfor %}
+</script>
+{% if debug %}
+<script src="/static/js/list-filter.js"></script>
+{% else %}
+<script src="/static/js/list-filter.min.js"></script>
+{% endif %}
+{% endblock %}

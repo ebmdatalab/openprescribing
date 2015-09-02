@@ -1,0 +1,47 @@
+[
+  {
+    "model": "frontend.presentation",
+    "pk": "0202010F0AAAAAA",
+    "fields": {
+      "bnf_code": "0202010F0AAAAAA",
+      "name": "Chlortalidone_Tab 50mg",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0202010B0AAACAC",
+    "fields": {
+      "bnf_code": "0202010B0AAACAC",
+      "name": "Bendroflumethiazide_Tab 5mg",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0202010B0AAABAB",
+    "fields": {
+      "bnf_code": "0202010B0AAABAB",
+      "name": "Bendroflumethiazide_Tab 2.5mg",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0204000I0BCAAAB",
+    "fields": {
+      "bnf_code": "0204000I0BCAAAB",
+      "name": "Trandate_Tab 50mg",
+      "is_generic": false
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0204000I0AAALAL",
+    "fields": {
+      "bnf_code": "0204000I0AAALAL",
+      "name": "Labetalol 50mg",
+      "is_generic": true
+    }
+  }
+]

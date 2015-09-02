@@ -1,0 +1,20 @@
+[
+  {
+    "model": "frontend.sha",
+    "pk": "Q48",
+    "fields": {
+      "code": "Q48",
+      "name": "Merseyside",
+      "ons_code": "E39000005"
+    }
+  },
+  {
+    "model": "frontend.sha",
+    "pk": "Q46",
+    "fields": {
+      "code": "Q46",
+      "name": "Greater Manchester",
+      "ons_code": "E39000003"
+    }
+  }
+]

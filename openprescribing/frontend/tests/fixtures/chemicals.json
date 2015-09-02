@@ -1,0 +1,34 @@
+[
+  {
+    "model": "frontend.chemical",
+    "pk": "0202010D0",
+    "fields": {
+      "bnf_code": "0202010D0",
+      "chem_name": "Chlorothiazide"
+    }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0202010F0",
+    "fields": {
+      "bnf_code": "0202010F0",
+      "chem_name": "Chlortalidone"
+    }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0202010B0",
+    "fields": {
+      "bnf_code": "0202010B0",
+      "chem_name": "Bendroflumethiazide"
+    }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0204000I0",
+    "fields": {
+      "bnf_code": "0204000I0",
+      "chem_name": "Labetalol Hydrochloride"
+    }
+  }
+]

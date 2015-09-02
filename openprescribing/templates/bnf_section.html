@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}BNF {{ section.number_str}}: {{ section.name }}{% endblock %}
+{% block active_class %}chemical{% endblock %}
+
+{% block content %}
+
+{% if section %}
+<h1>{{ section.number_str}}: {{ section.name }}</h1>
+{% if bnf_chapter %}
+<p class="lead">Part of chapter <a href="{% url 'bnf_section' bnf_chapter.bnf_id %}">{{ bnf_chapter.number_str }} {{ bnf_chapter.name }}</a>{% if bnf_section %}, section <a href="{% url 'bnf_section' bnf_section.bnf_id %}">{{ bnf_section.number_str }} {{ bnf_section.name }}</a>{% endif %}
+</p>
+{% endif %}
+{% endif %}
+
+<hr/>
+
+{% include '_chart.html' %}
+
+{% if subsections %}
+<h3>Subsections</h3>
+{% for subsection in subsections %}
+<a class="subsection" href="{% url 'bnf_section' subsection.bnf_id %}">{{ subsection.number_str }}: {{ subsection.name }}</a><br/>
+{% endfor %}
+{% endif %}
+
+{% if chemicals %}
+<h3>Chemicals</h3>
+{% for chemical in chemicals %}
+<a href="{% url 'chemical' chemical.bnf_code %}">{{ chemical.chem_name }} ({{ chemical.bnf_code }})</a><br/>
+{% endfor %}
+{% endif %}
+
+<div id="download-data">
+<h3>Download raw data</h3>
+<p>Download CSV or JSON:
+<a href="{% url 'total_spending' %}?code={{ page_id }}">all spending on {{ section.name }}</a> or
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}">spending on {{ section.name }} by CCG</a>.
+</p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var filename = "{% url 'total_spending' %}?format=csv&code={{ page_id }}";
+var pageType = 'bnf-section';
+</script>
+{% if debug %}
+<script src="/static/js/bar-chart.js"></script>
+{% else %}
+<script src="/static/js/bar-chart.min.js"></script>
+{% endif %}
+{% endblock %}

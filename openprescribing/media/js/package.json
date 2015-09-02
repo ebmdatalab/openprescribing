@@ -1,0 +1,58 @@
+{
+  "name": "openprescribing",
+  "version": "1.0.0",
+  "description": "Form and chart app for OpenPrescribing website",
+  "author": "Anna Powell-Smith",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "watch-index": "watchify index.js -o ../../static/js/openprescribing.js --debug --verbose",
+    "watch-bars": "watchify bar-charts.js -o ../../static/js/bar-chart.js --debug --verbose",
+    "watch-filter": "watchify list-filter.js -o ../../static/js/list-filter.js --debug --verbose",
+    "watch-dashboard": "watchify dashboard.js -o ../../static/js/dashboard.js --debug --verbose",
+    "watch": "npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-dashboard",
+    "lint": "jshint src/*.js",
+    "build-css": "lessc ../css/index.less > ../../static/css/index.css",
+    "build-index": "browserify index.js | uglifyjs > ../../static/js/openprescribing.min.js",
+    "build-bars": "browserify bar-charts.js | uglifyjs > ../../static/js/bar-chart.min.js",
+    "build-filter": "browserify list-filter.js | uglifyjs > ../../static/js/list-filter.min.js",
+    "build-dashboard": "browserify dashboard.js | uglifyjs > ../../static/js/dashboard.min.js",
+    "build": "npm run build-index | npm run build-bars | npm run build-filter | npm run build-dashboard"
+  },
+  "browser": {
+    "select2": "./vendor/select2.full.min.js",
+    "csv": "./vendor/jquery.csv-0.71.min.js",
+    "noUiSlider": "./vendor/jquery.nouislider.all.js",
+    "Highcharts": "./vendor/highcharts.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "Highcharts": {
+      "exports": "Highcharts"
+    }
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.4",
+    "compute-quantile": "^1.0.1",
+    "jquery": "^1.11.3",
+    "localforage": "^1.2.2",
+    "mapbox.js": "^2.2.1",
+    "moment": "^2.10.3",
+    "simple-statistics": "^0.9.2",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "chai": "^2.3.0",
+    "jsdom": "^3.1.2",
+    "jshint": "latest",
+    "less": "^2.5.1",
+    "mocha": "^2.2.5",
+    "uglifyjs": "^2.4.10",
+    "watchify": "^3.2.1"
+  }
+}

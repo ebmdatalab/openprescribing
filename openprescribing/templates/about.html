@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+{% block active_class %}about{% endblock %}
+
+{% block content %}
+
+<h2>About</h2>
+
+
+<p>This site aims to make NHS prescribing data clear, open and accessible. You can use it to explore patterns of prescribing in CCGs and individual practices. It was built by Anna Powell-Smith and Dr. Ben Goldacre at the <a href="http://www.cebm.net/">Centre for Evidence-Based Medicine</a> at Oxford University, as part of a range of projects to help make complex medical data more accessible, and more impactful in the real world. Phase 1 of this project was funded by the <a href="http://weahsn.net">West of England Academic Health Science Network</a>, with the kind assistance of Dr. Peter Brindle. There is much more to come, <a href="mailto:mail@openprescribing.net">get in touch</a> to find out more.</p>
+
+<h3 id="using-the-data">Using the data</h3>
+
+<p>We accept no liability for any errors in the data: use this data at your own risk. You should not use this data to make individual prescribing decisions. This prescribing data requires careful interpretation, and the information should not be looked at in isolation, as discussed elsewhere on the site.</p>
+
+<h2>Citation</h2>
+
+<p>You are welcome to use data or graphs from this site in your academic output with attribution. Our methods paper will be published shortly, until then please cite “OpenPrescribing.net, Powell-Smith A and Goldacre B, 2015” as the source for academic attribution. If you use data or images from this site online or in a report, please link back to OpenPrescribing.net, your readers will then be able to see live updates to the data you are interested in, and explore other interesting queries for themselves.</p>
+
+<h2>Feedback</h2>
+
+<p>We welcome all feedback: please contact us at <a href="mailto:mail@openprescribing.net">mail@openprescribing.net</a>.</p>
+
+<h3>Data sources</h3>
+
+<p><strong>Prescribing data</strong> is from the monthly files published by the <a href="http://www.hscic.gov.uk/gpprescribingdata">Health and Social Care Information Centre</a> (HSCIC), used under the terms of the Open Government Licence.</p>
+
+<p><strong>Practice list sizes</strong> are from the <a href="https://apps.nhsbsa.nhs.uk/infosystems/welcome">NHS Business Service Authority's Information Portal</a>, used under the terms of the Open Government Licence. ASTRO-PU and STAR-PUs are calculated from list sizes, based on standard formulas.</p>
+
+<p><strong>BNF codes and names</strong> are also from the <a href="https://apps.nhsbsa.nhs.uk/infosystems/welcome">NHS Business Service Authority's Information Portal</a>, used under the terms of the Open Government Licence.</p>
+
+<p><strong>CCG to practice relations</strong>, and practice prescribing settings, are from <a href="http://systems.hscic.gov.uk/data/ods/datadownloads/index">the HSCIC's data downloads</a> (epraccur.csv), used under the terms of the Open Government Licence.</p>
+
+<p><strong>CCG names and codes</strong> and CCG geographic boundaries are from the <a href="https://geoportal.statistics.gov.uk/geoportal/catalog/main/home.page">Office for National Statistics</a>, used under the terms of the Open Government Licence.</p>
+
+<p><strong>Practice locations</strong> are approximate, geocoded using <a href="http://geocoder.opencagedata.com/">OpenCageData</a>. If you know a better source of practice locations (not including Code-Point Open), please <a href="mailto:mail@openprescribing.net">get in touch</a>!</p>
+
+
+{% endblock %}

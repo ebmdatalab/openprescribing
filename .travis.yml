@@ -1,0 +1,23 @@
+language: python
+python:
+  - "2.7"
+addons:
+  postgresql: "9.3"
+env:
+  - SECRET_KEY=test DB_NAME=dbtest DB_USER=test DB_PASS=test
+before_install:
+  - export DJANGO_SETTINGS_MODULE=openprescribing.settings.local
+  - export PYTHONPATH=$HOME/builds/annapowellsmith/openprescribing
+install:
+ - pip install -r requirements.txt
+ - pip install -r requirements/local.txt
+before_script:
+ - psql -U postgres -c 'CREATE DATABASE dbtest;'
+ - psql -U postgres -c "CREATE EXTENSION postgis" -d dbtest
+ - psql -U postgres -c "CREATE EXTENSION postgis_topology" -d dbtest
+ - psql -U postgres -c "CREATE USER test WITH CREATEUSER PASSWORD 'test';"
+ - psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE dbtest to test;"
+ - psql -U postgres -c "ALTER USER test CREATEDB;"
+ - cd openprescribing && python manage.py migrate
+script:
+ - python manage.py test
