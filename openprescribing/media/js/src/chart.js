@@ -269,7 +269,7 @@ var analyseChart = {
                   to: function(val) {
                     var d = _this.globalOptions.allMonths[val];
                     return Highcharts.dateFormat('%b \'%y',
-                                  new Date(d));
+                                  new Date(d.replace(/-/g, '/')));
                   },
                   from: function(val) {
                     return _this.globalOptions.allMonths.indexOf[val]+1;
@@ -298,7 +298,7 @@ var analyseChart = {
                   to: function(val) {
                     var d = _this.globalOptions.allMonths[val];
                     return Highcharts.dateFormat('%b \'%y',
-                                  new Date(d));
+                                  new Date(d.replace(/-/g, '/')));
                   },
                   from: function(val) {
                     return _this.globalOptions.allMonths.indexOf[val]+1;
