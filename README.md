@@ -109,11 +109,10 @@ Similarly, you can build the compiled CSS from the source LESS with:
 
     npm run build-css
 
-
 Updating the data
 -----------------
 
-You may need to add data for new months. To do this, active your virtualenv, then import the chemicals and practices:
+You may need to add data for new months. To do this, active your virtualenv, then import the practices:
 
     workon openprescribing
     python manage.py import_hscic_practices --practice_file data/raw_data/[ADDR FILE].CSV -v 2
