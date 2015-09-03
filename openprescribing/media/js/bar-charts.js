@@ -1,7 +1,6 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
 require('Highcharts');
-var csv = require('csv');
 var _ = require('underscore');
 
 var chartOptions = require('./src/highcharts-options');
@@ -98,10 +97,8 @@ var barChart = {
           },
           success: function(response) {
             $('.status').hide();
-            console.log('response', response);
-            var output = (response) ? $.csv.toObjects(response): [];
             chartOptions = _this.initialiseChartOptions(chartOptions, _this.graphType);
-            var data = _this.initialiseData(output);
+            var data = _this.initialiseData(response);
             data = _this.getYValueOfData(data, _this.graphType);
             if (data.length) {
                 $('#trends').show();

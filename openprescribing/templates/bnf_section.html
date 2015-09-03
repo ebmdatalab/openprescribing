@@ -44,7 +44,7 @@
 
 {% block extra_js %}
 <script>
-var filename = "{% url 'total_spending' %}?format=csv&code={{ page_id }}";
+var filename = "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'bnf-section';
 </script>
 {% if debug %}

@@ -1,9 +1,9 @@
-var expect = require('chai').expect;
-global.window = require("jsdom")
-                  .jsdom()
-                  .parentWindow;
-global.document = window.document;
-var Dashboard = require('../dashboard');
+// var expect = require('chai').expect;
+// global.window = require("jsdom")
+//                   .jsdom()
+//                   .parentWindow;
+// global.document = window.document;
+// var Dashboard = require('../dashboard');
 
 
 // describe('Dashboard', function () {
