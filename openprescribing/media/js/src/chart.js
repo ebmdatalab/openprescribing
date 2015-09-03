@@ -118,13 +118,11 @@ var analyseChart = {
             // they are just too slow.
             // This could be fixed by adding more pauses in the data calculations,
             // and making the data calculations more efficient.
-            console.log('this.isOldIe', this.isOldIe)
             if (!this.isOldIe) {
                 $(_this.el.tabChart).removeClass('hidden');
                 $(_this.el.tabMap).removeClass('hidden');
                 _this.globalOptions.lineChart = lineChart.setUp(chartOptions.lineOptions,
                                                                _this.globalOptions);
-
                 map.setup(_this.globalOptions);
             }
 
