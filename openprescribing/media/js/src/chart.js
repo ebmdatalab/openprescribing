@@ -28,6 +28,7 @@ var analyseChart = {
         submitButton: $('#update'),
         tabs: $('#tabs li'),
         tabChart: $('#chart-tab'),
+        tabMap: $('#map-tab'),
         tabSummary: $('#summary-tab'),
         tabPanelChart: $('#chart-panel'),
         title: '.chart-title',
@@ -37,9 +38,10 @@ var analyseChart = {
 
     renderChart: function(globalOptions) {
         // console.log('renderChart', globalOptions);
+        // For older Internet Explorer, we deliberately want to
+        // delay execution in places, to prevent slow-running script errors.
         this.isOldIe = this.getIEVersion();
         this.scriptDelay = (this.isOldIe) ? 1500 : 0;
-        console.log('this.scriptDelay', this.scriptDelay);
         this.globalOptions = globalOptions;
         this.el.submitButton.button('loading');
         this.el.errorContainer.hide();
@@ -111,17 +113,21 @@ var analyseChart = {
             this.el.resultsEl.show();
             this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
                                                          this.globalOptions);
-            if (document.addEventListener) {
-                $(this.el.chartTab).show();
-                this.globalOptions.lineChart = lineChart.setUp(chartOptions.lineOptions,
-                                                               _this.globalOptions);
-            }
-            // For now, don't render the map in older browsers - it's too slow.
+
+            // For now, don't render the map and line chart in older browsers -
+            // they are just too slow.
             // This could be fixed by adding more pauses in the data calculations,
             // and making the data calculations more efficient.
+            console.log('this.isOldIe', this.isOldIe)
             if (!this.isOldIe) {
+                $(_this.el.tabChart).removeClass('hidden');
+                $(_this.el.tabMap).removeClass('hidden');
+                _this.globalOptions.lineChart = lineChart.setUp(chartOptions.lineOptions,
+                                                               _this.globalOptions);
+
                 map.setup(_this.globalOptions);
             }
+
             // TODO: Text for tabs. Tidy this up.
             var summaryTab = '';
             var numOrgs = this.globalOptions.orgIds.length;
