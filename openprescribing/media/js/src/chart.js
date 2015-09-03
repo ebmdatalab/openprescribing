@@ -2,7 +2,6 @@ global.jQuery = require('jquery');
 global.$ = global.jQuery;
 require('Highcharts');
 var noUiSlider = require('noUiSlider');
-var csv = require('csv');
 var _ = require('underscore');
 
 var chartOptions = require('./highcharts-options');
@@ -79,8 +78,8 @@ var analyseChart = {
             $.ajax(_this.globalOptions.urls.denominatorUrl)
             ).done(function(response1, response2){
                 _this.el.loadingMessage.text('Parsing data...');
-                _this.globalOptions.data.numeratorData = $.csv.toObjects(response1[0]);
-                _this.globalOptions.data.denominatorData = $.csv.toObjects(response2[0]);
+                _this.globalOptions.data.numeratorData = response1[0];
+                _this.globalOptions.data.denominatorData = response2[0];
                 _this.el.loadingMessage.text('Rendering chart...');
                 setTimeout(function() {
                     _this.loadChart();

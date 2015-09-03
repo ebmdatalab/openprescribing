@@ -21,7 +21,6 @@
   },
   "browser": {
     "select2": "./vendor/select2.full.min.js",
-    "csv": "./vendor/jquery.csv-0.71.min.js",
     "noUiSlider": "./vendor/jquery.nouislider.all.js",
     "Highcharts": "./vendor/highcharts.js"
   },

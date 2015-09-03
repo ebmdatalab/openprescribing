@@ -4,7 +4,6 @@ global.jQuery = require('jquery');
 global.$ = global.jQuery;
 require('Highcharts');
 require('mapbox.js');
-var csv = require('csv');
 var _ = require('underscore');
 
 var utils = require('./src/chart_utils');
@@ -95,18 +94,18 @@ var barChart = {
             chartOptions.chartValues.ratio = 'ratio_items';
 
             var numStr = utils.idsToString(chartOptions.numIds);
-            chartOptions.numOrgUrl = _this.spendUrl + '/?format=csv&org=' + _this.orgId;
+            chartOptions.numOrgUrl = _this.spendUrl + '/?format=json&org=' + _this.orgId;
             chartOptions.numOrgUrl += '&code=' + numStr;
-            chartOptions.numAllNHS = _this.baseUrl + 'spending/?format=csv&code=' + numStr;
+            chartOptions.numAllNHS = _this.baseUrl + 'spending/?format=json&code=' + numStr;
 
             var denomStr = utils.idsToString(chartOptions.denomIds);
             if (chartOptions.denom === 'chemical') {
-                chartOptions.denomOrgUrl = _this.spendUrl + '/?format=csv&code=' + denomStr;
-                chartOptions.denomAllNHS = _this.baseUrl + 'spending/?format=csv&code=' + denomStr;
+                chartOptions.denomOrgUrl = _this.spendUrl + '/?format=json&code=' + denomStr;
+                chartOptions.denomAllNHS = _this.baseUrl + 'spending/?format=json&code=' + denomStr;
             } else {
-                chartOptions.denomOrgUrl = _this.baseUrl + 'org_details/?format=csv';
+                chartOptions.denomOrgUrl = _this.baseUrl + 'org_details/?format=json';
                 chartOptions.denomOrgUrl += '&org_type=' + _this.orgType.toLowerCase();
-                chartOptions.denomAllNHS = _this.baseUrl + 'org_details/?format=csv';
+                chartOptions.denomAllNHS = _this.baseUrl + 'org_details/?format=json';
             }
             chartOptions.denomOrgUrl += '&org=' + _this.orgId;
             chartOptions.friendly = formatters.getFriendlyNamesForChart(chartOptions);
@@ -146,11 +145,11 @@ var barChart = {
             $.ajax(chartOptions.numAllNHS),
             $.ajax(chartOptions.denomAllNHS)
             ).done(function(numOrgResponse, denomOrgResponse, numAllResponse, denomAllResponse) {
-                var numOrgData = (numOrgResponse[0]) ? $.csv.toObjects(numOrgResponse[0]) : [];
-                var denomOrgData = (denomOrgResponse[0]) ? $.csv.toObjects(denomOrgResponse[0]) : [];
+                var numOrgData = numOrgResponse[0];
+                var denomOrgData = denomOrgResponse[0];
                 var combinedOrgData = utils.combineXAndYDatasets(denomOrgData, numOrgData, chartOptions.chartValues);
-                var numAllData = (numAllResponse[0]) ? $.csv.toObjects(numAllResponse[0]) : [];
-                var denomAllData = (denomAllResponse[0]) ? $.csv.toObjects(denomAllResponse[0]) : [];
+                var numAllData = numAllResponse[0];
+                var denomAllData = denomAllResponse[0];
                 var combinedAllData = utils.combineXAndYDatasets(denomAllData, numAllData, chartOptions.chartValues);
                 var chartOrgData = _this.convertData(combinedOrgData);
                 var chartAllData = _this.convertData(combinedAllData);

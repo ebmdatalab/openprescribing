@@ -7,11 +7,11 @@ var utils = {
     constructQueryURLs: function(options) {
         var numeratorUrl = '/api/1.0';
         if (options.org === 'CCG') {
-            numeratorUrl += '/spending_by_ccg/?format=csv';
+            numeratorUrl += '/spending_by_ccg/?format=json';
         } else if (options.org === 'practice') {
-            numeratorUrl += '/spending_by_practice/?format=csv';
+            numeratorUrl += '/spending_by_practice/?format=json';
         } else {
-            numeratorUrl += '/spending/?format=csv';
+            numeratorUrl += '/spending/?format=json';
         }
         var num_ids = options.numIds;
         if (num_ids.length > 0) {
@@ -32,18 +32,18 @@ var utils = {
         var denominatorUrl = '/api/1.0';
         if (options.denom === 'chemical') {
             if (options.org === 'CCG') {
-                denominatorUrl += '/spending_by_ccg/?format=csv';
+                denominatorUrl += '/spending_by_ccg/?format=json';
             } else if (options.org === 'practice') {
-                denominatorUrl += '/spending_by_practice/?format=csv';
+                denominatorUrl += '/spending_by_practice/?format=json';
             } else {
-                denominatorUrl += '/spending/?format=csv';
+                denominatorUrl += '/spending/?format=json';
             }
             var denom_ids = options.denomIds;
             if (denom_ids.length > 0) {
                 denominatorUrl += '&code=' + this.idsToString(denom_ids);
             }
         } else {
-            denominatorUrl += '/org_details/?format=csv';
+            denominatorUrl += '/org_details/?format=json';
             denominatorUrl += '&org_type=' + options.org.toLowerCase();
         }
         if ((org_ids.length > 0) && (options.org === 'practice')) {

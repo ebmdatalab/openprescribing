@@ -13,8 +13,8 @@ describe('Utils', function () {
                 'denomIds': [{'id': '9876'}],
             };
             var urls = utils.constructQueryURLs(options);
-            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_practice/?format=csv&code=1234,5678&org=Y020405');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/spending_by_practice/?format=csv&code=9876&org=Y020405');
+            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_practice/?format=json&code=1234,5678&org=Y020405');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/spending_by_practice/?format=json&code=9876&org=Y020405');
         });
         it('should correctly construct urls for all spending', function () {
             var options = {
@@ -26,8 +26,8 @@ describe('Utils', function () {
                 'denomIds': [{'id': '9876'}],
             };
             var urls = utils.constructQueryURLs(options);
-            expect(urls.numeratorUrl).to.equal('/api/1.0/spending/?format=csv&code=1234,5678');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/spending/?format=csv&code=9876');
+            expect(urls.numeratorUrl).to.equal('/api/1.0/spending/?format=json&code=1234,5678');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/spending/?format=json&code=9876');
         });
         it('should correctly construct urls for ASTRO-PU', function () {
             var options = {
@@ -39,8 +39,8 @@ describe('Utils', function () {
                 'denomIds': [{'id': '9876'}, {'id': '5678'}],
             };
             var urls = utils.constructQueryURLs(options);
-            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_practice/?format=csv&code=1234,5678&org=Y020405,J04052');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=csv&org_type=practice&org=Y020405,J04052');
+            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_practice/?format=json&code=1234,5678&org=Y020405,J04052');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=practice&org=Y020405,J04052');
         });
         it('should correctly construct urls for list size', function () {
             var options = {
@@ -52,8 +52,8 @@ describe('Utils', function () {
                 'denomIds': [{'id': '9876'}, {'id': '5678'}],
             };
             var urls = utils.constructQueryURLs(options);
-            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_ccg/?format=csv&code=1234,5678');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=csv&org_type=ccg');
+            expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_ccg/?format=json&code=1234,5678');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=ccg');
         });
     });
 
