@@ -107,7 +107,7 @@ var formatters = {
     },
 
     constructChartSubTitle: function(month) {
-        var monthDate = new Date(month.replace(/-/g, '/'));
+        var monthDate = (month) ? new Date(month.replace(/-/g, '/')) : month;
         var subTitle = 'in ';
         subTitle += (typeof Highcharts !== 'undefined') ? Highcharts.dateFormat('%b \'%y', monthDate) : month;
         return subTitle;
