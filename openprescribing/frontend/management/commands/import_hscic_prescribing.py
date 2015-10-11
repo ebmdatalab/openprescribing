@@ -47,7 +47,6 @@ class Command(BaseCommand):
         if options['filename']:
             files_to_import = [options['filename']]
         else:
-            self.import_missing_chemicals(cursor)
             filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
             files_to_import = glob.glob(filepath)
 
