@@ -112,21 +112,26 @@ Similarly, you can build the compiled CSS from the source LESS with:
 Updating the data
 -----------------
 
-You may need to add data for new months. To do this, active your virtualenv, then import the practices:
+You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site.
 
-    workon openprescribing
+Then import the practices:
+
     python manage.py import_hscic_practices --practice_file data/raw_data/[ADDR FILE].CSV -v 2
 
-If new practices were added, you may want to re-run the practice geocoder:
+(If new practices were added, you may want to re-run the practice geocoder:)
 
     python manage.py geocode_practices -v 2
+
+Import the chemicals:
+
+    python manage.py import_hscic_chemicals --chem_file data/raw_data/[CHEM FILE].CSV -v 2
 
 Then convert and import the prescribing data:
 
     python manage.py convert_hscic_prescribing --filename data/raw_data/[PDPI FILE].CSV -v 2
     python manage.py import_hscic_prescribing --filename data/raw_data/[PDPI FORMATTED FILE].CSV -v 2
 
-Update list sizes for the latest months:
+If necessary, update list sizes for the latest months:
 
     python manage.py import_list_sizes --filename data/list_sizes/[MONTH FILE].CSV -v 2
 
