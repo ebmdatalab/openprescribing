@@ -87,8 +87,10 @@ var analyseChart = {
                     _this.loadChart();
                 }, _this.scriptDelay);
             })
-            .fail(function(){
-                _this.showErrorMessage("Sorry, something went wrong.", null);
+            .fail(function(status, error){
+                var msg = (_.has(status, 'responseText')) ? status.responseText :
+                                 "Sorry, something went wrong.";
+                _this.showErrorMessage(msg.replace(/"/g, ""), null);
             });
     },
 
