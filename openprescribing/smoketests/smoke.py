@@ -16,7 +16,7 @@ The expected numbers are generated from smoke.sh
 class SmokeTestBase(unittest.TestCase):
 
     DOMAIN = 'https://openprescribing.net'
-    NUM_RESULTS = 57  # Should equal number of months since Aug 2010.
+    NUM_RESULTS = 59  # Should equal number of months since Aug 2010.
 
 
 class TestSmokeTestSpendingByEveryone(SmokeTestBase):
@@ -77,7 +77,6 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
     def test_presentation_by_one_practice(self):
         url = '%s/api/1.0/spending_by_practice/?format=csv&' % self.DOMAIN
         url += 'code=0703021Q0BBAAAA&org=A81015'  # Cerazette 75mcg.
-        print url
         r = requests.get(url)
         f = StringIO.StringIO(r.text)
         reader = csv.DictReader(f)
@@ -100,7 +99,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                      '166.24', '110.15', '147.84', '166.75', '139.35', '191.03',
                      '145.36', '94.09', '190.16', '118.21', '126.32', '163.56',
                      '150.81', '138.92', '153.6', '103.61', '62.03', '165.33',
-                     '106.48', '99.87', '117.65', '1000'],
+                     '106.48', '99.87', '117.65', '100.59', '89.03', '112.21'],
             'items': ['16', '14', '12', '7', '13',
                       '24', '9', '17', '12', '12', '14',
                       '21', '18', '26', '12', '12', '19',
@@ -110,7 +109,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                       '15', '12', '17', '19', '14', '18',
                       '17', '11', '20', '14', '13', '14',
                       '16', '13', '12', '10', '6', '14',
-                      '11', '9', '10', '1000']
+                      '11', '9', '10', '9', '10', '8']
         }
 
         for i, row in enumerate(all_rows):
@@ -142,7 +141,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                      '98.02', '81.38', '105.44', '57.39', '105.32', '64.72',
                      '98.06', '98.02', '98.18', '98.06', '64.8', '81.4',
                      '57.45', '81.46', '105.57', '16.68', '81.3', '125.55',
-                     '84.75', '84.93', '109.11', '1000'],
+                     '84.75', '84.93', '109.11', '84.91', '109.01', '84.96'],
             'items': ['3', '5', '3', '3', '3',
                       '1', '4', '3', '3', '3', '4',
                       '2', '5', '3', '5', '3', '4',
@@ -152,7 +151,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                       '5', '4', '5', '3', '5', '3',
                       '5', '5', '5', '5', '3', '4',
                       '3', '4', '5', '1', '4', '6',
-                      '4', '4', '5', '1000']
+                      '4', '4', '5', '4', '5', '4']
         }
         for i, row in enumerate(all_rows):
             self.assertEqual(row['actual_cost'], expected['cost'][i])
@@ -184,7 +183,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                      '2411.39', '2428.54', '2230.12', '2335.49', '2115.65', '2425.06',
                      '2274.16', '2207.01', '2322.6', '2043.0', '2059.34', '1973.39',
                      '2256.22', '2040.32', '2054.39', '2316.73', '2342.52', '2042.44',
-                     '2286.73', '2527.1', '2378.36', '1000'],
+                     '2286.73', '2527.1', '2378.36', '2273.38', '2267.96', '2316.11'],
             'items': ['1367', '1428', '1375', '1398', '1573',
                       '1316', '1260', '1527', '1343', '1366', '1468',
                       '1381', '1511', '1491', '1394', '1561', '1555',
@@ -194,7 +193,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                       '1897', '1883', '1777', '1977', '1830', '2068',
                       '1945', '1812', '1826', '1871', '1867', '1809',
                       '2030', '1813', '1837', '1893', '1906', '1725',
-                      '1908', '2028', '1992', '1000']
+                      '1908', '2028', '1992', '1938', '1869', '1967']
         }
         for i, row in enumerate(all_rows):
             self.assertEqual(row['actual_cost'], expected['cost'][i])
@@ -212,10 +211,6 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
         self.assertEqual(len(all_rows), self.NUM_RESULTS)
 
         sept_2013 = all_rows[36]
-        # self.assertEqual(sept_2013['row_id'], 'L84077')
-        # expected_name = 'STROUD VALLEYS FAMILY PRACTICE'
-        # self.assertEqual(sept_2013['row_name'], expected_name)
-
         expected = {
             'cost': ['103.89', '121.07', '257.2', '74.6', '112.71',
                      '99.62', '78.03', '219.45', '104.22', '130.93', '242.17',
@@ -226,7 +221,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                      '257.21', '194.35', '107.01', '304.33', '115.41', '76.98',
                      '136.66', '121.89', '85.19', '201.19', '148.67', '238.95',
                      '185.69', '152.56', '202.67', '166.08', '156.27', '82.07',
-                     '69.95', '75.88', '123.5', '1000'],
+                     '69.95', '75.88', '123.5', '172.32', '166.42', '247.19'],
             'items': ['37', '33', '35', '37', '36',
                       '35', '30', '50', '59', '57', '70',
                       '52', '49', '41', '20', '30', '25',
@@ -236,9 +231,12 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                       '84', '62', '38', '55', '49', '50',
                       '59', '54', '55', '73', '73', '94',
                       '98', '73', '63', '68', '54', '60',
-                      '60', '62', '60', '1000']
+                      '60', '62', '60', '73', '70', '93']
         }
         for i, row in enumerate(all_rows):
+            # print i, row
+            # print expected['cost'][i]
+            # print expected['items'][i]
             self.assertEqual(row['actual_cost'], expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
 
