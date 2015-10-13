@@ -4,6 +4,7 @@ openprescribing/media/js/node_modules
 openprescribing/assets
 analysis/
 docs/
+cache-warming/
 
 # System files
 *.py[co]
