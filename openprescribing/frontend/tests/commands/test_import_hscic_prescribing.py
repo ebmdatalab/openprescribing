@@ -36,7 +36,7 @@ class CommandsTestCase(TestCase):
         db_user = utils.get_env_setting('DB_USER')
         db_pass = utils.get_env_setting('DB_PASS')
         test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'T201304PDPI+BNFT_formatted.csv'
+        test_file += 'T201304PDPI+BNFT_formatted.CSV'
         new_opts = {
             'db_name': db_name,
             'db_user': db_user,
