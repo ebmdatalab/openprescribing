@@ -2,12 +2,12 @@ language: python
 python:
   - "2.7"
 addons:
-  postgresql: "9.3"
+  postgresql: "9.4"
 env:
   - SECRET_KEY=test DB_NAME=dbtest DB_USER=test DB_PASS=test
 before_install:
   - export DJANGO_SETTINGS_MODULE=openprescribing.settings.local
-  - export PYTHONPATH=$HOME/builds/annapowellsmith/openprescribing
+  - export PYTHONPATH=$HOME/builds/annapowellsmith/openpresc
 install:
  - pip install -r requirements.txt
  - pip install -r requirements/local.txt
