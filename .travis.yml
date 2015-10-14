@@ -7,7 +7,7 @@ env:
   - SECRET_KEY=test DB_NAME=dbtest DB_USER=test DB_PASS=test
 before_install:
   - export DJANGO_SETTINGS_MODULE=openprescribing.settings.local
-  - export PYTHONPATH=$HOME/builds/annapowellsmith/openpresc
+  - export PYTHONPATH=$HOME/builds/edmdatalab/openprescribing
 install:
  - pip install -r requirements.txt
  - pip install -r requirements/local.txt

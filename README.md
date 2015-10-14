@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/annapowellsmith/openprescribing.svg?token=9PrYJ1Wc7FpaJhrjLQq7&branch=master)](https://magnum.travis-ci.com/annapowellsmith/openprescribing)
+[![Build Status](https://travis-ci.org/ebmdatalab/openprescribing.svg?branch=master)](https://travis-ci.org/ebmdatalab/openprescribing)
 
 Open Prescribing
 ================
