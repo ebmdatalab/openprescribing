@@ -1,4 +1,4 @@
-/static/myapp[![Build Status](https://magnum.travis-ci.com/annapowellsmith/openprescribing.svg?token=9PrYJ1Wc7FpaJhrjLQq7&branch=master)](https://magnum.travis-ci.com/annapowellsmith/openprescribing)
+[![Build Status](https://magnum.travis-ci.com/annapowellsmith/openprescribing.svg?token=9PrYJ1Wc7FpaJhrjLQq7&branch=master)](https://magnum.travis-ci.com/annapowellsmith/openprescribing)
 
 Open Prescribing
 ================
