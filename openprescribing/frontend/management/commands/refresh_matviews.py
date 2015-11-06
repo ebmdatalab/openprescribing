@@ -43,7 +43,7 @@ class Command(BaseCommand):
     def refresh_matviews(self, cursor):
         if self.IS_VERBOSE:
             print 'Refreshing materialized views...'
-        refresh = 'REFRESH MATERIALIZED VIEW CONCURRENTLY'
+        refresh = 'REFRESH MATERIALIZED VIEW'
         cmd = '%s vw_presentation_summary_by_ccg' % refresh
         self._print_and_execute(cursor, cmd)
         cmd = '%s vw_presentation_summary' % refresh
