@@ -12,8 +12,9 @@ sum_value() {
 # TODO: handle empty arrays.
 # Remember not to include commas between items in the arrays!
 # All generic spending: CHEMICALS=('[A-Z0-9]\{9\}AA[A-Z0-9]\{4\}')
-declare -a CHEMICALS=('0208020Z0AAABAB')
-declare -a ORGS=('04V')
+# declare -a CHEMICALS=('0212000B0' '0212000C0' '0212000M0' '0212000X0' '0212000Y0')
+declare -a CHEMICALS=('0304')
+declare -a ORGS=('A81015')
 CHEM_STR=''
 for CHEM in "${CHEMICALS[@]}"; do
   CHEM_STR+=",$CHEM\|"
@@ -32,7 +33,7 @@ echo 'Looking for org string' $ORG_STR
 # List all data files, or declare them explicitly if you prefer.
 cd ./data/raw_data/
 # FILES=($(ls -d T201*PDPI+BNFT.CSV))
-declare -a FILES=('T201411PDPI+BNFT.CSV') # 'T201502PDPI+BNFT.CSV' 'T201503PDPI+BNFT.CSV')
+declare -a FILES=('T201507PDPI+BNFT.CSV') # 'T201502PDPI+BNFT.CSV' 'T201503PDPI+BNFT.CSV')
 
 # Grep for BNF and org codes, then sum the values.
 echo 'cost:'
