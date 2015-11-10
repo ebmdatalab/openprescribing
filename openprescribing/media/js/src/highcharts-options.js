@@ -66,7 +66,20 @@ var baseOptions = {
             fontFamily: "'Montserrat', 'Helvetica Neue', Arial, sans-serif"
         }
     },
-    credits: false,
+    credits: {
+        enabled: true,
+        position: {
+            align: 'center',
+            verticalAlign: 'top',
+            y: 96
+        },
+        style: {
+            color: '#ccc',
+            fontSize: '24px',
+            opacity: 0.2
+        },
+        text: "openprescribing.net"
+    },
     title: {
         text: null
     },
@@ -178,6 +191,7 @@ var chartOptions = {
 
 var dashOptions = $.extend(true, {}, baseOptions);
 dashOptions.chart.type = 'line';
+dashOptions.credits.enabled = false;
 dashOptions.chart.marginTop = 10;
 dashOptions.chart.spacingLeft = 0;
 dashOptions.chart.marginRight = 10;

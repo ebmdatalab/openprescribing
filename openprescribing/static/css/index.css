@@ -478,7 +478,7 @@ path {
 #trends .chart .status {
   padding-top: 160px;
 }
-#trends .chart .highcharts-contextmenu hr {
+.highcharts-contextmenu hr {
   margin: 5px 0;
 }
 #dashboard .panel p {

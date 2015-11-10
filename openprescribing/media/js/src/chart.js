@@ -1,6 +1,7 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
 require('Highcharts');
+require('Highcharts-export');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
