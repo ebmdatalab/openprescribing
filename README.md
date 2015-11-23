@@ -131,9 +131,11 @@ Then convert and import the prescribing data:
     python manage.py convert_hscic_prescribing --filename data/raw_data/[PDPI FILE].CSV -v 2
     python manage.py import_hscic_prescribing --filename data/raw_data/[PDPI FORMATTED FILE].CSV -v 2
 
-If necessary, update list sizes for the latest months:
+If necessary, update list sizes for the latest months. You can get the raw list size data from the NHS BSA Information Portal:
 
     python manage.py import_list_sizes --filename data/list_sizes/[MONTH FILE].CSV -v 2
+
+(If you want to add list size data for only part of a quarter, then rename the filename to cover only those months.)
 
 Then refresh the materialized views (which will take some time, and slow the database while it runs - if doing this remotely, it's best to run this inside a screen session):
 
