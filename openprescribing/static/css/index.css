@@ -28,7 +28,7 @@ h5,
 h6 {
   text-shadow: 1px 1px 1px rgba(150, 150, 150, 0.64);
 }
-p {
+.container p {
   max-width: 800px;
 }
 .invisible {
@@ -57,25 +57,24 @@ body {
   background: #e6e6e6;
   height: auto;
   overflow: auto;
+  font-size: 12px;
 }
-.footer .logo {
-  float: left;
-  border: 3px solid #ccc;
+.footer .sponsors img {
   margin-right: 10px;
-  margin-top: 2px;
-  height: 37px;
-  width: 92px;
+  height: 50px;
+  border: 1px solid #ccc;
 }
-@media (max-width: 1000px) {
-  body {
-    margin-bottom: 100px;
-  }
+.footer .sponsors img:last {
+  margin-right: 0;
+}
+@media (max-width: 990px) {
   .footer {
-    height: 90px;
-    font-size: 0.8em;
+    font-size: 10px;
   }
-  .responsive {
-    display: none;
+  .footer .sponsors img {
+    height: 40px;
+    margin-bottom: 5px;
+    margin-right: 1px;
   }
 }
 /* Fix for Django-debug-toolbar bug

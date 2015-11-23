@@ -89,13 +89,18 @@
 
     <footer class="footer">
       <div class="container">
-        <p class="text-muted">
-        <img class="logo" src="/static/img/weahsn_logo.png" alt="WEAHSN logo"/>
-        Funded by <a href="http://www.weahsn.net/">West of England Academic Health Science Network</a>.<br class="responsive" />
-        <a href="{% url 'about' %}">About this site</a>.
-        Contact us: <a href="mailto:mail@openprescribing.net">mail@openprescribing.net</a>.
-
-        </p>
+        <div class="row">
+            <div class="col-md-5 col-sm-5 col-xs-12 sponsors">
+              <a href="http://weahsn.net"><img src="/static/img/weahsn_logo.png" alt="WEAHSN logo"/></a>
+              <a href="http://cebm.net"><img src="/static/img/cebm_logo.png" alt="Centre for Evidence-Based Medicine logo"/></a>
+              <a href="http://www.ox.ac.uk"><img src="/static/img/oxford_logo.png" alt="University of Oxford logo"/></a>
+              <a href="http://www.lshtm.ac.uk"><img src="/static/img/lshtm_logo.png" alt="LSHTM logo"/></a>
+            </div>
+            <div class="col-md-7 col-sm-7 col-xs-12 attribution text-muted">
+              Designed and built by Anna Powell-Smith and Ben Goldacre at the <a href="http://ebmdatalab.net">EBM DataLab</a>, Department of Primary Care Health Sciences, University of Oxford. Funded by <a href="http://weahsn.net">West of England Academic Health Science Network</a>.
+              Contact us: <a href="mailto:mail@openprescribing.net">mail@openprescribing.net</a>.
+            </div>
+        </div>
       </div>
     </footer>
 
