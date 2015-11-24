@@ -95,6 +95,7 @@ var utils = {
                 row_id: c.row_id,
                 row_name: c.row_name,
                 date: c.date,
+                setting: c.setting,
                 x_actual_cost: +c.actual_cost || 0,
                 x_items: +c.items || 0,
                 y_actual_cost: 0,
@@ -113,6 +114,7 @@ var utils = {
                     row_id: c.row_id,
                     row_name: c.row_name,
                     date: c.date,
+                    setting: c.setting,
                     x_actual_cost: 0,
                     x_items: 0,
                     y_actual_cost: +c.actual_cost || 0,
@@ -136,7 +138,10 @@ var utils = {
         var combined = _.map(keys, function(key) {
             return xAndYDataDict[key];
         });
-        return combined;
+        return _.filter(combined, function(p){
+            // Filter out non-prescribing practices. Ignore this for CCGs.
+            return (typeof(p.setting) === 'undefined') || (p.setting === 4);
+        });
     },
 
     calculateRatiosForData: function(data, isSpecialDenominator, x_val_key) {
