@@ -2,7 +2,12 @@
 
 <h2>Prescribing dashboard</h2>
 
-<p>How this organisation performed on six prescribing measures, compared to the mean for all practices in NHS England. These are important measures, but they should be interpreted thoughtfully. It may be that the doctors working in that practice have different prescribing habits than their colleagues. However there may be other good reasons why a practice is prescribing more or less of something than other practices in the country: they may have a very different patient population to the national average, for example. Please read our notes on <a href="{% url 'about'%}#using-the-data">using the data</a>.</p>
+<p>How this organisation prescribed for six prescribing metrics, compared to the mean for all practices in NHS England.</p>
+
+<div class="alert alert-danger" role="alert" style="margin-top: 10px;">
+<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average. Please read our notes on <a href="{% url 'caution'%}">using the data</a>.
+</div>
+
 
 <hr/>
 
@@ -11,7 +16,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Rosuvastatin Calcium vs. Atorvastatin</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>.</p>
+            <p>Prescribing of branded <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of generic <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>.</p>
             <div id="rosuvastatin" class="chart">
             <div class="status"></div>
             </div>

@@ -16,6 +16,8 @@
 
 <hr/>
 
+<p>All prescribing on {{ chemical.chem_name }} in England.</p>
+
 {% include '_chart.html' %}
 
 <div id="download-data">
@@ -28,9 +30,8 @@ By CCG: <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={{ 
 <h3>Download raw data</h3>
 <p>
 Download CSV or JSON:
-<a href="{% url 'total_spending' %}?code={{ page_id }}">all spending on {{ chemical.chem_name }}</a>,
-<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}">spending on {{ chemical.chem_name }} by CCG</a>, or
-<a href="{% url 'spending_by_practice' %}?code={{ page_id }}">spending on {{ chemical.chem_name }} by practice</a>.
+<a href="{% url 'total_spending' %}?code={{ page_id }}">all spending on {{ chemical.chem_name }}</a> or
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}">spending on {{ chemical.chem_name }} by CCG</a.
 </p>
 </div>
 
