@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<h1>Explore GP prescribing data</h1>
+<h1>Explore England's prescribing data</h1>
 
 <p>Every month the NHS publishes <a href="">anonymised open data</a> about the drugs prescribed by GPs in England. But the raw data files are large and unwieldy. We're making it easier for CCGs, GPs and everyone to use - helping prescribers spot trends, savings and safety improvements.</p>
 
@@ -95,4 +95,8 @@
 
 <p>Find out more <a href="{% url 'about' %}">about us</a> or <a href="{% url 'about' %}#data">about the data</a>. And please read our <a href="{% url 'about' %}#guidelines">guidelines for using this data</a>.</p>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/openprescribing.min.js?q=123456"></script>
 {% endblock %}

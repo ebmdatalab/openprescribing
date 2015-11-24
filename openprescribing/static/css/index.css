@@ -97,13 +97,10 @@ body {
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .home .active_home > a,
+.howtouse .active_howtouse > a,
 .analyse .active_analyse > a,
-.chemical .active_chemical > a,
-.presentation .active_presentation > a,
-.practice .active_practice > a,
 .api .active_api > a,
-.sha .active_sha > a,
-.pct .active_pct > a,
+.caution .active_caution > a,
 .about .active_about > a {
   color: #fff !important;
   background-color: #080808;

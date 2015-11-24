@@ -2,6 +2,7 @@
 
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
+require('bootstrap');
 require('Highcharts');
 require('mapbox.js');
 var _ = require('underscore');

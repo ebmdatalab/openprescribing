@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block title %}BNF {{ section.number_str}}: {{ section.name }}{% endblock %}
-{% block active_class %}chemical{% endblock %}
+{% block active_class %}analyse{% endblock %}
 
 {% block content %}
 
@@ -47,9 +47,5 @@
 var filename = "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'bnf-section';
 </script>
-{% if debug %}
-<script src="/static/js/bar-chart.js"></script>
-{% else %}
 <script src="/static/js/bar-chart.min.js"></script>
-{% endif %}
 {% endblock %}

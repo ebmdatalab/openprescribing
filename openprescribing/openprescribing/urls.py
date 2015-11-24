@@ -15,6 +15,9 @@ urlpatterns = patterns(
     url(r'^api/$', TemplateView.as_view(template_name='api.html'), name="api"),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name="about"),
+    url(r'^caution/$', TemplateView.as_view(template_name='caution.html'), name="caution"),
+    url(r'^how-to-use/$', TemplateView.as_view(template_name='how-to-use.html'),
+        name="how-to-use"),
 
     # User-facing pages.
     url(r'^chemical/$', 'frontend.views.views.all_chemicals',

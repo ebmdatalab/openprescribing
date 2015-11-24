@@ -1,5 +1,6 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
+require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 var _ = require('underscore');

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}All practices{% endblock %}
-{% block active_class %}practice{% endblock %}
+{% block active_class %}analyse{% endblock %}
 
 {% block content %}
 
@@ -31,9 +31,5 @@ var practice = {
 allItems.push(practice);
 {% endfor %}
 </script>
-{% if debug %}
-<script src="/static/js/list-filter.js"></script>
-{% else %}
 <script src="/static/js/list-filter.min.js"></script>
-{% endif %}
 {% endblock %}

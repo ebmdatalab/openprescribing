@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}All chemicals{% endblock %}
-{% block active_class %}chemical{% endblock %}
+{% block active_class %}analyse{% endblock %}
 
 {% block content %}
 
@@ -32,9 +32,5 @@ var chemical = {
 allItems.push(chemical);
 {% endfor %}
 </script>
-{% if debug %}
-<script src="/static/js/list-filter.js"></script>
-{% else %}
 <script src="/static/js/list-filter.min.js"></script>
-{% endif %}
 {% endblock %}

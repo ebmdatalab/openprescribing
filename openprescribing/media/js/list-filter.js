@@ -1,5 +1,6 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
+require('bootstrap');
 var Fuse = require('./vendor/fuse');
 
 var listFilter = {
