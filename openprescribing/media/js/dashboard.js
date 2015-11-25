@@ -188,7 +188,7 @@ var barChart = {
             var dates = d.date.split('-');
             var date =  Date.UTC(dates[0], dates[1]-1, dates[2]);
             d.x = date;
-            d.y = (d.ratio_items) ? parseFloat(d.ratio_items) : null;
+            d.y = (d.ratio_items !== null) ? parseFloat(d.ratio_items) : null;
         });
         return data;
     },
