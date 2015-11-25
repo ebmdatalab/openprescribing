@@ -32,10 +32,10 @@ Not a dispensing practice
 
 {% include '_dashboard.html' with orgType="practice" orgId=practice.code orgName=practice.name %}
 
-<div id="download-data">
-<h3>Download raw data</h3>
+<div>
+<h3>Other prescribing</h3>
 <p>
-<a href="{% url 'spending_by_practice' %}?org={{ page_id }}">All spending by {{ practice }}</a>.
+Explore <a href="{% url 'analyse' %}#org=practice&orgIds={{ practice.code }}">prescribing by {{ practice.name }}</a> versus other practices in {{ practice.ccg.name }}, for any drug type.
 </p>
 </div>
 

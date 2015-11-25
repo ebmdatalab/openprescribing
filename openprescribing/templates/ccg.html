@@ -46,11 +46,10 @@ var boundary = {{ ccg.boundary|geojsonfeature|safe }};
 {% endblock %}
 {% include '_dashboard.html' with orgType="CCG" orgId=ccg.code orgName=ccg.name practiceCount=practices.count %}
 
-<div id="download-data">
-<h3>Download raw data</h3>
+<div>
+<h3>Other prescribing</h3>
 <p>
-<a href="{% url 'spending_by_ccg' %}?org={{ page_id }}">All spending by {{ ccg.name }}</a> or
-<a href="{% url 'spending_by_practice' %}?org={{ page_id }}">spending by practice in {{ ccg.name }}</a>.
+Explore <a href="{% url 'analyse' %}#org=CCG&orgIds={{ page_id }}">prescribing by {{ ccg.name }}</a> versus other CCGs, for any drug type.
 </p>
 </div>
 
