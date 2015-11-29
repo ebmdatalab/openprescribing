@@ -95,8 +95,8 @@ var barChart = {
             chartOptions.chartValues.ratio = 'ratio_items';
 
             var numStr = utils.idsToString(chartOptions.numIds);
-            chartOptions.numOrgUrl = _this.spendUrl + '/?format=json&org=' + _this.orgId;
-            chartOptions.numOrgUrl += '&code=' + numStr;
+            chartOptions.numOrgUrl = _this.spendUrl + '/?format=json&code=' + numStr;
+            chartOptions.numOrgUrl += '&org=' + _this.orgId;
             chartOptions.numAllNHS = _this.baseUrl + 'spending/?format=json&code=' + numStr;
 
             var denomStr = utils.idsToString(chartOptions.denomIds);
