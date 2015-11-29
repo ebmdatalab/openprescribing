@@ -14,6 +14,8 @@
 
 <h1>Search GP prescribing data</h1>
 
+<p>Search 600 million rows of prescribing data, and get prescribing information by CCG or practice. You can search for any numerator over any denominator. For example, prescriptions by CCG for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">branded Rosuvastatin as a proportion of all lipid-regulating drugs <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>; or for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=0212000B0">Rosuvastatin vs generic Atorvastatin <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>; or for <a target="_blank" href="{% url 'analyse' %}#numIds=0205051I0&denomIds=2.5.5">Enalapril as a proportion of its drug class <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>. Add the name of a CCG or practice to check how an organisation compares with its peers. Don't forget to look at time trends, and maps!</p>
+
 <div id="loading-form">
 <p>Loading search form...</p>
 </div>
@@ -185,13 +187,9 @@
 
 <br/>
 
-<p>Use this form to search for prescribing information by CCG or practice. You can search for any numerator over any denominator, to see the ratio. So for example: you can look at the prescriptions for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">branded Rosuvastatin as a proportion of all lipid-regulating drugs</a>; or for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=0212000B0">Rosuvastatin prescribing compared to generic equivalent Atorvastatin</a>; or one inhaler vs another; or the <a target="_blank" href="{% url 'analyse' %}#numIds=0205051I0&denomIds=2.5.5">number of prescriptions for Enalapril as a proportion of all members of that class of drugs</a>; and so on.</p>
+<p>Read our notes on <a href="{% url 'caution' %}">using the data responsibly</a>. Note that you can also look at the number of prescriptions for a drug or group of drugs compared to the total list size covered by that CCG or practice. Different practices and CCGs will have different populations: some will have more older people, and so on. There are various imperfect ways to correct for this.</p>
 
-<p>You can also look at the number of prescriptions for a drug or group of drugs compared to the size of population covered by that CCG or practice. Different practices and CCGs will have different populations: some will have more older people, and so on.</p>
-
-<p>There are various imperfect ways to correct for this. One is to calculate an "adjusted" population size, working from what you know about the number of men and women in each age band in that area. This works best when it is done for a specific class of treatments. For example, if you're interested in treatments to prevent heart attacks, then children aren't very likely to get any prescriptions, so they won't count for anything in your denominator; but much older people certainly will. These are called "STAR-PUs", they are imperfect but quick, and widely used, you can read about their strengths and weaknesses elsewhere. They take time to calculate, and they are different for each specific disease area, so we only have the <a target="_blank" href="{% url 'analyse' %}#org=CCG&numIds=5.1&denom=star_pu_oral_antibac_items">STAR-PUs for antibiotics</a>, as a demonstrator of the power of this approach.</p>
-
-<p>Add the name of a CCG or practice to check how an organisation compares with its peers. Don't forget to look at time trends, and maps!</p>
+<p>One is to calculate an "adjusted" population size, working from what you know about the number of men and women in each age band in that area. This works best when it is done for a specific class of treatments. For example, if you're interested in treatments to prevent heart attacks, then children aren't very likely to get any prescriptions, so they won't count for anything in your denominator; but much older people certainly will. These are called "STAR-PUs", they are imperfect but quick, and widely used, you can read about their strengths and weaknesses elsewhere. They take time to calculate, and they are different for each specific disease area, so we only have the <a target="_blank" href="{% url 'analyse' %}#org=CCG&numIds=5.1&denom=star_pu_oral_antibac_items">STAR-PUs for antibiotic prescribing <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>, as a demonstrator of the power of this approach.</p>
 
 
 {% endblock %}
