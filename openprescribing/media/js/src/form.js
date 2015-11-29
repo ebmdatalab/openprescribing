@@ -5,6 +5,7 @@ require('select2');
 var _ = require('underscore');
 
 var hashHelper = require('./analyse-hash');
+var utils = require('./chart_utils');
 var analyseChart = require('./chart');
 
 var queryForm = {
@@ -25,7 +26,8 @@ var queryForm = {
         analyseOptions: '#analyse-options',
         update: '#update',
         chart: '#chart',
-        results: '#results'
+        results: '#results',
+        oldBrowserWarning: '#old-browser'
     },
 
     globalOptions: {
@@ -41,6 +43,9 @@ var queryForm = {
     },
 
     setUp: function() {
+        if (utils.isOldIe()) {
+            $(oldBrowserWarning).show();
+        }
         this.initialiseGlobalOptionsFromHash(true);
         this.initialiseHelpText();
         var _this = this;
