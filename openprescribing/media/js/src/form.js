@@ -43,7 +43,7 @@ var queryForm = {
     },
 
     setUp: function() {
-        if (utils.isOldIe()) {
+        if (utils.getIEVersion()) {
             $(oldBrowserWarning).show();
         }
         this.initialiseGlobalOptionsFromHash(true);
