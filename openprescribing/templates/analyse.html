@@ -191,9 +191,7 @@
 
 <br/>
 
-<p>Read our notes on <a href="{% url 'caution' %}">using the data responsibly</a>. Note that you can also look at the number of prescriptions for a drug or group of drugs compared to the total list size covered by that CCG or practice. Different practices and CCGs will have different populations: some will have more older people, and so on. There are various imperfect ways to correct for this.</p>
-
-<p>One is to calculate an "adjusted" population size, working from what you know about the number of men and women in each age band in that area. This works best when it is done for a specific class of treatments. For example, if you're interested in treatments to prevent heart attacks, then children aren't very likely to get any prescriptions, so they won't count for anything in your denominator; but much older people certainly will. These are called "STAR-PUs", they are imperfect but quick, and widely used, you can read about their strengths and weaknesses elsewhere. They take time to calculate, and they are different for each specific disease area, so we only have the <a target="_blank" href="{% url 'analyse' %}#org=CCG&numIds=5.1&denom=star_pu_oral_antibac_items">STAR-PUs for antibiotic prescribing <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>, as a demonstrator of the power of this approach.</p>
+<p>Read our notes on <a href="{% url 'caution' %}">using the data responsibly</a>, with an explanation of appropriate denominators.</p>
 
 
 {% endblock %}
