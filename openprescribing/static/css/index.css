@@ -1,5 +1,5 @@
 body {
-  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   color: #222;
   font-size: 16px;
   background-image: url(/static/img/white_wall_hash.png);
@@ -16,7 +16,7 @@ h5,
 h6,
 .navbar-brand,
 #navbar {
-  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   color: #222;
 }
@@ -292,7 +292,7 @@ li.select2-search--inline input.select2-search__field {
   font-weight: bold;
 }
 .map-legend {
-  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !important;
 }
 #map-wrapper {
   position: relative;
@@ -312,7 +312,7 @@ li.select2-search--inline input.select2-search__field {
 }
 .leaflet-popup-content-wrapper {
   pointer-events: none;
-  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 .map-legend {
   max-width: 200px;
@@ -416,6 +416,9 @@ path {
   width: 100%;
   left: 0px;
   padding-right: 170px;
+}
+#chart-options #chart-options-wrapper #slider-wrapper #chart-date-slider .noUi-pips {
+  font-family: 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 #chart-options #chart-options-wrapper #slider-wrapper #chart-date-slider .noUi-pips-horizontal {
   padding: 10px 0 5px 0 !important;

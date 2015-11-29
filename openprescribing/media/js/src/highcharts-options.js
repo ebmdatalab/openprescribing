@@ -28,18 +28,18 @@ Highcharts.theme = {
     title: {
         style: {
             color: '#000',
-            font: "bold 16px 'Montserrat', 'Helvetica Neue', Arial, sans-serif"
+            font: "bold 16px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
         }
     },
     subtitle: {
         style: {
             color: '#666666',
-            font: "bold 12px 'Montserrat', 'Helvetica Neue', Arial, sans-serif"
+            font: "bold 12px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
         }
     },
     legend: {
         itemStyle: {
-            font: "9px 'Montserrat', 'Helvetica Neue', Arial, sans-serif",
+            font: "9px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
             color: 'black'
         },
         itemHoverStyle:{
@@ -63,7 +63,7 @@ var baseOptions = {
         type: 'scatter',
         zoomType: 'xy',
         style: {
-            fontFamily: "'Montserrat', 'Helvetica Neue', Arial, sans-serif"
+            fontFamily: "'sofia-pro', 'Helvetica Neue', 'Arial', sans-serif"
         }
     },
     credits: {
