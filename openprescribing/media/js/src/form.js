@@ -43,12 +43,12 @@ var queryForm = {
     },
 
     setUp: function() {
-        if (utils.getIEVersion()) {
-            $(oldBrowserWarning).show();
-        }
         this.initialiseGlobalOptionsFromHash(true);
         this.initialiseHelpText();
         var _this = this;
+        if (utils.getIEVersion()) {
+            $(_this.el.oldBrowserWarning).show();
+        }
         this.initialiseFormValues().then(function() {
             _this.initialiseSelectElements();
             _this.updateFormElementsToMatchOptions(true);
