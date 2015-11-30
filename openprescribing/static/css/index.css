@@ -47,7 +47,7 @@ html {
   min-height: 100%;
 }
 body {
-  margin-bottom: 100px;
+  padding-bottom: 150px;
 }
 .footer {
   position: absolute;
