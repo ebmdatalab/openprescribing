@@ -58,7 +58,12 @@ var barChart = {
         } else {
             chart.series[0].setData([], false);
         }
-        chart.redraw();
+        try {
+            chart.redraw();
+        } catch(err) {
+            chart.series[0].setData(this.barData[month][ratio], true);
+        }
+
     },
 
     _indexDataByMonthAndRatio: function(combinedData, activeOrgs) {
