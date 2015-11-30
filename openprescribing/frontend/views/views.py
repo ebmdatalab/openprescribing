@@ -82,7 +82,7 @@ def chemical(request, bnf_code):
 ##################################################
 
 def all_practices(request):
-    practices = Practice.objects.all().order_by('name')
+    practices = Practice.objects.filter(setting=4).order_by('name')
     context = {
         'practices': practices
     }
