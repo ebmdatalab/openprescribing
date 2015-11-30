@@ -24,7 +24,7 @@
 
 <h3>Analyse prescribing patterns</h3>
 <p>
-By CCG: <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={{ bnf_para.number_str }}">prescribing by CCG on {{ chemical.chem_name }} vs all items in the same BNF section</a>.
+By CCG: <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">prescribing by CCG on {{ chemical.chem_name }} vs all items in the same BNF section</a>.
 </p>
 
 <h3>Download raw data</h3>
