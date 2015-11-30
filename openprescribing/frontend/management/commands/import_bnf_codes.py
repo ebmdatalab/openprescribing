@@ -30,8 +30,9 @@ class Command(BaseCommand):
 
             pres_name = row['BNF Presentation'].strip()
             pres_code = row['BNF Presentation Code'].strip()
-            p, c = Presentation.objects.get_or_create(bnf_code=pres_code,
-                                                      name=pres_name)
+            if len(pres_code) == 15:
+                p, c = Presentation.objects.get_or_create(bnf_code=pres_code,
+                                                          name=pres_name)
 
             # Add to sections list.
             c_id = row['BNF Chapter Code']

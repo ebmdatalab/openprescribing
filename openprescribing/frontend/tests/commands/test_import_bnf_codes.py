@@ -26,9 +26,14 @@ class CommandsTestCase(TestCase):
         r = Presentation.objects.get(bnf_code='0101010D0AAAHAH')
         self.assertEqual(r.name, 'Gppe Susp_Gelusil')
         self.assertEqual(r.is_generic, True)
-        r = Presentation.objects.get(bnf_code='20031000015')
-        self.assertEqual(r.name, 'CarboFlex 10cm x 10cm S7660 Wound Dress')
+        r = Presentation.objects.get(bnf_code='0101010C0BDAAAC')
+        self.assertEqual(r.name, 'Aludrox_Gel S/F')
         self.assertEqual(r.is_generic, False)
+
+        # Presentations with codes less than 15 chars in length
+        # should not be imported.
+        r = Presentation.objects.filter(bnf_code='20031000015')
+        self.assertEqual(r.count(), 0)
 
         sections = Section.objects.all()
         self.assertEqual(sections.count(), 5)
