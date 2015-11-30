@@ -22,17 +22,6 @@ class Command(BaseCommand):
 
         sections = {}
         for row in reader:
-            product_name = row['BNF Product'].strip()
-            product_code = row['BNF Product Code'].strip()
-            if product_name != 'DUMMY PRODUCT':
-                p, c = Product.objects.get_or_create(bnf_code=product_code,
-                                                     name=product_name)
-
-            pres_name = row['BNF Presentation'].strip()
-            pres_code = row['BNF Presentation Code'].strip()
-            if len(pres_code) == 15:
-                p, c = Presentation.objects.get_or_create(bnf_code=pres_code,
-                                                          name=pres_name)
 
             # Add to sections list.
             c_id = row['BNF Chapter Code']
@@ -53,6 +42,17 @@ class Command(BaseCommand):
                     'id': p_id,
                     'name': row['BNF Paragraph']
                 }
+            product_name = row['BNF Product'].strip()
+            product_code = row['BNF Product Code'].strip()
+            if not product_name.startswith('DUMMY '):
+                p, c = Product.objects.get_or_create(bnf_code=product_code,
+                                                     name=product_name)
+
+            pres_name = row['BNF Presentation'].strip()
+            pres_code = row['BNF Presentation Code'].strip()
+            if (not pres_name.startswith('DUMMY ')) and (len(pres_code) == 15):
+                p, c = Presentation.objects.get_or_create(bnf_code=pres_code,
+                                                          name=pres_name)
 
         for s in sections:
             id = sections[s]['id'].strip()

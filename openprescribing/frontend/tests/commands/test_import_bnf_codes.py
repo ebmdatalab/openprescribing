@@ -21,7 +21,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(r.name, 'Alu-Cap')
         self.assertEqual(r.is_generic, False)
         dummies = Product.objects.filter(name='DUMMY PRODUCT')
-        self.assertEqual(len(dummies), 0)
+        self.assertEqual(dummies.count(), 0)
 
         r = Presentation.objects.get(bnf_code='0101010D0AAAHAH')
         self.assertEqual(r.name, 'Gppe Susp_Gelusil')
@@ -36,7 +36,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(r.count(), 0)
 
         sections = Section.objects.all()
-        self.assertEqual(sections.count(), 5)
+        self.assertEqual(sections.count(), 6)
 
         section = Section.objects.get(bnf_id='010101')
         self.assertEqual(section.bnf_chapter, 1)
