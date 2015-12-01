@@ -5,7 +5,7 @@
 <p>How this organisation prescribed for six prescribing metrics, compared to the mean for all practices in NHS England.</p>
 
 <div class="alert alert-danger" role="alert" style="margin-top: 10px;">
-<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average. Please read our notes on <a href="{% url 'caution'%}">using the data</a>.
+<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average. Please read our notes on <a href="{% url 'caution'%}">using the data</a> and on <a href="{% url 'caution'#metrics %">these metrics</a>.
 </div>
 
 
@@ -16,7 +16,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Rosuvastatin Calcium vs. Atorvastatin</div>
         <div class="panel-body">
-            <p>Prescribing of branded <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of generic <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>.</p>
+            <p>Prescribing of branded <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of generic <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>. Learn more <a href="{% url 'caution' %}#rosuvastatin">about this metric</a>.</p>
             <div id="rosuvastatin" class="chart">
             <div class="status"></div>
             </div>
@@ -31,7 +31,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Cerazette vs. Desogesterel</div>
         <div class="panel-body">
-            <p>Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all <a href="{% url 'chemical' '0703021Q0' %}">Desogesterel (BNF code 0703021Q0)</a>.</p>
+            <p>Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all <a href="{% url 'chemical' '0703021Q0' %}">Desogesterel (BNF code 0703021Q0)</a>. Learn more <a href="{% url 'caution' %}#cerazette">about this metric</a>.</p>
             <div id="cerazette" class="chart">
             <div class="status"></div>
             </div>
@@ -48,7 +48,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Cephalosporins per oral antibiotics STAR-PU</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'bnf_section' '050102' %}">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}.</p>
+            <p>Prescribing of <a href="{% url 'bnf_section' '050102' %}">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="{% url 'caution' %}#cephalosporins">about this metric</a>.</p>
             <div id="cephalosporins" class="chart">
             <div class="status"></div>
             </div>
@@ -64,7 +64,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">All antibacterial drugs per oral antibiotics STAR-PU</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'bnf_section' '0501' %}">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}.</p>
+            <p>Prescribing of <a href="{% url 'bnf_section' '0501' %}">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="{% url 'caution' %}#antibiotics">about this metric</a>.</p>
             <div id="antibiotics" class="chart">
             <div class="status"></div>
             </div>
@@ -82,7 +82,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Pioglitazone Hydrochloride vs. all Antidiabetic Drugs</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'chemical' '0601023B0' %}">Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all <a href="{% url 'bnf_section' '060102' %}">Antidiabetic Drugs</a> (BNF code 6.1.2).</p>
+            <p>Prescribing of <a href="{% url 'chemical' '0601023B0' %}">Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all <a href="{% url 'bnf_section' '060102' %}">Antidiabetic Drugs</a> (BNF code 6.1.2). Learn more <a href="{% url 'caution' %}#pioglitazone">about this metric</a>.</p>
             <div id="pioglitazone" class="chart">
             <div class="status"></div>
             </div>
@@ -97,7 +97,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Celecoxib vs. all NSAIDs </div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'chemical' '0801050AY' %}">Celecoxib (BNF code 0801050AY)</a> and <a href="{% url 'chemical' '1001010AH' %}">Celecoxib (BNF code 1001010AH)</a> compared with prescribing of all <a href="{% url 'bnf_section' '100101' %}">Non-Steroidal Anti-Inflammatory Drugs</a> (BNF section 1.1.1).</p>
+            <p>Prescribing of <a href="{% url 'chemical' '0801050AY' %}">Celecoxib (BNF code 0801050AY)</a> and <a href="{% url 'chemical' '1001010AH' %}">Celecoxib (BNF code 1001010AH)</a> compared with prescribing of all <a href="{% url 'bnf_section' '100101' %}">Non-Steroidal Anti-Inflammatory Drugs</a> (BNF section 1.1.1). Learn more <a href="{% url 'caution' %}#celecoxib">about this metric</a>.</p>
             <div id="celecoxib" class="chart">
             <div class="status"></div>
             </div>

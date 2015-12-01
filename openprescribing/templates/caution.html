@@ -33,9 +33,37 @@
 
 <h3 id="metrics">Our prescribing metrics</h3>
 
-<p>There are currently six standard prescribing measures on the dashboard pages for <a href="{% url 'all_ccgs' %}">CCGs</a> and <a href="{% url 'all_practices' %}">practices</a>, to get you going. These were developed in discussion between Jeff Aronson, Kamal Mahtani, and Ben Goldacre at the University of Oxford and are indicative of what the site can do.</p>
+<p>There are currently six standard prescribing measures on the dashboard pages for <a href="{% url 'all_ccgs' %}">CCGs</a> and <a href="{% url 'all_practices' %}">practices</a>, to get you going. These were developed in discussion between Jeff Aronson, Kamal Mahtani, and Ben Goldacre at the University of Oxford and are indicative of what the site can do. The interest of each measure is explained below. </p>
 
 <p>We would like to run workshops to develop 100 standard measures (creating a long list of candidates, choosing the best, and implementing the code). If you are able to fund this, please <a href="mailto:mail@openprescribing.net">get in touch</a>.</p>
+
+<div class="alert alert-danger" role="alert" style="max-width: 800pxt">
+<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average.
+</div>
+
+<h4 id="rosuvastatin">Rosuvastatin vs atorvastatin</h4>
+
+<p>Statins are the most commonly prescribed class of drug in the UK. Atorvastatin and Rosuvastatin are members of this class, and are both high-potency statins. There will always be reasons why occasional patients do better with a particular drug, but overall there is no good evidence that Rosuvastatin is better than atorvastatin. It is, however, vastly more expensive. When atorvastatin came off patent, and became cheap, practices tended to switch people away from expensive Rosuvastatin.</p>
+
+<h4 id="cerazette">Cerazette vs desogestrel</h4>
+
+<p>This is the NHS Business Service Authority's top cost-saver from generic switching. Cerazette and desogestrel are both exactly the same drug, the same molecule, but Cerazette is an expensive branded package, and desogestrel is a cheap generic package.</p>
+
+<h4 id="cephalosporins">Cephalosporins per oral antibiotic STAR-PU</h4>
+
+<p>Cephalosporins are broad spectrum antibiotics which can be used when others have failed. It is important that they are used sparingly, to avoid drug-resistant bacteria developing. This measure looks at the quantity of cephalosporins prescribed per head of population, corrected for the age and sex distribution of that population, as explained in the <a href="#denominators">denominators section</a> above.</p>
+
+<h4 id="antibiotics">All antibacterial drugs per oral antibiotic STAR-PU</h4>
+
+<p>It is important that we don't overuse antibiotics. This shows how many are being prescribed locally.</p>
+
+<h4 id="pioglitazone">Pioglitazone vs all antidiabetic drugs</h4>
+
+<p>Rosiglitazone is an antidiabetic drug that turned out to increase the risk of heart problems, and was effectively withdrawn from the market. There is concern that the problems may have been a "class effect", covering other related drugs, and so doctors have tended to also stop using pioglitazone. This shows how local practice reflects that national trend.</p>
+
+<h4 id="celecoxib">Celecoxib vs all NSAIDs</h4>
+
+<p>Coxib drugs are an interesting illustration of a common phenomenon in medicine: the need to make a trade off between risk and benefit, in different patients. Long term use of NSAID painkillers puts patients at increased risk of gastric bleeds. Coxib painkillers are effective at treating pain, with lower risk of bleeding; but they are much more expensive, and come with a higher risk of cardiovascular problems. Overall, therefore, they are sensible to use in some patients, but if one area is prescribing a lot of coxibs (or very few) then that may mean that they have unusual patients, or it may mean that doctors' thresholds for using them are different to their colleagues nationally.</p>
 
 <h3 id="disclaimer">Our disclaimer</h3>
 
