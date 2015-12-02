@@ -5,7 +5,7 @@
 <p>How this organisation prescribed for six prescribing metrics, compared to the mean for all practices in NHS England.</p>
 
 <div class="alert alert-danger" role="alert" style="margin-top: 10px;">
-<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average. Please read our notes on <a href="{% url 'caution'%}">using the data</a> and on <a href="{% url 'caution'#metrics %">these metrics</a>.
+<strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average. Please read our notes on <a href="{% url 'caution'%}">using the data</a> and on <a href="#metrics">these metrics</a>.
 </div>
 
 
@@ -16,7 +16,8 @@
     <div class="panel panel-info">
         <div class="panel-heading">Rosuvastatin Calcium vs. Atorvastatin</div>
         <div class="panel-body">
-            <p>Prescribing of branded <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of generic <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>. Learn more <a href="{% url 'caution' %}#rosuvastatin">about this metric</a>.</p>
+            <p>Prescribing of branded <a href="{% url 'chemical' '0212000AA' %}">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of generic <a href="{% url 'chemical' '0212000B0' %}">Atorvastatin (BNF code 0212000B0)</a>. Learn more <a href="#rosuvastatin_metric">about this metric</a>.
+            </p>
             <div id="rosuvastatin" class="chart">
             <div class="status"></div>
             </div>
@@ -31,7 +32,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Cerazette vs. Desogesterel</div>
         <div class="panel-body">
-            <p>Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all <a href="{% url 'chemical' '0703021Q0' %}">Desogesterel (BNF code 0703021Q0)</a>. Learn more <a href="{% url 'caution' %}#cerazette">about this metric</a>.</p>
+            <p>Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all <a href="{% url 'chemical' '0703021Q0' %}">Desogesterel (BNF code 0703021Q0)</a>. Learn more <a href="#cerazette_metric">about this metric</a>.</p>
             <div id="cerazette" class="chart">
             <div class="status"></div>
             </div>
@@ -48,7 +49,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Cephalosporins per oral antibiotics STAR-PU</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'bnf_section' '050102' %}">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="{% url 'caution' %}#cephalosporins">about this metric</a>.</p>
+            <p>Prescribing of <a href="{% url 'bnf_section' '050102' %}">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="#cephalosporins_metric">about this metric</a>.</p>
             <div id="cephalosporins" class="chart">
             <div class="status"></div>
             </div>
@@ -64,7 +65,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">All antibacterial drugs per oral antibiotics STAR-PU</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'bnf_section' '0501' %}">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="{% url 'caution' %}#antibiotics">about this metric</a>.</p>
+            <p>Prescribing of <a href="{% url 'bnf_section' '0501' %}">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics for this {{ orgType }}. Learn more <a href="#antibiotics_metric">about this metric</a>.</p>
             <div id="antibiotics" class="chart">
             <div class="status"></div>
             </div>
@@ -82,7 +83,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Pioglitazone Hydrochloride vs. all Antidiabetic Drugs</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'chemical' '0601023B0' %}">Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all <a href="{% url 'bnf_section' '060102' %}">Antidiabetic Drugs</a> (BNF code 6.1.2). Learn more <a href="{% url 'caution' %}#pioglitazone">about this metric</a>.</p>
+            <p>Prescribing of <a href="{% url 'chemical' '0601023B0' %}">Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all <a href="{% url 'bnf_section' '060102' %}">Antidiabetic Drugs</a> (BNF code 6.1.2). Learn more <a href="#pioglitazone_metric">about this metric</a>.</p>
             <div id="pioglitazone" class="chart">
             <div class="status"></div>
             </div>
@@ -97,7 +98,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">Celecoxib vs. all NSAIDs </div>
         <div class="panel-body">
-            <p>Prescribing of <a href="{% url 'chemical' '0801050AY' %}">Celecoxib (BNF code 0801050AY)</a> and <a href="{% url 'chemical' '1001010AH' %}">Celecoxib (BNF code 1001010AH)</a> compared with prescribing of all <a href="{% url 'bnf_section' '100101' %}">Non-Steroidal Anti-Inflammatory Drugs</a> (BNF section 1.1.1). Learn more <a href="{% url 'caution' %}#celecoxib">about this metric</a>.</p>
+            <p>Prescribing of <a href="{% url 'chemical' '0801050AY' %}">Celecoxib (BNF code 0801050AY)</a> and <a href="{% url 'chemical' '1001010AH' %}">Celecoxib (BNF code 1001010AH)</a> compared with prescribing of all <a href="{% url 'bnf_section' '100101' %}">Non-Steroidal Anti-Inflammatory Drugs</a> (BNF section 1.1.1). Learn more <a href="#celecoxib_metric">about this metric</a>.</p>
             <div id="celecoxib" class="chart">
             <div class="status"></div>
             </div>
@@ -111,6 +112,32 @@
 </div>
 
 </div>
+
+<h3 id="metrics">About these metrics</h3>
+
+<h4 id="rosuvastatin_metric">Rosuvastatin vs atorvastatin</h4>
+
+<p>Statins are the most commonly prescribed class of drug in the UK. Atorvastatin and Rosuvastatin are members of this class, and are both high-potency statins. There will always be reasons why occasional patients do better with a particular drug, but overall there is no good evidence that Rosuvastatin is better than atorvastatin. It is, however, vastly more expensive. When atorvastatin came off patent, and became cheap, practices tended to switch people away from expensive Rosuvastatin.</p>
+
+<h4 id="cerazette_metric">Cerazette vs desogestrel</h4>
+
+<p>This is the NHS Business Service Authority's top cost-saver from generic switching. Cerazette and desogestrel are both exactly the same drug, the same molecule, but Cerazette is an expensive branded package, and desogestrel is a cheap generic package.</p>
+
+<h4 id="cephalosporins_metric">Cephalosporins per oral antibiotic STAR-PU</h4>
+
+<p>Cephalosporins are broad spectrum antibiotics which can be used when others have failed. It is important that they are used sparingly, to avoid drug-resistant bacteria developing. This measure looks at the quantity of cephalosporins prescribed per head of population, corrected for the age and sex distribution of that population.</p>
+
+<h4 id="antibiotics_metric">All antibacterial drugs per oral antibiotic STAR-PU</h4>
+
+<p>It is important that we don't overuse antibiotics. This shows how many are being prescribed locally.</p>
+
+<h4 id="pioglitazone_metric">Pioglitazone vs all antidiabetic drugs</h4>
+
+<p>Rosiglitazone is an antidiabetic drug that turned out to increase the risk of heart problems, and was effectively withdrawn from the market. There is concern that the problems may have been a "class effect", covering other related drugs, and so doctors have tended to also stop using pioglitazone. This shows how local practice reflects that national trend.</p>
+
+<h4 id="celecoxib_metric">Celecoxib vs all NSAIDs</h4>
+
+<p>Coxib drugs are an interesting illustration of a common phenomenon in medicine: the need to make a trade off between risk and benefit, in different patients. Long term use of NSAID painkillers puts patients at increased risk of gastric bleeds. Coxib painkillers are effective at treating pain, with lower risk of bleeding; but they are much more expensive, and come with a higher risk of cardiovascular problems. Overall, therefore, they are sensible to use in some patients, but if one area is prescribing a lot of coxibs (or very few) then that may mean that they have unusual patients, or it may mean that doctors' thresholds for using them are different to their colleagues nationally.</p>
 
 <script>
 var orgId = '{{ orgId }}';
