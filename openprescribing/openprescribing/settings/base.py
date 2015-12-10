@@ -140,13 +140,14 @@ TEMPLATE_DIRS = (
 ########## MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     # Default Django middleware.
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 ########## END MIDDLEWARE CONFIGURATION
 
@@ -172,6 +173,7 @@ DJANGO_APPS = (
     'djgeojson',
     'rest_framework',
     'rest_framework_swagger',
+    'corsheaders',
 )
 
 # Apps specific for this project go here.
@@ -242,3 +244,9 @@ SWAGGER_SETTINGS = {
         'title': 'Title',
     }
 }
+
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = (
+    'GET'
+)
