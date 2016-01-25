@@ -44,15 +44,15 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print 'Refreshing materialized views...'
         refresh = 'REFRESH MATERIALIZED VIEW'
-        cmd = '%s vw_presentation_summary_by_ccg' % refresh
+        cmd = '%s vw__presentation_summary_by_ccg' % refresh
         self._print_and_execute(cursor, cmd)
-        cmd = '%s vw_presentation_summary' % refresh
+        cmd = '%s vw__presentation_summary' % refresh
         self._print_and_execute(cursor, cmd)
-        cmd = '%s vw_chemical_summary_by_ccg' % refresh
+        cmd = '%s vw__chemical_summary_by_ccg' % refresh
         self._print_and_execute(cursor, cmd)
-        cmd = '%s vw_chemical_summary_by_practice' % refresh
+        cmd = '%s vw__chemical_summary_by_practice' % refresh
         self._print_and_execute(cursor, cmd)
-        cmd = '%s vw_practice_summary' % refresh
+        cmd = '%s vw__practice_summary' % refresh
         self._print_and_execute(cursor, cmd)
 
     def vacuum_db(self, cursor):

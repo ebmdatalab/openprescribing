@@ -106,8 +106,9 @@ def spending_by_practice(request, format=None):
 def _get_query_for_total_spending(codes):
     query = 'SELECT SUM(cost) AS actual_cost, '
     query += 'SUM(items) AS items, '
+    query += 'SUM(quantity) AS quantity, '
     query += 'processing_date AS date '
-    query += "FROM vw_presentation_summary "
+    query += "FROM vw__presentation_summary "
     if codes:
         query += " WHERE ("
         for i, c in enumerate(codes):
@@ -136,11 +137,12 @@ def _get_query_for_total_spending_with_subdivide(codes):
     elif len(code) == 11:
         end_char = 15
     query = 'SELECT SUM(cost) AS actual_cost, SUM(items) AS items, '
+    query += 'SUM(quantity) AS quantity, '
     query += 'SUBSTR(vwps.presentation_code, 1, %s) AS code, ' % end_char
     query += 'frontend_section.number_str AS bnf_code, '
     query += 'processing_date AS date, '
     query += 'frontend_section.name AS name '
-    query += 'FROM vw_presentation_summary vwps '
+    query += 'FROM vw__presentation_summary vwps '
     query += 'LEFT JOIN frontend_section ON '
     query += 'frontend_section.bnf_id'
     query += '=SUBSTR(vwps.presentation_code, 1, %s) ' % end_char
@@ -156,9 +158,10 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
     query = 'SELECT pr.pct_id as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
-    query += 'sum(pr.cost) as actual_cost, '
-    query += 'sum(pr.items) as items '
-    query += "FROM vw_chemical_summary_by_ccg pr "
+    query += 'SUM(pr.cost) AS actual_cost, '
+    query += 'SUM(pr.items) AS items, '
+    query += 'SUM(pr.quantity) AS quantity '
+    query += "FROM vw__chemical_summary_by_ccg pr "
     query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
     query += "AND pc.org_type='CCG' "
     if spending_type:
@@ -191,9 +194,10 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
     query = 'SELECT pr.pct_id as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
-    query += "sum(pr.items) as items, "
-    query += 'sum(pr.cost) as actual_cost '
-    query += "FROM vw_presentation_summary_by_ccg pr "
+    query += "SUM(pr.items) AS items, "
+    query += 'SUM(pr.cost) AS actual_cost, '
+    query += 'SUM(pr.quantity) AS quantity '
+    query += "FROM vw__presentation_summary_by_ccg pr "
     query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
     query += "AND pc.org_type='CCG' "
     query += " WHERE ("
@@ -213,14 +217,15 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
 
 
 def _get_total_spending_by_practice(orgs, date):
-    query = 'SELECT pr.practice_id as row_id, '
-    query += "pc.name as row_name, "
-    query += "pc.setting as setting, "
-    query += "pc.ccg_id as ccg, "
-    query += 'pr.processing_date as date, '
-    query += 'pr.cost as actual_cost, '
-    query += 'pr.items as items '
-    query += "FROM vw_practice_summary pr "
+    query = 'SELECT pr.practice_id AS row_id, '
+    query += "pc.name AS row_name, "
+    query += "pc.setting AS setting, "
+    query += "pc.ccg_id AS ccg, "
+    query += 'pr.processing_date AS date, '
+    query += 'pr.cost AS actual_cost, '
+    query += 'pr.items AS items, '
+    query += 'pr.quantity AS quantity '
+    query += "FROM vw__practice_summary pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
     if orgs or date:
         query += "WHERE "
@@ -245,14 +250,15 @@ def _get_total_spending_by_practice(orgs, date):
 
 def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
                                            date):
-    query = 'SELECT pr.practice_id as row_id, '
-    query += "pc.name as row_name, "
-    query += "pc.setting as setting, "
-    query += "pc.ccg_id as ccg, "
-    query += "pr.processing_date as date, "
-    query += 'sum(pr.cost) as actual_cost, '
-    query += 'sum(pr.items) as items '
-    query += "FROM vw_chemical_summary_by_practice pr "
+    query = 'SELECT pr.practice_id AS row_id, '
+    query += "pc.name AS row_name, "
+    query += "pc.setting AS setting, "
+    query += "pc.ccg_id AS ccg, "
+    query += "pr.processing_date AS date, "
+    query += 'SUM(pr.cost) AS actual_cost, '
+    query += 'SUM(pr.items) AS items, '
+    query += 'SUM(pr.quantity) AS quantity '
+    query += "FROM vw__chemical_summary_by_practice pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
     has_preceding = False
     if spending_type:
@@ -297,13 +303,14 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
 
 
 def _get_presentations_by_practice(codes, orgs, date):
-    query = 'SELECT pr.practice_id as row_id, '
-    query += "pc.name as row_name, "
-    query += "pc.setting as setting, "
-    query += "pc.ccg_id as ccg, "
-    query += "pr.processing_date as date, "
-    query += 'sum(pr.actual_cost) as actual_cost, '
-    query += 'sum(pr.total_items) as items '
+    query = 'SELECT pr.practice_id AS row_id, '
+    query += "pc.name AS row_name, "
+    query += "pc.setting AS setting, "
+    query += "pc.ccg_id AS ccg, "
+    query += "pr.processing_date AS date, "
+    query += 'SUM(pr.actual_cost) AS actual_cost, '
+    query += 'SUM(pr.total_items) AS items, '
+    query += 'CAST(SUM(pr.quantity) AS bigint) AS quantity '
     query += "FROM frontend_prescription pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
     query += "WHERE ("

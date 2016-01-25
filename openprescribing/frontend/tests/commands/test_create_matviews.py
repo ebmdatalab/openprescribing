@@ -54,26 +54,28 @@ class CommandsTestCase(TestCase):
                                      password=db_pass)
         with self.conn.cursor() as c:
 
-            cmd = 'SELECT * from vw_practice_summary '
-            cmd += 'order by processing_date'
+            cmd = 'SELECT * FROM vw__practice_summary '
+            cmd += 'ORDER BY processing_date, practice_id'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 10)
             self.assertEqual(results[9][1], 'P87629')
             self.assertEqual(results[9][2], 55)
             self.assertEqual(results[9][3], 64.26)
+            self.assertEqual(results[9][4], 2599)
 
-            cmd = 'SELECT * from vw_presentation_summary '
-            cmd += 'order by processing_date'
+            cmd = 'SELECT * FROM vw__presentation_summary '
+            cmd += 'ORDER BY processing_date'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 11)
             self.assertEqual(results[9][1], '0204000I0BCAAAB')
             self.assertEqual(results[9][2], 29)
             self.assertEqual(results[9][3], 32.26)
+            self.assertEqual(results[9][4], 2350)
 
-            cmd = 'SELECT * from vw_presentation_summary_by_ccg '
-            cmd += 'order by processing_date, presentation_code'
+            cmd = 'SELECT * FROM vw__presentation_summary_by_ccg '
+            cmd += 'ORDER BY processing_date, presentation_code'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 12)
@@ -81,9 +83,10 @@ class CommandsTestCase(TestCase):
             self.assertEqual(results[9][2], '0202010B0AAABAB')
             self.assertEqual(results[9][3], 62)
             self.assertEqual(results[9][4], 54.26)
+            self.assertEqual(results[9][5], 2788)
 
-            cmd = 'SELECT * from vw_chemical_summary_by_ccg '
-            cmd += 'order by processing_date, chemical_id'
+            cmd = 'SELECT * FROM vw__chemical_summary_by_ccg '
+            cmd += 'ORDER BY processing_date, chemical_id'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 11)
@@ -91,9 +94,10 @@ class CommandsTestCase(TestCase):
             self.assertEqual(results[10][2], '0204000I0')
             self.assertEqual(results[10][3], 33)
             self.assertEqual(results[10][4], 36.28)
+            self.assertEqual(results[10][5], 2354)
 
-            cmd = 'SELECT * from vw_chemical_summary_by_practice '
-            cmd += 'order by processing_date, practice_id'
+            cmd = 'SELECT * FROM vw__chemical_summary_by_practice '
+            cmd += 'ORDER BY processing_date, practice_id'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 13)
@@ -101,5 +105,6 @@ class CommandsTestCase(TestCase):
             self.assertEqual(results[10][2], '0204000I0')
             self.assertEqual(results[10][3], 16)
             self.assertEqual(results[10][4], 14.15)
+            self.assertEqual(results[10][5], 1154)
 
         self.conn.close()
