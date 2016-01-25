@@ -38,6 +38,7 @@
   "dependencies": {
     "bootstrap": "^3.3.4",
     "compute-quantile": "^1.0.1",
+    "handlebars": "4.0.5",
     "jquery": "^1.11.3",
     "localforage": "^1.2.2",
     "mapbox.js": "^2.2.1",
