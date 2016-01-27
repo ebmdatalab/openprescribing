@@ -1,4 +1,5 @@
 import csv
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from frontend.models import Section, Product, Presentation
 
@@ -42,17 +43,28 @@ class Command(BaseCommand):
                     'id': p_id,
                     'name': row['BNF Paragraph']
                 }
+
             product_name = row['BNF Product'].strip()
             product_code = row['BNF Product Code'].strip()
             if not product_name.startswith('DUMMY '):
-                p, c = Product.objects.get_or_create(bnf_code=product_code,
-                                                     name=product_name)
+                try:
+                    p = Product.objects.get(bnf_code=product_code)
+                    p.name = product_name
+                    p.save()
+                except ObjectDoesNotExist:
+                    p = Product.objects.create(bnf_code=product_code,
+                                               name=product_name)
 
             pres_name = row['BNF Presentation'].strip()
             pres_code = row['BNF Presentation Code'].strip()
             if (not pres_name.startswith('DUMMY ')) and (len(pres_code) == 15):
-                p, c = Presentation.objects.get_or_create(bnf_code=pres_code,
-                                                          name=pres_name)
+                try:
+                    p = Presentation.objects.get(bnf_code=pres_code)
+                    p.name = pres_name
+                    p.save()
+                except ObjectDoesNotExist:
+                    p = Presentation.objects.create(bnf_code=pres_code,
+                                                    name=pres_name)
 
         for s in sections:
             id = sections[s]['id'].strip()
@@ -64,13 +76,19 @@ class Command(BaseCommand):
             bnf_section = self.convert_bnf_id_section(bnf_section)
             bnf_para = self.convert_bnf_id_section(bnf_para)
             if self.is_valid_section(id, name, bnf_para, bnf_subpara):
-                section, created = Section.objects.get_or_create(
-                    bnf_id=id,
-                    name=name,
-                    bnf_chapter=bnf_chapter,
-                    bnf_section=bnf_section,
-                    bnf_para=bnf_para
-                )
+                try:
+                    sec = Section.objects.get(bnf_id=id)
+                    sec.name = name
+                    sec.bnf_chapter = bnf_chapter
+                    sec.bnf_section = bnf_section
+                    sec.bnf_para = bnf_para
+                    sec.save()
+                except ObjectDoesNotExist:
+                    sec = Section.objects.create(bnf_id=id,
+                                                 name=name,
+                                                 bnf_chapter=bnf_chapter,
+                                                 bnf_section=bnf_section,
+                                                 bnf_para=bnf_para)
 
     def convert_bnf_id_section(self, id):
         if id == '':

@@ -58,3 +58,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(section.count(), 1)
         section = Section.objects.filter(name__startswith='DUMMY')
         self.assertEqual(section.count(), 0)
+
+        # Test for updated entries
+        updated = Presentation.objects.get(bnf_code='0101010A0AAAAAA')
+        self.assertEqual(updated.name, 'NEW PRODUCT NAME')
