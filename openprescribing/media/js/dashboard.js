@@ -28,7 +28,6 @@ var dashboard = {
     setUp: function() {
 
         this.setUpShowPractices();
-        this.setUpMap();
 
         var _this = this;
         _this.orgId = orgId;
@@ -37,6 +36,8 @@ var dashboard = {
         _this.baseUrl = '/api/1.0/';
         _this.spendUrl = _this.baseUrl;
         _this.spendUrl += (_this.orgType === 'CCG') ? 'spending_by_ccg' : 'spending_by_practice';
+
+        this.setUpMap(_this.orgId);
 
         var metric_panel_source = $("#metric-panel").html();
         var metric_panel_template = Handlebars.compile(metric_panel_source);
@@ -70,7 +71,7 @@ var dashboard = {
         });
     },
 
-    setUpMap: function() {
+    setUpMap: function(orgId) {
       if ($('#map-ccg').length) {
           var map = L.map('map-ccg').setView([52.905, -1.79], 6);
           map.scrollWheelZoom.disable();
@@ -78,9 +79,16 @@ var dashboard = {
               attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
               maxZoom: 18
           }).addTo(map);
-          var styleOptions = {"style": {"fillColor": "#ff00ff", "weight": "2", "color": "#333"}};
-          var layer = L.geoJson(boundary, styleOptions).addTo(map);
-          map.fitBounds(layer.getBounds());
+          var layer = L.mapbox.featureLayer()
+                .loadURL('/api/1.0/org_location/?org_type=ccg&q=' + orgId)
+                .on('ready', function() {
+                    map.fitBounds(layer.getBounds());
+                    layer.setStyle({fillColor: '#ff00ff',
+                                    fillOpacity: 0.2,
+                                    weight: 0.5,
+                                    color: "#333"});
+                })
+                .addTo(map);
       }
     },
 

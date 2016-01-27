@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load geojson_tags %}
 {% load humanize %}
 
 {% block title %}CCG: {{ ccg.name }}{% endblock %}
@@ -39,11 +38,6 @@ class='hidden'
 
 <hr/>
 
-{% block extra_js %}
-<script>
-var boundary = {{ ccg.boundary|geojsonfeature|safe }};
-</script>
-{% endblock %}
 {% include '_dashboard.html' with orgType="CCG" orgId=ccg.code orgName=ccg.name practiceCount=practices.count %}
 
 <div>
