@@ -20,7 +20,7 @@ python manage.py import_org_names
 python manage.py import_practice_prescribing_status --filename data/org_codes/epraccur.csv -v 2
 python manage.py import_practice_to_ccg_relations
 python manage.py import_qof_prevalence
-python manage.py import_bnf_codes
+python manage.py import_bnf_codes --filename data/bnf_codes/bnf_codes.csv -v 2
 python manage.py import_ccg_boundaries --filename data/org_codes/CCC_Feb2013.KML -v 2
 
 echo 'Updating database...'
