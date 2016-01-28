@@ -24,7 +24,7 @@ class Command(BaseCommand):
         if options['filename']:
             filenames = [options['filename']]
         else:
-            filenames = glob.glob('./raw_data/T*PDPI+BNFT*')
+            filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.CSV')
 
         for f in filenames:
             if self.IS_VERBOSE:
@@ -34,6 +34,9 @@ class Command(BaseCommand):
             filename_for_output = self.create_filename_for_output_file(f)
             writer = csv.writer(open(filename_for_output, 'wb'))
             for row in reader:
+                print row
+                if len(row) == 1:
+                    continue
                 data = self.format_row_for_sql_copy(row)
                 writer.writerow(data)
 
