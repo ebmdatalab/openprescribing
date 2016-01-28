@@ -38,7 +38,7 @@ And then install JavaScript dependencies:
 Create database and env variables
 ---------------------------------
 
-Set up a Postgres 9.4 database, and create a superuser for the database.
+Set up a Postgres 9.4 database, with PostGIS extensions, and create a superuser for the database.
 
 Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
 
