@@ -7,9 +7,17 @@ class Command(BaseCommand):
     args = ''
     help = 'Fetches all HSCIC data and rewrites filenames to be consistent'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--start_date')
+
     def handle(self, *args, **options):
-        START_YEAR = 2010
-        START_MONTH = 8
+        if options['start_date']:
+            dates = options['start_date'].split('-')
+            START_YEAR = int(dates[0])
+            START_MONTH = int(dates[1])
+        else:
+            START_YEAR = 2010
+            START_MONTH = 8
         now = datetime.datetime.now()
         END_YEAR = now.year
         END_MONTH = now.month
