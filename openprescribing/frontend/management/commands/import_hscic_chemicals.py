@@ -7,7 +7,8 @@ from frontend.models import Chemical
 
 class Command(BaseCommand):
     args = ''
-    help = 'Import chemicals data. '
+    help = 'Import any chemicals not present in the BNF codes list. '
+    help += 'This helps us avoid integrity errors when importing the data. '
 
     def add_arguments(self, parser):
         parser.add_argument('--chem_file')
