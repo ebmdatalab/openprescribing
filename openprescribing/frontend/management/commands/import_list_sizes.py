@@ -2,6 +2,7 @@ import csv
 import glob
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ObjectDoesNotExist
 from frontend.models import Practice, PracticeList, PCT
 
 
@@ -42,29 +43,55 @@ class Command(BaseCommand):
                 except PCT.DoesNotExist:
                     pct = None
                 for month in months:
-                    prac_list, created = PracticeList.objects.get_or_create(
-                        practice=practice,
-                        pct=pct,
-                        date=month,
-                        male_0_4=int(row['Male 0-4']),
-                        female_0_4=int(row['Female 0-4']),
-                        male_5_14=int(row['Male 5-14']),
-                        female_5_14=int(row['Female 5-14']),
-                        male_15_24=int(row['Male 15-24']),
-                        female_15_24=int(row['Female 15-24']),
-                        male_25_34=int(row['Male 25-34']),
-                        female_25_34=int(row['Female 25-34']),
-                        male_35_44=int(row['Male 35-44']),
-                        female_35_44=int(row['Female 35-44']),
-                        male_45_54=int(row['Male 45-54']),
-                        female_45_54=int(row['Female 45-54']),
-                        male_55_64=int(row['Male 55-64']),
-                        female_55_64=int(row['Female 55-64']),
-                        male_65_74=int(row['Male 65-74']),
-                        female_65_74=int(row['Female 65-74']),
-                        male_75_plus=int(row['Male 75+']),
-                        female_75_plus=int(row['Female 75+'])
-                    )
+                    try:
+                        prac_list = PracticeList.objects.get(
+                            practice=practice,
+                            pct=pct,
+                            date=month
+                        )
+                        prac_list.male_0_4 = int(row['Male 0-4'])
+                        prac_list.female_0_4 = int(row['Female 0-4'])
+                        prac_list.male_5_14 = int(row['Male 5-14'])
+                        prac_list.female_5_14 = int(row['Female 5-14'])
+                        prac_list.male_15_24 = int(row['Male 15-24'])
+                        prac_list.female_15_24 = int(row['Female 15-24'])
+                        prac_list.male_25_34 = int(row['Male 25-34'])
+                        prac_list.female_25_34 = int(row['Female 25-34'])
+                        prac_list.male_35_44 = int(row['Male 35-44'])
+                        prac_list.female_35_44 = int(row['Female 35-44'])
+                        prac_list.male_45_54 = int(row['Male 45-54'])
+                        prac_list.female_45_54 = int(row['Female 45-54'])
+                        prac_list.male_55_64 = int(row['Male 55-64'])
+                        prac_list.female_55_64 = int(row['Female 55-64'])
+                        prac_list.male_65_74 = int(row['Male 65-74'])
+                        prac_list.female_65_74 = int(row['Female 65-74'])
+                        prac_list.male_75_plus = int(row['Male 75+'])
+                        prac_list.female_75_plus = int(row['Female 75+'])
+                        prac_list.save()
+                    except ObjectDoesNotExist:
+                        prac_list = PracticeList.objects.create(
+                            practice=practice,
+                            pct=pct,
+                            date=month,
+                            male_0_4=int(row['Male 0-4']),
+                            female_0_4=int(row['Female 0-4']),
+                            male_5_14=int(row['Male 5-14']),
+                            female_5_14=int(row['Female 5-14']),
+                            male_15_24=int(row['Male 15-24']),
+                            female_15_24=int(row['Female 15-24']),
+                            male_25_34=int(row['Male 25-34']),
+                            female_25_34=int(row['Female 25-34']),
+                            male_35_44=int(row['Male 35-44']),
+                            female_35_44=int(row['Female 35-44']),
+                            male_45_54=int(row['Male 45-54']),
+                            female_45_54=int(row['Female 45-54']),
+                            male_55_64=int(row['Male 55-64']),
+                            female_55_64=int(row['Female 55-64']),
+                            male_65_74=int(row['Male 65-74']),
+                            female_65_74=int(row['Female 65-74']),
+                            male_75_plus=int(row['Male 75+']),
+                            female_75_plus=int(row['Female 75+'])
+                        )
 
     def get_months_from_filename(self, filename):
         f = filename.replace('.csv', '').split('_')
