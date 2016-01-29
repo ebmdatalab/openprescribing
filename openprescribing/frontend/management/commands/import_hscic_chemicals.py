@@ -9,6 +9,7 @@ class Command(BaseCommand):
     args = ''
     help = 'Import any chemicals not present in the BNF codes list. '
     help += 'This helps us avoid integrity errors when importing the data. '
+    help += 'You should have run import_bnf_codes before running this.'
 
     def add_arguments(self, parser):
         parser.add_argument('--chem_file')
