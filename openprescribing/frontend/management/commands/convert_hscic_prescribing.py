@@ -34,7 +34,6 @@ class Command(BaseCommand):
             filename_for_output = self.create_filename_for_output_file(f)
             writer = csv.writer(open(filename_for_output, 'wb'))
             for row in reader:
-                print row
                 if len(row) == 1:
                     continue
                 data = self.format_row_for_sql_copy(row)
