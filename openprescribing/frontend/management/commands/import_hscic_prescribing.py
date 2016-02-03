@@ -8,7 +8,7 @@ import time
 from pprint import pprint
 from os import environ
 from django.core.management.base import BaseCommand, CommandError
-from frontend.models import SHA, PCT, Practice, Chemical, Prescription
+from frontend.models import SHA, PCT, Prescription
 from common import utils
 
 
