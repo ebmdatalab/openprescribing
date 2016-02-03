@@ -26,12 +26,13 @@
     <div class="panel panel-info">
         <div class="panel-heading">{{ metric_name }}</div>
         <div class="panel-body">
-            <p>Prescribing of <a href="/chemical/0212000AA">Rosuvastatin Calcium (BNF code 0212000AA)</a> compared with prescribing of <a href="/chemical/0212000B0">Atorvastatin (BNF code 0212000B0)</a>. Learn more <a href="#{{ metric_id }}_metric">about this metric</a>.</p>
+            <p>{{{ metric_intro }}} Learn more <a href="#{{ metric_id }}_metric">about this metric</a>.</p>
             <div id="{{ metric_id }}" class="chart">
             <div class="status"></div>
             </div>
-            <p>Get more information on {{ org_name }}s prescribing of Rosuvastatin Calcium vs. Atorvastatin:
-see <a href="/analyse#org=CCG&amp;orgIds=13P&amp;numIds=0212000AA&amp;denomIds=0212000B0">how this {{ org_type }} compares to all {{ org_type }}s</a>, or <a href="/analyse#org=practice&amp;orgIds=13P&amp;numIds=0212000AA&amp;denomIds=0212000B0">trends for all 190 practices in this {{ org_type }}</a>.</p>
+            <p>Get more information on {{ org_name }}'s prescribing of {{ metric_name }}:
+            see {{{ metric_footer }}}.
+             </p>
         </div>
     </div>
   </div>

@@ -53,6 +53,39 @@ var dashboard = {
                 "org_name": _this.orgName,
                 "org_type": _this.orgType
             };
+            function getUrl(d) {
+                var url = '&numIds=';
+                d.numIds.forEach(function(numId, i) {
+                    url += numId.id;
+                    url += (i < (d.numIds.length-1)) ? ',' : '';
+                });
+                if (d.denomIds.length) {
+                    url += '&denomIds=';
+                    d.denomIds.forEach(function(denomId, i) {
+                        url += denomId.id;
+                        url += (i < (d.denomIds.length-1)) ? ',' : '';
+                    });
+                } else {
+                    url += '&denom=' + d.denom;
+                }
+                return url;
+            }
+            if (_this.orgType == 'CCG') {
+                data.metric_footer = '<a href="/analyse#';
+                data.metric_footer += 'org=CCG&orgIds=' + this.orgId;
+                data.metric_footer += getUrl(m);
+                data.metric_footer += '">how this CCG compares to all CCGs</a>, or ';
+                data.metric_footer += '<a href="/analyse#org=practice&orgIds=' + this.orgId;
+                data.metric_footer += getUrl(m);
+                data.metric_footer += '">trends for all ';
+                data.metric_footer += 'practices in the same CCG</a>';
+            } else {
+                data.metric_footer = '<a href="/analyse#';
+                data.metric_footer += 'org=practice&orgIds=' + this.orgId;
+                data.metric_footer +=  getUrl(m);
+                data.metric_footer += '">how this practice compares to all ';
+                data.metric_footer += 'practices in the same CCG</a>';
+            }
             var r = metric_panel_template(data);
             $('#metric-panels').append(r);
             r = metric_explanation_template(data);
@@ -162,7 +195,6 @@ var dashboard = {
     },
 
     renderGraph: function(chartOptions, combined1, combined2) {
-        // console.log('renderGraph', chartOptions);
         var _this = this;
         if (combined1.length) {
             var hcOptions = _this.getHighchartsOptions(chartOptions);
