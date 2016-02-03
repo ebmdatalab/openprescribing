@@ -369,14 +369,14 @@ class Prescription(models.Model):
     pct = models.ForeignKey(PCT)
     practice = models.ForeignKey(Practice)
     chemical = models.ForeignKey(Chemical)
-    presentation_code = models.CharField(max_length=15, db_index=True,
+    presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     presentation_name = models.CharField(max_length=1000)
     total_items = models.IntegerField()
     net_cost = models.FloatField()
     actual_cost = models.FloatField()
     quantity = models.FloatField()
-    processing_date = models.DateField(db_index=True)
+    processing_date = models.DateField()
     price_per_unit = models.FloatField()
 
     class Meta:
