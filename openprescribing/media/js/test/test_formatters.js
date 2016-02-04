@@ -65,7 +65,7 @@ describe('Formatters', function () {
             expect(str).to.equal('patients on list');
             str = formatters.getFriendlyDenominator('astro_pu_cost', []);
             expect(str).to.equal('ASTRO-PUs');
-            str = formatters.getFriendlyDenominator('star_pu_oral_antibac_items', []);
+            str = formatters.getFriendlyDenominator('star_pu.oral_antibacterials_item', []);
             expect(str).to.equal('STAR-PUs for oral antibiotics');
         });
     });

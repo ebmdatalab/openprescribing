@@ -61,7 +61,7 @@ var formatters = {
             str = 'patients on list';
         } else if (denom === 'astro_pu_cost') {
             str = 'ASTRO-PUs';
-        } else if (denom === "star_pu_oral_antibac_items") {
+        } else if (denom === "star_pu.oral_antibacterials_item") {
             str = 'STAR-PUs for oral antibiotics';
         } else {
             if (denomIds.length > 0) {

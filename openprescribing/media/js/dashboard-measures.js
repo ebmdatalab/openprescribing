@@ -21,7 +21,7 @@ var measures = [
         chartIntro: 'Prescribing of <a href="/bnf/050102">Cephalosporins (BNF section 5.1.2)</a> compared with item-based STAR-PUs for oral antibiotics.',
         chartDescription: 'Cephalosporins are broad spectrum antibiotics which can be used when others have failed. It is important that they are used sparingly, to avoid drug-resistant bacteria developing. This measure looks at the quantity of cephalosporins prescribed per head of population, corrected for the age and sex distribution of that population.',
         numIds: [{ id: '050102', 'name': 'Cephalosporins and other Beta-Lactams'}],
-        denom: 'star_pu_oral_antibac_items',
+        denom: 'star_pu.oral_antibacterials_item',
         denomIds: []
     },
     {
@@ -30,7 +30,7 @@ var measures = [
         chartIntro: 'Prescribing of <a href="/bnf/0501">Antibacterial Drugs (BNF section 5.1)</a> compared with item-based STAR-PUs for oral antibiotics.',
         chartDescription: 'It is important that we don\'t overuse antibiotics. This shows how many are being prescribed locally.',
         numIds: [{ id: '0501', 'name': 'Antibacterial Drugs'}],
-        denom: 'star_pu_oral_antibac_items',
+        denom: 'star_pu.oral_antibacterials_item',
         denomIds: []
     },
     {

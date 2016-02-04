@@ -145,6 +145,29 @@ class Command(BaseCommand):
         cmd += 'vw__practice_summary(practice_id)'
         self._print_and_execute(cursor, cmd)
 
+        # List sizes and related statistics, by CCG.
+        cmd = 'CREATE MATERIALIZED VIEW vw__ccglist AS '
+        cmd += 'SELECT date, pct_id, pc.name AS name, '
+        cmd += 'AVG(total_list_size) AS total_list_size, '
+        cmd += 'AVG(astro_pu_items) AS astro_pu_items, '
+        cmd += 'AVG(astro_pu_cost) AS astro_pu_cost, '
+        cmd += 'json_object_agg(key, val) AS star_pu '
+        cmd += 'FROM (SELECT date, pct_id, SUM(total_list_size) '
+        cmd += 'AS total_list_size, '
+        cmd += 'SUM(astro_pu_items) AS astro_pu_items, '
+        cmd += 'SUM(astro_pu_cost) AS astro_pu_cost, '
+        cmd += 'key, SUM(value::numeric) val '
+        cmd += 'FROM frontend_practicelist p, jsonb_each_text(star_pu) '
+        cmd += 'GROUP BY pct_id, date, key) pr '
+        cmd += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
+        cmd += "WHERE pc.org_type='CCG' "
+        cmd += 'GROUP BY pr.pct_id, pc.name, date ORDER BY date'
+        self._print_and_execute(cursor, cmd)
+
+        cmd = 'CREATE INDEX vw__idx_ccglist_by_ccg ON '
+        cmd += 'vw__ccglist(pct_id)'
+        self._print_and_execute(cursor, cmd)
+
     def vacuum_db(self, cursor):
         if self.IS_VERBOSE:
             print 'Vacuuming database...'

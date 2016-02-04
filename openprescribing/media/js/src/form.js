@@ -151,6 +151,10 @@ var queryForm = {
         // console.log('initialiseGlobalOptionsFromHash');
         var params = hashHelper.getHashParams();
         for (var k in params) {
+            // Handle old URL parameters.
+            if ((k === 'denom') && (params[k] === 'star_pu_oral_antibac_items')) {
+                params[k] = 'star_pu.oral_antibacterials_item';
+            }
             this.globalOptions[k] = params[k];
         }
     },

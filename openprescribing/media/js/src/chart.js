@@ -176,8 +176,8 @@ var analyseChart = {
             csvHeader.push('astro_pu_cost');
         } else if ('total_list_size' in sampleItem) {
             csvHeader.push('total_list_size');
-        } else if ('star_pu_oral_antibac_items' in sampleItem) {
-            csvHeader.push('star_pu_oral_antibac_items');
+        } else if ('star_pu.oral_antibacterials_item' in sampleItem) {
+            csvHeader.push('star_pu.oral_antibacterials_item');
         } else {
             csvHeader.push('x_items');
             csvHeader.push('x_actual_cost');

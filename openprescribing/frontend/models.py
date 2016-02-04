@@ -1,5 +1,7 @@
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from validators import isAlphaNumeric
+import model_prescribing_units
 
 
 class Section(models.Model):
@@ -189,82 +191,14 @@ class PracticeList(models.Model):
     male_75_plus = models.IntegerField()
     female_75_plus = models.IntegerField()
     total_list_size = models.IntegerField()
+
     astro_pu_cost = models.FloatField()
     astro_pu_items = models.FloatField()
-    star_pu_oral_antibac_items = models.FloatField()
+
+    star_pu = JSONField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        list_total = self.male_0_4 + self.female_0_4 + \
-            self.male_5_14 + self.female_5_14 + \
-            self.male_15_24 + self.female_15_24 + \
-            self.male_25_34 + self.female_25_34 + \
-            self.male_35_44 + self.female_35_44 + \
-            self.male_45_54 + self.female_45_54 + \
-            self.male_55_64 + self.female_55_64 + \
-            self.male_65_74 + self.female_65_74 + \
-            self.male_75_plus + self.female_75_plus
-        self.total_list_size = list_total
-
-        astro_pu_cost = (1.0 * float(self.male_0_4)) + \
-            (0.9 * float(self.female_0_4)) + \
-            (0.9 * float(self.male_5_14)) + \
-            (0.7 * float(self.female_5_14)) + \
-            (1.2 * float(self.male_15_24)) + \
-            (1.4 * float(self.female_15_24)) + \
-            (1.3 * float(self.male_25_34)) + \
-            (1.8 * float(self.female_25_34)) + \
-            (1.8 * float(self.male_35_44)) + \
-            (2.6 * float(self.female_35_44)) + \
-            (3.1 * float(self.male_45_54)) + \
-            (3.7 * float(self.female_45_54)) + \
-            (5.3 * float(self.male_55_64)) + \
-            (5.4 * float(self.female_55_64)) + \
-            (8.7 * float(self.male_65_74)) + \
-            (7.6 * float(self.female_65_74)) + \
-            (11.3 * float(self.male_75_plus)) + \
-            (9.9 * float(self.female_75_plus))
-        self.astro_pu_cost = astro_pu_cost
-
-        astro_pu_items = (5.2 * float(self.male_0_4)) + \
-            (4.6 * float(self.female_0_4)) + \
-            (2.8 * float(self.male_5_14)) + \
-            (2.5 * float(self.female_5_14)) + \
-            (2.5 * float(self.male_15_24)) + \
-            (4.6 * float(self.female_15_24)) + \
-            (2.9 * float(self.male_25_34)) + \
-            (6.0 * float(self.female_25_34)) + \
-            (4.9 * float(self.male_35_44)) + \
-            (8.3 * float(self.female_35_44)) + \
-            (8.7 * float(self.male_45_54)) + \
-            (12.3 * float(self.female_45_54)) + \
-            (16.6 * float(self.male_55_64)) + \
-            (19.1 * float(self.female_55_64)) + \
-            (29.9 * float(self.male_65_74)) + \
-            (30.4 * float(self.female_65_74)) + \
-            (44.9 * float(self.male_75_plus)) + \
-            (48.5 * float(self.female_75_plus))
-        self.astro_pu_items = astro_pu_items
-
-        star_pu_oral_antibac_items = (0.8 * float(self.male_0_4)) + \
-            (0.8 * float(self.female_0_4)) + \
-            (0.3 * float(self.male_5_14)) + \
-            (0.4 * float(self.female_5_14)) + \
-            (0.3 * float(self.male_15_24)) + \
-            (0.6 * float(self.female_15_24)) + \
-            (0.2 * float(self.male_25_34)) + \
-            (0.6 * float(self.female_25_34)) + \
-            (0.3 * float(self.male_35_44)) + \
-            (0.6 * float(self.female_35_44)) + \
-            (0.3 * float(self.male_45_54)) + \
-            (0.6 * float(self.female_45_54)) + \
-            (0.4 * float(self.male_55_64)) + \
-            (0.7 * float(self.female_55_64)) + \
-            (0.7 * float(self.male_65_74)) + \
-            (1.0 * float(self.female_65_74)) + \
-            (1.0 * float(self.male_75_plus)) + \
-            (1.3 * float(self.female_75_plus))
-        self.star_pu_oral_antibac_items = star_pu_oral_antibac_items
-
+        self = model_prescribing_units.set_units(self)
         super(PracticeList, self).save(*args, **kwargs)
 
     class Meta:

@@ -35,32 +35,58 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12318.9)
         self.assertEqual(p.astro_pu_items, 45350.1)
-        self.assertEqual(p.star_pu_oral_antibac_items, 1746.4)
+        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
+                         '1764.245')
+        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
+                         '968.672')
+        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
+                         '66516.700')
+        for k in p.star_pu:
+            self.assertNotEqual(p.star_pu[k], 0)
+            self.assertNotEqual(p.star_pu[k], None)
 
+        # Test that our script creates all months in the quarter.
         p = PracticeList.objects.get(practice_id='N84014',
                                      date='2013-11-01')
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12318.9)
         self.assertEqual(p.astro_pu_items, 45350.1)
-        self.assertEqual(p.star_pu_oral_antibac_items, 1746.4)
+        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
+                         '1764.245')
+        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
+                         '968.672')
+        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
+                         '66516.700')
 
         p = PracticeList.objects.get(practice_id='N84014',
                                      date='2013-12-01')
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12318.9)
         self.assertEqual(p.astro_pu_items, 45350.1)
-        self.assertEqual(p.star_pu_oral_antibac_items, 1746.4)
+        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
+                         '1764.245')
+        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
+                         '968.672')
+        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
+                         '66516.700')
 
         p = PracticeList.objects.get(practice_id='P84034',
                                      date='2013-12-01')
         self.assertEqual(p.total_list_size, 13439)
         self.assertEqual(p.astro_pu_cost, 41202.3)
         self.assertEqual(p.astro_pu_items, 143921.9)
-        self.assertEqual(p.star_pu_oral_antibac_items, 7033.1)
+        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
+                         '7100.005')
+        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
+                         '3287.111')
+        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
+                         '295093.300')
 
         p = PracticeList.objects.get(practice_id='Y02229',
                                      date='2013-12-01')
         self.assertEqual(p.total_list_size, 0)
         self.assertEqual(p.astro_pu_cost, 0)
         self.assertEqual(p.astro_pu_items, 0)
-        self.assertEqual(p.star_pu_oral_antibac_items, 0)
+        self.assertEqual(p.star_pu['oral_antibacterials_item'], 0)
+        self.assertEqual(p.star_pu['cox-2_inhibitors_cost'], 0)
+        self.assertEqual(p.star_pu['antidepressants_adq'], 0)
