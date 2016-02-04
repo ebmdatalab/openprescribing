@@ -1,9 +1,4 @@
-require('Highcharts');
 var _ = require('underscore');
-
-Highcharts.setOptions({
-    global: { useUTC: false }
-});
 
 var formatters = {
 

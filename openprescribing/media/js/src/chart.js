@@ -5,6 +5,10 @@ require('Highcharts-export');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
+Highcharts.setOptions({
+    global: { useUTC: false }
+});
+
 var chartOptions = require('./highcharts-options');
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
