@@ -171,7 +171,7 @@ var analyseMap = {
 
     resize: function() {
         var _this = this;
-        if ((_this.orgLayer.getGeoJSON()) && (_this.orgLayer.getGeoJSON().length)) {
+        if ((_this.orgLayer.getGeoJSON()) && (_this.orgLayer.getGeoJSON().length) && (_this.orgLayer.getBounds().isValid())) {
             _this.map.invalidateSize();
             _this.map.fitBounds(_this.orgLayer.getBounds(), {
                 minZoom: 7,
@@ -181,7 +181,6 @@ var analyseMap = {
             _this.map.invalidateSize();
             _this.map.setView([52, 0], 6);
         }
-        //$('#map, #chart').hide().fadeIn();
     },
 
     getBoundsUrl: function(options) {
