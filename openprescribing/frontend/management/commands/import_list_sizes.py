@@ -3,7 +3,7 @@ import glob
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
-from frontend.models import Practice, PracticeList, PCT
+from frontend.models import Practice, PracticeStatistics, PCT
 
 
 class Command(BaseCommand):
@@ -44,7 +44,7 @@ class Command(BaseCommand):
                     pct = None
                 for month in months:
                     try:
-                        prac_list = PracticeList.objects.get(
+                        prac_list = PracticeStatistics.objects.get(
                             practice=practice,
                             pct=pct,
                             date=month
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                         prac_list.female_75_plus = int(row['Female 75+'])
                         prac_list.save()
                     except ObjectDoesNotExist:
-                        prac_list = PracticeList.objects.create(
+                        prac_list = PracticeStatistics.objects.create(
                             practice=practice,
                             pct=pct,
                             date=month,

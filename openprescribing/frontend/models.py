@@ -165,9 +165,10 @@ class PracticeIsDispensing(models.Model):
         unique_together = ("practice", "date")
 
 
-class PracticeList(models.Model):
+class PracticeStatistics(models.Model):
     '''
-    List size categories from NHS BSA.
+    Statistics for a practice in a particular month, including
+    list sizes and derived values such as ASTRO-PUs and STAR-PUs.
     '''
     practice = models.ForeignKey(Practice)
     pct = models.ForeignKey(PCT, null=True, blank=True)
@@ -199,7 +200,7 @@ class PracticeList(models.Model):
 
     def save(self, *args, **kwargs):
         self = model_prescribing_units.set_units(self)
-        super(PracticeList, self).save(*args, **kwargs)
+        super(PracticeStatistics, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'frontend'

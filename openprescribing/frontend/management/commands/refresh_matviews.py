@@ -54,7 +54,7 @@ class Command(BaseCommand):
         self._print_and_execute(cursor, cmd)
         cmd = '%s vw__practice_summary' % refresh
         self._print_and_execute(cursor, cmd)
-        cmd = '%s vw__ccglist' % refresh
+        cmd = '%s vw__ccgstatistics' % refresh
         self._print_and_execute(cursor, cmd)
 
     def vacuum_db(self, cursor):

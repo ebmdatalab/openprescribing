@@ -16,7 +16,7 @@ def org_details(request, format=None):
         query += "pc.name as row_name, "
         query += "pr.total_list_size, pr.astro_pu_cost, "
         query += "pr.astro_pu_items, pr.star_pu "
-        query += "FROM frontend_practicelist pr "
+        query += "FROM frontend_practicestatistics pr "
         query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
         if orgs:
             query += "WHERE "
@@ -32,7 +32,7 @@ def org_details(request, format=None):
             query += "ORDER BY date, row_id"
     elif org_type == 'ccg':
         query = 'SELECT pct_id AS row_id, name as row_name, *'
-        query += ' FROM vw__ccglist '
+        query += ' FROM vw__ccgstatistics '
         if orgs:
             query += "WHERE ("
             for i, c in enumerate(orgs):
@@ -54,7 +54,7 @@ def org_details(request, format=None):
         query += 'SUM(astro_pu_items) AS astro_pu_items, '
         query += 'SUM(astro_pu_cost) AS astro_pu_cost, '
         query += 'key, SUM(value::numeric) val '
-        query += 'FROM vw__ccglist p, json_each_text(star_pu) '
+        query += 'FROM vw__ccgstatistics p, json_each_text(star_pu) '
         query += 'GROUP BY date, key '
         query += ') p '
         query += 'GROUP BY date ORDER BY date'

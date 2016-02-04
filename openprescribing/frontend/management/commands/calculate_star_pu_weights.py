@@ -8,7 +8,7 @@ class Command(BaseCommand):
     args = ''
     help = 'Calculate STAR-PU weights from HSCIC Excel file. '
     help += 'Save weights into frontend app, in preparation for '
-    help += 'calculating STAR-PUs on PracticeList save method. '
+    help += 'calculating STAR-PUs on PracticeStatistics save method. '
     help += 'Re-run when the HSCIC updates its file. '
 
     def handle(self, *args, **options):

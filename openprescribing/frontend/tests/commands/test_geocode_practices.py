@@ -2,7 +2,7 @@ import os
 import unittest
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import PracticeList, Practice
+from frontend.models import Practice
 
 
 def setUpModule():

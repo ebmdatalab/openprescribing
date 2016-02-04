@@ -79,12 +79,6 @@ class Command(BaseCommand):
         cmd += 'vw__presentation_summary(presentation_code varchar_pattern_ops)'
         self._print_and_execute(cursor, cmd)
 
-        # CREATE MATERIALIZED VIEW vw_presentation_summary AS
-        # SELECT processing_date, presentation_code,
-        # SUM(items) AS items, SUM(cost) AS cost
-        # FROM vw_presentation_summary_by_ccg
-        # GROUP BY processing_date, pct_id, presentation_code;
-
         # Spending by chemical_id by CCG by month.
         cmd = 'CREATE MATERIALIZED VIEW vw__chemical_summary_by_ccg AS '
         cmd += 'SELECT processing_date, pct_id, chemical_id, '
@@ -146,7 +140,7 @@ class Command(BaseCommand):
         self._print_and_execute(cursor, cmd)
 
         # List sizes and related statistics, by CCG.
-        cmd = 'CREATE MATERIALIZED VIEW vw__ccglist AS '
+        cmd = 'CREATE MATERIALIZED VIEW vw__ccgstatistics AS '
         cmd += 'SELECT date, pct_id, pc.name AS name, '
         cmd += 'AVG(total_list_size) AS total_list_size, '
         cmd += 'AVG(astro_pu_items) AS astro_pu_items, '
@@ -157,15 +151,15 @@ class Command(BaseCommand):
         cmd += 'SUM(astro_pu_items) AS astro_pu_items, '
         cmd += 'SUM(astro_pu_cost) AS astro_pu_cost, '
         cmd += 'key, SUM(value::numeric) val '
-        cmd += 'FROM frontend_practicelist p, jsonb_each_text(star_pu) '
+        cmd += 'FROM frontend_practicestatistics p, jsonb_each_text(star_pu) '
         cmd += 'GROUP BY pct_id, date, key) pr '
         cmd += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
         cmd += "WHERE pc.org_type='CCG' "
         cmd += 'GROUP BY pr.pct_id, pc.name, date ORDER BY date'
         self._print_and_execute(cursor, cmd)
 
-        cmd = 'CREATE INDEX vw__idx_ccglist_by_ccg ON '
-        cmd += 'vw__ccglist(pct_id)'
+        cmd = 'CREATE INDEX vw__idx_ccgstatistics_by_ccg ON '
+        cmd += 'vw__ccgstatistics(pct_id)'
         self._print_and_execute(cursor, cmd)
 
     def vacuum_db(self, cursor):

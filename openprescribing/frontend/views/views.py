@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from frontend.models import Chemical, Prescription, \
-    Practice, PracticeList, SHA, PCT, Section
+    Practice, PracticeStatistics, SHA, PCT, Section
 
 
 ##################################################

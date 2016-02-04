@@ -25,7 +25,7 @@ class Command(BaseCommand):
             cmd += 'DROP MATERIALIZED VIEW vw__chemical_summary_by_ccg; '
             cmd += 'DROP MATERIALIZED VIEW vw__chemical_summary_by_practice; '
             cmd += 'DROP MATERIALIZED VIEW vw__practice_summary; '
-            cmd += 'DROP MATERIALIZED VIEW vw__ccglist; '
+            cmd += 'DROP MATERIALIZED VIEW vw__ccgstatistics; '
             c.execute(cmd)
         self.conn.commit()
         self.conn.close()

@@ -1,6 +1,6 @@
 [
   {
-    "model": "frontend.practicelist",
+    "model": "frontend.practicestatistics",
     "pk": "1234",
     "fields": {
       "practice": "P87629",
@@ -31,7 +31,7 @@
     }
   },
   {
-    "model": "frontend.practicelist",
+    "model": "frontend.practicestatistics",
     "pk": "12346",
     "fields": {
       "practice": "P87629",
@@ -62,7 +62,7 @@
     }
   },
   {
-    "model": "frontend.practicelist",
+    "model": "frontend.practicestatistics",
     "pk": "12345",
     "fields": {
       "practice": "N84014",

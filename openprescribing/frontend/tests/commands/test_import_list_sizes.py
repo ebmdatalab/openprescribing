@@ -1,6 +1,6 @@
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import PracticeList, Practice
+from frontend.models import Practice, PracticeStatistics
 
 
 def setUpModule():
@@ -27,11 +27,11 @@ class CommandsTestCase(TestCase):
         }
         call_command('import_list_sizes', *args, **opts)
 
-        list_sizes = PracticeList.objects.all()
+        list_sizes = PracticeStatistics.objects.all()
         self.assertEqual(len(list_sizes), 9)
 
-        p = PracticeList.objects.get(practice_id='N84014',
-                                     date='2013-10-01')
+        p = PracticeStatistics.objects.get(practice_id='N84014',
+                                           date='2013-10-01')
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12358.6840999993)
         self.assertEqual(p.astro_pu_items, 45377.5747635734)
@@ -46,8 +46,8 @@ class CommandsTestCase(TestCase):
             self.assertNotEqual(p.star_pu[k], None)
 
         # Test that our script creates all months in the quarter.
-        p = PracticeList.objects.get(practice_id='N84014',
-                                     date='2013-11-01')
+        p = PracticeStatistics.objects.get(practice_id='N84014',
+                                           date='2013-11-01')
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12358.6840999993)
         self.assertEqual(p.astro_pu_items, 45377.5747635734)
@@ -58,8 +58,8 @@ class CommandsTestCase(TestCase):
         self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
                          '66516.700')
 
-        p = PracticeList.objects.get(practice_id='N84014',
-                                     date='2013-12-01')
+        p = PracticeStatistics.objects.get(practice_id='N84014',
+                                           date='2013-12-01')
         self.assertEqual(p.total_list_size, 2932)
         self.assertEqual(p.astro_pu_cost, 12358.6840999993)
         self.assertEqual(p.astro_pu_items, 45377.5747635734)
@@ -70,8 +70,8 @@ class CommandsTestCase(TestCase):
         self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
                          '66516.700')
 
-        p = PracticeList.objects.get(practice_id='P84034',
-                                     date='2013-12-01')
+        p = PracticeStatistics.objects.get(practice_id='P84034',
+                                           date='2013-12-01')
         self.assertEqual(p.total_list_size, 13439)
         self.assertEqual(p.astro_pu_cost, 41303.5675254792)
         self.assertEqual(p.astro_pu_items, 144028.821414122)
@@ -82,8 +82,8 @@ class CommandsTestCase(TestCase):
         self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
                          '295093.300')
 
-        p = PracticeList.objects.get(practice_id='Y02229',
-                                     date='2013-12-01')
+        p = PracticeStatistics.objects.get(practice_id='Y02229',
+                                           date='2013-12-01')
         self.assertEqual(p.total_list_size, 0)
         self.assertEqual(p.astro_pu_cost, 0)
         self.assertEqual(p.astro_pu_items, 0)
