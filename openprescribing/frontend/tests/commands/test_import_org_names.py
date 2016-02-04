@@ -23,7 +23,6 @@ class CommandsTestCase(TestCase):
         opts = {
             'area_team': 'data/org_codes/at.csv',
             'ccg': 'data/org_codes/CCG_APR_2013.csv',
-            'pct': 'data/org_codes/PCO_2012.csv',
             'area_team_to_ccg': 'data/org_codes/CCG13_NHSAT13_NHSCR13_EW_LU.csv'
         }
         data_dir = 'data/org_codes'
@@ -40,12 +39,6 @@ class CommandsTestCase(TestCase):
         lincs_ccg = PCT.objects.get(code='03T')
         self.assertEqual(lincs_ccg.name, 'NHS Lincolnshire East')
         self.assertEqual(lincs_ccg.ons_code, 'E38000099')
-
-        pcts = PCT.objects.filter(org_type='PCT')
-        self.assertEqual(pcts.count(), 151)
-        lincs_pct = PCT.objects.get(code='5EF')
-        self.assertEqual(lincs_pct.name, 'North Lincolnshire')
-        self.assertEqual(lincs_pct.ons_code, 'E16000021')
 
         ccgs_in_lincs_at = PCT.objects.filter(managing_group=lincs_at)
         self.assertEqual(ccgs_in_lincs_at.count(), 7)
