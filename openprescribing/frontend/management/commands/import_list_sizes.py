@@ -25,7 +25,7 @@ class Command(BaseCommand):
         if options['filename']:
             filenames = [options['filename']]
         else:
-            filenames = glob.glob('data/list_sizes/*')
+            filenames = glob.glob('data/list_sizes/*.csv')
         for f in filenames:
             if self.IS_VERBOSE:
                 print f
