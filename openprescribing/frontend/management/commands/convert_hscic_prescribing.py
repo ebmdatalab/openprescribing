@@ -24,7 +24,7 @@ class Command(BaseCommand):
         if options['filename']:
             filenames = [options['filename']]
         else:
-            filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.CSV')
+            filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.*')
 
         for f in filenames:
             if self.IS_VERBOSE:
