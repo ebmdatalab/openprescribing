@@ -42,8 +42,6 @@ Set up a Postgres 9.4 database, with PostGIS extensions, and create a superuser 
 
 Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
 
-You also will need an OpenCageData API key if you want to geocode practices. Set this to `OPENCAGEDATA_KEY`.
-
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
@@ -78,7 +76,7 @@ Load the HSCIC data
 
 Run setup.sh to fetch and import data, and create the indexes and materialized views needed to set up the database.
 
-(TBA)
+You will need to download the HSCIC's gridall file before doing this, and put it in the `/data` directory. (I don't keep this file in source control, because it's very large.)
 
     chmod u+x setup.sh
     ./setup.sh

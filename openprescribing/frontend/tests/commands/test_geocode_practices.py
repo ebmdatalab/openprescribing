@@ -30,20 +30,18 @@ class CommandsTestCase(TestCase):
 
     @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
                      "Skipping this test on Travis CI.")
-    @unittest.skipIf("OPENCAGEDATA_KEY" not in os.environ,
-                     "Skipping this test because OPENCAGEDATA_KEY not set.")
     def test_import_practice_geocoding(self):
 
         args = []
-        opts = {}
+        opts = {
+            'filename': 'frontend/tests/fixtures/commands/gridall.csv'
+        }
         call_command('geocode_practices', *args, **opts)
 
         practice = Practice.objects.get(code='N84014')
         loc = practice.location
-        self.assertEqual(loc.x, -3.03576042372)
-        self.assertEqual(loc.y, 53.600254095)
+        self.assertEqual(loc.x, -3.0366194249598926)
+        self.assertEqual(loc.y, 53.601301070769146)
 
         practice = Practice.objects.get(code='G82650')
-        loc = practice.location
-        self.assertEqual(loc.x, 1.41944991072)
-        self.assertEqual(loc.y, 51.3659731963)
+        self.assertEqual(practice.location, None)

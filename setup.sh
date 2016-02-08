@@ -6,7 +6,7 @@ echo 'Importing organisation details...'
 python manage.py import_hscic_practices -v 2
 python manage.py import_ccg_boundaries --filename data/org_codes/CCC_Feb2013.KML -v 2
 python manage.py import_org_names --ccg data/org_codes/CCG_APR_2013.csv --area_team data/org_codes/at.csv --area_team_to_ccg data/org_codes/CCG13_NHSAT13_NHSCR13_EW_LU.csv -v 2
-python manage.py geocode_practices -v 2
+python manage.py geocode_practices -v 2 --filename data/gridall.csv
 
 echo 'Fetching and converting HSCIC prescribing data...'
 python manage.py fetch_hscic_prescribing -v 2

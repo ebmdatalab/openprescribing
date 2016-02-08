@@ -17,11 +17,14 @@ Highcharts.setOptions({
     global: { useUTC: false }
 });
 
+L.mapbox.accessToken = 'pk.eyJ1IjoiYW5uYXBvd2VsbHNtaXRoIiwiYSI6ImNzY1VpYkkifQ.LC_IcHpHfOvWOQCuo5t7Hw';
+
 var dashboard = {
     el: {
         noData: '',
         status: '.status',
-        trendsPanel: '#trends'
+        trendsPanel: '#trends',
+        mapPanel: 'map-ccg'
     },
     errorMessage: '<p>Sorry, something went wrong.</p>',
 
@@ -37,7 +40,7 @@ var dashboard = {
         _this.spendUrl = _this.baseUrl;
         _this.spendUrl += (_this.orgType === 'CCG') ? 'spending_by_ccg' : 'spending_by_practice';
 
-        this.setUpMap(_this.orgId);
+        this.setUpMap(_this.orgId, _this.orgType);
 
         var metric_panel_source = $("#metric-panel").html();
         var metric_panel_template = Handlebars.compile(metric_panel_source);
@@ -104,25 +107,27 @@ var dashboard = {
         });
     },
 
-    setUpMap: function(orgId) {
-      if ($('#map-ccg').length) {
-          var map = L.map('map-ccg').setView([52.905, -1.79], 6);
-          map.scrollWheelZoom.disable();
-          L.tileLayer('https://{s}.tiles.mapbox.com/v3/annapowellsmith.ljij4na8/{z}/{x}/{y}.png', {
-              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-              maxZoom: 18
-          }).addTo(map);
-          var layer = L.mapbox.featureLayer()
-                .loadURL('/api/1.0/org_location/?org_type=ccg&q=' + orgId)
-                .on('ready', function() {
-                    map.fitBounds(layer.getBounds());
+    setUpMap: function(orgId, orgType) {
+        var _this = this;
+        var map = L.mapbox.map(_this.el.mapPanel, 'mapbox.streets').setView([52.905, -1.79], 6);
+        map.scrollWheelZoom.disable();
+        var url = '/api/1.0/org_location/?org_type=' + orgType.toLowerCase();
+        url += '&q=' + orgId;
+        var layer = L.mapbox.featureLayer()
+            .loadURL(url)
+            .on('ready', function() {
+                if (layer.getBounds().isValid()) {
+                    map.fitBounds(layer.getBounds(), {maxZoom: 12});
                     layer.setStyle({fillColor: '#ff00ff',
                                     fillOpacity: 0.2,
                                     weight: 0.5,
-                                    color: "#333"});
-                })
-                .addTo(map);
-      }
+                                    color: "#333",
+                                    radius: 10});
+                } else {
+                    $('#map-container').html('');
+                }
+            })
+            .addTo(map);
     },
 
     setUpChart: function(chartOptions) {
