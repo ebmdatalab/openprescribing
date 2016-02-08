@@ -76,8 +76,6 @@ Load the HSCIC data
 
 Run setup.sh to fetch and import data, and create the indexes and materialized views needed to set up the database.
 
-You will need to download the HSCIC's gridall file before doing this, and put it in the `/data` directory. (I don't keep this file in source control, because it's very large.)
-
     chmod u+x setup.sh
     ./setup.sh
 

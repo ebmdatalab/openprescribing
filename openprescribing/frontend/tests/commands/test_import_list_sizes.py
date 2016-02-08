@@ -17,7 +17,7 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-    def test_import_bnf_codes(self):
+    def test_import_bsa_list_size_quarterly(self):
 
         args = []
         fname = 'frontend/tests/fixtures/commands/'
@@ -90,3 +90,21 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.star_pu['oral_antibacterials_item'], 0)
         self.assertEqual(p.star_pu['cox-2_inhibitors_cost'], 0)
         self.assertEqual(p.star_pu['antidepressants_adq'], 0)
+
+    def test_import_foi_file(self):
+
+        # Test that the FOI file, with an explicit 'Month' field
+        # rather than months in the filename, also loads correctly.
+        args = []
+        fname = 'frontend/tests/fixtures/commands/'
+        fname += 'Patient_List_Size_nodate.csv'
+        opts = {
+            'filename': fname
+        }
+        call_command('import_list_sizes', *args, **opts)
+
+        p = PracticeStatistics.objects.get(practice_id='P84034',
+                                           date='2011-10-01')
+        self.assertEqual(p.total_list_size, 12842)
+        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
+        self.assertEqual(p.astro_pu_items, 136780.949819498)
