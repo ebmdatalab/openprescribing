@@ -73,7 +73,7 @@ class CommandsTestCase(TestCase):
         p = PracticeStatistics.objects.get(practice_id='P84034',
                                            date='2013-12-01')
         self.assertEqual(p.total_list_size, 13439)
-        self.assertEqual(p.astro_pu_cost, 41303.5675254792)
+        self.assertEqual(p.astro_pu_cost, 41303.5675254791)
         self.assertEqual(p.astro_pu_items, 144028.821414122)
         self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
                          '7100.005')
