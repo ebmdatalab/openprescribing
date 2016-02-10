@@ -26,7 +26,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">{{ metric_name }}</div>
         <div class="panel-body">
-            <p>{{{ metric_intro }}} Learn more <a href="#{{ metric_id }}_metric">about this metric</a>.</p>
+            <p>{{{ metric_intro }}} Learn more <a href="#metric_{{ metric_id }}">about this metric</a>.</p>
             <div id="{{ metric_id }}" class="chart">
             <div class="status"></div>
             </div>
@@ -38,7 +38,7 @@
   </div>
 </script>
 <script id="metric-explanation" type="text/x-handlebars-template">
-    <h4 id="{{ metric_id }}_metric">{{ metric_name }}</h4>
+    <h4 id="metric_{{ metric_id }}">{{ metric_name }}</h4>
     <p>{{ metric_description }}</p>
 </script>
 {% endverbatim %}
