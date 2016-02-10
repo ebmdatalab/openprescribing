@@ -58,13 +58,13 @@ var dashboard = {
             };
             function getUrl(d) {
                 var url = '&numIds=';
-                d.numIds.forEach(function(numId, i) {
+                _.each(d.numIds, function(numId, i) {
                     url += numId.id;
                     url += (i < (d.numIds.length-1)) ? ',' : '';
                 });
                 if (d.denomIds.length) {
                     url += '&denomIds=';
-                    d.denomIds.forEach(function(denomId, i) {
+                    _.each(d.denomIds, function(denomId, i) {
                         url += denomId.id;
                         url += (i < (d.denomIds.length-1)) ? ',' : '';
                     });
