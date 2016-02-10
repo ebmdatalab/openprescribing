@@ -105,7 +105,7 @@ var analyseChart = {
         this.globalOptions.activeOption = 'items';
         this.setUpData();
         this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions.data.combinedData);
-        this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length-1]
+        this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length-1];
         this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
         if (this.globalOptions.data.combinedData.length > 0) {
             this.addDataDownload();
