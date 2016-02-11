@@ -110,11 +110,16 @@ Updating the data
 
 You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site.
 
+You may want to start by updating organisational data, with the latest versions of the `eccg.csv` and `epraccur.csv` files:
+
+   python manage.py import_org_names --ccg data/org_codes/eccg.csv
+   python manage.py import_practice_to_ccg_relations --filename data/org_codes/epraccur.csv -v 2
+
 Then import the practices:
 
     python manage.py import_hscic_practices --practice_file data/raw_data/[ADDR FILE].CSV -v 2
 
-(If new practices were added, you may want to re-run the practice geocoder:)
+If new practices were added, you may want to re-run the practice geocoder:
 
     python manage.py geocode_practices -v 2
 

@@ -64,6 +64,7 @@ class PCT(models.Model):
     PCT_ORG_TYPES = (
         ('CCG', 'CCG'),
         ('PCT', 'PCT'),
+        ('H', 'Hub'),
         ('Unknown', 'Unknown')
     )
     code = models.CharField(max_length=3, primary_key=True,
@@ -74,6 +75,10 @@ class PCT(models.Model):
                                 default='Unknown')
     boundary = models.GeometryField(null=True, blank=True)
     managing_group = models.ForeignKey(SHA, null=True, blank=True)
+    open_date = models.DateField(null=True, blank=True)
+    close_date = models.DateField(null=True, blank=True)
+    address = models.CharField(max_length=400, null=True, blank=True)
+    postcode = models.CharField(max_length=10, null=True, blank=True)
 
     objects = models.GeoManager()
 

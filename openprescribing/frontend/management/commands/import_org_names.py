@@ -6,11 +6,11 @@ from frontend.models import PCT, SHA
 
 class Command(BaseCommand):
     args = ''
-    help = 'Imports CCG/PCT names and details. Imports AT names and '
-    help += 'maps ATs to CCGs.'
+    help = 'Imports CCG/PCT names and details, and their relationship '
+    help += 'to practices, from HSCIC organisational data. '
     help += 'You should import CCG boundaries BEFORE running this.'
 
-    filenames = ['area_team', 'ccg', 'area_team_to_ccg']
+    filenames = ['ccg']
 
     def add_arguments(self, parser):
         for f in self.filenames:
@@ -22,26 +22,20 @@ class Command(BaseCommand):
                 print 'Please supply a filename option: ', f
                 sys.exit
 
-        area_teams = csv.DictReader(open(options['area_team'], 'rU'))
-        for row in area_teams:
-            area_team, created = SHA.objects.get_or_create(code=row['hscic_code'])
-            area_team.ons_code = row['ons_code']
-            area_team.name = row['name']
-            area_team.save()
-
-        ccgs = csv.DictReader(open(options['ccg'], 'rU'))
+        ccgs = csv.reader(open(options['ccg'], 'rU'))
         for row in ccgs:
+            row = [r.strip() for r in row]
             ccg, created = PCT.objects.get_or_create(
-                code=row['CCG13CDH']
+                code=row[0]
             )
-            ccg.ons_code = row['CCG13CD']
-            ccg.name = row['CCG13NM'].decode('windows-1252').encode('utf8')
-            ccg.org_type = 'CCG'
-            ccg.save()
-
-        ccgs = csv.DictReader(open(options['area_team_to_ccg'], 'rU'))
-        for row in ccgs:
-            ccg = PCT.objects.get(ons_code=row['CCG13CD'])
-            area_team = SHA.objects.get(ons_code=row['NHSAT13CD'])
-            ccg.managing_group = area_team
+            ccg.name = row[1]
+            ccg.address = ', '.join([r for r in row[4:9] if r])
+            ccg.postcode = row[9]
+            od = row[10]
+            ccg.open_date = od[:4] + '-' + od[4:6] + '-' + od[-2:]
+            cd = row[11]
+            if cd:
+                ccg.close_date = cd[:4] + '-' + cd[4:6] + '-' + cd[-2:]
+            if row[13] == 'C':
+                ccg.org_type = 'CCG'
             ccg.save()

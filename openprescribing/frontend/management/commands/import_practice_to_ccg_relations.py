@@ -6,7 +6,7 @@ from frontend.models import Practice, PCT, SHA
 
 class Command(BaseCommand):
     args = ''
-    help = 'Relates practices to managing organisations, based on BSA data. '
+    help = 'Relates practices to CCGs, based on HSCIC data. '
     help += 'Around 20 practices do not have a CCG, only an AT - these are '
     help += 'mostly prison practices.'
     help += 'Also around 100 practices in our data are not found in the '
@@ -26,19 +26,11 @@ class Command(BaseCommand):
             try:
                 practice = Practice.objects.get(code=row[0])
                 try:
-                    pco_code = row[14]
+                    pco_code = row[14].strip()
                     ccg = PCT.objects.get(code=pco_code)
                     practice.ccg = ccg
                 except PCT.DoesNotExist:
                     print 'ccg not found with code', pco_code
-                # try:
-                #     area_team = SHA.objects.get(code=row[3])
-                #     practice.area_team = area_team
-                # except SHA.DoesNotExist:
-                #     pass
-                    # print 'area team', row[3], 'not found'
                 practice.save()
             except Practice.DoesNotExist:
                 pass
-                # print 'practice not found with code', row[0]
-

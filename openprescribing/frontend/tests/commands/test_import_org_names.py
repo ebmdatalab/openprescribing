@@ -1,5 +1,6 @@
 import os
 import unittest
+import datetime
 from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import SHA, PCT
@@ -21,24 +22,18 @@ class CommandsTestCase(TestCase):
 
         args = []
         opts = {
-            'area_team': 'data/org_codes/at.csv',
-            'ccg': 'data/org_codes/CCG_APR_2013.csv',
-            'area_team_to_ccg': 'data/org_codes/CCG13_NHSAT13_NHSCR13_EW_LU.csv'
+            'ccg': 'frontend/tests/fixtures/commands/eccg.csv'
         }
         data_dir = 'data/org_codes'
         call_command('import_org_names', *args, **opts)
 
-        area_teams = SHA.objects.filter()
-        self.assertEqual(area_teams.count(), 25)
-        lincs_at = SHA.objects.get(code='Q59')
-        self.assertEqual(lincs_at.name, 'Leicestershire and Lincolnshire')
-        self.assertEqual(lincs_at.ons_code, 'E39000016')
-
         ccgs = PCT.objects.filter(org_type='CCG')
-        self.assertEqual(ccgs.count(), 211)
-        lincs_ccg = PCT.objects.get(code='03T')
-        self.assertEqual(lincs_ccg.name, 'NHS Lincolnshire East')
-        self.assertEqual(lincs_ccg.ons_code, 'E38000099')
-
-        ccgs_in_lincs_at = PCT.objects.filter(managing_group=lincs_at)
-        self.assertEqual(ccgs_in_lincs_at.count(), 7)
+        self.assertEqual(ccgs.count(), 3)
+        ccg = PCT.objects.get(code='00C')
+        self.assertEqual(ccg.name, 'NHS DARLINGTON CCG')
+        address = 'DR PIPER HOUSE, KING STREET, DARLINGTON, COUNTY DURHAM'
+        self.assertEqual(ccg.address,
+                         address)
+        self.assertEqual(ccg.postcode, 'DL3 6JL')
+        self.assertEqual(ccg.open_date, datetime.date(2013, 4, 1))
+        self.assertEqual(ccg.close_date, None)
