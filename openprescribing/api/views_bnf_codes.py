@@ -8,6 +8,7 @@ from frontend.models import Chemical, Section, Product, Presentation
 @api_view(['GET'])
 def bnf_codes(request, format=None):
     codes = utils.param_to_list(request.query_params.get('q', []))
+    codes = [c.upper() for c in codes]
     is_exact = request.GET.get('exact', None)
     is_exact = (is_exact == 'true')
 
