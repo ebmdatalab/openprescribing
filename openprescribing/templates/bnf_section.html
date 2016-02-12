@@ -36,9 +36,9 @@
 
 <div id="download-data">
 <h3>Download raw data</h3>
-<p>Download CSV or JSON:
-<a href="{% url 'total_spending' %}?code={{ page_id }}">all spending on {{ section.name }}</a> or
-<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}">spending on {{ section.name }} by CCG</a>.
+<p>Download CSVs:
+<a href="{% url 'total_spending' %}?code={{ page_id }}&format=csv">all spending on {{ section.name }}</a> or
+<a href="{% url 'spending_by_ccg' %}?code={{ page_id }}&format=csv">spending on {{ section.name }} by CCG</a>.
 </p>
 </div>
 
