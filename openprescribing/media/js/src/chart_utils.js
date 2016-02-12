@@ -108,7 +108,6 @@ var utils = {
     },
 
     combineDatasets: function(xData, yData, x_val, x_val_key) {
-        // console.log('combinedDatasets', xData[0]);
         var xDataDict = _.reduce(xData, function(p, c) {
             var key = c.row_id + "-" + c.date;
             p[key] = {
@@ -126,12 +125,12 @@ var utils = {
             } else {
                 p[key][x_val_key] = +c[x_val];
             }
-
             return p;
         },{});
         xAndYDataDict = _.reduce(yData, function(p, c) {
             var key = c.row_id + "-" + c.date;
             if (p[key]) {
+                p[key].setting = c.setting;
                 p[key].y_actual_cost = +c.actual_cost || 0;
                 p[key].y_items = +c.items || 0;
             } else {

@@ -118,8 +118,8 @@ describe('Utils', function () {
         });
         it('should combine datasets with missing rows and with total_list_size denominator', function () {
             var xData = [
-              { 'total_list_size': '12', 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
-              { 'total_list_size': '10',  'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'}
+              { 'total_list_size': '12', 'setting': 4, 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
+              { 'total_list_size': '10', 'setting': 4,  'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'}
             ];
             var yData = [
               { 'actual_cost': '480', 'items': '15', 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
@@ -194,6 +194,28 @@ describe('Utils', function () {
             expect(combinedData[2].y_items).to.equal(11);
             expect(combinedData[2]['star_pu.oral_antibacterials_item']).to.equal(0);
             expect(combinedData[2].ratio_items).to.equal(null);
+        });
+        it('should exclude rows with non-standard settings', function () {
+            var xData = [
+              { 'star_pu': {'oral_antibacterials_item': '12'}, 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
+              { 'star_pu': {'oral_antibacterials_item': '10'},  'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'}
+            ];
+            var yData = [
+              { 'actual_cost': '480', setting: 4, 'items': '15', 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
+              { 'actual_cost': '500', setting: 3, 'items': '11', 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-04-01'}
+            ];
+            var values = {
+                y: 'y_actual_cost',
+                x: 'star_pu.oral_antibacterials_item',
+                x_val: 'star_pu.oral_antibacterials_item',
+                ratio: 'ratio_actual_cost'
+            };
+            var combinedData = utils.combineXAndYDatasets(xData, yData, values);
+            expect(combinedData.length).to.equal(2);
+            expect(combinedData[1].row_id).to.equal('O3Q');
+            expect(combinedData[1].date).to.equal('2014-03-01');
+            expect(combinedData[0].row_id).to.equal('O3V');
+            expect(combinedData[0].date).to.equal('2014-03-01');
         });
     });
 
