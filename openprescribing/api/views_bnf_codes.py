@@ -26,7 +26,13 @@ def _convert_querysets(querysets):
             if item['type'] == 0:
                 item['id'] = qu_item.number_str
                 item['name'] = qu_item.name
-                item['type'] = 'BNF section'
+                levels = item['id'].split('.')
+                if len(levels) > 2:
+                    item['type'] = 'BNF paragraph'
+                elif len(levels) == 2:
+                    item['type'] = 'BNF section'
+                else:
+                    item['type'] = 'BNF chapter'
             elif item['type'] == 1:
                 item['id'] = qu_item.bnf_code
                 item['name'] = qu_item.chem_name

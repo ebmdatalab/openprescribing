@@ -97,14 +97,19 @@ class TestAPIBNFCodeViews(TestCase):
         self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['id'], '2.2')
         self.assertEqual(content[0]['name'], 'Diuretics')
+        self.assertEqual(content[0]['type'], 'BNF section')
+        self.assertEqual(content[1]['id'], '2.2.1')
+        self.assertEqual(content[1]['name'], 'Thiazides And Related Diuretics')
+        self.assertEqual(content[1]['type'], 'BNF paragraph')
 
-        url = '%s/bnf_code?q=2.2&format=json' % self.api_prefix
+        url = '%s/bnf_code?q=cardio&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
-        self.assertEqual(len(content), 2)
-        self.assertEqual(content[0]['id'], '2.2')
-        self.assertEqual(content[0]['name'], 'Diuretics')
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['id'], '2')
+        self.assertEqual(content[0]['name'], 'Cardiovascular System')
+        self.assertEqual(content[0]['type'], 'BNF chapter')
 
         url = '%s/bnf_code?q=2.2&exact=true&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
@@ -113,6 +118,7 @@ class TestAPIBNFCodeViews(TestCase):
         self.assertEqual(len(content), 1)
         self.assertEqual(content[0]['id'], '2.2')
         self.assertEqual(content[0]['name'], 'Diuretics')
+        self.assertEqual(content[0]['type'], 'BNF section')
 
     def test_api_view_bnf_presentation(self):
         url = '%s/bnf_code?q=Bendroflume&format=json' % self.api_prefix
