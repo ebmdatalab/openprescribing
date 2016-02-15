@@ -75,7 +75,9 @@ var analyseMap = {
             var joinedFeatures = [],
                 byName = {};
             _.each(currentJson.features, function(d, i) {
-                byName[d.properties.name] = d;
+                if (d.properties.setting === 4) {
+                    byName[d.properties.name] = d;
+                }
             });
             for (var name in byName) {
                 byName[name].properties.data = data[name];

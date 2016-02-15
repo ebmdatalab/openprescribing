@@ -290,6 +290,10 @@ li.select2-search--inline input.select2-search__field {
 #old-browser {
   display: none;
 }
+#map-panel {
+  padding-bottom: 10px;
+  overflow: hidden;
+}
 #map-title {
   font-size: 16px;
   font-weight: bold;
@@ -388,7 +392,7 @@ path {
   margin-top: 0.5em;
   color: gray;
 }
-.chart-container .practice-warning {
+.practice-warning {
   float: left;
   font-size: 0.7em;
   margin-top: 0.5em;

@@ -123,6 +123,7 @@
     <a href="#data-panel" aria-controls="settings" role="tab" data-toggle="tab">Get raw data</a>
   </li>
 </ul>
+
 <div class="tab-content">
 
     <!-- Time slider and items toggle -->
@@ -138,39 +139,31 @@
 
     <!-- Tab content -->
     <div role="tabpanel" class="tab-pane fade in active" id="summary-panel" class="summary-tab">
-      <div class="chart-title-wrapper">
-        <div class="chart-title"></div>
-        <div class="chart-sub-title"></div>
-      </div>
-      <div class="chart-container">
-      <div id="summarychart"></div>
-      <div class="practice-warning">
-      For clarity, practice graphs only show standard GP practices, and exclude non-standard settings like prisons, out-of-hours services, etc.
-      </div>
-      <div class="highcharts-attribution">
-      Built with <a href="http://www.highcharts.com/">Highcharts</a>
-      </div>
-
-      </div>
+        <div class="chart-title-wrapper">
+            <div class="chart-title"></div>
+            <div class="chart-sub-title"></div>
+        </div>
+        <div class="chart-container">
+            <div id="summarychart"></div>
+            <div class="practice-warning">
+                For clarity, practice graphs and maps only show standard GP practices, and exclude non-standard settings like prisons, out-of-hours services, etc.
+            </div>
+            <div class="highcharts-attribution">
+                Built with <a href="http://www.highcharts.com/">Highcharts</a>
+            </div>
+        </div>
     </div>
+
     <div role="tabpanel" class="tab-pane fade" id="chart-panel" class="chart-tab">
         <div class="chart-container">
-<!--             <div class="form-row">
-                <div class="col" id="findItemWrapper" style="width: 100%" aria-label="Find an item in the chart">
-                        <select style="width: 100%" id="all-ccgs" class="chosen-multiple" data-placeholder="highlight organisation" multiple></select>
-                </div>
-                <div class="col" style="min-width: 210px; padding-left: 10px;">
-                    <div class="btn-group btn-toggle" id="useLogScale" aria-label="Linear or log scale">
-                    <button class="btn btn-info" id="linear">Linear scale</button>
-                    <button class="btn btn-default" id="log">Log scale</button>
-                    </div>
-                </div>
-            </div> -->
             <div id="chart"></div>
-
+            <div class="practice-warning">
+                For clarity, practice graphs and maps only show standard GP practices, and exclude non-standard settings like prisons, out-of-hours services, etc.
+            </div>
             <div class="highcharts-attribution">Built with <a href="http://www.highcharts.com/">Highcharts</a></div>
         </div>
     </div>
+
     <div role="tabpanel" class="tab-pane fade" id="map-panel" class="map-tab">
       <div class="chart-title-wrapper">
         <p class="chart-title"></p>
@@ -178,13 +171,18 @@
       </div>
       <div id="map-wrapper">
         <div id="map"></div>
-        <p class="disclaimer">CCG boundaries from <a href="http://www.england.nhs.uk/resources/ccg-maps/">NHS England</a>. Practice locations are approximate, based on postcode. Only practices with a known location are shown here.</p>
       </div>
+        <div class="practice-warning">
+        For clarity, practice graphs and maps only show standard GP practices, and exclude non-standard settings like prisons, out-of-hours services, etc.
+        CCG boundaries from <a href="http://www.england.nhs.uk/resources/ccg-maps/">NHS England</a>. Practice locations are approximate, based on postcode. Only practices with a known location are shown here.
+        </div>
     </div>
+
     <div role="tabpanel" class="tab-pane fade" id="data-panel" class="data-tab">
       <p>If you use this data, please credit this site.</p>
       <p><a id="data-link" href="#">Data as CSV</a> <span id="data-rows-count"></span></p>
     </div>
+
 </div>
 
 </div>
