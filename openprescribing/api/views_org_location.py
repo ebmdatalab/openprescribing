@@ -22,7 +22,7 @@ def org_location(request, format=None):
     else:
         results = Practice.objects.filter(code__in=org_codes)
         geo_field = 'location'
-        fields = ('name', 'code', 'is_dispensing', 'location', )
+        fields = ('name', 'code', 'setting', 'is_dispensing', 'location', )
     return HttpResponse(serialize('geojson', results,
                         geometry_field=geo_field, fields=fields),
                         content_type='application/json')
