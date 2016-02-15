@@ -321,3 +321,91 @@ class Prescription(models.Model):
 
     class Meta:
         app_label = 'frontend'
+
+
+class Measure(models.Model):
+    id = models.CharField(max_length=40, primary_key=True)
+    name = models.CharField(max_length=500)
+    title = models.CharField(max_length=500)
+    description = models.TextField()
+    numerator_description = models.CharField(max_length=500, null=True,
+                                             blank=True)
+    denominator_description = models.CharField(max_length=500, null=True,
+                                               blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        app_label = 'frontend'
+
+
+class MeasureValue(models.Model):
+    '''
+    An instance of a measure for a particular organisation,
+    on a particular date.
+    If it's a measure for a CCG, the practice field will be null.
+    Otherwise, it's a measure for a practice, and the pct field
+    indicates the parent CCG, if it exists.
+    '''
+    measure = models.ForeignKey(Measure)
+    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, null=True, blank=True)
+    month = models.DateField()
+
+    numerator = models.FloatField(null=True, blank=True)
+    denominator = models.FloatField(null=True, blank=True)
+    calc_value = models.FloatField(null=True, blank=True)
+
+    percentile = models.FloatField(null=True, blank=True)
+    cost_saving = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        app_label = 'frontend'
+        unique_together = (('measure', 'practice', 'month'),
+                           ('measure', 'pct', 'practice', 'month'),)
+
+
+class MeasureGlobal(models.Model):
+    '''
+    An instance of the global values for a measure,
+    on a particular date.
+    Percentile values may or may not be required. We
+    include them as placeholders for now.
+    '''
+    measure = models.ForeignKey(Measure)
+    month = models.DateField()
+
+    numerator = models.FloatField(null=True, blank=True)
+    denominator = models.FloatField(null=True, blank=True)
+    value = models.FloatField(null=True, blank=True)
+
+    # Percentile values for practices.
+    practice_10th = models.FloatField(null=True, blank=True)
+    practice_25th = models.FloatField(null=True, blank=True)
+    practice_50th = models.FloatField(null=True, blank=True)
+    practice_75th = models.FloatField(null=True, blank=True)
+    practice_90th = models.FloatField(null=True, blank=True)
+
+    # Percentile values for CCGs.
+    ccg_10th = models.FloatField(null=True, blank=True)
+    ccg_25th = models.FloatField(null=True, blank=True)
+    ccg_50th = models.FloatField(null=True, blank=True)
+    ccg_75th = models.FloatField(null=True, blank=True)
+    ccg_90th = models.FloatField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.denominator:
+            if self.numerator:
+                self.value = self.numerator / self.denominator
+            else:
+                self.value = self.numerator
+        else:
+            self.value = None
+        super(MeasureGlobal, self).save(*args, **kwargs)
+
+    class Meta:
+        app_label = 'frontend'
+        unique_together = (('measure', 'month'),)
