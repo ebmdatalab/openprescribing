@@ -64,12 +64,7 @@ def spending_by_ccg(request, format=None):
 def spending_by_practice(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    # We can do presentation queries indexed by PCT ID, which is faster.
-    # We have yet to update the *_by_practice matviews with PCT ID, however.
-    # So keep a list of the original query (orgs) and expanded orgs.
-    # Then use the most appropriate depending on the query type.
     orgs = utils.param_to_list(request.query_params.get('org', []))
-    expanded_orgs = utils.get_practice_ids_from_org(orgs)
     date = request.query_params.get('date', None)
 
     spending_type = utils.get_spending_type(codes)
@@ -88,8 +83,13 @@ def spending_by_practice(request, format=None):
     org_for_param = None
     if not spending_type or spending_type == 'bnf-section' \
        or spending_type == 'chemical':
+        # We can do presentation queries indexed by PCT ID, which is faster.
+        # We have yet to update the *_by_practice matviews with PCT ID.
+        # So for these queries, expand the CCG ID to a list of practice IDs.
+        expanded_orgs = utils.get_practice_ids_from_org(orgs)
         if codes:
-            query = _get_chemicals_or_sections_by_practice(codes, expanded_orgs,
+            query = _get_chemicals_or_sections_by_practice(codes,
+                                                           expanded_orgs,
                                                            spending_type,
                                                            date)
             org_for_param = expanded_orgs
