@@ -18,6 +18,8 @@ def setUpModule():
                  verbosity=0)
     call_command('loaddata', fix_dir + 'prescriptions.json',
                  verbosity=0)
+    call_command('loaddata', fix_dir + 'practice_listsizes.json',
+                 verbosity=0)
     args = []
     db_name = 'test_' + utils.get_env_setting('DB_NAME')
     db_user = utils.get_env_setting('DB_USER')
@@ -106,5 +108,17 @@ class CommandsTestCase(TestCase):
             self.assertEqual(results[10][3], 16)
             self.assertEqual(results[10][4], 14.15)
             self.assertEqual(results[10][5], 1154)
+
+            cmd = 'SELECT * FROM vw__ccgstatistics '
+            cmd += 'ORDER BY date, pct_id'
+            c.execute(cmd)
+            results = c.fetchall()
+            self.assertEqual(len(results), 3)
+            self.assertEqual(results[0][1], '03Q')
+            self.assertEqual(results[0][2], 'NHS Vale of York')
+            self.assertEqual(results[0][3], 25)
+            self.assertEqual(results[0][4], 819.2)
+            self.assertEqual(results[0][5], 489.7)
+            self.assertEqual(results[0][-1]['oral_antibacterials_item'], 10)
 
         self.conn.close()
