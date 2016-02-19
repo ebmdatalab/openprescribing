@@ -69,7 +69,7 @@ class CommandsTestCase(TestCase):
         opts = {
             'month': month
         }
-        call_command('ktt_dosulepin', *args, **opts)
+        call_command('import_dosulepin', *args, **opts)
 
         m = Measure.objects.get(id='ktt8_dosulepin')
         self.assertEqual(m.name, 'KTT8: Dosulepin: % items')
