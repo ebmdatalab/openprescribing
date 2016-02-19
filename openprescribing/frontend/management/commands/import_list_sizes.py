@@ -33,11 +33,16 @@ class Command(BaseCommand):
             if 'Month' in entries.fieldnames:
                 # This is the BSA's multi-year data: we don't need to
                 # derive the months from the filename.
+                # What we do need to do is fill in the missing months.
                 for row in entries:
                     m = row['Month'].split('/')
                     m.reverse()
                     month = '20' + '-'.join(m)
                     self.process_row(row, month)
+                    n = [m[0], str(int(m[1])+1), m[2]]
+                    self.process_row(row, '20' + '-'.join(n))
+                    n = [m[0], str(int(m[1])+2), m[2]]
+                    self.process_row(row, '20' + '-'.join(n))
             else:
                 months = self.get_months_from_filename(f)
                 for row in entries:

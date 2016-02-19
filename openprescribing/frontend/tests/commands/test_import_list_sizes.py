@@ -104,7 +104,19 @@ class CommandsTestCase(TestCase):
         call_command('import_list_sizes', *args, **opts)
 
         p = PracticeStatistics.objects.get(practice_id='P84034',
-                                           date='2011-10-01')
+                                           date='2011-04-01')
+        self.assertEqual(p.total_list_size, 12842)
+        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
+        self.assertEqual(p.astro_pu_items, 136780.949819498)
+
+        p = PracticeStatistics.objects.get(practice_id='P84034',
+                                           date='2011-05-01')
+        self.assertEqual(p.total_list_size, 12842)
+        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
+        self.assertEqual(p.astro_pu_items, 136780.949819498)
+
+        p = PracticeStatistics.objects.get(practice_id='P84034',
+                                           date='2011-06-01')
         self.assertEqual(p.total_list_size, 12842)
         self.assertEqual(p.astro_pu_cost, 39098.6573715275)
         self.assertEqual(p.astro_pu_items, 136780.949819498)
