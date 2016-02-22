@@ -86,23 +86,23 @@ class Command(BaseCommand):
     def import_practices_from_hscic(self, filename):
         if self.IS_VERBOSE:
             print 'Importing practices from %s' % filename
-        lines = count = 0
+        count = 0
         practices = csv.reader(open(filename, 'rU'))
         for row in practices:
             row = [i.strip() for i in row]
             p, created = Practice.objects.get_or_create(
                 code=row[1]
             )
-            p.name = row[2]
-            p.address1 = row[3]
-            p.address2 = row[4]
-            p.address3 = row[5]
-            p.address4 = row[6]
-            p.postcode = row[7]
-            p.save()
-            lines += 1
             if created:
-                count += 1
+                p.name = row[2]
+                p.address1 = row[3]
+                p.address2 = row[4]
+                p.address3 = row[5]
+                p.address4 = row[6]
+                p.postcode = row[7]
+                p.save()
+                if created:
+                    count += 1
 
         if self.IS_VERBOSE:
             print '%s Practice objects created from HSCIC' % count
