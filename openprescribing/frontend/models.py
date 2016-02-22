@@ -352,8 +352,14 @@ class Measure(models.Model):
                                              blank=True)
     denominator_description = models.CharField(max_length=500, null=True,
                                                blank=True)
+    numerator_short = models.CharField(max_length=100, null=True, blank=True)
+
+    denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    ranking_description = models.CharField(max_length=1000, null=True,
+                                           blank=True)
+    url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -400,7 +406,7 @@ class MeasureGlobal(models.Model):
 
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
-    value = models.FloatField(null=True, blank=True)
+    calc_value = models.FloatField(null=True, blank=True)
 
     # Percentile values for practices.
     practice_10th = models.FloatField(null=True, blank=True)
