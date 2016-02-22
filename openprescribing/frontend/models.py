@@ -113,6 +113,14 @@ class Practice(models.Model):
         (24, "Other - Justice Estate"),
         (25, "Prison")
     )
+    STATUS_SETTINGS = (
+        ('U', 'Unknown'),
+        ('A', 'Active'),
+        ('B', 'Retired'),
+        ('C', 'Closed'),
+        ('D', 'Dormant'),
+        ('P', 'Proposed')
+    )
     ccg = models.ForeignKey(PCT, null=True, blank=True)
     area_team = models.ForeignKey(SHA, null=True, blank=True)
     code = models.CharField(max_length=6, primary_key=True,
@@ -122,11 +130,19 @@ class Practice(models.Model):
     address2 = models.CharField(max_length=200, null=True, blank=True)
     address3 = models.CharField(max_length=200, null=True, blank=True)
     address4 = models.CharField(max_length=200, null=True, blank=True)
+    address5 = models.CharField(max_length=200, null=True, blank=True)
     postcode = models.CharField(max_length=9, null=True, blank=True)
     location = models.PointField(null=True, blank=True)
     setting = models.IntegerField(choices=PRESCRIBING_SETTINGS,
                                   default=-1)
     objects = models.GeoManager()
+    open_date = models.DateField(null=True, blank=True)
+    close_date = models.DateField(null=True, blank=True)
+    join_provider_date = models.DateField(null=True, blank=True)
+    leave_provider_date = models.DateField(null=True, blank=True)
+    status_code = models.CharField(max_length=1,
+                                   choices=STATUS_SETTINGS,
+                                   null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -139,6 +155,8 @@ class Practice(models.Model):
             address += self.address3 + ', '
         if self.address4:
             address += self.address4 + ', '
+        if self.address5:
+            address += self.address5 + ', '
         address += self.postcode
         return address
 
@@ -150,6 +168,8 @@ class Practice(models.Model):
             address += self.address3 + ', '
         if self.address4:
             address += self.address4 + ', '
+        if self.address5:
+            address += self.address5 + ', '
         address += self.postcode
         return address
 
