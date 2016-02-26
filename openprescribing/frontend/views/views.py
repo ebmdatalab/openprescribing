@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from frontend.models import Chemical, Prescription, \
-    Practice, PracticeStatistics, SHA, PCT, Section
+    Practice, PracticeStatistics, SHA, PCT, Section, \
+    Measure
 
 
 ##################################################
@@ -146,6 +147,19 @@ def ccg(request, ccg_code):
     }
     return render(request, 'ccg.html', context)
 
+
+def ccg_measure(request, ccg_code, measure):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = get_object_or_404(Measure, id=measure)
+    practices = Practice.objects.filter(ccg=requested_ccg)\
+        .filter(setting=4).order_by('name')
+    context = {
+        'ccg': requested_ccg,
+        'practices': practices,
+        'page_id': ccg_code,
+        'measure': measure
+    }
+    return render(request, 'ccg_measure.html', context)
 
 ##################################################
 # TEST HTTP CODES

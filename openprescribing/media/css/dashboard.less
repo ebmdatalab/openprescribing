@@ -1,4 +1,4 @@
-#dashboard {
+#dashboard, #measures {
     .panel p {
         font-size: 12px;
     }
@@ -7,4 +7,35 @@
         height: 300px;
         margin-bottom: 10px;
     }
+}
+
+#measures {
+
+  margin-top: 20px;
+
+  .loading-wrapper {
+    display: block;
+
+    .loading {
+      padding-bottom: 10px;
+    }
+  }
+
+  .panel {
+    white-space: nowrap;
+    overflow: hidden;
+
+   .panel-heading {
+        font-size: 12px;
+   }
+   .panel-body {
+        padding: 5px;
+   }
+    p {
+        font-size: 12px;
+    }
+    chart {
+        margin-bottom: 10px;
+    }
+  }
 }

@@ -342,11 +342,11 @@ path {
   -webkit-transition: fill 200ms;
   transition: fill 200ms;
 }
-#chart-loading {
+.loading-wrapper {
   display: none;
   text-align: center;
 }
-#chart-loading img.loading {
+.loading-wrapper img.loading {
   -webkit-animation: spin 4s linear infinite;
   -moz-animation: spin 4s linear infinite;
   animation: spin 4s linear infinite;
@@ -500,10 +500,37 @@ path {
 .highcharts-contextmenu hr {
   margin: 5px 0;
 }
-#dashboard .panel p {
+#dashboard .panel p,
+#measures .panel p {
   font-size: 12px;
 }
-#dashboard .chart {
+#dashboard .chart,
+#measures .chart {
   height: 300px;
+  margin-bottom: 10px;
+}
+#measures {
+  margin-top: 20px;
+}
+#measures .loading-wrapper {
+  display: block;
+}
+#measures .loading-wrapper .loading {
+  padding-bottom: 10px;
+}
+#measures .panel {
+  white-space: nowrap;
+  overflow: hidden;
+}
+#measures .panel .panel-heading {
+  font-size: 12px;
+}
+#measures .panel .panel-body {
+  padding: 5px;
+}
+#measures .panel p {
+  font-size: 12px;
+}
+#measures .panel chart {
   margin-bottom: 10px;
 }

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{measure.name}} prescribing by practices in {{ ccg.name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<h1>{{measure.name}} prescribing by practices in {{ ccg.name }}</h1>
+
+<p>How GP practices in {{ ccg.name }} prescribed {{ measure.title }}.</p>
+
+<h2>About this measure</h2>
+
+<p>This measure is defined as: <strong>{{ measure.description }}</strong>.
+{% if measure.numerator_description %}
+The numerator is: {{ measure.numerator_description }}.
+{% endif %}
+{% if measure.denominator_description %}
+The denominator is: {{ measure.denominator_description }}.
+{% endif %}
+</p>
+
+<p>TBA: Why this measure matters.
+{% if measure.url %}
+Read <a href="{{ measure.url }}">more about this measure</a>.
+{% endif %}
+</p>
+
+<h2>Practices</h2>
+
+<p>Practices are ordered by a weighted rank: percentile multipled by the number of numerator items, averaged over the past three months. This approximates to how much each practice contributed to the CCG's overall measure. NHS England wants to reduce prescribing in this area, so in general, lower numbers are preferred.</p>
+
+<p>Each chart shows the results for the individual practice, plus the 90th, 50th and 10th percentiles across all practices in NHS England.</p>
+
+<div id="measures">
+<div id="charts" class="row">
+<div class="loading-wrapper col-xs-12">
+    <hr/>
+    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+    <br/>Fetching data...
+    <br/><br/>
+</div>
+</div>
+
+<p>Get the raw data: <a href="/api/1.0/measure_by_practice/?org={{ ccg.code }}&measure={{ measure.id }}&format=csv">measures for each practice</a> and <a href="
+/api/1.0/measure/?measure={{ measure.id }}&format=csv">global mean and percentiles</a>.</p>
+
+</div>
+
+{% verbatim %}
+<script id="measure-panel" type="text/x-handlebars-template">
+<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a href="/practice/{{ practice_id }}">{{ practice_id }}: {{ practice_name }}</a>
+        </div>
+        <div class="panel-body" id="{{ practice_id }}">
+            <div class="chart">
+                <div class="status"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+{% endverbatim %}
+
+<script>
+var measureData = {
+    'orgId': '{{ ccg.code }}',
+    'orgName': '{{ ccg.name }}',
+    'orgType': 'CCG',
+    'measure': '{{ measure.id }}',
+    'numerator': '{{ measure.numerator_short }}',
+    'denominator': '{{ measure.denominator_short }}'
+};
+</script>
+{% if debug %}
+<script src="/static/js/measures.min.js"></script>
+{% else %}
+<script src="/static/js/measures.min.js"></script>
+{% endif %}
+{% endblock %}
