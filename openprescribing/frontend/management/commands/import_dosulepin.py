@@ -60,6 +60,8 @@ class Command(BaseCommand):
                 antidepressants (0403, excluding 0403010B0, 0403010F0,
                 0403010N0, 0403010V0, 0403010Y0, 040302, 0403040F0)
             '''
+            numerator_short = 'Dosulepin items'
+            denominator_short = 'Selected antidepressant items'
             rank = 'mean percentile over the past three months'
             url = 'https://www.nice.org.uk/'
             url += 'advice/ktt8/chapter/evidence-context'
@@ -71,6 +73,8 @@ class Command(BaseCommand):
                 numerator_description=num,
                 denominator_description=denom,
                 ranking_description=rank,
+                numerator_short=numerator_short,
+                denominator_short=denominator_short,
                 url=url
             )
 
