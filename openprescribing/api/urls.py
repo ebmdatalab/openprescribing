@@ -6,6 +6,7 @@ import views_spending
 import views_org_codes
 import views_org_details
 import views_org_location
+import views_measures
 
 
 urlpatterns = [
@@ -15,6 +16,12 @@ urlpatterns = [
         name='spending_by_ccg'),
     url(r'^spending_by_practice/$', views_spending.spending_by_practice,
         name='spending_by_practice'),
+    url(r'^measure/$', views_measures.measure_global,
+        name='measure'),
+    url(r'^measure_by_ccg/$', views_measures.measure_by_ccg,
+        name='measure_by_ccg'),
+    url(r'^measure_by_practice/$', views_measures.measure_by_practice,
+        name='measure_by_practice'),
     url(r'^org_details/$', views_org_details.org_details),
     url(r'^bnf_code/$', views_bnf_codes.bnf_codes),
     url(r'^org_code/$', views_org_codes.org_codes),

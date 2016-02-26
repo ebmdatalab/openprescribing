@@ -11,3 +11,4 @@ django-cors-headers==1.1.0
 openpyxl==2.3.3
 numpy==1.10.4
 pandas==0.17.1
+scipy==0.17.0
