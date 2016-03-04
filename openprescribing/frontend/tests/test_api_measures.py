@@ -82,11 +82,11 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['numerator'], 68)
         self.assertEqual(d['denominator'], 451)
         self.assertEqual("%.4f" % d['calc_value'], '0.1508')
-        self.assertEqual("%.4f" % d['practice_10th'], '0.0164')
-        self.assertEqual("%.4f" % d['practice_25th'], '0.0410')
-        self.assertEqual("%.4f" % d['practice_50th'], '0.0819')
-        self.assertEqual("%.4f" % d['practice_75th'], '0.5132')
-        self.assertEqual("%.4f" % d['practice_90th'], '0.7719')
+        self.assertEqual("%.4f" % d['practice_10th'], '0.1682')
+        self.assertEqual("%.4f" % d['practice_25th'], '0.2976')
+        self.assertEqual("%.4f" % d['practice_50th'], '0.5132')
+        self.assertEqual("%.4f" % d['practice_75th'], '0.7288')
+        self.assertEqual("%.4f" % d['practice_90th'], '0.8582')
 
     def test_api_measure_by_practice(self):
         url = '/api/1.0/measure_by_practice/'
