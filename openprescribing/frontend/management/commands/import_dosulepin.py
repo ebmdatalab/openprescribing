@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice
 import api.view_utils as utils
 from datetime import datetime
@@ -82,8 +83,12 @@ class Command(BaseCommand):
             print 'creating measure:', measure.title
 
         # Values by practice by month. Use standard practices only.
-        practices = Practice.objects.filter(setting=4)
         for month in months:
+            practices = Practice.objects.filter(setting=4) \
+                                        .filter(Q(open_date__isnull=True) |
+                                                Q(open_date__lt=month)) \
+                                        .filter(Q(close_date__isnull=True) |
+                                                Q(close_date__gt=month))
             if self.IS_VERBOSE:
                 print month
             for p in practices:

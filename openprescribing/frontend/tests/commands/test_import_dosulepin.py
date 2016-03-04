@@ -16,6 +16,13 @@ def setUpModule():
                                      name='LARWOOD SURGERY', setting=4)
         p2 = Practice.objects.create(code='C84024',
                                      name='NEWGATE MEDICAL GROUP', setting=4)
+        p3 = Practice.objects.create(code='B82005',
+                                     name='PRIORY MEDICAL GROUP', setting=4,
+                                     open_date='2015-01-01')
+        p4 = Practice.objects.create(code='B82008',
+                                     name='NORTH HOUSE SURGERY', setting=4,
+                                     open_date='2010-04-01',
+                                     close_date='2012-01-01')
         Practice.objects.create(code='Y00581',
                                 name='BASSETLAW DRUG & ALCOHOL SERVICE',
                                 setting=4)
