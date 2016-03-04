@@ -5,9 +5,16 @@ addons:
   postgresql: "9.4"
 env:
   - SECRET_KEY=test DB_NAME=dbtest DB_USER=test DB_PASS=test
+virtualenv:
+    system_site_packages: true
 before_install:
   - export DJANGO_SETTINGS_MODULE=openprescribing.settings.local
   - export PYTHONPATH=$HOME/builds/edmdatalab/openprescribing
+  - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
+  - rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
+  - sudo apt-get update
+  - sudo apt-get install python-numpy=1.10.4
+  - sudo apt-get install python-scipy=0.17.0
 install:
  - pip install -r requirements.txt
  - pip install -r requirements/local.txt
