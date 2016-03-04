@@ -142,7 +142,7 @@ class Command(BaseCommand):
                     else:
                         mv.calc_value = 0
                 else:
-                    mv.calc_value = 0
+                    mv.calc_value = None
 
                 mv.save()
 
@@ -151,17 +151,18 @@ class Command(BaseCommand):
             df = pd.DataFrame.from_records(records)
 
             if 'calc_value' in df:
-                # TODO: Experiment with including and excluding zero values,
-                # on real data, and see which produces better results.
-                df['rank_val'] = rankdata(df.calc_value.values, method='min')
-                df.rank_val = df.rank_val - 1
-                df['percentile'] = (df.rank_val / float(len(df)-1)) * 100
+                df.loc[df['calc_value'].notnull(), 'rank_val'] = \
+                    rankdata(df[df.calc_value.notnull()].calc_value.values,
+                             method='min') - 1
+                df1 = df[df['rank_val'].notnull()]
+                df.loc[df['rank_val'].notnull(), 'percentile'] = \
+                    (df1.rank_val / float(len(df1)-1)) * 100
 
                 for i, row in df.iterrows():
                     practice = Practice.objects.get(code=row.practice_id)
                     mv = MeasureValue.objects.get(practice=practice,
                                                   month=month)
-                    if np.isnan(row.percentile):
+                    if (row.percentile is None) or np.isnan(row.percentile):
                         row.percentile = None
                     mv.percentile = row.percentile
                     mv.save()
@@ -184,7 +185,7 @@ class Command(BaseCommand):
                     else:
                         mg.calc_value = mg.numerator
                 else:
-                    mg.calc_value = 0
+                    mg.calc_value = None
                 mg.practice_10th = df.quantile(.1)['calc_value']
                 mg.practice_25th = df.quantile(.25)['calc_value']
                 mg.practice_50th = df.quantile(.5)['calc_value']
