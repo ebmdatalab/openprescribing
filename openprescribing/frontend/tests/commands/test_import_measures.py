@@ -92,13 +92,15 @@ class CommandsTestCase(TestCase):
 
     def test_import_dosulepin(self):
         month = '2013-09-01'
+        measure_id = 'ktt8_dosulepin'
         args = []
         opts = {
-            'month': month
+            'month': month,
+            'measure': measure_id
         }
-        call_command('import_dosulepin', *args, **opts)
+        call_command('import_measures', *args, **opts)
 
-        m = Measure.objects.get(id='ktt8_dosulepin')
+        m = Measure.objects.get(id=measure_id)
         self.assertEqual(m.name, 'KTT8 (Dosulepin)')
 
         p1 = Practice.objects.get(code='C84001')
