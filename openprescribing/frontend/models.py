@@ -387,7 +387,12 @@ class MeasureValue(models.Model):
     calc_value = models.FloatField(null=True, blank=True)
 
     percentile = models.FloatField(null=True, blank=True)
-    cost_saving = models.FloatField(null=True, blank=True)
+
+    cost_saving_median = models.FloatField(null=True, blank=True)
+    cost_saving_10th = models.FloatField(null=True, blank=True)
+    cost_saving_25th = models.FloatField(null=True, blank=True)
+    cost_saving_75th = models.FloatField(null=True, blank=True)
+    cost_saving_90th = models.FloatField(null=True, blank=True)
 
     class Meta:
         app_label = 'frontend'
