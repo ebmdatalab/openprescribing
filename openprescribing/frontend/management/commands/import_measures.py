@@ -1,102 +1,19 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
-from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice
+import json
+import glob
+import numpy as np
+import os
+import pandas as pd
+import sys
 import api.view_utils as utils
 from datetime import datetime
 from dateutil.parser import *
 from dateutil.relativedelta import *
-import numpy as np
-import pandas as pd
+from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice
 from scipy.stats import rankdata
-import sys
 
-
-measures = {
-    'rosuvastatin': {
-        'name': 'Rosuvastatin vs. Atorvastatin',
-        'title': 'Rosuvastatin vs. Atorvastatin',
-        'description': (
-            "Statins are the most commonly prescribed class of drug in the UK. "
-            "Atorvastatin and Rosuvastatin are members of this class, and are "
-            "both high-potency statins. There will always be reasons why "
-            "occasional patients do better with a particular drug, but "
-            "overall there is no good evidence that Rosuvastatin is "
-            "better than atorvastatin. It is, however, vastly more expensive. "
-            "When atorvastatin came off patent, and became cheap, practices "
-            "tended to switch people away from expensive Rosuvastatin. "
-        ),
-        'num': 'Number of prescription items for Rosuvastatin (0212000AA)',
-        'denom': (
-            "Number of prescription items for Atorvastatin (Atorvastatin)"
-        ),
-        'numerator_short': 'Rosuvastatin items',
-        'denominator_short': 'Atorvastatin items',
-        'rank': 'mean percentile over the past three months',
-        'url': None,
-        'num_sql': (
-            "SELECT SUM(total_items) as items, "
-            "SUM(actual_cost) as cost "
-            "FROM frontend_prescription "
-            "WHERE (presentation_code LIKE '0212000AA%%') "
-            "AND (practice_id=%s) "
-            "AND (processing_date=%s) "
-            ),
-        'denom_sql': (
-            "SELECT SUM(total_items) as items, "
-            "SUM(actual_cost) as cost "
-            "FROM frontend_prescription "
-            "WHERE (presentation_code LIKE '0212000B0%%') "
-            "AND (practice_id=%s) "
-            "AND (processing_date=%s) "
-        ),
-        'is_cost_based': True
-    },
-    'ktt8_dosulepin': {
-        'name': 'KTT8 (Dosulepin)',
-        'description': (
-            "Number of prescription items for dosulepin as percentage of the "
-            "total number of prescription items for 'selected' antidepressants "
-            "(subset of BNF 4.3)"
-        ),
-        'title': (
-            "KTT8 (Dosulepin): First choice antidepressant use in adults with "
-            "depression or anxiety disorder"
-        ),
-        'num': 'Number of prescription items for dosulepin (0403010J0)',
-        'denom': (
-            "Number of prescription items for selected "
-            "antidepressants (0403, excluding 0403010B0, 0403010F0, "
-            "0403010N0, 0403010V0, 0403010Y0, 040302, 0403040F0)"
-        ),
-        'numerator_short': 'Dosulepin items',
-        'denominator_short': 'Selected antidepressant items',
-        'rank': 'mean percentile over the past three months',
-        'url': 'https://www.nice.org.uk/advice/ktt8/chapter/evidence-context',
-        'num_sql': (
-            "SELECT SUM(total_items) as items "
-            "FROM frontend_prescription "
-            "WHERE (presentation_code LIKE '0403010J0%%') "
-            "AND (practice_id=%s) "
-            "AND (processing_date=%s)"
-        ),
-        'denom_sql': (
-            "SELECT SUM(total_items) as items "
-            "FROM frontend_prescription "
-            "WHERE (presentation_code LIKE '0403%%') "
-            "AND (presentation_code NOT LIKE '0403010B0%%') "
-            "AND (presentation_code NOT LIKE '0403010F0%%') "
-            "AND (presentation_code NOT LIKE '0403010N0%%') "
-            "AND (presentation_code NOT LIKE '0403010V0%%') "
-            "AND (presentation_code NOT LIKE '0403010Y0%%') "
-            "AND (presentation_code NOT LIKE '040302%%') "
-            "AND (presentation_code NOT LIKE '0403040F0%%') "
-            "AND (practice_id=%s) "
-            "AND (processing_date=%s)"
-        ),
-        'is_cost_based': False
-    }
-}
 
 
 class Command(BaseCommand):
@@ -114,6 +31,21 @@ class Command(BaseCommand):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
+
+        fpath = os.path.dirname(__file__)
+        files = glob.glob(fpath + "/measure_definitions/*.json")
+        measures = {}
+        for fname in files:
+            fname = os.path.join(fpath, fname)
+            json_data=open(fname).read()
+            d = json.loads(json_data)
+            for k in d:
+                if k in measures:
+                    sys.exit()
+                    print "duplicate entry found!", k
+                else:
+                    measures[k] = d[k]
+
         if 'measure' in options and options['measure']:
             measure_ids = [options['measure']]
         else:
@@ -134,8 +66,12 @@ class Command(BaseCommand):
                 d = d + relativedelta(months=1)
 
         for m in measure_ids:
-            # Get or create measure.
             v = measures[m]
+            v['description'] = ' '.join(v['description'])
+            v['num'] = ' '.join(v['num'])
+            v['denom'] = ' '.join(v['denom'])
+            v['num_sql'] = ' '.join(v['num_sql'])
+            v['denom_sql'] = ' '.join(v['denom_sql'])
             try:
                 measure = Measure.objects.get(id=m)
             except ObjectDoesNotExist:
@@ -153,8 +89,9 @@ class Command(BaseCommand):
                     is_cost_based=v['is_cost_based']
                 )
 
-            # Values by practice by month. Use standard practices only.
             for month in months:
+                # We're interested in all standard practices that were
+                # operating that month.
                 practices = Practice.objects.filter(setting=4) \
                                             .filter(Q(open_date__isnull=True) |
                                                     Q(open_date__lt=month)) \
@@ -162,95 +99,122 @@ class Command(BaseCommand):
                                                     Q(close_date__gt=month))
                 if self.IS_VERBOSE:
                     print 'updating', measure.title, 'for', month
+
                 for p in practices:
-                    try:
-                        mv = MeasureValue.objects.get(
-                            measure=measure,
-                            practice=p,
-                            month=month
-                        )
-                    except ObjectDoesNotExist:
-                        mv = MeasureValue.objects.create(
-                            measure=measure,
-                            practice=p,
-                            month=month
-                        )
+                    self.create_measurevalue(measure, p, month,
+                                             v['num_sql'], v['denom_sql'])
 
-                    # Update foreign key values to match current
-                    # organisational links.
-                    mv.pct = p.ccg
+                records = MeasureValue.objects.filter(month=month)\
+                            .filter(measure=measure).values()
+                df = self.create_ranked_dataframe(records)
+                mg = self.create_measureglobal(df, measure, month)
+                for i, row in df.iterrows():
+                    self.update_practice_percentile(row, measure, month)
+                    if measure.is_cost_based:
+                        self.update_cost_savings(row, df)
 
-                    # Numerator.
-                    numerator = utils.execute_query(v['num_sql'], [[p.code, month]])
-                    mv.numerator = numerator[0]['items']
+    def create_measurevalue(self, measure, p, month, num_sql, denom_sql):
+        '''
+        Given a practice and the definition of a measure, calculate
+        the measure's values for a particular month.
+        '''
+        try:
+            mv = MeasureValue.objects.get(
+                measure=measure,
+                practice=p,
+                month=month
+            )
+        except ObjectDoesNotExist:
+            mv = MeasureValue.objects.create(
+                measure=measure,
+                practice=p,
+                month=month
+            )
+        # Values should match *current* organisational hierarchy.
+        mv.pct = p.ccg
+        numerator = utils.execute_query(num_sql, [[p.code, month]])
+        if numerator and numerator[0]['items']:
+                mv.numerator = float(numerator[0]['items'])
+        else:
+            mv.numerator = None
+        denominator = utils.execute_query(denom_sql, [[p.code, month]])
+        if denominator and denominator[0]['items']:
+            mv.denominator = float(denominator[0]['items'])
+        else:
+            mv.denominator = None
+        if mv.denominator:
+            if mv.numerator:
+                mv.calc_value = mv.numerator / mv.denominator
+            else:
+                mv.calc_value = 0
+        else:
+            mv.calc_value = None
+        mv.save()
 
-                    # Denominator.
-                    denominator = utils.execute_query(v['denom_sql'], [[p.code, month]])
-                    mv.denominator = denominator[0]['items']
+    def update_practice_percentile(self, row, measure, month):
+        practice = Practice.objects.get(code=row.practice_id)
+        mv = MeasureValue.objects.get(practice=practice,
+                                      month=month,
+                                      measure=measure)
+        if (row.percentile is None) or np.isnan(row.percentile):
+            row.percentile = None
+        mv.percentile = row.percentile
+        mv.save()
 
-                    # Values.
-                    if mv.denominator:
-                        if mv.numerator:
-                            mv.calc_value = float(mv.numerator) / \
-                                float(mv.denominator)
-                        else:
-                            mv.calc_value = 0
-                    else:
-                        mv.calc_value = None
+    def update_cost_savings(self, row, df):
+        '''
+        Stub
+        '''
+        pass
 
-                    mv.save()
+    def create_ranked_dataframe(self, records):
+        '''
+        Use scipy's rankdata to rank by calc_value - we use rankdata rather than
+        pandas qcut because pandas qcut does not cope well with repeated values
+        (e.g. repeated values of zero, which we will have a lot of).
+        Then normalise percentiles between 0 and 100.
+        '''
+        if self.IS_VERBOSE:
+            print 'processing dataframe of length', len(records)
+        df = pd.DataFrame.from_records(records)
+        if 'calc_value' in df:
+            df.loc[df['calc_value'].notnull(), 'rank_val'] = \
+                rankdata(df[df.calc_value.notnull()].calc_value.values,
+                         method='min') - 1
+            df1 = df[df['rank_val'].notnull()]
+            df.loc[df['rank_val'].notnull(), 'percentile'] = \
+                (df1.rank_val / float(len(df1)-1)) * 100
+            return df
+        else:
+            return None
 
-                records = MeasureValue.objects.filter(month=month)
-                records = records.filter(measure=measure).values()
-                if self.IS_VERBOSE:
-                    print len(records), 'values created'
-
-                df = pd.DataFrame.from_records(records)
-
-                if 'calc_value' in df:
-                    df.loc[df['calc_value'].notnull(), 'rank_val'] = \
-                        rankdata(df[df.calc_value.notnull()].calc_value.values,
-                                 method='min') - 1
-                    df1 = df[df['rank_val'].notnull()]
-                    df.loc[df['rank_val'].notnull(), 'percentile'] = \
-                        (df1.rank_val / float(len(df1)-1)) * 100
-
-                    for i, row in df.iterrows():
-                        practice = Practice.objects.get(code=row.practice_id)
-                        # print practice, month
-                        mv = MeasureValue.objects.get(practice=practice,
-                                                      month=month,
-                                                      measure=measure)
-                        if (row.percentile is None) or np.isnan(row.percentile):
-                            row.percentile = None
-                        mv.percentile = row.percentile
-
-                        if measure.is_cost_based:
-                            mv.cost_saving = 0
-                        mv.save()
-
-                    # Finally, global practice percentiles.
-                    mg, created = MeasureGlobal.objects.get_or_create(
-                        measure=measure,
-                        month=month
-                    )
-                    mg.numerator = df['numerator'].sum()
-                    if np.isnan(mg.numerator):
-                        mg.numerator = None
-                    mg.denominator = df['denominator'].sum()
-                    if np.isnan(mg.denominator):
-                        mg.denominator = None
-                    if mg.denominator:
-                        if mg.numerator:
-                            mg.calc_value = float(mg.numerator) / \
-                                float(mg.denominator)
-                        else:
-                            mg.calc_value = mg.numerator
-                    else:
-                        mg.calc_value = None
-                    mg.practice_10th = df.quantile(.1)['calc_value']
-                    mg.practice_25th = df.quantile(.25)['calc_value']
-                    mg.practice_50th = df.quantile(.5)['calc_value']
-                    mg.practice_75th = df.quantile(.75)['calc_value']
-                    mg.practice_90th = df.quantile(.9)['calc_value']
-                    mg.save()
+    def create_measureglobal(self, df, measure, month):
+        '''
+        Given the ranked dataframe of all practices, create or
+        update the MeasureGlobal percentiles for that month.
+        '''
+        mg, created = MeasureGlobal.objects.get_or_create(
+            measure=measure,
+            month=month
+        )
+        mg.numerator = df['numerator'].sum()
+        if np.isnan(mg.numerator):
+            mg.numerator = None
+        mg.denominator = df['denominator'].sum()
+        if np.isnan(mg.denominator):
+            mg.denominator = None
+        if mg.denominator:
+            if mg.numerator:
+                mg.calc_value = float(mg.numerator) / \
+                    float(mg.denominator)
+            else:
+                mg.calc_value = mg.numerator
+        else:
+            mg.calc_value = None
+        mg.practice_10th = df.quantile(.1)['calc_value']
+        mg.practice_25th = df.quantile(.25)['calc_value']
+        mg.practice_50th = df.quantile(.5)['calc_value']
+        mg.practice_75th = df.quantile(.75)['calc_value']
+        mg.practice_90th = df.quantile(.9)['calc_value']
+        mg.save()
+        return mg

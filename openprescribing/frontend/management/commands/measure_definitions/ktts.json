@@ -1,0 +1,256 @@
+{
+    "ktt3_lipid_modifying_drugs": {
+        "name": "KTT3 (Lipid-modifying drugs)",
+        "description": [
+            "Number of prescription items for Bile acid sequestrants, ",
+            "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, ",
+            "and 'Other lipid modifying drugs' (BNF 2.12 sub-set) ",
+            "as a percentage of total prescription items for BNF 2.12"
+        ],
+        "title": "KTT3 (Lipid-modifying drugs): Number of prescription items for Bile acid sequestrants, Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, and ‘Other lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage of total prescription items for BNF 2.12",
+        "num": [
+            "Number of prescription items for 0212000A0, 0212000D0, ",
+            "021200010, 0212000AD, 0212000K0, 0212000F0, 0212000P0, ",
+            "0212000Q0, 0212000U0, 0212000AE, 0212000V0, 0212000AB"
+        ],
+        "denom": [
+            "Number of prescription items for all lipid-modifying ",
+            "drugs (BNF section 2.12)"
+        ],
+        "numerator_short": "Selected items",
+        "denominator_short": "All items in 2.12",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0212000A0%%') ",
+            "OR (presentation_code LIKE '0212000D0%%') ",
+            "OR (presentation_code LIKE '021200010%%') ",
+            "OR (presentation_code LIKE '0212000AD%%') ",
+            "OR (presentation_code LIKE '0212000K0%%') ",
+            "OR (presentation_code LIKE '0212000F0%%') ",
+            "OR (presentation_code LIKE '0212000P0%%') ",
+            "OR (presentation_code LIKE '0212000Q0%%') ",
+            "OR (presentation_code LIKE '0212000U0%%') ",
+            "OR (presentation_code LIKE '0212000AE%%') ",
+            "OR (presentation_code LIKE '0212000V0%%') ",
+            "OR (presentation_code LIKE '0212000AB%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0212%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "is_cost_based": false
+    },
+    "ktt6_hypnotics": {
+        "name": "KTT6 (Hypnotics)",
+        "description": [
+            "Number of average daily quantities (ADQs) for benzodiazepines ",
+            "(indicated for use as hypnotics) and “Z” drugs per Hypnotics ",
+            " (BNF 4.1.1 sub-set) ADQ based STAR-PU."
+        ],
+        "title": "KTT6 (Hypnotics): TBA",
+        "num": [
+            "Number of prescription items for 0401010I0, 0401010L0, ",
+            "0401010N0, 0401010P0, 0401010R0, 0401010T0, 0401010V0, ",
+            "0401010W0, 0401010Y0, 0401010Z0"
+        ],
+        "denom": [
+            "￼Total number of Hypnotics (BNF 4.1.1 sub-set) ADQ based STAR-PUs"
+        ],
+        "numerator_short": "Hypnotics items",
+        "denominator_short": "Hypnotics STAR-PUs",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0401010I0%%') ",
+            "OR (presentation_code LIKE '0401010L0%%') ",
+            "OR (presentation_code LIKE '0401010N0%%') ",
+            "OR (presentation_code LIKE '0401010P0%%') ",
+            "OR (presentation_code LIKE '0401010R0%%') ",
+            "OR (presentation_code LIKE '0401010T0%%') ",
+            "OR (presentation_code LIKE '0401010V0%%') ",
+            "OR (presentation_code LIKE '0401010W0%%') ",
+            "OR (presentation_code LIKE '0401010Y0%%') ",
+            "OR (presentation_code LIKE '0401010Z0%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "denom_sql": [
+            "SELECT star_pu->>'hypnotics_adq' AS items ",
+            "FROM frontend_practicestatistics ",
+            "WHERE (practice_id=%s) ",
+            "AND (date=%s) "
+        ],
+        "is_cost_based": false
+    },
+    "ktt8_antidepressant_selected": {
+        "name": "KTT8 (Selected antidepressants)",
+        "description": [
+            "Number of average daily quantities (ADQs) for selected ",
+            "antidepressant prescribing per Antidepressants ",
+            "(BNF 4.3 sub-set) ADQ based STAR-PU"
+        ],
+        "title": "KTT8 (Selected antidepressants): TBA",
+        "num": [
+            "Total average daily quantities (ADQ) usage for ",
+            "selected antidepressants (0403, excluding 0403010B0, ",
+            "0403010F0, 0403010N0, 0403010V0, 0403010Y0, ",
+            "040302, 0403040F0)"
+        ],
+        "denom": [
+            "Number of Antidepressant (BNF 4.3 sub-set) ADQ based STAR-PUs"
+        ],
+        "numerator_short": "Selected antidepressant ADQs",
+        "denominator_short": "Antidepressant STAR-PUs",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0403%%') ",
+            "AND (presentation_code NOT LIKE '0403010B0%%') ",
+            "AND (presentation_code NOT LIKE '0403010F0%%') ",
+            "AND (presentation_code NOT LIKE '0403010N0%%') ",
+            "AND (presentation_code NOT LIKE '0403010V0%%') ",
+            "AND (presentation_code NOT LIKE '0403010Y0%%') ",
+            "AND (presentation_code NOT LIKE '040302%%') ",
+            "AND (presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "denom_sql": [
+            "SELECT star_pu->>'antidepressants_adq' AS items ",
+            "FROM frontend_practicestatistics ",
+            "WHERE (practice_id=%s) ",
+            "AND (date=%s) "
+        ],
+        "is_cost_based": false
+    },
+    "ktt8_dosulepin": {
+        "name": "KTT8 (Dosulepin)",
+        "description": [
+            "Number of prescription items for dosulepin as percentage of the ",
+            "total number of prescription items for 'selected' antidepressants ",
+            "(subset of BNF 4.3)"
+        ],
+        "title": "KTT8 (Dosulepin): First choice antidepressant use in adults with depression or anxiety disorder",
+        "num": ["Number of prescription items for dosulepin (0403010J0)"],
+        "denom": [
+            "Number of prescription items for selected ",
+            "antidepressants (0403, excluding 0403010B0, 0403010F0, ",
+            "0403010N0, 0403010V0, 0403010Y0, 040302, 0403040F0)"
+        ],
+        "numerator_short": "Dosulepin items",
+        "denominator_short": "Selected antidepressant items",
+        "rank": "mean percentile over the past three months",
+        "url": "https://www.nice.org.uk/advice/ktt8/chapter/evidence-context",
+        "num_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0403010J0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0403%%') ",
+            "AND (presentation_code NOT LIKE '0403010B0%%') ",
+            "AND (presentation_code NOT LIKE '0403010F0%%') ",
+            "AND (presentation_code NOT LIKE '0403010N0%%') ",
+            "AND (presentation_code NOT LIKE '0403010V0%%') ",
+            "AND (presentation_code NOT LIKE '0403010Y0%%') ",
+            "AND (presentation_code NOT LIKE '040302%%') ",
+            "AND (presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "is_cost_based": false
+    },
+    "ktt9_antibiotics": {
+        "name": "All antibacterial drugs per oral antibiotics STAR-PU",
+        "title": "Prescribing of Antibacterial Drugs (BNF section 5.1) compared with item-based STAR-PUs for oral antibiotics",
+        "description": [
+            "It is important that we don't overuse antibiotics. ",
+            "This shows how many are being prescribed locally."
+        ],
+        "num": ["Number of prescription items for all antibacterials (0501)"],
+        "denom": ["Item-based STAR-PUs for oral antibiotics"],
+        "numerator_short": "Antibacterials items",
+        "denominator_short": "STAR-PUs",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0501%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT star_pu->>'oral_antibacterials_item' AS items ",
+            "FROM frontend_practicestatistics ",
+            "WHERE (practice_id=%s) ",
+            "AND (date=%s) "
+        ],
+        "is_cost_based": false
+    },
+    "ktt9_cephalosporins": {
+        "name": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones)",
+        "title": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items): Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)",
+        "description": [
+            "Cephalosporins are broad spectrum antibiotics which can ",
+            "be used when others have failed. It is important that ",
+            "they are used sparingly, to avoid drug-resistant bacteria ",
+            "developing. This measure looks at the quantity of cephalosporins ",
+            "prescribed per head of population, corrected for the age ",
+            "and sex distribution of that population."
+        ],
+        "num": [
+            "Number of prescription items for co-amoxiclav (0501013K0), ",
+            "cephalosporins (0501021) and quinolones (050112)"
+        ],
+        "denom": [
+            "Number of prescription items for BNF 5.1.1; 5.1.2.1; ",
+            "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; 5.1.13"
+        ],
+        "numerator_short": "Selected items",
+        "denominator_short": "Other selected items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0501013K0%%') ",
+            "OR (presentation_code LIKE '0501021%%') ",
+            "OR (presentation_code LIKE '050112%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0501021%%') ",
+            "OR (presentation_code LIKE '050105%%') ",
+            "OR (presentation_code LIKE '050111%%') ",
+            "OR (presentation_code LIKE '050101%%') ",
+            "OR (presentation_code LIKE '050112%%') ",
+            "OR (presentation_code LIKE '050108%%') ",
+            "OR (presentation_code LIKE '050103%%') ",
+            "OR (presentation_code LIKE '050113%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_cost_based": false
+    }
+}

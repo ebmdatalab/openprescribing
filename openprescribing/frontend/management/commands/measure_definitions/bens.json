@@ -1,0 +1,151 @@
+{
+    "rosuvastatin": {
+        "name": "Rosuvastatin vs. Atorvastatin",
+        "title": "Rosuvastatin vs. Atorvastatin",
+        "description": [
+            "Statins are the most commonly prescribed class of drug in the UK. ",
+            "Atorvastatin and Rosuvastatin are members of this class, and are ",
+            "both high-potency statins. There will always be reasons why ",
+            "occasional patients do better with a particular drug, but ",
+            "overall there is no good evidence that Rosuvastatin is ",
+            "better than atorvastatin. It is, however, vastly more expensive. ",
+            "When atorvastatin came off patent, and became cheap, practices ",
+            "tended to switch people away from expensive Rosuvastatin. "
+        ],
+        "num": ["Number of prescription items for Rosuvastatin (0212000AA)"],
+        "denom": ["Number of prescription items for Atorvastatin (Atorvastatin)"],
+        "numerator_short": "Rosuvastatin items",
+        "denominator_short": "Atorvastatin items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0212000AA%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0212000B0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_cost_based": true
+    },
+    "cerazette": {
+        "name": "Cerazette vs. Desogestrel",
+        "title": " Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all desogestrel (BNF code 0703021Q0)",
+        "description": [
+            "This is the NHS Business Service Authority's top cost-saver from ",
+            " generic switching. Cerazette and desogestrel are both exactly ",
+            "the same drug, the same molecule, but Cerazette is an expensive ",
+            "branded package, and desogestrel is a cheap generic package."
+        ],
+        "num": ["Number of prescription items for Cerazette (0703021Q0BB)"],
+        "denom": ["Number of prescription items for desogestrel (0703021Q0)"],
+        "numerator_short": "Cerazette items",
+        "denominator_short": "Desogestrel items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0703021Q0BB%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0703021Q0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_cost_based": true
+    },
+    "pioglitazone": {
+        "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs",
+        "title": "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2).",
+        "description": [
+            "Rosiglitazone is an antidiabetic drug that turned out to ",
+            "increase the risk of heart problems, and was effectively ",
+            "withdrawn from the market. There is concern that the ",
+            "problems may have been a 'class effect', covering other ",
+            "related drugs, and so doctors have tended to also stop ",
+            "using pioglitazone. This shows how local practice ",
+            "reflects that national trend."
+        ],
+        "num": ["Number of prescription items for Pioglitazone Hydrochloride (0601023B0)"],
+        "denom": ["Number of prescription items for all diabetes (060102)"],
+        "numerator_short": "Pioglitazone items",
+        "denominator_short": "All diabetes items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0601023B0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '060102%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_cost_based": false
+    },
+    "celecoxib": {
+        "name": "Celecoxib vs. all NSAIDs",
+        "title": "Prescribing of Celecoxib (BNF code 0801050AY, 1001010AH) compared with prescribing of all Non-Steroidal Anti-Inflammatory Drugs (BNF section 1.1.1)",
+        "description": [
+            "Coxib drugs are an interesting illustration of a common ",
+            "phenomenon in medicine: the need to make a trade off ",
+            "between risk and benefit, in different patients. ",
+            "Long term use of NSAID painkillers puts patients at ",
+            "increased risk of gastric bleeds. Coxib painkillers ",
+            "are effective at treating pain, with lower risk of ",
+            "bleeding; but they are much more expensive, and come ",
+            "with a higher risk of cardiovascular problems. Overall, ",
+            "therefore, they are sensible to use in some patients, ",
+            "but if one area is prescribing a lot of coxibs (or ",
+            "very few) then that may mean that they have unusual ",
+            "patients, or it may mean that doctors' thresholds ",
+            "for using them are different to their colleagues nationally."
+        ],
+        "num": ["Number of prescription items for Celecoxib (0801050AY, 1001010AH)"],
+        "denom": ["Number of prescription items for all NSAIDs (100101)"],
+        "numerator_short": "Celecoxib items",
+        "denominator_short": "All NSAID items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0801050AY%%') ",
+            "OR (presentation_code LIKE '1001010AH%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(actual_cost) as cost ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '100101%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_cost_based": false
+    }
+}
