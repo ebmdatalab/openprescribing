@@ -59,13 +59,16 @@ body {
   overflow: auto;
   font-size: 12px;
 }
-.footer .sponsors img {
-  margin-right: 10px;
-  height: 50px;
-  border: 1px solid #ccc;
+.footer .sponsors {
+  margin-bottom: 10px;
 }
-.footer .sponsors img:last {
-  margin-right: 0;
+.footer .sponsors a.logo {
+  float: left;
+}
+.footer .sponsors img {
+  margin-top: 3px;
+  margin-right: 10px;
+  height: 45px;
 }
 @media (max-width: 990px) {
   .footer {
@@ -74,7 +77,7 @@ body {
   .footer .sponsors img {
     height: 40px;
     margin-bottom: 5px;
-    margin-right: 1px;
+    margin-right: 5px;
   }
 }
 /* Fix for Django-debug-toolbar bug
