@@ -27,7 +27,7 @@ var analyseChart = {
         errorMessage: $('#error-message'),
         highlightOrgType: $('#highlightType'),
         highlightNotFound: $('#itemNotFound'),
-        loadingEl: $('#chart-loading'),
+        loadingEl: $('.loading-wrapper'),
         loadingMessage: $('#chart-loading p'),
         slider: $("#chart-date-slider"),
         submitButton: $('#update'),
