@@ -10,7 +10,6 @@ var analyseMap = {
     },
 
     setup: function(options) {
-
         this.options = options;
         // TODO: Deal with no data
         //         $('#map-wrapper').show();
@@ -75,7 +74,11 @@ var analyseMap = {
             var joinedFeatures = [],
                 byName = {};
             _.each(currentJson.features, function(d, i) {
-                if (d.properties.setting === 4) {
+                if ('setting' in d.properties) {
+                    if (d.properties.setting === 4) {
+                        byName[d.properties.name] = d;
+                    }
+                } else {
                     byName[d.properties.name] = d;
                 }
             });
