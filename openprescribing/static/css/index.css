@@ -503,12 +503,10 @@ path {
 .highcharts-contextmenu hr {
   margin: 5px 0;
 }
-#dashboard .panel p,
-#measures .panel p {
+#dashboard .panel p {
   font-size: 12px;
 }
-#dashboard .chart,
-#measures .chart {
+#dashboard .chart {
   height: 300px;
   margin-bottom: 10px;
 }
@@ -534,6 +532,8 @@ path {
 #measures .panel p {
   font-size: 12px;
 }
-#measures .panel chart {
+#measures .panel .chart {
+  margin-top: 5px;
   margin-bottom: 10px;
+  min-height: 200px;
 }

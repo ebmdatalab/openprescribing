@@ -100,6 +100,14 @@ def practice(request, code):
     return render(request, 'practice.html', context)
 
 
+def practice_measures(request, code):
+    p = get_object_or_404(Practice, code=code)
+    context = {
+        'practice': p,
+        'page_id': code
+    }
+    return render(request, 'practice_measures.html', context)
+
 ##################################################
 # AREA TEAMS
 ##################################################
