@@ -360,6 +360,7 @@ class Measure(models.Model):
     ranking_description = models.CharField(max_length=1000, null=True,
                                            blank=True)
     url = models.URLField(null=True, blank=True)
+    is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
 
     def __str__(self):
