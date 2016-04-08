@@ -386,11 +386,21 @@ class MeasureValue(models.Model):
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
 
+    # Optionally store the raw values, where appropriate.
+    num_items = models.IntegerField(null=True, blank=True)
+    denom_items = models.IntegerField(null=True, blank=True)
+    num_cost = models.FloatField(null=True, blank=True)
+    denom_cost = models.FloatField(null=True, blank=True)
+    num_quantity = models.FloatField(null=True, blank=True)
+    denom_quantity = models.FloatField(null=True, blank=True)
+
     percentile = models.FloatField(null=True, blank=True)
 
-    cost_saving_median = models.FloatField(null=True, blank=True)
+    # Cost savings if practice all prescribed at set levels.
+    # Only used with cost-based measures.
     cost_saving_10th = models.FloatField(null=True, blank=True)
     cost_saving_25th = models.FloatField(null=True, blank=True)
+    cost_saving_50th = models.FloatField(null=True, blank=True)
     cost_saving_75th = models.FloatField(null=True, blank=True)
     cost_saving_90th = models.FloatField(null=True, blank=True)
 
@@ -414,12 +424,28 @@ class MeasureGlobal(models.Model):
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
 
+    # Optionally store the raw values, where appropriate.
+    num_items = models.IntegerField(null=True, blank=True)
+    denom_items = models.IntegerField(null=True, blank=True)
+    num_cost = models.FloatField(null=True, blank=True)
+    denom_cost = models.FloatField(null=True, blank=True)
+    num_quantity = models.FloatField(null=True, blank=True)
+    denom_quantity = models.FloatField(null=True, blank=True)
+
     # Percentile values for practices.
     practice_10th = models.FloatField(null=True, blank=True)
     practice_25th = models.FloatField(null=True, blank=True)
     practice_50th = models.FloatField(null=True, blank=True)
     practice_75th = models.FloatField(null=True, blank=True)
     practice_90th = models.FloatField(null=True, blank=True)
+
+    # Cost savings if practices all prescribed at set levels.
+    # Only used with cost-based measures.
+    cost_saving_10th = models.FloatField(null=True, blank=True)
+    cost_saving_25th = models.FloatField(null=True, blank=True)
+    cost_saving_50th = models.FloatField(null=True, blank=True)
+    cost_saving_75th = models.FloatField(null=True, blank=True)
+    cost_saving_90th = models.FloatField(null=True, blank=True)
 
     # Percentile values for CCGs.
     ccg_10th = models.FloatField(null=True, blank=True)
