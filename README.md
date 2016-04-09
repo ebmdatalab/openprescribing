@@ -112,8 +112,8 @@ You may need to add data for new months. To do this, active your virtualenv, the
 
 You may want to start by updating organisational data, with the latest versions of the `eccg.csv` and `epraccur.csv` files:
 
-   python manage.py import_org_names --ccg data/org_codes/eccg.csv
-   python manage.py import_hscic_practices --practice_file data/raw_data/[PRACTICE FILE].CSV -v 2 --epraccur data/org_codes/epraccur.csv
+    python manage.py import_org_names --ccg data/org_codes/eccg.csv
+    python manage.py import_hscic_practices --practice_file data/raw_data/[PRACTICE FILE].CSV -v 2 --epraccur data/org_codes/epraccur.csv
 
 If new practices were added, you may want to re-run the practice geocoder, with the latest version of the `gridall.csv` file:
 
