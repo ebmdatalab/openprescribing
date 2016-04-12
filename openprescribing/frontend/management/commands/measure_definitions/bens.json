@@ -12,28 +12,34 @@
             "When atorvastatin came off patent, and became cheap, practices ",
             "tended to switch people away from expensive Rosuvastatin. "
         ],
-        "num": ["Number of prescription items for Rosuvastatin (0212000AA)"],
-        "denom": ["Number of prescription items for Atorvastatin (Atorvastatin)"],
-        "numerator_short": "Rosuvastatin items",
-        "denominator_short": "Atorvastatin items",
+        "num": ["Total prescription quantity for Rosuvastatin (0212000AA)"],
+        "denom": ["Total prescription quantity for Atorvastatin (Atorvastatin)"],
+        "numerator_short": "Rosuvastatin quantity",
+        "denominator_short": "Atorvastatin quantity",
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0212000AA%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS denominator ",
             "FROM frontend_prescription ",
-            "WHERE (presentation_code LIKE '0212000B0%%') ",
+            "WHERE (presentation_code LIKE '0212000AA%%' ",
+            "OR presentation_code LIKE '0212000B0%%')",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
+        "is_percentage": false,
         "is_cost_based": true
     },
     "cerazette": {
@@ -45,28 +51,33 @@
             "the same drug, the same molecule, but Cerazette is an expensive ",
             "branded package, and desogestrel is a cheap generic package."
         ],
-        "num": ["Number of prescription items for Cerazette (0703021Q0BB)"],
-        "denom": ["Number of prescription items for desogestrel (0703021Q0)"],
-        "numerator_short": "Cerazette items",
-        "denominator_short": "Desogestrel items",
+        "num": ["Total prescription quantity for Cerazette (0703021Q0BB)"],
+        "denom": ["Total prescription quantity for desogestrel (0703021Q0)"],
+        "numerator_short": "Cerazette quantity",
+        "denominator_short": "Desogestrel quantity",
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0703021Q0BB%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS denominator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0703021Q0%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
+        "is_percentage": true,
         "is_cost_based": true
     },
     "pioglitazone": {
@@ -88,21 +99,26 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0601023B0%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '060102%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
+        "is_percentage": true,
         "is_cost_based": false
     },
     "celecoxib": {
@@ -130,8 +146,10 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) as quantity ",
             "FROM frontend_prescription ",
             "WHERE ((presentation_code LIKE '0801050AY%%') ",
             "OR (presentation_code LIKE '1001010AH%%')) ",
@@ -139,13 +157,16 @@
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '100101%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
+        "is_percentage": true,
         "is_cost_based": false
     }
 }

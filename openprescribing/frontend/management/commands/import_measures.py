@@ -10,7 +10,7 @@ from dateutil.parser import *
 from dateutil.relativedelta import *
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Sum, Q
 from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice
 from scipy.stats import rankdata
 
@@ -24,6 +24,7 @@ class Command(BaseCommand):
     '''
     def add_arguments(self, parser):
         parser.add_argument('--month')
+        parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
 
@@ -32,6 +33,9 @@ class Command(BaseCommand):
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
 
+        # Get measure definitions to use - either an individual
+        # measure supplied in an option, or all measures in
+        # the JSON files.
         fpath = os.path.dirname(__file__)
         files = glob.glob(fpath + "/measure_definitions/*.json")
         measures = {}
@@ -45,26 +49,32 @@ class Command(BaseCommand):
                     print "duplicate entry found!", k
                 else:
                     measures[k] = d[k]
-
         if 'measure' in options and options['measure']:
             measure_ids = [options['measure']]
         else:
             measure_ids = [k for k in measures]
+
+        # Get months to cover from options.
         if not options['month'] and not options['end_date']:
             err = 'You must supply either --month or --end_date '
-            err += 'in the format YYYY-MM-DD'
+            err += 'in the format YYYY-MM-DD. You can also '
+            err += 'optionally supply a start date.'
             print err
             sys.exit()
         months = []
         if 'month' in options and options['month']:
             months.append(options['month'])
         else:
-            d = datetime(2014, 1, 1)
+            if 'start_date' in options and options['start_date']:
+                d = parse(options['start_date'])
+            else:
+                d = datetime(2014, 1, 1)
             end_date = parse(options['end_date'])
             while (d <= end_date):
                 months.append(datetime.strftime(d, '%Y-%m-01'))
                 d = d + relativedelta(months=1)
 
+        # Now, for every measure that we care about...
         for m in measure_ids:
             v = measures[m]
             v['description'] = ' '.join(v['description'])
@@ -72,8 +82,21 @@ class Command(BaseCommand):
             v['denom'] = ' '.join(v['denom'])
             v['num_sql'] = ' '.join(v['num_sql'])
             v['denom_sql'] = ' '.join(v['denom_sql'])
+
+            # Create or update the measure.
             try:
                 measure = Measure.objects.get(id=m)
+                measure.name = v['name']
+                measure.title = v['title']
+                measure.description = v['description']
+                measure.numerator_description = v['num']
+                measure.numerator_description = v['denom']
+                measure.numerator_short = v['numerator_short']
+                measure.denominator_short = v['denominator_short']
+                measure.url = v['url']
+                measure.is_cost_based = v['is_cost_based']
+                measure.is_percentage = v['is_percentage']
+                measure.save()
             except ObjectDoesNotExist:
                 measure = Measure.objects.create(
                     id=m,
@@ -86,9 +109,11 @@ class Command(BaseCommand):
                     numerator_short=v['numerator_short'],
                     denominator_short=v['denominator_short'],
                     url=v['url'],
-                    is_cost_based=v['is_cost_based']
+                    is_cost_based=v['is_cost_based'],
+                    is_percentage=v['is_percentage']
                 )
 
+            # For all months, set the measurevalue for all practices.
             for month in months:
                 # We're interested in all standard practices that were
                 # operating that month.
@@ -101,17 +126,31 @@ class Command(BaseCommand):
                     print 'updating', measure.title, 'for', month
 
                 for p in practices:
+                    # print p.code
+                    # Set the raw values of the measure.
                     self.create_measurevalue(measure, p, month,
-                                             v['num_sql'], v['denom_sql'])
+                                             v['num_sql'],
+                                             v['denom_sql'])
 
+            # once we've done the raw calculations, calculate individual
+            # practice percentiles, global percentiles, cost savings
+            # for each practice, then global cost savings.
+            # the percentile for each practice, the global percentiles,
+            # the cost savings for each practice based on the global
+            # percentiles, and then the
+            for month in months:
                 records = MeasureValue.objects.filter(month=month)\
                             .filter(measure=measure).values()
-                df = self.create_ranked_dataframe(records)
+                df = self.rank_and_set_percentiles(records)
                 mg = self.create_measureglobal(df, measure, month)
+                if measure.is_cost_based:
+                    mg.cost_per_num_quant = mg.num_cost / mg.num_quantity
+                    mg.cost_per_non_num_quant = (mg.denom_cost - mg.num_cost) / \
+                        (mg.denom_quantity - mg.num_quantity)
                 for i, row in df.iterrows():
-                    self.update_practice_percentile(row, measure, month)
-                    if measure.is_cost_based:
-                        self.update_cost_savings(row, df)
+                    self.set_practice_percentile_and_savings(row, measure,
+                                                                month, mg)
+                self.set_global_cost_savings(mg)
 
     def create_measurevalue(self, measure, p, month, num_sql, denom_sql):
         '''
@@ -133,13 +172,33 @@ class Command(BaseCommand):
         # Values should match *current* organisational hierarchy.
         mv.pct = p.ccg
         numerator = utils.execute_query(num_sql, [[p.code, month]])
-        if numerator and numerator[0]['items']:
-                mv.numerator = float(numerator[0]['items'])
+        if numerator:
+            d = numerator[0]
+            if d['numerator']:
+                mv.numerator = float(d['numerator'])
+            else:
+                mv.numerator = 0
+            if d['items'] and d['items']:
+                mv.num_items = float(d['items'])
+            if 'cost' in d and d['cost']:
+                mv.num_cost = float(d['cost'])
+            if 'quantity' in d and d['quantity']:
+                mv.num_quantity = float(d['quantity'])
         else:
             mv.numerator = None
         denominator = utils.execute_query(denom_sql, [[p.code, month]])
-        if denominator and denominator[0]['items']:
-            mv.denominator = float(denominator[0]['items'])
+        if denominator:
+            d = denominator[0]
+            if d['denominator']:
+                mv.denominator = float(d['denominator'])
+            else:
+                mv.denominator = 0
+            if d['items'] and d['items']:
+                mv.denom_items = float(d['items'])
+            if 'cost' in d and d['cost']:
+                mv.denom_cost = float(d['cost'])
+            if 'quantity' in d and d['quantity']:
+                mv.denom_quantity = float(d['quantity'])
         else:
             mv.denominator = None
         if mv.denominator:
@@ -148,10 +207,13 @@ class Command(BaseCommand):
             else:
                 mv.calc_value = 0
         else:
-            mv.calc_value = None
+            if mv.numerator:
+                mv.calc_value = float('inf') # near infinity... hack
+            else:
+                mv.calc_value = None
         mv.save()
 
-    def update_practice_percentile(self, row, measure, month):
+    def set_practice_percentile_and_savings(self, row, measure, month, mg):
         practice = Practice.objects.get(code=row.practice_id)
         mv = MeasureValue.objects.get(practice=practice,
                                       month=month,
@@ -159,20 +221,40 @@ class Command(BaseCommand):
         if (row.percentile is None) or np.isnan(row.percentile):
             row.percentile = None
         mv.percentile = row.percentile
+        if measure.is_cost_based:
+            total_quantity = row.denom_quantity
+            total_cost = row.denom_cost
+            mv.cost_saving_10th = self._get_savings_at_ratio(mg.practice_10th,
+                total_quantity, total_cost, mg)
+            mv.cost_saving_25th = self._get_savings_at_ratio(mg.practice_25th,
+                total_quantity, total_cost, mg)
+            mv.cost_saving_50th = self._get_savings_at_ratio(mg.practice_50th,
+                total_quantity, total_cost, mg)
+            mv.cost_saving_75th = self._get_savings_at_ratio(mg.practice_75th,
+                total_quantity, total_cost, mg)
+            mv.cost_saving_90th = self._get_savings_at_ratio(mg.practice_90th,
+                total_quantity, total_cost, mg)
         mv.save()
 
-    def update_cost_savings(self, row, df):
+    def _get_savings_at_ratio(self, ratio, total_quantity, total_cost, mg):
         '''
-        Stub
+        NB: This assumes that we always use quantity to calculate savings,
+        not items. This means our numerator and denominator need to be
+        comparable in quantity terms.
         '''
-        pass
+        num_quant = total_quantity * ratio
+        non_num_quant = total_quantity - num_quant
+        cost_of_new_quant = (num_quant * mg.cost_per_num_quant) + \
+            (non_num_quant * mg.cost_per_non_num_quant)
+        return total_cost - cost_of_new_quant
 
-    def create_ranked_dataframe(self, records):
+    def rank_and_set_percentiles(self, records):
         '''
         Use scipy's rankdata to rank by calc_value - we use rankdata rather than
         pandas qcut because pandas qcut does not cope well with repeated values
         (e.g. repeated values of zero, which we will have a lot of).
-        Then normalise percentiles between 0 and 100.
+        Lastly, we normalise percentiles between 0 and 100 to make comparisons
+        easier later.
         '''
         if self.IS_VERBOSE:
             print 'processing dataframe of length', len(records)
@@ -184,6 +266,10 @@ class Command(BaseCommand):
             df1 = df[df['rank_val'].notnull()]
             df.loc[df['rank_val'].notnull(), 'percentile'] = \
                 (df1.rank_val / float(len(df1)-1)) * 100
+            # Replace NaNs with 0s in numeric columns.
+            cols = ['num_items', 'num_cost', 'num_quantity',
+                    'denom_items', 'denom_cost', 'denom_quantity']
+            df[cols] = df[cols].fillna(0)
             return df
         else:
             return None
@@ -216,5 +302,19 @@ class Command(BaseCommand):
         mg.practice_50th = df.quantile(.5)['calc_value']
         mg.practice_75th = df.quantile(.75)['calc_value']
         mg.practice_90th = df.quantile(.9)['calc_value']
+        aggregates = ['num_items', 'denom_items', 'num_cost',
+            'denom_cost', 'num_quantity', 'denom_quantity']
+        for a in aggregates:
+            if a in df.columns:
+                setattr(mg, a, df[a].sum())
         mg.save()
         return mg
+
+    def set_global_cost_savings(self, mg):
+        mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month)
+        mg.cost_saving_10th = mvs.filter(cost_saving_10th__gt=0).aggregate(Sum('cost_saving_10th')).values()[0]
+        mg.cost_saving_25th = mvs.filter(cost_saving_25th__gt=0).aggregate(Sum('cost_saving_25th')).values()[0]
+        mg.cost_saving_50th = mvs.filter(cost_saving_50th__gt=0).aggregate(Sum('cost_saving_50th')).values()[0]
+        mg.cost_saving_75th = mvs.filter(cost_saving_75th__gt=0).aggregate(Sum('cost_saving_75th')).values()[0]
+        mg.cost_saving_90th = mvs.filter(cost_saving_90th__gt=0).aggregate(Sum('cost_saving_90th')).values()[0]
+        mg.save()

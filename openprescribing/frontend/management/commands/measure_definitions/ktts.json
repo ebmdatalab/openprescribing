@@ -22,7 +22,8 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE ((presentation_code LIKE '0212000A0%%') ",
             "OR (presentation_code LIKE '0212000D0%%') ",
@@ -40,12 +41,14 @@
             "AND (processing_date=%s)"
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0212%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s)"
         ],
+        "is_percentage": true,
         "is_cost_based": false
     },
     "ktt6_hypnotics": {
@@ -69,7 +72,8 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE ((presentation_code LIKE '0401010I0%%') ",
             "OR (presentation_code LIKE '0401010L0%%') ",
@@ -85,11 +89,12 @@
             "AND (processing_date=%s)"
         ],
         "denom_sql": [
-            "SELECT star_pu->>'hypnotics_adq' AS items ",
+            "SELECT star_pu->>'hypnotics_adq' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
             "AND (date=%s) "
         ],
+        "is_percentage": false,
         "is_cost_based": false
     },
     "ktt8_antidepressant_selected": {
@@ -114,7 +119,8 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) as items, ",
+            "SUM(total_items) as numerator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0403%%') ",
             "AND (presentation_code NOT LIKE '0403010B0%%') ",
@@ -128,11 +134,12 @@
             "AND (processing_date=%s)"
         ],
         "denom_sql": [
-            "SELECT star_pu->>'antidepressants_adq' AS items ",
+            "SELECT star_pu->>'antidepressants_adq' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
             "AND (date=%s) "
         ],
+        "is_percentage": false,
         "is_cost_based": false
     },
     "ktt8_dosulepin": {
@@ -154,14 +161,16 @@
         "rank": "mean percentile over the past three months",
         "url": "https://www.nice.org.uk/advice/ktt8/chapter/evidence-context",
         "num_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0403010J0%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s)"
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0403%%') ",
             "AND (presentation_code NOT LIKE '0403010B0%%') ",
@@ -174,6 +183,7 @@
             "AND (practice_id=%s) ",
             "AND (processing_date=%s)"
         ],
+        "is_percentage": true,
         "is_cost_based": false
     },
     "ktt9_antibiotics": {
@@ -190,19 +200,20 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items, ",
-            "SUM(actual_cost) as cost ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE (presentation_code LIKE '0501%%') ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT star_pu->>'oral_antibacterials_item' AS items ",
+            "SELECT star_pu->>'oral_antibacterials_item' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
             "AND (date=%s) "
         ],
+        "is_percentage": false,
         "is_cost_based": false
     },
     "ktt9_cephalosporins": {
@@ -213,8 +224,7 @@
             "be used when others have failed. It is important that ",
             "they are used sparingly, to avoid drug-resistant bacteria ",
             "developing. This measure looks at the quantity of cephalosporins ",
-            "prescribed per head of population, corrected for the age ",
-            "and sex distribution of that population."
+            "prescribed, versus the broad class of similar antibiotics."
         ],
         "num": [
             "Number of prescription items for co-amoxiclav (0501013K0), ",
@@ -229,7 +239,8 @@
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription ",
             "WHERE ((presentation_code LIKE '0501013K0%%') ",
             "OR (presentation_code LIKE '0501021%%') ",
@@ -238,7 +249,8 @@
             "AND (processing_date=%s) "
         ],
         "denom_sql": [
-            "SELECT SUM(total_items) as items ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator ",
             "FROM frontend_prescription ",
             "WHERE ((presentation_code LIKE '0501021%%') ",
             "OR (presentation_code LIKE '050105%%') ",
@@ -251,6 +263,7 @@
             "AND (practice_id=%s) ",
             "AND (processing_date=%s) "
         ],
+        "is_percentage": true,
         "is_cost_based": false
     }
 }
