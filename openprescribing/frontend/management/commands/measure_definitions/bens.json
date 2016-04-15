@@ -13,9 +13,9 @@
             "tended to switch people away from expensive Rosuvastatin. "
         ],
         "num": ["Total prescription quantity for Rosuvastatin (0212000AA)"],
-        "denom": ["Total prescription quantity for Atorvastatin (Atorvastatin)"],
+        "denom": ["Total prescription quantity for Rosuvastatin and Atorvastatin (0212000AA + 0212000B0)"],
         "numerator_short": "Rosuvastatin quantity",
-        "denominator_short": "Atorvastatin quantity",
+        "denominator_short": "Rosuvastatin + Atorvastatin quantity",
         "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
