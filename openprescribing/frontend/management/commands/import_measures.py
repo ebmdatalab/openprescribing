@@ -27,6 +27,7 @@ class Command(BaseCommand):
         parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
+        parser.add_argument('--definitions_only', action='store_true')
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
@@ -76,6 +77,9 @@ class Command(BaseCommand):
 
         # Now, for every measure that we care about...
         for m in measure_ids:
+            if self.IS_VERBOSE:
+                print 'Updating measure:', m
+
             v = measures[m]
             v['description'] = ' '.join(v['description'])
             v['num'] = ' '.join(v['num'])
@@ -112,6 +116,9 @@ class Command(BaseCommand):
                     is_cost_based=v['is_cost_based'],
                     is_percentage=v['is_percentage']
                 )
+
+            if 'definitions_only' in options and options['definitions_only']:
+                continue
 
             # For all months, set the measurevalue for all practices.
             for month in months:
