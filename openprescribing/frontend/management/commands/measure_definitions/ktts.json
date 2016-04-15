@@ -5,7 +5,7 @@
             "Number of prescription items for Bile acid sequestrants, ",
             "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, ",
             "and 'Other lipid modifying drugs' (BNF 2.12 sub-set) ",
-            "as a percentage of total prescription items for BNF 2.12"
+            "as a percentage of total prescription items for BNF 2.12."
         ],
         "title": "KTT3 (Lipid-modifying drugs): Number of prescription items for Bile acid sequestrants, Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, and ‘Other lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage of total prescription items for BNF 2.12",
         "num": [
@@ -102,7 +102,7 @@
         "description": [
             "Number of average daily quantities (ADQs) for selected ",
             "antidepressant prescribing per Antidepressants ",
-            "(BNF 4.3 sub-set) ADQ based STAR-PU"
+            "(BNF 4.3 sub-set) ADQ based STAR-PU."
         ],
         "title": "KTT8 (Selected antidepressants): TBA",
         "num": [
@@ -116,7 +116,7 @@
         ],
         "numerator_short": "Selected antidepressant ADQs",
         "denominator_short": "Antidepressant STAR-PUs",
-        "rank": "mean percentile over the past three months",
+        "rank": "mean percentile over the past three months.",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) as items, ",
@@ -149,7 +149,7 @@
             "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
             "prescribed by approved name as a percentage of the ",
             "total number of prescription items for 'selected' ",
-            "antidepressants (sub-set of BNF 4.3)"
+            "antidepressants (sub-set of BNF 4.3)."
         ],
         "title": "KTT8 (Antidepressants: First choice % items)",
         "num": [
@@ -202,7 +202,7 @@
         "description": [
             "Number of prescription items for dosulepin as percentage of the ",
             "total number of prescription items for 'selected' antidepressants ",
-            "(subset of BNF 4.3)"
+            "(subset of BNF 4.3)."
         ],
         "title": "KTT8 (Dosulepin): First choice antidepressant use in adults with depression or anxiety disorder",
         "num": ["Number of prescription items for dosulepin (0403010J0)"],
@@ -242,14 +242,14 @@
         "is_cost_based": false
     },
     "ktt9_antibiotics": {
-        "name": "All antibacterial drugs per oral antibiotics STAR-PU",
-        "title": "Prescribing of Antibacterial Drugs (BNF section 5.1) compared with item-based STAR-PUs for oral antibiotics",
+        "name": "KTT9 (broad spectrum antibiotics)",
+        "title": "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)",
         "description": [
             "It is important that we don't overuse antibiotics. ",
             "This shows how many are being prescribed locally."
         ],
-        "num": ["Number of prescription items for all antibacterials (0501)"],
-        "denom": ["Item-based STAR-PUs for oral antibiotics"],
+        "num": ["Total number of items for Antibacterial drugs (BNF 5.1)"],
+        "denom": ["Total number of Oral antibacterials (BNF 5.1 sub-set) item-based STAR-PUs"],
         "numerator_short": "Antibacterials items",
         "denominator_short": "STAR-PUs",
         "rank": "mean percentile over the past three months",
