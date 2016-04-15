@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 measure.title = v['title']
                 measure.description = v['description']
                 measure.numerator_description = v['num']
-                measure.numerator_description = v['denom']
+                measure.denominator_description = v['denom']
                 measure.numerator_short = v['numerator_short']
                 measure.denominator_short = v['denominator_short']
                 measure.url = v['url']
