@@ -142,6 +142,61 @@
         "is_percentage": false,
         "is_cost_based": false
     },
+    "ktt8_antidepressant_first_choice": {
+        "name": "KTT8 (Antidepressants: First choice % items)",
+        "description": [
+            "Number of prescription items for Selective Serotonin ",
+            "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
+            "prescribed by approved name as a percentage of the ",
+            "total number of prescription items for 'selected' ",
+            "antidepressants (sub-set of BNF 4.3)"
+        ],
+        "title": "KTT8 (Antidepressants: First choice % items)",
+        "num": [
+            "Number of prescription items for Selective Serotonin ",
+            "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
+            "prescribed by approved name"
+        ],
+        "denom": [
+            "Number of prescription items for selected ",
+            "antidepressants (sub-set of BNF 4.3)"
+        ],
+        "numerator_short": "Selected antidepressant ADQs",
+        "denominator_short": "Antidepressant STAR-PUs",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(total_items) as numerator ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0403030Z0AA%%') ",
+            "OR (presentation_code LIKE '0403030D0AA%%') ",
+            "OR (presentation_code LIKE '0403030X0AA%%') ",
+            "OR (presentation_code LIKE '0403030E0AA%%') ",
+            "OR (presentation_code LIKE '0403030L0AA%%') ",
+            "OR (presentation_code LIKE '0403030P0AA%%') ",
+            "OR (presentation_code LIKE '0403030Q0AA%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(total_items) as numerator ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0403%%') ",
+            "AND (presentation_code NOT LIKE '0403010B0%%') ",
+            "AND (presentation_code NOT LIKE '0403010F0%%') ",
+            "AND (presentation_code NOT LIKE '0403010N0%%') ",
+            "AND (presentation_code NOT LIKE '0403010V0%%') ",
+            "AND (presentation_code NOT LIKE '0403010Y0%%') ",
+            "AND (presentation_code NOT LIKE '040302%%') ",
+            "AND (presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "is_percentage": true,
+        "is_cost_based": false
+    },
     "ktt8_dosulepin": {
         "name": "KTT8 (Dosulepin)",
         "description": [
