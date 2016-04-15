@@ -9,8 +9,8 @@ var measures = [
     },
     {
         chartId: 'cerazette',
-        chartName: 'Cerazette vs. Desogesterel',
-        chartIntro: 'Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of <a href="/chemical/0703021Q0">all Desogesterel (BNF code 0703021Q0)</a>.',
+        chartName: 'Cerazette vs. Desogestrel',
+        chartIntro: 'Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of <a href="/chemical/0703021Q0">all Desogestrel (BNF code 0703021Q0)</a>.',
         chartDescription: 'This is the NHS Business Service Authority\'s top cost-saver from generic switching. Cerazette and desogestrel are both exactly the same drug, the same molecule, but Cerazette is an expensive branded package, and desogestrel is a cheap generic package.',
         numIds: [{ id: '0703021Q0BB', 'name': 'Cerazette'}],
         denomIds: [{ id: '0703021Q0', 'name': 'Desogestrel'}]
