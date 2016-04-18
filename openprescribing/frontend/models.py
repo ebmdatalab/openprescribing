@@ -290,11 +290,16 @@ class Product(models.Model):
 class Presentation(models.Model):
     '''
     GP prescribing products. Import from BNF codes file from BSA.
+    ADQs imported from BSA data.
     '''
     bnf_code = models.CharField(max_length=15, primary_key=True,
                                 validators=[isAlphaNumeric])
     name = models.CharField(max_length=200)
     is_generic = models.NullBooleanField(default=None)
+    active_quantity = models.FloatField(null=True, blank=True)
+    adq = models.FloatField(null=True, blank=True)
+    adq_unit = models.CharField(max_length=10, null=True, blank=True)
+    percent_of_adq = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.name)

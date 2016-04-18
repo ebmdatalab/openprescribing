@@ -1,5 +1,6 @@
 echo 'Importing BNF codes and chemicals...'
 python manage.py import_bnf_codes --filename data/bnf_codes/bnf_codes.csv -v 2
+python manage.py import_adqs --filename data/bnf_codes/adqs_april_16.csv -v 2
 python manage.py import_hscic_chemicals -v 2
 
 echo 'Fetching and converting HSCIC prescribing data...'
