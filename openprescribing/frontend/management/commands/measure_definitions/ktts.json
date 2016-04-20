@@ -384,5 +384,211 @@
         ],
         "is_percentage": false,
         "is_cost_based": false
+    },
+    "ktt11_minocycline": {
+        "name": "KTT10: Minocycline ADQ/1000 patients",
+        "title": "KTT10: Minocycline ADQ/1000 patients",
+        "description": [
+            "Number of average daily quantities (ADQs) ",
+            "for minocycline per 1000 patients."
+        ],
+        "num": [
+            "Total average daily quantity (ADQ) usage ",
+            "for Minocycline Hydrochloride (0501030P0)"
+        ],
+        "denom": [
+            "Total number of patients (divided by 1000)"
+        ],
+        "numerator_short": "Minocycline ADQs",
+        "denominator_short": "Total patients / 1000",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
+            "FROM frontend_prescription p ",
+            "LEFT JOIN frontend_presentation r ",
+            "ON p.presentation_code = r.bnf_code ",
+            "WHERE (p.presentation_code LIKE '0501030P0%%') ",
+            "AND (p.practice_id=%s) ",
+            "AND (p.processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT (total_list_size / 1000.0) AS denominator ",
+            "FROM frontend_practicestatistics ",
+            "WHERE (practice_id=%s) ",
+            "AND (date=%s) "
+        ],
+        "is_percentage": false,
+        "is_cost_based": false
+    },
+    "ktt12_diabetes_blood_glucose": {
+        "name": "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs",
+        "title": "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs",
+        "description": [
+            "Number of prescription items for metformin and ",
+            "sulfonylureas as a percentage of the total number ",
+            "of prescription items for all Antidiabetic drugs (BNF 6.1.2)."
+        ],
+        "num": [
+            "Number of prescription items for BNF section ",
+            "6.1.2.1 and BNF section 6.1.2.2"
+        ],
+        "denom": [
+            "Number of prescription items for BNF section ",
+            "6.1.2 (Antidiabetic drugs)"
+        ],
+        "numerator_short": "Selected items",
+        "denominator_short": "All items for 6.1.2",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0601021%%') ",
+            "OR (presentation_code LIKE '0601022%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '060102%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_percentage": true,
+        "is_cost_based": false
+    },
+    "ktt12_diabetes": {
+        "name": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
+        "title": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
+        "description": [
+            "Number of prescription items for long-acting human ",
+            "analogue insulins as a percentage of the total number ",
+            "of prescription items for all long- acting and ",
+            "intermediate acting insulins excluding biphasic insulins."
+        ],
+        "num": [
+            "Number of prescription items for long-acting insulin ",
+            "analogues (sub-set of BNF section 6.1.1.2)"
+        ],
+        "denom": [
+            "Number of prescription items for all long acting and ",
+            "intermediate acting insulins excluding biphasic insulins ",
+            "(sub-set of BNF section 6.1.1.2)."
+        ],
+        "numerator_short": "Selected items",
+        "denominator_short": "Selected items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0601012Z0%%') ",
+            "OR (presentation_code LIKE '0601012X0%%') ",
+            "OR (presentation_code LIKE '0601012V0%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) as items, ",
+            "SUM(total_items) as denominator ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '0601012Z0%%') ",
+            "OR (presentation_code LIKE '0601012X0%%') ",
+            "OR (presentation_code LIKE '0601012V0%%') ",
+            "OR (presentation_code LIKE '0601012G0%%') ",
+            "OR (presentation_code LIKE '0601012L0%%') ",
+            "OR (presentation_code LIKE '0601012N0%%') ",
+            "OR (presentation_code LIKE '0601012S0%%') ",
+            "OR (presentation_code LIKE '060101200%%') ",
+            "OR (presentation_code LIKE '0601012U0%%')) ",
+            "AND (presentation_code NOT LIKE '0601012C0%%') ",
+            "AND (presentation_code NOT LIKE '0601012F0%%') ",
+            "AND (presentation_code NOT LIKE '0601012D0%%') ",
+            "AND (presentation_code NOT LIKE '0601012W0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s)"
+        ],
+        "is_percentage": true,
+        "is_cost_based": false
+    },
+    "ktt13_nsaids_ibuprofen": {
+        "name": "KTT13: NSAIDs - Ibuprofen & naproxen % items",
+        "title": "KTT13: NSAIDs - Ibuprofen & naproxen % items",
+        "description": [
+            "Number of prescription items for ibuprofen and naproxen ",
+            "as a percentage of the total number of prescription items ",
+            "for all NSAIDs."
+        ],
+        "num": [
+            "Number of prescription items for ibuprofen and naproxen ",
+            "(sub-set of BNF section 10.1.1)"
+        ],
+        "denom": [
+            "Number of prescription items for BNF section 10.1.1 ",
+            "(non-steroidal anti-inflammatory drugs)"
+        ],
+        "numerator_short": "Selected items",
+        "denominator_short": "Selected items",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
+            "FROM frontend_prescription ",
+            "WHERE ((presentation_code LIKE '1001010J0%%') ",
+            "OR (presentation_code LIKE '1001010AD%%') ",
+            "OR (presentation_code LIKE '1001010P0%%') ",
+            "OR (presentation_code LIKE '100101070%%')) ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS denominator ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '100101%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_percentage": true,
+        "is_cost_based": false
+    },
+    "ktt13_nsaids_adq": {
+        "name": "KTT13: NSAIDs ADQ/STAR-PU",
+        "title": "KTT13: NSAIDs ADQ/STAR-PU",
+        "description": [
+            "Number of average daily quantities (ADQs) per Oral NSAIDs ",
+            "(BNF 10.1.1 sub-set) cost-based STAR-PU."
+        ],
+        "num": [
+            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
+            "FROM frontend_prescription p ",
+            "LEFT JOIN frontend_presentation r ",
+            "ON p.presentation_code = r.bnf_code ",
+            "WHERE (p.presentation_code LIKE '100101%%') ",
+            "AND (p.practice_id=%s) ",
+            "AND (p.processing_date=%s) "
+        ],
+        "denom": [
+            "SELECT star_pu->>'oral_nsaids_cost' AS denominator ",
+            "FROM frontend_practicestatistics ",
+            "WHERE (practice_id=%s) ",
+            "AND (date=%s)"
+        ],
+        "numerator_short": "All items for 10.1.1",
+        "denominator_short": "Oral NSAIDs STAR-PUs",
+        "rank": "mean percentile over the past three months",
+        "url": null,
+        "num_sql": [
+        ],
+        "denom_sql": [
+        ],
+        "is_percentage": false,
+        "is_cost_based": false
     }
 }
