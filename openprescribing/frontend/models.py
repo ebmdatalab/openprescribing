@@ -362,8 +362,6 @@ class Measure(models.Model):
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    ranking_description = models.CharField(max_length=1000, null=True,
-                                           blank=True)
     url = models.URLField(null=True, blank=True)
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()

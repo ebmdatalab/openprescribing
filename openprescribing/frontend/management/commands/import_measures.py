@@ -130,7 +130,6 @@ class Command(BaseCommand):
                 description=v['description'],
                 numerator_description=v['num'],
                 denominator_description=v['denom'],
-                ranking_description=v['rank'],
                 numerator_short=v['numerator_short'],
                 denominator_short=v['denominator_short'],
                 url=v['url'],

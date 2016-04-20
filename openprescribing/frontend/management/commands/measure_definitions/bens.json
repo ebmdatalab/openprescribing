@@ -16,7 +16,6 @@
         "denom": ["Total prescription quantity for Rosuvastatin and Atorvastatin (0212000AA + 0212000B0)"],
         "numerator_short": "Rosuvastatin quantity",
         "denominator_short": "Rosuvastatin + Atorvastatin quantity",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -55,7 +54,6 @@
         "denom": ["Total prescription quantity for desogestrel (0703021Q0)"],
         "numerator_short": "Cerazette quantity",
         "denominator_short": "Desogestrel quantity",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -96,7 +94,6 @@
         "denom": ["Number of prescription items for all diabetes (060102)"],
         "numerator_short": "Pioglitazone items",
         "denominator_short": "All diabetes items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -143,7 +140,6 @@
         "denom": ["Number of prescription items for all NSAIDs (100101)"],
         "numerator_short": "Celecoxib items",
         "denominator_short": "All NSAID items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",

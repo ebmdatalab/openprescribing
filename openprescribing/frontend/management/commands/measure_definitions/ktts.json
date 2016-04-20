@@ -19,7 +19,6 @@
         ],
         "numerator_short": "Selected items",
         "denominator_short": "All items in 2.12",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -69,7 +68,6 @@
         ],
         "numerator_short": "Hypnotics ADQs",
         "denominator_short": "Hypnotics STAR-PUs",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
@@ -117,7 +115,6 @@
         ],
         "numerator_short": "Selected antidepressant ADQs",
         "denominator_short": "Antidepressant STAR-PUs",
-        "rank": "mean percentile over the past three months.",
         "url": null,
         "num_sql": [
             "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
@@ -165,7 +162,6 @@
         ],
         "numerator_short": "Selected antidepressant ADQs",
         "denominator_short": "Antidepressant STAR-PUs",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
@@ -216,7 +212,6 @@
         ],
         "numerator_short": "Dosulepin items",
         "denominator_short": "Selected antidepressant items",
-        "rank": "mean percentile over the past three months",
         "url": "https://www.nice.org.uk/advice/ktt8/chapter/evidence-context",
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -255,7 +250,6 @@
         "denom": ["Total number of Oral antibacterials (BNF 5.1 sub-set) item-based STAR-PUs"],
         "numerator_short": "Antibacterials items",
         "denominator_short": "STAR-PUs",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -294,7 +288,6 @@
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Other selected items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -347,7 +340,6 @@
         ],
         "numerator_short": "Selected ADQs",
         "denominator_short": "Selected items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
@@ -401,7 +393,6 @@
         ],
         "numerator_short": "Minocycline ADQs",
         "denominator_short": "Total patients / 1000",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
@@ -439,7 +430,6 @@
         ],
         "numerator_short": "Selected items",
         "denominator_short": "All items for 6.1.2",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -481,7 +471,6 @@
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Selected items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -534,7 +523,6 @@
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Selected items",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -582,7 +570,6 @@
         ],
         "numerator_short": "All items for 10.1.1",
         "denominator_short": "Oral NSAIDs STAR-PUs",
-        "rank": "mean percentile over the past three months",
         "url": null,
         "num_sql": [
         ],
