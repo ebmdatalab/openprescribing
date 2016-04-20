@@ -85,12 +85,16 @@ def measure_by_ccg(request, format=None):
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_pct pc ON mv.pct_id=pc.code "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
-    query += "WHERE ("
+    query += "WHERE "
+    if orgs:
+        query += "("
     for i, org in enumerate(orgs):
         query += "mv.pct_id=%s "
         if (i != len(orgs)-1):
             query += ' OR '
-    query += ') AND mv.practice_id IS NULL '
+    if orgs:
+        query += ") AND "
+    query += 'mv.practice_id IS NULL '
     if measure:
         query += "AND mv.measure_id=%s "
     query += "ORDER BY mv.practice_id, measure_id, date"
