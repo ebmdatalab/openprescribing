@@ -93,13 +93,13 @@
             "SELECT star_pu->>'hypnotics_adq' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
-            "AND (date=%s) "
+            "AND (date=%s)"
         ],
         "is_percentage": false,
         "is_cost_based": false
     },
     "ktt8_antidepressant_selected": {
-        "name": "KTT8 (Selected antidepressants)",
+        "name": "KTT8: selected antidepressant ADQ/STAR-PU",
         "description": [
             "Number of average daily quantities (ADQs) for selected ",
             "antidepressant prescribing per Antidepressants ",
@@ -124,14 +124,14 @@
             "FROM frontend_prescription p ",
             "LEFT JOIN frontend_presentation r ",
             "ON p.presentation_code = r.bnf_code ",
-            "WHERE (p.presentation_code LIKE '0403%%') ",
+            "WHERE ((p.presentation_code LIKE '0403%%') ",
             "AND (p.presentation_code NOT LIKE '0403010B0%%') ",
             "AND (p.presentation_code NOT LIKE '0403010F0%%') ",
             "AND (p.presentation_code NOT LIKE '0403010N0%%') ",
             "AND (p.presentation_code NOT LIKE '0403010V0%%') ",
             "AND (p.presentation_code NOT LIKE '0403010Y0%%') ",
             "AND (p.presentation_code NOT LIKE '040302%%') ",
-            "AND (p.presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (p.presentation_code NOT LIKE '0403040F0%%')) ",
             "AND (p.practice_id=%s) ",
             "AND (p.processing_date=%s)"
         ],
@@ -139,7 +139,7 @@
             "SELECT star_pu->>'antidepressants_adq' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
-            "AND (date=%s) "
+            "AND (date=%s)"
         ],
         "is_percentage": false,
         "is_cost_based": false
@@ -184,16 +184,16 @@
         ],
         "denom_sql": [
             "SELECT SUM(total_items) as items, ",
-            "SUM(total_items) as numerator ",
+            "SUM(total_items) as denominator ",
             "FROM frontend_prescription ",
-            "WHERE (presentation_code LIKE '0403%%') ",
+            "WHERE ((presentation_code LIKE '0403%%') ",
             "AND (presentation_code NOT LIKE '0403010B0%%') ",
             "AND (presentation_code NOT LIKE '0403010F0%%') ",
             "AND (presentation_code NOT LIKE '0403010N0%%') ",
             "AND (presentation_code NOT LIKE '0403010V0%%') ",
             "AND (presentation_code NOT LIKE '0403010Y0%%') ",
             "AND (presentation_code NOT LIKE '040302%%') ",
-            "AND (presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (presentation_code NOT LIKE '0403040F0%%')) ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s)"
         ],
@@ -230,14 +230,14 @@
             "SELECT SUM(total_items) AS items, ",
             "SUM(total_items) AS denominator ",
             "FROM frontend_prescription ",
-            "WHERE (presentation_code LIKE '0403%%') ",
+            "WHERE ((presentation_code LIKE '0403%%') ",
             "AND (presentation_code NOT LIKE '0403010B0%%') ",
             "AND (presentation_code NOT LIKE '0403010F0%%') ",
             "AND (presentation_code NOT LIKE '0403010N0%%') ",
             "AND (presentation_code NOT LIKE '0403010V0%%') ",
             "AND (presentation_code NOT LIKE '0403010Y0%%') ",
             "AND (presentation_code NOT LIKE '040302%%') ",
-            "AND (presentation_code NOT LIKE '0403040F0%%') ",
+            "AND (presentation_code NOT LIKE '0403040F0%%')) ",
             "AND (practice_id=%s) ",
             "AND (processing_date=%s)"
         ],
@@ -269,7 +269,7 @@
             "SELECT star_pu->>'oral_antibacterials_item' AS denominator ",
             "FROM frontend_practicestatistics ",
             "WHERE (practice_id=%s) ",
-            "AND (date=%s) "
+            "AND (date=%s)"
         ],
         "is_percentage": false,
         "is_cost_based": false
