@@ -1,4 +1,5 @@
 import csv
+import json
 import StringIO
 import requests
 import unittest
@@ -546,6 +547,145 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
             self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
+
+
+class TestSmokeTestMeasures(SmokeTestBase):
+
+    '''
+    Smoke tests for all 13 KTTs, for the period July-Sept 2015.
+    Cross-reference against data from the BSA site.
+    NB BSA calculations are done over a calendar quarter, and ours are done
+    monthly, so sometimes we have to multiply things to get the same answers.
+    '''
+
+    def get_data_for_q3_2015(self, data):
+        total = {
+            'numerator': 0,
+            'denominator': 0
+        }
+        for d in data:
+            if (d['date'] == '2015-07-01') or \
+               (d['date'] == '2015-08-01') or \
+               (d['date'] == '2015-09-01'):
+               total['numerator'] += d['numerator']
+               total['denominator'] += d['denominator']
+        total['calc_value'] = (total['numerator'] / float(total['denominator'])) * 100
+        return total
+
+    def retrieve_data_for_measure(self, measure, practice):
+        self.DOMAIN = 'http://localhost:8000'
+        url = '%s/api/1.0/measure_by_practice/?format=json&' % self.DOMAIN
+        url += 'measure=%s&org=%s' % (measure, practice)
+        r = requests.get(url)
+        data = json.loads(r.text)
+        rows = data['measures'][0]['data']
+        return self.get_data_for_q3_2015(rows)
+
+    def test_measure_by_practice(self):
+        q = self.retrieve_data_for_measure('ktt3_lipid_modifying_drugs', 'A81001')
+        bsa = {
+            'numerator': 34,
+            'denominator': 1265,
+            'calc_value': '2.688'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt8_antidepressant_first_choice', 'A81001')
+        bsa = {
+            'numerator': 643,
+            'denominator': 1025,
+            'calc_value': '62.732'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt8_dosulepin', 'A81001')
+        bsa = {
+            'numerator': 24,
+            'denominator': 1025,
+            'calc_value': '2.341'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt9_antibiotics', 'A81001')
+        bsa = {
+            'numerator': 577,
+            'denominator': 7581.92, # BSA's actual STAR-PU value is 7509
+            'calc_value': (577 / 7581.92) * 100
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual("%.0f" % q['denominator'], "%.0f" % bsa['denominator'])
+        self.assertEqual("%.2f" % q['calc_value'], "%.2f" % bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt9_cephalosporins', 'A81001')
+        bsa = {
+            'numerator': 30,
+            'denominator': 577,
+            'calc_value': '5.199'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt10_uti_antibiotics', 'A81001')
+        bsa = {
+            'numerator': 579.833,
+            'denominator': 72,
+            'calc_value': '8.053'
+        }
+        self.assertEqual("%.3f" % q['numerator'], str(bsa['numerator']))
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        # Note that BSA divides the value by 100, for no obvious reason.
+        self.assertEqual("%.3f" % (q['calc_value'] / 100), bsa['calc_value'])
+
+        # Note practice A81005, as A81001 does not appear in published data
+        q = self.retrieve_data_for_measure('ktt11_minocycline', 'A81006')
+        bsa = {
+            'numerator': 28,
+            'denominator': 12.235 * 3,
+            'calc_value': (28 / (12.235 * 3)) * 100
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.2f" % q['calc_value'], "%.2f" % bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt12_diabetes_blood_glucose', 'A81001')
+        bsa = {
+            'numerator': 543,
+            'denominator': 626,
+            'calc_value': '86.741'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt12_diabetes_insulin', 'A81001')
+        bsa = {
+            'numerator': 44,
+            'denominator': 64,
+            'calc_value': '68.750'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+        q = self.retrieve_data_for_measure('ktt13_nsaids_ibuprofen', 'A81001')
+        bsa = {
+            'numerator': 356,
+            'denominator': 413,
+            'calc_value': '86.199'
+        }
+        self.assertEqual(q['numerator'], bsa['numerator'])
+        self.assertEqual(q['denominator'], bsa['denominator'])
+        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
+
+    def test_measure_by_ccg(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
