@@ -50,97 +50,6 @@
         "is_percentage": true,
         "is_cost_based": false
     },
-    "ktt6_hypnotics": {
-        "name": "KTT6 (Hypnotics)",
-        "description": [
-            "Number of average daily quantities (ADQs) for benzodiazepines ",
-            "(indicated for use as hypnotics) and “Z” drugs per Hypnotics ",
-            " (BNF 4.1.1 sub-set) ADQ based STAR-PU."
-        ],
-        "title": "KTT6 (Hypnotics): TBA",
-        "num": [
-            "Number of ADQs for 0401010I0, 0401010L0, ",
-            "0401010N0, 0401010P0, 0401010R0, 0401010T0, 0401010V0, ",
-            "0401010W0, 0401010Y0, 0401010Z0"
-        ],
-        "denom": [
-            "￼Total number of Hypnotics (BNF 4.1.1 sub-set) ADQ based STAR-PUs"
-        ],
-        "numerator_short": "Hypnotics ADQs",
-        "denominator_short": "Hypnotics STAR-PUs",
-        "url": null,
-        "num_sql": [
-            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
-            "FROM frontend_prescription p ",
-            "LEFT JOIN frontend_presentation r ",
-            "ON p.presentation_code = r.bnf_code ",
-            "WHERE ((p.presentation_code LIKE '0401010I0%%') ",
-            "OR (p.presentation_code LIKE '0401010L0%%') ",
-            "OR (p.presentation_code LIKE '0401010N0%%') ",
-            "OR (p.presentation_code LIKE '0401010P0%%') ",
-            "OR (p.presentation_code LIKE '0401010R0%%') ",
-            "OR (p.presentation_code LIKE '0401010T0%%') ",
-            "OR (p.presentation_code LIKE '0401010V0%%') ",
-            "OR (p.presentation_code LIKE '0401010W0%%') ",
-            "OR (p.presentation_code LIKE '0401010Y0%%') ",
-            "OR (p.presentation_code LIKE '0401010Z0%%')) ",
-            "AND (p.practice_id=%s) ",
-            "AND (p.processing_date=%s)"
-        ],
-        "denom_sql": [
-            "SELECT star_pu->>'hypnotics_adq' AS denominator ",
-            "FROM frontend_practicestatistics ",
-            "WHERE (practice_id=%s) ",
-            "AND (date=%s)"
-        ],
-        "is_percentage": false,
-        "is_cost_based": false
-    },
-    "ktt8_antidepressant_selected": {
-        "name": "KTT8: selected antidepressant ADQ/STAR-PU",
-        "description": [
-            "Number of average daily quantities (ADQs) for selected ",
-            "antidepressant prescribing per Antidepressants ",
-            "(BNF 4.3 sub-set) ADQ based STAR-PU."
-        ],
-        "title": "KTT8 (Selected antidepressants): TBA",
-        "num": [
-            "Total average daily quantities (ADQ) usage for ",
-            "selected antidepressants (0403, excluding 0403010B0, ",
-            "0403010F0, 0403010N0, 0403010V0, 0403010Y0, ",
-            "040302, 0403040F0)"
-        ],
-        "denom": [
-            "Number of Antidepressant (BNF 4.3 sub-set) ADQ based STAR-PUs"
-        ],
-        "numerator_short": "Selected antidepressant ADQs",
-        "denominator_short": "Antidepressant STAR-PUs",
-        "url": null,
-        "num_sql": [
-            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
-            "FROM frontend_prescription p ",
-            "LEFT JOIN frontend_presentation r ",
-            "ON p.presentation_code = r.bnf_code ",
-            "WHERE ((p.presentation_code LIKE '0403%%') ",
-            "AND (p.presentation_code NOT LIKE '0403010B0%%') ",
-            "AND (p.presentation_code NOT LIKE '0403010F0%%') ",
-            "AND (p.presentation_code NOT LIKE '0403010N0%%') ",
-            "AND (p.presentation_code NOT LIKE '0403010V0%%') ",
-            "AND (p.presentation_code NOT LIKE '0403010Y0%%') ",
-            "AND (p.presentation_code NOT LIKE '040302%%') ",
-            "AND (p.presentation_code NOT LIKE '0403040F0%%')) ",
-            "AND (p.practice_id=%s) ",
-            "AND (p.processing_date=%s)"
-        ],
-        "denom_sql": [
-            "SELECT star_pu->>'antidepressants_adq' AS denominator ",
-            "FROM frontend_practicestatistics ",
-            "WHERE (practice_id=%s) ",
-            "AND (date=%s)"
-        ],
-        "is_percentage": false,
-        "is_cost_based": false
-    },
     "ktt8_antidepressant_first_choice": {
         "name": "KTT8 (Antidepressants: First choice % items)",
         "description": [
@@ -544,38 +453,6 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
-    },
-    "ktt13_nsaids_adq": {
-        "name": "KTT13: NSAIDs ADQ/STAR-PU",
-        "title": "KTT13: NSAIDs ADQ/STAR-PU",
-        "description": [
-            "Number of average daily quantities (ADQs) per Oral NSAIDs ",
-            "(BNF 10.1.1 sub-set) cost-based STAR-PU."
-        ],
-        "num": [
-            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
-            "FROM frontend_prescription p ",
-            "LEFT JOIN frontend_presentation r ",
-            "ON p.presentation_code = r.bnf_code ",
-            "WHERE (p.presentation_code LIKE '100101%%') ",
-            "AND (p.practice_id=%s) ",
-            "AND (p.processing_date=%s) "
-        ],
-        "denom": [
-            "SELECT star_pu->>'oral_nsaids_cost' AS denominator ",
-            "FROM frontend_practicestatistics ",
-            "WHERE (practice_id=%s) ",
-            "AND (date=%s)"
-        ],
-        "numerator_short": "All items for 10.1.1",
-        "denominator_short": "Oral NSAIDs STAR-PUs",
-        "url": null,
-        "num_sql": [
-        ],
-        "denom_sql": [
-        ],
-        "is_percentage": false,
         "is_cost_based": false
     }
 }
