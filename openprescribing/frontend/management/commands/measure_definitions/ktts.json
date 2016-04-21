@@ -69,14 +69,13 @@
             "Number of prescription items for selected ",
             "antidepressants (sub-set of BNF 4.3)"
         ],
-        "numerator_short": "Selected antidepressant ADQs",
-        "denominator_short": "Antidepressant STAR-PUs",
+        "numerator_short": "SSRI items",
+        "denominator_short": "Selected antidepresssant items",
         "url": null,
         "num_sql": [
-            "SELECT SUM(p.quantity * r.percent_of_adq) AS numerator ",
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(total_items) AS numerator ",
             "FROM frontend_prescription p ",
-            "LEFT JOIN frontend_presentation r ",
-            "ON p.presentation_code = r.bnf_code ",
             "WHERE ((p.presentation_code LIKE '0403030Z0AA%%') ",
             "OR (p.presentation_code LIKE '0403030D0AA%%') ",
             "OR (p.presentation_code LIKE '0403030X0AA%%') ",
@@ -149,7 +148,7 @@
         "is_cost_based": false
     },
     "ktt9_antibiotics": {
-        "name": "KTT9 (broad spectrum antibiotics)",
+        "name": "KTT9: Broad spectrum antibiotics",
         "title": "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)",
         "description": [
             "It is important that we don't overuse antibiotics. ",
@@ -287,8 +286,8 @@
         "is_cost_based": false
     },
     "ktt11_minocycline": {
-        "name": "KTT10: Minocycline ADQ/1000 patients",
-        "title": "KTT10: Minocycline ADQ/1000 patients",
+        "name": "KTT11: Minocycline ADQ/1000 patients",
+        "title": "KTT11: Minocycline ADQ/1000 patients",
         "description": [
             "Number of average daily quantities (ADQs) ",
             "for minocycline per 1000 patients."
@@ -360,13 +359,13 @@
         "is_percentage": true,
         "is_cost_based": false
     },
-    "ktt12_diabetes": {
+    "ktt12_diabetes_insulin": {
         "name": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
         "title": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
         "description": [
             "Number of prescription items for long-acting human ",
             "analogue insulins as a percentage of the total number ",
-            "of prescription items for all long- acting and ",
+            "of prescription items for all long-acting and ",
             "intermediate acting insulins excluding biphasic insulins."
         ],
         "num": [
