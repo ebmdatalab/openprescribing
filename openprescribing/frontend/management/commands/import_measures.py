@@ -81,7 +81,7 @@ class Command(BaseCommand):
         if 'measure' in options and options['measure']:
             options['measure_ids'] = [options['measure']]
         else:
-            options['measure_ids'] = [k for k in measures]
+            options['measure_ids'] = [k for k in options['measures']]
 
         # Get months to cover from options.
         if not options['month'] and not options['end_date']:
