@@ -1,11 +1,14 @@
 {
     "ktt3_lipid_modifying_drugs": {
-        "name": "KTT3 (Lipid-modifying drugs)",
+        "name": "Lipid-modifying drugs (KTT3)",
         "description": [
             "Number of prescription items for Bile acid sequestrants, ",
             "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, ",
             "and 'Other lipid modifying drugs' (BNF 2.12 sub-set) ",
             "as a percentage of total prescription items for BNF 2.12."
+        ],
+        "why_it_matters": [
+            "TBA"
         ],
         "title": "KTT3 (Lipid-modifying drugs): Number of prescription items for Bile acid sequestrants, Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, and ‘Other lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage of total prescription items for BNF 2.12",
         "num": [
@@ -51,13 +54,16 @@
         "is_cost_based": false
     },
     "ktt8_antidepressant_first_choice": {
-        "name": "KTT8 (Antidepressants: First choice % items)",
+        "name": "Antidepressants, % items first choice (KTT8)",
         "description": [
             "Number of prescription items for Selective Serotonin ",
             "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
             "prescribed by approved name as a percentage of the ",
             "total number of prescription items for 'selected' ",
             "antidepressants (sub-set of BNF 4.3)."
+        ],
+        "why_it_matters": [
+            "TBA"
         ],
         "title": "KTT8 (Antidepressants: First choice % items)",
         "num": [
@@ -105,7 +111,7 @@
         "is_cost_based": false
     },
     "ktt8_dosulepin": {
-        "name": "KTT8 (Dosulepin)",
+        "name": "Dosulepin (KTT8)",
         "description": [
             "Number of prescription items for dosulepin as percentage of the ",
             "total number of prescription items for 'selected' antidepressants ",
@@ -148,9 +154,13 @@
         "is_cost_based": false
     },
     "ktt9_antibiotics": {
-        "name": "KTT9: Broad spectrum antibiotics",
+        "name": "Broad-spectrum antibiotics (KTT9)",
         "title": "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)",
         "description": [
+            "Number of prescription items for antibacterial drugs (BNF 5.1) ",
+            "per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
+        ],
+        "why_it_matters": [
             "It is important that we don't overuse antibiotics. ",
             "This shows how many are being prescribed locally."
         ],
@@ -177,10 +187,10 @@
         "is_cost_based": false
     },
     "ktt9_cephalosporins": {
-        "name": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones)",
+        "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)",
         "title": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items): Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)",
         "description": [
-            "Cephalosporins are broad spectrum antibiotics which can ",
+            "(TBC) Cephalosporins are broad spectrum antibiotics which can ",
             "be used when others have failed. It is important that ",
             "they are used sparingly, to avoid drug-resistant bacteria ",
             "developing. This measure looks at the quantity of cephalosporins ",
@@ -226,7 +236,7 @@
         "is_cost_based": false
     },
     "ktt10_uti_antibiotics": {
-        "name": "KTT10 (Three-day courses of antibiotics for uncomplicated urinary tract infection)",
+        "name": "Antibiotics for uncomplicated UTIs (KTT10)",
         "title": "KTT10 (TBA)",
         "description": [
             "Number of average daily quantities (ADQs) per ",
@@ -286,8 +296,8 @@
         "is_cost_based": false
     },
     "ktt11_minocycline": {
-        "name": "KTT11: Minocycline ADQ/1000 patients",
-        "title": "KTT11: Minocycline ADQ/1000 patients",
+        "name": "Minocycline ADQ/1000 patients (KTT11)",
+        "title": "Minocycline ADQ/1000 patients (KTT11)",
         "description": [
             "Number of average daily quantities (ADQs) ",
             "for minocycline per 1000 patients."
@@ -321,7 +331,7 @@
         "is_cost_based": false
     },
     "ktt12_diabetes_blood_glucose": {
-        "name": "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs",
+        "name": "Blood glucose lowering drugs (KTT12)",
         "title": "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs",
         "description": [
             "Number of prescription items for metformin and ",
@@ -360,7 +370,7 @@
         "is_cost_based": false
     },
     "ktt12_diabetes_insulin": {
-        "name": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
+        "name": "Long-acting insulin analogues (KTT12)",
         "title": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
         "description": [
             "Number of prescription items for long-acting human ",
@@ -414,7 +424,7 @@
         "is_cost_based": false
     },
     "ktt13_nsaids_ibuprofen": {
-        "name": "KTT13: NSAIDs - Ibuprofen & naproxen % items",
+        "name": "NSAIDs - Ibuprofen & naproxen (KTT13)",
         "title": "KTT13: NSAIDs - Ibuprofen & naproxen % items",
         "description": [
             "Number of prescription items for ibuprofen and naproxen ",
