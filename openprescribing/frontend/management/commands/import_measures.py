@@ -36,12 +36,16 @@ class Command(BaseCommand):
             if options['definitions_only']:
                 continue
             for month in options['months']:
+                MeasureValue.objects.filter(month=month)\
+                            .filter(measure=measure).delete()
+                MeasureGlobal.objects.filter(month=month)\
+                            .filter(measure=measure).delete()
+
                 # Create practice values and percentiles. Use these to calculate
                 # global values and percentiles. Then calculate cost savings
                 # for individual practices, and globally.
                 self.create_practice_measurevalues(measure, month, measure_config)
-                records = MeasureValue.objects.filter(month=month)\
-                            .filter(measure=measure).values()
+                records = MeasureValue.objects.filter(month=month, measure=measure).values()
                 df = self.create_dataframe_with_ranks_and_percentiles(records)
                 mg = self.create_or_update_measureglobal(df, measure, month, 'practice')
                 for i, row in df.iterrows():
@@ -51,8 +55,7 @@ class Command(BaseCommand):
 
                 # Now calculate CCG values, percentiles and cost savings.
                 self.create_ccg_measurevalues(measure, month)
-                ccg_records = MeasureValue.objects.filter(month=month)\
-                            .filter(measure=measure, practice=None).values()
+                ccg_records = MeasureValue.objects.filter(month=month, measure=measure, practice=None).values()
                 df = self.create_dataframe_with_ranks_and_percentiles(ccg_records)
                 mg = self.create_or_update_measureglobal(df, measure, month, 'ccg')
                 for i, row in df.iterrows():
@@ -361,7 +364,7 @@ class Command(BaseCommand):
         return calc_value
 
     def set_measureglobal_savings(self, mg):
-        mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month)
+        mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=False)
         mg.cost_saving_10th = mvs.filter(cost_saving_10th__gt=0).aggregate(Sum('cost_saving_10th')).values()[0]
         mg.cost_saving_25th = mvs.filter(cost_saving_25th__gt=0).aggregate(Sum('cost_saving_25th')).values()[0]
         mg.cost_saving_50th = mvs.filter(cost_saving_50th__gt=0).aggregate(Sum('cost_saving_50th')).values()[0]
