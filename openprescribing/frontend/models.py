@@ -391,6 +391,7 @@ class MeasureValue(models.Model):
     calc_value = models.FloatField(null=True, blank=True)
 
     # Optionally store the raw values, where appropriate.
+    # Cost and quantity are used for calculating cost savings.
     num_items = models.IntegerField(null=True, blank=True)
     denom_items = models.IntegerField(null=True, blank=True)
     num_cost = models.FloatField(null=True, blank=True)
@@ -425,6 +426,7 @@ class MeasureGlobal(models.Model):
     calc_value = models.FloatField(null=True, blank=True)
 
     # Optionally store the raw values, where appropriate.
+    # Cost and quantity are used for calculating cost savings.
     num_items = models.IntegerField(null=True, blank=True)
     denom_items = models.IntegerField(null=True, blank=True)
     num_cost = models.FloatField(null=True, blank=True)
