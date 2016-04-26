@@ -85,21 +85,18 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['numerator'], 85500)
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
-        self.assertEqual("%.4f" % d['practice_10th'], '0.0419')
-        self.assertEqual("%.4f" % d['practice_25th'], '0.0803')
-        self.assertEqual("%.4f" % d['practice_50th'], '0.1176')
-        self.assertEqual("%.4f" % d['practice_75th'], '0.5167')
-        self.assertEqual("%.4f" % d['practice_90th'], '0.8200')
-        self.assertEqual("%.4f" % d['ccg_10th'], '0.0793')
-        self.assertEqual("%.4f" % d['ccg_25th'], '0.0937')
-        self.assertEqual("%.4f" % d['ccg_50th'], '0.1176')
-        self.assertEqual("%.4f" % d['ccg_75th'], '0.3455')
-        self.assertEqual("%.4f" % d['ccg_90th'], '0.4823')
-        self.assertEqual("%.2f" % d['cost_saving_10th'], '70149.77')
-        self.assertEqual("%.2f" % d['cost_saving_25th'], '64103.59')
-        self.assertEqual("%.2f" % d['cost_saving_50th'], '59029.41')
-        self.assertEqual("%.2f" % d['cost_saving_75th'], '16935.00')
-        self.assertEqual("%.2f" % d['cost_saving_90th'], '162.00')
+        self.assertEqual("%.4f" % d['percentiles']['practice']['10'], '0.0419')
+        self.assertEqual("%.4f" % d['percentiles']['practice']['50'], '0.1176')
+        self.assertEqual("%.4f" % d['percentiles']['practice']['90'], '0.8200')
+        self.assertEqual("%.4f" % d['percentiles']['ccg']['10'], '0.0793')
+        self.assertEqual("%.4f" % d['percentiles']['ccg']['50'], '0.1176')
+        self.assertEqual("%.4f" % d['percentiles']['ccg']['90'], '0.4823')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['10'], '70149.77')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['50'], '59029.41')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['90'], '162.00')
+        self.assertEqual("%.2f" % d['cost_savings']['ccg']['10'], '64174.56')
+        self.assertEqual("%.2f" % d['cost_savings']['ccg']['50'], '58658.82')
+        self.assertEqual("%.2f" % d['cost_savings']['ccg']['90'], '11731.76')
 
     def test_api_all_measures_global(self):
         url = '/api/1.0/measure/?format=json'
@@ -138,11 +135,9 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 143000)
         self.assertEqual(d['percentile'], 100)
         self.assertEqual("%.4f" % d['calc_value'], '0.5734')
-        self.assertEqual("%.2f" % d['cost_saving_10th'], '63588.51')
-        self.assertEqual("%.2f" % d['cost_saving_25th'], '61739.88')
-        self.assertEqual("%.2f" % d['cost_saving_50th'], '58658.82')
-        self.assertEqual("%.2f" % d['cost_saving_75th'], '29329.41')
-        self.assertEqual("%.2f" % d['cost_saving_90th'], '11731.76')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '63588.51')
+        self.assertEqual("%.2f" % d['cost_savings']['50'], '58658.82')
+        self.assertEqual("%.2f" % d['cost_savings']['90'], '11731.76')
 
     def test_api_all_measures_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'
@@ -169,11 +164,9 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 11000)
         self.assertEqual("%.2f" % d['percentile'], '33.33')
         self.assertEqual("%.4f" % d['calc_value'], '0.0909')
-        self.assertEqual("%.2f" % d['cost_saving_10th'], '485.58')
-        self.assertEqual("%.2f" % d['cost_saving_25th'], '104.65')
-        self.assertEqual("%.2f" % d['cost_saving_50th'], '-264.71')
-        self.assertEqual("%.2f" % d['cost_saving_75th'], '-4215.00')
-        self.assertEqual("%.2f" % d['cost_saving_90th'], '-7218.00')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '485.58')
+        self.assertEqual("%.2f" % d['cost_savings']['50'], '-264.71')
+        self.assertEqual("%.2f" % d['cost_savings']['90'], '-7218.00')
 
         # Practice with only Rosuva prescribing.
         url = '/api/1.0/measure_by_practice/'
@@ -186,7 +179,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 1000)
         self.assertEqual(d['percentile'], 100)
         self.assertEqual(d['calc_value'], 1)
-        self.assertEqual("%.2f" % d['cost_saving_10th'], '862.33')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '862.33')
 
         # Practice with only Atorva prescribing.
         url = '/api/1.0/measure_by_practice/'
@@ -200,7 +193,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 1000)
         self.assertEqual(d['percentile'], 0)
         self.assertEqual(d['calc_value'], 0)
-        self.assertEqual("%.2f" % d['cost_saving_10th'], '-37.67')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '-37.67')
 
         # Practice with no prescribing of either.
         url = '/api/1.0/measure_by_practice/'
@@ -214,7 +207,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 0)
         self.assertEqual(d['percentile'], None)
         self.assertEqual(d['calc_value'], None)
-        self.assertEqual(d['cost_saving_10th'], 0.0)
+        self.assertEqual(d['cost_savings']['10'], 0.0)
 
     def test_api_all_measures_by_practice(self):
         url = '/api/1.0/measure_by_practice/'

@@ -400,13 +400,9 @@ class MeasureValue(models.Model):
 
     percentile = models.FloatField(null=True, blank=True)
 
-    # Cost savings if practice all prescribed at set levels.
+    # Cost savings if organisation had prescribed at set levels.
     # Only used with cost-based measures.
-    cost_saving_10th = models.FloatField(null=True, blank=True)
-    cost_saving_25th = models.FloatField(null=True, blank=True)
-    cost_saving_50th = models.FloatField(null=True, blank=True)
-    cost_saving_75th = models.FloatField(null=True, blank=True)
-    cost_saving_90th = models.FloatField(null=True, blank=True)
+    cost_savings = JSONField(null=True, blank=True)
 
     class Meta:
         app_label = 'frontend'
@@ -437,26 +433,8 @@ class MeasureGlobal(models.Model):
     denom_quantity = models.FloatField(null=True, blank=True)
 
     # Percentile values for practices.
-    practice_10th = models.FloatField(null=True, blank=True)
-    practice_25th = models.FloatField(null=True, blank=True)
-    practice_50th = models.FloatField(null=True, blank=True)
-    practice_75th = models.FloatField(null=True, blank=True)
-    practice_90th = models.FloatField(null=True, blank=True)
-
-    # Cost savings if practices all prescribed at set levels.
-    # Only used with cost-based measures.
-    cost_saving_10th = models.FloatField(null=True, blank=True)
-    cost_saving_25th = models.FloatField(null=True, blank=True)
-    cost_saving_50th = models.FloatField(null=True, blank=True)
-    cost_saving_75th = models.FloatField(null=True, blank=True)
-    cost_saving_90th = models.FloatField(null=True, blank=True)
-
-    # Percentile values for CCGs.
-    ccg_10th = models.FloatField(null=True, blank=True)
-    ccg_25th = models.FloatField(null=True, blank=True)
-    ccg_50th = models.FloatField(null=True, blank=True)
-    ccg_75th = models.FloatField(null=True, blank=True)
-    ccg_90th = models.FloatField(null=True, blank=True)
+    percentiles = JSONField(null=True, blank=True)
+    cost_savings = JSONField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.denominator:

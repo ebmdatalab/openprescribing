@@ -29,6 +29,7 @@ class Command(BaseCommand):
         parser.add_argument('--definitions_only', action='store_true')
 
     def handle(self, *args, **options):
+        self.centiles = range(10, 100, 10)
         options = self.parse_options(options)
         for m in options['measure_ids']:
             measure_config = options['measures'][m]
@@ -51,7 +52,7 @@ class Command(BaseCommand):
                 for i, row in df.iterrows():
                     self.set_percentile_and_savings(row, measure, month, mg, 'practice')
                 if measure.is_cost_based:
-                    self.set_measureglobal_savings(mg)
+                    self.set_measureglobal_savings(mg, 'practice')
 
                 # Now calculate CCG values, percentiles and cost savings.
                 self.create_ccg_measurevalues(measure, month)
@@ -60,6 +61,8 @@ class Command(BaseCommand):
                 mg = self.create_or_update_measureglobal(df, measure, month, 'ccg')
                 for i, row in df.iterrows():
                     self.set_percentile_and_savings(row, measure, month, mg, 'ccg')
+                if measure.is_cost_based:
+                    self.set_measureglobal_savings(mg, 'ccg')
 
     def parse_options(self, options):
         self.IS_VERBOSE = False
@@ -250,6 +253,7 @@ class Command(BaseCommand):
 
     def set_percentile_and_savings(self, row, measure, month, mg, org_type):
         '''
+        For an organisation, set its current percentile, and calculate its savings.
         NB: This assumes that we always use quantity to calculate savings,
         not items. This means our numerator and denominator need to be
         directly comparable in quantity terms.
@@ -270,15 +274,16 @@ class Command(BaseCommand):
         if measure.is_cost_based:
             row_quantity = row.denom_quantity
             row_cost = row.denom_cost
-            centiles = [10, 25, 50, 75, 90]
-            for c in centiles:
-                ratio = getattr(mg, '%s_%sth' % (org_type, c))
+            cost_savings = {}
+            for c in self.centiles:
+                ratio = mg.percentiles[org_type][c]
                 num_quant = row_quantity * ratio
                 non_num_quant = row_quantity - num_quant
                 cost_of_new_quant = (num_quant * mg.cost_per_num_quant) + \
                     (non_num_quant * mg.cost_per_non_num_quant)
                 saving = row_cost - cost_of_new_quant
-                setattr(mv, 'cost_saving_%sth' % c, saving)
+                cost_savings[c] = saving
+            mv.cost_savings = cost_savings
         mv.save()
 
     def create_dataframe_with_ranks_and_percentiles(self, records):
@@ -328,11 +333,15 @@ class Command(BaseCommand):
             if np.isnan(mg.denominator):
                 mg.denominator = None
             mg.calc_value = self.get_calc_value(mg.numerator, mg.denominator)
-            mg.practice_10th = df.quantile(.1)['calc_value']
-            mg.practice_25th = df.quantile(.25)['calc_value']
-            mg.practice_50th = df.quantile(.5)['calc_value']
-            mg.practice_75th = df.quantile(.75)['calc_value']
-            mg.practice_90th = df.quantile(.9)['calc_value']
+            percentiles = {}
+            for c in self.centiles:
+                percentiles[c] = df.quantile(c/100.0)['calc_value']
+            if mg.percentiles:
+                mg.percentiles['practice'] = percentiles
+            else:
+                mg.percentiles = {
+                    'practice': percentiles
+                }
             # Create global summed items, quantity etc. TODO: Still needed?
             aggregates = ['num_items', 'denom_items', 'num_cost',
                 'denom_cost', 'num_quantity', 'denom_quantity']
@@ -340,11 +349,15 @@ class Command(BaseCommand):
                 if a in df.columns:
                     setattr(mg, a, df[a].sum())
         else:
-            mg.ccg_10th = df.quantile(.1)['calc_value']
-            mg.ccg_25th = df.quantile(.25)['calc_value']
-            mg.ccg_50th = df.quantile(.5)['calc_value']
-            mg.ccg_75th = df.quantile(.75)['calc_value']
-            mg.ccg_90th = df.quantile(.9)['calc_value']
+            percentiles = {}
+            for c in self.centiles:
+                percentiles[c] = df.quantile(c/100.0)['calc_value']
+            if mg.percentiles:
+                mg.percentiles['ccg'] = percentiles
+            else:
+                mg.percentiles = {
+                    'ccg': percentiles
+                }
         mg.save()
         # Temporary attributes, not saved in the database.
         if measure.is_cost_based:
@@ -363,11 +376,20 @@ class Command(BaseCommand):
                 calc_value = numerator
         return calc_value
 
-    def set_measureglobal_savings(self, mg):
-        mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=False)
-        mg.cost_saving_10th = mvs.filter(cost_saving_10th__gt=0).aggregate(Sum('cost_saving_10th')).values()[0]
-        mg.cost_saving_25th = mvs.filter(cost_saving_25th__gt=0).aggregate(Sum('cost_saving_25th')).values()[0]
-        mg.cost_saving_50th = mvs.filter(cost_saving_50th__gt=0).aggregate(Sum('cost_saving_50th')).values()[0]
-        mg.cost_saving_75th = mvs.filter(cost_saving_75th__gt=0).aggregate(Sum('cost_saving_75th')).values()[0]
-        mg.cost_saving_90th = mvs.filter(cost_saving_90th__gt=0).aggregate(Sum('cost_saving_90th')).values()[0]
+    def set_measureglobal_savings(self, mg, org_type):
+        cost_savings = {c: 0 for c in self.centiles}
+        if org_type == 'practice':
+            mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=False).values()
+            for c in self.centiles:
+                for mv in mvs:
+                    saving = mv['cost_savings'][str(c)]
+                    cost_savings[c] += max(saving, 0)
+            mg.cost_savings = { 'practice': cost_savings }
+        else:
+            mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=True).values()
+            for c in self.centiles:
+                for mv in mvs:
+                    saving = mv['cost_savings'][str(c)]
+                    cost_savings[c] += max(saving, 0)
+            mg.cost_savings['ccg'] = cost_savings
         mg.save()

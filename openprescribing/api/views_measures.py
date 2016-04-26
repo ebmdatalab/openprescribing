@@ -8,11 +8,7 @@ def measure_global(request, format=None):
     measure = request.query_params.get('measure', None)
 
     query = 'SELECT mg.month AS date, mg.numerator, mg.denominator, mg.measure_id, '
-    query += 'mg.calc_value, practice_10th, mg.practice_25th, mg.practice_50th, '
-    query += 'mg.practice_75th, mg.practice_90th, mg.ccg_10th, '
-    query += 'mg.ccg_25th, mg.ccg_50th, mg.ccg_75th, mg.ccg_90th, '
-    query += 'mg.cost_saving_10th, mg.cost_saving_25th, mg.cost_saving_50th, '
-    query += 'mg.cost_saving_75th, mg.cost_saving_90th, '
+    query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
     query += 'ms.name, ms.title, ms.description, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
     query += 'ms.url, ms.is_cost_based '
@@ -31,21 +27,8 @@ def measure_global(request, format=None):
             'numerator': d['numerator'],
             'denominator': d['denominator'],
             'calc_value': d['calc_value'],
-            'practice_10th': d['practice_10th'],
-            'practice_25th': d['practice_25th'],
-            'practice_50th': d['practice_50th'],
-            'practice_75th': d['practice_75th'],
-            'practice_90th': d['practice_90th'],
-            'ccg_10th': d['ccg_10th'],
-            'ccg_25th': d['ccg_25th'],
-            'ccg_50th': d['ccg_50th'],
-            'ccg_75th': d['ccg_75th'],
-            'ccg_90th': d['ccg_90th'],
-            'cost_saving_10th': d['cost_saving_10th'],
-            'cost_saving_25th': d['cost_saving_25th'],
-            'cost_saving_50th': d['cost_saving_50th'],
-            'cost_saving_75th': d['cost_saving_75th'],
-            'cost_saving_90th': d['cost_saving_90th']
+            'percentiles': d['percentiles'],
+            'cost_savings': d['cost_savings']
         }
         if id in rolled:
             rolled[id]['data'].append(d_copy)
@@ -75,9 +58,7 @@ def measure_by_ccg(request, format=None):
     orgs = utils.param_to_list(request.query_params.get('org', []))
 
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
-    query += 'mv.calc_value, mv.percentile, mv.cost_saving_10th, '
-    query += 'mv.cost_saving_25th, mv.cost_saving_50th, '
-    query += 'mv.cost_saving_75th, mv.cost_saving_90th, '
+    query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.pct_id, pc.name as pct_name, measure_id, '
     query += 'ms.name, ms.title, ms.description, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
@@ -113,11 +94,7 @@ def measure_by_ccg(request, format=None):
             'denominator': d['denominator'],
             'calc_value': d['calc_value'],
             'percentile': d['percentile'],
-            'cost_saving_10th': d['cost_saving_10th'],
-            'cost_saving_25th': d['cost_saving_25th'],
-            'cost_saving_50th': d['cost_saving_50th'],
-            'cost_saving_75th': d['cost_saving_75th'],
-            'cost_saving_90th': d['cost_saving_90th'],
+            'cost_savings': d['cost_savings'],
             'pct_id': d['pct_id'],
             'pct_name': d['pct_name']
         }
@@ -150,9 +127,7 @@ def measure_by_practice(request, format=None):
     orgs = utils.param_to_list(request.query_params.get('org', []))
 
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
-    query += 'mv.calc_value, mv.percentile, mv.cost_saving_10th, '
-    query += 'mv.cost_saving_25th, mv.cost_saving_50th, '
-    query += 'mv.cost_saving_75th, mv.cost_saving_90th, '
+    query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
     query += 'ms.name, ms.title, ms.description, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
@@ -186,11 +161,7 @@ def measure_by_practice(request, format=None):
             'denominator': d['denominator'],
             'calc_value': d['calc_value'],
             'percentile': d['percentile'],
-            'cost_saving_10th': d['cost_saving_10th'],
-            'cost_saving_25th': d['cost_saving_25th'],
-            'cost_saving_50th': d['cost_saving_50th'],
-            'cost_saving_75th': d['cost_saving_75th'],
-            'cost_saving_90th': d['cost_saving_90th'],
+            'cost_savings': d['cost_savings'],
             'practice_id': d['practice_id'],
             'practice_name': d['practice_name']
         }
