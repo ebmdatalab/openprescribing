@@ -100,7 +100,7 @@ class Command(BaseCommand):
             if 'start_date' in options and options['start_date']:
                 d = parse(options['start_date'])
             else:
-                d = datetime(2014, 1, 1)
+                d = datetime(2010, 8, 1)
             end_date = parse(options['end_date'])
             while (d <= end_date):
                 options['months'].append(datetime.strftime(d, '%Y-%m-01'))
