@@ -173,9 +173,10 @@ var measures = {
                        'enabled': false
                     }
                 };
-                // if (k === '50') {
-                //     e.dashStyle = 'longdash';
-                // }
+                // Highlight median line with dashes.
+                if (k === '50') {
+                    e.dashStyle = 'longdash';
+                }
                 hcOptions.series.push(e);
             }
             var chart = new Highcharts.Chart(hcOptions);
