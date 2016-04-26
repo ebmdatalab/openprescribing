@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Prescribing of {{ measure }} by all CCGs{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block content %}
+
+<h1>{{measure.name}} prescribing by all CCGs</h1>
+
+<p>How all CCGs prescribed {{ measure.title }}.</p>
+
+{% if measure.url %}
+<p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
+{% endif %}
+
+<h2>Why this measure matters</h2>
+
+<p>{{ measure.description }}</p>
+
+<h2>Definition</h2>
+
+<p>This measure is a ratio, and lower numbers are preferred. The numerator is: {{ measure.numerator_description }}. The denominator is: {{ measure.denominator_description }}.</p>
+
+<h2>How the CCGs are doing</h2>
+
+<p id="summary">Loading...</p>
+
+<h2>Individual CCGs</h2>
+
+<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus the 90th, 50th and 10th percentiles across all practices in NHS England.</p>
+
+<div id="measures">
+<div id="charts" class="row">
+<div class="loading-wrapper col-xs-12">
+    <hr/>
+    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+    <br/>Fetching data...
+    <br/><br/>
+</div>
+</div>
+
+</div>
+
+{% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+<p>Over the past six months, {{ above_median }} out of {{ total }} ({{ proportion_above_median }}%) CCGs were prescribing above the national median ratio for this measure. {{ performance_description }}</p>
+
+{{ cost_savings }}
+
+</script>
+
+<script id="measure-panel" type="text/x-handlebars-template">
+<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a href="{{ chart_title_url }}">{{ chart_title }}</a>
+        </div>
+        <div class="panel-body" id="{{ chart_id }}" data-costsaving="{{ cost_saving }}">
+            <div class="chart">
+                <div class="status"></div>
+            </div>
+        </div>
+        <div style="margin: 5px 10px 10px 10px; font-size: 12px; white-space: normal;">{{ chart_explanation }}</div>
+    </div>
+</div>
+</script>
+{% endverbatim %}
+
+<script>
+var measureData = {
+    'orgType': 'CCG',
+    'measure': '{{ measure.id }}',
+    'measure_is_cost_based': '{{ measure.is_cost_based }}',
+    'numerator': '{{ measure.numerator_short }}',
+    'denominator': '{{ measure.denominator_short }}'
+};
+</script>
+{% if debug %}
+<script src="/static/js/measures.js"></script>
+{% else %}
+<script src="/static/js/measures.min.js"></script>
+{% endif %}
+{% endblock %}

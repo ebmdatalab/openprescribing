@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Prescribing measures for {{ ccg.name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<h1>CCG: {{ ccg.name }}</h1>
+
+<div class="row" id="intro">
+
+<div class="col-md-6">
+<p>Practices currently in this CCG:</p>
+<ul class="list-unstyled" id="practices">
+{% for p in practices %}
+<li
+{% if forloop.counter > 6 %}
+class='hidden'
+{% endif %}
+>
+<a href="{% url 'practice' p.code %}">{{ p }}</a>
+({{ p.get_setting_display }})
+</li>
+{% endfor %}
+</ul>
+{% if practices.count > 6 %}
+<a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
+{% endif %}
+</div>
+
+<div class="col-md-6" id="map-container">
+<div id="map-ccg" style="height: 150px"></div>
+</div>
+
+</div>
+
+<hr/>
+
+<div id="intro">
+
+<p>Blah blah blah brief intro to measures, explaining what these measures are, what the ordering means and why they matter. <a href='#'>Read more about measures</a>.</p>
+
+<h3>This CCG's performance</h3>
+
+<p id="summary">Loading...</p>
+
+</div>
+
+<div style="float: right; clear: both; margin-bottom: 20px; margin-top: 10px">Sort measures by:
+<div class="btn-group" id="order">
+    <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
+        Percentile
+    </button>
+    <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
+        Potential savings
+    </button>
+</div>
+</div>
+
+<div id="measures" style="clear: both">
+<div id="charts" class="row">
+<div class="loading-wrapper col-xs-12">
+    <hr/>
+    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+    <br/>Fetching data...
+    <br/><br/>
+</div>
+</div>
+
+{% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+<p>Over the past six months, this practice was prescribing above the median on {{ above_median }} out of {{ total }} measures. {{ performance_description }}</p>
+
+{{ cost_savings }}
+
+</script>
+
+<script id="measure-panel" type="text/x-handlebars-template">
+<div id="measure_{{ chart_id }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chart_id }}" data-costsaving="{{ cost_saving_50th }}">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a href="{{ chart_title_url }}">{{ chart_title }}</a>
+        </div>
+        <div class="panel-body" class="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="padding: 10px; white-space: normal;">
+                <p><strong>Description:</strong> {{ description }}</p>
+                <p><strong>Why it matters:</strong> TBA.</p>
+                <p>{{ cost_description }}</p>
+                <p><strong>Explore:</strong> see how <a href="/ccg/99P/{{ chart_id }}">all practices in this CCG</a> contribute to this CCG's performance.</p>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chart_id }}">
+                <div class="status"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</script>
+{% endverbatim %}
+
+<hr/>
+
+
+</div>
+
+
+</div>
+
+<script>
+var measureData = {
+    'orgId': '{{ ccg.code }}',
+    'orgName': '{{ ccg.name }}',
+    'orgType': 'CCG'
+};
+</script>
+{% if debug %}
+<script src="/static/js/measures.js"></script>
+{% else %}
+<script src="/static/js/measures.min.js"></script>
+{% endif %}
+
+{% endblock %}

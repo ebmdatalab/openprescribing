@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Prescribing measures{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block content %}
+
+<h1>Prescribing measures</h1>
+
+<p>See prescribing by all CCGs for:</p>
+
+<ul>
+{% for measure in measures %}
+<li>
+<a href="/measure/{{ measure.id }}">
+{{ measure }}
+</a>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

@@ -14,28 +14,25 @@
 
 <p>How GP practices in {{ ccg.name }} prescribed {{ measure.title }}.</p>
 
-<h2>About this measure</h2>
-
-<p>This measure is defined as: <strong>{{ measure.description }}</strong>.
-{% if measure.numerator_description %}
-The numerator is: {{ measure.numerator_description }}.
-{% endif %}
-{% if measure.denominator_description %}
-The denominator is: {{ measure.denominator_description }}.
-{% endif %}
-</p>
-
-<p>TBA: Why this measure matters.
 {% if measure.url %}
-Read <a href="{{ measure.url }}">more about this measure</a>.
+<p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
 {% endif %}
-</p>
 
-<h2>Practices</h2>
+<h2>Why this measure matters</h2>
 
-<p>Practices are ordered by a weighted rank: percentile multipled by the number of numerator items, averaged over the past three months. This approximates to how much each practice contributed to the CCG's overall measure. NHS England wants to reduce prescribing in this area, so in general, lower numbers are preferred.</p>
+<p>{{ measure.description }}</p>
 
-<p>Each chart shows the results for the individual practice, plus the 90th, 50th and 10th percentiles across all practices in NHS England.</p>
+<h2>Definition</h2>
+
+<p>This measure is a ratio, and lower numbers are preferred. The numerator is: {{ measure.numerator_description }}. The denominator is: {{ measure.denominator_description }}.</p>
+
+<h2>How this CCG is doing</h2>
+
+<p id="summary">Loading...</p>
+
+<h2>Individual practices</h2>
+
+<p>Practices are ordered by mean percentile over the past six months. Each chart shows the results for the individual practice, plus the 90th, 50th and 10th percentiles across all practices in NHS England.</p>
 
 <div id="measures">
 <div id="charts" class="row">
@@ -47,23 +44,28 @@ Read <a href="{{ measure.url }}">more about this measure</a>.
 </div>
 </div>
 
-<p>Get the raw data: <a href="/api/1.0/measure_by_practice/?org={{ ccg.code }}&measure={{ measure.id }}&format=csv">measures for each practice</a> and <a href="
-/api/1.0/measure/?measure={{ measure.id }}&format=csv">global mean and percentiles</a>.</p>
-
 </div>
 
 {% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+<p>Over the past six months, {{ above_median }} out of {{ total }} ({{ proportion_above_median }}%) practices were prescribing above the national median ratio for this measure. {{ performance_description }} See <a href="/measure/{{ measure_id }}">how this CCG compares to other CCGs for this measure</a>.</p>
+
+{{ cost_savings }}
+
+</script>
+
 <script id="measure-panel" type="text/x-handlebars-template">
 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
     <div class="panel panel-info">
         <div class="panel-heading">
             <a href="{{ chart_title_url }}">{{ chart_title }}</a>
         </div>
-        <div class="panel-body" id="{{ chart_id }}">
+        <div class="panel-body" id="{{ chart_id }}" data-costsaving="{{ cost_saving }}">
             <div class="chart">
                 <div class="status"></div>
             </div>
         </div>
+        <div style="margin: 5px 10px 10px 10px; font-size: 12px; white-space: normal;">{{ chart_explanation }}</div>
     </div>
 </div>
 </script>
@@ -73,8 +75,9 @@ Read <a href="{{ measure.url }}">more about this measure</a>.
 var measureData = {
     'orgId': '{{ ccg.code }}',
     'orgName': '{{ ccg.name }}',
-    'orgType': 'CCG',
+    'orgType': 'practice',
     'measure': '{{ measure.id }}',
+    'measure_is_cost_based': '{{ measure.is_cost_based }}',
     'numerator': '{{ measure.numerator_short }}',
     'denominator': '{{ measure.denominator_short }}'
 };

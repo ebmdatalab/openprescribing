@@ -100,14 +100,6 @@ def practice(request, code):
     return render(request, 'practice.html', context)
 
 
-def practice_measures(request, code):
-    p = get_object_or_404(Practice, code=code)
-    context = {
-        'practice': p,
-        'page_id': code
-    }
-    return render(request, 'practice_measures.html', context)
-
 ##################################################
 # AREA TEAMS
 ##################################################
@@ -144,7 +136,6 @@ def all_ccgs(request):
     }
     return render(request, 'all_ccgs.html', context)
 
-
 def ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
@@ -156,7 +147,26 @@ def ccg(request, ccg_code):
     return render(request, 'ccg.html', context)
 
 
-def ccg_measure(request, ccg_code, measure):
+##################################################
+# MEASURES
+# These will eventually replace current dashboards.
+##################################################
+
+def all_measures(request):
+    measures = Measure.objects.all().order_by('name')
+    context = {
+        'measures': measures
+    }
+    return render(request, 'all_measures.html', context)
+
+def measure_for_all_ccgs(request, measure):
+    measure = get_object_or_404(Measure, id=measure)
+    context = {
+        'measure': measure
+    }
+    return render(request, 'measure_for_all_ccgs.html', context)
+
+def measure_for_practices_in_ccg(request, ccg_code, measure):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
     practices = Practice.objects.filter(ccg=requested_ccg)\
@@ -167,7 +177,26 @@ def ccg_measure(request, ccg_code, measure):
         'page_id': ccg_code,
         'measure': measure
     }
-    return render(request, 'ccg_measure.html', context)
+    return render(request, 'measure_for_practices_in_ccg.html', context)
+
+def measures_for_one_ccg(request, ccg_code):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
+    context = {
+        'ccg': requested_ccg,
+        'practices': practices,
+        'page_id': ccg_code
+    }
+    return render(request, 'measures_for_one_ccg.html', context)
+
+def measures_for_one_practice(request, code):
+    p = get_object_or_404(Practice, code=code)
+    context = {
+        'practice': p,
+        'page_id': code
+    }
+    return render(request, 'measures_for_one_practice.html', context)
+
 
 ##################################################
 # TEST HTTP CODES

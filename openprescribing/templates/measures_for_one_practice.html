@@ -12,7 +12,7 @@
 
 <h1>{{ practice }}</h1>
 
-<div class="row" id="summary">
+<div class="row" id="intro">
 
 <div class="col-md-6">
 <p class="lead">Address: {{ practice.address_pretty }}</p>
@@ -44,9 +44,7 @@
 
 <p>Blah blah blah brief intro to measures, explaining what these measures are, what the ordering means and why they matter. <a href='#'>Read more about measures</a>.</p>
 
-<p>Overall, {{ practice }} is <strong>prescribing in line with the median on the majority of measures</strong>. This practice has the most room to improve on <a href="#measure_rosuvastatin">XX</a> and <a href="#measure_rosuvastatin">XX</a>.</p>
-
-<p>The top savings opportunities for {{ practice }} are <a href="#measure_rosuvastatin">XX</a> and <a href="#measure_rosuvastatin">XX</a>. If this practice had prescribed in line with the national median for <a href="#measure_rosuvastatin">XX</a>, it would have saved £XX in the past 12 months. If this practice had prescribed in line with the national median for <a href="#measure_rosuvastatin">XX</a>, it would have saved £XX per year.</p>
+<p id="summary">Loading...</p>
 
 </div>
 
@@ -72,18 +70,25 @@
 </div>
 
 {% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+<p>Over the past six months, this practice was prescribing above the median on {{ above_median }} out of {{ total }} measures. {{ performance_description }}</p>
+{{ cost_savings }}
+</script>
+
 <script id="measure-panel" type="text/x-handlebars-template">
-<div id="measure_{{ chart_id }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chart_id }}" data-costsaving="{{ cost_saving }}">
+<div id="measure_{{ chart_id }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chart_id }}" data-costsaving="{{ cost_saving_50th }}">
     <div class="panel panel-info">
         <div class="panel-heading">
             <a href="{{ chart_title_url }}">{{ chart_title }}</a>
         </div>
         <div class="panel-body" class="row">
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="padding: 10px; white-space: normal;">
-                <p>{{ description }}</p>
-                <p>{{ potential_savings }}</p>
+                <p><strong>Description:</strong> {{ description }}</p>
+                <p><strong>Why it matters:</strong> TBA.</p>
+                <p>{{ cost_description }}</p>
+                <p><strong>Explore:</strong> prescribing of this measure by <a href="/ccg/99P/{{ chart_id }}">other practices in the same CCG</a>.</p>
             </div>
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 chart" id="{{ chart_id }}">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chart_id }}">
                 <div class="status"></div>
             </div>
         </div>
@@ -92,17 +97,6 @@
 </div>
 </script>
 {% endverbatim %}
-
-<!-- <div>
-
-<p>Get the raw data: <a href="/api/1.0/measure_by_practice/?org={{ ccg.code }}&measure={{ measure.id }}&format=csv">measures for each practice</a> and <a href="
-/api/1.0/measure/?measure={{ measure.id }}&format=csv">global mean and percentiles</a>.</p>
-
-<h3>Other prescribing</h3>
-<p>
-Explore <a href="{% url 'analyse' %}#org=practice&orgIds={{ practice.code }}">prescribing by {{ practice.name }}</a> versus other practices in {{ practice.ccg.name }}, for any drug type.
-</p>
-</div> -->
 
 <hr/>
 
