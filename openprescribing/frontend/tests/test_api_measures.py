@@ -80,6 +80,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['measures'][0]['name'], 'Rosuvastatin vs. Atorvastatin')
+        self.assertEqual(data['measures'][0]['description'][:10], 'Total quan')
+        self.assertEqual(data['measures'][0]['why_it_matters'][:10], 'Statins ar')
         self.assertEqual(len(data['measures'][0]['data']), 1)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 85500)

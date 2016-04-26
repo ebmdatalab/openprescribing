@@ -111,6 +111,7 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print 'Updating measure:', m
         v['description'] = ' '.join(v['description'])
+        v['why_it_matters'] = ' '.join(v['why_it_matters'])
         v['num'] = ' '.join(v['num'])
         v['denom'] = ' '.join(v['denom'])
         v['num_sql'] = ' '.join(v['num_sql'])
@@ -120,6 +121,7 @@ class Command(BaseCommand):
             measure.name = v['name']
             measure.title = v['title']
             measure.description = v['description']
+            measure.why_it_matters = v['why_it_matters']
             measure.numerator_description = v['num']
             measure.denominator_description = v['denom']
             measure.numerator_short = v['numerator_short']
@@ -134,6 +136,7 @@ class Command(BaseCommand):
                 name=v['name'],
                 title=v['title'],
                 description=v['description'],
+                why_it_matters=v['why_it_matters'],
                 numerator_description=v['num'],
                 denominator_description=v['denom'],
                 numerator_short=v['numerator_short'],

@@ -3,6 +3,11 @@
         "name": "Rosuvastatin vs. Atorvastatin",
         "title": "Rosuvastatin vs. Atorvastatin",
         "description": [
+            "Total quantity of Rosuvastatin (0212000AA), ",
+            "as a proportion of total quantity of Rosuvastatin ",
+            "and Atorvastatin (0212000AA + 0212000B0)."
+        ],
+        "why_it_matters": [
             "Statins are the most commonly prescribed class of drug in the UK. ",
             "Atorvastatin and Rosuvastatin are members of this class, and are ",
             "both high-potency statins. There will always be reasons why ",
@@ -45,6 +50,11 @@
         "name": "Cerazette vs. Desogestrel",
         "title": " Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all desogestrel (BNF code 0703021Q0)",
         "description": [
+            "Total quantity of Cerazette (0703021Q0BB), ",
+            "as a proportion of total quantity of desogestrel ",
+            "0703021Q0)."
+        ],
+        "why_it_matters": [
             "This is the NHS Business Service Authority's top cost-saver from ",
             " generic switching. Cerazette and desogestrel are both exactly ",
             "the same drug, the same molecule, but Cerazette is an expensive ",
@@ -80,8 +90,12 @@
     },
     "pioglitazone": {
         "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs",
-        "title": "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0)</a> compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2).",
+        "title": "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0) compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2).",
         "description": [
+            "Number of prescription items for Pioglitazone Hydrochloride (0601023B0) ",
+            "as a percentage of total prescription items for all diabetes (060102)."
+        ],
+        "why_it_matters": [
             "Rosiglitazone is an antidiabetic drug that turned out to ",
             "increase the risk of heart problems, and was effectively ",
             "withdrawn from the market. There is concern that the ",
@@ -122,6 +136,10 @@
         "name": "Celecoxib vs. all NSAIDs",
         "title": "Prescribing of Celecoxib (BNF code 0801050AY, 1001010AH) compared with prescribing of all Non-Steroidal Anti-Inflammatory Drugs (BNF section 1.1.1)",
         "description": [
+            "Number of prescription items for Celecoxib (0801050AY, 1001010AH) ",
+            "as a percentage of total prescription items for all NSAIDs (100101)."
+        ],
+        "why_it_matters": [
             "Coxib drugs are an interesting illustration of a common ",
             "phenomenon in medicine: the need to make a trade off ",
             "between risk and benefit, in different patients. ",

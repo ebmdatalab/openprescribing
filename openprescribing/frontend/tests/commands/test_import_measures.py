@@ -76,6 +76,8 @@ class CommandsTestCase(TestCase):
     def test_import_measurevalue_by_practice(self):
         m = Measure.objects.get(id='rosuvastatin')
         self.assertEqual(m.name, 'Rosuvastatin vs. Atorvastatin')
+        self.assertEqual(m.description[:10], 'Total quan')
+        self.assertEqual(m.why_it_matters[:10], 'Statins ar')
         month = '2015-09-01'
 
         p = Practice.objects.get(code='C84001')

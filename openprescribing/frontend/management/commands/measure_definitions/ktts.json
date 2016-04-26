@@ -117,6 +117,9 @@
             "total number of prescription items for 'selected' antidepressants ",
             "(subset of BNF 4.3)."
         ],
+        "why_it_matters": [
+            "TBA"
+        ],
         "title": "KTT8 (Dosulepin): First choice antidepressant use in adults with depression or anxiety disorder",
         "num": ["Number of prescription items for dosulepin (0403010J0)"],
         "denom": [
@@ -190,6 +193,12 @@
         "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)",
         "title": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items): Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)",
         "description": [
+            "Number of prescription items for co-amoxiclav (0501013K0), ",
+            "cephalosporins (0501021) and quinolones (050112), as a percentage ",
+            "of total prescription items for BNF 5.1.1; 5.1.2.1; ",
+            "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; and 5.1.13."
+        ],
+        "why_it_matters": [
             "(TBC) Cephalosporins are broad spectrum antibiotics which can ",
             "be used when others have failed. It is important that ",
             "they are used sparingly, to avoid drug-resistant bacteria ",
@@ -244,6 +253,7 @@
             "nitrofurantoin 50mg tablets and capsules, ",
             "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
         ],
+        "why_it_matters": [],
         "num": [
             "Total average daily quantity (ADQ) usage for ",
             "trimethoprim 200mg tablets, nitrofurantoin 50mg ",
@@ -302,6 +312,7 @@
             "Number of average daily quantities (ADQs) ",
             "for minocycline per 1000 patients."
         ],
+        "why_it_matters": [],
         "num": [
             "Total average daily quantity (ADQ) usage ",
             "for Minocycline Hydrochloride (0501030P0)"
@@ -338,6 +349,7 @@
             "sulfonylureas as a percentage of the total number ",
             "of prescription items for all Antidiabetic drugs (BNF 6.1.2)."
         ],
+        "why_it_matters": [],
         "num": [
             "Number of prescription items for BNF section ",
             "6.1.2.1 and BNF section 6.1.2.2"
@@ -378,6 +390,7 @@
             "of prescription items for all long-acting and ",
             "intermediate acting insulins excluding biphasic insulins."
         ],
+        "why_it_matters": [],
         "num": [
             "Number of prescription items for long-acting insulin ",
             "analogues (sub-set of BNF section 6.1.1.2)"
@@ -431,6 +444,7 @@
             "as a percentage of the total number of prescription items ",
             "for all NSAIDs."
         ],
+        "why_it_matters": [],
         "num": [
             "Number of prescription items for ibuprofen and naproxen ",
             "(sub-set of BNF section 10.1.1)"
