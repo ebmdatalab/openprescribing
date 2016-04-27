@@ -10,6 +10,7 @@ from dateutil.parser import *
 from dateutil.relativedelta import *
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.db.models import Sum, Q
 from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice, PCT
 from scipy.stats import rankdata
@@ -157,10 +158,9 @@ class Command(BaseCommand):
                                             Q(open_date__lt=month)) \
                                     .filter(Q(close_date__isnull=True) |
                                             Q(close_date__gt=month))
-        for practice in practices:
-            self.create_measurevalue(measure, practice, month,
-                                     measure_config['num_sql'],
-                                     measure_config['denom_sql'])
+        self.create_measurevalues(measure, practices, month,
+                                 measure_config['num_sql'],
+                                 measure_config['denom_sql'])
 
     def create_ccg_measurevalues(self, measure, month):
         if self.IS_VERBOSE:
@@ -170,89 +170,92 @@ class Command(BaseCommand):
                     Q(open_date__lt=month)) \
             .filter(Q(close_date__isnull=True) |
                     Q(close_date__gt=month))
-        for pct in pcts:
-            mvs = MeasureValue.objects.filter(
-                measure=measure,
-                pct=pct,
-                practice__isnull=False,
-                month=month
-            )
-            try:
-                mv_pct = MeasureValue.objects.get(
+        with transaction.atomic():
+            for pct in pcts:
+                mvs = MeasureValue.objects.filter(
                     measure=measure,
                     pct=pct,
-                    practice=None,
+                    practice__isnull=False,
                     month=month
                 )
-            except ObjectDoesNotExist:
-                mv_pct = MeasureValue.objects.create(
-                    measure=measure,
-                    pct=pct,
-                    practice=None,
-                    month=month
-                )
-            mv_pct.numerator = mvs.aggregate(Sum('numerator')).values()[0]
-            mv_pct.denominator = mvs.aggregate(Sum('denominator')).values()[0]
-            mv_pct.num_items = mvs.aggregate(Sum('num_items')).values()[0]
-            mv_pct.denom_items = mvs.aggregate(Sum('denom_items')).values()[0]
-            mv_pct.num_cost = mvs.aggregate(Sum('num_cost')).values()[0]
-            mv_pct.denom_cost = mvs.aggregate(Sum('denom_cost')).values()[0]
-            mv_pct.num_quantity = mvs.aggregate(Sum('num_quantity')).values()[0]
-            mv_pct.denom_quantity = mvs.aggregate(Sum('denom_quantity')).values()[0]
-            mv_pct.calc_value = self.get_calc_value(mv_pct.numerator, mv_pct.denominator)
-            mv_pct.save()
+                try:
+                    mv_pct = MeasureValue.objects.get(
+                        measure=measure,
+                        pct=pct,
+                        practice__isnull=True,
+                        month=month
+                    )
+                except ObjectDoesNotExist:
+                    mv_pct = MeasureValue.objects.create(
+                        measure=measure,
+                        pct=pct,
+                        practice__isnull=True,
+                        month=month
+                    )
+                mv_pct.numerator = mvs.aggregate(Sum('numerator')).values()[0]
+                mv_pct.denominator = mvs.aggregate(Sum('denominator')).values()[0]
+                mv_pct.num_items = mvs.aggregate(Sum('num_items')).values()[0]
+                mv_pct.denom_items = mvs.aggregate(Sum('denom_items')).values()[0]
+                mv_pct.num_cost = mvs.aggregate(Sum('num_cost')).values()[0]
+                mv_pct.denom_cost = mvs.aggregate(Sum('denom_cost')).values()[0]
+                mv_pct.num_quantity = mvs.aggregate(Sum('num_quantity')).values()[0]
+                mv_pct.denom_quantity = mvs.aggregate(Sum('denom_quantity')).values()[0]
+                mv_pct.calc_value = self.get_calc_value(mv_pct.numerator, mv_pct.denominator)
+                mv_pct.save()
 
-    def create_measurevalue(self, measure, p, month, num_sql, denom_sql):
+    def create_measurevalues(self, measure, practices, month, num_sql, denom_sql):
         '''
         Given a practice and the definition of a measure, calculate
         the measure's values for a particular month.
         '''
-        try:
-            mv = MeasureValue.objects.get(
-                measure=measure,
-                practice=p,
-                month=month
-            )
-        except ObjectDoesNotExist:
-            mv = MeasureValue.objects.create(
-                measure=measure,
-                practice=p,
-                month=month
-            )
-        # CCG calculations match *current* practice membership.
-        mv.pct = p.ccg
-        numerator = utils.execute_query(num_sql, [[p.code, month]])
-        if numerator:
-            d = numerator[0]
-            if d['numerator']:
-                mv.numerator = float(d['numerator'])
-            else:
-                mv.numerator = 0
-            if 'items' in d and d['items']:
-                mv.num_items = float(d['items'])
-            if 'cost' in d and d['cost']:
-                mv.num_cost = float(d['cost'])
-            if 'quantity' in d and d['quantity']:
-                mv.num_quantity = float(d['quantity'])
-        else:
-            mv.numerator = None
-        denominator = utils.execute_query(denom_sql, [[p.code, month]])
-        if denominator:
-            d = denominator[0]
-            if d['denominator']:
-                mv.denominator = float(d['denominator'])
-            else:
-                mv.denominator = 0
-            if 'items' in d and d['items']:
-                mv.denom_items = float(d['items'])
-            if 'cost' in d and d['cost']:
-                mv.denom_cost = float(d['cost'])
-            if 'quantity' in d and d['quantity']:
-                mv.denom_quantity = float(d['quantity'])
-        else:
-            mv.denominator = None
-        mv.calc_value = self.get_calc_value(mv.numerator, mv.denominator)
-        mv.save()
+        with transaction.atomic():
+            for p in practices:
+                try:
+                    mv = MeasureValue.objects.get(
+                        measure=measure,
+                        practice=p,
+                        month=month
+                    )
+                except ObjectDoesNotExist:
+                    mv = MeasureValue.objects.create(
+                        measure=measure,
+                        practice=p,
+                        month=month
+                    )
+                # CCG calculations match *current* practice membership.
+                mv.pct = p.ccg
+                numerator = utils.execute_query(num_sql, [[p.code, month]])
+                if numerator:
+                    d = numerator[0]
+                    if d['numerator']:
+                        mv.numerator = float(d['numerator'])
+                    else:
+                        mv.numerator = 0
+                    if 'items' in d and d['items']:
+                        mv.num_items = float(d['items'])
+                    if 'cost' in d and d['cost']:
+                        mv.num_cost = float(d['cost'])
+                    if 'quantity' in d and d['quantity']:
+                        mv.num_quantity = float(d['quantity'])
+                else:
+                    mv.numerator = None
+                denominator = utils.execute_query(denom_sql, [[p.code, month]])
+                if denominator:
+                    d = denominator[0]
+                    if d['denominator']:
+                        mv.denominator = float(d['denominator'])
+                    else:
+                        mv.denominator = 0
+                    if 'items' in d and d['items']:
+                        mv.denom_items = float(d['items'])
+                    if 'cost' in d and d['cost']:
+                        mv.denom_cost = float(d['cost'])
+                    if 'quantity' in d and d['quantity']:
+                        mv.denom_quantity = float(d['quantity'])
+                else:
+                    mv.denominator = None
+                mv.calc_value = self.get_calc_value(mv.numerator, mv.denominator)
+                mv.save()
 
     def set_percentile_and_savings(self, row, measure, month, mg, org_type):
         '''
