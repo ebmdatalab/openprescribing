@@ -15,15 +15,13 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-    def test_import_practices(self):
+    def test_import_practices_from_epraccur(self):
 
         args = []
         epraccur = 'frontend/tests/fixtures/commands/'
         epraccur += 'epraccur_sample.csv'
-        hscic = 'frontend/tests/fixtures/commands/hscic_practices.csv'
         opts = {
-            'epraccur': epraccur,
-            'hscic_address': hscic
+            'epraccur': epraccur
         }
         call_command('import_practices', *args, **opts)
 
@@ -46,7 +44,15 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.ccg.code, '00K')
         self.assertEqual(p.get_setting_display(), 'GP Practice')
 
-        # Test import from HSCIC
+    def test_import_practices_from_hscic(self):
+
+        args = []
+        hscic = 'frontend/tests/fixtures/commands/hscic_practices.csv'
+        opts = {
+            'hscic_address': hscic
+        }
+        call_command('import_practices', *args, **opts)
+
         p = Practice.objects.get(code='A81001')
         self.assertEqual(p.name, 'THE DENSHAM SURGERY')
         addr = "THE HEALTH CENTRE, LAWSON STREET, "

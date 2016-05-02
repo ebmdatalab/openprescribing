@@ -20,13 +20,14 @@ class Command(BaseCommand):
 
         if options['epraccur']:
             self.import_practices_from_epraccur(options['epraccur'])
-        practice_files = []
-        if options['hscic_address']:
-            practice_files = [options['hscic_address']]
         else:
-            practice_files = glob.glob('./data/raw_data/T*ADDR*')
-        for f in practice_files:
-            self.import_practices_from_hscic(f)
+            practice_files = []
+            if options['hscic_address']:
+                practice_files = [options['hscic_address']]
+            else:
+                practice_files = glob.glob('./data/raw_data/T*ADDR*')
+            for f in practice_files:
+                self.import_practices_from_hscic(f)
 
     def parse_date(self, d):
         return '-'.join([d[:4], d[4:6], d[6:]])
@@ -64,6 +65,8 @@ class Command(BaseCommand):
             practice.status_code = row[12]
 
             try:
+                # Not all practices have a CCG - the ones that don't are mostly
+                # in Jersey, Isle of Man, etc.
                 pco_code = row[14].strip()
                 ccg = PCT.objects.get(code=pco_code)
                 practice.ccg = ccg

@@ -108,14 +108,17 @@ Similarly, you can build the compiled CSS from the source LESS with:
 Updating the data
 -----------------
 
-You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site.
+You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site. Also, get the latest versions of `eccg.csv` and `epraccur.csv` from the [HSCIC site](http://systems.hscic.gov.uk/data/ods/datadownloads/index).
 
-You may want to start by updating organisational data, with the latest versions of the `eccg.csv` and `epraccur.csv` files:
+Note that the ordering of the following steps is important.
 
-    python manage.py import_org_names --ccg data/org_codes/eccg.csv
-    python manage.py import_hscic_practices --practice_file data/raw_data/[PRACTICE FILE].CSV -v 2 --epraccur data/org_codes/epraccur.csv
+Start by updating organisational data. The first and third steps only need to be run if `epraccur.csv` and `eccg.csv` have changed:
 
-If new practices were added, you may want to re-run the practice geocoder, with the latest version of the `gridall.csv` file:
+    python manage.py import_org_names --ccg data/org_codes/eccg.csv -v 2
+    python manage.py import_practices --hscic_address data/raw_data/[ADDR FILE].CSV -v 2
+    python manage.py import_practices --epraccur data/org_codes/epraccur.csv -v 2
+
+If new practices were added at any point, re-run the practice geocoder, with the latest version of the `gridall.csv` file, which you can also obtain from the HSCIC site:
 
     python manage.py geocode_practices -v 2 --filename data/gridall.csv
 
@@ -123,18 +126,22 @@ Import the chemicals:
 
     python manage.py import_hscic_chemicals --chem_file data/raw_data/[CHEM FILE].CSV -v 2
 
-Then convert and import the prescribing data:
+Now you can convert and import the prescribing data:
 
     python manage.py convert_hscic_prescribing --filename data/raw_data/[PDPI FILE].CSV -v 2
     python manage.py import_hscic_prescribing --filename data/raw_data/[PDPI FORMATTED FILE].CSV -v 2
 
-If necessary, update list sizes for the latest months. You can get the raw list size data from the NHS BSA Information Portal:
+Then update list sizes for the latest months. You can get the raw list size data from deep inside the NHS BSA Information Portal:
 
     python manage.py import_list_sizes --filename data/list_sizes/[MONTH FILE].CSV -v 2
 
-(If you want to add list size data for only part of a quarter, then rename the filename to cover only those months.)
+(If you want to add list size data for only part of a quarter - which will be the case if the HSCIC file is not for the last month of a quarter - then rename the filename to cover only those months.)
 
-Then refresh the materialized views (which will take some time, and slow the database while it runs - if doing this remotely, it's best to run this inside a screen session):
+Then update measures. You can get the raw list size data from the [BSA Information Portal](https://apps.nhsbsa.nhs.uk/infosystems/welcome) (Report > Common Information Reports > Organisation Data > Practice List Size):
+
+    python manage.py import_measures --start_date YYYY-MM-DD --end_date YYYY-MM-DD -v 2
+
+Finally, refresh the materialized views (which will take some time, and slow the database while it runs - if doing this remotely, it's best to run this inside a screen session):
 
     python manage.py refresh_matviews -v 2
 
@@ -142,7 +149,7 @@ Now purge the CloudFlare cache and you should see the new data appear.
 
 You may now want to run a snapshot on the DigitalOcean server, for use in backups if ever needed. This will take down the server for a few hours, so is best done in the middle of the night.
 
-And finally, update the smoke tests in `smoke.py` - you'll need to update `NUM_RESULTS`, plus add expected values for the latest month. You can use `smoke.sh` to calculate the values you expect to see, from the raw data files.
+And finally, update the smoke tests in `smoke.py` - you'll need to update `NUM_RESULTS`, plus add expected values for the latest month.
 
 Then re-run the smoke tests against the live data to make sure everything looks as you expect:
 
