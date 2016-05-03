@@ -189,7 +189,7 @@ class Command(BaseCommand):
                     mv_pct = MeasureValue.objects.create(
                         measure=measure,
                         pct=pct,
-                        practice__isnull=True,
+                        practice=None,
                         month=month
                     )
                 mv_pct.numerator = mvs.aggregate(Sum('numerator')).values()[0]
@@ -209,7 +209,9 @@ class Command(BaseCommand):
         the measure's values for a particular month.
         '''
         with transaction.atomic():
-            for p in practices:
+            for i, p in enumerate(practices):
+                if self.IS_VERBOSE and (i % 1000 == 0):
+                    print 'creating measurevalue for practice %s of %s' % (i, len(practices))
                 try:
                     mv = MeasureValue.objects.get(
                         measure=measure,
