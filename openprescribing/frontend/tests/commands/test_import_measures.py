@@ -11,7 +11,8 @@ def setUpModule():
         SHA.objects.create(code='Q51')
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG')
+        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+            open_date='2013-04-01', close_date='2015-01-01')
         Chemical.objects.create(bnf_code='0212000AA',
                                     chem_name='Rosuvastatin Calcium')
         Chemical.objects.create(bnf_code='0212000B0',

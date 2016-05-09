@@ -165,11 +165,7 @@ class Command(BaseCommand):
     def create_ccg_measurevalues(self, measure, month):
         if self.IS_VERBOSE:
             print 'updating', measure.title, 'for CCGs in', month
-        pcts = PCT.objects.filter(org_type='CCG') \
-            .filter(Q(open_date__isnull=True) |
-                    Q(open_date__lt=month)) \
-            .filter(Q(close_date__isnull=True) |
-                    Q(close_date__gt=month))
+        pcts = PCT.objects.filter(org_type='CCG')
         with transaction.atomic():
             for pct in pcts:
                 mvs = MeasureValue.objects.filter(
