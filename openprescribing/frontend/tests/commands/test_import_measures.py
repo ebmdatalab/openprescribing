@@ -13,10 +13,8 @@ def setUpModule():
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
         lincs_east = PCT.objects.create(code='03T', org_type='CCG',
             open_date='2013-04-01', close_date='2015-01-01')
-        Chemical.objects.create(bnf_code='0212000AA',
-                                    chem_name='Rosuvastatin Calcium')
-        Chemical.objects.create(bnf_code='0212000B0',
-                                    chem_name='Atorvastatin')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                    chem_name='Desogestrel')
         Practice.objects.create(code='C84001', ccg=bassetlaw,
                                 name='LARWOOD SURGERY', setting=4)
         Practice.objects.create(code='C84024', ccg=bassetlaw,
@@ -59,7 +57,7 @@ def setUpModule():
         call_command('import_hscic_prescribing', *args, **new_opts)
 
         month = '2015-09-01'
-        measure_id = 'rosuvastatin'
+        measure_id = 'cerazette'
         args = []
         opts = {
             'month': month,
@@ -75,10 +73,10 @@ def tearDownModule():
 class CommandsTestCase(TestCase):
 
     def test_import_measurevalue_by_practice(self):
-        m = Measure.objects.get(id='rosuvastatin')
-        self.assertEqual(m.name, 'Rosuvastatin vs. Atorvastatin')
+        m = Measure.objects.get(id='cerazette')
+        self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
         self.assertEqual(m.description[:10], 'Total quan')
-        self.assertEqual(m.why_it_matters[:10], 'Statins ar')
+        self.assertEqual(m.why_it_matters[:10], 'This is th')
         month = '2015-09-01'
 
         p = Practice.objects.get(code='C84001')
@@ -146,7 +144,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual("%.2f" % mv.cost_savings['90'], '-10746.00')
 
     def test_import_measurevalue_by_ccg(self):
-        m = Measure.objects.get(id='rosuvastatin')
+        m = Measure.objects.get(id='cerazette')
         month = '2015-09-01'
 
         ccg = PCT.objects.get(code='02Q')
@@ -176,8 +174,8 @@ class CommandsTestCase(TestCase):
         self.assertEqual(mv.percentile, 50)
 
     def test_import_measureglobal(self):
-        m = Measure.objects.get(id='rosuvastatin')
-        self.assertEqual(m.name, 'Rosuvastatin vs. Atorvastatin')
+        m = Measure.objects.get(id='cerazette')
+        self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
         month = '2015-09-01'
 
         mg = MeasureGlobal.objects.get(measure=m, month=month)

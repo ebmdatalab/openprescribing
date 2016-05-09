@@ -13,10 +13,8 @@ def setUpModule():
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
         lincs_east = PCT.objects.create(code='03T', org_type='CCG')
-        Chemical.objects.create(bnf_code='0212000AA',
-                                    chem_name='Rosuvastatin Calcium')
-        Chemical.objects.create(bnf_code='0212000B0',
-                                    chem_name='Atorvastatin')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                    chem_name='Desogestrel')
         Practice.objects.create(code='C84001', ccg=bassetlaw,
                                 name='LARWOOD SURGERY', setting=4)
         Practice.objects.create(code='C84024', ccg=bassetlaw,
@@ -59,7 +57,7 @@ def setUpModule():
         management.call_command('import_hscic_prescribing', *args, **new_opts)
 
         month = '2015-09-01'
-        measure_id = 'rosuvastatin'
+        measure_id = 'cerazette'
         args = []
         opts = {
             'month': month,
@@ -75,13 +73,13 @@ class TestAPIMeasureViews(TestCase):
     api_prefix = '/api/1.0'
 
     def test_api_measure_global(self):
-        url = '/api/1.0/measure/?measure=rosuvastatin&format=json'
+        url = '/api/1.0/measure/?measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['measures'][0]['name'], 'Rosuvastatin vs. Atorvastatin')
+        self.assertEqual(data['measures'][0]['name'], 'Cerazette vs. Desogestrel')
         self.assertEqual(data['measures'][0]['description'][:10], 'Total quan')
-        self.assertEqual(data['measures'][0]['why_it_matters'][:10], 'Statins ar')
+        self.assertEqual(data['measures'][0]['why_it_matters'][:10], 'This is th')
         self.assertEqual(len(data['measures'][0]['data']), 1)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 85500)
@@ -113,7 +111,7 @@ class TestAPIMeasureViews(TestCase):
 
     def test_api_measure_by_all_ccgs(self):
         url = '/api/1.0/measure_by_ccg/'
-        url += '?measure=rosuvastatin&format=json'
+        url += '?measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -127,7 +125,7 @@ class TestAPIMeasureViews(TestCase):
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'
-        url += '?org=02Q&measure=rosuvastatin&format=json'
+        url += '?org=02Q&measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -156,7 +154,7 @@ class TestAPIMeasureViews(TestCase):
 
     def test_api_measure_by_practice(self):
         url = '/api/1.0/measure_by_practice/'
-        url += '?org=C84001&measure=rosuvastatin&format=json'
+        url += '?org=C84001&measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -170,9 +168,9 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['50'], '-264.71')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '-7218.00')
 
-        # Practice with only Rosuva prescribing.
+        # Practice with only Cerazette prescribing.
         url = '/api/1.0/measure_by_practice/'
-        url += '?org=A85017&measure=rosuvastatin&format=json'
+        url += '?org=A85017&measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -183,9 +181,9 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['calc_value'], 1)
         self.assertEqual("%.2f" % d['cost_savings']['10'], '862.33')
 
-        # Practice with only Atorva prescribing.
+        # Practice with only Deso prescribing.
         url = '/api/1.0/measure_by_practice/'
-        url += '?org=A86030&measure=rosuvastatin&format=json'
+        url += '?org=A86030&measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -199,7 +197,7 @@ class TestAPIMeasureViews(TestCase):
 
         # Practice with no prescribing of either.
         url = '/api/1.0/measure_by_practice/'
-        url += '?org=B82010&measure=rosuvastatin&format=json'
+        url += '?org=B82010&measure=cerazette&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
