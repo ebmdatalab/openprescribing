@@ -44,6 +44,9 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.ccg.code, '00K')
         self.assertEqual(p.get_setting_display(), 'GP Practice')
 
+        p = Practice.objects.get(code='Y01063')
+        self.assertEqual(p.ccg, None)
+
     def test_import_practices_from_hscic(self):
 
         args = []

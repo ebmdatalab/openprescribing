@@ -67,11 +67,12 @@ class Command(BaseCommand):
             try:
                 # Not all practices have a CCG - the ones that don't are mostly
                 # in Jersey, Isle of Man, etc.
-                pco_code = row[14].strip()
+                pco_code = row[23].strip()
                 ccg = PCT.objects.get(code=pco_code)
                 practice.ccg = ccg
             except PCT.DoesNotExist:
-                print 'ccg not found with code', pco_code
+                if self.IS_VERBOSE:
+                    print 'ccg not found with code', pco_code
 
             if row[15]:
                 practice.join_provider_date = self.parse_date(row[15])
