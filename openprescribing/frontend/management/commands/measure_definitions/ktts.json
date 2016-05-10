@@ -2,15 +2,21 @@
     "ktt3_lipid_modifying_drugs": {
         "name": "Lipid-modifying drugs (KTT3)",
         "description": [
-            "Number of prescription items for Bile acid sequestrants, ",
-            "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, ",
-            "and 'Other lipid modifying drugs' (BNF 2.12 sub-set) ",
+            "Number of prescription items for Bile acid sequestrants,",
+            "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds,",
+            "and 'Other lipid modifying drugs' (BNF 2.12 sub-set)",
             "as a percentage of total prescription items for BNF 2.12."
         ],
         "why_it_matters": [
             "TBA"
         ],
-        "title": "KTT3 (Lipid-modifying drugs): Number of prescription items for Bile acid sequestrants, Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds, and ‘Other lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage of total prescription items for BNF 2.12",
+        "title": [
+            "KTT3 (Lipid-modifying drugs): Number of prescription",
+            "items for Bile acid sequestrants, Fibrates, Nicotinic",
+            "acid, and Omega-3 fatty acid compounds, and ‘Other",
+            "lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage",
+            "of total prescription items for BNF 2.12"
+        ],
         "num": [
             "Number of prescription items for 0212000A0, 0212000D0, ",
             "021200010, 0212000AD, 0212000K0, 0212000F0, 0212000P0, ",
@@ -56,16 +62,18 @@
     "ktt8_antidepressant_first_choice": {
         "name": "Antidepressants, % items first choice (KTT8)",
         "description": [
-            "Number of prescription items for Selective Serotonin ",
-            "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
-            "prescribed by approved name as a percentage of the ",
-            "total number of prescription items for 'selected' ",
+            "Number of prescription items for Selective Serotonin",
+            "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3)",
+            "prescribed by approved name as a percentage of the",
+            "total number of prescription items for 'selected'",
             "antidepressants (sub-set of BNF 4.3)."
         ],
         "why_it_matters": [
             "TBA"
         ],
-        "title": "KTT8 (Antidepressants: First choice % items)",
+        "title": [
+            "KTT8 (Antidepressants: First choice % items)"
+        ],
         "num": [
             "Number of prescription items for Selective Serotonin ",
             "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
@@ -113,14 +121,17 @@
     "ktt8_dosulepin": {
         "name": "Dosulepin (KTT8)",
         "description": [
-            "Number of prescription items for dosulepin as percentage of the ",
-            "total number of prescription items for 'selected' antidepressants ",
+            "Number of prescription items for dosulepin as a percentage of the",
+            "total number of prescription items for 'selected' antidepressants",
             "(subset of BNF 4.3)."
         ],
         "why_it_matters": [
             "TBA"
         ],
-        "title": "KTT8 (Dosulepin): First choice antidepressant use in adults with depression or anxiety disorder",
+        "title": [
+            "KTT8 (Dosulepin): First choice antidepressant use in",
+            "adults with depression or anxiety disorder"
+        ],
         "num": ["Number of prescription items for dosulepin (0403010J0)"],
         "denom": [
             "Number of prescription items for selected ",
@@ -158,9 +169,11 @@
     },
     "ktt9_antibiotics": {
         "name": "Broad-spectrum antibiotics (KTT9)",
-        "title": "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)",
+        "title": [
+            "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)"
+        ],
         "description": [
-            "Number of prescription items for antibacterial drugs (BNF 5.1) ",
+            "Number of prescription items for antibacterial drugs (BNF 5.1)",
             "per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
         ],
         "why_it_matters": [
@@ -191,11 +204,17 @@
     },
     "ktt9_cephalosporins": {
         "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)",
-        "title": "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items): Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the total number of prescription items for selected antibacterial drugs (sub-set of BNF 5.1)",
+        "title": [
+            "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items):",
+            "Number of prescription items for co-amoxiclav,",
+            "cephalosporins and quinolones as a percentage of the",
+            "total number of prescription items for selected",
+            "antibacterial drugs (sub-set of BNF 5.1)"
+        ],
         "description": [
-            "Number of prescription items for co-amoxiclav (0501013K0), ",
-            "cephalosporins (0501021) and quinolones (050112), as a percentage ",
-            "of total prescription items for BNF 5.1.1; 5.1.2.1; ",
+            "Number of prescription items for co-amoxiclav (0501013K0),",
+            "cephalosporins (0501021) and quinolones (050112), as a percentage",
+            "of total prescription items for BNF 5.1.1; 5.1.2.1;",
             "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; and 5.1.13."
         ],
         "why_it_matters": [
@@ -246,14 +265,18 @@
     },
     "ktt10_uti_antibiotics": {
         "name": "Antibiotics for uncomplicated UTIs (KTT10)",
-        "title": "KTT10 (TBA)",
+        "title": [
+            "KTT10 (TBA)"
+        ],
         "description": [
-            "Number of average daily quantities (ADQs) per ",
-            "item for trimethoprim 200mg tablets, ",
-            "nitrofurantoin 50mg tablets and capsules, ",
+            "Number of average daily quantities (ADQs) per",
+            "item for trimethoprim 200mg tablets,",
+            "nitrofurantoin 50mg tablets and capsules,",
             "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
         ],
-        "why_it_matters": [],
+        "why_it_matters": [
+            "TBA"
+        ],
         "num": [
             "Total average daily quantity (ADQ) usage for ",
             "trimethoprim 200mg tablets, nitrofurantoin 50mg ",
@@ -307,12 +330,16 @@
     },
     "ktt11_minocycline": {
         "name": "Minocycline ADQ/1000 patients (KTT11)",
-        "title": "Minocycline ADQ/1000 patients (KTT11)",
+        "title": [
+            "Minocycline ADQ/1000 patients (KTT11)"
+        ],
         "description": [
-            "Number of average daily quantities (ADQs) ",
+            "Number of average daily quantities (ADQs)",
             "for minocycline per 1000 patients."
         ],
-        "why_it_matters": [],
+        "why_it_matters": [
+            "TBA"
+        ],
         "num": [
             "Total average daily quantity (ADQ) usage ",
             "for Minocycline Hydrochloride (0501030P0)"
@@ -343,13 +370,17 @@
     },
     "ktt12_diabetes_blood_glucose": {
         "name": "Blood glucose lowering drugs (KTT12)",
-        "title": "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs",
+        "title": [
+            "KTT12: Type 2 diabetes mellitus - blood glucose lowering drugs"
+        ],
         "description": [
-            "Number of prescription items for metformin and ",
-            "sulfonylureas as a percentage of the total number ",
+            "Number of prescription items for metformin and",
+            "sulfonylureas as a percentage of the total number",
             "of prescription items for all Antidiabetic drugs (BNF 6.1.2)."
         ],
-        "why_it_matters": [],
+        "why_it_matters": [
+            "TBA"
+         ],
         "num": [
             "Number of prescription items for BNF section ",
             "6.1.2.1 and BNF section 6.1.2.2"
@@ -383,14 +414,18 @@
     },
     "ktt12_diabetes_insulin": {
         "name": "Long-acting insulin analogues (KTT12)",
-        "title": "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues",
+        "title": [
+            "KTT12: Type 2 diabetes mellitus - Long-acting insulin analogues"
+        ],
         "description": [
-            "Number of prescription items for long-acting human ",
-            "analogue insulins as a percentage of the total number ",
-            "of prescription items for all long-acting and ",
+            "Number of prescription items for long-acting human",
+            "analogue insulins as a percentage of the total number",
+            "of prescription items for all long-acting and",
             "intermediate acting insulins excluding biphasic insulins."
         ],
-        "why_it_matters": [],
+        "why_it_matters": [
+            "TBA"
+        ],
         "num": [
             "Number of prescription items for long-acting insulin ",
             "analogues (sub-set of BNF section 6.1.1.2)"
@@ -438,13 +473,17 @@
     },
     "ktt13_nsaids_ibuprofen": {
         "name": "NSAIDs - Ibuprofen & naproxen (KTT13)",
-        "title": "KTT13: NSAIDs - Ibuprofen & naproxen % items",
+        "title": [
+            "KTT13: NSAIDs - Ibuprofen & naproxen % items"
+        ],
         "description": [
-            "Number of prescription items for ibuprofen and naproxen ",
-            "as a percentage of the total number of prescription items ",
+            "Number of prescription items for ibuprofen and naproxen",
+            "as a percentage of the total number of prescription items",
             "for all NSAIDs."
         ],
-        "why_it_matters": [],
+        "why_it_matters": [
+            "TBA"
+        ],
         "num": [
             "Number of prescription items for ibuprofen and naproxen ",
             "(sub-set of BNF section 10.1.1)"

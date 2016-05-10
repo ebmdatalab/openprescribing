@@ -111,6 +111,7 @@ class Command(BaseCommand):
     def create_or_update_measure(self, m, v):
         if self.IS_VERBOSE:
             print 'Updating measure:', m
+        v['title'] = ' '.join(v['title'])
         v['description'] = ' '.join(v['description'])
         v['why_it_matters'] = ' '.join(v['why_it_matters'])
         v['num'] = ' '.join(v['num'])

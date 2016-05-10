@@ -1,10 +1,13 @@
 {
     "cerazette": {
         "name": "Cerazette vs. Desogestrel",
-        "title": " Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all desogestrel (BNF code 0703021Q0)",
+        "title": [
+            "Prescribing of branded Cerazette (BNF code 0703021Q0BB)",
+             "compared with prescribing of all desogestrel (BNF code 0703021Q0)"
+        ],
         "description": [
-            "Total quantity of Cerazette (0703021Q0BB), ",
-            "as a proportion of total quantity of desogestrel ",
+            "Total quantity of Cerazette (0703021Q0BB),",
+            "as a proportion of total quantity of desogestrel",
             "(0703021Q0)."
         ],
         "why_it_matters": [
@@ -43,9 +46,12 @@
     },
     "pioglitazone": {
         "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs",
-        "title": "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0) compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2).",
+        "title": [
+            "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0)",
+            " compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2)."
+        ],
         "description": [
-            "Number of prescription items for Pioglitazone Hydrochloride (0601023B0) ",
+            "Number of prescription items for Pioglitazone Hydrochloride (0601023B0)",
             "as a percentage of total prescription items for all diabetes (060102)."
         ],
         "why_it_matters": [
@@ -87,7 +93,11 @@
     },
     "celecoxib": {
         "name": "Celecoxib vs. all NSAIDs",
-        "title": "Prescribing of Celecoxib (BNF code 0801050AY, 1001010AH) compared with prescribing of all Non-Steroidal Anti-Inflammatory Drugs (BNF section 1.1.1)",
+        "title": [
+            "Prescribing of Celecoxib (BNF code 0801050AY, 1001010AH)",
+            "compared with prescribing of all Non-Steroidal ",
+            "Anti-Inflammatory Drugs (BNF section 1.1.1)"
+        ],
         "description": [
             "Number of prescription items for Celecoxib (0801050AY, 1001010AH) ",
             "as a percentage of total prescription items for all NSAIDs (100101)."
