@@ -17,7 +17,7 @@
 <div class="col-md-6">
 <p class="lead">Address: {{ practice.address_pretty }}</p>
 {% if practice.ccg %}
-<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
+<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}/measures">{{ practice.ccg.name }}</a></p>
 {% endif %}
 {% if practice.list_size_13 %}
 <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
@@ -26,29 +26,26 @@
 </div>
 
 <div class="col-md-6" id="map-container">
-<div id="map-ccg" style="height: 150px"></div>
-<small style='font-size: 0.6em'>Practice locations are approximate, <a href="#location">based on postcode</a>.</small>
+<div id="map-measure"></div>
+<small>Practice locations are approximate, based on postcode.</small>
 </div>
-
 </div>
 
 <hr/>
 
 {% if practice.setting != 4 %}
-<div class="alert alert-warning" role="alert" style="margin-top: 10px;">
+<div class="alert alert-warning" role="alert">
 <strong>Warning!</strong> {{ practice.name }} is not a standard GP practice, so may have very low numbers for some of these dashboards. Don't be surprised if some of the graphs look strange.
 </div>
 {% endif %}
 
-<div id="intro">
+<p>Blah blah blah brief intro to measures, explaining what these measures are, what the ordering means and why they matter. <a href="{% url 'caution' %}#metrics">Read more about measures</a>.</p>
 
-<p>Blah blah blah brief intro to measures, explaining what these measures are, what the ordering means and why they matter. <a href='#'>Read more about measures</a>.</p>
+<p id="perfsummary">Loading...</p>
 
-<p id="summary">Loading...</p>
+</div> <!-- /#intro -->
 
-</div>
-
-<div style="float: right; clear: both; margin-bottom: 20px; margin-top: 10px">Sort measures by:
+<div id="toggle">Sort measures by:
 <div class="btn-group" id="order">
     <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
         Percentile
@@ -59,7 +56,7 @@
 </div>
 </div>
 
-<div id="measures" style="clear: both">
+<div id="measures">
 <div id="charts" class="row">
 <div class="loading-wrapper col-xs-12">
     <hr/>
@@ -71,8 +68,12 @@
 
 {% verbatim %}
 <script id="summary-panel" type="text/x-handlebars-template">
-<p>Over the past six months, this practice was prescribing above the median on {{ above_median }} out of {{ total }} measures. {{ performance_description }}</p>
+<p>{{ performance_description }}</p>
+
+{{ top_opportunity }}
+
 {{ cost_savings }}
+
 </script>
 
 <script id="measure-panel" type="text/x-handlebars-template">
@@ -82,11 +83,11 @@
             <a href="{{ chart_title_url }}">{{ chart_title }}</a>
         </div>
         <div class="panel-body" class="row">
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="padding: 10px; white-space: normal;">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
                 <p><strong>Why it matters:</strong> {{ why_it_matters }}</p>
                 <p><strong>Description:</strong> {{ description }}</p>
-                <p>{{ cost_description }}</p>
-                <p><strong>Explore:</strong> prescribing of this measure by <a href="/ccg/99P/{{ chart_id }}">other practices in the same CCG</a>.</p>
+                <p>{{{ cost_description }}}</p>
+                <p><strong>Explore:</strong> prescribing of this measure by <a href="{{ chart_title_url }}">other practices in the same CCG</a>.</p>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chart_id }}">
                 <div class="status"></div>
@@ -111,6 +112,7 @@
 <script>
 var measureData = {
     'orgId': '{{ practice.code }}',
+    'parentOrg': '{{ practice.ccg.code }}',
     'orgName': '{{ practice.name }}',
     'orgType': 'practice'
 };

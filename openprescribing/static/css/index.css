@@ -510,8 +510,24 @@ path {
   height: 300px;
   margin-bottom: 10px;
 }
+#intro .alert {
+  margin-top: 10px;
+}
+#toggle {
+  float: right;
+  clear: both;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+#map-measure {
+  height: 150px;
+}
+#map-measure small {
+  font-size: 0.6px;
+}
 #measures {
   margin-top: 20px;
+  clear: both;
 }
 #measures .loading-wrapper {
   display: block;
@@ -528,6 +544,17 @@ path {
 }
 #measures .panel .panel-body {
   padding: 5px;
+}
+#measures .panel .panel-body .inner {
+  padding: 10px;
+  overflow: auto;
+  white-space: normal;
+}
+#measures .panel .explanation {
+  margin: 5px 10px 10px 10px;
+  font-size: 12px;
+  white-space: normal;
+  min-height: 3.5em;
 }
 #measures .panel p {
   font-size: 12px;

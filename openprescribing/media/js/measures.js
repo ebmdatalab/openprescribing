@@ -19,25 +19,28 @@ L.mapbox.accessToken = 'pk.eyJ1IjoiYW5uYXBvd2VsbHNtaXRoIiwiYSI6ImNzY1VpYkkifQ.LC
 
 var measures = {
     el: {
-        mapPanel: 'map-ccg'
+        mapPanel: 'map-measure'
     },
 
     setUp: function() {
+        this.setUpShowPractices();
         var _this = this;
 
-        // The number of months to look at when calculating ranks.
-        _this.NUM_MONTHS = 6;
+        _this.NUM_MONTHS_FOR_RANKING = 6;
         _this.centiles = ['10', '20', '30', '40', '50', '60', '70', '80', '90'];
-
-        // This may be the measure name, or undefined.
         _this.measure = measureData.measure;
-        _this.measure_is_cost_based = (measureData.measure_is_cost_based) ? (measureData.measure_is_cost_based === 'True') : null;
+        _this.measureIsCostBased = (measureData.measureIsCostBased) ? (measureData.measureIsCostBased === 'True') : null;
+        _this.measureIsPercentage = (measureData.measureIsPercentage) ? (measureData.measureIsPercentage === 'True') : null;
         _this.orgType = measureData.orgType;
+        _this.parentOrg = (measureData.parentOrg) ? measureData.parentOrg : null;
         _this.orgId = measureData.orgId;
         _this.orgName = measureData.orgName;
         _this.rollUpBy = (_this.measure) ? 'org_id': 'measure_id';
 
-        // Show a map, if required.
+        // On long pages, only render some graphs initially, to stop the page choking.
+        _this.allGraphsRendered = false;
+        _this.graphsToRenderInitially = 24;
+
         if ($('#' + _this.el.mapPanel).length) {
             _this.setUpMap(_this.orgId, _this.orgType);
         }
@@ -66,27 +69,30 @@ var measures = {
                             true, _this.orgType.toLowerCase(), i);
                     });
                     _this.globalYMax = _.max(globalSeries['90'], _.property('y'));
+                    _this.globalYMin = _.min(globalSeries['10'], _.property('y'));
                 } else {
                     _this.globalYMax = 0;
+                    _this.globalYMin = 0;
                 }
 
                 panelData = _this.annotateAndSortPanelData(panelData);
 
                 // Render performance summary measures.
                 var perf = _this.getPerformanceSummary(panelData, _this.rollUpBy,
-                    _this.measure_is_cost_based, _this.orgId, _this.measure);
-                $('#summary').html(summary_template(perf));
+                    _this.measureIsCostBased, _this.orgId, _this.measure);
+                $('#perfsummary').html(summary_template(perf));
 
                 // Draw the panel for each item (whether measure or org).
                 var html = '';
-                var chartData = _this.addChartAttributes(panelData, _this.rollUpBy, _this.orgType);
+                var chartData = _this.addChartAttributes(panelData, _this.rollUpBy,
+                    _this.orgType, _this.orgId, _this.parentOrg, _this.measure, _this.measureIsCostBased);
                 _.each(chartData, function(d) {
                     html += panel_template(d);
                 });
                 $('#charts').html(html);
 
                 // Render the chart to each panel.
-                _.each(chartData, function(d) {
+                _.each(chartData, function(d, i) {
                     d.data = _this.convertDataForHighcharts(d.data, false);
                     if (_this.rollUpBy === 'measure_id') {
                         // For measures, get the global series for each measure.
@@ -99,7 +105,22 @@ var measures = {
                     } else {
                         d.globalSeries = globalSeries;
                     }
-                    _this.renderGraph(d, _this.orgType);
+                    if (i < _this.graphsToRenderInitially) {
+                        _this.renderGraph(d, _this.orgType, _this.measureIsPercentage);
+                    }
+                });
+
+                // On long pages, render remaining graphs only after scroll,
+                // to stop the page choking on first load.
+                $(window).scroll(function() {
+                    if (_this.allGraphsRendered === false) {
+                        _.each(chartData, function(d, i) {
+                            if (i >= _this.graphsToRenderInitially) {
+                                _this.renderGraph(d, _this.orgType, _this.measureIsPercentage);
+                            }
+                        });
+                        _this.allGraphsRendered = true;
+                    }
                 });
 
                 // Set up 'sort by' options, for per-measure pages.
@@ -147,11 +168,12 @@ var measures = {
         return urls;
     },
 
-    renderGraph: function(d, orgType) {
+    renderGraph: function(d, orgType, isPercentageMeasure) {
         // console.log('renderGraph', d.globalSeries);
+        // Assemble the series for the graph, and any extra options.
         var _this = this;
         if (d.data.length) {
-            var hcOptions = _this.getChartOptions(d);
+            var hcOptions = _this.getChartOptions(d, isPercentageMeasure);
             hcOptions.series = [{
                 'name': 'This ' + orgType,
                 'is_national_series': false,
@@ -194,7 +216,7 @@ var measures = {
         if (_this.rollUpBy !== 'measure_id') {
             panelData = _this.rollUpByOrg(panelData[0], _this.orgType);
         }
-        panelData = _this.getSavingAndPercentilePerItem(panelData, _this.NUM_MONTHS);
+        panelData = _this.getSavingAndPercentilePerItem(panelData, _this.NUM_MONTHS_FOR_RANKING);
         data = _.sortBy(panelData, function(d) {
             if (d.mean_percentile === null) return -1;
             return d.mean_percentile;
@@ -220,8 +242,9 @@ var measures = {
             } else {
                 d.y = (d.calc_value !== null) ? parseFloat(d.calc_value) : null;
             }
-            // TODO: Only multiply values for percentage-based measures.
-            d.y = (d.y) ? d.y * 100 : d.y;
+            if (_this.measureIsPercentage) {
+                d.y = d.y * 100;
+            }
         });
         return dataCopy;
     },
@@ -271,59 +294,88 @@ var measures = {
         return data;
     },
 
-    addChartAttributes: function(data, rollUpBy, orgType) {
-        // Add the chart title, URL, description, etc.
+    addChartAttributes: function(data, rollUpBy, orgType, orgId, parentOrg, measure, measureIsCostBased) {
+        // For each item of the dataset, get the chart title, URL, and any description.
+        var _this = this;
         _.each(data, function(d) {
-            // console.log('addChartAttributes', d);
+            //console.log('addChartAttributes', d, measure);
             d.chart_id = d.id;
             if (rollUpBy === 'measure_id') {
+                // We want CCG or practice pages to link to the
+                // measure-by-all-practices in CCG page.
                 d.chart_title = d.name;
-                d.chart_title_url = '/measure/' + d.id;
+                d.chart_title_url = '/ccg/';
+                d.chart_title_url += (parentOrg) ? parentOrg : orgId;
+                d.chart_title_url += '/' + d.id;
             } else {
+                // We want measure pages to link to the appropriate
+                // organisation page.
                 d.chart_title = d.id + ': ' + d.name;
-                d.chart_title_url = '/' + orgType + '/' + d.id;
+                d.chart_title_url = '/' + orgType.toLowerCase() + '/' + d.id + '/measures';
             }
             d.description_short = d.description.substring(0, 80) + ' ...';
-            if (d.is_cost_based) {
-                d.cost_description = '<strong>Cost savings</strong>: ';
+            if ((d.is_cost_based) || measureIsCostBased) {
+                d.cost_description = '';
                 if (d.cost_saving_50th < 0) {
+                    d.cost_description += '<strong>Cost savings:</strong> ';
                     d.cost_description += 'By prescribing better than the median, ';
                     d.cost_description += 'this ' + orgType + ' has saved the NHS £';
                     d.cost_description += Highcharts.numberFormat((d.cost_saving_50th * -1), 2);
                     d.cost_description += ' over the past six months.';
                 } else if (d.cost_saving_50th === 0) {
                 } else {
+                    d.cost_description += '<strong>Cost savings:</strong> ';
                     d.cost_description += 'If it had prescribed in line with the median, ';
                     d.cost_description += 'this ' + orgType + ' would have spent £';
                     d.cost_description += Highcharts.numberFormat(d.cost_saving_50th, 2);
                     d.cost_description += ' less over the past six months.';
+                }
+                d.chart_explanation = d.cost_description;
+            } else {
+                if (d.mean_percentile) {
+                    var p = Highcharts.numberFormat(d.mean_percentile, 0);
+                    d.chart_explanation = 'This organisation was at the ';
+                    d.chart_explanation += p + _this.getOrdinalSuffix(p);
+                    d.chart_explanation += ' percentile on average across the past six months.';
+                } else {
+                    d.chart_explanation = 'No data available.';
                 }
             }
         });
         return data;
     },
 
-    getChartOptions: function(d) {
+    getChartOptions: function(d, isPercentageMeasure) {
+        // console.log('getChartOptions', d);
         // Highcharts options for these panel charts.
+        // Y-axis minimum, maximum, and label, and tooltip.
         var _this = this,
-            options = $.extend(true, {}, chartOptions.dashOptions);
+            options = $.extend(true, {}, chartOptions.dashOptions),
+            localMax = _.max(d.data, _.property('y')),
+            localMin = _.min(d.data, _.property('y')),
+            ymax, ymin;
+        isPercentageMeasure = (d.is_percentage || isPercentageMeasure);
         options.chart.renderTo = d.chart_id;
         options.chart.height = 200;
         options.legend.enabled = false;
-        var localMax = _.max(d.data, _.property('y'));
-        var ymax;
         if (_this.rollUpBy === 'org_id') {
             ymax = _.max([localMax.y, _this.globalYMax.y]);
+            ymin = _.min([localMin.y, _this.globalYMin.y]);
         } else {
             var local90thMax = _.max(d.globalSeries['90'], _.property('y'));
             ymax = _.max([localMax.y, local90thMax.y]);
+            var local90thMin = _.min(d.globalSeries['10'], _.property('y'));
+            ymin = _.min([localMin.y, local90thMin.y]);
         }
+        var yAxisLabel = (isPercentageMeasure) ? '%' : 'Measure';
         options.yAxis = {
             title: {
-                text: '%' // d.numerator_short + ' / ' + d.denominator_short
+                text: yAxisLabel
             },
             max: ymax,
-            min: 0 // use min, or hard-code zero if the local min is zero
+            // If ymin is zero, Highcharts will sometimes pick a negative value
+            // for formatting reasons. Force zero as the lowest value.
+            min: _.max([0, ymin])
         };
         options.tooltip = {
             formatter: function() {
@@ -342,7 +394,8 @@ var measures = {
                     str += d.denominator_short + ': ' + denom;
                     str += '<br/>';
                 }
-                str += 'Measure: ' +  Highcharts.numberFormat(this.point.y, 3) + '%';
+                str += 'Measure: ' +  Highcharts.numberFormat(this.point.y, 3);
+                str += (isPercentageMeasure) ? '%' : '';
                 if (!this.series.options.is_national_series) {
                     //str += ' (' + num + '/' + denom + ')';
                     str += ' (' + percentile + _this.getOrdinalSuffix(percentile) + ' percentile)';
@@ -357,13 +410,13 @@ var measures = {
         var lastChar = percentile.toString().slice(-1), suffix;
         switch (lastChar) {
             case '1':
-                suffix = 'st';
+                suffix = (percentile == '11') ? 'th' : 'st';
                 break;
             case '2':
-                suffix = 'nd';
+                suffix = (percentile == '12') ? 'th' : 'nd';
                 break;
             case '3':
-                suffix = 'rd';
+                suffix = (percentile == '13') ? 'th' : 'rd';
                 break;
             default:
                 suffix = 'th';
@@ -372,9 +425,7 @@ var measures = {
     },
 
     getPerformanceSummary: function(orderedData, rollUpBy, isCostBased, orgId, measure) {
-        // console.log('getPerformanceSummary', orderedData, rollUpBy);
-        // Calculate % of measures above the median, and the total
-        // possible savings at the median.
+        //console.log('getPerformanceSummary', orderedData[0], rollUpBy);
         var perf = {
             total: 0,
             above_median: 0,
@@ -383,53 +434,83 @@ var measures = {
             org_id: orgId,
             measure_id: measure
         };
-        _.each(orderedData, function(d) {
-            if (d.mean_percentile !== null) {
-                perf.total += 1;
-                if (d.mean_percentile > 50) {
-                    perf.above_median += 1;
-                    perf.potential_savings_50th += (isCostBased) ? d.cost_saving_50th : 0;
+        if (orderedData.length) {
+            _.each(orderedData, function(d) {
+                if (d.mean_percentile !== null) {
+                    perf.total += 1;
+                    if (d.mean_percentile > 50) {
+                        perf.above_median += 1;
+                        perf.potential_savings_50th += (isCostBased) ? d.cost_saving_50th : 0;
+                    }
+                    if (d.mean_percentile > 10) {
+                        perf.potential_savings_10th += (isCostBased) ? d.cost_saving_10th : 0;
+                    }
                 }
-                if (d.mean_percentile > 10) {
-                    perf.potential_savings_10th += (isCostBased) ? d.cost_saving_10th : 0;
-                }
+            });
+            perf.performance_description = "Over the past six months, this organisation ";
+            perf.performance_description += "has prescribed above the median on ";
+            perf.performance_description += perf.above_median + " of " + perf.total + " measures.";
+            perf.proportion_above_median = perf.above_median / perf.total;
+            if (perf.proportion_above_median >= 0.75) {
+                perf.rank = 'poor';
+            } else if (perf.proportion_above_median >= 0.5) {
+                perf.rank = 'acceptable';
+            } else if (perf.proportion_above_median >= 0.25) {
+                perf.rank = 'good';
+            } else if (perf.proportion_above_median >= 0) {
+                perf.rank = 'very good';
             }
-        });
-        perf.proportion_above_median = perf.above_median / perf.total;
-        if (perf.proportion_above_median > 0.75) {
-            perf.performance_description = 'poor';
-        } else if (perf.proportion_above_median > 0.5) {
-            perf.performance_description = 'acceptable';
-        } else if (perf.proportion_above_median > 0.25) {
-            perf.performance_description = 'good';
-        } else if (perf.proportion_above_median > 0) {
-            perf.performance_description = 'very good';
-        }
-        if (perf.performance_description) {
-            perf.performance_description = 'We think this is ' + perf.performance_description;
-            perf.performance_description += ' performance overall.';
-        }
-        perf.proportion_above_median = Highcharts.numberFormat(perf.proportion_above_median * 100, 1);
+            if (perf.performance_description) {
+                perf.performance_description += ' We think this is ' + perf.rank;
+                perf.performance_description += ' performance overall.';
+            }
 
-        if (isCostBased) {
-            if (rollUpBy === 'measure_id') {
-                perf.cost_savings = 'Over the same period, if this practice had prescribed ';
-                perf.cost_savings += 'at the median ratio or better on all cost-saving measures below, then it would ';
-                perf.cost_savings += 'have spent £' + Highcharts.numberFormat(perf.potential_savings_50th, 2);
-                perf.cost_savings += ' less. (We use the national median as a suggested ';
-                perf.cost_savings += 'target because by definition, 50% of practices were already prescribing ';
-                perf.cost_savings += 'at this level or better, so we think it ought to be achievable.)';
-            } else {
-                perf.cost_savings = 'Over the same period, if all practices had prescribed ';
-                perf.cost_savings += 'at the median ratio or better, then this CCG would ';
-                perf.cost_savings += 'have spent £' + Highcharts.numberFormat(perf.potential_savings_50th, 2);
-                perf.cost_savings += ' less. (We use the national median as a suggested ';
-                perf.cost_savings += 'target because by definition, 50% of practices were already prescribing ';
-                perf.cost_savings += 'at this level or better, so we think it ought to be achievable.)';
+            var p = Highcharts.numberFormat(orderedData[0].mean_percentile, 0);
+            perf.top_opportunity = 'The measure with the biggest potential for improvement was ';
+            perf.top_opportunity += orderedData[0].name + ', where this ' + this.orgType;
+            perf.top_opportunity += ' was at the ' + p + this.getOrdinalSuffix(p);
+            perf.top_opportunity += ' percentile on average across the past six months.';
+
+            perf.proportion_above_median = Highcharts.numberFormat(perf.proportion_above_median * 100, 1);
+
+            if (isCostBased) {
+                if (rollUpBy === 'measure_id') {
+                    perf.cost_savings = 'Over the past six months, if this ';
+                    perf.cost_savings += (this.orgType === 'practice') ? "practice " : "CCG ";
+                    perf.cost_savings += ' had prescribed ';
+                    perf.cost_savings += 'at the median ratio or better on all cost-saving measures below, then it would ';
+                    perf.cost_savings += 'have spent £' + Highcharts.numberFormat(perf.potential_savings_50th, 2);
+                    perf.cost_savings += ' less. (We use the national median as a suggested ';
+                    perf.cost_savings += 'target because by definition, 50% of practices were already prescribing ';
+                    perf.cost_savings += 'at this level or better, so we think it ought to be achievable.)';
+                } else {
+                    perf.cost_savings = 'Over the past six months, if all ' ;
+                    perf.cost_savings += (this.orgType === 'practice') ? "practices " : "CCGs ";
+                    perf.cost_savings += 'had prescribed at the median ratio or better, then ';
+                    perf.cost_savings += (this.orgType === 'practice') ? "this CCG " : "NHS England ";
+                    perf.cost_savings += 'would have spent £' + Highcharts.numberFormat(perf.potential_savings_50th, 2);
+                    perf.cost_savings += ' less. (We use the national median as a suggested ';
+                    perf.cost_savings += 'target because by definition, 50% of ';
+                    perf.cost_savings += (this.orgType === 'practice') ? "practices " : "CCGs ";
+                    perf.cost_savings += ' were already prescribing ';
+                    perf.cost_savings += 'at this level or better, so we think it ought to be achievable.)';
+                }
             }
+        } else {
+            perf.performance_description = "This organisation hasn't prescribed on any of these measures.";
         }
         //console.log('perf', perf);
         return perf;
+    },
+
+    setUpShowPractices: function() {
+        $('#showall').on('click', function(e) {
+            e.preventDefault();
+            $('#practices li.hidden').each(function (i, item) {
+                $(item).removeClass('hidden');
+            });
+            $(this).hide();
+        });
     },
 
     setUpMap: function(orgId, orgType) {

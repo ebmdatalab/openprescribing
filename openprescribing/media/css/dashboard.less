@@ -9,9 +9,30 @@
     }
 }
 
+#intro {
+   .alert {
+      margin-top: 10px;
+   }
+}
+
+#toggle {
+   float: right;
+   clear: both;
+   margin-bottom: 20px;
+   margin-top: 10px;
+}
+
+#map-measure {
+   height: 150px;
+   small {
+      font-size: 0.6px;
+   }
+}
+
 #measures {
 
   margin-top: 20px;
+  clear: both;
 
   .loading-wrapper {
     display: block;
@@ -25,19 +46,31 @@
     white-space: nowrap;
     overflow: hidden;
 
-   .panel-heading {
-        font-size: 12px;
-   }
-   .panel-body {
+    .panel-heading {
+      font-size: 12px;
+    }
+
+    .panel-body {
         padding: 5px;
-   }
+        .inner {
+          padding: 10px;
+          overflow: auto;
+          white-space: normal;
+        }
+    }
+    .explanation {
+      margin: 5px 10px 10px 10px;
+      font-size: 12px;
+      white-space: normal;
+      min-height: 3.5em;
+    }
     p {
-        font-size: 12px;
+      font-size: 12px;
     }
     .chart {
-        margin-top: 5px;
-        margin-bottom: 10px;
-        min-height: 200px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      min-height: 200px;
     }
   }
 }

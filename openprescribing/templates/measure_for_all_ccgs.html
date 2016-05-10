@@ -14,21 +14,17 @@
 <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
 {% endif %}
 
-<h2>Why this measure matters</h2>
+<p><strong>Why it matters</strong>: {{ measure.why_it_matters }}</p>
 
-<p>{{ measure.why_it_matters }}</p>
+<p><strong>Definition</strong>: {{ measure.description }}</p>
 
-<h2>Definition</h2>
+{% if measure.is_cost_based %}
 
-<p>{{ measure.description }} This measure is a ratio, and lower numbers are preferred.</p>
+<p><strong>How the CCGs are doing</strong>: <span id="perfsummary">Loading...</span></p>
 
-<h2>How the CCGs are doing</h2>
+{% endif %}
 
-<p id="summary">Loading...</p>
-
-<h2>Individual CCGs</h2>
-
-<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus the 90th, 50th and 10th percentiles across all practices in NHS England.</p>
+<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in NHS England.</p>
 
 <div id="measures">
 <div id="charts" class="row">
@@ -44,10 +40,7 @@
 
 {% verbatim %}
 <script id="summary-panel" type="text/x-handlebars-template">
-<p>Over the past six months, {{ above_median }} out of {{ total }} ({{ proportion_above_median }}%) CCGs were prescribing above the national median ratio for this measure. {{ performance_description }}</p>
-
 {{ cost_savings }}
-
 </script>
 
 <script id="measure-panel" type="text/x-handlebars-template">
@@ -61,7 +54,7 @@
                 <div class="status"></div>
             </div>
         </div>
-        <div style="margin: 5px 10px 10px 10px; font-size: 12px; white-space: normal;">{{ chart_explanation }}</div>
+        <div class="explanation">{{{ chart_explanation }}}</div>
     </div>
 </div>
 </script>
@@ -71,7 +64,8 @@
 var measureData = {
     'orgType': 'CCG',
     'measure': '{{ measure.id }}',
-    'measure_is_cost_based': '{{ measure.is_cost_based }}',
+    'measureIsCostBased': '{{ measure.is_cost_based }}',
+    'measureIsPercentage': '{{ measure.is_percentage }}',
     'numerator': '{{ measure.numerator_short }}',
     'denominator': '{{ measure.denominator_short }}'
 };
