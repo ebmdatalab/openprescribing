@@ -11,7 +11,7 @@ def measure_global(request, format=None):
     query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
     query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
-    query += 'ms.url, ms.is_cost_based '
+    query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measureglobal mg "
     query += "JOIN frontend_measure ms ON mg.measure_id=ms.id "
     if measure:
@@ -45,6 +45,7 @@ def measure_global(request, format=None):
                 'denominator_short': d['denominator_short'],
                 'url': d['url'],
                 'is_cost_based': d['is_cost_based'],
+                'is_percentage': d['is_percentage'],
                 'data': [d_copy]
             }
     d = {
@@ -63,7 +64,7 @@ def measure_by_ccg(request, format=None):
     query += 'mv.pct_id, pc.name as pct_name, measure_id, '
     query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
-    query += 'ms.url, ms.is_cost_based '
+    query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_pct pc ON mv.pct_id=pc.code "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
@@ -114,6 +115,7 @@ def measure_by_ccg(request, format=None):
                 'denominator_short': d['denominator_short'],
                 'url': d['url'],
                 'is_cost_based': d['is_cost_based'],
+                'is_percentage': d['is_percentage'],
                 'data': [d_copy]
             }
 
@@ -133,7 +135,7 @@ def measure_by_practice(request, format=None):
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
     query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
     query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
-    query += 'ms.url, ms.is_cost_based '
+    query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_practice pc ON mv.practice_id=pc.code "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
@@ -182,6 +184,7 @@ def measure_by_practice(request, format=None):
                 'denominator_short': d['denominator_short'],
                 'url': d['url'],
                 'is_cost_based': d['is_cost_based'],
+                'is_percentage': d['is_percentage'],
                 'data': [d_copy]
             }
 
