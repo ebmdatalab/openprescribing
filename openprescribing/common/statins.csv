@@ -1,0 +1,46 @@
+BNFcode,BNFname,NIC,Quantity,NICperDose,HighCost
+0212000AAAAAAAA,Rosuvastatin Calc_Tab 10mg              ,"£4,097,313.49","6,362,907",£0.64,1
+0212000AAAAABAB,Rosuvastatin Calc_Tab 20mg              ,"£3,163,928.34","3,404,615",£0.93,1
+0212000AAAAACAC,Rosuvastatin Calc_Tab 40mg              ,"£901,532.14","850,224",£1.06,1
+0212000AAAAADAD,Rosuvastatin Calc_Tab 5mg               ,"£3,085,644.66","4,791,850",£0.64,1
+0212000AABBAAAA,Crestor_Tab 10mg                        ,"£55,902.39","86,814",£0.64,1
+0212000AABBABAB,Crestor_Tab 20mg                        ,"£27,447.51","29,536",£0.93,1
+0212000AABBACAC,Crestor_Tab 40mg                        ,"£5,492.65","5,180",£1.06,1
+0212000AABBADAD,Crestor_Tab 5mg                         ,"£33,071.67","51,359",£0.64,1
+0212000B0AAAAAA,Atorvastatin_Tab 10mg                   ,"£2,114,700.34","48,960,416",£0.04,0
+0212000B0AAABAB,Atorvastatin_Tab 20mg                   ,"£3,580,249.54","70,597,367",£0.05,0
+0212000B0AAACAC,Atorvastatin_Tab 40mg                   ,"£3,556,578.19","61,097,829",£0.06,0
+0212000B0AAADAD,Atorvastatin_Tab 80mg                   ,"£1,970,048.59","20,194,341",£0.10,0
+0212000B0AAANAN,Atorvastatin_Tab 30mg                   ,"£68,624.01","78,443",£0.87,1
+0212000B0AAAPAP,Atorvastatin_Tab 60mg                   ,"£104,741.25","104,758",£1.00,1
+0212000B0BBAAAA,Lipitor_Tab 10mg                        ,"£209,543.96","451,328",£0.46,1
+0212000B0BBABAB,Lipitor_Tab 20mg                        ,"£298,428.37","339,125",£0.88,1
+0212000B0BBACAC,Lipitor_Tab 40mg                        ,"£183,574.93","208,609",£0.88,1
+0212000B0BBADAD,Lipitor_Tab 80mg                        ,"£47,413.63","47,061",£1.01,1
+0212000M0AAAAAA,Fluvastatin Sod_Cap 20mg                ,"£46,335.48","513,927",£0.09,0
+0212000M0AAABAB,Fluvastatin Sod_Cap 40mg                ,"£63,572.41","464,493",£0.14,0
+0212000M0AAADAD,Fluvastatin Sod_Tab 80mg M/R            ,"£127,431.71","185,838",£0.69,1
+0212000M0BBAAAA,Lescol_Cap 20mg                         ,"£5,785.30","10,615",£0.55,1
+0212000M0BBABAB,Lescol_Cap 40mg                         ,"£5,499.20","10,090",£0.55,1
+0212000M0BBACAD,Lescol XL_Tab 80mg                      ,"£5,534.25","8,071",£0.69,1
+0212000M0BCAAAD,Luvinsta XL_Tab 80mg                    ,£38.40,56,£0.69,1
+0212000M0BEAAAD,Dorisin XL_Tab 80mg                     ,£96.00,140,£0.69,1
+0212000X0AAAAAA,Pravastatin Sod_Tab 10mg                ,"£243,853.94","4,770,750",£0.05,0
+0212000X0AAABAB,Pravastatin Sod_Tab 20mg                ,"£456,943.32","7,703,382",£0.06,0
+0212000X0AAADAD,Pravastatin Sod_Tab 40mg                ,"£810,281.31","11,065,140",£0.07,0
+0212000X0BBAAAA,Lipostat_Tab 10mg                       ,"£3,325.21","6,566",£0.51,1
+0212000X0BBABAB,Lipostat_Tab 20mg                       ,"£13,128.37","14,133",£0.93,1
+0212000X0BBACAD,Lipostat_Tab 40mg                       ,"£21,998.83","23,682",£0.93,1
+0212000Y0AAAAAA,Simvastatin_Tab 10mg                    ,"£514,492.45","16,174,276",£0.03,0
+0212000Y0AAABAB,Simvastatin_Tab 20mg                    ,"£3,672,722.27","101,721,114",£0.04,0
+0212000Y0AAADAD,Simvastatin_Tab 40mg                    ,"£6,957,898.31","164,852,405",£0.04,0
+0212000Y0AAAHAH,Simvastatin_Tab 80mg                    ,"£187,903.61","2,767,445",£0.07,0
+0212000Y0BBAAAA,Zocor_Tab 10mg                          ,"£15,245.58","23,676",£0.64,1
+0212000Y0BBABAB,Zocor_Tab 20mg                          ,"£50,604.26","47,724",£1.06,1
+0212000Y0BBACAD,Zocor_Tab 40mg                          ,"£38,242.66","36,066",£1.06,1
+0212000Y0BBADAH,Zocor_Tab 80mg                          ,"£3,607.29","3,402",£1.06,1
+0212000Y0BBAEAA,Zocor Heart-Pro_Tab 10mg                ,£4.85,28,£0.17,1
+0212000Y0BDAAAA,Simvador_Tab 10mg                       ,"£7,038.14","245,278",£0.03,0
+0212000Y0BDABAB,Simvador_Tab 20mg                       ,"£44,815.55","1,394,727",£0.03,0
+0212000Y0BDACAD,Simvador_Tab 40mg                       ,"£96,212.03","2,499,497",£0.04,0
+0212000Y0BDADAH,Simvador_Tab 80mg                       ,£579.84,"9,646",£0.06,0
