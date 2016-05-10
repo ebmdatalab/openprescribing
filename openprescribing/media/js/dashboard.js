@@ -100,8 +100,8 @@ var dashboard = {
     setUpShowPractices: function() {
         $('#showall').on('click', function(e) {
             e.preventDefault();
-            $('#practices li.hidden').each(function () {
-                this.style.setProperty( 'display', 'list-item', 'important' );
+            $('#practices li.hidden').each(function (i, item) {
+                $(item).removeClass('hidden');
             });
             $(this).hide();
         });
