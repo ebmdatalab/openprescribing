@@ -7,7 +7,7 @@
 
 <h2>Caution: how to use the data responsibly</h2>
 
-<p>Prescribing data requires careful interpretation. Here's how to use it responsibly.</p>
+<p>This site is intended to be an accessible window onto prescribing data published by the <a href="http://www.hscic.gov.uk/gpprescribingdata">Health and Social Care Information Centre</a> (HSCIC). Prescribing data requires careful interpretation. Here's how to use it responsibly.</p>
 
 <h3 id="understanding">Understanding the data</h3>
 
@@ -25,7 +25,7 @@
 
 <p>To account for this the NHS uses imperfect but useful "adjusted" denominators called STAR-PUs, which try to account for the age and sex structure of the practice's population. These STAR-PUs are specific to specific disease areas, because they try to account for different rates of usage -- in different age bands of the population - for specific treatment. So for the STAR-PU for cardiovascular disease prevention prescribing, for example, gives you extra points for every man aged 40-50, even more for men aged 50-60, and so on; but less for women in the same bands, and very little for younger people.</p>
 
-<p>Generating these STAR-PUs for each practice, each disease area, and each month, takes coder time, so we currently only have the STAR-PU for antibiotics. We would like to add STAR-PUs for all disease areas. If you have generated that data already, or are able to fund us to do it, this is very straightforward, please <a href="mailto:mail@openprescribing.net">get in touch</a>.</p>
+<p>Generating these STAR-PUs for each practice, each disease area, and each month, takes coder time, so we currently only have the STAR-PU for antibiotics.</p>
 
 <p>When using the data ourselves we tend to use more thoughtful approaches to try to "bake in" population prevalence or need for a particular condition, or to explore different prescribing patterns. For example, we often use whole classes of drug as the denominator in our analyses, as in the video walkthroughs; or we compare the use of one drug against the use of another. When looking at whether a practice is using a lot of Nexium (an expensive "proton pump inhibitor" pill for treating ulcers) we might look at "Nexium prescribing" versus "all proton pump inhibitor prescribing" (<a href="{% url 'analyse' %}#org=CCG&numIds=0103050E0BB&denomIds=1.3.5">example</a>).</p>
 

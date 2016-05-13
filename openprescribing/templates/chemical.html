@@ -16,16 +16,11 @@
 
 <hr/>
 
-<p>All prescribing on {{ chemical.chem_name }} in England.</p>
+<p>High-level prescribing trends for {{ chemical.chem_name }} (BNF code {{ chemical.bnf_code }}) across all GP practices in NHS England, since August 2010. You can see <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">which CCGs prescribe most of this chemical</a> relative to its class, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 {% include '_chart.html' %}
 
 <div id="download-data">
-
-<h3>Analyse prescribing patterns</h3>
-<p>
-By CCG: <a href="{% url 'analyse' %}#numIds={{ chemical.bnf_code }}&denomIds={% if bnf_para %}{{ bnf_para.number_str }}{% else %}{{ bnf_section.number_str }}{% endif %}">prescribing by CCG on {{ chemical.chem_name }} vs all items in the same BNF section</a>.
-</p>
 
 <h3>Download raw data</h3>
 <p>

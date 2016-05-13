@@ -16,7 +16,7 @@
 
 <hr/>
 
-<p>All prescribing on {{ section.name }} in England.</p>
+<p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across all GP practices in NHS England, since August 2010. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by CCG</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
 {% include '_chart.html' %}
 
