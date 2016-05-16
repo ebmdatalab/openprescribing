@@ -28,9 +28,10 @@ Or in production:
 
     pip install -r requirements.txt
 
-And then install JavaScript dependencies:
+And then install JavaScript dependencies. You'll need a version of
+nodejs greater than v0.10.11:
 
-    cd openprescribing/static/js
+    cd openprescribing/media/js
     npm install -g browserify
     npm install -g jshint
     npm install
@@ -38,7 +39,12 @@ And then install JavaScript dependencies:
 Create database and env variables
 ---------------------------------
 
-Set up a Postgres 9.4 database, with PostGIS extensions, and create a superuser for the database.
+Set up a Postgres 9.4 database (required for `jsonb` type), with
+PostGIS extensions, and create a superuser for the database.
+
+    createuser -s <myuser>
+    createdb -O <myuser> <dbname>
+    psql -d <dbname> -c "CREATE EXTENSION postgis;"
 
 Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
 
@@ -76,8 +82,8 @@ Load the HSCIC data
 
 Run setup.sh to fetch and import data, and create the indexes and materialized views needed to set up the database.
 
-    chmod u+x setup.sh
-    ./setup.sh
+    chmod u+x ../setup.sh
+    ../setup.sh
 
 This is likely to take many hours to run, and will fetch more than 100GB of data. You probably want to tweak Postgres's memory settings first.
 
