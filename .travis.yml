@@ -28,3 +28,6 @@ before_script:
  - cd openprescribing && python manage.py migrate
 script:
  - python manage.py test
+notifications:
+  email:
+    - tech@ebmdatalab.net
