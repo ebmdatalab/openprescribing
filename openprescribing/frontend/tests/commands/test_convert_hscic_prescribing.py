@@ -18,7 +18,7 @@ class CommandsTestCase(TestCase):
         call_command('convert_hscic_prescribing', *args, **opts)
 
         test_output = 'frontend/tests/fixtures/commands/'
-        test_output += 'hscic_prescribing_sample_test.csv'
+        test_output += 'hscic_prescribing_sample_test.CSV'
         reader = csv.reader(open(test_output, 'rU'))
         rows = []
         for row in reader:
@@ -50,5 +50,3 @@ class CommandsTestCase(TestCase):
         # Test for 4-character chemical IDs.
         self.assertEqual(rows[0][3], '0102000N0')
         self.assertEqual(rows[-1][3], '2138')
-
-

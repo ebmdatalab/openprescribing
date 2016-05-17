@@ -47,7 +47,7 @@ def setUpModule():
         db_user = utils.get_env_setting('DB_USER')
         db_pass = utils.get_env_setting('DB_PASS')
         test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'T201509PDPI+BNFT_formatted.CSV'
+        test_file += 'T201509PDPI+BNFT_formatted.csv'
         new_opts = {
             'db_name': db_name,
             'db_user': db_user,
