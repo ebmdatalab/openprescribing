@@ -1,0 +1,25 @@
+version: '2'
+services:
+  db-test:
+    image: mdillon/postgis:latest
+    env_file: .env-test
+  test:
+    image: ebmdatalab/openprescribing-base:latest
+    command: /bin/bash -c './scripts/docker_setup.sh && cd openprescribing && make test'
+    env_file: .env-test
+    volumes:
+      - .:/code
+    depends_on:
+      - db-test
+
+  db-dev:
+    image: mdillon/postgis:latest
+    env_file: .env-dev
+  dev:
+    image: ebmdatalab/openprescribing-base:latest
+    command: /bin/bash -c './scripts/docker_setup.sh && /bin/bash -l'
+    env_file: .env-dev
+    volumes:
+      - .:/code
+    depends_on:
+      - db-dev

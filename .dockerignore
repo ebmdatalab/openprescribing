@@ -1,0 +1,3 @@
+openprescribing/data/**
+.git/**
+openprescribing/media/js/node_modules/*

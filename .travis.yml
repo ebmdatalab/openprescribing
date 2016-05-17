@@ -1,33 +1,23 @@
-language: python
-python:
-  - "2.7"
-addons:
-  postgresql: "9.4"
 env:
-  - SECRET_KEY=test DB_NAME=dbtest DB_USER=test DB_PASS=test
-virtualenv:
-    system_site_packages: true
+  DOCKER_COMPOSE_VERSION: 1.7.1
+sudo: required
+language: python
 before_install:
-  - export DJANGO_SETTINGS_MODULE=openprescribing.settings.local
-  - export PYTHONPATH=$HOME/builds/edmdatalab/openprescribing
-  - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
-  - rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
-  - sudo apt-get update
-  - sudo apt-get install python-numpy
-  - sudo apt-get install python-scipy
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 install:
- - pip install -r requirements.txt
- - pip install -r requirements/local.txt
-before_script:
- - psql -U postgres -c 'CREATE DATABASE dbtest;'
- - psql -U postgres -c "CREATE EXTENSION postgis" -d dbtest
- - psql -U postgres -c "CREATE EXTENSION postgis_topology" -d dbtest
- - psql -U postgres -c "CREATE USER test WITH CREATEUSER PASSWORD 'test';"
- - psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE dbtest to test;"
- - psql -U postgres -c "ALTER USER test CREATEDB;"
- - cd openprescribing && python manage.py migrate
+  - docker pull ebmdatalab/openprescribing-base:latest
+  - docker pull mdillon/postgis:latest
+cache:
+  directories:
+    - docker
+services:
+  - docker
 script:
- - python manage.py test
+  - docker-compose run test
 notifications:
   email:
     - tech@ebmdatalab.net
