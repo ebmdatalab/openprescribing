@@ -52,8 +52,9 @@ class CommandsTestCase(TestCase):
         db_name = 'test_' + utils.get_env_setting('DB_NAME')
         db_user = utils.get_env_setting('DB_USER')
         db_pass = utils.get_env_setting('DB_PASS')
+        db_host = utils.get_env_setting('DB_HOST')
         self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass)
+                                     password=db_pass, host=db_host)
         with self.conn.cursor() as c:
 
             cmd = 'SELECT * FROM vw__practice_summary '
