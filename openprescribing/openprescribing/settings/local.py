@@ -33,7 +33,7 @@ DATABASES = {
         'NAME': utils.get_env_setting('DB_NAME'),
         'USER': utils.get_env_setting('DB_USER'),
         'PASSWORD': utils.get_env_setting('DB_PASS'),
-        'HOST': '127.0.0.1'
+        'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')
     }
 }
 ########## END DATABASE CONFIGURATION

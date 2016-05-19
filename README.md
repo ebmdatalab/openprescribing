@@ -1,15 +1,53 @@
 [![Build Status](https://travis-ci.org/ebmdatalab/openprescribing.svg?branch=master)](https://travis-ci.org/ebmdatalab/openprescribing)
 
-Open Prescribing
-================
+# Open Prescribing
 
 Website code for https://openprescribing.net - a Django application that provides a REST API and dashboards for the HSCIC's [GP-level prescribing data](http://www.hscic.gov.uk/searchcatalogue?q=title%3a%22presentation+level+data%22&sort=Relevance&size=100&page=1#top)
 
-Set up the application
-======================
+# Set up the application
 
-Set up a virtualenv
--------------------
+You can install the application dependencies either on bare metal, or
+using docker.
+
+## Using docker
+
+Install `docker` and `docker-compose` per
+[the instructions](https://docs.docker.com/compose/install/) (you need
+at least Compose 1.6.0+ and Docker Engine of version 1.10.0+.)
+
+In the project root, run
+
+    docker-compose run test
+
+This will pull down the relevant images, and run the tests.
+
+To open a shell (from where you can run migrations, start a server,
+etc), run
+
+    docker-compose run dev
+
+The project code is mounted as a volume within the docker container,
+at `/code/openprescribing`. Note that the container runs as the `root`
+user, so any files you create from that console will be owned by
+`root`.
+
+The first time you run `docker-compose` it creates a persistent volume
+for the postgres container. Therefore, if you ever need to change the
+database configuration, you'll need to blow away the volume with:
+
+    docker-compose stop
+    docker-compose rm -f all
+
+Any time you change the npm or pip dependencies, you should rebuild
+the docker image used by the tests:
+
+    docker build -t ebmdatalab/openprescribing-base .
+    docker login  # details in `pass`; only have to do this once on your machin
+    docker push  # pushes the image to hub.docker.io
+
+## On bare metal
+
+### Set up a virtualenv
 
 If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
 
@@ -17,8 +55,7 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
     cd openprescribing && add2virtualenv `pwd`
     workon openprescribing
 
-Install dependencies
---------------------
+### Install dependencies
 
 Install Python dependencies in development:
 
@@ -36,8 +73,7 @@ nodejs greater than v0.10.11:
     npm install -g jshint
     npm install
 
-Create database and env variables
----------------------------------
+### Create database and env variables
 
 Set up a Postgres 9.4 database (required for `jsonb` type), with
 PostGIS extensions, and create a superuser for the database.
@@ -52,15 +88,13 @@ You will need a `GMAIL_PASS` environment variable to send error emails in produc
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
 
-Set up the database
--------------------
+# Set up the database
 
 Run migrations:
 
     python manage.py migrate
 
-Run tests
----------
+# Run tests
 
 Run Django and JavaScript tests:
 
@@ -70,15 +104,13 @@ If required, you can run individual Django tests as follows:
 
     python manage.py test frontend.tests.test_api_views
 
-Run the application
--------------------
+# Run the application
 
     python manage.py runserver --settings=openprescribing.settings.local
 
 You should now have a Django application running with no data inside it.
 
-Load the HSCIC data
--------------------
+# Load the HSCIC data
 
 Run setup.sh to fetch and import data, and create the indexes and materialized views needed to set up the database.
 
@@ -89,8 +121,7 @@ This is likely to take many hours to run, and will fetch more than 100GB of data
 
 If you just want to import one month of data to get started, edit setup.sh to use `--filename` arguments (as below in 'Updating the data').
 
-Editing JS and CSS
-------------------
+# Editing JS and CSS
 
 Source JavaScript is in `/media`, compiled JavaScript is in `/static`.
 
@@ -111,8 +142,7 @@ Similarly, you can build the compiled CSS from the source LESS with:
 
     npm run build-css
 
-Updating the data
------------------
+# Updating the data
 
 You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site. Also, get the latest versions of `eccg.csv` and `epraccur.csv` from the [HSCIC site](http://systems.hscic.gov.uk/data/ods/datadownloads/index).
 
@@ -161,7 +191,6 @@ Then re-run the smoke tests against the live data to make sure everything looks 
 
     python smoketests/smoke.py
 
-Philosophy
-==========
+# Philosophy
 
 This project follows design practices from [Two Scoops of Django](http://twoscoopspress.org/products/two-scoops-of-django-1-6).

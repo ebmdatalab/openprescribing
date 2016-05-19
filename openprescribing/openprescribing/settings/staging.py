@@ -49,7 +49,7 @@ DATABASES = {
         'NAME': utils.get_env_setting('DB_NAME_STAGING', ''),
         'USER': utils.get_env_setting('DB_USER_STAGING', ''),
         'PASSWORD': utils.get_env_setting('DB_PASS_STAGING', ''),
-        'HOST': '127.0.0.1'
+        'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')
     }
 }
 ########## END DATABASE CONFIGURATION
