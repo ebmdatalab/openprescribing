@@ -101,21 +101,29 @@ var analyseChart = {
 
     loadChart: function() {
         var _this = this;
+        var button_clicked = false;
+        if ($(this.el.submitButton).data('clicked'))
+            button_clicked = true;
         this.el.submitButton.button('reset');
         this.globalOptions.activeOption = 'items';
         this.setUpData();
         this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions.data.combinedData);
         this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length-1];
         this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
+        this.hash = hashHelper.setHashParams(this.globalOptions);
+        if (button_clicked)
+            this.hash += '&source=button';
+        else
+            this.hash += 'source=pageload';
+        ga('send', {
+            'hitType': 'event',
+            'eventCategory': 'search_button',
+            'eventAction': 'click',
+            'eventLabel': _this.hash
+        });
+
         if (this.globalOptions.data.combinedData.length > 0) {
             this.addDataDownload();
-            this.hash = hashHelper.setHashParams(this.globalOptions);
-            ga('send', {
-              'hitType': 'event',
-              'eventCategory': 'search_button',
-              'eventAction': 'click',
-              'eventLabel': _this.hash
-            });
             this.el.loadingEl.hide();
             this.el.resultsEl.show();
             this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
