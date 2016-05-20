@@ -101,9 +101,6 @@ var analyseChart = {
 
     loadChart: function() {
         var _this = this;
-        var button_clicked = false;
-        if ($(this.el.submitButton).data('clicked'))
-            button_clicked = true;
         this.el.submitButton.button('reset');
         this.globalOptions.activeOption = 'items';
         this.setUpData();
@@ -111,10 +108,7 @@ var analyseChart = {
         this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length-1];
         this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
         this.hash = hashHelper.setHashParams(this.globalOptions);
-        if (button_clicked)
-            this.hash += '&source=button';
-        else
-            this.hash += 'source=pageload';
+        this.hash += ($(this.el.submitButton).data('clicked')) ? '&source=button' : '&source=pageload'
         ga('send', {
             'hitType': 'event',
             'eventCategory': 'search_button',
