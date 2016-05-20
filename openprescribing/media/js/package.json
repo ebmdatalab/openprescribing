@@ -38,7 +38,14 @@
     }
   },
   "eslintConfig": {
-    "extends": "eslint-config-google"
+     "extends": "eslint-config-google",
+     "env": {
+       "node": true,
+       "commonjs": true,
+       "jquery": true,
+       "browser": true,
+       "mocha": true
+    }
   },
   "dependencies": {
     "bootstrap": "^3.3.4",
