@@ -1,23 +1,23 @@
 var utils = require('./chart_utils');
 
 var scatterChart = {
-    setUp: function(chartOptions, globalOptions) {
+  setUp: function(chartOptions, globalOptions) {
         // console.log('denominatorData', this.globalOptions.data.denominatorData[0]);
         // console.log('numeratorData', this.globalOptions.data.numeratorData[0]);
         // Set up chart options.
-        var _this = this;
-        var scatterOptions = chartOptions.scatterOptions;
-        scatterOptions.series = utils.createChartSeries(this.globalOptions.data.summedData, this.globalOptions);
+    var _this = this;
+    var scatterOptions = chartOptions.scatterOptions;
+    scatterOptions.series = utils.createChartSeries(this.globalOptions.data.summedData, this.globalOptions);
         // console.log('series[0]', scatterOptions.series[0]);
-        scatterOptions.legend.enabled = false;
-        scatterOptions.title.text = _this.globalOptions.chartTitle;
-        scatterOptions.xAxis.title = {
-            text: utils.constructXAxisTitle(this.globalOptions)
-        };
-        this.globalOptions.yAxisTitle = utils.constructYAxisTitle(this.globalOptions);
-        scatterOptions.yAxis.title = {
-            text: this.globalOptions.yAxisTitle
-        };
+    scatterOptions.legend.enabled = false;
+    scatterOptions.title.text = _this.globalOptions.chartTitle;
+    scatterOptions.xAxis.title = {
+      text: utils.constructXAxisTitle(this.globalOptions)
+    };
+    this.globalOptions.yAxisTitle = utils.constructYAxisTitle(this.globalOptions);
+    scatterOptions.yAxis.title = {
+      text: this.globalOptions.yAxisTitle
+    };
         // if (this.globalOptions.scale === 'log') {
         //     scatterOptions.xAxis.type = 'logarithmic';
         //     scatterOptions.xAxis.min = 0.1;
@@ -33,20 +33,20 @@ var scatterChart = {
         //     this.el.scaleisLog.removeClass('btn-info').addClass('btn-default');
         //     this.el.scaleIsLinear.addClass('btn-info').removeClass('btn-default');
         // }
-        this.el.loadingEl.hide();
-        this.el.chartContainerEl.show();
-        if ((this.globalOptions.denom == 'total_list_size') || (this.globalOptions.denom == 'astro_pu_cost')) {
-            scatterOptions.xAxis.labels.formatter = null;
-        } else {
-            scatterOptions.xAxis.labels.formatter = function () {
-                return '£' + this.axis.defaultLabelFormatter.call(this);
-            };
-        }
-        this.globalOptions.chart = new Highcharts.Chart(scatterOptions);
+    this.el.loadingEl.hide();
+    this.el.chartContainerEl.show();
+    if ((this.globalOptions.denom == 'total_list_size') || (this.globalOptions.denom == 'astro_pu_cost')) {
+      scatterOptions.xAxis.labels.formatter = null;
+    } else {
+      scatterOptions.xAxis.labels.formatter = function() {
+        return '£' + this.axis.defaultLabelFormatter.call(this);
+      };
+    }
+    this.globalOptions.chart = new Highcharts.Chart(scatterOptions);
 
         // Update the type of organisation that the user can highlight.
-        this.el.highlightOrgType.text(this.globalOptions.org);
-    },
+    this.el.highlightOrgType.text(this.globalOptions.org);
+  }
 
     // initialiseHighlightOrgs: function() {
     //     var orgs = utils.getUniqueRowNames(this.globalOptions.data.activeMonthData);
