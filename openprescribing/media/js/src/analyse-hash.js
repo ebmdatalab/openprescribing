@@ -63,7 +63,7 @@ var hashHelper = {
           });
           hash += '&';
         }
-      } else if ((k === 'num') || (k === 'denom') || (k === 'org')) {
+      } else if ((k === 'num') || (k === 'denom') || (k === 'org') || (k === 'selectedTab')) {
         if (params[k] !== 'chemical') {
           hash += k + '=' + params[k] + '&';
         }

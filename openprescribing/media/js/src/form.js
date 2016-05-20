@@ -39,7 +39,8 @@ var queryForm = {
     denom: 'chemical',
     denomIds: [],
     highlightedPoints: [],
-    reUpdate: false
+    reUpdate: false,
+    selectedTab: 'summary' // One of 'summary', 'chart', 'map'
   },
 
   setUp: function() {
@@ -62,12 +63,12 @@ var queryForm = {
   },
 
   updateFormElementsToMatchOptions: function(isInitial) {
-        // console.log('updateFormElementsToMatchOptions');
+    // console.log('updateFormElementsToMatchOptions');
     isInitial = isInitial || false;
     var _this = this;
     if (isInitial) {
-            // On first load, manually append all the values.
-            // This is how select2 wants us to do it.
+      // On first load, manually append all the values.
+      // This is how select2 wants us to do it.
       _.each(_this.globalOptions.orgIds, function(d) {
         var option = $('<option selected></option>').text(d.name).val(d.id);
         $(_this.el.orgIds).append(option);
@@ -84,9 +85,9 @@ var queryForm = {
       });
       $(_this.el.denominatorIds).trigger('change');
     } else {
-            // We do this because a type change needs us to set the related
-            // IDs to empty - e.g. if we change org type from CCGs to practices,
-            // we want to empty the list of orgs.
+      // We do this because a type change needs us to set the related
+      // IDs to empty - e.g. if we change org type from CCGs to practices,
+      // we want to empty the list of orgs.
       if (_this.globalOptions.orgIds.length === 0) {
         $(_this.el.orgIds).val("").trigger("change");
       }
@@ -98,7 +99,7 @@ var queryForm = {
       }
     }
 
-        // Hide or show CCG matches.
+    // Hide or show CCG matches.
     if ((this.globalOptions.org === 'CCG') || (this.globalOptions.org === 'practice')) {
       $(this.el.orgIds).parent().fadeIn();
       if (this.globalOptions.org === 'practice') {
@@ -112,20 +113,19 @@ var queryForm = {
       $(this.el.orgIds).parent().fadeOut();
     }
 
-        // Hide or show numerator options.
+    // Hide or show numerator options.
     if (this.globalOptions.num === 'all') {
       $(this.el.numeratorIds).parent().fadeOut();
     } else {
       $(this.el.numeratorIds).parent().fadeIn();
     }
 
-        // Hide or show denominator options.
+    // Hide or show denominator options.
     if (this.globalOptions.denom !== 'chemical') {
       $(this.el.denominatorIds).parent().fadeOut();
     } else {
       $(this.el.denominatorIds).parent().fadeIn();
     }
-
     this.checkIfButtonShouldBeEnabled(this.globalOptions);
   },
 
