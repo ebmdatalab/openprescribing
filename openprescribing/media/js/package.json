@@ -12,7 +12,7 @@
     "watch-dashboard": "watchify dashboard.js -o ../../static/js/dashboard.js --debug --verbose",
     "watch-measures": "watchify measures.js -o ../../static/js/measures.js --debug --verbose",
     "watch": "npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-dashboard | npm run watch-measures",
-    "lint": "jshint src/*.js",
+    "lint": "eslint src/*.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-index": "browserify index.js | uglifyjs > ../../static/js/openprescribing.min.js",
     "build-bars": "browserify bar-charts.js | uglifyjs > ../../static/js/bar-chart.min.js",
@@ -37,6 +37,16 @@
       "exports": "Highcharts"
     }
   },
+  "eslintConfig": {
+     "extends": "eslint-config-google",
+     "env": {
+       "node": true,
+       "commonjs": true,
+       "jquery": true,
+       "browser": true,
+       "mocha": true
+    }
+  },
   "dependencies": {
     "bootstrap": "^3.3.4",
     "compute-quantile": "^1.0.1",
@@ -53,7 +63,8 @@
     "browserify-shim": "~3.2.0",
     "chai": "^2.3.0",
     "jsdom": "^3.1.2",
-    "jshint": "latest",
+    "eslint": "latest",
+    "eslint-config-google": "latest",
     "less": "^2.5.1",
     "mocha": "^2.2.5",
     "uglifyjs": "^2.4.10",
