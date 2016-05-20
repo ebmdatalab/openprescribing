@@ -215,6 +215,7 @@ var queryForm = {
     });
         // Handle click on 'get data' button.
     $(_this.el.update).click(function() {
+      $(this).data('clicked', true);
       $(_this.el.results).hide();
       $(_this.el.chart).html('');
       if (_this.checkIfChartCanBeRendered(_this.globalOptions)) {
