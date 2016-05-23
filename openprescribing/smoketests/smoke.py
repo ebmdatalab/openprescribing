@@ -586,7 +586,7 @@ class TestSmokeTestMeasures(SmokeTestBase):
         return total
 
     def retrieve_data_for_measure(self, measure, practice):
-        self.DOMAIN = 'http://localhost:8000'
+        self.DOMAIN = 'https://openprescribing.net'
         url = '%s/api/1.0/measure_by_practice/?format=json&' % self.DOMAIN
         url += 'measure=%s&org=%s' % (measure, practice)
         r = requests.get(url)
