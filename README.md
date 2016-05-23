@@ -142,6 +142,38 @@ Similarly, you can build the compiled CSS from the source LESS with:
 
     npm run build-css
 
+# Deployment
+
+Deployment is carried out using [`fabric`](http://www.fabfile.org/).
+As long as you have `ssh` access to the server, then running `fab
+deploy:production` will:
+
+* Check if there are any changes to deploy
+* Install `npm` and `pip` as required (you will need sudo access to do this)
+* Update the repo on the server
+* Install any new pip and npm dependencies
+* Build JS and CSS artefacts
+* Run pending migations (only for production environment)
+* Reload the server gracefully
+* Clear the cloudflare cache
+* Log a deploy to `deploy-log.json` in the deployment directory on the server
+
+You can also deploy to staging:
+
+    fab deploy:staging
+
+Or deploy a specific branch to staging:
+
+    fab deploy:staging,branch=deployment
+
+If the fabfile detects no undeployed changes, it will refuse to run. You can force it to do so (for example, to make it rebuild assets), with:
+
+    fab deploy:production,force_build=true
+
+Or for staging:
+
+    fab deploy:staging,force_build=true,branch=deployment
+
 # Updating the data
 
 You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site. Also, get the latest versions of `eccg.csv` and `epraccur.csv` from the [HSCIC site](http://systems.hscic.gov.uk/data/ods/datadownloads/index).
