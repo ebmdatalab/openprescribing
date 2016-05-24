@@ -37,7 +37,7 @@ def venv_init():
 
 
 def git_pull():
-    run('git pull --ff-only && git checkout %s' % env.branch)
+    run('git fetch --all && git checkout --force origin/%s' % env.branch)
 
 
 def pip_install():
