@@ -144,31 +144,38 @@ def graceful_reload():
         abort(result)
 
 
-@task
+def find_changed_static_files():
+    return set(
+        run("find %s/openprescribing/static -type f -newermt '%s'" %
+            (env.path, env.started_at.strftime('%Y-%m-%d %H:%M:%S'))).split()
+    )
+
+
 def clear_cloudflare(purge_all=False):
-    with cd(env.path):
-        if not hasattr(env, 'started_at'):
-            # Task has been invoked from command line
-            checkpoint(True)
-        url = 'https://api.cloudflare.com/client/v4/zones/%s'
-        headers = {
-            "Content-Type": "application/json",
-            "X-Auth-Key": os.environ['CF_API_KEY'],
-            "X-Auth-Email": os.environ['CF_API_EMAIL']
-        }
-        if purge_all:
-            data = {'purge_everything': true}
-        else:
-            data = {'files': purge_urls_from_git_files(env.changed_files)}
-        result = json.loads(
-            requests.delete(url % ZONE_ID + '/purge_cache',
-                            headers=headers, data=json.dumps(data)).text)
-        if result['success']:
-            print "Cloudflare clearing succeeded: %s" % \
-                json.dumps(result, indent=2)
-        else:
-            warn("Cloudflare clearing failed: %s" %
-                 json.dumps(result, indent=2))
+    url = 'https://api.cloudflare.com/client/v4/zones/%s'
+    headers = {
+        "Content-Type": "application/json",
+        "X-Auth-Key": os.environ['CF_API_KEY'],
+        "X-Auth-Email": os.environ['CF_API_EMAIL']
+    }
+    if purge_all:
+        data = {'purge_everything': True}
+    else:
+        # XXX need to think about these. If we're looking at files
+        # that have changed since the deployment started, do we need
+        # to bother with files that have changed according to git?
+        changed_files = env.changed_files.copy()
+        changed_files = changed_files.union(find_changed_static_files())
+        data = {'files': purge_urls_from_git_files(changed_files)}
+    result = json.loads(
+        requests.delete(url % ZONE_ID + '/purge_cache',
+                        headers=headers, data=json.dumps(data)).text)
+    if result['success']:
+        print "Cloudflare clearing succeeded: %s" % \
+            json.dumps(result, indent=2)
+    else:
+        warn("Cloudflare clearing failed: %s" %
+             json.dumps(result, indent=2))
 
 
 @task
@@ -177,6 +184,7 @@ def deploy(environment, force_build=False, branch='master'):
         abort("Specified environment must be one of %s" %
               ",".join(environments.keys()))
     env.app = environments[environment]
+    env.environment = environment
     env.path = "/webapps/%s" % env.app
     env.branch = branch
     with cd(env.path):
