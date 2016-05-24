@@ -89,7 +89,7 @@ def purge_urls_from_git_files(filenames):
     for name in filenames:
         if name.startswith('openprescribing/static'):
             urls.append("%s/%s" %
-                        (base_url, name.replace('openprescribing/static', '')))
+                        (base_url, name.replace('openprescribing/static/', '')))
         elif name in static_templates:
             urls.append("%s/%s" % (base_url, static_templates[name]))
     return urls
