@@ -84,6 +84,8 @@ PostGIS extensions, and create a superuser for the database.
 
 Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
 
+Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
+
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
@@ -164,7 +166,7 @@ You can also deploy to staging:
 
 Or deploy a specific branch to staging:
 
-    fab deploy:staging,branch=deployment
+    fab deploy:staging,branch=my_amazing_branch
 
 If the fabfile detects no undeployed changes, it will refuse to run. You can force it to do so (for example, to make it rebuild assets), with:
 
