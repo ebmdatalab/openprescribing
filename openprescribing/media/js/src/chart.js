@@ -212,29 +212,29 @@ var analyseChart = {
 
   setUpChartEvents: function() {
     var _this = this;
-        // Tab clicks.
+    // Tab clicks.
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
       $(window).resize(); // CSS hack.
-      var href = ($(this).attr('href'));
-      if ((href === '#chart-panel') ||
-          (href === '#data-panel')) {
+      var target = ($(this).data('target'));
+      if ((target === '#chart-panel') ||
+          (target === '#data-panel')) {
         // Only show the time slider for the "show over time" panel
         $('#chart-options').hide();
       } else {
         $('#chart-options').show();
       }
-      if (href === '#map-panel') {
+      if (target === '#map-panel') {
         if (!_this.isOldIe) {
           map.resize();
         }
       }
       // update the URL
-      var tabid = href.substring(1, href.length - 6);
+      var tabid = target.substring(1, target.length - 6);
       _this.globalOptions.selectedTab = tabid;
       this.hash = hashHelper.setHashParams(_this.globalOptions);
 
     });
-        // Items/spending toggle.
+    // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
       e.preventDefault();
       ga('send', {
