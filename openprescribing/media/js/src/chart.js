@@ -1,5 +1,6 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
+require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 var noUiSlider = require('noUiSlider');
@@ -211,21 +212,29 @@ var analyseChart = {
 
   setUpChartEvents: function() {
     var _this = this;
-        // Tab clicks.
+    // Tab clicks.
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
       $(window).resize(); // CSS hack.
-      if (($(this).attr('href') === '#chart-panel') || ($(this).attr('href') === '#data-panel')) {
+      var target = ($(this).data('target'));
+      if ((target === '#chart-panel') ||
+          (target === '#data-panel')) {
+        // Only show the time slider for the "show over time" panel
         $('#chart-options').hide();
       } else {
         $('#chart-options').show();
       }
-      if ($(this).attr('href') === '#map-panel') {
+      if (target === '#map-panel') {
         if (!_this.isOldIe) {
           map.resize();
         }
       }
+      // update the URL
+      var tabid = target.substring(1, target.length - 6);
+      _this.globalOptions.selectedTab = tabid;
+      this.hash = hashHelper.setHashParams(_this.globalOptions);
+
     });
-        // Items/spending toggle.
+    // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
       e.preventDefault();
       ga('send', {
@@ -240,6 +249,8 @@ var analyseChart = {
       _this.updateCharts();
 
     });
+    // select the correct view tab
+    $('a[data-toggle="tab"][href="#'+this.globalOptions.selectedTab+'-panel"]').tab('show');
   },
 
   updateCharts: function() {
