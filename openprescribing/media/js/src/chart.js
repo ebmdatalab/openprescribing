@@ -3,6 +3,8 @@ global.$ = global.jQuery;
 require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
+require('bootstrap');
+var Clipboard = require('clipboard');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
@@ -154,6 +156,9 @@ var analyseChart = {
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
       this.setUpSlider();
       this.setUpChartEvents();
+      this.setupSaveUrlButton();
+      new Clipboard('.save-url-dropdown .btn');
+      // add the save-url button to the active tab
     } else {
       this.showErrorMessage("No data found for this query. Please try again.", null);
     }
@@ -210,6 +215,17 @@ var analyseChart = {
     $(this.el.rowCount).text('(' + this.globalOptions.data.combinedData.length + ' rows)');
   },
 
+  setupSaveUrlButton: function () {
+    // Set the input box URL, and make it selected on click
+    $('#save-url-text')
+      .val(window.location.href)
+      .click(function() {
+        $(this).select();
+      });
+    // Move the button to the currently selected tab
+    $('.save-url-button').appendTo('.nav-tabs .active');
+  },
+
   setUpChartEvents: function() {
     var _this = this;
     // Tab clicks.
@@ -232,7 +248,7 @@ var analyseChart = {
       var tabid = target.substring(1, target.length - 6);
       _this.globalOptions.selectedTab = tabid;
       this.hash = hashHelper.setHashParams(_this.globalOptions);
-
+      _this.setupSaveUrlButton();
     });
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
