@@ -18,10 +18,9 @@ environments = {
     'staging': 'openprescribing_staging'
 }
 
-
-# XXX replace with the correct zone id for openprescribing.
-# See https://api.cloudflare.com/#zone-list-zones
-ZONE_ID = "427e898bffc0cfbcd1201dc0d363299e"
+# This zone ID may change if/when our account changes
+# Run `fab list_cloudflare_zones` to get a full list
+ZONE_ID = "a0965a9865f3c77f44fa06569fcfa714"
 
 
 def git_init():
@@ -149,6 +148,19 @@ def find_changed_static_files():
         run("find %s/openprescribing/static -type f -newermt '%s'" %
             (env.path, env.started_at.strftime('%Y-%m-%d %H:%M:%S'))).split()
     )
+
+@task
+def list_cloudflare_zones():
+    url = 'https://api.cloudflare.com/client/v4/zones'
+    headers = {
+        "Content-Type": "application/json",
+        "X-Auth-Key": os.environ['CF_API_KEY'],
+        "X-Auth-Email": os.environ['CF_API_EMAIL']
+    }
+    result = json.loads(
+        requests.get(url, headers=headers,).text)
+    zones = map(lambda x: {'name': x['name'], 'id': x['id']}, [x for x in result["result"]])
+    print json.dumps(zones, indent=2)
 
 
 def clear_cloudflare(purge_all=False):
