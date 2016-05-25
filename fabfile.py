@@ -74,22 +74,28 @@ def npm_build_css(force=False):
         run('cd openprescribing/media/js && npm run build-css')
 
 
-def purge_urls_from_git_files(filenames):
-    """Turn a list of filenames changed in git to a list of URLs to purge
-    in Cloudflare.
+def purge_urls(paths_from_git, changed_in_static):
+    """Turn 2 lists of filenames (changed in git, and in static) to a list
+    of URLs to purge in Cloudflare.
 
     """
-    # XXX this method for Anna to update
     urls = []
     base_url = 'https://openprescribing.net'
     static_templates = {
-        'openprescribing/templates/about.html': '/about/'
-    }  # etc
-    for name in filenames:
+        'openprescribing/templates/index.html': '/',
+        'openprescribing/templates/api.html': '/api/',
+        'openprescribing/templates/about.html': '/about/',
+        'openprescribing/templates/caution.html': '/caution/',
+        'openprescribing/templates/how-to-use.html': '/how-to-use/'
+    }
+    for name in changed_in_static:
         if name.startswith('openprescribing/static'):
             urls.append("%s/%s" %
-                        (base_url, name.replace('openprescribing/static/', '')))
-        elif name in static_templates:
+                        (base_url,
+                         name.replace('openprescribing/static/', '')))
+
+    for name in paths_from_git:
+        if name in static_templates:
             urls.append("%s/%s" % (base_url, static_templates[name]))
     return urls
 
@@ -98,14 +104,14 @@ def log_deploy():
     url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
     current_commit = run("git rev-parse --verify %s" % env.branch)
     log_line = json.dumps({'started_at': str(env.started_at),
-                           'ended_at': str(datetime.now()),
+                           'ended_at': str(datetime.utcnow()),
                            'changes_url': url % (env.previous_commit,
                                                  current_commit)})
     run("echo '%s' >> deploy-log.json" % log_line)
 
 
 def checkpoint(force_build):
-    env.started_at = datetime.now()
+    env.started_at = datetime.utcnow()
     with settings(warn_only=True):
         inited = run('git status').return_code == 0
         if not inited:
@@ -144,10 +150,11 @@ def graceful_reload():
 
 
 def find_changed_static_files():
-    return set(
-        run("find %s/openprescribing/static -type f -newermt '%s'" %
-            (env.path, env.started_at.strftime('%Y-%m-%d %H:%M:%S'))).split()
-    )
+    changed = run(
+        "find %s/openprescribing/static -type f -newermt '%s'" %
+        (env.path, env.started_at.strftime('%Y-%m-%d %H:%M:%S'))).split()
+    return map(lambda x: x.replace(env.path + '/', ''), [x for x in changed])
+
 
 @task
 def list_cloudflare_zones():
@@ -176,9 +183,9 @@ def clear_cloudflare(purge_all=False):
         # XXX need to think about these. If we're looking at files
         # that have changed since the deployment started, do we need
         # to bother with files that have changed according to git?
-        changed_files = env.changed_files.copy()
-        changed_files = changed_files.union(find_changed_static_files())
-        data = {'files': purge_urls_from_git_files(changed_files)}
+        changed_files_from_git = env.changed_files.copy()
+        data = {'files': purge_urls(changed_files_from_git,
+                                    find_changed_static_files())}
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
