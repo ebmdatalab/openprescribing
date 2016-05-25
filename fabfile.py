@@ -63,8 +63,8 @@ def npm_install_deps(force=False):
 
 
 def npm_build_js(force=False):
-    if force or [filter(lambda x: x.startswith('openprescribing/media/js'))
-                 for x in env.changed_files]:
+    if force or filter(lambda x: x.startswith('openprescribing/media/js'),
+                 [x for x in env.changed_files]):
         run('cd openprescribing/media/js && npm run build')
 
 
