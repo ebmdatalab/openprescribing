@@ -36,7 +36,8 @@ def venv_init():
 
 
 def git_pull():
-    run('git fetch --all && git checkout --force origin/%s' % env.branch)
+    run('git fetch --all')
+    run('git checkout --force origin/%s' % env.branch)
 
 
 def pip_install():
@@ -123,6 +124,7 @@ def checkpoint(force_build):
         if run('file .venv').return_code > 0:
             venv_init()
     env.previous_commit = run('git rev-parse --verify HEAD')
+    run('git fetch')
     env.next_commit = run('git rev-parse --verify origin/%s' % env.branch)
     env.changed_files = set(
         run("git diff --name-only %s %s" %
