@@ -1,6 +1,8 @@
 openprescribing/data/raw_data
 openprescribing/media/js/archive
 openprescribing/media/js/node_modules
+openprescribing/static/js/*js
+openprescribing/static/css/index.css
 openprescribing/assets
 analysis/
 docs/
@@ -30,4 +32,3 @@ tramp
 Thumbs.db
 Desktop.ini
 Icon?
-

@@ -84,6 +84,8 @@ PostGIS extensions, and create a superuser for the database.
 
 Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
 
+Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
+
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
@@ -141,6 +143,38 @@ Before deploying, run the build task to generate minified JavaScript:
 Similarly, you can build the compiled CSS from the source LESS with:
 
     npm run build-css
+
+# Deployment
+
+Deployment is carried out using [`fabric`](http://www.fabfile.org/).
+As long as you have `ssh` access to the server, then running `fab
+deploy:production` will:
+
+* Check if there are any changes to deploy
+* Install `npm` and `pip` as required (you will need sudo access to do this)
+* Update the repo on the server
+* Install any new pip and npm dependencies
+* Build JS and CSS artefacts
+* Run pending migations (only for production environment)
+* Reload the server gracefully
+* Clear the cloudflare cache
+* Log a deploy to `deploy-log.json` in the deployment directory on the server
+
+You can also deploy to staging:
+
+    fab deploy:staging
+
+Or deploy a specific branch to staging:
+
+    fab deploy:staging,branch=my_amazing_branch
+
+If the fabfile detects no undeployed changes, it will refuse to run. You can force it to do so (for example, to make it rebuild assets), with:
+
+    fab deploy:production,force_build=true
+
+Or for staging:
+
+    fab deploy:staging,force_build=true,branch=deployment
 
 # Updating the data
 
