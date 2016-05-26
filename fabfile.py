@@ -83,15 +83,15 @@ def purge_urls(paths_from_git, changed_in_static):
     urls = []
     if env.environment == 'production':
         base_url = 'https://openprescribing.net'
-    else
+    else:
         base_url = 'http://staging.openprescribing.net'
 
     static_templates = {
-        'openprescribing/templates/index.html': '/',
-        'openprescribing/templates/api.html': '/api/',
-        'openprescribing/templates/about.html': '/about/',
-        'openprescribing/templates/caution.html': '/caution/',
-        'openprescribing/templates/how-to-use.html': '/how-to-use/'
+        'openprescribing/templates/index.html': '',
+        'openprescribing/templates/api.html': 'api/',
+        'openprescribing/templates/about.html': 'about/',
+        'openprescribing/templates/caution.html': 'caution/',
+        'openprescribing/templates/how-to-use.html': 'how-to-use/'
     }
     for name in changed_in_static:
         if name.startswith('openprescribing/static'):
@@ -107,7 +107,7 @@ def purge_urls(paths_from_git, changed_in_static):
 
 def log_deploy():
     url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
-    current_commit = run("git rev-parse --verify HEAD" % env.branch)
+    current_commit = run("git rev-parse --verify HEAD")
     log_line = json.dumps({'started_at': str(env.started_at),
                            'ended_at': str(datetime.utcnow()),
                            'changes_url': url % (env.previous_commit,
@@ -196,7 +196,7 @@ def clear_cloudflare(purge_all=False):
                                     find_changed_static_files())}
 
     print "Purging from Cloudflare:"
-    print json.dumps(json.loads(data), indent=2)
+    print data
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
