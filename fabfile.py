@@ -116,6 +116,7 @@ def checkpoint(force_build):
         inited = run('git status').return_code == 0
         if not inited:
             git_init()
+        if run('file .venv').return_code > 0:
             venv_init()
     env.previous_commit = run('git rev-parse --verify HEAD')
     env.next_commit = run('git rev-parse --verify origin/%s' % env.branch)
