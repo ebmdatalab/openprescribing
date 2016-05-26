@@ -41,7 +41,7 @@ def git_pull():
 
 def pip_install():
     if filter(lambda x: x.startswith('requirements'),
-              [x for x in env.changed_files]):
+                       [x for x in env.changed_files]):
         with prefix('source .venv/bin/activate'):
             run('pip install -r requirements/production.txt')
 
@@ -64,13 +64,13 @@ def npm_install_deps(force=False):
 
 def npm_build_js(force=False):
     if force or filter(lambda x: x.startswith('openprescribing/media/js'),
-                 [x for x in env.changed_files]):
+                       [x for x in env.changed_files]):
         run('cd openprescribing/media/js && npm run build')
 
 
 def npm_build_css(force=False):
-    if force or [filter(lambda x: x.startswith('openprescribing/media/css'))
-                 for x in env.changed_files]:
+    if force or filter(lambda x: x.startswith('openprescribing/media/css'),
+                       [x for x in env.changed_files]):
         run('cd openprescribing/media/js && npm run build-css')
 
 
