@@ -171,7 +171,8 @@ def list_cloudflare_zones():
     }
     result = json.loads(
         requests.get(url, headers=headers,).text)
-    zones = map(lambda x: {'name': x['name'], 'id': x['id']}, [x for x in result["result"]])
+    zones = map(lambda x: {'name': x['name'], 'id': x['id']},
+                [x for x in result["result"]])
     print json.dumps(zones, indent=2)
 
 
