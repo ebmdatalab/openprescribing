@@ -147,8 +147,15 @@ Similarly, you can build the compiled CSS from the source LESS with:
 # Deployment
 
 Deployment is carried out using [`fabric`](http://www.fabfile.org/).
-As long as you have `ssh` access to the server, then running `fab
-deploy:production` will:
+
+Your public key must be added to `authorized_keys` for the `hello`
+user, and SSH forwarding should work (this possibly means running
+`ssh-agent add <private-key>` on your workstation - see
+[this helpful debugging guide](https://developer.github.com/guides/using-ssh-agent-forwarding/)
+if you are having problems.
+
+Running `fab deploy:production` will:
+
 
 * Check if there are any changes to deploy
 * Install `npm` and `pip` as required (you will need sudo access to do this)

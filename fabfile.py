@@ -36,12 +36,13 @@ def venv_init():
 
 
 def git_pull():
-    run('git fetch --all && git checkout --force origin/%s' % env.branch)
+    run('git fetch --all')
+    run('git checkout --force origin/%s' % env.branch)
 
 
 def pip_install():
     if filter(lambda x: x.startswith('requirements'),
-              [x for x in env.changed_files]):
+                       [x for x in env.changed_files]):
         with prefix('source .venv/bin/activate'):
             run('pip install -r requirements/production.txt')
 
@@ -64,13 +65,13 @@ def npm_install_deps(force=False):
 
 def npm_build_js(force=False):
     if force or filter(lambda x: x.startswith('openprescribing/media/js'),
-                 [x for x in env.changed_files]):
+                       [x for x in env.changed_files]):
         run('cd openprescribing/media/js && npm run build')
 
 
 def npm_build_css(force=False):
-    if force or [filter(lambda x: x.startswith('openprescribing/media/css'))
-                 for x in env.changed_files]:
+    if force or filter(lambda x: x.startswith('openprescribing/media/css'),
+                       [x for x in env.changed_files]):
         run('cd openprescribing/media/js && npm run build-css')
 
 
@@ -80,7 +81,11 @@ def purge_urls(paths_from_git, changed_in_static):
 
     """
     urls = []
-    base_url = 'https://openprescribing.net'
+    if env.environment == 'production':
+        base_url = 'https://openprescribing.net'
+    else
+        base_url = 'http://staging.openprescribing.net'
+
     static_templates = {
         'openprescribing/templates/index.html': '/',
         'openprescribing/templates/api.html': '/api/',
@@ -102,7 +107,7 @@ def purge_urls(paths_from_git, changed_in_static):
 
 def log_deploy():
     url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
-    current_commit = run("git rev-parse --verify %s" % env.branch)
+    current_commit = run("git rev-parse --verify HEAD" % env.branch)
     log_line = json.dumps({'started_at': str(env.started_at),
                            'ended_at': str(datetime.utcnow()),
                            'changes_url': url % (env.previous_commit,
@@ -116,8 +121,10 @@ def checkpoint(force_build):
         inited = run('git status').return_code == 0
         if not inited:
             git_init()
+        if run('file .venv').return_code > 0:
             venv_init()
     env.previous_commit = run('git rev-parse --verify HEAD')
+    run('git fetch')
     env.next_commit = run('git rev-parse --verify origin/%s' % env.branch)
     env.changed_files = set(
         run("git diff --name-only %s %s" %
@@ -166,7 +173,8 @@ def list_cloudflare_zones():
     }
     result = json.loads(
         requests.get(url, headers=headers,).text)
-    zones = map(lambda x: {'name': x['name'], 'id': x['id']}, [x for x in result["result"]])
+    zones = map(lambda x: {'name': x['name'], 'id': x['id']},
+                [x for x in result["result"]])
     print json.dumps(zones, indent=2)
 
 
@@ -186,6 +194,9 @@ def clear_cloudflare(purge_all=False):
         changed_files_from_git = env.changed_files.copy()
         data = {'files': purge_urls(changed_files_from_git,
                                     find_changed_static_files())}
+
+    print "Purging from Cloudflare:"
+    print json.dumps(json.loads(data), indent=2)
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
