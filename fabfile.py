@@ -107,7 +107,7 @@ def purge_urls(paths_from_git, changed_in_static):
 
 def log_deploy():
     url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
-    current_commit = run("git rev-parse --verify %s" % env.branch)
+    current_commit = run("git rev-parse --verify HEAD" % env.branch)
     log_line = json.dumps({'started_at': str(env.started_at),
                            'ended_at': str(datetime.utcnow()),
                            'changes_url': url % (env.previous_commit,
