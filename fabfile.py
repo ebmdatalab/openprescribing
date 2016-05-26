@@ -80,7 +80,11 @@ def purge_urls(paths_from_git, changed_in_static):
 
     """
     urls = []
-    base_url = 'https://openprescribing.net'
+    if env.environment == 'production':
+        base_url = 'https://openprescribing.net'
+    else
+        base_url = 'http://staging.openprescribing.net'
+
     static_templates = {
         'openprescribing/templates/index.html': '/',
         'openprescribing/templates/api.html': '/api/',
