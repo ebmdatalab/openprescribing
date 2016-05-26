@@ -192,6 +192,9 @@ def clear_cloudflare(purge_all=False):
         changed_files_from_git = env.changed_files.copy()
         data = {'files': purge_urls(changed_files_from_git,
                                     find_changed_static_files())}
+
+    print "Purging from Cloudflare:"
+    print json.dumps(json.loads(data), indent=2)
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
