@@ -23,6 +23,14 @@
 <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
 {% endif %}
 <p class="lead">Current practice type: {{ practice.get_setting_display }}</p>
+
+{% if practice.open_date %}
+<p class="lead">Opened: {{ practice.open_date }}</p>
+{% endif %}
+{% if practice.close_date %}
+<p class="lead">Closed: {{ practice.close_date }}</p>
+{% endif %}
+
 </div>
 
 <div class="col-md-6" id="map-container">

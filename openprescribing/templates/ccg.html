@@ -14,6 +14,13 @@
 
 <div class="row" id="summary">
 <div class="col-md-6">
+{% if ccg.open_date %}
+<p>Opened: {{ ccg.open_date }}</p>
+{% endif %}
+{% if ccg.close_date %}
+<p>Closed: {{ ccg.close_date }}</p>
+{% endif %}
+
 <p>Practices currently in this CCG:</p>
 <ul class="list-unstyled" id="practices">
 {% for p in practices %}
@@ -30,6 +37,7 @@ class='hidden'
 {% if practices.count > 10 %}
 <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
 {% endif %}
+
 </div>
 <div class="col-md-6">
 <div id="map-ccg"></div>
