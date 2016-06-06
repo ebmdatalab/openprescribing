@@ -110,8 +110,7 @@ class TestAPIOrgDetailsViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(rows[0]['detail'],
-                         'The keys you provided are not supported')
+        self.assertEqual(rows[0]['detail'], 'key "borg" does not exist')
 
     def test_api_view_org_details_all_ccgs_with_json_key(self):
         url = self.api_prefix
