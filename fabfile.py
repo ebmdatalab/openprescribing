@@ -221,7 +221,7 @@ def deploy(environment, force_build=False, branch='master'):
         pip_install()
         npm_install()
         npm_install_deps(force_build)
-        npm_build_js
+        npm_build_js()
         npm_build_css(force_build)
         run_migrations()
         graceful_reload()
