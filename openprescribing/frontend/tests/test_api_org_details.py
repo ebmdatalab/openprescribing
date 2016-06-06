@@ -84,6 +84,35 @@ class TestAPIOrgDetailsViews(TestCase):
                          '35.2')
         self.assertEqual(float(rows[1]['total_list_size']), 28)
 
+    def test_api_view_org_details_all_ccgs_with_keys(self):
+        url = self.api_prefix
+        url += ('/org_details?format=csv&org_type=ccg&keys=row_id,row_name,'
+                'date,total_list_size')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(rows[1]['row_id'], '03V')
+        self.assertEqual(rows[1]['row_name'], 'NHS Corby')
+        self.assertEqual(rows[1]['date'], '2015-01-01')
+        self.assertEqual(rows[1].get('astro_pu_cost'), None)
+        self.assertEqual(float(rows[1]['total_list_size']), 28)
+
+    def test_api_view_org_details_all_ccgs_with_nonexistent_key(self):
+        url = self.api_prefix
+        url += ('/org_details?format=csv&org_type=ccg&keys=borg')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 400)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        self.assertEqual(rows[0]['detail'],
+                         'The keys you provided are not supported')
+
     def test_api_view_org_details_one_ccg(self):
         url = self.api_prefix
         url += '/org_details?format=csv&org_type=ccg&org=03V'
