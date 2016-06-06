@@ -63,10 +63,8 @@ def npm_install_deps(force=False):
         run('cd openprescribing/media/js && npm install')
 
 
-def npm_build_js(force=False):
-    if force or filter(lambda x: x.startswith('openprescribing/media/js'),
-                       [x for x in env.changed_files]):
-        run('cd openprescribing/media/js && npm run build')
+def npm_build_js():
+    run('cd openprescribing/media/js && npm run build')
 
 
 def npm_build_css(force=False):
@@ -223,7 +221,7 @@ def deploy(environment, force_build=False, branch='master'):
         pip_install()
         npm_install()
         npm_install_deps(force_build)
-        npm_build_js(force_build)
+        npm_build_js
         npm_build_css(force_build)
         run_migrations()
         graceful_reload()
