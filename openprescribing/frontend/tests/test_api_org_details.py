@@ -113,6 +113,19 @@ class TestAPIOrgDetailsViews(TestCase):
         self.assertEqual(rows[0]['detail'],
                          'The keys you provided are not supported')
 
+    def test_api_view_org_details_all_ccgs_with_json_key(self):
+        url = self.api_prefix
+        url += ('/org_details?format=csv&org_type=ccg'
+                '&keys=star_pu.oral_antibacterials_item,total_list_size')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        self.assertEqual(rows[1]['star_pu.oral_antibacterials_item'],
+                         '35.2')
+
     def test_api_view_org_details_one_ccg(self):
         url = self.api_prefix
         url += '/org_details?format=csv&org_type=ccg&org=03V'

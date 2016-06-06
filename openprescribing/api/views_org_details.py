@@ -45,10 +45,17 @@ def org_details(request, format=None):
             aliases = {'row_id': 'pct_id',
                        'row_name': 'name'}
             for k in keys:
-                if k in aliases:
-                    cols.append("%s AS %s" % (aliases[k], k))
+                if k.startswith('star_pu.'):
+                    star_pu_type = k[len('star_pu.'):]
+                    cols.append(
+                        "json_build_object('%s', star_pu->>'%s') AS star_pu" %
+                        (star_pu_type, star_pu_type)
+                    )
                 else:
-                    cols.append(k)
+                    if k in aliases:
+                        cols.append("%s AS %s" % (aliases[k], k))
+                    else:
+                        cols.append(k)
             query = "SELECT %s" % ", ".join(cols)
         else:
             query = 'SELECT pct_id AS row_id, name as row_name, *'
@@ -88,3 +95,39 @@ def org_details(request, format=None):
         else:
             raise
     return Response(data)
+
+
+def _build_org_query(keys, orgs):
+    query = ""
+    if keys:
+        keys = keys.split(",")
+        cols = []
+        aliases = {'row_id': 'pct_id',
+                   'row_name': 'name'}
+        for k in keys:
+            if k.startswith('star_pu.'):
+                star_pu_type = k[len('star_pu.'):]
+                cols.append(
+                    "json_build_object('%s', star_pu->>'%s') AS star_pu" %
+                    (star_pu_type, star_pu_type)
+                )
+            else:
+                if k in aliases:
+                    cols.append("%s AS %s" % (aliases[k], k))
+                else:
+                    cols.append(k)
+        query = "SELECT %s" % ", ".join(cols)
+    else:
+        query = 'SELECT pct_id AS row_id, name as row_name, *'
+    query += ' FROM vw__ccgstatistics '
+
+    # select json_build_object('asd', star_pu->>'analgesics_cost') as star_pu from vw__ccgstatistics limit 1;
+    if orgs:
+        query += "WHERE ("
+        for i, c in enumerate(orgs):
+            query += "pct_id=%s "
+            if (i != len(orgs)-1):
+                query += ' OR '
+        query += ') '
+    query += 'ORDER BY date'
+    return query
