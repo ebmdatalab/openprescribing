@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 
 {% block title %}All BNF sections{% endblock %}
 {% block active_class %}trends{% endblock %}
@@ -37,5 +38,5 @@ var section = {
 allItems.push(section);
 {% endfor %}
 </script>
-<script src="/static/js/list-filter.min.js"></script>
+{% conditional_js 'list-filter' %}
 {% endblock %}

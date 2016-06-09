@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 
 {% block title %}Analyse{% endblock %}
 {% block active_class %}analyse{% endblock %}
@@ -195,9 +196,5 @@
 {% endblock %}
 
 {% block extra_js %}
-{% if debug %}
-<script src="/static/js/openprescribing.js?q=123456"></script>
-{% else %}
-<script src="/static/js/openprescribing.min.js?q=123456"></script>
-{% endif %}
+{% conditional_js 'openprescribing' %}
 {% endblock %}

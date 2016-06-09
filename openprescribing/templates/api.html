@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 
 {% block title %}API{% endblock %}
 {% block active_class %}more{% endblock %}
@@ -108,5 +109,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="/static/js/openprescribing.min.js?q=123456"></script>
+{% conditional_js 'openprescribing' %}
 {% endblock %}

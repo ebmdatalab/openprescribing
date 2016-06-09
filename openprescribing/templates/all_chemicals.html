@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 
 {% block title %}All chemicals{% endblock %}
 {% block active_class %}bnf{% endblock %}
@@ -32,5 +33,5 @@ var chemical = {
 allItems.push(chemical);
 {% endfor %}
 </script>
-<script src="/static/js/list-filter.min.js"></script>
+{% conditional_js 'list-filter' %}
 {% endblock %}
