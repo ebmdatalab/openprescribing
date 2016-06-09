@@ -110,6 +110,7 @@ var analyseChart = {
     this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
     this.hash = hashHelper.setHashParams(this.globalOptions);
     this.hash += ($(this.el.submitButton).data('clicked')) ? '&source=button' : '&source=pageload';
+    ga('send', 'pageview', '/analyse_dummy_search?' + this.hash);
     ga('send', {
       'hitType': 'event',
       'eventCategory': 'search_button',
