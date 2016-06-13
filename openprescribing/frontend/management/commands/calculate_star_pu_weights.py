@@ -11,10 +11,18 @@ class Command(BaseCommand):
     help += 'calculating STAR-PUs on PracticeStatistics save method. '
     help += 'Re-run when the HSCIC updates its file. '
 
+    def add_arguments(self, parser):
+        parser.add_argument('--filename')
+
+
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
+        if not options['filename']:
+            print 'Please supply a filename'
+            sys.exit()
+        fname = options['filename']
         fname = './data/star_pu/PrescribingUnits2013.xlsx'
         f = op.load_workbook(fname)
         sheet = f['STAR-PUs']
