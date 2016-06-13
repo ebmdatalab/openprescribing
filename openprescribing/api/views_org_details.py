@@ -4,6 +4,40 @@ from rest_framework.exceptions import APIException
 from django.db.utils import ProgrammingError
 import view_utils as utils
 
+CCG_STATS_COLUMN_WHITELIST = (
+    'row_id',
+    'row_name',
+    'date',
+    'total_list_size',
+    'astro_pu_items',
+    'astro_pu_cost',
+    'star_pu.lipid-regulating_drugs_cost',
+    'star_pu.ulcer_healing_drugs_cost',
+    'star_pu.statins_cost',
+    'star_pu.proton_pump_inhibitors_cost',
+    'star_pu.oral_nsaids_cost',
+'star_pu.oral_antibacterials_item',
+    'star_pu.oral_antibacterials_cost',
+    'star_pu.omega-3_fatty_acid_compounds_adq',
+'star_pu.laxatives_cost',
+    'star_pu.inhaled_corticosteroids_cost',
+    'star_pu.hypnotics_adq',
+'star_pu.drugs_used_in_parkinsonism_and_related_disorders_cost',
+    'star_pu.drugs_for_dementia_cost',
+    'star_pu.drugs_affecting_the_renin_angiotensin_system_cost',
+    'star_pu.drugs_acting_on_benzodiazepine_receptors_cost',
+'star_pu.cox-2_inhibitors_cost',
+    'star_pu.calcium-channel_blockers_cost',
+    'star_pu.bronchodilators_cost',
+    'star_pu.bisphosphonates_and_other_drugs_cost',
+    'star_pu.benzodiazepine_caps_and_tabs_cost',
+    'star_pu.antiplatelet_drugs_cost',
+    'star_pu.antiepileptic_drugs_cost',
+    'star_pu.antidepressants_cost',
+    'star_pu.antidepressants_adq',
+    'star_pu.analgesics_cost'
+)
+
 
 class KeysNotValid(APIException):
     status_code = 400
@@ -16,7 +50,7 @@ def org_details(request, format=None):
     Get list size and ASTRO-PU by month, for CCGs or practices.
     '''
     org_type = request.GET.get('org_type', None)
-    keys = request.GET.get('keys', None)
+    keys = utils.param_to_list(request.query_params.get('keys', []))
     orgs = utils.param_to_list(request.query_params.get('org', []))
 
     if org_type == 'practice':
@@ -40,11 +74,12 @@ def org_details(request, format=None):
             query += "ORDER BY date, row_id"
     elif org_type == 'ccg':
         if keys:
-            keys = keys.split(",")
             cols = []
             aliases = {'row_id': 'pct_id',
                        'row_name': 'name'}
             for k in keys:
+                if k not in CCG_STATS_COLUMN_WHITELIST:
+                    raise KeysNotValid("%s is not a valid key" % k)
                 if k.startswith('star_pu.'):
                     star_pu_type = k[len('star_pu.'):]
                     cols.append(
@@ -87,7 +122,7 @@ def org_details(request, format=None):
         query += 'GROUP BY date ORDER BY date'
     try:
         data = utils.execute_query(query, [orgs])
-    except ProgrammingError, e:
+    except ProgrammingError as e:
         error = str(e)
         if keys and 'does not exist' in error:
             error = error.split('\n')[0].replace('column', 'key')

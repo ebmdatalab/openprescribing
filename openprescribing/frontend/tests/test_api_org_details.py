@@ -101,7 +101,7 @@ class TestAPIOrgDetailsViews(TestCase):
         self.assertEqual(rows[1].get('astro_pu_cost'), None)
         self.assertEqual(float(rows[1]['total_list_size']), 28)
 
-    def test_api_view_org_details_all_ccgs_with_nonexistent_key(self):
+    def test_api_view_org_details_all_ccgs_with_unpermitted_key(self):
         url = self.api_prefix
         url += ('/org_details?format=csv&org_type=ccg&keys=borg')
         response = self.client.get(url, follow=True)
@@ -110,7 +110,7 @@ class TestAPIOrgDetailsViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(rows[0]['detail'], 'key "borg" does not exist')
+        self.assertEqual(rows[0]['detail'], 'borg is not a valid key')
 
     def test_api_view_org_details_all_ccgs_with_json_key(self):
         url = self.api_prefix
