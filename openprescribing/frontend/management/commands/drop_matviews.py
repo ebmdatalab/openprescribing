@@ -14,10 +14,10 @@ class Command(BaseCommand):
         parser.add_argument('--db_pass')
 
     def handle(self, *args, **options):
-        db_name = options['db_name']
-        db_user = options['db_user']
-        db_pass = options['db_pass']
-        db_host = utils.get_env_setting('DB_HOST')
+        db_name = options['db_name'] or utils.get_env_setting('DB_NAME')
+        db_user = options['db_user'] or utils.get_env_setting('DB_USER')
+        db_pass = options['db_pass'] or utils.get_env_setting('DB_PASS')
+        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
         with self.conn.cursor() as c:
