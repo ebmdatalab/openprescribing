@@ -22,11 +22,14 @@ class Command(BaseCommand):
         parser.add_argument('--db_user')
         parser.add_argument('--db_pass')
         parser.add_argument('--filename')
+        parser.add_argument('--truncate')
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
+        if options['truncate']:
+            self.truncate = True
 
         if options['db_name']:
             db_name = options['db_name']
@@ -67,9 +70,13 @@ class Command(BaseCommand):
         rows = csv.reader(open(filename, 'rU'))
         sha_codes = set()
         pct_codes = set()
+        i = 0
         for row in rows:
             sha_codes.add(row[0])
             pct_codes.add(row[1])
+            i += 1
+            if self.truncate and i > 500:
+                break
         shas_created = pcts_created = 0
         for sha_code in sha_codes:
             s, created = SHA.objects.get_or_create(code=sha_code)
@@ -90,7 +97,18 @@ class Command(BaseCommand):
         copy_str += "presentation_name,total_items,net_cost,actual_cost,"
         copy_str += "quantity,processing_date,price_per_unit) FROM STDIN "
         copy_str += "WITH DELIMITER AS ','"
-        file_obj = open(filename)
+        i = 0
+        if self.truncate:
+            with open("/tmp/sample", "wb") as outfile:
+                with open(filename) as infile:
+                    for line in infile:
+                        outfile.write(line)
+                        i += 1
+                        if self.truncate and i > 500:
+                            break
+            file_obj = open("/tmp/sample")
+        else:
+            file_obj = open(filename)
         cursor.copy_expert(copy_str, file_obj)
         try:
             self.conn.commit()
@@ -104,7 +122,7 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print 'Deleting existing Prescriptions for month'
         file_str = filename.split('/')[-1].split('.')[0]
-        file_str = file_str.replace('PDPI+BNFT_formatted', '')
+        file_str = file_str.replace('PDPI BNFT_formatted', '')
         date_from_filename = file_str[1:5] + '-' + file_str[5:] + '-01'
         p = Prescription.objects.filter(processing_date=date_from_filename)
         p.delete()
