@@ -1,3 +1,5 @@
+{% load template_extras %}
+
 <div id="dashboard">
 
 <h2>Prescribing dashboard</h2>
@@ -48,4 +50,5 @@ var orgId = '{{ orgId }}';
 var orgName = '{{ orgName }}';
 var orgType = '{{ orgType }}';
 </script>
-<script src="/static/js/dashboard.js?q=123"></script>
+
+{% conditional_js 'dashboard' %}

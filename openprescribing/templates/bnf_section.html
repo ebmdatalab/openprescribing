@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load template_extras %}
 
 {% block title %}BNF {{ section.number_str}}: {{ section.name }}{% endblock %}
 {% block active_class %}trends{% endblock %}
@@ -49,5 +50,5 @@
 var filename = "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'bnf-section';
 </script>
-<script src="/static/js/bar-chart.min.js"></script>
+{% conditional_js 'bar-chart' %}
 {% endblock %}

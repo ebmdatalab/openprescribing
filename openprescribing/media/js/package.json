@@ -11,7 +11,7 @@
     "watch-filter": "watchify list-filter.js -o ../../static/js/list-filter.js --debug --verbose",
     "watch-dashboard": "watchify dashboard.js -o ../../static/js/dashboard.js --debug --verbose",
     "watch-measures": "watchify measures.js -o ../../static/js/measures.js --debug --verbose",
-    "watch": "npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-dashboard | npm run watch-measures",
+    "watch": "npm run build | npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-dashboard | npm run watch-measures",
     "lint": "eslint src/*.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-index": "browserify index.js | uglifyjs > ../../static/js/openprescribing.min.js",
