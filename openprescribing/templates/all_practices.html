@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 
 {% block title %}All practices{% endblock %}
 {% block active_class %}practice{% endblock %}
@@ -31,5 +32,5 @@ var practice = {
 allItems.push(practice);
 {% endfor %}
 </script>
-<script src="/static/js/list-filter.min.js"></script>
+{% conditional_js 'list-filter' %}
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load template_extras %}
 
 {% block title %}Prescribing of {{ measure }} by all CCGs{% endblock %}
 {% block active_class %}ccg{% endblock %}
@@ -70,9 +71,5 @@ var measureData = {
     'denominator': '{{ measure.denominator_short }}'
 };
 </script>
-{% if debug %}
-<script src="/static/js/measures.js"></script>
-{% else %}
-<script src="/static/js/measures.min.js"></script>
-{% endif %}
+{% conditional_js 'measures' %}
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load template_extras %}
 
 {% block title %}{{ chemical.chem_name }}: BNF Code {{ chemical.bnf_code }}{% endblock %}
 {% block active_class %}bnf{% endblock %}
@@ -37,5 +38,5 @@ Download CSV:
 var filename = "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'chemical';
 </script>
-<script src="/static/js/bar-chart.min.js"></script>
+{% conditional_js 'bar-chart' %}
 {% endblock %}

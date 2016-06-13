@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_extras %}
 {% load humanize %}
 
 {% block title %}Prescribing measures for {{ practice }}{% endblock %}
@@ -117,10 +118,6 @@ var measureData = {
     'orgType': 'practice'
 };
 </script>
-{% if debug %}
-<script src="/static/js/measures.js"></script>
-{% else %}
-<script src="/static/js/measures.min.js"></script>
-{% endif %}
+{% conditional_js 'measures' %}
 
 {% endblock %}
