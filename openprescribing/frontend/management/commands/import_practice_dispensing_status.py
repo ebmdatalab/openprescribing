@@ -18,12 +18,10 @@ class Command(BaseCommand):
             self.IS_VERBOSE = True
 
         if not options['filename']:
-            print 'Please supply a filename'
-            sys.exit()
+            raise CommandError('Please supply a filename')
 
         if not options['date']:
-            print 'Please supply a date'
-            sys.exit()
+            raise CommandError('Please supply a date')
 
         workbook = xlrd.open_workbook(options['filename'])
         worksheet = workbook.sheet_by_name('Sheet1')
