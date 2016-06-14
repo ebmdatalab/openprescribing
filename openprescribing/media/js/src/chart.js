@@ -287,6 +287,7 @@ var analyseChart = {
       _this.globalOptions.selectedTab = tabid;
       this.hash = hashHelper.setHashParams(_this.globalOptions);
       _this.setUpSaveUrl();
+      _this.setUpSaveUrlUI();
     });
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
