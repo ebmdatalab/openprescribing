@@ -23,7 +23,6 @@ class Command(BaseCommand):
             print 'Please supply a filename'
             sys.exit()
         fname = options['filename']
-        fname = './data/star_pu/PrescribingUnits2013.xlsx'
         f = op.load_workbook(fname)
         sheet = f['STAR-PUs']
         idxs = self.get_sect_cells('A6')
