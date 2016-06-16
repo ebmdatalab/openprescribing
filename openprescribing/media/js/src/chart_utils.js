@@ -64,7 +64,7 @@ var utils = {
     } else {
       denominatorUrl += '/org_details/?format=json';
       denominatorUrl += '&org_type=' + options.org.toLowerCase();
-      denominatorUrl += '&keys=row_id,row_name,date,' + options.denom;
+      denominatorUrl += '&keys=' + options.denom;
     }
     if ((org_ids.length > 0) && (options.org === 'practice')) {
       denominatorUrl += '&org=';

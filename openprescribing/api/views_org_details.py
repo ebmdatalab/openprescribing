@@ -4,38 +4,10 @@ from rest_framework.exceptions import APIException
 from django.db.utils import ProgrammingError
 import view_utils as utils
 
-CCG_STATS_COLUMN_WHITELIST = (
-    'row_id',
-    'row_name',
-    'date',
+STATS_COLUMN_WHITELIST = (
     'total_list_size',
     'astro_pu_items',
-    'astro_pu_cost',
-    'star_pu.lipid-regulating_drugs_cost',
-    'star_pu.ulcer_healing_drugs_cost',
-    'star_pu.statins_cost',
-    'star_pu.proton_pump_inhibitors_cost',
-    'star_pu.oral_nsaids_cost',
-'star_pu.oral_antibacterials_item',
-    'star_pu.oral_antibacterials_cost',
-    'star_pu.omega-3_fatty_acid_compounds_adq',
-'star_pu.laxatives_cost',
-    'star_pu.inhaled_corticosteroids_cost',
-    'star_pu.hypnotics_adq',
-'star_pu.drugs_used_in_parkinsonism_and_related_disorders_cost',
-    'star_pu.drugs_for_dementia_cost',
-    'star_pu.drugs_affecting_the_renin_angiotensin_system_cost',
-    'star_pu.drugs_acting_on_benzodiazepine_receptors_cost',
-'star_pu.cox-2_inhibitors_cost',
-    'star_pu.calcium-channel_blockers_cost',
-    'star_pu.bronchodilators_cost',
-    'star_pu.bisphosphonates_and_other_drugs_cost',
-    'star_pu.benzodiazepine_caps_and_tabs_cost',
-    'star_pu.antiplatelet_drugs_cost',
-    'star_pu.antiepileptic_drugs_cost',
-    'star_pu.antidepressants_cost',
-    'star_pu.antidepressants_adq',
-    'star_pu.analgesics_cost'
+    'astro_pu_cost'
 )
 
 
@@ -52,13 +24,11 @@ def org_details(request, format=None):
     org_type = request.GET.get('org_type', None)
     keys = utils.param_to_list(request.query_params.get('keys', []))
     orgs = utils.param_to_list(request.query_params.get('org', []))
+    cols = []
 
     if org_type == 'practice':
-        query = "SELECT pr.date as date, pr.practice_id as row_id, "
-        query += "pc.name as row_name, "
-        query += "pr.total_list_size, pr.astro_pu_cost, "
-        query += "pr.astro_pu_items, pr.star_pu "
-        query += "FROM frontend_practicestatistics pr "
+        cols, query = _construct_cols(keys, True)
+        query += " FROM frontend_practicestatistics pr "
         query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
         if orgs:
             query += "WHERE "
@@ -69,31 +39,9 @@ def org_details(request, format=None):
                     query += "pr.practice_id=%s "
                 if (i != len(orgs)-1):
                     query += ' OR '
-            query += "ORDER BY date, row_id"
-        else:
-            query += "ORDER BY date, row_id"
+        query += "ORDER BY date, row_id"
     elif org_type == 'ccg':
-        if keys:
-            cols = []
-            aliases = {'row_id': 'pct_id',
-                       'row_name': 'name'}
-            for k in keys:
-                if k not in CCG_STATS_COLUMN_WHITELIST:
-                    raise KeysNotValid("%s is not a valid key" % k)
-                if k.startswith('star_pu.'):
-                    star_pu_type = k[len('star_pu.'):]
-                    cols.append(
-                        "json_build_object('%s', star_pu->>'%s') AS star_pu" %
-                        (star_pu_type, star_pu_type)
-                    )
-                else:
-                    if k in aliases:
-                        cols.append("%s AS %s" % (aliases[k], k))
-                    else:
-                        cols.append(k)
-            query = "SELECT %s" % ", ".join(cols)
-        else:
-            query = 'SELECT pct_id AS row_id, name as row_name, *'
+        cols, query = _construct_cols(keys, False)
         query += ' FROM vw__ccgstatistics '
         if orgs:
             query += "WHERE ("
@@ -121,7 +69,10 @@ def org_details(request, format=None):
         query += ') p '
         query += 'GROUP BY date ORDER BY date'
     try:
-        data = utils.execute_query(query, [orgs])
+        if cols:
+            data = utils.execute_query(query, [cols, orgs])
+        else:
+            data = utils.execute_query(query, [orgs])
     except ProgrammingError as e:
         error = str(e)
         if keys and 'does not exist' in error:
@@ -132,37 +83,25 @@ def org_details(request, format=None):
     return Response(data)
 
 
-def _build_org_query(keys, orgs):
-    query = ""
+def _construct_cols(keys, is_practice):
+    cols = []
+    if is_practice:
+        query = "SELECT practice_id AS row_id, name as row_name, date, "
+    else:
+        query = "SELECT pct_id AS row_id, name as row_name, date, "
     if keys:
-        keys = keys.split(",")
-        cols = []
-        aliases = {'row_id': 'pct_id',
-                   'row_name': 'name'}
         for k in keys:
             if k.startswith('star_pu.'):
                 star_pu_type = k[len('star_pu.'):]
-                cols.append(
-                    "json_build_object('%s', star_pu->>'%s') AS star_pu" %
-                    (star_pu_type, star_pu_type)
-                )
+                query += "json_build_object"
+                query += "(%s, star_pu->>%s) AS star_pu, "
+                cols += [star_pu_type, star_pu_type]
             else:
-                if k in aliases:
-                    cols.append("%s AS %s" % (aliases[k], k))
+                if k not in STATS_COLUMN_WHITELIST:
+                    raise KeysNotValid("%s is not a valid key" % k)
                 else:
-                    cols.append(k)
-        query = "SELECT %s" % ", ".join(cols)
+                    query += '%s, ' % k
+        query = query[:-2]
     else:
-        query = 'SELECT pct_id AS row_id, name as row_name, *'
-    query += ' FROM vw__ccgstatistics '
-
-    # select json_build_object('asd', star_pu->>'analgesics_cost') as star_pu from vw__ccgstatistics limit 1;
-    if orgs:
-        query += "WHERE ("
-        for i, c in enumerate(orgs):
-            query += "pct_id=%s "
-            if (i != len(orgs)-1):
-                query += ' OR '
-        query += ') '
-    query += 'ORDER BY date'
-    return query
+        query += '* '
+    return cols, query
