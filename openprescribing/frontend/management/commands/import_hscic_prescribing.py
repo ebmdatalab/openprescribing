@@ -30,7 +30,8 @@ class Command(BaseCommand):
             self.IS_VERBOSE = True
         if options['truncate']:
             self.truncate = True
-
+        else:
+            self.truncate = False
         if options['db_name']:
             db_name = options['db_name']
         else:
