@@ -1,6 +1,7 @@
 import csv
 import glob
 import logging
+import re
 import psycopg2
 import os
 import sys
@@ -123,7 +124,7 @@ class Command(BaseCommand):
         if self.IS_VERBOSE:
             print 'Deleting existing Prescriptions for month'
         file_str = filename.split('/')[-1].split('.')[0]
-        file_str = file_str.replace('PDPI BNFT_formatted', '')
+        file_str = re.sub(r'PDPI.BNFT_formatted', '', file_str)
         date_from_filename = file_str[1:5] + '-' + file_str[5:] + '-01'
         p = Prescription.objects.filter(processing_date=date_from_filename)
         p.delete()
