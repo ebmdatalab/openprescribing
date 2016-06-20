@@ -115,14 +115,12 @@ You should now have a Django application running with no data inside it.
 
 # Load the HSCIC data
 
-Run setup.sh to fetch and import data, and create the indexes and materialized views needed to set up the database.
+Check out the `openprescribing-data` repo (which contains data for the
+app, and scripts to update that data):
 
-    chmod u+x ../setup.sh
-    ../setup.sh
+    git clone git@github.com:ebmdatalab/openprescribing-data.git
 
-This is likely to take many hours to run, and will fetch more than 100GB of data. You probably want to tweak Postgres's memory settings first.
-
-If you just want to import one month of data to get started, edit setup.sh to use `--filename` arguments (as below in 'Updating the data').
+Follow the documentation there to import data.
 
 # Editing JS and CSS
 
@@ -183,55 +181,6 @@ If the fabfile detects no undeployed changes, it will refuse to run. You can for
 Or for staging:
 
     fab deploy:staging,force_build=true,branch=deployment
-
-# Updating the data
-
-You may need to add data for new months. To do this, active your virtualenv, then wget the files you need from the HSCIC site. Also, get the latest versions of `eccg.csv` and `epraccur.csv` from the [HSCIC site](http://systems.hscic.gov.uk/data/ods/datadownloads/index).
-
-Note that the ordering of the following steps is important.
-
-Start by updating organisational data. The first and third steps only need to be run if `epraccur.csv` and `eccg.csv` have changed:
-
-    python manage.py import_org_names --ccg data/org_codes/eccg.csv -v 2
-    python manage.py import_practices --hscic_address data/raw_data/[ADDR FILE].CSV -v 2
-    python manage.py import_practices --epraccur data/org_codes/epraccur.csv -v 2
-
-If new practices were added at any point, re-run the practice geocoder, with the latest version of the `gridall.csv` file, which you can also obtain from the HSCIC site:
-
-    python manage.py geocode_practices -v 2 --filename data/gridall.csv
-
-Import the chemicals:
-
-    python manage.py import_hscic_chemicals --chem_file data/raw_data/[CHEM FILE].CSV -v 2
-
-Now you can convert and import the prescribing data:
-
-    python manage.py convert_hscic_prescribing --filename data/raw_data/[PDPI FILE].CSV -v 2
-    python manage.py import_hscic_prescribing --filename data/raw_data/[PDPI FORMATTED FILE].CSV -v 2
-
-Then update list sizes for the latest months. You can get the raw list size data from deep inside the NHS BSA Information Portal:
-
-    python manage.py import_list_sizes --filename data/list_sizes/[MONTH FILE].CSV -v 2
-
-(If you want to add list size data for only part of a quarter - which will be the case if the HSCIC file is not for the last month of a quarter - then rename the filename to cover only those months.)
-
-Then update measures. You can get the raw list size data from the [BSA Information Portal](https://apps.nhsbsa.nhs.uk/infosystems/welcome) (Report > Common Information Reports > Organisation Data > Practice List Size):
-
-    python manage.py import_measures --start_date YYYY-MM-DD --end_date YYYY-MM-DD -v 2
-
-Finally, refresh the materialized views (which will take some time, and slow the database while it runs - if doing this remotely, it's best to run this inside a screen session):
-
-    python manage.py refresh_matviews -v 2
-
-Now purge the CloudFlare cache and you should see the new data appear.
-
-You may now want to run a snapshot on the DigitalOcean server, for use in backups if ever needed. This will take down the server for a few hours, so is best done in the middle of the night.
-
-And finally, update the smoke tests in `smoke.py` - you'll need to update `NUM_RESULTS`, plus add expected values for the latest month.
-
-Then re-run the smoke tests against the live data to make sure everything looks as you expect:
-
-    python smoketests/smoke.py
 
 # Philosophy
 

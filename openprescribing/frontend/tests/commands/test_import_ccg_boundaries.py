@@ -19,7 +19,7 @@ class CommandsTestCase(TestCase):
     def test_import_ccg_boundaries(self):
         args = []
         opts = {
-            'filename': 'data/org_codes/CCC_Feb2013.KML'
+            'filename': 'frontend/tests/fixtures/commands/ccg_boundaries_2013_02_01.kml'
         }
         call_command('import_ccg_boundaries', *args, **opts)
 

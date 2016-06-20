@@ -27,7 +27,7 @@ class Command(BaseCommand):
             db_pass = options['db_pass']
         else:
             db_pass = utils.get_env_setting('DB_PASS')
-        db_host = utils.get_env_setting('DB_HOST')
+        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
         cursor = self.conn.cursor()
@@ -59,6 +59,13 @@ class Command(BaseCommand):
         cmd += '(presentation_code varchar_pattern_ops)'
         self._print_and_execute(cursor, cmd)
 
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__idx_pres_by_ccg_unique ON '
+        cmd += 'vw__presentation_summary_by_ccg'
+        cmd += '(processing_date, pct_id, presentation_code)'
+        self._print_and_execute(cursor, cmd)
+
+
         cmd = 'CREATE INDEX vw__idx_pres_by_ccg_joint_code ON '
         cmd += 'vw__presentation_summary_by_ccg(pct_id, presentation_code)'
         self._print_and_execute(cursor, cmd)
@@ -77,6 +84,12 @@ class Command(BaseCommand):
         cmd = ('CREATE INDEX vw__idx_presentation_summary ON '
                'vw__presentation_summary(presentation_code '
                'varchar_pattern_ops)')
+        self._print_and_execute(cursor, cmd)
+
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__idx_presentation_summary_unique ON '
+        cmd += 'vw__presentation_summary'
+        cmd += '(processing_date, presentation_code)'
         self._print_and_execute(cursor, cmd)
 
         # Spending by chemical_id by CCG by month.
@@ -98,6 +111,12 @@ class Command(BaseCommand):
         cmd = ('CREATE INDEX vw__idx_ccg_by_chem ON '
                'vw__chemical_summary_by_ccg('
                'pct_id, chemical_id varchar_pattern_ops)')
+        self._print_and_execute(cursor, cmd)
+
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__idx_chem_by_ccg_unique ON '
+        cmd += 'vw__chemical_summary_by_ccg'
+        cmd += '(processing_date, pct_id, chemical_id)'
         self._print_and_execute(cursor, cmd)
 
         # Spending by chemical_id by practice by month.
@@ -127,6 +146,12 @@ class Command(BaseCommand):
         cmd += '(chemical_id varchar_pattern_ops, processing_date)'
         self._print_and_execute(cursor, cmd)
 
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__idx_chem_by_practice_unique ON '
+        cmd += 'vw__chemical_summary_by_practice'
+        cmd += '(processing_date, practice_id, chemical_id)'
+        self._print_and_execute(cursor, cmd)
+
         # Spending by practice by month.
         cmd = 'CREATE MATERIALIZED VIEW vw__practice_summary AS '
         cmd += 'SELECT processing_date, practice_id, '
@@ -139,6 +164,12 @@ class Command(BaseCommand):
 
         cmd = 'CREATE INDEX vw__practice_summary_prac_id ON '
         cmd += 'vw__practice_summary(practice_id)'
+        self._print_and_execute(cursor, cmd)
+
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__practice_summary_unique ON '
+        cmd += 'vw__practice_summary'
+        cmd += '(processing_date, practice_id)'
         self._print_and_execute(cursor, cmd)
 
         # List sizes and related statistics, by CCG.
@@ -162,6 +193,12 @@ class Command(BaseCommand):
 
         cmd = 'CREATE INDEX vw__idx_ccgstatistics_by_ccg ON '
         cmd += 'vw__ccgstatistics(pct_id)'
+        self._print_and_execute(cursor, cmd)
+
+        # Unique index to support concurrent refreshing
+        cmd = 'CREATE UNIQUE INDEX vw__ccgstatistics_unique ON '
+        cmd += 'vw__ccgstatistics'
+        cmd += '(date, pct_id, name)'
         self._print_and_execute(cursor, cmd)
 
     def vacuum_db(self, cursor):

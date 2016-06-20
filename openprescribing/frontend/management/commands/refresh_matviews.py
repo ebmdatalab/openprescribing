@@ -29,7 +29,7 @@ class Command(BaseCommand):
             db_pass = options['db_pass']
         else:
             db_pass = utils.get_env_setting('DB_PASS')
-        db_host = utils.get_env_setting('DB_HOST')
+        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
         cursor = self.conn.cursor()
@@ -43,7 +43,7 @@ class Command(BaseCommand):
     def refresh_matviews(self, cursor):
         if self.IS_VERBOSE:
             print 'Refreshing materialized views...'
-        refresh = 'REFRESH MATERIALIZED VIEW'
+        refresh = 'REFRESH MATERIALIZED VIEW CONCURRENTLY'
         cmd = '%s vw__presentation_summary_by_ccg' % refresh
         self._print_and_execute(cursor, cmd)
         cmd = '%s vw__presentation_summary' % refresh
