@@ -40,7 +40,7 @@ describe('Utils', function () {
             };
             var urls = utils.constructQueryURLs(options);
             expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_practice/?format=json&code=1234,5678&org=Y020405,J04052');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=practice&org=Y020405,J04052');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=practice&keys=row_id,row_name,date,astro_pu_cost&org=Y020405,J04052');
         });
         it('should correctly construct urls for list size', function () {
             var options = {
@@ -53,7 +53,7 @@ describe('Utils', function () {
             };
             var urls = utils.constructQueryURLs(options);
             expect(urls.numeratorUrl).to.equal('/api/1.0/spending_by_ccg/?format=json&code=1234,5678');
-            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=ccg');
+            expect(urls.denominatorUrl).to.equal('/api/1.0/org_details/?format=json&org_type=ccg&keys=row_id,row_name,date,total_list_size');
         });
     });
 
