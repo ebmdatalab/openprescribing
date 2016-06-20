@@ -16,6 +16,9 @@ engines:
     enabled: true
   radon:
     enabled: true
+    checks:
+      Complexity:
+        enabled: false
 ratings:
   paths:
   - "**.css"
@@ -26,4 +29,7 @@ ratings:
   - "**.php"
   - "**.py"
   - "**.rb"
-exclude_paths: []
+exclude_paths:
+ - "**/vendor/"
+ - "openprescribing/static/rest_framework*"
+ - "openprescribing/media/js/*.js"
