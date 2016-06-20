@@ -6,12 +6,12 @@ from frontend.models import PCT, Practice, QOFPrevalence
 
 
 def setUpModule():
-        PCT.objects.create(code='00C')
-        PCT.objects.create(code='00D')
-        Practice.objects.create(code='A81001')
-        Practice.objects.create(code='A81002')
-        Practice.objects.create(code='A81003')
-        Practice.objects.create(code='A81004')
+    PCT.objects.create(code='00C')
+    PCT.objects.create(code='00D')
+    Practice.objects.create(code='A81001')
+    Practice.objects.create(code='A81002')
+    Practice.objects.create(code='A81003')
+    Practice.objects.create(code='A81004')
 
 
 def tearDownModule():

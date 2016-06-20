@@ -32,7 +32,8 @@ class Command(BaseCommand):
                     continue
                 p = Presentation.objects.get(bnf_code=code)
                 adq_unit = row['ADQ Unit'].strip().lower()
-                active_quantity = self.get_active_quantity(row['BNF Name'], adq_unit)
+                active_quantity = self.get_active_quantity(
+                    row['BNF Name'], adq_unit)
                 p.active_quantity = active_quantity
                 p.adq = adq
                 p.adq_unit = adq_unit
@@ -54,4 +55,3 @@ class Command(BaseCommand):
             return digits[0].replace(adq_unit, '')
         else:
             return None
-

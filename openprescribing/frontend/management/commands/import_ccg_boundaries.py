@@ -27,5 +27,5 @@ class Command(BaseCommand):
             'boundary': 'Unknown'
         }
         lm = LayerMapping(PCT, options['filename'],
-                          layer_mapping, transform=False) # , unique='code')
+                          layer_mapping, transform=False)  # , unique='code')
         lm.save(strict=True)

@@ -6,13 +6,14 @@ import pandas as pd
 import sys
 import api.view_utils as utils
 from datetime import datetime
-from dateutil.parser import *
-from dateutil.relativedelta import *
-from django.core.management.base import BaseCommand, CommandError
+from dateutil.parser import parse
+from dateutil import relativedelta
+from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Sum, Q
-from frontend.models import Measure, MeasureGlobal,  MeasureValue, Practice, PCT
+from frontend.models import Measure, MeasureGlobal
+from frontend.models import MeasureValue, Practice, PCT
 from scipy.stats import rankdata
 
 
@@ -22,6 +23,7 @@ class Command(BaseCommand):
     up to that date, or --month to load data for just one
     month. You can also supply --start_date.
     '''
+
     def add_arguments(self, parser):
         parser.add_argument('--month')
         parser.add_argument('--start_date')
@@ -41,27 +43,36 @@ class Command(BaseCommand):
                 MeasureValue.objects.filter(month=month)\
                             .filter(measure=measure).delete()
                 MeasureGlobal.objects.filter(month=month)\
-                            .filter(measure=measure).delete()
+                    .filter(measure=measure).delete()
 
-                # Create practice values and percentiles. Use these to calculate
-                # global values and percentiles. Then calculate cost savings
-                # for individual practices, and globally.
-                self.create_practice_measurevalues(measure, month, measure_config)
-                records = MeasureValue.objects.filter(month=month, measure=measure).values()
+                # Create practice values and percentiles. Use these to
+                # calculate global values and percentiles. Then
+                # calculate cost savings for individual practices, and
+                # globally.
+                self.create_practice_measurevalues(
+                    measure, month, measure_config)
+                records = MeasureValue.objects.filter(
+                    month=month, measure=measure).values()
                 df = self.create_dataframe_with_ranks_and_percentiles(records)
-                mg = self.create_or_update_measureglobal(df, measure, month, 'practice')
+                mg = self.create_or_update_measureglobal(
+                    df, measure, month, 'practice')
                 for i, row in df.iterrows():
-                    self.set_percentile_and_savings(row, measure, month, mg, 'practice')
+                    self.set_percentile_and_savings(
+                        row, measure, month, mg, 'practice')
                 if measure.is_cost_based:
                     self.set_measureglobal_savings(mg, 'practice')
 
                 # Now calculate CCG values, percentiles and cost savings.
                 self.create_ccg_measurevalues(measure, month)
-                ccg_records = MeasureValue.objects.filter(month=month, measure=measure, practice=None).values()
-                df = self.create_dataframe_with_ranks_and_percentiles(ccg_records)
-                mg = self.create_or_update_measureglobal(df, measure, month, 'ccg')
+                ccg_records = MeasureValue.objects.filter(
+                    month=month, measure=measure, practice=None).values()
+                df = self.create_dataframe_with_ranks_and_percentiles(
+                    ccg_records)
+                mg = self.create_or_update_measureglobal(
+                    df, measure, month, 'ccg')
                 for i, row in df.iterrows():
-                    self.set_percentile_and_savings(row, measure, month, mg, 'ccg')
+                    self.set_percentile_and_savings(
+                        row, measure, month, mg, 'ccg')
                 if measure.is_cost_based:
                     self.set_measureglobal_savings(mg, 'ccg')
 
@@ -74,7 +85,7 @@ class Command(BaseCommand):
         options['measures'] = {}
         for fname in files:
             fname = os.path.join(fpath, fname)
-            json_data=open(fname).read()
+            json_data = open(fname).read()
             d = json.loads(json_data)
             for k in d:
                 if k in options['measures']:
@@ -105,7 +116,7 @@ class Command(BaseCommand):
             end_date = parse(options['end_date'])
             while (d <= end_date):
                 options['months'].append(datetime.strftime(d, '%Y-%m-01'))
-                d = d + relativedelta(months=1)
+                d = d + relativedelta.relativedelta(months=1)
         return options
 
     def create_or_update_measure(self, m, v):
@@ -160,8 +171,8 @@ class Command(BaseCommand):
                                     .filter(Q(close_date__isnull=True) |
                                             Q(close_date__gt=month))
         self.create_measurevalues(measure, practices, month,
-                                 measure_config['num_sql'],
-                                 measure_config['denom_sql'])
+                                  measure_config['num_sql'],
+                                  measure_config['denom_sql'])
 
     def create_ccg_measurevalues(self, measure, month):
         if self.IS_VERBOSE:
@@ -190,17 +201,24 @@ class Command(BaseCommand):
                         month=month
                     )
                 mv_pct.numerator = mvs.aggregate(Sum('numerator')).values()[0]
-                mv_pct.denominator = mvs.aggregate(Sum('denominator')).values()[0]
+                mv_pct.denominator = mvs.aggregate(
+                    Sum('denominator')).values()[0]
                 mv_pct.num_items = mvs.aggregate(Sum('num_items')).values()[0]
-                mv_pct.denom_items = mvs.aggregate(Sum('denom_items')).values()[0]
+                mv_pct.denom_items = mvs.aggregate(
+                    Sum('denom_items')).values()[0]
                 mv_pct.num_cost = mvs.aggregate(Sum('num_cost')).values()[0]
-                mv_pct.denom_cost = mvs.aggregate(Sum('denom_cost')).values()[0]
-                mv_pct.num_quantity = mvs.aggregate(Sum('num_quantity')).values()[0]
-                mv_pct.denom_quantity = mvs.aggregate(Sum('denom_quantity')).values()[0]
-                mv_pct.calc_value = self.get_calc_value(mv_pct.numerator, mv_pct.denominator)
+                mv_pct.denom_cost = mvs.aggregate(
+                    Sum('denom_cost')).values()[0]
+                mv_pct.num_quantity = mvs.aggregate(
+                    Sum('num_quantity')).values()[0]
+                mv_pct.denom_quantity = mvs.aggregate(
+                    Sum('denom_quantity')).values()[0]
+                mv_pct.calc_value = self.get_calc_value(
+                    mv_pct.numerator, mv_pct.denominator)
                 mv_pct.save()
 
-    def create_measurevalues(self, measure, practices, month, num_sql, denom_sql):
+    def create_measurevalues(self, measure, practices,
+                             month, num_sql, denom_sql):
         '''
         Given a practice and the definition of a measure, calculate
         the measure's values for a particular month.
@@ -208,7 +226,8 @@ class Command(BaseCommand):
         with transaction.atomic():
             for i, p in enumerate(practices):
                 if self.IS_VERBOSE and (i % 1000 == 0):
-                    print 'creating measurevalue for practice %s of %s' % (i, len(practices))
+                    print 'creating measurevalue for practice %s of %s' % (
+                        i, len(practices))
                 try:
                     mv = MeasureValue.objects.get(
                         measure=measure,
@@ -253,15 +272,18 @@ class Command(BaseCommand):
                         mv.denom_quantity = float(d['quantity'])
                 else:
                     mv.denominator = None
-                mv.calc_value = self.get_calc_value(mv.numerator, mv.denominator)
+                mv.calc_value = self.get_calc_value(
+                    mv.numerator, mv.denominator)
                 mv.save()
 
     def set_percentile_and_savings(self, row, measure, month, mg, org_type):
-        '''
-        For an organisation, set its current percentile, and calculate its savings.
+        '''For an organisation, set its current percentile, and calculate its
+        savings.
+
         NB: This assumes that we always use quantity to calculate savings,
         not items. This means our numerator and denominator need to be
         directly comparable in quantity terms.
+
         '''
         if org_type == 'practice':
             practice = Practice.objects.get(code=row.practice_id)
@@ -292,10 +314,11 @@ class Command(BaseCommand):
         mv.save()
 
     def create_dataframe_with_ranks_and_percentiles(self, records):
-        '''
-        Use scipy's rankdata to rank by calc_value - we use rankdata rather than
-        pandas qcut because pandas qcut does not cope well with repeated values
-        (e.g. repeated values of zero). Returns dataframe with percentile column.
+        '''Use scipy's rankdata to rank by calc_value - we use rankdata
+        rather than pandas qcut because pandas qcut does not cope well
+        with repeated values (e.g. repeated values of zero). Returns
+        dataframe with percentile column.
+
         '''
         if self.IS_VERBOSE:
             print 'processing dataframe of length', len(records)
@@ -310,7 +333,7 @@ class Command(BaseCommand):
             # Add percentiles to each row, and normalise to 0-100 to make
             # comparisons easier later.
             df.loc[df['rank_val'].notnull(), 'percentile'] = \
-                (df1.rank_val / float(len(df1)-1)) * 100
+                (df1.rank_val / float(len(df1) - 1)) * 100
             # TODO: Still needed?
             cols = ['num_items', 'num_cost', 'num_quantity',
                     'denom_items', 'denom_cost', 'denom_quantity']
@@ -340,7 +363,7 @@ class Command(BaseCommand):
             mg.calc_value = self.get_calc_value(mg.numerator, mg.denominator)
             percentiles = {}
             for c in self.centiles:
-                percentiles[c] = df.quantile(c/100.0)['calc_value']
+                percentiles[c] = df.quantile(c / 100.0)['calc_value']
             if mg.percentiles:
                 mg.percentiles['practice'] = percentiles
             else:
@@ -349,14 +372,14 @@ class Command(BaseCommand):
                 }
             # Create global summed items, quantity etc. TODO: Still needed?
             aggregates = ['num_items', 'denom_items', 'num_cost',
-                'denom_cost', 'num_quantity', 'denom_quantity']
+                          'denom_cost', 'num_quantity', 'denom_quantity']
             for a in aggregates:
                 if a in df.columns:
                     setattr(mg, a, df[a].sum())
         else:
             percentiles = {}
             for c in self.centiles:
-                percentiles[c] = df.quantile(c/100.0)['calc_value']
+                percentiles[c] = df.quantile(c / 100.0)['calc_value']
             if mg.percentiles:
                 mg.percentiles['ccg'] = percentiles
             else:
@@ -384,14 +407,20 @@ class Command(BaseCommand):
     def set_measureglobal_savings(self, mg, org_type):
         cost_savings = {c: 0 for c in self.centiles}
         if org_type == 'practice':
-            mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=False).values()
+            mvs = MeasureValue.objects.filter(
+                measure=mg.measure,
+                month=mg.month,
+                practice__isnull=False).values()
             for c in self.centiles:
                 for mv in mvs:
                     saving = mv['cost_savings'][str(c)]
                     cost_savings[c] += max(saving, 0)
-            mg.cost_savings = { 'practice': cost_savings }
+            mg.cost_savings = {'practice': cost_savings}
         else:
-            mvs = MeasureValue.objects.filter(measure=mg.measure, month=mg.month, practice__isnull=True).values()
+            mvs = MeasureValue.objects.filter(
+                measure=mg.measure,
+                month=mg.month,
+                practice__isnull=True).values()
             for c in self.centiles:
                 for mv in mvs:
                     saving = mv['cost_savings'][str(c)]

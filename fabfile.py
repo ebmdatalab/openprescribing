@@ -1,4 +1,5 @@
-from fabric.api import run, sudo, prefix, warn, abort
+from fabric.api import run, sudo
+from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env
 from fabric.context_managers import cd
 
@@ -42,7 +43,7 @@ def git_pull():
 
 def pip_install():
     if filter(lambda x: x.startswith('requirements'),
-                       [x for x in env.changed_files]):
+              [x for x in env.changed_files]):
         with prefix('source .venv/bin/activate'):
             run('pip install -r requirements/production.txt')
 

@@ -6,6 +6,7 @@ from common import utils
 
 
 class Command(BaseCommand):
+
     def add_arguments(self, parser):
         parser.add_argument('--db_name')
         parser.add_argument('--db_user')

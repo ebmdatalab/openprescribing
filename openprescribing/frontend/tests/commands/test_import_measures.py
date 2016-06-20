@@ -1,69 +1,68 @@
-import os
-import unittest
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import SHA, PCT, Practice, Measure, MeasureValue, \
-    MeasureGlobal, Prescription, Chemical
+from frontend.models import SHA, PCT, Practice, Measure
+from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from common import utils
 
 
 def setUpModule():
-        SHA.objects.create(code='Q51')
-        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
-            open_date='2013-04-01', close_date='2015-01-01')
-        Chemical.objects.create(bnf_code='0703021Q0',
-                                    chem_name='Desogestrel')
-        Practice.objects.create(code='C84001', ccg=bassetlaw,
-                                name='LARWOOD SURGERY', setting=4)
-        Practice.objects.create(code='C84024', ccg=bassetlaw,
-                                name='NEWGATE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='B82005', ccg=bassetlaw,
-                                name='PRIORY MEDICAL GROUP', setting=4,
-                                open_date='2015-01-01')
-        Practice.objects.create(code='B82010', ccg=bassetlaw,
-                                name='RIPON SPA SURGERY', setting=4)
-        Practice.objects.create(code='A85017', ccg=bassetlaw,
-                                name='BEWICK ROAD SURGERY', setting=4)
-        Practice.objects.create(code='A86030', ccg=bassetlaw,
-                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
-        # Ensure we only include open practices in our calculations.
-        Practice.objects.create(code='B82008', ccg=bassetlaw,
-                                name='NORTH SURGERY', setting=4,
-                                open_date='2010-04-01',
-                                close_date='2012-01-01')
-        # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                                setting=1)
-        Practice.objects.create(code='C83051', ccg=lincs_west,
-                                name='ABBEY MEDICAL PRACTICE', setting=4)
-        Practice.objects.create(code='C83019', ccg=lincs_east,
-                                name='BEACON MEDICAL PRACTICE', setting=4)
+    SHA.objects.create(code='Q51')
+    bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+    lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+    lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+                                    open_date='2013-04-01',
+                                    close_date='2015-01-01')
+    Chemical.objects.create(bnf_code='0703021Q0',
+                            chem_name='Desogestrel')
+    Practice.objects.create(code='C84001', ccg=bassetlaw,
+                            name='LARWOOD SURGERY', setting=4)
+    Practice.objects.create(code='C84024', ccg=bassetlaw,
+                            name='NEWGATE MEDICAL GROUP', setting=4)
+    Practice.objects.create(code='B82005', ccg=bassetlaw,
+                            name='PRIORY MEDICAL GROUP', setting=4,
+                            open_date='2015-01-01')
+    Practice.objects.create(code='B82010', ccg=bassetlaw,
+                            name='RIPON SPA SURGERY', setting=4)
+    Practice.objects.create(code='A85017', ccg=bassetlaw,
+                            name='BEWICK ROAD SURGERY', setting=4)
+    Practice.objects.create(code='A86030', ccg=bassetlaw,
+                            name='BETTS AVENUE MEDICAL GROUP', setting=4)
+    # Ensure we only include open practices in our calculations.
+    Practice.objects.create(code='B82008', ccg=bassetlaw,
+                            name='NORTH SURGERY', setting=4,
+                            open_date='2010-04-01',
+                            close_date='2012-01-01')
+    # Ensure we only include standard practices in our calculations.
+    Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                            name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                            setting=1)
+    Practice.objects.create(code='C83051', ccg=lincs_west,
+                            name='ABBEY MEDICAL PRACTICE', setting=4)
+    Practice.objects.create(code='C83019', ccg=lincs_east,
+                            name='BEACON MEDICAL PRACTICE', setting=4)
 
-        args = []
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        db_user = utils.get_env_setting('DB_USER')
-        db_pass = utils.get_env_setting('DB_PASS')
-        test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'T201509PDPI+BNFT_formatted.csv'
-        new_opts = {
-            'db_name': db_name,
-            'db_user': db_user,
-            'db_pass': db_pass,
-            'filename': test_file
-        }
-        call_command('import_hscic_prescribing', *args, **new_opts)
+    args = []
+    db_name = 'test_' + utils.get_env_setting('DB_NAME')
+    db_user = utils.get_env_setting('DB_USER')
+    db_pass = utils.get_env_setting('DB_PASS')
+    test_file = 'frontend/tests/fixtures/commands/'
+    test_file += 'T201509PDPI+BNFT_formatted.csv'
+    new_opts = {
+        'db_name': db_name,
+        'db_user': db_user,
+        'db_pass': db_pass,
+        'filename': test_file
+    }
+    call_command('import_hscic_prescribing', *args, **new_opts)
 
-        month = '2015-09-01'
-        measure_id = 'cerazette'
-        args = []
-        opts = {
-            'month': month,
-            'measure': measure_id
-        }
-        call_command('import_measures', *args, **opts)
+    month = '2015-09-01'
+    measure_id = 'cerazette'
+    args = []
+    opts = {
+        'month': month,
+        'measure': measure_id
+    }
+    call_command('import_measures', *args, **opts)
 
 
 def tearDownModule():
@@ -148,7 +147,8 @@ class CommandsTestCase(TestCase):
         month = '2015-09-01'
 
         ccg = PCT.objects.get(code='02Q')
-        mv = MeasureValue.objects.get(measure=m, month=month, pct=ccg, practice=None)
+        mv = MeasureValue.objects.get(
+            measure=m, month=month, pct=ccg, practice=None)
         self.assertEqual(mv.numerator, 82000)
         self.assertEqual(mv.denominator, 143000)
         self.assertEqual("%.4f" % mv.calc_value, '0.5734')
@@ -160,14 +160,16 @@ class CommandsTestCase(TestCase):
         self.assertEqual("%.2f" % mv.cost_savings['90'], '11731.76')
 
         ccg = PCT.objects.get(code='04D')
-        mv = MeasureValue.objects.get(measure=m, month=month, pct=ccg, practice=None)
+        mv = MeasureValue.objects.get(
+            measure=m, month=month, pct=ccg, practice=None)
         self.assertEqual(mv.numerator, 1500)
         self.assertEqual(mv.denominator, 21500)
         self.assertEqual("%.4f" % mv.calc_value, '0.0698')
         self.assertEqual(mv.percentile, 0)
 
         ccg = PCT.objects.get(code='03T')
-        mv = MeasureValue.objects.get(measure=m, month=month, pct=ccg, practice=None)
+        mv = MeasureValue.objects.get(
+            measure=m, month=month, pct=ccg, practice=None)
         self.assertEqual(mv.numerator, 2000)
         self.assertEqual(mv.denominator, 17000)
         self.assertEqual("%.4f" % mv.calc_value, '0.1176')
@@ -198,10 +200,14 @@ class CommandsTestCase(TestCase):
         self.assertEqual("%.4f" % mg.percentiles['ccg']['50'], '0.1176')
         self.assertEqual("%.4f" % mg.percentiles['ccg']['80'], '0.3911')
         self.assertEqual("%.4f" % mg.percentiles['ccg']['90'], '0.4823')
-        self.assertEqual("%.2f" % mg.cost_savings['practice']['10'], '70149.77')
-        self.assertEqual("%.2f" % mg.cost_savings['practice']['20'], '65011.21')
-        self.assertEqual("%.2f" % mg.cost_savings['practice']['50'], '59029.41')
-        self.assertEqual("%.2f" % mg.cost_savings['practice']['70'], '26934.00')
+        self.assertEqual("%.2f" % mg.cost_savings[
+                         'practice']['10'], '70149.77')
+        self.assertEqual("%.2f" % mg.cost_savings[
+                         'practice']['20'], '65011.21')
+        self.assertEqual("%.2f" % mg.cost_savings[
+                         'practice']['50'], '59029.41')
+        self.assertEqual("%.2f" % mg.cost_savings[
+                         'practice']['70'], '26934.00')
         self.assertEqual("%.2f" % mg.cost_savings['practice']['90'], '162.00')
         self.assertEqual("%.2f" % mg.cost_savings['ccg']['10'], '64174.56')
         self.assertEqual("%.2f" % mg.cost_savings['ccg']['30'], '61416.69')

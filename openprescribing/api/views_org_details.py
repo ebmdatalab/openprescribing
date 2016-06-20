@@ -37,7 +37,7 @@ def org_details(request, format=None):
                     query += 'pr.pct_id=%s '
                 else:
                     query += "pr.practice_id=%s "
-                if (i != len(orgs)-1):
+                if (i != len(orgs) - 1):
                     query += ' OR '
         query += "ORDER BY date, row_id"
     elif org_type == 'ccg':
@@ -47,7 +47,7 @@ def org_details(request, format=None):
             query += "WHERE ("
             for i, c in enumerate(orgs):
                 query += "pct_id=%s "
-                if (i != len(orgs)-1):
+                if (i != len(orgs) - 1):
                     query += ' OR '
             query += ') '
         query += 'ORDER BY date'

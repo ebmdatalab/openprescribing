@@ -1,10 +1,8 @@
-import csv
 import os
 import json
 import unittest
 from django.core import management
 from django.test import TestCase
-from common import utils
 
 
 def setUpModule():
@@ -34,7 +32,8 @@ class TestAPIOrgLocationViews(TestCase):
         self.assertEqual(coord[1], 33.97943076318428)
 
     def test_api_view_org_location_ccg_by_code(self):
-        url = '%s/org_location?org_type=ccg&q=03Q,03V&format=json' % self.api_prefix
+        url = ('%s/org_location?org_type=ccg&q=03Q,03V&format=json' %
+               self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
@@ -46,7 +45,8 @@ class TestAPIOrgLocationViews(TestCase):
     @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
                      "Skipping this test on Travis CI.")
     def test_api_view_org_location_practice_by_code(self):
-        url = '%s/org_location?org_type=practice&q=03Q&format=json' % self.api_prefix
+        url = ('%s/org_location?org_type=practice&q=03Q&format=json'
+               % self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)

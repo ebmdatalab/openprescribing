@@ -1,6 +1,6 @@
 import sys
 import xlrd
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from frontend.models import Practice, PracticeIsDispensing as PID
 
 
@@ -28,7 +28,6 @@ class Command(BaseCommand):
         workbook = xlrd.open_workbook(options['filename'])
         worksheet = workbook.sheet_by_name('Sheet1')
         num_rows = worksheet.nrows - 1
-        num_cells = worksheet.ncols - 1
         curr_row = -1
         name_and_postcode_matches = 0
         useful_rows = 0
@@ -39,11 +38,11 @@ class Command(BaseCommand):
 
         while curr_row < num_rows:
             curr_row += 1
-            row = worksheet.row(curr_row)
             address = worksheet.cell_value(curr_row, 1).strip()
             if address == 'Dispensing Practices Address Details' or \
-                address == 'Primary Care Trust:' or address == 'Report For:' or \
-                    address == 'Practice Name and Address':
+               address == 'Primary Care Trust:' or \
+               address == 'Report For:' or \
+               address == 'Practice Name and Address':
                 continue
             useful_rows += 1
             addresses = address.split(',')
@@ -75,7 +74,8 @@ class Command(BaseCommand):
                         # for ps1 in ps:
                         #     print 'match on postcode only'
                         #     print address
-                        #     print ps1.code, ps1.name + ', ' + ps1.address_pretty()
+                        #     print ps1.code, ps1.name + ', ' + \
+                        #        ps1.address_pretty()
                         # print ''
                         name_only_matches += 1
                     else:
@@ -84,7 +84,8 @@ class Command(BaseCommand):
                             # for ps1 in ps:
                             #     print 'match on name only'
                             #     print address
-                            #     print ps1.code, ps1.name + ', ' + ps1.address_pretty()
+                            #     print ps1.code, ps1.name + ', ' + \
+                            #        ps1.address_pretty()
                             # print ''
                             postcode_only_matches += 1
                 except Practice.MultipleObjectsReturned:

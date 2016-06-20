@@ -6,16 +6,17 @@ from frontend.models import Practice
 
 
 def setUpModule():
-        Practice.objects.create(code='1', name='ADDINGHAM SURGERY',
-                                postcode='LS29 0LZ')
-        Practice.objects.create(code='2', name='HAWORTH MEDICAL PRACTICE',
-                                postcode='BD22 8DH')
-        Practice.objects.create(code='3', name='TOWNHEAD SURGERY',
-                                postcode='BD24 9JA')
-        Practice.objects.create(code='4', name='CHARING SURGERY',
-                                postcode='TN27 0AW')
-        Practice.objects.create(code='B82005', name='PRIORY MEDICAL GROUP',
-                                postcode='YO24 3WX')
+    Practice.objects.create(code='1', name='ADDINGHAM SURGERY',
+                            postcode='LS29 0LZ')
+    Practice.objects.create(code='2', name='HAWORTH MEDICAL PRACTICE',
+                            postcode='BD22 8DH')
+    Practice.objects.create(code='3', name='TOWNHEAD SURGERY',
+                            postcode='BD24 9JA')
+    Practice.objects.create(code='4', name='CHARING SURGERY',
+                            postcode='TN27 0AW')
+    Practice.objects.create(code='B82005', name='PRIORY MEDICAL GROUP',
+                            postcode='YO24 3WX')
+
 
 def tearDownModule():
     call_command('flush', verbosity=0, interactive=False)

@@ -1,0 +1,37 @@
+---
+engines:
+  pep8:
+    enabled: true
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+      - javascript
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
+    checks:
+      Complexity:
+        enabled: false
+ratings:
+  paths:
+  - "**.css"
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+  - "**.rb"
+exclude_paths:
+ - "**/vendor/"
+ - "openprescribing/static/rest_framework*"
+ - "openprescribing/static/js/"
+ - "openprescribing/static/css/"
+ - "openprescribing/media/js/*.js"

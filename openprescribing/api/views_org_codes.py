@@ -28,10 +28,10 @@ def _get_org_from_code(q, is_exact, org_type):
                                  .filter(org_type='CCG')
             values = results.values('name', 'code', 'managing_group')
             for v in values:
-                    v['id'] = v['code']
-                    v['type'] = 'CCG'
-                    v['area_team'] = v['managing_group']
-                    del v['managing_group']
+                v['id'] = v['code']
+                v['type'] = 'CCG'
+                v['area_team'] = v['managing_group']
+                del v['managing_group']
             if results.count() == 0:
                 results = SHA.objects.filter(Q(code=q) | Q(name=q))
                 values = results.values('name', 'code')

@@ -7,9 +7,9 @@ from frontend.models import SHA, PCT
 
 
 def setUpModule():
-        SHA.objects.create(code='Q48')
-        PCT.objects.create(code='06F',
-                           name='NHS Bedfordshire')
+    SHA.objects.create(code='Q48')
+    PCT.objects.create(code='06F',
+                       name='NHS Bedfordshire')
 
 
 def tearDownModule():
