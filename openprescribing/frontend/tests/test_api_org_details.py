@@ -226,4 +226,4 @@ class TestAPIOrgDetailsViews(TestCase):
         self.assertEqual(float(rows[0]['total_list_size']), 25)
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
                          '10')
-        self.assertEqual(rows[0].get('astro_pu_cost'), None)import
+        self.assertEqual(rows[0].get('astro_pu_cost'), None)
