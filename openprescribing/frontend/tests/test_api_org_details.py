@@ -227,3 +227,20 @@ class TestAPIOrgDetailsViews(TestCase):
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
                          '10')
         self.assertEqual(rows[0].get('astro_pu_cost'), None)
+
+    def test_api_view_org_details_all_nhs_with_json_key(self):
+        url = self.api_prefix
+        url += ('/org_details?format=csv'
+                '&keys=star_pu.oral_antibacterials_item,total_list_size')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]['date'], '2015-01-01')
+        self.assertEqual(float(rows[0]['total_list_size']), 53)
+        self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
+                         '45.2')
+        self.assertEqual(rows[0].get('astro_pu_cost'), '695.4')

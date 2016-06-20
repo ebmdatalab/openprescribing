@@ -53,6 +53,7 @@ def org_details(request, format=None):
         query += 'ORDER BY date'
     else:
         # Total across NHS England.
+        json_query, cols = _query_and_cols_for(keys, json_builder_only=True)
         query = 'SELECT date, '
         query += 'AVG(total_list_size) AS total_list_size, '
         query += 'AVG(astro_pu_items) AS astro_pu_items, '
@@ -64,7 +65,12 @@ def org_details(request, format=None):
         query += 'SUM(astro_pu_items) AS astro_pu_items, '
         query += 'SUM(astro_pu_cost) AS astro_pu_cost, '
         query += 'key, SUM(value::numeric) val '
-        query += 'FROM vw__ccgstatistics p, json_each_text(star_pu) '
+        query += "FROM vw__ccgstatistics p, json_each_text("
+        if json_query:
+            query += json_query
+        else:
+            query += 'star_pu'
+        query += ") "
         query += 'GROUP BY date, key '
         query += ') p '
         query += 'GROUP BY date ORDER BY date'
@@ -75,6 +81,8 @@ def org_details(request, format=None):
             data = utils.execute_query(query, [orgs])
     except ProgrammingError as e:
         error = str(e)
+        import pdb; pdb.set_trace()
+
         if keys and 'does not exist' in error:
             error = error.split('\n')[0].replace('column', 'key')
             raise KeysNotValid(error)
@@ -90,18 +98,34 @@ def _construct_cols(keys, is_practice):
     else:
         query = "SELECT pct_id AS row_id, name as row_name, date, "
     if keys:
-        for k in keys:
-            if k.startswith('star_pu.'):
-                star_pu_type = k[len('star_pu.'):]
-                query += "json_build_object"
-                query += "(%s, star_pu->>%s) AS star_pu, "
-                cols += [star_pu_type, star_pu_type]
-            else:
-                if k not in STATS_COLUMN_WHITELIST:
-                    raise KeysNotValid("%s is not a valid key" % k)
-                else:
-                    query += '%s, ' % k
-        query = query[:-2]
+        q, cols = _query_and_cols_for(keys)
+        query += q
     else:
         query += '* '
     return cols, query
+
+
+def _query_and_cols_for(keys, json_builder_only=False):
+    query = ""
+    cols = []
+    json_object_keys = []
+    for k in keys:
+        if k.startswith('star_pu.'):
+            star_pu_type = k[len('star_pu.'):]
+            json_object_keys.append(star_pu_type)
+            cols += [star_pu_type, star_pu_type]
+        elif not json_builder_only:
+            if k not in STATS_COLUMN_WHITELIST:
+                raise KeysNotValid("%s is not a valid key" % k)
+            else:
+                query += '%s, ' % k
+    if json_object_keys:
+        query += 'json_build_object('
+        for k in json_object_keys:
+            query += "%s, star_pu->>%s"
+        query += ') '
+        if not json_builder_only:
+            query += 'AS star_pu'
+    if query.endswith(", "):
+        query = query[:-2]
+    return query, cols

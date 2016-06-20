@@ -191,8 +191,8 @@ var dashboard = {
             chartOptions.denomAllNHS = _this.baseUrl + 'spending/?format=json&code=' + denomStr;
         } else {
             chartOptions.denomOrgUrl = _this.baseUrl + 'org_details/?format=json';
-            chartOptions.denomOrgUrl += '&org_type=' + _this.orgType.toLowerCase();
-            chartOptions.denomAllNHS = _this.baseUrl + 'org_details/?format=json';
+            chartOptions.denomOrgUrl += '&org_type=' + _this.orgType.toLowerCase() + '&keys=' + d.denom;
+            chartOptions.denomAllNHS = _this.baseUrl + 'org_details/?format=json&keys='+ d.denom;
         }
         chartOptions.denomOrgUrl += '&org=' + _this.orgId;
         chartOptions.friendly = formatters.getFriendlyNamesForChart(chartOptions);
@@ -262,4 +262,3 @@ dashboard.setUp();
 
 
 })();
-
