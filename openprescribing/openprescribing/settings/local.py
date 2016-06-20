@@ -1,31 +1,30 @@
 """Development settings and globals."""
 
 from __future__ import absolute_import
-from os.path import join, normpath
 from .base import *
 from common import utils
 
 
-########## DEBUG CONFIGURATION
+# DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = True
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
-########## END DEBUG CONFIGURATION
+# END DEBUG CONFIGURATION
 
-########## SITE CONFIGURATION
+# SITE CONFIGURATION
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'openprescribing.net', 'openprescriptions.net']
-########## END SITE CONFIGURATION
+# END SITE CONFIGURATION
 
 
-########## EMAIL CONFIGURATION
+# EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-########## END EMAIL CONFIGURATION
+# END EMAIL CONFIGURATION
 
 
-########## DATABASE CONFIGURATION
+# DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     'default': {
@@ -36,21 +35,21 @@ DATABASES = {
         'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')
     }
 }
-########## END DATABASE CONFIGURATION
+# END DATABASE CONFIGURATION
 
 
-########## CACHE CONFIGURATION
+# CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-########## END CACHE CONFIGURATION
+# END CACHE CONFIGURATION
 
 
-########## TOOLBAR CONFIGURATION
-# See: http://django-debug-toolbar.readthedocs.org/en/latest/installation.html#explicit-setup
+# TOOLBAR CONFIGURATION
+# See: http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
 # DEBUG_TOOLBAR_PANELS = [
 #     'debug_toolbar.panels.versions.VersionsPanel',
 #     'debug_toolbar.panels.timer.TimerPanel',
@@ -72,10 +71,11 @@ CACHES = {
 #     'debug_toolbar.apps.DebugToolbarConfig',
 # )
 
-# MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
+# MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',
+# ) + MIDDLEWARE_CLASSES
 
 # DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
 INTERNAL_IPS = ('127.0.0.1',)
-########## END TOOLBAR CONFIGURATION
+# END TOOLBAR CONFIGURATION

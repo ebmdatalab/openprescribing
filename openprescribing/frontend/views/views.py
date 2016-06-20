@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from frontend.models import Chemical, Prescription, \
-    Practice, PracticeStatistics, SHA, PCT, Section, \
-    Measure
+from frontend.models import Chemical, Prescription
+from frontend.models import Practice, SHA, PCT, Section
+from frontend.models import Measure
 
 
 ##################################################
@@ -29,8 +29,9 @@ def bnf_section(request, section_id):
     except Section.DoesNotExist:
         pass
     chemicals = None
-    subsections = Section.objects.filter(bnf_id__startswith=section_id) \
-                         .extra(where=["CHAR_LENGTH(bnf_id)=%s" % (id_len+2)])
+    subsections = Section.objects.filter(
+        bnf_id__startswith=section_id) \
+        .extra(where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
     if not subsections:
         chemicals = Chemical.objects.filter(bnf_code__startswith=section_id) \
                             .order_by('chem_name')
@@ -136,6 +137,7 @@ def all_ccgs(request):
     }
     return render(request, 'all_ccgs.html', context)
 
+
 def ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
@@ -159,12 +161,14 @@ def all_measures(request):
     }
     return render(request, 'all_measures.html', context)
 
+
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
     context = {
         'measure': measure
     }
     return render(request, 'measure_for_all_ccgs.html', context)
+
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
@@ -179,6 +183,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     }
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
+
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
@@ -188,6 +193,7 @@ def measures_for_one_ccg(request, ccg_code):
         'page_id': ccg_code
     }
     return render(request, 'measures_for_one_ccg.html', context)
+
 
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)

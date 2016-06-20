@@ -5,9 +5,9 @@ import datetime
 
 
 def setUpModule():
-        PCT.objects.create(code='00M', name='SOUTHPORT AND FORMBY CCG')
-        PCT.objects.create(code='00K', name='SOUTH MANCHESTER CCG')
-        SHA.objects.create(code='Q74', name='TEST AREA TEAM')
+    PCT.objects.create(code='00M', name='SOUTHPORT AND FORMBY CCG')
+    PCT.objects.create(code='00K', name='SOUTH MANCHESTER CCG')
+    SHA.objects.create(code='Q74', name='TEST AREA TEAM')
 
 
 def tearDownModule():
@@ -15,6 +15,7 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
+
     def test_import_practices_from_epraccur(self):
 
         args = []

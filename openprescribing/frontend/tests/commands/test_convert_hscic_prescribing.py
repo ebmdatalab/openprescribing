@@ -4,7 +4,9 @@ import unittest
 from django.core.management import call_command
 from django.test import TestCase
 
+
 class CommandsTestCase(TestCase):
+
     @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
                      "Skipping this test on Travis CI.")
     def test_import_hscic_prescribing(self):

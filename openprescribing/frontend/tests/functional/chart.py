@@ -19,20 +19,26 @@ class FrontendTest(unittest.TestCase):
         url += '&denominator=chemical&denominatorIds=0501013B0'
         self.browser.get(url)
 
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa3350k')
         self.assertEqual(yaxis_labels[-1].text, u'\xa33000')
 
         self.browser.find_element_by_css_selector('#log').click()
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa31m')
         self.assertEqual(yaxis_labels[-1].text, u'\xa310k')
 
         self.browser.find_element_by_css_selector('#linear').click()
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa3350k')
         self.assertEqual(yaxis_labels[-1].text, u'\xa33000')
 
@@ -44,20 +50,26 @@ class FrontendTest(unittest.TestCase):
         url += 'scale=linear'
         self.browser.get(url)
 
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa3350k')
         self.assertEqual(yaxis_labels[-1].text, u'\xa33000')
 
         self.browser.find_element_by_css_selector('#log').click()
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa31m')
         self.assertEqual(yaxis_labels[-1].text, u'\xa310k')
 
         self.browser.find_element_by_css_selector('#linear').click()
-        xaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-xaxis-labels text')
-        yaxis_labels = self.browser.find_elements_by_css_selector('.highcharts-yaxis-labels text')
+        xaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-xaxis-labels text')
+        yaxis_labels = self.browser.find_elements_by_css_selector(
+            '.highcharts-yaxis-labels text')
         self.assertEqual(xaxis_labels[-1].text, u'\xa3350k')
         self.assertEqual(yaxis_labels[-1].text, u'\xa33000')
 
@@ -69,11 +81,13 @@ class FrontendTest(unittest.TestCase):
 
         org = self.browser.find_element_by_css_selector('#findItem')
         org.send_keys("Stafford")
-        suggestions = self.browser.find_elements_by_css_selector('#findItemWrapper .tt-suggestion')
+        suggestions = self.browser.find_elements_by_css_selector(
+            '#findItemWrapper .tt-suggestion')
         self.assertEqual(len(suggestions), 3)
         suggestions[0].click()
 
-        tooltip = self.browser.find_element_by_css_selector('.highcharts-tooltip')
+        tooltip = self.browser.find_element_by_css_selector(
+            '.highcharts-tooltip')
         tooltip_html = tooltip.get_attribute("innerHTML")
         self.assertIn("NHS East Staffordshire", tooltip_html)
         self.assertIn("Spend on 0501013E0:", tooltip_html)
@@ -85,7 +99,8 @@ class FrontendTest(unittest.TestCase):
         url += '&denominator=chemical&denominatorIds=0501013B0'
         self.browser.get(url)
 
-        slider_checkbox = self.browser.find_element_by_css_selector('#enable-date')
+        slider_checkbox = self.browser.find_element_by_css_selector(
+            '#enable-date')
         slider_checkbox.click()
 
         # TODO: Add stuff here

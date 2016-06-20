@@ -20,8 +20,8 @@ def total_spending(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-            err = 'Error: Codes must all be the same length'
-            return Response(err, status=400)
+        err = 'Error: Codes must all be the same length'
+        return Response(err, status=400)
 
     if subdivide:
         query = _get_query_for_total_spending_with_subdivide(codes)
@@ -43,8 +43,8 @@ def spending_by_ccg(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-            err = 'Error: Codes must all be the same length'
-            return Response(err, status=400)
+        err = 'Error: Codes must all be the same length'
+        return Response(err, status=400)
 
     if not spending_type or spending_type == 'bnf-section' \
        or spending_type == 'chemical':
@@ -69,8 +69,8 @@ def spending_by_practice(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-            err = 'Error: Codes must all be the same length'
-            return Response(err, status=400)
+        err = 'Error: Codes must all be the same length'
+        return Response(err, status=400)
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
 
@@ -99,7 +99,8 @@ def spending_by_practice(request, format=None):
     else:
         query = _get_presentations_by_practice(codes, orgs, date)
         org_for_param = orgs
-    data = utils.execute_query(query, [codes, org_for_param, [date] if date else []])
+    data = utils.execute_query(
+        query, [codes, org_for_param, [date] if date else []])
     return Response(data)
 
 
@@ -113,7 +114,7 @@ def _get_query_for_total_spending(codes):
         query += " WHERE ("
         for i, c in enumerate(codes):
             query += "presentation_code LIKE %s "
-            if (i != len(codes)-1):
+            if (i != len(codes) - 1):
                 query += ' OR '
         query += ") "
     query += "GROUP BY date ORDER BY date"
@@ -169,20 +170,20 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
         if spending_type == 'bnf-section':
             for i, c in enumerate(codes):
                 query += "pr.chemical_id LIKE %s "
-                if (i != len(codes)-1):
+                if (i != len(codes) - 1):
                     query += ' OR '
             codes = [c + '%' for c in codes]
         else:
             for i, c in enumerate(codes):
                 query += "pr.chemical_id=%s "
-                if (i != len(codes)-1):
+                if (i != len(codes) - 1):
                     query += ' OR '
         query += ") "
     if orgs:
         query += "AND ("
         for i, org in enumerate(orgs):
             query += "pr.pct_id=%s "
-            if (i != len(orgs)-1):
+            if (i != len(orgs) - 1):
                 query += ' OR '
         query += ") "
     query += "GROUP BY pr.pct_id, pc.code, date "
@@ -203,13 +204,13 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
     query += " WHERE ("
     for i, c in enumerate(codes):
         query += "pr.presentation_code LIKE %s "
-        if (i != len(codes)-1):
+        if (i != len(codes) - 1):
             query += ' OR '
     if orgs:
         query += ") AND ("
         for i, org in enumerate(orgs):
             query += "pr.pct_id=%s "
-            if (i != len(orgs)-1):
+            if (i != len(orgs) - 1):
                 query += ' OR '
     query += ") GROUP BY pr.pct_id, pc.code, date "
     query += "ORDER BY date, pr.pct_id"
@@ -241,7 +242,7 @@ def _get_total_spending_by_practice(orgs, date):
             #     query += "pr.pct_id=%s "
             # else:
             #     query += "pr.practice_id=%s "
-            if (i != len(orgs)-1):
+            if (i != len(orgs) - 1):
                 query += ' OR '
         query += ") "
     query += "ORDER BY date, pr.practice_id "
@@ -267,13 +268,13 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
         if spending_type == 'bnf-section':
             for i, c in enumerate(codes):
                 query += "pr.chemical_id LIKE %s "
-                if (i != len(codes)-1):
+                if (i != len(codes) - 1):
                     query += ' OR '
             codes = [c + '%' for c in codes]
         else:
             for i, c in enumerate(codes):
                 query += "pr.chemical_id=%s "
-                if (i != len(codes)-1):
+                if (i != len(codes) - 1):
                     query += ' OR '
         query += ") "
     if orgs:
@@ -287,7 +288,7 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
             #     query += "pr.pct_id=%s "
             # else:
             #     query += "pr.practice_id=%s "
-            if (i != len(orgs)-1):
+            if (i != len(orgs) - 1):
                 query += ' OR '
         query += ") "
         has_preceding = True
@@ -316,7 +317,7 @@ def _get_presentations_by_practice(codes, orgs, date):
     query += "WHERE ("
     for i, c in enumerate(codes):
         query += "pr.presentation_code LIKE %s "
-        if (i != len(codes)-1):
+        if (i != len(codes) - 1):
             query += ' OR '
     if orgs:
         query += ") AND ("
@@ -325,7 +326,7 @@ def _get_presentations_by_practice(codes, orgs, date):
                 query += "pr.pct_id=%s "
             else:
                 query += "pr.practice_id=%s "
-            if (i != len(orgs)-1):
+            if (i != len(orgs) - 1):
                 query += ' OR '
     if date:
         query += "AND pr.processing_date=%s "

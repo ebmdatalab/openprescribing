@@ -1,16 +1,19 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import view_utils as utils
-from frontend.models import Measure, MeasureGlobal, MeasureValue
+
 
 @api_view(['GET'])
 def measure_global(request, format=None):
     measure = request.query_params.get('measure', None)
 
-    query = 'SELECT mg.month AS date, mg.numerator, mg.denominator, mg.measure_id, '
+    query = 'SELECT mg.month AS date, mg.numerator,  '
+    query += 'mg.denominator, mg.measure_id, '
     query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
-    query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
-    query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
+    query += 'ms.name, ms.title, ms.description, '
+    query += 'ms.why_it_matters, ms.numerator_description, '
+    query += 'ms.denominator_description, '
+    query += ' ms.denominator_short, ms.numerator_short, '
     query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measureglobal mg "
     query += "JOIN frontend_measure ms ON mg.measure_id=ms.id "
@@ -62,8 +65,10 @@ def measure_by_ccg(request, format=None):
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.pct_id, pc.name as pct_name, measure_id, '
-    query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
-    query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
+    query += 'ms.name, ms.title, ms.description, '
+    query += 'ms.why_it_matters, ms.numerator_description, '
+    query += 'ms.denominator_description, ms.denominator_short, '
+    query += 'ms.numerator_short, '
     query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_pct pc ON mv.pct_id=pc.code "
@@ -73,7 +78,7 @@ def measure_by_ccg(request, format=None):
         query += "("
     for i, org in enumerate(orgs):
         query += "mv.pct_id=%s "
-        if (i != len(orgs)-1):
+        if (i != len(orgs) - 1):
             query += ' OR '
     if orgs:
         query += ") AND "
@@ -133,8 +138,9 @@ def measure_by_practice(request, format=None):
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
-    query += 'ms.name, ms.title, ms.description, ms.why_it_matters, ms.numerator_description, '
-    query += 'ms.denominator_description, ms.denominator_short, ms.numerator_short, '
+    query += 'ms.name, ms.title, ms.description, ms.why_it_matters, '
+    query += 'ms.numerator_description, ms.denominator_description, '
+    query += 'ms.denominator_short, ms.numerator_short, '
     query += 'ms.url, ms.is_cost_based, ms.is_percentage '
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_practice pc ON mv.practice_id=pc.code "
@@ -145,7 +151,7 @@ def measure_by_practice(request, format=None):
             query += "mv.pct_id=%s "
         else:
             query += "mv.practice_id=%s "
-        if (i != len(orgs)-1):
+        if (i != len(orgs) - 1):
             query += ' OR '
     if measure:
         query += "AND mv.measure_id=%s "

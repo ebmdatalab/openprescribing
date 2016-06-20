@@ -39,9 +39,9 @@ class Command(BaseCommand):
                     m.reverse()
                     month = '20' + '-'.join(m)
                     self.process_row(row, month)
-                    n = [m[0], str(int(m[1])+1), m[2]]
+                    n = [m[0], str(int(m[1]) + 1), m[2]]
                     self.process_row(row, '20' + '-'.join(n))
-                    n = [m[0], str(int(m[1])+2), m[2]]
+                    n = [m[0], str(int(m[1]) + 2), m[2]]
                     self.process_row(row, '20' + '-'.join(n))
             else:
                 months = self.get_months_from_filename(f)
@@ -118,4 +118,4 @@ class Command(BaseCommand):
                 female_65_74=int(row['Female 65-74']),
                 male_75_plus=int(row['Male 75+']),
                 female_75_plus=int(row['Female 75+'])
-                )
+            )

@@ -5,7 +5,7 @@ from sys import path
 from django.core.exceptions import ImproperlyConfigured
 from common import utils
 
-########## PATH CONFIGURATION
+# PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
@@ -18,16 +18,16 @@ SITE_NAME = basename(DJANGO_ROOT)
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
 path.append(DJANGO_ROOT)
-########## END PATH CONFIGURATION
+# END PATH CONFIGURATION
 
 
-########## DEBUG CONFIGURATION
+# DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
-########## END DEBUG CONFIGURATION
+# END DEBUG CONFIGURATION
 
 
-########## MANAGER CONFIGURATION
+# MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
     ('EBM Data Lab', 'tech@ebmdatalab.net'),
@@ -35,10 +35,10 @@ ADMINS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
-########## END MANAGER CONFIGURATION
+# END MANAGER CONFIGURATION
 
 
-########## GENERAL CONFIGURATION
+# GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
 TIME_ZONE = 'Europe/London'
 
@@ -56,59 +56,62 @@ USE_L10N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
-########## END GENERAL CONFIGURATION
+# END GENERAL CONFIGURATION
 
 
-########## MEDIA CONFIGURATION
+# MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
 MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
-########## END MEDIA CONFIGURATION
+# END MEDIA CONFIGURATION
 
 
-########## STATIC FILE CONFIGURATION
+# STATIC FILE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 
-# See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+# See:
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
     normpath(join(SITE_ROOT, 'static')),
 )
 
-# See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
+# See:
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-########## END STATIC FILE CONFIGURATION
+# END STATIC FILE CONFIGURATION
 
 
-########## SECRET CONFIGURATION
+# SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = utils.get_env_setting('SECRET_KEY')
-########## END SECRET CONFIGURATION
+# END SECRET CONFIGURATION
 
-########## SITE CONFIGURATION
+# SITE CONFIGURATION
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
-########## END SITE CONFIGURATION
+# END SITE CONFIGURATION
 
 
-########## FIXTURE CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
+# FIXTURE CONFIGURATION
+# See:
+# https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
     normpath(join(SITE_ROOT, 'fixtures')),
 )
-########## END FIXTURE CONFIGURATION
+# END FIXTURE CONFIGURATION
 
 
-########## TEMPLATE CONFIGURATION
+# TEMPLATE CONFIGURATION
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -131,10 +134,10 @@ TEMPLATES = [
         },
     },
 ]
-########## END TEMPLATE CONFIGURATION
+# END TEMPLATE CONFIGURATION
 
 
-########## MIDDLEWARE CONFIGURATION
+# MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
@@ -146,16 +149,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-########## END MIDDLEWARE CONFIGURATION
+# END MIDDLEWARE CONFIGURATION
 
 
-########## URL CONFIGURATION
+# URL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
 ROOT_URLCONF = '%s.urls' % SITE_NAME
-########## END URL CONFIGURATION
+# END URL CONFIGURATION
 
 
-########## APP CONFIGURATION
+# APP CONFIGURATION
 DJANGO_APPS = (
     # Default Django apps:
     'django.contrib.auth',
@@ -179,10 +182,10 @@ LOCAL_APPS = (
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
-########## END APP CONFIGURATION
+# END APP CONFIGURATION
 
 
-########## LOGGING CONFIGURATION
+# LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -212,13 +215,13 @@ LOGGING = {
         },
     }
 }
-########## END LOGGING CONFIGURATION
+# END LOGGING CONFIGURATION
 
 
-########## WSGI CONFIGURATION
+# WSGI CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
-########## END WSGI CONFIGURATION
+# END WSGI CONFIGURATION
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 

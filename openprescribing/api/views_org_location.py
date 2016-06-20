@@ -24,5 +24,5 @@ def org_location(request, format=None):
         geo_field = 'location'
         fields = ('name', 'code', 'setting', 'is_dispensing', 'location', )
     return HttpResponse(serialize('geojson', results,
-                        geometry_field=geo_field, fields=fields),
+                                  geometry_field=geo_field, fields=fields),
                         content_type='application/json')

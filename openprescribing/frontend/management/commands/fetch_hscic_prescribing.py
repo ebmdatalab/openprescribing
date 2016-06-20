@@ -21,7 +21,7 @@ class Command(BaseCommand):
         now = datetime.datetime.now()
         END_YEAR = now.year
         END_MONTH = now.month
-        for year in range(START_YEAR, END_YEAR+1):
+        for year in range(START_YEAR, END_YEAR + 1):
             for month in range(1, 13):
                 if year == START_YEAR and month < START_MONTH:
                     continue
@@ -105,4 +105,4 @@ class Command(BaseCommand):
         return num_files, number_expected
 
     def files_expected(START_YEAR, START_MONTH, END_YEAR, END_MONTH):
-        return (END_YEAR - START_YEAR)*12 + (END_MONTH - START_MONTH)
+        return (END_YEAR - START_YEAR) * 12 + (END_MONTH - START_MONTH)

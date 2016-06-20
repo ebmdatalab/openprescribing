@@ -1,7 +1,4 @@
-import csv
-import os
 import json
-import unittest
 from django.core import management
 from django.test import TestCase
 from common import utils
@@ -80,7 +77,8 @@ class TestAPIBNFCodeViews(TestCase):
         content = json.loads(response.content)
         self.assertEqual(len(content), 0)
 
-        url = '%s/bnf_code?q=0202010D0BD&exact=true&format=json' % self.api_prefix
+        url = ('%s/bnf_code?q=0202010D0BD&exact=true&format=json' %
+               self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
@@ -89,7 +87,8 @@ class TestAPIBNFCodeViews(TestCase):
         self.assertEqual(content[0]['name'], 'Chlotride')
         self.assertEqual(content[0]['is_generic'], False)
 
-        url = '%s/bnf_code?q=0202010D0bd&exact=true&format=json' % self.api_prefix
+        url = ('%s/bnf_code?q=0202010D0bd&exact=true&format=json' %
+               self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
@@ -147,7 +146,8 @@ class TestAPIBNFCodeViews(TestCase):
         self.assertEqual(content[0]['name'], 'Chlortalidone_Tab 50mg')
         self.assertEqual(content[0]['type'], 'product format')
 
-        url = '%s/bnf_code?q=0202010F0AAA&exact=true&format=json' % self.api_prefix
+        url = ('%s/bnf_code?q=0202010F0AAA&exact=true&format=json' %
+               self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)

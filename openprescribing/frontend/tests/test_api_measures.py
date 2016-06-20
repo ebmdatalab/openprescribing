@@ -9,64 +9,66 @@ from frontend.models import SHA, PCT, Chemical, Practice
 
 
 def setUpModule():
-        SHA.objects.create(code='Q51')
-        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG')
-        Chemical.objects.create(bnf_code='0703021Q0',
-                                    chem_name='Desogestrel')
-        Practice.objects.create(code='C84001', ccg=bassetlaw,
-                                name='LARWOOD SURGERY', setting=4)
-        Practice.objects.create(code='C84024', ccg=bassetlaw,
-                                name='NEWGATE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='B82005', ccg=bassetlaw,
-                                name='PRIORY MEDICAL GROUP', setting=4,
-                                open_date='2015-01-01')
-        Practice.objects.create(code='B82010', ccg=bassetlaw,
-                                name='RIPON SPA SURGERY', setting=4)
-        Practice.objects.create(code='A85017', ccg=bassetlaw,
-                                name='BEWICK ROAD SURGERY', setting=4)
-        Practice.objects.create(code='A86030', ccg=bassetlaw,
-                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
-        # Ensure we only include open practices in our calculations.
-        Practice.objects.create(code='B82008', ccg=bassetlaw,
-                                name='NORTH HOUSE SURGERY', setting=4,
-                                open_date='2010-04-01',
-                                close_date='2012-01-01')
-        # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                                setting=1)
-        Practice.objects.create(code='C83051', ccg=lincs_west,
-                                name='ABBEY MEDICAL PRACTICE', setting=4)
-        Practice.objects.create(code='C83019', ccg=lincs_east,
-                                name='BEACON MEDICAL PRACTICE', setting=4)
+    SHA.objects.create(code='Q51')
+    bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+    lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+    lincs_east = PCT.objects.create(code='03T', org_type='CCG')
+    Chemical.objects.create(bnf_code='0703021Q0',
+                            chem_name='Desogestrel')
+    Practice.objects.create(code='C84001', ccg=bassetlaw,
+                            name='LARWOOD SURGERY', setting=4)
+    Practice.objects.create(code='C84024', ccg=bassetlaw,
+                            name='NEWGATE MEDICAL GROUP', setting=4)
+    Practice.objects.create(code='B82005', ccg=bassetlaw,
+                            name='PRIORY MEDICAL GROUP', setting=4,
+                            open_date='2015-01-01')
+    Practice.objects.create(code='B82010', ccg=bassetlaw,
+                            name='RIPON SPA SURGERY', setting=4)
+    Practice.objects.create(code='A85017', ccg=bassetlaw,
+                            name='BEWICK ROAD SURGERY', setting=4)
+    Practice.objects.create(code='A86030', ccg=bassetlaw,
+                            name='BETTS AVENUE MEDICAL GROUP', setting=4)
+    # Ensure we only include open practices in our calculations.
+    Practice.objects.create(code='B82008', ccg=bassetlaw,
+                            name='NORTH HOUSE SURGERY', setting=4,
+                            open_date='2010-04-01',
+                            close_date='2012-01-01')
+    # Ensure we only include standard practices in our calculations.
+    Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                            name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                            setting=1)
+    Practice.objects.create(code='C83051', ccg=lincs_west,
+                            name='ABBEY MEDICAL PRACTICE', setting=4)
+    Practice.objects.create(code='C83019', ccg=lincs_east,
+                            name='BEACON MEDICAL PRACTICE', setting=4)
 
-        args = []
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        db_user = utils.get_env_setting('DB_USER')
-        db_pass = utils.get_env_setting('DB_PASS')
-        test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'T201509PDPI+BNFT_formatted.csv'
-        new_opts = {
-            'db_name': db_name,
-            'db_user': db_user,
-            'db_pass': db_pass,
-            'filename': test_file
-        }
-        management.call_command('import_hscic_prescribing', *args, **new_opts)
+    args = []
+    db_name = 'test_' + utils.get_env_setting('DB_NAME')
+    db_user = utils.get_env_setting('DB_USER')
+    db_pass = utils.get_env_setting('DB_PASS')
+    test_file = 'frontend/tests/fixtures/commands/'
+    test_file += 'T201509PDPI+BNFT_formatted.csv'
+    new_opts = {
+        'db_name': db_name,
+        'db_user': db_user,
+        'db_pass': db_pass,
+        'filename': test_file
+    }
+    management.call_command('import_hscic_prescribing', *args, **new_opts)
 
-        month = '2015-09-01'
-        measure_id = 'cerazette'
-        args = []
-        opts = {
-            'month': month,
-            'measure': measure_id
-        }
-        management.call_command('import_measures', *args, **opts)
+    month = '2015-09-01'
+    measure_id = 'cerazette'
+    args = []
+    opts = {
+        'month': month,
+        'measure': measure_id
+    }
+    management.call_command('import_measures', *args, **opts)
+
 
 def tearDownModule():
     management.call_command('flush', verbosity=0, interactive=False)
+
 
 class TestAPIMeasureViews(TestCase):
 
@@ -77,9 +79,11 @@ class TestAPIMeasureViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['measures'][0]['name'], 'Cerazette vs. Desogestrel')
+        self.assertEqual(data['measures'][0]['name'],
+                         'Cerazette vs. Desogestrel')
         self.assertEqual(data['measures'][0]['description'][:10], 'Total quan')
-        self.assertEqual(data['measures'][0]['why_it_matters'][:10], 'This is th')
+        self.assertEqual(data['measures'][0][
+                         'why_it_matters'][:10], 'This is th')
         self.assertEqual(data['measures'][0]['is_cost_based'], True)
         self.assertEqual(data['measures'][0]['is_percentage'], True)
         self.assertEqual(len(data['measures'][0]['data']), 1)
@@ -93,9 +97,12 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['percentiles']['ccg']['10'], '0.0793')
         self.assertEqual("%.4f" % d['percentiles']['ccg']['50'], '0.1176')
         self.assertEqual("%.4f" % d['percentiles']['ccg']['90'], '0.4823')
-        self.assertEqual("%.2f" % d['cost_savings']['practice']['10'], '70149.77')
-        self.assertEqual("%.2f" % d['cost_savings']['practice']['50'], '59029.41')
-        self.assertEqual("%.2f" % d['cost_savings']['practice']['90'], '162.00')
+        self.assertEqual("%.2f" % d['cost_savings'][
+                         'practice']['10'], '70149.77')
+        self.assertEqual("%.2f" % d['cost_savings'][
+                         'practice']['50'], '59029.41')
+        self.assertEqual("%.2f" % d['cost_savings'][
+                         'practice']['90'], '162.00')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['10'], '64174.56')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['50'], '58658.82')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['90'], '11731.76')

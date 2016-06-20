@@ -6,20 +6,20 @@ from frontend.models import Practice
 
 
 def setUpModule():
-        Practice.objects.create(code='N84014',
-                                name='AINSDALE VILLAGE SURGERY',
-                                address1='THE SURGERY',
-                                address2='2 LEAMINGTON RD AINSDALE',
-                                address3='SOUTHPORT',
-                                address4='MERSEYSIDE',
-                                postcode='PR8 3LB')
-        Practice.objects.create(code='G82650',
-                                name='MOCKETTS WOOD SURGERY',
-                                address1="THE MOCKETT'S WOOD SURG.",
-                                address2='HOPEVILLE AVE ST PETERSY',
-                                address3='BROADSTAIRS',
-                                address4='KENT',
-                                postcode='CT10 2TR')
+    Practice.objects.create(code='N84014',
+                            name='AINSDALE VILLAGE SURGERY',
+                            address1='THE SURGERY',
+                            address2='2 LEAMINGTON RD AINSDALE',
+                            address3='SOUTHPORT',
+                            address4='MERSEYSIDE',
+                            postcode='PR8 3LB')
+    Practice.objects.create(code='G82650',
+                            name='MOCKETTS WOOD SURGERY',
+                            address1="THE MOCKETT'S WOOD SURG.",
+                            address2='HOPEVILLE AVE ST PETERSY',
+                            address3='BROADSTAIRS',
+                            address4='KENT',
+                            postcode='CT10 2TR')
 
 
 def tearDownModule():

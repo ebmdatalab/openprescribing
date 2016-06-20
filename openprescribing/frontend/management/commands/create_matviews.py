@@ -1,11 +1,10 @@
-import csv
 import psycopg2
-from django.core.management.base import BaseCommand, CommandError
-from frontend.models import Section
+from django.core.management.base import BaseCommand
 from common import utils
 
 
 class Command(BaseCommand):
+
     def add_arguments(self, parser):
         parser.add_argument('--db_name')
         parser.add_argument('--db_user')
@@ -75,8 +74,9 @@ class Command(BaseCommand):
         self._print_and_execute(cursor, cmd)
 
         # Indexes by uage.
-        cmd = 'CREATE INDEX vw__idx_presentation_summary ON '
-        cmd += 'vw__presentation_summary(presentation_code varchar_pattern_ops)'
+        cmd = ('CREATE INDEX vw__idx_presentation_summary ON '
+               'vw__presentation_summary(presentation_code '
+               'varchar_pattern_ops)')
         self._print_and_execute(cursor, cmd)
 
         # Spending by chemical_id by CCG by month.
@@ -90,12 +90,14 @@ class Command(BaseCommand):
         self._print_and_execute(cursor, cmd)
 
         # Indexes by usage.
-        cmd = 'CREATE INDEX vw__idx_chem_by_ccg ON '
-        cmd += 'vw__chemical_summary_by_ccg(chemical_id varchar_pattern_ops, pct_id)'
+        cmd = ('CREATE INDEX vw__idx_chem_by_ccg ON '
+               'vw__chemical_summary_by_ccg(chemical_id '
+               'varchar_pattern_ops, pct_id)')
         self._print_and_execute(cursor, cmd)
 
-        cmd = 'CREATE INDEX vw__idx_ccg_by_chem ON '
-        cmd += 'vw__chemical_summary_by_ccg(pct_id, chemical_id varchar_pattern_ops)'
+        cmd = ('CREATE INDEX vw__idx_ccg_by_chem ON '
+               'vw__chemical_summary_by_ccg('
+               'pct_id, chemical_id varchar_pattern_ops)')
         self._print_and_execute(cursor, cmd)
 
         # Spending by chemical_id by practice by month.

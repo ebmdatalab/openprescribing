@@ -4,12 +4,12 @@ from frontend.models import Practice, PracticeStatistics
 
 
 def setUpModule():
-        Practice.objects.create(code='N84014',
-                                name='AINSDALE VILLAGE SURGERY')
-        Practice.objects.create(code='P84034',
-                                name='BARLOW MEDICAL CENTRE')
-        Practice.objects.create(code='Y02229',
-                                name='ADDACTION NUNEATON')
+    Practice.objects.create(code='N84014',
+                            name='AINSDALE VILLAGE SURGERY')
+    Practice.objects.create(code='P84034',
+                            name='BARLOW MEDICAL CENTRE')
+    Practice.objects.create(code='Y02229',
+                            name='ADDACTION NUNEATON')
 
 
 def tearDownModule():
@@ -17,6 +17,7 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
+
     def test_import_bsa_list_size_quarterly(self):
 
         args = []

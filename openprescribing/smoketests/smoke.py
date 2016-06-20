@@ -18,7 +18,7 @@ class SmokeTestBase(unittest.TestCase):
 
     DOMAIN = 'https://openprescribing.net'
     NUM_RESULTS = 66  # Should equal number of months since Aug 2010.
-    NUM_RESULTS_CCG = 34 # Should equal number of months since Apr 2013.
+    NUM_RESULTS_CCG = 34  # Should equal number of months since Apr 2013.
 
 
 class TestSmokeTestSpendingByEveryone(SmokeTestBase):
@@ -82,7 +82,8 @@ class TestSmokeTestSpendingByEveryone(SmokeTestBase):
         }
 
         for i, row in enumerate(all_rows):
-            self.assertEqual('%.2f' % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual('%.2f' % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -148,7 +149,8 @@ class TestSmokeTestSpendingByEveryone(SmokeTestBase):
                          '156868251', '141887244']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -211,7 +213,8 @@ class TestSmokeTestSpendingByEveryone(SmokeTestBase):
                          '4318021']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -266,7 +269,8 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
         }
 
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -318,7 +322,8 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                          '112', '112', '168', '84']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -378,7 +383,8 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                          '45705']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -432,7 +438,8 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
                          '2834', '1915', '1667', '2240', '1646', '2366']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -478,7 +485,8 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
         }
 
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -519,7 +527,8 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
         }
 
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -557,7 +566,8 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
                          '14146', '10988', '13815', '12065']
         }
         for i, row in enumerate(all_rows):
-            self.assertEqual("%.2f" % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual("%.2f" % float(
+                row['actual_cost']), expected['cost'][i])
             self.assertEqual(row['items'], expected['items'][i])
             self.assertEqual(row['quantity'], expected['quantity'][i])
 
@@ -580,9 +590,10 @@ class TestSmokeTestMeasures(SmokeTestBase):
             if (d['date'] == '2015-07-01') or \
                (d['date'] == '2015-08-01') or \
                (d['date'] == '2015-09-01'):
-               total['numerator'] += d['numerator']
-               total['denominator'] += d['denominator']
-        total['calc_value'] = (total['numerator'] / float(total['denominator'])) * 100
+                total['numerator'] += d['numerator']
+                total['denominator'] += d['denominator']
+        total['calc_value'] = (total['numerator'] /
+                               float(total['denominator'])) * 100
         return total
 
     def retrieve_data_for_measure(self, measure, practice):
@@ -595,7 +606,8 @@ class TestSmokeTestMeasures(SmokeTestBase):
         return self.get_data_for_q3_2015(rows)
 
     def test_measure_by_practice(self):
-        q = self.retrieve_data_for_measure('ktt3_lipid_modifying_drugs', 'A81001')
+        q = self.retrieve_data_for_measure(
+            'ktt3_lipid_modifying_drugs', 'A81001')
         bsa = {
             'numerator': 34,
             'denominator': 1265,
@@ -605,7 +617,8 @@ class TestSmokeTestMeasures(SmokeTestBase):
         self.assertEqual(q['denominator'], bsa['denominator'])
         self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
 
-        q = self.retrieve_data_for_measure('ktt8_antidepressant_first_choice', 'A81001')
+        q = self.retrieve_data_for_measure(
+            'ktt8_antidepressant_first_choice', 'A81001')
         bsa = {
             'numerator': 643,
             'denominator': 1025,
@@ -628,11 +641,12 @@ class TestSmokeTestMeasures(SmokeTestBase):
         q = self.retrieve_data_for_measure('ktt9_antibiotics', 'A81001')
         bsa = {
             'numerator': 577,
-            'denominator': 7581.92, # BSA's actual STAR-PU value is 7509
+            'denominator': 7581.92,  # BSA's actual STAR-PU value is 7509
             'calc_value': (577 / 7581.92) * 100
         }
         self.assertEqual(q['numerator'], bsa['numerator'])
-        self.assertEqual("%.0f" % q['denominator'], "%.0f" % bsa['denominator'])
+        self.assertEqual("%.0f" % q['denominator'],
+                         "%.0f" % bsa['denominator'])
         self.assertEqual("%.2f" % q['calc_value'], "%.2f" % bsa['calc_value'])
 
         q = self.retrieve_data_for_measure('ktt9_cephalosporins', 'A81001')
@@ -667,7 +681,8 @@ class TestSmokeTestMeasures(SmokeTestBase):
         self.assertEqual(q['denominator'], bsa['denominator'])
         self.assertEqual("%.2f" % q['calc_value'], "%.2f" % bsa['calc_value'])
 
-        q = self.retrieve_data_for_measure('ktt12_diabetes_blood_glucose', 'A81001')
+        q = self.retrieve_data_for_measure(
+            'ktt12_diabetes_blood_glucose', 'A81001')
         bsa = {
             'numerator': 543,
             'denominator': 626,

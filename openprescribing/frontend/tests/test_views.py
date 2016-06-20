@@ -1,4 +1,3 @@
-import json
 from pyquery import PyQuery as pq
 from django.core import management
 from django.test import TestCase
@@ -25,6 +24,7 @@ def tearDownModule():
 
 
 class TestFrontendViews(TestCase):
+
     def test_call_view_homepage(self):
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
@@ -64,7 +64,8 @@ class TestFrontendViews(TestCase):
         title = doc('h1')
         self.assertEqual(title.text(), '2.2: Diuretics')
         lead = doc('.lead')
-        self.assertEqual(lead.text(), 'Part of chapter 2 Cardiovascular System')
+        self.assertEqual(
+            lead.text(), 'Part of chapter 2 Cardiovascular System')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 1)
 
@@ -74,9 +75,12 @@ class TestFrontendViews(TestCase):
         self.assertTemplateUsed(response, 'bnf_section.html')
         doc = pq(response.content)
         title = doc('h1')
-        self.assertEqual(title.text(), '2.2.1: Thiazides And Related Diuretics')
+        self.assertEqual(
+            title.text(), '2.2.1: Thiazides And Related Diuretics')
         lead = doc('.lead')
-        self.assertEqual(lead.text(), 'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics')
+        self.assertEqual(
+            lead.text(),
+            'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 0)
 
@@ -91,7 +95,8 @@ class TestFrontendViews(TestCase):
         sections = doc('#all-results li')
         self.assertEqual(len(sections), 4)
         first_section = doc('#all-results li:first')
-        self.assertEqual(first_section.text(), 'Bendroflumethiazide (0202010B0)')
+        self.assertEqual(first_section.text(),
+                         'Bendroflumethiazide (0202010B0)')
 
     def test_call_view_chemical_section(self):
         response = self.client.get('/chemical/0202010D0/')
@@ -101,7 +106,11 @@ class TestFrontendViews(TestCase):
         title = doc('h1')
         self.assertEqual(title.text(), 'Chlorothiazide (0202010D0)')
         lead = doc('.lead')
-        self.assertEqual(lead.text(), 'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
+        self.assertEqual(
+            lead.text(),
+            ('Part of chapter 2 Cardiovascular System , section 2.2 '
+             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
+        )
 
     def test_call_view_ccg_all(self):
         response = self.client.get('/ccg/')
@@ -141,6 +150,8 @@ class TestFrontendViews(TestCase):
         title = doc('h1')
         self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
         lead = doc('.lead:first')
-        self.assertEqual(lead.text(), 'Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET ECCLES, MANCHESTER, M30 0NU')
+        self.assertEqual(
+            lead.text(),
+            ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '
+             'ECCLES, MANCHESTER, M30 0NU'))
         lead = doc('.lead:last')
-        # self.assertEqual(lead.text(), 'Registered patients in 2013/14: 1,994')

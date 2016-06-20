@@ -5,12 +5,13 @@ from .base import *
 from common import utils
 
 
-########## HOST CONFIGURATION
-# See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = ['openprescribing.net', 'openprescriptions.net',]
-########## END HOST CONFIGURATION
+# HOST CONFIGURATION
+# See:
+# https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
+ALLOWED_HOSTS = ['openprescribing.net', 'openprescriptions.net', ]
+# END HOST CONFIGURATION
 
-########## EMAIL CONFIGURATION
+# EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -36,9 +37,9 @@ EMAIL_USE_TLS = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = EMAIL_HOST_USER
-########## END EMAIL CONFIGURATION
+# END EMAIL CONFIGURATION
 
-########## DATABASE CONFIGURATION
+# DATABASE CONFIGURATION
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -48,14 +49,14 @@ DATABASES = {
         'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')
     }
 }
-########## END DATABASE CONFIGURATION
+# END DATABASE CONFIGURATION
 
 
-########## CACHE CONFIGURATION
+# CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-########## END CACHE CONFIGURATION
+# END CACHE CONFIGURATION

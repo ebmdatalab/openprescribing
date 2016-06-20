@@ -69,7 +69,8 @@ def set_units(practice):
         weights = json.load(json_file)
         for star_pu_name in weights:
             w = weights[star_pu_name]
-            star_pus[star_pu_name] = (w['0-4'][0] * float(practice.male_0_4)) + \
+            star_pus[star_pu_name] = \
+                (w['0-4'][0] * float(practice.male_0_4)) + \
                 (w['0-4'][1] * float(practice.female_0_4)) + \
                 (w['5-14'][0] * float(practice.male_5_14)) + \
                 (w['5-14'][1] * float(practice.female_5_14)) + \
