@@ -4,6 +4,7 @@ import numpy as np
 import os
 import pandas as pd
 import sys
+import re
 import api.view_utils as utils
 from datetime import datetime
 from dateutil.parser import parse
@@ -18,14 +19,18 @@ from scipy.stats import rankdata
 
 
 class Command(BaseCommand):
-    '''
-    Supply either --end_date to load data for all months
+    '''Supply either --end_date to load data for all months
     up to that date, or --month to load data for just one
-    month. You can also supply --start_date.
+    month.
+
+    You can also supply --start_date, or supply a file path that
+    includes a timestamp with --month_from_prescribing_filename
+
     '''
 
     def add_arguments(self, parser):
         parser.add_argument('--month')
+        parser.add_argument('--month_from_prescribing_filename')
         parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
@@ -99,15 +104,23 @@ class Command(BaseCommand):
             options['measure_ids'] = [k for k in options['measures']]
 
         # Get months to cover from options.
-        if not options['month'] and not options['end_date']:
+        if not options['month'] and not options['end_date'] \
+           and not options['month_from_prescribing_filename']:
             err = 'You must supply either --month or --end_date '
-            err += 'in the format YYYY-MM-DD. You can also '
+            err += 'in the format YYYY-MM-DD, supply a path to a file which '
+            err += 'includes the timetamp in the path. You can also '
             err += 'optionally supply a start date.'
             print err
             sys.exit()
         options['months'] = []
         if 'month' in options and options['month']:
             options['months'] = [options['month']]
+        elif 'month_from_prescribing_filename' in options \
+             and options['month_from_prescribing_filename']:
+            filename = options['month_from_prescribing_filename']
+            date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
+            month = datetime.strptime(date_part + "_01", "%Y_%m_%d")
+            options['month'] = month.strftime('%Y-%m-01')
         else:
             if 'start_date' in options and options['start_date']:
                 d = parse(options['start_date'])
