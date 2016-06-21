@@ -36,7 +36,7 @@ var hashHelper = {
         hashParams[d(key)] = $.map(val.split(','), function(v) {
           if (d(v) !== '') {
             return {
-              'id': d(v)
+              id: d(v)
             };
           }
         });
