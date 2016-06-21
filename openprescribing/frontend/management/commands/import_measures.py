@@ -107,8 +107,8 @@ class Command(BaseCommand):
         if not options['month'] and not options['end_date'] \
            and not options['month_from_prescribing_filename']:
             err = 'You must supply either --month or --end_date '
-            err += 'in the format YYYY-MM-DD, supply a path to a file which '
-            err += 'includes the timetamp in the path. You can also '
+            err += 'in the format YYYY-MM-DD, or supply a path to a file which '
+            err += 'includes the timestamp in the path. You can also '
             err += 'optionally supply a start date.'
             print err
             sys.exit()
