@@ -81,8 +81,6 @@ def org_details(request, format=None):
             data = utils.execute_query(query, [orgs])
     except ProgrammingError as e:
         error = str(e)
-        import pdb; pdb.set_trace()
-
         if keys and 'does not exist' in error:
             error = error.split('\n')[0].replace('column', 'key')
             raise KeysNotValid(error)
