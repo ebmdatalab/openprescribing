@@ -1,5 +1,3 @@
-import os
-import unittest
 from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import PCT
@@ -19,7 +17,8 @@ class CommandsTestCase(TestCase):
     def test_import_ccg_boundaries(self):
         args = []
         opts = {
-            'filename': 'frontend/tests/fixtures/commands/ccg_boundaries_2013_02_01.kml'
+            'filename': ('frontend/tests/fixtures/commands/'
+                         'ccg_boundaries_2013_02_01.kml')
         }
         call_command('import_ccg_boundaries', *args, **opts)
 

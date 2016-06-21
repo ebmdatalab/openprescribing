@@ -42,7 +42,6 @@ class TestFrontendViews(TestCase):
             mainjs = doc('script')[-2].attrib['src']
             self.assertIn('openprescribing.js', mainjs)
 
-
     def test_call_view_analyse(self):
         response = self.client.get('/analyse/')
         self.assertEqual(response.status_code, 200)
