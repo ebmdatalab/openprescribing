@@ -143,7 +143,8 @@ var utils = {
           x_actual_cost: 0,
           x_items: 0,
           y_actual_cost: +c.actual_cost || 0,
-          y_items: +c.items || 0
+          y_items: +c.items || 0,
+          filled: c.filled
         };
         p[key][x_val_key] = 0;
       }
@@ -229,11 +230,20 @@ var utils = {
   },
 
   getAllMonthsInData: function(combinedData) {
-        // Used for date slider.
+    // Used for date slider.
     var monthRange = [];
     if (combinedData.length > 0) {
-      var firstMonth = combinedData[0].date,
-        lastMonth = combinedData[combinedData.length - 1].date;
+      var firstMonth = combinedData[0].date;
+      var lastMonth;
+      // don't go beyond the last month with values. This is to
+      // compute ratios: the fact we fill out months without data with
+      // zeros in the API means otherwise we may get a zero ration
+      for (var i = combinedData.length; i-- > 0;) {
+        if (typeof combinedData[i].filled === 'undefined') {
+          lastMonth = combinedData[i].date;
+          break;
+        }
+      }
       var startDate = moment(firstMonth);
       var endDate = moment(lastMonth);
       if (endDate.isBefore(startDate)) {

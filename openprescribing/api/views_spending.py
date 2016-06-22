@@ -1,6 +1,39 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import datetime
+from collections import defaultdict
 import view_utils as utils
+
+
+def _fill_dates_with_zero(data, default_data):
+    """Given an array of data with 'date' keys, ensure every possible
+    month between the start of prescribing data and today has default
+    values.
+
+    Marks data which is supplied from default_data with a `filled`
+    flag.
+
+    """
+    dates_with_values = defaultdict(list)
+    for d in data:
+        dates_with_values[d['date']].append(d)
+    filled_data = []
+    now = datetime.datetime.now()
+    for year in range(2010, now.year + 1):
+        for month in range(1, 13):
+            if year == 2010 and month < 8 \
+               or year == now.year and month > now.month:
+                continue
+            date = datetime.date(year, month, 1)
+            if date in dates_with_values:
+                for d in dates_with_values[date]:
+                    filled_data.append(d)
+            else:
+                val = default_data.copy()
+                val['date'] = date
+                val['filled'] = True
+                filled_data.append(val)
+    return filled_data
 
 
 @api_view(['GET'])
@@ -24,15 +57,15 @@ def total_spending(request, format=None):
         return Response(err, status=400)
 
     if subdivide:
-        query = _get_query_for_total_spending_with_subdivide(codes)
+        query, default_data = _get_query_for_total_spending_with_subdivide(codes)
     else:
-        query = _get_query_for_total_spending(codes)
+        query, default_data = _get_query_for_total_spending(codes)
 
     if spending_type != 'presentation':
         codes = [c + '%' for c in codes]
 
     data = utils.execute_query(query, [codes])
-    return Response(data)
+    return Response(_fill_dates_with_zero(data, default_data))
 
 
 @api_view(['GET'])
@@ -48,16 +81,17 @@ def spending_by_ccg(request, format=None):
 
     if not spending_type or spending_type == 'bnf-section' \
        or spending_type == 'chemical':
-        query = _get_query_for_chemicals_or_sections_by_ccg(codes, orgs,
-                                                            spending_type)
+        query, default_data = _get_query_for_chemicals_or_sections_by_ccg(
+            codes, orgs,
+            spending_type)
     else:
-        query = _get_query_for_presentations_by_ccg(codes, orgs)
+        query, default_data = _get_query_for_presentations_by_ccg(codes, orgs)
 
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
 
     data = utils.execute_query(query, [codes, orgs])
-    return Response(data)
+    return Response(_fill_dates_with_zero(data, default_data))
 
 
 @api_view(['GET'])
@@ -73,7 +107,6 @@ def spending_by_practice(request, format=None):
         return Response(err, status=400)
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
-
     if not date and not orgs:
         err = 'Error: You must supply either '
         err += 'a list of practice IDs or a date parameter, e.g. '
@@ -88,23 +121,26 @@ def spending_by_practice(request, format=None):
         # So for these queries, expand the CCG ID to a list of practice IDs.
         expanded_orgs = utils.get_practice_ids_from_org(orgs)
         if codes:
-            query = _get_chemicals_or_sections_by_practice(codes,
-                                                           expanded_orgs,
-                                                           spending_type,
-                                                           date)
+            query, default_data = _get_chemicals_or_sections_by_practice(
+                codes, expanded_orgs, spending_type, date)
             org_for_param = expanded_orgs
         else:
-            query = _get_total_spending_by_practice(expanded_orgs, date)
+            query, default_data = _get_total_spending_by_practice(expanded_orgs, date)
             org_for_param = expanded_orgs
     else:
-        query = _get_presentations_by_practice(codes, orgs, date)
+        query, default_data = _get_presentations_by_practice(codes, orgs, date)
         org_for_param = orgs
     data = utils.execute_query(
         query, [codes, org_for_param, [date] if date else []])
-    return Response(data)
+    return Response(_fill_dates_with_zero(data, default_data))
 
 
 def _get_query_for_total_spending(codes):
+    default_data = {
+        'items': 0,
+        'actual_cost': 0,
+        'quantity': 0,
+    }
     query = 'SELECT SUM(cost) AS actual_cost, '
     query += 'SUM(items) AS items, '
     query += 'SUM(quantity) AS quantity, '
@@ -118,7 +154,7 @@ def _get_query_for_total_spending(codes):
                 query += ' OR '
         query += ") "
     query += "GROUP BY date ORDER BY date"
-    return query
+    return query, default_data
 
 
 def _get_query_for_total_spending_with_subdivide(codes):
@@ -137,6 +173,12 @@ def _get_query_for_total_spending_with_subdivide(codes):
         end_char = 9
     elif len(code) == 11:
         end_char = 15
+    default_data = {
+        'items': 0,
+        'quantity': 0,
+        'bnf_code': '',
+        'name': '',
+    }
     query = 'SELECT SUM(cost) AS actual_cost, SUM(items) AS items, '
     query += 'SUM(quantity) AS quantity, '
     query += 'SUBSTR(vwps.presentation_code, 1, %s) AS code, ' % end_char
@@ -152,7 +194,8 @@ def _get_query_for_total_spending_with_subdivide(codes):
         code += '%'
     query += 'GROUP BY code, name, number_str, date '
     query += 'ORDER BY date, code'
-    return query
+
+    return query, default_data
 
 
 def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
@@ -165,6 +208,12 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
     query += "FROM vw__chemical_summary_by_ccg pr "
     query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
     query += "AND pc.org_type='CCG' "
+    default_data = {
+        'row_name': '',
+        'actual_cost': 0,
+        'items': 0,
+        'quantity': 0
+    }
     if spending_type:
         query += " WHERE ("
         if spending_type == 'bnf-section':
@@ -188,10 +237,17 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
         query += ") "
     query += "GROUP BY pr.pct_id, pc.code, date "
     query += "ORDER BY date, pr.pct_id "
-    return query
+    return query, default_data
 
 
 def _get_query_for_presentations_by_ccg(codes, orgs):
+    default_data = {
+        'row_id': '',
+        'actual_cost': 0,
+        'items': 0,
+        'quantity': 0
+    }
+
     query = 'SELECT pr.pct_id as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
@@ -214,10 +270,18 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
                 query += ' OR '
     query += ") GROUP BY pr.pct_id, pc.code, date "
     query += "ORDER BY date, pr.pct_id"
-    return query
+    return query, default_data
 
 
 def _get_total_spending_by_practice(orgs, date):
+    default_data = {
+        'row_name': '',
+        'setting': '',
+        'ccg': '',
+        'actual_cost': 0,
+        'items': 0,
+        'quantity': 0
+    }
     query = 'SELECT pr.practice_id AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
@@ -246,11 +310,19 @@ def _get_total_spending_by_practice(orgs, date):
                 query += ' OR '
         query += ") "
     query += "ORDER BY date, pr.practice_id "
-    return query
+    return query, default_data
 
 
 def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
                                            date):
+    default_data = {
+        'row_name': '',
+        'setting': '',
+        'ccg': '',
+        'actual_cost': 0,
+        'items': 0,
+        'quantity': 0
+    }
     query = 'SELECT pr.practice_id AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
@@ -300,10 +372,18 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
         query += "pr.processing_date=%s) "
     query += "GROUP BY pr.practice_id, pc.code, date "
     query += "ORDER BY date, pr.practice_id"
-    return query
+    return query, default_data
 
 
 def _get_presentations_by_practice(codes, orgs, date):
+    default_data = {
+        'row_name': '',
+        'setting': '',
+        'ccg': '',
+        'actual_cost': 0,
+        'items': 0,
+        'quantity': 0
+    }
     query = 'SELECT pr.practice_id AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
@@ -332,4 +412,4 @@ def _get_presentations_by_practice(codes, orgs, date):
         query += "AND pr.processing_date=%s "
     query += ") GROUP BY pr.practice_id, pc.code, date "
     query += "ORDER BY date, pr.practice_id"
-    return query
+    return query, default_data

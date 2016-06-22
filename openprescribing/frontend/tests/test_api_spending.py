@@ -2,6 +2,7 @@ import csv
 import os
 import json
 import unittest
+import datetime
 from django.core import management
 from django.test import TestCase
 from common import utils
@@ -46,6 +47,11 @@ def tearDownModule():
     management.call_command('flush', verbosity=0, interactive=False)
 
 
+
+def _rows_with_values(rows):
+    return [x for x in rows if not x.get('filled', False)]
+
+
 class TestAPISpendingViews(TestCase):
 
     api_prefix = '/api/1.0'
@@ -55,6 +61,20 @@ class TestAPISpendingViews(TestCase):
         url += '?format=csv&code=0202010B0,0202010B0AAAAAA'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
+
+    def test_default_data_fill(self):
+        url = '%s/spending?format=csv' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        expected_months = 5 # in 2010
+        today = datetime.datetime.now()
+        expected_months += (today.year - 1 - 2010) * 12
+        expected_months += today.month
+
+        self.assertEqual(len(rows), expected_months)
 
     ########################################
     # Spending across all NHS England.
@@ -66,6 +86,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -83,6 +104,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -100,6 +122,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -117,6 +140,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['date'], '2014-11-01')
         self.assertEqual(rows[0]['actual_cost'], '36.28')
@@ -131,6 +155,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[3]['date'], '2014-09-01')
         self.assertEqual(rows[3]['actual_cost'], '36.29')
@@ -147,6 +172,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
         self.assertEqual(rows[6]['row_name'], 'NHS Corby')
@@ -162,6 +188,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-2]['row_id'], '03V')
         self.assertEqual(rows[-2]['row_name'], 'NHS Corby')
@@ -177,6 +204,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
         self.assertEqual(rows[6]['row_name'], 'NHS Corby')
@@ -192,6 +220,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
@@ -214,6 +243,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -236,6 +266,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
@@ -252,6 +283,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], '03V')
         self.assertEqual(rows[2]['row_name'], 'NHS Corby')
@@ -268,6 +300,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 7)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -283,6 +316,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -304,6 +338,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[-1]['row_id'], '03V')
         self.assertEqual(rows[-1]['row_name'], 'NHS Corby')
@@ -329,6 +364,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -347,6 +383,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -365,6 +402,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['actual_cost'], '11.99')
@@ -382,6 +420,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -398,6 +437,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -417,6 +457,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -433,6 +474,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -451,6 +493,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -469,6 +512,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[1]['row_id'], 'P87629')
         self.assertEqual(rows[1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -488,6 +532,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -504,6 +549,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -520,6 +566,7 @@ class TestAPISpendingViews(TestCase):
         rows = []
         for row in reader:
             rows.append(row)
+        rows = _rows_with_values(rows)
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')

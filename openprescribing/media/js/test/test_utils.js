@@ -329,6 +329,15 @@ describe('Utils', function () {
                                    "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01",
                                    "2010-12-01", "2011-01-01", "2011-02-01"]);
         });
+        it('should trim months with `filled` data from the end', function () {
+            var combinedData = [
+              {'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2010-04-01'},
+              {'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2011-02-01'},
+              {'row_id': 'O3S', 'row_name': 'NHS Vale of York', 'date': '2012-02-01', 'filled': true}
+            ];
+            var months = utils.getAllMonthsInData(combinedData);
+            expect(months.length).to.equal(11);
+        });
     });
 
     describe("#calculateQuintiles", function () {
