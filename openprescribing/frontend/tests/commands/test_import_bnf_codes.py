@@ -31,9 +31,9 @@ class CommandsTestCase(TestCase):
         self.assertEqual(r.is_generic, False)
 
         # Presentations with codes less than 15 chars in length
-        # should not be imported.
+        # should be imported.
         r = Presentation.objects.filter(bnf_code='20031000015')
-        self.assertEqual(r.count(), 0)
+        self.assertEqual(r.count(), 1)
 
         sections = Section.objects.all()
         self.assertEqual(sections.count(), 6)

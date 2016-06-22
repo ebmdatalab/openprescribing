@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
             pres_name = row['BNF Presentation'].strip()
             pres_code = row['BNF Presentation Code'].strip()
-            if (not pres_name.startswith('DUMMY ')) and (len(pres_code) == 15):
+            if not pres_name.startswith('DUMMY '):
                 try:
                     p = Presentation.objects.get(bnf_code=pres_code)
                     p.name = pres_name
