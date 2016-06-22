@@ -56,6 +56,16 @@ class TestAPISpendingViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
 
+    def test_404_returned_for_unknown_short_code(self):
+        url = '%s/spending?format=csv&code=0' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_404_returned_for_unknown_dotted_code(self):
+        url = '%s/spending?format=csv&code=123.456' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
     ########################################
     # Spending across all NHS England.
     ########################################
