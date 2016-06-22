@@ -8,8 +8,9 @@ engines:
     enabled: true
     config:
       languages:
-      - python
-      - javascript
+        python:
+          mass_threshold: 70
+        javascript:
   eslint:
     enabled: true
   fixme:
