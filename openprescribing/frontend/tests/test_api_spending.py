@@ -2,7 +2,6 @@ import csv
 import os
 import json
 import unittest
-import datetime
 from django.core import management
 from django.test import TestCase
 from common import utils
@@ -47,14 +46,21 @@ def tearDownModule():
     management.call_command('flush', verbosity=0, interactive=False)
 
 
-
-def _rows_with_values(rows):
-    return [x for x in rows if not x.get('filled', False)]
-
-
 class TestAPISpendingViews(TestCase):
 
     api_prefix = '/api/1.0'
+
+    def _rows_from_api(self, url, unfilled_only=True):
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        if unfilled_only:
+            return [x for x in rows if not x.get('filled', False)]
+        else:
+            return rows
 
     def test_codes_are_rejected_if_not_same_length(self):
         url = '%s/spending' % self.api_prefix
@@ -62,31 +68,29 @@ class TestAPISpendingViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
 
-    def test_default_data_fill(self):
-        url = '%s/spending?format=csv' % self.api_prefix
+    def test_404_returned_for_unknown_short_code(self):
+        url = '%s/spending?format=csv&code=0' % self.api_prefix
         response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
+        self.assertEqual(response.status_code, 404)
+
+    def test_404_returned_for_unknown_dotted_code(self):
+        url = '%s/spending?format=csv&code=123.456' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_default_data_fill(self):
+        rows = self._rows_from_api('/spending?format=csv', unfilled_only=False)    
         expected_months = 5 # in 2010
         today = datetime.datetime.now()
         expected_months += (today.year - 1 - 2010) * 12
         expected_months += today.month
-
         self.assertEqual(len(rows), expected_months)
 
     ########################################
     # Spending across all NHS England.
     ########################################
     def test_total_spending(self):
-        url = '%s/spending?format=csv' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending?format=csv')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -98,13 +102,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['quantity'], '5142')
 
     def test_total_spending_by_bnf_section(self):
-        url = '%s/spending?format=csv&code=2' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending?format=csv&code=2')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -116,13 +114,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['quantity'], '5142')
 
     def test_total_spending_by_bnf_section_full_code(self):
-        url = '%s/spending?format=csv&code=02' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending?format=csv&code=02')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
@@ -134,13 +126,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['quantity'], '5142')
 
     def test_total_spending_by_code(self):
-        url = '%s/spending?format=csv&code=0204000I0' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending?format=csv&code=0204000I0')
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['date'], '2014-11-01')
         self.assertEqual(rows[0]['actual_cost'], '36.28')
@@ -148,14 +134,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['quantity'], '2354')
 
     def test_total_spending_by_codes(self):
-        url = '%s/spending?format=csv' % self.api_prefix
+        url = '/spending?format=csv'
         url += '&code=0204000I0,0202010B0'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[3]['date'], '2014-09-01')
         self.assertEqual(rows[3]['actual_cost'], '36.29')
@@ -166,13 +147,7 @@ class TestAPISpendingViews(TestCase):
     # Total spending by CCG.
     ########################################
     def test_total_spending_by_ccg(self):
-        url = '%s/spending_by_ccg?format=csv' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending_by_ccg?format=csv')
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
         self.assertEqual(rows[6]['row_name'], 'NHS Corby')
@@ -182,13 +157,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[6]['quantity'], '1241')
 
     def test_total_spending_by_one_ccg(self):
-        url = '%s/spending_by_ccg?format=csv&org=03V' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending_by_ccg?format=csv&org=03V')
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-2]['row_id'], '03V')
         self.assertEqual(rows[-2]['row_name'], 'NHS Corby')
@@ -198,13 +167,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-2]['quantity'], '1241')
 
     def test_total_spending_by_multiple_ccgs(self):
-        url = '%s/spending_by_ccg?format=csv&org=03V,03Q' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api('/spending_by_ccg?format=csv&org=03V,03Q')
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
         self.assertEqual(rows[6]['row_name'], 'NHS Corby')
@@ -214,13 +177,8 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[6]['quantity'], '1241')
 
     def test_spending_by_all_ccgs_on_chemical(self):
-        url = '%s/spending_by_ccg?format=csv&code=0202010B0' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(
+            '/spending_by_ccg?format=csv&code=0202010B0')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
@@ -236,14 +194,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_chemicals(self):
-        url = '%s/spending_by_ccg' % self.api_prefix
+        url = '/spending_by_ccg'
         url += '?format=csv&code=0202010B0,0202010F0'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -259,14 +212,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-3]['quantity'], '1241')
 
     def test_spending_by_all_ccgs_on_product(self):
-        url = '%s/spending_by_ccg' % self.api_prefix
+        url = '/spending_by_ccg'
         url += '?format=csv&code=0204000I0BC'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
@@ -276,14 +224,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['quantity'], '2350')
 
     def test_spending_by_all_ccgs_on_presentation(self):
-        url = '%s/spending_by_ccg' % self.api_prefix
+        url = '/spending_by_ccg'
         url += '?format=csv&code=0202010B0AAABAB'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], '03V')
         self.assertEqual(rows[2]['row_name'], 'NHS Corby')
@@ -293,14 +236,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[2]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_presentations(self):
-        url = '%s/spending_by_ccg' % self.api_prefix
+        url = '/spending_by_ccg'
         url += '?format=csv&code=0202010F0AAAAAA,0202010B0AAACAC'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 7)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -310,13 +248,8 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['quantity'], '56')
 
     def test_spending_by_all_ccgs_on_bnf_section(self):
-        url = '%s/spending_by_ccg?format=csv&code=2.2.1' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        url = '/spending_by_ccg?format=csv&code=2.2.1'
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -332,13 +265,8 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-1]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):
-        url = '%s/spending_by_ccg?format=csv&code=2.2,2.4' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        url = '/spending_by_ccg?format=csv&code=2.2,2.4'
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[-1]['row_id'], '03V')
         self.assertEqual(rows[-1]['row_name'], 'NHS Corby')
@@ -357,14 +285,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_total_spending_by_practice(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&date=2014-11-01'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -376,14 +299,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['quantity'], '2543')
 
     def test_spending_by_practice_on_chemical(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0&date=2014-11-01'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -395,14 +313,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['quantity'], '1154')
 
     def test_spending_by_all_practices_on_chemical_with_date(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0202010F0&date=2014-09-01'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['actual_cost'], '11.99')
@@ -414,13 +327,8 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['quantity'], '32')
 
     def test_spending_by_one_practice(self):
-        url = '%s/spending_by_practice?format=csv&org=P87629' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        url = '/spending_by_practice?format=csv&org=P87629'
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -430,14 +338,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-1]['quantity'], '2599')
 
     def test_spending_by_one_practice_on_chemical(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0&org=P87629'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -449,15 +352,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-1]['quantity'], '1399')
 
     def test_spending_by_practice_on_multiple_chemicals(self):
-        url = self.api_prefix
-        url += '/spending_by_practice?format=csv'
+        url = '/spending_by_practice?format=csv'
         url += '&code=0202010B0,0204000I0&org=P87629,K83059'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -467,14 +364,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[2]['quantity'], '24')
 
     def test_spending_by_all_practices_on_product(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AA&date=2014-11-01'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -486,14 +378,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['quantity'], '1399')
 
     def test_spending_by_all_practices_on_presentation(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AAABAB&date=2014-11-01'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -505,14 +392,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['quantity'], '1399')
 
     def test_spending_by_practice_on_presentation(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB&org=03V'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[1]['row_id'], 'P87629')
         self.assertEqual(rows[1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -524,15 +406,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['quantity'], '1200')
 
     def test_spending_by_practice_on_multiple_presentations(self):
-        url = self.api_prefix
-        url += '/spending_by_practice'
+        url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB,0202010B0AAABAB&org=03V'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -542,14 +418,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[2]['quantity'], '2599')
 
     def test_spending_by_practice_on_section(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=2&org=03V'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -559,14 +430,9 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-1]['quantity'], '2599')
 
     def test_spending_by_practice_on_multiple_sections(self):
-        url = '%s/spending_by_practice' % self.api_prefix
+        url = '/spending_by_practice'
         url += '?format=csv&code=0202,0204&org=03Q'
-        response = self.client.get(url, follow=True)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        rows = _rows_with_values(rows)
+        rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')

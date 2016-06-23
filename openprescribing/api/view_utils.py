@@ -1,5 +1,6 @@
 import itertools
 from django.db import connection
+from django.shortcuts import get_object_or_404
 from frontend.models import Practice, Section
 
 
@@ -48,12 +49,14 @@ def get_bnf_codes_from_number_str(codes):
     converted = []
     for code in codes:
         if '.' in code:
-            section = Section.objects.get(number_str=code)
+            section = get_object_or_404(Section, number_str=code)
             converted.append(section.bnf_id)
         elif len(code) < 3:
-            section = Section.objects.get(bnf_chapter=code, bnf_section=None)
+            section = get_object_or_404(
+                Section, bnf_chapter=code, bnf_section=None)
             converted.append(section.bnf_id)
         else:
+            # it's a presentation, not a section
             converted.append(code)
     return converted
 

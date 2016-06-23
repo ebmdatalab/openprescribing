@@ -65,7 +65,6 @@ class Command(BaseCommand):
         cmd += '(processing_date, pct_id, presentation_code)'
         self._print_and_execute(cursor, cmd)
 
-
         cmd = 'CREATE INDEX vw__idx_pres_by_ccg_joint_code ON '
         cmd += 'vw__presentation_summary_by_ccg(pct_id, presentation_code)'
         self._print_and_execute(cursor, cmd)
