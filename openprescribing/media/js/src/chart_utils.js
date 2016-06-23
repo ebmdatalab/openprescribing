@@ -229,21 +229,26 @@ var utils = {
     return newData;
   },
 
+  _findLastMonthWithValues: function(combinedData) {
+    var lastMonth;
+    // don't go beyond the last month with values. This is to
+    // compute ratios: the fact we fill out months without data with
+    // zeros in the API means otherwise we may get a zero ration
+    for (var i = combinedData.length; i-- > 0;) {
+      if (typeof combinedData[i].filled === 'undefined') {
+        lastMonth = combinedData[i].date;
+        break;
+      }
+    }
+    return lastMonth;
+  },
+
   getAllMonthsInData: function(combinedData) {
     // Used for date slider.
     var monthRange = [];
     if (combinedData.length > 0) {
       var firstMonth = combinedData[0].date;
-      var lastMonth;
-      // don't go beyond the last month with values. This is to
-      // compute ratios: the fact we fill out months without data with
-      // zeros in the API means otherwise we may get a zero ration
-      for (var i = combinedData.length; i-- > 0;) {
-        if (typeof combinedData[i].filled === 'undefined') {
-          lastMonth = combinedData[i].date;
-          break;
-        }
-      }
+      var lastMonth = this._findLastMonthWithValues(combinedData);
       var startDate = moment(firstMonth);
       var endDate = moment(lastMonth);
       if (endDate.isBefore(startDate)) {
