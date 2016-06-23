@@ -57,7 +57,8 @@ def total_spending(request, format=None):
         return Response(err, status=400)
 
     if subdivide:
-        query, default_data = _get_query_for_total_spending_with_subdivide(codes)
+        query, default_data = _get_query_for_total_spending_with_subdivide(
+            codes)
     else:
         query, default_data = _get_query_for_total_spending(codes)
 
@@ -125,7 +126,8 @@ def spending_by_practice(request, format=None):
                 codes, expanded_orgs, spending_type, date)
             org_for_param = expanded_orgs
         else:
-            query, default_data = _get_total_spending_by_practice(expanded_orgs, date)
+            query, default_data = _get_total_spending_by_practice(
+                expanded_orgs, date)
             org_for_param = expanded_orgs
     else:
         query, default_data = _get_presentations_by_practice(codes, orgs, date)

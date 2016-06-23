@@ -1,10 +1,8 @@
 import csv
-import os
-import json
-import unittest
 from django.core import management
 from django.test import TestCase
 from common import utils
+import datetime
 
 
 def setUpModule():
@@ -79,8 +77,8 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_default_data_fill(self):
-        rows = self._rows_from_api('/spending?format=csv', unfilled_only=False)    
-        expected_months = 5 # in 2010
+        rows = self._rows_from_api('/spending?format=csv', unfilled_only=False)
+        expected_months = 5  # in 2010
         today = datetime.datetime.now()
         expected_months += (today.year - 1 - 2010) * 12
         expected_months += today.month
