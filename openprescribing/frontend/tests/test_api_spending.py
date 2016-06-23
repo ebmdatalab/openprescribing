@@ -2,11 +2,12 @@ import csv
 from django.core import management
 from django.test import TestCase
 from common import utils
-import datetime
+from frontend.models import ImportLog
 
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
+    db_name = utils.get_env_setting('DB_NAME')
     management.call_command('loaddata', fix_dir + 'chemicals.json',
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'sections.json',
@@ -21,7 +22,8 @@ def setUpModule():
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'practice_listsizes.json',
                             verbosity=0)
-    db_name = utils.get_env_setting('DB_NAME')
+    management.call_command('loaddata', fix_dir + 'importlog.json',
+                            verbosity=0)
     db_user = utils.get_env_setting('DB_USER')
     db_pass = utils.get_env_setting('DB_PASS')
     management.call_command('create_matviews',
@@ -79,9 +81,9 @@ class TestAPISpendingViews(TestCase):
     def test_default_data_fill(self):
         rows = self._rows_from_api('/spending?format=csv', unfilled_only=False)
         expected_months = 5  # in 2010
-        today = datetime.datetime.now()
-        expected_months += (today.year - 1 - 2010) * 12
-        expected_months += today.month
+        end = ImportLog.objects.latest_in_category('prescribing').current_at
+        expected_months += (end.year - 1 - 2010) * 12
+        expected_months += end.month
         self.assertEqual(len(rows), expected_months)
 
     ########################################

@@ -452,3 +452,22 @@ class MeasureGlobal(models.Model):
     class Meta:
         app_label = 'frontend'
         unique_together = (('measure', 'month'),)
+
+
+class ImportLogManager(models.Manager):
+    def latest_in_category(self, category):
+        return self.filter(category=category).first()
+
+
+class ImportLog(models.Model):
+    '''
+    Keep track of when things have been imported
+    '''
+    imported_at = models.DateTimeField(auto_now_add=True)
+    current_at = models.DateField(db_index=True)
+    filename = models.CharField(max_length=200)
+    category = models.CharField(max_length=15, db_index=True)
+    objects = ImportLogManager()
+
+    class Meta:
+        ordering = ["-current_at"]

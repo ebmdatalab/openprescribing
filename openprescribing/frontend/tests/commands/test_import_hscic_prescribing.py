@@ -1,8 +1,8 @@
 import datetime
-import unittest
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import Chemical, PCT, Practice, Prescription, SHA
+from frontend.models import Chemical, PCT, Practice
+from frontend.models import Prescription, SHA, ImportLog
 from common import utils
 
 
@@ -68,3 +68,5 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.quantity, 878870)
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))
         self.assertEqual(p.price_per_unit, 0.0128236599269517)
+        l = ImportLog.objects.latest_in_category('prescribing')
+        self.assertEqual(l.current_at.strftime('%Y-%m-%d'), '2013-04-01')

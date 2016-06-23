@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import datetime
 from collections import defaultdict
+from frontend.models import ImportLog
 import view_utils as utils
 
 
@@ -18,11 +19,11 @@ def _fill_dates_with_zero(data, default_data):
     for d in data:
         dates_with_values[d['date']].append(d)
     filled_data = []
-    now = datetime.datetime.now()
-    for year in range(2010, now.year + 1):
+    end = ImportLog.objects.latest_in_category('prescribing').current_at
+    for year in range(2010, end.year + 1):
         for month in range(1, 13):
             if year == 2010 and month < 8 \
-               or year == now.year and month > now.month:
+               or year == end.year and month > end.month:
                 continue
             date = datetime.date(year, month, 1)
             if date in dates_with_values:

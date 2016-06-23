@@ -9,7 +9,7 @@ import time
 from pprint import pprint
 from os import environ
 from django.core.management.base import BaseCommand, CommandError
-from frontend.models import SHA, PCT, Prescription
+from frontend.models import SHA, PCT, Prescription, ImportLog
 from common import utils
 
 
@@ -114,19 +114,28 @@ class Command(BaseCommand):
         cursor.copy_expert(copy_str, file_obj)
         try:
             self.conn.commit()
+            date = self._date_from_filename(filename)
+            ImportLog.objects.create(
+                current_at=date,
+                filename=filename,
+                category='prescribing'
+            )
         except Exception as err:
             print 'EXCEPTION:', err
         # end = time.clock()
         # time_taken = (end-start)
         # print 'time_taken', time_taken
 
+    def _date_from_filename(self, filename):
+        file_str = filename.split('/')[-1].split('.')[0]
+        file_str = re.sub(r'PDPI.BNFT_formatted', '', file_str)
+        return file_str[1:5] + '-' + file_str[5:] + '-01'
+
     def delete_existing_prescriptions(self, filename):
         if self.IS_VERBOSE:
             print 'Deleting existing Prescriptions for month'
-        file_str = filename.split('/')[-1].split('.')[0]
-        file_str = re.sub(r'PDPI.BNFT_formatted', '', file_str)
-        date_from_filename = file_str[1:5] + '-' + file_str[5:] + '-01'
-        p = Prescription.objects.filter(processing_date=date_from_filename)
+        p = Prescription.objects.filter(
+            processing_date=self._date_from_filename(filename))
         p.delete()
 
     def vacuum_db(self, cursor):
