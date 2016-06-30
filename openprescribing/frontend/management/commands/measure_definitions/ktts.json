@@ -8,7 +8,7 @@
             "as a percentage of total prescription items for BNF 2.12."
         ],
         "why_it_matters": [
-            "TBA"
+            "The latest NICE guidance suggests that, for the vast majority of people who need treatment for high cholesterol, these drugs should not be used.  There is no evidence that omega 3 fatty acids reduces the chances of patients getting cardiovascular disease."
         ],
         "title": [
             "KTT3 (Lipid-modifying drugs): Number of prescription",
@@ -69,7 +69,7 @@
             "antidepressants (sub-set of BNF 4.3)."
         ],
         "why_it_matters": [
-            "TBA"
+            "Although non-drug methods are often used to treat depression, sometimes antidepressants are needed. Most antidepressants seem to be equally effective, and therefore doctors should decide which ones to give based on people’s previous experience and the likely side-effects. NICE guidance recommends that a generic type of antidepressant called an SSRI should normally be used first."
         ],
         "title": [
             "KTT8 (Antidepressants: First choice % items)"
@@ -126,7 +126,7 @@
             "(subset of BNF 4.3)."
         ],
         "why_it_matters": [
-            "TBA"
+            "Dosulepin is an older antidepressant. For the last ten years there has been a concern that overdose can easily be fatal, and it is recommended that patients should only be started on it by an expert in mental health. Numbers of patients who still get prescribed this drug are reducing."
         ],
         "title": [
             "KTT8 (Dosulepin): First choice antidepressant use in",
@@ -218,10 +218,10 @@
             "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; and 5.1.13."
         ],
         "why_it_matters": [
-            "(TBC) Cephalosporins are broad spectrum antibiotics which can ",
+            "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can ",
             "be used when others have failed. It is important that ",
             "they are used sparingly, to avoid drug-resistant bacteria ",
-            "developing. This measure looks at the quantity of cephalosporins ",
+            "developing. This measure looks at the quantity of these ",
             "prescribed, versus the broad class of similar antibiotics."
         ],
         "num": [
@@ -266,7 +266,11 @@
     "ktt10_uti_antibiotics": {
         "name": "Antibiotics for uncomplicated UTIs (KTT10)",
         "title": [
-            "KTT10 (TBA)"
+            "KTT10 (Antibiotics for uncomplicated UTIs): ",
+            "Number of average daily quantities (ADQs) per",
+            "item for trimethoprim 200mg tablets,",
+            "nitrofurantoin 50mg tablets and capsules,",
+            "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
         ],
         "description": [
             "Number of average daily quantities (ADQs) per",
@@ -275,7 +279,7 @@
             "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
         ],
         "why_it_matters": [
-            "TBA"
+            "For most women (who are not pregnant), a three-day course of antibiotics for an uncomplicated urinary tract infection (UTI) will treat it effectively. This also reduces the amount of unnecessary antibiotics being prescribed."
         ],
         "num": [
             "Total average daily quantity (ADQ) usage for ",
@@ -338,7 +342,7 @@
             "for minocycline per 1000 patients."
         ],
         "why_it_matters": [
-            "TBA"
+            "Minocycline is an antibiotic used to treat patients with acne. However, there are concerns about its safety, and there are other treatments which appear to be safer and as effective.  The amount of minocycline prescribing has dropped nationally as a result."
         ],
         "num": [
             "Total average daily quantity (ADQ) usage ",
@@ -379,7 +383,7 @@
             "of prescription items for all Antidiabetic drugs (BNF 6.1.2)."
         ],
         "why_it_matters": [
-            "TBA"
+            "The previous NICE guidance on diabetes (2009) recommended that patients are prescribed metformin or a sulphonylurea first to treat their diabetes.  This guideline has now been changed, and so it is likely that the use of these drugs will reduce."
          ],
         "num": [
             "Number of prescription items for BNF section ",
@@ -482,7 +486,7 @@
             "for all NSAIDs."
         ],
         "why_it_matters": [
-            "TBA"
+            "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, for their effects on the stomach, kidneys and the risk of blood clots.  The latest evidence shows that ibuprofen and naproxen are two of the drugs with a lower level of risk, and therefore doctors should prescribe these to patients before trying the others."
         ],
         "num": [
             "Number of prescription items for ibuprofen and naproxen ",

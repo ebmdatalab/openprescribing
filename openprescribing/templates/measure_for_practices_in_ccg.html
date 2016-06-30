@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+f{% extends "base.html" %}
 {% load humanize %}
 {% load template_extras %}
 
@@ -11,9 +11,9 @@
 
 {% block content %}
 
-<h1>{{measure.name}} prescribing by practices in {{ ccg.name }}</h1>
+<h1>{{measure.name}} prescribing by GP practices in {{ ccg.name }}</h1>
 
-<p>How GP practices in {{ ccg.name }} prescribed {{ measure.title }}.</p>
+<p>How standard GP practices in {{ ccg.name }} prescribed {{ measure.title }}.</p>
 
 {% if measure.url %}
 <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
@@ -40,23 +40,23 @@
 </div>
 
 {% verbatim %}
-<script id="summary-panel" type="text/x-handlebars-template">{{ performance_description }}
-
-{{ cost_savings }}
+<script id="summary-panel" type="text/x-handlebars-template">
+{{ performanceDescription }}
+{{ costSavings }}
 </script>
 
 <script id="measure-panel" type="text/x-handlebars-template">
 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
     <div class="panel panel-info">
         <div class="panel-heading">
-            <a href="{{ chart_title_url }}">{{ chart_title }}</a>
+            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
         </div>
-        <div class="panel-body" id="{{ chart_id }}" data-costsaving="{{ cost_saving }}">
+        <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
             <div class="chart">
                 <div class="status"></div>
             </div>
         </div>
-        <div class="explanation">{{{ chart_explanation }}}</div>
+        <div class="explanation">{{{ chartExplanation }}}</div>
     </div>
 </div>
 </script>
@@ -68,8 +68,7 @@ var measureData = {
     'orgName': '{{ ccg.name }}',
     'orgType': 'practice',
     'measure': '{{ measure.id }}',
-    'measure_is_cost_based': '{{ measure.is_cost_based }}',
-    'measureIsPercentage': '{{ measure.is_percentage }}',
+    'isCostBasedMeasure': '{{ measure.is_cost_based }}',
     'numerator': '{{ measure.numerator_short }}',
     'denominator': '{{ measure.denominator_short }}'
 };

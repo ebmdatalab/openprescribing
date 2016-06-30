@@ -18,7 +18,7 @@
 <div class="col-md-6">
 <p class="lead">Address: {{ practice.address_pretty }}</p>
 {% if practice.ccg %}
-<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}/measures">{{ practice.ccg.name }}</a></p>
+<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}measures">{{ practice.ccg.name }}</a></p>
 {% endif %}
 {% if practice.list_size_13 %}
 <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
@@ -40,7 +40,7 @@
 </div>
 {% endif %}
 
-<p>Blah blah blah brief intro to measures, explaining what these measures are, what the ordering means and why they matter. <a href="{% url 'caution' %}#metrics">Read more about measures</a>.</p>
+<p>>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href="{% url 'caution' %}#metrics">Read more about measures</a>.</p>
 
 <p id="perfsummary">Loading...</p>
 
@@ -69,28 +69,28 @@
 
 {% verbatim %}
 <script id="summary-panel" type="text/x-handlebars-template">
-<p>{{ performance_description }}</p>
+<p>{{ performanceDescription }}</p>
 
-{{ top_opportunity }}
+{{ topOpportunity }}
 
-{{ cost_savings }}
+{{ costSavings }}
 
 </script>
 
 <script id="measure-panel" type="text/x-handlebars-template">
-<div id="measure_{{ chart_id }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chart_id }}" data-costsaving="{{ cost_saving_50th }}">
+<div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
     <div class="panel panel-info">
         <div class="panel-heading">
-            <a href="{{ chart_title_url }}">{{ chart_title }}</a>
+            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
         </div>
         <div class="panel-body" class="row">
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
                 <p><strong>Why it matters:</strong> {{ why_it_matters }}</p>
                 <p><strong>Description:</strong> {{ description }}</p>
-                <p>{{{ cost_description }}}</p>
-                <p><strong>Explore:</strong> prescribing of this measure by <a href="{{ chart_title_url }}">other practices in the same CCG</a>.</p>
+                <p>{{{ costDescription }}}</p>
+                <p><strong>Explore:</strong> prescribing of this measure by <a href="{{ chartTitleUrl }}">other practices in the same CCG</a>.</p>
             </div>
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chart_id }}">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
                 <div class="status"></div>
             </div>
         </div>
