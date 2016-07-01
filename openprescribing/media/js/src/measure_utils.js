@@ -245,7 +245,7 @@ var utils = {
     var newData = [];
     _.each(data, function(d) {
       d.data = _this._addHighchartsXAndY(d.data, false,
-        d.isPercentage, options, null);
+        d.is_percentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
         // centiles for that measure.
