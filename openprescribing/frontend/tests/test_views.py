@@ -47,7 +47,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(first_section.text(), '2: Cardiovascular System')
 
     def test_call_view_bnf_chapter(self):
-        response = self.client.get('/bnf/02')
+        response = self.client.get('/bnf/02/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'bnf_section.html')
         doc = pq(response.content)
@@ -57,7 +57,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(subsections), 2)
 
     def test_call_view_bnf_section(self):
-        response = self.client.get('/bnf/0202')
+        response = self.client.get('/bnf/0202/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'bnf_section.html')
         doc = pq(response.content)
@@ -69,7 +69,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(subsections), 1)
 
     def test_call_view_bnf_para(self):
-        response = self.client.get('/bnf/020201')
+        response = self.client.get('/bnf/020201/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'bnf_section.html')
         doc = pq(response.content)
@@ -94,7 +94,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(first_section.text(), 'Bendroflumethiazide (0202010B0)')
 
     def test_call_view_chemical_section(self):
-        response = self.client.get('/chemical/0202010D0')
+        response = self.client.get('/chemical/0202010D0/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'chemical.html')
         doc = pq(response.content)
@@ -114,7 +114,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(ccgs), 2)
 
     def test_call_view_ccg_section(self):
-        response = self.client.get('/ccg/03V')
+        response = self.client.get('/ccg/03V/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'ccg.html')
         doc = pq(response.content)
@@ -134,7 +134,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(practices), 0)
 
     def test_call_view_practice_section(self):
-        response = self.client.get('/practice/P87629')
+        response = self.client.get('/practice/P87629/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'practice.html')
         doc = pq(response.content)
