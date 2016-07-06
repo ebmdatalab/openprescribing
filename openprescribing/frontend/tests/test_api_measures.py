@@ -86,6 +86,7 @@ class TestAPIMeasureViews(TestCase):
                          'why_it_matters'][:10], 'This is th')
         self.assertEqual(data['measures'][0]['is_cost_based'], True)
         self.assertEqual(data['measures'][0]['is_percentage'], True)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         self.assertEqual(len(data['measures'][0]['data']), 1)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 85500)
@@ -113,6 +114,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 1)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 85500)
         self.assertEqual(d['denominator'], 181500)
@@ -125,6 +127,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 3)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['pct_id'], '03T')
         self.assertEqual(d['numerator'], 2000)
@@ -139,6 +142,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 1)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 82000)
         self.assertEqual(d['denominator'], 143000)
@@ -155,6 +159,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 1)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 82000)
         self.assertEqual(d['denominator'], 143000)
@@ -168,6 +173,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 1)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 1000)
         self.assertEqual(d['denominator'], 11000)
@@ -225,6 +231,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['measures'][0]['data']), 1)
+        self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 1000)
         self.assertEqual(d['denominator'], 11000)
