@@ -366,6 +366,7 @@ class Measure(models.Model):
     url = models.URLField(null=True, blank=True)
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
+    low_is_good = models.NullBooleanField()
 
     def __str__(self):
         return self.name

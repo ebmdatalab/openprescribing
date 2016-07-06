@@ -155,6 +155,7 @@ class Command(BaseCommand):
             measure.url = v['url']
             measure.is_cost_based = v['is_cost_based']
             measure.is_percentage = v['is_percentage']
+            measure.low_is_good = v['low_is_good']
             measure.save()
         except ObjectDoesNotExist:
             measure = Measure.objects.create(
@@ -169,7 +170,8 @@ class Command(BaseCommand):
                 denominator_short=v['denominator_short'],
                 url=v['url'],
                 is_cost_based=v['is_cost_based'],
-                is_percentage=v['is_percentage']
+                is_percentage=v['is_percentage'],
+                low_is_good=v['low_is_good']
             )
         return measure
 

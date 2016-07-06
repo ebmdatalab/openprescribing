@@ -67,11 +67,20 @@ var utils = {
         panelData = _this._rollUpByOrg(panelData[0], options.orgType);
       }
       panelData = _this._getSavingAndPercentilePerItem(panelData,
-        numMonths);
-      data = _.sortBy(panelData, function(d) {
-        if (d.meanPercentile === null) return -1;
-        return d.meanPercentile;
-      }).reverse();
+                                                       numMonths);
+      if (options.rollUpBy == 'measure_id' || options.lowIsGood) {
+        // high values to the top
+        data = _.sortBy(panelData, function(d) {
+          if (d.meanPercentile === null) return -1;
+          return d.meanPercentile;
+        }).reverse();
+      } else {
+        // low values to to top
+        data = _.sortBy(panelData, function(d) {
+          if (d.meanPercentile === null) return 101;
+          return d.meanPercentile;
+        });
+      }
     }
     return data;
   },

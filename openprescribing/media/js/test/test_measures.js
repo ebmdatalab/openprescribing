@@ -85,51 +85,51 @@ describe('Measures', function() {
   });
 
   describe('#annotateAndSortData', function() {
-    it('sorts organisations correctly', function() {
-      var data = [{
+    before(function() {
+      this.org_data = [{
         data: [
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 8,
-          percentile: 20
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 9,
-          percentile: 21
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-01-01',
-          calc_value: 10,
-          percentile: 40
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-02-01',
-          calc_value: 12,
-          percentile: 37
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-01-01',
-          calc_value: null,
-          percentile: null
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-02-01',
-          calc_value: null,
-          percentile: null
-        }
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-01-01',
+            calc_value: 8,
+            percentile: 20
+          },
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-02-01',
+            calc_value: 9,
+            percentile: 21
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-01-01',
+            calc_value: 10,
+            percentile: 40
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-02-01',
+            calc_value: 12,
+            percentile: 37
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-01-01',
+            calc_value: null,
+            percentile: null
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-02-01',
+            calc_value: null,
+            percentile: null
+          }
         ],
         id:"ace",
         is_cost_based: true,
@@ -138,78 +138,106 @@ describe('Measures', function() {
         numerator_short: "High-cost ACEs quantity",
         title: "TBA"
       }];
-      var result = mu.annotateAndSortData(data,
-        {rollUpBy: 'org_id', orgType: 'CCG'}, 6);
-      expect(result.length).to.equal(3);
-      expect(result[0].name).to.equal('NHS CORBY CCG');
-      expect(result[0].meanPercentile).to.equal(38.5);
-      expect(result[0].data.length).to.equal(2);
-      expect(result[2].name).to.equal('NHS NORTH, EAST AND WEST DEVON CCG');
-      expect(result[2].meanPercentile).to.equal(null);
-      expect(result[2].data.length).to.equal(2);
+
+      this.measures_data = [
+        {
+          id: 'ace',
+          data: [
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-01-01',
+              calc_value: 8,
+              percentile: 20
+            },
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-02-01',
+              calc_value: 9,
+              percentile: 21
+            }]
+        },
+        {
+          id: 'arb',
+          data: [
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-01-01',
+              calc_value: 3.48,
+              percentile: 58
+            },
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-02-01',
+              calc_value: 7.42,
+              percentile: 62
+            }]
+        },
+        {
+          id: 'statins',
+          data: [
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-01-01',
+              calc_value: 1200,
+              percentile: 1
+            },
+            {
+              pct_id: '04N',
+              pct_name: 'NHS RUSHCLIFFE CCG',
+              date: '2015-02-01',
+              calc_value: 1400,
+              percentile: 3
+            }]
+        }
+      ];
+
     });
 
     it('sorts measures correctly', function() {
-      var data = [
-      {
-        id: 'ace',
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 8,
-          percentile: 20
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 9,
-          percentile: 21
-        }]
-      },
-      {
-        id: 'arb',
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 3.48,
-          percentile: 58
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 7.42,
-          percentile: 62
-        }]
-      },
-      {
-        id: 'statins',
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 1200,
-          percentile: 1
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 1400,
-          percentile: 3
-        }]
-      }
-      ];
-      var result = mu.annotateAndSortData(data,
+      var result = mu.annotateAndSortData(
+        this.measures_data,
         { rollUpBy: 'measure_id', orgType: null}, 6);
       expect(result.length).to.equal(3);
       expect(result[0].id).to.equal('arb');
       expect(result[0].meanPercentile).to.equal(60);
       expect(result[0].data.length).to.equal(2);
     });
+
+    describe('when low is good', function() {
+      it('sorts organisations correctly', function() {
+        var result = mu.annotateAndSortData(
+          this.org_data,
+          {rollUpBy: 'org_id', orgType: 'CCG', lowIsGood: true}, 6);
+        expect(result.length).to.equal(3);
+        expect(result[0].name).to.equal('NHS CORBY CCG');
+        expect(result[0].meanPercentile).to.equal(38.5);
+        expect(result[0].data.length).to.equal(2);
+        expect(result[2].name).to.equal('NHS NORTH, EAST AND WEST DEVON CCG');
+        expect(result[2].meanPercentile).to.equal(null);
+        expect(result[2].data.length).to.equal(2);
+      });
+    });
+
+    describe('when high is good', function() {
+      it('sorts organisations correctly', function() {
+        var result = mu.annotateAndSortData(
+          this.org_data,
+          {rollUpBy: 'org_id', orgType: 'CCG', lowIsGood: false}, 6);
+        expect(result.length).to.equal(3);
+        expect(result[0].name).to.equal('NHS RUSHCLIFFE CCG');
+        expect(result[0].meanPercentile).to.equal(20.5);
+        expect(result[0].data.length).to.equal(2);
+        expect(result[2].name).to.equal('NHS NORTH, EAST AND WEST DEVON CCG');
+        expect(result[2].meanPercentile).to.equal(null);
+        expect(result[2].data.length).to.equal(2);
+      });
+    });
+
   });
 
   describe('#_rollUpByOrg', function() {
