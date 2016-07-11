@@ -143,6 +143,7 @@ describe('Measures', function() {
       expect(result.length).to.equal(3);
       expect(result[0].name).to.equal('NHS CORBY CCG');
       expect(result[0].meanPercentile).to.equal(38.5);
+      expect(result[0].isPercentage).to.be.true
       expect(result[0].data.length).to.equal(2);
       expect(result[2].name).to.equal('NHS NORTH, EAST AND WEST DEVON CCG');
       expect(result[2].meanPercentile).to.equal(null);
@@ -153,6 +154,7 @@ describe('Measures', function() {
       var data = [
       {
         id: 'ace',
+        is_percentage: true,
         data: [{
           pct_id: '04N',
           pct_name: 'NHS RUSHCLIFFE CCG',
@@ -170,6 +172,7 @@ describe('Measures', function() {
       },
       {
         id: 'arb',
+        is_percentage: true,
         data: [{
           pct_id: '04N',
           pct_name: 'NHS RUSHCLIFFE CCG',
@@ -187,6 +190,7 @@ describe('Measures', function() {
       },
       {
         id: 'statins',
+        is_percentage: true,
         data: [{
           pct_id: '04N',
           pct_name: 'NHS RUSHCLIFFE CCG',
@@ -208,6 +212,7 @@ describe('Measures', function() {
       expect(result.length).to.equal(3);
       expect(result[0].id).to.equal('arb');
       expect(result[0].meanPercentile).to.equal(60);
+      expect(result[0].isPercentage).to.be.true
       expect(result[0].data.length).to.equal(2);
     });
   });
