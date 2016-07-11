@@ -21,7 +21,7 @@ f{% extends "base.html" %}
 
 <p><strong>Why it matters</strong>: {{ measure.why_it_matters }}</p>
 
-<p><strong>Definition</strong>: {{ measure.description }}</p>
+<p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}</p>
 
 <p><strong>How this CCG is doing:</strong> <span id="perfsummary">Loading...</span> See <a href="/ccg/{{ ccg.code }}/measures">how this CCG is doing on other measures</a>.</p>
 
