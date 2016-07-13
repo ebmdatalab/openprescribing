@@ -58,7 +58,7 @@
         ],
         "is_percentage": true,
         "is_cost_based": false,
-        "low_is_good": true
+        "low_is_good": false
     },
     "ktt8_antidepressant_first_choice": {
         "name": "Antidepressants, % items first choice (KTT8)",
@@ -118,7 +118,7 @@
         ],
         "is_percentage": true,
         "is_cost_based": false,
-        "low_is_good": true
+        "low_is_good": false
     },
     "ktt8_dosulepin": {
         "name": "Dosulepin (KTT8)",
@@ -529,6 +529,6 @@
         ],
         "is_percentage": true,
         "is_cost_based": false,
-        "low_is_good": true
+        "low_is_good": false
     }
 }
