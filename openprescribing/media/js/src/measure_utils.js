@@ -133,6 +133,10 @@ var utils = {
         var saving = (num.cost_savings) ? num.cost_savings['50'] : null;
         return memo + saving;
       }, null);
+      // normalise to camelcase convention
+      if (!('isPercentage' in d)) {
+        d.isPercentage = d.is_percentage;
+      }
       if (!('numeratorShort' in d)) {
         d.numeratorShort = d.numerator_short;
         d.denominatorShort = d.denominator_short;
@@ -254,7 +258,7 @@ var utils = {
     var newData = [];
     _.each(data, function(d) {
       d.data = _this._addHighchartsXAndY(d.data, false,
-        d.is_percentage, options, null);
+        d.isPercentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
         // centiles for that measure.

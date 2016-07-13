@@ -205,6 +205,7 @@ describe('Measures', function() {
       expect(result.length).to.equal(3);
       expect(result[0].id).to.equal('arb');
       expect(result[0].meanPercentile).to.equal(60);
+      expect(result[0].isPercentage).to.be.true
       expect(result[0].data.length).to.equal(2);
     });
 
