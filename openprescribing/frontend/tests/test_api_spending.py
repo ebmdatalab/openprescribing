@@ -329,13 +329,17 @@ class TestAPISpendingViews(TestCase):
     def test_spending_by_one_practice(self):
         url = '/spending_by_practice?format=csv&org=P87629'
         rows = self._rows_from_api(url)
-        self.assertEqual(len(rows), 5)
+        print rows
+        self.assertEqual(len(rows), 6)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
-        self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
-        self.assertEqual(rows[-1]['date'], '2014-11-01')
-        self.assertEqual(rows[-1]['actual_cost'], '64.26')
-        self.assertEqual(rows[-1]['items'], '55')
-        self.assertEqual(rows[-1]['quantity'], '2599')
+        self.assertEqual(rows[-1]['date'], '2014-12-01')
+        self.assertEqual(rows[-1]['items'], '')
+        self.assertEqual(rows[-2]['row_id'], 'P87629')
+        self.assertEqual(rows[-2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(rows[-2]['date'], '2014-11-01')
+        self.assertEqual(rows[-2]['actual_cost'], '64.26')
+        self.assertEqual(rows[-2]['items'], '55')
+        self.assertEqual(rows[-2]['quantity'], '2599')
 
     def test_spending_by_one_practice_on_chemical(self):
         url = '/spending_by_practice'

@@ -15,6 +15,11 @@ def _fill_dates_with_zero(data, default_data):
     flag.
 
     """
+    # XXX looking good, but we want a way for the SQL to return zeros
+    # rather than nulls; we presumably then won't need this method at
+    # all, as long as we ensure we fill importlog with dates. The
+    # correct thing to do is to use COALESCE for null values. I guess
+    # that just means doing it directly in all the SQL.
     dates_with_values = defaultdict(list)
     for d in data:
         dates_with_values[d['date']].append(d)
@@ -176,6 +181,7 @@ def _get_query_for_total_spending_with_subdivide(codes):
         end_char = 9
     elif len(code) == 11:
         end_char = 15
+    # XXX prefill with codes and names
     default_data = {
         'items': 0,
         'quantity': 0,
@@ -211,8 +217,9 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
     query += "FROM vw__chemical_summary_by_ccg pr "
     query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
     query += "AND pc.org_type='CCG' "
+    # XXX prefil with all ccg names
     default_data = {
-        'row_name': '',
+        'row_name': 'n/a',
         'actual_cost': 0,
         'items': 0,
         'quantity': 0
@@ -250,7 +257,7 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
         'items': 0,
         'quantity': 0
     }
-
+    # XXX prefill with all pct_ids
     query = 'SELECT pr.pct_id as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
@@ -278,33 +285,36 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
 
 def _get_total_spending_by_practice(orgs, date):
     default_data = {
-        'row_name': '',
+        'row_name': 'n/a',
         'setting': '',
         'ccg': '',
         'actual_cost': 0,
         'items': 0,
         'quantity': 0
     }
-    query = 'SELECT pr.practice_id AS row_id, '
+    # XXX prefill with all practices
+    query = 'SELECT pc.code AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
     query += "pc.ccg_id AS ccg, "
-    query += 'pr.processing_date AS date, '
+    query += 'log.current_at AS date, '
     query += 'pr.cost AS actual_cost, '
     query += 'pr.items AS items, '
     query += 'pr.quantity AS quantity '
-    query += "FROM vw__practice_summary pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
+    query += "FROM frontend_practice pc "
+    query += "CROSS JOIN (SELECT * FROM frontend_importlog WHERE category = 'prescribing') log "
+
+    query += "LEFT JOIN vw__practice_summary pr ON log.current_at = pr.processing_date AND pr.practice_id = pc.code "
     if orgs or date:
         query += "WHERE "
     if date:
-        query += "pr.processing_date=%s "
+        query += "pr.processing_date=%s  "
     if orgs:
         if date:
             query += "AND "
         query += "("
         for i, org in enumerate(orgs):
-            query += "pr.practice_id=%s "
+            query += "pc.code=%s "
             # if len(org) == 3:
             #     query += "pr.pct_id=%s "
             # else:
