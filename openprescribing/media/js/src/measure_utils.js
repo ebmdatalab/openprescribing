@@ -163,7 +163,7 @@ var utils = {
     */
     var perf = {
       total: 0,
-      aboveMedian: 0,
+      worseThanMedian: 0,
       potentialSavings50th: 0,
       potentialSavings10th: 0,
       orgId: options.orgId,
@@ -173,8 +173,12 @@ var utils = {
       _.each(orderedData, function(d) {
         if (d.meanPercentile !== null) {
           perf.total += 1;
+          if (d.lowIsGood && d.meanPercentile > 50) {
+            perf.worseThanMedian += 1;
+          } else if (!d.lowIsGood && d.meanPercentile < 50) {
+            perf.worseThanMedian += 1;
+          }
           if (d.meanPercentile > 50) {
-            perf.aboveMedian += 1;
             perf.potentialSavings50th +=
               (options.isCostBasedMeasure) ? d.costSaving50th : 0;
           }
@@ -186,17 +190,17 @@ var utils = {
       });
       if (options.rollUpBy === 'measure_id') {
         perf.performanceDescription = "Over the past " + numMonths +
-          " months, this organisation has prescribed above the median on " +
-          perf.aboveMedian + " of " + perf.total + " measures. ";
+          " months, this organisation has prescribed worse than the median on " +
+          perf.worseThanMedian + " of " + perf.total + " measures. ";
       } else {
         perf.performanceDescription = "Over the past " + numMonths +
-          " months, " + perf.aboveMedian + " of " + perf.total + ' ';
+          " months, " + perf.worseThanMedian + " of " + perf.total + ' ';
         perf.performanceDescription += (options.orgType === 'practice') ?
           "practices " : "CCGs ";
-        perf.performanceDescription += "have prescribed above the " +
+        perf.performanceDescription += "have prescribed worse than the " +
           "national median. ";
       }
-      perf.proportionAboveMedian = perf.aboveMedian / perf.total;
+      perf.proportionAboveMedian = perf.worseThanMedian / perf.total;
       if (perf.proportionAboveMedian >= 0.7) {
         perf.rank = 'poor';
       } else if (perf.proportionAboveMedian >= 0.45) {

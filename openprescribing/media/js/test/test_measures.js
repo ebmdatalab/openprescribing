@@ -397,12 +397,12 @@ describe('Measures', function() {
       };
       var result = mu.getPerformanceSummary(data, options, 6);
       expect(result.total).to.equal(7);
-      expect(result.aboveMedian).to.equal(3);
+      expect(result.worseThanMedian).to.equal(3);
       expect(result.proportionAboveMedian).to.equal('42.9');
       expect(result.potentialSavings50th).to.equal(300);
       expect(result.rank).to.equal('good');
       var str = "Over the past 6 months, 3 of 7 CCGs have prescribed ";
-      str += 'above the national median. We think this is good ';
+      str += 'worse than the national median. We think this is good ';
       str += 'performance overall.';
       expect(result.performanceDescription).to.equal(str);
       str = 'Over the past 6 months, if all CCGs had prescribed at ';
@@ -416,12 +416,12 @@ describe('Measures', function() {
 
     it('gets summaries for all measures across one organisation', function() {
       var data = [
-      { meanPercentile: 14 },
-      { meanPercentile: 33 },
-      { meanPercentile: 82, costSaving50th: 12000 },
-      { meanPercentile: 50 },
-      { meanPercentile: 30 },
-      { meanPercentile: 21, costSaving50th: -200 }
+        { meanPercentile: 14, lowIsGood: true },
+        { meanPercentile: 33, lowIsGood: true },
+        { meanPercentile: 82, lowIsGood: true, costSaving50th: 12000 },
+        { meanPercentile: 50, lowIsGood: true },
+        { meanPercentile: 30, lowIsGood: false },
+        { meanPercentile: 21, lowIsGood: true, costSaving50th: -200 }
       ];
       var options = {
         rollUpBy: 'measure_id',
@@ -432,13 +432,13 @@ describe('Measures', function() {
       };
       var result = mu.getPerformanceSummary(data, options, 6);
       expect(result.total).to.equal(6);
-      expect(result.aboveMedian).to.equal(1);
-      expect(result.proportionAboveMedian).to.equal('16.7');
+      expect(result.worseThanMedian).to.equal(2);
+      expect(result.proportionAboveMedian).to.equal('33.3');
       expect(result.potentialSavings50th).to.equal(12000);
-      expect(result.rank).to.equal('very good');
+      expect(result.rank).to.equal('good');
       var str = "Over the past 6 months, this organisation has ";
-      str += "prescribed above the median on 1 of 6 measures. We ";
-      str += "think this is very good performance overall.";
+      str += "prescribed worse than the median on 2 of 6 measures. We ";
+      str += "think this is good performance overall.";
       expect(result.performanceDescription).to.equal(str);
       str = "Over the past 6 months, if this practice  had prescribed ";
       str += "at the median ratio or better on all cost-saving measures ";
