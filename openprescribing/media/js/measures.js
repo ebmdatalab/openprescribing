@@ -50,12 +50,12 @@
 
           _.extend(options,
             mu.getCentilesAndYAxisExtent(globalData, options, centiles));
-          chartData = mu.annotateAndSortData(chartData, options,
+          chartData = mu.annotateData(chartData, options,
             NUM_MONTHS_FOR_RANKING);
           chartData = mu.addChartAttributes(chartData, globalData,
             options.globalCentiles, centiles, options,
             NUM_MONTHS_FOR_RANKING);
-
+          chartData = mu.sortData(chartData, options);
           var perf = mu.getPerformanceSummary(chartData, options,
             NUM_MONTHS_FOR_RANKING);
           $(_this.el.perfSummary).html(summaryTemplate(perf));

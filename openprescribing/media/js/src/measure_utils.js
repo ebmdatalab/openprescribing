@@ -52,15 +52,13 @@ var utils = {
     };
   },
 
-  annotateAndSortData: function(panelData, options, numMonths) {
+  annotateData: function(panelData, options, numMonths) {
     /*
     Create a new array with an item for each chart, each chart being
     either a measure or an organisation, as appropriate.
     Annotate each chart with the mean percentile over the past
     N months, and cost saving if appropriate.
-    Sort the array by percentile, pushing nulls to the bottom.
     */
-    var data = [];
     var _this = this;
     if (panelData.length) {
       if (options.rollUpBy !== 'measure_id') {
@@ -68,21 +66,33 @@ var utils = {
       }
       panelData = _this._getSavingAndPercentilePerItem(panelData,
                                                        numMonths);
-      if (options.rollUpBy == 'measure_id' || options.lowIsGood) {
-        // high values to the top
-        data = _.sortBy(panelData, function(d) {
-          if (d.meanPercentile === null) return -1;
-          return d.meanPercentile;
-        }).reverse();
-      } else {
-        // low values to to top
-        data = _.sortBy(panelData, function(d) {
-          if (d.meanPercentile === null) return 101;
-          return d.meanPercentile;
-        });
-      }
     }
-    return data;
+    return panelData;
+  },
+
+  sortData: function(panelData, options) {
+    /*
+       Sort data such that the worst scores come first (but nulls
+       always come at the bottom).
+    */
+    // Sort by `id` first, so that ties are always returned in a
+    // predictable order
+    var sortedArray = _(panelData).chain().sortBy(function(d) {
+      return d.id;
+    }).sortBy(function(d) {
+      var score = d.meanPercentile;
+      if (score === null) {
+        score = 101;
+      } else if (d.lowIsGood || options.lowIsGood) {
+        // `lowIsGood is set on the data for each measure when showing
+        // multiple measures (i.e. rolling up by org); when showing a
+        // single meausre, it is set on the `options` object in the
+        // template.
+        score = 100 - score;
+      }
+      return score;
+    }).value();
+    return sortedArray;
   },
 
   _rollUpByOrg: function(data, orgType) {
@@ -251,7 +261,7 @@ var utils = {
     /*
     Expects an array that represents a series of charts. For
     each chart, add Highcharts attributes to the data,
-    merge in centiles from the global data, and
+    merge in centiles and low_is_good from the global data, and
     add chart title, URL, description etc.
     */
     var _this = this;
@@ -261,8 +271,9 @@ var utils = {
         d.isPercentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
-        // centiles for that measure.
+        // centiles for that measure, and if lowIsGood
         var series = _.findWhere(globalData, {id: d.id});
+        d.lowIsGood = series.low_is_good;
         d.globalCentiles = {};
         _.each(centiles, function(i) {
           d.globalCentiles[i] = _this._addHighchartsXAndY(series.data,
@@ -270,6 +281,7 @@ var utils = {
         });
       } else {
         d.globalCentiles = globalCentiles;
+        d.lowIsGood = options.lowIsGood;
       }
       d.chartId = d.id;
       _.extend(d, _this._getChartTitleEtc(d, options, numMonths));
