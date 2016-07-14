@@ -2,6 +2,7 @@ require('mapbox.js');
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
 var _ = require('underscore');
+var config = require('./config');
 
 var analyseMap = {
 
@@ -189,7 +190,7 @@ var analyseMap = {
   },
 
   getBoundsUrl: function(options) {
-    var boundsUrl = '/api/1.0/org_location/?';
+    var boundsUrl = config.apiHost + '/api/1.0/org_location/?';
     if (options.org === 'CCG') {
       boundsUrl += 'org_type=ccg';
     } else {
