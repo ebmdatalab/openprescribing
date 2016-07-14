@@ -160,7 +160,7 @@
         "num": ["Quantity for high-cost ACEs"],
         "denom": ["Quantity for all included ACEs"],
         "numerator_short": "High-cost ACEs quantity",
-        "denominator_short": "All ACEs quantity",
+        "denominator_short": "All included ACEs quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -203,8 +203,8 @@
         ],
         "num": ["Quantity for high-cost ARBs"],
         "denom": ["Quantity for all included ARBs"],
-        "numerator_short": "High-cost statin quantity",
-        "denominator_short": "All codes quantity",
+        "numerator_short": "High-cost ARBs quantity",
+        "denominator_short": "All included ARBs quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -292,7 +292,7 @@
         "num": ["Quantity for high-cost statins"],
         "denom": ["Quantity for all included statins"],
         "numerator_short": "High-cost statin quantity",
-        "denominator_short": "All codes quantity",
+        "denominator_short": "All included statins quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
