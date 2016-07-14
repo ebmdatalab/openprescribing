@@ -42,7 +42,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "pioglitazone": {
         "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs",
@@ -83,7 +84,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "celecoxib": {
         "name": "Celecoxib vs. all NSAIDs",
@@ -138,7 +140,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ace": {
         "name": "High-cost ACE inhibitors",
@@ -180,7 +183,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "arb": {
         "name": "High-cost ARBs",
@@ -223,7 +227,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "ppi": {
         "name": "High-cost PPIs",
@@ -266,7 +271,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "statins": {
         "name": "High-cost statins",
@@ -309,6 +315,7 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     }
 }

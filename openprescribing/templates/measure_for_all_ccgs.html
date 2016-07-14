@@ -25,7 +25,7 @@
 
 {% endif %}
 
-<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in NHS England.</p>
+<p>CCGs are ordered by mean percentile over the past six months, with the worst-performing at the top. Each chart shows the results for the individual CCG, plus deciles across all CCGs in NHS England.</p>
 
 <div id="measures">
 <div id="charts" class="row">
@@ -65,7 +65,8 @@
 var measureData = {
     'orgType': 'CCG',
     'measure': '{{ measure.id }}',
-    'isCostBasedMeasure': '{{ measure.is_cost_based }}',
+    'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
+    'lowIsGood': {{ measure.low_is_good|yesno:"true,false" }},
     'numerator': '{{ measure.numerator_short }}',
     'denominator': '{{ measure.denominator_short }}'
 };

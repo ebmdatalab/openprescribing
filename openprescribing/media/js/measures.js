@@ -34,8 +34,7 @@
 
       _this.allGraphsRendered = false;
       _this.graphsToRenderInitially = 24;
-
-      var options = measureData;
+      var options = measureData; // defined in handlebars templates
       options.rollUpBy = (options.measure) ? 'org_id' : 'measure_id';
 
       _this.setUpShowPractices();
@@ -51,13 +50,12 @@
 
           _.extend(options,
             mu.getCentilesAndYAxisExtent(globalData, options, centiles));
-
-          chartData = mu.annotateAndSortData(chartData, options,
+          chartData = mu.annotateData(chartData, options,
             NUM_MONTHS_FOR_RANKING);
           chartData = mu.addChartAttributes(chartData, globalData,
             options.globalCentiles, centiles, options,
             NUM_MONTHS_FOR_RANKING);
-
+          chartData = mu.sortData(chartData);
           var perf = mu.getPerformanceSummary(chartData, options,
             NUM_MONTHS_FOR_RANKING);
           $(_this.el.perfSummary).html(summaryTemplate(perf));

@@ -57,7 +57,8 @@
             "AND (processing_date=%s)"
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": false
     },
     "ktt8_antidepressant_first_choice": {
         "name": "Antidepressants, % items first choice (KTT8)",
@@ -116,7 +117,8 @@
             "AND (processing_date=%s)"
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": false
     },
     "ktt8_dosulepin": {
         "name": "Dosulepin (KTT8)",
@@ -165,7 +167,8 @@
             "AND (processing_date=%s)"
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt9_antibiotics": {
         "name": "Broad-spectrum antibiotics (KTT9)",
@@ -200,7 +203,8 @@
             "AND (date=%s)"
         ],
         "is_percentage": false,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt9_cephalosporins": {
         "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)",
@@ -261,7 +265,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt10_uti_antibiotics": {
         "name": "Antibiotics for uncomplicated UTIs (KTT10)",
@@ -330,7 +335,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": false,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt11_minocycline": {
         "name": "Minocycline ADQ/1000 patients (KTT11)",
@@ -370,7 +376,8 @@
             "AND (date=%s) "
         ],
         "is_percentage": false,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt12_diabetes_blood_glucose": {
         "name": "Blood glucose lowering drugs (KTT12)",
@@ -414,7 +421,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": false
     },
     "ktt12_diabetes_insulin": {
         "name": "Long-acting insulin analogues (KTT12)",
@@ -473,7 +481,8 @@
             "AND (processing_date=%s)"
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ktt13_nsaids_ibuprofen": {
         "name": "NSAIDs - Ibuprofen & naproxen (KTT13)",
@@ -519,6 +528,7 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": false
     }
 }

@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var mu = require('../src/measure_utils');
+var _ = require('underscore');
 
 describe('Measures', function() {
   describe('#getDataUrls', function() {
@@ -84,52 +85,52 @@ describe('Measures', function() {
     });
   });
 
-  describe('#annotateAndSortData', function() {
-    it('sorts organisations correctly', function() {
-      var data = [{
+  describe('annotateData', function () {
+    it('rolls up by organisation and calculates means', function() {
+      var org_data = [{
         data: [
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 8,
-          percentile: 20
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 9,
-          percentile: 21
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-01-01',
-          calc_value: 10,
-          percentile: 40
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-02-01',
-          calc_value: 12,
-          percentile: 37
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-01-01',
-          calc_value: null,
-          percentile: null
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-02-01',
-          calc_value: null,
-          percentile: null
-        }
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-01-01',
+            calc_value: 8,
+            percentile: 20
+          },
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-02-01',
+            calc_value: 9,
+            percentile: 21
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-01-01',
+            calc_value: 10,
+            percentile: 40
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-02-01',
+            calc_value: 12,
+            percentile: 37
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-01-01',
+            calc_value: null,
+            percentile: null
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-02-01',
+            calc_value: null,
+            percentile: null
+          }
         ],
         id:"ace",
         is_cost_based: true,
@@ -138,82 +139,59 @@ describe('Measures', function() {
         numerator_short: "High-cost ACEs quantity",
         title: "TBA"
       }];
-      var result = mu.annotateAndSortData(data,
-        {rollUpBy: 'org_id', orgType: 'CCG'}, 6);
+      var summarise_months = 6;
+      var result = mu.annotateData(
+        org_data,
+        { rollUpBy: 'org_id', orgType: 'ccg'}, summarise_months);
       expect(result.length).to.equal(3);
-      expect(result[0].name).to.equal('NHS CORBY CCG');
-      expect(result[0].meanPercentile).to.equal(38.5);
-      expect(result[0].isPercentage).to.be.true
-      expect(result[0].data.length).to.equal(2);
-      expect(result[2].name).to.equal('NHS NORTH, EAST AND WEST DEVON CCG');
-      expect(result[2].meanPercentile).to.equal(null);
-      expect(result[2].data.length).to.equal(2);
+      var corby = _.findWhere(result, {name: 'NHS CORBY CCG'});
+      expect(corby.meanPercentile).to.equal(38.5);
+      expect(corby.isPercentage).to.be.true;
+      expect(corby.data.length).to.equal(2);
+      var devon = _.findWhere(result, {name: 'NHS NORTH, EAST AND WEST DEVON CCG'});
+      expect(devon.meanPercentile).to.equal(null);
+      expect(devon.isPercentage).to.be.true;
+      expect(devon.data.length).to.equal(2);
     });
+  });
 
-    it('sorts measures correctly', function() {
+  describe('sortData', function () {
+    it("sorts as expected", function () {
       var data = [
-      {
-        id: 'ace',
-        is_percentage: true,
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 8,
-          percentile: 20
+        {
+          id: 1,
+          meanPercentile: 40,
+          lowIsGood: true
         },
         {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 9,
-          percentile: 21
-        }]
-      },
-      {
-        id: 'arb',
-        is_percentage: true,
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 3.48,
-          percentile: 58
+          id: 2,
+          meanPercentile: 60,
+          lowIsGood: true
         },
         {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 7.42,
-          percentile: 62
-        }]
-      },
-      {
-        id: 'statins',
-        is_percentage: true,
-        data: [{
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 1200,
-          percentile: 1
+          id: 3,
+          meanPercentile: 50,
+          lowIsGood: false
         },
         {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 1400,
-          percentile: 3
-        }]
-      }
+          id: 4,
+          meanPercentile: 50,
+          lowIsGood: true
+        },
+        {
+          id: 5,
+          meanPercentile: 40,
+          lowIsGood: false,
+        },
+        {
+          id: 6,
+          meanPercentile: null,
+          lowIsGood: false
+        }
       ];
-      var result = mu.annotateAndSortData(data,
-        { rollUpBy: 'measure_id', orgType: null}, 6);
-      expect(result.length).to.equal(3);
-      expect(result[0].id).to.equal('arb');
-      expect(result[0].meanPercentile).to.equal(60);
-      expect(result[0].isPercentage).to.be.true
-      expect(result[0].data.length).to.equal(2);
+      var result = mu.sortData(data);
+      var positions = _.map(result, function(d) {return d.id});
+      expect(positions).to.eql([2,5,3,4,1,6]);
     });
   });
 
@@ -398,12 +376,12 @@ describe('Measures', function() {
       };
       var result = mu.getPerformanceSummary(data, options, 6);
       expect(result.total).to.equal(7);
-      expect(result.aboveMedian).to.equal(3);
+      expect(result.worseThanMedian).to.equal(3);
       expect(result.proportionAboveMedian).to.equal('42.9');
       expect(result.potentialSavings50th).to.equal(300);
       expect(result.rank).to.equal('good');
       var str = "Over the past 6 months, 3 of 7 CCGs have prescribed ";
-      str += 'above the national median. We think this is good ';
+      str += 'worse than the national median. We think this is good ';
       str += 'performance overall.';
       expect(result.performanceDescription).to.equal(str);
       str = 'Over the past 6 months, if all CCGs had prescribed at ';
@@ -417,12 +395,12 @@ describe('Measures', function() {
 
     it('gets summaries for all measures across one organisation', function() {
       var data = [
-      { meanPercentile: 14 },
-      { meanPercentile: 33 },
-      { meanPercentile: 82, costSaving50th: 12000 },
-      { meanPercentile: 50 },
-      { meanPercentile: 30 },
-      { meanPercentile: 21, costSaving50th: -200 }
+        { meanPercentile: 14, lowIsGood: true },
+        { meanPercentile: 33, lowIsGood: true },
+        { meanPercentile: 82, lowIsGood: true, costSaving50th: 12000 },
+        { meanPercentile: 50, lowIsGood: true },
+        { meanPercentile: 30, lowIsGood: false },
+        { meanPercentile: 21, lowIsGood: true, costSaving50th: -200 }
       ];
       var options = {
         rollUpBy: 'measure_id',
@@ -433,13 +411,13 @@ describe('Measures', function() {
       };
       var result = mu.getPerformanceSummary(data, options, 6);
       expect(result.total).to.equal(6);
-      expect(result.aboveMedian).to.equal(1);
-      expect(result.proportionAboveMedian).to.equal('16.7');
+      expect(result.worseThanMedian).to.equal(2);
+      expect(result.proportionAboveMedian).to.equal('33.3');
       expect(result.potentialSavings50th).to.equal(12000);
-      expect(result.rank).to.equal('very good');
+      expect(result.rank).to.equal('good');
       var str = "Over the past 6 months, this organisation has ";
-      str += "prescribed above the median on 1 of 6 measures. We ";
-      str += "think this is very good performance overall.";
+      str += "prescribed worse than the median on 2 of 6 measures. We ";
+      str += "think this is good performance overall.";
       expect(result.performanceDescription).to.equal(str);
       str = "Over the past 6 months, if this practice  had prescribed ";
       str += "at the median ratio or better on all cost-saving measures ";
