@@ -46,8 +46,9 @@
 {% endblock %}
 
 {% block extra_js %}
+{% conditional_js 'config' %}
 <script>
-var filename = "{% url 'total_spending' %}?format=json&code={{ page_id }}";
+var filename = config.apiHost + "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'bnf-section';
 </script>
 {% conditional_js 'bar-chart' %}
