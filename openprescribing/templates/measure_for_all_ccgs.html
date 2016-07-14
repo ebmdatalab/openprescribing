@@ -17,7 +17,7 @@
 
 <p><strong>Why it matters</strong>: {{ measure.why_it_matters }}</p>
 
-<p><strong>Definition</strong>: {{ measure.description }}</p>
+<p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}</p>
 
 {% if measure.is_cost_based %}
 
