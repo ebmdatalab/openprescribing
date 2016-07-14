@@ -55,7 +55,7 @@
           chartData = mu.addChartAttributes(chartData, globalData,
             options.globalCentiles, centiles, options,
             NUM_MONTHS_FOR_RANKING);
-          chartData = mu.sortData(chartData, options);
+          chartData = mu.sortData(chartData);
           var perf = mu.getPerformanceSummary(chartData, options,
             NUM_MONTHS_FOR_RANKING);
           $(_this.el.perfSummary).html(summaryTemplate(perf));

@@ -86,73 +86,77 @@ describe('Measures', function() {
   });
 
   describe('annotateData', function () {
-    org_data = [{
-      data: [
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-01-01',
-          calc_value: 8,
-          percentile: 20
-        },
-        {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
-          date: '2015-02-01',
-          calc_value: 9,
-          percentile: 21
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-01-01',
-          calc_value: 10,
-          percentile: 40
-        },
-        {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
-          date: '2015-02-01',
-          calc_value: 12,
-          percentile: 37
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-01-01',
-          calc_value: null,
-          percentile: null
-        },
-        {
-          pct_id: '99P',
-          pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
-          date: '2015-02-01',
-          calc_value: null,
-          percentile: null
-        }
-      ],
-      id:"ace",
-      is_cost_based: true,
-      is_percentage: true,
-      name: "High-cost ACE inhibitors",
-      numerator_short: "High-cost ACEs quantity",
-      title: "TBA"
-    }];
     it('rolls up by organisation and calculates means', function() {
+      var org_data = [{
+        data: [
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-01-01',
+            calc_value: 8,
+            percentile: 20
+          },
+          {
+            pct_id: '04N',
+            pct_name: 'NHS RUSHCLIFFE CCG',
+            date: '2015-02-01',
+            calc_value: 9,
+            percentile: 21
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-01-01',
+            calc_value: 10,
+            percentile: 40
+          },
+          {
+            pct_id: '03V',
+            pct_name: 'NHS CORBY CCG',
+            date: '2015-02-01',
+            calc_value: 12,
+            percentile: 37
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-01-01',
+            calc_value: null,
+            percentile: null
+          },
+          {
+            pct_id: '99P',
+            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            date: '2015-02-01',
+            calc_value: null,
+            percentile: null
+          }
+        ],
+        id:"ace",
+        is_cost_based: true,
+        is_percentage: true,
+        name: "High-cost ACE inhibitors",
+        numerator_short: "High-cost ACEs quantity",
+        title: "TBA"
+      }];
       var summarise_months = 6;
       var result = mu.annotateData(
         org_data,
         { rollUpBy: 'org_id', orgType: 'ccg'}, summarise_months);
       expect(result.length).to.equal(3);
-      var rushcliffe = _.findWhere(result, {name: 'NHS RUSHCLIFFE CCG'});
-      expect(rushcliffe.data.length).to.equal(2);
-      expect(rushcliffe.isPercentage).to.be.true;
-      expect(rushcliffe.meanPercentile).to.equal(20.5);
+      var corby = _.findWhere(result, {name: 'NHS CORBY CCG'});
+      expect(corby.meanPercentile).to.equal(38.5);
+      expect(corby.isPercentage).to.be.true;
+      expect(corby.data.length).to.equal(2);
+      var devon = _.findWhere(result, {name: 'NHS NORTH, EAST AND WEST DEVON CCG'});
+      expect(devon.meanPercentile).to.equal(null);
+      expect(devon.isPercentage).to.be.true;
+      expect(devon.data.length).to.equal(2);
     });
   });
 
   describe('sortData', function () {
-    it("sorts rolled-up-style respecting nulls and lowIsGood", function () {
+    it("sorts as expected", function () {
       var data = [
         {
           id: 1,
@@ -185,36 +189,11 @@ describe('Measures', function() {
           lowIsGood: false
         }
       ];
-      var result = mu.sortData(data, {});
+      var result = mu.sortData(data);
       var positions = _.map(result, function(d) {return d.id});
       expect(positions).to.eql([2,5,3,4,1,6]);
     });
-
-    it("sorts per-measure-style data, respecting nulls and lowIsGood", function () {
-      var data = [
-        {
-          id: 1,
-          meanPercentile: 1,
-        },
-        {
-          id: 2,
-          meanPercentile: 2,
-        },
-        {
-          id: 3,
-          meanPercentile: 3,
-        },
-        {
-          id: 4,
-          meanPercentile: null,
-        }
-      ];
-      var result = mu.sortData(data, {lowIsGood: true});
-      var positions = _.map(result, function(d) {return d.id});
-      expect(positions).to.eql([3,2,1,4]);
-    });
   });
-
 
   describe('#_rollUpByOrg', function() {
     it('rolls up by CCG', function() {

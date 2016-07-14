@@ -70,24 +70,21 @@ var utils = {
     return panelData;
   },
 
-  sortData: function(panelData, options) {
+  sortData: function(panelData) {
     /*
        Sort data such that the worst scores come first (but nulls
        always come at the bottom).
     */
-    // Sort by `id` first, so that ties are always returned in a
-    // predictable order
     var sortedArray = _(panelData).chain().sortBy(function(d) {
+      // Sort by `id` first, so that tiles are always returned in a
+      // predictable order
       return d.id;
     }).sortBy(function(d) {
+      // Now by score, respecting `lowIsGood`
       var score = d.meanPercentile;
       if (score === null) {
         score = 101;
-      } else if (d.lowIsGood || options.lowIsGood) {
-        // `lowIsGood is set on the data for each measure when showing
-        // multiple measures (i.e. rolling up by org); when showing a
-        // single meausre, it is set on the `options` object in the
-        // template.
+      } else if (d.lowIsGood) {
         score = 100 - score;
       }
       return score;
