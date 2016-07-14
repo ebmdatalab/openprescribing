@@ -131,6 +131,10 @@ During development, run the `watch` task to see changes appear in the compiled J
     cd openprescribing/media/js
     npm run watch
 
+The client-side code makes extensive use of data from the API. To test client-side code against production data, you can set an environment variable to use an API host other than the default:
+
+    API_HOST=https://openprescribing.net npm run watch
+
 And run tests with:
 
     npm run test

@@ -1,6 +1,7 @@
 (function() {
   var _ = require('underscore');
   var mu = require('./src/measure_utils');
+  var config = require('./src/config');
   var Highcharts = require('Highcharts');
   var chartOptions = require('./src/highcharts-options');
   var L = require('mapbox.js');
@@ -119,7 +120,7 @@
         var map = L.mapbox.map(_this.el.mapPanel,
           'mapbox.streets').setView([52.905, -1.79], 6);
         map.scrollWheelZoom.disable();
-        var url = '/api/1.0/org_location/?org_type=' +
+        var url = config.apiHost + '/api/1.0/org_location/?org_type=' +
           options.orgType.toLowerCase();
         url += '&q=' + options.orgId;
         var layer = L.mapbox.featureLayer()

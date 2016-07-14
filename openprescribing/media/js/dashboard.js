@@ -12,6 +12,7 @@ var measures = require('./dashboard-measures');
 var utils = require('./src/chart_utils');
 var formatters = require('./src/chart_formatters');
 var chartOptions = require('./src/highcharts-options');
+var config = require('./src/config');
 
 Highcharts.setOptions({
     global: { useUTC: false }
@@ -36,7 +37,7 @@ var dashboard = {
         _this.orgId = orgId;
         _this.orgName = orgName;
         _this.orgType = orgType;
-        _this.baseUrl = '/api/1.0/';
+        _this.baseUrl = config.apiHost + '/api/1.0/';
         _this.spendUrl = _this.baseUrl;
         _this.spendUrl += (_this.orgType === 'CCG') ? 'spending_by_ccg' : 'spending_by_practice';
 
@@ -111,7 +112,7 @@ var dashboard = {
         var _this = this;
         var map = L.mapbox.map(_this.el.mapPanel, 'mapbox.streets').setView([52.905, -1.79], 6);
         map.scrollWheelZoom.disable();
-        var url = '/api/1.0/org_location/?org_type=' + orgType.toLowerCase();
+        var url = config.apiHost + '/api/1.0/org_location/?org_type=' + orgType.toLowerCase();
         url += '&q=' + orgId;
         var layer = L.mapbox.featureLayer()
             .loadURL(url)

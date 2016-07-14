@@ -1,6 +1,7 @@
 var moment = require('moment');
 var _ = require('underscore');
 var ss = require('simple-statistics');
+var config = require('./config');
 
 var utils = {
 
@@ -24,7 +25,7 @@ var utils = {
   },
 
   constructQueryURLs: function(options) {
-    var numeratorUrl = '/api/1.0';
+    var numeratorUrl = config.apiHost + '/api/1.0';
     if (options.org === 'CCG') {
       numeratorUrl += '/spending_by_ccg/?format=json';
     } else if (options.org === 'practice') {
@@ -48,7 +49,7 @@ var utils = {
         numeratorUrl += (i !== (org_ids.length - 1)) ? ',' : '';
       });
     }
-    var denominatorUrl = '/api/1.0';
+    var denominatorUrl = config.apiHost + '/api/1.0';
     if (options.denom === 'chemical') {
       if (options.org === 'CCG') {
         denominatorUrl += '/spending_by_ccg/?format=json';

@@ -2,15 +2,15 @@ global.jQuery = require('jquery');
 global.$ = global.jQuery;
 var _ = require('underscore');
 var humanize = require('humanize');
-
+var config = require('./config');
 var utils = {
 
   getDataUrls: function(options) {
-    var panelUrl = '/api/1.0/measure_by_';
+    var panelUrl = config.apiHost + '/api/1.0/measure_by_';
     panelUrl += options.orgType.toLowerCase() + '/?format=json';
     var urls = {
       panelMeasuresUrl: panelUrl,
-      globalMeasuresUrl: '/api/1.0/measure/?format=json'
+      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json'
     };
     if (options.orgId) {
       urls.panelMeasuresUrl += '&org=' + options.orgId;
