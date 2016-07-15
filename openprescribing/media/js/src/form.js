@@ -7,6 +7,7 @@ var _ = require('underscore');
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
 var analyseChart = require('./chart');
+var config = require('./config');
 
 var queryForm = {
 
@@ -241,7 +242,7 @@ var queryForm = {
 
   prefillOrgs: function() {
     if (this.globalOptions.orgIds.length > 0) {
-      var url = '/api/1.0/org_code/?format=json&exact=true&q=';
+      var url = config.apiHost + '/api/1.0/org_code/?format=json&exact=true&q=';
       _.each(this.globalOptions.orgIds, function(d) {
         url += d.id + ',';
       });
@@ -263,7 +264,7 @@ var queryForm = {
     }
     context.globalOptions.orgIds = orgIds;
     if (context.globalOptions.numIds.length > 0) {
-      var url = '/api/1.0/bnf_code/?format=json&exact=true&q=';
+      var url = config.apiHost + '/api/1.0/bnf_code/?format=json&exact=true&q=';
       _.each(context.globalOptions.numIds, function(d) {
         url += d.id + ',';
       });
@@ -287,7 +288,7 @@ var queryForm = {
       context = this;
     }
     if (context.globalOptions.denomIds.length > 0) {
-      var url = '/api/1.0/bnf_code/?format=json&exact=true&q=';
+      var url = config.apiHost + '/api/1.0/bnf_code/?format=json&exact=true&q=';
       _.each(context.globalOptions.denomIds, function(d) {
         url += d.id + ',';
       });
@@ -338,7 +339,7 @@ var queryForm = {
         return str;
       },
       ajax: {
-        url: "/api/1.0/bnf_code/",
+        url: config.apiHost + "/api/1.0/bnf_code/",
         dataType: 'json',
         delay: 50,
         data: function(params) {
@@ -369,9 +370,9 @@ var queryForm = {
     var optionsOrg = jQuery.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
       if (_this.globalOptions.org == 'CCG') {
-        return "/api/1.0/org_code?org_type=CCG";
+        return config.apiHost + "/api/1.0/org_code?org_type=CCG";
       } else {
-        return "/api/1.0/org_code?org_type=CCG,practice";
+        return config.apiHost + "/api/1.0/org_code?org_type=CCG,practice";
       }
     };
     $(this.el.orgIds).select2(optionsOrg);

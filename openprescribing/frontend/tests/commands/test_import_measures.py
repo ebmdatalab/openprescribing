@@ -76,6 +76,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
         self.assertEqual(m.description[:10], 'Total quan')
         self.assertEqual(m.why_it_matters[:10], 'This is th')
+        self.assertEqual(m.low_is_good, True)
         month = '2015-09-01'
 
         p = Practice.objects.get(code='C84001')
