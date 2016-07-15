@@ -3,6 +3,7 @@ global.$ = global.jQuery;
 require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
+require('bootstrap');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
@@ -17,8 +18,6 @@ var formatters = require('./chart_formatters');
 var map = require('./map');
 var barChart = require('./bar-chart');
 var lineChart = require('./line-chart');
-var scatterChart = require('./scatter-chart');
-
 var analyseChart = {
 
   el: {
@@ -155,8 +154,11 @@ var analyseChart = {
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
       this.setUpSlider();
       this.setUpChartEvents();
+      this.setUpSaveUrl();
+      this.setUpSaveUrlUI();
     } else {
-      this.showErrorMessage("No data found for this query. Please try again.", null);
+      this.showErrorMessage(
+        "No data found for this query. Please try again.", null);
     }
   },
 
@@ -169,6 +171,48 @@ var analyseChart = {
     var combinedData = utils.combineXAndYDatasets(xData, yData,
                                                       this.globalOptions.chartValues);
     this.globalOptions.data.combinedData = combinedData;
+  },
+
+  setUpSaveUrlUI: function() {
+    // Don't hide the dropdown modal after a "copy-to-clipboard"
+    // click; on any other click, do hide it.
+    $('.save-url-button.dropdown').on(
+      'hide.bs.dropdown', function() {
+        var close = true;
+        var btn = $('.save-url-dropdown .btn');
+        if (btn.data('clicked')) {
+          btn.removeData('clicked');
+          close = false;
+        }
+        return close;
+      }
+    );
+    $('.save-url-dropdown .btn').on('click', function() {
+      $(this).data('clicked', true);
+    });
+
+    // Move the button to the currently selected tab
+    $('.save-url-button').appendTo('.nav-tabs .active');
+
+    // Set up the clipboard functionality, including a fallback for
+    // unsupported browsers
+    if (!utils.getIEVersion()) {
+      var clipboard = new Clipboard('.save-url-dropdown .btn');
+      clipboard.on('success', function() {
+        $('#save-url-text').attr('title', 'Copied!').tooltip().tooltip('show');
+      });
+      clipboard.on('error', function() {
+        var errorMsg = '';
+        if (/iPhone|iPad/i.test(navigator.userAgent)) {
+          errorMsg = 'No support :(';
+        } else if (/Mac/i.test(navigator.userAgent)) {
+          errorMsg = 'Press ⌘-C to copy';
+        } else {
+          errorMsg = 'Press Ctrl-C to copy';
+        }
+        $('#save-url-text').attr('title', errorMsg).tooltip('show');
+      });
+    }
   },
 
   addDataDownload: function() {
@@ -211,6 +255,15 @@ var analyseChart = {
     $(this.el.rowCount).text('(' + this.globalOptions.data.combinedData.length + ' rows)');
   },
 
+  setUpSaveUrl: function () {
+    // Set the input box URL, and make it selected on click
+    $('#save-url-text')
+      .val(window.location.href)
+      .click(function() {
+        $(this).select();
+      });
+  },
+
   setUpChartEvents: function() {
     var _this = this;
     // Tab clicks.
@@ -233,7 +286,8 @@ var analyseChart = {
       var tabid = target.substring(1, target.length - 6);
       _this.globalOptions.selectedTab = tabid;
       this.hash = hashHelper.setHashParams(_this.globalOptions);
-
+      _this.setUpSaveUrl();
+      _this.setUpSaveUrlUI();
     });
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {

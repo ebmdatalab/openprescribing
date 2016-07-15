@@ -110,6 +110,8 @@
 <div id="results">
 <hr/>
 
+{% include '_share_button.html' %}
+
 <ul id="tabs" class="nav nav-tabs" role="tablist">
   <li role="presentation" id="summary-tab" class="summary-tab active">
     <a href="#summary-panel" data-target="#summary-panel" aria-controls="settings" role="tab" data-toggle="tab">Show summary</a>
@@ -196,5 +198,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<!--[if !IE 8]><!-->
+  <script src="/static/js/clipboard.min.js?q=123456"></script>
+<!--<![endif]-->
 {% conditional_js 'openprescribing' %}
 {% endblock %}
