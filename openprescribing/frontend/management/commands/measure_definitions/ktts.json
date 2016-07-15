@@ -17,15 +17,6 @@
             "lipid modifying drugs’ (BNF 2.12 sub-set) as a percentage",
             "of total prescription items for BNF 2.12"
         ],
-        "num": [
-            "Number of prescription items for 0212000A0, 0212000D0, ",
-            "021200010, 0212000AD, 0212000K0, 0212000F0, 0212000P0, ",
-            "0212000Q0, 0212000U0, 0212000AE, 0212000V0, 0212000AB"
-        ],
-        "denom": [
-            "Number of prescription items for all lipid-modifying ",
-            "drugs (BNF section 2.12)"
-        ],
         "numerator_short": "Selected items",
         "denominator_short": "All items in 2.12",
         "url": null,
@@ -74,15 +65,6 @@
         ],
         "title": [
             "KTT8 (Antidepressants: First choice % items)"
-        ],
-        "num": [
-            "Number of prescription items for Selective Serotonin ",
-            "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3) ",
-            "prescribed by approved name"
-        ],
-        "denom": [
-            "Number of prescription items for selected ",
-            "antidepressants (sub-set of BNF 4.3)"
         ],
         "numerator_short": "SSRI items",
         "denominator_short": "Selected antidepresssant items",
@@ -134,12 +116,6 @@
             "KTT8 (Dosulepin): First choice antidepressant use in",
             "adults with depression or anxiety disorder"
         ],
-        "num": ["Number of prescription items for dosulepin (0403010J0)"],
-        "denom": [
-            "Number of prescription items for selected ",
-            "antidepressants (0403, excluding 0403010B0, 0403010F0, ",
-            "0403010N0, 0403010V0, 0403010Y0, 040302, 0403040F0)"
-        ],
         "numerator_short": "Dosulepin items",
         "denominator_short": "Selected antidepressant items",
         "url": "https://www.nice.org.uk/advice/ktt8/chapter/evidence-context",
@@ -183,8 +159,6 @@
             "It is important that we don't overuse antibiotics. ",
             "This shows how many are being prescribed locally."
         ],
-        "num": ["Total number of items for Antibacterial drugs (BNF 5.1)"],
-        "denom": ["Total number of Oral antibacterials (BNF 5.1 sub-set) item-based STAR-PUs"],
         "numerator_short": "Antibacterials items",
         "denominator_short": "STAR-PUs",
         "url": null,
@@ -227,14 +201,6 @@
             "they are used sparingly, to avoid drug-resistant bacteria ",
             "developing. This measure looks at the quantity of these ",
             "prescribed, versus the broad class of similar antibiotics."
-        ],
-        "num": [
-            "Number of prescription items for co-amoxiclav (0501013K0), ",
-            "cephalosporins (0501021) and quinolones (050112)"
-        ],
-        "denom": [
-            "Number of prescription items for BNF 5.1.1; 5.1.2.1; ",
-            "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; 5.1.13"
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Other selected items",
@@ -285,18 +251,6 @@
         ],
         "why_it_matters": [
             "For most women (who are not pregnant), a three-day course of antibiotics for an uncomplicated urinary tract infection (UTI) will treat it effectively. This also reduces the amount of unnecessary antibiotics being prescribed."
-        ],
-        "num": [
-            "Total average daily quantity (ADQ) usage for ",
-            "trimethoprim 200mg tablets, nitrofurantoin 50mg ",
-            "tablets and capsules, nitrofurantoin 100mg m/r ",
-            "capsules and pivmecillinam 200mg tablets."
-        ],
-        "denom": [
-            "Total number of prescription items for trimethoprim ",
-            "200mg tablets, nitrofurantoin 50mg tablets and ",
-            "capsules, nitrofurantoin 100mg m/r capsules ",
-            "and pivmecillinam 200mg tablets"
         ],
         "numerator_short": "Selected ADQs",
         "denominator_short": "Selected items",
@@ -350,13 +304,6 @@
         "why_it_matters": [
             "Minocycline is an antibiotic used to treat patients with acne. However, there are concerns about its safety, and there are other treatments which appear to be safer and as effective.  The amount of minocycline prescribing has dropped nationally as a result."
         ],
-        "num": [
-            "Total average daily quantity (ADQ) usage ",
-            "for Minocycline Hydrochloride (0501030P0)"
-        ],
-        "denom": [
-            "Total number of patients (divided by 1000)"
-        ],
         "numerator_short": "Minocycline ADQs",
         "denominator_short": "Total patients / 1000",
         "url": null,
@@ -392,14 +339,6 @@
         "why_it_matters": [
             "The previous NICE guidance on diabetes (2009) recommended that patients are prescribed metformin or a sulphonylurea first to treat their diabetes.  This guideline has now been changed, and so it is likely that the use of these drugs will reduce."
          ],
-        "num": [
-            "Number of prescription items for BNF section ",
-            "6.1.2.1 and BNF section 6.1.2.2"
-        ],
-        "denom": [
-            "Number of prescription items for BNF section ",
-            "6.1.2 (Antidiabetic drugs)"
-        ],
         "numerator_short": "Selected items",
         "denominator_short": "All items for 6.1.2",
         "url": null,
@@ -437,15 +376,6 @@
         ],
         "why_it_matters": [
             "TBA"
-        ],
-        "num": [
-            "Number of prescription items for long-acting insulin ",
-            "analogues (sub-set of BNF section 6.1.1.2)"
-        ],
-        "denom": [
-            "Number of prescription items for all long acting and ",
-            "intermediate acting insulins excluding biphasic insulins ",
-            "(sub-set of BNF section 6.1.1.2)."
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Selected items",
@@ -496,14 +426,6 @@
         ],
         "why_it_matters": [
             "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, for their effects on the stomach, kidneys and the risk of blood clots.  The latest evidence shows that ibuprofen and naproxen are two of the drugs with a lower level of risk, and therefore doctors should prescribe these to patients before trying the others."
-        ],
-        "num": [
-            "Number of prescription items for ibuprofen and naproxen ",
-            "(sub-set of BNF section 10.1.1)"
-        ],
-        "denom": [
-            "Number of prescription items for BNF section 10.1.1 ",
-            "(non-steroidal anti-inflammatory drugs)"
         ],
         "numerator_short": "Selected items",
         "denominator_short": "Selected items",

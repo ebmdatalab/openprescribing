@@ -354,10 +354,6 @@ class Measure(models.Model):
     title = models.CharField(max_length=500)
     description = models.TextField()
     why_it_matters = models.TextField(null=True, blank=True)
-    numerator_description = models.CharField(max_length=500, null=True,
-                                             blank=True)
-    denominator_description = models.CharField(max_length=500, null=True,
-                                               blank=True)
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
 
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
