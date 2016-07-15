@@ -20,13 +20,13 @@
 <div class="col-lg-6 col-md-6 col-sm-6">
 <h3>Look at your CCG</h3>
 <p>We've identified six standard prescribing measures, and created dashboards for every Clinical Commissioning Group in the country.</p>
-<a href="{% url 'all_ccgs' %}"><button class="btn-lg btn-info">Find a CCG &raquo;</button></a>
+<a href="{% url 'all_ccgs' %}" class="btn btn-lg btn-info">Find a CCG &raquo;</a>
 </div>
 
 <div class="col-lg-6 col-md-6 col-sm-6">
 <h3>Look at your GP practice</h3>
 <p>We've identified six standard prescribing measures, and created dashboards for every GP practice in the country.</p>
-<a href="{% url 'all_practices' %}"><button class="btn-lg btn-info">Find a practice &raquo;</button></a>
+<a href="{% url 'all_practices' %}" class="btn btn-lg btn-info">Find a practice &raquo;</a>
 </div>
 </div>
 
@@ -34,26 +34,29 @@
 <div class="col-lg-6 col-md-6 col-sm-6">
 <h3>Run your own analyses</h3>
 <p>For advanced users! If you have a burning question about the prescribing data, use our flexible query form to get the data you need, quickly and easily.</p>
-<a href="{% url 'analyse' %}"><button class="btn-lg btn-info">Start analysing &raquo;</button></a>
+<a href="{% url 'analyse' %}" class="btn btn-lg btn-info">Start analysing &raquo;</a>
 </div>
 
 <div class="col-lg-6 col-md-6 col-sm-6">
 <h3>Spot national trends</h3>
 <p>See how national prescribing trends have changed since 2010, for any drug or <a href="https://en.wikipedia.org/wiki/British_National_Formulary">BNF section</a> that interests you.</p>
-<a href="{% url 'all_chemicals' %}"><button class="btn-lg btn-info">Find a drug &raquo;</button></a>
+<a href="{% url 'all_chemicals' %}" class="btn btn-lg btn-info">Find a drug &raquo;</a>
 </div>
 </div>
 
 <hr />
 
+<!--[if !IE 8]><!-->
 <h2>Find out more</h2>
 
 <p>Ben Goldacre explains what the site does and why we built it.</p>
+
 <div class="embed-responsive embed-responsive-16by9" style="border: 1px solid #ccc">
   <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/U-hvuEfUUOM"></iframe>
 </div>
 
 <hr/>
+<!--<![endif]-->
 
 
 <p>Read more <a href="{% url 'about' %}">about the site</a>. And please read our <a href="{% url 'caution' %}">guidelines for using this data</a>.</p>
