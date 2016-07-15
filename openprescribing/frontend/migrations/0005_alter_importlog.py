@@ -16,7 +16,7 @@ def seed_log(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('frontend', '0002_importlog'),
+        ('frontend', '0004_importlog'),
     ]
 
     operations = [

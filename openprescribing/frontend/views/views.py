@@ -174,7 +174,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
     practices = Practice.objects.filter(ccg=requested_ccg)\
-        .order_by('name')
+        .filter(setting=4).order_by('name')
     context = {
         'ccg': requested_ccg,
         'practices': practices,
@@ -186,7 +186,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
+    practices = Practice.objects.filter(ccg=requested_ccg).filter(setting=4).order_by('name')
     context = {
         'ccg': requested_ccg,
         'practices': practices,

@@ -1,7 +1,7 @@
 from pyquery import PyQuery as pq
 from django.core import management
 from django.test import TestCase
-
+from frontend.models import Measure, MeasureValue, MeasureGlobal
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
@@ -17,7 +17,8 @@ def setUpModule():
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'prescriptions.json',
                             verbosity=0)
-
+    Measure.objects.create(id='ace', name='ACE inhibitors',
+        title='ACE inhibitors', description='foo')
 
 def tearDownModule():
     management.call_command('flush', verbosity=0, interactive=False)
@@ -167,3 +168,31 @@ class TestFrontendViews(TestCase):
             ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '
              'ECCLES, MANCHESTER, M30 0NU'))
         lead = doc('.lead:last')
+
+    def test_call_view_measure_ccg(self):
+        response = self.client.get('/ccg/03V/measures/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        self.assertEqual(title.text(), 'CCG: NHS Corby')
+        practices = doc('#practices li')
+        self.assertEqual(len(practices), 1)
+
+    def test_call_view_measure_practice(self):
+        response = self.client.get('/practice/P87629/measures/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measures_for_one_practice.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
+
+    def test_call_view_measure_practices_in_ccg(self):
+        response = self.client.get('/ccg/03V/ace/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        t = ('ACE inhibitors prescribing '
+             'by GP practices in NHS Corby')
+        self.assertEqual(title.text(), t)

@@ -16,8 +16,6 @@
             "the same drug, the same molecule, but Cerazette is an expensive ",
             "branded package, and desogestrel is a cheap generic package."
         ],
-        "num": ["Total prescription quantity for Cerazette (0703021Q0BB)"],
-        "denom": ["Total prescription quantity for desogestrel (0703021Q0)"],
         "numerator_short": "Cerazette quantity",
         "denominator_short": "Desogestrel quantity",
         "url": null,
@@ -42,7 +40,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "pioglitazone": {
         "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs",
@@ -55,16 +54,8 @@
             "as a percentage of total prescription items for all diabetes (060102)."
         ],
         "why_it_matters": [
-            "Rosiglitazone is an antidiabetic drug that turned out to ",
-            "increase the risk of heart problems, and was effectively ",
-            "withdrawn from the market. There is concern that the ",
-            "problems may have been a 'class effect', covering other ",
-            "related drugs, and so doctors have tended to also stop ",
-            "using pioglitazone. This shows how local practice ",
-            "reflects that national trend."
+            "Rosiglitazone is an antidiabetic drug that turned out to increase the risk of heart problems, and was effectively withdrawn from the market. There is concern that the problems may have been a 'class effect', covering other related drugs, and so doctors have tended to also stop using pioglitazone. This shows how local practice reflects that national trend. However, the latest NICE guidance on diabetes recommends it equally with other drugs, so it may become more popular again."
         ],
-        "num": ["Number of prescription items for Pioglitazone Hydrochloride (0601023B0)"],
-        "denom": ["Number of prescription items for all diabetes (060102)"],
         "numerator_short": "Pioglitazone items",
         "denominator_short": "All diabetes items",
         "url": null,
@@ -89,7 +80,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "celecoxib": {
         "name": "Celecoxib vs. all NSAIDs",
@@ -117,8 +109,6 @@
             "patients, or it may mean that doctors' thresholds ",
             "for using them are different to their colleagues nationally."
         ],
-        "num": ["Number of prescription items for Celecoxib (0801050AY, 1001010AH)"],
-        "denom": ["Number of prescription items for all NSAIDs (100101)"],
         "numerator_short": "Celecoxib items",
         "denominator_short": "All NSAID items",
         "url": null,
@@ -144,24 +134,25 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": false
+        "is_cost_based": false,
+        "low_is_good": true
     },
     "ace": {
         "name": "High-cost ACE inhibitors",
         "title": [
             "Prescribing of high-cost ACE inhibitors ",
-            "as a percentage of prescribing of TBA"
+            "as a percentage of prescribing of all ACE inhibitors"
         ],
         "description": [
-            "TBA"
+            "Prescribing of high-cost ACE inhibitors ",
+            "as a percentage of prescribing of all ACE inhibitors.",
+            "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
         ],
         "why_it_matters": [
-            "TBA"
+            "All commonly-used ACE inhibitors are now available generically and are low-cost. There is no difference between these generic versions and the more expensive brands, and so it’s important that practices prescribe the most cost-effective version possible."
         ],
-        "num": ["Quantity for high-cost ACEs"],
-        "denom": ["Quantity for all included ACEs"],
         "numerator_short": "High-cost ACEs quantity",
-        "denominator_short": "All ACEs quantity",
+        "denominator_short": "All included ACEs quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -184,7 +175,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "arb": {
         "name": "High-cost ARBs",
@@ -193,15 +185,16 @@
             "as a percentage of prescribing of all ARBs"
         ],
         "description": [
-            "TBA"
+            "Prescribing of high-cost ARBs ",
+            "as a percentage of prescribing of all ARBs.",
+            "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
+
         ],
         "why_it_matters": [
-            "TBA"
+            "Various angiotensin receptor blockers (ARBs) are available. A number of them are now available generically, and are of low cost. NICE guidance for treating high blood pressure recommends that the low-cost versions should be used."
         ],
-        "num": ["Quantity for high-cost ARBs"],
-        "denom": ["Quantity for all included ARBs"],
-        "numerator_short": "High-cost statin quantity",
-        "denominator_short": "All codes quantity",
+        "numerator_short": "High-cost ARBs quantity",
+        "denominator_short": "All included ARBs quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -224,7 +217,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "ppi": {
         "name": "High-cost PPIs",
@@ -233,13 +227,14 @@
             "as a percentage of prescribing of all PPIs"
         ],
         "description": [
-            "TBA"
+            "Prescribing of high-cost PPIs ",
+            "as a percentage of prescribing of all PPIs.",
+            "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
+
         ],
         "why_it_matters": [
             "TBA"
         ],
-        "num": ["Quantity for high-cost PPIs"],
-        "denom": ["Quantity for all included PPIs"],
         "numerator_short": "High-cost PPIs quantity",
         "denominator_short": "All included PPIs quantity",
         "url": null,
@@ -264,7 +259,8 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     },
     "statins": {
         "name": "High-cost statins",
@@ -273,15 +269,16 @@
             "as a percentage of prescribing of all statins"
         ],
         "description": [
-            "TBA"
+            "Prescribing of high-cost statins ",
+            "as a percentage of prescribing of all statins.",
+            "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
+
         ],
         "why_it_matters": [
-            "TBA"
+            "When treating high cholesterol, doctors are recommended to prescribe statins which are both low-cost, and reduce cholesterol by at least 40%. The low-cost statins (simvastatin and atorvastatin) are suitable for the majority of patients."
         ],
-        "num": ["Quantity for high-cost statins"],
-        "denom": ["Quantity for all included statins"],
         "numerator_short": "High-cost statin quantity",
-        "denominator_short": "All codes quantity",
+        "denominator_short": "All included statins quantity",
         "url": null,
         "num_sql": [
             "SELECT SUM(total_items) AS items, ",
@@ -304,6 +301,7 @@
             "AND (processing_date=%s) "
         ],
         "is_percentage": true,
-        "is_cost_based": true
+        "is_cost_based": true,
+        "low_is_good": true
     }
 }

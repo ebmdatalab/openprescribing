@@ -138,8 +138,6 @@ class Command(BaseCommand):
         v['title'] = ' '.join(v['title'])
         v['description'] = ' '.join(v['description'])
         v['why_it_matters'] = ' '.join(v['why_it_matters'])
-        v['num'] = ' '.join(v['num'])
-        v['denom'] = ' '.join(v['denom'])
         v['num_sql'] = ' '.join(v['num_sql'])
         v['denom_sql'] = ' '.join(v['denom_sql'])
         try:
@@ -148,13 +146,12 @@ class Command(BaseCommand):
             measure.title = v['title']
             measure.description = v['description']
             measure.why_it_matters = v['why_it_matters']
-            measure.numerator_description = v['num']
-            measure.denominator_description = v['denom']
             measure.numerator_short = v['numerator_short']
             measure.denominator_short = v['denominator_short']
             measure.url = v['url']
             measure.is_cost_based = v['is_cost_based']
             measure.is_percentage = v['is_percentage']
+            measure.low_is_good = v['low_is_good']
             measure.save()
         except ObjectDoesNotExist:
             measure = Measure.objects.create(
@@ -163,13 +160,12 @@ class Command(BaseCommand):
                 title=v['title'],
                 description=v['description'],
                 why_it_matters=v['why_it_matters'],
-                numerator_description=v['num'],
-                denominator_description=v['denom'],
                 numerator_short=v['numerator_short'],
                 denominator_short=v['denominator_short'],
                 url=v['url'],
                 is_cost_based=v['is_cost_based'],
-                is_percentage=v['is_percentage']
+                is_percentage=v['is_percentage'],
+                low_is_good=v['low_is_good']
             )
         return measure
 
