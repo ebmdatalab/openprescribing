@@ -4,7 +4,6 @@ require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 require('bootstrap');
-var Clipboard = require('clipboard');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
@@ -19,8 +18,6 @@ var formatters = require('./chart_formatters');
 var map = require('./map');
 var barChart = require('./bar-chart');
 var lineChart = require('./line-chart');
-var scatterChart = require('./scatter-chart');
-
 var analyseChart = {
 
   el: {
@@ -199,21 +196,23 @@ var analyseChart = {
 
     // Set up the clipboard functionality, including a fallback for
     // unsupported browsers
-    var clipboard = new Clipboard('.save-url-dropdown .btn');
-    clipboard.on('success', function() {
-      $('#save-url-text').attr('title', 'Copied!').tooltip().tooltip('show');
-    });
-    clipboard.on('error', function() {
-      var errorMsg = '';
-      if (/iPhone|iPad/i.test(navigator.userAgent)) {
-        errorMsg = 'No support :(';
-      } else if (/Mac/i.test(navigator.userAgent)) {
-        errorMsg = 'Press ⌘-C to copy';
-      } else {
-        errorMsg = 'Press Ctrl-C to copy';
-      }
-      $('#save-url-text').attr('title', errorMsg).tooltip('show');
-    });
+    if (!utils.getIEVersion()) {
+      var clipboard = new Clipboard('.save-url-dropdown .btn');
+      clipboard.on('success', function() {
+        $('#save-url-text').attr('title', 'Copied!').tooltip().tooltip('show');
+      });
+      clipboard.on('error', function() {
+        var errorMsg = '';
+        if (/iPhone|iPad/i.test(navigator.userAgent)) {
+          errorMsg = 'No support :(';
+        } else if (/Mac/i.test(navigator.userAgent)) {
+          errorMsg = 'Press ⌘-C to copy';
+        } else {
+          errorMsg = 'Press Ctrl-C to copy';
+        }
+        $('#save-url-text').attr('title', errorMsg).tooltip('show');
+      });
+    }
   },
 
   addDataDownload: function() {
