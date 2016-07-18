@@ -34,11 +34,27 @@ var barChart = {
     };
     var activeOrgs = _.pluck(globalOptions.orgIds, 'id');
     this.barData = this._indexDataByMonthAndRatio(globalOptions.data.combinedData,
-                                                      activeOrgs);
+                                                  activeOrgs);
+    // Ensure we always show ticks for any active (selected) orgs:
+    barOptions.xAxis.tickPositioner = function() {
+      var calculated = this.tickPositions;
+      var activeOrgsIndex = [];
+      _.each(this.series[0].options.data, function(d, i) {
+        if (d.active) {
+          activeOrgsIndex.push(i);
+        }
+      });
+      console.log(this.chart.series[0].data)
+      _.each(activeOrgsIndex, function(d) {
+        var j = _.sortedIndex(calculated, d);
+        calculated.splice(j, 0, d);
+      });
+      return calculated;
+    };
     var activeMonth = globalOptions.activeMonth;
     var ratio = globalOptions.chartValues.ratio;
     var dataForMonth = this.barData[activeMonth][ratio];
-        // barOptions.xAxis.labels.step = (barData.length > 120) ? 3 : 1;
+    // barOptions.xAxis.labels.step = (barData.length > 120) ? 3 : 1;
     barOptions.series = utils.createChartSeries(dataForMonth);
     return new Highcharts.Chart(barOptions);
   },
@@ -70,8 +86,13 @@ var barChart = {
     var newData = {};
     _.each(combinedData, function(d) {
       d.name = d.row_name;
-      d.color = (_.contains(activeOrgs, d.id)) ? 'rgba(255, 64, 129, .8)' :
-                        'rgba(119, 152, 191, .5)';
+      if (_.contains(activeOrgs, d.id)) {
+        d.color = 'rgba(255, 64, 129, .8)';
+        d.active = true;
+      } else {
+        d.color = 'rgba(119, 152, 191, .5)';
+        d.active = false;
+      }
       var copy1 = $.extend(true, {}, d);
       var copy2 = $.extend(true, {}, d);
       if (d.date in newData) {
