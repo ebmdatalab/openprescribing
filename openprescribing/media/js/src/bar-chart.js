@@ -44,7 +44,6 @@ var barChart = {
           activeOrgsIndex.push(i);
         }
       });
-      console.log(this.chart.series[0].data)
       _.each(activeOrgsIndex, function(d) {
         var j = _.sortedIndex(calculated, d);
         calculated.splice(j, 0, d);
