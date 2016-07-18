@@ -303,5 +303,51 @@
         "is_percentage": true,
         "is_cost_based": true,
         "low_is_good": true
+    },
+    "keppra": {
+        "name": "Keppra vs. levetiracetam",
+        "title": [
+            "Prescribing of branded Keppra (BNF code 0408010A0BB)",
+             "compared with prescribing of all levetiracetam (BNF code 0408010A0)"
+        ],
+        "description": [
+            "Total quantity of Keppra (0408010A0BB),",
+            "as a proportion of total quantity of levetiracetam",
+            "(0408010A0)."
+        ],
+        "why_it_matters": [
+            "This is one of the NHS Business Service Authority's top cost-savers from ",
+            "generic switching. Keppra is an expensive branded form of the chemical ",
+            "levetiracetam. The MHRA's guidance is that it is usually unnecessary ",
+            "to maintain patients on a specific manufacturer's levetiracetam product ",
+            "unless there are specific concerns such as patient anxiety, or risk of ",
+            "confusion or dosing errors."
+        ],
+        "numerator_short": "Keppra quantity",
+        "denominator_short": "Levetiracetam quantity",
+        "url": null,
+        "num_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS numerator ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0408010A0BB%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "denom_sql": [
+            "SELECT SUM(total_items) AS items, ",
+            "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity, ",
+            "SUM(quantity) AS denominator ",
+            "FROM frontend_prescription ",
+            "WHERE (presentation_code LIKE '0408010A0%%') ",
+            "AND (practice_id=%s) ",
+            "AND (processing_date=%s) "
+        ],
+        "is_percentage": true,
+        "is_cost_based": true,
+        "low_is_good": true
     }
 }
