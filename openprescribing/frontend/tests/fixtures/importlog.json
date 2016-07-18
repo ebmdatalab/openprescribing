@@ -1,0 +1,65 @@
+[
+  {"model":"frontend.importlog",
+   "pk": 1,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2013-04-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 2,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2013-08-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 3,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2013-10-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 4,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2014-09-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 5,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2014-10-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 1,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2014-11-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  },
+  {"model":"frontend.importlog",
+   "pk": 6,
+   "fields":
+   {"imported_at": "2016-06-23T13:25:15.003Z",
+    "current_at": "2014-12-01",
+    "filename": "/tmp/foo",
+    "category": "prescribing"
+   }
+  }
+]

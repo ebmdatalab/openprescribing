@@ -1,14 +1,13 @@
 import csv
-import os
-import json
-import unittest
 from django.core import management
 from django.test import TestCase
 from common import utils
+from frontend.models import ImportLog
 
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
+    db_name = utils.get_env_setting('DB_NAME')
     management.call_command('loaddata', fix_dir + 'chemicals.json',
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'sections.json',
@@ -23,7 +22,8 @@ def setUpModule():
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'practice_listsizes.json',
                             verbosity=0)
-    db_name = utils.get_env_setting('DB_NAME')
+    management.call_command('loaddata', fix_dir + 'importlog.json',
+                            verbosity=0)
     db_user = utils.get_env_setting('DB_USER')
     db_pass = utils.get_env_setting('DB_PASS')
     management.call_command('create_matviews',
@@ -50,14 +50,17 @@ class TestAPISpendingViews(TestCase):
 
     api_prefix = '/api/1.0'
 
-    def _rows_from_api(self, url):
+    def _rows_from_api(self, url, unfilled_only=True):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         reader = csv.DictReader(response.content.splitlines())
         rows = []
         for row in reader:
             rows.append(row)
-        return rows
+        if unfilled_only:
+            return [x for x in rows if not x.get('filled', False)]
+        else:
+            return rows
 
     def test_codes_are_rejected_if_not_same_length(self):
         url = '%s/spending' % self.api_prefix
@@ -74,6 +77,14 @@ class TestAPISpendingViews(TestCase):
         url = '%s/spending?format=csv&code=123.456' % self.api_prefix
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 404)
+
+    def test_default_data_fill(self):
+        rows = self._rows_from_api('/spending?format=csv', unfilled_only=False)
+        expected_months = 5  # in 2010
+        end = ImportLog.objects.latest_in_category('prescribing').current_at
+        expected_months += (end.year - 1 - 2010) * 12
+        expected_months += end.month
+        self.assertEqual(len(rows), expected_months)
 
     ########################################
     # Spending across all NHS England.
@@ -318,13 +329,17 @@ class TestAPISpendingViews(TestCase):
     def test_spending_by_one_practice(self):
         url = '/spending_by_practice?format=csv&org=P87629'
         rows = self._rows_from_api(url)
-        self.assertEqual(len(rows), 5)
+        print rows
+        self.assertEqual(len(rows), 6)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
-        self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
-        self.assertEqual(rows[-1]['date'], '2014-11-01')
-        self.assertEqual(rows[-1]['actual_cost'], '64.26')
-        self.assertEqual(rows[-1]['items'], '55')
-        self.assertEqual(rows[-1]['quantity'], '2599')
+        self.assertEqual(rows[-1]['date'], '2014-12-01')
+        self.assertEqual(rows[-1]['items'], '')
+        self.assertEqual(rows[-2]['row_id'], 'P87629')
+        self.assertEqual(rows[-2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(rows[-2]['date'], '2014-11-01')
+        self.assertEqual(rows[-2]['actual_cost'], '64.26')
+        self.assertEqual(rows[-2]['items'], '55')
+        self.assertEqual(rows[-2]['quantity'], '2599')
 
     def test_spending_by_one_practice_on_chemical(self):
         url = '/spending_by_practice'
