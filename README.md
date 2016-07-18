@@ -107,6 +107,9 @@ If required, you can run individual Django tests as follows:
 
     python manage.py test frontend.tests.test_api_views
 
+We support IE8 and above. We have a free account for testing across
+multiple browsers, thanks to [BrowserStack](www.browserstack.com).
+
 # Run the application
 
     python manage.py runserver --settings=openprescribing.settings.local
