@@ -120,7 +120,7 @@ class Command(BaseCommand):
             filename = options['month_from_prescribing_filename']
             date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
             month = datetime.strptime(date_part + "_01", "%Y_%m_%d")
-            options['month'] = month.strftime('%Y-%m-01')
+            options['months'] = [month.strftime('%Y-%m-01')]
         else:
             if 'start_date' in options and options['start_date']:
                 d = parse(options['start_date'])
