@@ -470,7 +470,8 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures');
-      str = '<strong>Cost savings:</strong> If it had prescribed in line ';
+      str = 'This CCG was at the 80th percentile on average across the past ';
+      str += '6 months. If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -499,8 +500,8 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures');
-      var str = 'This organisation was at the 80th percentile ';
-      str += 'on average across the past 6 months.';
+      var str = 'This CCG was at the 80th percentile ';
+      str += 'on average across the past 6 months. ';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -528,7 +529,8 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = '<strong>Cost savings:</strong> If it had prescribed in line ';
+      str = 'This CCG was at the 80th percentile on average across the ';
+      str += 'past 6 months. If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -558,7 +560,8 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = '<strong>Cost savings:</strong> If it had prescribed in line ';
+      str = 'This practice was at the 80th percentile on average across ';
+      str += 'the past 6 months. If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -612,7 +615,8 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = '<strong>Cost savings:</strong> If it had prescribed in line ';
+      str = 'This practice was at the 80th percentile on average across ';
+      str += 'the past 6 months. If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result.chartExplanation).to.equal(str);
@@ -636,8 +640,8 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This organisation was at the 80th percentile ';
-      str += 'on average across the past 6 months.';
+      str = 'This practice was at the 80th percentile ';
+      str += 'on average across the past 6 months. ';
       expect(result.chartExplanation).to.equal(str);
     });
   });

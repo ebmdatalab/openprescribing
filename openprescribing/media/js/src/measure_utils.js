@@ -144,6 +144,9 @@ var utils = {
       if (!('isPercentage' in d)) {
         d.isPercentage = d.is_percentage;
       }
+      if (!('isCostBased' in d)) {
+        d.isCostBased = d.is_cost_based;
+      }
       if (!('numeratorShort' in d)) {
         d.numeratorShort = d.numerator_short;
         d.denominatorShort = d.denominator_short;
@@ -333,25 +336,25 @@ var utils = {
     }
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';
-    } else if (d.isCostBased) {
-      chartExplanation = '<strong>Cost savings:</strong> ';
-      if (d.costSaving50th < 0) {
-        chartExplanation += 'By prescribing better than the median, ' +
-          'this ' + options.orgType + ' has saved the NHS £' +
-          humanize.numberFormat((d.costSaving50th * -1), 2) +
-          ' over the past ' + numMonths + ' months.';
-      } else {
-        chartExplanation += 'If it had prescribed in line with the ' +
-          'median, this ' + options.orgType + ' would have spent £' +
-          humanize.numberFormat(d.costSaving50th, 2) +
-          ' less over the past ' + numMonths + ' months.';
-      }
     } else {
       var p = humanize.numberFormat(d.meanPercentile, 0);
-      chartExplanation = 'This organisation was at the ' +
+      chartExplanation = 'This ' + options.orgType + ' was at the ' +
         humanize.ordinal(p) +
         ' percentile on average across the ' +
-        'past ' + numMonths + ' months.';
+        'past ' + numMonths + ' months. ';
+        if (d.isCostBased || options.isCostBasedMeasure) {
+          if (d.costSaving50th < 0) {
+            chartExplanation += 'By prescribing better than the median, ' +
+              'this ' + options.orgType + ' has saved the NHS £' +
+              humanize.numberFormat((d.costSaving50th * -1), 2) +
+              ' over the past ' + numMonths + ' months.';
+          } else {
+            chartExplanation += 'If it had prescribed in line with the ' +
+              'median, this ' + options.orgType + ' would have spent £' +
+              humanize.numberFormat(d.costSaving50th, 2) +
+              ' less over the past ' + numMonths + ' months.';
+          }
+      }
     }
     return {
       chartTitle: chartTitle,
