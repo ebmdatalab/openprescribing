@@ -4,13 +4,15 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 from frontend.models import ImportLog
+from common.utils import under_test
 
 
 def seed_log(apps, schema_editor):
-    ImportLog.objects.create(
-        current_at='2016-03-01',
-        filename='dummy-initial-value',
-        category='prescribing')
+    if not under_test():
+        ImportLog.objects.create(
+            current_at='2016-03-01',
+            filename='dummy-initial-value',
+            category='prescribing')
 
 
 class Migration(migrations.Migration):

@@ -1,75 +1,90 @@
+import argparse
 from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import SHA, PCT, Practice, Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
+from frontend.management.commands.import_measures import Command
 from common import utils
 
 
-def setUpModule():
-    SHA.objects.create(code='Q51')
-    bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-    lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-    lincs_east = PCT.objects.create(code='03T', org_type='CCG',
-                                    open_date='2013-04-01',
-                                    close_date='2015-01-01')
-    Chemical.objects.create(bnf_code='0703021Q0',
-                            chem_name='Desogestrel')
-    Practice.objects.create(code='C84001', ccg=bassetlaw,
-                            name='LARWOOD SURGERY', setting=4)
-    Practice.objects.create(code='C84024', ccg=bassetlaw,
-                            name='NEWGATE MEDICAL GROUP', setting=4)
-    Practice.objects.create(code='B82005', ccg=bassetlaw,
-                            name='PRIORY MEDICAL GROUP', setting=4,
-                            open_date='2015-01-01')
-    Practice.objects.create(code='B82010', ccg=bassetlaw,
-                            name='RIPON SPA SURGERY', setting=4)
-    Practice.objects.create(code='A85017', ccg=bassetlaw,
-                            name='BEWICK ROAD SURGERY', setting=4)
-    Practice.objects.create(code='A86030', ccg=bassetlaw,
-                            name='BETTS AVENUE MEDICAL GROUP', setting=4)
-    # Ensure we only include open practices in our calculations.
-    Practice.objects.create(code='B82008', ccg=bassetlaw,
-                            name='NORTH SURGERY', setting=4,
-                            open_date='2010-04-01',
-                            close_date='2012-01-01')
-    # Ensure we only include standard practices in our calculations.
-    Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                            name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                            setting=1)
-    Practice.objects.create(code='C83051', ccg=lincs_west,
-                            name='ABBEY MEDICAL PRACTICE', setting=4)
-    Practice.objects.create(code='C83019', ccg=lincs_east,
-                            name='BEACON MEDICAL PRACTICE', setting=4)
-
-    args = []
-    db_name = 'test_' + utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    test_file = 'frontend/tests/fixtures/commands/'
-    test_file += 'T201509PDPI+BNFT_formatted.csv'
-    new_opts = {
-        'db_name': db_name,
-        'db_user': db_user,
-        'db_pass': db_pass,
-        'filename': test_file
-    }
-    call_command('import_hscic_prescribing', *args, **new_opts)
-
-    month = '2015-09-01'
-    measure_id = 'cerazette'
-    args = []
-    opts = {
-        'month': month,
-        'measure': measure_id
-    }
-    call_command('import_measures', *args, **opts)
+class ArgumentTestCase(TestCase):
+    def test_months_parsed_from_hscic_filename(self):
+        opts = [
+            '--month_from_prescribing_filename',
+            'data/prescribing/2016_03/T201603PDPI BNFT_formatted.CSV'
+        ]
+        parser = argparse.ArgumentParser()
+        cmd = Command()
+        parser = cmd.create_parser("import_measures", "")
+        options = parser.parse_args(opts)
+        result = cmd.parse_options(options.__dict__)
+        self.assertEqual(result['months'], ['2016-03-01'])
 
 
-def tearDownModule():
-    call_command('flush', verbosity=0, interactive=False)
+class BehaviourTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        SHA.objects.create(code='Q51')
+        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+                                        open_date='2013-04-01',
+                                        close_date='2015-01-01')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                chem_name='Desogestrel')
+        Practice.objects.create(code='C84001', ccg=bassetlaw,
+                                name='LARWOOD SURGERY', setting=4)
+        Practice.objects.create(code='C84024', ccg=bassetlaw,
+                                name='NEWGATE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='B82005', ccg=bassetlaw,
+                                name='PRIORY MEDICAL GROUP', setting=4,
+                                open_date='2015-01-01')
+        Practice.objects.create(code='B82010', ccg=bassetlaw,
+                                name='RIPON SPA SURGERY', setting=4)
+        Practice.objects.create(code='A85017', ccg=bassetlaw,
+                                name='BEWICK ROAD SURGERY', setting=4)
+        Practice.objects.create(code='A86030', ccg=bassetlaw,
+                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
+        # Ensure we only include open practices in our calculations.
+        Practice.objects.create(code='B82008', ccg=bassetlaw,
+                                name='NORTH SURGERY', setting=4,
+                                open_date='2010-04-01',
+                                close_date='2012-01-01')
+        # Ensure we only include standard practices in our calculations.
+        Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                                setting=1)
+        Practice.objects.create(code='C83051', ccg=lincs_west,
+                                name='ABBEY MEDICAL PRACTICE', setting=4)
+        Practice.objects.create(code='C83019', ccg=lincs_east,
+                                name='BEACON MEDICAL PRACTICE', setting=4)
 
+        args = []
+        db_name = 'test_' + utils.get_env_setting('DB_NAME')
+        db_user = utils.get_env_setting('DB_USER')
+        db_pass = utils.get_env_setting('DB_PASS')
+        test_file = 'frontend/tests/fixtures/commands/'
+        test_file += 'T201509PDPI+BNFT_formatted.csv'
+        new_opts = {
+            'db_name': db_name,
+            'db_user': db_user,
+            'db_pass': db_pass,
+            'filename': test_file
+        }
+        call_command('import_hscic_prescribing', *args, **new_opts)
 
-class CommandsTestCase(TestCase):
+        month = '2015-09-01'
+        measure_id = 'cerazette'
+        args = []
+        opts = {
+            'month': month,
+            'measure': measure_id
+        }
+        call_command('import_measures', *args, **opts)
+
+    @classmethod
+    def tearDownClass(cls):
+        call_command('flush', verbosity=0, interactive=False)
 
     def test_import_measurevalue_by_practice(self):
         m = Measure.objects.get(id='cerazette')
