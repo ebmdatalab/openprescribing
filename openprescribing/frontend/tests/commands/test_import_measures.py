@@ -15,7 +15,7 @@ class ArgumentTestCase(TestCase):
         ]
         parser = argparse.ArgumentParser()
         cmd = Command()
-        cmd.add_arguments(parser)
+        parser = cmd.create_parser("import_measures", "")
         options = parser.parse_args(opts)
         result = cmd.parse_options(options.__dict__)
         self.assertEqual(result['months'], ['2016-03-01'])
