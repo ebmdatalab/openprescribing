@@ -49,7 +49,7 @@
 <div id="toggle">Sort measures by:
 <div class="btn-group" id="order">
     <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
-        Percentile
+        Potential for improvement
     </button>
     <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
         Potential savings
@@ -87,7 +87,7 @@
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
                 <p><strong>Why it matters:</strong> {{ why_it_matters }}</p>
                 <p><strong>Description:</strong> {{{ description }}}</p>
-                <p>{{{ costDescription }}}</p>
+                <p><strong>Performance:</strong> {{{ chartExplanation }}}</p>
                 <p><strong>Explore:</strong> prescribing of this measure by <a href="{{ chartTitleUrl }}">other practices in the same CCG</a>.</p>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
