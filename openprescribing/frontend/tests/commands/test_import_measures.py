@@ -32,6 +32,8 @@ class BehaviourTestCase(TestCase):
                                         close_date='2015-01-01')
         Chemical.objects.create(bnf_code='0703021Q0',
                                 chem_name='Desogestrel')
+        Chemical.objects.create(bnf_code='0408010A0',
+                                chem_name='Levetiracetam')
         Practice.objects.create(code='C84001', ccg=bassetlaw,
                                 name='LARWOOD SURGERY', setting=4)
         Practice.objects.create(code='C84024', ccg=bassetlaw,

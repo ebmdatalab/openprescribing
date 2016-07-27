@@ -7,6 +7,16 @@ services:
     image: ebmdatalab/openprescribing-base:latest
     command: /bin/bash -c './scripts/docker_setup.sh && cd openprescribing && make test'
     env_file: .env-test
+    environment:
+      - TRAVIS=${TRAVIS}
+      - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+      - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+      - SAUCE_USERNAME=${SAUCE_USERNAME}
+      - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+    extra_hosts:
+      - "saucehost:${SAUCE_HOST}"
+    ports:
+      - "6080:6080"
     volumes:
       - .:/code
     depends_on:

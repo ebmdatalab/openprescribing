@@ -15,6 +15,8 @@ def setUpModule():
     lincs_east = PCT.objects.create(code='03T', org_type='CCG')
     Chemical.objects.create(bnf_code='0703021Q0',
                             chem_name='Desogestrel')
+    Chemical.objects.create(bnf_code='0408010A0',
+                            chem_name='Keppra')
     Practice.objects.create(code='C84001', ccg=bassetlaw,
                             name='LARWOOD SURGERY', setting=4)
     Practice.objects.create(code='C84024', ccg=bassetlaw,

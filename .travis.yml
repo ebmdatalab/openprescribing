@@ -1,5 +1,11 @@
 env:
-  DOCKER_COMPOSE_VERSION: 1.7.1
+  global:
+    DOCKER_COMPOSE_VERSION: 1.7.1
+  matrix:
+    - env: TEST_SUITE=nonfunctional
+    - env: TEST_SUITE=functional BROWSER="firefox:47:Windows 2012"
+    - env: TEST_SUITE=functional BROWSER="safari:8.0:OS X 10.10"
+    - env: TEST_SUITE=functional BROWSER="internet explorer:8.0:Windows 7"
 sudo: required
 language: python
 before_install:
@@ -17,7 +23,12 @@ cache:
 services:
   - docker
 script:
-  - docker-compose run test
+  - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
+  - docker-compose run --service-ports test
 notifications:
   email:
     - tech@ebmdatalab.net
+addons:
+  sauce_connect:
+    username: ebmdatalab
+    access_key: 397c2f14-5ab3-43cf-a47c-019807cd3c44

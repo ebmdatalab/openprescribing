@@ -110,6 +110,46 @@ If required, you can run individual Django tests as follows:
 We support IE8 and above. We have a free account for testing across
 multiple browsers, thanks to [BrowserStack](www.browserstack.com).
 
+## Functional tests
+
+Functional tests are run using Selenium; the default in your sandbox
+is to do so via a Firefox driver, so you will need Firefox
+installed. Running the functional tests will therefore result in a
+browser being launched.
+
+If you want to run the tests headless (i.e. without launching a
+browser), you have two choices:
+
+### Run the functional tests using Xvbf
+
+To do this, you'll need to install
+[pyvirtualdisplay](http://pyvirtualdisplay.readthedocs.io/en/latest/#installation)
+and Xvbf. This is, apparently, quite hard to do on OS X.
+
+### Run the functional tests in Saucelabs
+
+In our CI environment we use [Saucelabs](http://saucelabs.com) to run
+the functional tests in various browsers. If you are connected to the
+internet, you can run these tests against Saucelabs by
+[installing Sauce Connect](https://wiki.saucelabs.com/display/DOCS/Setting+Up+Sauce+Connect),
+and running:
+
+    # Start the Sauce Connect proxy
+    ./sc -u $SAUCE_USERNAME -k $SAUCE_ACCESS_KEY
+
+    # Run the tests using Saucelabs
+    USE_SAUCELABS=1 BROWSER="firefox:47:Windows 2012" make test
+
+You can work out the browser string to use for your desired platform /
+browser combination using
+[this Saucelabs tool](https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/).
+You can find the combinations we use for our Travis CI in
+[`.travis.yml`](.travis.yml).
+
+### Skip the functional tests
+
+    TEST_SUITE=nonfunctional make test
+
 # Run the application
 
     python manage.py runserver --settings=openprescribing.settings.local
