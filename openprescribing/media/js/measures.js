@@ -146,7 +146,7 @@
         return $(this).data('costsaving') !== 0;
       });
       chartsBySaving.sort(function(a, b) {
-        return Number(a.costsaving) - Number(b.costsaving);
+        return $(b).data('costsaving') - $(a).data('costsaving');
       });
       $(_this.el.sortButtons).click(function() {
         $(this).addClass("active").siblings().removeClass("active");
