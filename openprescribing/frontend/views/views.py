@@ -91,16 +91,6 @@ def all_practices(request):
     return render(request, 'all_practices.html', context)
 
 
-def practice(request, code):
-    p = get_object_or_404(Practice, code=code)
-    context = {
-        'practice': p,
-        'page_id': code,
-        'page_type': 'practice'
-    }
-    return render(request, 'practice.html', context)
-
-
 ##################################################
 # AREA TEAMS
 ##################################################
@@ -138,20 +128,9 @@ def all_ccgs(request):
     return render(request, 'all_ccgs.html', context)
 
 
-def ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    practices = Practice.objects.filter(ccg=requested_ccg).order_by('name')
-    context = {
-        'ccg': requested_ccg,
-        'practices': practices,
-        'page_id': ccg_code
-    }
-    return render(request, 'ccg.html', context)
-
-
 ##################################################
 # MEASURES
-# These will eventually replace current dashboards.
+# These replace old CCG and practice dashboards.
 ##################################################
 
 def all_measures(request):

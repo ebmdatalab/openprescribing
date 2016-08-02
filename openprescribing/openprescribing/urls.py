@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.conf import settings
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 from common import utils
 import api
 from frontend.views import views as frontend_views
@@ -27,11 +27,13 @@ urlpatterns = [
         name='chemical'),
     url(r'^practice/$', frontend_views.all_practices,
         name='all_practices'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/$', frontend_views.practice,
-        name='practice'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+    url(r'^practice/(?P<code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='measures_for_one_practice'),
+        name='practice'),
     url(r'^area_team/$', frontend_views.all_area_teams,
         name='all_area_teams'),
     url(r'^area_team/(?P<at_code>[A-Z\d]+)/$', frontend_views.area_team,
@@ -43,11 +45,13 @@ urlpatterns = [
         frontend_views.measure_for_all_ccgs,
         name='measure_for_all_ccgs'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$', frontend_views.ccg,
-        name='ccg'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='measures_for_one_ccg'),
+        name='ccg'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),

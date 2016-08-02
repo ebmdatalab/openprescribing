@@ -18,7 +18,7 @@
 <div class="col-md-6">
 <p class="lead">Address: {{ practice.address_pretty }}</p>
 {% if practice.ccg %}
-<p class="lead">Part of CCG: <a href="{% url 'ccg' practice.ccg.code %}measures">{{ practice.ccg.name }}</a></p>
+<p class="lead">Part of CCG: <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
 {% endif %}
 {% if practice.list_size_13 %}
 <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
