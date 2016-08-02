@@ -1,5 +1,11 @@
 env:
-  DOCKER_COMPOSE_VERSION: 1.7.1
+  global:
+    DOCKER_COMPOSE_VERSION: 1.7.1
+  matrix:
+    - env: TEST_SUITE=nonfunctional
+    - env: TEST_SUITE=functional BROWSER="firefox:47:Windows 2012"
+    - env: TEST_SUITE=functional BROWSER="safari:8.0:OS X 10.10"
+    - env: TEST_SUITE=functional BROWSER="internet explorer:8.0:Windows 7"
 sudo: required
 language: python
 before_install:
@@ -17,7 +23,13 @@ cache:
 services:
   - docker
 script:
-  - docker-compose run test
+  - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
+  - docker-compose run --service-ports test
 notifications:
   email:
     - tech@ebmdatalab.net
+addons:
+  sauce_connect:
+    username: ebmdatalab
+    access_key:
+      secure: "MlmeHStJ91/CHGiz2wVo8rOsrBjk181DbQPSV4PYlJQyogDuGQrKy8LIkUZlzaXUhhG+H5jdUyfoBGJXhZCCxjwzf4yibZEYpHWvWGfCwb8g4SFr9doDSxmwY0aJgYkJGAMPKxz7MQ4LXgNp/6z+NO1kw3uU0poNQEMz73Do9rd6iVRvjRThj4q0wGv5AoV3+LshVtHKHBpcEs0ZyHzmEuGrpEuR0Ak4g1Dif0HoMmAepmU/pNui18tMHx3HDtBerKuo1+ou4eEtxBUy4OVnAas7+zgw3e1pWawsf3mMTSKGxY6rFTIE5A5N+Te589vVGucpc0XzfoxpFtn13DLMFG4Mf0mdBgHYBo+fCuIrBwPZ0RoD7NV7RfhKKGQ4rpLP6uwjFTCtbG1CyT5+zz/RxxbE+guqmIUZI6oZZQsXx7mk2cypQgV3La41O85VJ6Y74QRCK9c59ChiDxjfYbIMLysP8E4d5GmLnLUFlGjSTr9G8bP3kHZqhE12tg2JPqhMG3eMvQngQfQhgXqh4shBPOJCUthinafJizyJ9lscx0OMmNkb4GMqXAEJNIz7Xp0xFJvsOnLyoWO3rJ2UoZd1tNuv4OnhQOsZvvHePueAyYateXPHsFPOaIhgoAQkGkALI+E8+2dSWUVZo5EqYd00beM4Ni6GTThpZ3tIIfTu2+w="
