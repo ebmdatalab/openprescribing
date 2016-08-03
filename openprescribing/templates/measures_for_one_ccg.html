@@ -24,7 +24,7 @@
 class='hidden'
 {% endif %}
 >
-<a href="{% url 'practice' p.code %}measures">{{ p }}</a>
+<a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
 ({{ p.get_setting_display }})
 </li>
 {% endfor %}

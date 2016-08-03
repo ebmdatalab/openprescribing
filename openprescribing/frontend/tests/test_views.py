@@ -138,12 +138,12 @@ class TestFrontendViews(TestCase):
     def test_call_view_ccg_section(self):
         response = self.client.get('/ccg/03V/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ccg.html')
+        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), 'CCG: NHS Corby')
         practices = doc('#practices li')
-        self.assertEqual(len(practices), 2)
+        self.assertEqual(len(practices), 1)
 
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
@@ -158,7 +158,7 @@ class TestFrontendViews(TestCase):
     def test_call_view_practice_section(self):
         response = self.client.get('/practice/P87629/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'practice.html')
+        self.assertTemplateUsed(response, 'measures_for_one_practice.html')
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
@@ -170,7 +170,7 @@ class TestFrontendViews(TestCase):
         lead = doc('.lead:last')
 
     def test_call_view_measure_ccg(self):
-        response = self.client.get('/ccg/03V/measures/')
+        response = self.client.get('/ccg/03V/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
         doc = pq(response.content)
@@ -180,7 +180,7 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(practices), 1)
 
     def test_call_view_measure_practice(self):
-        response = self.client.get('/practice/P87629/measures/')
+        response = self.client.get('/practice/P87629/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measures_for_one_practice.html')
         doc = pq(response.content)
@@ -196,3 +196,11 @@ class TestFrontendViews(TestCase):
         t = ('ACE inhibitors prescribing '
              'by GP practices in NHS Corby')
         self.assertEqual(title.text(), t)
+
+    def test_call_view_practice_redirect(self):
+        response = self.client.get('/practice/P87629/measures/')
+        self.assertEqual(response.status_code, 301)
+
+    def test_call_view_ccg_redirect(self):
+        response = self.client.get('/ccg/03V/measures/')
+        self.assertEqual(response.status_code, 301)

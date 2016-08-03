@@ -469,7 +469,7 @@ describe('Measures', function() {
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures');
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
       str = 'This CCG was at the 80th percentile on average across the past ';
       str += '6 months. If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
@@ -499,7 +499,7 @@ describe('Measures', function() {
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures');
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
       var str = 'This CCG was at the 80th percentile ';
       str += 'on average across the past 6 months. ';
       expect(result[0].chartExplanation).to.equal(str);

@@ -332,7 +332,7 @@ var utils = {
       // organisation page.
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
-        '/' + d.id + '/measures';
+        '/' + d.id;
     }
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';

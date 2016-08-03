@@ -38,7 +38,7 @@ class CommandsTestCase(TestCase):
         fname += 'patient_list_size/2040_05/Patient_List_Size_2013_10-12.csv'
         opts = {
             'filename': fname,
-            'verbosity': 2
+            'verbosity': 0
         }
         # Now check that we get an error (because there is now a gap)
         with self.assertRaises(CommandError):

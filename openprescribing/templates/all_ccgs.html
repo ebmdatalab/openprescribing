@@ -16,7 +16,7 @@
 
 <ul class="list-unstyled" id="all-results">
 {% for ccg in ccgs %}
-<li><a class="ccg" href="{% url 'ccg' ccg.code %}">{{ ccg.name }} ({{ ccg.code }})</a></li>
+<li><a class="ccg" href="{% url 'measures_for_one_ccg' ccg.code %}">{{ ccg.name }} ({{ ccg.code }})</a></li>
 {% endfor %}
 </ul>
 
@@ -31,7 +31,7 @@ var inputSearch = '#search',
 var ccg = {
     name: '{{ ccg.name }}',
     code: '{{ ccg.code }}',
-    url: "{% url 'ccg' ccg.code %}"
+    url: "{% url 'measures_for_one_ccg' ccg.code %}"
 };
 allItems.push(ccg);
 {% endfor %}
