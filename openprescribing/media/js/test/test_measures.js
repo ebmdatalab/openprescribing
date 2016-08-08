@@ -698,7 +698,7 @@ describe('Measures', function() {
         options, chartOptions);
       expect(result.yAxis.reversed).to.equal(true);
       d.lowIsGood = true;
-      var result = mu._getChartOptions(d, true,
+      result = mu._getChartOptions(d, true,
         options, chartOptions);
       expect(result.yAxis.reversed).not.to.equal(true);
     });
