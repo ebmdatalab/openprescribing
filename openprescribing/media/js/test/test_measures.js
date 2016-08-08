@@ -683,6 +683,26 @@ describe('Measures', function() {
       expect(tooltip).to.equal(str);
     });
 
+    it('reverses the yAxis when low is bad', function() {
+      var d = {
+        lowIsGood: false,
+        data: [{x: 0, y: 60}, {x: 10, y: 0}]
+      },
+      options = {
+        rollUpBy: 'org_id',
+        globalYMax: {y: 100},
+        globalYMin: {y: 10}
+      },
+      chartOptions = {dashOptions: { chart: {}, legend: {}}};
+      var result = mu._getChartOptions(d, true,
+        options, chartOptions);
+      expect(result.yAxis.reversed).to.equal(true);
+      d.lowIsGood = true;
+      var result = mu._getChartOptions(d, true,
+        options, chartOptions);
+      expect(result.yAxis.reversed).not.to.equal(true);
+    });
+
     it('sets correct Highcharts options for non-% measures', function() {
       var d = {
         data: [{x: 0, y: 90}, {x: 10, y: 10}],

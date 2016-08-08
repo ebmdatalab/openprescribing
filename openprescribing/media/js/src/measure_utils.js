@@ -434,6 +434,9 @@ var utils = {
         // because it prefers that formatting. Force zero as the lowest value.
       min: _.max([0, ymin])
     };
+    if (!d.lowIsGood) {
+      chOptions.yAxis.reversed = true;
+    }
     chOptions.tooltip = {
       formatter: function() {
         var num = humanize.numberFormat(this.point.numerator, 0);
