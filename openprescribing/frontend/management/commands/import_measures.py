@@ -308,16 +308,43 @@ class Command(BaseCommand):
             row.percentile = None
         mv.percentile = row.percentile
         if measure.is_cost_based:
-            row_quantity = row.denom_quantity
-            row_cost = row.denom_cost
             cost_savings = {}
+            # Calculate actual numerator and non-numerator cost per pill.
+            # If these exist (i.e. the practice actually prescribed some
+            # of the numerator or non-numerator) we use the mean price
+            # per pill actually paid by the practice to calculate the
+            # theoretical cost of shifting the ratios between the two.
+            # If not, we just use the global mean cost per pill.
+            # First do this for the numerator...
+            if row.num_quantity:
+                cost_per_num_quant = row.num_cost / row.num_quantity
+            else:
+                cost_per_num_quant = mg.cost_per_num_quant
+            # ... Then the non-numerator. (Note "non-numerator" not
+            # "denominator": technically in our measures the denominator
+            # always contains the numerator. For example, if our measure is
+            # Cerazette as a proportion of all desogesterel, in this case
+            # we're interested in the mean price paid for everything that
+            # wasn't branded Cerazette.)
+            actual_non_num_quant = row.denom_quantity - row.num_quantity
+            actual_non_num_cost = row.denom_cost - row.num_cost
+            if actual_non_num_quant:
+                cost_per_non_num_quant = actual_non_num_cost / \
+                    actual_non_num_quant
+            else:
+                cost_per_non_num_quant = mg.cost_per_non_num_quant
             for c in self.centiles:
                 ratio = mg.percentiles[org_type][c]
-                num_quant = row_quantity * ratio
-                non_num_quant = row_quantity - num_quant
-                cost_of_new_quant = (num_quant * mg.cost_per_num_quant) + \
-                    (non_num_quant * mg.cost_per_non_num_quant)
-                saving = row_cost - cost_of_new_quant
+                # And finally calculate theoretical quantities,
+                # costs and savings at this ratio.
+                num_quant_theoretical = row.denom_quantity * ratio
+                non_num_quant_theoretical = row.denom_quantity - \
+                    num_quant_theoretical
+                cost_theoretical = (num_quant_theoretical *
+                                    cost_per_num_quant) + \
+                                   (non_num_quant_theoretical *
+                                    cost_per_non_num_quant)
+                saving = row.denom_cost - cost_theoretical
                 cost_savings[c] = saving
             mv.cost_savings = cost_savings
         mv.save()
