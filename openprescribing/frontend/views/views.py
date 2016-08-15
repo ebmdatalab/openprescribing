@@ -201,7 +201,7 @@ def feedback(request):
         except forms.ValidationError:
             mfrom = "<%s> tech@openprescribing.net" % (request.POST['name'])
         send_mail("Feedback", msg,
-                  mfrom, ["seb.bacon@gmail.com"])
+                  mfrom, ["openprescribing-support@googlegroups.com"])
         return HttpResponse(
             '{"status": "Thanks for your feedback!"}',
             content_type='application/json')
