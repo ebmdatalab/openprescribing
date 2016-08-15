@@ -1,5 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.core.mail import send_mail
+from django.core.validators import validate_email
+from django import forms
 from frontend.models import Chemical, Prescription
 from frontend.models import Practice, SHA, PCT, Section
 from frontend.models import Measure
@@ -165,7 +168,8 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    practices = Practice.objects.filter(ccg=requested_ccg).filter(setting=4).order_by('name')
+    practices = Practice.objects.filter(
+        ccg=requested_ccg).filter(setting=4).order_by('name')
     context = {
         'ccg': requested_ccg,
         'practices': practices,
@@ -181,6 +185,30 @@ def measures_for_one_practice(request, code):
         'page_id': code
     }
     return render(request, 'measures_for_one_practice.html', context)
+
+
+##################################################
+# Misc
+##################################################
+def feedback(request):
+    if request.POST:
+        msg = "Message posted from %s:\n\n" % request.META['HTTP_REFERER']
+        msg += request.POST['message']
+        email = request.POST['email']
+        try:
+            validate_email(email)
+            mfrom = "<%s> %s" % (request.POST['name'], email)
+        except forms.ValidationError:
+            mfrom = "<%s> tech@openprescribing.net" % (request.POST['name'])
+        send_mail("Feedback", msg,
+                  mfrom, ["seb.bacon@gmail.com"])
+        return HttpResponse(
+            '{"status": "Thanks for your feedback!"}',
+            content_type='application/json')
+    else:
+        return HttpResponse(
+            '{"status": "Something odd"}',
+            content_type='application/json')
 
 
 ##################################################

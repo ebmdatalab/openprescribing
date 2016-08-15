@@ -9,19 +9,22 @@
     "watch-index": "watchify index.js -t envify -o ../../static/js/openprescribing.js --debug --verbose",
     "watch-config": "watchify src/config.js --standalone config -t envify -o ../../static/js/config.js --debug --verbose",
     "watch-bars": "watchify bar-charts.js -t envify -o ../../static/js/bar-chart.js --debug --verbose",
+    "watch-general": "watchify src/general.js -t envify -o ../../static/js/general.js --debug --verbose",
     "watch-filter": "watchify list-filter.js -t envify -o ../../static/js/list-filter.js --debug --verbose",
     "watch-measures": "watchify measures.js -t envify -o ../../static/js/measures.js --debug --verbose",
     "watch-css": "when-changed ../css/ 'npm run build-css'",
-    "watch": "npm run build | npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-measures | npm run watch-config | npm run watch-css",
+    "watch": "npm run build | npm run watch-index | npm run watch-bars | npm run watch-filter | npm run watch-measures | npm run watch-config | npm run watch-css | npm run watch-general",
     "lint": "eslint src/*.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-index": "browserify index.js -t envify | uglifyjs > ../../static/js/openprescribing.min.js",
     "copy-clipboardjs": "cp node_modules/clipboard/dist/clipboard.min.js ../../static/js/",
+    "copy-jquery": "cp node_modules/jquery/dist/*.js ../../static/js/",
     "build-config": "browserify src/config.js --standalone config -t envify | uglifyjs > ../../static/js/config.min.js",
+    "build-general": "browserify src/general.js -t envify | uglifyjs  > ../../static/js/general.min.js",
     "build-bars": "browserify bar-charts.js -t envify | uglifyjs > ../../static/js/bar-chart.min.js",
     "build-filter": "browserify list-filter.js -t envify | uglifyjs > ../../static/js/list-filter.min.js",
     "build-measures": "browserify measures.js -t envify | uglifyjs > ../../static/js/measures.min.js",
-    "build": "npm run build-index | npm run build-bars | npm run build-filter | npm run build-measures | npm run build-config | npm run build-css | npm run copy-clipboardjs"
+    "build": "npm run build-index | npm run build-general | npm run build-bars | npm run build-filter | npm run build-measures | npm run build-config | npm run build-css | npm run copy-clipboardjs | npm run copy-jquery"
   },
   "browser": {
     "select2": "./vendor/select2.full.min.js",
@@ -60,7 +63,8 @@
     "mapbox.js": "^2.2.1",
     "moment": "^2.10.3",
     "simple-statistics": "^0.9.2",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "js-cookie": "^2.1.2"
   },
   "devDependencies": {
     "browserify": "^9.0.8",

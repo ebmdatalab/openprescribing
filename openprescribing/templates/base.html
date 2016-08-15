@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load template_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -113,8 +114,28 @@
       </div>
     </footer>
 
+    <div id="feedback" class="shadow">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Name: </label><input type="text" name="name">
+        </div>
+        <div class="form-group">
+          <label>Email: </label><input type="text" name="email">
+        </div>
+        <div class="form-group">
+          <label>Message: </label><textarea name="message"></textarea>
+        </div>
+        <div class="form-group">
+          <input id="send-feedback" type="button" class="btn btn-default" value="Send">
+        </div>
+      </form>
+      <a href="#" class="pull_feedback btn btn-info btn-lg shadow animated" title="Click to leave feedback">Feedback</a>
+    </div>
 
-    {% block extra_js %}{% endblock extra_js %}
+  {% conditional_js 'jquery' %}
+  {% conditional_js 'general' %}
+  {% block extra_js %}{% endblock extra_js %}
 
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

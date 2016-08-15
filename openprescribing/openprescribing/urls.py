@@ -58,6 +58,10 @@ urlpatterns = [
     url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
     url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
         name='bnf_section'),
+
+    url(r'^feedback/$', frontend_views.feedback,
+        name='feedback'),
+
     url(r'^500/$', frontend_views.test_500_view,
         name='test_500'),
 
