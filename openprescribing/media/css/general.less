@@ -77,3 +77,69 @@ body {
 #djDebugToolbarHandle {
   top: 30px !important;
 }
+
+#feedback{
+  position: fixed;
+  right: 50px;
+  padding: 10px;
+  background-color: #f6f6f6;
+  border: solid #e6e6e6 1px;
+  border-radius:5px;
+}
+.shadow {
+  -webkit-box-shadow: -2px -2px 8px 0px rgba(50, 50, 50, 0.35);
+  -moz-box-shadow:    -2px -2px 8px 0px rgba(50, 50, 50, 0.35);
+  box-shadow:         -2px -2px 8px 0px rgba(50, 50, 50, 0.35);
+
+}
+#feedback form{
+  float: left;
+  padding: 10px;
+  border-radius:5px;
+}
+#feedback form label {
+  display: block;
+  float: left;
+  text-align:right;
+  margin-right:20px;
+  width:70px;
+}
+#feedback a{
+  display: block ! important;
+  width:175px;
+  height:50px;
+  position: absolute;
+  top:-50px;
+  right: 0px;
+  outline: none;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+#feedback textarea {
+  height: 10em;
+  width: 20em;
+}
+
+.animated {
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes shake {
+  0%, 100% {-webkit-transform: translateY(0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translateY(-4px);}
+  20%, 40%, 60%, 80% {-webkit-transform: translateY(4px);}
+}
+
+@keyframes shake {
+  0%, 100% {transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {transform: translateY(-4px);}
+  20%, 40%, 60%, 80% {transform: translateY(4px);}
+}
+// qhere date-showing not true
+.shake:not([data-showing='true']) {
+  -webkit-animation-name: shake;
+  animation-name: shake;
+}

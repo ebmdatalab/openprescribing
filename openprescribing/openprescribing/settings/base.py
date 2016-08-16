@@ -175,13 +175,17 @@ DJANGO_APPS = (
     'corsheaders',
 )
 
+CONTRIB_APPS = (
+    'anymail',
+)
+
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'frontend',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 # END APP CONFIGURATION
 
 
@@ -223,7 +227,7 @@ LOGGING = {
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 # END WSGI CONFIGURATION
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+TEST_RUNNER = 'frontend.tests.custom_runner.AssetBuildingTestRunner'
 
 CONN_MAX_AGE = 1200
 
@@ -249,3 +253,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
     'GET'
 )
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": utils.get_env_setting('MAILGUN_API_KEY'),
+}
+
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+DEFAULT_FROM_EMAIL = "hello@openprescribing.net"

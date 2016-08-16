@@ -3,3 +3,4 @@ coverage
 selenium
 pyquery
 pyvirtualdisplay
+mock
