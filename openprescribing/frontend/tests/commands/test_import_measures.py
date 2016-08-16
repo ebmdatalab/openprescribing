@@ -84,6 +84,15 @@ class BehaviourTestCase(TestCase):
         }
         call_command('import_measures', *args, **opts)
 
+        month = '2015-10-01'
+        measure_id = 'cerazette'
+        args = []
+        opts = {
+            'month': month,
+            'measure': measure_id
+        }
+        call_command('import_measures', *args, **opts)
+
     @classmethod
     def tearDownClass(cls):
         call_command('flush', verbosity=0, interactive=False)
@@ -159,6 +168,22 @@ class BehaviourTestCase(TestCase):
         self.assertEqual(mv.percentile, 50)
         self.assertEqual("%.2f" % mv.cost_savings['10'], '1159.53')
         self.assertEqual("%.2f" % mv.cost_savings['90'], '-10746.00')
+
+    def test_import_measurevalue_by_practice_with_different_payments(self):
+        m = Measure.objects.get(id='cerazette')
+        month = '2015-10-01'
+
+        p = Practice.objects.get(code='C83051')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '0.00')
+
+        p = Practice.objects.get(code='C83019')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '325.58')
+
+        p = Practice.objects.get(code='A86030')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
     def test_import_measurevalue_by_ccg(self):
         m = Measure.objects.get(id='cerazette')
