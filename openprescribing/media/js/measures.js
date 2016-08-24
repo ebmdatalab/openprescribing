@@ -165,3 +165,7 @@
 
   measures.setUp();
 })();
+
+$(document).ready(function() {
+  $('.doorbell-show').click(function() { doorbell.show(); });
+});

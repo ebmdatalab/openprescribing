@@ -127,3 +127,7 @@ var barChart = {
 };
 
 barChart.setUp();
+
+$(document).ready(function() {
+  $('.doorbell-show').click(function() { doorbell.show(); });
+});

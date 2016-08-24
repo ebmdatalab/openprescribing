@@ -1,3 +1,6 @@
+global.jQuery = require('jquery');
+global.$ = global.jQuery;
+
 if (!window.console) {
   var noOp = function(){};
   console = {
@@ -9,3 +12,7 @@ if (!window.console) {
 
 var queryForm = require('./src/form');
 queryForm.setUp();
+
+$(document).ready(function() {
+  $('.doorbell-show').click(function() { doorbell.show(); });
+});

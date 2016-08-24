@@ -1,5 +1,3 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
 require('bootstrap');
 require('select2');
 var _ = require('underscore');
