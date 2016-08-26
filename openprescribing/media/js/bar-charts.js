@@ -126,8 +126,12 @@ var barChart = {
     }
 };
 
-barChart.setUp();
-
 $(document).ready(function() {
-  $('.doorbell-show').click(function() { doorbell.show(); });
+  barChart.setUp();
+  $('.doorbell-show').click(function(e) {
+    if (typeof doorbell !== 'undefined') {
+      e.preventDefault();
+      doorbell.show();
+    }
+  });
 });
