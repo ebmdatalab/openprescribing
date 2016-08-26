@@ -58,7 +58,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         url = self.live_server_url + '/ccg/02Q/measures/'
         self.browser.get(url)
         # The default should be sorting by percentile, then id
-        self.assertEqual(self.browser.find_element_by_xpath(
+        self.assertEqual(self.find_by_xpath(
             "//div[@id='charts']/div[1]").get_attribute("id"),
                          'measure_cerazette')
 
