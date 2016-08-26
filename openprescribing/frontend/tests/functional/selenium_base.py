@@ -21,6 +21,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             return subprocess.call(
                 "type xvfb-run", shell=True,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+        else:
+            return False
 
     @classmethod
     def get_firefox_driver(cls):
@@ -59,6 +61,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display = Display(visible=0, size=(1200, 800))
                 cls.display.start()
             cls.browser = cls.get_firefox_driver()
+
         cls.browser.maximize_window()
         cls.browser.implicitly_wait(1)
 
@@ -76,4 +79,4 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             )
             return element
         except TimeoutException:
-            raise TimeoutException("Expected to find element %s" % locator)
+            raise AssertionError("Expected to find element %s" % locator)

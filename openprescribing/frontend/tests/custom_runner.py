@@ -10,6 +10,7 @@ class AssetBuildingTestRunner(DiscoverRunner):
     os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = "0.0.0.0:6080"
 
     def setup_test_environment(self):
+        settings.DJANGO_SETTINGS_MODULE = 'frontend.settings.test'
         # Before we load any func tests, ensure we've got assets built
         npm_cmd = "mkdir -p ../../static/js && npm run build"
         subprocess.check_call(

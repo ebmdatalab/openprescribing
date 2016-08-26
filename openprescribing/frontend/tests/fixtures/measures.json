@@ -1,0 +1,20 @@
+[
+  {
+    "model": "frontend.measure",
+    "pk": "cerazette",
+    "fields": {
+      "name": "cerazette",
+      "title": "cerazette",
+      "description": "",
+      "why_it_matters": "",
+      "numerator_short": "",
+      "denominator_short": "",
+      "start_date": "2001-01-01",
+      "end_date": "2001-01-01",
+      "url": "",
+      "is_percentage": true,
+      "is_cost_based": true,
+      "low_is_good": false
+    }
+  }
+]

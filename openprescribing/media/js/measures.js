@@ -162,6 +162,12 @@
       });
     }
   };
-
-  measures.setUp();
-})();
+  $(document).ready(function() {
+    measures.setUp();
+    $('.doorbell-show').click(function(e) {
+      if (typeof doorbell !== 'undefined') {
+        e.preventDefault();
+        doorbell.show();
+      }
+    });
+  });})();
