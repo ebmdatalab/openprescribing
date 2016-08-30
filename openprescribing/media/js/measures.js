@@ -1,4 +1,7 @@
 (function() {
+  global.jQuery = require('jquery');
+  global.$ = global.jQuery;
+  require('bootstrap');
   var _ = require('underscore');
   var mu = require('./src/measure_utils');
   var config = require('./src/config');
