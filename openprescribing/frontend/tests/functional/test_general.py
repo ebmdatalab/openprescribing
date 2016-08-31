@@ -9,7 +9,6 @@ from django.core import management
 
 class GeneralFrontendTest(SeleniumTestCase):
     def setUp(self):
-        import datetime
         fix_dir = 'frontend/tests/fixtures/'
         management.call_command('loaddata', fix_dir + 'chemicals.json',
                                 verbosity=0)
@@ -21,6 +20,27 @@ class GeneralFrontendTest(SeleniumTestCase):
                                 verbosity=0)
         management.call_command('loaddata', fix_dir + 'measures.json',
                                 verbosity=0)
+
+    def test_menu_dropdown(self):
+        for url in ['/ccg/03Q/',
+                    '/practice/P87629/',
+                    '/measure/cerazette/',
+                    '/chemical/0202010D0/',
+                    '/bnf/020201/',
+                    '/analyse/',
+                    '/about']:
+            url = self.live_server_url + url
+            self.browser.get(url)
+            try:
+                self.find_by_xpath("//a[contains(text(), 'More')]").click()
+            except AssertionError as e:
+                e.args += ("at URL %s" % url,)
+                raise
+            self.assertTrue(
+                self.find_by_xpath(
+                    "//a[contains(text(), 'About')]").is_displayed(),
+                "dropdown functionality broken at %s" % url
+            )
 
     def test_message_and_action(self):
         for url in ['/ccg/03Q/',
