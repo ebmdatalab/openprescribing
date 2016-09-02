@@ -63,7 +63,7 @@ class NewMeasures(object):
             dict_row[key] = value
         return self.drop_internal_cols(dict_row)
 
-    def query_and_return(self, query, table_id, convert=True):
+    def query_and_return(self, query, table_id, convert=True, legacy=False):
         print query
         payload = {
             "configuration": {
@@ -73,6 +73,7 @@ class NewMeasures(object):
                     "allowLargeResults": True,
                     "timeoutMs": 100000,
                     "useQueryCache": True,
+                    "useLegacySql": legacy,
                     "destinationTable": {
                         "projectId": 'ebmdatalab',
                         "tableId": table_id,
@@ -171,6 +172,13 @@ class NewMeasures(object):
             practice_cond = " AND practice = '{}'".format(practice_id)
             numerator_where += practice_cond
             denominator_where += practice_cond
+        numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
+        for col in self.get_custom_cols(measure_id, 'denominator'):
+            denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
+            aliased_denominators += ", denom_%s" % col
+        for col in self.get_custom_cols(measure_id, 'numerator'):
+            numerator_aliases += ", num.%s AS num_%s" % (col, col)
+            aliased_numerators += ", num_%s" % col
         fpath = os.path.dirname(__file__)
         sql_path = os.path.join(fpath, "./measure_sql/smoothed_ratios.sql")
         with open(sql_path, "r") as sql_file:
@@ -181,38 +189,49 @@ class NewMeasures(object):
                 numerator_columns=" ".join(measure['numerator_columns']),
                 denominator_columns=" ".join(measure['denominator_columns']),
                 denominator_from=measure['denominator_from'],
-                denominator_where=denominator_where
+                denominator_where=denominator_where,
+                numerator_aliases=numerator_aliases,
+                denominator_aliases=denominator_aliases,
+                aliased_denominators=aliased_denominators,
+                aliased_numerators=aliased_numerators,
+                today=datetime.datetime.now().strftime('%Y%m%d')
             )
             return self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
+
+    def get_custom_cols(self, measure_id, num_or_denom=None):
+        assert num_or_denom in ['numerator', 'denominator']
+        measure = self.measures[measure_id]
+        cols = []
+        for col in measure["%s_columns" % num_or_denom]:
+            alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
+            if alias != num_or_denom:
+                cols.append(alias)
+        return cols
 
     def calculate_global_centiles(self, measure_id):
         measure = self.measures[measure_id]
         extra_fields = []
-
-        for col in measure['numerator_columns']:
-            alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
-            if alias not in ["numerator", "denominator"]:
-                extra_fields.append("ratios_num_" + alias)
-        for col in measure['denominator_columns']:
-            alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
-            if alias not in ["numerator", "denominator"]:
-                extra_fields.append("ratios_denom_" + alias)
+        for col in self.get_custom_cols(measure_id, 'numerator'):
+            extra_fields.append("num_" + col)
+        for col in self.get_custom_cols(measure_id, 'denominator'):
+            extra_fields.append("denom_" + col)
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", SUM(%s) as %s" % (f, f)
         if measure["is_cost_based"]:
             extra_select_sql += """,
-SUM(ratios_denom_cost) / SUM(ratios_denom_quantity) AS cost_per_denom,
-SUM(ratios_num_cost) / SUM(ratios_num_quantity) as cost_per_num
+SUM(denom_cost) / SUM(denom_quantity) AS cost_per_denom,
+SUM(num_cost) / SUM(num_quantity) as cost_per_num
 """
 
         fpath = os.path.dirname(__file__)
         with open(os.path.join(fpath, "./measure_sql/global_deciles.sql")) as sql_file_2:
             sql = sql_file_2.read()
             sql = sql.format(
-                from_table="[measures.smoothed_ratios_%s]" % measure_id,
+                from_table="[ebmdatalab:measures.smoothed_ratios_%s]" % measure_id,
                 extra_select_sql=extra_select_sql)
-            return self.query_and_return(sql, "global_centiles_%s" % measure_id)
+            # We have to use legacy SQL because there' no PERCENTILE_CONT equivalent in the standard SQL
+            return self.query_and_return(sql, "global_centiles_%s" % measure_id, legacy=True)
 
     def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
         # See
@@ -252,4 +271,4 @@ SUM(ratios_num_cost) / SUM(ratios_num_quantity) as cost_per_num
 class Command(BaseCommand):
     def handle(self, *args, **options):
         NewMeasures().create_practice_measurevalues(
-            'cerazette', practice_id='A81032')
+            'cerazette')

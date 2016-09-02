@@ -1,52 +1,65 @@
 SELECT
-  *,
-  COALESCE(numerator / denominator, 0) AS raw_ratio,
-  COALESCE(numerator_in_window / denominator_in_window, 0) AS smoothed_ratio,
-  PERCENT_RANK() OVER (PARTITION BY month ORDER BY smoothed_ratio) AS percentile
+  numerator,
+  denominator,
+  practice_id,
+  pct_id,
+  DATE(month) AS month,
+  calc_value,
+  smoothed_calc_value,
+  PERCENT_RANK() OVER (PARTITION BY month ORDER BY smoothed_calc_value) AS percentile
+  {aliased_denominators}
+  {aliased_numerators}
 FROM (
   SELECT
     *,
-    DATE(month) AS month_fmt,
-    SUM(numerator) OVER (PARTITION BY practice ORDER BY month RANGE BETWEEN 1000000*3600*24*31*2 PRECEDING AND CURRENT ROW) AS numerator_in_window,
-    SUM(denominator) OVER (PARTITION BY practice ORDER BY month RANGE BETWEEN 1000000*3600*24*31*2 PRECEDING AND CURRENT ROW) AS denominator_in_window,
-    COUNT(month) OVER (PARTITION BY practice ORDER BY month RANGE BETWEEN 1000000*3600*24*31*2 PRECEDING AND CURRENT ROW) AS window_size
+    COALESCE(numerator / denominator, 0) AS calc_value,
+    COALESCE(numerator_in_window / denominator_in_window, 0) AS smoothed_calc_value
   FROM (
     SELECT
-    *,
-      num.numerator AS numerator,
-      denom.denominator AS denominator,
-      denom.practice AS practice,
-      denom.month AS month
+      *,
+      SUM(numerator) OVER (PARTITION BY practice_id ORDER BY month_secs RANGE BETWEEN 5356800 PRECEDING AND CURRENT ROW) AS numerator_in_window,
+      SUM(denominator) OVER (PARTITION BY practice_id ORDER BY month_secs RANGE BETWEEN 5356800 PRECEDING AND CURRENT ROW) AS denominator_in_window,
+      COUNT(month) OVER (PARTITION BY practice_id ORDER BY month_secs RANGE BETWEEN 5356800 PRECEDING AND CURRENT ROW) AS window_size
     FROM (
-      SELECT month, practice, {numerator_columns}
-      FROM
-        {numerator_from}
-      WHERE
-        {numerator_where}
-      GROUP BY
-        practice,
-        month) num
-    OUTER JOIN EACH (
-      SELECT month, practice, {denominator_columns}
-      FROM
-        {denominator_from}
-      WHERE
-        {denominator_where}
-      GROUP BY
-        practice,
-        month) denom
-    ON
-      (num.practice=denom.practice
-        AND num.month=denom.month)) ratios
-    INNER JOIN (
-      SELECT org_code, provider_purchaser AS ccg
-      FROM [ebmdatalab:hscic.epraccur]
-      WHERE
-        prescribing_setting = 4
-        AND (opendate < "20160901" OR opendate IS NULL)
-        AND (closedate > "20160901" OR closedate IS NULL)
-        ) practices
-    ON practices.org_code=ratios.practice
-    )
-WHERE
-  window_size = 3
+      SELECT
+        num.numerator AS numerator,
+        denom.denominator AS denominator,
+        denom.practice AS practice_id,
+        denom.month AS month,
+        UNIX_SECONDS(denom.month) AS month_secs
+        {numerator_aliases}
+        {denominator_aliases}
+      FROM (
+        SELECT month, practice, {numerator_columns}
+        FROM
+          {numerator_from}
+        WHERE
+          {numerator_where}
+        GROUP BY
+          practice,
+          month) num
+      FULL OUTER JOIN (
+        SELECT month, practice, {denominator_columns}
+        FROM
+          {denominator_from}
+        WHERE
+          {denominator_where}
+        GROUP BY
+          practice,
+          month) denom
+      ON
+        (num.practice=denom.practice
+          AND num.month=denom.month)) ratios
+      INNER JOIN (
+        SELECT org_code, provider_purchaser AS pct_id
+        FROM ebmdatalab.hscic.epraccur
+        WHERE
+          prescribing_setting = 4
+          AND (opendate < "{today}" OR opendate IS NULL)
+          AND (closedate > "{today}" OR closedate IS NULL)
+          ) practices
+      ON practices.org_code=ratios.practice_id
+      )
+  WHERE
+    window_size = 3
+)

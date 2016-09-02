@@ -25,7 +25,7 @@
       "SUM(quantity) AS numerator "
     ],
     "numerator_where": ["bnf_code LIKE '0703021Q0BB%'"],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
       "SUM(items) AS items, ",
       "SUM(actual_cost) AS cost, ",
@@ -33,7 +33,7 @@
       "SUM(quantity) AS denominator "
     ],
     "denominator_where": ["bnf_code LIKE '0703021Q0%'"],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
     "is_percentage": true,
     "is_cost_based": true,
     "low_is_good": true
@@ -63,7 +63,7 @@
     "numerator_where": [
       "bnf_code LIKE '0601023B0%'"
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
       "SUM(items) AS items, ",
       "SUM(items) AS denominator, ",
@@ -73,7 +73,7 @@
     "denominator_where": [
       "bnf_code LIKE '060102%'"
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
     "is_percentage": true,
     "is_cost_based": false,
     "low_is_good": true
@@ -117,7 +117,7 @@
       "((bnf_code LIKE '0801050AY%') ",
       "OR (bnf_code LIKE '1001010AH%'))"
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
       "SUM(items) AS items, ",
       "SUM(items) AS denominator, ",
@@ -127,7 +127,7 @@
     "denominator_where": [
       "(bnf_code LIKE '100101%')"
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
     "is_percentage": true,
     "is_cost_based": false,
     "low_is_good": true
@@ -158,7 +158,7 @@
     "numerator_where": [
       "(bnf_code IN ('0205051AAAAAAAA', '0205051AAAAABAB', '0205051AAAAACAC', '0205051C0AAAAAA', '0205051C0AAABAB', '0205051C0BBABAB', '0205051E0AAADAD', '0205051E0AAAEAE', '0205051E0BBABAB', '0205051E0BBAEAE', '0205051F0AAAKAK', '0205051F0AADUDU', '0205051F0BCABAE', '0205051I0BBAAAA', '0205051I0BBABAB', '0205051I0BBACAC', '0205051I0BBADAD', '0205051L0BBABAB', '0205051L0BBACAC', '0205051L0BBADAD', '0205051M0BBAAAA', '0205051M0BBABAB', '0205051M0BBACAF', '0205051Q0BBACAC', '0205051Q0BBADAD', '0205051Q0BCACAC', '0205051Q0BCADAD', '0205051R0BBAAAA', '0205051R0BBABAB', '0205051R0BBADAD', '0205051R0BBAFAK', '0205051R0BBAGAL', '0205051R0BBAHAM', '0205051R0BBAIAN', '0205051W0AAAAAA', '0205051W0AAABAB', '0205051W0AAACAC', '0205051W0BBAAAA', '0205051W0BBABAB', '0205051W0BBACAC', '0205051Y0AAAAAA', '0205051Y0AAABAB', '0205051Y0AAACAC', '0205051Y0BBAAAA', '0205051Y0BBABAB', '0205051Y0BBACAC'))"
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
       "SUM(items) AS items, ",
       "SUM(actual_cost) AS cost, ",
@@ -168,7 +168,7 @@
     "denominator_where": [
       "(bnf_code IN ('0205051AAAAAAAA', '0205051AAAAABAB', '0205051AAAAACAC', '0205051C0AAAAAA', '0205051C0AAABAB', '0205051C0BBABAB', '0205051E0AAADAD', '0205051E0AAAEAE', '0205051E0BBABAB', '0205051E0BBAEAE', '0205051F0AAADAD', '0205051F0AAAEAE', '0205051F0AAAFAF', '0205051F0AAAKAK', '0205051F0AADUDU', '0205051F0BCABAE', '0205051I0AAAAAA', '0205051I0AAABAB', '0205051I0AAACAC', '0205051I0AAADAD', '0205051I0BBAAAA', '0205051I0BBABAB', '0205051I0BBACAC', '0205051I0BBADAD', '0205051J0AAAAAA', '0205051J0AAABAB', '0205051J0BBAAAA', '0205051L0AAAAAA', '0205051L0AAABAB', '0205051L0AAACAC', '0205051L0AAADAD', '0205051L0BBABAB', '0205051L0BBACAC', '0205051L0BBADAD', '0205051M0AAAAAA', '0205051M0AAABAB', '0205051M0AAAFAF', '0205051M0BBAAAA', '0205051M0BBABAB', '0205051M0BBACAF', '0205051Q0AAAAAA', '0205051Q0AAABAB', '0205051Q0AAACAC', '0205051Q0AAADAD', '0205051Q0BBAAAA', '0205051Q0BBABAB', '0205051Q0BBACAC', '0205051Q0BBADAD', '0205051Q0BCAAAA', '0205051Q0BCABAB', '0205051Q0BCACAC', '0205051Q0BCADAD', '0205051R0AAAAAA', '0205051R0AAABAB', '0205051R0AAACAC', '0205051R0AAADAD', '0205051R0AAAKAK', '0205051R0AAALAL', '0205051R0AAAMAM', '0205051R0AAANAN', '0205051R0BBAAAA', '0205051R0BBABAB', '0205051R0BBADAD', '0205051R0BBAFAK', '0205051R0BBAGAL', '0205051R0BBAHAM', '0205051R0BBAIAN', '0205051U0AAAAAA', '0205051U0AAABAB', '0205051U0AAACAC', '0205051U0AAAFAF', '0205051U0BBAAAA', '0205051U0BBACAC', '0205051U0BBADAF', '0205051W0AAAAAA', '0205051W0AAABAB', '0205051W0AAACAC', '0205051W0BBAAAA', '0205051W0BBABAB', '0205051W0BBACAC', '0205051Y0AAAAAA', '0205051Y0AAABAB', '0205051Y0AAACAC', '0205051Y0BBAAAA', '0205051Y0BBABAB', '0205051Y0BBACAC'))"
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
     "is_percentage": true,
     "is_cost_based": true,
     "low_is_good": true
@@ -195,12 +195,12 @@
     ],
     "numerator_where": [
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
     ],
     "denominator_where": [
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
 
     "num_sql": [
       "SELECT SUM(items) AS items, ",
@@ -248,12 +248,12 @@
     ],
     "numerator_where": [
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
     ],
     "denominator_where": [
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
 
     "num_sql": [
       "SELECT SUM(items) AS items, ",
@@ -301,12 +301,12 @@
     ],
     "numerator_where": [
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
     ],
     "denominator_where": [
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
 
     "num_sql": [
       "SELECT SUM(items) AS items, ",
@@ -358,12 +358,12 @@
     ],
     "numerator_where": [
     ],
-    "numerator_from": "[ebmdatalab:hscic.prescribing]",
+    "numerator_from": "ebmdatalab.hscic.prescribing",
     "denominator_columns": [
     ],
     "denominator_where": [
     ],
-    "denominator_from": "[ebmdatalab:hscic.prescribing]",
+    "denominator_from": "ebmdatalab.hscic.prescribing",
 
     "num_sql": [
       "SELECT SUM(items) AS items, ",
