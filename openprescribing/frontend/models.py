@@ -387,6 +387,7 @@ class MeasureValue(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
+    smoothed_calc_value = models.FloatField(null=True, blank=True)
 
     # Optionally store the raw values, where appropriate.
     # Cost and quantity are used for calculating cost savings.
@@ -431,17 +432,23 @@ class MeasureGlobal(models.Model):
     denom_cost = models.FloatField(null=True, blank=True)
     num_quantity = models.FloatField(null=True, blank=True)
     denom_quantity = models.FloatField(null=True, blank=True)
+    cost_per_num = models.FloatField(null=True, blank=True)
+    cost_per_denom = models.FloatField(null=True, blank=True)
 
     # Percentile values for practices.
     percentiles = JSONField(null=True, blank=True)
     cost_savings = JSONField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        if self.denominator is not None:
+            self.denominator = float(self.denominator)
+        if self.numerator is not None:
+            self.numerator = float(self.numerator)
         if self.denominator:
             if self.numerator:
-                self.value = self.numerator / self.denominator
+                self.calc_value = self.numerator / self.denominator
             else:
-                self.value = self.numerator
+                self.calc_value = self.numerator
         else:
             self.value = None
         super(MeasureGlobal, self).save(*args, **kwargs)
