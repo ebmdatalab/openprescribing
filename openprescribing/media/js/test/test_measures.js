@@ -450,11 +450,11 @@ describe('Measures', function() {
         'data': [],
         'isPercentage': false,
         'id': 'somethingMissing',
-      }]
+      }];
       expect(
         function () {
           mu.addChartAttributes(
-            data, [], [], [], {'orgType': '', 'rollUpBy': 'measure_id'}, 0)
+            data, [], [], [], {'orgType': '', 'rollUpBy': 'measure_id'}, 0);
         }).to.not.throw(TypeError);
     });
 
