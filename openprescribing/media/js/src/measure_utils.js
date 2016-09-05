@@ -277,7 +277,9 @@ var utils = {
         // If each chart is a different measure, get the
         // centiles for that measure, and if lowIsGood
         var series = _.findWhere(globalData, {id: d.id});
-        d.lowIsGood = series.low_is_good;
+        if (typeof series !== 'undefined') {
+          d.lowIsGood = series.low_is_good;
+        }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
           d.globalCentiles[i] = _this._addHighchartsXAndY(series.data,
