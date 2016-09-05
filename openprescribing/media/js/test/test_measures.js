@@ -445,6 +445,18 @@ describe('Measures', function() {
   });
 
   describe('#addChartAttributes', function() {
+    it('should not error when a given measure is missing', function () {
+      var data = [{
+        'data': [],
+        'isPercentage': false,
+        'id': 'somethingMissing',
+      }]
+      expect(
+        function () {
+          mu.addChartAttributes(
+            data, [], [], [], {'orgType': '', 'rollUpBy': 'measure_id'}, 0)
+        }).to.not.throw(TypeError);
+    });
 
     it('sets the expected title, URL, and descriptions for all-CCG charts', function() {
       var data = [
