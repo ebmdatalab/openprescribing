@@ -259,6 +259,8 @@ var utils = {
     _.each(data, function(d) {
       d.data = _this._addHighchartsXAndY(d.data, false,
         d.isPercentage, options, null);
+      d.smoothedData = _this._addHighchartsXAndYSmoothed(d.data, false,
+        d.isPercentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
         // centiles for that measure, and if lowIsGood
@@ -296,6 +298,27 @@ var utils = {
           parseFloat(p[org][centile]) : null;
       } else {
         d.y = (d.calc_value === null) ? null : parseFloat(d.calc_value);
+      }
+      if (isPercentage) {
+        d.y = (isPercentage && d.y) ? d.y * 100 : d.y;
+      }
+    });
+    return dataCopy;
+  },
+  _addHighchartsXAndYSmoothed: function(data, isGlobal, isPercentage,
+      options, centile) {
+    // Add X and Y attributes in the format that Highcharts expects.
+    var dataCopy = JSON.parse(JSON.stringify(data));
+    _.each(dataCopy, function(d, i) {
+      var dates = d.date.split('-');
+      d.x = Date.UTC(dates[0], dates[1] - 1, dates[2]);
+      if (isGlobal) {
+        var p = d.percentiles;
+        var org = options.orgType.toLowerCase();
+        d.y = (p && p[org] && p[org][centile] !== null) ?
+          parseFloat(p[org][centile]) : null;
+      } else {
+        d.y = (d.smoothed_calc_value === null) ? null : parseFloat(d.smoothed_calc_value);
       }
       if (isPercentage) {
         d.y = (isPercentage && d.y) ? d.y * 100 : d.y;
@@ -365,6 +388,14 @@ var utils = {
           radius: 2
         }
       }];
+      hcOptions.series.push({
+        name: 'That ' + options.orgType,
+        isNationalSeries: false,
+        data: d.smoothedData,
+        color: 'green',
+        marker: {
+          radius: 1
+        }});
       _.each(_.keys(d.globalCentiles), function(k) {
         var e = {
           name: k + 'th percentile nationally',
