@@ -38,7 +38,7 @@ FROM (
         GROUP BY
           practice,
           month) num
-      FULL OUTER JOIN (
+      RIGHT JOIN (
         SELECT month, practice, {denominator_columns}
         FROM
           {denominator_from}
