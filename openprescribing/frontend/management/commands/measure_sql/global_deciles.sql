@@ -15,15 +15,15 @@ SELECT
 FROM (
   SELECT
     *,
-    PERCENTILE_CONT(0.1) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_10th,
-    PERCENTILE_CONT(0.2) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_20th,
-    PERCENTILE_CONT(0.3) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_30th,
-    PERCENTILE_CONT(0.4) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_40th,
-    PERCENTILE_CONT(0.5) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_50th,
-    PERCENTILE_CONT(0.6) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_60th,
-    PERCENTILE_CONT(0.7) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_70th,
-    PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_80th,
-    PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY smoothed_calc_value ASC) AS p_90th
+    PERCENTILE_CONT(0.1) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_10th,
+    PERCENTILE_CONT(0.2) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_20th,
+    PERCENTILE_CONT(0.3) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_30th,
+    PERCENTILE_CONT(0.4) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_40th,
+    PERCENTILE_CONT(0.5) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_50th,
+    PERCENTILE_CONT(0.6) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_60th,
+    PERCENTILE_CONT(0.7) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_70th,
+    PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_80th,
+    PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_90th
   FROM {from_table}
   )
   GROUP BY month

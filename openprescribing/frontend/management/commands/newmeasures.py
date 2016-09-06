@@ -2,13 +2,16 @@ import time
 import re
 import os
 import datetime
-from oauth2client.client import GoogleCredentials
-from googleapiclient import discovery
-from django.db import transaction
-from django.core.management.base import BaseCommand
+import csv
 import json
 import glob
 import sys
+
+from oauth2client.client import GoogleCredentials
+from googleapiclient import discovery
+
+from django.db import transaction
+from django.core.management.base import BaseCommand
 
 from frontend.models import Measure, MeasureGlobal
 from frontend.models import MeasureValue, Practice, PCT
@@ -208,7 +211,7 @@ class NewMeasures(object):
                 cols.append(alias)
         return cols
 
-    def calculate_global_centiles(self, measure_id):
+    def calculate_global_centiles(self, measure_id, unit='practice'):
         measure = self.measures[measure_id]
         extra_fields = []
         for col in self.get_custom_cols(measure_id, 'numerator'):
@@ -223,15 +226,65 @@ class NewMeasures(object):
 SUM(denom_cost) / SUM(denom_quantity) AS cost_per_denom,
 SUM(num_cost) / SUM(num_quantity) as cost_per_num
 """
-
         fpath = os.path.dirname(__file__)
         with open(os.path.join(fpath, "./measure_sql/global_deciles.sql")) as sql_file_2:
+            if unit == 'practice':
+                value_var = 'smoothed_calc_value'
+                from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
+            else:
+                value_var = 'calc_value'
+                from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
             sql = sql_file_2.read()
             sql = sql.format(
-                from_table="[ebmdatalab:measures.smoothed_ratios_%s]" % measure_id,
-                extra_select_sql=extra_select_sql)
-            # We have to use legacy SQL because there' no PERCENTILE_CONT equivalent in the standard SQL
-            return self.query_and_return(sql, "global_centiles_%s" % measure_id, legacy=True)
+                from_table=from_table,
+                extra_select_sql=extra_select_sql,
+                value_var=value_var
+            )
+            # We have to use legacy SQL because there' no
+            # PERCENTILE_CONT equivalent in the standard SQL
+            self.query_and_return(
+                sql, "global_centiles_%s_%s" % (unit, measure_id), legacy=True)
+
+    def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
+        """Depends on the practice ratios table having been generated
+        (e.g. smoothed_ratios_cerazette)
+
+        """
+        fpath = os.path.dirname(__file__)
+        # calculate ratios
+        with open(os.path.join(
+                fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
+            sql = sql_file.read()
+            numerator_aliases = denominator_aliases = ''
+            for col in self.get_custom_cols(measure_id, 'denominator'):
+                denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (col, col)
+            for col in self.get_custom_cols(measure_id, 'numerator'):
+                numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
+            from_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
+            sql = sql.format(denominator_aliases=denominator_aliases,
+                             numerator_aliases=numerator_aliases,
+                             from_table=from_table)
+            self.query_and_return(sql, "ccg_ratios_%s" % measure_id)
+            for datum in self.get_rows("ccg_ratios_%s" % measure_id):
+                datum['measure_id'] = measure_id
+                MeasureValue.objects.create(**datum)
+        # calculate centiles
+        self.calculate_global_centiles(measure_id, unit='ccg')
+        for d in self.get_rows("global_centiles_ccg_%s" % measure_id):
+            month_ccg_deciles = {}
+            d['measure_id'] = measure_id
+            # cast strings to numbers for the after-save hook in
+            # the MeasureGlobal model
+            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                month_ccg_deciles[str(c)] = float(d.pop("p_%sth" % c))
+            mg, created = MeasureGlobal.objects.get_or_create(
+                measure=measure_id,
+                month=d['month']
+            )
+            mg.percentiles = {'ccg' : month_ccg_deciles}
+            mg.save()
+        print "Created %s measureglobals" % c
+
 
     def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
         # See
@@ -239,13 +292,20 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         # Note when we upgrade to postgres 9.5 we can use `INSERT
         # ... ON CONFLICT UPDATE`
         start = datetime.datetime.now()
-        with transaction.atomic():
+        with open("/tmp/measures.csv", "w") as f:
             MeasureValue.objects.filter(measure=measure_id).delete()
-            ratios = self.calculate_smoothed_ratios(measure_id, month, practice_id)
-            deciles = self.calculate_global_centiles(measure_id)
+            self.calculate_smoothed_ratios(measure_id, month, practice_id)
+            self.calculate_global_centiles(measure_id)
+            fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
+                          'denominator', 'smoothed_calc_value', 'month',
+                          'percentile', 'calc_value', 'denom_items',
+                          'denom_quantity', 'denom_cost', 'num_cost',
+                          'num_quantity', 'practice_id']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
             c = 0
             for datum in self.get_rows("smoothed_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
+                writer.writerow(datum)
                 MeasureValue.objects.create(**datum)
                 c += 1
                 if c % 1000 == 0:
@@ -253,7 +313,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
             print "Created %s measurevalues" % c
             MeasureGlobal.objects.filter(measure=measure_id).delete()
             c = 0
-            for d in self.get_rows("global_centiles_%s" % measure_id):
+            for d in self.get_rows("global_centiles_practice_%s" % measure_id):
                 month_practice_deciles = {}
                 d['measure_id'] = measure_id
                 # cast strings to numbers for the after-save hook in
@@ -270,5 +330,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        NewMeasures().create_practice_measurevalues(
+        #NewMeasures().create_practice_measurevalues(
+        #'cerazette')
+        NewMeasures().create_ccg_measurevalues(
             'cerazette')
