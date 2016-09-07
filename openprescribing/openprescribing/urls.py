@@ -63,6 +63,11 @@ urlpatterns = [
 
     url(r'^api/1.0/', include('api.urls')),
 
+    url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',
+        frontend_views.gdoc_view,
+        name='docs'),
+
+
     # Other files.
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='robots.txt',
                                                 content_type='text/plain')),
