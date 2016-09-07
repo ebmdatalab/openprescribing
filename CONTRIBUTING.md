@@ -8,7 +8,7 @@ We use GitHub issues for suggestions, and [Trello](https://trello.com/b/RGR9BttD
 
 We have unit tests for Python: `python manage.py test` and for JavaScript: `npm run test`. See the README for more details on setting up the project, and running tests.
 
-The documentation could be undoubtedly be better: tell mail@openprescribing.net if you get stuck, or have any suggestions.
+The documentation could be undoubtedly be better: tell openprescribing-support@googlegroups.com if you get stuck, or have any suggestions.
 
 ## Submitting changes
 

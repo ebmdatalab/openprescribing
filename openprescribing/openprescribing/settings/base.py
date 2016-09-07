@@ -129,6 +129,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+                'frontend.context_processors.support_email'
             ],
             'debug': DEBUG
         },
@@ -236,19 +237,19 @@ REST_FRAMEWORK = {
     ),
 }
 
-SWAGGER_SETTINGS = {
-    'info': {
-        'contact': 'mail@openprescribing.net',
-        'description': 'description goes here',
-        'title': 'Title',
-    }
-}
-
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
     'GET'
 )
+SUPPORT_EMAIL = 'openprescribing-support@googlegroups.com'
+SWAGGER_SETTINGS = {
+    'info': {
+        'contact': SUPPORT_EMAIL,
+        'description': 'description goes here',
+        'title': 'Title',
+    }
+}
 GDOC_DOCS = {
     'zooming': '1lz1uRfNOy2fQ-xSy_6BiLV_7Mgr-Z2V0-VWzo6HlCO0',
     'analyse': '1HqlJlUA86cnlyJpUxiQdGsM46Gsv9xyZkmhkTqjbwH0',
