@@ -1,7 +1,9 @@
 from pyquery import PyQuery as pq
 from django.core import management
 from django.test import TestCase
+from django.conf import settings
 from frontend.models import Measure, MeasureValue, MeasureGlobal
+
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
@@ -204,3 +206,8 @@ class TestFrontendViews(TestCase):
     def test_call_view_ccg_redirect(self):
         response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 301)
+
+    def test_gdoc_inclusion(self):
+        for doc_id in settings.GDOC_DOCS.keys():
+            response = self.client.get("/docs/%s/" % doc_id)
+            self.assertEqual(response.status_code, 200)
