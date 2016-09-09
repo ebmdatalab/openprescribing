@@ -339,8 +339,7 @@ var queryForm = {
         return str;
       },
       ajax: {
-        url: config.apiHost + "/api/1.0/bnf_code/",
-        dataType: 'json',
+        url: config.apiHost + "/api/1.0/bnf_code/?format=json",
         delay: 50,
         data: function(params) {
           return {

@@ -61,6 +61,15 @@ class GeneralFrontendTest(SeleniumTestCase):
                 "get in touch functionality broken at %s" % url
             )
 
+    def test_drug_name_typeahead(self):
+        self.browser.get(self.live_server_url + '/analyse/')
+        el = self.find_by_xpath(
+            '//div[@id="denomIds-wrapper"]'
+            '//input[@class="select2-search__field"]')
+        el.send_keys("chl")
+        # This should succeed; if not, the JSON dropdown-filling has not:
+        self.find_by_xpath('//ul[@id="select2-denomIds-results"]//li')
+
     def test_ccg_measures_sorting(self):
         # add CCGs and one measure
         setUpMeasures()
