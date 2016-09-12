@@ -235,6 +235,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework_csv.renderers.CSVRenderer',
     ),
+    'DEFAULT_CONTENT_NEGOTIATION_CLASS':
+    'frontend.negotiation.IgnoreAcceptsContentNegotiation',
 }
 
 CORS_URLS_REGEX = r'^/api/.*$'
