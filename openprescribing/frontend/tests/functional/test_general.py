@@ -70,6 +70,18 @@ class GeneralFrontendTest(SeleniumTestCase):
         # This should succeed; if not, the JSON dropdown-filling has not:
         self.find_by_xpath('//ul[@id="select2-denomIds-results"]//li')
 
+    def test_practice_name_typeahead(self):
+        self.browser.get(self.live_server_url + '/analyse/')
+        self.find_by_xpath('//span[@id="select2-org-container"]').click()
+        self.find_by_xpath(
+            '//li[contains(text(), "a practice or practices")]').click()
+        el = self.find_by_xpath(
+            '//div[@id="orgIds-container"]'
+            '//input[@class="select2-search__field"]')
+        el.send_keys("ains")
+        # This should succeed; if not, the JSON dropdown-filling has not:
+        self.find_by_xpath('//ul[@id="select2-orgIds-results"]//li')
+
     def test_ccg_measures_sorting(self):
         # add CCGs and one measure
         setUpMeasures()

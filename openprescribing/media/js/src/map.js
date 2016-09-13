@@ -190,7 +190,7 @@ var analyseMap = {
   },
 
   getBoundsUrl: function(options) {
-    var boundsUrl = config.apiHost + '/api/1.0/org_location/?';
+    var boundsUrl = config.apiHost + '/api/1.0/org_location/?format=json&';
     if (options.org === 'CCG') {
       boundsUrl += 'org_type=ccg';
     } else {
