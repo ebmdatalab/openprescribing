@@ -281,6 +281,8 @@ class Command(BaseCommand):
                         mv.denom_quantity = float(d['quantity'])
                 else:
                     mv.denominator = None
+                # ends up being null if denominator is 0 or null or the numerator is null
+                # such values are skipped when computing percentile ranking
                 mv.calc_value = self.get_calc_value(
                     mv.numerator, mv.denominator)
                 mv.save()
@@ -326,6 +328,8 @@ class Command(BaseCommand):
             # Cerazette as a proportion of all desogesterel, in this case
             # we're interested in the mean price paid for everything that
             # wasn't branded Cerazette.)
+
+            # so where they are both the same, we use a cost from the globals?
             actual_non_num_quant = row.denom_quantity - row.num_quantity
             actual_non_num_cost = row.denom_cost - row.num_cost
             if actual_non_num_quant:

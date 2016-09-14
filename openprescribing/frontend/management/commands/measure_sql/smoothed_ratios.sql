@@ -2,11 +2,12 @@ SELECT
   numerator,
   denominator,
   practice_id,
-  pct_id,
+  ccg_id AS pct_id,
   DATE(month) AS month,
   calc_value,
   smoothed_calc_value,
-  PERCENT_RANK() OVER (PARTITION BY month ORDER BY smoothed_calc_value) AS percentile
+  -- this should be smoothed_calc_value
+  PERCENT_RANK() OVER (PARTITION BY month ORDER BY calc_value) AS percentile
   {aliased_denominators}
   {aliased_numerators}
 FROM (
@@ -50,16 +51,9 @@ FROM (
       ON
         (num.practice=denom.practice
           AND num.month=denom.month)) ratios
-      INNER JOIN (
-        SELECT org_code, provider_purchaser AS pct_id
-        FROM ebmdatalab.hscic.epraccur
-        WHERE
-          prescribing_setting = 4
-          AND (opendate < "{today}" OR opendate IS NULL)
-          AND (closedate > "{today}" OR closedate IS NULL)
-          ) practices
-      ON practices.org_code=ratios.practice_id
+      INNER JOIN
+        ebmdatalab.hscic.practices
+      ON practices.setting = 4 AND practices.code=ratios.practice_id AND (practices.open_date < FORMAT_TIMESTAMP('%Y-%m-%d', ratios.month) OR practices.open_date IS NULL) AND (practices.close_date > FORMAT_TIMESTAMP('%Y-%m-%d', ratios.month) or practices.close_date IS NULL)
       )
-  WHERE
-    window_size = 3
+      --- WHERE window_size = 3
 )

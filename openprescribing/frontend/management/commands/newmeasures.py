@@ -7,19 +7,23 @@ import json
 import glob
 import sys
 
+import psycopg2
+
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 
-from django.db import transaction
 from django.core.management.base import BaseCommand
 
-from frontend.models import Measure, MeasureGlobal
-from frontend.models import MeasureValue, Practice, PCT
+from frontend.models import MeasureGlobal
+from frontend.models import MeasureValue
+
+from common import utils
 
 
-class NewMeasures(object):
+class NewMeasures(BaseCommand):
     def __init__(self):
         super(NewMeasures, self).__init__()
+        self.fpath = os.path.dirname(__file__)
         credentials = GoogleCredentials.get_application_default()
         self.bigquery = discovery.build('bigquery', 'v2',
                                         credentials=credentials)
@@ -117,10 +121,9 @@ class NewMeasures(object):
 
     def parse_measures(self):
         self.measures = {}
-        fpath = os.path.dirname(__file__)
-        files = glob.glob(os.path.join(fpath, "./new_measure_definitions/*.json"))
+        files = glob.glob(os.path.join(self.fpath, "./new_measure_definitions/*.json"))
         for fname in files:
-            fname = os.path.join(fpath, fname)
+            fname = os.path.join(self.fpath, fname)
             json_data = open(fname).read()
             d = json.loads(json_data)
             for k in d:
@@ -182,8 +185,7 @@ class NewMeasures(object):
         for col in self.get_custom_cols(measure_id, 'numerator'):
             numerator_aliases += ", num.%s AS num_%s" % (col, col)
             aliased_numerators += ", num_%s" % col
-        fpath = os.path.dirname(__file__)
-        sql_path = os.path.join(fpath, "./measure_sql/smoothed_ratios.sql")
+        sql_path = os.path.join(self.fpath, "./measure_sql/smoothed_ratios.sql")
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
             sql = sql.format(
@@ -196,8 +198,7 @@ class NewMeasures(object):
                 numerator_aliases=numerator_aliases,
                 denominator_aliases=denominator_aliases,
                 aliased_denominators=aliased_denominators,
-                aliased_numerators=aliased_numerators,
-                today=datetime.datetime.now().strftime('%Y%m%d')
+                aliased_numerators=aliased_numerators
             )
             return self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
 
@@ -223,16 +224,15 @@ class NewMeasures(object):
             extra_select_sql += ", SUM(%s) as %s" % (f, f)
         if measure["is_cost_based"]:
             extra_select_sql += """,
-SUM(denom_cost) / SUM(denom_quantity) AS cost_per_denom,
+(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity) - SUM(num_quantity)) AS cost_per_denom,
 SUM(num_cost) / SUM(num_quantity) as cost_per_num
 """
-        fpath = os.path.dirname(__file__)
-        with open(os.path.join(fpath, "./measure_sql/global_deciles.sql")) as sql_file_2:
+        with open(os.path.join(self.fpath, "./measure_sql/global_deciles.sql")) as sql_file_2:
+            value_var = 'calc_value'
+            # XXX or smoothed_calc_value? Presumably no
             if unit == 'practice':
-                value_var = 'smoothed_calc_value'
                 from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
             else:
-                value_var = 'calc_value'
                 from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
             sql = sql_file_2.read()
             sql = sql.format(
@@ -250,10 +250,9 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         (e.g. smoothed_ratios_cerazette)
 
         """
-        fpath = os.path.dirname(__file__)
         # calculate ratios
         with open(os.path.join(
-                fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
+                self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
             sql = sql_file.read()
             numerator_aliases = denominator_aliases = ''
             for col in self.get_custom_cols(measure_id, 'denominator'):
@@ -270,6 +269,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
                 MeasureValue.objects.create(**datum)
         # calculate centiles
         self.calculate_global_centiles(measure_id, unit='ccg')
+        # XXX it is only now we can compute cost savings for CCGs
         for d in self.get_rows("global_centiles_ccg_%s" % measure_id):
             month_ccg_deciles = {}
             d['measure_id'] = measure_id
@@ -286,51 +286,91 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         print "Created %s measureglobals" % c
 
 
-    def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
-        # See
-        # http://stackoverflow.com/questions/17267417/how-to-upsert-merge-insert-on-duplicate-update-in-postgresql
-        # Note when we upgrade to postgres 9.5 we can use `INSERT
-        # ... ON CONFLICT UPDATE`
-        start = datetime.datetime.now()
+    def calculate_cost_savings(self, measure_id, month=None, practice_id=None):
+        # Seems we can overwrite a table that we're querying.
+        sql_path = os.path.join(self.fpath, "./measure_sql/practice_cost_savings.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            ratios_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
+            sql = sql.format(
+                local_table=ratios_table,
+                global_table="ebmdatalab.measures.global_centiles_practice_%s" % measure_id)
+            self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
+
+
+    def write_ratios_to_database(self, measure_id):
+        fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
+                      'denominator', 'smoothed_calc_value', 'month',
+                      'percentile', 'calc_value', 'denom_items',
+                      'denom_quantity', 'denom_cost', 'num_cost',
+                      'num_quantity', 'practice_id']
         with open("/tmp/measures.csv", "w") as f:
-            MeasureValue.objects.filter(measure=measure_id).delete()
-            self.calculate_smoothed_ratios(measure_id, month, practice_id)
-            self.calculate_global_centiles(measure_id)
-            fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
-                          'denominator', 'smoothed_calc_value', 'month',
-                          'percentile', 'calc_value', 'denom_items',
-                          'denom_quantity', 'denom_cost', 'num_cost',
-                          'num_quantity', 'practice_id']
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             c = 0
             for datum in self.get_rows("smoothed_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
                 writer.writerow(datum)
-                MeasureValue.objects.create(**datum)
-                c += 1
-                if c % 1000 == 0:
-                    print ".",
-            print "Created %s measurevalues" % c
-            MeasureGlobal.objects.filter(measure=measure_id).delete()
-            c = 0
-            for d in self.get_rows("global_centiles_practice_%s" % measure_id):
-                month_practice_deciles = {}
-                d['measure_id'] = measure_id
-                # cast strings to numbers for the after-save hook in
-                # the MeasureGlobal model
-                for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                    month_practice_deciles[str(c)] = float(d.pop("p_%sth" % c))
-                d['percentiles'] = {'practice' : month_practice_deciles}
-                c += 1
-                MeasureGlobal.objects.create(**d)
-            print "Created %s measureglobals" % c
+        print "Commiting data to database...."
+        with open("/tmp/measures.csv", "r") as f:
+            copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
+            copy_str += "WITH (FORMAT csv)"
+            print copy_str % ", ".join(fieldnames)
+            self.conn.cursor().copy_expert(copy_str % ", ".join(fieldnames), f)
+            self.conn.commit()
 
+    def write_global_centiles_to_database(self, measure_id):
+        # XXX if month specified, only delete that month
+        MeasureGlobal.objects.filter(measure=measure_id).delete()
+        c = 0
+        print datetime.datetime.now()
+        for d in self.get_rows("global_centiles_practice_%s" % measure_id):
+            month_practice_deciles = {}
+            d['measure_id'] = measure_id
+            # cast strings to numbers for the after-save hook in
+            # the MeasureGlobal model
+            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                month_practice_deciles[str(c)] = float(d.pop("p_%sth" % c))
+            d['percentiles'] = {'practice' : month_practice_deciles}
+            c += 1
+            MeasureGlobal.objects.create(**d)
+
+    def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
+        start = datetime.datetime.now()
+        fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
+                      'denominator', 'smoothed_calc_value', 'month',
+                      'percentile', 'calc_value', 'denom_items',
+                      'denom_quantity', 'denom_cost', 'num_cost',
+                      'num_quantity', 'practice_id']
+        # compute ratios for each pratice, and global centiles
+        MeasureValue.objects.filter(measure=measure_id).delete()
+        #self.calculate_smoothed_ratios(measure_id, month, practice_id)
+        #self.calculate_global_centiles(measure_id)
+        # now compute cost savings (updating the per-practice ratio
+        # table). This depends on the previous two to run correctly
+        self.calculate_cost_savings(measure_id, month, practice_id)
+
+        #self.write_ratios_to_database(measure_id) # XXX with cost savings
+        #self.write_global_centiles_to_database(measure_id)
         print "%s elapsed" % (datetime.datetime.now() - start)
 
 
-class Command(BaseCommand):
+class Command(NewMeasures):
+    def setUpDb(self):
+        db_name = utils.get_env_setting('DB_NAME')
+        db_user = utils.get_env_setting('DB_USER')
+        db_pass = utils.get_env_setting('DB_PASS')
+        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
+        self.conn = psycopg2.connect(database=db_name, user=db_user,
+                                     password=db_pass, host=db_host)
+
     def handle(self, *args, **options):
-        #NewMeasures().create_practice_measurevalues(
-        #'cerazette')
-        NewMeasures().create_ccg_measurevalues(
+        self.setUpDb()
+
+        self.create_practice_measurevalues(
             'cerazette')
+        #self.create_ccg_measurevalues(
+        #    'cerazette')
+
+# TO generate perfect copy of practices:
+# COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
+# see hscic:practices  in BQ for schema. This will need automatic uploading from runner.py
