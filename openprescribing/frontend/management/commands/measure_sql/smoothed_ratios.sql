@@ -5,16 +5,14 @@ SELECT
   ccg_id AS pct_id,
   DATE(month) AS month,
   calc_value,
-  smoothed_calc_value,
-  -- this should be smoothed_calc_value
-  PERCENT_RANK() OVER (PARTITION BY month ORDER BY calc_value) AS percentile
+  smoothed_calc_value
   {aliased_denominators}
   {aliased_numerators}
 FROM (
   SELECT
     *,
-    COALESCE(numerator / denominator, 0) AS calc_value,
-    COALESCE(numerator_in_window / denominator_in_window, 0) AS smoothed_calc_value
+    numerator / denominator AS calc_value,
+    numerator_in_window / denominator_in_window AS smoothed_calc_value
   FROM (
     SELECT
       *,

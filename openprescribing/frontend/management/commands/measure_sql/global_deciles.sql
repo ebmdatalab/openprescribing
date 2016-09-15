@@ -25,6 +25,6 @@ FROM (
     PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_80th,
     PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_90th
   FROM {from_table}
-  )
+  WHERE {value_var} IS NOT NULL)
   GROUP BY month
   ORDER BY month

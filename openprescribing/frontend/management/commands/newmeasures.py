@@ -203,6 +203,24 @@ class NewMeasures(BaseCommand):
             )
             return self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
 
+    def add_percent_rank(self, measure_id, unit=None):
+        if unit == 'practice':
+            from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
+            target_table = "smoothed_ratios_%s" % measure_id
+            value_var = 'calc_value' # XXX will want to make this smoothed in the future
+        else:
+            from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
+            target_table = "ccg_ratios_%s" % measure_id
+            value_var = 'calc_value'
+        sql_path = os.path.join(self.fpath, "./measure_sql/percent_rank.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            sql = sql.format(
+                from_table=from_table,
+                target_table=target_table,
+                value_var=value_var)
+            return self.query_and_return(sql, target_table, legacy=True)
+
     def get_custom_cols(self, measure_id, num_or_denom=None):
         assert num_or_denom in ['numerator', 'denominator']
         measure = self.measures[measure_id]
@@ -295,6 +313,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
 
         """
         self.calculate_ccg_ratios(measure_id, month, practice_id)
+        self.add_percent_rank(measure_id, unit='ccg')
         # calculate centiles
         self.calculate_global_centiles(measure_id, unit='ccg')
         # XXX it is only now we can compute cost savings for CCGs
@@ -368,8 +387,9 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         start = datetime.datetime.now()
         # compute ratios for each pratice, and global centiles
         MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
-        #self.calculate_smoothed_ratios(measure_id, month, practice_id)
-        #self.calculate_global_centiles(measure_id)
+        self.calculate_smoothed_ratios(measure_id, month, practice_id)
+        self.add_percent_rank(measure_id, unit='practice')
+        self.calculate_global_centiles(measure_id)
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
         # XXX we can skip this step if it's not a cost-saving measure!
@@ -391,10 +411,10 @@ class Command(NewMeasures):
     def handle(self, *args, **options):
         self.setUpDb()
 
-        #self.create_practice_measurevalues(
-        #    'cerazette')
-        self.create_ccg_measurevalues(
+        self.create_practice_measurevalues(
             'cerazette')
+        #self.create_ccg_measurevalues(
+        #    'cerazette')
 
 # TO generate perfect copy of practices:
 # COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
