@@ -13,6 +13,7 @@ from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
@@ -245,11 +246,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
             self.query_and_return(
                 sql, "global_centiles_%s_%s" % (unit, measure_id), legacy=True)
 
-    def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
-        """Depends on the practice ratios table having been generated
-        (e.g. smoothed_ratios_cerazette)
-
-        """
+    def calculate_ccg_ratios(self, measure_id, month, practice_id):
         # calculate ratios
         with open(os.path.join(
                 self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
@@ -264,12 +261,8 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
                              numerator_aliases=numerator_aliases,
                              from_table=from_table)
             self.query_and_return(sql, "ccg_ratios_%s" % measure_id)
-            for datum in self.get_rows("ccg_ratios_%s" % measure_id):
-                datum['measure_id'] = measure_id
-                MeasureValue.objects.create(**datum)
-        # calculate centiles
-        self.calculate_global_centiles(measure_id, unit='ccg')
-        # XXX it is only now we can compute cost savings for CCGs
+
+    def write_global_centiles_to_database(self, measure_id):
         for d in self.get_rows("global_centiles_ccg_%s" % measure_id):
             month_ccg_deciles = {}
             d['measure_id'] = measure_id
@@ -285,31 +278,64 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
             mg.save()
         print "Created %s measureglobals" % c
 
+    def write_ccg_ratios_to_database(self, measure_id):
+        with transaction.atomic():
+            c = 0
+            for datum in self.get_rows("ccg_ratios_%s" % measure_id):
+                datum['measure_id'] = measure_id
+                for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    datum['cost_savings'] = json.dumps({str(centile): datum.pop("cost_savings_%s" % centile)})
+                MeasureValue.objects.create(**datum)
+                c += 1
+        print "Wrote %s CCG measures" % c
 
-    def calculate_cost_savings(self, measure_id, month=None, practice_id=None):
+    def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
+        """Depends on the practice ratios table having been generated
+        (e.g. smoothed_ratios_cerazette)
+
+        """
+        self.calculate_ccg_ratios(measure_id, month, practice_id)
+        # calculate centiles
+        self.calculate_global_centiles(measure_id, unit='ccg')
+        # XXX it is only now we can compute cost savings for CCGs
+        self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
+        self.write_ccg_ratios_to_database(measure_id)
+        self.write_global_centiles_to_database(measure_id)
+
+
+    def calculate_cost_savings(self, measure_id, month=None, practice_id=None, unit='practice'):
         # Seems we can overwrite a table that we're querying.
         sql_path = os.path.join(self.fpath, "./measure_sql/practice_cost_savings.sql")
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
-            ratios_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
+            if unit == 'practice':
+                ratios_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
+                global_table = "ebmdatalab.measures.global_centiles_practice_%s" % measure_id
+                target_table = "smoothed_ratios_%s" % measure_id
+            else:
+                ratios_table = "ebmdatalab.measures.ccg_ratios_%s" % measure_id
+                global_table = "ebmdatalab.measures.global_centiles_ccg_%s" % measure_id
+                target_table = "ccg_ratios_%s" % measure_id
             sql = sql.format(
                 local_table=ratios_table,
-                global_table="ebmdatalab.measures.global_centiles_practice_%s" % measure_id)
-            self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
-
+                global_table=global_table)
+            self.query_and_return(sql, target_table)
 
     def write_ratios_to_database(self, measure_id):
         fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
                       'denominator', 'smoothed_calc_value', 'month',
                       'percentile', 'calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
-                      'num_quantity', 'practice_id']
+                      'num_quantity', 'practice_id', 'cost_savings']
         with open("/tmp/measures.csv", "w") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             c = 0
             for datum in self.get_rows("smoothed_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
+                for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    datum['cost_savings'] = json.dumps({str(centile): datum.pop("cost_savings_%s" % centile)})
                 writer.writerow(datum)
+                c += 1
         print "Commiting data to database...."
         with open("/tmp/measures.csv", "r") as f:
             copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
@@ -317,38 +343,37 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
             print copy_str % ", ".join(fieldnames)
             self.conn.cursor().copy_expert(copy_str % ", ".join(fieldnames), f)
             self.conn.commit()
+        print "Wrote %s values" % c
 
     def write_global_centiles_to_database(self, measure_id):
         # XXX if month specified, only delete that month
-        MeasureGlobal.objects.filter(measure=measure_id).delete()
-        c = 0
-        print datetime.datetime.now()
-        for d in self.get_rows("global_centiles_practice_%s" % measure_id):
-            month_practice_deciles = {}
-            d['measure_id'] = measure_id
-            # cast strings to numbers for the after-save hook in
-            # the MeasureGlobal model
-            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                month_practice_deciles[str(c)] = float(d.pop("p_%sth" % c))
-            d['percentiles'] = {'practice' : month_practice_deciles}
-            c += 1
-            MeasureGlobal.objects.create(**d)
+        # XXX in transaction?
+        with transaction.atomic():
+            MeasureGlobal.objects.filter(measure=measure_id).delete()
+            c = 0
+            print datetime.datetime.now()
+            for d in self.get_rows("global_centiles_practice_%s" % measure_id):
+                month_practice_deciles = {}
+                d['measure_id'] = measure_id
+                # cast strings to numbers for the after-save hook in
+                # the MeasureGlobal model
+                for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    month_practice_deciles[str(c)] = float(d.pop("p_%sth" % c))
+                d['percentiles'] = {'practice' : month_practice_deciles}
+                c += 1
+                MeasureGlobal.objects.create(**d)
+            print "Wrote %s globals" % c
 
     def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
         start = datetime.datetime.now()
-        fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
-                      'denominator', 'smoothed_calc_value', 'month',
-                      'percentile', 'calc_value', 'denom_items',
-                      'denom_quantity', 'denom_cost', 'num_cost',
-                      'num_quantity', 'practice_id']
         # compute ratios for each pratice, and global centiles
-        MeasureValue.objects.filter(measure=measure_id).delete()
+        MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
         #self.calculate_smoothed_ratios(measure_id, month, practice_id)
         #self.calculate_global_centiles(measure_id)
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
+        # XXX we can skip this step if it's not a cost-saving measure!
         self.calculate_cost_savings(measure_id, month, practice_id)
-
         #self.write_ratios_to_database(measure_id) # XXX with cost savings
         #self.write_global_centiles_to_database(measure_id)
         print "%s elapsed" % (datetime.datetime.now() - start)
@@ -366,10 +391,10 @@ class Command(NewMeasures):
     def handle(self, *args, **options):
         self.setUpDb()
 
-        self.create_practice_measurevalues(
-            'cerazette')
-        #self.create_ccg_measurevalues(
+        #self.create_practice_measurevalues(
         #    'cerazette')
+        self.create_ccg_measurevalues(
+            'cerazette')
 
 # TO generate perfect copy of practices:
 # COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
