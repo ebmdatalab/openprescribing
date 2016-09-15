@@ -191,28 +191,14 @@ var utils = {
       if (options.rollUpBy === 'measure_id') {
         perf.performanceDescription = "Over the past " + numMonths +
           " months, this organisation has prescribed worse than the median on " +
-          perf.worseThanMedian + " of " + perf.total + " measures. ";
+          perf.worseThanMedian + " of " + perf.total + " measures.";
       } else {
         perf.performanceDescription = "Over the past " + numMonths +
           " months, " + perf.worseThanMedian + " of " + perf.total + ' ';
         perf.performanceDescription += (options.orgType === 'practice') ?
           "practices " : "CCGs ";
         perf.performanceDescription += "have prescribed worse than the " +
-          "national median. ";
-      }
-      perf.proportionAboveMedian = perf.worseThanMedian / perf.total;
-      if (perf.proportionAboveMedian >= 0.7) {
-        perf.rank = 'poor';
-      } else if (perf.proportionAboveMedian >= 0.45) {
-        perf.rank = 'acceptable';
-      } else if (perf.proportionAboveMedian >= 0.25) {
-        perf.rank = 'good';
-      } else if (perf.proportionAboveMedian >= 0) {
-        perf.rank = 'very good';
-      }
-      if (perf.performanceDescription) {
-        perf.performanceDescription += 'We think this is ' + perf.rank +
-          ' performance overall.';
+          "national median.";
       }
       if (options.rollUpBy === 'measure_id') {
         var p = humanize.numberFormat(orderedData[0].meanPercentile, 0);
