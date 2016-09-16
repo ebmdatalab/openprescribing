@@ -1,14 +1,14 @@
 SELECT
   month,
-  MAX(p_10th) AS p_10th,
-  MAX(p_20th) AS p_20th,
-  MAX(p_30th) AS p_30th,
-  MAX(p_40th) AS p_40th,
-  MAX(p_50th) AS p_50th,
-  MAX(p_60th) AS p_60th,
-  MAX(p_70th) AS p_70th,
-  MAX(p_80th) AS p_80th,
-  MAX(p_90th) AS p_90th,
+  MAX(p_10th) AS practice_10th,
+  MAX(p_20th) AS practice_20th,
+  MAX(p_30th) AS practice_30th,
+  MAX(p_40th) AS practice_40th,
+  MAX(p_50th) AS practice_50th,
+  MAX(p_60th) AS practice_60th,
+  MAX(p_70th) AS practice_70th,
+  MAX(p_80th) AS practice_80th,
+  MAX(p_90th) AS practice_90th,
   SUM(denominator) AS denominator,
   SUM(numerator) AS numerator
   {extra_select_sql}

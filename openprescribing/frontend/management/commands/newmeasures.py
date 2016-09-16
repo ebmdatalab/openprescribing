@@ -233,26 +233,31 @@ class NewMeasures(BaseCommand):
 
     def calculate_global_centiles(self, measure_id, unit='practice'):
         measure = self.measures[measure_id]
-        extra_fields = []
-        for col in self.get_custom_cols(measure_id, 'numerator'):
-            extra_fields.append("num_" + col)
-        for col in self.get_custom_cols(measure_id, 'denominator'):
-            extra_fields.append("denom_" + col)
-        extra_select_sql = ""
-        for f in extra_fields:
-            extra_select_sql += ", SUM(%s) as %s" % (f, f)
-        if measure["is_cost_based"]:
-            extra_select_sql += """,
-(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity) - SUM(num_quantity)) AS cost_per_denom,
-SUM(num_cost) / SUM(num_quantity) as cost_per_num
-"""
-        with open(os.path.join(self.fpath, "./measure_sql/global_deciles.sql")) as sql_file_2:
+        if unit == 'practice':
+            sql_path = os.path.join(
+                self.fpath, "./measure_sql/global_deciles_practices.sql")
+            from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
+            extra_fields = []
+            for col in self.get_custom_cols(measure_id, 'numerator'):
+                extra_fields.append("num_" + col)
+            for col in self.get_custom_cols(measure_id, 'denominator'):
+                extra_fields.append("denom_" + col)
+            extra_select_sql = ""
+            for f in extra_fields:
+                extra_select_sql += ", SUM(%s) as %s" % (f, f)
+            if measure["is_cost_based"]:
+                extra_select_sql += (
+                    ", "
+                    "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
+                    "- SUM(num_quantity)) AS cost_per_denom,"
+                    "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
+        else:
+            sql_path = os.path.join(
+                self.fpath, "./measure_sql/global_deciles_ccgs.sql")
+            from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
+        with open(sql_path) as sql_file_2:
             value_var = 'calc_value'
             # XXX or smoothed_calc_value? Presumably no
-            if unit == 'practice':
-                from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
-            else:
-                from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
             sql = sql_file_2.read()
             sql = sql.format(
                 from_table=from_table,
@@ -282,17 +287,18 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
 
     def write_global_centiles_to_database(self, measure_id):
         for d in self.get_rows("global_centiles_ccg_%s" % measure_id):
-            month_ccg_deciles = {}
+            ccg_deciles = practice_deciles = {}
             d['measure_id'] = measure_id
             # cast strings to numbers for the after-save hook in
             # the MeasureGlobal model
             for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                month_ccg_deciles[str(c)] = float(d.pop("p_%sth" % c))
+                ccg_deciles[str(c)] = float(d.pop("practice_%sth" % c))
+                practice_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
             mg, created = MeasureGlobal.objects.get_or_create(
                 measure=measure_id,
                 month=d['month']
             )
-            mg.percentiles = {'ccg' : month_ccg_deciles}
+            mg.percentiles = {'ccg' : ccg_deciles, 'practice': practice_deciles}
             mg.save()
         print "Created %s measureglobals" % c
 
@@ -307,24 +313,9 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
                 c += 1
         print "Wrote %s CCG measures" % c
 
-    def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
-        """Depends on the practice ratios table having been generated
-        (e.g. smoothed_ratios_cerazette)
-
-        """
-        self.calculate_ccg_ratios(measure_id, month, practice_id)
-        self.add_percent_rank(measure_id, unit='ccg')
-        # calculate centiles
-        self.calculate_global_centiles(measure_id, unit='ccg')
-        # XXX it is only now we can compute cost savings for CCGs
-        self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
-        self.write_ccg_ratios_to_database(measure_id)
-        self.write_global_centiles_to_database(measure_id)
-
-
     def calculate_cost_savings(self, measure_id, month=None, practice_id=None, unit='practice'):
         # Seems we can overwrite a table that we're querying.
-        sql_path = os.path.join(self.fpath, "./measure_sql/practice_cost_savings.sql")
+        sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
             if unit == 'practice':
@@ -337,7 +328,9 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
                 target_table = "ccg_ratios_%s" % measure_id
             sql = sql.format(
                 local_table=ratios_table,
-                global_table=global_table)
+                global_table=global_table,
+                unit=unit
+            )
             self.query_and_return(sql, target_table)
 
     def write_ratios_to_database(self, measure_id):
@@ -387,16 +380,38 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         start = datetime.datetime.now()
         # compute ratios for each pratice, and global centiles
         MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
+        # 1. work out ratios for each practice
         self.calculate_smoothed_ratios(measure_id, month, practice_id)
+        # 2. Add their percent rank (has to be in a different step to skip nulls)
         self.add_percent_rank(measure_id, unit='practice')
+        # 3. calculate global centiles for practices: for each month,
+        # what is the median (etc) ratio, plus totals for the various
+        # columns
         self.calculate_global_centiles(measure_id, unit='practice')
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
         # XXX we can skip this step if it's not a cost-saving measure!
         self.calculate_cost_savings(measure_id, month, practice_id)
-        #self.write_ratios_to_database(measure_id) # XXX with cost savings
-        #self.write_global_centiles_to_database(measure_id)
+        self.write_ratios_to_database(measure_id) # XXX with cost savings
+        self.write_global_centiles_to_database(measure_id)
         print "%s elapsed" % (datetime.datetime.now() - start)
+
+
+    def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
+        """Depends on the practice ratios table having been generated
+        (e.g. smoothed_ratios_cerazette)
+
+        """
+        # Compute ratios at CCG level
+        self.calculate_ccg_ratios(measure_id, month, practice_id)
+        self.add_percent_rank(measure_id, unit='ccg')
+        # calculate centiles When doing this, we don't want to
+        # overwrite the sums, or calc value; we just want to work out the centiles.
+        self.calculate_global_centiles(measure_id, unit='ccg')
+        # XXX it is only now we can compute cost savings for CCGs
+        self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
+        self.write_ccg_ratios_to_database(measure_id)
+        self.write_global_centiles_to_database(measure_id)
 
 
 class Command(NewMeasures):
