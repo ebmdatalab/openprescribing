@@ -389,7 +389,7 @@ SUM(num_cost) / SUM(num_quantity) as cost_per_num
         MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
         self.calculate_smoothed_ratios(measure_id, month, practice_id)
         self.add_percent_rank(measure_id, unit='practice')
-        self.calculate_global_centiles(measure_id)
+        self.calculate_global_centiles(measure_id, unit='practice')
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
         # XXX we can skip this step if it's not a cost-saving measure!
