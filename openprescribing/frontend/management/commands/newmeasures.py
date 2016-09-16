@@ -329,7 +329,7 @@ class NewMeasures(BaseCommand):
                 for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
                     cost_savings[str(centile)] = float(datum.pop(
                         "cost_savings_%s" % centile))
-                datum['cost_savings'] = json.dumps(cost_savings)
+                datum['cost_savings'] = cost_savings
                 datum['percentile'] = float(datum['percentile']) * 100
                 MeasureValue.objects.create(**datum)
                 c += 1
