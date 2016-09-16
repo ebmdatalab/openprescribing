@@ -370,6 +370,7 @@ class NewMeasures(BaseCommand):
                     cost_savings[str(centile)] = datum.pop(
                         "cost_savings_%s" % centile)
                 datum['cost_savings'] = json.dumps(cost_savings)
+                datum['percentile'] = datum['percentile'] * 100
                 writer.writerow(datum)
                 c += 1
         print "Commiting data to database...."
