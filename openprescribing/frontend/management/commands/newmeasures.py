@@ -450,12 +450,14 @@ class Command(NewMeasures):
                                      password=db_pass, host=db_host)
 
     def handle(self, *args, **options):
+        start = datetime.datetime.now()
         self.setUpDb()
 
         self.create_practice_measurevalues(
             'cerazette')
         self.create_ccg_measurevalues(
             'cerazette')
+        print "Total %s elapsed" % (datetime.datetime.now() - start)
 
 # TO generate perfect copy of practices:
 # COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
