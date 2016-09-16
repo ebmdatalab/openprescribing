@@ -20,6 +20,9 @@ from frontend.models import MeasureValue
 
 from common import utils
 
+PRACTICE_TABLE_NAME = "practice_ratios_%s"
+CCG_TABLE_NAME = "ccg_ratios_%s"
+GLOBALS_TABLE_NAME = "global_centiles_%s"
 
 class NewMeasures(BaseCommand):
     def __init__(self):
@@ -159,7 +162,7 @@ class NewMeasures(BaseCommand):
                 break
         raise StopIteration
 
-    def calculate_smoothed_ratios(self, measure_id, month=None, practice_id=None):
+    def calculate_practice_ratios(self, measure_id, month=None, practice_id=None):
         measure = self.measures[measure_id]
         numerator_where = " ".join(measure['numerator_where'])
         denominator_where = " ".join(measure['denominator_where'])
@@ -186,7 +189,7 @@ class NewMeasures(BaseCommand):
         for col in self.get_custom_cols(measure_id, 'numerator'):
             numerator_aliases += ", num.%s AS num_%s" % (col, col)
             aliased_numerators += ", num_%s" % col
-        sql_path = os.path.join(self.fpath, "./measure_sql/smoothed_ratios.sql")
+        sql_path = os.path.join(self.fpath, "./measure_sql/practice_ratios.sql")
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
             sql = sql.format(
@@ -201,13 +204,13 @@ class NewMeasures(BaseCommand):
                 aliased_denominators=aliased_denominators,
                 aliased_numerators=aliased_numerators
             )
-            return self.query_and_return(sql, "smoothed_ratios_%s" % measure_id)
+            return self.query_and_return(sql, "practice_ratios_%s" % measure_id)
 
     def add_percent_rank(self, measure_id, unit=None):
         if unit == 'practice':
-            from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
-            target_table = "smoothed_ratios_%s" % measure_id
-            value_var = 'calc_value' # XXX will want to make this smoothed in the future
+            from_table = "ebmdatalab:measures.practice_ratios_%s" % measure_id
+            target_table = "practice_ratios_%s" % measure_id
+            value_var = 'calc_value' # XXX will want to make this practice in the future
         else:
             from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
             target_table = "ccg_ratios_%s" % measure_id
@@ -236,7 +239,7 @@ class NewMeasures(BaseCommand):
         if unit == 'practice':
             sql_path = os.path.join(
                 self.fpath, "./measure_sql/global_deciles_practices.sql")
-            from_table = "ebmdatalab:measures.smoothed_ratios_%s" % measure_id
+            from_table = "ebmdatalab:measures.practice_ratios_%s" % measure_id
             extra_fields = []
             for col in self.get_custom_cols(measure_id, 'numerator'):
                 extra_fields.append("num_" + col)
@@ -252,22 +255,35 @@ class NewMeasures(BaseCommand):
                     "- SUM(num_quantity)) AS cost_per_denom,"
                     "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
         else:
+            extra_fields = []
+            for col in self.get_custom_cols(measure_id, 'numerator'):
+                extra_fields.append("num_" + col)
+            for col in self.get_custom_cols(measure_id, 'denominator'):
+                extra_fields.append("denom_" + col)
+            extra_select_sql = ""
+            for f in extra_fields:
+                extra_select_sql += ", practice_deciles.%s as %s" % (f, f)
+            if measure["is_cost_based"]:
+                extra_select_sql += (
+                    ", practice_deciles.cost_per_denom AS cost_per_denom"
+                    ", practice_deciles.cost_per_num AS cost_per_num")
             sql_path = os.path.join(
                 self.fpath, "./measure_sql/global_deciles_ccgs.sql")
             from_table = "ebmdatalab:measures.ccg_ratios_%s" % measure_id
         with open(sql_path) as sql_file_2:
             value_var = 'calc_value'
-            # XXX or smoothed_calc_value? Presumably no
+            # XXX or practice_calc_value? Presumably no
             sql = sql_file_2.read()
             sql = sql.format(
                 from_table=from_table,
                 extra_select_sql=extra_select_sql,
-                value_var=value_var
+                value_var=value_var,
+                global_centiles_table="ebmdatalab:measures.global_centiles_%s" % (measure_id)
             )
             # We have to use legacy SQL because there' no
             # PERCENTILE_CONT equivalent in the standard SQL
             self.query_and_return(
-                sql, "global_centiles_%s_%s" % (unit, measure_id), legacy=True)
+                sql, "global_centiles_%s" % (measure_id), legacy=True)
 
     def calculate_ccg_ratios(self, measure_id, month, practice_id):
         # calculate ratios
@@ -279,14 +295,16 @@ class NewMeasures(BaseCommand):
                 denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (col, col)
             for col in self.get_custom_cols(measure_id, 'numerator'):
                 numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-            from_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
+            from_table = "ebmdatalab.measures.practice_ratios_%s" % measure_id
             sql = sql.format(denominator_aliases=denominator_aliases,
                              numerator_aliases=numerator_aliases,
                              from_table=from_table)
             self.query_and_return(sql, "ccg_ratios_%s" % measure_id)
 
     def write_global_centiles_to_database(self, measure_id):
-        for d in self.get_rows("global_centiles_ccg_%s" % measure_id):
+        """Should only get called once for both ccg and practice
+        """
+        for d in self.get_rows("global_centiles_%s" % (measure_id)):
             ccg_deciles = practice_deciles = {}
             d['measure_id'] = measure_id
             # cast strings to numbers for the after-save hook in
@@ -298,7 +316,7 @@ class NewMeasures(BaseCommand):
                 measure=measure_id,
                 month=d['month']
             )
-            mg.percentiles = {'ccg' : ccg_deciles, 'practice': practice_deciles}
+            mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
             mg.save()
         print "Created %s measureglobals" % c
 
@@ -319,12 +337,12 @@ class NewMeasures(BaseCommand):
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
             if unit == 'practice':
-                ratios_table = "ebmdatalab.measures.smoothed_ratios_%s" % measure_id
-                global_table = "ebmdatalab.measures.global_centiles_practice_%s" % measure_id
-                target_table = "smoothed_ratios_%s" % measure_id
+                ratios_table = "ebmdatalab.measures.practice_ratios_%s" % measure_id
+                global_table = "ebmdatalab.measures.global_centiles_%s" % measure_id
+                target_table = "practice_ratios_%s" % measure_id
             else:
                 ratios_table = "ebmdatalab.measures.ccg_ratios_%s" % measure_id
-                global_table = "ebmdatalab.measures.global_centiles_ccg_%s" % measure_id
+                global_table = "ebmdatalab.measures.global_centiles_%s" % measure_id
                 target_table = "ccg_ratios_%s" % measure_id
             sql = sql.format(
                 local_table=ratios_table,
@@ -333,16 +351,16 @@ class NewMeasures(BaseCommand):
             )
             self.query_and_return(sql, target_table)
 
-    def write_ratios_to_database(self, measure_id):
+    def write_practice_ratios_to_database(self, measure_id):
         fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
-                      'denominator', 'smoothed_calc_value', 'month',
-                      'percentile', 'calc_value', 'denom_items',
+                      'denominator', 'practice_calc_value', 'month',
+                      'percentile', 'calc_value', 'smoothed_calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
                       'num_quantity', 'practice_id', 'cost_savings']
         with open("/tmp/measures.csv", "w") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             c = 0
-            for datum in self.get_rows("smoothed_ratios_%s" % measure_id):
+            for datum in self.get_rows("practice_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
                 for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
                     datum['cost_savings'] = json.dumps({str(centile): datum.pop("cost_savings_%s" % centile)})
@@ -381,37 +399,38 @@ class NewMeasures(BaseCommand):
         # compute ratios for each pratice, and global centiles
         MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
         # 1. work out ratios for each practice
-        self.calculate_smoothed_ratios(measure_id, month, practice_id)
+        #self.calculate_practice_ratios(measure_id, month, practice_id)
         # 2. Add their percent rank (has to be in a different step to skip nulls)
-        self.add_percent_rank(measure_id, unit='practice')
+        #self.add_percent_rank(measure_id, unit='practice')
         # 3. calculate global centiles for practices: for each month,
         # what is the median (etc) ratio, plus totals for the various
         # columns
-        self.calculate_global_centiles(measure_id, unit='practice')
+        #self.calculate_global_centiles(measure_id, unit='practice')
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
         # XXX we can skip this step if it's not a cost-saving measure!
-        self.calculate_cost_savings(measure_id, month, practice_id)
-        self.write_ratios_to_database(measure_id) # XXX with cost savings
-        self.write_global_centiles_to_database(measure_id)
+        #self.calculate_cost_savings(measure_id, month, practice_id)
+        self.write_practice_ratios_to_database(measure_id) # XXX with cost savings
         print "%s elapsed" % (datetime.datetime.now() - start)
 
 
     def create_ccg_measurevalues(self, measure_id, month=None, practice_id=None):
         """Depends on the practice ratios table having been generated
-        (e.g. smoothed_ratios_cerazette)
+        (e.g. practice_ratios_cerazette)
 
         """
+        start = datetime.datetime.now()
         # Compute ratios at CCG level
-        self.calculate_ccg_ratios(measure_id, month, practice_id)
-        self.add_percent_rank(measure_id, unit='ccg')
+        #self.calculate_ccg_ratios(measure_id, month, practice_id)
+        #self.add_percent_rank(measure_id, unit='ccg')
         # calculate centiles When doing this, we don't want to
         # overwrite the sums, or calc value; we just want to work out the centiles.
-        self.calculate_global_centiles(measure_id, unit='ccg')
+        #self.calculate_global_centiles(measure_id, unit='ccg')
         # XXX it is only now we can compute cost savings for CCGs
-        self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
+        #self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
         self.write_ccg_ratios_to_database(measure_id)
         self.write_global_centiles_to_database(measure_id)
+        print "%s elapsed" % (datetime.datetime.now() - start)
 
 
 class Command(NewMeasures):
