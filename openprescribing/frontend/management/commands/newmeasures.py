@@ -325,8 +325,11 @@ class NewMeasures(BaseCommand):
             c = 0
             for datum in self.get_rows("ccg_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
+                cost_savings = {}
                 for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                    datum['cost_savings'] = json.dumps({str(centile): datum.pop("cost_savings_%s" % centile)})
+                    cost_savings[str(centile)] = datum.pop(
+                        "cost_savings_%s" % centile)
+                datum['cost_savings'] = json.dumps(cost_savings)
                 MeasureValue.objects.create(**datum)
                 c += 1
         print "Wrote %s CCG measures" % c
@@ -353,8 +356,8 @@ class NewMeasures(BaseCommand):
 
     def write_practice_ratios_to_database(self, measure_id):
         fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
-                      'denominator', 'practice_calc_value', 'month',
-                      'percentile', 'calc_value', 'smoothed_calc_value', 'denom_items',
+                      'denominator', 'smoothed_calc_value', 'month',
+                      'percentile', 'calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
                       'num_quantity', 'practice_id', 'cost_savings']
         with open("/tmp/measures.csv", "w") as f:
@@ -362,8 +365,11 @@ class NewMeasures(BaseCommand):
             c = 0
             for datum in self.get_rows("practice_ratios_%s" % measure_id):
                 datum['measure_id'] = measure_id
+                cost_savings = {}
                 for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                    datum['cost_savings'] = json.dumps({str(centile): datum.pop("cost_savings_%s" % centile)})
+                    cost_savings[str(centile)] = datum.pop(
+                        "cost_savings_%s" % centile)
+                datum['cost_savings'] = json.dumps(cost_savings)
                 writer.writerow(datum)
                 c += 1
         print "Commiting data to database...."
@@ -375,7 +381,7 @@ class NewMeasures(BaseCommand):
             self.conn.commit()
         print "Wrote %s values" % c
 
-    def write_global_centiles_to_database(self, measure_id):
+    def x_write_global_centiles_to_database(self, measure_id):
         # XXX if month specified, only delete that month
         # XXX in transaction?
         with transaction.atomic():
@@ -389,27 +395,27 @@ class NewMeasures(BaseCommand):
                 # the MeasureGlobal model
                 for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
                     month_practice_deciles[str(c)] = float(d.pop("p_%sth" % c))
-                d['percentiles'] = {'practice' : month_practice_deciles}
-                c += 1
-                MeasureGlobal.objects.create(**d)
-            print "Wrote %s globals" % c
+                    d['percentiles'] = {'practice' : month_practice_deciles}
+                    c += 1
+                    MeasureGlobal.objects.create(**d)
+                    print "Wrote %s globals" % c
 
     def create_practice_measurevalues(self, measure_id, month=None, practice_id=None):
         start = datetime.datetime.now()
         # compute ratios for each pratice, and global centiles
         MeasureValue.objects.filter(measure=measure_id).delete() # XXX not necessarily...
         # 1. work out ratios for each practice
-        #self.calculate_practice_ratios(measure_id, month, practice_id)
+        self.calculate_practice_ratios(measure_id, month, practice_id)
         # 2. Add their percent rank (has to be in a different step to skip nulls)
-        #self.add_percent_rank(measure_id, unit='practice')
+        self.add_percent_rank(measure_id, unit='practice')
         # 3. calculate global centiles for practices: for each month,
         # what is the median (etc) ratio, plus totals for the various
         # columns
-        #self.calculate_global_centiles(measure_id, unit='practice')
+        self.calculate_global_centiles(measure_id, unit='practice')
         # now compute cost savings (updating the per-practice ratio
         # table). This depends on the previous two to run correctly
         # XXX we can skip this step if it's not a cost-saving measure!
-        #self.calculate_cost_savings(measure_id, month, practice_id)
+        self.calculate_cost_savings(measure_id, month, practice_id)
         self.write_practice_ratios_to_database(measure_id) # XXX with cost savings
         print "%s elapsed" % (datetime.datetime.now() - start)
 
@@ -421,13 +427,12 @@ class NewMeasures(BaseCommand):
         """
         start = datetime.datetime.now()
         # Compute ratios at CCG level
-        #self.calculate_ccg_ratios(measure_id, month, practice_id)
-        #self.add_percent_rank(measure_id, unit='ccg')
+        self.calculate_ccg_ratios(measure_id, month, practice_id)
+        self.add_percent_rank(measure_id, unit='ccg')
         # calculate centiles When doing this, we don't want to
         # overwrite the sums, or calc value; we just want to work out the centiles.
-        #self.calculate_global_centiles(measure_id, unit='ccg')
-        # XXX it is only now we can compute cost savings for CCGs
-        #self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
+        self.calculate_global_centiles(measure_id, unit='ccg')
+        self.calculate_cost_savings(measure_id, month, practice_id, unit='ccg')
         self.write_ccg_ratios_to_database(measure_id)
         self.write_global_centiles_to_database(measure_id)
         print "%s elapsed" % (datetime.datetime.now() - start)
