@@ -413,8 +413,8 @@ class Command(NewMeasures):
 
         self.create_practice_measurevalues(
             'cerazette')
-        #self.create_ccg_measurevalues(
-        #    'cerazette')
+        self.create_ccg_measurevalues(
+            'cerazette')
 
 # TO generate perfect copy of practices:
 # COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
