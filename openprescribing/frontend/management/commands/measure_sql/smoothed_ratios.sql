@@ -21,8 +21,8 @@ FROM (
       COUNT(month) OVER (PARTITION BY practice_id ORDER BY month_secs RANGE BETWEEN 5356800 PRECEDING AND CURRENT ROW) AS window_size
     FROM (
       SELECT
-        num.numerator AS numerator,
-        denom.denominator AS denominator,
+        COALESCE(num.numerator, 0) AS numerator,
+        COALESCE(denom.denominator, 0) AS denominator,
         denom.practice AS practice_id,
         denom.month AS month,
         UNIX_SECONDS(denom.month) AS month_secs
