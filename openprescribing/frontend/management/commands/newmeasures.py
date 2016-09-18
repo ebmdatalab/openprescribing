@@ -29,7 +29,7 @@ GLOBALS_TABLE_PREFIX = "global_data"
 
 
 class MeasureCalculation(object):
-    def __init__(self, measure_id, practice_id=None, month=None):
+    def __init__(self, measure_id, month=None):
         self.fpath = os.path.dirname(__file__)
         credentials = GoogleCredentials.get_application_default()
         self.bigquery = discovery.build('bigquery', 'v2',
@@ -37,8 +37,16 @@ class MeasureCalculation(object):
         self.measure = self.parse_measures()[measure_id]
         self.measure_id = measure_id
         self.month = month
-        self.practice_id = practice_id
         self.setUpDb()
+
+    def full_table_name(self):
+        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.table_name())
+
+    def globals_table_name(self):
+        return "%s_%s" % (GLOBALS_TABLE_PREFIX, self.measure_id)
+
+    def full_globals_table_name(self):
+        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
 
     def setUpDb(self):
         db_name = utils.get_env_setting('DB_NAME')
@@ -64,30 +72,6 @@ class MeasureCalculation(object):
                 else:
                     measures[k] = d[k]
         return measures
-
-    def _get_custom_cols(self, num_or_denom=None):
-        """Return column names referred to in measure definitions for either
-        numerator or denominator
-
-        """
-
-        assert num_or_denom in ['numerator', 'denominator']
-        cols = []
-        for col in self.measure["%s_columns" % num_or_denom]:
-            alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
-            if alias != num_or_denom:
-                cols.append(alias)
-        return cols
-
-    def _row_to_dict(self, row, fields):
-        """Converts a row from bigquery into a dictionary
-        """
-        dict_row = {}
-        for i, item in enumerate(row['f']):
-            value = item['v']
-            key = fields[i]['name']
-            dict_row[key] = value
-        return dict_row
 
     def query_and_return(self, query, table_id, convert=True, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
@@ -182,9 +166,9 @@ class MeasureCalculation(object):
     def add_percent_rank(self):
         from_table = self.full_table_name()
         target_table = self.table_name()
-        value_var = 'calc_value' # XXX will want to make this
-        # smoothed_calc_value in the
-        # future
+        # The following should be smoothed_calc_value for practice
+        # data when we get there
+        value_var = 'calc_value'
         sql_path = os.path.join(self.fpath, "./measure_sql/percent_rank.sql")
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
@@ -195,7 +179,7 @@ class MeasureCalculation(object):
             return self.query_and_return(sql, target_table, legacy=True)
 
     def write_global_centiles_to_database(self):
-        """XXX Should only get called once for both ccg and practice
+        """Should only get called once for both ccg and practice
         """
         for d in self.get_rows(self.globals_table_name()):
             ccg_deciles = practice_deciles = {}
@@ -232,14 +216,29 @@ class MeasureCalculation(object):
             return self.query_and_return(
                 sql, self.globals_table_name(), legacy=True)
 
-    def full_table_name(self):
-        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.table_name())
+    def _get_custom_cols(self, num_or_denom=None):
+        """Return column names referred to in measure definitions for either
+        numerator or denominator
 
-    def globals_table_name(self):
-        return "%s_%s" % (GLOBALS_TABLE_PREFIX, self.measure_id)
+        """
 
-    def full_globals_table_name(self):
-        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
+        assert num_or_denom in ['numerator', 'denominator']
+        cols = []
+        for col in self.measure["%s_columns" % num_or_denom]:
+            alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
+            if alias != num_or_denom:
+                cols.append(alias)
+        return cols
+
+    def _row_to_dict(self, row, fields):
+        """Converts a row from bigquery into a dictionary
+        """
+        dict_row = {}
+        for i, item in enumerate(row['f']):
+            value = item['v']
+            key = fields[i]['name']
+            dict_row[key] = value
+        return dict_row
 
 
 class PracticeCalculation(MeasureCalculation):
@@ -254,6 +253,7 @@ class PracticeCalculation(MeasureCalculation):
             datetime.datetime.strptime(self.month, "%Y-%m-%d")
             # Because we smooth using a moving average of three months, we
             # have to filter to a three month window
+            # XXX not necessarily before we implement smoothing
             date_cond = (
                 " AND ("
                 "month >= DATE_ADD('{} 00:00:00', -2, 'MONTH') AND "
@@ -261,10 +261,6 @@ class PracticeCalculation(MeasureCalculation):
             ).format(self.month, self.month)
             numerator_where += date_cond
             denominator_where += date_cond
-        if self.practice_id:
-            practice_cond = " AND practice = '{}'".format(self.practice_id)
-            numerator_where += practice_cond
-            denominator_where += practice_cond
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
         for col in self._get_custom_cols('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
@@ -289,7 +285,7 @@ class PracticeCalculation(MeasureCalculation):
             )
             return self.query_and_return(sql, self.table_name())
 
-    def calculate_global_centiles(self):
+    def calculate_global_centiles_for_practices(self):
         sql_path = os.path.join(
             self.fpath, "./measure_sql/global_deciles_practices.sql")
         from_table = self.full_table_name()
@@ -311,7 +307,7 @@ class PracticeCalculation(MeasureCalculation):
         return self._query_and_write_global_centiles(
             sql_path, value_var, from_table, extra_select_sql)
 
-    def calculate_cost_savings(self):
+    def calculate_cost_savings_for_practices(self):
         """Appends cost savings column to the Practice ratios table"""
         sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
         with open(sql_path, "r") as sql_file:
@@ -358,6 +354,14 @@ class PracticeCalculation(MeasureCalculation):
         f.close()
         print "Wrote %s values" % c
 
+    def calculate(self):
+        self.calculate_practice_ratios()
+        self.add_percent_rank()
+        self.calculate_global_centiles_for_practices()
+        if self.measure['is_cost_based']:
+            self.calculate_cost_savings_for_practices()
+        self.write_practice_ratios_to_database()
+
 
 class CCGCalculation(MeasureCalculation):
     def table_name(self):
@@ -366,6 +370,7 @@ class CCGCalculation(MeasureCalculation):
     def calculate_ccg_ratios(self):
         """Sums all the fields in the per-practice table, grouped by
         CCG. Stores in a new table.
+
         """
         with open(os.path.join(
                 self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
@@ -381,7 +386,10 @@ class CCGCalculation(MeasureCalculation):
                              from_table=from_table)
             self.query_and_return(sql, self.table_name())
 
-    def calculate_global_centiles(self):
+    def calculate_global_centiles_for_ccgs(self):
+        """Adds CCG centiles to the already-existing practice centiles table
+
+        """
         extra_fields = []
         for col in self._get_custom_cols('numerator'):
             extra_fields.append("num_" + col)
@@ -401,22 +409,7 @@ class CCGCalculation(MeasureCalculation):
         return self._query_and_write_global_centiles(
             sql_path, value_var, from_table, extra_select_sql)
 
-    def write_ccg_ratios_to_database(self):
-        with transaction.atomic():
-            c = 0
-            for datum in self.get_rows(self.table_name()):
-                datum['measure_id'] = self.measure_id
-                cost_savings = {}
-                for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                    cost_savings[str(centile)] = float(datum.pop(
-                        "cost_savings_%s" % centile))
-                datum['cost_savings'] = cost_savings
-                datum['percentile'] = float(datum['percentile']) * 100
-                MeasureValue.objects.create(**datum)
-                c += 1
-        print "Wrote %s CCG measures" % c
-
-    def calculate_cost_savings(self):
+    def calculate_cost_savings_for_ccgs(self):
         """Appends cost savings column to the CCG ratios table"""
 
         sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
@@ -432,55 +425,42 @@ class CCGCalculation(MeasureCalculation):
             )
             self.query_and_return(sql, target_table)
 
-# XXX why do we see CCGs like 5EM which don't
+    def write_ccg_ratios_to_database(self):
+        with transaction.atomic():
+            c = 0
+            for datum in self.get_rows(self.table_name()):
+                datum['measure_id'] = self.measure_id
+                cost_savings = {}
+                for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    cost_savings[str(centile)] = float(datum.pop(
+                        "cost_savings_%s" % centile))
+                datum['cost_savings'] = cost_savings
+                datum['percentile'] = float(datum['percentile']) * 100
+                MeasureValue.objects.create(**datum)
+                c += 1
+        print "Wrote %s CCG measures" % c
+
+    def calculate(self, measure_id, month=None):
+        self.calculate_ccg_ratios()
+        self.add_percent_rank()
+        self.calculate_global_centiles_for_ccgs()
+        if self.measure['is_cost_based']:
+            self.calculate_cost_savings_for_ccgs()
+        self.write_ccg_ratios_to_database()
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         start = datetime.datetime.now()
-        self.create_practice_measurevalues('cerazette')
-        self.create_ccg_measurevalues('cerazette')
+        measure_id = 'cerazette'
+
+        MeasureValue.objects.filter(measure=measure_id).delete()
+        PracticeCalculation(measure_id).calculate()
+        CCGCalculation(measure_id).calculate()
+        MeasureCalculation(measure_id).write_global_centiles_to_database()
+
         print "Total %s elapsed" % (datetime.datetime.now() - start)
 
-    def create_practice_measurevalues(
-            self, measure_id, month=None, practice_id=None):
-        start = datetime.datetime.now()
-        # compute ratios for each pratice, and global centiles
-        # XXX not necessarily... when do we want to delete measures?
-        MeasureValue.objects.filter(measure=measure_id).delete()
-        calc = PracticeCalculation(measure_id)
-        calc.calculate_practice_ratios()
-        calc.add_percent_rank()
-        calc.calculate_global_centiles()
-        # now compute cost savings (updating the per-practice ratio
-        # table). This depends on the previous two to run correctly
-        # XXX we can skip this step if it's not a cost-saving measure!
-        if calc.measure['is_cost_based']:
-            calc.calculate_cost_savings()
-        calc.write_practice_ratios_to_database()
-        print "%s elapsed" % (datetime.datetime.now() - start)
-
-
-    def create_ccg_measurevalues(
-            self, measure_id, month=None, practice_id=None):
-        """Depends on the practice ratios table having been generated
-        (e.g. practice_ratios_cerazette)
-
-        """
-        start = datetime.datetime.now()
-        # Compute ratios at CCG level
-        calc = CCGCalculation(measure_id)
-        calc.calculate_ccg_ratios()
-        calc.add_percent_rank()
-        # calculate centiles When doing this, we don't want to
-        # overwrite the sums, or calc value; we just want to work out the centiles.
-        calc.calculate_global_centiles()
-        if calc.measure['is_cost_based']:
-            calc.calculate_cost_savings()
-        calc.write_ccg_ratios_to_database()
-        # XXX note we only write the global centiles after we've
-        # computed both the practice and ccg global centiles
-        calc.write_global_centiles_to_database()
-        print "%s elapsed" % (datetime.datetime.now() - start)
 
 # TO generate perfect copy of practices:
 # COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
