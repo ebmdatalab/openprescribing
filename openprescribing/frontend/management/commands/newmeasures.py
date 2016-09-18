@@ -37,18 +37,32 @@ class MeasureCalculation(object):
         self.measure = self.parse_measures()[measure_id]
         self.measure_id = measure_id
         self.month = month
-        self.setUpDb()
+        self.setup_db()
 
-    def full_table_name(self):
-        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.table_name())
+    def table_name(self):
+        """Name of table to which we write ratios data.
+        """
+        raise NotImplementedError("Must be implemented in sublcass")
 
     def globals_table_name(self):
+        """Name of globals table to which we write overall summary data
+
+        """
         return "%s_%s" % (GLOBALS_TABLE_PREFIX, self.measure_id)
 
+    def full_table_name(self):
+        """Fully qualified table name as used in bigquery SELECT
+        (legacy SQL dialect)
+        """
+        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.table_name())
+
     def full_globals_table_name(self):
+        """Fully qualified table name as used in bigquery SELECT
+        (legacy SQL dialect)
+        """
         return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
 
-    def setUpDb(self):
+    def setup_db(self):
         db_name = utils.get_env_setting('DB_NAME')
         db_user = utils.get_env_setting('DB_USER')
         db_pass = utils.get_env_setting('DB_PASS')
@@ -164,6 +178,8 @@ class MeasureCalculation(object):
         raise StopIteration
 
     def add_percent_rank(self):
+        """Add a percentile rank to the ratios table
+        """
         from_table = self.full_table_name()
         target_table = self.table_name()
         # The following should be smoothed_calc_value for practice
@@ -179,7 +195,7 @@ class MeasureCalculation(object):
             return self.query_and_return(sql, target_table, legacy=True)
 
     def write_global_centiles_to_database(self):
-        """Should only get called once for both ccg and practice
+        """Write the globals data from BigQuery to the local database
         """
         for d in self.get_rows(self.globals_table_name()):
             ccg_deciles = practice_deciles = {}
@@ -202,7 +218,6 @@ class MeasureCalculation(object):
                                          value_var,
                                          from_table,
                                          extra_select_sql):
-
         with open(sql_path) as sql_file:
             value_var = 'calc_value'
             sql = sql_file.read()
@@ -217,9 +232,8 @@ class MeasureCalculation(object):
                 sql, self.globals_table_name(), legacy=True)
 
     def _get_custom_cols(self, num_or_denom=None):
-        """Return column names referred to in measure definitions for either
+        """Return column names referred to in measure definitions for both
         numerator or denominator
-
         """
 
         assert num_or_denom in ['numerator', 'denominator']
@@ -242,10 +256,24 @@ class MeasureCalculation(object):
 
 
 class PracticeCalculation(MeasureCalculation):
+    def calculate(self):
+        self.calculate_practice_ratios()
+        self.add_percent_rank()
+        self.calculate_global_centiles_for_practices()
+        if self.measure['is_cost_based']:
+            self.calculate_cost_savings_for_practices()
+        self.write_practice_ratios_to_database()
+
     def table_name(self):
         return "%s_%s" % (PRACTICE_TABLE_PREFIX, self.measure_id)
 
     def calculate_practice_ratios(self):
+        """Given a measure defition, construct a BigQuery job which computes
+        numerator/denominator ratios for practices.
+
+        Also see  comments in SQL.
+        """
+
         numerator_where = " ".join(self.measure['numerator_where'])
         denominator_where = " ".join(self.measure['denominator_where'])
         if self.month:
@@ -286,6 +314,8 @@ class PracticeCalculation(MeasureCalculation):
             return self.query_and_return(sql, self.table_name())
 
     def calculate_global_centiles_for_practices(self):
+        """Compute overall sums and centiles for each practice.
+        """
         sql_path = os.path.join(
             self.fpath, "./measure_sql/global_deciles_practices.sql")
         from_table = self.full_table_name()
@@ -354,16 +384,16 @@ class PracticeCalculation(MeasureCalculation):
         f.close()
         print "Wrote %s values" % c
 
-    def calculate(self):
-        self.calculate_practice_ratios()
-        self.add_percent_rank()
-        self.calculate_global_centiles_for_practices()
-        if self.measure['is_cost_based']:
-            self.calculate_cost_savings_for_practices()
-        self.write_practice_ratios_to_database()
-
 
 class CCGCalculation(MeasureCalculation):
+    def calculate(self, measure_id, month=None):
+        self.calculate_ccg_ratios()
+        self.add_percent_rank()
+        self.calculate_global_centiles_for_ccgs()
+        if self.measure['is_cost_based']:
+            self.calculate_cost_savings_for_ccgs()
+        self.write_ccg_ratios_to_database()
+
     def table_name(self):
         return "%s_%s" % (CCG_TABLE_PREFIX, self.measure_id)
 
@@ -439,14 +469,6 @@ class CCGCalculation(MeasureCalculation):
                 MeasureValue.objects.create(**datum)
                 c += 1
         print "Wrote %s CCG measures" % c
-
-    def calculate(self, measure_id, month=None):
-        self.calculate_ccg_ratios()
-        self.add_percent_rank()
-        self.calculate_global_centiles_for_ccgs()
-        if self.measure['is_cost_based']:
-            self.calculate_cost_savings_for_ccgs()
-        self.write_ccg_ratios_to_database()
 
 
 class Command(BaseCommand):
