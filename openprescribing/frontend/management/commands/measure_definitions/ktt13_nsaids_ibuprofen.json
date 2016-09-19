@@ -1,0 +1,34 @@
+{
+  "name": "NSAIDs - Ibuprofen & naproxen (KTT13)", 
+  "title": [
+    "KTT13: NSAIDs - Ibuprofen & naproxen % items"
+  ], 
+  "description": [
+    "Number of prescription items for ibuprofen and naproxen", 
+    "as a percentage of the total number of prescription items", 
+    "for all NSAIDs."
+  ], 
+  "why_it_matters": [
+    "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, for their effects on the stomach, kidneys and the risk of blood clots.  The latest evidence shows that ibuprofen and naproxen are two of the drugs with a lower level of risk, and therefore doctors should prescribe these to patients before trying the others."
+  ], 
+  "numerator_short": "Selected items", 
+  "denominator_short": "Selected items", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": false, 
+  "numerator_columns": [
+    "SUM(total_items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "((bnf_code LIKE '1001010J0%%')  OR (bnf_code LIKE '1001010AD%%')  OR (bnf_code LIKE '1001010P0%%')  OR (bnf_code LIKE '100101070%%'))  "
+  ], 
+  "denominator_columns": [
+    "SUM(total_items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code LIKE '100101%%')  "
+  ]
+}

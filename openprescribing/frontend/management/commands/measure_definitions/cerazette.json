@@ -1,0 +1,38 @@
+{
+  "name": "Cerazette vs. Desogestrel", 
+  "title": [
+    "Prescribing of branded Cerazette (BNF code 0703021Q0BB)", 
+    "compared with prescribing of all desogestrel (BNF code 0703021Q0)"
+  ], 
+  "description": [
+    "Total quantity of Cerazette (0703021Q0BB),", 
+    "as a proportion of total quantity of desogestrel", 
+    "(0703021Q0)."
+  ], 
+  "why_it_matters": [
+    "This is the NHS Business Service Authority's top cost-saver from ", 
+    " generic switching. Cerazette and desogestrel are both exactly ", 
+    "the same drug, the same molecule, but Cerazette is an expensive ", 
+    "branded package, and desogestrel is a cheap generic package."
+  ], 
+  "numerator_short": "Cerazette quantity", 
+  "denominator_short": "Desogestrel quantity", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": true, 
+  "low_is_good": true, 
+  "numerator_columns": [
+    "SUM(quantity) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code LIKE '0703021Q0BB%%')  "
+  ], 
+  "denominator_columns": [
+    "SUM(quantity) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code LIKE '0703021Q0%%')  "
+  ]
+}

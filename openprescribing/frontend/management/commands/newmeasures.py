@@ -7,13 +7,14 @@ import json
 import glob
 import sys
 import tempfile
+from collections import OrderedDict
 
 import psycopg2
 
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from frontend.models import MeasureGlobal
@@ -34,6 +35,7 @@ class MeasureCalculation(object):
         credentials = GoogleCredentials.get_application_default()
         self.bigquery = discovery.build('bigquery', 'v2',
                                         credentials=credentials)
+        self.measures = self.parse_measures()
         self.measure = self.parse_measures()[measure_id]
         self.measure_id = measure_id
         self.month = month
@@ -54,13 +56,13 @@ class MeasureCalculation(object):
         """Fully qualified table name as used in bigquery SELECT
         (legacy SQL dialect)
         """
-        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.table_name())
+        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, self.table_name())
 
     def full_globals_table_name(self):
         """Fully qualified table name as used in bigquery SELECT
         (legacy SQL dialect)
         """
-        return "%s:%s.%s" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
+        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
 
     def setup_db(self):
         db_name = utils.get_env_setting('DB_NAME')
@@ -74,18 +76,26 @@ class MeasureCalculation(object):
         """Deserialise JSON measures definition
         """
         measures = {}
-        files = glob.glob(os.path.join(self.fpath, "./new_measure_definitions/*.json"))
+        files = glob.glob(os.path.join(self.fpath, "./measure_definitions/*.json"))
         for fname in files:
+            measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
+            if measure_id in measures:
+                raise CommandError("duplicate measure definition %s found!" % measure_id)
             fname = os.path.join(self.fpath, fname)
             json_data = open(fname).read()
-            d = json.loads(json_data)
-            for k in d:
-                if k in measures:
-                    sys.exit()
-                    print "duplicate entry found!", k
-                else:
-                    measures[k] = d[k]
+            d = json.loads(json_data, object_pairs_hook=OrderedDict)
+            measures[measure_id] = d
         return measures
+
+    def get_columns_for_select(self, num_or_denom=None):
+        assert num_or_denom in ['numerator', 'denominator']
+        fieldname = "%s_columns" % num_or_denom
+        cols = self.measure[fieldname][:]
+        if self.measure['is_cost_based']:
+            cols += ["SUM(items) AS items, ",
+                     "SUM(actual_cost) AS cost, ",
+                     "SUM(quantity) AS quantity "]
+        return cols
 
     def query_and_return(self, query, table_id, convert=True, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
@@ -93,9 +103,9 @@ class MeasureCalculation(object):
 
         """
         if not legacy:
-            query = query.replace(
-                "%s:%s" % (BG_PROJECT, BG_DATASET),
-                "%s.%s" % (BG_PROJECT, BG_DATASET))
+            # Rename any legacy-style table references to use standard
+            # SQL dialect.
+            query = re.sub(r'\[(.+):(.+)\.(.+)\]', r'\1.\2.\3', query)
         payload = {
             "configuration": {
                 "query": {
@@ -132,7 +142,7 @@ class MeasureCalculation(object):
             counter += 1
             if response['status']['state'] == 'DONE':
                 if 'errors' in response['status']:
-                    print json.dumps(response, indent=2)
+                    print str(response['configuration']['query']['query'])
                     raise StandardError(
                         json.dumps(response['status']['errors'], indent=2))
                 else:
@@ -142,7 +152,7 @@ class MeasureCalculation(object):
         gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
         est_cost = round(bytes_billed/1e+12 * 5.0, 2)
         # Add our own metadata
-        print "Cost: %s" % est_cost
+        print "Cost: $%s" % est_cost
         response['openp'] = {'query': query,
                              'est_cost': est_cost,
                              'gb_processed': gb_processed}
@@ -206,7 +216,7 @@ class MeasureCalculation(object):
                 ccg_deciles[str(c)] = float(d.pop("practice_%sth" % c))
                 practice_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
             mg, created = MeasureGlobal.objects.get_or_create(
-                measure=self.measure_id,
+                measure_id=self.measure_id,
                 month=d['month']
             )
             mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
@@ -231,14 +241,15 @@ class MeasureCalculation(object):
             return self.query_and_return(
                 sql, self.globals_table_name(), legacy=True)
 
-    def _get_custom_cols(self, num_or_denom=None):
+    def _get_col_aliases(self, num_or_denom=None):
         """Return column names referred to in measure definitions for both
-        numerator or denominator
-        """
+        numerator or denominator. Used to construct the SELECT portion
+        of a query.
 
+        """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        for col in self.measure["%s_columns" % num_or_denom]:
+        for col in self.get_columns_for_select(num_or_denom=num_or_denom):
             alias = re.search(r"AS ([a-z0-9_]+)", col).group(1)
             if alias != num_or_denom:
                 cols.append(alias)
@@ -290,10 +301,10 @@ class PracticeCalculation(MeasureCalculation):
             numerator_where += date_cond
             denominator_where += date_cond
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
-        for col in self._get_custom_cols('denominator'):
+        for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
             aliased_denominators += ", denom_%s" % col
-        for col in self._get_custom_cols('numerator'):
+        for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", num.%s AS num_%s" % (col, col)
             aliased_numerators += ", num_%s" % col
         sql_path = os.path.join(self.fpath, "./measure_sql/practice_ratios.sql")
@@ -302,8 +313,10 @@ class PracticeCalculation(MeasureCalculation):
             sql = sql.format(
                 numerator_from=self.measure['numerator_from'],
                 numerator_where=numerator_where,
-                numerator_columns=" ".join(self.measure['numerator_columns']),
-                denominator_columns=" ".join(self.measure['denominator_columns']),
+                numerator_columns=" ".join(
+                    self.get_columns_for_select('numerator')),
+                denominator_columns=" ".join(
+                    self.get_columns_for_select('denominator')),
                 denominator_from=self.measure['denominator_from'],
                 denominator_where=denominator_where,
                 numerator_aliases=numerator_aliases,
@@ -320,9 +333,9 @@ class PracticeCalculation(MeasureCalculation):
             self.fpath, "./measure_sql/global_deciles_practices.sql")
         from_table = self.full_table_name()
         extra_fields = []
-        for col in self._get_custom_cols('numerator'):
+        for col in self._get_col_aliases('numerator'):
             extra_fields.append("num_" + col)
-        for col in self._get_custom_cols('denominator'):
+        for col in self._get_col_aliases('denominator'):
             extra_fields.append("denom_" + col)
         extra_select_sql = ""
         for f in extra_fields:
@@ -386,7 +399,7 @@ class PracticeCalculation(MeasureCalculation):
 
 
 class CCGCalculation(MeasureCalculation):
-    def calculate(self, measure_id, month=None):
+    def calculate(self):
         self.calculate_ccg_ratios()
         self.add_percent_rank()
         self.calculate_global_centiles_for_ccgs()
@@ -406,9 +419,9 @@ class CCGCalculation(MeasureCalculation):
                 self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
             sql = sql_file.read()
             numerator_aliases = denominator_aliases = ''
-            for col in self._get_custom_cols('denominator'):
+            for col in self._get_col_aliases('denominator'):
                 denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (col, col)
-            for col in self._get_custom_cols('numerator'):
+            for col in self._get_col_aliases('numerator'):
                 numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
             from_table = PracticeCalculation(self.measure_id).full_table_name()
             sql = sql.format(denominator_aliases=denominator_aliases,
@@ -421,9 +434,9 @@ class CCGCalculation(MeasureCalculation):
 
         """
         extra_fields = []
-        for col in self._get_custom_cols('numerator'):
+        for col in self._get_col_aliases('numerator'):
             extra_fields.append("num_" + col)
-        for col in self._get_custom_cols('denominator'):
+        for col in self._get_col_aliases('denominator'):
             extra_fields.append("denom_" + col)
         extra_select_sql = ""
         for f in extra_fields:
@@ -474,10 +487,11 @@ class CCGCalculation(MeasureCalculation):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         start = datetime.datetime.now()
-        measure_id = 'cerazette'
-
-        MeasureValue.objects.filter(measure=measure_id).delete()
-        PracticeCalculation(measure_id).calculate()
+        measure_id = 'ace'
+        MeasureCalculation('cerazette').convert_json()
+        #sys.exit()
+        #MeasureValue.objects.filter(measure=measure_id).delete()
+        #PracticeCalculation(measure_id).calculate()
         CCGCalculation(measure_id).calculate()
         MeasureCalculation(measure_id).write_global_centiles_to_database()
 

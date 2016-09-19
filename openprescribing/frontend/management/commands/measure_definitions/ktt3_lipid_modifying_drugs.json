@@ -1,0 +1,39 @@
+{
+  "name": "Lipid-modifying drugs (KTT3)", 
+  "description": [
+    "Number of prescription items for Bile acid sequestrants,", 
+    "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds,", 
+    "and 'Other lipid modifying drugs' (BNF 2.12 sub-set)", 
+    "as a percentage of total prescription items for BNF 2.12."
+  ], 
+  "why_it_matters": [
+    "The latest NICE guidance suggests that, for the vast majority of people who need treatment for high cholesterol, these drugs should not be used.  There is no evidence that omega 3 fatty acids reduces the chances of patients getting cardiovascular disease."
+  ], 
+  "title": [
+    "KTT3 (Lipid-modifying drugs): Number of prescription", 
+    "items for Bile acid sequestrants, Fibrates, Nicotinic", 
+    "acid, and Omega-3 fatty acid compounds, and \u2018Other", 
+    "lipid modifying drugs\u2019 (BNF 2.12 sub-set) as a percentage", 
+    "of total prescription items for BNF 2.12"
+  ], 
+  "numerator_short": "Selected items", 
+  "denominator_short": "All items in 2.12", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": false, 
+  "numerator_columns": [
+    "SUM(total_items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "((bnf_code LIKE '0212000A0%%')  OR (bnf_code LIKE '0212000D0%%')  OR (bnf_code LIKE '021200010%%')  OR (bnf_code LIKE '0212000AD%%')  OR (bnf_code LIKE '0212000K0%%')  OR (bnf_code LIKE '0212000F0%%')  OR (bnf_code LIKE '0212000P0%%')  OR (bnf_code LIKE '0212000Q0%%')  OR (bnf_code LIKE '0212000U0%%')  OR (bnf_code LIKE '0212000AE%%')  OR (bnf_code LIKE '0212000V0%%')  OR (bnf_code LIKE '0212000AB%%'))  AND (practice_id=%s)  AND (processing_date=%s)"
+  ], 
+  "denominator_columns": [
+    "SUM(total_items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code LIKE '0212%%')  AND (practice_id=%s)  AND (processing_date=%s)"
+  ]
+}

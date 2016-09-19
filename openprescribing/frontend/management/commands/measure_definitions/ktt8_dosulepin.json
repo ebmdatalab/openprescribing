@@ -1,0 +1,35 @@
+{
+  "name": "Dosulepin (KTT8)", 
+  "description": [
+    "Number of prescription items for dosulepin as a percentage of the", 
+    "total number of prescription items for 'selected' antidepressants", 
+    "(subset of BNF 4.3)."
+  ], 
+  "why_it_matters": [
+    "Dosulepin is an older antidepressant. For the last ten years there has been a concern that overdose can easily be fatal, and it is recommended that patients should only be started on it by an expert in mental health. Numbers of patients who still get prescribed this drug are reducing."
+  ], 
+  "title": [
+    "KTT8 (Dosulepin): First choice antidepressant use in", 
+    "adults with depression or anxiety disorder"
+  ], 
+  "numerator_short": "Dosulepin items", 
+  "denominator_short": "Selected antidepressant items", 
+  "url": "https://www.nice.org.uk/advice/ktt8/chapter/evidence-context", 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": true, 
+  "numerator_columns": [
+    "SUM(total_items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code LIKE '0403010J0%%')  AND (practice_id=%s)  AND (processing_date=%s)"
+  ], 
+  "denominator_columns": [
+    "SUM(total_items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "((bnf_code LIKE '0403%%')  AND (bnf_code NOT LIKE '0403010B0%%')  AND (bnf_code NOT LIKE '0403010F0%%')  AND (bnf_code NOT LIKE '0403010N0%%')  AND (bnf_code NOT LIKE '0403010V0%%')  AND (bnf_code NOT LIKE '0403010Y0%%')  AND (bnf_code NOT LIKE '040302%%')  AND (bnf_code NOT LIKE '0403040F0%%'))  AND (practice_id=%s)  AND (processing_date=%s)"
+  ]
+}

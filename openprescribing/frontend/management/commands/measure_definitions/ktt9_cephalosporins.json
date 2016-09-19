@@ -1,0 +1,43 @@
+{
+  "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)", 
+  "title": [
+    "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items):", 
+    "Number of prescription items for co-amoxiclav,", 
+    "cephalosporins and quinolones as a percentage of the", 
+    "total number of prescription items for selected", 
+    "antibacterial drugs (sub-set of BNF 5.1)"
+  ], 
+  "description": [
+    "Number of prescription items for co-amoxiclav (0501013K0),", 
+    "cephalosporins (0501021) and quinolones (050112), as a percentage", 
+    "of total prescription items for BNF 5.1.1; 5.1.2.1;", 
+    "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; and 5.1.13."
+  ], 
+  "why_it_matters": [
+    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can ", 
+    "be used when others have failed. It is important that ", 
+    "they are used sparingly, to avoid drug-resistant bacteria ", 
+    "developing. This measure looks at the quantity of these ", 
+    "prescribed, versus the broad class of similar antibiotics."
+  ], 
+  "numerator_short": "Selected items", 
+  "denominator_short": "Other selected items", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": true, 
+  "numerator_columns": [
+    "SUM(total_items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "((bnf_code LIKE '0501013K0%%')  OR (bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050112%%'))  "
+  ], 
+  "denominator_columns": [
+    "SUM(total_items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "((bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050105%%')  OR (bnf_code LIKE '050111%%')  OR (bnf_code LIKE '050101%%')  OR (bnf_code LIKE '050112%%')  OR (bnf_code LIKE '050108%%')  OR (bnf_code LIKE '050103%%')  OR (bnf_code LIKE '050113%%'))  "
+  ]
+}
