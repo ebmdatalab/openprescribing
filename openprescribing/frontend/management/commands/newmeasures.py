@@ -8,18 +8,17 @@ import glob
 import sys
 import tempfile
 from collections import OrderedDict
-
+from dateutil.parser import parse
+from dateutil import relativedelta
 import psycopg2
-
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 
-from frontend.models import MeasureGlobal
-from frontend.models import MeasureValue
-
+from frontend.models import MeasureGlobal, MeasureValue, Measure
 from common import utils
 
 BG_PROJECT = 'ebmdatalab'
@@ -29,14 +28,33 @@ CCG_TABLE_PREFIX = "ccg_data"
 GLOBALS_TABLE_PREFIX = "global_data"
 
 
+def parse_measures():
+    """Deserialise JSON measures definition
+    """
+    measures = {}
+    fpath = os.path.dirname(__file__)
+    files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
+    for fname in files:
+        measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
+        if measure_id in measures:
+            raise CommandError(
+                "duplicate measure definition %s found!" % measure_id)
+        fname = os.path.join(fpath, fname)
+        json_data = open(fname).read()
+        d = json.loads(json_data, object_pairs_hook=OrderedDict)
+        measures[measure_id] = d
+    return measures
+
+
 class MeasureCalculation(object):
-    def __init__(self, measure_id, month=None):
+    def __init__(self, measure_id, month=None, verbose=False):
+        self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
         credentials = GoogleCredentials.get_application_default()
         self.bigquery = discovery.build('bigquery', 'v2',
                                         credentials=credentials)
-        self.measures = self.parse_measures()
-        self.measure = self.parse_measures()[measure_id]
+        self.measures = parse_measures()
+        self.measure = parse_measures()[measure_id]
         self.measure_id = measure_id
         self.month = month
         self.setup_db()
@@ -71,21 +89,6 @@ class MeasureCalculation(object):
         db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
-
-    def parse_measures(self):
-        """Deserialise JSON measures definition
-        """
-        measures = {}
-        files = glob.glob(os.path.join(self.fpath, "./measure_definitions/*.json"))
-        for fname in files:
-            measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-            if measure_id in measures:
-                raise CommandError("duplicate measure definition %s found!" % measure_id)
-            fname = os.path.join(self.fpath, fname)
-            json_data = open(fname).read()
-            d = json.loads(json_data, object_pairs_hook=OrderedDict)
-            measures[measure_id] = d
-        return measures
 
     def get_columns_for_select(self, num_or_denom=None):
         assert num_or_denom in ['numerator', 'denominator']
@@ -128,7 +131,7 @@ class MeasureCalculation(object):
         response = self.bigquery.jobs().insert(
             projectId='ebmdatalab',
             body=payload).execute()
-        print "Waiting for bigquery job to complete..."
+        self.msg("Waiting for bigquery job to complete...")
         counter = 0
         job_id = response['jobReference']['jobId']
         while True:
@@ -146,13 +149,13 @@ class MeasureCalculation(object):
                     raise StandardError(
                         json.dumps(response['status']['errors'], indent=2))
                 else:
-                    print "done!"
+                    self.msg("done!")
                     break
         bytes_billed = float(response['statistics']['query']['totalBytesBilled'])
         gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
         est_cost = round(bytes_billed/1e+12 * 5.0, 2)
         # Add our own metadata
-        print "Cost: $%s" % est_cost
+        self.msg("Cost: $%s" % est_cost)
         response['openp'] = {'query': query,
                              'est_cost': est_cost,
                              'gb_processed': gb_processed}
@@ -204,24 +207,9 @@ class MeasureCalculation(object):
                 value_var=value_var)
             return self.query_and_return(sql, target_table, legacy=True)
 
-    def write_global_centiles_to_database(self):
-        """Write the globals data from BigQuery to the local database
-        """
-        for d in self.get_rows(self.globals_table_name()):
-            ccg_deciles = practice_deciles = {}
-            d['measure_id'] = self.measure_id
-            # cast strings to numbers for the after-save hook in
-            # the MeasureGlobal model
-            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                ccg_deciles[str(c)] = float(d.pop("practice_%sth" % c))
-                practice_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
-            mg, created = MeasureGlobal.objects.get_or_create(
-                measure_id=self.measure_id,
-                month=d['month']
-            )
-            mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
-            mg.save()
-        print "Created %s measureglobals" % c
+    def msg(self, message):
+        if self.verbose:
+            print message
 
     def _query_and_write_global_centiles(self,
                                          sql_path,
@@ -266,6 +254,60 @@ class MeasureCalculation(object):
         return dict_row
 
 
+class GlobalCalcuation(MeasureCalculation):
+    def write_global_centiles_to_database(self):
+        """Write the globals data from BigQuery to the local database
+        """
+        for d in self.get_rows(self.globals_table_name()):
+            ccg_deciles = practice_deciles = {}
+            d['measure_id'] = self.measure_id
+            # cast strings to numbers for the after-save hook in
+            # the MeasureGlobal model
+            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                ccg_deciles[str(c)] = float(d.pop("practice_%sth" % c))
+                practice_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
+            mg, created = MeasureGlobal.objects.get_or_create(
+                measure_id=self.measure_id,
+                month=d['month']
+            )
+            mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
+            mg.save()
+        self.msg("Created %s measureglobals" % c)
+
+    def create_or_update_measure(self, m, v):
+        self.msg('Updating measure: %s' % m)
+        v['title'] = ' '.join(v['title'])
+        v['description'] = ' '.join(v['description'])
+        v['why_it_matters'] = ' '.join(v['why_it_matters'])
+        try:
+            measure = Measure.objects.get(id=m)
+            measure.name = v['name']
+            measure.title = v['title']
+            measure.description = v['description']
+            measure.why_it_matters = v['why_it_matters']
+            measure.numerator_short = v['numerator_short']
+            measure.denominator_short = v['denominator_short']
+            measure.url = v['url']
+            measure.is_cost_based = v['is_cost_based']
+            measure.is_percentage = v['is_percentage']
+            measure.low_is_good = v['low_is_good']
+            measure.save()
+        except ObjectDoesNotExist:
+            measure = Measure.objects.create(
+                id=m,
+                name=v['name'],
+                title=v['title'],
+                description=v['description'],
+                why_it_matters=v['why_it_matters'],
+                numerator_short=v['numerator_short'],
+                denominator_short=v['denominator_short'],
+                url=v['url'],
+                is_cost_based=v['is_cost_based'],
+                is_percentage=v['is_percentage'],
+                low_is_good=v['low_is_good']
+            )
+        return measure
+
 class PracticeCalculation(MeasureCalculation):
     def calculate(self):
         self.calculate_practice_ratios()
@@ -290,16 +332,17 @@ class PracticeCalculation(MeasureCalculation):
         if self.month:
             # validate the format before sending to bigquery
             datetime.datetime.strptime(self.month, "%Y-%m-%d")
-            # Because we smooth using a moving average of three months, we
-            # have to filter to a three month window
-            # XXX not necessarily before we implement smoothing
-            date_cond = (
+            # XXX will be required when we use smoothing
+            date_cond_with_smoothing = (
                 " AND ("
-                "month >= DATE_ADD('{} 00:00:00', -2, 'MONTH') AND "
-                "month <= '{} 00:00:00') "
+                "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
+                "DATE(month) <= '{}') "
             ).format(self.month, self.month)
-            numerator_where += date_cond
-            denominator_where += date_cond
+            date_cond_without_smoothing = (
+                " AND (DATE(month) = '{}') "
+            ).format(self.month)
+            numerator_where += date_cond_without_smoothing
+            denominator_where += date_cond_without_smoothing
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
         for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
@@ -387,15 +430,15 @@ class PracticeCalculation(MeasureCalculation):
             datum['percentile'] = float(datum['percentile']) * 100
             writer.writerow(datum)
             c += 1
-        print "Commiting data to database...."
+        self.msg("Commiting data to database....")
         copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
         copy_str += "WITH (FORMAT csv)"
-        print copy_str % ", ".join(fieldnames)
+        self.msg(copy_str % ", ".join(fieldnames))
         f.seek(0)
         self.conn.cursor().copy_expert(copy_str % ", ".join(fieldnames), f)
         self.conn.commit()
         f.close()
-        print "Wrote %s values" % c
+        self.msg("Wrote %s values" % c)
 
 
 class CCGCalculation(MeasureCalculation):
@@ -481,21 +524,97 @@ class CCGCalculation(MeasureCalculation):
                 datum['percentile'] = float(datum['percentile']) * 100
                 MeasureValue.objects.create(**datum)
                 c += 1
-        print "Wrote %s CCG measures" % c
+        self.msg("Wrote %s CCG measures" % c)
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
-        start = datetime.datetime.now()
-        measure_id = 'ace'
-        MeasureCalculation('cerazette').convert_json()
-        #sys.exit()
-        #MeasureValue.objects.filter(measure=measure_id).delete()
-        #PracticeCalculation(measure_id).calculate()
-        CCGCalculation(measure_id).calculate()
-        MeasureCalculation(measure_id).write_global_centiles_to_database()
+    '''Supply either --end_date to load data for all months
+    up to that date, or --month to load data for just one
+    month.
 
-        print "Total %s elapsed" % (datetime.datetime.now() - start)
+    You can also supply --start_date, or supply a file path that
+    includes a timestamp with --month_from_prescribing_filename
+
+    '''
+
+    def handle(self, *args, **options):
+        options = self.parse_options(options)
+
+        start = datetime.datetime.now()
+        for measure_id in options['measure_ids']:
+            # Create measure (if required)
+            global_calculation = GlobalCalcuation(
+                measure_id, verbose=self.IS_VERBOSE)
+            measure = global_calculation.create_or_update_measure(
+                measure_id, global_calculation.measure)
+            if options['definitions_only']:
+                continue
+            for month in options['months']:
+                # delete existing data; will need to delete 3 months
+                # when we have smoothing
+                MeasureValue.objects.filter(month=month)\
+                            .filter(measure=measure).delete()
+                MeasureGlobal.objects.filter(month=month)\
+                    .filter(measure=measure).delete()
+                # Calculate practice data
+                PracticeCalculation(
+                    measure_id, month=month, verbose=self.IS_VERBOSE
+                ).calculate()
+                # Calculate CCG data
+                CCGCalculation(
+                    measure_id, month=month, verbose=self.IS_VERBOSE
+                ).calculate()
+                # Store global data locally
+                global_calculation.write_global_centiles_to_database()
+        if self.IS_VERBOSE:
+            print "Total %s elapsed" % (datetime.datetime.now() - start)
+
+    def add_arguments(self, parser):
+        parser.add_argument('--month')
+        parser.add_argument('--month_from_prescribing_filename')
+        parser.add_argument('--start_date')
+        parser.add_argument('--end_date')
+        parser.add_argument('--measure')
+        parser.add_argument('--definitions_only', action='store_true')
+
+    def parse_options(self, options):
+        self.IS_VERBOSE = False
+        if options['verbosity'] > 1:
+            self.IS_VERBOSE = True
+        if 'measure' in options and options['measure']:
+            options['measure_ids'] = [options['measure']]
+        else:
+            options['measure_ids'] = parse_measures.keys()
+
+        # Get months to cover from options.
+        if not options['month'] and not options['end_date'] \
+           and not options['month_from_prescribing_filename']:
+            err = 'You must supply either --month or --end_date '
+            err += 'in the format YYYY-MM-DD, or supply a path to a file which '
+            err += 'includes the timestamp in the path. You can also '
+            err += 'optionally supply a start date.'
+            print err
+            sys.exit()
+        options['months'] = []
+        if 'month' in options and options['month']:
+            options['months'] = [options['month']]
+        elif 'month_from_prescribing_filename' in options \
+             and options['month_from_prescribing_filename']:
+            filename = options['month_from_prescribing_filename']
+            date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
+            month = datetime.strptime(date_part + "_01", "%Y_%m_%d")
+            options['months'] = [month.strftime('%Y-%m-01')]
+        else:
+            if 'start_date' in options and options['start_date']:
+                d = parse(options['start_date'])
+            else:
+                d = datetime(2010, 8, 1)
+            end_date = parse(options['end_date'])
+            while (d <= end_date):
+                options['months'].append(datetime.strftime(d, '%Y-%m-01'))
+                d = d + relativedelta.relativedelta(months=1)
+        return options
+
 
 
 # TO generate perfect copy of practices:
