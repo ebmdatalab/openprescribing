@@ -43,7 +43,8 @@ class Command(BaseCommand):
                 if postcode in postcodes:
                     lng = postcodes[postcode][0]
                     lat = postcodes[postcode][1]
-                    pnt = Point(int(lng), int(lat), srid=27700)
-                    pnt.transform(trans)
-                    practice.location = pnt
+                    if lng and lat:
+                        pnt = Point(int(lng), int(lat), srid=27700)
+                        pnt.transform(trans)
+                        practice.location = pnt
                 practice.save()
