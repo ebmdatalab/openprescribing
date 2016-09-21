@@ -12,3 +12,5 @@ openpyxl==2.3.3
 numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
+google-api-python-client==1.5.3
+gcloud==0.18.1

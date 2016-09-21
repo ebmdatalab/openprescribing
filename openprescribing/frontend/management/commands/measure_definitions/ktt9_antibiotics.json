@@ -18,7 +18,7 @@
   "is_cost_based": false, 
   "low_is_good": true, 
   "numerator_columns": [
-    "SUM(total_items) AS numerator, "
+    "SUM(items) AS numerator, "
   ], 
   "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
   "numerator_where": [

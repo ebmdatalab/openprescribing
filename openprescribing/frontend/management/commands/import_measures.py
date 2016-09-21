@@ -1,145 +1,343 @@
+import time
+import re
+import os
+import datetime
+import csv
 import json
 import glob
-import numpy as np
-import os
-import pandas as pd
 import sys
-import re
-import api.view_utils as utils
-from datetime import datetime
+import tempfile
+from collections import OrderedDict
 from dateutil.parser import parse
 from dateutil import relativedelta
-from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
+import psycopg2
+from oauth2client.client import GoogleCredentials
+from googleapiclient import discovery
+
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from django.db.models import Sum, Q
-from frontend.models import Measure, MeasureGlobal
-from frontend.models import MeasureValue, Practice, PCT
-from scipy.stats import rankdata
+from django.core.exceptions import ObjectDoesNotExist
+
+from frontend.models import MeasureGlobal, MeasureValue, Measure
+from common import utils
+
+BG_PROJECT = 'ebmdatalab'
+BG_DATASET = 'measures'
+PRACTICE_TABLE_PREFIX = "practice_data"
+CCG_TABLE_PREFIX = "ccg_data"
+GLOBALS_TABLE_PREFIX = "global_data"
 
 
-class Command(BaseCommand):
-    '''Supply either --end_date to load data for all months
-    up to that date, or --month to load data for just one
-    month.
+def parse_measures():
+    """Deserialise JSON measures definition
+    """
+    measures = {}
+    fpath = os.path.dirname(__file__)
+    files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
+    for fname in files:
+        measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
+        if measure_id in measures:
+            raise CommandError(
+                "duplicate measure definition %s found!" % measure_id)
+        fname = os.path.join(fpath, fname)
+        json_data = open(fname).read()
+        d = json.loads(json_data, object_pairs_hook=OrderedDict)
+        measures[measure_id] = d
+    return measures
 
-    You can also supply --start_date, or supply a file path that
-    includes a timestamp with --month_from_prescribing_filename
 
-    '''
+class MeasureCalculation(object):
+    def __init__(self, measure_id, month=None,
+                 verbose=False, under_test=False):
+        self.verbose = verbose
+        self.fpath = os.path.dirname(__file__)
+        credentials = GoogleCredentials.get_application_default()
+        self.bigquery = discovery.build('bigquery', 'v2',
+                                        credentials=credentials)
+        self.measures = parse_measures()
+        self.measure = parse_measures()[measure_id]
+        self.measure_id = measure_id
+        self.month = month
+        self.under_test = under_test
 
-    def add_arguments(self, parser):
-        parser.add_argument('--month')
-        parser.add_argument('--month_from_prescribing_filename')
-        parser.add_argument('--start_date')
-        parser.add_argument('--end_date')
-        parser.add_argument('--measure')
-        parser.add_argument('--definitions_only', action='store_true')
+        self.setup_db()
 
-    def handle(self, *args, **options):
-        self.centiles = range(10, 100, 10)
-        options = self.parse_options(options)
-        for m in options['measure_ids']:
-            measure_config = options['measures'][m]
-            measure = self.create_or_update_measure(m, measure_config)
-            if options['definitions_only']:
-                continue
-            for month in options['months']:
-                MeasureValue.objects.filter(month=month)\
-                            .filter(measure=measure).delete()
-                MeasureGlobal.objects.filter(month=month)\
-                    .filter(measure=measure).delete()
+    def table_name(self):
+        """Name of table to which we write ratios data.
+        """
+        raise NotImplementedError("Must be implemented in sublcass")
 
-                # Create practice values and percentiles. Use these to
-                # calculate global values and percentiles. Then
-                # calculate cost savings for individual practices, and
-                # globally.
-                self.create_practice_measurevalues(
-                    measure, month, measure_config)
-                records = MeasureValue.objects.filter(
-                    month=month, measure=measure).values()
-                df = self.create_dataframe_with_ranks_and_percentiles(records)
-                mg = self.create_or_update_measureglobal(
-                    df, measure, month, 'practice')
-                for i, row in df.iterrows():
-                    self.set_percentile_and_savings(
-                        row, measure, month, mg, 'practice')
-                if measure.is_cost_based:
-                    self.set_measureglobal_savings(mg, 'practice')
+    def globals_table_name(self):
+        """Name of globals table to which we write overall summary data
 
-                # Now calculate CCG values, percentiles and cost savings.
-                self.create_ccg_measurevalues(measure, month)
-                ccg_records = MeasureValue.objects.filter(
-                    month=month, measure=measure, practice=None).values()
-                df = self.create_dataframe_with_ranks_and_percentiles(
-                    ccg_records)
-                mg = self.create_or_update_measureglobal(
-                    df, measure, month, 'ccg')
-                for i, row in df.iterrows():
-                    self.set_percentile_and_savings(
-                        row, measure, month, mg, 'ccg')
-                if measure.is_cost_based:
-                    self.set_measureglobal_savings(mg, 'ccg')
+        """
+        name = "%s_%s" % (GLOBALS_TABLE_PREFIX, self.measure_id)
+        if self.under_test:
+            name = "test_" + name
+        return name
 
-    def parse_options(self, options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
-        fpath = os.path.dirname(__file__)
-        files = glob.glob(fpath + "/measure_definitions/*.json")
-        options['measures'] = {}
-        for fname in files:
-            fname = os.path.join(fpath, fname)
-            json_data = open(fname).read()
-            d = json.loads(json_data)
-            for k in d:
-                if k in options['measures']:
-                    sys.exit()
-                    print "duplicate entry found!", k
+    def full_practices_table_name(self):
+        """Fully qualified name for current practices table
+
+        """
+        name = "practices"
+        if self.under_test:
+            name = "test_" + name
+        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, name)
+
+    def full_table_name(self):
+        """Fully qualified table name as used in bigquery SELECT
+        (legacy SQL dialect)
+        """
+        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, self.table_name())
+
+    def full_globals_table_name(self):
+        """Fully qualified table name as used in bigquery SELECT
+        (legacy SQL dialect)
+        """
+        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, self.globals_table_name())
+
+    def setup_db(self):
+        db_name = utils.get_env_setting('DB_NAME')
+        db_user = utils.get_env_setting('DB_USER')
+        db_pass = utils.get_env_setting('DB_PASS')
+        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
+        self.conn = psycopg2.connect(database=db_name, user=db_user,
+                                     password=db_pass, host=db_host)
+
+    def get_columns_for_select(self, num_or_denom=None):
+        assert num_or_denom in ['numerator', 'denominator']
+        fieldname = "%s_columns" % num_or_denom
+        cols = self.measure[fieldname][:]
+        # Deal with possible inconsistencies in measure definition
+        # trailing commas
+        if cols[-1].strip()[-1] != ',':
+            cols[-1] += ", "
+        if self.measure['is_cost_based']:
+            cols += ["SUM(items) AS items, ",
+                     "SUM(actual_cost) AS cost, ",
+                     "SUM(quantity) AS quantity "]
+        # Deal with possible inconsistencies in measure definition
+        # trailing commas
+        if cols[-1].strip()[-1] == ',':
+            cols[-1] = re.sub(r',\s*$', '', cols[-1])
+        return cols
+
+    def query_and_return(self, query, table_id, legacy=False):
+        """Send query to BigQuery, wait, and return response object when the
+        job has completed.
+
+        """
+        if self.under_test:
+            query = query.replace(
+                "[ebmdatalab:hscic.prescribing]",
+                "[ebmdatalab:measures.test_data]")
+        if not legacy:
+            # Rename any legacy-style table references to use standard
+            # SQL dialect.
+            query = re.sub(r'\[(.+):(.+)\.(.+)\]', r'\1.\2.\3', query)
+        payload = {
+            "configuration": {
+                "query": {
+                    "query": query,
+                    "flattenResuts": False,
+                    "allowLargeResults": True,
+                    "timeoutMs": 100000,
+                    "useQueryCache": True,
+                    "useLegacySql": legacy,
+                    "destinationTable": {
+                        "projectId": 'ebmdatalab',
+                        "tableId": table_id,
+                        "datasetId": 'measures'
+                    },
+                    "createDisposition": "CREATE_IF_NEEDED",
+                    "writeDisposition": "WRITE_TRUNCATE"
+                }
+            }
+        }
+        self.msg("Executing a query which will write to %s" % table_id)
+        start = datetime.datetime.now()
+        response = self.bigquery.jobs().insert(
+            projectId='ebmdatalab',
+            body=payload).execute()
+        counter = 0
+        job_id = response['jobReference']['jobId']
+        while True:
+            time.sleep(1)
+            if counter % 5 == 0:
+                sys.stdout.write(".")
+                sys.stdout.flush()
+            response = self.bigquery.jobs().get(
+                projectId='ebmdatalab',
+                jobId=job_id).execute()
+            counter += 1
+            if response['status']['state'] == 'DONE':
+                if 'errors' in response['status']:
+                    query = str(response['configuration']['query']['query'])
+                    for i, l in enumerate(query.split("\n")):
+                        # print SQL query with line numbers for debugging
+                        print "{:>3}: {}".format(i + 1, l)
+                    raise StandardError(
+                        json.dumps(response['status']['errors'], indent=2))
                 else:
-                    options['measures'][k] = d[k]
-        if 'measure' in options and options['measure']:
-            options['measure_ids'] = [options['measure']]
-        else:
-            options['measure_ids'] = [k for k in options['measures']]
+                    break
+        bytes_billed = float(response['statistics']['query']['totalBytesBilled'])
+        gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
+        est_cost = round(bytes_billed/1e+12 * 5.0, 2)
+        # Add our own metadata
+        elapsed = (datetime.datetime.now() - start).total_seconds()
+        response['openp'] = {'query': query,
+                             'est_cost': est_cost,
+                             'time': elapsed,
+                             'gb_processed': gb_processed}
+        self.msg("Time %ss, cost $%s" % (elapsed, est_cost))
+        return response
 
-        # Get months to cover from options.
-        if not options['month'] and not options['end_date'] \
-           and not options['month_from_prescribing_filename']:
-            err = 'You must supply either --month or --end_date '
-            err += 'in the format YYYY-MM-DD, or supply a path to a file which '
-            err += 'includes the timestamp in the path. You can also '
-            err += 'optionally supply a start date.'
-            print err
-            sys.exit()
-        options['months'] = []
-        if 'month' in options and options['month']:
-            options['months'] = [options['month']]
-        elif 'month_from_prescribing_filename' in options \
-             and options['month_from_prescribing_filename']:
-            filename = options['month_from_prescribing_filename']
-            date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
-            month = datetime.strptime(date_part + "_01", "%Y_%m_%d")
-            options['months'] = [month.strftime('%Y-%m-01')]
-        else:
-            if 'start_date' in options and options['start_date']:
-                d = parse(options['start_date'])
+    def get_rows(self, table_name):
+        """Iterate over the specified bigquery table, returning a dict for
+        each row of data.
+
+        """
+        fields = self.bigquery.tables().get(
+            projectId='ebmdatalab',
+            datasetId='measures',
+            tableId=table_name
+        ).execute()['schema']['fields']
+        response = self.bigquery.tabledata().list(
+            projectId='ebmdatalab',
+            datasetId='measures',
+            tableId=table_name,
+            maxResults=100000, startIndex=0).execute()
+        while response['rows']:
+            for row in response['rows']:
+                yield self._row_to_dict(row, fields)
+            if 'pageToken' in response:
+                response = self.bigquery.tabledata().list(
+                    projectId='ebmdatalab',
+                    datasetId='measures',
+                    tableId=table_name,
+                    pageToken=response['pageToken'],
+                    maxResults=100000).execute()
             else:
-                d = datetime(2010, 8, 1)
-            end_date = parse(options['end_date'])
-            while (d <= end_date):
-                options['months'].append(datetime.strftime(d, '%Y-%m-01'))
-                d = d + relativedelta.relativedelta(months=1)
-        return options
+                break
+        raise StopIteration
+
+    def add_percent_rank(self):
+        """Add a percentile rank to the ratios table
+        """
+        from_table = self.full_table_name()
+        target_table = self.table_name()
+        # The following should be smoothed_calc_value for practice
+        # data when we get there
+        value_var = 'calc_value'
+        sql_path = os.path.join(self.fpath, "./measure_sql/percent_rank.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            sql = sql.format(
+                from_table=from_table,
+                target_table=target_table,
+                value_var=value_var)
+            return self.query_and_return(sql, target_table, legacy=True)
+
+    def msg(self, message):
+        if self.verbose:
+            print message
+
+    def _query_and_write_global_centiles(self,
+                                         sql_path,
+                                         value_var,
+                                         from_table,
+                                         extra_select_sql):
+        with open(sql_path) as sql_file:
+            value_var = 'calc_value'
+            sql = sql_file.read()
+            sql = sql.format(
+                from_table=from_table,
+                extra_select_sql=extra_select_sql,
+                value_var=value_var,
+                global_centiles_table=self.full_globals_table_name())
+            # We have to use legacy SQL because there' no
+            # PERCENTILE_CONT equivalent in the standard SQL
+            return self.query_and_return(
+                sql, self.globals_table_name(), legacy=True)
+
+    def _get_col_aliases(self, num_or_denom=None):
+        """Return column names referred to in measure definitions for both
+        numerator or denominator. Used to construct the SELECT portion
+        of a query.
+
+        """
+        assert num_or_denom in ['numerator', 'denominator']
+        cols = []
+        for col in self.get_columns_for_select(num_or_denom=num_or_denom):
+            match = re.search(r"AS ([a-z0-9_]+)", col)
+            if match:
+                alias = match.group(1)
+            else:
+                raise CommandError("Could not find alias in %s" % col)
+            if alias != num_or_denom:
+                cols.append(alias)
+        return cols
+
+    def _row_to_dict(self, row, fields):
+        """Converts a row from bigquery into a dictionary
+        """
+        dict_row = {}
+        for i, item in enumerate(row['f']):
+            value = item['v']
+            key = fields[i]['name']
+            dict_row[key] = value
+        return dict_row
+
+
+class GlobalCalcuation(MeasureCalculation):
+    def calculate_global_cost_savings(self, practice_table_name, ccg_table_name):
+        sql_path = os.path.join(self.fpath, "./measure_sql/global_cost_savings.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            sql = sql.format(
+                practice_table=practice_table_name,
+                ccg_table=ccg_table_name,
+                global_table=self.full_globals_table_name()
+            )
+            target_table = self.globals_table_name()
+            self.query_and_return(sql, target_table, legacy=True)
+
+    def write_global_centiles_to_database(self):
+        """Write the globals data from BigQuery to the local database
+        """
+        self.msg("Writing global centiles to database")
+        for d in self.get_rows(self.globals_table_name()):
+            ccg_deciles = {}
+            practice_deciles = {}
+            ccg_cost_savings = {}
+            practice_cost_savings = {}
+            d['measure_id'] = self.measure_id
+            # cast strings to numbers for the after-save hook in
+            # the MeasureGlobal model
+            mg, created = MeasureGlobal.objects.get_or_create(
+                measure_id=self.measure_id,
+                month=d['global_month']
+            )
+            for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                practice_deciles[str(c)] = float(d.pop("global_practice_%sth" % c))
+                ccg_deciles[str(c)] = float(d.pop("global_ccg_%sth" % c))
+                practice_cost_savings[str(c)] = float(
+                    d.pop("practice_cost_savings_%s" % c))
+                ccg_cost_savings[str(c)] = float(
+                    d.pop("ccg_cost_savings_%s" % c))
+            for attr, value in d.iteritems():
+                setattr(mg, attr.replace('global_', ''), value)
+            mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
+            mg.cost_savings = {'ccg': ccg_cost_savings, 'practice': practice_cost_savings}
+            mg.save()
+        self.msg("Created %s measureglobals" % c)
 
     def create_or_update_measure(self, m, v):
-        if self.IS_VERBOSE:
-            print 'Updating measure:', m
+        self.msg('Updating measure: %s' % m)
         v['title'] = ' '.join(v['title'])
         v['description'] = ' '.join(v['description'])
         v['why_it_matters'] = ' '.join(v['why_it_matters'])
-        v['num_sql'] = ' '.join(v['num_sql'])
-        v['denom_sql'] = ' '.join(v['denom_sql'])
         try:
             measure = Measure.objects.get(id=m)
             measure.name = v['name']
@@ -169,301 +367,349 @@ class Command(BaseCommand):
             )
         return measure
 
-    def create_practice_measurevalues(self, measure, month, measure_config):
-        if self.IS_VERBOSE:
-            print 'updating', measure.title, 'for practices in', month
-        # Calculate values only for standard practices that were open
-        # in each month, to avoid messing up percentile calculations.
-        practices = Practice.objects.filter(setting=4) \
-                                    .filter(Q(open_date__isnull=True) |
-                                            Q(open_date__lt=month)) \
-                                    .filter(Q(close_date__isnull=True) |
-                                            Q(close_date__gt=month))
-        self.create_measurevalues(measure, practices, month,
-                                  measure_config['num_sql'],
-                                  measure_config['denom_sql'])
 
-    def create_ccg_measurevalues(self, measure, month):
-        if self.IS_VERBOSE:
-            print 'updating', measure.title, 'for CCGs in', month
-        pcts = PCT.objects.filter(org_type='CCG')
+class PracticeCalculation(MeasureCalculation):
+    def calculate(self):
+        self.msg("Calculating practice ratios")
+        self.calculate_practice_ratios()
+        self.msg("Adding percent rank to practices")
+        self.add_percent_rank()
+        self.msg("Calculating global centiles for practices")
+        self.calculate_global_centiles_for_practices()
+        if self.measure['is_cost_based']:
+            self.msg("Calculating cost savings for practices")
+            self.calculate_cost_savings_for_practices()
+        self.msg("Writing practice ratios to postgres")
+        self.write_practice_ratios_to_database()
+
+    def table_name(self):
+        name = "%s_%s" % (PRACTICE_TABLE_PREFIX, self.measure_id)
+        if self.under_test:
+            name = "test_" + name
+        return name
+
+    def calculate_practice_ratios(self):
+        """Given a measure defition, construct a BigQuery job which computes
+        numerator/denominator ratios for practices.
+
+        Also see  comments in SQL.
+        """
+
+        numerator_where = " ".join(self.measure['numerator_where'])
+        denominator_where = " ".join(self.measure['denominator_where'])
+        if self.month:
+            # validate the format before sending to bigquery
+            datetime.datetime.strptime(self.month, "%Y-%m-%d")
+            # XXX will be required when we use smoothing
+            date_cond_with_smoothing = (
+                " AND ("
+                "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
+                "DATE(month) <= '{}') "
+            ).format(self.month, self.month)
+            date_cond_without_smoothing = (
+                " AND (DATE(month) = '{}') "
+            ).format(self.month)
+            numerator_where += date_cond_without_smoothing
+            denominator_where += date_cond_without_smoothing
+        numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
+        for col in self._get_col_aliases('denominator'):
+            denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
+            aliased_denominators += ", denom_%s" % col
+        for col in self._get_col_aliases('numerator'):
+            numerator_aliases += ", num.%s AS num_%s" % (col, col)
+            aliased_numerators += ", num_%s" % col
+        sql_path = os.path.join(self.fpath, "./measure_sql/practice_ratios.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            sql = sql.format(
+                numerator_from=self.measure['numerator_from'],
+                numerator_where=numerator_where,
+                numerator_columns=" ".join(
+                    self.get_columns_for_select('numerator')),
+                denominator_columns=" ".join(
+                    self.get_columns_for_select('denominator')),
+                denominator_from=self.measure['denominator_from'],
+                denominator_where=denominator_where,
+                numerator_aliases=numerator_aliases,
+                denominator_aliases=denominator_aliases,
+                aliased_denominators=aliased_denominators,
+                aliased_numerators=aliased_numerators,
+                practices_from=self.full_practices_table_name()
+
+            )
+            return self.query_and_return(sql, self.table_name())
+
+    def calculate_global_centiles_for_practices(self):
+        """Compute overall sums and centiles for each practice.
+        """
+        sql_path = os.path.join(
+            self.fpath, "./measure_sql/global_deciles_practices.sql")
+        from_table = self.full_table_name()
+        extra_fields = []
+        for col in self._get_col_aliases('numerator'):
+            extra_fields.append("num_" + col)
+        for col in self._get_col_aliases('denominator'):
+            extra_fields.append("denom_" + col)
+        extra_select_sql = ""
+        for f in extra_fields:
+            extra_select_sql += ", SUM(%s) as %s" % (f, f)
+        if self.measure["is_cost_based"]:
+            extra_select_sql += (
+                ", "
+                "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
+                "- SUM(num_quantity)) AS cost_per_denom,"
+                "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
+        value_var = 'calc_value'  # could be smoothed_calc_value in future
+        return self._query_and_write_global_centiles(
+            sql_path, value_var, from_table, extra_select_sql)
+
+    def calculate_cost_savings_for_practices(self):
+        """Appends cost savings column to the Practice ratios table"""
+        sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            ratios_table = self.full_table_name()
+            global_table = self.full_globals_table_name()
+            target_table = self.table_name()
+            sql = sql.format(
+                local_table=ratios_table,
+                global_table=global_table,
+                unit='practice'
+            )
+            self.query_and_return(sql, target_table)
+
+    def write_practice_ratios_to_database(self):
+        """Copies the bigquery ratios data to the local postgres database.
+        Uses COPY command via a CSV file for performance.
+        """
+        fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
+                      'denominator', 'smoothed_calc_value', 'month',
+                      'percentile', 'calc_value', 'denom_items',
+                      'denom_quantity', 'denom_cost', 'num_cost',
+                      'num_quantity', 'practice_id', 'cost_savings']
+        f = tempfile.TemporaryFile(mode='r+')
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        c = 0
+        for datum in self.get_rows(self.table_name()):
+            datum['measure_id'] = self.measure_id
+            if self.measure['is_cost_based']:
+                cost_savings = {}
+                for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    cost_savings[str(centile)] = float(datum.pop(
+                        "cost_savings_%s" % centile))
+                datum['cost_savings'] = json.dumps(cost_savings)
+            datum['percentile'] = float(datum['percentile']) * 100
+            writer.writerow(datum)
+            c += 1
+        self.msg("Commiting data to database....")
+        copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
+        copy_str += "WITH (FORMAT csv)"
+        self.msg(copy_str % ", ".join(fieldnames))
+        f.seek(0)
+        self.conn.cursor().copy_expert(copy_str % ", ".join(fieldnames), f)
+        self.conn.commit()
+        f.close()
+        self.msg("Wrote %s values" % c)
+
+
+class CCGCalculation(MeasureCalculation):
+    def calculate(self):
+        self.msg("Calculating CCG ratios")
+        self.calculate_ccg_ratios()
+        self.msg("Adding rank to CCG ratios")
+        self.add_percent_rank()
+        self.msg("Calculating global CCG centiles")
+        self.calculate_global_centiles_for_ccgs()
+        if self.measure['is_cost_based']:
+            self.msg("Calculating CCG cost savings")
+            self.calculate_cost_savings_for_ccgs()
+        self.msg("Writing CCG data to postgres")
+        self.write_ccg_ratios_to_database()
+
+    def table_name(self):
+        name = "%s_%s" % (CCG_TABLE_PREFIX, self.measure_id)
+        if self.under_test:
+            name = "test_" + name
+        return name
+
+    def calculate_ccg_ratios(self):
+        """Sums all the fields in the per-practice table, grouped by
+        CCG. Stores in a new table.
+
+        """
+        with open(os.path.join(
+                self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
+            sql = sql_file.read()
+            numerator_aliases = denominator_aliases = ''
+            for col in self._get_col_aliases('denominator'):
+                denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (col, col)
+            for col in self._get_col_aliases('numerator'):
+                numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
+            from_table = PracticeCalculation(
+                self.measure_id, under_test=self.under_test).full_table_name()
+            sql = sql.format(denominator_aliases=denominator_aliases,
+                             numerator_aliases=numerator_aliases,
+                             from_table=from_table)
+            self.query_and_return(sql, self.table_name())
+
+    def calculate_global_centiles_for_ccgs(self):
+        """Adds CCG centiles to the already-existing practice centiles table
+
+        """
+        extra_fields = []
+        for col in self._get_col_aliases('numerator'):
+            extra_fields.append("num_" + col)
+        for col in self._get_col_aliases('denominator'):
+            extra_fields.append("denom_" + col)
+        extra_select_sql = ""
+        for f in extra_fields:
+            extra_select_sql += ", practice_deciles.%s as %s" % (f, f)
+        if self.measure["is_cost_based"]:
+            extra_select_sql += (
+                ", practice_deciles.cost_per_denom AS cost_per_denom"
+                ", practice_deciles.cost_per_num AS cost_per_num")
+        sql_path = os.path.join(
+            self.fpath, "./measure_sql/global_deciles_ccgs.sql")
+        from_table = self.full_table_name()
+        value_var = 'calc_value'  # could be smoothed_calc_value in future
+        return self._query_and_write_global_centiles(
+            sql_path, value_var, from_table, extra_select_sql)
+
+    def calculate_cost_savings_for_ccgs(self):
+        """Appends cost savings column to the CCG ratios table"""
+
+        sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
+        with open(sql_path, "r") as sql_file:
+            sql = sql_file.read()
+            ratios_table = self.full_table_name()
+            global_table = self.full_globals_table_name()
+            target_table = self.table_name()
+            sql = sql.format(
+                local_table=ratios_table,
+                global_table=global_table,
+                unit='ccg'
+            )
+            self.query_and_return(sql, target_table)
+
+    def write_ccg_ratios_to_database(self):
+        """Create measure values for CCG ratios (these are distinguished from
+        practice ratios by having a NULL practice_id)
+
+        """
         with transaction.atomic():
-            for pct in pcts:
-                mvs = MeasureValue.objects.filter(
-                    measure=measure,
-                    pct=pct,
-                    practice__isnull=False,
-                    month=month
+            c = 0
+            for datum in self.get_rows(self.table_name()):
+                datum['measure_id'] = self.measure_id
+                if self.measure['is_cost_based']:
+                    cost_savings = {}
+                    for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                        cost_savings[str(centile)] = float(datum.pop(
+                            "cost_savings_%s" % centile))
+                    datum['cost_savings'] = cost_savings
+                datum['percentile'] = float(datum['percentile']) * 100
+                MeasureValue.objects.create(**datum)
+                c += 1
+        self.msg("Wrote %s CCG measures" % c)
+
+
+class Command(BaseCommand):
+    '''Supply either --end_date to load data for all months
+    up to that date, or --month to load data for just one
+    month.
+
+    You can also supply --start_date, or supply a file path that
+    includes a timestamp with --month_from_prescribing_filename
+
+    '''
+
+    def handle(self, *args, **options):
+        options = self.parse_options(options)
+
+        start = datetime.datetime.now()
+        for measure_id in options['measure_ids']:
+            # Create measure (if required)
+            global_calculation = GlobalCalcuation(
+                measure_id, verbose=self.IS_VERBOSE,
+                under_test=options['test_mode'])
+            measure = global_calculation.create_or_update_measure(
+                measure_id, global_calculation.measure)
+            if options['definitions_only']:
+                continue
+            for month in options['months']:
+                # delete existing data; will need to delete 3 months
+                # when we have smoothing
+                MeasureValue.objects.filter(month=month)\
+                            .filter(measure=measure).delete()
+                MeasureGlobal.objects.filter(month=month)\
+                    .filter(measure=measure).delete()
+                # Calculate practice data
+                pc = PracticeCalculation(
+                    measure_id, month=month,
+                    verbose=self.IS_VERBOSE, under_test=options['test_mode']
                 )
-                try:
-                    mv_pct = MeasureValue.objects.get(
-                        measure=measure,
-                        pct=pct,
-                        practice__isnull=True,
-                        month=month
-                    )
-                except ObjectDoesNotExist:
-                    mv_pct = MeasureValue.objects.create(
-                        measure=measure,
-                        pct=pct,
-                        practice=None,
-                        month=month
-                    )
-                mv_pct.numerator = mvs.aggregate(Sum('numerator')).values()[0]
-                mv_pct.denominator = mvs.aggregate(
-                    Sum('denominator')).values()[0]
-                mv_pct.num_items = mvs.aggregate(Sum('num_items')).values()[0]
-                mv_pct.denom_items = mvs.aggregate(
-                    Sum('denom_items')).values()[0]
-                mv_pct.num_cost = mvs.aggregate(Sum('num_cost')).values()[0]
-                mv_pct.denom_cost = mvs.aggregate(
-                    Sum('denom_cost')).values()[0]
-                mv_pct.num_quantity = mvs.aggregate(
-                    Sum('num_quantity')).values()[0]
-                mv_pct.denom_quantity = mvs.aggregate(
-                    Sum('denom_quantity')).values()[0]
-                mv_pct.calc_value = self.get_calc_value(
-                    mv_pct.numerator, mv_pct.denominator)
-                mv_pct.save()
-
-    def create_measurevalues(self, measure, practices,
-                             month, num_sql, denom_sql):
-        '''
-        Given a practice and the definition of a measure, calculate
-        the measure's values for a particular month.
-        '''
-        with transaction.atomic():
-            for i, p in enumerate(practices):
-                if self.IS_VERBOSE and (i % 1000 == 0):
-                    print 'creating measurevalue for practice %s of %s' % (
-                        i, len(practices))
-                try:
-                    mv = MeasureValue.objects.get(
-                        measure=measure,
-                        practice=p,
-                        month=month
-                    )
-                except ObjectDoesNotExist:
-                    mv = MeasureValue.objects.create(
-                        measure=measure,
-                        practice=p,
-                        month=month
-                    )
-                # CCG calculations match *current* practice membership.
-                mv.pct = p.ccg
-                numerator = utils.execute_query(num_sql, [[p.code, month]])
-                if numerator:
-                    d = numerator[0]
-                    if d['numerator']:
-                        mv.numerator = float(d['numerator'])
-                    else:
-                        mv.numerator = 0
-                    if 'items' in d and d['items']:
-                        mv.num_items = float(d['items'])
-                    if 'cost' in d and d['cost']:
-                        mv.num_cost = float(d['cost'])
-                    if 'quantity' in d and d['quantity']:
-                        mv.num_quantity = float(d['quantity'])
-                else:
-                    mv.numerator = None
-                denominator = utils.execute_query(denom_sql, [[p.code, month]])
-                if denominator:
-                    d = denominator[0]
-                    if d['denominator']:
-                        mv.denominator = float(d['denominator'])
-                    else:
-                        mv.denominator = 0
-                    if 'items' in d and d['items']:
-                        mv.denom_items = float(d['items'])
-                    if 'cost' in d and d['cost']:
-                        mv.denom_cost = float(d['cost'])
-                    if 'quantity' in d and d['quantity']:
-                        mv.denom_quantity = float(d['quantity'])
-                else:
-                    mv.denominator = None
-                # ends up being null if denominator is 0 or null or the numerator is null
-                # such values are skipped when computing percentile ranking
-                mv.calc_value = self.get_calc_value(
-                    mv.numerator, mv.denominator)
-                mv.save()
-
-    def set_percentile_and_savings(self, row, measure, month, mg, org_type):
-        '''For an organisation, set its current percentile, and calculate its
-        savings.
-
-        NB: This assumes that we always use quantity to calculate savings,
-        not items. This means our numerator and denominator need to be
-        directly comparable in quantity terms.
-
-        '''
-        if org_type == 'practice':
-            practice = Practice.objects.get(code=row.practice_id)
-            mv = MeasureValue.objects.get(practice=practice,
-                                          month=month,
-                                          measure=measure)
-        else:
-            pct = PCT.objects.get(code=row.pct_id)
-            mv = MeasureValue.objects.get(practice=None, pct=pct,
-                                          month=month,
-                                          measure=measure)
-        if (row.percentile is None) or np.isnan(row.percentile):
-            row.percentile = None
-        mv.percentile = row.percentile
-        if measure.is_cost_based:
-            cost_savings = {}
-            # Calculate actual numerator and non-numerator cost per pill.
-            # If these exist (i.e. the practice actually prescribed some
-            # of the numerator or non-numerator) we use the mean price
-            # per pill actually paid by the practice to calculate the
-            # theoretical cost of shifting the ratios between the two.
-            # If not, we just use the global mean cost per pill.
-            # First do this for the numerator...
-            if row.num_quantity:
-                cost_per_num_quant = row.num_cost / row.num_quantity
-            else:
-                cost_per_num_quant = mg.cost_per_num_quant
-            # ... Then the non-numerator. (Note "non-numerator" not
-            # "denominator": technically in our measures the denominator
-            # always contains the numerator. For example, if our measure is
-            # Cerazette as a proportion of all desogesterel, in this case
-            # we're interested in the mean price paid for everything that
-            # wasn't branded Cerazette.)
-
-            # so where they are both the same, we use a cost from the globals?
-            actual_non_num_quant = row.denom_quantity - row.num_quantity
-            actual_non_num_cost = row.denom_cost - row.num_cost
-            if actual_non_num_quant:
-                cost_per_non_num_quant = actual_non_num_cost / \
-                    actual_non_num_quant
-            else:
-                cost_per_non_num_quant = mg.cost_per_non_num_quant
-            for c in self.centiles:
-                ratio = mg.percentiles[org_type][c]
-                # And finally calculate theoretical quantities,
-                # costs and savings at this ratio.
-                num_quant_theoretical = row.denom_quantity * ratio
-                non_num_quant_theoretical = row.denom_quantity - \
-                    num_quant_theoretical
-                cost_theoretical = (num_quant_theoretical *
-                                    cost_per_num_quant) + \
-                                   (non_num_quant_theoretical *
-                                    cost_per_non_num_quant)
-                saving = row.denom_cost - cost_theoretical
-                cost_savings[c] = saving
-            mv.cost_savings = cost_savings
-        mv.save()
-
-    def create_dataframe_with_ranks_and_percentiles(self, records):
-        '''Use scipy's rankdata to rank by calc_value - we use rankdata
-        rather than pandas qcut because pandas qcut does not cope well
-        with repeated values (e.g. repeated values of zero). Returns
-        dataframe with percentile column.
-
-        '''
+                pc.calculate()
+                # Calculate CCG data
+                cc = CCGCalculation(
+                    measure_id, month=month,
+                    verbose=self.IS_VERBOSE, under_test=options['test_mode']
+                )
+                cc.calculate()
+                global_calculation.calculate_global_cost_savings(
+                    pc.full_table_name(), cc.full_table_name())
+                # Store global data locally
+                global_calculation.write_global_centiles_to_database()
         if self.IS_VERBOSE:
-            print 'processing dataframe of length', len(records)
-        df = pd.DataFrame.from_records(records)
-        # Skip empty dataframes.
-        if 'calc_value' in df:
-            # Rank by calc_value, skipping nulls.
-            df.loc[df['calc_value'].notnull(), 'rank_val'] = \
-                rankdata(df[df.calc_value.notnull()].calc_value.values,
-                         method='min') - 1
-            df1 = df[df['rank_val'].notnull()]
-            # Add percentiles to each row, and normalise to 0-100 to make
-            # comparisons easier later.
-            df.loc[df['rank_val'].notnull(), 'percentile'] = \
-                (df1.rank_val / float(len(df1) - 1)) * 100
-            # TODO: Still needed?
-            cols = ['num_items', 'num_cost', 'num_quantity',
-                    'denom_items', 'denom_cost', 'denom_quantity']
-            df[cols] = df[cols].fillna(0)
-            return df
-        else:
-            return None
+            print "Total %s elapsed" % (datetime.datetime.now() - start)
 
-    def create_or_update_measureglobal(self, df, measure, month, org_type):
-        '''
-        Given the ranked dataframe of all practices, create or
-        update the MeasureGlobal percentiles for that month.
-        We don't strictly need to use pandas methods for
-        the numerator/denominator sums, but do so for ease.
-        '''
-        mg, created = MeasureGlobal.objects.get_or_create(
-            measure=measure,
-            month=month
-        )
-        if org_type == 'practice':
-            mg.numerator = df['numerator'].sum()
-            if np.isnan(mg.numerator):
-                mg.numerator = None
-            mg.denominator = df['denominator'].sum()
-            if np.isnan(mg.denominator):
-                mg.denominator = None
-            mg.calc_value = self.get_calc_value(mg.numerator, mg.denominator)
-            percentiles = {}
-            for c in self.centiles:
-                percentiles[c] = df.quantile(c / 100.0)['calc_value']
-            if mg.percentiles:
-                mg.percentiles['practice'] = percentiles
-            else:
-                mg.percentiles = {
-                    'practice': percentiles
-                }
-            # Create global summed items, quantity etc. TODO: Still needed?
-            aggregates = ['num_items', 'denom_items', 'num_cost',
-                          'denom_cost', 'num_quantity', 'denom_quantity']
-            for a in aggregates:
-                if a in df.columns:
-                    setattr(mg, a, df[a].sum())
-        else:
-            percentiles = {}
-            for c in self.centiles:
-                percentiles[c] = df.quantile(c / 100.0)['calc_value']
-            if mg.percentiles:
-                mg.percentiles['ccg'] = percentiles
-            else:
-                mg.percentiles = {
-                    'ccg': percentiles
-                }
-        mg.save()
-        # Temporary attributes, not saved in the database.
-        if measure.is_cost_based:
-            mg.cost_per_num_quant = mg.num_cost / mg.num_quantity
-            mg.cost_per_non_num_quant = (mg.denom_cost - mg.num_cost) / \
-                (mg.denom_quantity - mg.num_quantity)
-        return mg
+    def add_arguments(self, parser):
+        parser.add_argument('--month')
+        parser.add_argument('--month_from_prescribing_filename')
+        parser.add_argument('--start_date')
+        parser.add_argument('--end_date')
+        parser.add_argument('--measure')
+        parser.add_argument('--test_mode', action='store_true')
+        parser.add_argument('--definitions_only', action='store_true')
 
-    def get_calc_value(self, numerator, denominator):
-        calc_value = None
-        if denominator:
-            if numerator:
-                calc_value = float(numerator) / \
-                    float(denominator)
-            else:
-                calc_value = numerator
-        return calc_value
-
-    def set_measureglobal_savings(self, mg, org_type):
-        cost_savings = {c: 0 for c in self.centiles}
-        if org_type == 'practice':
-            mvs = MeasureValue.objects.filter(
-                measure=mg.measure,
-                month=mg.month,
-                practice__isnull=False).values()
-            for c in self.centiles:
-                for mv in mvs:
-                    saving = mv['cost_savings'][str(c)]
-                    cost_savings[c] += max(saving, 0)
-            mg.cost_savings = {'practice': cost_savings}
+    def parse_options(self, options):
+        self.IS_VERBOSE = False
+        if options['verbosity']:
+            self.IS_VERBOSE = True
+        if 'measure' in options and options['measure']:
+            options['measure_ids'] = [options['measure']]
         else:
-            mvs = MeasureValue.objects.filter(
-                measure=mg.measure,
-                month=mg.month,
-                practice__isnull=True).values()
-            for c in self.centiles:
-                for mv in mvs:
-                    saving = mv['cost_savings'][str(c)]
-                    cost_savings[c] += max(saving, 0)
-            mg.cost_savings['ccg'] = cost_savings
-        mg.save()
+            options['measure_ids'] = [
+                k for k, v in parse_measures().items() if 'skip' not in v]
+        # Get months to cover from options.
+        if not options['month'] and not options['end_date'] \
+           and not options['month_from_prescribing_filename']:
+            err = 'You must supply either --month or --end_date '
+            err += 'in the format YYYY-MM-DD, or supply a path to a file which '
+            err += 'includes the timestamp in the path. You can also '
+            err += 'optionally supply a start date.'
+            print err
+            sys.exit()
+        options['months'] = []
+        if 'month' in options and options['month']:
+            options['months'] = [options['month']]
+        elif 'month_from_prescribing_filename' in options \
+             and options['month_from_prescribing_filename']:
+            filename = options['month_from_prescribing_filename']
+            date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
+            month = datetime.datetime.strptime(date_part + "_01", "%Y_%m_%d")
+            options['months'] = [month.strftime('%Y-%m-01')]
+        else:
+            if 'start_date' in options and options['start_date']:
+                d = parse(options['start_date'])
+            else:
+                d = datetime(2010, 8, 1)
+            end_date = parse(options['end_date'])
+            while (d <= end_date):
+                options['months'].append(datetime.strftime(d, '%Y-%m-01'))
+                d = d + relativedelta.relativedelta(months=1)
+        return options
+
+
+
+# TO generate perfect copy of practices:
+# COPY frontend_practice TO '/tmp/practices.csv' DELIMITER ',' CSV HEADER;
+# see hscic:practices  in BQ for schema. This will need automatic uploading from runner.py

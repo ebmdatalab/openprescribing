@@ -18,7 +18,7 @@
   "is_cost_based": false, 
   "low_is_good": true, 
   "numerator_columns": [
-    "SUM(total_items) AS numerator, ", 
+    "SUM(items) AS numerator, ", 
     "SUM(quantity) AS quantity, "
   ], 
   "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
@@ -26,7 +26,7 @@
     "(bnf_code LIKE '0601023B0%%')  "
   ], 
   "denominator_columns": [
-    "SUM(total_items) AS denominator, ", 
+    "SUM(items) AS denominator, ", 
     "SUM(quantity) AS quantity, "
   ], 
   "denominator_from": "[ebmdatalab:hscic.prescribing] ", 

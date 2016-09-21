@@ -1,38 +1,39 @@
 {
-  "name": "Antibiotics for uncomplicated UTIs (KTT10)", 
+  "name": "Antibiotics for uncomplicated UTIs (KTT10)",
+  "skip": true,
   "title": [
-    "KTT10 (Antibiotics for uncomplicated UTIs): ", 
-    "Number of average daily quantities (ADQs) per", 
-    "item for trimethoprim 200mg tablets,", 
-    "nitrofurantoin 50mg tablets and capsules,", 
+    "KTT10 (Antibiotics for uncomplicated UTIs): ",
+    "Number of average daily quantities (ADQs) per",
+    "item for trimethoprim 200mg tablets,",
+    "nitrofurantoin 50mg tablets and capsules,",
     "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
-  ], 
+  ],
   "description": [
-    "Number of average daily quantities (ADQs) per", 
-    "item for trimethoprim 200mg tablets,", 
-    "nitrofurantoin 50mg tablets and capsules,", 
+    "Number of average daily quantities (ADQs) per",
+    "item for trimethoprim 200mg tablets,",
+    "nitrofurantoin 50mg tablets and capsules,",
     "nitrofurantoin 100mg m/r capsules and pivmecillinam 200mg tablets."
-  ], 
+  ],
   "why_it_matters": [
     "For most women (who are not pregnant), a three-day course of antibiotics for an uncomplicated urinary tract infection (UTI) will treat it effectively. This also reduces the amount of unnecessary antibiotics being prescribed."
-  ], 
-  "numerator_short": "Selected ADQs", 
-  "denominator_short": "Selected items", 
-  "url": null, 
-  "is_percentage": false, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+  ],
+  "numerator_short": "Selected ADQs",
+  "denominator_short": "Selected items",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] p  LEFT JOIN frontend_presentation r  ON p.presentation_code = r.bnf_code ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] p  LEFT JOIN frontend_presentation r  ON p.presentation_code = r.bnf_code ",
   "numerator_where": [
-    "((p.bnf_code='0501130R0BBAAAD')  OR (p.bnf_code='0501130R0BGAAAG')  OR (p.bnf_code='0501130R0BCAAAA')  OR (p.bnf_code='0501130R0AAAGAG')  OR (p.bnf_code='0501130R0AAAAAA')  OR (p.bnf_code='0501130R0AAADAD')  OR (p.bnf_code='0501015P0AAABAB')  OR (p.bnf_code='0501015P0BBABAB')  OR (p.bnf_code='0501080W0AAAEAE'))  AND (p.practice_id=%s)  AND (p.processing_date=%s) "
-  ], 
+    "((p.bnf_code='0501130R0BBAAAD')  OR (p.bnf_code='0501130R0BGAAAG')  OR (p.bnf_code='0501130R0BCAAAA')  OR (p.bnf_code='0501130R0AAAGAG')  OR (p.bnf_code='0501130R0AAAAAA')  OR (p.bnf_code='0501130R0AAADAD')  OR (p.bnf_code='0501015P0AAABAB')  OR (p.bnf_code='0501015P0BBABAB')  OR (p.bnf_code='0501080W0AAAEAE')) "
+  ],
   "denominator_columns": [
-    "SUM(total_items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "((bnf_code='0501130R0BBAAAD')  OR (bnf_code='0501130R0BGAAAG')  OR (bnf_code='0501130R0BCAAAA')  OR (bnf_code='0501130R0AAAGAG')  OR (bnf_code='0501130R0AAAAAA')  OR (bnf_code='0501130R0AAADAD')  OR (bnf_code='0501015P0AAABAB')  OR (bnf_code='0501015P0BBABAB')  OR (bnf_code='0501080W0AAAEAE'))  "
   ]
