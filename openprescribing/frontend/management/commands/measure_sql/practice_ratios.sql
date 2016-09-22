@@ -13,8 +13,8 @@ FROM (
   SELECT
     -- Compute ratios
     *,
-    numerator / denominator AS calc_value,
-    numerator_in_window / denominator_in_window AS smoothed_calc_value
+    IEEE_DIVIDE(numerator, denominator) AS calc_value,
+    IEEE_DIVIDE(numerator_in_window, denominator_in_window) AS smoothed_calc_value
   FROM (
     SELECT
       -- Calculate sums over a rolling three month window for smoothed

@@ -19,12 +19,12 @@
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.prescribing] p  LEFT JOIN [ebmdatalab:hscic.presentation] r  ON p.presentation_code = r.bnf_code ",
+  "numerator_from": "[ebmdatalab:hscic.prescribing] p LEFT JOIN [ebmdatalab:hscic.presentation] r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
     "(p.bnf_code LIKE '0501030P0%%')   "
   ],
   "denominator_columns": [
-    "(total_list_size / 1000.0) AS denominator, "
+    "SUM(total_list_size / 1000.0) AS denominator, "
   ],
   "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
   "denominator_where": []

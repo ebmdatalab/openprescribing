@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 
-from frontend.models import MeasureGlobal, MeasureValue, Measure
+from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
 from common import utils
 
 BG_PROJECT = 'ebmdatalab'
@@ -84,7 +84,7 @@ class MeasureCalculation(object):
         name = "practices"
         if self.under_test:
             name = "test_" + name
-        return "[%s:%s.%s]" % (BG_PROJECT, BG_DATASET, name)
+        return "[%s:%s.%s]" % (BG_PROJECT, 'hscic', name)
 
     def full_table_name(self):
         """Fully qualified table name as used in bigquery SELECT
@@ -136,7 +136,7 @@ class MeasureCalculation(object):
         if not legacy:
             # Rename any legacy-style table references to use standard
             # SQL dialect.
-            query = re.sub(r'\[(.+):(.+)\.(.+)\]', r'\1.\2.\3', query)
+            query = re.sub(r'\[(.+?):(.+?)\.(.+?)\]', r'\1.\2.\3', query)
         payload = {
             "configuration": {
                 "query": {
@@ -206,7 +206,7 @@ class MeasureCalculation(object):
             datasetId='measures',
             tableId=table_name,
             maxResults=100000, startIndex=0).execute()
-        while response['rows']:
+        while 'rows' in response:
             for row in response['rows']:
                 yield self._row_to_dict(row, fields)
             if 'pageToken' in response:
@@ -305,30 +305,40 @@ class GlobalCalcuation(MeasureCalculation):
         """Write the globals data from BigQuery to the local database
         """
         self.msg("Writing global centiles to database")
+        c = 0
         for d in self.get_rows(self.globals_table_name()):
             ccg_deciles = {}
             practice_deciles = {}
             ccg_cost_savings = {}
             practice_cost_savings = {}
             d['measure_id'] = self.measure_id
-            # cast strings to numbers for the after-save hook in
-            # the MeasureGlobal model
+            # The cost-savings calculations prepend columns with
+            # global_. There is probably a better way of contstructing
+            # the query so this clean-up doesn't have to happen...
+            new_d = {}
+            for attr, value in d.iteritems():
+                new_d[attr.replace('global_', '')] = value
+            d = new_d
             mg, created = MeasureGlobal.objects.get_or_create(
                 measure_id=self.measure_id,
-                month=d['global_month']
+                month=d['month']
             )
             for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                practice_deciles[str(c)] = float(d.pop("global_practice_%sth" % c))
-                ccg_deciles[str(c)] = float(d.pop("global_ccg_%sth" % c))
-                practice_cost_savings[str(c)] = float(
-                    d.pop("practice_cost_savings_%s" % c))
-                ccg_cost_savings[str(c)] = float(
-                    d.pop("ccg_cost_savings_%s" % c))
-            for attr, value in d.iteritems():
-                setattr(mg, attr.replace('global_', ''), value)
+                practice_deciles[str(c)] = float(d.pop("practice_%sth" % c))
+                ccg_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
+                if self.measure['is_cost_based']:
+                    practice_cost_savings[str(c)] = float(
+                        d.pop("practice_cost_savings_%s" % c))
+                    ccg_cost_savings[str(c)] = float(
+                        d.pop("ccg_cost_savings_%s" % c))
+            if self.measure['is_cost_based']:
+                mg.cost_savings = {'ccg': ccg_cost_savings, 'practice': practice_cost_savings}
+            # If we're cost-based, global_ prefix has been added
             mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
-            mg.cost_savings = {'ccg': ccg_cost_savings, 'practice': practice_cost_savings}
+            for attr, value in d.iteritems():
+                setattr(mg, attr, value)
             mg.save()
+            c += 1
         self.msg("Created %s measureglobals" % c)
 
     def create_or_update_measure(self, m, v):
@@ -378,7 +388,8 @@ class PracticeCalculation(MeasureCalculation):
             self.msg("Calculating cost savings for practices")
             self.calculate_cost_savings_for_practices()
         self.msg("Writing practice ratios to postgres")
-        self.write_practice_ratios_to_database()
+        written = self.write_practice_ratios_to_database()
+        return written
 
     def table_name(self):
         name = "%s_%s" % (PRACTICE_TABLE_PREFIX, self.measure_id)
@@ -392,22 +403,19 @@ class PracticeCalculation(MeasureCalculation):
 
         Also see  comments in SQL.
         """
-
-        numerator_where = " ".join(self.measure['numerator_where'])
-        denominator_where = " ".join(self.measure['denominator_where'])
-        # validate the format before sending to bigquery
-        datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
         # XXX will be required when we use smoothing
         date_cond_with_smoothing = (
-            " AND ("
+            "("
             "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
             "DATE(month) <= '{}') "
         ).format(self.start_date, self.end_date)
         date_cond_without_smoothing = (
-            " AND (DATE(month) >= '{}' AND DATE(month) <= '{}') "
+            "(DATE(month) >= '{}' AND DATE(month) <= '{}') "
         ).format(self.start_date, self.end_date)
-        numerator_where += date_cond_without_smoothing
-        denominator_where += date_cond_without_smoothing
+        numerator_where = " AND ".join(
+            self.measure['numerator_where'] + [date_cond_without_smoothing])
+        denominator_where = " AND ".join(
+            self.measure['denominator_where'] + [date_cond_without_smoothing])
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
         for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
@@ -478,6 +486,8 @@ class PracticeCalculation(MeasureCalculation):
     def write_practice_ratios_to_database(self):
         """Copies the bigquery ratios data to the local postgres database.
         Uses COPY command via a CSV file for performance.
+
+        Returns number of rows written
         """
         fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
                       'denominator', 'smoothed_calc_value', 'month',
@@ -507,6 +517,7 @@ class PracticeCalculation(MeasureCalculation):
         self.conn.commit()
         f.close()
         self.msg("Wrote %s values" % c)
+        return c
 
 
 class CCGCalculation(MeasureCalculation):
@@ -521,7 +532,8 @@ class CCGCalculation(MeasureCalculation):
             self.msg("Calculating CCG cost savings")
             self.calculate_cost_savings_for_ccgs()
         self.msg("Writing CCG data to postgres")
-        self.write_ccg_ratios_to_database()
+        written = self.write_ccg_ratios_to_database()
+        return written
 
     def table_name(self):
         name = "%s_%s" % (CCG_TABLE_PREFIX, self.measure_id)
@@ -590,7 +602,9 @@ class CCGCalculation(MeasureCalculation):
 
     def write_ccg_ratios_to_database(self):
         """Create measure values for CCG ratios (these are distinguished from
-        practice ratios by having a NULL practice_id)
+        practice ratios by having a NULL practice_id).
+
+        Retuns number of rows written
 
         """
         with transaction.atomic():
@@ -607,6 +621,7 @@ class CCGCalculation(MeasureCalculation):
                 MeasureValue.objects.create(**datum)
                 c += 1
         self.msg("Wrote %s CCG measures" % c)
+        return c
 
 
 class Command(BaseCommand):
@@ -645,17 +660,20 @@ class Command(BaseCommand):
                 measure_id, start_date=start_date, end_date=end_date,
                 verbose=self.IS_VERBOSE, under_test=options['test_mode']
             )
-            pc.calculate()
+            practice_rows = pc.calculate()
             # Calculate CCG data
             cc = CCGCalculation(
                 measure_id, start_date=start_date, end_date=end_date,
                 verbose=self.IS_VERBOSE, under_test=options['test_mode']
             )
-            cc.calculate()
-            global_calculation.calculate_global_cost_savings(
-                pc.full_table_name(), cc.full_table_name())
-            # Store global data locally
-            global_calculation.write_global_centiles_to_database()
+            ccg_rows = cc.calculate()
+            if practice_rows and ccg_rows:
+                if measure.is_cost_based:
+                    global_calculation.calculate_global_cost_savings(
+                        pc.full_table_name(), cc.full_table_name())
+                global_calculation.write_global_centiles_to_database()
+            else:
+                raise CommandError("No rows were generated by measure %s" % measure_id)
         if self.IS_VERBOSE:
             print "Total %s elapsed" % (datetime.datetime.now() - start)
 
@@ -678,8 +696,9 @@ class Command(BaseCommand):
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
         # Get months to cover from options.
-        if not options['month'] and not options['end_date'] \
-           and not options['month_from_prescribing_filename']:
+        if (not options['month'] and not options['end_date'] \
+           and not options['month_from_prescribing_filename']) \
+           and not options['start_date']:
             err = 'You must supply either --month or --end_date '
             err += 'in the format YYYY-MM-DD, or supply a path to a file which '
             err += 'includes the timestamp in the path. You can also '
@@ -695,6 +714,12 @@ class Command(BaseCommand):
             date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
             month = datetime.datetime.strptime(date_part + "_01", "%Y_%m_%d")
             options['start_date'] = options['end_date'] = [month.strftime('%Y-%m-01')]
+        else:
+            l = ImportLog.objects.latest_in_category('prescribing')
+            options['end_date'] = l.current_at.strftime('%Y-%m-%d')
+        # validate the format
+        datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
+        datetime.datetime.strptime(options['end_date'], "%Y-%m-%d")
         return options
 
 
