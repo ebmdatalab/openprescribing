@@ -47,7 +47,7 @@ def parse_measures():
 
 
 class MeasureCalculation(object):
-    def __init__(self, measure_id, month=None,
+    def __init__(self, measure_id, start_date=None, end_date=None,
                  verbose=False, under_test=False):
         self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
@@ -57,7 +57,8 @@ class MeasureCalculation(object):
         self.measures = parse_measures()
         self.measure = parse_measures()[measure_id]
         self.measure_id = measure_id
-        self.month = month
+        self.start_date = start_date
+        self.end_date = end_date
         self.under_test = under_test
 
         self.setup_db()
@@ -155,7 +156,7 @@ class MeasureCalculation(object):
                 }
             }
         }
-        self.msg("Executing a query which will write to %s" % table_id)
+        self.msg("Writing to bigquery table %s" % table_id)
         start = datetime.datetime.now()
         response = self.bigquery.jobs().insert(
             projectId='ebmdatalab',
@@ -164,9 +165,6 @@ class MeasureCalculation(object):
         job_id = response['jobReference']['jobId']
         while True:
             time.sleep(1)
-            if counter % 5 == 0:
-                sys.stdout.write(".")
-                sys.stdout.flush()
             response = self.bigquery.jobs().get(
                 projectId='ebmdatalab',
                 jobId=job_id).execute()
@@ -397,20 +395,19 @@ class PracticeCalculation(MeasureCalculation):
 
         numerator_where = " ".join(self.measure['numerator_where'])
         denominator_where = " ".join(self.measure['denominator_where'])
-        if self.month:
-            # validate the format before sending to bigquery
-            datetime.datetime.strptime(self.month, "%Y-%m-%d")
-            # XXX will be required when we use smoothing
-            date_cond_with_smoothing = (
-                " AND ("
-                "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
-                "DATE(month) <= '{}') "
-            ).format(self.month, self.month)
-            date_cond_without_smoothing = (
-                " AND (DATE(month) = '{}') "
-            ).format(self.month)
-            numerator_where += date_cond_without_smoothing
-            denominator_where += date_cond_without_smoothing
+        # validate the format before sending to bigquery
+        datetime.datetime.strptime(self.start_date, "%Y-%m-%d")
+        # XXX will be required when we use smoothing
+        date_cond_with_smoothing = (
+            " AND ("
+            "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
+            "DATE(month) <= '{}') "
+        ).format(self.start_date, self.end_date)
+        date_cond_without_smoothing = (
+            " AND (DATE(month) >= '{}' AND DATE(month) <= '{}') "
+        ).format(self.start_date, self.end_date)
+        numerator_where += date_cond_without_smoothing
+        denominator_where += date_cond_without_smoothing
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
         for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
@@ -635,29 +632,30 @@ class Command(BaseCommand):
                 measure_id, global_calculation.measure)
             if options['definitions_only']:
                 continue
-            for month in options['months']:
-                # delete existing data; will need to delete 3 months
-                # when we have smoothing
-                MeasureValue.objects.filter(month=month)\
-                            .filter(measure=measure).delete()
-                MeasureGlobal.objects.filter(month=month)\
-                    .filter(measure=measure).delete()
-                # Calculate practice data
-                pc = PracticeCalculation(
-                    measure_id, month=month,
-                    verbose=self.IS_VERBOSE, under_test=options['test_mode']
-                )
-                pc.calculate()
-                # Calculate CCG data
-                cc = CCGCalculation(
-                    measure_id, month=month,
-                    verbose=self.IS_VERBOSE, under_test=options['test_mode']
-                )
-                cc.calculate()
-                global_calculation.calculate_global_cost_savings(
-                    pc.full_table_name(), cc.full_table_name())
-                # Store global data locally
-                global_calculation.write_global_centiles_to_database()
+            start_date = options['start_date']
+            end_date = options['end_date']
+            MeasureValue.objects.filter(month__gte=start_date)\
+                                .filter(month__lte=end_date)\
+                                .filter(measure=measure).delete()
+            MeasureGlobal.objects.filter(month__gte=start_date)\
+                                 .filter(month__lte=end_date)\
+                                 .filter(measure=measure).delete()
+            # Calculate practice data
+            pc = PracticeCalculation(
+                measure_id, start_date=start_date, end_date=end_date,
+                verbose=self.IS_VERBOSE, under_test=options['test_mode']
+            )
+            pc.calculate()
+            # Calculate CCG data
+            cc = CCGCalculation(
+                measure_id, start_date=start_date, end_date=end_date,
+                verbose=self.IS_VERBOSE, under_test=options['test_mode']
+            )
+            cc.calculate()
+            global_calculation.calculate_global_cost_savings(
+                pc.full_table_name(), cc.full_table_name())
+            # Store global data locally
+            global_calculation.write_global_centiles_to_database()
         if self.IS_VERBOSE:
             print "Total %s elapsed" % (datetime.datetime.now() - start)
 
@@ -690,22 +688,13 @@ class Command(BaseCommand):
             sys.exit()
         options['months'] = []
         if 'month' in options and options['month']:
-            options['months'] = [options['month']]
+            options['start_date'] = options['end_date'] = options['month']
         elif 'month_from_prescribing_filename' in options \
              and options['month_from_prescribing_filename']:
             filename = options['month_from_prescribing_filename']
             date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
             month = datetime.datetime.strptime(date_part + "_01", "%Y_%m_%d")
-            options['months'] = [month.strftime('%Y-%m-01')]
-        else:
-            if 'start_date' in options and options['start_date']:
-                d = parse(options['start_date'])
-            else:
-                d = datetime(2010, 8, 1)
-            end_date = parse(options['end_date'])
-            while (d <= end_date):
-                options['months'].append(datetime.strftime(d, '%Y-%m-01'))
-                d = d + relativedelta.relativedelta(months=1)
+            options['start_date'] = options['end_date'] = [month.strftime('%Y-%m-01')]
         return options
 
 
