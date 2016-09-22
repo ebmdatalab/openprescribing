@@ -60,11 +60,11 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
 
 Install Python dependencies in development:
 
-    pip install -r requirements/local.txt
+    pip install -r requirements/local.txt --process-dependency-links
 
 Or in production:
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt --process-dependency-links
 
 And then install JavaScript dependencies. You'll need a version of
 nodejs greater than v0.10.11:

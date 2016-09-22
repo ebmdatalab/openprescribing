@@ -13,4 +13,6 @@ numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
 google-api-python-client==1.5.3
--e git+https://github.com/GoogleCloudPlatform/google-cloud-python#egg=gcloud
+pip==8.1.2
+setuptools==27.3.0
+-e git+https://github.com/ebmdatalab/ebmdatalab-python#egg=ebmdatalab-python
