@@ -1,10 +1,10 @@
 {
   "name": "Broad-spectrum antibiotics (KTT9)",
   "title": [
-    "KTT9 (Antibiotic prescribing - especially broad spectrum antibiotics)"
+    "KTT9 (Antibiotic prescribing)"
   ],
   "description": [
-    "Number of prescription items for antibacterial drugs (BNF 5.1)",
+    "Number of prescription items for all antibacterial drugs (BNF 5.1)",
     "per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
   ],
   "why_it_matters": [
