@@ -8,16 +8,6 @@ var utils = {
   getDataUrls: function(options) {
     var panelUrl = config.apiHost + '/api/1.0/measure_by_';
     panelUrl += options.orgType.toLowerCase() + '/?format=json';
-    var urglobal.jQuery = require('jquery');
-global.$ = global.jQuery;
-var _ = require('underscore');
-var humanize = require('humanize');
-var config = require('./config');
-var utils = {
-
-  getDataUrls: function(options) {
-    var panelUrl = config.apiHost + '/api/1.0/measure_by_';
-    panelUrl += options.orgType.toLowerCase() + '/?format=json';
     var urls = {
       panelMeasuresUrl: panelUrl,
       globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json'
