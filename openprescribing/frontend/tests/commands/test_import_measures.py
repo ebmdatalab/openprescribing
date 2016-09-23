@@ -19,7 +19,8 @@ class ArgumentTestCase(TestCase):
         parser = cmd.create_parser("import_measures", "")
         options = parser.parse_args(opts)
         result = cmd.parse_options(options.__dict__)
-        self.assertEqual(result['months'], ['2016-03-01'])
+        self.assertEqual(result['start_date'], ['2016-03-01'])
+        self.assertEqual(result['end_date'], ['2016-03-01'])
 
 
 class BehaviourTestCase(TestCase):
