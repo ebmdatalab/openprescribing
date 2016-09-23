@@ -225,8 +225,6 @@ class MeasureCalculation(object):
         """
         from_table = self.full_table_name()
         target_table = self.table_name()
-        # The following should be smoothed_calc_value for practice
-        # data when we get there
         value_var = 'calc_value'
         sql_path = os.path.join(self.fpath, "./measure_sql/percent_rank.sql")
         with open(sql_path, "r") as sql_file:
@@ -403,19 +401,13 @@ class PracticeCalculation(MeasureCalculation):
 
         Also see  comments in SQL.
         """
-        # XXX will be required when we use smoothing
-        date_cond_with_smoothing = (
-            "("
-            "DATE(month) >= DATE_ADD(DATE '{}', INTERVAL -2 MONTH) AND "
-            "DATE(month) <= '{}') "
-        ).format(self.start_date, self.end_date)
-        date_cond_without_smoothing = (
+        date_cond = (
             "(DATE(month) >= '{}' AND DATE(month) <= '{}') "
         ).format(self.start_date, self.end_date)
         numerator_where = " AND ".join(
-            self.measure['numerator_where'] + [date_cond_without_smoothing])
+            self.measure['numerator_where'] + [date_cond])
         denominator_where = " AND ".join(
-            self.measure['denominator_where'] + [date_cond_without_smoothing])
+            self.measure['denominator_where'] + [date_cond])
         numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
         for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
@@ -464,7 +456,7 @@ class PracticeCalculation(MeasureCalculation):
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
                 "- SUM(num_quantity)) AS cost_per_denom,"
                 "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
-        value_var = 'calc_value'  # could be smoothed_calc_value in future
+        value_var = 'calc_value'
         return self._query_and_write_global_centiles(
             sql_path, value_var, from_table, extra_select_sql)
 
@@ -490,7 +482,7 @@ class PracticeCalculation(MeasureCalculation):
         Returns number of rows written
         """
         fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
-                      'denominator', 'smoothed_calc_value', 'month',
+                      'denominator', 'month',
                       'percentile', 'calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
                       'num_quantity', 'practice_id', 'cost_savings']
@@ -580,7 +572,7 @@ class CCGCalculation(MeasureCalculation):
         sql_path = os.path.join(
             self.fpath, "./measure_sql/global_deciles_ccgs.sql")
         from_table = self.full_table_name()
-        value_var = 'calc_value'  # could be smoothed_calc_value in future
+        value_var = 'calc_value'
         return self._query_and_write_global_centiles(
             sql_path, value_var, from_table, extra_select_sql)
 

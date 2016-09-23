@@ -387,7 +387,6 @@ class MeasureValue(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
-    smoothed_calc_value = models.FloatField(null=True, blank=True)
 
     # Optionally store the raw values, where appropriate.
     # Cost and quantity are used for calculating cost savings.

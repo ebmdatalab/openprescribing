@@ -6,7 +6,6 @@ SELECT
   ccg_id AS pct_id,
   DATE(month) AS month,
   calc_value,
-  smoothed_calc_value
   {aliased_denominators}
   {aliased_numerators}
 FROM (

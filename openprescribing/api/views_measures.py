@@ -134,7 +134,7 @@ def measure_by_practice(request, format=None):
     orgs = utils.param_to_list(request.query_params.get('org', []))
 
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
-    query += 'mv.calc_value, mv.smoothed_calc_value, mv.percentile, mv.cost_savings, '
+    query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
     query += 'ms.name, ms.title, ms.description, ms.why_it_matters, '
     query += 'ms.denominator_short, ms.numerator_short, '
@@ -168,7 +168,6 @@ def measure_by_practice(request, format=None):
             'numerator': d['numerator'],
             'denominator': d['denominator'],
             'calc_value': d['calc_value'],
-            'smoothed_calc_value': d['smoothed_calc_value'],
             'percentile': d['percentile'],
             'cost_savings': d['cost_savings'],
             'practice_id': d['practice_id'],
