@@ -188,38 +188,51 @@ class BehaviourTestCase(TestCase):
         mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
         self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
-    def test_import_measurevalue_by_ccg(self):
-        m = Measure.objects.get(id='cerazette')
+    def test_ccg_at_100th_centile(self):
         month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '02Q': {
+                'numerator': 82000,
+                'denominator': 143000,
+                'calc_value': 0.5734,
+                'percentile': 100,
+                'cost_savings': {
+                    '10': 63588.51,
+                    '30': 61123.67,
+                    '50': 58658.82,
+                    '80': 23463.53,
+                    '90': 11731.76
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
 
-        ccg = PCT.objects.get(code='02Q')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 82000)
-        self.assertEqual(mv.denominator, 143000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.5734')
-        self.assertEqual(mv.percentile, 100)
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '63588.51')
-        self.assertEqual("%.2f" % mv.cost_savings['30'], '61123.67')
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '58658.82')
-        self.assertEqual("%.2f" % mv.cost_savings['80'], '23463.53')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '11731.76')
+    def test_ccg_at_0th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '04D': {
+                'numerator': 1500,
+                'denominator': 21500,
+                'calc_value': 0.0698,
+                'percentile': 0
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
 
-        ccg = PCT.objects.get(code='04D')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 1500)
-        self.assertEqual(mv.denominator, 21500)
-        self.assertEqual("%.4f" % mv.calc_value, '0.0698')
-        self.assertEqual(mv.percentile, 0)
-
-        ccg = PCT.objects.get(code='03T')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 2000)
-        self.assertEqual(mv.denominator, 17000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.1176')
-        self.assertEqual(mv.percentile, 50)
+    def test_ccg_at_50th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '03T': {
+                'numerator': 2000,
+                'denominator': 17000,
+                'calc_value': 0.1176,
+                'percentile': 50
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
 
     def test_import_measureglobal(self):
         month = '2015-09-01'
@@ -366,12 +379,16 @@ class BehaviourTestCase(TestCase):
                 yield actual, expected, identifier
 
     def _assertExpectedMeasureValue(self, measure, month, expected):
-        for practice_id, data in expected.items():
-            if practice_id == '_global_':
+        for entity_id, data in expected.items():
+            if entity_id == '_global_':
                 mv = MeasureGlobal.objects.get(
                     measure=measure, month=month)
+            elif len(entity_id) == 3:
+                ccg = PCT.objects.get(code=entity_id)
+                mv = MeasureValue.objects.get(
+                    measure=measure, month=month, pct=ccg, practice=None)
             else:
-                p = Practice.objects.get(code=practice_id)
+                p = Practice.objects.get(code=entity_id)
                 mv = MeasureValue.objects.get(
                     measure=measure, month=month, practice=p)
                 for actual, expected, identifier in self._walk(mv, data):
