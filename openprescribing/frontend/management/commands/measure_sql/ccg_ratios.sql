@@ -3,7 +3,7 @@ SELECT
   month,
   SUM(numerator) AS numerator,
   SUM(denominator) AS denominator,
-  SUM(numerator)/SUM(denominator) AS calc_value
+  IEEE_DIVIDE(SUM(numerator), SUM(denominator)) AS calc_value
   {denominator_aliases}
   {numerator_aliases}
 FROM

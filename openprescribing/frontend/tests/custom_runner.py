@@ -16,7 +16,6 @@ class AssetBuildingTestRunner(DiscoverRunner):
         if 'SKIP_NPM_BUILD' not in os.environ:
             subprocess.check_call(
                 npm_cmd, shell=True, cwd=settings.SITE_ROOT + '/media/js')
-        os.environ['DB_NAME'] = 'test_openprescribing'
         if not os.environ.get('BROWSER'):
             # Default test environment for Saucelabs
             os.environ['BROWSER'] = 'firefox:47.0:Windows 10'

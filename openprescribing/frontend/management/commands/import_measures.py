@@ -8,6 +8,8 @@ import glob
 import sys
 import tempfile
 import psycopg2
+import math
+from numbers import Number
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 
@@ -24,7 +26,7 @@ PRACTICE_TABLE_PREFIX = "practice_data"
 CCG_TABLE_PREFIX = "ccg_data"
 GLOBALS_TABLE_PREFIX = "global_data"
 PRESCRIBING_TABLE_NAME = "prescribing"
-PRACTICES_TABLE_NAME = "practice"
+PRACTICES_TABLE_NAME = "practices"
 
 
 class Command(BaseCommand):
@@ -93,7 +95,7 @@ class Command(BaseCommand):
 
     def parse_options(self, options):
         self.IS_VERBOSE = False
-        if options['verbosity']:
+        if options['verbosity'] > 1:
             self.IS_VERBOSE = True
         if 'measure' in options and options['measure']:
             options['measure_ids'] = [options['measure']]
@@ -102,11 +104,11 @@ class Command(BaseCommand):
                 k for k, v in parse_measures().items() if 'skip' not in v]
         # Get months to cover from options.
         if (not options['month'] and not options['end_date'] \
-           and not options['month_from_prescribing_filename']) \
-           and not options['start_date']:
+            and not options['month_from_prescribing_filename']) \
+            and not options['start_date']:
             err = 'You must supply either --month or --end_date '
-            err += 'in the format YYYY-MM-DD, or supply a path to a file which '
-            err += 'includes the timestamp in the path. You can also '
+            err += 'in the format YYYY-MM-DD, or supply a path to a file which'
+            err += ' includes the timestamp in the path. You can also '
             err += 'optionally supply a start date.'
             print err
             sys.exit()
@@ -118,7 +120,9 @@ class Command(BaseCommand):
             filename = options['month_from_prescribing_filename']
             date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
             month = datetime.datetime.strptime(date_part + "_01", "%Y_%m_%d")
-            options['start_date'] = options['end_date'] = month.strftime('%Y-%m-01')
+
+            options['start_date'] = options['end_date'] = \
+                                    month.strftime('%Y-%m-01')
         else:
             l = ImportLog.objects.latest_in_category('prescribing')
             options['end_date'] = l.current_at.strftime('%Y-%m-%d')
@@ -144,6 +148,19 @@ def parse_measures():
         d = json.loads(json_data)
         measures[measure_id] = d
     return measures
+
+
+def float_or_null(d, k, prefer_zero=False):
+    """Return a value coerced to a float, unless it's a None, in which
+    case preserve it or replace with a zero.
+
+    """
+    v = d.pop(k)
+    if v is not None:
+        v = float(v)
+    if prefer_zero and v is None:
+        v = 0
+    return v
 
 
 class MeasureCalculation(object):
@@ -391,12 +408,14 @@ class MeasureCalculation(object):
         return cols
 
     def _row_to_dict(self, row, fields):
-        """Converts a row from bigquery into a dictionary
+        """Converts a row from bigquery into a dictionary, and converts NaN to None
         """
         dict_row = {}
         for i, item in enumerate(row['f']):
             value = item['v']
             key = fields[i]['name']
+            if value and value.lower() == 'nan':
+                value = None
             dict_row[key] = value
         return dict_row
 
@@ -445,13 +464,13 @@ class GlobalCalcuation(MeasureCalculation):
                 month=d['month']
             )
             for c in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                practice_deciles[str(c)] = float(d.pop("practice_%sth" % c))
-                ccg_deciles[str(c)] = float(d.pop("ccg_%sth" % c))
+                practice_deciles[str(c)] = float_or_null(d, "practice_%sth" % c)
+                ccg_deciles[str(c)] = float_or_null(d, "ccg_%sth" % c)
                 if self.measure['is_cost_based']:
-                    practice_cost_savings[str(c)] = float(
-                        d.pop("practice_cost_savings_%s" % c))
-                    ccg_cost_savings[str(c)] = float(
-                        d.pop("ccg_cost_savings_%s" % c))
+                    practice_cost_savings[str(c)] = float_or_null(
+                        d, "practice_cost_savings_%s" % c, prefer_zero=True)
+                    ccg_cost_savings[str(c)] = float_or_null(
+                        d, "ccg_cost_savings_%s" % c, prefer_zero=True)
             if self.measure['is_cost_based']:
                 mg.cost_savings = {'ccg': ccg_cost_savings,
                                    'practice': practice_cost_savings}
@@ -537,14 +556,12 @@ class PracticeCalculation(MeasureCalculation):
         See also comments in SQL.
 
         """
-        date_cond = (
-            "(DATE(month) >= '{}' AND DATE(month) <= '{}') "
-        ).format(self.start_date, self.end_date)
-        numerator_where = " AND ".join(
-            self.measure['numerator_where'] + [date_cond])
-        denominator_where = " AND ".join(
-            self.measure['denominator_where'] + [date_cond])
-        numerator_aliases = denominator_aliases = aliased_numerators = aliased_denominators = ''
+        numerator_where = " ".join(self.measure['numerator_where'])
+        denominator_where = " ".join(self.measure['denominator_where'])
+        numerator_aliases = ''
+        denominator_aliases = ''
+        aliased_numerators = ''
+        aliased_denominators = ''
         for col in self._get_col_aliases('denominator'):
             denominator_aliases += ", denom.%s AS denom_%s" % (col, col)
             aliased_denominators += ", denom_%s" % col
@@ -567,7 +584,9 @@ class PracticeCalculation(MeasureCalculation):
                 denominator_aliases=denominator_aliases,
                 aliased_denominators=aliased_denominators,
                 aliased_numerators=aliased_numerators,
-                practices_from=self.full_practices_table_name()
+                practices_from=self.full_practices_table_name(),
+                start_date=self.start_date,
+                end_date=self.end_date
 
             )
             return self.query_and_return(sql, self.table_name())
@@ -638,10 +657,13 @@ class PracticeCalculation(MeasureCalculation):
             if self.measure['is_cost_based']:
                 cost_savings = {}
                 for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                    cost_savings[str(centile)] = float(datum.pop(
-                        "cost_savings_%s" % centile))
+                    cost_savings[str(centile)] = float_or_null(
+                        datum, "cost_savings_%s" % centile, prefer_zero=True)
                 datum['cost_savings'] = json.dumps(cost_savings)
-            datum['percentile'] = float(datum['percentile']) * 100
+            percentile = float_or_null(datum, 'percentile')
+            if percentile:
+                percentile = percentile * 100
+            datum['percentile'] = percentile
             writer.writerow(datum)
             c += 1
         self.msg("Commiting data to database....")
@@ -662,7 +684,6 @@ class CCGCalculation(MeasureCalculation):
         GGC level, and write these to the database.
 
         """
-
         self.msg("Calculating CCG ratios")
         self.calculate_ccg_ratios()
         self.msg("Adding rank to CCG ratios")
@@ -761,10 +782,14 @@ class CCGCalculation(MeasureCalculation):
                 if self.measure['is_cost_based']:
                     cost_savings = {}
                     for centile in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                        cost_savings[str(centile)] = float(datum.pop(
-                            "cost_savings_%s" % centile))
+                        cost_savings[str(centile)] = float_or_null(
+                            datum, "cost_savings_%s" % centile)
                     datum['cost_savings'] = cost_savings
-                datum['percentile'] = float(datum['percentile']) * 100
+                percentile = float_or_null(
+                    datum, 'percentile')
+                if percentile:
+                    percentile = percentile * 100
+                datum['percentile'] = percentile
                 MeasureValue.objects.create(**datum)
                 c += 1
         self.msg("Wrote %s CCG measures" % c)

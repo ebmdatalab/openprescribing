@@ -6,7 +6,7 @@ SELECT * FROM
   FROM
     {from_table}
   WHERE
-    calc_value IS NOT NULL) a,
+    calc_value IS NOT NULL AND NOT IS_NAN(calc_value)) a,
   (
   SELECT
     *,
@@ -14,4 +14,4 @@ SELECT * FROM
   FROM
     {from_table}
   WHERE
-    calc_value IS NULL) b
+    calc_value IS NULL OR IS_NAN(calc_value)) b
