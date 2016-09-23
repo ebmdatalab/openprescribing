@@ -5,7 +5,7 @@ SELECT
   practice_id,
   ccg_id AS pct_id,
   DATE(month) AS month,
-  calc_value,
+  calc_value
   {aliased_denominators}
   {aliased_numerators}
 FROM (
