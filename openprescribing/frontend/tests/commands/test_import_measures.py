@@ -3,7 +3,7 @@ import argparse
 from numbers import Number
 from django.core.management import call_command
 from django.test import TestCase
-from test.test_support import EnvironmentVarGuard
+from mock import patch
 
 from frontend.models import SHA, PCT, Practice, Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
@@ -39,8 +39,8 @@ class ArgumentTestCase(TestCase):
 class BehaviourTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.env = EnvironmentVarGuard()
-        cls.env.set('DB_NAME', 'test_' + os.environ['DB_NAME'])
+        cls.env = patch.dict(
+            'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
         with cls.env:
             cls._createData()
 

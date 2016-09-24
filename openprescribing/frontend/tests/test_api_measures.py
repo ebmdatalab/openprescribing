@@ -1,11 +1,13 @@
-import csv
 import os
 import json
-import unittest
+from mock import patch
 from django.core import management
 from django.test import TestCase
 from common import utils
 from frontend.models import SHA, PCT, Chemical, Practice
+
+env = patch.dict(
+    'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
 
 
 def setUpModule():
@@ -65,11 +67,13 @@ def setUpModule():
         'month': month,
         'measure': measure_id
     }
-    management.call_command('import_measures', *args, **opts)
+    with env:
+        management.call_command('import_measures', *args, **opts)
 
 
 def tearDownModule():
-    management.call_command('flush', verbosity=0, interactive=False)
+    with env:
+        management.call_command('flush', verbosity=0, interactive=False)
 
 
 class TestAPIMeasureViews(TestCase):
