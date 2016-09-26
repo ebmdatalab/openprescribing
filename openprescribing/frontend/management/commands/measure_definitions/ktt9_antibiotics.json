@@ -1,0 +1,32 @@
+{
+  "name": "Broad-spectrum antibiotics (KTT9)",
+  "title": [
+    "KTT9 (Antibiotic prescribing)"
+  ],
+  "description": [
+    "Number of prescription items for all antibacterial drugs (BNF 5.1)",
+    "per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
+  ],
+  "why_it_matters": [
+    "It is important that we don't overuse antibiotics. ",
+    "This shows how many are being prescribed locally."
+  ],
+  "numerator_short": "Antibacterials items",
+  "denominator_short": "STAR-PUs",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0501%%')  "
+  ],
+  "denominator_columns": [
+    "JSON_EXTRACT(star_pu, '$.oral_antibacterials_item') as denominator "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": []
+}

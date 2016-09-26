@@ -1,0 +1,36 @@
+{
+  "name": "Pioglitazone Hydrochloride vs. all Antidiabetic Drugs", 
+  "title": [
+    "Prescribing of Pioglitazone Hydrochloride (BNF code 0601023B0)", 
+    " compared with prescribing of all Antidiabetic Drugs (BNF code 6.1.2)."
+  ], 
+  "description": [
+    "Number of prescription items for Pioglitazone Hydrochloride (0601023B0)", 
+    "as a percentage of total prescription items for all diabetes (060102)."
+  ], 
+  "why_it_matters": [
+    "Rosiglitazone is an antidiabetic drug that turned out to increase the risk of heart problems, and was effectively withdrawn from the market. There is concern that the problems may have been a 'class effect', covering other related drugs, and so doctors have tended to also stop using pioglitazone. This shows how local practice reflects that national trend. However, the latest NICE guidance on diabetes recommends it equally with other drugs, so it may become more popular again."
+  ], 
+  "numerator_short": "Pioglitazone items", 
+  "denominator_short": "All diabetes items", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": true, 
+  "numerator_columns": [
+    "SUM(items) AS numerator, ", 
+    "SUM(quantity) AS quantity, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code LIKE '0601023B0%%')  "
+  ], 
+  "denominator_columns": [
+    "SUM(items) AS denominator, ", 
+    "SUM(quantity) AS quantity, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code LIKE '060102%%')  "
+  ]
+}

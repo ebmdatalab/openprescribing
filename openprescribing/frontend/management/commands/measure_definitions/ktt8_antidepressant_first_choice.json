@@ -1,0 +1,37 @@
+{
+  "name": "Antidepressants, % items first choice (KTT8)",
+  "description": [
+    "Number of prescription items for Selective Serotonin",
+    "Reuptake Inhibitors (SSRIs) (sub-set of BNF 4.3.3)",
+    "prescribed by approved name as a percentage of the",
+    "total number of prescription items for 'selected'",
+    "antidepressants (sub-set of BNF 4.3)."
+  ],
+  "why_it_matters": [
+    "Although non-drug methods are often used to treat depression, sometimes antidepressants are needed. Most antidepressants seem to be equally effective, and therefore doctors should decide which ones to give based on people\u2019s previous experience and the likely side-effects. NICE guidance recommends that a generic type of antidepressant called an SSRI should normally be used first."
+  ],
+  "title": [
+    "KTT8 (Antidepressants: First choice % items)"
+  ],
+  "numerator_short": "SSRI items",
+  "denominator_short": "Selected antidepresssant items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": false,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing]",
+  "numerator_where": [
+    "((bnf_code LIKE '0403030Z0AA%%')  OR (bnf_code LIKE '0403030D0AA%%')  OR (bnf_code LIKE '0403030X0AA%%')  OR (bnf_code LIKE '0403030E0AA%%')  OR (bnf_code LIKE '0403030L0AA%%')  OR (bnf_code LIKE '0403030P0AA%%')  OR (bnf_code LIKE '0403030Q0AA%%')) "
+  ],
+  "denominator_columns": [
+    "SUM(items) as items, ",
+    "SUM(items) as denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "((bnf_code LIKE '0403%%')  AND (bnf_code NOT LIKE '0403010B0%%')  AND (bnf_code NOT LIKE '0403010F0%%')  AND (bnf_code NOT LIKE '0403010N0%%')  AND (bnf_code NOT LIKE '0403010V0%%')  AND (bnf_code NOT LIKE '0403010Y0%%')  AND (bnf_code NOT LIKE '040302%%')  AND (bnf_code NOT LIKE '0403040F0%%')) "
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Minocycline ADQ/1000 patients (KTT11)",
+  "title": [
+    "Minocycline ADQ/1000 patients (KTT11)"
+  ],
+  "description": [
+    "Number of average daily quantities (ADQs)",
+    "for minocycline per 1000 patients."
+  ],
+  "why_it_matters": [
+    "Minocycline is an antibiotic used to treat patients with acne. However, there are concerns about its safety, and there are other treatments which appear to be safer and as effective.  The amount of minocycline prescribing has dropped nationally as a result."
+  ],
+  "numerator_short": "Minocycline ADQs",
+  "denominator_short": "Total patients / 1000",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(p.quantity * r.percent_of_adq) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] p LEFT JOIN [ebmdatalab:hscic.presentation] r  ON p.bnf_code = r.bnf_code ",
+  "numerator_where": [
+    "(p.bnf_code LIKE '0501030P0%%')   "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": []
+}
