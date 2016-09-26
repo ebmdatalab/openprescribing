@@ -70,11 +70,11 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
 
 Install Python dependencies in development:
 
-    pip install -r requirements/local.txt
+    pip install -r requirements/local.txt --process-dependency-links
 
 Or in production:
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt --process-dependency-links
 
 And then install JavaScript dependencies. You'll need a version of
 nodejs greater than v0.10.11:
@@ -145,6 +145,17 @@ browser), you have two choices:
 To do this, you'll need to install
 [pyvirtualdisplay](http://pyvirtualdisplay.readthedocs.io/en/latest/#installation)
 and Xvbf. This is, apparently, quite hard to do on OS X.
+
+If you don't install Xvbf, you'll see the tests launch a browser and
+operate it.
+
+You can run *just* the functional tests with
+
+    TEST_SUITE=functional make test
+
+And the inverse is:
+
+    TEST_SUITE=nonfunctional make test
 
 ### Run the functional tests in Saucelabs
 
