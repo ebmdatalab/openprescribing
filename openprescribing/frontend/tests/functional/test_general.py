@@ -3,8 +3,6 @@ import unittest
 
 from selenium_base import SeleniumTestCase
 
-from django.core import management
-
 
 class GeneralFrontendTest(SeleniumTestCase):
     fixtures = ['functional_test_data']
@@ -40,7 +38,8 @@ class GeneralFrontendTest(SeleniumTestCase):
             url = self.live_server_url + url
             self.browser.get(url)
             try:
-                el = self.find_visible_by_xpath('//button[@id="doorbell-button"]')
+                el = self.find_visible_by_xpath(
+                    '//button[@id="doorbell-button"]')
                 el.click()
             except TypeError as e:
                 e.args += ("at URL %s" % url,)
