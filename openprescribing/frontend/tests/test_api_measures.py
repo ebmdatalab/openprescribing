@@ -1,13 +1,5 @@
-import os
 import json
-from mock import patch
-from django.core import management
 from django.test import TestCase
-from common import utils
-from frontend.models import SHA, PCT, Chemical, Practice
-
-env = patch.dict(
-    'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
 
 
 class TestAPIMeasureViews(TestCase):
