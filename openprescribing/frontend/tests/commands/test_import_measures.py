@@ -1,10 +1,20 @@
+import os
 import argparse
+from numbers import Number
 from django.core.management import call_command
 from django.test import TestCase
+from mock import patch
+
 from frontend.models import SHA, PCT, Practice, Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.management.commands.import_measures import Command
 from common import utils
+
+def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
+    if isinstance(a, Number) and isinstance(b, Number):
+        return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+    else:
+        return a == b
 
 
 class ArgumentTestCase(TestCase):
@@ -18,12 +28,260 @@ class ArgumentTestCase(TestCase):
         parser = cmd.create_parser("import_measures", "")
         options = parser.parse_args(opts)
         result = cmd.parse_options(options.__dict__)
-        self.assertEqual(result['months'], ['2016-03-01'])
+        self.assertEqual(result['start_date'], '2016-03-01')
+        self.assertEqual(result['end_date'], '2016-03-01')
 
 
 class BehaviourTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.env = patch.dict(
+            'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
+        with cls.env:
+            cls._createData()
+
+    @classmethod
+    def tearDownClass(cls):
+        with cls.env:
+            call_command('flush', verbosity=0, interactive=False)
+
+    def test_measure_is_created(self):
+        m = Measure.objects.get(id='cerazette')
+        self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
+        self.assertEqual(m.description[:10], 'Total quan')
+        self.assertEqual(m.why_it_matters[:10], 'This is th')
+        self.assertEqual(m.low_is_good, True)
+
+    def test_practice_general(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'C84001': {
+                'numerator': 1000,
+                'denominator': 11000,
+                'calc_value': 0.0909,
+                'num_items': 10,
+                'denom_items': 110,
+                'num_cost': 1000.0,
+                'denom_cost': 2000,
+                'denom_quantity': 11000,
+                'percentile': 33.33,
+                'pct.code': '02Q',
+                'cost_savings': {
+                    '10': 485.58,
+                    '20': 167.44,
+                    '50': -264.71,
+                    '70': -3126.00,
+                    '90': -7218.00
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_practice_with_no_prescribing(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'B82010': {
+                'numerator': 0,
+                'denominator': 0,
+                'calc_value': None,
+                'num_items': None,
+                'denom_items': None,
+                'num_cost': None,
+                'denom_cost': None,
+                'denom_quantity': None,
+                'percentile': None,
+                'cost_savings': {
+                    '10': 0,
+                    '90': 0
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_practice_with_positive_cost_savings(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'A85017': {
+                'numerator': 1000,
+                'denominator': 1000,
+                'calc_value': 1,
+                'percentile': 100,
+                'cost_savings': {
+                    '10': 862.33,
+                    '90': 162.00
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_practice_with_negative_cost_savings(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'A86030': {
+                'numerator': 0,
+                'denominator': 1000,
+                'calc_value': 0,
+                'percentile': 0,
+                'cost_savings': {
+                    '10': -37.67,
+                    '90': -738.00
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_practice_in_top_quartile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'C83051': {
+                'numerator': 1500,
+                'denominator': 21500,
+                'calc_value': 0.0698,
+                'percentile': 16.67,
+                'cost_savings': {
+                    '10': 540.00,
+                    '90': -14517.00
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_practice_at_median(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            'C83019': {
+                'numerator': 2000,
+                'denominator': 17000,
+                'calc_value': 0.1176,
+                'percentile': 50,
+                'cost_savings': {
+                    '10': 1159.53,
+                    '90': -10746.00
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_import_measurevalue_by_practice_with_different_payments(self):
+        m = Measure.objects.get(id='cerazette')
+        month = '2015-10-01'
+
+        p = Practice.objects.get(code='C83051')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '0.00')
+
+        p = Practice.objects.get(code='C83019')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '325.58')
+
+        p = Practice.objects.get(code='A86030')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
+
+    def test_ccg_at_100th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '02Q': {
+                'numerator': 82000,
+                'denominator': 143000,
+                'calc_value': 0.5734,
+                'percentile': 100,
+                'cost_savings': {
+                    '10': 63588.51,
+                    '30': 61123.67,
+                    '50': 58658.82,
+                    '80': 23463.53,
+                    '90': 11731.76
+                }
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_ccg_at_0th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '04D': {
+                'numerator': 1500,
+                'denominator': 21500,
+                'calc_value': 0.0698,
+                'percentile': 0
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_ccg_at_50th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '03T': {
+                'numerator': 2000,
+                'denominator': 17000,
+                'calc_value': 0.1176,
+                'percentile': 50
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    def test_import_measureglobal(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '_global_': {
+                'numerator': 85500,
+                'denominator': 181500,
+                'num_items': 855,
+                'denom_items': 1815,
+                'num_cost': 85500,
+                'denom_cost': 95100,
+                'num_quantity': 85500,
+                'denom_quantity': 181500,
+                'calc_value': 0.4711,
+                'percentiles': {
+                    'practice': {
+                        '10': 0.0419,
+                        '20': 0.0740,
+                        '50': 0.1176,
+                        '70': 0.4067,
+                        '90': 0.8200
+                    },
+                    'ccg': {
+                        '10': 0.0793,
+                        '30': 0.0985,
+                        '50': 0.1176,
+                        '80': 0.3911,
+                        '90': 0.4823
+                    },
+                },
+                'cost_savings': {
+                    'practice': {
+                        '10': 70149.77,
+                        '20': 65011.21,
+                        '50': 59029.41,
+                        '70': 26934.00,
+                        '90': 162.00
+                    },
+                    'ccg': {
+                        '10': 64174.56,
+                        '30': 61416.69,
+                        '50': 58658.82,
+                        '80': 23463.53,
+                        '90': 11731.76
+                    },
+                },
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
+    @classmethod
+    def _createData(cls):
         SHA.objects.create(code='Q51')
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
@@ -93,167 +351,53 @@ class BehaviourTestCase(TestCase):
         }
         call_command('import_measures', *args, **opts)
 
-    @classmethod
-    def tearDownClass(cls):
-        call_command('flush', verbosity=0, interactive=False)
+    def _walk(self, mv, data):
+        for k, v in data.items():
+            if '.' in k:
+                relation, attr = k.split('.')
+                model = getattr(mv, relation)
+                actual = getattr(model, attr)
+                expected = v
+                identifier = k
+            elif isinstance(v, dict):
+                field = getattr(mv, k)
+                for k2, v2 in v.items():
+                    actual = field.get(k2)
+                    expected = v2
+                    identifier = "%s[%s]" % (k, k2)
+                    if isinstance(v2, dict):
+                        for k3, v3 in v2.items():
+                            yield actual.get(k3), v3, "[%s]" % k3
+                    else:
+                        yield actual, expected, identifier
 
-    def test_import_measurevalue_by_practice(self):
-        m = Measure.objects.get(id='cerazette')
-        self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
-        self.assertEqual(m.description[:10], 'Total quan')
-        self.assertEqual(m.why_it_matters[:10], 'This is th')
-        self.assertEqual(m.low_is_good, True)
-        month = '2015-09-01'
+            else:
+                actual = getattr(mv, k)
+                expected = v
+                identifier = k
+                yield actual, expected, identifier
 
-        p = Practice.objects.get(code='C84001')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 1000)
-        self.assertEqual(mv.denominator, 11000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.0909')
-        self.assertEqual(mv.num_items, 10)
-        self.assertEqual(mv.denom_items, 110)
-        self.assertEqual(mv.num_cost, 1000.00)
-        self.assertEqual(mv.denom_cost, 2000.00)
-        self.assertEqual(mv.num_quantity, 1000)
-        self.assertEqual(mv.denom_quantity, 11000)
-        self.assertEqual("%.2f" % mv.percentile, '33.33')
-        self.assertEqual(mv.pct.code, '02Q')
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '485.58')
-        self.assertEqual("%.2f" % mv.cost_savings['20'], '167.44')
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '-264.71')
-        self.assertEqual("%.2f" % mv.cost_savings['70'], '-3126.00')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '-7218.00')
-
-        p = Practice.objects.get(code='B82010')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 0)
-        self.assertEqual(mv.denominator, 0)
-        self.assertEqual(mv.percentile, None)
-        self.assertEqual(mv.calc_value, None)
-        self.assertEqual(mv.cost_savings['10'], 0)
-        self.assertEqual(mv.cost_savings['90'], 0)
-
-        p = Practice.objects.get(code='A85017')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 1000)
-        self.assertEqual(mv.denominator, 1000)
-        self.assertEqual(mv.calc_value, 1)
-        self.assertEqual(mv.percentile, 100)
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '862.33')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '162.00')
-
-        p = Practice.objects.get(code='A86030')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 0)
-        self.assertEqual(mv.denominator, 1000)
-        self.assertEqual(mv.calc_value, 0)
-        self.assertEqual(mv.percentile, 0)
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '-37.67')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '-738.00')
-
-        p = Practice.objects.get(code='C83051')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 1500)
-        self.assertEqual(mv.denominator, 21500)
-        self.assertEqual("%.4f" % mv.calc_value, '0.0698')
-        self.assertEqual("%.2f" % mv.percentile, "16.67")
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '540.00')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '-14517.00')
-
-        p = Practice.objects.get(code='C83019')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual(mv.numerator, 2000)
-        self.assertEqual(mv.denominator, 17000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.1176')
-        self.assertEqual(mv.percentile, 50)
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '1159.53')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '-10746.00')
-
-    def test_import_measurevalue_by_practice_with_different_payments(self):
-        m = Measure.objects.get(id='cerazette')
-        month = '2015-10-01'
-
-        p = Practice.objects.get(code='C83051')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '0.00')
-
-        p = Practice.objects.get(code='C83019')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '325.58')
-
-        p = Practice.objects.get(code='A86030')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
-
-    def test_import_measurevalue_by_ccg(self):
-        m = Measure.objects.get(id='cerazette')
-        month = '2015-09-01'
-
-        ccg = PCT.objects.get(code='02Q')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 82000)
-        self.assertEqual(mv.denominator, 143000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.5734')
-        self.assertEqual(mv.percentile, 100)
-        self.assertEqual("%.2f" % mv.cost_savings['10'], '63588.51')
-        self.assertEqual("%.2f" % mv.cost_savings['30'], '61123.67')
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '58658.82')
-        self.assertEqual("%.2f" % mv.cost_savings['80'], '23463.53')
-        self.assertEqual("%.2f" % mv.cost_savings['90'], '11731.76')
-
-        ccg = PCT.objects.get(code='04D')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 1500)
-        self.assertEqual(mv.denominator, 21500)
-        self.assertEqual("%.4f" % mv.calc_value, '0.0698')
-        self.assertEqual(mv.percentile, 0)
-
-        ccg = PCT.objects.get(code='03T')
-        mv = MeasureValue.objects.get(
-            measure=m, month=month, pct=ccg, practice=None)
-        self.assertEqual(mv.numerator, 2000)
-        self.assertEqual(mv.denominator, 17000)
-        self.assertEqual("%.4f" % mv.calc_value, '0.1176')
-        self.assertEqual(mv.percentile, 50)
-
-    def test_import_measureglobal(self):
-        m = Measure.objects.get(id='cerazette')
-        self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
-        month = '2015-09-01'
-
-        mg = MeasureGlobal.objects.get(measure=m, month=month)
-        self.assertEqual(mg.numerator, 85500)
-        self.assertEqual(mg.denominator, 181500)
-        self.assertEqual(mg.num_items, 855)
-        self.assertEqual(mg.denom_items, 1815)
-        self.assertEqual(mg.num_cost, 85500)
-        self.assertEqual(mg.denom_cost, 95100)
-        self.assertEqual(mg.num_quantity, 85500)
-        self.assertEqual(mg.denom_quantity, 181500)
-        self.assertEqual("%.4f" % mg.calc_value, '0.4711')
-        self.assertEqual("%.4f" % mg.percentiles['practice']['10'], '0.0419')
-        self.assertEqual("%.4f" % mg.percentiles['practice']['20'], '0.0740')
-        self.assertEqual("%.4f" % mg.percentiles['practice']['50'], '0.1176')
-        self.assertEqual("%.4f" % mg.percentiles['practice']['70'], '0.4067')
-        self.assertEqual("%.4f" % mg.percentiles['practice']['90'], '0.8200')
-        self.assertEqual("%.4f" % mg.percentiles['ccg']['10'], '0.0793')
-        self.assertEqual("%.4f" % mg.percentiles['ccg']['30'], '0.0985')
-        self.assertEqual("%.4f" % mg.percentiles['ccg']['50'], '0.1176')
-        self.assertEqual("%.4f" % mg.percentiles['ccg']['80'], '0.3911')
-        self.assertEqual("%.4f" % mg.percentiles['ccg']['90'], '0.4823')
-        self.assertEqual("%.2f" % mg.cost_savings[
-                         'practice']['10'], '70149.77')
-        self.assertEqual("%.2f" % mg.cost_savings[
-                         'practice']['20'], '65011.21')
-        self.assertEqual("%.2f" % mg.cost_savings[
-                         'practice']['50'], '59029.41')
-        self.assertEqual("%.2f" % mg.cost_savings[
-                         'practice']['70'], '26934.00')
-        self.assertEqual("%.2f" % mg.cost_savings['practice']['90'], '162.00')
-        self.assertEqual("%.2f" % mg.cost_savings['ccg']['10'], '64174.56')
-        self.assertEqual("%.2f" % mg.cost_savings['ccg']['30'], '61416.69')
-        self.assertEqual("%.2f" % mg.cost_savings['ccg']['50'], '58658.82')
-        self.assertEqual("%.2f" % mg.cost_savings['ccg']['80'], '23463.53')
-        self.assertEqual("%.2f" % mg.cost_savings['ccg']['90'], '11731.76')
+    def _assertExpectedMeasureValue(self, measure, month, expected):
+        for entity_id, data in expected.items():
+            if entity_id == '_global_':
+                mv = MeasureGlobal.objects.get(
+                    measure=measure, month=month)
+            elif len(entity_id) == 3:
+                ccg = PCT.objects.get(code=entity_id)
+                mv = MeasureValue.objects.get(
+                    measure=measure, month=month, pct=ccg, practice=None)
+            else:
+                p = Practice.objects.get(code=entity_id)
+                mv = MeasureValue.objects.get(
+                    measure=measure, month=month, practice=p)
+                for actual, expected, identifier in self._walk(mv, data):
+                    if isinstance(expected, Number):
+                        self.assert_(
+                            isclose(actual, expected),
+                            "got %s for %s, expected ~ %s" % (
+                                actual, identifier, expected))
+                    else:
+                        self.assert_(
+                            actual == expected,
+                            "got %s for %s, expected %s" % (
+                                actual, identifier, expected))
