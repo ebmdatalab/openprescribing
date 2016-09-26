@@ -18,8 +18,6 @@ import glob
 import sys
 import tempfile
 import psycopg2
-from oauth2client.client import GoogleCredentials
-from googleapiclient import discovery
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -27,6 +25,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
 from common import utils
+from ebmdatalab import bigquery
+
 
 BG_PROJECT = 'ebmdatalab'
 BG_DATASET = 'measures'
@@ -114,7 +114,7 @@ class Command(BaseCommand):
                 k for k, v in parse_measures().items() if 'skip' not in v]
         # Get months to cover from options.
         if not (options['month'] or options['end_date']) \
-           or not options['month_from_prescribing_filename']:
+           and not options['month_from_prescribing_filename']:
             err = 'You must supply either --month or --end_date '
             err += 'in the format YYYY-MM-DD, or supply a path to a file which'
             err += ' includes the timestamp in the path. You can also '
@@ -181,11 +181,6 @@ class MeasureCalculation(object):
                  verbose=False, under_test=False):
         self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
-        credentials = GoogleCredentials.get_application_default()
-        # We've started using the google-cloud library since first
-        # writing this. TODO: decide if we can use that throughout
-        self.bigquery = discovery.build('bigquery', 'v2',
-                                        credentials=credentials)
         self.measure_id = measure_id
         self.measure = parse_measures()[measure_id]
         self.start_date = start_date
@@ -266,100 +261,28 @@ class MeasureCalculation(object):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
 
+        Because the current specification format for a measure allows
+        selecting the FROM table via free-text, and we want to support
+        functional testing against real measure definitions, we have
+        following hack to replace the table being queried with a test
+        table name.
+
+        A better thing to do would be to construct measure definitions
+        specifically for testing.
+
         """
         if self.under_test:
             query = query.replace(
                 "[ebmdatalab:hscic.prescribing]",
                 "[ebmdatalab:measures.test_%s]" % PRESCRIBING_TABLE_NAME)
-        if not legacy:
-            # Rename any legacy-style table references to use standard
-            # SQL dialect. Because we use a mixture of both, we
-            # standardise on only using the legacy style for the time
-            # being.
-            query = re.sub(r'\[(.+?):(.+?)\.(.+?)\]', r'\1.\2.\3', query)
-        payload = {
-            "configuration": {
-                "query": {
-                    "query": query,
-                    "flattenResuts": False,
-                    "allowLargeResults": True,
-                    "timeoutMs": 100000,
-                    "useQueryCache": True,
-                    "useLegacySql": legacy,
-                    "destinationTable": {
-                        "projectId": 'ebmdatalab',
-                        "tableId": table_id,
-                        "datasetId": 'measures'
-                    },
-                    "createDisposition": "CREATE_IF_NEEDED",
-                    "writeDisposition": "WRITE_TRUNCATE"
-                }
-            }
-        }
-        self.msg("Writing to bigquery table %s" % table_id)
-        start = datetime.datetime.now()
-        response = self.bigquery.jobs().insert(
-            projectId=BG_PROJECT,
-            body=payload).execute()
-        counter = 0
-        job_id = response['jobReference']['jobId']
-        while True:
-            time.sleep(1)
-            response = self.bigquery.jobs().get(
-                projectId=BG_PROJECT,
-                jobId=job_id).execute()
-            counter += 1
-            if response['status']['state'] == 'DONE':
-                if 'errors' in response['status']:
-                    query = str(response['configuration']['query']['query'])
-                    for i, l in enumerate(query.split("\n")):
-                        # print SQL query with line numbers for debugging
-                        print "{:>3}: {}".format(i + 1, l)
-                    raise StandardError(
-                        json.dumps(response['status']['errors'], indent=2))
-                else:
-                    break
-        bytes_billed = float(
-            response['statistics']['query']['totalBytesBilled'])
-        gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
-        est_cost = round(bytes_billed/1e+12 * 5.0, 2)
-        # Add our own metadata
-        elapsed = (datetime.datetime.now() - start).total_seconds()
-        response['openp'] = {'query': query,
-                             'est_cost': est_cost,
-                             'time': elapsed,
-                             'gb_processed': gb_processed}
-        self.msg("Time %ss, cost $%s" % (elapsed, est_cost))
-        return response
+        return bigquery.query_and_return(BG_PROJECT, table_id, query, legacy)
 
     def get_rows(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for
         each row of data.
 
         """
-        fields = self.bigquery.tables().get(
-            projectId=BG_PROJECT,
-            datasetId=BG_DATASET,
-            tableId=table_name
-        ).execute()['schema']['fields']
-        response = self.bigquery.tabledata().list(
-            projectId=BG_PROJECT,
-            datasetId=BG_DATASET,
-            tableId=table_name,
-            maxResults=100000, startIndex=0).execute()
-        while 'rows' in response:
-            for row in response['rows']:
-                yield _row_to_dict(row, fields)
-            if 'pageToken' in response:
-                response = self.bigquery.tabledata().list(
-                    projectId=BG_PROJECT,
-                    datasetId=BG_DATASET,
-                    tableId=table_name,
-                    pageToken=response['pageToken'],
-                    maxResults=100000).execute()
-            else:
-                break
-        raise StopIteration
+        return bigquery.get_rows(BG_PROJECT, BG_DATASET, table_name)
 
     def add_percent_rank(self):
         """Add a percentile rank to the ratios table
@@ -683,7 +606,7 @@ class PracticeCalculation(MeasureCalculation):
 class CCGCalculation(MeasureCalculation):
     def calculate(self):
         """Calculate ratios, centiles and (optionally) cost savings at a
-        GGC level, and write these to the database.
+        CCG level, and write these to the database.
 
         """
         self.msg("Calculating CCG ratios")
@@ -797,16 +720,3 @@ class CCGCalculation(MeasureCalculation):
                 c += 1
         self.msg("Wrote %s CCG measures" % c)
         return c
-
-
-def _row_to_dict(row, fields):
-    """Converts a row from bigquery into a dictionary, and converts NaN to None
-    """
-    dict_row = {}
-    for i, item in enumerate(row['f']):
-        value = item['v']
-        key = fields[i]['name']
-        if value and value.lower() == 'nan':
-            value = None
-        dict_row[key] = value
-    return dict_row
