@@ -13,6 +13,7 @@ services:
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=/code/google-credentials.json
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:

@@ -3,12 +3,15 @@ import argparse
 from numbers import Number
 from django.core.management import call_command
 from django.test import TestCase
+from django.conf import settings
 from mock import patch
 
 from frontend.models import SHA, PCT, Practice, Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.management.commands.import_measures import Command
-from common import utils
+
+from ebmdatalab import bigquery
+
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
@@ -320,25 +323,23 @@ class BehaviourTestCase(TestCase):
                                 name='BEACON MEDICAL PRACTICE', setting=4)
 
         args = []
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        db_user = utils.get_env_setting('DB_USER')
-        db_pass = utils.get_env_setting('DB_PASS')
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'T201509PDPI+BNFT_formatted.csv'
-        new_opts = {
-            'db_name': db_name,
-            'db_user': db_user,
-            'db_pass': db_pass,
-            'filename': test_file
-        }
-        call_command('import_hscic_prescribing', *args, **new_opts)
-
+        if 'SKIP_BQ_LOAD' not in os.environ:
+            bigquery.load_prescribing_data_from_file(
+                'measures',
+                'test_' + settings.BQ_PRESCRIBING_TABLE_NAME, test_file)
+            bigquery.load_data_from_pg(
+                'hscic', 'test_' + settings.BQ_PRACTICES_TABLE_NAME,
+                'frontend_practice',
+                bigquery.PRACTICE_SCHEMA)
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
         opts = {
             'month': month,
-            'measure': measure_id
+            'measure': measure_id,
+            'test_mode': True,
         }
         call_command('import_measures', *args, **opts)
 
@@ -347,7 +348,8 @@ class BehaviourTestCase(TestCase):
         args = []
         opts = {
             'month': month,
-            'measure': measure_id
+            'measure': measure_id,
+            'test_mode': True,
         }
         call_command('import_measures', *args, **opts)
 

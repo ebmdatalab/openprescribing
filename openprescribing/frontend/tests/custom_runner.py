@@ -3,6 +3,7 @@ import subprocess
 
 from django.conf import settings
 from django.test.runner import DiscoverRunner
+from openprescribing.settings import test as test_settings
 
 
 class AssetBuildingTestRunner(DiscoverRunner):
@@ -10,7 +11,13 @@ class AssetBuildingTestRunner(DiscoverRunner):
     os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = "0.0.0.0:6080"
 
     def setup_test_environment(self):
-        settings.DJANGO_SETTINGS_MODULE = 'frontend.settings.test'
+        # Use the settings in settings/test.py. Doing it this way
+        # means we don't have to remember to specify --settings on the
+        # command line when testing.
+        for key in dir(test_settings):
+            if key.isupper():
+                setattr(settings, key, getattr(test_settings, key))
+
         # Before we load any func tests, ensure we've got assets built
         npm_cmd = "mkdir -p ../../static/js && npm run build"
         subprocess.check_call(

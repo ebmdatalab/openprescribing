@@ -12,3 +12,7 @@ openpyxl==2.3.3
 numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
+google-api-python-client==1.5.3
+pip==8.1.2
+setuptools==27.3.0
+ebmdatalab-python==0.0.3
