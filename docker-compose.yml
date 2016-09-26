@@ -9,6 +9,7 @@ services:
     env_file: .env-test
     environment:
       - TRAVIS=${TRAVIS}
+      - TEST_SUITE=${TEST_SUITE}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
