@@ -45,7 +45,8 @@ def pip_install():
     if filter(lambda x: x.startswith('requirements'),
               [x for x in env.changed_files]):
         with prefix('source .venv/bin/activate'):
-            run('pip install -r requirements/production.txt')
+            run('pip install -r requirements/production.txt '
+                '--process-dependency-links')
 
 
 def npm_install():

@@ -3,7 +3,7 @@ env:
     DOCKER_COMPOSE_VERSION: 1.7.1
   matrix:
     - env: TEST_SUITE=nonfunctional
-    - env: TEST_SUITE=functional BROWSER="firefox:47:Windows 2012"
+    - env: TEST_SUITE=functional BROWSER="firefox:latest:Windows 2012"
     - env: TEST_SUITE=functional BROWSER="safari:8.0:OS X 10.10"
     - env: TEST_SUITE=functional BROWSER="internet explorer:8.0:Windows 7"
 sudo: required
@@ -14,6 +14,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
+  - openssl aes-256-cbc -K $encrypted_ef2af4a5c304_key -iv $encrypted_ef2af4a5c304_iv -in google-credentials.json.enc -out google-credentials.json -d
 install:
   - docker pull ebmdatalab/openprescribing-base:latest
   - docker pull mdillon/postgis:latest
