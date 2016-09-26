@@ -15,4 +15,4 @@ scipy==0.17.0
 google-api-python-client==1.5.3
 pip==8.1.2
 setuptools==27.3.0
--e git+https://github.com/ebmdatalab/ebmdatalab-python#egg=ebmdatalab-python
+ebmdatalab-python==0.0.3
