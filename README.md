@@ -152,7 +152,7 @@ You can find the combinations we use for our Travis CI in
 
 # Run the application
 
-    python manage.py runserver --settings=openprescribing.settings.local
+    python manage.py runserver_plus --settings=openprescribing.settings.local
 
 You should now have a Django application running with no data inside it.
 

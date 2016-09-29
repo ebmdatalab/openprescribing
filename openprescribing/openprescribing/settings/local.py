@@ -47,6 +47,7 @@ CACHES = {
 }
 # END CACHE CONFIGURATION
 
+INSTALLED_APPS += ('django_extensions',)
 
 # TOOLBAR CONFIGURATION
 # See: http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
