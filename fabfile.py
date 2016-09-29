@@ -133,6 +133,12 @@ def checkpoint(force_build):
         abort("No changes to pull from origin!")
 
 
+def deploy_static():
+    with prefix('source .venv/bin/activate'):
+        run('cd openprescribing/ && '
+            'python manage.py collectstatic -v0 --noinput')
+
+
 def run_migrations():
     if env.environment == 'production':
         with prefix('source .venv/bin/activate'):
@@ -224,6 +230,7 @@ def deploy(environment, force_build=False, branch='master'):
         npm_install_deps(force_build)
         npm_build_js()
         npm_build_css(force_build)
+        deploy_static()
         run_migrations()
         graceful_reload()
         clear_cloudflare()

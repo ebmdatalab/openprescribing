@@ -72,12 +72,22 @@ MEDIA_URL = '/media/'
 
 
 # STATIC FILE CONFIGURATION
+
+# The directory from where files should be served. The `collectstatic`
+# command will copy all files from static folders to here for serving.
+# The reason we need to do this (rather than just serve things
+# straignt from a static directory) is because dependent apps may also
+# provide static files for serving -- specifically, the Django admin
+# app.
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
+# The base URL which will be used in URLs for static assets
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 
+# Places that are searched -- by the django development server ahd the
+# `collectstatic` command -- for static files
 # See:
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
