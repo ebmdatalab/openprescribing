@@ -38,7 +38,8 @@ var analyseChart = {
     tabPanelChart: $('#chart-panel'),
     title: '.chart-title',
     subtitle: '.chart-sub-title',
-    rowCount: ('#data-rows-count')
+    rowCount: ('#data-rows-count'),
+    bookmarkLink: ('#bookmark-link'),
   },
 
   renderChart: function(globalOptions) {
@@ -152,6 +153,17 @@ var analyseChart = {
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
+      var bookmarkLink = $(_this.el.bookmarkLink);
+      bookmarkLink.attr(
+        'href',
+        bookmarkLink.attr("href") + "?url=" +
+          encodeURIComponent(this.hash));
+      bookmarkLink.attr(
+        'href',
+        bookmarkLink.attr("href") + "&name=" +
+          encodeURIComponent(
+            _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
+      bookmarkLink.show();
       this.setUpSlider();
       this.setUpChartEvents();
       this.setUpSaveUrl();
