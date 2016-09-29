@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from .local import *
 
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

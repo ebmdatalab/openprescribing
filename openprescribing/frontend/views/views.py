@@ -2,13 +2,23 @@ import requests
 from lxml import html
 
 from django.http import HttpResponse
+from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 from frontend.models import Chemical, Prescription
 from frontend.models import Practice, SHA, PCT, Section
 from frontend.models import Measure
+from frontend.models import OrgBookmark
+from frontend.forms import OrgBookmarkForm
+from django.contrib.auth import authenticate
+from django.shortcuts import redirect
+from django.http.response import HttpResponseRedirect
+from allauth.account.utils import perform_login
+from allauth.account import app_settings
 
 
 ##################################################
@@ -171,20 +181,113 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    practices = Practice.objects.filter(ccg=requested_ccg).filter(setting=4).order_by('name')
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            OrgBookmark,
+            OrgBookmarkForm,
+            'CCG', 'pct')
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = OrgBookmarkForm(
+            initial={'pct': requested_ccg.pk, 'next': request.path})
+    if request.user.is_authenticated():
+        signed_up_for_alert = request.user.orgbookmark_set.filter(
+            pct=requested_ccg)
+    else:
+        signed_up_for_alert = False
+    practices = Practice.objects.filter(
+        ccg=requested_ccg).filter(
+            setting=4).order_by('name')
     context = {
         'ccg': requested_ccg,
         'practices': practices,
-        'page_id': ccg_code
+        'page_id': ccg_code,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
 
+def last_bookmark(request):
+    """Redirect the logged in user to the CCG they last bookmarked, or if
+    they're not logged in, just go straight to the homepage -- both
+    with a message.
+
+    """
+    if request.user.is_authenticated():
+        try:
+            last_bookmark = request.user.orgbookmark_set.last()
+            next_url = last_bookmark.dashboard_url()
+            if last_bookmark.practice:
+                entity = 'practice'
+            else:
+                entity = 'CCG'
+            messages.success(
+                request,
+                "Thanks, you're now subscribed to monthly "
+                "alerts about this %s!" % entity)
+        except AttributeError:
+            messages.success(
+                request,
+                "Your account is activated, but you are not subscribed "
+                "to any monthly alerts!")
+        return redirect(next_url)
+    else:
+        messages.success("Thanks, you're now subscribed to monthly alerts!")
+        return redirect('home')
+
+
+def _handleCreateBookmark(request, subject_class,
+                          subject_form_class,
+                          subject_name,
+                          subject_field_id):
+    form = subject_form_class(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        subject = form.cleaned_data[subject_field_id]
+        try:
+            user = User.objects.create_user(
+                username=email, email=email)
+        except IntegrityError:
+            user = User.objects.get(username=email)
+        user = authenticate(key=user.profile.key)
+        kwargs = {
+            'user': user,
+            subject_field_id: subject
+        }
+        subject_class.objects.get_or_create(**kwargs)
+        return perform_login(
+            request, user,
+            app_settings.EmailVerificationMethod.MANDATORY,
+            signup=True)
+    return form
+
+
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            OrgBookmark,
+            OrgBookmarkForm,
+            'practice', 'practice')
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = OrgBookmarkForm(
+            initial={'practice': p.pk, 'next': request.path})
+    if request.user.is_authenticated():
+        signed_up_for_alert = request.user.orgbookmark_set.filter(
+            practice=p)
+    else:
+        signed_up_for_alert = False
     context = {
         'practice': p,
-        'page_id': code
+        'page_id': code,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_practice.html', context)
 

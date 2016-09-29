@@ -2,9 +2,15 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic import RedirectView, TemplateView
+from django.core.urlresolvers import reverse
 from common import utils
 import api
+from django.contrib import admin
 from frontend.views import views as frontend_views
+from frontend.views import profile_views
+from frontend.views import bookmark_views
+
+admin.autodiscover()
 
 urlpatterns = [
     # Static pages.
@@ -71,4 +77,20 @@ urlpatterns = [
     # Other files.
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='robots.txt',
                                                 content_type='text/plain')),
+
+    # required by django-allauth
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^admin/',include(admin.site.urls)),
+
+    # bookmarks
+    url(r'^bookmarks/(?P<key>[0-9a-z]+)$',
+        bookmark_views.login_from_key,
+        name='bookmark-login'),
+    url(r'^bookmarks/$',
+        bookmark_views.BookmarkList.as_view(),
+        name='bookmark-list'),
+    url(r'^last_bookmark/$',
+        frontend_views.last_bookmark,
+        name='last-bookmark'
+    )
 ]

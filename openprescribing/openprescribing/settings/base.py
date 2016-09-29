@@ -15,6 +15,9 @@ SITE_ROOT = dirname(DJANGO_ROOT)
 # Site name:
 SITE_NAME = basename(DJANGO_ROOT)
 
+# Site ID (django.contrib.sites framework, required by django-anyauth
+SITE_ID = 1
+
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
 path.append(DJANGO_ROOT)
@@ -106,7 +109,7 @@ ALLOWED_HOSTS = []
 # See:
 # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
-    normpath(join(SITE_ROOT, 'fixtures')),
+    normpath(join(SITE_ROOT, 'frontend', 'tests', 'fixtures')),
 )
 # END FIXTURE CONFIGURATION
 
@@ -146,6 +149,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -162,6 +166,7 @@ ROOT_URLCONF = '%s.urls' % SITE_NAME
 # APP CONFIGURATION
 DJANGO_APPS = (
     # Default Django apps:
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -181,8 +186,19 @@ LOCAL_APPS = (
     'frontend',
 )
 
+CONTRIB_APPS = (
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
+    'anymail',
+    'crispy_forms',
+)
+
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 # END APP CONFIGURATION
 
 
@@ -219,6 +235,16 @@ LOGGING = {
 # END LOGGING CONFIGURATION
 
 
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # custom backend to support logging in via a hash
+    'frontend.backends.SecretKeyBackend'
+)
+
+
 # WSGI CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
@@ -245,6 +271,7 @@ CORS_ALLOW_METHODS = (
     'GET'
 )
 SUPPORT_EMAIL = 'openprescribing-support@googlegroups.com'
+DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
 SWAGGER_SETTINGS = {
     'info': {
         'contact': SUPPORT_EMAIL,
@@ -258,3 +285,21 @@ GDOC_DOCS = {
     'analyse-by-practice': '1idnk9yczLLBLbYUbp06dMglfivobTNoKY7pA2zCDPI8',
     'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0'
 }
+
+# Use django-anymail through mailgun for sending emails
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+ANYMAIL = {
+    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+}
+
+# django-allauth configuration
+ACCOUNT_ADAPTER = 'frontend.account.adapter.MessageBlockingAdapter'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+LOGIN_REDIRECT_URL = "last-bookmark"
+LOGIN_URL = "home"
+
+# Easy bootstrap styling of Django forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

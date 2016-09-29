@@ -1,5 +1,8 @@
+import uuid
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from validators import isAlphaNumeric
 import model_prescribing_units
 
@@ -82,6 +85,8 @@ class PCT(models.Model):
 
     objects = models.GeoManager()
 
+    def __unicode__(self):
+        return self.name or ""
 
 class Practice(models.Model):
     '''
@@ -451,6 +456,49 @@ class MeasureGlobal(models.Model):
         unique_together = (('measure', 'month'),)
 
 
+class SearchBookmark(models.Model):
+    '''A bookmark for an individual analyse search made by a user.
+    '''
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    url = models.CharField(max_length=200)
+    low_is_good = models.NullBooleanField()
+
+    def __unicode__(self):
+        return 'Bookmark: ' + self.name
+
+
+class OrgBookmark(models.Model):
+    '''
+    A bookmark for an organistion a user is interested in.
+
+    If a bookmark for a CCG, the practice field will be null.
+    Otherwise, it's a bookmark for a practice, and the pct field
+    indicates the parent CCG, if it exists.
+    '''
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, null=True, blank=True)
+
+    def dashboard_url(self):
+        if self.practice is None:
+            return reverse('ccg', kwargs={'ccg_code': self.pct.code})
+        else:
+            return reverse('practice', kwargs={'code': self.practice.code})
+
+    def name(self):
+        if self.practice is None:
+            return self.pct.name
+        else:
+            return self.practice.name
+
+    def get_absolute_url(self):
+        return self.dashboard_url()
+
+    def __unicode__(self):
+        return 'Org Bookmark: ' + self.name()
+
+
 class ImportLogManager(models.Manager):
     def latest_in_category(self, category):
         return self.filter(category=category).first()
@@ -468,3 +516,14 @@ class ImportLog(models.Model):
 
     class Meta:
         ordering = ["-current_at"]
+
+
+def _makeKey():
+    return uuid.uuid4().hex
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    key = models.CharField(max_length=32,
+                           default=_makeKey,
+                           unique=True)

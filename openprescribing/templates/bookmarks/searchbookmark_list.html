@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Bookmarks for {{ request.user }} {% endblock %}
+
+{% block content %}
+    <h2>Bookmarks</h2>
+    <ul>
+        {% for bookmark in searchbookmark_list %}
+        <li>
+          <h3>{{ bookmark.name }}</h3>
+          <a class="btn btn-primary" href="/analyse/#{{ bookmark.url }}">View graph</a>
+          <a class="btn btn-warning" href="{% url 'searchbookmark-update' pk=bookmark.id %}">Change</a>
+
+          <form class="form form-inline" method="post" action="{% url 'searchbookmark-delete' pk=bookmark.id %}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-danger" value="delete">
+          </form>
+
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

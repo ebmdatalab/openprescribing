@@ -1,0 +1,12 @@
+{% load crispy_forms_tags %}
+{% if not signed_up_for_alert %}
+<p>
+  Get monthly alerts about prescribing at this {{entity_type}}:
+  <form method="post" class="form form-inline">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form | crispy }}
+    <input class="btn btn-primary" type="submit" value="Subscribe">
+  </form>
+</p>
+{% endif %}

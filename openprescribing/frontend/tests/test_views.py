@@ -1,32 +1,28 @@
+import re
+
 from pyquery import PyQuery as pq
-from django.core import management
-from django.test import TestCase
+
 from django.conf import settings
-from frontend.models import Measure, MeasureValue, MeasureGlobal
+from django.core import mail
+from django.core import management
+from django.test import TransactionTestCase
+
+from frontend.models import Measure
+from frontend.models import OrgBookmark
 
 
 def setUpModule():
-    fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'chemicals.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'sections.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'shas.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'prescriptions.json',
-                            verbosity=0)
     Measure.objects.create(id='ace', name='ACE inhibitors',
-        title='ACE inhibitors', description='foo')
+                           title='ACE inhibitors', description='foo')
+
 
 def tearDownModule():
     management.call_command('flush', verbosity=0, interactive=False)
 
 
-class TestFrontendViews(TestCase):
+class TestFrontendViews(TransactionTestCase):
+    fixtures = ['chemicals', 'sections', 'ccgs',
+                'practices', 'shas', 'prescriptions']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
@@ -146,6 +142,77 @@ class TestFrontendViews(TestCase):
         self.assertEqual(title.text(), 'CCG: NHS Corby')
         practices = doc('#practices li')
         self.assertEqual(len(practices), 1)
+
+    # Test alert signups
+
+    def _post_alert_signup(self, entity_id, email='foo@baz.com'):
+        form_data = {'email': email}
+        if len(entity_id) == 3:
+            url = "/ccg/%s/" % entity_id
+            form_data['pct'] = entity_id
+            form_data['next'] = url
+        else:
+            url = "/practice/%s/" % entity_id
+            form_data['practice'] = entity_id
+            form_data['next'] = url
+        return self.client.post(
+            url, form_data, follow=True)
+
+    def test_alert_ccg_email_invalid(self):
+        response = self._post_alert_signup('03V', email='boo')
+        self.assertContains(
+            response, "Please enter a valid email address")
+
+    def test_alert_ccg_email_sent(self):
+        response = self._post_alert_signup('03V')
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
+
+    def test_alert_ccg_bookmark_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_alert_signup('03V')
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, '03V')
+
+    def test_alert_ccg_follow_email_link(self):
+        self._post_alert_signup('03V')
+        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
+                               mail.outbox[0].body, re.DOTALL).groups()[0]
+        response = self.client.get(confirm_url, follow=True)
+        self.assertContains(
+            response, "subscribed to monthly alerts about this CCG")
+        self.assertTrue(response.context['user'].is_active)
+
+    def test_alert_practice_email_invalid(self):
+        response = self._post_alert_signup('P87629', email='boo')
+        self.assertContains(
+            response, "Please enter a valid email address")
+
+    def test_alert_practice_email_sent(self):
+        response = self._post_alert_signup('P87629')
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("about prescribing in 1/ST ANDREWS", mail.outbox[0].body)
+
+    def test_alert_practice_bookmark_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_alert_signup('P87629')
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.practice.code, 'P87629')
+
+    def test_alert_practice_follow_email_link(self):
+        self._post_alert_signup('P87629')
+        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
+                               mail.outbox[0].body, re.DOTALL).groups()[0]
+        response = self.client.get(confirm_url, follow=True)
+        self.assertContains(
+            response, "subscribed to monthly alerts about this practice")
+        self.assertTrue(response.context['user'].is_active)
 
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
