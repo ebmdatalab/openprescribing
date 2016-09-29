@@ -11,18 +11,9 @@ from frontend.models import Measure
 from frontend.models import OrgBookmark
 
 
-def setUpModule():
-    Measure.objects.create(id='ace', name='ACE inhibitors',
-                           title='ACE inhibitors', description='foo')
-
-
-def tearDownModule():
-    management.call_command('flush', verbosity=0, interactive=False)
-
-
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'shas', 'prescriptions']
+                'practices', 'shas', 'prescriptions', 'measures']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
@@ -257,12 +248,12 @@ class TestFrontendViews(TransactionTestCase):
         self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
 
     def test_call_view_measure_practices_in_ccg(self):
-        response = self.client.get('/ccg/03V/ace/')
+        response = self.client.get('/ccg/03V/cerazette/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
         doc = pq(response.content)
         title = doc('h1')
-        t = ('ACE inhibitors prescribing '
+        t = ('cerazette prescribing '
              'by GP practices in NHS Corby')
         self.assertEqual(title.text(), t)
 
