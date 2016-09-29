@@ -511,7 +511,7 @@ class ImportLog(models.Model):
     imported_at = models.DateTimeField(auto_now_add=True)
     current_at = models.DateField(db_index=True)
     filename = models.CharField(max_length=200)
-    category = models.CharField(max_length=15, db_index=True)
+    category = models.CharField(max_length=50, db_index=True)
     objects = ImportLogManager()
 
     class Meta:
