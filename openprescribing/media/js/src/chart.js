@@ -39,7 +39,7 @@ var analyseChart = {
     title: '.chart-title',
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
-    bookmarkLink: ('#bookmark-link'),
+    alertForm: ('#alert-form'),
   },
 
   renderChart: function(globalOptions) {
@@ -153,17 +153,11 @@ var analyseChart = {
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
-      var bookmarkLink = $(_this.el.bookmarkLink);
-      bookmarkLink.attr(
-        'href',
-        bookmarkLink.attr("href") + "?url=" +
-          encodeURIComponent(this.hash));
-      bookmarkLink.attr(
-        'href',
-        bookmarkLink.attr("href") + "&name=" +
-          encodeURIComponent(
-            _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
-      bookmarkLink.show();
+      var alertForm = $(_this.el.alertForm);
+      alertForm.parent().show();
+      alertForm.find('#id_url').val(encodeURIComponent(this.hash));
+      alertForm.find('#id_name').val(encodeURIComponent(
+        _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
       this.setUpSlider();
       this.setUpChartEvents();
       this.setUpSaveUrl();

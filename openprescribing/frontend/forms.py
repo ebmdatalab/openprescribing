@@ -1,3 +1,4 @@
+import urllib
 from django import forms
 from django.utils.safestring import mark_safe
 from frontend.models import PCT, Practice
@@ -5,7 +6,7 @@ from frontend.models import PCT, Practice
 
 def _name_with_url(bookmark):
     html = ('<a href="%s">%s</a>' %
-            (bookmark.dashboard_url(), bookmark.name()))
+            (bookmark.dashboard_url(), bookmark.name))
     return mark_safe(html)
 
 
@@ -37,6 +38,36 @@ class BookmarkListForm(forms.Form):
             del self.fields['search_bookmarks']
 
 
+class SearchBookmarkForm(forms.Form):
+    email = forms.EmailField(
+        label="",
+        error_messages={
+            'required': "This can't be blank!",
+            'invalid': 'Please enter a valid email address'
+        },
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Email address',
+                'size': '35'})
+    )
+    url = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=True
+    )
+    name = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=True
+    )
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        return urllib.unquote(name)
+
+    def clean_url(self):
+        url = self.cleaned_data['url']
+        return urllib.unquote(url)
+
+
 class OrgBookmarkForm(forms.Form):
     email = forms.EmailField(
         label="",
@@ -57,8 +88,6 @@ class OrgBookmarkForm(forms.Form):
         widget=forms.HiddenInput(),
         required=False
     )
-    # Used by allauth framework for redirection
-    next = forms.CharField(widget=forms.HiddenInput())
 
     def clean(self):
         """Turn entity ids into Practice or PCT instances

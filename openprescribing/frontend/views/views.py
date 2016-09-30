@@ -7,18 +7,23 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 
 from frontend.models import Chemical, Prescription
 from frontend.models import Practice, SHA, PCT, Section
 from frontend.models import Measure
 from frontend.models import OrgBookmark
 from frontend.forms import OrgBookmarkForm
+from frontend.models import SearchBookmark
+from frontend.forms import SearchBookmarkForm
 from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 from django.http.response import HttpResponseRedirect
 from allauth.account.utils import perform_login
 from allauth.account import app_settings
+from allauth.account.models import EmailAddress
 
 
 ##################################################
@@ -186,12 +191,13 @@ def measures_for_one_ccg(request, ccg_code):
             request,
             OrgBookmark,
             OrgBookmarkForm,
-            'CCG', 'pct')
+            'pct')
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
         form = OrgBookmarkForm(
-            initial={'pct': requested_ccg.pk, 'next': request.path})
+            initial={'pct': requested_ccg.pk,
+                     'email': getattr(request.user, 'email', '')})
     if request.user.is_authenticated():
         signed_up_for_alert = request.user.orgbookmark_set.filter(
             pct=requested_ccg)
@@ -218,17 +224,14 @@ def last_bookmark(request):
     """
     if request.user.is_authenticated():
         try:
-            last_bookmark = request.user.orgbookmark_set.last()
+            last_bookmark = request.user.profile.most_recent_bookmark()
             next_url = last_bookmark.dashboard_url()
-            if last_bookmark.practice:
-                entity = 'practice'
-            else:
-                entity = 'CCG'
             messages.success(
                 request,
-                "Thanks, you're now subscribed to monthly "
-                "alerts about this %s!" % entity)
+                mark_safe("Thanks, you're now subscribed to monthly "
+                "alerts about <em>%s</em>!" % last_bookmark.topic()))
         except AttributeError:
+            next_url = 'home'
             messages.success(
                 request,
                 "Your account is activated, but you are not subscribed "
@@ -239,14 +242,31 @@ def last_bookmark(request):
         return redirect('home')
 
 
+def analyse(request):
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            SearchBookmark,
+            SearchBookmarkForm,
+            'url', 'name'
+        )
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = SearchBookmarkForm(
+            initial={'email': getattr(request.user, 'email', '')})
+    context = {
+        'form': form
+    }
+    return render(request, 'analyse.html', context)
+
+
 def _handleCreateBookmark(request, subject_class,
                           subject_form_class,
-                          subject_name,
-                          subject_field_id):
+                          *subject_field_ids):
     form = subject_form_class(request.POST)
     if form.is_valid():
         email = form.cleaned_data['email']
-        subject = form.cleaned_data[subject_field_id]
         try:
             user = User.objects.create_user(
                 username=email, email=email)
@@ -254,10 +274,23 @@ def _handleCreateBookmark(request, subject_class,
             user = User.objects.get(username=email)
         user = authenticate(key=user.profile.key)
         kwargs = {
-            'user': user,
-            subject_field_id: subject
+            'user': user
         }
+        for field in subject_field_ids:
+            kwargs[field] = form.cleaned_data[field]
+        # An unverified account can only create unapproved bookmarks.
+        # When an account is verified, all its bookmarks are
+        # approved. Whenever someone tries to add a bookmark for
+        # someone else's email address (or they're not logged in),
+        # that email address is marked as unverified again.  In this
+        # way we can allow people who remain logged in to add several
+        # alerts without having to reconfirm by email.
+        emailaddress = EmailAddress.objects.filter(user=user)
+        kwargs['approved'] = emailaddress.filter(verified=True).exists()
         subject_class.objects.get_or_create(**kwargs)
+        if user != request.user:
+            emailaddress.update(verified=False)
+        logout(request)
         return perform_login(
             request, user,
             app_settings.EmailVerificationMethod.MANDATORY,
@@ -272,12 +305,13 @@ def measures_for_one_practice(request, code):
             request,
             OrgBookmark,
             OrgBookmarkForm,
-            'practice', 'practice')
+            'practice')
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
         form = OrgBookmarkForm(
-            initial={'practice': p.pk, 'next': request.path})
+            initial={'practice': p.pk,
+                     'email': getattr(request.user, 'email', '')})
     if request.user.is_authenticated():
         signed_up_for_alert = request.user.orgbookmark_set.filter(
             practice=p)

@@ -44,11 +44,11 @@ class BookmarkList(ListView):
 
     def _search_bookmarks(self):
         return SearchBookmark.objects.filter(
-            user__id=self.request.user.id)
+            user__id=self.request.user.id, approved=True)
 
     def _org_bookmarks(self):
         return OrgBookmark.objects.filter(
-            user__id=self.request.user.id)
+            user__id=self.request.user.id, approved=True)
 
     def get_context_data(self):
         search_bookmarks = self._search_bookmarks()

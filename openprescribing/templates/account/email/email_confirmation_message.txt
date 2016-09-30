@@ -1,6 +1,6 @@
 {% load account %}{% autoescape off %}Hello from OpenPrescribing!
 
-You're receiving this e-mail because someone has requested monthly alerts about prescribing in {% if user.orgbookmark_set.last.practice %}{{ user.orgbookmark_set.last.practice.name }}{% else %}{{ user.orgbookmark_set.last.pct.name }}{% endif %}.
+You're receiving this e-mail because someone has requested monthly alerts about {{ user.profile.most_recent_bookmark.topic }}.
 
 To confirm this is correct, go to {{ activate_url }}
 

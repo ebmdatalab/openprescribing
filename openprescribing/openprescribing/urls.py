@@ -15,8 +15,6 @@ admin.autodiscover()
 urlpatterns = [
     # Static pages.
     url(r'^$', TemplateView.as_view(template_name='index.html'), name="home"),
-    url(r'^analyse/$', TemplateView.as_view(template_name='analyse.html'),
-        name="analyse"),
     url(r'^api/$', TemplateView.as_view(template_name='api.html'), name="api"),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name="about"),
@@ -27,6 +25,8 @@ urlpatterns = [
         name="how-to-use"),
 
     # User-facing pages.
+    url(r'^analyse/$', frontend_views.analyse,
+        name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,
         name='all_chemicals'),
     url(r'^chemical/(?P<bnf_code>[A-Z\d]+)/$', frontend_views.chemical,
