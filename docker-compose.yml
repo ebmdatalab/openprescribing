@@ -4,8 +4,27 @@ services:
     image: mdillon/postgis:latest
     env_file: .env-test
   test:
+    image: ebmdatalab/openprescribing-test:latest
+    command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
+    env_file: .env-test
+    environment:
+      - TRAVIS=${TRAVIS}
+      - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+      - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+      - SAUCE_USERNAME=${SAUCE_USERNAME}
+      - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+    extra_hosts:
+      - "saucehost:${SAUCE_HOST}"
+    ports:
+      - "6080:6080"
+    volumes:
+      - .:/code
+    depends_on:
+      - db-test
+
+  test-production:
     image: ebmdatalab/openprescribing-base:latest
-    command: /bin/bash -c './scripts/docker_setup.sh && cd openprescribing && make test'
+    command: /bin/bash -c './scripts/docker_setup.sh production && cd openprescribing && python manage.py check --deploy --settings openprescribing.settings.production'
     env_file: .env-test
     environment:
       - TRAVIS=${TRAVIS}
@@ -26,7 +45,7 @@ services:
     image: mdillon/postgis:latest
     env_file: .env-dev
   dev:
-    image: ebmdatalab/openprescribing-base:latest
+    image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh && /bin/bash -l'
     env_file: .env-dev
     volumes:

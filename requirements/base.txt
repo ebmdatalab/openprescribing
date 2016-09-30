@@ -12,3 +12,4 @@ openpyxl==2.3.3
 numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
+lxml==3.6.4
