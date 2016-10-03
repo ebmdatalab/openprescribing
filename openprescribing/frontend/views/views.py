@@ -286,10 +286,13 @@ def _handleCreateBookmark(request, subject_class,
         # way we can allow people who remain logged in to add several
         # alerts without having to reconfirm by email.
         emailaddress = EmailAddress.objects.filter(user=user)
-        kwargs['approved'] = emailaddress.filter(verified=True).exists()
-        subject_class.objects.get_or_create(**kwargs)
-        if user != request.user:
+        if user == request.user:
+            emailaddress = EmailAddress.objects.filter(user=user)
+            kwargs['approved'] = emailaddress.filter(verified=True).exists()
+        else:
+            kwargs['approved'] = False
             emailaddress.update(verified=False)
+        subject_class.objects.get_or_create(**kwargs)
         logout(request)
         return perform_login(
             request, user,
