@@ -1,19 +1,24 @@
-import datetime
 import numpy as np
 
 from dateutil.relativedelta import relativedelta
 from frontend.models import ImportLog
 from frontend.models import Measure
-from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
 
 
 class InterestingMeasureFinder(object):
-    def __init__(self, org_bookmark, since_months):
-        self.org_bookmark = org_bookmark
-        self.since_months = since_months
+    def __init__(self, practice=None, pct=None,
+                 month_window=6,
+                 interesting_saving=1000,
+                 interesting_percentile_change=10):
+        assert practice or pct
+        self.practice = practice
+        self.pct = pct
+        self.month_window = month_window
+        self.interesting_percentile_change = interesting_percentile_change
+        self.interesting_saving = interesting_saving
         now = ImportLog.objects.latest_in_category('prescribing').current_at
-        self.months_ago = now + relativedelta(months=-(self.since_months-1))
+        self.months_ago = now + relativedelta(months=-(self.month_window-1))
 
     def _best_or_worst_performing_over_time(self, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
@@ -21,10 +26,10 @@ class InterestingMeasureFinder(object):
         for measure in Measure.objects.all():
             measure_filter = {
                 'measure': measure, 'month__gte': self.months_ago}
-            if self.org_bookmark.practice:
-                measure_filter['practice'] = self.org_bookmark.practice
+            if self.practice:
+                measure_filter['practice'] = self.practice
             else:
-                measure_filter['pct'] = self.org_bookmark.pct
+                measure_filter['pct'] = self.pct
                 measure_filter['practice'] = None
             if measure.low_is_good:
                 if best_or_worst == 'worst':
@@ -37,7 +42,7 @@ class InterestingMeasureFinder(object):
                 else:
                     measure_filter['percentile__gte'] = 90
             is_worst = MeasureValue.objects.filter(**measure_filter)
-            if is_worst.count() == self.since_months:
+            if is_worst.count() == self.month_window:
                 worst.append(measure)
         return worst
 
@@ -71,23 +76,26 @@ class InterestingMeasureFinder(object):
         for measure in Measure.objects.all():
             measure_filter = {
                 'measure': measure, 'month__gte': self.months_ago}
-            if self.org_bookmark.practice:
-                measure_filter['practice'] = self.org_bookmark.practice
+            if self.practice:
+                measure_filter['practice'] = self.practice
             else:
-                measure_filter['pct'] = self.org_bookmark.pct
+                measure_filter['pct'] = self.pct
                 measure_filter['practice'] = None
             percentiles = [x.percentile for x in
                            MeasureValue.objects.filter(**measure_filter)
                            .order_by('month')]
-            if len(percentiles) == self.since_months:
-                x = np.arange(self.since_months)
+            if len(percentiles) == self.month_window:
+                x = np.arange(self.month_window)
                 y = np.array(percentiles)
                 m, b = np.polyfit(x, y, 1)
-                slope_of_interest = 10.0 / self.since_months
+                slope_of_interest = (
+                    self.interesting_percentile_change /
+                    float(self.month_window)
+                )
                 if m > 0 and m >= slope_of_interest \
                    or m < 0 and m <= -slope_of_interest:
                     lines_of_best_fit.append(
-                        (m, b, m * (self.since_months - 1) + b, measure))
+                        (m, b, m * (self.month_window - 1) + b, measure))
         lines_of_best_fit = sorted(lines_of_best_fit, key=lambda x: x[0])
         # XXX probably should be a dictionary with two sets of
         # triples, like the next function
@@ -96,7 +104,7 @@ class InterestingMeasureFinder(object):
 
     def top_and_total_savings_over_time(self):
         """Sum total possible savings over time, and find measures where
-        possible or achieved savings are greater than 1000.
+        possible or achieved savings are greater than self.interesting_saving.
 
         Returns a dictionary where the keys are
         `possible_top_savings_total`, `possible_savings` and
@@ -105,7 +113,7 @@ class InterestingMeasureFinder(object):
         tuples respectively.
 
         """
-        # Top savings for CCG, where savings are greater than GBP1000 .
+        # Top savings for CCG, where savings are greater than GBPself.interesting_saving .
         possible_savings = []
         achieved_savings = []
         total_savings = 0
@@ -114,13 +122,13 @@ class InterestingMeasureFinder(object):
                 # XXX factor out this conditional filtering
                 measure_filter = {
                     'measure': measure, 'month__gte': self.months_ago}
-                if self.org_bookmark.practice:
-                    measure_filter['practice'] = self.org_bookmark.practice
+                if self.practice:
+                    measure_filter['practice'] = self.practice
                 else:
-                    measure_filter['pct'] = self.org_bookmark.pct
+                    measure_filter['pct'] = self.pct
                     measure_filter['practice'] = None
                 values = list(MeasureValue.objects.filter(**measure_filter))
-                if len(values) != self.since_months:
+                if len(values) != self.month_window:
                     continue
                 savings_at_50th = [
                     x.cost_savings['50'] for x in
@@ -128,11 +136,11 @@ class InterestingMeasureFinder(object):
                 possible_savings_for_measure = sum(
                     [x for x in savings_at_50th if x > 0])
                 savings_or_loss_for_measure = sum(savings_at_50th)
-                if possible_savings_for_measure >= 1000:
+                if possible_savings_for_measure >= self.interesting_saving:
                     possible_savings.append(
                         (measure, possible_savings_for_measure)
                     )
-                if savings_or_loss_for_measure <= -1000:
+                if savings_or_loss_for_measure <= -self.interesting_saving:
                     achieved_savings.append(
                         (measure, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
