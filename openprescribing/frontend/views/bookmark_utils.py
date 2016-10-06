@@ -160,8 +160,7 @@ class InterestingMeasureFinder(object):
                     savings_at_10th = sum([
                         max(0, x.cost_savings['90']) for x in
                         values])
-
-            total_savings += savings_at_10th
+                total_savings += savings_at_10th
         return {
             'possible_savings': sorted(
                 possible_savings, key=lambda x: -x[1]),
