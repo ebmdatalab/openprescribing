@@ -13,7 +13,7 @@ class InterestingMeasureFinder(object):
         self.org_bookmark = org_bookmark
         self.since_months = since_months
         now = ImportLog.objects.latest_in_category('prescribing').current_at
-        self.months_ago = now + relativedelta(months=-self.since_months)
+        self.months_ago = now + relativedelta(months=-self.since_months-1)
 
     def _best_or_worst_performing_over_time(self, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
@@ -24,7 +24,7 @@ class InterestingMeasureFinder(object):
             percentiles = MeasureGlobal.objects.filter(
                 measure=measure, month__gte=self.months_ago
             ).only('month', 'percentiles')
-            if len(percentiles) < self.since_months:
+            if len(percentiles) != self.since_months:
                 percentiles = []
             for p in percentiles:
                 measure_filter = {
@@ -137,7 +137,7 @@ class InterestingMeasureFinder(object):
                     measure_filter['pct'] = self.org_bookmark.pct
                     measure_filter['practice'] = None
                 values = list(MeasureValue.objects.filter(**measure_filter))
-                if len(values) < self.since_months:
+                if len(values) != self.since_months:
                     continue
                 savings_at_50th = [
                     x.cost_savings['50'] for x in
