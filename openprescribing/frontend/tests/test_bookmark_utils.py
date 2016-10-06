@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TransactionTestCase
 
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
@@ -23,6 +24,9 @@ class TestBookmarkUtilsPerforming(TransactionTestCase):
         pct = PCT.objects.get(pk='03V')
         practice_with_high_percentiles = Practice.objects.get(pk='P87629')
         practice_with_low_percentiles = Practice.objects.get(pk='P87630')
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
         for i in range(3):
             month = datetime.datetime.today() + relativedelta(months=i)
             MeasureGlobal.objects.create(
@@ -109,6 +113,9 @@ class TestBookmarkUtilsChanging(TransactionTestCase):
 
     def setUp(self):
         self.measure = Measure.objects.get(pk='cerazette')
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
         practice_with_high_change = Practice.objects.get(pk='P87629')
         practice_with_high_neg_change = Practice.objects.get(pk='P87631')
         practice_with_low_change = Practice.objects.get(pk='P87630')
@@ -168,7 +175,7 @@ def _makeCostSavingMeasureValues(measure, practice, savings):
     """Create measurevalues for the given practice and measure with
     savings at the 50th centile taken from the specified `savings`
     array.  Savings at the 90th centile are set as 100 times those at
-    the 50th.
+    the 50th, and at the 10th as 0.1 times.
 
     """
     for i in range(len(savings)):
@@ -177,8 +184,9 @@ def _makeCostSavingMeasureValues(measure, practice, savings):
             measure=measure,
             practice=practice,
             cost_savings={
-                'practice': {'90': savings[i] * 100, '50': savings[i]}
-            },
+                '10': savings[i] * 0.1,
+                '50': savings[i],
+                '90': savings[i] * 100, },
             month=month
         )
 
@@ -188,6 +196,9 @@ class TestBookmarkUtilsSavingsPossible(TransactionTestCase):
 
     def setUp(self):
         self.measure = Measure.objects.get(pk='cerazette')
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
         practice = Practice.objects.get(pk='P87629')
         _makeCostSavingMeasureValues(self.measure, practice, [0, 1500, 2000])
         self.bookmark = OrgBookmark.objects.create(
@@ -210,7 +221,7 @@ class TestBookmarkUtilsSavingsPossible(TransactionTestCase):
         savings = finder.top_and_total_savings_over_time()
         self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
-        self.assertEqual(savings['possible_top_savings_total'], 0)
+        self.assertEqual(savings['possible_top_savings_total'], 350.0)
 
 
 class TestBookmarkUtilsSavingsAchieved(TransactionTestCase):
@@ -218,6 +229,9 @@ class TestBookmarkUtilsSavingsAchieved(TransactionTestCase):
 
     def setUp(self):
         self.measure = Measure.objects.get(pk='cerazette')
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
         practice = Practice.objects.get(pk='P87629')
         _makeCostSavingMeasureValues(
             self.measure, practice, [-1000, -500, 100])

@@ -2,6 +2,7 @@ import datetime
 import numpy as np
 
 from dateutil.relativedelta import relativedelta
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
@@ -11,18 +12,17 @@ class InterestingMeasureFinder(object):
     def __init__(self, org_bookmark, since_months):
         self.org_bookmark = org_bookmark
         self.since_months = since_months
+        now = ImportLog.objects.latest_in_category('prescribing').current_at
+        self.months_ago = now + relativedelta(months=-self.since_months)
 
     def _best_or_worst_performing_over_time(self, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
         # Where they're in the worst decile over the past six months,
         # ordered by badness
-        now = datetime.datetime.today()
-        months_ago = now + relativedelta(months=-self.since_months)
-
         worst = []
         for measure in Measure.objects.all():
             percentiles = MeasureGlobal.objects.filter(
-                measure=measure, month__gte=months_ago
+                measure=measure, month__gte=self.months_ago
             ).only('month', 'percentiles')
             if len(percentiles) < self.since_months:
                 percentiles = []
@@ -87,10 +87,8 @@ class InterestingMeasureFinder(object):
 
         """
         lines_of_best_fit = []
-        now = datetime.datetime.today()
-        months_ago = now + relativedelta(months=-self.since_months)
         for measure in Measure.objects.all():
-            measure_filter = {'measure': measure, 'month__gte': months_ago}
+            measure_filter = {'measure': measure, 'month__gte': self.months_ago}
             if self.org_bookmark.practice:
                 measure_filter['practice'] = self.org_bookmark.practice
             else:
@@ -125,41 +123,43 @@ class InterestingMeasureFinder(object):
 
         """
         # Top savings for CCG, where savings are greater than GBP1000 .
-        now = datetime.datetime.today()
-        months_ago = now + relativedelta(months=-self.since_months)
         possible_savings = []
         achieved_savings = []
         total_savings = 0
         for measure in Measure.objects.all():
-            # XXX factor out this conditional filtering
-            measure_filter = {'measure': measure, 'month__gte': months_ago}
-            if self.org_bookmark.practice:
-                measure_filter['practice'] = self.org_bookmark.practice
-                entity_type = 'practice'
-            else:
-                measure_filter['pct'] = self.org_bookmark.pct
-                measure_filter['practice'] = None
-                entity_type = 'ccg'
-            values = MeasureValue.objects.filter(**measure_filter)
-            savings_at_50th = [
-                x.cost_savings[entity_type].get('50', 0) for x in
-                values]
-            possible_savings_for_measure = sum(
-                [x for x in savings_at_50th if x > 0])
-            savings_or_loss_for_measure = sum(savings_at_50th)
-            if possible_savings_for_measure >= 1000:
-                possible_savings.append((measure, possible_savings_for_measure))
-            if savings_or_loss_for_measure <= -1000:
-                achieved_savings.append(
-                    (measure, -1 * savings_or_loss_for_measure))
-            if measure.low_is_good:
-                savings_at_10th = sum([
-                    max(0, x.cost_savings[entity_type].get('10', 0)) for x in
-                    values])
-            else:
-                savings_at_10th = sum([
-                    max(0, x.cost_savings[entity_type].get('90', 0)) for x in
-                    values])
+            if measure.is_cost_based:
+                # XXX factor out this conditional filtering
+                measure_filter = {
+                    'measure': measure, 'month__gte': self.months_ago}
+                if self.org_bookmark.practice:
+                    measure_filter['practice'] = self.org_bookmark.practice
+                else:
+                    measure_filter['pct'] = self.org_bookmark.pct
+                    measure_filter['practice'] = None
+                values = list(MeasureValue.objects.filter(**measure_filter))
+                if len(values) < self.since_months:
+                    continue
+                savings_at_50th = [
+                    x.cost_savings['50'] for x in
+                    values]
+                possible_savings_for_measure = sum(
+                    [x for x in savings_at_50th if x > 0])
+                savings_or_loss_for_measure = sum(savings_at_50th)
+                if possible_savings_for_measure >= 1000:
+                    possible_savings.append(
+                        (measure, possible_savings_for_measure)
+                    )
+                if savings_or_loss_for_measure <= -1000:
+                    achieved_savings.append(
+                        (measure, -1 * savings_or_loss_for_measure))
+                if measure.low_is_good:
+                    savings_at_10th = sum([
+                        max(0, x.cost_savings['10']) for x in
+                        values])
+                else:
+                    savings_at_10th = sum([
+                        max(0, x.cost_savings['90']) for x in
+                        values])
 
             total_savings += savings_at_10th
         return {
