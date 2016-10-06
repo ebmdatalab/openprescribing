@@ -13,51 +13,32 @@ class InterestingMeasureFinder(object):
         self.org_bookmark = org_bookmark
         self.since_months = since_months
         now = ImportLog.objects.latest_in_category('prescribing').current_at
-        self.months_ago = now + relativedelta(months=-self.since_months-1)
+        self.months_ago = now + relativedelta(months=-(self.since_months-1))
 
     def _best_or_worst_performing_over_time(self, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
-        # Where they're in the worst decile over the past six months,
-        # ordered by badness
         worst = []
         for measure in Measure.objects.all():
-            percentiles = MeasureGlobal.objects.filter(
-                measure=measure, month__gte=self.months_ago
-            ).only('month', 'percentiles')
-            if len(percentiles) != self.since_months:
-                percentiles = []
-            for p in percentiles:
-                measure_filter = {
-                    'measure': measure,
-                    'month': p.month
-                }
-                if self.org_bookmark.practice:
-                    measure_filter['practice'] = self.org_bookmark.practice
-                    entity_type = 'practice'
+            measure_filter = {
+                'measure': measure, 'month__gte': self.months_ago}
+            if self.org_bookmark.practice:
+                measure_filter['practice'] = self.org_bookmark.practice
+            else:
+                measure_filter['pct'] = self.org_bookmark.pct
+                measure_filter['practice'] = None
+            if measure.low_is_good:
+                if best_or_worst == 'worst':
+                    measure_filter['percentile__gte'] = 90
                 else:
-                    measure_filter['pct'] = self.org_bookmark.pct
-                    measure_filter['practice'] = None
-                    entity_type = 'ccg'
-                if measure.low_is_good:
-                    if best_or_worst == 'worst':
-                        measure_filter['percentile__gte'] = \
-                          p.percentiles[entity_type]['90'] * 100
-                    else:
-                        measure_filter['percentile__lte'] = \
-                          p.percentiles[entity_type]['10'] * 100
+                    measure_filter['percentile__lte'] = 10
+            else:
+                if best_or_worst == 'worst':
+                    measure_filter['percentile__lte'] = 10
                 else:
-                    if best_or_worst == 'worst':
-                        measure_filter['percentile__lte'] = \
-                          p.percentiles[entity_type]['10'] * 100
-                    else:
-                        measure_filter['percentile__gte'] = \
-                          p.percentiles[entity_type]['90'] * 100
-                is_worst = MeasureValue.objects.filter(**measure_filter)
-                if is_worst.count() == 0:
-                    worst = []
-                    break
-                else:
-                    worst.append(measure)
+                    measure_filter['percentile__gte'] = 90
+            is_worst = MeasureValue.objects.filter(**measure_filter)
+            if is_worst.count() == self.since_months:
+                worst.append(measure)
         return worst
 
     def worst_performing_over_time(self):
@@ -88,7 +69,8 @@ class InterestingMeasureFinder(object):
         """
         lines_of_best_fit = []
         for measure in Measure.objects.all():
-            measure_filter = {'measure': measure, 'month__gte': self.months_ago}
+            measure_filter = {
+                'measure': measure, 'month__gte': self.months_ago}
             if self.org_bookmark.practice:
                 measure_filter['practice'] = self.org_bookmark.practice
             else:
@@ -104,11 +86,12 @@ class InterestingMeasureFinder(object):
                 slope_of_interest = 10.0 / self.since_months
                 if m > 0 and m >= slope_of_interest \
                    or m < 0 and m <= -slope_of_interest:
-                    lines_of_best_fit.append((m, b, measure))
+                    lines_of_best_fit.append(
+                        (m, b, m * (self.since_months - 1) + b, measure))
         lines_of_best_fit = sorted(lines_of_best_fit, key=lambda x: x[0])
         # XXX probably should be a dictionary with two sets of
         # triples, like the next function
-        return [(line[2], b, m * (self.since_months - 1) + b)
+        return [(line[3], line[1], line[2])
                 for line in lines_of_best_fit]
 
     def top_and_total_savings_over_time(self):
@@ -173,6 +156,5 @@ class InterestingMeasureFinder(object):
         return {
             'worst': self.worst_performing_over_time(),
             'best': self.best_performing_over_time(),
-            'fastest_worsening': self.fastest_worsening_over_time(),
-            'top_savings': self.top_savings_over_time(),
-            'total_possible_savings': self.total_possible_savings_over_time()}
+            'most_changing': self.most_change_over_time(),
+            'top_savings': self.top_and_total_savings_over_time()}
