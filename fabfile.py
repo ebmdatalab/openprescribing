@@ -136,7 +136,8 @@ def checkpoint(force_build):
 def deploy_static():
     with prefix('source .venv/bin/activate'):
         run('cd openprescribing/ && '
-            'python manage.py collectstatic -v0 --noinput')
+            'python manage.py collectstatic -v0 --noinput '
+            '--settings=openprescribing.settings.production')
 
 
 def run_migrations():
