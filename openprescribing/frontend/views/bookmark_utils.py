@@ -75,7 +75,10 @@ class InterestingMeasureFinder(object):
         lines_of_best_fit = []
         for measure in Measure.objects.all():
             measure_filter = {
-                'measure': measure, 'month__gte': self.months_ago}
+                'measure': measure,
+                'month__gte': self.months_ago,
+                'percentile__isnull': False
+            }
             if self.practice:
                 measure_filter['practice'] = self.practice
             else:
@@ -166,3 +169,19 @@ class InterestingMeasureFinder(object):
             'best': self.best_performing_over_time(),
             'most_changing': self.most_change_over_time(),
             'top_savings': self.top_and_total_savings_over_time()}
+
+def test_debug():
+    from frontend.models import PCT
+    from frontend.models import Practice
+    print "Data for 10 CCGs:"
+    for ccg in PCT.objects.all()[:50]:
+        finder = InterestingMeasureFinder(
+            pct=ccg, month_window=6)
+        print ccg, "https://openprescribing.net/ccg/" + ccg.code
+        print finder.context_for_org_email()
+    print "Data for 10 Practices:"
+    for practice in Practice.objects.all()[:50]:
+        finder = InterestingMeasureFinder(
+            practice=practice, month_window=6)
+        print practice, "https://openprescribing.net/practice/" + practice.code
+        print finder.context_for_org_email()
