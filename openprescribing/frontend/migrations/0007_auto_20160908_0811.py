@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='importlog',
             name='category',
-            field=models.CharField(db_index=True, max_length=15),
+            field=models.CharField(db_index=True, max_length=50),
         ),
     ]
