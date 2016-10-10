@@ -441,6 +441,7 @@ class GlobalCalcuation(MeasureCalculation):
                 mg.cost_savings = {'ccg': ccg_cost_savings,
                                    'practice': practice_cost_savings}
             practice_deciles = convertDecilesToJson(d, prefix='practice')
+            ccg_deciles = convertDecilesToJson(d, prefix='ccg')
             mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
 
             # Set the rest of the data returned from bigquery directly
@@ -661,7 +662,7 @@ class CCGCalculation(MeasureCalculation):
         """The name of the bigquery working table for CCGs
 
         """
-        return "%s_%s" % (settings.BQ_PRACTICE_TABLE_PREFIX, self.measure_id)
+        return "%s_%s" % (settings.BQ_CCG_TABLE_PREFIX, self.measure_id)
 
     def calculate_ccg_ratios(self):
         """Sums all the fields in the per-practice table, grouped by

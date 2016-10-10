@@ -1,3 +1,4 @@
+import json
 import os
 import argparse
 from numbers import Number
@@ -47,6 +48,32 @@ class BehaviourTestCase(TestCase):
     def tearDownClass(cls):
         with cls.env:
             call_command('flush', verbosity=0, interactive=False)
+
+    def test_import_measurevalue_by_practice_with_different_payments(self):
+        month = '2015-10-01'
+        measure_id = 'cerazette'
+        args = []
+        opts = {
+            'month': month,
+            'measure': measure_id,
+            'test_mode': True,
+        }
+        call_command('import_measures', *args, **opts)
+
+        m = Measure.objects.get(id='cerazette')
+        month = '2015-10-01'
+
+        p = Practice.objects.get(code='C83051')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '0.00')
+
+        p = Practice.objects.get(code='C83019')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '325.58')
+
+        p = Practice.objects.get(code='A86030')
+        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
     def test_measure_is_created(self):
         m = Measure.objects.get(id='cerazette')
@@ -170,22 +197,6 @@ class BehaviourTestCase(TestCase):
             }
         }
         self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_import_measurevalue_by_practice_with_different_payments(self):
-        m = Measure.objects.get(id='cerazette')
-        month = '2015-10-01'
-
-        p = Practice.objects.get(code='C83051')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '0.00')
-
-        p = Practice.objects.get(code='C83019')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '325.58')
-
-        p = Practice.objects.get(code='A86030')
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
     def test_ccg_at_100th_centile(self):
         month = '2015-09-01'
@@ -343,16 +354,6 @@ class BehaviourTestCase(TestCase):
         }
         call_command('import_measures', *args, **opts)
 
-        month = '2015-10-01'
-        measure_id = 'cerazette'
-        args = []
-        opts = {
-            'month': month,
-            'measure': measure_id,
-            'test_mode': True,
-        }
-        call_command('import_measures', *args, **opts)
-
     def _walk(self, mv, data):
         for k, v in data.items():
             if '.' in k:
@@ -368,6 +369,12 @@ class BehaviourTestCase(TestCase):
                     expected = v2
                     identifier = "%s[%s]" % (k, k2)
                     if isinstance(v2, dict):
+                        # BQ returns strings:
+                        try:
+                            actual = json.loads(actual)
+                        except TypeError:
+                            # Already decoded it
+                            pass
                         for k3, v3 in v2.items():
                             yield actual.get(k3), v3, "[%s]" % k3
                     else:
@@ -392,14 +399,16 @@ class BehaviourTestCase(TestCase):
                 p = Practice.objects.get(code=entity_id)
                 mv = MeasureValue.objects.get(
                     measure=measure, month=month, practice=p)
-                for actual, expected, identifier in self._walk(mv, data):
-                    if isinstance(expected, Number):
-                        self.assert_(
-                            isclose(actual, expected),
-                            "got %s for %s, expected ~ %s" % (
-                                actual, identifier, expected))
-                    else:
-                        self.assert_(
-                            actual == expected,
-                            "got %s for %s, expected %s" % (
-                                actual, identifier, expected))
+            print "comparing", data, "with", mv.__dict__
+            for actual, expected, identifier in self._walk(mv, data):
+                print " looking for", expected, "in", actual
+                if isinstance(expected, Number):
+                    self.assert_(
+                        isclose(actual, expected),
+                        "got %s for %s, expected ~ %s" % (
+                            actual, identifier, expected))
+                else:
+                    self.assert_(
+                        actual == expected,
+                        "got %s for %s, expected %s" % (
+                            actual, identifier, expected))
