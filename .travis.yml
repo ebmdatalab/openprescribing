@@ -25,7 +25,7 @@ services:
   - docker
 script:
   - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
-  - docker-compose run --service-ports test
+  - docker-compose run --service-ports test && docker-compose run --service-ports test-production
 notifications:
   email:
     - tech@ebmdatalab.net
