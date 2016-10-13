@@ -174,8 +174,8 @@ def float_or_zero(v):
     return v
 
 
-def convertSavingsToJson(datum, prefix=None):
-    """Convert flat list of savings into a JSON object with centiles as
+def convertSavingsToDict(datum, prefix=None):
+    """Convert flat list of savings into a dict with centiles as
     keys
 
     """
@@ -185,11 +185,11 @@ def convertSavingsToJson(datum, prefix=None):
         if prefix:
             key = "%s_%s" % (prefix, key)
         data[str(centile)] = float_or_zero(datum.pop(key))
-    return json.dumps(data)
+    return data
 
 
-def convertDecilesToJson(datum, prefix=None):
-    """Convert flat list of deciles into a JSON object with centiles as
+def convertDecilesToDict(datum, prefix=None):
+    """Convert flat list of deciles into a dict with centiles as
     keys
 
     """
@@ -198,7 +198,7 @@ def convertDecilesToJson(datum, prefix=None):
     for centile in CENTILES:
         key = "%s_%sth" % (prefix, centile)
         data[str(centile)] = float_or_null(datum.pop(key))
-    return json.dumps(data)
+    return data
 
 
 def normalisePercentile(percentile):
@@ -434,14 +434,14 @@ class GlobalCalcuation(MeasureCalculation):
 
             # Coerce decile-based values into JSON objects
             if self.measure['is_cost_based']:
-                practice_cost_savings = convertSavingsToJson(
+                practice_cost_savings = convertSavingsToDict(
                     d, prefix='practice')
-                ccg_cost_savings = convertSavingsToJson(
+                ccg_cost_savings = convertSavingsToDict(
                     d, prefix='ccg')
                 mg.cost_savings = {'ccg': ccg_cost_savings,
                                    'practice': practice_cost_savings}
-            practice_deciles = convertDecilesToJson(d, prefix='practice')
-            ccg_deciles = convertDecilesToJson(d, prefix='ccg')
+            practice_deciles = convertDecilesToDict(d, prefix='practice')
+            ccg_deciles = convertDecilesToDict(d, prefix='ccg')
             mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
 
             # Set the rest of the data returned from bigquery directly
@@ -623,7 +623,7 @@ class PracticeCalculation(MeasureCalculation):
         for datum in self.get_rows(self.table_name()):
             datum['measure_id'] = self.measure_id
             if self.measure['is_cost_based']:
-                datum['cost_savings'] = convertSavingsToJson(datum)
+                datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
             datum['percentile'] = normalisePercentile(datum['percentile'])
             writer.writerow(datum)
             c += 1
@@ -739,7 +739,7 @@ class CCGCalculation(MeasureCalculation):
             for datum in self.get_rows(self.table_name()):
                 datum['measure_id'] = self.measure_id
                 if self.measure['is_cost_based']:
-                    datum['cost_savings'] = convertSavingsToJson(datum)
+                    datum['cost_savings'] = convertSavingsToDict(datum)
                 datum['percentile'] = normalisePercentile(datum['percentile'])
                 MeasureValue.objects.create(**datum)
                 c += 1
