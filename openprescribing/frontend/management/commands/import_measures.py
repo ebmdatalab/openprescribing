@@ -22,6 +22,7 @@ import tempfile
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
+from django.db import connection
 from django.db import transaction
 
 from ebmdatalab import bigquery
@@ -51,7 +52,7 @@ class Command(BaseCommand):
 
         for measure_id in options['measure_ids']:
             # Create measure (if required)
-            global_calculation = GlobalCalcuation(
+            global_calculation = GlobalCalculation(
                 measure_id, verbose=verbose,
                 under_test=options['test_mode'])
             practice_calculation = PracticeCalculation(
@@ -261,8 +262,7 @@ class MeasureCalculation(object):
         """Fully qualified name for practices table
 
         """
-        name = settings.BQ_PRACTICES_TABLE_NAME
-        return "[%s:%s.%s]" % (settings.BQ_PROJECT, 'hscic', name)
+        return settings.BQ_FULL_PRACTICES_TABLE_NAME
 
     def setup_db(self):
         """Create a connection to postgres database
@@ -313,7 +313,7 @@ class MeasureCalculation(object):
         if self.under_test:
             query = query.replace(
                 "[ebmdatalab:hscic.prescribing]",
-                "[ebmdatalab:measures.test_%s]" %
+                "[ebmdatalab:measures.%s]" %
                 settings.BQ_PRESCRIBING_TABLE_NAME)
         return bigquery.query_and_return(
             settings.BQ_PROJECT, table_id, query, legacy)
@@ -387,7 +387,7 @@ class MeasureCalculation(object):
         return cols
 
 
-class GlobalCalcuation(MeasureCalculation):
+class GlobalCalculation(MeasureCalculation):
     def calculate_global_cost_savings(
             self, practice_table_name, ccg_table_name):
         """Execute a bigquery SQL statement to sum cost savings at practice
@@ -629,11 +629,11 @@ class PracticeCalculation(MeasureCalculation):
             c += 1
         self.log("Commiting data to database....")
         copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
-        copy_str += "WITH (FORMAT csv)"
+        copy_str += "WITH (FORMAT CSV)"
         self.log(copy_str % ", ".join(fieldnames))
         f.seek(0)
-        self.conn.cursor().copy_expert(copy_str % ", ".join(fieldnames), f)
-        self.conn.commit()
+        with connection.cursor() as cursor:
+            cursor.copy_expert(copy_str % ", ".join(fieldnames), f)
         f.close()
         self.log("Wrote %s values" % c)
         return c

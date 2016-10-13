@@ -276,3 +276,5 @@ BQ_PRESCRIBING_TABLE_NAME = "prescribing"
 # The name of the table containing practice information (names,
 # addresses etc)
 BQ_PRACTICES_TABLE_NAME = "practices"
+BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
+    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)

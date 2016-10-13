@@ -80,6 +80,7 @@ FROM (
               DATE(month) >= '{start_date}' AND
               DATE(month) <= '{end_date}') practices_with_months
       ON practices_with_months.practice_id = denom.practice
+       AND practices_with_months.month = denom.month
       -- Currently commented out because we're not ready to smooth things yet
       -- WHERE window_size = 3
       )
