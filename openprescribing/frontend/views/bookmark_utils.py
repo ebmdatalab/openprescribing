@@ -6,26 +6,84 @@ from frontend.models import Measure
 from frontend.models import MeasureValue
 
 
+def remove_jagged(measurevalues):
+    """Remove records that are outside the standard error of the mean or
+    where they hit 0% or 100% more than once.
+
+    Bit of a guess as to if this'll work or not. Pending review by
+    real statistician.
+
+    """
+    values = [x.percentile for x in measurevalues]
+    sem = (np.std(values) /
+           np.sqrt(len(values)))
+    keep = []
+    extremes = 0
+    for x in measurevalues:
+        if x.measure.is_percentage:
+            if x.calc_value == 1.0:
+                extremes += 1
+        if x.calc_value == 0.0:
+            extremes += 1
+        if x.numerator and x.numerator < 15:
+            extremes += 1
+        if extremes > 1 or x.percentile < sem or x.percentile > (100 - sem):
+            next
+        else:
+            keep.append(x)
+    return keep
+
+
+def remove_jagged_logit(measurevalues):
+    """Remove records that are outside the standard error of the mean.
+
+    Bit of a guess as to if this'll work or not. Pending review by
+    real statistivcian.
+
+    """
+    values = []
+    for m in measurevalues:
+        val = m.percentile / 100.0
+        if val > 0 and val < 1:
+            values.append(np.log(val/(100-val)))
+        else:
+            values.append(
+                np.log(
+                    (val + 0.5/len(measurevalues))/
+                    (1 - val + (0.5/len(measurevalues)))
+                )
+            )
+    sem = (np.std(values) /
+           np.sqrt(len(values)))
+    keep = []
+    for m in measurevalues:
+        if m.percentile < sem or m.percentile > (100 - sem):
+            next
+        else:
+            keep.append(m)
+    return keep
+
+
 class InterestingMeasureFinder(object):
     def __init__(self, practice=None, pct=None,
-                 month_window=6,
                  interesting_saving=1000,
                  interesting_percentile_change=10):
         assert practice or pct
         self.practice = practice
         self.pct = pct
-        self.month_window = month_window
         self.interesting_percentile_change = interesting_percentile_change
         self.interesting_saving = interesting_saving
-        now = ImportLog.objects.latest_in_category('prescribing').current_at
-        self.months_ago = now + relativedelta(months=-(self.month_window-1))
 
-    def _best_or_worst_performing_over_time(self, best_or_worst=None):
+    def months_ago(self, period):
+        now = ImportLog.objects.latest_in_category('prescribing').current_at
+        return now + relativedelta(months=-(period-1))
+
+    def _best_or_worst_performing_in_period(self, period, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
         worst = []
         for measure in Measure.objects.all():
             measure_filter = {
-                'measure': measure, 'month__gte': self.months_ago}
+                'measure': measure, 'month__gte': self.months_ago(period)}
             if self.practice:
                 measure_filter['practice'] = self.practice
             else:
@@ -41,28 +99,29 @@ class InterestingMeasureFinder(object):
                     measure_filter['percentile__lte'] = 10
                 else:
                     measure_filter['percentile__gte'] = 90
-            is_worst = MeasureValue.objects.filter(**measure_filter)
-            if is_worst.count() == self.month_window:
-                worst.append(measure)
+            is_worst = remove_jagged(
+                MeasureValue.objects.filter(**measure_filter))
+            if len(is_worst) == period:
+                worst.append(measure.id)
         return worst
 
-    def worst_performing_over_time(self):
+    def worst_performing_in_period(self, period):
         """Return every measure where the organisation specified in the given
         bookmark is in the worst decile for each month in the
         specified time range
 
         """
-        return self._best_or_worst_performing_over_time('worst')
+        return self._best_or_worst_performing_in_period(period, 'worst')
 
-    def best_performing_over_time(self):
+    def best_performing_in_period(self, period):
         """Return every measure where organisations specified in the given
         bookmark is in the best decile for each month in the specified
         time range
 
         """
-        return self._best_or_worst_performing_over_time('best')
+        return self._best_or_worst_performing_in_period(period, 'best')
 
-    def most_change_over_time(self):
+    def most_change_in_period(self, period):
         """Every measure where the specified organisation has changed by more
         than 10 centiles in the specified time period, ordered by rate
         of change.
@@ -76,7 +135,7 @@ class InterestingMeasureFinder(object):
         for measure in Measure.objects.all():
             measure_filter = {
                 'measure': measure,
-                'month__gte': self.months_ago,
+                'month__gte': self.months_ago(period),
                 'percentile__isnull': False
             }
             if self.practice:
@@ -85,27 +144,64 @@ class InterestingMeasureFinder(object):
                 measure_filter['pct'] = self.pct
                 measure_filter['practice'] = None
             percentiles = [x.percentile for x in
-                           MeasureValue.objects.filter(**measure_filter)
-                           .order_by('month')]
-            if len(percentiles) == self.month_window:
-                x = np.arange(self.month_window)
+                           remove_jagged(
+                               MeasureValue.objects.filter(**measure_filter)
+                               .order_by('month'))]
+            if len(percentiles) == period:
+                x = np.arange(period)
                 y = np.array(percentiles)
-                m, b = np.polyfit(x, y, 1)
+                p, res, _, _, _ = np.polyfit(x, y, 1, full=True)
+                m, b = p
                 slope_of_interest = (
                     self.interesting_percentile_change /
-                    float(self.month_window)
+                    float(period - 1)
                 )
-                if m > 0 and m >= slope_of_interest \
-                   or m < 0 and m <= -slope_of_interest:
-                    lines_of_best_fit.append(
-                        (m, b, m * (self.month_window - 1) + b, measure))
+                if res < 1200:
+                    if m > 0 and m >= slope_of_interest \
+                       or m < 0 and m <= -slope_of_interest:
+                        lines_of_best_fit.append(
+                            (m, b, m * (period - 1) + b,
+                             measure.id, res[0]))
         lines_of_best_fit = sorted(lines_of_best_fit, key=lambda x: x[0])
-        # XXX probably should be a dictionary with two sets of
-        # triples, like the next function
-        return [(line[3], line[1], line[2])
+        return [(line[3], line[1], line[2], line[4])
                 for line in lines_of_best_fit]
 
-    def top_and_total_savings_over_time(self):
+    def most_change_in_period_2(self, period):
+        most_changing = []
+        for measure in Measure.objects.all():
+            measure_filter = {
+                'measure': measure,
+                'month__gte': self.months_ago(period),
+                'percentile__isnull': False
+            }
+            if self.practice:
+                measure_filter['practice'] = self.practice
+            else:
+                measure_filter['pct'] = self.pct
+                measure_filter['practice'] = None
+            percentiles = [x.percentile for x in
+                           remove_jagged(
+                               MeasureValue.objects.filter(**measure_filter)
+                               .order_by('month'))]
+            if len(percentiles) == period:
+                split = period / 2
+                d1 = np.array(percentiles[:split])
+                d2 = np.array(percentiles[split:])
+                d1_mean = np.mean(d1)
+                d2_mean = np.mean(d2)
+                percentile_change = d1_mean - d2_mean
+                if percentile_change >= self.interesting_percentile_change or \
+                   percentile_change <= (
+                       0 - self.interesting_percentile_change):
+                    most_changing.append(
+                        (percentile_change, measure.id, d1_mean, d2_mean)
+                    )
+
+        most_changing = sorted(most_changing, key=lambda x: x[0])
+        return [(line[1], line[2], line[3])
+                for line in most_changing]
+
+    def top_and_total_savings_in_period(self, period):
         """Sum total possible savings over time, and find measures where
         possible or achieved savings are greater than self.interesting_saving.
 
@@ -116,7 +212,6 @@ class InterestingMeasureFinder(object):
         tuples respectively.
 
         """
-        # Top savings for CCG, where savings are greater than GBPself.interesting_saving .
         possible_savings = []
         achieved_savings = []
         total_savings = 0
@@ -124,14 +219,15 @@ class InterestingMeasureFinder(object):
             if measure.is_cost_based:
                 # XXX factor out this conditional filtering
                 measure_filter = {
-                    'measure': measure, 'month__gte': self.months_ago}
+                    'measure': measure, 'month__gte': self.months_ago(period)}
                 if self.practice:
                     measure_filter['practice'] = self.practice
                 else:
                     measure_filter['pct'] = self.pct
                     measure_filter['practice'] = None
-                values = list(MeasureValue.objects.filter(**measure_filter))
-                if len(values) != self.month_window:
+                values = list(
+                    MeasureValue.objects.filter(**measure_filter))
+                if len(values) != period:
                     continue
                 savings_at_50th = [
                     x.cost_savings['50'] for x in
@@ -141,11 +237,11 @@ class InterestingMeasureFinder(object):
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if possible_savings_for_measure >= self.interesting_saving:
                     possible_savings.append(
-                        (measure, possible_savings_for_measure)
+                        (measure.id, possible_savings_for_measure)
                     )
                 if savings_or_loss_for_measure <= -self.interesting_saving:
                     achieved_savings.append(
-                        (measure, -1 * savings_or_loss_for_measure))
+                        (measure.id, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
                         max(0, x.cost_savings['10']) for x in
@@ -165,23 +261,72 @@ class InterestingMeasureFinder(object):
 
     def context_for_org_email(self):
         return {
-            'worst': self.worst_performing_over_time(),
-            'best': self.best_performing_over_time(),
-            'most_changing': self.most_change_over_time(),
-            'top_savings': self.top_and_total_savings_over_time()}
+            'worst': self.worst_performing_in_period(3),
+            'best': self.best_performing_in_period(3),
+            'most_changing': self.most_change_in_period(9),
+            'top_savings': self.top_and_total_savings_in_period(6)}
+
 
 def test_debug():
     from frontend.models import PCT
     from frontend.models import Practice
-    print "Data for 10 CCGs:"
-    for ccg in PCT.objects.all()[:50]:
-        finder = InterestingMeasureFinder(
-            pct=ccg, month_window=6)
-        print ccg, "https://openprescribing.net/ccg/" + ccg.code
-        print finder.context_for_org_email()
+    import json
+    print "Data for 100 CCGs:"
+    with open("/tmp/ccgs.json", "w") as f:
+        for ccg in PCT.objects.all()[:100]:
+            finder = InterestingMeasureFinder(
+                pct=ccg)
+            result = {}
+            result['url'] = "https://openprescribing.net/ccg/" + ccg.code
+            result['data'] = finder.context_for_org_email()
+            f.write(json.dumps(result) + "\n")
     print "Data for 10 Practices:"
-    for practice in Practice.objects.all()[:50]:
+    with open("/tmp/practices.json", "w") as f:
+        for practice in Practice.objects.all()[:1000]:
+            finder = InterestingMeasureFinder(
+                practice=practice)
+            result = {}
+            result['url'] = "https://openprescribing.net/practice/" + practice.code
+            result['data'] = finder.context_for_org_email()
+            f.write(json.dumps(result) + "\n")
+
+def test_debug2():
+    from frontend.models import PCT
+    from frontend.models import Practice
+    import json
+    f = open("/tmp/data-6-month-method-1.json", "w")
+    for ccg in PCT.objects.all():
         finder = InterestingMeasureFinder(
-            practice=practice, month_window=6)
-        print practice, "https://openprescribing.net/practice/" + practice.code
-        print finder.context_for_org_email()
+            pct=ccg, interesting_percentile_change=20)
+        result = {}
+        result['data'] = finder.most_change_in_period(6)
+        result['url'] = "https://openprescribing.net/ccg/" + ccg.code
+        f.write(json.dumps(result) + "\n")
+    f.close()
+    f = open("/tmp/data-6-month-method-2.json", "w")
+    for ccg in PCT.objects.all():
+        finder = InterestingMeasureFinder(
+            pct=ccg, interesting_percentile_change=20)
+        result = {}
+        result['data'] = finder.most_change_in_period_2(6)
+        result['url'] = "https://openprescribing.net/ccg/" + ccg.code
+        f.write(json.dumps(result) + "\n")
+    f.close()
+    f = open("/tmp/data-12-month-method-1.json", "w")
+    for ccg in PCT.objects.all():
+        finder = InterestingMeasureFinder(
+            pct=ccg, interesting_percentile_change=20)
+        result = {}
+        result['data'] = finder.most_change_in_period(12)
+        result['url'] = "https://openprescribing.net/ccg/" + ccg.code
+        f.write(json.dumps(result) + "\n")
+    f.close()
+    f = open("/tmp/data-12-month-method-2.json", "w")
+    for ccg in PCT.objects.all():
+        finder = InterestingMeasureFinder(
+            pct=ccg, interesting_percentile_change=20)
+        result = {}
+        result['data'] = finder.most_change_in_period_2(12)
+        result['url'] = "https://openprescribing.net/ccg/" + ccg.code
+        f.write(json.dumps(result) + "\n")
+    f.close()

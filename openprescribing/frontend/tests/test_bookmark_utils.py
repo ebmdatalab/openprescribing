@@ -1,7 +1,8 @@
 import datetime
 from dateutil.relativedelta import relativedelta
+import unittest
 
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -14,11 +15,98 @@ from frontend.models import User
 from frontend.views import bookmark_utils
 
 
-class TestBookmarkUtilsPerforming(TransactionTestCase):
+class TestRemoveJagged(unittest.TestCase):
+    def _makeSome(self, percentiles):
+        m = Measure(is_percentage=False)
+        return [MeasureValue(percentile=percentile, measure=m)
+                for percentile in percentiles]
+
+    def _makeSomeWithPercentCalcValues(self, percentiles):
+        m = Measure(is_percentage=True)
+        return [MeasureValue(measure=m, percentile=percentile, calc_value=value)
+                for percentile, value in percentiles]
+
+    def _makeSomeWithNumeratorValues(self, percentiles):
+        m = Measure(is_percentage=False)
+        return [MeasureValue(measure=m, percentile=percentile, numerator=value)
+                for percentile, value in percentiles]
+
+    def test_percentiles_at_extremes_one_extreme_ok(self):
+        vals = [(5, 0.9), (6, 1.0), (4, 0.8)]
+        filtered = bookmark_utils.remove_jagged(self._makeSomeWithPercentCalcValues(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+    def test_percentiles_at_extremes_two_extremes_bad(self):
+        vals = [(5, 0.9), (6, 1.0), (4, 0.0)]
+        filtered = bookmark_utils.remove_jagged(self._makeSomeWithPercentCalcValues(vals))
+        self.assertNotEqual(
+            len(filtered), len(vals))
+
+    def test_non_percentiles_extremes(self):
+        vals = [5, 5, 5, 5, 5, 5, 5, 0, 0]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertNotEqual(
+            len(filtered), len(vals))
+
+    def test_non_percentiles_no_low_numerators(self):
+        vals = [(5, 30), (6, 20), (4, 30)]
+        filtered = bookmark_utils.remove_jagged(
+            self._makeSomeWithNumeratorValues(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+    def test_non_percentiles_with_low_numerators(self):
+        vals = [(5, 10), (6, 12), (4, 30)]
+        filtered = bookmark_utils.remove_jagged(
+            self._makeSomeWithNumeratorValues(vals))
+        self.assertNotEqual(
+            len(filtered), len(vals))
+
+    def test_very_jagged(self):
+        vals = [1, 100, 1, 100, 1, 50, 40, 100]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertNotEqual(
+            len(filtered), len(vals))
+
+    @unittest.skip('should be fixed by better algorithm')
+    def test_low_not_jagged(self):
+        vals = [0, 1, 0, 1, 0, 1, 0, 1]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+    def test_low_not_jagged_not_zero(self):
+        vals = [1, 2, 1, 2, 1, 2, 1, 2]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+    def test_quite_jagged(self):
+        vals = [0, 100, 0, 50, 10, 20, 100]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertNotEqual(
+            len(filtered), len(vals))
+
+    def test_slightly_jagged(self):
+        vals = [30, 70, 50, 60, 50, 40, 10]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+    def test_not_at_all_jagged(self):
+        vals = [40, 50, 60, 70, 80]
+        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
+        self.assertEqual(
+            len(filtered), len(vals))
+
+
+class TestBookmarkUtilsPerforming(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def setUp(self):
-        self.measure = Measure.objects.get(pk='cerazette')
+        self.measure_id = 'cerazette'
+        self.measure = Measure.objects.get(pk=self.measure_id)
         self.measure.low_is_good = True
         self.measure.save()
         pct = PCT.objects.get(pk='03V')
@@ -58,52 +146,52 @@ class TestBookmarkUtilsPerforming(TransactionTestCase):
     # CCG bookmarks
     def test_hit_where_ccg_worst_in_specified_number_of_months(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.pct, month_window=3)
-        worst_measures = finder.worst_performing_over_time()
-        self.assertIn(self.measure, worst_measures)
+            pct=self.pct)
+        worst_measures = finder.worst_performing_in_period(3)
+        self.assertIn(self.measure_id, worst_measures)
 
     def test_miss_where_not_better_in_specified_number_of_months(self):
         self.measure.low_is_good = False
         self.measure.save()
         finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.pct, month_window=3)
-        worst_measures = finder.worst_performing_over_time()
+            pct=self.pct)
+        worst_measures = finder.worst_performing_in_period(3)
         self.assertFalse(worst_measures)
 
     def test_miss_where_not_enough_global_data(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.pct, month_window=6)
-        worst_measures = finder.worst_performing_over_time()
+            pct=self.pct)
+        worst_measures = finder.worst_performing_in_period(6)
         self.assertFalse(worst_measures)
 
     def test_miss_where_not_worst_in_specified_number_of_months(self):
         MeasureValue.objects.all().delete()
         finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.pct, month_window=3)
-        worst_measures = finder.worst_performing_over_time()
+            pct=self.pct)
+        worst_measures = finder.worst_performing_in_period(3)
         self.assertFalse(worst_measures)
 
     # Practice bookmarks
     def test_hit_where_practice_worst_in_specified_number_of_months(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.high_percentile_practice, month_window=3)
-        worst_measures = finder.worst_performing_over_time()
-        self.assertIn(self.measure, worst_measures)
+            practice=self.high_percentile_practice)
+        worst_measures = finder.worst_performing_in_period(3)
+        self.assertIn(self.measure_id, worst_measures)
 
     ## Best performing
     def test_hit_where_practice_best_in_specified_number_of_months(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.low_percentile_practice,
-            month_window=3)
-        best_measures = finder.best_performing_over_time()
-        self.assertIn(self.measure, best_measures)
+            practice=self.low_percentile_practice)
+        best_measures = finder.best_performing_in_period(3)
+        self.assertIn(self.measure_id, best_measures)
 
 
-class TestBookmarkUtilsChanging(TransactionTestCase):
+class TestBookmarkUtilsChanging(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def setUp(self):
-        self.measure = Measure.objects.get(pk='cerazette')
+        self.measure_id = 'cerazette'
+        self.measure = Measure.objects.get(pk=self.measure_id)
         ImportLog.objects.create(
             category='prescribing',
             current_at=datetime.datetime.today())
@@ -115,19 +203,19 @@ class TestBookmarkUtilsChanging(TransactionTestCase):
             MeasureValue.objects.create(
                 measure=self.measure,
                 practice=practice_with_high_change,
-                percentile=i * 10,
+                percentile=(i+1) * 7,
                 month=month
             )
             MeasureValue.objects.create(
                 measure=self.measure,
                 practice=practice_with_high_neg_change,
-                percentile=i * -10,
+                percentile=(3-i) * 7,
                 month=month
             )
             MeasureValue.objects.create(
                 measure=self.measure,
                 practice=practice_with_low_change,
-                percentile=i,
+                percentile=i+1,
                 month=month
             )
         self.practice_with_low_change = practice_with_low_change
@@ -136,27 +224,24 @@ class TestBookmarkUtilsChanging(TransactionTestCase):
 
     def test_low_change_not_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_low_change,
-            month_window=3)
-        self.assertEqual(finder.most_change_over_time(), [])
+            practice=self.practice_with_low_change)
+        self.assertEqual(finder.most_change_in_period(3), [])
 
     def test_high_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_change,
-            month_window=3)
-        sorted_measure = finder.most_change_over_time()[0]
-        self.assertEqual(sorted_measure[0], self.measure)
-        self.assertAlmostEqual(sorted_measure[1], 0)
-        self.assertAlmostEqual(sorted_measure[2], 20)
+            practice=self.practice_with_high_change)
+        sorted_measure = finder.most_change_in_period(3)[0]
+        self.assertEqual(sorted_measure[0], self.measure_id)
+        self.assertAlmostEqual(sorted_measure[1], 7)
+        self.assertAlmostEqual(sorted_measure[2], 21)
 
     def test_high_negative_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_neg_change,
-            month_window=3)
-        sorted_measure = finder.most_change_over_time()[0]
-        self.assertEqual(sorted_measure[0], self.measure)
-        self.assertAlmostEqual(sorted_measure[1], 0)
-        self.assertAlmostEqual(sorted_measure[2], -20)
+            practice=self.practice_with_high_neg_change)
+        sorted_measure = finder.most_change_in_period(3)[0]
+        self.assertEqual(sorted_measure[0], self.measure_id)
+        self.assertAlmostEqual(sorted_measure[1], 21)
+        self.assertAlmostEqual(sorted_measure[2], 7)
 
 
 def _makeCostSavingMeasureValues(measure, practice, savings):
@@ -171,6 +256,7 @@ def _makeCostSavingMeasureValues(measure, practice, savings):
         MeasureValue.objects.create(
             measure=measure,
             practice=practice,
+            percentile=0.5,
             cost_savings={
                 '10': savings[i] * 0.1,
                 '50': savings[i],
@@ -179,11 +265,12 @@ def _makeCostSavingMeasureValues(measure, practice, savings):
         )
 
 
-class TestBookmarkUtilsSavingsPossible(TransactionTestCase):
+class TestBookmarkUtilsSavingsPossible(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def setUp(self):
-        self.measure = Measure.objects.get(pk='cerazette')
+        self.measure_id = 'cerazette'
+        self.measure = Measure.objects.get(pk=self.measure_id)
         ImportLog.objects.create(
             category='prescribing',
             current_at=datetime.datetime.today())
@@ -193,10 +280,9 @@ class TestBookmarkUtilsSavingsPossible(TransactionTestCase):
 
     def test_possible_savings(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice,
-            month_window=3)
-        savings = finder.top_and_total_savings_over_time()
-        self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
+            practice=self.practice)
+        savings = finder.top_and_total_savings_in_period(3)
+        self.assertEqual(savings['possible_savings'], [(self.measure_id, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
         self.assertEqual(savings['possible_top_savings_total'], 350000)
 
@@ -204,19 +290,19 @@ class TestBookmarkUtilsSavingsPossible(TransactionTestCase):
         self.measure.low_is_good = True
         self.measure.save()
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice,
-            month_window=3)
-        savings = finder.top_and_total_savings_over_time()
-        self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
+            practice=self.practice)
+        savings = finder.top_and_total_savings_in_period(3)
+        self.assertEqual(savings['possible_savings'], [(self.measure_id, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
         self.assertEqual(savings['possible_top_savings_total'], 350.0)
 
 
-class TestBookmarkUtilsSavingsAchieved(TransactionTestCase):
+class TestBookmarkUtilsSavingsAchieved(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def setUp(self):
-        self.measure = Measure.objects.get(pk='cerazette')
+        self.measure_id = 'cerazette'
+        self.measure = Measure.objects.get(pk=self.measure_id)
         ImportLog.objects.create(
             category='prescribing',
             current_at=datetime.datetime.today())
@@ -226,9 +312,8 @@ class TestBookmarkUtilsSavingsAchieved(TransactionTestCase):
 
     def test_achieved_savings(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice,
-            month_window=3)
-        savings = finder.top_and_total_savings_over_time()
+            practice=self.practice)
+        savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings['possible_savings'], [])
-        self.assertEqual(savings['achieved_savings'], [(self.measure, 1400)])
+        self.assertEqual(savings['achieved_savings'], [(self.measure_id, 1400)])
         self.assertEqual(savings['possible_top_savings_total'], 10000)
