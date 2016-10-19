@@ -148,7 +148,7 @@ class TestBookmarkUtilsPerforming(TestCase):
         finder = bookmark_utils.InterestingMeasureFinder(
             pct=self.pct)
         worst_measures = finder.worst_performing_in_period(3)
-        self.assertIn(self.measure_id, worst_measures)
+        self.assertIn(self.measure, worst_measures)
 
     def test_miss_where_not_better_in_specified_number_of_months(self):
         self.measure.low_is_good = False
@@ -176,14 +176,14 @@ class TestBookmarkUtilsPerforming(TestCase):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.high_percentile_practice)
         worst_measures = finder.worst_performing_in_period(3)
-        self.assertIn(self.measure_id, worst_measures)
+        self.assertIn(self.measure, worst_measures)
 
     ## Best performing
     def test_hit_where_practice_best_in_specified_number_of_months(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.low_percentile_practice)
         best_measures = finder.best_performing_in_period(3)
-        self.assertIn(self.measure_id, best_measures)
+        self.assertIn(self.measure, best_measures)
 
 
 class TestBookmarkUtilsChanging(TestCase):
@@ -235,7 +235,7 @@ class TestBookmarkUtilsChanging(TestCase):
         sorted_measure = finder.most_change_in_period(3)
         measure_info = sorted_measure['improvements'][0]
         self.assertEqual(
-            measure_info[0], 'cerazette')
+            measure_info[0].id, 'cerazette')
         self.assertAlmostEqual(
             measure_info[1], 7)   # start
         self.assertAlmostEqual(
@@ -249,7 +249,7 @@ class TestBookmarkUtilsChanging(TestCase):
         sorted_measure = finder.most_change_in_period(3)
         measure_info = sorted_measure['declines'][0]
         self.assertEqual(
-            measure_info[0], 'cerazette')
+            measure_info[0].id, 'cerazette')
         self.assertAlmostEqual(
             measure_info[1], 21)  # start
         self.assertAlmostEqual(
@@ -296,7 +296,7 @@ class TestBookmarkUtilsSavingsPossible(TestCase):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice)
         savings = finder.top_and_total_savings_in_period(3)
-        self.assertEqual(savings['possible_savings'], [(self.measure_id, 3500)])
+        self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
         self.assertEqual(savings['possible_top_savings_total'], 350000)
 
@@ -306,7 +306,7 @@ class TestBookmarkUtilsSavingsPossible(TestCase):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice)
         savings = finder.top_and_total_savings_in_period(3)
-        self.assertEqual(savings['possible_savings'], [(self.measure_id, 3500)])
+        self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
         self.assertEqual(savings['possible_top_savings_total'], 350.0)
 
@@ -329,5 +329,5 @@ class TestBookmarkUtilsSavingsAchieved(TestCase):
             practice=self.practice)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings['possible_savings'], [])
-        self.assertEqual(savings['achieved_savings'], [(self.measure_id, 1400)])
+        self.assertEqual(savings['achieved_savings'], [(self.measure, 1400)])
         self.assertEqual(savings['possible_top_savings_total'], 10000)

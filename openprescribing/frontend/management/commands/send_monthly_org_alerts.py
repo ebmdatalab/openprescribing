@@ -1,18 +1,21 @@
 import subprocess
-import datetime
-import glob
-import os
+from tempfile import NamedTemporaryFile
 from premailer import transform
 from django.core.management.base import BaseCommand
 from django.core.mail import EmailMultiAlternatives
 from anymail.message import attach_inline_image_file
 from django.conf import settings
 from django.template.loader import get_template
-from django.urls import reverse
-from frontend.models import SearchBookmark, User
+from django.core.urlresolvers import reverse
+from frontend.models import OrgBookmark
+from frontend.views import bookmark_utils
 
-PHANTOM = '/usr/local/bin/phantomjs'
-html_email = get_template('bookmarks/email.html')
+
+GRAB_CMD = ('/usr/local/bin/phantomjs ' +
+            settings.SITE_ROOT +
+            ' /frontend/management/commands/grab_chart.js')
+GRAB_HOST = "https://openprescring.net"
+html_email = get_template('bookmarks/email_for_measures.html')
 
 
 class Command(BaseCommand):
@@ -20,55 +23,87 @@ class Command(BaseCommand):
     help = 'Send monthly emails based on bookmarks'
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument('--email')
+        parser.add_argument('--ccg')
+        parser.add_argument('--practice')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
-        now = datetime.datetime.now().strftime('%Y_%m_%d')
-        for org_bookmark in OrgBookmark.objects.filter(
-                user__is_active=True):
-            target_folder = "/tmp/org_emails/%s/%s" % (now, org_bookmark.user.id)
-            subprocess.check_call("mkdir -p %s" % target_folder, shell=True)
-            cmd = ('%s %s/grab_chart.js "http://localhost:8000/analyse/#%s" %s/%s' %
-                   (PHANTOM,
-                    settings.SITE_ROOT + '/frontend/management/commands',
-                    search_bookmark.url,
-                    target_folder,
-                    search_bookmark.id)
-            )
-            if self.IS_VERBOSE:
-                print "Running " + cmd
-            subprocess.check_call(cmd, shell=True)
-        for user_id in os.listdir("/tmp/emails/%s" % (now)):
-            user = User.objects.get(id=int(user_id))
-            if self.IS_VERBOSE:
-                print "Sending email to " + user.email
-            bookmarks = user.searchbookmark_set.all()
-            images = []
+        recipient_email = None
+        recipient_key = None
+        recipient_id = None
+
+        if options['email']:
+            bookmarks = [OrgBookmark(
+                pct_id=options['ccg'],
+                practice_id=options['practice']
+            )]
+            recipient_email = options['email']
+            recipient_id = 'test'
+            recipient_key = 'test'
+        else:
+            bookmarks = OrgBookmark.objects.filter(
+                user__is_active=True)
+        # First, generate the images for each email
+        for org_bookmark in bookmarks:
+
+            stats = bookmark_utils.InterestingMeasureFinder(
+                practice=org_bookmark.practice or options['practice'],
+                pct=org_bookmark.pct or options['ccg']).context_for_org_email()
+            if recipient_email is None:
+                recipient_email = org_bookmark.user.email
+                recipient_key = org_bookmark.user.profile.key
+                recipient_id = org_bookmark.user.id
             msg = EmailMultiAlternatives(
                 "Your monthly update",
                 "This email is only available in HTML",
                 "hello@openprescribing.net",
-                [user.email])
-            for image in glob.glob("/tmp/emails/%s/%s/*png" % (now, user.id)):
-                images.append(attach_inline_image_file(msg, image))
+                [recipient_email])
+            images = []
+            with NamedTemporaryFile() as getting_worse_img, \
+                    NamedTemporaryFile() as still_bad_img:
+                most_changing = stats['most_changing']
+                if most_changing['declines']:
+                    getting_worse_measure = most_changing['declines'][0][0]
+                    cmd = ('{cmd} "{host}{url} {file_path} #{selector}'.format(
+                        cmd=GRAB_CMD,
+                        host=GRAB_HOST,
+                        url=org_bookmark.dashboard_url(),
+                        file_path=getting_worse_img.name,
+                        selector=getting_worse_measure)
+                    )
+                    subprocess.check_call(cmd, shell=True)
+                    images.append(attach_inline_image_file(
+                        msg, getting_worse_img.name))
+                if stats['worst']:
+                    still_bad_measure = stats['worst'][0]
+                    cmd = ('{cmd} "{host}{url} {file_path} #{selector}'.format(
+                        cmd=GRAB_CMD,
+                        host=GRAB_HOST,
+                        url=org_bookmark.dashboard_url(),
+                        file_path=still_bad_img.name,
+                        selector=still_bad_measure)
+                    )
+                    subprocess.check_call(cmd, shell=True)
+                    images.append(attach_inline_image_file(
+                        msg, still_bad_img.name))
 
-            html = transform(html_email.render(
-                context={
-                    'images_and_bookmarks': zip(images, bookmarks),
-                    'unsubscribe_link': reverse(
-                        'bookmark-login',
-                        key=user.profile.key)
-                }))
-            msg.attach_alternative(html, "text/html")
+                html = transform(html_email.render(
+                    context={
+                        'getting_worse_image': images and images[0],
+                        'still_bad_img': images and images[1],
+                        'bookmark': org_bookmark,
+                        'stats': stats,
+                        'unsubscribe_link': reverse(
+                            'bookmark-login',
+                            kwargs={'key': recipient_key})
+                    }))
+                msg.attach_alternative(html, "text/html")
 
-            # Optional Anymail extensions:
-            msg.metadata = {"user_id": user.id, "experiment_variation": 1}
-            msg.tags = ["monthly_update"]
-            msg.track_clicks = True
-            msg.esp_extra = {"sender_domain": "openprescribing.net"}
-            sent = msg.send()
-            if self.IS_VERBOSE:
+                # Optional Anymail extensions:
+                msg.metadata = {"user_id": recipient_id,
+                                "experiment_variation": 1}
+                msg.tags = ["monthly_update"]
+                msg.track_clicks = True
+                msg.esp_extra = {"sender_domain": "openprescribing.net"}
+                sent = msg.send()
                 print "Sent %s messages" % sent

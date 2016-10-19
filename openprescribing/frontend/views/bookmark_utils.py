@@ -89,8 +89,10 @@ class InterestingMeasureFinder(object):
             else:
                 measure_filter['pct'] = self.pct
                 measure_filter['practice'] = None
+            invert_percentile_for_comparison = False
             if measure.low_is_good:
                 if best_or_worst == 'worst':
+                    invert_percentile_for_comparison = True
                     measure_filter['percentile__gte'] = 90
                 else:
                     measure_filter['percentile__lte'] = 10
@@ -98,12 +100,18 @@ class InterestingMeasureFinder(object):
                 if best_or_worst == 'worst':
                     measure_filter['percentile__lte'] = 10
                 else:
+                    invert_percentile_for_comparison = True
                     measure_filter['percentile__gte'] = 90
             is_worst = remove_jagged(
                 MeasureValue.objects.filter(**measure_filter))
             if len(is_worst) == period:
-                worst.append(measure.id)
-        return worst
+                if invert_percentile_for_comparison:
+                    comparator = 100 - is_worst[-1].percentile
+                else:
+                    comparator = is_worst[-1].percentile
+                worst.append((measure, comparator))
+        worst = sorted(worst, key=lambda x: x[-1])
+        return [x[0] for x in worst]
 
     def worst_performing_in_period(self, period):
         """Return every measure where the organisation specified in the given
@@ -158,7 +166,7 @@ class InterestingMeasureFinder(object):
                 end_centile = m * (period - 1) + b
                 if residuals < 1200:
                     delta = start_centile - end_centile
-                    data = (m, measure.id, start_centile,
+                    data = (m, measure, start_centile,
                             end_centile, residuals)
                     if delta >= self.interesting_percentile_change:
                         if measure.low_is_good:
@@ -204,7 +212,7 @@ class InterestingMeasureFinder(object):
                    percentile_change <= (
                        0 - self.interesting_percentile_change):
                     most_changing.append(
-                        (percentile_change, measure.id, d1_mean, d2_mean)
+                        (percentile_change, measure, d1_mean, d2_mean)
                     )
 
         most_changing = sorted(most_changing, key=lambda x: x[0])
@@ -247,11 +255,11 @@ class InterestingMeasureFinder(object):
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if possible_savings_for_measure >= self.interesting_saving:
                     possible_savings.append(
-                        (measure.id, possible_savings_for_measure)
+                        (measure, possible_savings_for_measure)
                     )
                 if savings_or_loss_for_measure <= -self.interesting_saving:
                     achieved_savings.append(
-                        (measure.id, -1 * savings_or_loss_for_measure))
+                        (measure, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
                         max(0, x.cost_savings['10']) for x in
