@@ -225,23 +225,37 @@ class TestBookmarkUtilsChanging(TestCase):
     def test_low_change_not_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice_with_low_change)
-        self.assertEqual(finder.most_change_in_period(3), [])
+        self.assertEqual(finder.most_change_in_period(3),
+                         {'improvements': [],
+                          'declines': []})
 
     def test_high_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice_with_high_change)
-        sorted_measure = finder.most_change_in_period(3)[0]
-        self.assertEqual(sorted_measure[0], self.measure_id)
-        self.assertAlmostEqual(sorted_measure[1], 7)
-        self.assertAlmostEqual(sorted_measure[2], 21)
+        sorted_measure = finder.most_change_in_period(3)
+        measure_info = sorted_measure['improvements'][0]
+        self.assertEqual(
+            measure_info[0], 'cerazette')
+        self.assertAlmostEqual(
+            measure_info[1], 7)   # start
+        self.assertAlmostEqual(
+            measure_info[2], 21)  # end
+        self.assertAlmostEqual(
+            measure_info[3], 0)   # residuals
 
     def test_high_negative_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice_with_high_neg_change)
-        sorted_measure = finder.most_change_in_period(3)[0]
-        self.assertEqual(sorted_measure[0], self.measure_id)
-        self.assertAlmostEqual(sorted_measure[1], 21)
-        self.assertAlmostEqual(sorted_measure[2], 7)
+        sorted_measure = finder.most_change_in_period(3)
+        measure_info = sorted_measure['declines'][0]
+        self.assertEqual(
+            measure_info[0], 'cerazette')
+        self.assertAlmostEqual(
+            measure_info[1], 21)  # start
+        self.assertAlmostEqual(
+            measure_info[2], 7)   # end
+        self.assertAlmostEqual(
+            measure_info[3], 0)   # residuals
 
 
 def _makeCostSavingMeasureValues(measure, practice, savings):

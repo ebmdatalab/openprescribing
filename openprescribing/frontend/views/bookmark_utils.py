@@ -131,7 +131,8 @@ class InterestingMeasureFinder(object):
         Returns a list of triples of (measure, change_from, change_to)
 
         """
-        lines_of_best_fit = []
+        improvements = []
+        declines = []
         for measure in Measure.objects.all():
             measure_filter = {
                 'measure': measure,
@@ -152,19 +153,28 @@ class InterestingMeasureFinder(object):
                 y = np.array(percentiles)
                 p, res, _, _, _ = np.polyfit(x, y, 1, full=True)
                 m, b = p
-                slope_of_interest = (
-                    self.interesting_percentile_change /
-                    float(period - 1)
-                )
-                if res < 1200:
-                    if m > 0 and m >= slope_of_interest \
-                       or m < 0 and m <= -slope_of_interest:
-                        lines_of_best_fit.append(
-                            (m, b, m * (period - 1) + b,
-                             measure.id, res[0]))
-        lines_of_best_fit = sorted(lines_of_best_fit, key=lambda x: x[0])
-        return [(line[3], line[1], line[2], line[4])
-                for line in lines_of_best_fit]
+                residuals = res[0]
+                start_centile = b
+                end_centile = m * (period - 1) + b
+                if residuals < 1200:
+                    delta = start_centile - end_centile
+                    data = (m, measure.id, start_centile,
+                            end_centile, residuals)
+                    if delta >= self.interesting_percentile_change:
+                        if measure.low_is_good:
+                            improvements.append(data)
+                        else:
+                            declines.append(data)
+                    elif delta <= (0 - self.interesting_percentile_change):
+                        if measure.low_is_good:
+                            declines.append(data)
+                        else:
+                            improvements.append(data)
+
+        improvements = sorted(improvements, key=lambda x: -abs(x[0]))
+        declines = sorted(declines, key=lambda x: -abs(x[0]))
+        return {'improvements': [x[1:] for x in improvements],
+                'declines': [x[1:] for x in declines]}
 
     def most_change_in_period_2(self, period):
         most_changing = []
