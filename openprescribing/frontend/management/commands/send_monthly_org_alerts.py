@@ -13,7 +13,7 @@ from frontend.views import bookmark_utils
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.SITE_ROOT +
-            ' /frontend/management/commands/grab_chart.js')
+            '/frontend/management/commands/grab_chart.js')
 GRAB_HOST = "https://openprescring.net"
 html_email = get_template('bookmarks/email_for_measures.html')
 
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     NamedTemporaryFile() as still_bad_img:
                 most_changing = stats['most_changing']
                 if most_changing['declines']:
-                    getting_worse_measure = most_changing['declines'][0][0]
+                    getting_worse_measure = most_changing['declines'][0][0].id
                     cmd = ('{cmd} "{host}{url} {file_path} #{selector}'.format(
                         cmd=GRAB_CMD,
                         host=GRAB_HOST,
@@ -75,8 +75,8 @@ class Command(BaseCommand):
                     images.append(attach_inline_image_file(
                         msg, getting_worse_img.name))
                 if stats['worst']:
-                    still_bad_measure = stats['worst'][0]
-                    cmd = ('{cmd} "{host}{url} {file_path} #{selector}'.format(
+                    still_bad_measure = stats['worst'][0].id
+                    cmd = ('{cmd} "{host}{url}" {file_path} #{selector}'.format(
                         cmd=GRAB_CMD,
                         host=GRAB_HOST,
                         url=org_bookmark.dashboard_url(),
