@@ -9,9 +9,45 @@ page.viewportSize = {
 };
 var address;
 
+if (system.args.length !== 4) {
+  console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector>');
+  phantom.exit();
+} else {
+  address = system.args[1];
+  var path = system.args[2];
+  var selector = system.args[3];
+  page.open(address, function(status) {
+    if (!status === 'success') {
+      console.log('Unable to load the address!');
+    } else {
+      waitFor({
+        debug: true,
+        interval: 500,  // The time series chart is actually
+                        // visible some time after the element is
+                        // visible (there's a jerky refresh thing
+                        // going on). We should fix the jerky thing,
+                        // then we can make the timeout shorter
+        timeout: 5000,
+        check: function() {
+          return page.evaluate(function(s) {
+            return $(s).is(':visible');
+          }, selector);
+        },
+        success: function() {
+          captureSelector(path, selector);
+          phantom.exit();
+        },
+        error: function() {
+          console.log("Error waiting for element " + selector);
+          phantom.exit(1);
+        }
+      });
+    }
+  });
+}
+
 function waitFor($config) {
   $config._start = $config._start || new Date();
-
   if ($config.timeout && new Date() - $config._start > $config.timeout) {
     if ($config.error) {
       $config.error();
@@ -26,13 +62,16 @@ function waitFor($config) {
     if ($config.debug) {
       console.log('success ' + (new Date() - $config._start) + 'ms');
     }
-    return $config.success();
+    return setTimeout(function() {
+      return $config.success();
+    }, 500); // the extra wait is for the graph to paint
   }
 
   setTimeout(waitFor, $config.interval || 0, $config);
 }
 
 var capture = function(targetFile, clipRect) {
+  // save specified clip rectangle on current page to targetFile
   var previousClipRect;
   previousClipRect = page.clipRect;
   page.clipRect = clipRect;
@@ -50,6 +89,7 @@ var capture = function(targetFile, clipRect) {
 
 var captureSelector = function(targetFile, selector) {
   return capture(targetFile, page.evaluate(function(selector) {
+    // work out how to clip the screen shot around the selected element
     try {
       var clipRect = document.querySelector(selector).getBoundingClientRect();
       return {
@@ -63,40 +103,3 @@ var captureSelector = function(targetFile, selector) {
     }
   }, selector));
 };
-
-if (system.args.length !== 3) {
-  console.log('Usage: phantomjs grab_chart.js <url> <img_id>');
-  phantom.exit();
-} else {
-  address = system.args[1];
-  var imgId = system.args[2];
-  page.open(address, function(status) {
-    if (!status === 'success') {
-      console.log('Unable to load the address!');
-    } else {
-      waitFor({
-        debug: true,
-        interval: 1000, // XXX the time series chart is actually
-                        // visible some time after the element is
-                        // visible (there's a jerky refresh thing
-                        // going on). We should fix the jerky thing,
-                        // then we can on the waitFor with a timeout
-                        // of 0.
-        timeout: 8000,
-        check: function() {
-          return page.evaluate(function() {
-            return $('.tab-pane').is(':visible');
-          });
-        },
-        success: function() {
-          captureSelector(imgId + '.png','.tab-pane');
-          phantom.exit();
-        },
-        error: function() {
-          console.log("Error waiting for chart");
-          phantom.exit();
-        }
-      });
-    }
-  });
-}
