@@ -14,8 +14,6 @@ ALLOWED_HOSTS = ['openprescribing.net', 'openprescriptions.net', ]
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
 
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = EMAIL_HOST_USER
 # END EMAIL CONFIGURATION
 
 # DATABASE CONFIGURATION

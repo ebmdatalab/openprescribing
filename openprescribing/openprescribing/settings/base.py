@@ -302,6 +302,9 @@ ANYMAIL = {
     "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
 }
 
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+SERVER_EMAIL = "errors@openprescribing.net"
+
 # django-allauth configuration
 ACCOUNT_ADAPTER = 'frontend.account.adapter.MessageBlockingAdapter'
 ACCOUNT_EMAIL_REQUIRED = True
