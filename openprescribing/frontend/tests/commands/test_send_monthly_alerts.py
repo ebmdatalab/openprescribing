@@ -136,7 +136,7 @@ class SendEmailTestCase(TestCase):
                          practice='P87629')
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
-            AnyStringWith("You've slipped a bit"), 'text/html')
+            AnyStringWith("You've slipped on"), 'text/html')
 
         body = attachment.call_args[0][0]
         self.assertIn("We've found some areas for you to look at", body)
@@ -163,9 +163,10 @@ class SendEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertIn("We've found some areas for you to look at", body)
         self.assertRegexpMatches(
-            body, 'the worst 10% of CCGs for <a href="/practice/P87629'
-            '/measures/cerazette/".*>'
-            "Cerazette vs. Desogestrel</a>.")
+            body, re.compile(
+                'the worst 10% of.*practices for.*<a href="/practice/P87629'
+                '/measures/cerazette/".*>'
+                "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', body)
 
     def test_email_body_two_savings(self, attach_image, email, finder):
