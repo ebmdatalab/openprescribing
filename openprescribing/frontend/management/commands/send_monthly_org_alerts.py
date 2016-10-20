@@ -52,7 +52,7 @@ class Command(BaseCommand):
         return bookmarks
 
     def attach_image(self, msg, url, file_path, selector):
-        cmd = ('{cmd} "{host}{url}" {file_path} "#{selector}"'.format(
+        cmd = ('{cmd} "{host}{url}" {file_path} "{selector}"'.format(
             cmd=GRAB_CMD,
             host=settings.GRAB_HOST,
             url=url,
@@ -83,20 +83,18 @@ class Command(BaseCommand):
                     NamedTemporaryFile(suffix='.png') as still_bad_img:
                 most_changing = stats['most_changing']
                 if most_changing['declines']:
-                    getting_worse_measure = most_changing['declines'][0][0].id
                     getting_worse_img = self.attach_image(
                         msg,
                         org_bookmark.dashboard_url(),
                         getting_worse_img.name,
-                        getting_worse_measure
+                        '#' + most_changing['declines'][0][0].id
                     )
                 if stats['worst']:
-                    still_bad_measure = stats['worst'][0].id
                     still_bad_img = self.attach_image(
                         msg,
                         org_bookmark.dashboard_url(),
                         still_bad_img.name,
-                        still_bad_measure)
+                        '#' + stats['worst'][0].id)
                 html = html_email.render(
                     context={
                         'intro_text': self._getIntroText(stats),
@@ -122,7 +120,6 @@ class Command(BaseCommand):
                 msg.track_clicks = True
                 msg.esp_extra = {"sender_domain": "openprescribing.net"}
                 sent = msg.send()
-                print "Sent %s messages" % sent
 
     def _getIntroText(self, stats):
         attention_areas = (len(stats['most_changing']['declines']) +
