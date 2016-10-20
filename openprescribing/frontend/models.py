@@ -510,6 +510,12 @@ class OrgBookmark(models.Model):
         else:
             return self.practice.name
 
+    def org_type(self):
+        if self.practice is None:
+            return 'CCG'
+        else:
+            return 'practice'
+
     def topic(self):
         """Sentence snippet describing the bookmark
         """

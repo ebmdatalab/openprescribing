@@ -1,92 +1,96 @@
 {% extends "bookmarks/email_base.html" %}
-{% block title %}Hello!{% endblock %}
+{% load template_extras %}
+{% load humanize %}
+{% block title %}Your monthly alert from OpenPrescribing{% endblock %}
 
 {% block content %}
 
 <p>Hello!</p>
 
-<p>This is your monthly update from OpenPrescribing for {{bookmark.name}}.
+<p>This is your monthly update from OpenPrescribing for {{bookmark.name}}.</p>
 
-XXX We’ve found a couple of areas for you to look at, and some good
-news. </p>
+{% if has_stats %}
+  <p>{{ intro_text }}</p>
+  {% if stats.best or stats.most_changing.improvements or stats.top_savings.achieved_savings  %}
+
+    <h2>Your best prescribing areas</h2>
+
+    {% if stats.best %}
+     <p>Well done! You're in the top 10% of CCGs for
+       {% for measure in stats.best %}
+        {{ measure.name }},
+       {% endfor %}
+     </p>
+    {% endif %}
+
+    {% if stats.most_changing.improvements %}
+    <p>
+      You've improved on:</p>
+      <ul>
+      {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
+         <li>{{ measure.name }} - you've gone from {{percent_from}}% to {{percent_to}} over the past 9 months.</li>
+      {% endfor %}
+      </ul>
+
+    {% endif %}
+
+    {% if stats.top_savings.achieved_savings %}
+     {% for measure, saving in stats.top_savings.achieved_savings %}
+      <p>By prescribing {{ measure.name }} better than the median, you've saved £{{saving}} over the past 6 months.</p>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+
+  {% if stats.most_changing.declines or stats.worst %}
+    <h2>Areas for attention</h2>
+
+    {% if stats.most_changing.declines %}
+    <p>
+      You've slipped a bit on:
+      <ul>
+      {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
+         <li><a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a> - you've gone from the {{percent_from|wholenum|ordinal}} centile to the {{percent_to|wholenum|ordinal}} centile over the past 9 months.</li>
+      {% endfor %}
+      </ul>
+     <img src="cid:{{ getting_worse_image }}">
+    {% endif %}
 
 
-<h2>Your best prescribing areas</h2>
+    {% if stats.worst %}
+    <h2>Ongoing areas for concern</h2>
+     <p>Over the last three months, you've been in the worst 10% of CCGs for {% for measure in stats.worst %}{% if forloop.first %}{% else %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>{% endfor %}.
+     </p>
+     <img src="cid:{{ still_bad_image }}">
+    {% endif %}
 
+  {% endif %}
 
-{% if stats.best %}
- <p>Well done! You’re in the top 10% of CCGs for
-   {% for measure in stats.best %}
-    {{ measure.title }},
-   {% endfor %}
- </p>
+  {% if stats.top_savings.possible_savings %}
+    <h2>Cost savings</h2>
+    <p>We've looked at all the measures where you could have saved at least £1000 in the last six months.</p>
+
+    {% if stats.top_savings.possible_savings|length_is:1 %}
+      <p>If you had prescribed in line with the average {{ bookmark.org_type }}, you could have saved £{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }} on <a href="{{ bookmark.dashboard_url }}{{stats.top_savings.possible_savings.0.0.id}}/">{{stats.top_savings.possible_savings.0.0.name}}</a>.
+    {% else %}
+      <p>These add up to £{{total_possible_savings|wholenum|intcomma}} of potential savings. If you had prescribed in line with the average {{ bookmark.org_type }}, you could have saved:</p>
+
+      <ul>
+        {% for measure, saving in stats.top_savings.possible_savings %}
+        <li>£{{saving|wholenum|intcomma}} on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{measure.name}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+
+  {% if stats.top_savings.possible_top_savings_total %}
+    <p>If you prescribed as well as the best 10% of {{ bookmark.org_type }}s on all our
+      measures, you could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
+    </p>
+  {% endif %}
+
+{% else %}
+  <p>This month, there's nothing to tell you! You're not doing badly on any measures, and you're not outstanding or improving on any either.</p>
 {% endif %}
 
-{% if stats.most_changing.improvements %}
-<p>
-  You’ve improved on:
-  <ul>
-  {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
-     <li>{{ measure.title }} - you’ve gone from {{percent_from}}% to {{percent_to}} over the past 9 months.</li>
-  {% endfor %}
-  </ul>
-{% endif %}
-
-{% if stats.top_savings.achieved_savings %}
- {% for measure, saving in stats.top_savings.achieved_savings %}
-  <p>By prescribing {{ measure.title }} better than the median, you’ve saved £{{saving}} over the past 6 months.</p>
-  {% endfor %}
-{% endif %}
-
-<h2>Areas for attention</h2>
-
-{% if stats.most_changing.declines %}
-<p>
-  You’ve slipped a bit on:
-  <ul>
-  {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
-     <li>{{ measure.title }} - you’ve gone from {{percent_from}}% to {{percent_to}} over the past 9 months.</li>
-  {% endfor %}
-  </ul>
- <img src="cid:{{ getting_worse_img }}">
-{% endif %}
-
-
-<h2>Ongoing areas for concern</h2>
-
-{% if stats.worst %}
- <p>Over the last three months, you’ve been in the worst 10% of CCGs for
-   {% for measure in stats.worst %}
-    {{ measure.title }},
-   {% endfor %}
- </p>
- <img src="cid:{{ still_bad_img }}">
-{% endif %}
-
-
-
-<h2>Cost savings</h2>
-
-<p>We’ve identified around £XXX of potential savings over the next six months. For example, if you prescribed in line with the average CCG, you could save:</p>
-
-<ul>
-  {% for measure, saving in stats.top_savings.possible_savings %}
-  <li>
-    £{{saving}} on {{measure.name}}</li>
-  {% endfor %}
-</ul>
-
-<p>If you prescribed as well as the best 10% of CCGs on all our
-  measures, you could save around
-  <b>{{stats.top_savings.possible_top_savings_total}}</b>. <a>Take a look at your
-potential savings</a>.</p>
-
-
-{% for image, bookmark in images_and_bookmarks %}
-  <h2>{{ bookmark.name }}</h2>
-  <a href="https://openprescribing.net/analyse/#{{ bookmark.url }}">
-    <img src="cid:{{ image }}">
-  </a>
-{% endfor %}
 
 {% endblock %}

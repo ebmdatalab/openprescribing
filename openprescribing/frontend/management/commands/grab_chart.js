@@ -11,7 +11,7 @@ var address;
 
 if (system.args.length !== 4) {
   console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector>');
-  phantom.exit();
+  phantom.exit(1);
 } else {
   address = system.args[1];
   var path = system.args[2];

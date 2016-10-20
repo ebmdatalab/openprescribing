@@ -12,3 +12,8 @@ def conditional_js(context, filename):
     else:
         tag = tag_format % (filename, 'min.')
     return mark_safe(tag)
+
+
+@register.filter
+def wholenum(num):
+    return int(round(num))

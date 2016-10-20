@@ -316,3 +316,6 @@ LOGIN_URL = "home"
 
 # Easy bootstrap styling of Django forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# For grabbing images that we insert into alert emails
+GRAB_HOST = "https://openprescribing.net"
