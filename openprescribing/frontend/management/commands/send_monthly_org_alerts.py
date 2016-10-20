@@ -52,7 +52,7 @@ class Command(BaseCommand):
         return bookmarks
 
     def attach_image(self, msg, url, file_path, selector):
-        cmd = ('{cmd} "{host}{url}" {file_path} "{selector}"'.format(
+        cmd = ('{cmd} "{host}{url}" {file_path} "#{selector}"'.format(
             cmd=GRAB_CMD,
             host=settings.GRAB_HOST,
             url=url,
