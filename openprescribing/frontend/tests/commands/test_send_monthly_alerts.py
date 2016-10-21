@@ -57,46 +57,8 @@ class GetBookmarksTestCase(TestCase):
 class SendEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
-    def _makeContext(self, **kwargs):
-        empty_context = {
-            'most_changing': {
-                'declines': [
-                ],
-                'improvements': [
-                ]
-            },
-            'top_savings': {
-                'possible_top_savings_total': 0.0,
-                'possible_savings': [],
-                'achieved_savings': []
-            },
-            'worst': [
-            ],
-            'best': [
-            ]
-        }
-        if 'declines' in kwargs:
-            empty_context['most_changing']['declines'] = kwargs['declines']
-        if 'improvements' in kwargs:
-            empty_context['most_changing']['improvements'] = (
-                kwargs['improvements'])
-        if 'possible_top_savings_total' in kwargs:
-            empty_context['top_savings']['possible_top_savings_total'] = (
-                kwargs['possible_top_savings_total'])
-        if 'possible_savings' in kwargs:
-            empty_context['top_savings']['possible_savings'] = (
-                kwargs['possible_savings'])
-        if 'achieved_savings' in kwargs:
-            empty_context['top_savings']['achieved_savings'] = (
-                kwargs['achieved_savings'])
-        if 'worst' in kwargs:
-            empty_context['worst'] = kwargs['worst']
-        if 'best' in kwargs:
-            empty_context['best'] = kwargs['best']
-        return empty_context
-
     def test_email_recipient(self, attach_image, email, finder):
-        test_context = self._makeContext()
+        test_context = _makeContext()
         finder.return_value.context_for_org_email.return_value = test_context
         Command().handle(recipient_email='s@s.com',
                          ccg='03V',
@@ -110,7 +72,7 @@ class SendEmailTestCase(TestCase):
         email.return_value.send.assert_any_call()
 
     def test_email_body_no_data(self, attach_image, email, finder):
-        test_context = self._makeContext()
+        test_context = _makeContext()
         finder.return_value.context_for_org_email.return_value = test_context
         Command().handle(recipient_email='s@s.com',
                          ccg='03V',
@@ -124,11 +86,11 @@ class SendEmailTestCase(TestCase):
             AnyStringWith('/bookmarks/dummykey'), 'text/html')
 
         attachment.assert_called_once_with(
-            AnyStringWith("This month, there's nothing to tell"), 'text/html')
+            AnyStringWith("We've no new information"), 'text/html')
 
     def test_email_body_declines(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = self._makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
+        test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
         Command().handle(recipient_email='s@s.com',
@@ -139,7 +101,6 @@ class SendEmailTestCase(TestCase):
             AnyStringWith("You've slipped on"), 'text/html')
 
         body = attachment.call_args[0][0]
-        self.assertIn("We've found some areas for you to look at", body)
         self.assertRegexpMatches(
             body, '<a href="/practice/P87629/measures/cerazette/".*>'
             "Cerazette vs. Desogestrel</a> - you've gone from the 100th "
@@ -150,7 +111,7 @@ class SendEmailTestCase(TestCase):
 
     def test_email_body_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = self._makeContext(worst=[measure])
+        test_context = _makeContext(worst=[measure])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
         Command().handle(recipient_email='s@s.com',
@@ -158,10 +119,9 @@ class SendEmailTestCase(TestCase):
                          practice='P87629')
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
-            AnyStringWith("Ongoing areas for concern"), 'text/html')
+            AnyStringWith("We've found"), 'text/html')
 
         body = attachment.call_args[0][0]
-        self.assertIn("We've found some areas for you to look at", body)
         self.assertRegexpMatches(
             body, re.compile(
                 'the worst 10% of.*practices for.*<a href="/practice/P87629'
@@ -171,7 +131,7 @@ class SendEmailTestCase(TestCase):
 
     def test_email_body_two_savings(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = self._makeContext(possible_savings=[
+        test_context = _makeContext(possible_savings=[
             (measure, 9.9), (measure, 1.12)])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
@@ -190,7 +150,7 @@ class SendEmailTestCase(TestCase):
 
     def test_email_body_one_saving(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = self._makeContext(possible_savings=[
+        test_context = _makeContext(possible_savings=[
             (measure, 9.9)])
         finder.return_value.context_for_org_email.return_value = test_context
         Command().handle(recipient_email='s@s.com',
@@ -207,7 +167,7 @@ class SendEmailTestCase(TestCase):
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
     def test_email_body_total_savings(self, attach_image, email, finder):
-        test_context = self._makeContext(possible_top_savings_total=9000.1)
+        test_context = _makeContext(possible_top_savings_total=9000.1)
         finder.return_value.context_for_org_email.return_value = test_context
         Command().handle(recipient_email='s@s.com',
                          ccg='03V',
@@ -281,3 +241,100 @@ class GenerateImageTestCase(unittest.TestCase):
             self.assertEqual(
                 attachment.get_payload().replace("\n", ""),
                 base64.b64encode(expected.read()))
+
+
+class IntroTextTest(unittest.TestCase):
+    def test_nothing(self):
+        stats = _makeContext(possible_top_savings_total=9000.1)
+        msg = Command().getIntroText(stats, 'CCG')
+        self.assertIn("We've no new information about this CCG", msg)
+
+    def test_worst(self):
+        stats = _makeContext(worst=[None])
+        msg = Command().getIntroText(stats, 'CCG')
+        self.assertNotIn("We've no new information about this CCG", msg)
+        self.assertIn("We've found one prescribing measure where this "
+                      "CCG could be doing better", msg)
+
+    def test_worst_plural(self):
+        stats = _makeContext(worst=[None, None])
+        msg = Command().getIntroText(stats, 'CCG')
+        self.assertIn("We've found two prescribing measures where this "
+                      "CCG could be doing better", msg)
+
+    def test_decline_plural(self):
+        stats = _makeContext(declines=[None, None])
+        msg = Command().getIntroText(stats, 'CCG')
+        self.assertIn("We've found two prescribing measures where this "
+                      "CCG is getting worse", msg)
+
+    def test_decline_and_worse(self):
+        stats = _makeContext(declines=[None], worst=[None])
+        msg = Command().getIntroText(stats, 'thing')
+        self.assertIn("We've found two prescribing measures where this "
+                      "thing is getting worse, or could be doing better", msg)
+
+    def test_improvement(self):
+        stats = _makeContext(improvements=[None])
+        msg = Command().getIntroText(stats, 'thing')
+        self.assertIn("We've found one prescribing measure where this "
+                      "thing is improving.", msg)
+
+    def test_improvement_and_best(self):
+        stats = _makeContext(improvements=[None], best=[None])
+        msg = Command().getIntroText(stats, 'thing')
+        self.assertIn("We've found two prescribing measures where this "
+                      "thing is improving, or is already doing "
+                      "very well.", msg)
+
+    def test_decline_and_improvement(self):
+        stats = _makeContext(declines=[None], improvements=[None])
+        msg = Command().getIntroText(stats, 'thing')
+        self.assertIn("We've found one prescribing measure where this "
+                      "thing is getting worse, and one measure where it "
+                      "is improving.", msg)
+
+    def test_possible_savings(self):
+        stats = _makeContext(possible_savings=[None])
+        msg = Command().getIntroText(stats, 'thing')
+        self.assertIn("We've found one prescribing measure where there "
+                      "are potential cost savings", msg)
+
+
+def _makeContext(**kwargs):
+    empty_context = {
+        'most_changing': {
+            'declines': [
+            ],
+            'improvements': [
+            ]
+        },
+        'top_savings': {
+            'possible_top_savings_total': 0.0,
+            'possible_savings': [],
+            'achieved_savings': []
+        },
+        'worst': [
+        ],
+        'best': [
+        ]
+    }
+    if 'declines' in kwargs:
+        empty_context['most_changing']['declines'] = kwargs['declines']
+    if 'improvements' in kwargs:
+        empty_context['most_changing']['improvements'] = (
+            kwargs['improvements'])
+    if 'possible_top_savings_total' in kwargs:
+        empty_context['top_savings']['possible_top_savings_total'] = (
+            kwargs['possible_top_savings_total'])
+    if 'possible_savings' in kwargs:
+        empty_context['top_savings']['possible_savings'] = (
+            kwargs['possible_savings'])
+    if 'achieved_savings' in kwargs:
+        empty_context['top_savings']['achieved_savings'] = (
+            kwargs['achieved_savings'])
+    if 'worst' in kwargs:
+        empty_context['worst'] = kwargs['worst']
+    if 'best' in kwargs:
+        empty_context['best'] = kwargs['best']
+    return empty_context

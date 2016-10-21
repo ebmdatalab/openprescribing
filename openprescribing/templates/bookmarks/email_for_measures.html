@@ -9,14 +9,15 @@
 
 <p>Welcome to your your monthly update from OpenPrescribing for {{bookmark.name}}.</p>
 
+<p>{{ intro_text }}</p>
+
 {% if has_stats %}
-  <p>{{ intro_text }}</p>
   {% if stats.best or stats.most_changing.improvements or stats.top_savings.achieved_savings  %}
 
-    <h2>Your best prescribing areas</h2>
+    <h2>Best prescribing measures</h2>
 
     {% if stats.best %}
-     <p>Well done! You're in the top 10% of CCGs for
+     <p>This is in the top 10% of {{ bookmark.org_type}}s for
        {% for measure in stats.best %}
         {{ measure.name }},
        {% endfor %}
@@ -25,7 +26,7 @@
 
     {% if stats.most_changing.improvements %}
     <p>
-      Well done! You've improved on:</p>
+      This {{ bookmark.org_type }} has improved on:</p>
       <ul>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
          <li>{{ measure.name }} - you've gone from {{percent_from}}% to {{percent_to}} over the past 9 months.</li>
@@ -42,8 +43,7 @@
   {% endif %}
 
   {% if stats.most_changing.declines or stats.worst %}
-    <h2>Areas for attention</h2>
-
+    <h3>Areas with the greatest change</h3>
     {% if stats.most_changing.declines %}
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
@@ -63,7 +63,7 @@
 
 
     {% if stats.worst %}
-      <h2>Ongoing areas for concern</h2>
+    <h3>Areas  performance</h3>
       <p>Over the last three months, you've been in the worst 10% of
        {{ bookmark.org_type }}s for
       </p>
@@ -108,8 +108,6 @@
     </p>
   {% endif %}
 
-{% else %}
-  <p>This month, there's nothing to tell you! You're not doing badly on any measures, and you're not outstanding or improving on any either.</p>
 {% endif %}
 
 
