@@ -17,3 +17,8 @@ def conditional_js(context, filename):
 @register.filter
 def wholenum(num):
     return int(round(num))
+
+
+@register.filter
+def delta(num, arg):
+    return abs(num - arg)

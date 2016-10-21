@@ -12,87 +12,63 @@
 <p>{{ intro_text }}</p>
 
 {% if has_stats %}
-  {% if stats.best or stats.most_changing.improvements or stats.top_savings.achieved_savings  %}
-
-    <h2>Best prescribing measures</h2>
-
-    {% if stats.best %}
-     <p>This is in the top 10% of {{ bookmark.org_type}}s for
-       {% for measure in stats.best %}
-        {{ measure.name }},
-       {% endfor %}
-     </p>
-    {% endif %}
-
-    {% if stats.most_changing.improvements %}
-    <p>
-      This {{ bookmark.org_type }} has improved on:</p>
-      <ul>
-      {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
-         <li>{{ measure.name }} - you've gone from {{percent_from}}% to {{percent_to}} over the past 9 months.</li>
-      {% endfor %}
-      </ul>
-
-    {% endif %}
-
-    {% if stats.top_savings.achieved_savings %}
-     {% for measure, saving in stats.top_savings.achieved_savings %}
-      <p>By prescribing {{ measure.name }} better than the median, you've saved £{{saving}} over the past 6 months.</p>
-      {% endfor %}
-    {% endif %}
-  {% endif %}
-
   {% if stats.most_changing.declines or stats.worst %}
-    <h3>Areas with the greatest change</h3>
+    <h3>Prescribing measures which are getting worse</h3>
     {% if stats.most_changing.declines %}
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          You've slipped on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a> - you've gone from the {{percent_from|wholenum|ordinal}} centile to the {{percent_to|wholenum|ordinal}} centile over the past 9 months.<br>
-         <img src="cid:{{ getting_worse_image }}"><br>
-        {% elif forloop.counter == 2 %}
-         You've also slipped more than 20 centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>{% if forloop.last %}. {% else %}, {% endif %}
-        {% elif forloop.last %}
-           and <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>
+          This {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
+        <img src="cid:{{ getting_worse_image }}"><br>
+        {% elif stats.most_changing.declines|length == 2 %}
+          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
         {% else %}
-           <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }},</a>
-        {% endif %}
+          {% if forloop.counter == 2 %}
+           It also slipped on the following measures:
+           <ul>
+          {% endif %}
+            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+           </ul>
+          {% endif %}
+         {% endif %}
       {% endfor %}
       </ul>
     {% endif %}
 
 
     {% if stats.worst %}
-    <h3>Areas  performance</h3>
-      <p>Over the last three months, you've been in the worst 10% of
-       {{ bookmark.org_type }}s for
-      </p>
+    <h3>Prescribing measures in the lowest decile</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
+          <p>Over the last three months, this {{ bookmark.org_type }} was in the lowest decile on
           <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
           <img src="cid:{{ still_bad_image }}"><br>
-        {% elif forloop.counter == 2 %}
-            You're also in the worst 10% on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>{% if forloop.last %}. {% else %}, {% endif %}
-        {% elif forloop.last %}
-           and <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>
+        {% elif stats.worst|length == 2 %}
+          It was also in the lowest decile on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
         {% else %}
-           <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }},</a>
+          {% if forloop.counter == 2 %}
+            It was also in the lowest decile on the following measures:
+            <ul>
+          {% endif %}
+              <li><a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+            </ul>
+          {% endif %}
         {% endif %}
       {% endfor %}
     {% endif %}
 
   {% endif %}
 
-  {% if stats.top_savings.possible_savings or stats.top_savings.possible_top_savings_total > 5000%}
-    <h2>Cost savings</h2>
-  {% endif %}
   {% if stats.top_savings.possible_savings %}
-    <p>We've looked at all the measures where you could have saved at least £1000 in the last six months.</p>
+    <h3>Possible savings</h3>
+    <p>We've looked at all the measures where this {{ bookmark.org_type }} could have saved at least £1000 in the last six months.</p>
 
     {% if stats.top_savings.possible_savings|length_is:1 %}
-      <p>If you had prescribed in line with the average {{ bookmark.org_type }}, you could have saved £{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }} on <a href="{{ bookmark.dashboard_url }}{{stats.top_savings.possible_savings.0.0.id}}/">{{stats.top_savings.possible_savings.0.0.name}}</a>.
+      <p>If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved £{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }} on <a href="{{ bookmark.dashboard_url }}{{stats.top_savings.possible_savings.0.0.id}}/">{{stats.top_savings.possible_savings.0.0.name}}</a>.
     {% else %}
-      <p>These add up to £{{total_possible_savings|wholenum|intcomma}} of potential savings. If you had prescribed in line with the average {{ bookmark.org_type }}, you could have saved:</p>
+      <p>These add up to £{{total_possible_savings|wholenum|intcomma}} of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved:</p>
 
       <ul>
         {% for measure, saving in stats.top_savings.possible_savings %}
@@ -103,10 +79,60 @@
   {% endif %}
 
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
-    <p>If you prescribed as well as the best 10% of {{ bookmark.org_type }}s on all our
-      measures, you could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
+    <h3>Best-case possible savings</h3>
+    <p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as the lowest-spending decile, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
     </p>
   {% endif %}
+
+
+  {% if stats.best %}
+  <h3>Prescribing measures in the highest decile</h3>
+    {% for measure in stats.best %}
+      {% if forloop.first %}
+        <p>Over the last three months, this {{ bookmark.org_type }} was in the highest decile on
+        <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>
+      {% elif stats.best|length == 2 %}
+        It was also in the highest decile on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+      {% else %}
+        {% if forloop.counter == 2 %}
+          It was also in the highest decile on the following measures:
+          <ul>
+        {% endif %}
+            <li><a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+        {% if forloop.last %}
+          </ul>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if stats.most_changing.improvements %}
+    <h3>Prescribing measures which are getting better</h3>
+    <p>
+      {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
+        {% if forloop.counter == 1 %}
+          This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
+        {% elif stats.most_changing.improvements|length == 2 %}
+          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+        {% else %}
+          {% if forloop.counter == 2 %}
+           It also improved on the following measures:
+           <ul>
+          {% endif %}
+            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+           </ul>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
+
+  {% if stats.top_savings.achieved_savings %}
+   {% for measure, saving in stats.top_savings.achieved_savings %}
+    <p>By prescribing {{ measure.name }} better than the median, you've saved £{{saving}} over the past 6 months.</p>
+   {% endfor %}
+  {% endif %}
+
 
 {% endif %}
 

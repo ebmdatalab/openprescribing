@@ -98,16 +98,53 @@ class SendEmailTestCase(TestCase):
                          practice='P87629')
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
-            AnyStringWith("You've slipped on"), 'text/html')
+            AnyStringWith("This practice slipped"), 'text/html')
 
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
-            body, '<a href="/practice/P87629/measures/cerazette/".*>'
-            "Cerazette vs. Desogestrel</a> - you've gone from the 100th "
-            "centile to the 0th centile over the past 9 months")
+            body, 'slipped by 100 centiles .* on '
+            '<a href="/practice/P87629/measures/cerazette/".*>'
+            'Cerazette vs. Desogestrel</a>')
         self.assertIn('<img src="cid:unique-image-id', body)
         self.assertNotIn("Your best prescribing areas", body)
         self.assertNotIn("Cost savings", body)
+
+    def test_email_body_two_declines(self, attach_image, email, finder):
+        measure = Measure.objects.get(pk='cerazette')
+        test_context = _makeContext(declines=[
+            (measure, 99.92, 0.12, 10.002),
+            (measure, 30, 10, 0)
+
+        ])
+        finder.return_value.context_for_org_email.return_value = test_context
+        attach_image.return_value = 'unique-image-id'
+        Command().handle(recipient_email='s@s.com',
+                         ccg='03V',
+                         practice='P87629')
+        attachment = email.return_value.attach_alternative
+        body = attachment.call_args[0][0]
+        self.assertRegexpMatches(
+            body, 'It also slipped by 20 centiles')
+
+    def test_email_body_three_declines(self, attach_image, email, finder):
+        measure = Measure.objects.get(pk='cerazette')
+        test_context = _makeContext(declines=[
+            (measure, 99.92, 0.12, 10.002),
+            (measure, 30, 10, 0),
+            (measure, 20, 10, 0)
+        ])
+        finder.return_value.context_for_org_email.return_value = test_context
+        attach_image.return_value = 'unique-image-id'
+        Command().handle(recipient_email='s@s.com',
+                         ccg='03V',
+                         practice='P87629')
+        attachment = email.return_value.attach_alternative
+        body = attachment.call_args[0][0]
+        self.assertRegexpMatches(
+            body, 'It also slipped on the following measures')
+        self.assertRegexpMatches(
+            body, re.compile('<ul.*<li>By 20 centiles on.*'
+                             '<li>By 10 centiles on.*</ul>', re.DOTALL))
 
     def test_email_body_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -124,10 +161,26 @@ class SendEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, re.compile(
-                'the worst 10% of.*practices for.*<a href="/practice/P87629'
+                'the lowest decile on.*<a href="/practice/P87629'
                 '/measures/cerazette/".*>'
                 "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', body)
+
+    def test_email_body_three_worst(self, attach_image, email, finder):
+        measure = Measure.objects.get(pk='cerazette')
+        test_context = _makeContext(worst=[measure, measure, measure])
+        finder.return_value.context_for_org_email.return_value = test_context
+        attach_image.return_value = 'unique-image-id'
+        Command().handle(recipient_email='s@s.com',
+                         ccg='03V',
+                         practice='P87629')
+        attachment = email.return_value.attach_alternative
+        body = attachment.call_args[0][0]
+        self.assertRegexpMatches(
+            body, 'It was also in the lowest decile on the following measures')
+        self.assertRegexpMatches(
+            body, re.compile('<ul.*<li>.*Desogestrel.*'
+                             '<li>.*Desogestrel.*</ul>', re.DOTALL))
 
     def test_email_body_two_savings(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -159,10 +212,10 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "If you had prescribed in line with the average practice",
+            "If it had prescribed in line with the average practice",
             body)
         self.assertRegexpMatches(
-            body, 'you could have saved £10 on <a href="/practice/P87629'
+            body, 'it could have saved £10 on <a href="/practice/P87629'
             '/measures/cerazette/".*>'
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
@@ -175,7 +228,7 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "you could save around <b>£9,000</b>".decode('utf-8'),
+            "it could save around <b>£9,000</b>".decode('utf-8'),
             body)
 
 class MockServerRequestHandler(BaseHTTPRequestHandler):
