@@ -111,6 +111,10 @@
               $('#overlay').stop().fadeOut(300);
             });
           }
+          if (location.search.indexOf('sortBySavings') > -1) {
+            $(_this.el.sortButtons).click();
+          }
+
         })
         .fail(function(jqXHR, textStatus, error) {
           console.log("Error " + error + " when making request " + jqXHR);

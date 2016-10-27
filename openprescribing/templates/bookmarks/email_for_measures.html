@@ -129,7 +129,7 @@
 
   {% if stats.top_savings.achieved_savings %}
    {% for measure, saving in stats.top_savings.achieved_savings %}
-    <p>By prescribing {{ measure.name }} better than the median, you've saved £{{saving}} over the past 6 months.</p>
+    <p>By prescribing {{ measure.name }} better than the median, you've saved £{{saving}} over the past 6 months. <a href="{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a></p>
    {% endfor %}
   {% endif %}
 
