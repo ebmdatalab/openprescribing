@@ -18,16 +18,16 @@
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          This {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
+          This {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a><br>
         <img src="cid:{{ getting_worse_image }}"><br>
         {% elif stats.most_changing.declines|length == 2 %}
-          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
            It also slipped on the following measures:
            <ul>
           {% endif %}
-            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -42,16 +42,16 @@
       {% for measure in stats.worst %}
         {% if forloop.first %}
           <p>Over the last three months, this {{ bookmark.org_type }} was in the lowest decile on
-          <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
+          <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a><br>
           <img src="cid:{{ still_bad_image }}"><br>
         {% elif stats.worst|length == 2 %}
-          It was also in the lowest decile on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+          It was also in the lowest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
             It was also in the lowest decile on the following measures:
             <ul>
           {% endif %}
-              <li><a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+              <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
             </ul>
           {% endif %}
@@ -66,13 +66,13 @@
     <p>We've looked at all the measures where this {{ bookmark.org_type }} could have saved at least £1000 in the last six months.</p>
 
     {% if stats.top_savings.possible_savings|length_is:1 %}
-      <p>If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved £{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }} on <a href="{{ bookmark.dashboard_url }}{{stats.top_savings.possible_savings.0.0.id}}/">{{stats.top_savings.possible_savings.0.0.name}}</a>.
+      <p>If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved £{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }} on <a href="{{ bookmark.dashboard_url }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.
     {% else %}
       <p>These add up to £{{total_possible_savings|wholenum|intcomma}} of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved:</p>
 
       <ul>
         {% for measure, saving in stats.top_savings.possible_savings %}
-        <li>£{{saving|wholenum|intcomma}} on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{measure.name}}</a></li>
+        <li>£{{saving|wholenum|intcomma}} on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{measure.name}}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -90,15 +90,15 @@
     {% for measure in stats.best %}
       {% if forloop.first %}
         <p>Over the last three months, this {{ bookmark.org_type }} was in the highest decile on
-        <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>
+        <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
       {% elif stats.best|length == 2 %}
-        It was also in the highest decile on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+        It was also in the highest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
       {% else %}
         {% if forloop.counter == 2 %}
           It was also in the highest decile on the following measures:
           <ul>
         {% endif %}
-            <li><a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+            <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
         {% if forloop.last %}
           </ul>
         {% endif %}
@@ -111,15 +111,15 @@
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a><br>
+          This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a><br>
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a>.
+          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
            It also improved on the following measures:
            <ul>
           {% endif %}
-            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}{{measure.id}}/">{{ measure.name }}</a></li>
+            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
