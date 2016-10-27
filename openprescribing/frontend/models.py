@@ -499,9 +499,13 @@ class OrgBookmark(models.Model):
 
         """
         if self.practice is None:
-            return reverse('ccg', kwargs={'ccg_code': self.pct.code})
+            return reverse(
+                'measures_for_one_ccg',
+                kwargs={'ccg_code': self.pct.code})
         else:
-            return reverse('practice', kwargs={'code': self.practice.code})
+            return reverse(
+                'measures_for_one_practice',
+                kwargs={'code': self.practice.code})
 
     @property
     def name(self):
