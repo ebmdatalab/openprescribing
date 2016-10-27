@@ -82,7 +82,7 @@ def remove_jagged_logit(measurevalues):
 class InterestingMeasureFinder(object):
     def __init__(self, practice=None, pct=None,
                  interesting_saving=1000,
-                 interesting_percentile_change=10):
+                 interesting_percentile_change=20):
         assert practice or pct
         self.practice = practice
         self.pct = pct
