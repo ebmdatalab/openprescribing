@@ -80,7 +80,9 @@
 
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
     <h3>Best-case possible savings</h3>
-    <p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as the lowest-spending decile, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
+<p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as the lowest-spending decile, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
+    <a href="{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>
+
     </p>
   {% endif %}
 
