@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 pct=org_bookmark.pct or options['ccg']).context_for_org_email()
             recipient_id = org_bookmark.user.id
             msg = bookmark_utils.make_email_html(
-                org_bookmark.user, org_bookmark, stats)
+                org_bookmark, stats)
             # Optional Anymail extensions:
             msg.metadata = {"user_id": recipient_id,
                             "experiment_variation": 1}

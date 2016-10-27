@@ -465,6 +465,7 @@ class GenerateImageTestCase(unittest.TestCase):
                 attachment.get_payload().replace("\n", ""),
                 base64.b64encode(expected.read()))
 
+
 def _makeContext(**kwargs):
     empty_context = {
         'most_changing': {

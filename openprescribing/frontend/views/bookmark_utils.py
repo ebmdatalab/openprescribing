@@ -376,7 +376,7 @@ def _hasStats(stats):
             stats['most_changing']['improvements'])
 
 
-def make_email_html(recipient, org_bookmark, stats):
+def make_email_html(org_bookmark, stats):
     recipient_email = org_bookmark.user.email
     recipient_key = org_bookmark.user.profile.key
 
