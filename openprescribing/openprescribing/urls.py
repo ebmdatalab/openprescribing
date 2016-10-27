@@ -36,6 +36,9 @@ urlpatterns = [
     url(r'^practice/(?P<code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
+    url(r'^practice/(?P<code>[A-Z\d]+)/preview_bookmark/$',
+        bookmark_views.preview_practice_bookmark,
+        name='preview-practice-bookmark'),
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_practice'),
@@ -54,6 +57,9 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
+    url(r'^ccg/(?P<code>[A-Z\d]+)/preview_bookmark/$',
+        bookmark_views.preview_ccg_bookmark,
+        name='preview-ccg-bookmark'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_ccg'),
@@ -80,7 +86,7 @@ urlpatterns = [
 
     # required by django-allauth
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^admin/',include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     # bookmarks
     url(r'^bookmarks/(?P<key>[0-9a-z]+)$',
@@ -91,6 +97,5 @@ urlpatterns = [
         name='bookmark-list'),
     url(r'^last_bookmark/$',
         frontend_views.last_bookmark,
-        name='last-bookmark'
-    )
+        name='last-bookmark'),
 ]

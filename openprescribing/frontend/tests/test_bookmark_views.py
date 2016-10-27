@@ -1,8 +1,14 @@
+import base64
+from mock import patch
+
 from django.test import TransactionTestCase
 from django.core.urlresolvers import reverse
 
 from frontend.models import OrgBookmark
+from frontend.models import PCT
+from frontend.models import Practice
 from frontend.models import User
+from frontend.models import Measure
 
 
 class TestBookmarkViews(TransactionTestCase):
@@ -47,3 +53,35 @@ class TestBookmarkViews(TransactionTestCase):
             response,
             "Unsubscribed from 2 alerts")
         self.assertEqual(OrgBookmark.objects.count(), 0)
+
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
+    @patch('frontend.views.bookmark_utils.subprocess')
+    @patch('frontend.views.bookmark_utils.NamedTemporaryFile')
+    def test_preview_ccg_bookmark(self, tmpfile, subprocess, finder):
+        from test_bookmark_utils import _makeContext
+        from django.conf import settings
+        context = _makeContext(declines=[(Measure(id='foo'), 30, 10)])
+        test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                         'alert-email-image.png')
+
+        finder.return_value.context_for_org_email.return_value = context
+        tmpfile.return_value.__enter__.return_value.name = test_img_path
+        url = reverse('preview-ccg-bookmark',
+                      kwargs={'code': PCT.objects.first().pk})
+        response = self.client.get(url)
+        self.assertContains(
+            response, "This CCG slipped by 20")
+        with open(test_img_path, 'rb') as expected:
+            self.assertContains(
+                response, base64.b64encode(expected.read()))
+
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
+    def test_preview_practice_bookmark(self, finder):
+        from test_bookmark_utils import _makeContext
+        context = _makeContext()
+        finder.return_value.context_for_org_email.return_value = context
+        url = reverse('preview-practice-bookmark',
+                      kwargs={'code': Practice.objects.first().pk})
+        response = self.client.get(url)
+        self.assertContains(
+            response, "about this practice")
