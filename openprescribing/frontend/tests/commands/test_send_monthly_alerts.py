@@ -1,24 +1,10 @@
 # -*- coding: utf-8 -*-
-import base64
-from datetime import date
-from datetime import datetime
-import unittest
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import json
 import re
-import socket
-from threading import Thread
 
-import requests
 from mock import patch
 from mock import ANY
 
-from django.core.mail import EmailMultiAlternatives
 from django.test import TestCase
-from django.conf import settings
-from frontend.models import OrgBookmark
-from frontend.models import SearchBookmark
-from frontend.models import User
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_org_alerts import Command
 
@@ -52,8 +38,8 @@ class GetBookmarksTestCase(TestCase):
 
 
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
-@patch('frontend.management.commands.send_monthly_org_alerts.EmailMultiAlternatives')
-@patch.object(Command, 'attach_image')
+@patch('frontend.views.bookmark_utils.EmailMultiAlternatives')
+@patch('frontend.views.bookmark_utils.attach_image')
 class SendEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
@@ -230,129 +216,6 @@ class SendEmailTestCase(TestCase):
         self.assertIn(
             "it could save around <b>£9,000</b>".decode('utf-8'),
             body)
-
-class MockServerRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/page.html':
-            self.send_response(requests.codes.ok)
-            self.send_header('Content-Type', 'text/html')
-            self.end_headers()
-            response_content = """
-            <html>
-            <head><script src='/jquery.min.js'></script></head>
-            <div id='thing1'>This is thing 1</div>
-            <div id='thing2'>This is thing 2</div>
-            """
-            self.wfile.write(response_content)
-            return
-        elif self.path == '/jquery.min.js':
-            self.send_response(requests.codes.ok)
-            self.send_header('Content-Type', 'text/javascript')
-            self.end_headers()
-            with open(settings.SITE_ROOT + '/media/js/'
-                      'node_modules/jquery/dist/jquery.min.js', 'r') as f:
-                self.wfile.write(f.read())
-                return
-
-
-def get_free_port():
-    s = socket.socket(socket.AF_INET, type=socket.SOCK_STREAM)
-    s.bind(('localhost', 0))
-    address, port = s.getsockname()
-    s.close()
-    return port
-
-
-def start_mock_server(port):
-    mock_server = HTTPServer(('localhost', port), MockServerRequestHandler)
-    mock_server_thread = Thread(target=mock_server.serve_forever)
-    mock_server_thread.setDaemon(True)
-    mock_server_thread.start()
-
-
-class GenerateImageTestCase(unittest.TestCase):
-    def test_image_generated(self):
-        port = get_free_port()
-        start_mock_server(port)
-        msg = EmailMultiAlternatives(
-            "Subject", "body", "sender@email.com", ["recipient@email.com"])
-        url = ":%s/page.html" % port
-        file_path = "/tmp/image.png"
-        selector = "#thing2"
-        self.assertEqual(len(msg.attachments), 0)
-        image = Command().attach_image(msg, url, file_path, selector)
-        with open(
-                settings.SITE_ROOT + '/frontend/tests/fixtures/'
-                'alert-email-image.png', 'rb') as expected:
-            self.assertEqual(len(msg.attachments), 1)
-            attachment = msg.attachments[0]
-            # Check the attachment is as we expect
-            self.assertEqual(attachment.get_filename(), 'image.png')
-            self.assertIn(image, attachment['Content-ID'])
-            # Attachments in emails are base64 *with line breaks*, so
-            # we remove those.
-            self.assertEqual(
-                attachment.get_payload().replace("\n", ""),
-                base64.b64encode(expected.read()))
-
-
-class IntroTextTest(unittest.TestCase):
-    def test_nothing(self):
-        stats = _makeContext(possible_top_savings_total=9000.1)
-        msg = Command().getIntroText(stats, 'CCG')
-        self.assertIn("We've no new information about this CCG", msg)
-
-    def test_worst(self):
-        stats = _makeContext(worst=[None])
-        msg = Command().getIntroText(stats, 'CCG')
-        self.assertNotIn("We've no new information about this CCG", msg)
-        self.assertIn("We've found one prescribing measure where this "
-                      "CCG could be doing better", msg)
-
-    def test_worst_plural(self):
-        stats = _makeContext(worst=[None, None])
-        msg = Command().getIntroText(stats, 'CCG')
-        self.assertIn("We've found two prescribing measures where this "
-                      "CCG could be doing better", msg)
-
-    def test_decline_plural(self):
-        stats = _makeContext(declines=[None, None])
-        msg = Command().getIntroText(stats, 'CCG')
-        self.assertIn("We've found two prescribing measures where this "
-                      "CCG is getting worse", msg)
-
-    def test_decline_and_worse(self):
-        stats = _makeContext(declines=[None], worst=[None])
-        msg = Command().getIntroText(stats, 'thing')
-        self.assertIn("We've found two prescribing measures where this "
-                      "thing is getting worse, or could be doing better", msg)
-
-    def test_improvement(self):
-        stats = _makeContext(improvements=[None])
-        msg = Command().getIntroText(stats, 'thing')
-        self.assertIn("We've found one prescribing measure where this "
-                      "thing is improving.", msg)
-
-    def test_improvement_and_best(self):
-        stats = _makeContext(improvements=[None], best=[None])
-        msg = Command().getIntroText(stats, 'thing')
-        self.assertIn("We've found two prescribing measures where this "
-                      "thing is improving, or is already doing "
-                      "very well.", msg)
-
-    def test_decline_and_improvement(self):
-        stats = _makeContext(declines=[None], improvements=[None])
-        msg = Command().getIntroText(stats, 'thing')
-        self.assertIn("We've found one prescribing measure where this "
-                      "thing is getting worse, and one measure where it "
-                      "is improving.", msg)
-
-    def test_possible_savings(self):
-        stats = _makeContext(possible_savings=[None])
-        msg = Command().getIntroText(stats, 'thing')
-        self.assertIn("We've found one prescribing measure where there "
-                      "are potential cost savings", msg)
-
 
 def _makeContext(**kwargs):
     empty_context = {

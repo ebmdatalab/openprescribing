@@ -1,27 +1,10 @@
 # -*- coding: utf-8 -*-
-import subprocess
-import logging
-from tempfile import NamedTemporaryFile
-from premailer import Premailer
 from django.core.management.base import BaseCommand
-from django.core.mail import EmailMultiAlternatives
-from django.contrib.humanize.templatetags.humanize import apnumber
-from anymail.message import attach_inline_image_file
-from django.conf import settings
-from django.template.loader import get_template
-from django.core.urlresolvers import reverse
 from frontend.models import OrgBookmark
 from frontend.models import User
 from frontend.models import Profile
 
-from frontend.models import OrgBookmark
 from frontend.views import bookmark_utils
-
-
-GRAB_CMD = ('/usr/local/bin/phantomjs ' +
-            settings.SITE_ROOT +
-            '/frontend/management/commands/grab_chart.js')
-html_email = get_template('bookmarks/email_for_measures.html')
 
 
 class Command(BaseCommand):
@@ -52,134 +35,19 @@ class Command(BaseCommand):
                 user__is_active=True)
         return bookmarks
 
-    def attach_image(self, msg, url, file_path, selector):
-        cmd = ('{cmd} "{host}{url}" {file_path} "{selector}"'.format(
-            cmd=GRAB_CMD,
-            host=settings.GRAB_HOST,
-            url=url,
-            file_path=file_path,
-            selector=selector)
-        )
-        subprocess.check_call(cmd, shell=True)
-        return attach_inline_image_file(
-            msg, file_path, subtype='png')
-
-
     def handle(self, *args, **options):
         # First, generate the images for each email
         for org_bookmark in self.get_bookmarks(**options):
             stats = bookmark_utils.InterestingMeasureFinder(
                 practice=org_bookmark.practice or options['practice'],
                 pct=org_bookmark.pct or options['ccg']).context_for_org_email()
-            recipient_email = org_bookmark.user.email
-            recipient_key = org_bookmark.user.profile.key
             recipient_id = org_bookmark.user.id
-            msg = EmailMultiAlternatives(
-                "Your monthly update",
-                "This email is only available in HTML",
-                "hello@openprescribing.net",
-                [recipient_email])
-            getting_worse_img = still_bad_img = None
-            with NamedTemporaryFile(suffix='.png') as getting_worse_img, \
-                    NamedTemporaryFile(suffix='.png') as still_bad_img:
-                most_changing = stats['most_changing']
-                if most_changing['declines']:
-                    getting_worse_img = self.attach_image(
-                        msg,
-                        org_bookmark.dashboard_url(),
-                        getting_worse_img.name,
-                        '#' + most_changing['declines'][0][0].id
-                    )
-                if stats['worst']:
-                    still_bad_img = self.attach_image(
-                        msg,
-                        org_bookmark.dashboard_url(),
-                        still_bad_img.name,
-                        '#' + stats['worst'][0].id)
-                html = html_email.render(
-                    context={
-                        'intro_text': self.getIntroText(
-                            stats, org_bookmark.org_type()),
-                        'total_possible_savings': sum(
-                            [x[1] for x in
-                             stats['top_savings']['possible_savings']]),
-                        'has_stats': self._hasStats(stats),
-                        'getting_worse_image': getting_worse_img,
-                        'still_bad_image': still_bad_img,
-                        'bookmark': org_bookmark,
-                        'stats': stats,
-                        'unsubscribe_link': reverse(
-                            'bookmark-login',
-                            kwargs={'key': recipient_key})
-                    })
-                html = Premailer(html, cssutils_logging_level=logging.ERROR).transform()
-                msg.attach_alternative(html, "text/html")
-
-                # Optional Anymail extensions:
-                msg.metadata = {"user_id": recipient_id,
-                                "experiment_variation": 1}
-                msg.tags = ["monthly_update"]
-                msg.track_clicks = True
-                msg.esp_extra = {"sender_domain": "openprescribing.net"}
-                sent = msg.send()
-
-    def getIntroText(self, stats, org_type):
-        declines = len(stats['most_changing']['declines'])
-        improvements = len(stats['most_changing']['improvements'])
-        possible_savings = len(stats['top_savings']['possible_savings'])
-        worst = len(stats['worst'])
-        best = len(stats['best'])
-        not_great = worst + declines
-        pretty_good = best + improvements
-        msg = ""
-        if not_great or pretty_good or possible_savings:
-            if not_great:
-                msg = "We've found %s prescribing measure%s where this %s " % (
-                    apnumber(not_great),
-                    not_great > 1 and 's' or '',
-                    org_type)
-                if declines and worst:
-                    msg += "is getting worse, or could be doing better"
-                elif declines:
-                    msg += "is getting worse"
-                else:
-                    msg += "could be doing better"
-            if pretty_good:
-                if msg:
-                    msg += ", and %s measure%s where it " % (
-                        apnumber(pretty_good),
-                        pretty_good > 1 and 's' or '')
-                else:
-                    msg = ("We've found %s prescribing measure%s where "
-                           "this %s " % (apnumber(pretty_good),
-                                         pretty_good > 1 and 's' or '',
-                                         org_type))
-                if best and improvements:
-                    msg += "is improving, or is already doing very well."
-                elif improvements:
-                    msg += "is improving."
-                else:
-                    msg += "is already doing very well."
-            if possible_savings:
-                if msg:
-                    msg += " We've also found "
-                else:
-                    msg = "We've found "
-                msg += ("%s prescribing measure%s where there are potential "
-                        "cost savings of at least £1000".decode('utf-8') % (
-                            apnumber(possible_savings),
-                            possible_savings > 1 and 's' or ''))
-        else:
-            msg = ("We've no new information about this %s this month! "
-                   "Its performance is not an outlier on any "
-                   "of our common prescribing measures." % org_type)
-        return msg
-
-    def _hasStats(self, stats):
-        return (stats['worst'] or
-                stats['best'] or
-                stats['top_savings']['possible_top_savings_total'] or
-                stats['top_savings']['possible_savings'] or
-                stats['top_savings']['achieved_savings'] or
-                stats['most_changing']['declines'] or
-                stats['most_changing']['improvements'])
+            msg = bookmark_utils.make_email_html(
+                org_bookmark.user, org_bookmark, stats)
+            # Optional Anymail extensions:
+            msg.metadata = {"user_id": recipient_id,
+                            "experiment_variation": 1}
+            msg.tags = ["monthly_update"]
+            msg.track_clicks = True
+            msg.esp_extra = {"sender_domain": "openprescribing.net"}
+            msg.send()
