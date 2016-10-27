@@ -12,7 +12,7 @@
 <p>{{ intro_text }}</p>
 
 {% if has_stats %}
-  {% if stats.most_changing.declines or stats.worst %}
+  {% if stats.most_changing.declines %}
     <h3>Prescribing measures which are getting worse</h3>
     {% if stats.most_changing.declines %}
     <p>
@@ -24,7 +24,7 @@
           It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-           It also slipped on the following measures:
+           It also slipped on:
            <ul>
           {% endif %}
             <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -42,13 +42,13 @@
       {% for measure in stats.worst %}
         {% if forloop.first %}
           <p>Over the last three months, this {{ bookmark.org_type }} was in the lowest decile on
-          <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a><br>
+          <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
           <img src="cid:{{ still_bad_image }}"><br>
         {% elif stats.worst|length == 2 %}
           It was also in the lowest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-            It was also in the lowest decile on the following measures:
+            It was also in the lowest decile:
             <ul>
           {% endif %}
               <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -90,12 +90,12 @@
     {% for measure in stats.best %}
       {% if forloop.first %}
         <p>Over the last three months, this {{ bookmark.org_type }} was in the highest decile on
-        <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
+        <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:
       {% elif stats.best|length == 2 %}
         It was also in the highest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
       {% else %}
         {% if forloop.counter == 2 %}
-          It was also in the highest decile on the following measures:
+          It was also in the highest decile on:
           <ul>
         {% endif %}
             <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -116,7 +116,7 @@
           It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-           It also improved on the following measures:
+           It also improved on:
            <ul>
           {% endif %}
             <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>

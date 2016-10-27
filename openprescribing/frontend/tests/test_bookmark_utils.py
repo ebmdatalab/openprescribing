@@ -74,8 +74,8 @@ class IntroTextTest(unittest.TestCase):
     def test_possible_savings(self):
         stats = _makeContext(possible_savings=[None])
         msg = bookmark_utils.getIntroText(stats, 'thing')
-        self.assertIn("We've found one prescribing measure where there "
-                      "are potential cost savings", msg)
+        self.assertIn("We've also found one prescribing measure where there "
+                      "are some potential cost savings", msg)
 
 
 class TestRemoveJagged(unittest.TestCase):
@@ -292,14 +292,17 @@ class TestBookmarkUtilsChanging(TestCase):
 
     def test_low_change_not_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_low_change)
+            practice=self.practice_with_low_change,
+            interesting_percentile_change=10
+        )
         self.assertEqual(finder.most_change_in_period(3),
                          {'improvements': [],
                           'declines': []})
 
     def test_high_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_change)
+            practice=self.practice_with_high_change,
+            interesting_percentile_change=10)
         sorted_measure = finder.most_change_in_period(3)
         measure_info = sorted_measure['improvements'][0]
         self.assertEqual(
@@ -313,7 +316,8 @@ class TestBookmarkUtilsChanging(TestCase):
 
     def test_high_negative_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.practice_with_high_neg_change)
+            practice=self.practice_with_high_neg_change,
+            interesting_percentile_change=10)
         sorted_measure = finder.most_change_in_period(3)
         measure_info = sorted_measure['declines'][0]
         self.assertEqual(

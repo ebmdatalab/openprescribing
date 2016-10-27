@@ -322,20 +322,26 @@ def getIntroText(stats, org_type):
     not_great = worst + declines
     pretty_good = best + improvements
     msg = ""
+    in_sentence = False
     if not_great or pretty_good or possible_savings:
         if not_great:
             msg = "We've found %s prescribing measure%s where this %s " % (
                 apnumber(not_great),
                 not_great > 1 and 's' or '',
                 org_type)
+            in_sentence = True
             if declines and worst:
                 msg += "is getting worse, or could be doing better"
             elif declines:
                 msg += "is getting worse"
             else:
                 msg += "could be doing better"
+        else:
+            msg = ("Good news: we've not found any problem prescribing "
+                   "measures for this %s!" % org_type)
+            in_sentence = False
         if pretty_good:
-            if msg:
+            if msg and in_sentence:
                 msg += ", and %s measure%s where it " % (
                     apnumber(pretty_good),
                     pretty_good > 1 and 's' or '')
@@ -350,13 +356,16 @@ def getIntroText(stats, org_type):
                 msg += "is improving."
             else:
                 msg += "is already doing very well."
+            in_sentence = False
+        if in_sentence:
+            msg += ". "
         if possible_savings:
             if msg:
                 msg += " We've also found "
             else:
                 msg = "We've found "
-            msg += ("%s prescribing measure%s where there are potential "
-                    "cost savings of at least £1000".decode('utf-8') % (
+            msg += ("%s prescribing measure%s where there are some "
+                    "potential cost savings that may be of interest." % (
                         apnumber(possible_savings),
                         possible_savings > 1 and 's' or ''))
     else:
