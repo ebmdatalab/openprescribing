@@ -128,7 +128,7 @@
   {% endif %}
 
   {% if stats.top_savings.achieved_savings %}
-   <h3 class="better"><img src="cid:{{info_icon}}"Achieved savings</h3>
+   <h3 class="better"><img src="cid:{{info_icon}}">Achieved savings</h3>
    {% if stats.top_savings.achieved_savings|length == 1 %}
     <p>By prescribing <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved £{{stats.top_savings.achieved_savings.0.1|wholenum|intcomma}} over the past 6 months. </p>
     {% else %}
