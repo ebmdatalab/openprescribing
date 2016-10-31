@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
@@ -86,12 +86,12 @@ def login_from_key(request, key):
     return redirect('bookmark-list')
 
 
-@login_required
+@staff_member_required
 def preview_practice_bookmark(request, code):
     return preview_bookmark(request, practice=Practice.objects.get(pk=code))
 
 
-@login_required
+@staff_member_required
 def preview_ccg_bookmark(request, code):
     return preview_bookmark(request, pct=PCT.objects.get(pk=code))
 
