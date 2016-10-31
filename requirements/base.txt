@@ -14,5 +14,5 @@ pandas==0.17.1
 scipy==0.17.0
 django-allauth==0.25.2
 premailer
-django-anymail
+-e git@github.com:anymail/django-anymail.git#egg=django-anymail
 django-crispy-forms
