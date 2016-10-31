@@ -437,7 +437,7 @@ def make_email_html(org_bookmark, stats):
                 'info_icon': info_icon,
                 'warn_icon': warn_icon,
                 'stats': stats,
-                'unsubscribe_link': reverse(
+                'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
                     kwargs={'key': recipient_key})
             })
