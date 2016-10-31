@@ -98,4 +98,7 @@ urlpatterns = [
     url(r'^last_bookmark/$',
         frontend_views.last_bookmark,
         name='last-bookmark'),
+
+    # anymail webhooks
+    url(r'^anymail/', include('anymail.urls')),
 ]

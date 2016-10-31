@@ -300,6 +300,7 @@ GDOC_DOCS = {
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {
     "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "WEBHOOK_AUTHORIZATION": "A%GEhrm/>p6jKr9M:NPZCa&?$Jb..?7hG"
 }
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
