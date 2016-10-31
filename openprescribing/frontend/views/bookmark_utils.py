@@ -430,6 +430,7 @@ def make_email_html(org_bookmark, stats):
                     [x[1] for x in
                      stats['top_savings']['possible_savings']]),
                 'has_stats': _hasStats(stats),
+                'domain': settings.GRAB_HOST,
                 'getting_worse_image': getting_worse_img,
                 'still_bad_image': still_bad_img,
                 'bookmark': org_bookmark,
