@@ -331,11 +331,11 @@ def getIntroText(stats, org_type):
                 org_type)
             in_sentence = True
             if declines and worst:
-                msg += "is getting worse, or could be doing better"
+                msg += "<span class='worse'>is getting worse, or could be doing better</span>"
             elif declines:
-                msg += "is getting worse"
+                msg += "<span class='worse'>is getting worse</span>"
             else:
-                msg += "could be doing better"
+                msg += "<span class='worse'>could be doing better</span>"
         else:
             msg = ("Good news: we've not found any problem prescribing "
                    "measures for this %s!" % org_type)
@@ -351,11 +351,11 @@ def getIntroText(stats, org_type):
                                      pretty_good > 1 and 's' or '',
                                      org_type))
             if best and improvements:
-                msg += "is improving, or is already doing very well."
+                msg += "<span class='better'>is improving, or is already doing very well.</span>"
             elif improvements:
-                msg += "is improving."
+                msg += "<span class='better'>is improving</span>."
             else:
-                msg += "is already doing very well."
+                msg += "<span class='better'>is already doing very well</span>."
             in_sentence = False
         if in_sentence:
             msg += ". "

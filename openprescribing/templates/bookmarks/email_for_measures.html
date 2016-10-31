@@ -75,9 +75,9 @@
       </ul>
     {% endif %}
   {% endif %}
-
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
-    <h3 class="worse"><img src="cid:{{warn_icon}}">Best-case possible savings</h3>
+
+      <h3 class="worse"><img src="cid:{{warn_icon}}">Best-case possible savings</h3>
 <p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
     <a href="{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>
 
@@ -86,16 +86,16 @@
 
 
   {% if stats.best %}
-  <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures in the highest decile</h3>
+  <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures in the best decile</h3>
     {% for measure in stats.best %}
       {% if forloop.first %}
-        <p>Over the last three months, this {{ bookmark.org_type }} was in the highest decile on
+        <p>Over the last three months, this {{ bookmark.org_type }} was in the best decile on
         <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:
       {% elif stats.best|length == 2 %}
-        It was also in the highest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+        It was also in the best decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
       {% else %}
         {% if forloop.counter == 2 %}
-          It was also in the highest decile on:
+          It was also in the best decile on:
           <ul>
         {% endif %}
             <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -107,7 +107,7 @@
   {% endif %}
 
   {% if stats.most_changing.improvements %}
-    <h3 class="better"><img src="cid:{{info_icon}}"Prescribing measures which are getting better</h3>
+    <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures which are getting better</h3>
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
