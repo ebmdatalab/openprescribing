@@ -37,7 +37,7 @@
     <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
+          <p>This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
           It also improved by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
