@@ -280,7 +280,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
     'GET'
 )
-SUPPORT_EMAIL = 'openprescribing-support@googlegroups.com'
+SUPPORT_EMAIL = 'feedback@openprescribing.net'
 DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
 SWAGGER_SETTINGS = {
     'info': {
