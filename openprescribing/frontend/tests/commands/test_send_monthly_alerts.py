@@ -91,6 +91,7 @@ class SendEmailTestCase(TestCase):
             body, 'slipped by 100 centiles .* on '
             '<a href="/practice/P87629/#cerazette".*>'
             'Cerazette vs. Desogestrel</a>')
+        self.assertIn('<span class="worse"', body)
         self.assertIn('<img src="cid:unique-image-id', body)
         self.assertNotIn("Your best prescribing areas", body)
         self.assertNotIn("Cost savings", body)

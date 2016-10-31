@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from dateutil.relativedelta import relativedelta
 from frontend.models import ImportLog
@@ -351,7 +352,7 @@ def getIntroText(stats, org_type):
                                      pretty_good > 1 and 's' or '',
                                      org_type))
             if best and improvements:
-                msg += "<span class='better'>is improving, or is already doing very well.</span>"
+                msg += "<span class='better'>is improving, or is already doing very well</span>."
             elif improvements:
                 msg += "<span class='better'>is improving</span>."
             else:
@@ -372,7 +373,7 @@ def getIntroText(stats, org_type):
         msg = ("We've no new information about this %s this month! "
                "Its performance is not an outlier on any "
                "of our common prescribing measures." % org_type)
-    return msg
+    return mark_safe(msg)
 
 
 def _hasStats(stats):
