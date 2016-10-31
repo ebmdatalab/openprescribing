@@ -250,6 +250,7 @@ class SendEmailTestCase(TestCase):
             "it could save around <b>£9,000</b>".decode('utf-8'),
             body)
 
+
 def _makeContext(**kwargs):
     empty_context = {
         'most_changing': {

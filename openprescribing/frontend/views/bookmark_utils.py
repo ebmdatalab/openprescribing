@@ -352,7 +352,7 @@ def getIntroText(stats, org_type):
                                      pretty_good > 1 and 's' or '',
                                      org_type))
             if best and improvements:
-                msg += "<span class='better'>is improving, or is already doing very well</span>."
+                msg += "<span class='better'>is doing well</span>."
             elif improvements:
                 msg += "<span class='better'>is improving</span>."
             else:
