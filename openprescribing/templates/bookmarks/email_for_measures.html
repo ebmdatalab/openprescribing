@@ -14,7 +14,6 @@
 {% if has_stats %}
   {% if stats.most_changing.declines %}
     <h3>Prescribing measures which are getting worse</h3>
-    {% if stats.most_changing.declines %}
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
@@ -34,10 +33,10 @@
          {% endif %}
       {% endfor %}
       </ul>
-    {% endif %}
+  {% endif %}
 
 
-    {% if stats.worst %}
+  {% if stats.worst %}
     <h3>Prescribing measures in the lowest decile</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
@@ -48,7 +47,7 @@
           It was also in the lowest decile on <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-            It was also in the lowest decile:
+            It was also in the lowest decile on:
             <ul>
           {% endif %}
               <li><a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -57,8 +56,6 @@
           {% endif %}
         {% endif %}
       {% endfor %}
-    {% endif %}
-
   {% endif %}
 
   {% if stats.top_savings.possible_savings %}
@@ -131,7 +128,7 @@
 
   {% if stats.top_savings.achieved_savings %}
    {% if stats.top_savings.achieved_savings|length == 1 %}
-    <p>By prescribing <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a> better than the median, you've saved £{{saving|wholenum}} over the past 6 months. </p>
+    <p>By prescribing <a href="{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, you've saved £{{stats.top_savings.achieved_savings.0.1|wholenum}} over the past 6 months. </p>
     {% else %}
      <ul>Over the past 6 months, by prescribing better than the median, you've saved:
      {% for measure, saving in stats.top_savings.achieved_savings %}
