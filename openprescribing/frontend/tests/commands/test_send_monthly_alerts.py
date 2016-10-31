@@ -127,10 +127,10 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
-            body, 'It also slipped on:')
+            body, 'It also slipped:')
         self.assertRegexpMatches(
-            body, re.compile('<ul.*<li>By 20 centiles on.*'
-                             '<li>By 10 centiles on.*</ul>', re.DOTALL))
+            body, re.compile('<ul.*<li>by 20 centiles on.*'
+                             '<li>by 10 centiles on.*</ul>', re.DOTALL))
 
     def test_email_body_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -147,7 +147,7 @@ class SendEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, re.compile(
-                'the lowest decile on.*<a href="/practice/P87629'
+                'the worst decile on.*<a href="/practice/P87629'
                 '/#cerazette".*>'
                 "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', body)
@@ -163,7 +163,7 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
-            body, 'It was also in the lowest decile on:')
+            body, 'It was also in the worst decile on:')
         self.assertRegexpMatches(
             body, re.compile('<ul.*<li>.*Desogestrel.*'
                              '<li>.*Desogestrel.*</ul>', re.DOTALL))
@@ -198,7 +198,7 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "If it had prescribed in line with the average practice",
+            "if it had prescribed in line with the average practice",
             body)
         self.assertRegexpMatches(
             body, 'it could have saved £10 on <a href="/practice/P87629'
@@ -216,7 +216,7 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "you've saved £10".decode('utf-8'),
+            "this practice saved £10".decode('utf-8'),
             body)
 
     def test_email_body_two_achieved_savings(
