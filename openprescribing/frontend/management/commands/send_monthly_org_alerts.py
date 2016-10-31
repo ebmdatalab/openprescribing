@@ -20,7 +20,7 @@ class Command(BaseCommand):
         parser.add_argument('--practice')
 
     def get_bookmarks(self, **options):
-        if 'recipient_email' in options:
+        if options['recipient_email']:
             dummy_user = User(email=options['recipient_email'], id='dummyid')
             dummy_user.profile = Profile(key='dummykey')
             bookmarks = [OrgBookmark(
