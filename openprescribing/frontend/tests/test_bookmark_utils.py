@@ -31,45 +31,46 @@ class IntroTextTest(unittest.TestCase):
         msg = bookmark_utils.getIntroText(stats, 'CCG')
         self.assertNotIn("We've no new information about this CCG", msg)
         self.assertIn("We've found one prescribing measure where this "
-                      "CCG could be doing better", msg)
+                      "CCG <span class='worse'>could be doing better", msg)
 
     def test_worst_plural(self):
         stats = _makeContext(worst=[None, None])
         msg = bookmark_utils.getIntroText(stats, 'CCG')
         self.assertIn("We've found two prescribing measures where this "
-                      "CCG could be doing better", msg)
+                      "CCG <span class='worse'>could be doing better", msg)
 
     def test_decline_plural(self):
         stats = _makeContext(declines=[None, None])
         msg = bookmark_utils.getIntroText(stats, 'CCG')
         self.assertIn("We've found two prescribing measures where this "
-                      "CCG is getting worse", msg)
+                      "CCG <span class='worse'>is getting worse", msg)
 
     def test_decline_and_worse(self):
         stats = _makeContext(declines=[None], worst=[None])
         msg = bookmark_utils.getIntroText(stats, 'thing')
         self.assertIn("We've found two prescribing measures where this "
-                      "thing is getting worse, or could be doing better", msg)
+                      "thing <span class='worse'>is getting worse, "
+                      "or could be doing better", msg)
 
     def test_improvement(self):
         stats = _makeContext(improvements=[None])
         msg = bookmark_utils.getIntroText(stats, 'thing')
         self.assertIn("We've found one prescribing measure where this "
-                      "thing is improving.", msg)
+                      "thing <span class='better'>is improving", msg)
 
     def test_improvement_and_best(self):
         stats = _makeContext(improvements=[None], best=[None])
         msg = bookmark_utils.getIntroText(stats, 'thing')
         self.assertIn("We've found two prescribing measures where this "
-                      "thing is improving, or is already doing "
-                      "very well.", msg)
+                      "thing <span class='better'>is doing well", msg)
 
     def test_decline_and_improvement(self):
         stats = _makeContext(declines=[None], improvements=[None])
         msg = bookmark_utils.getIntroText(stats, 'thing')
         self.assertIn("We've found one prescribing measure where this "
-                      "thing is getting worse, and one measure where it "
-                      "is improving.", msg)
+                      "thing <span class='worse'>is getting worse</span>, "
+                      "and one measure where it <span class='better'>is "
+                      "improving", msg)
 
     def test_possible_savings(self):
         stats = _makeContext(possible_savings=[None])

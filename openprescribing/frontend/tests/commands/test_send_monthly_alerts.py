@@ -18,7 +18,7 @@ class GetBookmarksTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
     def test_get_bookmarks_without_options(self):
-        bookmarks = Command().get_bookmarks()
+        bookmarks = Command().get_bookmarks(recipient_email=None)
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 3)
         self.assertTrue(active)
@@ -89,7 +89,7 @@ class SendEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, 'slipped by 100 centiles .* on '
-            '<a href="/practice/P87629/#cerazette".*>'
+            '<a href=".*/practice/P87629/#cerazette".*>'
             'Cerazette vs. Desogestrel</a>')
         self.assertIn('<span class="worse"', body)
         self.assertIn('<img src="cid:unique-image-id', body)
@@ -148,7 +148,7 @@ class SendEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, re.compile(
-                'the worst decile on.*<a href="/practice/P87629'
+                'the worst decile on.*<a href=".*/practice/P87629'
                 '/#cerazette".*>'
                 "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', body)
@@ -181,10 +181,10 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "These add up to £11 of potential savings".decode('utf-8'),
+            "These add up to around <b>£11</b> of potential savings".decode('utf-8'),
             body)
         self.assertRegexpMatches(
-            body, '<li.*>£10 on <a href="/practice/P87629'
+            body, '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
             '/#cerazette".*>'
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
@@ -202,8 +202,8 @@ class SendEmailTestCase(TestCase):
             "if it had prescribed in line with the average practice",
             body)
         self.assertRegexpMatches(
-            body, 'it could have saved £10 on <a href="/practice/P87629'
-            '/#cerazette".*>'
+            body, 'it could have saved about <b>£10</b> on '
+            '<a href=".*/practice/P87629/#cerazette".*>'
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
     def test_email_body_achieved_saving(self, attach_image, email, finder):
@@ -217,7 +217,7 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "this practice saved £10".decode('utf-8'),
+            "this practice saved around <b>£10".decode('utf-8'),
             body)
 
     def test_email_body_two_achieved_savings(
@@ -232,10 +232,10 @@ class SendEmailTestCase(TestCase):
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "<li>£10 on".decode('utf-8'),
+            "<li>\n<b>£10</b> on".decode('utf-8'),
             body)
         self.assertIn(
-            "<li>£12 on".decode('utf-8'),
+            "<li>\n<b>£12</b> on".decode('utf-8'),
             body)
 
     def test_email_body_total_savings(self, attach_image, email, finder):
