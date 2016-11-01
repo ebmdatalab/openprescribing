@@ -15,7 +15,7 @@
 
 {% if has_stats %}
   {% if stats.best %}
-  <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures in the best decile</h3>
+  <h3 class="better">Prescribing measures in the best decile</h3>
     {% for measure in stats.best %}
       {% if forloop.first %}
         <p>Over the last three months, this {{ bookmark.org_type }} was in the best decile on
@@ -36,7 +36,7 @@
   {% endif %}
 
   {% if stats.most_changing.improvements %}
-    <h3 class="better"><img src="cid:{{info_icon}}">Prescribing measures which are getting better</h3>
+    <h3 class="better">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
           <p>This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
@@ -57,7 +57,7 @@
   {% endif %}
 
   {% if stats.top_savings.achieved_savings %}
-   <h3 class="better"><img src="cid:{{info_icon}}">Achieved savings</h3>
+   <h3 class="better">Achieved savings</h3>
    {% if stats.top_savings.achieved_savings|length == 1 %}
     <p>By prescribing <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved <b>£{{stats.top_savings.achieved_savings.0.1|wholenum|intcomma}}</b> over the past 6 months. </p>
     {% else %}
@@ -73,7 +73,7 @@
 
 
   {% if stats.most_changing.declines %}
-    <h3 class="worse"><img src="cid:{{warn_icon}}"> Prescribing measures which are getting worse</h3>
+    <h3 class="worse">Prescribing measures which are getting worse</h3>
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
@@ -97,7 +97,7 @@
 
 
   {% if stats.worst %}
-    <h3 class="worse"><img src="cid:{{warn_icon}}">Prescribing measures in the worst decile</h3>
+    <h3 class="worse">Prescribing measures in the worst decile</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
           <p>Over the last three months, this {{ bookmark.org_type }} was in the worst decile on
@@ -119,7 +119,7 @@
   {% endif %}
 
   {% if stats.top_savings.possible_savings %}
-    <h3 class="worse"><img src="cid:{{warn_icon}}">Possible savings</h3>
+    <h3 class="worse">Possible savings</h3>
     <p>We've looked at all the measures where this organisation could have saved at least £1,000 in the last six months.
 
     {% if stats.top_savings.possible_savings|length_is:1 %}
@@ -137,7 +137,7 @@
   {% endif %}
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
 
-      <h3 class="worse"><img src="cid:{{warn_icon}}">Best-case possible savings</h3>
+      <h3 class="worse">Best-case possible savings</h3>
 <p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
     <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
 

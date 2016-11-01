@@ -399,14 +399,6 @@ def make_email_html(org_bookmark, stats):
         "This email is only available in HTML",
         "hello@openprescribing.net",
         [recipient_email])
-    warn_icon = attach_inline_image_file(
-        msg,
-        settings.SITE_ROOT + '/static/img/warn.png',
-        subtype='png')
-    info_icon = attach_inline_image_file(
-        msg,
-        settings.SITE_ROOT + '/static/img/info.png',
-        subtype='png')
     getting_worse_img = still_bad_img = None
     html_email = get_template('bookmarks/email_for_measures.html')
 
@@ -438,8 +430,6 @@ def make_email_html(org_bookmark, stats):
                 'getting_worse_image': getting_worse_img,
                 'still_bad_image': still_bad_img,
                 'bookmark': org_bookmark,
-                'info_icon': info_icon,
-                'warn_icon': warn_icon,
                 'stats': stats,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
