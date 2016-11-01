@@ -21,6 +21,8 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.SITE_ROOT +
             '/frontend/management/commands/grab_chart.js')
 
+logger = logging.getLogger(__name__)
+
 
 def remove_jagged(measurevalues):
     """Remove records that are outside the standard error of the mean or
@@ -309,7 +311,9 @@ def attach_image(msg, url, file_path, selector):
         file_path=file_path,
         selector=selector)
     )
+    logger.info("Running command %s" % cmd)
     subprocess.check_call(cmd, shell=True)
+    logger.info("Command %s completed" % cmd)
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 
@@ -444,6 +448,7 @@ def make_email_html(org_bookmark, stats):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
+        logger.info("Alert message generated: %s" % msg)
         return msg
 
 

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
 from django.core.management.base import BaseCommand
 from frontend.models import OrgBookmark
 from frontend.models import User
 from frontend.models import Profile
 
 from frontend.views import bookmark_utils
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -36,7 +39,6 @@ class Command(BaseCommand):
         return bookmarks
 
     def handle(self, *args, **options):
-        # First, generate the images for each email
         for org_bookmark in self.get_bookmarks(**options):
             stats = bookmark_utils.InterestingMeasureFinder(
                 practice=org_bookmark.practice or options['practice'],
@@ -51,3 +53,5 @@ class Command(BaseCommand):
             msg.track_clicks = True
             msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
+            logger.info("Sent message to user %s about bookmark %s" % (
+                recipient_id, org_bookmark.id))
