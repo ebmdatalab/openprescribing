@@ -28,7 +28,9 @@ def deltawords(num, arg):
     """
     delta = abs(num - arg)
     # We only pick out changes over 10%; over 30% in 9 months is unheard of.
-    if delta < 10:
+    if delta == 0:
+        word = "not at all"
+    elif delta < 10:
         word = "slightly"
     elif delta < 20:
         word = "quite a lot"
@@ -41,8 +43,8 @@ def deltawords(num, arg):
 
 @register.filter
 def roundpound(num):
-    order = math.floor(math.log10(num))
+    order = 10 ** math.floor(math.log10(num))
     if order > 0:
         return intcomma(int(round(num/order) * order))
     else:
-        return int(round(num))
+        return str(int(round(num)))
