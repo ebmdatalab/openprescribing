@@ -39,17 +39,17 @@
 
 
   {% if stats.worst %}
-    <h3 class="worse">Prescribing measures in the worst decile</h3>
+    <h3 class="worse">Prescribing measures in the worst 10%</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
-          <p>Over the last three months, this {{ bookmark.org_type }} was in the worst decile on
+          <p>Over the last three months, this {{ bookmark.org_type }} was in the worst 10% on
           <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
           <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ still_bad_image }}"></a><br>
         {% elif stats.worst|length == 2 %}
-          It was also in the worst decile on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+          It was also in the worst 10% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-            It was also in the worst decile on:
+            It was also in the worst 10% on:
             <ul>
           {% endif %}
               <li><a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
@@ -80,23 +80,23 @@
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
 
       <h3 class="worse">Best-case possible savings</h3>
-<p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
+<p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending 10% across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
     <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
 
     </p>
   {% endif %}
 
   {% if stats.best %}
-  <h3 class="better">Prescribing measures in the best decile</h3>
+  <h3 class="better">Prescribing measures in the best 10%</h3>
     {% for measure in stats.best %}
       {% if forloop.first %}
-        <p>Over the last three months, this {{ bookmark.org_type }} was in the best decile on
+        <p>Over the last three months, this {{ bookmark.org_type }} was in the best 10% on
         <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
       {% elif stats.best|length == 2 %}
-        It was also in the best decile on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+        It was also in the best 10% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
       {% else %}
         {% if forloop.counter == 2 %}</p>
-          It was also in the best decile on:
+          It was also in the best 10% on:
           <ul>
         {% endif %}
             <li><a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
