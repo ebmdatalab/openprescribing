@@ -33,7 +33,7 @@ def deltawords(num, arg):
     elif delta < 10:
         word = "slightly"
     elif delta < 20:
-        word = "quite a lot"
+        word = "moderately"
     elif delta < 30:
         word = "considerably"
     else:

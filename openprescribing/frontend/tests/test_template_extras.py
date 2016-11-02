@@ -18,7 +18,7 @@ class TestTemplateExtras(unittest.TestCase):
     def test_deltawords_positive_all_sizes(self):
         self.assertEqual(t.deltawords(0, 100), "massively")
         self.assertEqual(t.deltawords(0, 29), "considerably")
-        self.assertEqual(t.deltawords(0, 19), "quite a lot")
+        self.assertEqual(t.deltawords(0, 19), "moderately")
         self.assertEqual(t.deltawords(0, 1), "slightly")
         self.assertEqual(t.deltawords(0, 0), "not at all")
 
