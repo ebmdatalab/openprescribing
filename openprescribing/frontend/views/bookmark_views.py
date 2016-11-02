@@ -96,20 +96,30 @@ def preview_ccg_bookmark(request, code):
     return preview_bookmark(request, pct=PCT.objects.get(pk=code))
 
 
-def preview_bookmark(request, practice=None, pct=None):
-    context = bookmark_utils.InterestingMeasureFinder(
-        practice=practice,
-        pct=pct
-    ).context_for_org_email()
+@staff_member_required
+def preview_analysis_bookmark(request, url):
+    return preview_bookmark(request, url)
+
+
+def preview_bookmark(request, practice=None, pct=None, url=None):
     user = User(email='foo@foo.com')
     user.profile = Profile()
-    bookmark = OrgBookmark(practice=practice, pct=pct, user=user)
-    msg = bookmark_utils.make_email_html(
-        bookmark, context)
-    # now turn the message into html, including inlined images
+    if pct or practice:
+        context = bookmark_utils.InterestingMeasureFinder(
+            practice=practice,
+            pct=pct
+        ).context_for_org_email()
+        bookmark = OrgBookmark(practice=practice, pct=pct, user=user)
+        msg = bookmark_utils.make_org_email(
+            bookmark, context)
+    else:
+        bookmark = SearchBookmark(url=url, user=user)
+        msg = bookmark_utils.make_search_email(
+            bookmark, context)
     html = msg.alternatives[0][0]
     images = msg.attachments
     return HttpResponse(_convert_images_to_data_uris(html, images))
+
 
 def _convert_images_to_data_uris(html, images):
     for image in images:

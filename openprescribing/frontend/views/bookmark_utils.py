@@ -390,12 +390,12 @@ def _hasStats(stats):
             stats['most_changing']['improvements'])
 
 
-def make_email_html(org_bookmark, stats):
+def make_org_email(org_bookmark, stats):
     recipient_email = org_bookmark.user.email
     recipient_key = org_bookmark.user.profile.key
 
     msg = EmailMultiAlternatives(
-        "Your monthly update",
+        "Your monthly update about %s" % org_bookmark.name,
         "This email is only available in HTML",
         "hello@openprescribing.net",
         [recipient_email])
@@ -439,5 +439,39 @@ def make_email_html(org_bookmark, stats):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
-        logger.info("Alert message generated: %s" % msg)
+        logger.info("Measures alert generated: %s" % msg)
+        return msg
+
+
+def make_search_email(search_bookmark):
+    recipient_email = search_bookmark.user.email
+    recipient_key = search_bookmark.user.profile.key
+
+    msg = EmailMultiAlternatives(
+        "Your monthly update about %s" % search_bookmark.name,
+        "This email is only available in HTML",
+        "hello@openprescribing.net",
+        [recipient_email])
+    html_email = get_template('bookmarks/email_for_searches.html')
+
+    with NamedTemporaryFile(suffix='.png') as graph_file:
+        graph = attach_image(
+            msg,
+            search_bookmark.dashboard_url(),
+            graph_file.name,
+            '#results .tab-pane.active'
+        )
+        html = html_email.render(
+            context={
+                'bookmark': search_bookmark,
+                'domain': settings.GRAB_HOST,
+                'graph': graph,
+                'unsubscribe_link': settings.GRAB_HOST + reverse(
+                    'bookmark-login',
+                    kwargs={'key': recipient_key})
+            })
+        html = Premailer(
+            html, cssutils_logging_level=logging.ERROR).transform()
+        msg.attach_alternative(html, "text/html")
+        logger.info("Analysis alert generated: %s" % msg)
         return msg

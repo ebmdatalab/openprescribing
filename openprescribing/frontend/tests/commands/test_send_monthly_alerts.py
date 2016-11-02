@@ -4,9 +4,12 @@ import re
 from mock import patch
 from mock import ANY
 
+from django.core.management import call_command
 from django.test import TestCase
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_org_alerts import Command
+
+CMD_NAME = 'send_monthly_org_alerts'
 
 
 class AnyStringWith(str):
@@ -18,13 +21,13 @@ class GetBookmarksTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
     def test_get_bookmarks_without_options(self):
-        bookmarks = Command().get_bookmarks(recipient_email=None)
+        bookmarks = Command().get_org_bookmarks(recipient_email=None)
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 3)
         self.assertTrue(active)
 
     def test_get_bookmarks_with_options(self):
-        bookmarks = Command().get_bookmarks(
+        bookmarks = Command().get_org_bookmarks(
             recipient_email='s@s.com',
             ccg='03V',
             practice='P87629'
@@ -40,15 +43,16 @@ class GetBookmarksTestCase(TestCase):
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
 @patch('frontend.views.bookmark_utils.EmailMultiAlternatives')
 @patch('frontend.views.bookmark_utils.attach_image')
-class SendEmailTestCase(TestCase):
+class OrgEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def test_email_recipient(self, attach_image, email, finder):
         test_context = _makeContext()
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
@@ -60,9 +64,10 @@ class SendEmailTestCase(TestCase):
     def test_email_body_no_data(self, attach_image, email, finder):
         test_context = _makeContext()
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         # Name of the practice
         attachment.assert_called_once_with(
@@ -79,9 +84,10 @@ class SendEmailTestCase(TestCase):
         test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
             AnyStringWith("this practice slipped"), 'text/html')
@@ -105,9 +111,10 @@ class SendEmailTestCase(TestCase):
         ])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
@@ -122,25 +129,27 @@ class SendEmailTestCase(TestCase):
         ])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, 'It also slipped:')
         self.assertRegexpMatches(
             body, re.compile('<ul.*<li>considerably on.*'
-                             '<li>quite a lot on.*</ul>', re.DOTALL))
+                             '<li>moderately on.*</ul>', re.DOTALL))
 
     def test_email_body_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
         test_context = _makeContext(worst=[measure])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
             AnyStringWith("We've found"), 'text/html')
@@ -158,9 +167,10 @@ class SendEmailTestCase(TestCase):
         test_context = _makeContext(worst=[measure, measure, measure])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
@@ -175,13 +185,15 @@ class SendEmailTestCase(TestCase):
             (measure, 9.9), (measure, 1.12)])
         finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
-            "These add up to around <b>£11</b> of potential savings".decode('utf-8'),
+            "These add up to around <b>£10</b> of "
+            "potential savings".decode('utf-8'),
             body)
         self.assertRegexpMatches(
             body, '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
@@ -193,9 +205,10 @@ class SendEmailTestCase(TestCase):
         test_context = _makeContext(possible_savings=[
             (measure, 9.9)])
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -211,9 +224,10 @@ class SendEmailTestCase(TestCase):
         test_context = _makeContext(achieved_savings=[
             (measure, 9.9)])
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -226,29 +240,67 @@ class SendEmailTestCase(TestCase):
         test_context = _makeContext(achieved_savings=[
             (measure, 9.9), (measure, 12.0)])
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
             "<li>\n<b>£10</b> on".decode('utf-8'),
             body)
         self.assertIn(
-            "<li>\n<b>£12</b> on".decode('utf-8'),
+            "<li>\n<b>£10</b> on".decode('utf-8'),
             body)
 
     def test_email_body_total_savings(self, attach_image, email, finder):
         test_context = _makeContext(possible_top_savings_total=9000.1)
         finder.return_value.context_for_org_email.return_value = test_context
-        Command().handle(recipient_email='s@s.com',
-                         ccg='03V',
-                         practice='P87629')
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
             "it could save around <b>£9,000</b>".decode('utf-8'),
             body)
+
+
+@patch('frontend.views.bookmark_utils.EmailMultiAlternatives')
+@patch('frontend.views.bookmark_utils.attach_image')
+class SearchEmailTestCase(TestCase):
+    fixtures = ['bookmark_alerts']
+
+    def test_email_recipient(self, attach_image, email):
+        opts = {'recipient_email': 's@s.com',
+                'url': 'something'}
+        call_command('send_monthly_org_alerts', **opts)
+        email.assert_any_call(
+            ANY,  # subject
+            ANY,  # body
+            "hello@openprescribing.net",
+            ['s@s.com']
+        )
+        email.return_value.send.assert_any_call()
+
+    def test_email_body(self, attach_image, email):
+        opts = {'recipient_email': 's@s.com',
+                'url': 'something',
+                'search_name': 'some name'}
+        call_command(CMD_NAME, **opts)
+        attachment = email.return_value.attach_alternative
+        attachment.assert_called_once_with(
+            AnyStringWith('some name'), 'text/html')
+
+        # Unsubscribe link
+        attachment.assert_called_once_with(
+            AnyStringWith('/bookmarks/dummykey'), 'text/html')
+
+        attachment.assert_called_once_with(
+            AnyStringWith(
+                '<a href="http://localhost/analyse/#%s' % 'something'),
+            'text/html')
 
 
 def _makeContext(**kwargs):

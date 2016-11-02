@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
 from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError
 from frontend.models import OrgBookmark
-from frontend.models import User
 from frontend.models import Profile
+from frontend.models import SearchBookmark
+from frontend.models import User
 
 from frontend.views import bookmark_utils
 
@@ -21,9 +23,12 @@ class Command(BaseCommand):
         parser.add_argument('--recipient-email')
         parser.add_argument('--ccg')
         parser.add_argument('--practice')
+        parser.add_argument('--search-name')
+        parser.add_argument('--url')
 
-    def get_bookmarks(self, **options):
-        if options['recipient_email']:
+    def get_org_bookmarks(self, **options):
+        if options['recipient_email'] and (
+                options['ccg'] or options['practice']):
             dummy_user = User(email=options['recipient_email'], id='dummyid')
             dummy_user.profile = Profile(key='dummykey')
             bookmarks = [OrgBookmark(
@@ -31,20 +36,52 @@ class Command(BaseCommand):
                 pct_id=options['ccg'],
                 practice_id=options['practice']
             )]
-        else:
+        elif not options['recipient_email']:
             # XXX add a constraint here to ensure we don't send two
             # emails for one month.
             bookmarks = OrgBookmark.objects.filter(
                 user__is_active=True)
+        else:
+            bookmarks = []
         return bookmarks
 
+    def get_search_bookmarks(self, **options):
+        if options['recipient_email'] and options['url']:
+            dummy_user = User(email=options['recipient_email'], id='dummyid')
+            dummy_user.profile = Profile(key='dummykey')
+            bookmarks = [SearchBookmark(
+                user=dummy_user,
+                url=options['url'],
+                name=options['search_name']
+            )]
+        elif not options['recipient_email']:
+            # XXX add a constraint here to ensure we don't send two
+            # emails for one month.
+            bookmarks = SearchBookmark.objects.filter(
+                user__is_active=True)
+        else:
+            bookmarks = []
+        return bookmarks
+
+    def validate_options(self, **options):
+        if ((options['url'] or options['ccg'] or options['practice']) and
+           not options['recipient_email']):
+            raise CommandError(
+                "You must specify a test recipient email if you want to "
+                "specify a test CCG, practice, or URL")
+        if options['url'] and (options['practice'] or options['ccg']):
+            raise CommandError(
+                "You must specify either a URL, or one of a ccg or a practice"
+            )
+
     def handle(self, *args, **options):
-        for org_bookmark in self.get_bookmarks(**options):
+        self.validate_options(**options)
+        for org_bookmark in self.get_org_bookmarks(**options):
             stats = bookmark_utils.InterestingMeasureFinder(
                 practice=org_bookmark.practice or options['practice'],
                 pct=org_bookmark.pct or options['ccg']).context_for_org_email()
             recipient_id = org_bookmark.user.id
-            msg = bookmark_utils.make_email_html(
+            msg = bookmark_utils.make_org_email(
                 org_bookmark, stats)
             # Optional Anymail extensions:
             msg.metadata = {"user_id": recipient_id,
@@ -55,3 +92,16 @@ class Command(BaseCommand):
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
                 recipient_id, org_bookmark.id))
+        for search_bookmark in self.get_search_bookmarks(**options):
+            recipient_id = search_bookmark.user.id
+            msg = bookmark_utils.make_search_email(
+                search_bookmark)
+            # Optional Anymail extensions:
+            msg.metadata = {"user_id": recipient_id,
+                            "experiment_variation": 1}
+            msg.tags = ["monthly_update"]
+            msg.track_clicks = True
+            msg.esp_extra = {"sender_domain": "openprescribing.net"}
+            msg.send()
+            logger.info("Sent message to user %s about bookmark %s" % (
+                recipient_id, search_bookmark.id))
