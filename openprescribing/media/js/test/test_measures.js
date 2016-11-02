@@ -282,22 +282,23 @@ describe('Measures', function() {
     it('should get mean cost saving and percentile across last N months', function() {
       var data = [{
         data: [
-        {date: '2015-01-01', percentile: 21, cost_savings: { 50: 7 }},
-        {date: '2015-02-01', percentile: 22, cost_savings: { 50: 7 }},
-        {date: '2015-03-01', percentile: 19, cost_savings: { 50: 7 }},
-        {date: '2015-04-01', percentile: 16, cost_savings: { 50: 7 }},
-        {date: '2015-05-01', percentile: 15, cost_savings: { 50: 7 }},
-        {date: '2015-06-01', percentile: 19, cost_savings: { 50: 12 }},
-        {date: '2015-07-01', percentile: 18, cost_savings: { 50: 81 }},
-        {date: '2015-08-01', percentile: 16, cost_savings: { 50: 12.8 }},
-        {date: '2015-09-01', percentile: 13, cost_savings: { 50: 12.4 }},
-        {date: '2015-10-01', percentile: 12, cost_savings: { 50: 10 }},
-        {date: '2015-11-01', percentile: 12, cost_savings: { 50: 8 }},
-        {date: '2015-12-01', percentile: 7, cost_savings: { 50: 7 }},
+        {date: '2015-01-01', percentile: 21, cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-02-01', percentile: 22, cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-03-01', percentile: 19, cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-04-01', percentile: 16, cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-05-01', percentile: 15, cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-06-01', percentile: 19, cost_savings: { 10: 1, 50: 12 }},
+        {date: '2015-07-01', percentile: 18, cost_savings: { 10: 1, 50: 81 }},
+        {date: '2015-08-01', percentile: 16, cost_savings: { 10: 1, 50: 12.8 }},
+        {date: '2015-09-01', percentile: 13, cost_savings: { 10: 1, 50: 12.4 }},
+        {date: '2015-10-01', percentile: 12, cost_savings: { 10: 1, 50: 10 }},
+        {date: '2015-11-01', percentile: 12, cost_savings: { 10: 1, 50: 8 }},
+        {date: '2015-12-01', percentile: 7,  cost_savings: { 10: 1, 50: 7 }},
         ]
       }];
       var result = mu._getSavingAndPercentilePerItem(data, 6);
       expect(result[0].meanPercentile).to.equal(13);
+      expect(result[0].costSaving10th).to.equal(6);
       expect(result[0].costSaving50th).to.equal(131.2);
     });
 
@@ -609,6 +610,7 @@ describe('Measures', function() {
         name: 'ACE',
         meanPercentile: 80,
         costSaving50th: 10,
+        costSaving10th: 30,
         isCostBased: true,
         data: []
       },
@@ -624,7 +626,8 @@ describe('Measures', function() {
       str = 'This practice was at the 80th percentile on average across ';
       str += 'the past 6 months. If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
-      str += 'over the past 6 months.';
+      str += 'over the past 6 months. If it had prescribed in line with ';
+      str += 'the best 10%, it would have spent £30.00 less. ';
       expect(result.chartExplanation).to.equal(str);
     });
 

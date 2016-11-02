@@ -140,6 +140,11 @@ var utils = {
         var saving = (num.cost_savings) ? num.cost_savings['50'] : null;
         return memo + saving;
       }, null);
+      d.costSaving10th = _.reduce(latestData, function(memo, num) {
+        // We assume that `low_is_good` for all cost-savings
+        var saving = (num.cost_savings) ? num.cost_savings['10'] : null;
+        return memo + saving;
+      }, null);
       // normalise to camelcase convention
       if (!('isPercentage' in d)) {
         d.isPercentage = d.is_percentage;
@@ -330,18 +335,23 @@ var utils = {
         humanize.ordinal(p) +
         ' percentile on average across the ' +
         'past ' + numMonths + ' months. ';
-        if (d.isCostBased || options.isCostBasedMeasure) {
-          if (d.costSaving50th < 0) {
-            chartExplanation += 'By prescribing better than the median, ' +
-              'this ' + options.orgType + ' has saved the NHS £' +
-              humanize.numberFormat((d.costSaving50th * -1), 2) +
-              ' over the past ' + numMonths + ' months.';
-          } else {
-            chartExplanation += 'If it had prescribed in line with the ' +
-              'median, this ' + options.orgType + ' would have spent £' +
-              humanize.numberFormat(d.costSaving50th, 2) +
-              ' less over the past ' + numMonths + ' months.';
-          }
+      if (d.isCostBased || options.isCostBasedMeasure) {
+        if (d.costSaving50th < 0) {
+          chartExplanation += 'By prescribing better than the median, ' +
+            'this ' + options.orgType + ' has saved the NHS £' +
+            humanize.numberFormat((d.costSaving50th * -1), 2) +
+            ' over the past ' + numMonths + ' months.';
+        } else {
+          chartExplanation += 'If it had prescribed in line with the ' +
+            'median, this ' + options.orgType + ' would have spent £' +
+            humanize.numberFormat(d.costSaving50th, 2) +
+            ' less over the past ' + numMonths + ' months.';
+        }
+        if (d.costSaving10th > 0) {
+          chartExplanation += ' If it had prescribed in line with the best ' +
+            '10%, it would have spent £' +
+            humanize.numberFormat(d.costSaving10th, 2) + ' less. ';
+        }
       }
     }
     return {
