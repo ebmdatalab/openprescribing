@@ -7,11 +7,11 @@
 
 <p><b>Hello!</b></p>
 
-<p>Welcome to your your monthly update about how <a href="{{ domain }}{{ bookmark.dashboard_url }}">{{bookmark.name}}</a> compares with other {{ bookmark.org_type }}s nationwide, on {{ measures_count|apnumber }} different prescribing measures.</p>
+<p>Welcome to your your monthly update about how <a href="{{ domain }}{{ bookmark.dashboard_url }}">{{bookmark.name}}</a>. We've looked at how it compares with other {{ bookmark.org_type }}s nationwide, on {{ measures_count|apnumber }} different prescribing measures.</p>
 
-<p>{{ intro_text }}</p>
+<p>{{ intro_text }} Note that a {{ bookmark.org_type }} which is an outlier isn't necessarily a good or bad prescriber: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
 
-<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email! Bear in mind that a practice or CCG which is an outlier isn't necessarily a good or bad prescriber: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
+<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 
 {% if has_stats %}
   {% if stats.worst %}
@@ -68,7 +68,7 @@
       We found that if it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about <b>£{{ stats.top_savings.possible_savings.0.1|roundpound }}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.</p>
     {% else %}
       </p>
-      <p>These add up to around <b>£{{total_possible_savings|roundpound}}</b> of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved:</p>
+      <p>These add up to around <b>£{{total_possible_savings|roundpound}}</b> of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about:</p>
 
       <ul>
         {% for measure, saving in stats.top_savings.possible_savings %}
@@ -77,12 +77,11 @@
       </ul>
     {% endif %}
   {% endif %}
+
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
-
-      <h4>Best-case possible savings</h4>
-<p>We compared this {{ bookmark.org_type }}'s spending with the best-performing 10% on all the areas we track.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
-    <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
-
+    <h3>Best-case possible savings</h3>
+      <p>We compared this {{ bookmark.org_type }}'s spending with the best-performing 10% on all the areas we track.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
+      <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
     </p>
   {% endif %}
 
@@ -111,16 +110,16 @@
     <h3 class="better">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>Over the last 9 months, we found that his {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>Over the last 9 months, we found that this {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also improved by {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also improved {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
            It also improved:
            <ul>
           {% endif %}
-            <li>by {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -133,7 +132,7 @@
    {% if stats.top_savings.achieved_savings|length == 1 %}
     <p>By prescribing <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved around <b>£{{stats.top_savings.achieved_savings.0.1|roundpound}}</b> over the past 6 months. </p>
     {% else %}
-    Over the past 6 months, by prescribing better than the median, this {{bookmark.org_type }} saved:
+    Over the past 6 months, by prescribing better than the median, this {{bookmark.org_type }} saved around:
      <ul>
      {% for measure, saving in stats.top_savings.achieved_savings %}
        <li><b>£{{saving|roundpound}}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
