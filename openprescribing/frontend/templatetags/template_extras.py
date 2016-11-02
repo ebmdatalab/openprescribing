@@ -1,5 +1,8 @@
+import math
+
 from django import template
 from django.utils.safestring import mark_safe
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 register = template.Library()
 
@@ -22,3 +25,12 @@ def wholenum(num):
 @register.filter
 def delta(num, arg):
     return abs(num - arg)
+
+
+@register.filter
+def roundpound(num):
+    order = math.floor(math.log10(num))
+    if order > 0:
+        return intcomma(int(round(num/order) * order))
+    else:
+        return int(round(num))

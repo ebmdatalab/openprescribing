@@ -65,14 +65,14 @@
     <p>We've looked at all the measures where this organisation could have saved at least £1,000 in the last six months.
 
     {% if stats.top_savings.possible_savings|length_is:1 %}
-      We found that if it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved <b>£{{ stats.top_savings.possible_savings.0.1|wholenum|intcomma }}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.</p>
+      We found that if it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about <b>£{{ stats.top_savings.possible_savings.0.1|roundpound }}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.</p>
     {% else %}
       </p>
-      <p>These add up to <b>£{{total_possible_savings|wholenum|intcomma}}</b> of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved:</p>
+      <p>These add up to around <b>£{{total_possible_savings|roundpound}}</b> of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved:</p>
 
       <ul>
         {% for measure, saving in stats.top_savings.possible_savings %}
-        <li><b>£{{saving|wholenum|intcomma}}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{measure.name}}</a></li>
+        <li><b>£{{saving|roundpound}}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{measure.name}}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -80,7 +80,7 @@
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
 
       <h3 class="worse">Best-case possible savings</h3>
-<p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|wholenum|intcomma}}</b>.
+<p>We've compared this {{ bookmark.org_type }}'s spending with the lowest-spending decile across all our measures.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
     <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
 
     </p>
@@ -131,12 +131,12 @@
   {% if stats.top_savings.achieved_savings %}
    <h3 class="better">Achieved savings</h3>
    {% if stats.top_savings.achieved_savings|length == 1 %}
-    <p>By prescribing <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved <b>£{{stats.top_savings.achieved_savings.0.1|wholenum|intcomma}}</b> over the past 6 months. </p>
+    <p>By prescribing <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved around <b>£{{stats.top_savings.achieved_savings.0.1|roundpound}}</b> over the past 6 months. </p>
     {% else %}
     Over the past 6 months, by prescribing better than the median, this {{bookmark.org_type }} saved:
      <ul>
      {% for measure, saving in stats.top_savings.achieved_savings %}
-       <li><b>£{{saving|wholenum|intcomma}}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
+       <li><b>£{{saving|roundpound}}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>
         </li>
      {% endfor %}
      </ul>
