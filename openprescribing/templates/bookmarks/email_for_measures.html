@@ -14,6 +14,28 @@
 <p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email! Bear in mind that a practice or CCG which is an outlier isn't necessarily a good or bad prescriber: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
 
 {% if has_stats %}
+  {% if stats.worst %}
+    <h3 class="worse">Worst prescribing measures</h3>
+      {% for measure in stats.worst %}
+        {% if forloop.first %}
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the worst 10% on
+          <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ still_bad_image }}"></a><br>
+        {% elif stats.worst|length == 2 %}
+          It was also in the worst 10% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% else %}
+          {% if forloop.counter == 2 %}
+            It was also in the worst 10% on:
+            <ul>
+          {% endif %}
+              <li><a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+            </ul>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
+
   {% if stats.most_changing.declines %}
     <h3 class="worse">Prescribing measures which are getting worse</h3>
     <p>
@@ -37,28 +59,6 @@
       </ul>
   {% endif %}
 
-
-  {% if stats.worst %}
-    <h3 class="worse">Worst prescribing measures</h3>
-      {% for measure in stats.worst %}
-        {% if forloop.first %}
-          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the worst 10% on
-          <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
-          <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ still_bad_image }}"></a><br>
-        {% elif stats.worst|length == 2 %}
-          It was also in the worst 10% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
-        {% else %}
-          {% if forloop.counter == 2 %}
-            It was also in the worst 10% on:
-            <ul>
-          {% endif %}
-              <li><a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
-          {% if forloop.last %}
-            </ul>
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-  {% endif %}
 
   {% if stats.top_savings.possible_savings %}
     <h3 class="worse">Possible savings</h3>
