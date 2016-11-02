@@ -7,7 +7,7 @@
 
 <p><b>Hello!</b></p>
 
-<p>Welcome to your your monthly update about <a href="{{ domain }}{{ bookmark.dashboard_url }}">{{bookmark.name}}</a>.</p>
+<p>Welcome to your your monthly update about how <a href="{{ domain }}{{ bookmark.dashboard_url }}">{{bookmark.name}}</a> compares with other {{ bookmark.org_type }}s nationwide, on {{ measures_count|apnumber }} different prescribing measures.</p>
 
 <p>{{ intro_text }}</p>
 
@@ -19,7 +19,7 @@
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          This {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          We found that this {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
         <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
           It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
@@ -42,7 +42,7 @@
     <h3 class="worse">Prescribing measures in the worst 10%</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
-          <p>Over the last three months, this {{ bookmark.org_type }} was in the worst 10% on
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the worst 10% on
           <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
           <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ still_bad_image }}"></a><br>
         {% elif stats.worst|length == 2 %}
@@ -62,7 +62,7 @@
 
   {% if stats.top_savings.possible_savings %}
     <h3 class="worse">Possible savings</h3>
-    <p>We've looked at all the measures where this organisation could have saved at least £1,000 in the last six months.
+    <p>We looked at all the measures where this organisation could have saved at least £1,000 in the last six months.
 
     {% if stats.top_savings.possible_savings|length_is:1 %}
       We found that if it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about <b>£{{ stats.top_savings.possible_savings.0.1|roundpound }}</b> on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.</p>
@@ -90,7 +90,7 @@
   <h3 class="better">Prescribing measures in the best 10%</h3>
     {% for measure in stats.best %}
       {% if forloop.first %}
-        <p>Over the last three months, this {{ bookmark.org_type }} was in the best 10% on
+        <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the best 10% on
         <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
       {% elif stats.best|length == 2 %}
         It was also in the best 10% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
@@ -111,7 +111,7 @@
     <h3 class="better">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>This {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>Over the last 9 months, we found that his {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
           It also improved by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
