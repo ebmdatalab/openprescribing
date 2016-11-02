@@ -41,16 +41,16 @@
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          We found that this {{ bookmark.org_type }} slipped by {{percent_from|delta:percent_to|wholenum}} centiles over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          We found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:percent_to}} over the last 9 months on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>:<br>
         <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
-          It also slipped by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+          It also slipped {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
            It also slipped:
            <ul>
           {% endif %}
-            <li>by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -111,16 +111,16 @@
     <h3 class="better">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>Over the last 9 months, we found that his {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>Over the last 9 months, we found that his {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also improved by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also improved by {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
            It also improved:
            <ul>
           {% endif %}
-            <li>by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>by {{percent_from|deltawords:percent_to}} on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}

@@ -23,8 +23,20 @@ def wholenum(num):
 
 
 @register.filter
-def delta(num, arg):
-    return abs(num - arg)
+def deltawords(num, arg):
+    """An adverb to come after the word 'improved' or 'slipped'
+    """
+    delta = abs(num - arg)
+    # We only pick out changes over 10%; over 30% in 9 months is unheard of.
+    if delta < 10:
+        word = "slightly"
+    elif delta < 20:
+        word = "quite a lot"
+    elif delta < 30:
+        word = "considerably"
+    else:
+        word = "massively"
+    return word
 
 
 @register.filter
