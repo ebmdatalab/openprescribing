@@ -80,7 +80,7 @@
   {% if stats.top_savings.possible_top_savings_total > 5000 %}
 
       <h4>Best-case possible savings</h4>
-<p>We compared this {{ bookmark.org_type }}'s spending with the lowest-spending 10% on all the areas we track.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
+<p>We compared this {{ bookmark.org_type }}'s spending with the best-performing 10% on all the areas we track.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
     <a href="{{ domain }}{{ bookmark.dashboard_url }}?sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
 
     </p>
