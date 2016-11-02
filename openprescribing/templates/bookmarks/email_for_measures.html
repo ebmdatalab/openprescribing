@@ -39,7 +39,7 @@
 
 
   {% if stats.worst %}
-    <h3 class="worse">Prescribing measures in the worst 10%</h3>
+    <h3 class="worse">Worst prescribing measures</h3>
       {% for measure in stats.worst %}
         {% if forloop.first %}
           <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the worst 10% on
@@ -87,7 +87,7 @@
   {% endif %}
 
   {% if stats.best %}
-  <h3 class="better">Prescribing measures in the best 10%</h3>
+  <h3 class="better">Best prescribing measures</h3>
     {% for measure in stats.best %}
       {% if forloop.first %}
         <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the best 10% on
@@ -113,14 +113,14 @@
         {% if forloop.counter == 1 %}
           <p>Over the last 9 months, we found that his {{ bookmark.org_type }} improved by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also improved by {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also improved by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
-           It also improved on:
+           It also improved:
            <ul>
           {% endif %}
-            <li>By {{percent_from|delta:percent_to|wholenum}} centiles on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>by {{percent_from|delta:percent_to|wholenum}}% on <a href="{{ domain }}{{ bookmark.dashboard_url }}#{{measure.id}}">{{ measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
