@@ -95,7 +95,7 @@ class OrgEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, 'slipped massively .* on '
-            '<a href=".*/practice/P87629/#cerazette".*>'
+            '<a href=".*/practice/P87629/.*#cerazette".*>'
             'Cerazette vs. Desogestrel</a>')
         self.assertIn('<span class="worse"', body)
         self.assertIn('<img src="cid:unique-image-id', body)
@@ -158,7 +158,7 @@ class OrgEmailTestCase(TestCase):
         self.assertRegexpMatches(
             body, re.compile(
                 'the worst 10% on.*<a href=".*/practice/P87629'
-                '/#cerazette".*>'
+                '/.*#cerazette".*>'
                 "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', body)
 
@@ -197,7 +197,7 @@ class OrgEmailTestCase(TestCase):
             body)
         self.assertRegexpMatches(
             body, '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
-            '/#cerazette".*>'
+            '/.*#cerazette".*>'
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
     def test_email_body_one_saving(self, attach_image, email, finder):
@@ -216,7 +216,7 @@ class OrgEmailTestCase(TestCase):
             body)
         self.assertRegexpMatches(
             body, 'it could have saved about <b>£10</b> on '
-            '<a href=".*/practice/P87629/#cerazette".*>'
+            '<a href=".*/practice/P87629/.*#cerazette".*>'
             "Cerazette vs. Desogestrel</a>".decode('utf-8'))
 
     def test_email_body_achieved_saving(self, attach_image, email, finder):

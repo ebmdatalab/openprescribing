@@ -1,11 +1,18 @@
+import logging
+
+from allauth.account.signals import user_logged_in
 from anymail.signals import tracking
+from requests_futures.sessions import FuturesSession
+
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 
-from allauth.account.signals import user_logged_in
-
+from common.utils import google_user_id
 from frontend.models import Profile
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=User)
@@ -20,29 +27,38 @@ def handle_user_logged_in(sender, request, user, **kwargs):
     user.orgbookmark_set.update(approved=True)
 
 
-@receiver(tracking)
-def handle_open(sender, event, esp_name, **kwargs):
-    if event.event_type == 'opened':
-        print("Message %s to %s bounced" % (
-              event.message_id, event.recipient))
+# Do these via mailgun as we also get delivery and unsubscription events
+
+def send_ga_event(event):
+    try:
+        user = User.objects.get(email=event.recipient)
+        session = FuturesSession()
+        email_payload = {
+            'v': 1,
+            'tid': settings.GOOGLE_TRACKING_ID,
+            'cid': google_user_id(user),
+            't': 'event',
+            'ec': 'email',
+            'ea': event.event_type,
+            'dp': "/email/%s/%s/%s" % (
+                event.metadata['campaign_name'],
+                event.metadata['campaign_source'],
+                event.metadata['user_id']
+            ),
+            'ua': event.user_agent,
+            'dt': event.metadata['subject'],
+            'cm': 'email',
+            'cc': event.metadata['data'],
+            'cn': event.metadata['campaign_name'],
+            'cs': event.metadata['campaign_source']
+        }
+        session.post(
+            'https://www.google-analytics.com/collect', data=email_payload)
+    except User.DoesNotExist:
+        pass
 
 
 @receiver(tracking)
-def handle_click(sender, event, esp_name, **kwargs):
-    if event.event_type == 'clicked':
-        print("Recipient %s clicked url %s" % (
-              event.recipient, event.click_url))
-
-
-@receiver(tracking)
-def handle_deliver(sender, event, esp_name, **kwargs):
-    if event.event_type == 'delivered':
-        print("Recipient %s clicked url %s" % (
-              event.recipient, event.click_url))
-
-
-@receiver(tracking)
-def handle_unsubscribe(sender, event, esp_name, **kwargs):
-    if event.event_type == 'unsubscribed':
-        print("Recipient %s clicked url %s" % (
-              event.recipient, event.click_url))
+def handle_anymail_webhook(sender, event, esp_name, **kwargs):
+    logger.info("Received webhook from %s: %s" % (esp_name, event))
+    send_ga_event(event)

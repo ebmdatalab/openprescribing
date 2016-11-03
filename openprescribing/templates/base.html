@@ -123,31 +123,46 @@
       </div>
     </footer>
 
-
     {% block extra_js %}{% endblock extra_js %}
 
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    {% if GOOGLE_TRACKING_ID %}
+    <script>
+      function setParamsFromQueryString(params, keys) {
+        for(i=0; i < keys.length; i++) {
+         var match = location.search.match(new RegExp("[?&]"+keys[0]+"=([^&]+)(&|$)"));
+         var val = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+         if (val) {
+          params[keys[0]] = val;
+         }
+        }
+        return params;
+      }
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-62480003-1', 'auto');
-    ga('send', 'pageview', location.pathname + location.search + location.hash);
-
-  </script>
-
-  <script type="text/javascript">
-      window.doorbellOptions = {
-          appKey: 'Q0QHxHoW1DialTJ21NI5jKrDzqzyUrv9dXNENy3J3mGCu5RxFkNE59zrbCYeQvBh'
-      };
-      (function(w, d, t) {
-          var hasLoaded = false;
-          function l() { if (hasLoaded) { return; } hasLoaded = true; window.doorbellOptions.windowLoaded = true; var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/4272?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g); }
-          if (w.attachEvent) { w.attachEvent('onload', l); } else if (w.addEventListener) { w.addEventListener('load', l, false); } else { l(); }
-          if (d.readyState == 'complete') { l(); }
-      }(window, document, 'script'));
-  </script>
+      var params = {};
+      params = setParamsFromQueryString(params, ['clientId', 'expId', 'expVar']);
+      {% if GOOGLE_USER_ID %}
+        params['userId'] = '{{ GOOGLE_USER_ID }}';
+      {% endif %}
+      console.log(params);
+      ga('create', '{{ GOOGLE_TRACKING_ID }}', 'auto', params);
+      ga('send', 'pageview', location.pathname + location.search + location.hash);
+    </script>
+    {% endif %}
+    <script type="text/javascript">
+        window.doorbellOptions = {
+            appKey: 'Q0QHxHoW1DialTJ21NI5jKrDzqzyUrv9dXNENy3J3mGCu5RxFkNE59zrbCYeQvBh'
+        };
+        (function(w, d, t) {
+            var hasLoaded = false;
+            function l() { if (hasLoaded) { return; } hasLoaded = true; window.doorbellOptions.windowLoaded = true; var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/4272?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g); }
+            if (w.attachEvent) { w.attachEvent('onload', l); } else if (w.addEventListener) { w.addEventListener('load', l, false); } else { l(); }
+            if (d.readyState == 'complete') { l(); }
+        }(window, document, 'script'));
+    </script>
 
   </body>
 </html>

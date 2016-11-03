@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import json
 import numpy as np
 import subprocess
 import logging
 from tempfile import NamedTemporaryFile
+import urllib
 from premailer import Premailer
 from django.core.mail import EmailMultiAlternatives
 from anymail.message import attach_inline_image_file
@@ -16,6 +18,7 @@ from dateutil.relativedelta import relativedelta
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from common.utils import google_user_id
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.SITE_ROOT +
@@ -393,6 +396,25 @@ def _hasStats(stats):
             stats['most_changing']['improvements'])
 
 
+class StatsEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Measure):
+            return o.id
+        else:
+            return json.JSONEncoder.default(self, o)
+
+
+def build_ga_tracking_qs(content, bookmark):
+    tracking_params = {
+        'utm_medium': 'email',
+        'utm_campaign': 'alert on date (poss with A/B)',
+        'utm_source': 'dashboard',
+        'utm_content': json.dumps(content, cls=StatsEncoder),
+        'clientId': google_user_id(bookmark.user)
+    }
+    return urllib.urlencode(tracking_params)
+
+
 def make_org_email(org_bookmark, stats):
     recipient_email = org_bookmark.user.email
     recipient_key = org_bookmark.user.profile.key
@@ -404,7 +426,9 @@ def make_org_email(org_bookmark, stats):
         [recipient_email])
     getting_worse_img = still_bad_img = None
     html_email = get_template('bookmarks/email_for_measures.html')
-
+    qs = build_ga_tracking_qs(stats, org_bookmark)
+    dashboard_uri = mark_safe(
+        settings.GRAB_HOST + org_bookmark.dashboard_url() + '?' + qs)
     with NamedTemporaryFile(suffix='.png') as getting_worse_img, \
             NamedTemporaryFile(suffix='.png') as still_bad_img:
         most_changing = stats['most_changing']
@@ -434,6 +458,8 @@ def make_org_email(org_bookmark, stats):
                 'getting_worse_image': getting_worse_img,
                 'still_bad_image': still_bad_img,
                 'bookmark': org_bookmark,
+                'dashboard_uri': dashboard_uri,
+                'qs': qs,
                 'stats': stats,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
@@ -456,6 +482,11 @@ def make_search_email(search_bookmark):
         "hello@openprescribing.net",
         [recipient_email])
     html_email = get_template('bookmarks/email_for_searches.html')
+    qs = build_ga_tracking_qs(
+        {'url': search_bookmark.dashboard_url()},
+        search_bookmark)
+    dashboard_uri = (settings.GRAB_HOST + search_bookmark.dashboard_url() +
+                     '&' + qs)
 
     with NamedTemporaryFile(suffix='.png') as graph_file:
         graph = attach_image(
@@ -470,6 +501,7 @@ def make_search_email(search_bookmark):
                 'bookmark': search_bookmark,
                 'domain': settings.GRAB_HOST,
                 'graph': graph,
+                'dashboard_uri': dashboard_uri,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
                     kwargs={'key': recipient_key})

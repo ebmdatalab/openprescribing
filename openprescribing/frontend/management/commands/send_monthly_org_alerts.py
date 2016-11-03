@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from datetime import date
 import logging
+
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 from frontend.models import OrgBookmark
@@ -76,6 +78,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.validate_options(**options)
+        today = date.today().strftime("%Y-%m-%d")
         for org_bookmark in self.get_org_bookmarks(**options):
             stats = bookmark_utils.InterestingMeasureFinder(
                 practice=org_bookmark.practice or options['practice'],
@@ -83,11 +86,12 @@ class Command(BaseCommand):
             recipient_id = org_bookmark.user.id
             msg = bookmark_utils.make_org_email(
                 org_bookmark, stats)
-            # Optional Anymail extensions:
             msg.metadata = {"user_id": recipient_id,
-                            "experiment_variation": 1}
-            msg.tags = ["monthly_update"]
-            msg.track_clicks = True
+                            "subject": msg.subject,
+                            "campaign_name": "monthly alert %s" % today,
+                            "campaign_source": "dashboard-alerts",
+                            "data": stats}
+            msg.tags = ["monthly_update", "measures"]
             msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
@@ -96,11 +100,12 @@ class Command(BaseCommand):
             recipient_id = search_bookmark.user.id
             msg = bookmark_utils.make_search_email(
                 search_bookmark)
-            # Optional Anymail extensions:
             msg.metadata = {"user_id": recipient_id,
-                            "experiment_variation": 1}
-            msg.tags = ["monthly_update"]
-            msg.track_clicks = True
+                            "subject": msg.subject,
+                            "campaign_name": "monthly alert %s" % today,
+                            "campaign_source": "analyse-alerts",
+                            "data": {"url": search_bookmark.dashboard_url()}}
+            msg.tags = ["monthly_update", "analyse"]
             msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
