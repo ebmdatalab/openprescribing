@@ -9,13 +9,20 @@ page.viewportSize = {
 };
 var address;
 
-if (system.args.length !== 4) {
-  console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector>');
+if (system.args.length < 4) {
+  console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector> [<width>x<height>]');
   phantom.exit(1);
 } else {
   address = system.args[1];
   var path = system.args[2];
   var selector = system.args[3];
+  if (system.args.length === 5) {
+    var parts = system.args[4].split('x');
+    page.viewportSize = {
+      width: parseInt(parts[0], 10),
+      height: parseInt(parts[1], 10)
+    };
+  }
   page.open(address, function(status) {
     if (!status === 'success') {
       console.log('Unable to load the address!');

@@ -303,17 +303,20 @@ class InterestingMeasureFinder(object):
             'top_savings': self.top_and_total_savings_in_period(6)}
 
 
-def attach_image(msg, url, file_path, selector):
-    cmd = ('{cmd} "{host}{url}" {file_path} "{selector}"'.format(
-        cmd=GRAB_CMD,
-        host=settings.GRAB_HOST,
-        url=url,
-        file_path=file_path,
-        selector=selector)
+def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
+    cmd = (
+        '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions}'.format(
+            cmd=GRAB_CMD,
+            host=settings.GRAB_HOST,
+            url=url,
+            file_path=file_path,
+            selector=selector,
+            dimensions=dimensions
+        )
     )
     logger.info("Running command %s" % cmd)
-    subprocess.check_call(cmd, shell=True)
-    logger.info("Command %s completed" % cmd)
+    result = subprocess.check_output(cmd, shell=True)
+    logger.info("Command %s completed with output %s" % (cmd, result.strip()))
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 
@@ -459,7 +462,8 @@ def make_search_email(search_bookmark):
             msg,
             search_bookmark.dashboard_url(),
             graph_file.name,
-            '#results .tab-pane.active'
+            '#results .tab-pane.active',
+            '800x600'
         )
         html = html_email.render(
             context={

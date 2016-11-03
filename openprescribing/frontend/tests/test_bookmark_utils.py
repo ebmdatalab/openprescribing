@@ -407,6 +407,9 @@ class TestBookmarkUtilsSavingsAchieved(TestCase):
 
 
 class MockServerRequestHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        pass
+
     def do_GET(self):
         if self.path == '/page.html':
             self.send_response(requests.codes.ok)
@@ -446,26 +449,44 @@ def start_mock_server(port):
 
 
 class GenerateImageTestCase(unittest.TestCase):
-    def test_image_generated(self):
+    def setUp(self):
         port = get_free_port()
         start_mock_server(port)
-        msg = EmailMultiAlternatives(
+        self.msg = EmailMultiAlternatives(
             "Subject", "body", "sender@email.com", ["recipient@email.com"])
-        url = ":%s/page.html" % port
-        file_path = "/tmp/image.png"
-        selector = "#thing2"
-        self.assertEqual(len(msg.attachments), 0)
-        image = bookmark_utils.attach_image(msg, url, file_path, selector)
+        self.url = ":%s/page.html" % port
+        self.file_path = "/tmp/image.png"
+        self.selector = "#thing2"
+
+    def tearDown(self):
+        import os
+        os.remove(self.file_path)
+
+    def test_image_generated(self):
+        self.assertEqual(len(self.msg.attachments), 0)
+        image = bookmark_utils.attach_image(
+            self.msg, self.url, self.file_path, self.selector)
         with open(
                 settings.SITE_ROOT + '/frontend/tests/fixtures/'
                 'alert-email-image.png', 'rb') as expected:
-            self.assertEqual(len(msg.attachments), 1)
-            attachment = msg.attachments[0]
+            self.assertEqual(len(self.msg.attachments), 1)
+            attachment = self.msg.attachments[0]
             # Check the attachment is as we expect
             self.assertEqual(attachment.get_filename(), 'image.png')
             self.assertIn(image, attachment['Content-ID'])
             # Attachments in emails are base64 *with line breaks*, so
             # we remove those.
+            self.assertEqual(
+                attachment.get_payload().replace("\n", ""),
+                base64.b64encode(expected.read()))
+
+    def test_small_image_generated_with_viewport_dimensions_specified(self):
+        bookmark_utils.attach_image(
+            self.msg, self.url, self.file_path, self.selector, '100x100')
+        with open(
+                settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                'alert-email-image-small.png', 'rb') as expected:
+            attachment = self.msg.attachments[0]
             self.assertEqual(
                 attachment.get_payload().replace("\n", ""),
                 base64.b64encode(expected.read()))
