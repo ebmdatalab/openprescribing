@@ -224,6 +224,11 @@ INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s'
+        }
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -234,12 +239,37 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'gunicorn': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': '/webapps/openprescribing/logs/gunicorn.log',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+        'signals': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': '/webapps/openprescribing/logs/mail-signals.log',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
         }
+
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'frontend': {
+            'level': 'WARN',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend.signals.handlers': {
+            'level': 'DEBUG',
+            'handlers': ['signals'],
             'propagate': True,
         },
     }

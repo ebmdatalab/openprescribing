@@ -57,7 +57,14 @@ LOGGING = {
             'formatter': 'verbose',
             'filename': '/webapps/openprescribing_staging/logs/gunicorn.log',
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
-        }
+        },
+        'signals': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': '/webapps/openprescribing/logs/mail-signals.log',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+            }
     },
     'loggers': {
         'django.request': {
@@ -66,8 +73,13 @@ LOGGING = {
             'propagate': True,
         },
         'frontend': {
-            'level': 'DEBUG',
+            'level': 'WARN',
             'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend.signals.handlers': {
+            'level': 'DEBUG',
+            'handlers': ['signals'],
             'propagate': True,
         },
     }
