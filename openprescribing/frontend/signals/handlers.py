@@ -42,18 +42,16 @@ def send_ga_event(event):
             'ua': event.user_agent,
             'cm': 'email',
         }
-        if event.esp_event:
-            payload['dt'] = event.esp_event['subject']
-            payload['cn'] = event.esp_event['campaign_name']
-            payload['cs'] = event.esp_event['campaign_source']
-            payload['dp'] = "/email/%s/%s/%s/%s" % (
-                event.esp_event['campaign_name'],
-                event.esp_event['campaign_source'],
-                event.esp_event['user_id'],
-                event.event_type
-            )
+        if event.esp_event.get('subject', None):
+            payload['dt'] = event.esp_event['subject'][0]
+            payload['cn'] = event.esp_event.get('campaign_name', None)
+            payload['cs'] = event.esp_event.get('campaign_source', None)
+            payload['cc'] = payload['el'] = event.esp_event.get(
+                'email_id', None)
+            payload['dp'] = "%s/%s" % (
+                payload['cc'], event.event_type)
         else:
-            logger.warn("No esp_event found for event: %s" % event.__dict__)
+            logger.warn("No subject found for event: %s" % event.__dict__)
         logger.info("Sending mail event data Analytics: %s" % payload)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)

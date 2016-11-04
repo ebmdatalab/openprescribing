@@ -78,33 +78,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.validate_options(**options)
-        today = date.today().strftime("%Y-%m-%d")
         for org_bookmark in self.get_org_bookmarks(**options):
             stats = bookmark_utils.InterestingMeasureFinder(
                 practice=org_bookmark.practice or options['practice'],
                 pct=org_bookmark.pct or options['ccg']).context_for_org_email()
-            recipient_id = org_bookmark.user.id
+
             msg = bookmark_utils.make_org_email(
                 org_bookmark, stats)
-            msg.metadata = {"user_id": recipient_id,
-                            "subject": msg.subject,
-                            "campaign_name": "monthly alert %s" % today,
-                            "campaign_source": "dashboard-alerts"}
-            msg.tags = ["monthly_update", "measures"]
-            msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
-                recipient_id, org_bookmark.id))
+                msg.recipients(), org_bookmark.id))
         for search_bookmark in self.get_search_bookmarks(**options):
             recipient_id = search_bookmark.user.id
             msg = bookmark_utils.make_search_email(
                 search_bookmark)
-            msg.metadata = {"user_id": recipient_id,
-                            "subject": msg.subject,
-                            "campaign_name": "monthly alert %s" % today,
-                            "campaign_source": "analyse-alerts"}
-            msg.tags = ["monthly_update", "analyse"]
-            msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
                 recipient_id, search_bookmark.id))

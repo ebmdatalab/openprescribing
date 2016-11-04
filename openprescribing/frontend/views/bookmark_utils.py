@@ -404,45 +404,58 @@ class StatsEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, o)
 
 
-def build_ga_tracking_qs(content, bookmark):
-    today = date.today().strftime("%Y-%m-%d")
+def ga_tracking_qs(context):
     tracking_params = {
         'utm_medium': 'email',
-        'utm_campaign': "monthly alert %s" % today,
-        'utm_source': 'dashboard-alerts'
+        'utm_campaign': context['campaign_name'],
+        'utm_source': context['campaign_source'],
+        'utm_content': context['email_id']
     }
     return urllib.urlencode(tracking_params)
 
 
-def make_org_email(org_bookmark, stats):
-    recipient_email = org_bookmark.user.email
-    recipient_key = org_bookmark.user.profile.key
-
+def make_email_with_campaign(bookmark, campaign_source):
+    campaign_name = "monthly alert %s" % date.today().strftime("%Y-%m-%d")
+    email_id = "/email/%s/%s/%s" % (
+        campaign_name,
+        campaign_source,
+        bookmark.id)
     msg = EmailMultiAlternatives(
-        "Your monthly update about %s" % org_bookmark.name,
+        "Your monthly update about %s" % bookmark.name,
         "This email is only available in HTML",
         "hello@openprescribing.net",
-        [recipient_email])
-    getting_worse_img = still_bad_img = None
-    html_email = get_template('bookmarks/email_for_measures.html')
-    qs = build_ga_tracking_qs(stats, org_bookmark)
+        [bookmark.user.email])
+    metadata = {"subject": msg.subject,
+                "campaign_name": campaign_name,
+                "campaign_source": campaign_source,
+                "email_id": email_id}
+    msg.metadata = metadata
+    msg.qs = ga_tracking_qs(metadata)
+    return msg
+
+
+def make_org_email(org_bookmark, stats):
+    msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = mark_safe(
-        settings.GRAB_HOST + org_bookmark.dashboard_url() + '?' + qs)
-    with NamedTemporaryFile(suffix='.png') as getting_worse_img, \
-            NamedTemporaryFile(suffix='.png') as still_bad_img:
+        settings.GRAB_HOST + org_bookmark.dashboard_url() +
+        '?' + msg.qs)
+    html_email = get_template('bookmarks/email_for_measures.html')
+    with NamedTemporaryFile(suffix='.png') as getting_worse_file, \
+            NamedTemporaryFile(suffix='.png') as still_bad_file:
         most_changing = stats['most_changing']
+        getting_worse_img = still_bad_img = None
         if most_changing['declines']:
             getting_worse_img = attach_image(
                 msg,
                 org_bookmark.dashboard_url(),
-                getting_worse_img.name,
+                getting_worse_file.name,
                 '#' + most_changing['declines'][0][0].id
             )
         if stats['worst']:
             still_bad_img = attach_image(
                 msg,
                 org_bookmark.dashboard_url(),
-                still_bad_img.name,
+                still_bad_file.name,
                 '#' + stats['worst'][0].id)
         html = html_email.render(
             context={
@@ -458,34 +471,25 @@ def make_org_email(org_bookmark, stats):
                 'still_bad_image': still_bad_img,
                 'bookmark': org_bookmark,
                 'dashboard_uri': dashboard_uri,
-                'qs': qs,
+                'qs': msg.qs,
                 'stats': stats,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
-                    kwargs={'key': recipient_key})
+                    kwargs={'key': org_bookmark.user.profile.key})
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
+        msg.tags = ["monthly_update", "measures"]
+        msg.esp_extra = {"sender_domain": "openprescribing.net"}
         return msg
 
 
 def make_search_email(search_bookmark):
-    recipient_email = search_bookmark.user.email
-    recipient_key = search_bookmark.user.profile.key
-
-    msg = EmailMultiAlternatives(
-        "Your monthly update about %s" % search_bookmark.name,
-        "This email is only available in HTML",
-        "hello@openprescribing.net",
-        [recipient_email])
+    msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
-    qs = build_ga_tracking_qs(
-        {'url': search_bookmark.dashboard_url()},
-        search_bookmark)
     dashboard_uri = (settings.GRAB_HOST + search_bookmark.dashboard_url() +
-                     '&' + qs)
-
+                     '&' + msg.qs)
     with NamedTemporaryFile(suffix='.png') as graph_file:
         graph = attach_image(
             msg,
@@ -502,9 +506,11 @@ def make_search_email(search_bookmark):
                 'dashboard_uri': dashboard_uri,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
-                    kwargs={'key': recipient_key})
+                    kwargs={'key': search_bookmark.user.profile.key})
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
+        msg.tags = ["monthly_update", "analyse"]
+        msg.esp_extra = {"sender_domain": "openprescribing.net"}
         return msg
