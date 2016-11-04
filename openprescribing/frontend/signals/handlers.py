@@ -41,21 +41,16 @@ def send_ga_event(event):
             'ea': event.event_type,
             'ua': event.user_agent,
             'cm': 'email',
-        }
-        if event.metadata:
-            payload['dt'] = event.metadata['subject']
-            payload['cn'] = event.metadata['campaign_name']
-            payload['cs'] = event.metadata['campaign_source']
-            payload['dp'] = "/email/%s/%s/%s/%s" % (
-                event.metadata['campaign_name'],
-                event.metadata['campaign_source'],
-                event.metadata['user_id'],
+            'dt': event.subject,
+            'cn': event.campaign_name,
+            'cs': event.campaign_source,
+            'dp': "/email/%s/%s/%s/%s" % (
+                event.campaign_name,
+                event.campaign_source,
+                event.user_id,
                 event.event_type
             )
-        else:
-            logger.info("No metadata found for event type %s" %
-                        event.event_type)
-            logger.debug("Full event data: %s" % event.__dict__)
+        }
         logger.debug("Recording event in Analytics: %s" % payload)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
@@ -66,4 +61,5 @@ def send_ga_event(event):
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
     logger.info("Received webhook from %s: %s" % (esp_name, event.event_type))
+    logger.debug("Full event data: %s" % event.__dict__)
     send_ga_event(event)
