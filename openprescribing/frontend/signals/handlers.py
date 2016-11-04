@@ -27,11 +27,10 @@ def handle_user_logged_in(sender, request, user, **kwargs):
     user.orgbookmark_set.update(approved=True)
 
 
-# Do these via mailgun as we also get delivery and unsubscription events
-
 def send_ga_event(event):
-    try:
-        user = User.objects.get(email=event.recipient)
+    user = User.objects.filter(email=event.recipient)
+    if user:
+        user = user[0]
         session = FuturesSession()
         payload = {
             'v': 1,
@@ -40,21 +39,25 @@ def send_ga_event(event):
             't': 'event',
             'ec': 'email',
             'ea': event.event_type,
-            'dp': "/email/%s/%s/%s" % (
+            'ua': event.user_agent,
+            'cm': 'email',
+        }
+        if event.metadata:
+            payload['dt'] = event.metadata['subject']
+            payload['cn'] = event.metadata['campaign_name']
+            payload['cs'] = event.metadata['campaign_source']
+            payload['dp'] = "/email/%s/%s/%s/%s" % (
                 event.metadata['campaign_name'],
                 event.metadata['campaign_source'],
-                event.metadata['user_id']
-            ),
-            'ua': event.user_agent,
-            'dt': event.metadata['subject'],
-            'cm': 'email',
-            'cn': event.metadata['campaign_name'],
-            'cs': event.metadata['campaign_source']
-        }
+                event.metadata['user_id'],
+                event.event_type
+            )
+        else:
+            logger.info("No metadata found for event %s" % event)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
-    except User.DoesNotExist:
-        pass
+    else:
+        logger.error("Could not find receipient %s" % event.recipient)
 
 
 @receiver(tracking)
