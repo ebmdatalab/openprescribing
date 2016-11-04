@@ -41,25 +41,27 @@ def send_ga_event(event):
             'ea': event.event_type,
             'ua': event.user_agent,
             'cm': 'email',
-            'dt': event.subject,
-            'cn': event.campaign_name,
-            'cs': event.campaign_source,
-            'dp': "/email/%s/%s/%s/%s" % (
-                event.campaign_name,
-                event.campaign_source,
-                event.user_id,
+        }
+        if event.esp_event:
+            payload['dt'] = event.esp_event['subject']
+            payload['cn'] = event.esp_event['campaign_name']
+            payload['cs'] = event.esp_event['campaign_source']
+            payload['dp'] = "/email/%s/%s/%s/%s" % (
+                event.esp_event['campaign_name'],
+                event.esp_event['campaign_source'],
+                event.esp_event['user_id'],
                 event.event_type
             )
-        }
-        logger.debug("Recording event in Analytics: %s" % payload)
+        else:
+            logger.warn("No esp_event found for event: %s" % event.__dict__)
+        logger.info("Sending mail event data Analytics: %s" % payload)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
     else:
-        logger.error("Could not find receipient %s" % event.recipient)
+        logger.warn("Could not find receipient %s" % event.recipient)
 
 
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
-    logger.info("Received webhook from %s: %s" % (esp_name, event.event_type))
-    logger.debug("Full event data: %s" % event.__dict__)
+    logger.debug("Received webhook from %s: %s" % (esp_name))
     send_ga_event(event)
