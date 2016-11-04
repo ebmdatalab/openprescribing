@@ -53,7 +53,9 @@ def send_ga_event(event):
                 event.event_type
             )
         else:
-            logger.info("No metadata found for event %s" % event)
+            logger.info("No metadata found for event type %s" %
+                        event.event_type)
+        logger.debug("Recording event in Analytics: %s" % payload)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
     else:

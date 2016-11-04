@@ -65,6 +65,11 @@ LOGGING = {
             'handlers': ['gunicorn'],
             'propagate': True,
         },
+        'frontend': {
+            'level': 'DEBUG',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
     }
 }
 
