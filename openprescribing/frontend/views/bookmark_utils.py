@@ -318,9 +318,8 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
             dimensions=dimensions
         )
     )
-    logger.info("Running command %s" % cmd)
     result = subprocess.check_output(cmd, shell=True)
-    logger.info("Command %s completed with output %s" % (cmd, result.strip()))
+    logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 
@@ -469,7 +468,6 @@ def make_org_email(org_bookmark, stats):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
-        logger.info("Measures alert generated: %s" % msg)
         return msg
 
 
@@ -510,5 +508,4 @@ def make_search_email(search_bookmark):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         msg.attach_alternative(html, "text/html")
-        logger.info("Analysis alert generated: %s" % msg)
         return msg

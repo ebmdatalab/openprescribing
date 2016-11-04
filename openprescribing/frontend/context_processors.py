@@ -11,7 +11,6 @@ def support_email(request):
     return {'SUPPORT_EMAIL': settings.SUPPORT_EMAIL}
 
 
-
 def google_user_id(request):
     return {'GOOGLE_USER_ID': utils.google_user_id(request.user)}
 
@@ -20,5 +19,6 @@ def google_tracking_id(request):
     tracking_id = None
     if hasattr(settings, 'GOOGLE_TRACKING_ID'):
         tracking_id = settings.GOOGLE_TRACKING_ID
+    else:
         logger.warn("No GOOGLE_TRACKING_ID set")
     return {'GOOGLE_TRACKING_ID': tracking_id}

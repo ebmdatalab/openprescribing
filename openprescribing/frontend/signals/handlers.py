@@ -55,6 +55,7 @@ def send_ga_event(event):
         else:
             logger.info("No metadata found for event type %s" %
                         event.event_type)
+            logger.debug("Full event data: %s" % event.__dict__)
         logger.debug("Recording event in Analytics: %s" % payload)
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
@@ -64,5 +65,5 @@ def send_ga_event(event):
 
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
-    logger.info("Received webhook from %s: %s" % (esp_name, event))
+    logger.info("Received webhook from %s: %s" % (esp_name, event.event_type))
     send_ga_event(event)
