@@ -61,5 +61,10 @@ def send_ga_event(event):
 
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
-    logger.debug("Received webhook from %s: %s" % (esp_name, event.__dict__))
-    send_ga_event(event)
+    if 'monthly_update' in event.tags:
+        logger.debug("Handling webhook from %s: %s" % (
+            esp_name, event.__dict__))
+        send_ga_event(event)
+    else:
+        logger.warn("Received unhandled webhook from %s: %s" % (
+            esp_name, event.__dict__))
