@@ -129,7 +129,10 @@
 
   <script type="text/javascript">
       window.doorbellOptions = {
-          appKey: 'Q0QHxHoW1DialTJ21NI5jKrDzqzyUrv9dXNENy3J3mGCu5RxFkNE59zrbCYeQvBh'
+        appKey: 'Q0QHxHoW1DialTJ21NI5jKrDzqzyUrv9dXNENy3J3mGCu5RxFkNE59zrbCYeQvBh',
+        onSubmit: function () {
+         ga('send', 'pageview', '/doorbell');
+        }
       };
       (function(w, d, t) {
           var hasLoaded = false;
