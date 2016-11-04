@@ -56,7 +56,7 @@ def send_ga_event(event):
         session.post(
             'https://www.google-analytics.com/collect', data=payload)
     else:
-        logger.warn("Could not find receipient %s" % event.recipient)
+        logger.warn("Could not find recipient %s" % event.recipient)
 
 
 @receiver(tracking)
@@ -66,5 +66,5 @@ def handle_anymail_webhook(sender, event, esp_name, **kwargs):
             esp_name, event.__dict__))
         send_ga_event(event)
     else:
-        logger.warn("Received unhandled webhook from %s: %s" % (
+        logger.debug("Received unhandled webhook from %s: %s" % (
             esp_name, event.__dict__))
