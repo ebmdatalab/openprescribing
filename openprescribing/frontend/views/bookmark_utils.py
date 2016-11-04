@@ -409,8 +409,7 @@ def build_ga_tracking_qs(content, bookmark):
     tracking_params = {
         'utm_medium': 'email',
         'utm_campaign': "monthly alert %s" % today,
-        'utm_source': 'dashboard-alerts',
-        'clientId': google_user_id(bookmark.user)
+        'utm_source': 'dashboard-alerts'
     }
     return urllib.urlencode(tracking_params)
 
