@@ -89,8 +89,7 @@ class Command(BaseCommand):
             msg.metadata = {"user_id": recipient_id,
                             "subject": msg.subject,
                             "campaign_name": "monthly alert %s" % today,
-                            "campaign_source": "dashboard-alerts",
-                            "data": stats}
+                            "campaign_source": "dashboard-alerts"}
             msg.tags = ["monthly_update", "measures"]
             msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()
@@ -103,8 +102,7 @@ class Command(BaseCommand):
             msg.metadata = {"user_id": recipient_id,
                             "subject": msg.subject,
                             "campaign_name": "monthly alert %s" % today,
-                            "campaign_source": "analyse-alerts",
-                            "data": {"url": search_bookmark.dashboard_url()}}
+                            "campaign_source": "analyse-alerts"}
             msg.tags = ["monthly_update", "analyse"]
             msg.esp_extra = {"sender_domain": "openprescribing.net"}
             msg.send()

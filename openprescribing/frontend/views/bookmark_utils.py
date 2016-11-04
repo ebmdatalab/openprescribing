@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import date
 import json
 import numpy as np
 import subprocess
@@ -405,11 +406,11 @@ class StatsEncoder(json.JSONEncoder):
 
 
 def build_ga_tracking_qs(content, bookmark):
+    today = date.today().strftime("%Y-%m-%d")
     tracking_params = {
         'utm_medium': 'email',
-        'utm_campaign': 'alert on date (poss with A/B)',
-        'utm_source': 'dashboard',
-        'utm_content': json.dumps(content, cls=StatsEncoder),
+        'utm_campaign': "monthly alert %s" % today,
+        'utm_source': 'dashboard-alerts',
         'clientId': google_user_id(bookmark.user)
     }
     return urllib.urlencode(tracking_params)

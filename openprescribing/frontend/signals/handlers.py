@@ -33,7 +33,7 @@ def send_ga_event(event):
     try:
         user = User.objects.get(email=event.recipient)
         session = FuturesSession()
-        email_payload = {
+        payload = {
             'v': 1,
             'tid': settings.GOOGLE_TRACKING_ID,
             'cid': google_user_id(user),
@@ -48,12 +48,11 @@ def send_ga_event(event):
             'ua': event.user_agent,
             'dt': event.metadata['subject'],
             'cm': 'email',
-            'cc': event.metadata['data'],
             'cn': event.metadata['campaign_name'],
             'cs': event.metadata['campaign_source']
         }
         session.post(
-            'https://www.google-analytics.com/collect', data=email_payload)
+            'https://www.google-analytics.com/collect', data=payload)
     except User.DoesNotExist:
         pass
 

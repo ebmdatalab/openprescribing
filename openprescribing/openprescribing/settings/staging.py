@@ -71,4 +71,4 @@ LOGGING = {
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://staging.openprescribing.net"
 
-GOOGLE_TRACKING_ID = 'UA-62480003-2'
+GOOGLE_TRACKING_ID = 'UA-62480003-3'
