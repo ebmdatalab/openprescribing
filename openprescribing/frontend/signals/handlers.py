@@ -39,7 +39,7 @@ def send_ga_event(event):
             't': 'event',
             'ec': 'email',
             'ea': event.event_type,
-            'ua': event.user_agent,
+            'ua': event.esp_event.get('user-agent', None),
             'cm': 'email',
         }
         if event.esp_event.get('subject', None):
