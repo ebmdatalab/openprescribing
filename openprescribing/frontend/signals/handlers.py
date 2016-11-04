@@ -35,7 +35,7 @@ def send_ga_event(event):
         payload = {
             'v': 1,
             'tid': settings.GOOGLE_TRACKING_ID,
-            'cid': google_user_id(user),
+            'uid': google_user_id(user),
             't': 'event',
             'ec': 'email',
             'ea': event.event_type,
