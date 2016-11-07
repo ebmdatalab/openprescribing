@@ -3,6 +3,7 @@ services:
   db-test:
     image: mdillon/postgis:latest
     env_file: .env-test
+
   test:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
@@ -13,6 +14,7 @@ services:
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+      - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:
