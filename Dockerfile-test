@@ -1,0 +1,4 @@
+FROM ebmdatalab/openprescribing-base:latest
+
+ADD requirements /tmp/requirements/
+RUN pip install -r /tmp/requirements/test.txt && rm -rf /tmp/requirements

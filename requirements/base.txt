@@ -13,6 +13,7 @@ numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
 django-allauth==0.25.2
+lxml==3.6.4
 premailer
 django-anymail==0.6.1
 django-crispy-forms

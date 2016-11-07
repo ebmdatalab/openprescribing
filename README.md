@@ -20,7 +20,11 @@ In the project root, run
 
     docker-compose run test
 
-This will pull down the relevant images, and run the tests.
+This will pull down the relevant images, and run the tests.  In our CI
+system, we also run checks against the production environment, which
+you can reproduce with
+
+    docker-compose run test-production
 
 To open a shell (from where you can run migrations, start a server,
 etc), run
@@ -40,11 +44,17 @@ database configuration, you'll need to blow away the volume with:
     docker-compose rm -f all
 
 Any time you change the npm or pip dependencies, you should rebuild
-the docker image used by the tests:
+the docker image used by the tests to improve runtime performance of
+travis.
 
+    # Base docker image, for production
     docker build -t ebmdatalab/openprescribing-base .
+    # Same as base, but with local-only pip dependencies
+    docker build -t ebmdatalab/openprescribing-test -f Dockerfile-test .
     docker login  # details in `pass`; only have to do this once on your machin
-    docker push  # pushes the image to hub.docker.io
+    # push the images to hub.docker.io
+    docker push ebmdatalab/openprescribing-base
+    docker push ebmdatalab/openprescribing-test
 
 ## On bare metal
 

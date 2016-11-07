@@ -11,7 +11,7 @@
     <meta name="google-site-verification" content="JcfqytwjhFX03U1JI15k7oxfih_wpC1OWbCl1vxsosM" />
 
     <title>{% block title %}{% endblock %} | OpenPrescribing</title>
-    <script src="https://use.typekit.net/oji4kok.js"></script>
+    <script src="https://use.typekit.net/hkz3kmo.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
 
     {% if not debug %}
@@ -88,16 +88,6 @@
 
       <div class="starter-template">
 
-      {% if messages %}
-
-       {% for message in messages %}
-        <div class="alert alert-{{ message.tags}}">
-          {{message}}
-        </div>
-
-       {% endfor %}
-      {% endif %}
-
       {% block content %}{% endblock %}
 
       </div>
@@ -123,6 +113,7 @@
       </div>
     </footer>
 
+
     {% block extra_js %}{% endblock extra_js %}
 
     {% if GOOGLE_TRACKING_ID %}
@@ -147,7 +138,7 @@
       {% if GOOGLE_USER_ID %}
         params['userId'] = '{{ GOOGLE_USER_ID }}';
       {% endif %}
-      console.log(params);
+
       ga('create', '{{ GOOGLE_TRACKING_ID }}', 'auto', params);
       ga('send', 'pageview', location.pathname + location.search + location.hash);
     </script>
@@ -166,3 +157,4 @@
 
   </body>
 </html>
+

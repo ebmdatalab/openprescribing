@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
+from mock import patch
+from mock import MagicMock
+from mock import PropertyMock
 
 from frontend.tests.test_api_measures import setUpModule as setUpMeasures
 from selenium_base import SeleniumTestCase
@@ -20,6 +23,22 @@ class GeneralFrontendTest(SeleniumTestCase):
                                 verbosity=0)
         management.call_command('loaddata', fix_dir + 'measures.json',
                                 verbosity=0)
+
+    def test_menu_dropdown_on_doc_page(self):
+        with patch('requests.get') as mock_response:
+            # Mock the text fetched from Google Docs
+            text = PropertyMock(
+                return_value=('<head><style></style></head>'
+                              '<body>some text</body>'))
+            type(mock_response.return_value).text = text
+            url = self.live_server_url + '/docs/analyse/'
+            self.browser.get(url)
+            self.find_by_xpath("//a[contains(text(), 'More')]").click()
+            self.assertTrue(
+                self.find_by_xpath(
+                    "//a[contains(text(), 'About')]").is_displayed(),
+                "dropdown functionality broken at %s" % url
+            )
 
     def test_menu_dropdown(self):
         for url in ['/ccg/03Q/',
