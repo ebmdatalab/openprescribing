@@ -253,6 +253,8 @@ def analyse(request):
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
+        # Note that the (hidden) URL field is filled via javascript on
+        # page load (see `alertForm` in `chart.js`)
         form = SearchBookmarkForm(
             initial={'email': getattr(request.user, 'email', '')})
     context = {

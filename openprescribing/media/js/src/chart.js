@@ -153,11 +153,17 @@ var analyseChart = {
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
+      // Record the current encoded analysis in the hidden URL field
+      // in custom alerts signup form
       var alertForm = $(_this.el.alertForm);
       alertForm.parent().show();
       alertForm.find('#id_url').val(encodeURIComponent(this.hash));
       alertForm.find('#id_name').val(encodeURIComponent(
         _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
+      // Also append it to the preview URL that admins see
+      var previewHref = $('#preview-analyse-bookmark').attr('href');
+      $('#preview-analyse-bookmark').attr(
+        'href', previewHref + encodeURIComponent(this.hash));
       this.setUpSlider();
       this.setUpChartEvents();
       this.setUpSaveUrl();

@@ -202,6 +202,9 @@
     {{ form.non_field_errors }}
     {{ form | crispy }}
     <input class="btn btn-primary" type="submit" value="Subscribe">
+    {% if request.user.is_superuser %}
+      <a id="preview-analyse-bookmark" href="{% url 'preview-analyse-bookmark' %}?url=" class="btn btn-danger">Preview alert email</a>
+    {% endif %}
   </form>
 </div>
 <br/>

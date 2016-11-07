@@ -33,11 +33,13 @@ class TestAlertViews(TransactionTestCase):
         return self.client.post(
             '/analyse/', form_data, follow=True)
 
-    def _create_user_and_login(self, email):
+    def _create_user_and_login(self, email, is_superuser=False):
         from allauth.utils import get_user_model
         user = get_user_model().objects.create(
             username=email, email=email, is_active=True)
         user.set_unusable_password()
+        if is_superuser:
+            user.is_superuser = True
         user.save()
         EmailAddress.objects.create(user=user,
                                     email=email,
@@ -58,6 +60,11 @@ class TestAlertViews(TransactionTestCase):
             response, "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about mysearch", mail.outbox[0].body)
+
+    def test_preview_appears_for_admins(self):
+        self._create_user_and_login('a@a.com', is_superuser=True)
+        response = self.client.get('/analyse/')
+        self.assertContains(response, "Preview alert email")
 
     def test_search_bookmark_created(self):
         self.assertEqual(SearchBookmark.objects.count(), 0)
@@ -209,6 +216,7 @@ class TestFrontendViews(TransactionTestCase):
         response = self.client.get('/analyse/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'analyse.html')
+        self.assertNotContains(response, "Preview alert email")
 
     def test_call_view_bnf_all(self):
         response = self.client.get('/bnf/')
