@@ -5,7 +5,7 @@ from .local import *
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-if 'TRAVIS' in os.environ:
+if 'TRAVIS' not in os.environ:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': True,
