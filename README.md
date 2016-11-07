@@ -99,11 +99,11 @@ Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required fo
 
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
-You will want `MAILGUN_WEBHOOK_AUTH_STRING` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
+You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
 
     http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
 
-Then set `MAILGUN_WEBHOOK_AUTH_STRING` to `bobby:123`.
+Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
 

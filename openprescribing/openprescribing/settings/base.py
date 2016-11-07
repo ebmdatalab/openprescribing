@@ -308,8 +308,10 @@ GDOC_DOCS = {
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {
     "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
-        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
+    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
+    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
+        utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
+        utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
 }
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
