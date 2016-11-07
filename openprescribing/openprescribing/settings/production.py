@@ -90,7 +90,7 @@ LOGGING = {
         'frontend.signals.handlers': {
             'level': 'DEBUG',
             'handlers': ['signals'],
-            'propagate': True,
+            'propagate': False,
         },
     }
 }

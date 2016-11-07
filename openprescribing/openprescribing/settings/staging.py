@@ -62,7 +62,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': '/webapps/openprescribing/logs/mail-signals.log',
+            'filename': '/webapps/openprescribing_staging/logs/mail-signals.log',
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
             }
     },
@@ -80,7 +80,7 @@ LOGGING = {
         'frontend.signals.handlers': {
             'level': 'DEBUG',
             'handlers': ['signals'],
-            'propagate': True,
+            'propagate': False,
         },
     }
 }
