@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
+import unittest
 
 from mock import patch
 from mock import ANY
 
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_org_alerts import Command
@@ -17,16 +19,52 @@ class AnyStringWith(str):
         return self in other
 
 
+class ValidateOptionsTestCase(unittest.TestCase):
+    def _defaultOpts(self, **extra):
+        default = {
+            'url': None,
+            'ccg': None,
+            'practice': None,
+            'recipient_email': None,
+            'url': None
+        }
+        for k, v in extra.items():
+            default[k] = v
+        return default
+
+    def test_options_depended_on_by_recipient_email(self):
+        opts = self._defaultOpts(url='thing')
+        with self.assertRaises(CommandError):
+            Command().validate_options(**opts)
+        opts = self._defaultOpts(ccg='thing')
+        with self.assertRaises(CommandError):
+            Command().validate_options(**opts)
+        opts = self._defaultOpts(practice='thing')
+        with self.assertRaises(CommandError):
+            Command().validate_options(**opts)
+
+        opts = self._defaultOpts(practice='thing', recipient_email='thing')
+        Command().validate_options(**opts)
+
+    def test_incompatibile_options(self):
+        opts = self._defaultOpts(url='thing', ccg='thing')
+        with self.assertRaises(CommandError):
+            Command().validate_options(**opts)
+        opts = self._defaultOpts(url='thing', practice='thing')
+        with self.assertRaises(CommandError):
+            Command().validate_options(**opts)
+
+
 class GetBookmarksTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
-    def test_get_bookmarks_without_options(self):
+    def test_get_org_bookmarks_without_options(self):
         bookmarks = Command().get_org_bookmarks(recipient_email=None)
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 3)
         self.assertTrue(active)
 
-    def test_get_bookmarks_with_options(self):
+    def test_get_org_bookmarks_with_options(self):
         bookmarks = Command().get_org_bookmarks(
             recipient_email='s@s.com',
             ccg='03V',
@@ -38,6 +76,23 @@ class GetBookmarksTestCase(TestCase):
         self.assertTrue(bookmarks[0].user.id)
         self.assertEqual(bookmarks[0].pct.code, '03V')
         self.assertEqual(bookmarks[0].practice.code, 'P87629')
+
+    def test_get_search_bookmarks_without_options(self):
+        bookmarks = Command().get_search_bookmarks(recipient_email=None)
+        active = all([x.user.is_active for x in bookmarks])
+        self.assertEqual(len(bookmarks), 1)
+        self.assertEqual(bookmarks[0].url, 'foo')
+        self.assertTrue(active)
+
+    def test_get_search_bookmarks_with_options(self):
+        bookmarks = Command().get_search_bookmarks(
+            recipient_email='s@s.com',
+            url='frob', search_name='baz')
+        self.assertEqual(len(bookmarks), 1)
+        self.assertEqual(bookmarks[0].user.email, 's@s.com')
+        self.assertTrue(bookmarks[0].user.profile.key)
+        self.assertTrue(bookmarks[0].user.id)
+        self.assertEqual(bookmarks[0].url, 'frob')
 
 
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
@@ -231,6 +286,17 @@ class OrgEmailTestCase(TestCase):
 class SearchEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
+    def test_all_recipients(self, attach_image, email):
+        call_command('send_monthly_org_alerts')
+        email.assert_any_call(
+            ANY,  # subject
+            ANY,  # body
+            "hello@openprescribing.net",
+            ['foo@baz.com']
+        )
+        self.assertEqual(email.call_count, 4)
+        email.return_value.send.assert_any_call()
+
     def test_email_recipient(self, attach_image, email):
         opts = {'recipient_email': 's@s.com',
                 'url': 'something'}
@@ -241,6 +307,7 @@ class SearchEmailTestCase(TestCase):
             "hello@openprescribing.net",
             ['s@s.com']
         )
+        self.assertEqual(email.call_count, 1)
         email.return_value.send.assert_any_call()
 
     def test_email_body(self, attach_image, email):

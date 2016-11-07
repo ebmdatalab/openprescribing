@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import date
+
 import logging
 
 from django.core.management.base import BaseCommand

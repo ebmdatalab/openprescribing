@@ -5,6 +5,7 @@ from frontend.templatetags import template_extras as t
 
 class TestTemplateExtras(unittest.TestCase):
     def test_roundpound_less_than_10(self):
+        self.assertEquals(t.roundpound(0.1), '0')
         self.assertEquals(t.roundpound(1), '1')
         self.assertEquals(t.roundpound(9), '9')
         self.assertEquals(t.roundpound(10), '10')

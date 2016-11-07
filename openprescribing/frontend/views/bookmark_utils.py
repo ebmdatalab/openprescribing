@@ -209,41 +209,6 @@ class InterestingMeasureFinder(object):
         return {'improvements': [x[1:] for x in improvements],
                 'declines': [x[1:] for x in declines]}
 
-    def most_change_in_period_2(self, period):
-        most_changing = []
-        for measure in Measure.objects.all():
-            measure_filter = {
-                'measure': measure,
-                'month__gte': self.months_ago(period),
-                'percentile__isnull': False
-            }
-            if self.practice:
-                measure_filter['practice'] = self.practice
-            else:
-                measure_filter['pct'] = self.pct
-                measure_filter['practice'] = None
-            percentiles = [x.percentile for x in
-                           remove_jagged(
-                               MeasureValue.objects.filter(**measure_filter)
-                               .order_by('month'))]
-            if len(percentiles) == period:
-                split = period / 2
-                d1 = np.array(percentiles[:split])
-                d2 = np.array(percentiles[split:])
-                d1_mean = np.mean(d1)
-                d2_mean = np.mean(d2)
-                percentile_change = d1_mean - d2_mean
-                if percentile_change >= self.interesting_percentile_change or \
-                   percentile_change <= (
-                       0 - self.interesting_percentile_change):
-                    most_changing.append(
-                        (percentile_change, measure, d1_mean, d2_mean)
-                    )
-
-        most_changing = sorted(most_changing, key=lambda x: x[0])
-        return [(line[1], line[2], line[3])
-                for line in most_changing]
-
     def top_and_total_savings_in_period(self, period):
         """Sum total possible savings over time, and find measures where
         possible or achieved savings are greater than self.interesting_saving.
@@ -397,14 +362,6 @@ def _hasStats(stats):
             stats['top_savings']['achieved_savings'] or
             stats['most_changing']['declines'] or
             stats['most_changing']['improvements'])
-
-
-class StatsEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, Measure):
-            return o.id
-        else:
-            return json.JSONEncoder.default(self, o)
 
 
 def ga_tracking_qs(context):

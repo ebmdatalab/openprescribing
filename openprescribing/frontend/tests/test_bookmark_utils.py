@@ -254,6 +254,14 @@ class TestBookmarkUtilsPerforming(TestCase):
         best_measures = finder.best_performing_in_period(3)
         self.assertIn(self.measure, best_measures)
 
+    def test_no_hit_where_practice_best_and_low_is_bad(self):
+        self.measure.low_is_good = False
+        self.measure.save()
+        finder = bookmark_utils.InterestingMeasureFinder(
+            practice=self.low_percentile_practice)
+        best_measures = finder.best_performing_in_period(3)
+        self.assertFalse(best_measures)
+
 
 class TestBookmarkUtilsChanging(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
@@ -291,9 +299,18 @@ class TestBookmarkUtilsChanging(TestCase):
         self.practice_with_high_change = practice_with_high_change
         self.practice_with_high_neg_change = practice_with_high_neg_change
 
-    def test_low_change_not_returned(self):
+    def test_low_change_not_returned_for_practice(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice_with_low_change,
+            interesting_percentile_change=10
+        )
+        self.assertEqual(finder.most_change_in_period(3),
+                         {'improvements': [],
+                          'declines': []})
+
+    def test_low_change_not_returned_for_ccg(self):
+        finder = bookmark_utils.InterestingMeasureFinder(
+            pct=self.practice_with_low_change.ccg,
             interesting_percentile_change=10
         )
         self.assertEqual(finder.most_change_in_period(3),
@@ -306,6 +323,23 @@ class TestBookmarkUtilsChanging(TestCase):
             interesting_percentile_change=10)
         sorted_measure = finder.most_change_in_period(3)
         measure_info = sorted_measure['improvements'][0]
+        self.assertEqual(
+            measure_info[0].id, 'cerazette')
+        self.assertAlmostEqual(
+            measure_info[1], 7)   # start
+        self.assertAlmostEqual(
+            measure_info[2], 21)  # end
+        self.assertAlmostEqual(
+            measure_info[3], 0)   # residuals
+
+    def test_high_change_declines_when_low_is_good(self):
+        self.measure.low_is_good = True
+        self.measure.save()
+        finder = bookmark_utils.InterestingMeasureFinder(
+            practice=self.practice_with_high_change,
+            interesting_percentile_change=10)
+        sorted_measure = finder.most_change_in_period(3)
+        measure_info = sorted_measure['declines'][0]
         self.assertEqual(
             measure_info[0].id, 'cerazette')
         self.assertAlmostEqual(
@@ -365,13 +399,29 @@ class TestBookmarkUtilsSavingsPossible(TestCase):
         _makeCostSavingMeasureValues(
             self.measure, self.practice, [0, 1500, 2000])
 
-    def test_possible_savings(self):
+    def test_possible_savings_for_practice(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             practice=self.practice)
         savings = finder.top_and_total_savings_in_period(3)
         self.assertEqual(savings['possible_savings'], [(self.measure, 3500)])
         self.assertEqual(savings['achieved_savings'], [])
         self.assertEqual(savings['possible_top_savings_total'], 350000)
+
+    def test_possible_savings_for_practice_not_enough_months(self):
+        finder = bookmark_utils.InterestingMeasureFinder(
+            practice=self.practice)
+        savings = finder.top_and_total_savings_in_period(10)
+        self.assertEqual(savings['possible_savings'], [])
+        self.assertEqual(savings['achieved_savings'], [])
+        self.assertEqual(savings['possible_top_savings_total'], 0)
+
+    def test_possible_savings_for_ccg(self):
+        finder = bookmark_utils.InterestingMeasureFinder(
+            pct=self.practice.ccg)
+        savings = finder.top_and_total_savings_in_period(3)
+        self.assertEqual(savings['possible_savings'], [])
+        self.assertEqual(savings['achieved_savings'], [])
+        self.assertEqual(savings['possible_top_savings_total'], 0)
 
     def test_possible_savings_low_is_good(self):
         self.measure.low_is_good = True

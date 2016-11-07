@@ -355,8 +355,8 @@ class TestFrontendViews(TransactionTestCase):
         self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
         doc = pq(response.content)
         title = doc('h1')
-        t = ('cerazette prescribing '
-             'by GP practices in NHS Corby')
+        t = ('Cerazette vs. Desogestrel prescribing by GP practices '
+             'in NHS Corby')
         self.assertEqual(title.text(), t)
 
     def test_call_view_practice_redirect(self):

@@ -29,6 +29,11 @@ class TestBookmarkViews(TransactionTestCase):
         self.assertContains(
             response, "You are currently subscribed to 3 monthly alerts")
 
+    def test_list_bookmarks_invalid_key(self):
+        url = reverse('bookmark-login', kwargs={'key': 'broken'})
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+
     def test_unsubscribe_one_by_one(self):
         # First, log in
         url = self._get_bookmark_url_for_user()
