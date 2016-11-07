@@ -560,6 +560,9 @@ class Profile(models.Model):
     key = models.CharField(max_length=32,
                            default=_makeKey,
                            unique=True)
+    emails_received = models.IntegerField(default=0)
+    emails_opened = models.IntegerField(default=0)
+    emails_clicked = models.IntegerField(default=0)
 
     def most_recent_bookmark(self):
         org_bookmark = self.user.orgbookmark_set.last()
