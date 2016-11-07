@@ -48,11 +48,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_recipient(self, attach_image, email, finder):
         test_context = _makeContext()
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(test_context, finder)
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
@@ -63,11 +59,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_no_data(self, attach_image, email, finder):
         test_context = _makeContext()
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(test_context, finder)
         attachment = email.return_value.attach_alternative
         # Name of the practice
         attachment.assert_called_once_with(
@@ -81,27 +73,20 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_has_ga_tracking(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
-        finder.return_value.context_for_org_email.return_value = test_context
-        attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, '<a href=".*&utm_content=.*#cerazette".*>')
 
     def test_email_body_declines(self, attach_image, email, finder):
-        measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
-        finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        measure = Measure.objects.get(pk='cerazette')
+        call_mocked_command(
+            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            finder)
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
             AnyStringWith("this practice slipped"), 'text/html')
@@ -118,17 +103,12 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_two_declines(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(declines=[
-            (measure, 99.92, 0.12, 10.002),
-            (measure, 30, 10, 0)
-
-        ])
-        finder.return_value.context_for_org_email.return_value = test_context
-        attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(declines=[
+                (measure, 99.92, 0.12, 10.002),
+                (measure, 30, 10, 0),
+            ]),
+            finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
@@ -136,17 +116,13 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_three_declines(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(declines=[
-            (measure, 99.92, 0.12, 10.002),
-            (measure, 30, 10, 0),
-            (measure, 20, 10, 0)
-        ])
-        finder.return_value.context_for_org_email.return_value = test_context
-        attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(declines=[
+                (measure, 99.92, 0.12, 10.002),
+                (measure, 30, 10, 0),
+                (measure, 20, 10, 0)
+            ]),
+            finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
@@ -157,13 +133,8 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(worst=[measure])
-        finder.return_value.context_for_org_email.return_value = test_context
         attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(_makeContext(worst=[measure]), finder)
         attachment = email.return_value.attach_alternative
         attachment.assert_called_once_with(
             AnyStringWith("We've found"), 'text/html')
@@ -178,13 +149,8 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_three_worst(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(worst=[measure, measure, measure])
-        finder.return_value.context_for_org_email.return_value = test_context
-        attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(worst=[measure, measure, measure]), finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
@@ -195,14 +161,10 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_two_savings(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(possible_savings=[
-            (measure, 9.9), (measure, 1.12)])
-        finder.return_value.context_for_org_email.return_value = test_context
-        attach_image.return_value = 'unique-image-id'
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(possible_savings=[
+                (measure, 9.9), (measure, 1.12)]),
+            finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -216,13 +178,8 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_one_saving(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(possible_savings=[
-            (measure, 9.9)])
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(possible_savings=[(measure, 9.9)]), finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -235,13 +192,8 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_achieved_saving(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(achieved_savings=[
-            (measure, 9.9)])
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(achieved_savings=[(measure, 9.9)]), finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -251,13 +203,10 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_two_achieved_savings(
             self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
-        test_context = _makeContext(achieved_savings=[
-            (measure, 9.9), (measure, 12.0)])
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(
+                achieved_savings=[(measure, 9.9), (measure, 12.0)]),
+            finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -268,12 +217,8 @@ class OrgEmailTestCase(TestCase):
             body)
 
     def test_email_body_total_savings(self, attach_image, email, finder):
-        test_context = _makeContext(possible_top_savings_total=9000.1)
-        finder.return_value.context_for_org_email.return_value = test_context
-        opts = {'recipient_email': 's@s.com',
-                'ccg': '03V',
-                'practice': 'P87629'}
-        call_command(CMD_NAME, **opts)
+        call_mocked_command(
+            _makeContext(possible_top_savings_total=9000.1), finder)
         attachment = email.return_value.attach_alternative
         body = attachment.call_args[0][0]
         self.assertIn(
@@ -313,6 +258,16 @@ class SearchEmailTestCase(TestCase):
         body = attachment.call_args[0][0]
         self.assertRegexpMatches(
             body, '<a href="http://localhost/analyse/.*#%s' % 'something')
+
+
+def call_mocked_command(context, mock_finder, **opts):
+    mock_finder.return_value.context_for_org_email.return_value = context
+    default_opts = {'recipient_email': 's@s.com',
+                    'ccg': '03V',
+                    'practice': 'P87629'}
+    for k, v in opts.items():
+        default_opts[k] = v
+    call_command(CMD_NAME, **default_opts)
 
 
 def _makeContext(**kwargs):
