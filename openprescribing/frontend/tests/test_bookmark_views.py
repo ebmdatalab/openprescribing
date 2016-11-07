@@ -5,6 +5,7 @@ from django.test import TransactionTestCase
 from django.core.urlresolvers import reverse
 
 from frontend.models import OrgBookmark
+from frontend.models import SearchBookmark
 from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import User
@@ -89,3 +90,12 @@ class TestBookmarkViews(TransactionTestCase):
         response = self.client.get(url)
         self.assertContains(
             response, "about this practice")
+
+    @patch('frontend.views.bookmark_utils.subprocess')
+    def test_preview_analysis_bookmark(self, subprocess):
+        bookmark = SearchBookmark.objects.first()
+        url = reverse('preview-analyse-bookmark') + '?url=' + bookmark.url
+        self.client.force_login(User.objects.get(username='admin-user'))
+        response = self.client.get(url)
+        self.assertContains(
+            response, "your monthly update")

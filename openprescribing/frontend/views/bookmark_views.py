@@ -97,8 +97,9 @@ def preview_ccg_bookmark(request, code):
 
 
 @staff_member_required
-def preview_analysis_bookmark(request, url):
-    return preview_bookmark(request, url)
+def preview_analysis_bookmark(request):
+    url = request.GET['url']
+    return preview_bookmark(request, url=url)
 
 
 def preview_bookmark(request, practice=None, pct=None, url=None):
@@ -114,8 +115,7 @@ def preview_bookmark(request, practice=None, pct=None, url=None):
             bookmark, context)
     else:
         bookmark = SearchBookmark(url=url, user=user)
-        msg = bookmark_utils.make_search_email(
-            bookmark, context)
+        msg = bookmark_utils.make_search_email(bookmark)
     html = msg.alternatives[0][0]
     images = msg.attachments
     return HttpResponse(_convert_images_to_data_uris(html, images))
