@@ -492,6 +492,34 @@ class GenerateImageTestCase(unittest.TestCase):
                 base64.b64encode(expected.read()))
 
 
+class UnescapeTestCase(unittest.TestCase):
+    def test_no_url(self):
+        example = "Foo bar"
+        self.assertEqual(
+            bookmark_utils.unescape_href(example), example)
+
+    def test_unescaped_url(self):
+        example = "Foo bar href='http://foo.com/frob?b=3#bar'"
+        self.assertEqual(
+            bookmark_utils.unescape_href(example), example)
+
+    def test_escaped_url(self):
+        example = "href='http://localhost/analyse/?u=7&amp;m=9#bong'"
+        expected = "href='http://localhost/analyse/?u=7&m=9#bong'"
+        self.assertEqual(
+            bookmark_utils.unescape_href(example), expected)
+
+    def test_mixture(self):
+        example = ('Foo href="http://localhost/analyse/?u=7&amp;m=9" '
+                   'href="http://foo.com/frob?b=3#bar" '
+                   'Baz')
+        expected = ('Foo href="http://localhost/analyse/?u=7&m=9" '
+                    'href="http://foo.com/frob?b=3#bar" '
+                    'Baz')
+        self.assertEqual(
+            bookmark_utils.unescape_href(example), expected)
+
+
 def _makeContext(**kwargs):
     empty_context = {
         'most_changing': {

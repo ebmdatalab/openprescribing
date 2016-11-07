@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from datetime import date
-import json
-import numpy as np
-import subprocess
-import logging
 from tempfile import NamedTemporaryFile
+import json
+import logging
+import numpy as np
+import re
+import subprocess
 import urllib
+import urlparse
+import HTMLParser
 from premailer import Premailer
 from django.core.mail import EmailMultiAlternatives
 from anymail.message import attach_inline_image_file
@@ -436,7 +439,7 @@ def make_email_with_campaign(bookmark, campaign_source):
 
 def make_org_email(org_bookmark, stats):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
-    dashboard_uri = mark_safe(
+    dashboard_uri = (
         settings.GRAB_HOST + org_bookmark.dashboard_url() +
         '?' + msg.qs)
     html_email = get_template('bookmarks/email_for_measures.html')
@@ -470,8 +473,8 @@ def make_org_email(org_bookmark, stats):
                 'getting_worse_image': getting_worse_img,
                 'still_bad_image': still_bad_img,
                 'bookmark': org_bookmark,
-                'dashboard_uri': dashboard_uri,
-                'qs': msg.qs,
+                'dashboard_uri': mark_safe(dashboard_uri),
+                'qs': mark_safe(msg.qs),
                 'stats': stats,
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
@@ -479,6 +482,7 @@ def make_org_email(org_bookmark, stats):
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
+        html = unescape_href(html)
         msg.attach_alternative(html, "text/html")
         msg.tags = ["monthly_update", "measures"]
         msg.esp_extra = {"sender_domain": "openprescribing.net"}
@@ -488,8 +492,13 @@ def make_org_email(org_bookmark, stats):
 def make_search_email(search_bookmark):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
-    dashboard_uri = (settings.GRAB_HOST + search_bookmark.dashboard_url() +
-                     '&' + msg.qs)
+    parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
+    if parsed_url.query:
+        qs = '?' + parsed_url.query + '&' + msg.qs
+    else:
+        qs = '?' + msg.qs
+    dashboard_uri = (
+        settings.GRAB_HOST + parsed_url.path + qs + '#' + parsed_url.fragment)
     with NamedTemporaryFile(suffix='.png') as graph_file:
         graph = attach_image(
             msg,
@@ -503,14 +512,26 @@ def make_search_email(search_bookmark):
                 'bookmark': search_bookmark,
                 'domain': settings.GRAB_HOST,
                 'graph': graph,
-                'dashboard_uri': dashboard_uri,
+                'dashboard_uri': mark_safe(dashboard_uri),
                 'unsubscribe_link': settings.GRAB_HOST + reverse(
                     'bookmark-login',
                     kwargs={'key': search_bookmark.user.profile.key})
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
-        msg.attach_alternative(html, "text/html")
+        html = unescape_href(html)
+        msg.attach_alternative(html, "text/html") # XXX this escapes?
         msg.tags = ["monthly_update", "analyse"]
         msg.esp_extra = {"sender_domain": "openprescribing.net"}
         return msg
+
+
+def unescape_href(text):
+    """Unfortunately, premailer escapes hrefs and there's [not much we can
+    do about it](https://github.com/peterbe/premailer/issues/72).
+    Unencode them again."""
+    hrefs = re.findall(r'href=["\']([^"\']+)["\']', text)
+    html_parser = HTMLParser.HTMLParser()
+    for href in hrefs:
+        text = text.replace(href, html_parser.unescape(href))
+    return text

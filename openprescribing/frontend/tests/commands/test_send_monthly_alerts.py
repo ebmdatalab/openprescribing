@@ -79,6 +79,20 @@ class OrgEmailTestCase(TestCase):
         attachment.assert_called_once_with(
             AnyStringWith("We've no new information"), 'text/html')
 
+    def test_email_body_has_ga_tracking(self, attach_image, email, finder):
+        measure = Measure.objects.get(pk='cerazette')
+        test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
+        finder.return_value.context_for_org_email.return_value = test_context
+        attach_image.return_value = 'unique-image-id'
+        opts = {'recipient_email': 's@s.com',
+                'ccg': '03V',
+                'practice': 'P87629'}
+        call_command(CMD_NAME, **opts)
+        attachment = email.return_value.attach_alternative
+        body = attachment.call_args[0][0]
+        self.assertRegexpMatches(
+            body, '<a href=".*&utm_content=.*#cerazette".*>')
+
     def test_email_body_declines(self, attach_image, email, finder):
         measure = Measure.objects.get(pk='cerazette')
         test_context = _makeContext(declines=[(measure, 99.92, 0.12, 10.002)])
@@ -296,11 +310,9 @@ class SearchEmailTestCase(TestCase):
         # Unsubscribe link
         attachment.assert_called_once_with(
             AnyStringWith('/bookmarks/dummykey'), 'text/html')
-
-        attachment.assert_called_once_with(
-            AnyStringWith(
-                '<a href="http://localhost/analyse/#%s' % 'something'),
-            'text/html')
+        body = attachment.call_args[0][0]
+        self.assertRegexpMatches(
+            body, '<a href="http://localhost/analyse/.*#%s' % 'something')
 
 
 def _makeContext(**kwargs):
