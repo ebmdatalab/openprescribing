@@ -12,7 +12,7 @@ def _name_with_url(bookmark):
 
 class BookmarkListForm(forms.Form):
     org_bookmarks = forms.MultipleChoiceField(
-        label="",
+        label="Alerts about organisations",
         widget=forms.CheckboxSelectMultiple())
     search_bookmarks = forms.MultipleChoiceField(
         label="Alerts about searches",
