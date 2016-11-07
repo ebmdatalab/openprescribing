@@ -239,20 +239,6 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'gunicorn': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': '/webapps/openprescribing/logs/gunicorn.log',
-            'maxBytes': 1024 * 1024 * 100,  # 100 mb
-        },
-        'signals': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': '/webapps/openprescribing/logs/mail-signals.log',
-            'maxBytes': 1024 * 1024 * 100,  # 100 mb
         }
 
     },
@@ -261,17 +247,7 @@ LOGGING = {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
-        },
-        'frontend': {
-            'level': 'WARN',
-            'handlers': ['gunicorn'],
-            'propagate': True,
-        },
-        'frontend.signals.handlers': {
-            'level': 'DEBUG',
-            'handlers': ['signals'],
-            'propagate': True,
-        },
+        }
     }
 }
 # END LOGGING CONFIGURATION
