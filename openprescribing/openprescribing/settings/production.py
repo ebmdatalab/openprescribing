@@ -79,6 +79,11 @@ LOGGING = {
 
     },
     'loggers': {
+        'django': {
+            'handlers': ['gunicorn'],
+            'level': 'WARN',
+            'propagate': True,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',

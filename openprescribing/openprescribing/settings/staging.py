@@ -71,13 +71,13 @@ LOGGING = {
             }
     },
     'loggers': {
-        'django.request': {
-            'level': 'DEBUG',
+        'django': {
+            'level': 'WARN',
             'handlers': ['gunicorn'],
             'propagate': True,
         },
         'frontend': {
-            'level': 'WARN',
+            'level': 'DEBUG',
             'handlers': ['gunicorn'],
             'propagate': True,
         },
