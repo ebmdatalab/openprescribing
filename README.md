@@ -84,6 +84,10 @@ nodejs greater than v0.10.11:
     npm install -g jshint
     npm install
 
+To generate monthly alert emails (and run the tests for those) you'll
+need a `phantomjs` binary located at `/usr/local/bin/phantomjs`. Get
+it from [here](http://phantomjs.org/download.html).
+
 ### Create database and env variables
 
 Set up a Postgres 9.4 database (required for `jsonb` type), with
