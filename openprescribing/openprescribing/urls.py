@@ -1,13 +1,7 @@
-from django.conf.urls import patterns, include, url
-from django.conf.urls.static import static
-from django.conf import settings
+from django.conf.urls import include, url
 from django.views.generic import RedirectView, TemplateView
-from django.core.urlresolvers import reverse
-from common import utils
-import api
 from django.contrib import admin
 from frontend.views import views as frontend_views
-from frontend.views import profile_views
 from frontend.views import bookmark_views
 
 admin.autodiscover()
