@@ -468,8 +468,8 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             response_content = """
             <html>
             <head><script src='/jquery.min.js'></script></head>
-            <div id='thing1'>This is thing 1</div>
-            <div id='thing2'>This is thing 2</div>
+            <div id='thing1' style='background-color:red; width:100%; height:100%'></div>
+            <div id='thing2' style='background-color:green; width:100%; height:100%'></div>
             """
             self.wfile.write(response_content)
             return
