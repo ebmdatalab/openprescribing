@@ -66,14 +66,14 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': '/webapps/openprescribing/logs/gunicorn.log',
+            'filename': "%s/logs/gunicorn.log" % SITE_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
         'signals': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': '/webapps/openprescribing/logs/mail-signals.log',
+            'filename': "%s/logs/mail-signals.log" % SITE_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         }
 

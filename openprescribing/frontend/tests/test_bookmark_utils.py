@@ -386,7 +386,7 @@ def _makeCostSavingMeasureValues(measure, practice, savings):
         )
 
 
-class TestBookmarkUtilsSavingsPossible(TestCase):
+class TestBookmarkUtilsSavingsBase(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def setUp(self):
@@ -396,6 +396,11 @@ class TestBookmarkUtilsSavingsPossible(TestCase):
             category='prescribing',
             current_at=datetime.today())
         self.practice = Practice.objects.get(pk='P87629')
+
+
+class TestBookmarkUtilsSavingsPossible(TestBookmarkUtilsSavingsBase):
+    def setUp(self):
+        super(TestBookmarkUtilsSavingsPossible, self).setUp()
         _makeCostSavingMeasureValues(
             self.measure, self.practice, [0, 1500, 2000])
 
@@ -435,15 +440,8 @@ class TestBookmarkUtilsSavingsPossible(TestCase):
 
 
 class TestBookmarkUtilsSavingsAchieved(TestCase):
-    fixtures = ['bookmark_alerts', 'measures']
-
     def setUp(self):
-        self.measure_id = 'cerazette'
-        self.measure = Measure.objects.get(pk=self.measure_id)
-        ImportLog.objects.create(
-            category='prescribing',
-            current_at=datetime.today())
-        self.practice = Practice.objects.get(pk='P87629')
+        super(TestBookmarkUtilsSavingsAchieved, self).setUp()
         _makeCostSavingMeasureValues(
             self.measure, self.practice, [-1000, -500, 100])
 
@@ -467,9 +465,17 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             response_content = """
             <html>
-            <head><script src='/jquery.min.js'></script></head>
-            <div id='thing1' style='background-color:red; width:100%; height:100%'></div>
-            <div id='thing2' style='background-color:green; width:100%; height:100%'></div>
+             <head>
+              <script src='/jquery.min.js'></script>
+              <style>
+               div {width: 100%; height: 100%}
+               #thing1 {background-color:red}
+               #thing1 {background-color:green}
+              </style>
+             </head>
+             <div id='thing1'></div>
+             <div id='thing2'></div>
+            </html>
             """
             self.wfile.write(response_content)
             return

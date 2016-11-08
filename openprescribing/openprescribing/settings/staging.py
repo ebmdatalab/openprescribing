@@ -51,7 +51,8 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s'
+            'format': ('%(asctime)s %(levelname)s [%(name)s:%(lineno)s] '
+                       '%(module)s %(process)d %(thread)d %(message)s')
         }
     },
     'handlers': {
@@ -59,14 +60,15 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': '/webapps/openprescribing_staging/logs/gunicorn.log',
+            'filename': "%s/logs/gunicorn.log" % SITE_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
         'signals': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': '/webapps/openprescribing_staging/logs/mail-signals.log',
+            'filename':
+            "%s/logs/mail-signals.log" % SITE_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
             }
     },

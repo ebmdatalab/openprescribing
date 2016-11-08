@@ -88,6 +88,7 @@ class PCT(models.Model):
     def __unicode__(self):
         return self.name or ""
 
+
 class Practice(models.Model):
     '''
     GP practices. HSCIC practice status is from:

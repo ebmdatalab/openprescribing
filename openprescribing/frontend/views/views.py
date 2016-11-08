@@ -229,7 +229,7 @@ def last_bookmark(request):
             messages.success(
                 request,
                 mark_safe("Thanks, you're now subscribed to monthly "
-                "alerts about <em>%s</em>!" % last_bookmark.topic()))
+                          "alerts about <em>%s</em>!" % last_bookmark.topic()))
         except AttributeError:
             next_url = 'home'
             messages.success(

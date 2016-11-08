@@ -101,9 +101,11 @@ class OrgBookmarkForm(forms.Form):
                 raise forms.ValidationError("CCG %s does not exist" % pct_id)
         elif practice_id:
             try:
-                self.cleaned_data['practice'] = Practice.objects.get(pk=practice_id)
+                self.cleaned_data['practice'] = Practice.objects.get(
+                    pk=practice_id)
             except Practice.DoesNotExist:
-                raise forms.ValidationError("Practice %s does not exist" % pct_id)
+                raise forms.ValidationError(
+                    "Practice %s does not exist" % pct_id)
         else:
             raise forms.ValidationError("No practice or CCG specified")
         return self.cleaned_data

@@ -6,6 +6,7 @@ from .models import SearchBookmark, OrgBookmark
 class SearchBookmarkAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(OrgBookmark)
 class OrgBookmarkAdmin(admin.ModelAdmin):
     pass

@@ -39,8 +39,8 @@ class Command(BaseCommand):
                 practice_id=options['practice']
             )]
         elif not options['recipient_email']:
-            # XXX add a constraint here to ensure we don't send two
-            # emails for one month.
+            # Perhaps add a constraint here to ensure we don't send two
+            # emails for one month?
             bookmarks = OrgBookmark.objects.filter(
                 user__is_active=True)
         else:
@@ -57,8 +57,6 @@ class Command(BaseCommand):
                 name=options['search_name']
             )]
         elif not options['recipient_email']:
-            # XXX add a constraint here to ensure we don't send two
-            # emails for one month.
             bookmarks = SearchBookmark.objects.filter(
                 user__is_active=True)
         else:

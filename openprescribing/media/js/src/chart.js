@@ -39,7 +39,7 @@ var analyseChart = {
     title: '.chart-title',
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
-    alertForm: ('#alert-form'),
+    alertForm: ('#alert-form')
   },
 
   renderChart: function(globalOptions) {

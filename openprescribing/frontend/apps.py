@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
+
 class FrontendConfig(AppConfig):
     """An appconfig to wire up our receiver handlers.
 

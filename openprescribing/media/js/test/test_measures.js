@@ -293,7 +293,7 @@ describe('Measures', function() {
         {date: '2015-09-01', percentile: 13, cost_savings: { 10: 1, 50: 12.4 }},
         {date: '2015-10-01', percentile: 12, cost_savings: { 10: 1, 50: 10 }},
         {date: '2015-11-01', percentile: 12, cost_savings: { 10: 1, 50: 8 }},
-        {date: '2015-12-01', percentile: 7,  cost_savings: { 10: 1, 50: 7 }},
+        {date: '2015-12-01', percentile: 7, cost_savings: { 10: 1, 50: 7 }},
         ]
       }];
       var result = mu._getSavingAndPercentilePerItem(data, 6);

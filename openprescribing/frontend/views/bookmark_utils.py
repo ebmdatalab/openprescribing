@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from tempfile import NamedTemporaryFile
-import json
+import HTMLParser
 import logging
-import numpy as np
 import re
 import subprocess
 import urllib
 import urlparse
-import HTMLParser
-from premailer import Premailer
-from django.core.mail import EmailMultiAlternatives
+
 from anymail.message import attach_inline_image_file
+from dateutil.relativedelta import relativedelta
+from premailer import Premailer
+import numpy as np
+
+from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import apnumber
+from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import get_template
-from django.contrib.humanize.templatetags.humanize import apnumber
-from django.conf import settings
 from django.utils.safestring import mark_safe
 
-from dateutil.relativedelta import relativedelta
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
-from common.utils import google_user_id
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.SITE_ROOT +
@@ -74,7 +74,7 @@ def remove_jagged_logit(measurevalues):
         else:
             values.append(
                 np.log(
-                    (val + 0.5/len(measurevalues))/
+                    (val + 0.5/len(measurevalues)) /
                     (1 - val + (0.5/len(measurevalues)))
                 )
             )
@@ -206,8 +206,8 @@ class InterestingMeasureFinder(object):
 
         improvements = sorted(improvements, key=lambda x: -abs(x[0]))
         declines = sorted(declines, key=lambda x: -abs(x[0]))
-        return {'improvements': [x[1:] for x in improvements],
-                'declines': [x[1:] for x in declines]}
+        return {'improvements': [d[1:] for d in improvements],
+                'declines': [d[1:] for d in declines]}
 
     def top_and_total_savings_in_period(self, period):
         """Sum total possible savings over time, and find measures where
@@ -225,7 +225,6 @@ class InterestingMeasureFinder(object):
         total_savings = 0
         for measure in Measure.objects.all():
             if measure.is_cost_based:
-                # XXX factor out this conditional filtering
                 measure_filter = {
                     'measure': measure, 'month__gte': self.months_ago(period)}
                 if self.practice:
@@ -310,7 +309,8 @@ def getIntroText(stats, org_type):
                 org_type)
             in_sentence = True
             if declines and worst:
-                msg += "<span class='worse'>is getting worse, or could be doing better</span>"
+                msg += "<span class='worse'>is getting worse, or could be "
+                msg += "doing better</span>"
             elif declines:
                 msg += "<span class='worse'>is getting worse</span>"
             else:
@@ -334,7 +334,8 @@ def getIntroText(stats, org_type):
             elif improvements:
                 msg += "<span class='better'>is improving</span>."
             else:
-                msg += "<span class='better'>is already doing very well</span>."
+                msg += "<span class='better'>is already doing "
+                msg += "very well</span>."
             in_sentence = False
         if in_sentence:
             msg += ". "
@@ -476,7 +477,7 @@ def make_search_email(search_bookmark):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         html = unescape_href(html)
-        msg.attach_alternative(html, "text/html") # XXX this escapes?
+        msg.attach_alternative(html, "text/html")
         msg.tags = ["monthly_update", "analyse"]
         return msg
 

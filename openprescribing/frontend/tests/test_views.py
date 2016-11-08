@@ -11,6 +11,7 @@ from frontend.models import SearchBookmark
 
 from allauth.account.models import EmailAddress
 
+
 class TestAlertViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
                 'practices', 'shas', 'prescriptions', 'measures']
