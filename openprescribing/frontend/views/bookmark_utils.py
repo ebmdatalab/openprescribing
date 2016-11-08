@@ -383,7 +383,7 @@ def make_email_with_campaign(bookmark, campaign_source):
     msg = EmailMultiAlternatives(
         "Your monthly update about %s" % bookmark.name,
         "This email is only available in HTML",
-        "hello@openprescribing.net",
+        settings.SUPPORT_EMAIL,
         [bookmark.user.email])
     metadata = {"subject": msg.subject,
                 "campaign_name": campaign_name,
