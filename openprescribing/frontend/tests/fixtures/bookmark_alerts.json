@@ -88,7 +88,7 @@
     "pct": "03V",
     "practice": null,
     "approved": true,
-    "created_at": "2000-01-01"
+    "created_at": "2000-01-01T12:00:00Z"
   }
 },
 {
@@ -99,7 +99,7 @@
     "pct": null,
     "practice": "P87629",
     "approved": true,
-    "created_at": "2000-01-01"
+    "created_at": "2000-01-01T12:00:00Z"
   }
 },
 {
@@ -110,7 +110,7 @@
     "pct": null,
     "practice": "P87629",
     "approved": false,
-    "created_at": "2000-01-01"
+    "created_at": "2000-01-01T12:00:00Z"
   }
 },
 {
@@ -120,7 +120,7 @@
     "user": 1,
     "url": "foo",
     "approved": true,
-    "created_at": "2000-01-01"
+    "created_at": "2000-01-01T12:00:00Z"
   }
 },
 {
