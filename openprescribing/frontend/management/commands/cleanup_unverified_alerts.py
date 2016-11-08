@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 import logging
 
@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = 'Remove stale bookmarks and users. Should be run daily.'
 
     def handle(self, *args, **options):
-        now = datetime.datetime.now()
+        now = timezone.now()
         one_month_ago = now + relativedelta(months=-1)
         OrgBookmark.objects.filter(
             created_at__lte=one_month_ago, approved=False).delete()

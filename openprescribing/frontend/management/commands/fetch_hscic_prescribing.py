@@ -1,6 +1,8 @@
 import datetime
 import os
-from django.core.management.base import BaseCommand, CommandError
+
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 
 class Command(BaseCommand):
@@ -18,7 +20,7 @@ class Command(BaseCommand):
         else:
             START_YEAR = 2010
             START_MONTH = 8
-        now = datetime.datetime.now()
+        now = timezone.now()
         END_YEAR = now.year
         END_MONTH = now.month
         for year in range(START_YEAR, END_YEAR + 1):

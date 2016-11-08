@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils import timezone
 
 from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
@@ -43,7 +44,7 @@ class CommandsTestCase(TestCase):
     def test_new_unapproved_bookmarks_not_deleted(self):
         old_count = OrgBookmark.objects.count()
         new_bookmark = OrgBookmark.objects.filter(approved=False).first()
-        new_bookmark.created_at = datetime.now()
+        new_bookmark.created_at = timezone.now()
         new_bookmark.save()
         call_command('cleanup_unverified_alerts')
         self.assertEqual(OrgBookmark.objects.count(), old_count)
