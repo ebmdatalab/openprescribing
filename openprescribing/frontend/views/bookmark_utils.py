@@ -442,7 +442,6 @@ def make_org_email(org_bookmark, stats):
         html = unescape_href(html)
         msg.attach_alternative(html, "text/html")
         msg.tags = ["monthly_update", "measures"]
-        msg.esp_extra = {"sender_domain": "openprescribing.net"}
         return msg
 
 
@@ -479,7 +478,6 @@ def make_search_email(search_bookmark):
         html = unescape_href(html)
         msg.attach_alternative(html, "text/html") # XXX this escapes?
         msg.tags = ["monthly_update", "analyse"]
-        msg.esp_extra = {"sender_domain": "openprescribing.net"}
         return msg
 
 

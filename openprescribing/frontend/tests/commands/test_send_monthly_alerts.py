@@ -5,6 +5,7 @@ import unittest
 from mock import patch
 from mock import ANY
 
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
@@ -107,7 +108,7 @@ class OrgEmailTestCase(TestCase):
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
-            "hello@openprescribing.net",
+            settings.SUPPORT_EMAIL,
             ['s@s.com']
         )
         email.return_value.send.assert_any_call()
@@ -291,7 +292,7 @@ class SearchEmailTestCase(TestCase):
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
-            "hello@openprescribing.net",
+            settings.SUPPORT_EMAIL,
             ['foo@baz.com']
         )
         self.assertEqual(email.call_count, 4)
@@ -304,7 +305,7 @@ class SearchEmailTestCase(TestCase):
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
-            "hello@openprescribing.net",
+            settings.SUPPORT_EMAIL,
             ['s@s.com']
         )
         self.assertEqual(email.call_count, 1)
