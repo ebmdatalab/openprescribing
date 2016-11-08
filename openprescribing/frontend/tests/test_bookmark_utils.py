@@ -4,8 +4,8 @@ import unittest
 from django.test import TestCase
 import base64
 from datetime import datetime
-from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
+from BaseHTTPServer import BaseHTTPRequestHandler
+from BaseHTTPServer import HTTPServer
 import socket
 from threading import Thread
 import requests
