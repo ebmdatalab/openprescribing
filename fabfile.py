@@ -1,6 +1,6 @@
 from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
-from fabric.api import settings, task, env
+from fabric.api import settings, task, env, shell_env
 from fabric.context_managers import cd
 
 from datetime import datetime
@@ -134,10 +134,14 @@ def checkpoint(force_build):
 
 
 def deploy_static():
-    with prefix('source .venv/bin/activate'):
-        run('cd openprescribing/ && '
-            'python manage.py collectstatic -v0 --noinput '
-            '--settings=openprescribing.settings.production')
+    bootstrap_environ = {
+        'MAILGUN_WEBHOOK_USER': 'foo',
+        'MAILGUN_WEBHOOK_PASS': 'foo'}
+    with shell_env(**bootstrap_environ):
+        with prefix('source .venv/bin/activate'):
+            run('cd openprescribing/ && '
+                'python manage.py collectstatic -v0 --noinput '
+                '--settings=openprescribing.settings.production')
 
 
 def run_migrations():
