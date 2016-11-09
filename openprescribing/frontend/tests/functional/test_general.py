@@ -70,6 +70,7 @@ class GeneralFrontendTest(SeleniumTestCase):
                     '/analyse/']:
             url = self.live_server_url + url
             self.browser.get(url)
+            self.find_by_xpath('//button[@id="doorbell-button"]')  # Wait for button load
             try:
                 self.find_by_xpath('//a[@class="doorbell-show"]').click()
             except AssertionError as e:
