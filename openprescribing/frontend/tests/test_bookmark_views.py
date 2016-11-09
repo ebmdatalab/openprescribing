@@ -68,7 +68,7 @@ class TestBookmarkViews(TransactionTestCase):
     def test_preview_ccg_bookmark(self, tmpfile, subprocess, finder):
         from test_bookmark_utils import _makeContext
         from django.conf import settings
-        context = _makeContext(declines=[(Measure(id='foo'), 30, 10)])
+        context = _makeContext(declines=[(Measure(id='foo'), 30, 10, 0)])
         test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
                          'alert-email-image.png')
 
