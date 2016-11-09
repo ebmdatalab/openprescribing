@@ -27,5 +27,3 @@ which submits the information to Google Analytics.
 All webhook events are recorded at debug level in the
 `frontend.signals.handlers` log facility.  For the time being, these
 are all logged to their own file in the production environment.
-
-Originally I considered adding code to
