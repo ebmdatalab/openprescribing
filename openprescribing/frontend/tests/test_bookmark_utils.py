@@ -308,14 +308,20 @@ class TestBookmarkUtilsChanging(TestCase):
                          {'improvements': [],
                           'declines': []})
 
+
     def test_low_change_not_returned_for_ccg(self):
-        finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.practice_with_low_change.ccg,
-            interesting_percentile_change=10
-        )
-        self.assertEqual(finder.most_change_in_period(3),
-                         {'improvements': [],
-                          'declines': []})
+        # This test will raise a warning due to all imput being
+        # None. Silence it.
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            finder = bookmark_utils.InterestingMeasureFinder(
+                pct=self.practice_with_low_change.ccg,
+                interesting_percentile_change=10
+            )
+            self.assertEqual(finder.most_change_in_period(3),
+                             {'improvements': [],
+                              'declines': []})
 
     def test_high_change_returned(self):
         finder = bookmark_utils.InterestingMeasureFinder(
@@ -439,7 +445,7 @@ class TestBookmarkUtilsSavingsPossible(TestBookmarkUtilsSavingsBase):
         self.assertEqual(savings['possible_top_savings_total'], 350.0)
 
 
-class TestBookmarkUtilsSavingsAchieved(TestCase):
+class TestBookmarkUtilsSavingsAchieved(TestBookmarkUtilsSavingsBase):
     def setUp(self):
         super(TestBookmarkUtilsSavingsAchieved, self).setUp()
         _makeCostSavingMeasureValues(

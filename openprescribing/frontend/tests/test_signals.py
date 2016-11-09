@@ -44,7 +44,8 @@ class TestAnymailReceiver(TestCase):
         mock_sender.assert_called_once_with(event, None)
 
     @patch('frontend.signals.handlers.send_ga_event')
-    def test_delivered(self, mock_sender):
+    @patch('frontend.signals.handlers.logger')
+    def test_delivered(self, mock_logger, mock_sender):
         send_event(
             event_type='delivered',
             recipient=User.objects.first().email,
@@ -53,7 +54,8 @@ class TestAnymailReceiver(TestCase):
         self.assertEqual(User.objects.first().profile.emails_received, 1)
 
     @patch('frontend.signals.handlers.send_ga_event')
-    def test_opened(self, mock_sender):
+    @patch('frontend.signals.handlers.logger')
+    def test_opened(self, mock_logger, mock_sender):
         send_event(
             event_type='opened',
             recipient=User.objects.first().email,
@@ -62,7 +64,8 @@ class TestAnymailReceiver(TestCase):
         self.assertEqual(User.objects.first().profile.emails_opened, 1)
 
     @patch('frontend.signals.handlers.send_ga_event')
-    def test_clicked(self, mock_sender):
+    @patch('frontend.signals.handlers.logger')
+    def test_clicked(self, mock_logger, mock_sender):
         send_event(
             event_type='clicked',
             recipient=User.objects.first().email,
@@ -71,7 +74,8 @@ class TestAnymailReceiver(TestCase):
         self.assertEqual(User.objects.first().profile.emails_clicked, 1)
 
     @patch('frontend.signals.handlers.FuturesSession')
-    def test_ga_event_no_metadata(self, mock_session):
+    @patch('frontend.signals.handlers.logger')
+    def test_ga_event_no_metadata(self, mock_logger, mock_session):
         send_event(
             event_type='clicked',
             recipient=User.objects.first().email,
@@ -88,7 +92,8 @@ class TestAnymailReceiver(TestCase):
             ANY, data=expected)
 
     @patch('frontend.signals.handlers.FuturesSession')
-    def test_ga_event_with_metadata(self, mock_session):
+    @patch('frontend.signals.handlers.logger')
+    def test_ga_event_with_metadata(self, mock_logger, mock_session):
         metadata = {
             'user-agent': 'tofu',
             'subject': ['tempeh'],

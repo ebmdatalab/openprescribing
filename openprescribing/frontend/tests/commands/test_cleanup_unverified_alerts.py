@@ -1,4 +1,3 @@
-from datetime import date
 from datetime import datetime
 
 from django.core.management import call_command
@@ -8,6 +7,8 @@ from django.utils import timezone
 from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
 from frontend.models import User
+
+import pytz
 
 
 class CommandsTestCase(TestCase):
@@ -52,7 +53,7 @@ class CommandsTestCase(TestCase):
     def test_old_unverified_users_without_bookmarks_deleted(self):
         user = self._makeUser(
             has_bookmarks=False,
-            date_joined=date(2000, 1, 1),
+            date_joined=datetime(2000, 1, 1, tzinfo=pytz.utc),
             is_superuser=False,
             verified=False)
         call_command('cleanup_unverified_alerts')
@@ -62,7 +63,7 @@ class CommandsTestCase(TestCase):
     def test_old_unverified_users_with_bookmarks_not_deleted(self):
         user = self._makeUser(
             has_bookmarks=True,
-            date_joined=date(2000, 1, 1),
+            date_joined=datetime(2000, 1, 1, tzinfo=pytz.utc),
             is_superuser=False,
             verified=False)
         call_command('cleanup_unverified_alerts')
@@ -71,7 +72,7 @@ class CommandsTestCase(TestCase):
     def test_new_unverified_users_without_bookmarks_not_deleted(self):
         user = self._makeUser(
             has_bookmarks=False,
-            date_joined=datetime.today(),
+            date_joined=timezone.now(),
             is_superuser=False,
             verified=False)
         call_command('cleanup_unverified_alerts')
@@ -80,7 +81,7 @@ class CommandsTestCase(TestCase):
     def test_admin_users_never_deleted(self):
         user = self._makeUser(
             has_bookmarks=False,
-            date_joined=date(2000, 1, 1),
+            date_joined=datetime(2000, 1, 1, tzinfo=pytz.utc),
             is_superuser=True,
             verified=True)
         call_command('cleanup_unverified_alerts')
@@ -89,7 +90,7 @@ class CommandsTestCase(TestCase):
     def test_verified_users_never_deleted(self):
         user = self._makeUser(
             has_bookmarks=False,
-            date_joined=date(2000, 1, 1),
+            date_joined=datetime(2000, 1, 1, tzinfo=pytz.utc),
             is_superuser=False,
             verified=True)
         call_command('cleanup_unverified_alerts')
