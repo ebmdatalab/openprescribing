@@ -239,12 +239,10 @@ class InterestingMeasureFinder(object):
                 savings_at_50th = [
                     x.cost_savings['50'] for x in
                     values]
-                possible_savings_for_measure = sum(
-                    [x for x in savings_at_50th if x > 0])
                 savings_or_loss_for_measure = sum(savings_at_50th)
-                if possible_savings_for_measure >= self.interesting_saving:
+                if savings_or_loss_for_measure >= self.interesting_saving:
                     possible_savings.append(
-                        (measure, possible_savings_for_measure)
+                        (measure, savings_or_loss_for_measure)
                     )
                 if savings_or_loss_for_measure <= -self.interesting_saving:
                     achieved_savings.append(
