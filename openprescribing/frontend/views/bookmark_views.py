@@ -1,12 +1,13 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.views.generic import ListView
 from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.generic import ListView
 
 from frontend.forms import BookmarkListForm
 from frontend.models import SearchBookmark
@@ -119,6 +120,13 @@ def preview_bookmark(request, practice=None, pct=None, url=None):
     html = msg.alternatives[0][0]
     images = msg.attachments
     return HttpResponse(_convert_images_to_data_uris(html, images))
+
+
+def email_verification_sent(request):
+    sent_in_session = request.session.get('sent_in_session', 0)
+    request.session['sent_in_session'] = sent_in_session + 1
+    context = {'sent_in_session': sent_in_session}
+    return render(request, 'account/verification_sent.html', context)
 
 
 def _convert_images_to_data_uris(html, images):

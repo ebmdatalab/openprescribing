@@ -1,14 +1,17 @@
 import requests
 from lxml import html
 
-from django.http import HttpResponse
-from django.db import IntegrityError
-from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from django.http import Http404
-from django.contrib.auth.models import User
-from django.contrib.auth import logout
 from django.contrib import messages
+from django.contrib.auth import SESSION_KEY
+from django.contrib.auth import BACKEND_SESSION_KEY
+from django.contrib.auth import HASH_SESSION_KEY
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.http import Http404
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
 from frontend.models import Chemical, Prescription
@@ -289,13 +292,20 @@ def _handleCreateBookmark(request, subject_class,
         # alerts without having to reconfirm by email.
         emailaddress = EmailAddress.objects.filter(user=user)
         if user == request.user:
-            emailaddress = EmailAddress.objects.filter(user=user)
             kwargs['approved'] = emailaddress.filter(verified=True).exists()
         else:
             kwargs['approved'] = False
             emailaddress.update(verified=False)
         subject_class.objects.get_or_create(**kwargs)
-        logout(request)
+        if hasattr(request, 'user'):
+            # Log the user out. We don't use Django's built-in logout
+            # mechanism because that clears the entire session, too,
+            # and we want to know if someone's logged in previously in
+            # this session.
+            request.user = AnonymousUser()
+            for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
+                if k in request.session:
+                    del(request.session[k])
         return perform_login(
             request, user,
             app_settings.EmailVerificationMethod.MANDATORY,

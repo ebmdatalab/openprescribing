@@ -94,6 +94,9 @@ urlpatterns = [
         name='last-bookmark'),
     url(r'^analyse/preview/$', bookmark_views.preview_analysis_bookmark,
         name="preview-analyse-bookmark"),
+    # Custom verification page, overrides allauth view
+    url(r"^confirm-email/$", bookmark_views.email_verification_sent,
+        name="account_email_verification_sent"),
 
     # anymail webhooks
     url(r'^anymail/', include('anymail.urls')),

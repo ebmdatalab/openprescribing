@@ -7,8 +7,11 @@
 
 <h1>One more step...</h1>
 
-<h3>Check your email and click the confirmation link.</h3>
-
+{% if sent_in_session > 0 %}
+ <h3>We've already sent you an email with a confirmation link. Please check your email to confirm all the alerts you've signed up for today.</h3>
+ {% else %}
+ <h3>Check your email and click the confirmation link.</h3>
+{% endif %}
 <button type="button" class="btn btn-primary" onclick="window.history.go(-1); return false;">Back to previous page</button>
 
 {% endblock %}
