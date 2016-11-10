@@ -153,21 +153,11 @@ var analyseChart = {
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
       $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
-      // Record the current encoded analysis in the hidden URL field
-      // in custom alerts signup form
-      var alertForm = $(_this.el.alertForm);
-      alertForm.parent().show();
-      alertForm.find('#id_url').val(encodeURIComponent(this.hash));
-      alertForm.find('#id_name').val(encodeURIComponent(
-        _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
-      // Also append it to the preview URL that admins see
-      var previewHref = $('#preview-analyse-bookmark').attr('href');
-      $('#preview-analyse-bookmark').attr(
-        'href', previewHref + encodeURIComponent(this.hash));
       this.setUpSlider();
       this.setUpChartEvents();
       this.setUpSaveUrl();
       this.setUpSaveUrlUI();
+      this.setUpAlertSubscription();
     } else {
       this.showErrorMessage(
         "No data found for this query. Please try again.", null);
@@ -183,6 +173,21 @@ var analyseChart = {
     var combinedData = utils.combineXAndYDatasets(xData, yData,
                                                       this.globalOptions.chartValues);
     this.globalOptions.data.combinedData = combinedData;
+  },
+
+  setUpAlertSubscription: function() {
+    // Record the current encoded analysis in the hidden URL field
+    // in custom alerts signup form
+    var _this = this;
+    var alertForm = $(_this.el.alertForm);
+    alertForm.parent().show();
+    alertForm.find('#id_url').val(encodeURIComponent(this.hash));
+    alertForm.find('#id_name').val(encodeURIComponent(
+      _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
+    // Also append it to the preview URL that admins see
+    var previewHref = $('#preview-analyse-bookmark').attr('href');
+    $('#preview-analyse-bookmark').attr(
+      'href', previewHref + encodeURIComponent(this.hash));
   },
 
   setUpSaveUrlUI: function() {
@@ -297,9 +302,10 @@ var analyseChart = {
       // update the URL
       var tabid = target.substring(1, target.length - 6);
       _this.globalOptions.selectedTab = tabid;
-      this.hash = hashHelper.setHashParams(_this.globalOptions);
+      _this.hash = hashHelper.setHashParams(_this.globalOptions);
       _this.setUpSaveUrl();
       _this.setUpSaveUrlUI();
+      _this.setUpAlertSubscription();
     });
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
@@ -308,7 +314,7 @@ var analyseChart = {
         'hitType': 'event',
         'eventCategory': 'items_spending_toggle',
         'eventAction': 'click',
-        'eventLabel':  _this.hash
+        'eventLabel': _this.hash
       });
       $('#items-spending-toggle .btn').removeClass('btn-info').addClass('btn-default');
       $(this).addClass('btn-info').removeClass('btn-default');
