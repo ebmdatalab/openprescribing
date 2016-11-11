@@ -10,7 +10,7 @@
 
 <p>Search for a practice by name, and see how the practice compares to the national mean for key prescribing indicators.</p>
 
-<input class="form-control" id="search" placeholder="Search by name or code, e.g. Castle Gardens" />
+<input class="form-control" id="search" placeholder="Search by practice name, postcode, or practice code" />
 
 <ul class="list-unstyled" id="all-results">
 
@@ -25,8 +25,8 @@ var inputSearch = '#search',
   allItems = [];
 {% for p in practices %}
 var practice = {
-    name: '{{ p.name }}',
-    code: '{{ p.postcode }}',
+    name: '{{ p.name }} ',
+    code: '{{ p.postcode }}, practice code {{ p.code }}',
     url: "{% url 'measures_for_one_practice' p.code %}"
 };
 allItems.push(practice);
