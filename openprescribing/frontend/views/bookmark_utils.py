@@ -373,14 +373,32 @@ def ga_tracking_qs(context):
     return urllib.urlencode(tracking_params)
 
 
+def truncate_subject(prefix, subject):
+    max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
+    ellipsis = '...'
+    subject = subject[0].lower() + subject[1:]
+    if len(subject) <= max_length:
+        truncated = subject
+    else:
+        if 'by' in subject:
+            end_bit = subject.split('by')[-1]
+            end_bit = 'by' + end_bit
+        else:
+            end_bit = ''
+        start_bit = subject[:(max_length - len(end_bit) - len(ellipsis))]
+        truncated = start_bit + ellipsis + end_bit
+    return prefix + truncated
+
+
 def make_email_with_campaign(bookmark, campaign_source):
     campaign_name = "monthly alert %s" % date.today().strftime("%Y-%m-%d")
     email_id = "/email/%s/%s/%s" % (
         campaign_name,
         campaign_source,
         bookmark.id)
+    subject_prefix = 'Your monthly update about '
     msg = EmailMultiAlternatives(
-        "Your monthly update about %s" % bookmark.name,
+        truncate_subject(subject_prefix, bookmark.name),
         "This email is only available in HTML",
         settings.SUPPORT_EMAIL,
         [bookmark.user.email])
