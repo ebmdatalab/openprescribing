@@ -62,7 +62,7 @@ class GetBookmarksTestCase(TestCase):
     def test_get_org_bookmarks_without_options(self):
         bookmarks = Command().get_org_bookmarks(recipient_email=None)
         active = all([x.user.is_active for x in bookmarks])
-        self.assertEqual(len(bookmarks), 3)
+        self.assertEqual(len(bookmarks), 2)
         self.assertTrue(active)
 
     def test_get_org_bookmarks_with_options(self):
@@ -295,7 +295,7 @@ class SearchEmailTestCase(TestCase):
             settings.SUPPORT_EMAIL,
             ['foo@baz.com']
         )
-        self.assertEqual(email.call_count, 4)
+        self.assertEqual(email.call_count, 3)
         email.return_value.send.assert_any_call()
 
     def test_email_recipient(self, attach_image, email):
