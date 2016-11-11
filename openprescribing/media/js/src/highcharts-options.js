@@ -62,6 +62,17 @@ var baseOptions = {
   chart: {
     type: 'scatter',
     zoomType: 'xy',
+    plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
+    events: {
+      load: function() {
+        // change cursor to crosshair to indicate zoom is possible
+        if (this.plotBackground) {
+          this.plotBackground.toFront().css({ // move on top to get all events
+            cursor: "crosshair"
+          });
+        }
+      }
+    },
     style: {
       fontFamily: "'sofia-pro', 'Helvetica Neue', 'Arial', sans-serif"
     }
