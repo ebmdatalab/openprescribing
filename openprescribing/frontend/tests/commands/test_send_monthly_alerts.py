@@ -10,9 +10,9 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import Measure
-from frontend.management.commands.send_monthly_org_alerts import Command
+from frontend.management.commands.send_monthly_alerts import Command
 
-CMD_NAME = 'send_monthly_org_alerts'
+CMD_NAME = 'send_monthly_alerts'
 
 
 class AnyStringWith(str):
@@ -288,7 +288,7 @@ class SearchEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
     def test_all_recipients(self, attach_image, email):
-        call_command('send_monthly_org_alerts')
+        call_command(CMD_NAME)
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
@@ -301,7 +301,7 @@ class SearchEmailTestCase(TestCase):
     def test_email_recipient(self, attach_image, email):
         opts = {'recipient_email': 's@s.com',
                 'url': 'something'}
-        call_command('send_monthly_org_alerts', **opts)
+        call_command(CMD_NAME, **opts)
         email.assert_any_call(
             ANY,  # subject
             ANY,  # body
