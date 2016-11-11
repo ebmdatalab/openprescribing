@@ -71,7 +71,7 @@ function waitFor($config) {
     }
     return setTimeout(function() {
       return $config.success();
-    }, 500); // the extra wait is for the graph to paint
+    }, 1000); // the extra wait is for the graph to paint
   }
 
   setTimeout(waitFor, $config.interval || 0, $config);
