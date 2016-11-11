@@ -186,9 +186,8 @@ var analyseChart = {
     alertForm.find('#id_url').val(encodeURIComponent(this.hash));
     alertForm.find('#id_name').val(title);
     // Also append it to the preview URL that admins see
-    var previewHref = $('#preview-analyse-bookmark').attr('href');
     $('#preview-analyse-bookmark').attr(
-      'href', previewHref + encodeURIComponent(this.hash) + '&name=' + title);
+      'href', '/analyse/preview/?url=' + encodeURIComponent(this.hash) + '&name=' + title);
   },
 
   setUpSaveUrlUI: function() {
