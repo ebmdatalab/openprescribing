@@ -9,20 +9,19 @@ page.viewportSize = {
 };
 var address;
 
-if (system.args.length < 4) {
-  console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector> [<width>x<height>]');
+if (system.args.length < 6) {
+  console.log('Usage: phantomjs grab_chart.js <url> <filename> <selector> <width>x<height> timeout');
   phantom.exit(1);
 } else {
   address = system.args[1];
   var path = system.args[2];
   var selector = system.args[3];
-  if (system.args.length === 5) {
-    var parts = system.args[4].split('x');
-    page.viewportSize = {
-      width: parseInt(parts[0], 10),
-      height: parseInt(parts[1], 10)
-    };
-  }
+  var parts = system.args[4].split('x');
+  page.viewportSize = {
+    width: parseInt(parts[0], 10),
+    height: parseInt(parts[1], 10)
+  };
+  var wait = parseInt(system.args[5]);
   page.open(address, function(status) {
     if (!status === 'success') {
       console.log('Unable to load the address!');
@@ -34,7 +33,7 @@ if (system.args.length < 4) {
                         // visible (there's a jerky refresh thing
                         // going on). We should fix the jerky thing,
                         // then we can make the timeout shorter
-        timeout: 5000,
+        timeout: 10000,
         check: function() {
           return page.evaluate(function(s) {
             return $(s).is(':visible');
@@ -71,7 +70,7 @@ function waitFor($config) {
     }
     return setTimeout(function() {
       return $config.success();
-    }, 1000); // the extra wait is for the graph to paint
+    }, wait); // the extra wait is for the graph to paint
   }
 
   setTimeout(waitFor, $config.interval || 0, $config);

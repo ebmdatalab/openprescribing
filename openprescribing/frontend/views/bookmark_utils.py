@@ -273,14 +273,25 @@ class InterestingMeasureFinder(object):
 
 
 def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
+    if 'selectedTab=map' in url:
+        wait = 8000
+        dimensions = '1000x600'
+    elif 'selectedTab=chart' in url:
+        wait = 1000
+        dimensions = '800x600'
+    else:
+        wait = 500
+        dimensions = '800x600'
+    cmd = '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions} {wait}'
     cmd = (
-        '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions}'.format(
+        cmd.format(
             cmd=GRAB_CMD,
             host=settings.GRAB_HOST,
             url=url,
             file_path=file_path,
             selector=selector,
-            dimensions=dimensions
+            dimensions=dimensions,
+            wait=wait
         )
     )
     result = subprocess.check_output(cmd, shell=True)
@@ -478,8 +489,7 @@ def make_search_email(search_bookmark):
             msg,
             search_bookmark.dashboard_url(),
             graph_file.name,
-            '#results .tab-pane.active',
-            '800x600'
+            '#results .tab-pane.active'
         )
         html = html_email.render(
             context={
