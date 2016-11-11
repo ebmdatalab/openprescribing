@@ -282,6 +282,8 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
     elif 'selectedTab' in url:
         wait = 500
         dimensions = '800x600'
+    else:
+        wait = 500
     cmd = '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions} {wait}'
     cmd = (
         cmd.format(
