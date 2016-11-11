@@ -99,7 +99,8 @@ class TestBookmarkViews(TransactionTestCase):
     @patch('frontend.views.bookmark_utils.subprocess')
     def test_preview_analysis_bookmark(self, subprocess):
         bookmark = SearchBookmark.objects.first()
-        url = reverse('preview-analyse-bookmark') + '?url=' + bookmark.url
+        url = reverse('preview-analyse-bookmark')
+        url += '?url=' + bookmark.url + '&name=foo'
         self.client.force_login(User.objects.get(username='admin-user'))
         response = self.client.get(url)
         self.assertContains(

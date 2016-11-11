@@ -300,7 +300,8 @@ class SearchEmailTestCase(TestCase):
 
     def test_email_recipient(self, attach_image, email):
         opts = {'recipient_email': 's@s.com',
-                'url': 'something'}
+                'url': 'something',
+                'search_name': 'some name'}
         call_command(CMD_NAME, **opts)
         email.assert_any_call(
             ANY,  # subject

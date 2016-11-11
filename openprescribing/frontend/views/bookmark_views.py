@@ -100,10 +100,11 @@ def preview_ccg_bookmark(request, code):
 @staff_member_required
 def preview_analysis_bookmark(request):
     url = request.GET['url']
-    return preview_bookmark(request, url=url)
+    name = request.GET['name']
+    return preview_bookmark(request, url=url, name=name)
 
 
-def preview_bookmark(request, practice=None, pct=None, url=None):
+def preview_bookmark(request, practice=None, pct=None, url=None, name=None):
     user = User(email='foo@foo.com')
     user.profile = Profile()
     if pct or practice:
@@ -115,7 +116,7 @@ def preview_bookmark(request, practice=None, pct=None, url=None):
         msg = bookmark_utils.make_org_email(
             bookmark, context)
     else:
-        bookmark = SearchBookmark(url=url, user=user)
+        bookmark = SearchBookmark(url=url, user=user, name=name)
         msg = bookmark_utils.make_search_email(bookmark)
     html = msg.alternatives[0][0]
     images = msg.attachments

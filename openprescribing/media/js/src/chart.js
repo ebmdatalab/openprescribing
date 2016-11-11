@@ -180,14 +180,15 @@ var analyseChart = {
     // in custom alerts signup form
     var _this = this;
     var alertForm = $(_this.el.alertForm);
+    var title = encodeURIComponent(
+      _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, ''));
     alertForm.parent().show();
     alertForm.find('#id_url').val(encodeURIComponent(this.hash));
-    alertForm.find('#id_name').val(encodeURIComponent(
-      _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, '')));
+    alertForm.find('#id_name').val(title);
     // Also append it to the preview URL that admins see
     var previewHref = $('#preview-analyse-bookmark').attr('href');
     $('#preview-analyse-bookmark').attr(
-      'href', previewHref + encodeURIComponent(this.hash));
+      'href', previewHref + encodeURIComponent(this.hash) + '&name=' + title);
   },
 
   setUpSaveUrlUI: function() {

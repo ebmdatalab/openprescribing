@@ -584,21 +584,22 @@ class UnescapeTestCase(unittest.TestCase):
 
 class TruncateSubjectTestCase(unittest.TestCase):
     def test_truncate_subject(self):
-        data = [{'input':
-                 ('Items for Abacavir + Levocabastine + Levacetylmethadol '
-                  'Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + '
-                  'Alverine Citrate + Boceprevir by all CCGs'),
-                 'expected':
-                 ('Your monthly update about items for Abacavir + Levocaba...'
-                  'by all CCGs')},
-                {'input': 'a short title by me',
-                 'expected': 'Your monthly update about a short title by me'},
-                {'input':
-                 ('The point is that the relative freedom which we enjoy'
-                  'depends of public opinion. The law is no protection.'),
-                 'expected':
-                 ('Your monthly update about the point is that the relative '
-                  'freedom w...')}]
+        data = [
+            {'input': 'a short title by me',
+             'expected': 'Your monthly update about a short title by me'},
+            {'input':
+             ('Items for Abacavir + Levocabastine + Levacetylmethadol '
+              'Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + '
+              'Alverine Citrate + Boceprevir by all CCGs'),
+             'expected':
+             ('Your monthly update about items for Abacavir + Levocaba...'
+              'by all CCGs')},
+            {'input':
+             ('The point is that the relative freedom which we enjoy'
+              'depends of public opinion. The law is no protection.'),
+             'expected':
+             ('Your monthly update about the point is that the relative '
+              'freedom w...')}]
 
         for test_case in data:
             self.assertEqual(
