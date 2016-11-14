@@ -308,6 +308,19 @@ class FunctionalTests(TestCase):
         }
         self._assertExpectedMeasureValue(measure, month, expected)
 
+    def test_ccg_at_0th_centile(self):
+        month = '2015-09-01'
+        measure = Measure.objects.get(id='cerazette')
+        expected = {
+            '04D': {
+                'numerator': 1500,
+                'denominator': 21500,
+                'calc_value': 0.0698,
+                'percentile': 0
+            }
+        }
+        self._assertExpectedMeasureValue(measure, month, expected)
+
     def test_ccg_at_100th_centile(self):
         month = '2015-09-01'
         measure = Measure.objects.get(id='cerazette')
@@ -328,19 +341,6 @@ class FunctionalTests(TestCase):
         }
         self._assertExpectedMeasureValue(measure, month, expected)
 
-    def test_ccg_at_0th_centile(self):
-        month = '2015-09-01'
-        measure = Measure.objects.get(id='cerazette')
-        expected = {
-            '04D': {
-                'numerator': 1500,
-                'denominator': 21500,
-                'calc_value': 0.0698,
-                'percentile': 0
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
     def test_ccg_at_50th_centile(self):
         month = '2015-09-01'
         measure = Measure.objects.get(id='cerazette')
@@ -354,7 +354,7 @@ class FunctionalTests(TestCase):
         }
         self._assertExpectedMeasureValue(measure, month, expected)
 
-    def test_import_measureglobal(self):
+    def test_import_measureglobal(self):  # failing
         month = '2015-09-01'
         measure = Measure.objects.get(id='cerazette')
         expected = {
@@ -393,7 +393,7 @@ class FunctionalTests(TestCase):
                         '90': 162.00
                     },
                     'ccg': {
-                        '10': 64174.56,
+                        '10': 64174.56,  # this one got 62795.62
                         '30': 61416.69,
                         '50': 58658.82,
                         '80': 23463.53,
@@ -444,15 +444,19 @@ class FunctionalTests(TestCase):
                                 setting=1)
 
         args = []
-        test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'T201509PDPI+BNFT_formatted.csv'
         if 'SKIP_BQ_LOAD' not in os.environ:
+            fixtures_base = 'frontend/tests/fixtures/commands/'
+            prescribing_fixture = (fixtures_base +
+                                   'T201509PDPI+BNFT_formatted.csv')
+            practices_fixture = fixtures_base + 'practices.csv'
             bigquery.load_prescribing_data_from_file(
                 'measures',
-                settings.BQ_PRESCRIBING_TABLE_NAME, test_file)
-            bigquery.load_data_from_pg(
-                'hscic', settings.BQ_PRACTICES_TABLE_NAME,
-                'frontend_practice',
+                settings.BQ_PRESCRIBING_TABLE_NAME,
+                prescribing_fixture)
+            bigquery.load_data_from_file(
+                'measures',
+                settings.BQ_PRACTICES_TABLE_NAME,
+                practices_fixture,
                 bigquery.PRACTICE_SCHEMA)
         month = '2015-09-01'
         measure_id = 'cerazette'

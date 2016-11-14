@@ -51,7 +51,6 @@ class Command(BaseCommand):
         verbose = options['verbosity'] > 1
 
         for measure_id in options['measure_ids']:
-            # Create measure (if required)
             global_calculation = GlobalCalculation(
                 measure_id, verbose=verbose,
                 under_test=options['test_mode'])
