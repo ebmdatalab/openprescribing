@@ -27,8 +27,8 @@
     "((bnf_code LIKE '0403030Z0AA%%')  OR (bnf_code LIKE '0403030D0AA%%')  OR (bnf_code LIKE '0403030X0AA%%')  OR (bnf_code LIKE '0403030E0AA%%')  OR (bnf_code LIKE '0403030L0AA%%')  OR (bnf_code LIKE '0403030P0AA%%')  OR (bnf_code LIKE '0403030Q0AA%%')) "
   ],
   "denominator_columns": [
-    "SUM(items) as items, ",
-    "SUM(items) as denominator, "
+    "SUM(items) AS items, ",
+    "SUM(items) AS denominator, "
   ],
   "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
