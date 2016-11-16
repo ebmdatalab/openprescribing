@@ -9,7 +9,7 @@ env:
 sudo: required
 language: python
 before_install:
-  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine --force-yes
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
