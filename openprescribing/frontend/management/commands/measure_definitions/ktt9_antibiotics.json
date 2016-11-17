@@ -25,8 +25,8 @@
     "(bnf_code LIKE '0501%%')  "
   ],
   "denominator_columns": [
-    "JSON_EXTRACT(star_pu, '$.oral_antibacterials_item') AS denominator "
+    "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator "
   ],
   "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
-  "denominator_where": []
+  "denominator_where": [" 1 = 1 "]
 }

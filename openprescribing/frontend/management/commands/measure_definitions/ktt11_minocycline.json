@@ -27,5 +27,5 @@
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],
   "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
-  "denominator_where": []
+  "denominator_where": [ "1 = 1" ]
 }

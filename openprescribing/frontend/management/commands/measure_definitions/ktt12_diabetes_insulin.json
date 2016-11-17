@@ -31,6 +31,6 @@
   ],
   "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
-    "((bnf_code LIKE '0601012Z0%%')  OR (bnf_code LIKE '0601012X0%%')  OR (bnf_code LIKE '0601012V0%%')  OR (bnf_code LIKE '0601012G0%%')  OR (bnf_code LIKE '0601012L0%%')  OR (bnf_code LIKE '0601012N0%%')  OR (bnf_code LIKE '0601012S0%%')  OR (bnf_code LIKE '060101200%%')  OR (bnf_code LIKE '0601012U0%%'))  AND (bnf_code NOT LIKE '0601012C0%%')  AND (bnf_code NOT LIKE '0601012F0%%')  AND (bnf_code NOT LIKE '0601012D0%%')  AND (bnf_code NOT LIKE '0601012W0%%')  AND (practice_id=%s)  AND (processing_date=%s)"
+    "((bnf_code LIKE '0601012Z0%%')  OR (bnf_code LIKE '0601012X0%%')  OR (bnf_code LIKE '0601012V0%%')  OR (bnf_code LIKE '0601012G0%%')  OR (bnf_code LIKE '0601012L0%%')  OR (bnf_code LIKE '0601012N0%%')  OR (bnf_code LIKE '0601012S0%%')  OR (bnf_code LIKE '060101200%%')  OR (bnf_code LIKE '0601012U0%%'))  AND (bnf_code NOT LIKE '0601012C0%%')  AND (bnf_code NOT LIKE '0601012F0%%')  AND (bnf_code NOT LIKE '0601012D0%%')  AND (bnf_code NOT LIKE '0601012W0%%') "
   ]
 }
