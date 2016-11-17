@@ -405,8 +405,7 @@ class MeasureValue(models.Model):
 
     class Meta:
         app_label = 'frontend'
-        unique_together = (('measure', 'practice', 'month'),
-                           ('measure', 'pct', 'practice', 'month'),)
+        unique_together = (('measure', 'pct', 'practice', 'month'),)
 
 
 class MeasureGlobal(models.Model):

@@ -413,8 +413,7 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='measurevalue',
             unique_together=set(
-                [('measure', 'practice', 'month'),
-                 ('measure', 'pct', 'practice', 'month')]),
+                [('measure', 'pct', 'practice', 'month')]),
         ),
         migrations.AlterUniqueTogether(
             name='measureglobal',

@@ -150,8 +150,50 @@ class UnitTests(TestCase):
             self.assertEqual(mv.num_cost, 60)
             self.assertEqual(mv.cost_savings['10'], 9)
 
+    @patch('django.db.connection')
+    def test_reconstructor_not_called_when_measures_specified(self, conn):
+        from frontend.management.commands.import_measures \
+            import constraint_and_index_reconstructor
+        with constraint_and_index_reconstructor(
+                {'measure': 'thingy'}):
+            pass
+        execute = conn.cursor.return_value.__enter__.return_value.execute
+        execute.assert_not_called()
+
+    @patch('frontend.management.commands.import_measures.connection')
+    def test_reconstructor_called_when_no_measures_specified(self, conn):
+        from frontend.management.commands.import_measures \
+            import constraint_and_index_reconstructor
+        with constraint_and_index_reconstructor({}):
+            pass
+        calls = conn.cursor.return_value.__enter__\
+                    .return_value.execute.mock_calls
+        self.assertGreater(calls, 0)
+
 
 class FunctionalTests(TestCase):
+    fixtures = ['measures']
+
+    def test_reconstructor_does_work(self):
+        from django.db import connection
+        from frontend.management.commands.import_measures \
+            import constraint_and_index_reconstructor
+        start_count = Measure.objects.count()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM pg_indexes")
+            old_count = cursor.fetchone()[0]
+            with constraint_and_index_reconstructor({}):
+                Measure.objects.all().delete()
+                cursor.execute("SELECT COUNT(*) FROM pg_indexes")
+                new_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM pg_indexes")
+            after_count = cursor.fetchone()[0]
+        self.assertLess(Measure.objects.count(), start_count)
+        self.assertLess(new_count, old_count)
+        self.assertEqual(old_count, after_count)
+
+
+class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.env = patch.dict(
