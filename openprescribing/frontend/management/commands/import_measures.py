@@ -41,6 +41,9 @@ class Command(BaseCommand):
     You can also supply --start_date, or supply a file path that
     includes a timestamp with --month_from_prescribing_filename
 
+    Specify a measure with a single string argument to `--measure`,
+    and more than one with a comma-delimited list.
+
     '''
 
     def handle(self, *args, **options):
@@ -107,7 +110,10 @@ class Command(BaseCommand):
         """Parse command line options
         """
         if 'measure' in options and options['measure']:
-            options['measure_ids'] = [options['measure']]
+            if "," in options['measure']:
+                options['measure_ids'] = options['measure'].split(',')
+            else:
+                options['measure_ids'] = [options['measure']]
         else:
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
