@@ -30,7 +30,7 @@ DEBUG = False
 # MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ('EBM Data Lab', 'tech@ebmdatalab.net'),
+    ('EBM DataLab', 'tech@ebmdatalab.net'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
