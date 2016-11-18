@@ -1,79 +1,9 @@
-import csv
-import os
 import json
-import unittest
-from django.core import management
 from django.test import TestCase
-from common import utils
-from frontend.models import SHA, PCT, Chemical, Practice
-
-
-def setUpModule():
-    SHA.objects.create(code='Q51')
-    bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-    lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-    lincs_east = PCT.objects.create(code='03T', org_type='CCG')
-    Chemical.objects.create(bnf_code='0703021Q0',
-                            chem_name='Desogestrel')
-    Chemical.objects.create(bnf_code='0408010A0',
-                            chem_name='Keppra')
-    Practice.objects.create(code='C84001', ccg=bassetlaw,
-                            name='LARWOOD SURGERY', setting=4)
-    Practice.objects.create(code='C84024', ccg=bassetlaw,
-                            name='NEWGATE MEDICAL GROUP', setting=4)
-    Practice.objects.create(code='B82005', ccg=bassetlaw,
-                            name='PRIORY MEDICAL GROUP', setting=4,
-                            open_date='2015-01-01')
-    Practice.objects.create(code='B82010', ccg=bassetlaw,
-                            name='RIPON SPA SURGERY', setting=4)
-    Practice.objects.create(code='A85017', ccg=bassetlaw,
-                            name='BEWICK ROAD SURGERY', setting=4)
-    Practice.objects.create(code='A86030', ccg=bassetlaw,
-                            name='BETTS AVENUE MEDICAL GROUP', setting=4)
-    # Ensure we only include open practices in our calculations.
-    Practice.objects.create(code='B82008', ccg=bassetlaw,
-                            name='NORTH HOUSE SURGERY', setting=4,
-                            open_date='2010-04-01',
-                            close_date='2012-01-01')
-    # Ensure we only include standard practices in our calculations.
-    Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                            name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                            setting=1)
-    Practice.objects.create(code='C83051', ccg=lincs_west,
-                            name='ABBEY MEDICAL PRACTICE', setting=4)
-    Practice.objects.create(code='C83019', ccg=lincs_east,
-                            name='BEACON MEDICAL PRACTICE', setting=4)
-
-    args = []
-    db_name = 'test_' + utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    test_file = 'frontend/tests/fixtures/commands/'
-    test_file += 'T201509PDPI+BNFT_formatted.csv'
-    new_opts = {
-        'db_name': db_name,
-        'db_user': db_user,
-        'db_pass': db_pass,
-        'filename': test_file
-    }
-    management.call_command('import_hscic_prescribing', *args, **new_opts)
-
-    month = '2015-09-01'
-    measure_id = 'cerazette'
-    args = []
-    opts = {
-        'month': month,
-        'measure': measure_id
-    }
-    management.call_command('import_measures', *args, **opts)
-
-
-def tearDownModule():
-    management.call_command('flush', verbosity=0, interactive=False)
 
 
 class TestAPIMeasureViews(TestCase):
-
+    fixtures = ['one_month_of_measures']
     api_prefix = '/api/1.0'
 
     def test_api_measure_global(self):
@@ -131,11 +61,11 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(len(data['measures'][0]['data']), 3)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
-        self.assertEqual(d['pct_id'], '03T')
-        self.assertEqual(d['numerator'], 2000)
-        self.assertEqual(d['denominator'], 17000)
-        self.assertEqual(d['percentile'], 50)
-        self.assertEqual("%.4f" % d['calc_value'], '0.1176')
+        self.assertEqual(d['pct_id'], '02Q')  # we get 02Q
+        self.assertEqual(d['numerator'], 82000)
+        self.assertEqual(d['denominator'], 143000)
+        self.assertEqual(d['percentile'], 100)
+        self.assertEqual("%.4f" % d['calc_value'], '0.5734')
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'

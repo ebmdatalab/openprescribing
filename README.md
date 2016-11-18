@@ -120,6 +120,9 @@ If required, you can run individual Django tests as follows:
 We support IE8 and above. We have a free account for testing across
 multiple browsers, thanks to [BrowserStack](www.browserstack.com).
 
+Note that tests are run using the settings in
+`openprescribing/settings/test.py`; this happens automatically
+
 ## Functional tests
 
 Functional tests are run using Selenium; the default in your sandbox
@@ -135,6 +138,17 @@ browser), you have two choices:
 To do this, you'll need to install
 [pyvirtualdisplay](http://pyvirtualdisplay.readthedocs.io/en/latest/#installation)
 and Xvbf. This is, apparently, quite hard to do on OS X.
+
+If you don't install Xvbf, you'll see the tests launch a browser and
+operate it.
+
+You can run *just* the functional tests with
+
+    TEST_SUITE=functional make test
+
+And the inverse is:
+
+    TEST_SUITE=nonfunctional make test
 
 ### Run the functional tests in Saucelabs
 

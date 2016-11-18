@@ -70,7 +70,8 @@ def measure_by_ccg(request, format=None):
     query += 'ms.url, ms.is_cost_based, ms.is_percentage, '
     query += 'ms.low_is_good '
     query += "FROM frontend_measurevalue mv "
-    query += "JOIN frontend_pct pc ON mv.pct_id=pc.code "
+    query += "JOIN frontend_pct pc ON "
+    query += "(mv.pct_id=pc.code AND pc.org_type = 'CCG') "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
     query += "WHERE "
     if orgs:
@@ -84,7 +85,7 @@ def measure_by_ccg(request, format=None):
     query += 'mv.practice_id IS NULL '
     if measure:
         query += "AND mv.measure_id=%s "
-    query += "ORDER BY mv.practice_id, measure_id, date"
+    query += "ORDER BY mv.pct_id, measure_id, date"
 
     if measure:
         data = utils.execute_query(query, [orgs, [measure]])

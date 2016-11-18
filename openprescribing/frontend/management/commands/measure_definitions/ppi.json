@@ -1,0 +1,35 @@
+{
+  "name": "High-cost PPIs", 
+  "title": [
+    "Prescribing of high-cost PPIs ", 
+    "as a percentage of prescribing of all PPIs"
+  ], 
+  "description": [
+    "Prescribing of high-cost PPIs ", 
+    "as a percentage of prescribing of all PPIs.", 
+    "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
+  ], 
+  "why_it_matters": [
+    "TBA"
+  ], 
+  "numerator_short": "High-cost PPIs quantity", 
+  "denominator_short": "All included PPIs quantity", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": true, 
+  "low_is_good": true, 
+  "numerator_columns": [
+    "SUM(quantity) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code IN ('0103050E0BBAAAA', '0103050E0BBABAB', '0103050E0BBAEAA', '0103050E0BBAFAB', '0103050E0BBAGAA', '0103050L0BBAAAA', '0103050P0AAAMAM', '0103050P0AAANAN', '0103050P0AAAPAP', '0103050P0AABCBC', '0103050P0AABDBD', '0103050P0AABEBE', '0103050P0BBAAAA', '0103050P0BBABAE', '0103050P0BBACAF', '0103050P0BBADAM', '0103050P0BBAEAN', '0103050P0BBAFAP', '0103050P0BDABBD', '0103050P0BEAABC', '0103050P0BGAAAM', '0103050P0BGABAN', '0103050P0BGACAP', '0103050R0BBAAAA', '0103050R0BBABAB', '0103050R0BCAAAB', '0103050T0BBAAAA', '0103050T0BBABAB'))  "
+  ], 
+  "denominator_columns": [
+    "SUM(quantity) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code IN ('0103050E0AAAAAA', '0103050E0AAABAB', '0103050E0AAAFAF', '0103050E0AAAGAG', '0103050E0BCAAAF', '0103050E0BCABAG', '0103050L0AAAAAA', '0103050L0AAABAB', '0103050L0AAAGAG', '0103050L0AAAHAH', '0103050L0BBADAG', '0103050L0BBAEAH', '0103050P0AAAAAA', '0103050P0AAAEAE', '0103050P0AAAFAF', '0103050P0BFAAAF', '0103050P0BFABAA', '0103050R0AAAAAA', '0103050R0AAABAB', '0103050T0AAAAAA', '0103050T0AAABAB', '0103050E0BBAAAA', '0103050E0BBABAB', '0103050E0BBAEAA', '0103050E0BBAFAB', '0103050E0BBAGAA', '0103050L0BBAAAA', '0103050P0AAAMAM', '0103050P0AAANAN', '0103050P0AAAPAP', '0103050P0AABCBC', '0103050P0AABDBD', '0103050P0AABEBE', '0103050P0BBAAAA', '0103050P0BBABAE', '0103050P0BBACAF', '0103050P0BBADAM', '0103050P0BBAEAN', '0103050P0BBAFAP', '0103050P0BDABBD', '0103050P0BEAABC', '0103050P0BGAAAM', '0103050P0BGABAN', '0103050P0BGACAP', '0103050R0BBAAAA', '0103050R0BBABAB', '0103050R0BCAAAB', '0103050T0BBAAAA', '0103050T0BBABAB'))  "
+  ]
+}

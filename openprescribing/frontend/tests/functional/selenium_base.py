@@ -6,7 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
@@ -26,8 +27,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def get_firefox_driver(cls):
-        # Get a driver that supports capturing the output of console.log
-        return webdriver.Firefox()
+        caps = DesiredCapabilities.FIREFOX
+        caps["marionette"] = True
+        return webdriver.Firefox(capabilities=caps)
 
     @classmethod
     def setUpClass(cls):
@@ -60,7 +62,11 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 from pyvirtualdisplay import Display
                 cls.display = Display(visible=0, size=(1200, 800))
                 cls.display.start()
-            cls.browser = cls.get_firefox_driver()
+            try:
+                cls.browser = cls.get_firefox_driver()
+            except WebDriverException:
+                if not cls.use_saucelabs and cls.use_xvfb():
+                    cls.display.stop()
 
         cls.browser.maximize_window()
         cls.browser.implicitly_wait(1)
@@ -72,11 +78,17 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             cls.display.stop()
         super(SeleniumTestCase, cls).tearDownClass()
 
-    def find_by_xpath(self, locator):
+    def _find_and_wait(self, locator, waiter):
         try:
-            element = WebDriverWait(self.browser, 3).until(
-                EC.presence_of_element_located((By.XPATH, locator))
+            element = WebDriverWait(self.browser, 5).until(
+                waiter((By.XPATH, locator))
             )
             return element
         except TimeoutException:
             raise AssertionError("Expected to find element %s" % locator)
+
+    def find_by_xpath(self, locator):
+        return self._find_and_wait(locator, EC.presence_of_element_located)
+
+    def find_visible_by_xpath(self, locator):
+        return self._find_and_wait(locator, EC.visibility_of_element_located)
