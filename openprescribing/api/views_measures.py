@@ -85,7 +85,7 @@ def measure_by_ccg(request, format=None):
     query += 'mv.practice_id IS NULL '
     if measure:
         query += "AND mv.measure_id=%s "
-    query += "ORDER BY mv.practice_id, measure_id, date"
+    query += "ORDER BY mv.pct_id, measure_id, date"
 
     if measure:
         data = utils.execute_query(query, [orgs, [measure]])

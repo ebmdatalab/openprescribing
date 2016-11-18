@@ -61,11 +61,11 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(len(data['measures'][0]['data']), 3)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
-        self.assertEqual(d['pct_id'], '03T')
-        self.assertEqual(d['numerator'], 2000)
-        self.assertEqual(d['denominator'], 17000)
-        self.assertEqual(d['percentile'], 50)
-        self.assertEqual("%.4f" % d['calc_value'], '0.1176')
+        self.assertEqual(d['pct_id'], '02Q')  # we get 02Q
+        self.assertEqual(d['numerator'], 82000)
+        self.assertEqual(d['denominator'], 143000)
+        self.assertEqual(d['percentile'], 100)
+        self.assertEqual("%.4f" % d['calc_value'], '0.5734')
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'
