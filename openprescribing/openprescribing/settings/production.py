@@ -8,7 +8,9 @@ from common import utils
 # HOST CONFIGURATION
 # See:
 # https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = ['openprescribing.net', 'openprescriptions.net', ]
+ALLOWED_HOSTS = ['deploy.openprescribing.net',
+                 'openprescribing.net',
+                 'openprescriptions.net', ]
 # END HOST CONFIGURATION
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix

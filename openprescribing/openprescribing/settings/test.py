@@ -37,7 +37,7 @@ if 'TRAVIS' not in os.environ:
             'file': {
                 'level': 'DEBUG',
                 'class': 'logging.FileHandler',
-                'filename': '/tmp/asdog/test-debug.log',
+                'filename': '../log/test-debug.log',
             },
         },
         'loggers': {
@@ -48,6 +48,15 @@ if 'TRAVIS' not in os.environ:
             },
         },
     }
+# Prefix table names with `test_` to prevent namespace clashes in
+# BigQuery
+BQ_CCG_TABLE_PREFIX = 'test_' + BQ_CCG_TABLE_PREFIX
+BQ_GLOBALS_TABLE_PREFIX = 'test_' + BQ_GLOBALS_TABLE_PREFIX
+BQ_PRACTICE_TABLE_PREFIX = 'test_' + BQ_PRACTICE_TABLE_PREFIX
+BQ_PRESCRIBING_TABLE_NAME = 'test_' + BQ_PRESCRIBING_TABLE_NAME
+BQ_PRACTICES_TABLE_NAME = 'test_' + BQ_PRACTICES_TABLE_NAME
+BQ_FULL_PRACTICES_TABLE_NAME = "[%s:measures.%s]" % (
+    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://localhost"

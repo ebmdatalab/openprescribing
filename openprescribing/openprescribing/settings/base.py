@@ -306,6 +306,26 @@ GDOC_DOCS = {
     'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0'
 }
 
+# BigQuery settings (used for measure calculations)
+
+# The BigQuery project name
+BQ_PROJECT = 'ebmdatalab'
+# The BigQuery dataset name
+BQ_MEASURES_DATASET = 'measures'
+# Prefix for practice-level table name (the measure id is appended)
+BQ_PRACTICE_TABLE_PREFIX = "practice_data"
+# Prefix for CCG-level table name
+BQ_CCG_TABLE_PREFIX = "ccg_data"
+# Prefix for global table name
+BQ_GLOBALS_TABLE_PREFIX = "global_data"
+# The name of the table containing core prescribing data
+BQ_PRESCRIBING_TABLE_NAME = "prescribing"
+# The name of the table containing practice information (names,
+# addresses etc)
+BQ_PRACTICES_TABLE_NAME = "practices"
+BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
+    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
+
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {

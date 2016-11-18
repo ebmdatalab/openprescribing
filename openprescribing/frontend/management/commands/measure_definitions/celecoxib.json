@@ -1,0 +1,49 @@
+{
+  "name": "Celecoxib vs. all NSAIDs",
+  "title": [
+    "Prescribing of Celecoxib (BNF code 0801050AY, 1001010AH)",
+    "compared with prescribing of all Non-Steroidal ",
+    "Anti-Inflammatory Drugs (BNF section 1.1.1)"
+  ],
+  "description": [
+    "Number of prescription items for Celecoxib (0801050AY, 1001010AH) ",
+    "as a percentage of total prescription items for all NSAIDs (100101)."
+  ],
+  "why_it_matters": [
+    "Coxib drugs are an interesting illustration of a common ",
+    "phenomenon in medicine: the need to make a trade off ",
+    "between risk and benefit, in different patients. ",
+    "Long term use of NSAID painkillers puts patients at ",
+    "increased risk of gastric bleeds. Coxib painkillers ",
+    "are effective at treating pain, with lower risk of ",
+    "bleeding; but they are much more expensive, and come ",
+    "with a higher risk of cardiovascular problems. Overall, ",
+    "therefore, they are sensible to use in some patients, ",
+    "but if one area is prescribing a lot of coxibs (or ",
+    "very few) then that may mean that they have unusual< ",
+    "patients, or it may mean that doctors' thresholds ",
+    "for using them are different to their colleagues nationally."
+  ],
+  "numerator_short": "Celecoxib items",
+  "denominator_short": "All NSAID items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, ",
+    "SUM(quantity) AS quantity, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "((bnf_code LIKE '0801050AY%%')  OR (bnf_code LIKE '1001010AH%%'))  "
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, ",
+    "SUM(quantity) AS quantity, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "(bnf_code LIKE '100101%%')  "
+  ]
+}
