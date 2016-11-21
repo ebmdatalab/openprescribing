@@ -60,7 +60,7 @@ class Command(BaseCommand):
         month = row[9]
         formatted_date = '%s-%s-01' % (month[:4], month[4:])
         output = [row[0], row[1], row[2], chemical_id, row[3],
-                  row[4], int(row[5]), float(row[6]), float(row[7]),
+                  row[4], int(row[5]), float(row[7]),
                   quantity, formatted_date, price_per_unit]
         return output
 

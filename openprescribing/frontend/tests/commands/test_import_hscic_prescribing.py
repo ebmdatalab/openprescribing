@@ -18,7 +18,7 @@ def setUpModule():
                                 chemical=chemical,
                                 presentation_code='0410030C0BBAABA',
                                 presentation_name='Methadose_Oral Conc',
-                                total_items=4, net_cost=47.09,
+                                total_items=4,
                                 actual_cost=44.12, quantity=588,
                                 processing_date='2013-04-01',
                                 price_per_unit=0.075)
@@ -63,7 +63,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.chemical.bnf_code, '0410030C0')
         self.assertEqual(p.presentation_name, 'Methadone HCl_Mix 1mg/1ml S/F')
         self.assertEqual(p.total_items, 1346)
-        self.assertEqual(p.net_cost, 12038.02)
         self.assertEqual(p.actual_cost, 11270.33)
         self.assertEqual(p.quantity, 878870)
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))

@@ -46,8 +46,6 @@ class Command(BaseCommand):
         assert prescriptions.count() == 1234
         total_items = prescriptions.aggregate(Sum('total_items'))
         assert total_items == 12345
-        net_cost = prescriptions.aggregate(Sum('net_cost'))
-        assert net_cost == 12345
         actual_cost = prescriptions.aggregate(Sum('actual_cost'))
         assert actual_cost == 12345
         quantity = prescriptions.aggregate(Sum('quantity'))
@@ -65,8 +63,6 @@ class Command(BaseCommand):
         assert prescriptions.count() == 1234
         total_items = prescriptions.aggregate(Sum('total_items'))
         assert total_items == 12345
-        net_cost = prescriptions.aggregate(Sum('net_cost'))
-        assert net_cost == 12345
         actual_cost = prescriptions.aggregate(Sum('actual_cost'))
         assert actual_cost == 12345
         quantity = prescriptions.aggregate(Sum('quantity'))

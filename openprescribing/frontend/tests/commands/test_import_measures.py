@@ -489,7 +489,7 @@ class BigqueryFunctionalTests(TestCase):
         if 'SKIP_BQ_LOAD' not in os.environ:
             fixtures_base = 'frontend/tests/fixtures/commands/'
             prescribing_fixture = (fixtures_base +
-                                   'T201509PDPI+BNFT_formatted.csv')
+                                   'prescribing_bigquery_fixture.csv')
             practices_fixture = fixtures_base + 'practices.csv'
             bigquery.load_prescribing_data_from_file(
                 'measures',
