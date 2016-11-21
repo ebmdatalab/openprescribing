@@ -480,7 +480,6 @@
     "actual_cost": 1000.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -497,7 +496,6 @@
     "actual_cost": 1000.0,
     "quantity": 10000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -514,7 +512,6 @@
     "actual_cost": 10000.0,
     "quantity": 10000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -531,7 +528,6 @@
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -548,7 +544,6 @@
     "actual_cost": 70000.0,
     "quantity": 70000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -565,7 +560,6 @@
     "actual_cost": 3000.0,
     "quantity": 30000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -582,7 +576,6 @@
     "actual_cost": 1000.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -599,7 +592,6 @@
     "actual_cost": 100.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -616,7 +608,6 @@
     "actual_cost": 1500.0,
     "quantity": 1500.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -633,7 +624,6 @@
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -650,7 +640,6 @@
     "actual_cost": 2000.0,
     "quantity": 2000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -667,7 +656,6 @@
     "actual_cost": 1500.0,
     "quantity": 15000.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -684,7 +672,6 @@
     "actual_cost": 100000.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -701,7 +688,6 @@
     "actual_cost": 500.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -718,7 +704,6 @@
     "actual_cost": 10.0,
     "quantity": 1.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -735,7 +720,6 @@
     "actual_cost": 50.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -752,7 +736,6 @@
     "actual_cost": 10.0,
     "quantity": 1.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -769,7 +752,6 @@
     "actual_cost": 50.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -786,7 +768,6 @@
     "actual_cost": 1500.0,
     "quantity": 1500.0,
     "processing_date": "2015-10-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -803,7 +784,6 @@
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-10-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -820,7 +800,6 @@
     "actual_cost": 1000.0,
     "quantity": 2000.0,
     "processing_date": "2015-10-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -837,7 +816,6 @@
     "actual_cost": 1500.0,
     "quantity": 15000.0,
     "processing_date": "2015-10-01",
-    "price_per_unit": 0.0
   }
 },
 {
@@ -854,7 +832,6 @@
     "actual_cost": 100.0,
     "quantity": 1000.0,
     "processing_date": "2015-10-01",
-    "price_per_unit": 0.0
   }
 },
 {

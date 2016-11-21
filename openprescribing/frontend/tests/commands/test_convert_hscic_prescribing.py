@@ -43,10 +43,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(rows[0][7], '0.7')
         self.assertEqual(rows[0][8], '12')
         self.assertEqual(rows[0][9], '2014-10-01')
-        self.assertEqual(rows[0][10], '0.05833333333333333')
-
-        # Test price_per_unit is correctly set to 0 if quantity is 0.
-        self.assertEqual(rows[-2][10], '0')
 
         # Test for 4-character chemical IDs.
         self.assertEqual(rows[0][3], '0102000N0')

@@ -20,8 +20,7 @@ def setUpModule():
                                 presentation_name='Methadose_Oral Conc',
                                 total_items=4,
                                 actual_cost=44.12, quantity=588,
-                                processing_date='2013-04-01',
-                                price_per_unit=0.075)
+                                processing_date='2013-04-01')
 
 
 def tearDownModule():
@@ -66,6 +65,5 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.actual_cost, 11270.33)
         self.assertEqual(p.quantity, 878870)
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))
-        self.assertEqual(p.price_per_unit, 0.0128236599269517)
         l = ImportLog.objects.latest_in_category('prescribing')
         self.assertEqual(l.current_at.strftime('%Y-%m-%d'), '2013-04-01')

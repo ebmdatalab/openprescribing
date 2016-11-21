@@ -97,7 +97,7 @@ class Command(BaseCommand):
         copy_str = "COPY frontend_prescription(sha_id,pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
         copy_str += "presentation_name,total_items,actual_cost,"
-        copy_str += "quantity,processing_date,price_per_unit) FROM STDIN "
+        copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH DELIMITER AS ','"
         i = 0
         if self.truncate:

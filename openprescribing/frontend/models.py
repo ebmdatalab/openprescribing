@@ -341,7 +341,6 @@ class Prescription(models.Model):
     actual_cost = models.FloatField()
     quantity = models.FloatField()
     processing_date = models.DateField()
-    price_per_unit = models.FloatField()
 
     class Meta:
         app_label = 'frontend'
