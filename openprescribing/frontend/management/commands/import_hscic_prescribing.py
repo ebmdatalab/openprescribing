@@ -112,19 +112,13 @@ class Command(BaseCommand):
         else:
             file_obj = open(filename)
         cursor.copy_expert(copy_str, file_obj)
-        try:
-            self.conn.commit()
-            date = self._date_from_filename(filename)
-            ImportLog.objects.create(
-                current_at=date,
-                filename=filename,
-                category='prescribing'
-            )
-        except Exception as err:
-            print 'EXCEPTION:', err
-        # end = time.clock()
-        # time_taken = (end-start)
-        # print 'time_taken', time_taken
+        self.conn.commit()
+        date = self._date_from_filename(filename)
+        ImportLog.objects.create(
+            current_at=date,
+            filename=filename,
+            category='prescribing'
+        )
 
     def _date_from_filename(self, filename):
         file_str = filename.split('/')[-1].split('.')[0]
