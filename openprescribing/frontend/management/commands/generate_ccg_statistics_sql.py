@@ -1,3 +1,13 @@
+"""A command to generate the SQL required to aggregate statistics
+stashed in the JSON column for star_pus in the practice_statistics
+table.
+
+When the keys in the JSON change, replace
+`views_sql/ccgstatistics.sql` with the output of running this command
+
+"""
+
+
 keys = ['analgesics_cost',
         'antidepressants_adq',
         'antidepressants_cost',

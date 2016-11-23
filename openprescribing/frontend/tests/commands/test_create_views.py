@@ -1,16 +1,19 @@
 import os
+
+from mock import patch
+
 from django.core.management import call_command
-from django.test import TestCase
 from django.db import connection
+from django.test import TestCase
 
 from common import utils
 from ebmdatalab import bigquery
-from mock import patch
 
 
 def setUpModule():
-    db_name = 'test_' + utils.get_env_setting('DB_NAME')
     if 'SKIP_BQ_LOAD' not in os.environ:
+        # Create local test data from fixtures, then upload this to a
+        # test project in bigquery
         call_command('loaddata',
                      'frontend/tests/fixtures/ccgs.json',
                      verbosity=0)
@@ -23,19 +26,23 @@ def setUpModule():
         fixtures_base = 'frontend/tests/fixtures/commands/'
         prescribing_fixture = (fixtures_base +
                                'prescribing_bigquery_views_fixture.csv')
+        db_name = 'test_' + utils.get_env_setting('DB_NAME')
         env = patch.dict(
             'os.environ', {'DB_NAME': db_name})
         with env:
+            # We patch the environment as this is how the
+            # ebmdatalab/bigquery library selects a database
             bigquery.load_prescribing_data_from_file(
                 'test_hscic',
                 'prescribing',
                 prescribing_fixture)
             bigquery.load_ccgs_from_pg('test_hscic')
             bigquery.load_statistics_from_pg('test_hscic')
-    args = []
+    # Create view tables and indexes
     with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
         with connection.cursor() as c:
             c.execute(f.read())
+    args = []
     opts = {
         'dataset': 'test_hscic'
     }

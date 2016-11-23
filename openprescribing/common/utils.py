@@ -1,8 +1,11 @@
 from contextlib import contextmanager
 from os import environ
+import logging
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
+
+logger = logging.getLogger(__name__)
 
 
 def get_env_setting(setting, default=None):
@@ -70,21 +73,25 @@ def constraint_and_index_reconstructor(table_name):
                 % (table_name, name))
 
         # drop indexes
+        logger.info("Dropping indexes")
         for name in indexes.keys():
             cursor.execute("DROP INDEX %s" % name)
-        print "Dropped indexes; running main command"
+            logger.info("Dropped index %s" % name)
 
+        logger.info("Running wrapped command")
         yield
 
         # we're updating everything. This takes 52 minutes.
         # restore indexes
-        print "Recreating indexes"
-        for cmd in indexes.values():
+        logger.info("Recreating indexes")
+        for name, cmd in indexes.items():
             cursor.execute(cmd)
+            logger.info("Recreated index %s" % name)
 
-        print "Recreating constraints"
+        logger.info("Recreating constraints")
         # restore foreign key constraints
         for name, cmd in constraints.items():
             cmd = ("ALTER TABLE %s "
                    "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
             cursor.execute(cmd)
+            logger.info("Recreated constraint %s" % name)
