@@ -25,17 +25,33 @@ class Command(BaseCommand):
     frontend/management/commands/replace_matviews.sql (also used by the tests).
 
     """
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--view', help='view to update (default is to update all)')
+        parser.add_argument(
+            '--list-views', help='list available views', action='store_true')
+
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
         self.dataset = options.get('dataset', 'hscic')
-        self.fill_views()
+        self.fpath = os.path.dirname(__file__)
+        self.view_paths = glob.glob(
+            os.path.join(self.fpath, "./views_sql/*.sql"))
+        self.view = None
+        if options['list_views']:
+            for view in self.view_paths:
+                print os.path.basename(view).replace('.sql', '')
+        else:
+            if options['view']:
+                self.view = options['view']
+            self.fill_views()
 
     def fill_views(self):
-        fpath = os.path.dirname(__file__)
-        views = glob.glob(os.path.join(fpath, "./views_sql/*.sql"))
-        for view in views:
+        for view in self.view_paths:
+            if self.view and self.view not in view:
+                continue
             f = tempfile.TemporaryFile(mode='r+')
             writer = fieldnames = None
             tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
