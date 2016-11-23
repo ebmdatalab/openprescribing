@@ -1,8 +1,15 @@
-import csv
+from multiprocessing.pool import Pool
+import datetime
 import glob
+import json
 import logging
 import os
+import subprocess
 import tempfile
+import time
+
+from google.cloud import storage
+from google.cloud.storage import Blob
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -49,45 +56,33 @@ class Command(BaseCommand):
             self.fill_views()
 
     def fill_views(self):
-        for view in self.view_paths:
+        paths = [x for x in self.view_paths
+                 if not self.view or (self.view and self.view == x)]
+        pool = Pool(processes=len(paths))
+        pool_results = []
+        for view in paths:
             if self.view and self.view not in view:
                 continue
-            f = tempfile.TemporaryFile(mode='r+')
-            writer = fieldnames = None
-            tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
-            self.log("Recreating %s:" % tablename)
-            # We do a string replacement here as we don't know how
-            # many times a dataset substitution token (i.e. `%s`) will
-            # appear in each SQL template. And we can't use new-style
-            # formatting as some of the SQL has braces in.
-            sql = open(view, "r").read().replace('%s', self.dataset)
-            self.log("Running bigquery query...")
-            bigquery.query_and_return(
-                'ebmdatalab', self.dataset, tablename, sql)
-            self.log("Writing CSV from bigquery to disk...")
-            count = 0
-            for row in bigquery.get_rows(
-                    'ebmdatalab', self.dataset, tablename):
-                if writer is None:
-                    # Snarf the fieldnames from the first row of data
-                    fieldnames = row.keys()
-                    writer = csv.DictWriter(f, fieldnames=fieldnames)
-                writer.writerow(row)
-                count += 1
-            self.log("Wrote %s rows" % count)
-            if count > 0:
-                copy_str = "COPY %s(%s) FROM STDIN "
-                copy_str += "WITH (FORMAT CSV)"
-                f.seek(0)
-                with connection.cursor() as cursor:
-                    with utils.constraint_and_index_reconstructor(tablename):
-                        print "Deleting from table..."
-                        cursor.execute("DELETE FROM %s" % tablename)
-                        print "Copying CSV to postgres..."
-                        print len(f.read().split("\n"))
-                        f.seek(0)
-                        cursor.copy_expert(copy_str % (
-                            tablename, ','.join(fieldnames)), f)
+            # Perform bigquery parts of operation in parallel
+            result = pool.apply_async(query_and_export, [self.dataset, view])
+            pool_results.append(result)
+        pool.close()
+        pool.join()  # wait for all worker processes to exit
+        for result in pool_results:
+            if not result.successful():
+                raise RuntimeError("Error running job: %s" % result.__dict__)
+            tablename, gcs_uri = result.get()
+            f = download_and_unzip(self.dataset, gcs_uri)
+            copy_str = "COPY %s(%s) FROM STDIN "
+            copy_str += "WITH (FORMAT CSV)"
+            fieldnames = f.readline().split(',')
+            with connection.cursor() as cursor:
+                with utils.constraint_and_index_reconstructor(tablename):
+                    self.log("Deleting from table...")
+                    cursor.execute("DELETE FROM %s" % tablename)
+                    self.log("Copying CSV to postgres...")
+                    cursor.copy_expert(copy_str % (
+                        tablename, ','.join(fieldnames)), f)
             f.close()
             self.log("-------------")
 
@@ -96,3 +91,143 @@ class Command(BaseCommand):
             logger.warn(message)
         else:
             logger.info(message)
+
+
+# BigQuery helper functions. Candidates for moving to
+# ebmdatalab-python.
+
+def query_and_export(dataset, view):
+    project_id = 'ebmdatalab'
+    tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
+    gzip_destination = "gs://ebmdatalab/views/%s.csv.gz" % tablename
+    # We do a string replacement here as we don't know how
+    # many times a dataset substitution token (i.e. `%s`) will
+    # appear in each SQL template. And we can't use new-style
+    # formatting as some of the SQL has braces in.
+    sql = open(view, "r").read().replace('%s', dataset)
+
+    # Execute query and wait
+    job_id = query_and_return(
+        project_id, dataset, tablename, sql)
+    logger.warn("Awaiting query completion")
+    wait_for_job(job_id, project_id)
+
+    # Export to GCS and wait
+    job_id = export_to_gzip(
+        project_id, dataset, tablename, gzip_destination)
+    logger.warn("Awaiting export completion")
+    wait_for_job(job_id, project_id)
+    return (tablename, gzip_destination)
+
+
+def download_and_unzip(dataset, gcs_uri):
+    # Download from GCS
+    unzipped = tempfile.NamedTemporaryFile(mode='r+')
+    with tempfile.NamedTemporaryFile(mode='wb') as f:
+        download_from_gcs(f.name, gcs_uri)
+
+        # Unzip
+        subprocess.check_call(
+            "zcat -f %s > %s" % (f.name, unzipped.name), shell=True)
+        return unzipped
+
+
+def export_to_gzip(project_id, dataset_id, table_id, destination):
+    payload = {
+        "configuration": {
+            "extract": {
+                "compression": 'GZIP',
+                "destinationFormat": 'CSV',
+                "destinationUri": destination,
+                "printHeader": True,
+                "sourceTable": {
+                    "datasetId": dataset_id,
+                    "projectId": project_id,
+                    "tableId": table_id
+                }
+            }
+        }
+    }
+    return insert_job(project_id, payload)
+
+
+def download_from_gcs(dest, gcs_uri):
+    bucket, folder, blob = gcs_uri.replace('gs://', '').split('/')
+    client = storage.Client(project='embdatalab')
+    bucket = client.get_bucket(bucket)
+    blob = Blob("%s/%s" % (folder, blob), bucket)
+    with open(dest, 'wb') as file_obj:
+        blob.download_to_file(file_obj)
+    return dest
+
+
+def query_and_return(project_id, dataset_id, table_id, query):
+    """Send query to BigQuery, wait, write it to table_id, and return
+    response object when the job has completed.
+
+    """
+    payload = {
+        "configuration": {
+            "query": {
+                "query": query,
+                "flattenResuts": False,
+                "allowLargeResults": True,
+                "timeoutMs": 100000,
+                "useQueryCache": True,
+                "useLegacySql": False,
+                "destinationTable": {
+                    "projectId": project_id,
+                    "tableId": table_id,
+                    "datasetId": dataset_id
+                },
+                "createDisposition": "CREATE_IF_NEEDED",
+                "writeDisposition": "WRITE_TRUNCATE"
+            }
+        }
+    }
+    logging.info("Writing to bigquery table %s" % table_id)
+    return insert_job(project_id, payload)
+
+
+def insert_job(project_id, payload):
+    bq = bigquery.get_bq_service()
+    response = bq.jobs().insert(
+        projectId=project_id,
+        body=payload).execute()
+    return response['jobReference']['jobId']
+
+
+def wait_for_job(job_id, project_id):
+    bq = bigquery.get_bq_service()
+    start = datetime.datetime.now()
+    counter = 0
+    while True:
+        time.sleep(1)
+        response = bq.jobs().get(
+            projectId=project_id,
+            jobId=job_id).execute()
+        counter += 1
+        if response['status']['state'] == 'DONE':
+            if 'errors' in response['status']:
+                query = str(response['configuration']['query']['query'])
+                for i, l in enumerate(query.split("\n")):
+                    # print SQL query with line numbers for debugging
+                    print "{:>3}: {}".format(i + 1, l)
+                raise StandardError(
+                    json.dumps(response['status']['errors'], indent=2))
+            else:
+                break
+    elapsed = (datetime.datetime.now() - start).total_seconds()
+    if 'query' in response['statistics']:
+        bytes_billed = float(
+            response['statistics']['query']['totalBytesBilled'])
+        gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
+        est_cost = round(bytes_billed / 1e+12 * 5.0, 2)
+        # Add our own metadata
+        response['openp'] = {'est_cost': est_cost,
+                             'time': elapsed,
+                             'gb_processed': gb_processed}
+    else:
+        est_cost = 'n/a'
+    logging.warn("Time %ss, cost $%s" % (elapsed, est_cost))
+    return response
