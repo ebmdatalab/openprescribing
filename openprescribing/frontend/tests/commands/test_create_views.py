@@ -1,11 +1,9 @@
 import os
-import psycopg2
 from django.core.management import call_command
 from django.test import TestCase
 from django.db import connection
 
 from common import utils
-from datetime import datetime
 from ebmdatalab import bigquery
 from mock import patch
 
@@ -50,7 +48,6 @@ def tearDownModule():
 
 class CommandsTestCase(TestCase):
     def test_import_create_views(self):
-        import pdb; pdb.set_trace()
         with connection.cursor() as c:
 
             cmd = 'SELECT * FROM vw__practice_summary '

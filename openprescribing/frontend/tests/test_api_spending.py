@@ -47,7 +47,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[5]['items'], '95')
         self.assertEqual(rows[5]['quantity'], '5142')
 
-    def test_total_spending_by_bnf_section(self):   # XXX
+    def test_total_spending_by_bnf_section(self):
         rows = self._rows_from_api('/spending?format=csv&code=2')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
@@ -59,7 +59,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[5]['items'], '95')
         self.assertEqual(rows[5]['quantity'], '5142')
 
-    def test_total_spending_by_bnf_section_full_code(self):  # XXX
+    def test_total_spending_by_bnf_section_full_code(self):
         rows = self._rows_from_api('/spending?format=csv&code=02')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
@@ -193,7 +193,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['items'], '2')
         self.assertEqual(rows[0]['quantity'], '56')
 
-    def test_spending_by_all_ccgs_on_bnf_section(self):  # XXX
+    def test_spending_by_all_ccgs_on_bnf_section(self):
         url = '/spending_by_ccg?format=csv&code=2.2.1'
         rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
@@ -210,7 +210,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['items'], '62')
         self.assertEqual(rows[-1]['quantity'], '2788')
 
-    def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):   # XXX
+    def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):
         url = '/spending_by_ccg?format=csv&code=2.2,2.4'
         rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
@@ -309,7 +309,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[2]['items'], '1')
         self.assertEqual(rows[2]['quantity'], '24')
 
-    def test_spending_by_all_practices_on_product(self):   # XXX not 404
+    def test_spending_by_all_practices_on_product(self):
         url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AA&date=2014-11-01'
         rows = self._rows_from_api(url)
@@ -323,7 +323,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['items'], '38')
         self.assertEqual(rows[1]['quantity'], '1399')
 
-    def test_spending_by_all_practices_on_presentation(self):  # XXX not 404
+    def test_spending_by_all_practices_on_presentation(self):
         url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AAABAB&date=2014-11-01'
         rows = self._rows_from_api(url)
@@ -337,7 +337,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['items'], '38')
         self.assertEqual(rows[1]['quantity'], '1399')
 
-    def test_spending_by_practice_on_presentation(self):   # XXX not 404
+    def test_spending_by_practice_on_presentation(self):
         url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB&org=03V'
         rows = self._rows_from_api(url)
@@ -351,7 +351,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['items'], '17')
         self.assertEqual(rows[1]['quantity'], '1200')
 
-    def test_spending_by_practice_on_multiple_presentations(self):   # XXX not 404
+    def test_spending_by_practice_on_multiple_presentations(self):
         url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB,0202010B0AAABAB&org=03V'
         rows = self._rows_from_api(url)
@@ -363,7 +363,7 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[2]['items'], '55')
         self.assertEqual(rows[2]['quantity'], '2599')
 
-    def test_spending_by_practice_on_section(self):   # XXX
+    def test_spending_by_practice_on_section(self):
         url = '/spending_by_practice'
         url += '?format=csv&code=2&org=03V'
         rows = self._rows_from_api(url)

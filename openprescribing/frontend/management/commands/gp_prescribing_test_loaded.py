@@ -1,7 +1,7 @@
 import csv
 import os
-from django.core.management.base import BaseCommand, CommandError
-from frontend.models import SHA, PCT, Practice, Chemical, Prescription
+from django.core.management.base import BaseCommand
+from frontend.models import PCT, Practice, Prescription
 from django.db.models import Sum
 
 
@@ -53,12 +53,10 @@ class Command(BaseCommand):
 
     def test_rows_by_ccg(self):
         '''
-        Test that the row count, and the summed values, for a
-        two selected CCGs looks OK.
         Data based on download from HSCIC iView.
-        TODO: Use our materialized views for this
+        We should use materialized views for this, too
         '''
-        practice = PCT.objects.get(code='P87659')
+        pct = PCT.objects.get(code='P87659')
         prescriptions = Prescription.objects.filter(pct=pct)
         assert prescriptions.count() == 1234
         total_items = prescriptions.aggregate(Sum('total_items'))
