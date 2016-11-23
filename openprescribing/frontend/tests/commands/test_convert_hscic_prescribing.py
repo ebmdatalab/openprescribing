@@ -40,14 +40,9 @@ class CommandsTestCase(TestCase):
         self.assertEqual(rows[0][4], '0102000N0AAABAB')
         self.assertEqual(rows[0][5], 'Hyoscine Butylbrom_Tab 10mg')
         self.assertEqual(rows[0][6], '1')
-        self.assertEqual(rows[0][7], '0.64')
-        self.assertEqual(rows[0][8], '0.7')
-        self.assertEqual(rows[0][9], '12')
-        self.assertEqual(rows[0][10], '2014-10-01')
-        self.assertEqual(rows[0][11], '0.05833333333333333')
-
-        # Test price_per_unit is correctly set to 0 if quantity is 0.
-        self.assertEqual(rows[-2][11], '0')
+        self.assertEqual(rows[0][7], '0.7')
+        self.assertEqual(rows[0][8], '12')
+        self.assertEqual(rows[0][9], '2014-10-01')
 
         # Test for 4-character chemical IDs.
         self.assertEqual(rows[0][3], '0102000N0')

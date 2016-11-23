@@ -9,7 +9,7 @@ import os
 import requests
 
 
-env.hosts = ['46.101.62.45']
+env.hosts = ['138.68.140.164']
 env.forward_agent = True
 env.colorize_errors = True
 env.user = 'hello'

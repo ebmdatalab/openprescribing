@@ -96,8 +96,8 @@ class Command(BaseCommand):
         # start = time.clock()
         copy_str = "COPY frontend_prescription(sha_id,pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
-        copy_str += "presentation_name,total_items,net_cost,actual_cost,"
-        copy_str += "quantity,processing_date,price_per_unit) FROM STDIN "
+        copy_str += "presentation_name,total_items,actual_cost,"
+        copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH DELIMITER AS ','"
         i = 0
         if self.truncate:
@@ -112,19 +112,13 @@ class Command(BaseCommand):
         else:
             file_obj = open(filename)
         cursor.copy_expert(copy_str, file_obj)
-        try:
-            self.conn.commit()
-            date = self._date_from_filename(filename)
-            ImportLog.objects.create(
-                current_at=date,
-                filename=filename,
-                category='prescribing'
-            )
-        except Exception as err:
-            print 'EXCEPTION:', err
-        # end = time.clock()
-        # time_taken = (end-start)
-        # print 'time_taken', time_taken
+        self.conn.commit()
+        date = self._date_from_filename(filename)
+        ImportLog.objects.create(
+            current_at=date,
+            filename=filename,
+            category='prescribing'
+        )
 
     def _date_from_filename(self, filename):
         file_str = filename.split('/')[-1].split('.')[0]
