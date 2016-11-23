@@ -2,6 +2,8 @@ import os
 import psycopg2
 from django.core.management import call_command
 from django.test import TestCase
+from django.db import connection
+
 from common import utils
 from datetime import datetime
 from ebmdatalab import bigquery
@@ -33,32 +35,23 @@ def setUpModule():
             bigquery.load_ccgs_from_pg('test_hscic')
             bigquery.load_statistics_from_pg('test_hscic')
     args = []
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    conn = psycopg2.connect(
-        database=db_name, user=db_user, password=db_pass)
     with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
-        with conn.cursor() as c:
+        with connection.cursor() as c:
             c.execute(f.read())
     opts = {
-        'db_name': db_name,
-        'db_user': db_user,
-        'db_pass': db_pass,
         'dataset': 'test_hscic'
     }
     call_command('create_views', *args, **opts)
 
 
-class CommandsTestCase(TestCase):
+def tearDownModule():
+    call_command('flush', verbosity=0, interactive=False)
 
+
+class CommandsTestCase(TestCase):
     def test_import_create_views(self):
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        db_user = utils.get_env_setting('DB_USER')
-        db_pass = utils.get_env_setting('DB_PASS')
-        db_host = utils.get_env_setting('DB_HOST')
-        self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass, host=db_host)
-        with self.conn.cursor() as c:
+        import pdb; pdb.set_trace()
+        with connection.cursor() as c:
 
             cmd = 'SELECT * FROM vw__practice_summary '
             cmd += 'ORDER BY processing_date, practice_id'
@@ -121,4 +114,3 @@ class CommandsTestCase(TestCase):
             self.assertEqual(results[0][1], '03Q')
             self.assertEqual(results[0][5], 489.7)
             self.assertEqual(results[0][6]['oral_antibacterials_item'], 10)
-        self.conn.close()

@@ -1,58 +1,15 @@
 import csv
-import os
-import json
-import unittest
-from django.core import management
-from django.test import TestCase
-from common import utils
+from django.http import Http404
+
+from .api_test_base import ApiTestBase
 
 
-def setUpModule():
-    fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'chemicals.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'sections.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'shas.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'prescriptions.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practice_listsizes.json',
-                            verbosity=0)
-    db_name = utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    management.call_command('create_matviews',
-                            db_name='test_' + db_name,
-                            db_user=db_user,
-                            db_pass=db_pass)
-
-
-def tearDownModule():
-    args = []
-    db_name = 'test_' + utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    opts = {
-        'db_name': db_name,
-        'db_user': db_user,
-        'db_pass': db_pass
-    }
-    management.call_command('drop_matviews', *args, **opts)
-    management.call_command('flush', verbosity=0, interactive=False)
-
-
-class TestAPISpendingViews(TestCase):
-
-    api_prefix = '/api/1.0'
-
+class TestAPISpendingViews(ApiTestBase):
     def _rows_from_api(self, url):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
+        if response.status_code == 404:
+            raise Http404("URL %s does not exist" % url)
         reader = csv.DictReader(response.content.splitlines())
         rows = []
         for row in reader:
@@ -90,7 +47,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['items'], '95')
         self.assertEqual(rows[5]['quantity'], '5142')
 
-    def test_total_spending_by_bnf_section(self):
+    def test_total_spending_by_bnf_section(self):   # XXX
         rows = self._rows_from_api('/spending?format=csv&code=2')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
@@ -102,7 +59,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[5]['items'], '95')
         self.assertEqual(rows[5]['quantity'], '5142')
 
-    def test_total_spending_by_bnf_section_full_code(self):
+    def test_total_spending_by_bnf_section_full_code(self):  # XXX
         rows = self._rows_from_api('/spending?format=csv&code=02')
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
@@ -236,7 +193,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[0]['items'], '2')
         self.assertEqual(rows[0]['quantity'], '56')
 
-    def test_spending_by_all_ccgs_on_bnf_section(self):
+    def test_spending_by_all_ccgs_on_bnf_section(self):  # XXX
         url = '/spending_by_ccg?format=csv&code=2.2.1'
         rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
@@ -253,7 +210,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[-1]['items'], '62')
         self.assertEqual(rows[-1]['quantity'], '2788')
 
-    def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):
+    def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):   # XXX
         url = '/spending_by_ccg?format=csv&code=2.2,2.4'
         rows = self._rows_from_api(url)
         self.assertEqual(len(rows), 9)
@@ -352,7 +309,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[2]['items'], '1')
         self.assertEqual(rows[2]['quantity'], '24')
 
-    def test_spending_by_all_practices_on_product(self):
+    def test_spending_by_all_practices_on_product(self):   # XXX not 404
         url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AA&date=2014-11-01'
         rows = self._rows_from_api(url)
@@ -366,7 +323,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['items'], '38')
         self.assertEqual(rows[1]['quantity'], '1399')
 
-    def test_spending_by_all_practices_on_presentation(self):
+    def test_spending_by_all_practices_on_presentation(self):  # XXX not 404
         url = '/spending_by_practice'
         url += '?format=csv&code=0202010B0AAABAB&date=2014-11-01'
         rows = self._rows_from_api(url)
@@ -380,7 +337,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['items'], '38')
         self.assertEqual(rows[1]['quantity'], '1399')
 
-    def test_spending_by_practice_on_presentation(self):
+    def test_spending_by_practice_on_presentation(self):   # XXX not 404
         url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB&org=03V'
         rows = self._rows_from_api(url)
@@ -394,7 +351,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[1]['items'], '17')
         self.assertEqual(rows[1]['quantity'], '1200')
 
-    def test_spending_by_practice_on_multiple_presentations(self):
+    def test_spending_by_practice_on_multiple_presentations(self):   # XXX not 404
         url = '/spending_by_practice'
         url += '?format=csv&code=0204000I0BCAAAB,0202010B0AAABAB&org=03V'
         rows = self._rows_from_api(url)
@@ -406,7 +363,7 @@ class TestAPISpendingViews(TestCase):
         self.assertEqual(rows[2]['items'], '55')
         self.assertEqual(rows[2]['quantity'], '2599')
 
-    def test_spending_by_practice_on_section(self):
+    def test_spending_by_practice_on_section(self):   # XXX
         url = '/spending_by_practice'
         url += '?format=csv&code=2&org=03V'
         rows = self._rows_from_api(url)

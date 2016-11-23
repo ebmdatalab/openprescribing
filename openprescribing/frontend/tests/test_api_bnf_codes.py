@@ -1,51 +1,8 @@
 import json
-from django.core import management
-from django.test import TestCase
-from common import utils
+from .api_test_base import ApiTestBase
 
 
-def setUpModule():
-    fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'chemicals.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'products.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'sections.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'presentations.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'shas.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'prescriptions.json',
-                            verbosity=0)
-    db_name = utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    management.call_command('create_matviews',
-                            db_name='test_' + db_name,
-                            db_user=db_user,
-                            db_pass=db_pass)
-
-
-def tearDownModule():
-    args = []
-    db_name = 'test_' + utils.get_env_setting('DB_NAME')
-    db_user = utils.get_env_setting('DB_USER')
-    db_pass = utils.get_env_setting('DB_PASS')
-    opts = {
-        'db_name': db_name,
-        'db_user': db_user,
-        'db_pass': db_pass
-    }
-    management.call_command('drop_matviews', *args, **opts)
-    management.call_command('flush', verbosity=0, interactive=False)
-
-
-class TestAPIBNFCodeViews(TestCase):
+class TestAPIBNFCodeViews(ApiTestBase):
 
     api_prefix = '/api/1.0'
 

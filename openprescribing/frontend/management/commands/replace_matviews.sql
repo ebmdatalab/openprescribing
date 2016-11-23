@@ -1,4 +1,3 @@
-BEGIN;
 DROP MATERIALIZED VIEW IF EXISTS vw__presentation_summary ;
 CREATE TABLE IF NOT EXISTS vw__presentation_summary (
   processing_date date,
@@ -78,4 +77,3 @@ CREATE TABLE IF NOT EXISTS vw__ccgstatistics (
 );
 
 CREATE INDEX IF NOT EXISTS vw__idx_ccgstatistics_by_ccg ON vw__ccgstatistics(pct_id);
-COMMIT;
