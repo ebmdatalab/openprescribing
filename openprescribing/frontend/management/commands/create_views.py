@@ -215,12 +215,14 @@ def wait_for_job(job_id, project_id):
         counter += 1
         if response['status']['state'] == 'DONE':
             if 'errors' in response['status']:
-                query = str(response['configuration']['query']['query'])
-                for i, l in enumerate(query.split("\n")):
-                    # print SQL query with line numbers for debugging
-                    print "{:>3}: {}".format(i + 1, l)
-                raise StandardError(
-                    json.dumps(response['status']['errors'], indent=2))
+                error = json.dumps(response['status']['errors'], indent=2)
+                if 'query' in response['configuration']:
+                    query = str(response['configuration']['query']['query'])
+                    for i, l in enumerate(query.split("\n")):
+                        # print SQL query with line numbers for debugging
+                        logging.error(
+                            error + ":\n" + "{:>3}: {}".format(i + 1, l))
+                raise StandardError(error)
             else:
                 break
     elapsed = (datetime.datetime.now() - start).total_seconds()
