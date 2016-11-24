@@ -99,7 +99,8 @@ def query_and_export(dataset, view):
     try:
         project_id = 'ebmdatalab'
         tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
-        gzip_destination = "gs://ebmdatalab/views/%s-*.csv.gz" % tablename
+        gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
+            dataset, tablename)
         # We do a string replacement here as we don't know how
         # many times a dataset substitution token (i.e. `%s`) will
         # appear in each SQL template. And we can't use new-style
@@ -154,12 +155,11 @@ def export_to_gzip(project_id, dataset_id, table_id, destination):
     }
     return insert_job(project_id, payload)
 
-
+"".split
 def download_from_gcs(gcs_uri):
-    bucket, folder, blob = gcs_uri.replace('gs://', '').split('/')
+    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
     client = storage.Client(project='embdatalab')
     bucket = client.get_bucket(bucket)
-    blob_name = "%s/%s" % (folder, blob)
     prefix = blob_name.split('*')[0]
     for blob in bucket.list_blobs(prefix=prefix):
         with tempfile.NamedTemporaryFile(mode='rb+') as f:
