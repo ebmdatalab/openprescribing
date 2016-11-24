@@ -7,6 +7,7 @@ import os
 import subprocess
 import tempfile
 import time
+import traceback
 
 from google.cloud import storage
 from google.cloud.storage import Blob
@@ -97,27 +98,34 @@ class Command(BaseCommand):
 # ebmdatalab-python.
 
 def query_and_export(dataset, view):
-    project_id = 'ebmdatalab'
-    tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
-    gzip_destination = "gs://ebmdatalab/views/%s.csv.gz" % tablename
-    # We do a string replacement here as we don't know how
-    # many times a dataset substitution token (i.e. `%s`) will
-    # appear in each SQL template. And we can't use new-style
-    # formatting as some of the SQL has braces in.
-    sql = open(view, "r").read().replace('%s', dataset)
+    try:
+        project_id = 'ebmdatalab'
+        tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
+        gzip_destination = "gs://ebmdatalab/views/%s-*.csv.gz" % tablename
+        # We do a string replacement here as we don't know how
+        # many times a dataset substitution token (i.e. `%s`) will
+        # appear in each SQL template. And we can't use new-style
+        # formatting as some of the SQL has braces in.
+        sql = open(view, "r").read().replace('%s', dataset)
 
-    # Execute query and wait
-    job_id = query_and_return(
-        project_id, dataset, tablename, sql)
-    logger.warn("Awaiting query completion")
-    wait_for_job(job_id, project_id)
+        # Execute query and wait
+        job_id = query_and_return(
+            project_id, dataset, tablename, sql)
+        logger.warn("Awaiting query completion")
+        wait_for_job(job_id, project_id)
 
-    # Export to GCS and wait
-    job_id = export_to_gzip(
-        project_id, dataset, tablename, gzip_destination)
-    logger.warn("Awaiting export completion")
-    wait_for_job(job_id, project_id)
-    return (tablename, gzip_destination)
+        # Export to GCS and wait
+        job_id = export_to_gzip(
+            project_id, dataset, tablename, gzip_destination)
+        logger.warn("Awaiting export completion")
+        wait_for_job(job_id, project_id)
+        return (tablename, gzip_destination)
+    except Exception:
+        # Log the formatted error, because the multiprocessing pool
+        # this is called from only shows the error message (with no
+        # traceback)
+        logger.error(traceback.format_exc())
+        raise
 
 
 def download_and_unzip(dataset, gcs_uri):
