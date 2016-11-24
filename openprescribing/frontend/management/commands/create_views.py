@@ -70,8 +70,6 @@ class Command(BaseCommand):
         pool.close()
         pool.join()  # wait for all worker processes to exit
         for result in pool_results:
-            if not result.successful():
-                raise RuntimeError("Error running job: %s" % result.__dict__)
             tablename, gcs_uri = result.get()
             f = download_and_unzip(self.dataset, gcs_uri)
             copy_str = "COPY %s(%s) FROM STDIN "
