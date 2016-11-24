@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
     def fill_views(self):
         paths = [x for x in self.view_paths
-                 if not self.view or (self.view and self.view == x)]
+                 if not self.view or (self.view and self.view in x)]
         pool = Pool(processes=len(paths))
         pool_results = []
         for view in paths:
