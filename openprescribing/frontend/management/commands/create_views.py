@@ -129,13 +129,11 @@ def query_and_export(dataset, view):
 def download_and_unzip(dataset, gcs_uri):
     # Download from GCS
     unzipped = tempfile.NamedTemporaryFile(mode='r+')
-    with tempfile.NamedTemporaryFile(mode='wb') as f:
-        download_from_gcs(f.name, gcs_uri)
-
+    for f in download_from_gcs(gcs_uri):
         # Unzip
         subprocess.check_call(
-            "zcat -f %s > %s" % (f.name, unzipped.name), shell=True)
-        return unzipped
+            "zcat -f %s >> %s" % (f.name, unzipped.name), shell=True)
+    return unzipped
 
 
 def export_to_gzip(project_id, dataset_id, table_id, destination):
@@ -157,14 +155,18 @@ def export_to_gzip(project_id, dataset_id, table_id, destination):
     return insert_job(project_id, payload)
 
 
-def download_from_gcs(dest, gcs_uri):
+def download_from_gcs(gcs_uri):
     bucket, folder, blob = gcs_uri.replace('gs://', '').split('/')
     client = storage.Client(project='embdatalab')
     bucket = client.get_bucket(bucket)
-    blob = Blob("%s/%s" % (folder, blob), bucket)
-    with open(dest, 'wb') as file_obj:
-        blob.download_to_file(file_obj)
-    return dest
+    blob_name = "%s/%s" % (folder, blob)
+    prefix = blob_name.split('*')[0]
+    for blob in bucket.list_blobs(prefix=prefix):
+        with tempfile.NamedTemporaryFile(mode='rb+') as f:
+            blob.download_to_file(f)
+            f.flush()
+            f.seek(0)
+            yield f
 
 
 def query_and_return(project_id, dataset_id, table_id, query):
