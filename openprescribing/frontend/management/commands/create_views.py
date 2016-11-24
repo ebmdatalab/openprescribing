@@ -7,6 +7,7 @@ import os
 import subprocess
 import tempfile
 import time
+import traceback
 
 from google.cloud import storage
 from google.cloud.storage import Blob
@@ -56,8 +57,14 @@ class Command(BaseCommand):
             self.fill_views()
 
     def fill_views(self):
-        paths = [x for x in self.view_paths
-                 if not self.view or (self.view and self.view == x)]
+        paths = []
+        if self.view:
+            for path in self.view_paths:
+                if self.view in path:
+                    paths.append(path)
+                    break
+        else:
+            paths = self.view_paths
         pool = Pool(processes=len(paths))
         pool_results = []
         for view in paths:
@@ -69,8 +76,6 @@ class Command(BaseCommand):
         pool.close()
         pool.join()  # wait for all worker processes to exit
         for result in pool_results:
-            if not result.successful():
-                raise RuntimeError("Error running job: %s" % result.__dict__)
             tablename, gcs_uri = result.get()
             f = download_and_unzip(self.dataset, gcs_uri)
             copy_str = "COPY %s(%s) FROM STDIN "
@@ -97,39 +102,45 @@ class Command(BaseCommand):
 # ebmdatalab-python.
 
 def query_and_export(dataset, view):
-    project_id = 'ebmdatalab'
-    tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
-    gzip_destination = "gs://ebmdatalab/views/%s.csv.gz" % tablename
-    # We do a string replacement here as we don't know how
-    # many times a dataset substitution token (i.e. `%s`) will
-    # appear in each SQL template. And we can't use new-style
-    # formatting as some of the SQL has braces in.
-    sql = open(view, "r").read().replace('%s', dataset)
+    try:
+        project_id = 'ebmdatalab'
+        tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
+        gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
+            dataset, tablename)
+        # We do a string replacement here as we don't know how
+        # many times a dataset substitution token (i.e. `%s`) will
+        # appear in each SQL template. And we can't use new-style
+        # formatting as some of the SQL has braces in.
+        sql = open(view, "r").read().replace('%s', dataset)
 
-    # Execute query and wait
-    job_id = query_and_return(
-        project_id, dataset, tablename, sql)
-    logger.warn("Awaiting query completion")
-    wait_for_job(job_id, project_id)
+        # Execute query and wait
+        job_id = query_and_return(
+            project_id, dataset, tablename, sql)
+        logger.warn("Awaiting query completion")
+        wait_for_job(job_id, project_id)
 
-    # Export to GCS and wait
-    job_id = export_to_gzip(
-        project_id, dataset, tablename, gzip_destination)
-    logger.warn("Awaiting export completion")
-    wait_for_job(job_id, project_id)
-    return (tablename, gzip_destination)
+        # Export to GCS and wait
+        job_id = export_to_gzip(
+            project_id, dataset, tablename, gzip_destination)
+        logger.warn("Awaiting export completion")
+        wait_for_job(job_id, project_id)
+        return (tablename, gzip_destination)
+    except Exception:
+        # Log the formatted error, because the multiprocessing pool
+        # this is called from only shows the error message (with no
+        # traceback)
+        logger.error(traceback.format_exc())
+        raise
 
 
 def download_and_unzip(dataset, gcs_uri):
     # Download from GCS
     unzipped = tempfile.NamedTemporaryFile(mode='r+')
-    with tempfile.NamedTemporaryFile(mode='wb') as f:
-        download_from_gcs(f.name, gcs_uri)
-
+    for f in download_from_gcs(gcs_uri):
         # Unzip
         subprocess.check_call(
-            "zcat -f %s > %s" % (f.name, unzipped.name), shell=True)
-        return unzipped
+            "zcat -f %s >> %s" % (f.name, unzipped.name), shell=True)
+    return unzipped
 
 
 def export_to_gzip(project_id, dataset_id, table_id, destination):
@@ -150,15 +161,18 @@ def export_to_gzip(project_id, dataset_id, table_id, destination):
     }
     return insert_job(project_id, payload)
 
-
-def download_from_gcs(dest, gcs_uri):
-    bucket, folder, blob = gcs_uri.replace('gs://', '').split('/')
+"".split
+def download_from_gcs(gcs_uri):
+    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
     client = storage.Client(project='embdatalab')
     bucket = client.get_bucket(bucket)
-    blob = Blob("%s/%s" % (folder, blob), bucket)
-    with open(dest, 'wb') as file_obj:
-        blob.download_to_file(file_obj)
-    return dest
+    prefix = blob_name.split('*')[0]
+    for blob in bucket.list_blobs(prefix=prefix):
+        with tempfile.NamedTemporaryFile(mode='rb+') as f:
+            blob.download_to_file(f)
+            f.flush()
+            f.seek(0)
+            yield f
 
 
 def query_and_return(project_id, dataset_id, table_id, query):
@@ -209,12 +223,14 @@ def wait_for_job(job_id, project_id):
         counter += 1
         if response['status']['state'] == 'DONE':
             if 'errors' in response['status']:
-                query = str(response['configuration']['query']['query'])
-                for i, l in enumerate(query.split("\n")):
-                    # print SQL query with line numbers for debugging
-                    print "{:>3}: {}".format(i + 1, l)
-                raise StandardError(
-                    json.dumps(response['status']['errors'], indent=2))
+                error = json.dumps(response['status']['errors'], indent=2)
+                if 'query' in response['configuration']:
+                    query = str(response['configuration']['query']['query'])
+                    for i, l in enumerate(query.split("\n")):
+                        # print SQL query with line numbers for debugging
+                        logging.error(
+                            error + ":\n" + "{:>3}: {}".format(i + 1, l))
+                raise StandardError(error)
             else:
                 break
     elapsed = (datetime.datetime.now() - start).total_seconds()
