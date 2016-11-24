@@ -1,15 +1,15 @@
 var expect = require('chai').expect;
 var lineChart = require('../src/line-chart');
+var combinedData = [
+  { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'x_actual_cost': 10, 'astro_pu_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-03-01'},
+  { 'ratio_actual_cost': 10, 'y_actual_cost': 204, 'x_actual_cost': 11, 'astro_pu_cost': 11, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-03-01'},
+  { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'x_actual_cost': 12, 'astro_pu_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-04-01'},
+  { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'x_actual_cost': 13,'astro_pu_cost': 13,  'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
+];
 
 describe('LineChart', function () {
     describe('#getDataForLineChart', function () {
         it('should correctly construct the line chart series', function () {
-            var combinedData = [
-              { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'x_actual_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 10, 'y_actual_cost': 204, 'x_actual_cost': 11, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'x_actual_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-04-01'},
-              { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'x_actual_cost': 13, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
-            ];
             var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
                                x_val: "x_actual_cost", x: "actual_cost"};
             var series = lineChart.getDataForLineChart(combinedData, chartValues, []);
@@ -25,13 +25,7 @@ describe('LineChart', function () {
             expect(dataPoint.original_x).to.equal(10);
         });
 
-        it('should correctly construct the line chart series', function () {
-            var combinedData = [
-              { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'astro_pu_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 10, 'y_actual_cost': 204, 'astro_pu_cost': 11, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-04-01'},
-              { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'astro_pu_cost': 13, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
-            ];
+        it('should correctly construct the line chart series for other x_val', function () {
             var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
                                x_val: "astro_pu_cost", x: "astro_pu_cost"};
             var series = lineChart.getDataForLineChart(combinedData, chartValues, []);
@@ -47,12 +41,6 @@ describe('LineChart', function () {
         });
 
         it('should correctly highlight any active organisations', function () {
-            var combinedData = [
-              { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'x_actual_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 10, 'y_actual_cost': 204, 'x_actual_cost': 11, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-03-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'x_actual_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2014-04-01'},
-              { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'x_actual_cost': 13, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
-            ];
             var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
                                x_val: "x_actual_cost", x: "actual_cost"};
             var series = lineChart.getDataForLineChart(combinedData, chartValues, ['O3Q']);

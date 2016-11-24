@@ -17,8 +17,6 @@ def setUpModule():
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'shas.json',
                             verbosity=0)
-    management.call_command('loaddata', fix_dir + 'prescriptions.json',
-                            verbosity=0)
     Measure.objects.create(id='ace', name='ACE inhibitors',
         title='ACE inhibitors', description='foo')
 

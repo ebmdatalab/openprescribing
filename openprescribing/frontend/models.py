@@ -317,35 +317,6 @@ class Presentation(models.Model):
         app_label = 'frontend'
 
 
-class Prescription(models.Model):
-    '''
-    Prescription items
-    Characters
-    -- 1 & 2 show the BNF Chapter,
-    -- 3 & 4 show the BNF Section,
-    -- 5 & 6 show the BNF paragraph,
-    -- 7 shows the BNF sub-paragraph and
-    -- 8 & 9 show the chemical substance
-    -- 10 & 11 show the Product
-    -- 12 & 13 show the Strength and Formulation
-    -- 14 & 15 show the equivalent generic code (always used)
-    '''
-    sha = models.ForeignKey(SHA)
-    pct = models.ForeignKey(PCT)
-    practice = models.ForeignKey(Practice)
-    chemical = models.ForeignKey(Chemical)
-    presentation_code = models.CharField(max_length=15,
-                                         validators=[isAlphaNumeric])
-    presentation_name = models.CharField(max_length=1000)
-    total_items = models.IntegerField()
-    actual_cost = models.FloatField()
-    quantity = models.FloatField()
-    processing_date = models.DateField()
-
-    class Meta:
-        app_label = 'frontend'
-
-
 class Measure(models.Model):
     id = models.CharField(max_length=40, primary_key=True)
     name = models.CharField(max_length=500)
@@ -466,7 +437,7 @@ class ImportLog(models.Model):
     imported_at = models.DateTimeField(auto_now_add=True)
     current_at = models.DateField(db_index=True)
     filename = models.CharField(max_length=200)
-    category = models.CharField(max_length=15, db_index=True)
+    category = models.CharField(max_length=50, db_index=True)
     objects = ImportLogManager()
 
     class Meta:

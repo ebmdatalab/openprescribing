@@ -8,7 +8,7 @@ class ApiTestBase(TestCase):
 
     """
     fixtures = ['ccgs', 'practices', 'practice_listsizes', 'products',
-                'presentations', 'sections', 'prescriptions', 'chemicals',
+                'presentations', 'sections', 'chemicals',
                 'shas']
     api_prefix = '/api/1.0'
 

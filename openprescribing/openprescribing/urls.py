@@ -1,9 +1,5 @@
-from django.conf.urls import patterns, include, url
-from django.conf.urls.static import static
-from django.conf import settings
+from django.conf.urls import include, url
 from django.views.generic import RedirectView, TemplateView
-from common import utils
-import api
 from frontend.views import views as frontend_views
 
 urlpatterns = [
@@ -34,10 +30,6 @@ urlpatterns = [
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_practice'),
         name='practice'),
-    url(r'^area_team/$', frontend_views.all_area_teams,
-        name='all_area_teams'),
-    url(r'^area_team/(?P<at_code>[A-Z\d]+)/$', frontend_views.area_team,
-        name='area_team'),
     url(r'^measure/$',
         frontend_views.all_measures,
         name='all_measures'),

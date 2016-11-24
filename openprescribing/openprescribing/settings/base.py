@@ -11,6 +11,7 @@ DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
 # Absolute filesystem path to the top-level project folder:
 SITE_ROOT = dirname(DJANGO_ROOT)
+INSTALL_ROOT = abspath(join(SITE_ROOT, '..'))
 
 # Site name:
 SITE_NAME = basename(DJANGO_ROOT)
