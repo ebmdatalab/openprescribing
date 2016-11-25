@@ -9,6 +9,8 @@ from django.db import connection
 
 from frontend.models import SHA, PCT, ImportLog
 
+logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = ''
@@ -26,9 +28,6 @@ class Command(BaseCommand):
         parser.add_argument('--truncate')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
         if options['truncate']:
             self.truncate = True
         else:
@@ -55,8 +54,7 @@ class Command(BaseCommand):
             self.drop_oldest_month(date)
 
     def import_shas_and_pcts(self, filename, date):
-        if self.IS_VERBOSE:
-            print 'Importing SHAs and PCTs from %s' % filename
+        logger.info('Importing SHAs and PCTs from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
         sha_codes = set()
         pct_codes = set()
@@ -74,9 +72,8 @@ class Command(BaseCommand):
         for pct_code in pct_codes:
             p, created = PCT.objects.get_or_create(code=pct_code)
             pcts_created += created
-        if self.IS_VERBOSE:
-            print shas_created, 'SHAs created'
-            print pcts_created, 'PCTs created'
+        logger.info("%s SHAs created" % shas_created)
+        logger.info("%s PCTs created" % pcts_created)
 
     def create_partition(self, date):
         sql = ("CREATE TABLE %s ("
@@ -100,12 +97,11 @@ class Command(BaseCommand):
         )
         with connection.cursor() as cursor:
             cursor.execute(sql)
+        logger.info("Created partition %s" % self._partition_name(date))
 
     def drop_oldest_month(self, date):
         five_years_ago = datetime.date(date.year - 5, date.month, date.day)
-        partition_name = self._partition_name(five_years_ago)
-        with connection.cursor() as cursor:
-            cursor.execute("DROP TABLE IF EXISTS %s" % partition_name)
+        self.drop_partition(five_years_ago)
 
     def _partition_name(self, date):
         return "frontend_prescription_%s%s" % (
@@ -152,7 +148,8 @@ class Command(BaseCommand):
              "USING btree (presentation_code, practice_id)"),
             ("CREATE INDEX %s_by_practice_and_code "
              "ON %s "
-             "USING btree (practice_id, presentation_code varchar_pattern_ops)"),
+             "USING btree ("
+             "practice_id, presentation_code varchar_pattern_ops)"),
             ("CREATE INDEX %s_idx_date_and_code "
              "ON %s "
              "USING btree (processing_date, presentation_code)")]
@@ -187,13 +184,13 @@ class Command(BaseCommand):
                     partition_name, partition_name))
 
     def drop_partition(self, date):
+        logger.info('Dropping partition %s' % self._partition_name(date))
         sql = "DROP TABLE IF EXISTS %s" % self._partition_name(date)
         with connection.cursor() as cursor:
             cursor.execute(sql)
 
     def import_prescriptions(self, filename, date):
-        if self.IS_VERBOSE:
-            print 'Importing Prescriptions from %s' % filename
+        logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
         copy_str = "COPY %s(sha_id,pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
