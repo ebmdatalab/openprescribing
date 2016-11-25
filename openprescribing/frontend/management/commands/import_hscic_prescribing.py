@@ -52,6 +52,7 @@ class Command(BaseCommand):
             self.import_prescriptions(f, date)
             self.create_partition_indexes(date)
             self.add_parent_trigger()
+            self.drop_oldest_month(date)
 
     def import_shas_and_pcts(self, filename, date):
         if self.IS_VERBOSE:
@@ -100,8 +101,15 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute(sql)
 
+    def drop_oldest_month(self, date):
+        five_years_ago = datetime.date(date.year - 5, date.month, date.day)
+        partition_name = self._partition_name(five_years_ago)
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS %s" % partition_name)
+
     def _partition_name(self, date):
-        return "frontend_prescription_%s%s" % (date.year, date.month)
+        return "frontend_prescription_%s%s" % (
+            date.year, str(date.month).zfill(2))
 
     def add_parent_trigger(self):
         """A trigger to prevent accidental adding of data to the parent table

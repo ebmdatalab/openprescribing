@@ -8,6 +8,7 @@ from django.test import TestCase
 
 from common import utils
 from ebmdatalab import bigquery
+from frontend.models import ImportLog
 
 
 def setUpModule():
@@ -39,6 +40,7 @@ def setUpModule():
             bigquery.load_ccgs_from_pg('test_hscic')
             bigquery.load_statistics_from_pg('test_hscic')
     # Create view tables and indexes
+    ImportLog.objects.create(category='prescribing', current_at='2015-10-01')
     with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
         with connection.cursor() as c:
             c.execute(f.read())
