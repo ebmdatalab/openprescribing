@@ -1,6 +1,8 @@
 import os
+import unittest
 
 from mock import patch
+from mock import MagicMock
 
 from django.core.management import call_command
 from django.db import connection
@@ -8,52 +10,69 @@ from django.test import TestCase
 
 from common import utils
 from ebmdatalab import bigquery
+from frontend.management.commands import create_views
 
 
-def setUpModule():
-    if 'SKIP_BQ_LOAD' not in os.environ:
-        # Create local test data from fixtures, then upload this to a
-        # test project in bigquery
-        call_command('loaddata',
-                     'frontend/tests/fixtures/ccgs.json',
-                     verbosity=0)
-        call_command('loaddata',
-                     'frontend/tests/fixtures/practices.json',
-                     verbosity=0)
-        call_command('loaddata',
-                     'frontend/tests/fixtures/practice_listsizes.json',
-                     verbosity=0)
-        fixtures_base = 'frontend/tests/fixtures/commands/'
-        prescribing_fixture = (fixtures_base +
-                               'prescribing_bigquery_views_fixture.csv')
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        env = patch.dict(
-            'os.environ', {'DB_NAME': db_name})
-        with env:
-            # We patch the environment as this is how the
-            # ebmdatalab/bigquery library selects a database
-            bigquery.load_prescribing_data_from_file(
-                'test_hscic',
-                'prescribing',
-                prescribing_fixture)
-            bigquery.load_ccgs_from_pg('test_hscic')
-            bigquery.load_statistics_from_pg('test_hscic')
-    # Create view tables and indexes
-    with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
-        with connection.cursor() as c:
-            c.execute(f.read())
-    args = []
-    opts = {
-        'dataset': 'test_hscic'
-    }
-    call_command('create_views', *args, **opts)
+def _mockFile(name):
+    mock = MagicMock(spec=file, name=name)
+    mock.configure_mock(name='frontend/tests/fixtures/commands/' + name)
+    return mock
 
 
-def tearDownModule():
-    call_command('flush', verbosity=0, interactive=False)
+class UnitTests(unittest.TestCase):
+    @patch('frontend.management.commands.create_views.download_from_gcs')
+    def test_download_and_unzip_skips_extra_headers(self, mock_download):
+        mock_download.return_value = [
+            _mockFile('csv_part_1.gz'),
+            _mockFile('csv_part_2.gz')]
+        unzipped = create_views.download_and_unzip('foo')
+        self.assertEqual(unzipped.read().count("a,b,c"), 1)
 
 
 class CommandsTestCase(TestCase):
+    def setUp(self):
+        if 'SKIP_BQ_LOAD' not in os.environ:
+            # Create local test data from fixtures, then upload this to a
+            # test project in bigquery
+            call_command('loaddata',
+                         'frontend/tests/fixtures/ccgs.json',
+                         verbosity=0)
+            call_command('loaddata',
+                         'frontend/tests/fixtures/practices.json',
+                         verbosity=0)
+            call_command('loaddata',
+                         'frontend/tests/fixtures/practice_listsizes.json',
+                         verbosity=0)
+            fixtures_base = 'frontend/tests/fixtures/commands/'
+            prescribing_fixture = (fixtures_base +
+                                   'prescribing_bigquery_views_fixture.csv')
+            db_name = 'test_' + utils.get_env_setting('DB_NAME')
+            env = patch.dict(
+                'os.environ', {'DB_NAME': db_name})
+            with env:
+                # We patch the environment as this is how the
+                # ebmdatalab/bigquery library selects a database
+                bigquery.load_prescribing_data_from_file(
+                    'test_hscic',
+                    'prescribing',
+                    prescribing_fixture)
+                bigquery.load_ccgs_from_pg('test_hscic')
+                bigquery.load_statistics_from_pg('test_hscic')
+        # Create view tables and indexes
+        with open(
+                'frontend/management/commands/replace_matviews.sql', 'r') as f:
+            with connection.cursor() as c:
+                c.execute(f.read())
+        args = []
+        opts = {
+            'dataset': 'test_hscic'
+        }
+        call_command('create_views', *args, **opts)
+
+    def tearDown(self):
+        # Is this redundant?
+        call_command('flush', verbosity=0, interactive=False)
+
     def test_import_create_views(self):
         with connection.cursor() as c:
 
