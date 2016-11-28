@@ -10,13 +10,14 @@ import time
 import traceback
 
 from google.cloud import storage
-from google.cloud.storage import Blob
 
 from django.core.management.base import BaseCommand
 from django.db import connection
 
 from common import utils
 from ebmdatalab import bigquery
+from frontend.models import ImportLog
+
 
 logger = logging.getLogger(__name__)
 
@@ -67,11 +68,14 @@ class Command(BaseCommand):
             paths = self.view_paths
         pool = Pool(processes=len(paths))
         pool_results = []
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at.strftime('%Y-%m-%d')
         for view in paths:
             if self.view and self.view not in view:
                 continue
             # Perform bigquery parts of operation in parallel
-            result = pool.apply_async(query_and_export, [self.dataset, view])
+            result = pool.apply_async(
+                query_and_export, [self.dataset, view, prescribing_date])
             pool_results.append(result)
         pool.close()
         pool.join()  # wait for all worker processes to exit
@@ -101,18 +105,19 @@ class Command(BaseCommand):
 # BigQuery helper functions. Candidates for moving to
 # ebmdatalab-python.
 
-def query_and_export(dataset, view):
+def query_and_export(dataset, view, prescribing_date):
     try:
         project_id = 'ebmdatalab'
         tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
         gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
             dataset, tablename)
-        # We do a string replacement here as we don't know how
-        # many times a dataset substitution token (i.e. `%s`) will
+        # We do a string replacement here as we don't know how many
+        # times a dataset substitution token (i.e. `{{dataset}}') will
         # appear in each SQL template. And we can't use new-style
         # formatting as some of the SQL has braces in.
-        sql = open(view, "r").read().replace('%s', dataset)
-
+        sql = open(view, "r").read().replace('{{dataset}}', dataset)
+        sql = sql.replace("{{this_month}}", prescribing_date)
+        print sql
         # Execute query and wait
         job_id = query_and_return(
             project_id, dataset, tablename, sql)
@@ -161,7 +166,7 @@ def export_to_gzip(project_id, dataset_id, table_id, destination):
     }
     return insert_job(project_id, payload)
 
-"".split
+
 def download_from_gcs(gcs_uri):
     bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
     client = storage.Client(project='embdatalab')
