@@ -57,7 +57,7 @@ class Command(BaseCommand):
             query = ("COPY (select * from frontend_prescription) "
                      "TO STDOUT WITH CSV HEADER")
             with tempfile.NamedTemporaryFile(mode='rb+') as f:
-                with connection.cursor() as cursor:
+                with connection['old'].cursor() as cursor:
                     cursor.copy_expert(query, f)
                     print "  importing", date
                     call_command(
