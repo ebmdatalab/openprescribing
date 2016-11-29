@@ -83,13 +83,12 @@ class Command(BaseCommand):
                "  )"
                ") INHERITS (frontend_prescription);")
         constraint_from = "%s-%s-%s" % (date.year, date.month, "01")
-        next_month = (date.month + 1) % 12
-        if next_month == 0:
+        next_month = (date.month % 12) + 1
+        if next_month == 1:
             next_year = date.year + 1
-            next_month = 1
         else:
             next_year = date.year
-        constraint_to = "%s-%s-%s" % (next_year, next_month, "01")
+        constraint_to = "%s-%s-%s" % (next_year, str(next_month).zfill(2), "01")
         sql = sql % (
             self._partition_name(date),
             constraint_from,
