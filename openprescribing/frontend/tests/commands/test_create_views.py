@@ -6,11 +6,12 @@ from mock import MagicMock
 
 from django.core.management import call_command
 from django.db import connection
-from django.test import TestCase
+from django.test import SimpleTestCase
 
 from common import utils
 from ebmdatalab import bigquery
 from frontend.management.commands import create_views
+from frontend.models import ImportLog
 
 
 def _mockFile(name):
@@ -29,7 +30,9 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(unzipped.read().count("a,b,c"), 1)
 
 
-class CommandsTestCase(TestCase):
+class CommandsTestCase(SimpleTestCase):
+    allow_database_queries = True
+
     def setUp(self):
         if 'SKIP_BQ_LOAD' not in os.environ:
             # Create local test data from fixtures, then upload this to a
@@ -40,6 +43,7 @@ class CommandsTestCase(TestCase):
             call_command('loaddata',
                          'frontend/tests/fixtures/practices.json',
                          verbosity=0)
+            #This happens inside one transaction
             call_command('loaddata',
                          'frontend/tests/fixtures/practice_listsizes.json',
                          verbosity=0)
@@ -58,6 +62,7 @@ class CommandsTestCase(TestCase):
                     prescribing_fixture)
                 bigquery.load_ccgs_from_pg('test_hscic')
                 bigquery.load_statistics_from_pg('test_hscic')
+        ImportLog.objects.create(category='prescribing', current_at='2015-10-01')
         # Create view tables and indexes
         with open(
                 'frontend/management/commands/replace_matviews.sql', 'r') as f:
