@@ -88,7 +88,8 @@ class Command(BaseCommand):
             next_year = date.year + 1
         else:
             next_year = date.year
-        constraint_to = "%s-%s-%s" % (next_year, str(next_month).zfill(2), "01")
+        constraint_to = "%s-%s-%s" % (
+            next_year, str(next_month).zfill(2), "01")
         sql = sql % (
             self._partition_name(date),
             constraint_from,
