@@ -5,6 +5,7 @@ import tempfile
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import connection
+from django.db import connections
 
 
 class Command(BaseCommand):
@@ -36,7 +37,7 @@ class Command(BaseCommand):
                 sha_id character varying(3) NOT NULL
             );
             DROP SEQUENCE IF EXISTS frontend_prescription_parent_id_seq;
-            CREATE SEQUENCE frontend_prescription_id_seq
+            CREATE SEQUENCE frontend_prescription_parent_id_seq
                 START WITH 1
                 INCREMENT BY 1
                 NO MINVALUE
@@ -54,12 +55,12 @@ class Command(BaseCommand):
         for date in self.each_date(start_date, end_date):
             start = datetime.datetime.now()
             print "Copying", date
-            query = ("COPY (select * from frontend_prescription) "
-                     "TO STDOUT WITH CSV HEADER")
+            query = ("COPY (select sha_id,pct_id,practice_id,chemical_id,presentation_code,presentation_name,total_items,actual_cost,quantity,processing_date from frontend_prescription WHERE processing_date >= '%s' AND processing_date < (DATE('%s') + INTERVAL '1 MONTH - 1 DAY') LIMIT 100) TO STDOUT WITH CSV " % (date, date))
             with tempfile.NamedTemporaryFile(mode='rb+') as f:
-                with connection['old'].cursor() as cursor:
+                with connections['old'].cursor() as cursor:
                     cursor.copy_expert(query, f)
                     print "  importing", date
+                    f.flush()
                     call_command(
                         'import_hscic_prescribing',
                         filename=f.name,
