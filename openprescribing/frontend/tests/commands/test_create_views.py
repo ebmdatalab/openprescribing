@@ -43,7 +43,6 @@ class CommandsTestCase(SimpleTestCase):
             call_command('loaddata',
                          'frontend/tests/fixtures/practices.json',
                          verbosity=0)
-            #This happens inside one transaction
             call_command('loaddata',
                          'frontend/tests/fixtures/practice_listsizes.json',
                          verbosity=0)
@@ -62,7 +61,8 @@ class CommandsTestCase(SimpleTestCase):
                     prescribing_fixture)
                 bigquery.load_ccgs_from_pg('test_hscic')
                 bigquery.load_statistics_from_pg('test_hscic')
-        ImportLog.objects.create(category='prescribing', current_at='2015-10-01')
+        ImportLog.objects.create(
+            category='prescribing', current_at='2015-10-01')
         # Create view tables and indexes
         with open(
                 'frontend/management/commands/replace_matviews.sql', 'r') as f:
