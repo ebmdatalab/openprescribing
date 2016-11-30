@@ -7,11 +7,9 @@
 
 <p><b>Hello!</b></p>
 
-<p>Welcome to your monthly update about <a href="{{ dashboard_uri }}">{{bookmark.name}}</a>. We've looked at how it compares with other {{ bookmark.org_type }}s nationwide, on {{ measures_count|apnumber }} different prescribing measures.</p>
+<p>Welcome to your monthly update about <a href="{{ dashboard_uri }}">{{bookmark.name}}</a>. This is an experimental new service from OpenPrescribing and we are keen for feedback: just reply to this email.</p>
 
-<p>{{ intro_text }} Note that a {{ bookmark.org_type }} which is an outlier isn't necessarily a good or bad prescriber: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
-
-<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
+<p>{{ intro_text }} Note that there can sometimes be good reasons why one {{ bookmark.org_type }} is an outlier, and you should interpret the data thoughtfully: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
 
 {% if has_stats %}
   {% if stats.worst %}
@@ -41,7 +39,7 @@
     <p>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          We found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:percent_to}} over the last 9 months on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:percent_to}} over the last 9 months on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
         <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
           It also slipped {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
@@ -110,7 +108,7 @@
     <h3 class="better">Prescribing measures which are getting better</h3>
       {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>Over the last 9 months, we found that this {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that over the last 9 months this {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
           It also improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
         {% else %}
@@ -143,5 +141,6 @@
   {% endif %}
 {% endif %}
 
+<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 
 {% endblock %}
