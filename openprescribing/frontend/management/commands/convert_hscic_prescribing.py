@@ -53,15 +53,11 @@ class Command(BaseCommand):
         chemical_id = self.get_chemical_id(row[3])
         actual_cost = float(row[7])
         quantity = int(row[8])
-        if quantity:
-            price_per_unit = actual_cost / float(quantity)
-        else:
-            price_per_unit = 0
         month = row[9]
         formatted_date = '%s-%s-01' % (month[:4], month[4:])
         output = [row[0], row[1], row[2], chemical_id, row[3],
                   row[4], int(row[5]), float(row[7]),
-                  quantity, formatted_date, price_per_unit]
+                  quantity, formatted_date]
         return output
 
     def get_chemical_id(self, presentation_id):

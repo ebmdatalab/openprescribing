@@ -21,4 +21,4 @@ requests-futures
 google-api-python-client==1.5.3
 pip==8.1.2
 setuptools==27.3.0
-ebmdatalab-python==0.0.9
+ebmdatalab-python==0.0.14

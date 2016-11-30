@@ -53,7 +53,7 @@ class Command(BaseCommand):
         start_date = options['start_date']
         end_date = options['end_date']
         verbose = options['verbosity'] > 1
-        with constraint_and_index_reconstructor(options):
+        with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
                 measure_start = datetime.datetime.now()
                 global_calculation = GlobalCalculation(
@@ -140,6 +140,8 @@ class Command(BaseCommand):
                 month.strftime('%Y-%m-01')
         else:
             l = ImportLog.objects.latest_in_category('prescribing')
+            options['start_date'] = "%s-%s-%s" % (
+                l.current_at.year - 5, l.current_at.month, l.current_at.day)
             options['end_date'] = l.current_at.strftime('%Y-%m-%d')
         # validate the date format
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
@@ -326,7 +328,7 @@ class MeasureCalculation(object):
                 "[ebmdatalab:measures.%s]" %
                 settings.BQ_PRESCRIBING_TABLE_NAME)
         return bigquery.query_and_return(
-            settings.BQ_PROJECT, table_id, query, legacy)
+            settings.BQ_PROJECT, 'measures', table_id, query, legacy)
 
     def get_rows(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for
@@ -760,65 +762,10 @@ class CCGCalculation(MeasureCalculation):
 
 
 @contextmanager
-def constraint_and_index_reconstructor(options):
-    """A context manager which drops and reconstructs
-    the constraints and indexes in the measurevalues table.
-
-    Using this method can greatly speed up performance when
-    regenerating the data for the entire set of measures.
-
-    """
+def conditional_constraint_and_index_reconstructor(options):
     if 'measure' in options and options['measure']:
         # This is an optimisation that only makes sense when we're
         # updating the entire table.
         yield
     else:
-        with connection.cursor() as cursor:
-
-            # Record index and constraint definitions
-            indexes = {}
-            constraints = {}
-
-            # Build lists of current constraints and indexes
-            cursor.execute(
-                "SELECT conname, pg_get_constraintdef(c.oid) "
-                "FROM pg_constraint c "
-                "JOIN pg_namespace n "
-                "ON n.oid = c.connamespace "
-                "WHERE contype IN ('f', 'p','c','u') "
-                "AND conrelid = 'frontend_measurevalue'::regclass "
-                "ORDER BY contype;")
-            for name, definition in cursor.fetchall():
-                constraints[name] = definition
-            cursor.execute(
-                "SELECT indexname, indexdef "
-                "FROM pg_indexes "
-                "WHERE tablename = 'frontend_measurevalue';")
-            for name, definition in cursor.fetchall():
-                if name not in constraints.keys():
-                    # UNIQUE constraints actuall create indexes, so
-                    # we mustn't attempt to handle them twice
-                    indexes[name] = definition
-
-            # drop foreign key constraints
-            for name in constraints.keys():
-                cursor.execute(
-                    "ALTER TABLE frontend_measurevalue DROP CONSTRAINT %s"
-                    % name)
-
-            # drop indexes
-            for name in indexes.keys():
-                cursor.execute("DROP INDEX %s" % name)
-
-            yield
-
-            # we're updating everything. This takes 52 minutes.
-            # restore indexes
-            for cmd in indexes.values():
-                cursor.execute(cmd)
-
-            # restore foreign key constraints
-            for name, cmd in constraints.items():
-                cmd = ("ALTER TABLE frontend_measurevalue "
-                       "ADD CONSTRAINT %s %s" % (name, cmd))
-                cursor.execute(cmd)
+        yield utils.constraint_and_index_reconstructor('frontend_measurevalue')

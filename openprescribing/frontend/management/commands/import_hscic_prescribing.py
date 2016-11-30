@@ -1,16 +1,15 @@
 import csv
+import datetime
 import glob
 import logging
 import re
-import psycopg2
-import os
-import sys
-import time
-from pprint import pprint
-from os import environ
-from django.core.management.base import BaseCommand, CommandError
-from frontend.models import SHA, PCT, Prescription, ImportLog
-from common import utils
+
+from django.core.management.base import BaseCommand
+from django.db import connection
+
+from frontend.models import SHA, PCT, ImportLog
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -19,56 +18,43 @@ class Command(BaseCommand):
     help += 'Set DEBUG to False in your settings before running this.'
 
     def add_arguments(self, parser):
-        parser.add_argument('--db_name')
-        parser.add_argument('--db_user')
-        parser.add_argument('--db_pass')
         parser.add_argument('--filename')
+        parser.add_argument(
+            '--date', help="Specify date rather than infer it from filename")
+        parser.add_argument(
+            '--skip-orgs',
+            action='store_true',
+            help="Don't parse orgs from the file")
         parser.add_argument('--truncate')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
         if options['truncate']:
             self.truncate = True
         else:
             self.truncate = False
-        if options['db_name']:
-            db_name = options['db_name']
-        else:
-            db_name = utils.get_env_setting('DB_NAME')
-        if options['db_user']:
-            db_user = options['db_user']
-        else:
-            db_user = utils.get_env_setting('DB_USER')
-        if options['db_pass']:
-            db_pass = options['db_pass']
-        else:
-            db_pass = utils.get_env_setting('DB_PASS')
-        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
-        self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass, host=db_host)
-        cursor = self.conn.cursor()
 
         if options['filename']:
             files_to_import = [options['filename']]
         else:
             filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
             files_to_import = glob.glob(filepath)
-
         for f in files_to_import:
-            self.import_shas_and_pcts(f)
-            self.delete_existing_prescriptions(f)
-            self.import_prescriptions(f, cursor)
+            if options['date']:
+                date = datetime.datetime.strptime(
+                    options['date'], '%Y-%m-%d').date()
+            else:
+                date = self._date_from_filename(f)
+            if not options['skip_orgs']:
+                self.import_shas_and_pcts(f, date)
+            self.drop_partition(date)
+            self.create_partition(date)
+            self.import_prescriptions(f, date)
+            self.create_partition_indexes(date)
+            self.add_parent_trigger()
+            self.drop_oldest_month(date)
 
-        self.vacuum_db(cursor)
-        self.analyze_db(cursor)
-
-        self.conn.close()
-
-    def import_shas_and_pcts(self, filename):
-        if self.IS_VERBOSE:
-            print 'Importing SHAs and PCTs from %s' % filename
+    def import_shas_and_pcts(self, filename, date):
+        logger.info('Importing SHAs and PCTs from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
         sha_codes = set()
         pct_codes = set()
@@ -86,19 +72,131 @@ class Command(BaseCommand):
         for pct_code in pct_codes:
             p, created = PCT.objects.get_or_create(code=pct_code)
             pcts_created += created
-        if self.IS_VERBOSE:
-            print shas_created, 'SHAs created'
-            print pcts_created, 'PCTs created'
+        logger.info("%s SHAs created" % shas_created)
+        logger.info("%s PCTs created" % pcts_created)
 
-    def import_prescriptions(self, filename, cursor):
-        if self.IS_VERBOSE:
-            print 'Importing Prescriptions from %s' % filename
+    def create_partition(self, date):
+        sql = ("CREATE TABLE %s ("
+               "  CHECK ( "
+               "    processing_date >= DATE '%s' "
+               "      AND processing_date < DATE '%s'"
+               "  )"
+               ") INHERITS (frontend_prescription);")
+        constraint_from = "%s-%s-%s" % (date.year, date.month, "01")
+        next_month = (date.month + 1) % 12
+        if next_month == 0:
+            next_year = date.year + 1
+            next_month = 1
+        else:
+            next_year = date.year
+        constraint_to = "%s-%s-%s" % (next_year, next_month, "01")
+        sql = sql % (
+            self._partition_name(date),
+            constraint_from,
+            constraint_to
+        )
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+        logger.info("Created partition %s" % self._partition_name(date))
+
+    def drop_oldest_month(self, date):
+        five_years_ago = datetime.date(date.year - 5, date.month, date.day)
+        self.drop_partition(five_years_ago)
+
+    def _partition_name(self, date):
+        return "frontend_prescription_%s%s" % (
+            date.year, str(date.month).zfill(2))
+
+    def add_parent_trigger(self):
+        """A trigger to prevent accidental adding of data to the parent table
+
+        """
+        function = ("CREATE OR REPLACE FUNCTION prescription_prevent_action() "
+                    "  RETURNS trigger AS $prevent_action$ "
+                    "BEGIN "
+                    "  RAISE EXCEPTION "
+                    "  '% on % not allowed. Perform on descendant tables',"
+                    "  TG_OP, TG_TABLE_NAME;"
+                    "END; "
+                    "$prevent_action$ LANGUAGE plpgsql; ")
+        trigger = ("DROP TRIGGER IF EXISTS prevent_action "
+                   "  ON frontend_prescription; "
+                   "CREATE TRIGGER prevent_action "
+                   "BEFORE INSERT OR UPDATE OR DELETE ON frontend_prescription"
+                   "  FOR EACH STATEMENT "
+                   "  EXECUTE PROCEDURE prescription_prevent_action();")
+        with connection.cursor() as cursor:
+            cursor.execute(function)
+            cursor.execute(trigger)
+
+    def create_partition_indexes(self, date):
+        indexes = [
+            ("CREATE INDEX %s_6ea07fe3 "
+             "ON %s "
+             "USING btree (practice_id)"),
+            ("CREATE INDEX %s_by_pct "
+             "ON %s "
+             "USING btree (presentation_code, pct_id)"),
+            ("CREATE INDEX %s_by_pct_and_presentation "
+             "ON %s "
+             "USING btree (pct_id, presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX %s_by_prac_date_code "
+             "ON %s "
+             "USING btree (practice_id, processing_date, presentation_code)"),
+            ("CREATE INDEX %s_by_practice "
+             "ON %s "
+             "USING btree (presentation_code, practice_id)"),
+            ("CREATE INDEX %s_by_practice_and_code "
+             "ON %s "
+             "USING btree ("
+             "practice_id, presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX %s_idx_date_and_code "
+             "ON %s "
+             "USING btree (processing_date, presentation_code)")]
+        constraints = [
+            ("ALTER TABLE %s ADD CONSTRAINT "
+             "cnstrt_%s_pkey "
+             "PRIMARY KEY (id)"),
+            ("ALTER TABLE %s ADD CONSTRAINT "
+             "cnstrt_%s_chemical_bnf_code "
+             "FOREIGN KEY (chemical_id) REFERENCES frontend_chemical(bnf_code)"
+             " DEFERRABLE INITIALLY DEFERRED"),
+            ("ALTER TABLE %s ADD CONSTRAINT "
+             "cnstrt_%s__practice_code "
+             "FOREIGN KEY (practice_id) REFERENCES frontend_practice(code) "
+             "DEFERRABLE INITIALLY DEFERRED"),
+            ("ALTER TABLE %s ADD CONSTRAINT "
+             "cnstrt_%s__pct_code "
+             "FOREIGN KEY (pct_id) REFERENCES frontend_pct(code) "
+             "DEFERRABLE INITIALLY DEFERRED"),
+            ("ALTER TABLE %s ADD CONSTRAINT "
+             "cnstrt_%s__sha_code "
+             "FOREIGN KEY (sha_id) REFERENCES frontend_sha(code) "
+             "DEFERRABLE INITIALLY DEFERRED")
+            ]
+        partition_name = self._partition_name(date)
+        with connection.cursor() as cursor:
+            for index_sql in indexes:
+                cursor.execute(index_sql % (
+                    partition_name, partition_name))
+            for constraint_sql in constraints:
+                cursor.execute(constraint_sql % (
+                    partition_name, partition_name))
+
+    def drop_partition(self, date):
+        logger.info('Dropping partition %s' % self._partition_name(date))
+        sql = "DROP TABLE IF EXISTS %s" % self._partition_name(date)
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+
+    def import_prescriptions(self, filename, date):
+        logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
-        copy_str = "COPY frontend_prescription(sha_id,pct_id,"
+        copy_str = "COPY %s(sha_id,pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
         copy_str += "presentation_name,total_items,actual_cost,"
-        copy_str += "quantity,processing_date,price_per_unit) FROM STDIN "
-        copy_str += "WITH DELIMITER AS ','"
+        copy_str += "quantity,processing_date) FROM STDIN "
+        copy_str += "WITH (FORMAT CSV)"
         i = 0
         if self.truncate:
             with open("/tmp/sample", "wb") as outfile:
@@ -111,42 +209,15 @@ class Command(BaseCommand):
             file_obj = open("/tmp/sample")
         else:
             file_obj = open(filename)
-        cursor.copy_expert(copy_str, file_obj)
-        try:
-            self.conn.commit()
-            date = self._date_from_filename(filename)
+        with connection.cursor() as cursor:
+            cursor.copy_expert(copy_str % self._partition_name(date), file_obj)
             ImportLog.objects.create(
                 current_at=date,
                 filename=filename,
                 category='prescribing'
             )
-        except Exception as err:
-            print 'EXCEPTION:', err
-        # end = time.clock()
-        # time_taken = (end-start)
-        # print 'time_taken', time_taken
 
     def _date_from_filename(self, filename):
         file_str = filename.split('/')[-1].split('.')[0]
         file_str = re.sub(r'PDPI.BNFT_formatted', '', file_str)
-        return file_str[1:5] + '-' + file_str[5:] + '-01'
-
-    def delete_existing_prescriptions(self, filename):
-        if self.IS_VERBOSE:
-            print 'Deleting existing Prescriptions for month'
-        p = Prescription.objects.filter(
-            processing_date=self._date_from_filename(filename))
-        p.delete()
-
-    def vacuum_db(self, cursor):
-        if self.IS_VERBOSE:
-            print 'Vacuuming database...'
-        old_isolation_level = self.conn.isolation_level
-        self.conn.set_isolation_level(0)
-        cursor.execute("VACUUM frontend_prescription")
-        self.conn.set_isolation_level(old_isolation_level)
-
-    def analyze_db(self, cursor):
-        if self.IS_VERBOSE:
-            print 'Analyzing database...'
-        cursor.execute('ANALYZE VERBOSE frontend_prescription')
+        return datetime.date(int(file_str[1:5]), int(file_str[5:]), 1)

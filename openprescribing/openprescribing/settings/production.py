@@ -26,7 +26,15 @@ DATABASES = {
         'USER': utils.get_env_setting('DB_USER'),
         'PASSWORD': utils.get_env_setting('DB_PASS'),
         'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')
+    },
+    'old': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': utils.get_env_setting('DB_NAME'),
+        'USER': utils.get_env_setting('DB_USER'),
+        'PASSWORD': utils.get_env_setting('DB_PASS'),
+        'HOST': utils.get_env_setting('DB_HOST', '138.68.140.164')
     }
+
 }
 # END DATABASE CONFIGURATION
 
