@@ -81,7 +81,7 @@ class Command(BaseCommand):
         pool.join()  # wait for all worker processes to exit
         for result in pool_results:
             tablename, gcs_uri = result.get()
-            f = download_and_unzip(self.dataset, gcs_uri)
+            f = download_and_unzip(gcs_uri)
             copy_str = "COPY %s(%s) FROM STDIN "
             copy_str += "WITH (FORMAT CSV)"
             fieldnames = f.readline().split(',')
@@ -90,8 +90,13 @@ class Command(BaseCommand):
                     self.log("Deleting from table...")
                     cursor.execute("DELETE FROM %s" % tablename)
                     self.log("Copying CSV to postgres...")
-                    cursor.copy_expert(copy_str % (
-                        tablename, ','.join(fieldnames)), f)
+                    try:
+                        cursor.copy_expert(copy_str % (
+                            tablename, ','.join(fieldnames)), f)
+                    except Exception:
+                        import shutil
+                        shutil.copyfile(f.name, "/tmp/error")
+                        raise
             f.close()
             self.log("-------------")
 
@@ -121,13 +126,13 @@ def query_and_export(dataset, view, prescribing_date):
         # Execute query and wait
         job_id = query_and_return(
             project_id, dataset, tablename, sql)
-        logger.warn("Awaiting query completion")
+        logger.info("Awaiting query completion")
         wait_for_job(job_id, project_id)
 
         # Export to GCS and wait
         job_id = export_to_gzip(
             project_id, dataset, tablename, gzip_destination)
-        logger.warn("Awaiting export completion")
+        logger.info("Awaiting export completion")
         wait_for_job(job_id, project_id)
         return (tablename, gzip_destination)
     except Exception:
@@ -138,13 +143,20 @@ def query_and_export(dataset, view, prescribing_date):
         raise
 
 
-def download_and_unzip(dataset, gcs_uri):
+def download_and_unzip(gcs_uri):
     # Download from GCS
     unzipped = tempfile.NamedTemporaryFile(mode='r+')
-    for f in download_from_gcs(gcs_uri):
+    for i, f in enumerate(download_from_gcs(gcs_uri)):
         # Unzip
+        if i == 0:
+            cmd = "zcat -f %s >> %s"
+        else:
+            # When the file is split into several shards in GCS, it
+            # puts a header on every file, so we have to skip that
+            # header on all except the first shard.
+            cmd = "zcat -f %s | tail -n +2 >> %s"
         subprocess.check_call(
-            "zcat -f %s >> %s" % (f.name, unzipped.name), shell=True)
+            cmd % (f.name, unzipped.name), shell=True)
     return unzipped
 
 
@@ -174,6 +186,7 @@ def download_from_gcs(gcs_uri):
     prefix = blob_name.split('*')[0]
     for blob in bucket.list_blobs(prefix=prefix):
         with tempfile.NamedTemporaryFile(mode='rb+') as f:
+            logger.info("Downloading %s to %s" % (blob.path, f.name))
             blob.download_to_file(f)
             f.flush()
             f.seek(0)
