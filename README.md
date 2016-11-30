@@ -58,6 +58,9 @@ travis.
 
 ## On bare metal
 
+This should be enough to get a dev sandbox running; some brief notes
+about production environment follow.
+
 ### Set up a virtualenv
 
 If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
@@ -67,6 +70,10 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
     workon openprescribing
 
 ### Install dependencies
+
+Install library dependencies (current as of Debian Jessie):
+
+    sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
 
 Install Python dependencies in development:
 
@@ -100,6 +107,15 @@ Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required fo
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
+
+## Production notes
+
+Keeping environment variables all in one place can be a faff. In
+production, we've solved this by adding them all in
+`/etc/profile.d/openprescribing.sh` and then adding `source
+/etc/profile.d/openprescribing.sh` to `<virtualenv>/bin/activate`.
+
+The script at `contrib/bin/gunicorn_start` is responsible for starting up a backend server. We proxy to this from nginx using a configuration like that at `contrib/nginx/`.  We control the gunicorn process using `supervisor`, with a script like that at `contrib/supervisor/`.
 
 # Set up the database
 

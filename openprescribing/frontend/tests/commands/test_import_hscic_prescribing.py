@@ -1,11 +1,29 @@
 import datetime
+import unittest
+
+from mock import patch
+
 from django.core.management import call_command
 from django.db import InternalError
 from django.test import TestCase
+
+from common import utils
+from frontend.management.commands.import_hscic_prescribing import Command
 from frontend.models import Chemical, PCT, Practice
 from frontend.models import Prescription, SHA, ImportLog
-from common import utils
-from mock import patch
+
+
+class UnitTests(unittest.TestCase):
+    @patch('django.db.connection.cursor')
+    def test_create_partition_december(self, mock_cursor):
+        date = datetime.date(2011, 12, 1)
+        Command().create_partition(date)
+        mock_execute = mock_cursor.return_value.__enter__.return_value.execute
+        execute_args = mock_execute.call_args[0][0]
+        self.assertIn(
+            "processing_date >= DATE '2011-12-01'", execute_args)
+        self.assertIn(
+            "processing_date < DATE '2012-01-01'", execute_args)
 
 
 class CommandsTestCase(TestCase):
