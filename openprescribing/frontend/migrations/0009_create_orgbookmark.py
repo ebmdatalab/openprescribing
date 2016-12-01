@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('frontend', '0008_create_searchbookmark'),
+        ('frontend', '0009_auto_20161121_1507'),
     ]
 
     operations = [

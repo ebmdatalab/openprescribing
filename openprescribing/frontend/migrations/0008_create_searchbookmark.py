@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('frontend', '0007_add_cost_per_fields'),
+        ('frontend', '0008_auto_20161121_1236'),
     ]
 
     operations = [

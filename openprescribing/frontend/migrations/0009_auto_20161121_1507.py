@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('frontend', '0008_auto_20161121_1236'),
+        ('frontend', '0008_create_searchbookmark'),
     ]
 
     operations = [
