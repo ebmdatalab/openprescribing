@@ -1,16 +1,14 @@
-from django.conf.urls import patterns, include, url
-from django.conf.urls.static import static
-from django.conf import settings
+from django.conf.urls import include, url
 from django.views.generic import RedirectView, TemplateView
-from common import utils
-import api
+from django.contrib import admin
 from frontend.views import views as frontend_views
+from frontend.views import bookmark_views
+
+admin.autodiscover()
 
 urlpatterns = [
     # Static pages.
     url(r'^$', TemplateView.as_view(template_name='index.html'), name="home"),
-    url(r'^analyse/$', TemplateView.as_view(template_name='analyse.html'),
-        name="analyse"),
     url(r'^api/$', TemplateView.as_view(template_name='api.html'), name="api"),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name="about"),
@@ -21,6 +19,8 @@ urlpatterns = [
         name="how-to-use"),
 
     # User-facing pages.
+    url(r'^analyse/$', frontend_views.analyse,
+        name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,
         name='all_chemicals'),
     url(r'^chemical/(?P<bnf_code>[A-Z\d]+)/$', frontend_views.chemical,
@@ -30,6 +30,9 @@ urlpatterns = [
     url(r'^practice/(?P<code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
+    url(r'^practice/(?P<code>[A-Z\d]+)/preview_bookmark/$',
+        bookmark_views.preview_practice_bookmark,
+        name='preview-practice-bookmark'),
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_practice'),
@@ -48,6 +51,9 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
+    url(r'^ccg/(?P<code>[A-Z\d]+)/preview_bookmark/$',
+        bookmark_views.preview_ccg_bookmark,
+        name='preview-ccg-bookmark'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_ccg'),
@@ -71,4 +77,27 @@ urlpatterns = [
     # Other files.
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='robots.txt',
                                                 content_type='text/plain')),
+
+    # required by django-allauth
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+
+    # bookmarks
+    url(r'^bookmarks/(?P<key>[0-9a-z]+)$',
+        bookmark_views.login_from_key,
+        name='bookmark-login'),
+    url(r'^bookmarks/$',
+        bookmark_views.BookmarkList.as_view(),
+        name='bookmark-list'),
+    url(r'^last_bookmark/$',
+        frontend_views.last_bookmark,
+        name='last-bookmark'),
+    url(r'^analyse/preview/$', bookmark_views.preview_analysis_bookmark,
+        name="preview-analyse-bookmark"),
+    # Custom verification page, overrides allauth view
+    url(r"^confirm-email/$", bookmark_views.email_verification_sent,
+        name="account_email_verification_sent"),
+
+    # anymail webhooks
+    url(r'^anymail/', include('anymail.urls')),
 ]

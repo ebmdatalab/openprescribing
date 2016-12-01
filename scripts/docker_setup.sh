@@ -10,5 +10,6 @@ if ! [ -r openprescribing/media/js/node_modules ]; then
 else
     echo "NOTICE: node_modules already exists in repo; refusing to use the node_modules provided by the docker image"
 fi
+mkdir logs
 cd openprescribing/media/js
 npm install -s

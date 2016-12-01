@@ -20,6 +20,8 @@ ALLOWED_HOSTS = ['localhost', 'openprescribing.net', 'openprescriptions.net']
 
 # EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # END EMAIL CONFIGURATION
 
@@ -47,6 +49,7 @@ CACHES = {
 }
 # END CACHE CONFIGURATION
 
+INSTALLED_APPS += ('django_extensions',)
 
 # TOOLBAR CONFIGURATION
 # See: http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
@@ -79,3 +82,13 @@ CACHES = {
 # http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
 INTERNAL_IPS = ('127.0.0.1',)
 # END TOOLBAR CONFIGURATION
+
+GOOGLE_TRACKING_ID = 'UA-62480003-2'
+
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
+    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
+        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
+}

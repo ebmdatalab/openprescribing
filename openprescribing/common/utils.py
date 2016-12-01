@@ -1,6 +1,8 @@
 from contextlib import contextmanager
 from os import environ
+import hashlib
 import logging
+import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
@@ -95,3 +97,13 @@ def constraint_and_index_reconstructor(table_name):
                    "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
             cursor.execute(cmd)
             logger.info("Recreated constraint %s" % name)
+
+
+def google_user_id(user):
+    if user:
+        h = hashlib.md5()
+        h.update(str(user.id))
+        client_id = str(uuid.UUID(h.hexdigest()))
+    else:
+        client_id = None
+    return client_id

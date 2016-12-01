@@ -14,106 +14,42 @@
 <h1>CCG: {{ ccg.name }}</h1>
 
 <div class="row" id="intro">
+  <div class="col-md-6">
+    <p>Standard practices currently in this CCG:</p>
+    <ul class="list-unstyled" id="practices">
+    {% for p in practices %}
+      <li
+        {% if forloop.counter > 6 %}
+          class='hidden'
+        {% endif %}
+        >
+        <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
+        ({{ p.get_setting_display }})
+      </li>
+    {% endfor %}
+    </ul>
+    {% if practices.count > 6 %}
+      <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
+    {% endif %}
+  </div>
 
-<div class="col-md-6">
-<p>Standard practices currently in this CCG:</p>
-<ul class="list-unstyled" id="practices">
-{% for p in practices %}
-<li
-{% if forloop.counter > 6 %}
-class='hidden'
-{% endif %}
->
-<a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
-({{ p.get_setting_display }})
-</li>
-{% endfor %}
-</ul>
-{% if practices.count > 6 %}
-<a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
-{% endif %}
-</div>
-
-<div class="col-md-6" id="map-container">
-<div id="map-measure"></div>
-</div>
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+  </div>
 
 </div>
 
 <hr/>
-
-<div id="intro">
 
 <p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'caution' %}#metrics'>Read more about measures</a>.</p>
 
 <p id="perfsummary">Loading...</p>
 
-</div>
-
-<div id="toggle">Sort measures by:
-<div class="btn-group" id="order">
-    <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
-        Potential for improvement
-    </button>
-    <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
-        Potential savings
-    </button>
-</div>
-</div>
-
-<div id="measures">
-<div id="charts" class="row">
-<div class="loading-wrapper col-xs-12">
-    <hr/>
-    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
-    <br/>Fetching data...
-    <br/><br/>
-</div>
-</div>
-
-{% verbatim %}
-<script id="summary-panel" type="text/x-handlebars-template">
-<p>{{ performanceDescription }}</p>
-
-{{ topOpportunity }}
-
-{{{ costSavings }}}
-
-</script>
-
-<script id="measure-panel" type="text/x-handlebars-template">
-<div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
-        </div>
-        <div class="panel-body" class="row">
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
-                <p><strong>Why it matters:</strong> {{ why_it_matters }}</p>
-                <p><strong>Description:</strong> {{{ description }}}</p>
-                <p><strong>Performance:</strong> {{{ chartExplanation }}}</p>
-                <p><strong>Explore:</strong> see <a href="{{ chartTitleUrl }}">how all practices in this CCG</a> contribute to this CCG's performance.</p>
-            </div>
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
-                <div class="status"></div>
-            </div>
-        </div>
-
-    </div>
-</div>
-</script>
-{% endverbatim %}
+{% include '_measures_panel.html' with entity_type='CCG' %}
 
 <hr/>
 
-
-</div>
-
 {% include '_get_in_touch.html' %}
-
-
-
-</div>
 
 <script>
 var measureData = {

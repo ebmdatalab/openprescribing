@@ -12,8 +12,13 @@ DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 # Absolute filesystem path to the top-level project folder:
 SITE_ROOT = dirname(DJANGO_ROOT)
 
+INSTALL_ROOT = abspath(join(SITE_ROOT, '..'))
+
 # Site name:
 SITE_NAME = basename(DJANGO_ROOT)
+
+# Site ID (django.contrib.sites framework, required by django-anyauth
+SITE_ID = 1
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
@@ -30,7 +35,7 @@ DEBUG = False
 # MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ('EBM DataLab', 'tech@ebmdatalab.net'),
+    ('EBM Data Lab', 'tech@ebmdatalab.net'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -69,12 +74,22 @@ MEDIA_URL = '/media/'
 
 
 # STATIC FILE CONFIGURATION
+
+# The directory from where files should be served. The `collectstatic`
+# command will copy all files from static folders to here for serving.
+# The reason we need to do this (rather than just serve things
+# straignt from a static directory) is because dependent apps may also
+# provide static files for serving -- specifically, the Django admin
+# app.
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
+# The base URL which will be used in URLs for static assets
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 
+# Places that are searched -- by the django development server ahd the
+# `collectstatic` command -- for static files
 # See:
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
@@ -129,7 +144,9 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
-                'frontend.context_processors.support_email'
+                'frontend.context_processors.support_email',
+                'frontend.context_processors.google_tracking_id',
+                'frontend.context_processors.google_user_id'
             ],
             'debug': DEBUG
         },
@@ -146,6 +163,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -162,6 +180,7 @@ ROOT_URLCONF = '%s.urls' % SITE_NAME
 # APP CONFIGURATION
 DJANGO_APPS = (
     # Default Django apps:
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -181,8 +200,19 @@ LOCAL_APPS = (
     'frontend',
 )
 
+CONTRIB_APPS = (
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
+    'anymail',
+    'crispy_forms',
+)
+
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 # END APP CONFIGURATION
 
 
@@ -196,6 +226,11 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s'
+        }
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -207,16 +242,27 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
+
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
-        },
+        }
     }
 }
 # END LOGGING CONFIGURATION
+
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # custom backend to support logging in via a hash
+    'frontend.backends.SecretKeyBackend'
+)
 
 
 # WSGI CONFIGURATION
@@ -244,7 +290,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
     'GET'
 )
-SUPPORT_EMAIL = 'openprescribing-support@googlegroups.com'
+SUPPORT_EMAIL = 'feedback@openprescribing.net'
+DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
 SWAGGER_SETTINGS = {
     'info': {
         'contact': SUPPORT_EMAIL,
@@ -278,3 +325,31 @@ BQ_PRESCRIBING_TABLE_NAME = "prescribing"
 BQ_PRACTICES_TABLE_NAME = "practices"
 BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
     BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
+
+# Use django-anymail through mailgun for sending emails
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+ANYMAIL = {
+    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
+    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
+        utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
+        utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
+}
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+SERVER_EMAIL = "errors@openprescribing.net"
+
+# django-allauth configuration
+ACCOUNT_ADAPTER = 'frontend.account.adapter.MessageBlockingAdapter'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+LOGIN_REDIRECT_URL = "last-bookmark"
+LOGIN_URL = "home"
+
+# Easy bootstrap styling of Django forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# For grabbing images that we insert into alert emails
+GRAB_HOST = "https://openprescribing.net"

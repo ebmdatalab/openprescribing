@@ -77,11 +77,11 @@ Install library dependencies (current as of Debian Jessie):
 
 Install Python dependencies in development:
 
-    pip install -r requirements/local.txt
+    pip install -r requirements/local.txt --process-dependency-links
 
 Or in production:
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt --process-dependency-links
 
 And then install JavaScript dependencies. You'll need a version of
 nodejs greater than v0.10.11:
@@ -90,6 +90,10 @@ nodejs greater than v0.10.11:
     npm install -g browserify
     npm install -g jshint
     npm install
+
+To generate monthly alert emails (and run the tests for those) you'll
+need a `phantomjs` binary located at `/usr/local/bin/phantomjs`. Get
+it from [here](http://phantomjs.org/download.html).
 
 ### Create database and env variables
 
@@ -105,6 +109,12 @@ Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the d
 Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
 
 You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
+
+You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
+
+    http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
+
+Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
 
@@ -192,7 +202,7 @@ You can find the combinations we use for our Travis CI in
 
 # Run the application
 
-    python manage.py runserver --settings=openprescribing.settings.local
+    python manage.py runserver_plus --settings=openprescribing.settings.local
 
 You should now have a Django application running with no data inside it.
 

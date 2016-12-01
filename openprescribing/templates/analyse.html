@@ -96,7 +96,6 @@
     </p>
     <div>
         <button type="button" id="update" class="btn btn-primary" type="submit" data-loading-text="Fetching data..." data-loaded-text="Show me the data!">Show me the data!</button>
-        &nbsp;
     </div>
 
 </div> <!-- /#analyse-options -->
@@ -195,6 +194,23 @@
 </div>
 
 <br/>
+
+{% load crispy_forms_tags %}
+{% if not signed_up_for_alert %}
+<div id="alert-form-container">
+  Get monthly alerts about this analysis:
+  <form method="post" class="form form-inline" id="alert-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form | crispy }}
+    <input class="btn btn-primary" type="submit" value="Subscribe">
+    {% if request.user.is_superuser %}
+      <a id="preview-analyse-bookmark" href="{% url 'preview-analyse-bookmark' %}?url=" class="btn btn-danger">Preview alert email</a>
+    {% endif %}
+  </form>
+</div>
+<br/>
+{% endif %}
 
 <p>Read our notes on <a href="{% url 'caution' %}">understanding the data</a>. Found something interesting, or a bug? Get in touch: <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">{{ SUPPORT_EMAIL}}</a></p>
 

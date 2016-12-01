@@ -12,7 +12,12 @@ openpyxl==2.3.3
 numpy==1.10.4
 pandas==0.17.1
 scipy==0.17.0
+django-allauth==0.25.2
 lxml==3.6.4
+premailer
+django-anymail==0.6.1
+django-crispy-forms
+requests-futures
 google-api-python-client==1.5.3
 pip==8.1.2
 setuptools==27.3.0

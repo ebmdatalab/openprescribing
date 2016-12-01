@@ -1,0 +1,18 @@
+{% extends "bookmarks/email_base.html" %}
+{% load template_extras %}
+{% load humanize %}
+{% block title %}Your monthly alert from OpenPrescribing{% endblock %}
+
+{% block content %}
+
+<p><b>Hello!</b></p>
+
+<p>This is your monthly update for <a href="{{ dashboard_uri }}">{{ bookmark.name }}</a>.</p>
+
+<p>
+  <a href="{{ dashboard_uri }}"><img src="cid:{{ graph }}"></a>
+</p>
+
+<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
+
+{% endblock %}

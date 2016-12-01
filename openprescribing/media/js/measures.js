@@ -35,7 +35,7 @@
         Handlebars.compile($(_this.el.panelTemplate).html());
       var NUM_MONTHS_FOR_RANKING = 6;
       var centiles = ['10', '20', '30', '40', '50', '60', '70', '80', '90'];
-
+      var selectedMeasure = window.location.hash;
       _this.allGraphsRendered = false;
       _this.graphsToRenderInitially = 24;
       var options = measureData; // defined in handlebars templates
@@ -99,6 +99,22 @@
           if (options.rollUpBy === 'measure_id') {
             _this.setUpSortGraphs();
           }
+          if (selectedMeasure !== '') {
+            $('#overlay').fadeIn(300);
+            var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
+            console.log(measureId);
+            $(measureId).css('z-index', '99999');
+            $('html, body').animate({
+              scrollTop: $(measureId).offset().top
+            }, 1000);
+            $('#overlay').on('click', function() {
+              $('#overlay').stop().fadeOut(300);
+            });
+          }
+          if (location.search.indexOf('sortBySavings') > -1) {
+            $(_this.el.sortButtons).click();
+          }
+
         })
         .fail(function(jqXHR, textStatus, error) {
           console.log("Error " + error + " when making request " + jqXHR);

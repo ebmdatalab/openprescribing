@@ -19,11 +19,4 @@ class Migration(migrations.Migration):
         ('frontend', '0004_importlog'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='importlog',
-            name='category',
-            field=models.CharField(db_index=True, max_length=50)
-        ),
-        migrations.RunPython(seed_log),
-    ]
+    operations = []

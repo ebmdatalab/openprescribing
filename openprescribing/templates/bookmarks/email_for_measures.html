@@ -1,0 +1,146 @@
+{% extends "bookmarks/email_base.html" %}
+{% load template_extras %}
+{% load humanize %}
+{% block title %}Your monthly alert from OpenPrescribing{% endblock %}
+
+{% block content %}
+
+<p><b>Hello!</b></p>
+
+<p>Welcome to your monthly update about <a href="{{ dashboard_uri }}">{{bookmark.name}}</a>. This is an experimental new service from OpenPrescribing and we are keen for feedback: just reply to this email.</p>
+
+<p>{{ intro_text }} Note that there can sometimes be good reasons why one {{ bookmark.org_type }} is an outlier, and you should interpret the data thoughtfully: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
+
+{% if has_stats %}
+  {% if stats.worst %}
+    <h3 class="worse">Worst prescribing measures</h3>
+      {% for measure in stats.worst %}
+        {% if forloop.first %}
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the worst 10% on
+          <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ still_bad_image }}"></a><br>
+        {% elif stats.worst|length == 2 %}
+          It was also in the worst 10% on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% else %}
+          {% if forloop.counter == 2 %}
+            It was also in the worst 10% on:
+            <ul>
+          {% endif %}
+              <li><a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+            </ul>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
+
+  {% if stats.most_changing.declines %}
+    <h3 class="worse">Prescribing measures which are getting worse</h3>
+    <p>
+      {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
+        {% if forloop.counter == 1 %}
+          We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:percent_to}} over the last 9 months on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+        <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
+        {% elif stats.most_changing.declines|length == 2 %}
+          It also slipped {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% else %}
+          {% if forloop.counter == 2 %}
+           It also slipped:
+           <ul>
+          {% endif %}
+            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+           </ul>
+          {% endif %}
+         {% endif %}
+      {% endfor %}
+      </ul>
+  {% endif %}
+
+
+  {% if stats.top_savings.possible_savings %}
+    <h3 class="worse">Possible savings</h3>
+    <p>We looked at all the measures where this organisation could have saved at least £1,000 in the last six months.
+
+    {% if stats.top_savings.possible_savings|length_is:1 %}
+      We found that if it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about <b>£{{ stats.top_savings.possible_savings.0.1|roundpound }}</b> on <a href="{{ dashboard_uri }}#{{stats.top_savings.possible_savings.0.0.id}}">{{stats.top_savings.possible_savings.0.0.name}}</a>.</p>
+    {% else %}
+      </p>
+      <p>These add up to around <b>£{{total_possible_savings|roundpound}}</b> of potential savings. If it had prescribed in line with the average {{ bookmark.org_type }}, it could have saved about:</p>
+
+      <ul>
+        {% for measure, saving in stats.top_savings.possible_savings %}
+        <li><b>£{{saving|roundpound}}</b> on <a href="{{ dashboard_uri }}#{{measure.id}}">{{measure.name}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+
+  {% if stats.top_savings.possible_top_savings_total > 5000 %}
+    <h3>Best-case possible savings</h3>
+      <p>We compared this {{ bookmark.org_type }}'s spending with the best-performing 10% on all the areas we track.  If it prescribed as well as those {{ bookmark.org_type }}s, it could save around <b>£{{stats.top_savings.possible_top_savings_total|roundpound}}</b>.
+      <a href="{{ dashboard_uri }}&sortBySavings=1">Here's a list of measures, sorted by potential cost savings</a>.
+    </p>
+  {% endif %}
+
+  {% if stats.best %}
+  <h3 class="better">Best prescribing measures</h3>
+    {% for measure in stats.best %}
+      {% if forloop.first %}
+        <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the best 10% on
+        <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+      {% elif stats.best|length == 2 %}
+        It was also in the best 10% on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+      {% else %}
+        {% if forloop.counter == 2 %}</p>
+          It was also in the best 10% on:
+          <ul>
+        {% endif %}
+            <li><a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+        {% if forloop.last %}
+          </ul>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if stats.most_changing.improvements %}
+    <h3 class="better">Prescribing measures which are getting better</h3>
+      {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
+        {% if forloop.counter == 1 %}
+          <p>We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that over the last 9 months this {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% elif stats.most_changing.improvements|length == 2 %}
+          It also improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+        {% else %}
+          {% if forloop.counter == 2 %}
+           </p>
+           It also improved:
+           <ul>
+          {% endif %}
+            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+           </ul>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
+
+  {% if stats.top_savings.achieved_savings %}
+   <h3 class="better">Achieved savings</h3>
+   {% if stats.top_savings.achieved_savings|length == 1 %}
+    <p>By prescribing <a href="{{ dashboard_uri }}#{{measure.id}}">{{ stats.top_savings.achieved_savings.0.0.name }}</a> better than the median, this {{bookmark.org_type }} saved around <b>£{{stats.top_savings.achieved_savings.0.1|roundpound}}</b> over the past 6 months. </p>
+    {% else %}
+    Over the past 6 months, by prescribing better than the median, this {{bookmark.org_type }} saved around:
+     <ul>
+     {% for measure, saving in stats.top_savings.achieved_savings %}
+       <li><b>£{{saving|roundpound}}</b> on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>
+        </li>
+     {% endfor %}
+     </ul>
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
+
+{% endblock %}

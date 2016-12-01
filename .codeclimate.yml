@@ -40,3 +40,4 @@ exclude_paths:
  - "openprescribing/static/js/"
  - "openprescribing/static/css/"
  - "openprescribing/media/js/*.js"
+ - "openprescribing/frontend/management/commands/grab_chart.js"

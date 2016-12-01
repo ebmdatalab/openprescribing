@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Bookmarks for {{ request.user }} {% endblock %}
+
+{% block content %}
+
+<h2>Your alerts</h2>
+{% if org_bookmarks or search_bookmarks %}
+ {% if single_bookmark %}
+   <p>You are subscribed to a monthly alert about
+     <strong><a href="{{ single_bookmark.get_absolute_url }}">{{ single_bookmark.name }}</a></strong>
+   </p>
+   <form class="form" method="post">
+     <input class="btn btn-primary" type="submit" name="unsuball" value="Unsubscribe">
+   </form>
+ {% else %}
+  <p>You are currently subscribed to {{ count }} monthly alerts.</p>
+  <form class="form" method="post">
+    <input class="btn btn-primary" type="submit" name="unsuball" value="Unsubscribe from all">
+    <hr>
+    <p>
+      Or unsubscribe from specific alerts.
+    </p>
+    {{ form }}
+    {% csrf_token %}
+    <input class="btn btn-primary" type="submit" value="Unsubscribe">
+  </form>
+  {% endif %}
+{% else %}
+  <p>You are not subscribed to any alerts.</p>
+{% endif %}
+
+{% endblock %}

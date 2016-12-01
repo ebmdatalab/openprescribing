@@ -17,33 +17,6 @@ TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 ALLOWED_HOSTS = ['staging.openprescribing.net']
 # END HOST CONFIGURATION
 
-# EMAIL CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = environ.get('EMAIL_HOST', 'smtp.gmail.com')
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-password
-EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD',
-                                  utils.get_env_setting('GMAIL_PASS'))
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-user
-EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER',
-                              'openprescribing.errors@gmail.com')
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = environ.get('EMAIL_PORT', 587)
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
-EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-use-tls
-EMAIL_USE_TLS = True
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = EMAIL_HOST_USER
-# END EMAIL CONFIGURATION
 
 # DATABASE CONFIGURATION
 DATABASES = {
@@ -66,3 +39,59 @@ CACHES = {
     }
 }
 # END CACHE CONFIGURATION
+
+ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "staging.openprescribing.net",
+SUPPORT_EMAIL = 'feedback@staging.openprescribing.net'
+DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
+
+# LOGGING CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s %(levelname)s [%(name)s:%(lineno)s] '
+                       '%(module)s %(process)d %(thread)d %(message)s')
+        }
+    },
+    'handlers': {
+        'gunicorn': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': "%s/logs/gunicorn.log" % INSTALL_ROOT,
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+        'signals': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename':
+            "%s/logs/mail-signals.log" % INSTALL_ROOT,
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+            }
+    },
+    'loggers': {
+        'django': {
+            'level': 'WARN',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend': {
+            'level': 'DEBUG',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend.signals.handlers': {
+            'level': 'DEBUG',
+            'handlers': ['signals'],
+            'propagate': False,
+        },
+    }
+}
+
+# For grabbing images that we insert into alert emails
+GRAB_HOST = "http://staging.openprescribing.net"
+
+GOOGLE_TRACKING_ID = 'UA-62480003-3'

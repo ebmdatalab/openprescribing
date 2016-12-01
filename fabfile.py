@@ -1,6 +1,6 @@
 from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
-from fabric.api import settings, task, env
+from fabric.api import settings, task, env, shell_env
 from fabric.context_managers import cd
 
 from datetime import datetime
@@ -133,6 +133,17 @@ def checkpoint(force_build):
         abort("No changes to pull from origin!")
 
 
+def deploy_static():
+    bootstrap_environ = {
+        'MAILGUN_WEBHOOK_USER': 'foo',
+        'MAILGUN_WEBHOOK_PASS': 'foo'}
+    with shell_env(**bootstrap_environ):
+        with prefix('source .venv/bin/activate'):
+            run('cd openprescribing/ && '
+                'python manage.py collectstatic -v0 --noinput '
+                '--settings=openprescribing.settings.production')
+
+
 def run_migrations():
     if env.environment == 'production':
         with prefix('source .venv/bin/activate'):
@@ -224,6 +235,7 @@ def deploy(environment, force_build=False, branch='master'):
         npm_install_deps(force_build)
         npm_build_js()
         npm_build_css(force_build)
+        deploy_static()
         run_migrations()
         graceful_reload()
         clear_cloudflare()

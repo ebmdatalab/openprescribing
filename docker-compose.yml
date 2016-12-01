@@ -8,6 +8,7 @@ services:
     command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
     env_file: .env-test
     environment:
+      - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
       - TRAVIS=${TRAVIS}
       - TEST_SUITE=${TEST_SUITE}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}

@@ -1,0 +1,202 @@
+[
+{
+  "model": "frontend.pct",
+  "pk": "03V",
+  "fields": {
+    "ons_code": "E38000037",
+    "name": "NHS Corby",
+    "org_type": "CCG",
+    "boundary": "",
+    "managing_group": null,
+    "open_date": null,
+    "close_date": null,
+    "address": null,
+    "postcode": null
+  }
+},
+{
+  "model": "frontend.practice",
+  "pk": "P87629",
+  "fields": {
+    "ccg": "03V",
+    "area_team": null,
+    "name": "1/ST ANDREWS MEDICAL PRACTICE",
+    "address1": "ST.ANDREWS MEDICAL CENTRE",
+    "address2": "30 RUSSELL STREET ECCLES",
+    "address3": "MANCHESTER",
+    "address4": null,
+    "address5": null,
+    "postcode": "M30 0NU",
+    "location": "",
+    "setting": 4,
+    "open_date": null,
+    "close_date": null,
+    "join_provider_date": null,
+    "leave_provider_date": null,
+    "status_code": null
+  }
+},
+{
+  "model": "frontend.practice",
+  "pk": "P87630",
+  "fields": {
+    "ccg": "03V",
+    "area_team": null,
+    "name": "2/ST ANDREWS MEDICAL PRACTICE",
+    "address1": "ST.ANDREWS MEDICAL CENTRE",
+    "address2": "30 RUSSELL STREET ECCLES",
+    "address3": "MANCHESTER",
+    "address4": null,
+    "address5": null,
+    "postcode": "M30 0NU",
+    "location": "",
+    "setting": 4,
+    "open_date": null,
+    "close_date": null,
+    "join_provider_date": null,
+    "leave_provider_date": null,
+    "status_code": null
+  }
+},
+{
+  "model": "frontend.practice",
+  "pk": "P87631",
+  "fields": {
+    "ccg": "03V",
+    "area_team": null,
+    "name": "3/ST ANDREWS MEDICAL PRACTICE",
+    "address1": "ST.ANDREWS MEDICAL CENTRE",
+    "address2": "30 RUSSELL STREET ECCLES",
+    "address3": "MANCHESTER",
+    "address4": null,
+    "address5": null,
+    "postcode": "M30 0NU",
+    "location": "",
+    "setting": 4,
+    "open_date": null,
+    "close_date": null,
+    "join_provider_date": null,
+    "leave_provider_date": null,
+    "status_code": null
+  }
+},
+{
+  "model": "frontend.orgbookmark",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "pct": "03V",
+    "practice": null,
+    "approved": true,
+    "created_at": "2000-01-01T12:00:00Z"
+  }
+},
+{
+  "model": "frontend.orgbookmark",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "pct": null,
+    "practice": "P87629",
+    "approved": true,
+    "created_at": "2000-01-01T12:00:00Z"
+  }
+},
+{
+  "model": "frontend.orgbookmark",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "pct": null,
+    "practice": "P87629",
+    "approved": false,
+    "created_at": "2000-01-01T12:00:00Z"
+  }
+},
+{
+  "model": "frontend.searchbookmark",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "url": "foo",
+    "name": "foo",
+    "approved": true,
+    "created_at": "2000-01-01T12:00:00Z"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "!pZgapyTQg0svG35XcW1qhCthZomwBxMg2ZpTvQv6",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "bookmarks-user",
+    "first_name": "",
+    "last_name": "",
+    "email": "foo@baz.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-28T15:08:58.446Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.emailaddress",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "email": "foo@baz.com",
+    "verified": true,
+    "primary": false
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "!pZgapyTQg0svG35XcW1qhCthZomwBxMg2ZpTvQv6",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "no-bookmarks-user",
+    "first_name": "",
+    "last_name": "",
+    "email": "foo2@baz.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2016-09-28T15:08:58.446Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "account.emailaddress",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "email": "foo2@baz.com",
+    "verified": true,
+    "primary": false
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "!pZgapyTQg0svG35XcW1qhCthZomwBxMg2ZpTvQv6",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin-user",
+    "first_name": "",
+    "last_name": "",
+    "email": "foo3@baz.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-09-28T15:08:58.446Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+
+]

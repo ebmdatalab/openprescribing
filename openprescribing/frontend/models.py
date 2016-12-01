@@ -1,5 +1,8 @@
+import uuid
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from validators import isAlphaNumeric
 import model_prescribing_units
 
@@ -81,6 +84,9 @@ class PCT(models.Model):
     postcode = models.CharField(max_length=10, null=True, blank=True)
 
     objects = models.GeoManager()
+
+    def __unicode__(self):
+        return self.name or ""
 
 
 class Practice(models.Model):
@@ -454,6 +460,82 @@ class MeasureGlobal(models.Model):
         unique_together = (('measure', 'month'),)
 
 
+class SearchBookmark(models.Model):
+    '''A bookmark for an individual analyse search made by a user.
+    '''
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    url = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return 'Bookmark: ' + self.name
+
+    def topic(self):
+        """Sentence snippet describing the bookmark
+        """
+        return self.name
+
+    def dashboard_url(self):
+        """The 'home page' for this bookmark
+
+        """
+        return "%s#%s" % (reverse('analyse'), self.url)
+
+
+class OrgBookmark(models.Model):
+    '''
+    A bookmark for an organistion a user is interested in.
+
+    If a bookmark for a CCG, the practice field will be null.
+    Otherwise, it's a bookmark for a practice, and the pct field
+    indicates the parent CCG, if it exists.
+    '''
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    def dashboard_url(self):
+        """The 'home page' for this bookmark
+
+        """
+        if self.practice is None:
+            return reverse(
+                'measures_for_one_ccg',
+                kwargs={'ccg_code': self.pct.code})
+        else:
+            return reverse(
+                'measures_for_one_practice',
+                kwargs={'code': self.practice.code})
+
+    @property
+    def name(self):
+        if self.practice is None:
+            return self.pct.name
+        else:
+            return self.practice.name
+
+    def org_type(self):
+        if self.practice is None:
+            return 'CCG'
+        else:
+            return 'practice'
+
+    def topic(self):
+        """Sentence snippet describing the bookmark
+        """
+        return "prescribing in %s" % self.name
+
+    def get_absolute_url(self):
+        return self.dashboard_url()
+
+    def __unicode__(self):
+        return 'Org Bookmark: ' + self.name
+
+
 class ImportLogManager(models.Manager):
     def latest_in_category(self, category):
         return self.filter(category=category).first()
@@ -466,8 +548,28 @@ class ImportLog(models.Model):
     imported_at = models.DateTimeField(auto_now_add=True)
     current_at = models.DateField(db_index=True)
     filename = models.CharField(max_length=200)
-    category = models.CharField(max_length=15, db_index=True)
+    category = models.CharField(max_length=50, db_index=True)
     objects = ImportLogManager()
 
     class Meta:
         ordering = ["-current_at"]
+
+
+def _makeKey():
+    return uuid.uuid4().hex
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    key = models.CharField(max_length=32,
+                           default=_makeKey,
+                           unique=True)
+    emails_received = models.IntegerField(default=0)
+    emails_opened = models.IntegerField(default=0)
+    emails_clicked = models.IntegerField(default=0)
+
+    def most_recent_bookmark(self):
+        org_bookmark = self.user.orgbookmark_set.last()
+        search_bookmark = self.user.searchbookmark_set.last()
+        bookmarks = [x for x in [org_bookmark, search_bookmark] if x]
+        return sorted(bookmarks, key=lambda x: x.created_at)[-1]
