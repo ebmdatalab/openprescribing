@@ -1,23 +1,27 @@
 {
-	"name": "Prescribing of standard release tramadol",
+	"name": "High dose opiates",
 	"title": [
-		"Prescribing of standardvrelease tramadol",
-		"compared with prescribing of all tramadol preparations"
+		"Prescribing of high dose opiates",
+		"compared with prescribing of opiates"
 	],
 	"description": [
-		"Prescribing of standardrelease tramadol",
-		"compared with prescribing of all tramadol preparations"
+		"Prescribing of high dose opiates",
+		"compared with prescribing of opiates"
 	],
 	"why_it_matters": [
-		"Modified release tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
-		"Ideally modified-release preparations should be reserved for patients who have compliance issues."
+		"The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware' Opioids Aware</a> project seeks to ",
+		"improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
+		"and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
+		"We have assumed that if a patient is on regular doses of 120mg morphine a day or above that they are likely to have also had ",
+		"additional opioids for breakthrough pain.  This is why we have set the threshold at ≥120mg morphine equivalence per day.",
+		"Morphine equivalencies have been calculated using the <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids' tables available </a> from the Royal College of Anesthetists Faculty of Pain Medicine."
 	],
-	"numerator_short": "Tramadol 50mg capsule items",
-	"denominator_short": "All tramadol items",
+	"numerator_short": "High dose opiate items",
+	"denominator_short": "All opiate items",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
-	"low_is_good": false,
+	"low_is_good": true,
 	"numerator_columns": [
 		"SUM(items) AS numerator, "
 	],
