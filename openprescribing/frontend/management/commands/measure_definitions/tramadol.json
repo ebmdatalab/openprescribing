@@ -1,0 +1,35 @@
+{
+  "name": "Prescribing of standard release tramadol", 
+  "title": [
+    "Prescribing of standardvrelease tramadol", 
+    "compared with prescribing of all tramadol preparations"
+  ], 
+  "description": [
+    "Prescribing of standardrelease tramadol", 
+    "compared with prescribing of all tramadol preparations"
+  ], 
+  "why_it_matters": [
+  "Modified release tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
+  "Ideally modified-release preparations should be reserved for patients who have compliance issues."
+  ], 
+  "numerator_short": "Tramadol 50mg capsule items", 
+  "denominator_short": "All tramadol items", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": false, 
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code LIKE'040702040AAAAAA%')  "
+  ], 
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code like '040702040AAAAAA%')  "
+  ]
+}
