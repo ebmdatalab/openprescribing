@@ -1,0 +1,60 @@
+{
+	"name": "Prescribing of standard release tramadol",
+	"title": [
+		"Prescribing of standardvrelease tramadol",
+		"compared with prescribing of all tramadol preparations"
+	],
+	"description": [
+		"Prescribing of standardrelease tramadol",
+		"compared with prescribing of all tramadol preparations"
+	],
+	"why_it_matters": [
+		"Modified release tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
+		"Ideally modified-release preparations should be reserved for patients who have compliance issues."
+	],
+	"numerator_short": "Tramadol 50mg capsule items",
+	"denominator_short": "All tramadol items",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": false,
+	"numerator_columns": [
+		"SUM(items) AS numerator, "
+	],
+	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
+	"numerator_where": [
+		"(bnf_code LIKE '0407020Q0%AI' OR bnf_code LIKE '0407020Q0%DC' OR bnf_code LIKE '0407020Q0%EH' ",
+		"OR bnf_code LIKE '0407020Q0%DU' OR bnf_code LIKE '0407020Q0%AH' OR bnf_code LIKE '0407020Q0%DD' ",
+		"OR bnf_code LIKE '0407020Q0%EB' OR bnf_code LIKE '0407020Q0%DV' OR bnf_code LIKE '0407020Q0%DW' ",
+		"OR bnf_code LIKE '0407020Q0%AG' OR bnf_code LIKE '0407020Q0%DE' OR bnf_code LIKE '0407020Q0%EI' ",
+		"OR bnf_code LIKE '0407020AD%AR' OR bnf_code LIKE '0407020AD%AH' OR bnf_code LIKE '0407020AD%AI' ",
+		"OR bnf_code LIKE '0407020AD%AP' OR bnf_code LIKE '0407020AD%AQ' OR bnf_code LIKE '0407020AF%AD' ",
+		"OR bnf_code LIKE '0407020AG%AF' OR bnf_code LIKE '0407020AG%AG' OR bnf_code LIKE '0407020A0%AF' ",
+		"OR bnf_code LIKE '0407020A0%AG' OR bnf_code LIKE '0407020A0%AH' OR bnf_code LIKE '0407020B0%AF' ",
+		"OR bnf_code LIKE '0407020B0%AG')  "
+	],
+	"denominator_columns": [
+		"SUM(items) AS denominator, "
+	],
+	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
+	"denominator_where": [
+		"((bnf_code LIKE '0407020Q0%CG'  OR bnf_code LIKE '0407020Q0%AK'  OR bnf_code LIKE '0407020Q0%EF' ",
+		"OR bnf_code LIKE '0407020Q0%CF'  OR bnf_code LIKE '0407020Q0%FL'  OR bnf_code LIKE '0407020Q0%CV' ",
+		"OR bnf_code LIKE '0407020Q0%DZ'  OR bnf_code LIKE '0407020Q0%AL'  OR bnf_code LIKE '0407020Q0%CP' ",
+		"OR bnf_code LIKE '0407020Q0%EG'  OR bnf_code LIKE '0407020Q0%EA'  OR bnf_code LIKE '0407020Q0%AI' ",
+		"OR bnf_code LIKE '0407020Q0%DC'  OR bnf_code LIKE '0407020Q0%EH'  OR bnf_code LIKE '0407020Q0%DU' ",
+		"OR bnf_code LIKE '0407020Q0%AH'  OR bnf_code LIKE '0407020Q0%DD'  OR bnf_code LIKE '0407020Q0%EB' ",
+		"OR bnf_code LIKE '0407020Q0%DV'  OR bnf_code LIKE '0407020Q0%DW'  OR bnf_code LIKE '0407020Q0%AG' ",
+		"OR bnf_code LIKE '0407020Q0%DE'  OR bnf_code LIKE '0407020Q0%EI'  OR bnf_code LIKE '0407020AD%AF' ",
+		"OR bnf_code LIKE '0407020AD%AG'  OR bnf_code LIKE '0407020AD%AH'  OR bnf_code LIKE '0407020AD%AI' ",
+		"OR bnf_code LIKE '0407020AD%AK'  OR bnf_code LIKE '0407020AD%AP'  OR bnf_code LIKE '0407020AD%AQ' ",
+		"OR bnf_code LIKE '0407020AD%AR'  OR bnf_code LIKE '0407020AD%AS'  OR bnf_code LIKE '0407020AF%AA' ",
+		"OR bnf_code LIKE '0407020AF%AB'  OR bnf_code LIKE '0407020AF%AC'  OR bnf_code LIKE '0407020AF%AD' ",
+		"OR bnf_code LIKE '0407020AG%AC'  OR bnf_code LIKE '0407020AG%AD'  OR bnf_code LIKE '0407020AG%AE' ",
+		"OR bnf_code LIKE '0407020AG%AF'  OR bnf_code LIKE '0407020AG%AG'  OR bnf_code LIKE '0407020A0%AE' ",
+		"OR bnf_code LIKE '0407020A0%AF'  OR bnf_code LIKE '0407020A0%AG'  OR bnf_code LIKE '0407020A0%AH' ",
+		"OR bnf_code LIKE '0407020A0%AU'  OR bnf_code LIKE '0407020A0%BW'  OR bnf_code LIKE '0407020B0%AE' ",
+		"OR bnf_code LIKE '0407020B0%AF'  OR bnf_code LIKE '0407020B0%AG'  OR bnf_code LIKE '0407020B0%AH' ",
+		"OR bnf_code LIKE '0407020B0%AI'  OR bnf_code LIKE '0407020B0%AJ' )  "
+	]
+}
