@@ -7,9 +7,9 @@
 	"Prescribing of pregabalin per 1000 patients"
 	],
 	"why_it_matters": [
-		Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
-    "However, it is expensive when compared to other NICE receommended treatments, and costs are increasingly rapidly in the NHS. ",
-    "Patients should be regularly review to ensure continued benefit, and that side effects are not troublesome."
+	"Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
+    	"However, it is expensive when compared to other NICE receommended treatments, and costs are increasingly rapidly in the NHS. ",
+    	"Patients should be regularly review to ensure continued benefit, and that side effects are not troublesome."
 	],
 	"numerator_short": "Pregabalin cost",
 	"denominator_short": "1000 patients",
