@@ -42,7 +42,7 @@
 	],
 	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
 	"denominator_where": [
-		"((bnf_code LIKE '0407020Q0%CG'  OR bnf_code LIKE '0407020Q0%AK'  OR bnf_code LIKE '0407020Q0%EF' ",
+		"(bnf_code LIKE '0407020Q0%CG'  OR bnf_code LIKE '0407020Q0%AK'  OR bnf_code LIKE '0407020Q0%EF' ",
 		"OR bnf_code LIKE '0407020Q0%CF'  OR bnf_code LIKE '0407020Q0%FL'  OR bnf_code LIKE '0407020Q0%CV' ",
 		"OR bnf_code LIKE '0407020Q0%DZ'  OR bnf_code LIKE '0407020Q0%AL'  OR bnf_code LIKE '0407020Q0%CP' ",
 		"OR bnf_code LIKE '0407020Q0%EG'  OR bnf_code LIKE '0407020Q0%EA'  OR bnf_code LIKE '0407020Q0%AI' ",
