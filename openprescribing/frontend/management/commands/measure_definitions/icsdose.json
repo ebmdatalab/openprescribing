@@ -1,0 +1,45 @@
+{
+	"name": "High dose inhaled corticosteroids",
+	"title": [
+		"Prescribing of high dose inhaled corticosteroids",
+		"compared with prescribing of all inhaled corticosteroids"
+	],
+	"description": [
+		"Prescribing of high dose inhaled corticosteroids",
+		"compared with prescribing of all inhaled corticosteroids"
+	],
+	"why_it_matters": [
+		"<a href='https://www.brit-thoracic.org.uk/standards-of-care/guidelines/btssign-british-guideline-on-the-management-of-asthma/' Latest BTS/SIGN guidance </a> on the treatment of asthma recommends that ",
+		"patients should be maintained at the lowest possible dose of inhaled corticosteroid.",
+		"Reduction in inhaled corticosteroid dose should be slow as patients deteriorate at different rates. ",
+		"Reductions should be considered every three months, decreasing the dose by approximately 25–50% each time. ",
+		"'High-dose' inhaled corticosteroids are listed at step 4 of the guidelines. ",
+		"The latest guidance for treatment of COPD now recommends use of another treatment in preference to inhaled corticosteroids. ",
+		"There is some evidence that inhaled corticosteroids increases the risk of pneumonia.  This risk appears to increase with dose."
+	],
+	"numerator_short": "High dose ICS items",
+	"denominator_short": "All ICS items",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"numerator_columns": [
+		"SUM(items) AS numerator, "
+	],
+	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
+	"numerator_where": [
+		"(bnf_code LIKE '0302000C0%BW' OR bnf_code LIKE '0302000C0%AC' OR bnf_code LIKE '0302000C0%AU' ",
+		"OR bnf_code LIKE '0302000C0%BK' OR bnf_code LIKE '0302000K0%AU' OR bnf_code LIKE '0302000K0%AH' ",
+		"OR bnf_code LIKE '0302000U0%AB' OR bnf_code LIKE '0302000U0%AC' OR bnf_code LIKE '0302000N0%BC' ",
+		"OR bnf_code LIKE '0302000N0%AU' OR bnf_code LIKE '0302000N0%AF' OR bnf_code LIKE '0302000N0%AP' ",
+		"OR bnf_code LIKE '0302000N0%BG' OR bnf_code LIKE '0302000N0%AZ' OR bnf_code LIKE '0302000N0%BM') "
+	],
+	"denominator_columns": [
+		"SUM(items) AS denominator, "
+	],
+	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
+	"denominator_where": [
+		"(bnf_code LIKE '0302000K0%' OR bnf_code LIKE '0302000C0%' OR bnf_code LIKE '0302000R0%' ",
+		"OR bnf_code LIKE '0302000U0%' OR bnf_code LIKE '0302000N0%' )"
+	]
+}
