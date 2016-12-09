@@ -1,0 +1,41 @@
+{
+	"name": "Maintainance Proton Pump Inhibitors (PPIs)",
+	"title": [
+		"Prescribing of maintainance dose Proton Prump Inhibitors",
+		"compared with prescribing of all PPIs"
+	],
+	"description": [
+		"Prescribing of maintainance dose Proton Prump Inhibitors",
+		"compared with prescribing of all PPIs"
+	],
+	"why_it_matters": [
+		"PPIs are used to reduce acid levels in the stomach, in order to treat conditions such as gastro-oesphogeal reflux disease. ",
+		"NICE guidance recommends that the lowest dose is used to treat the symptoms. ",
+		"Although PPIs are safe drugs, their use has been associated with an increase in a number of disorders, ",
+		"including Clostridium difficile infection and a higher risk of community-aquired pneunmonia. ",
+		"Low dose PPIs are defined in the <a href='https://www.nice.org.uk/guidance/cg184/chapter/appendix-a-dosage-information-on-proton-pump-inhibitors' NICE guidance</a>."
+	],
+	"numerator_short": "Maintainance dose PPI items",
+	"denominator_short": "All PPI items",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": false,
+	"numerator_columns": [
+		"SUM(items) AS numerator, "
+	],
+	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
+	"numerator_where": [
+		"(bnf_code LIKE '0103050L0%AB' OR bnf_code LIKE '0103050L0%AE' OR bnf_code LIKE '0103050L0%AG' ",
+		"OR bnf_code LIKE '0103050P0%AB' OR bnf_code LIKE '0103050P0%AF' OR bnf_code LIKE '0103050P0%AM' ",
+		"OR bnf_code LIKE '0103050P0%AT' OR bnf_code LIKE '0103050P0%AU' OR bnf_code LIKE '0103050P0%BC' ",
+		"OR bnf_code LIKE '0103050R0%AB'OR bnf_code LIKE '0103050T0%AA') "
+	],
+	"denominator_columns": [
+		"SUM(items) AS denominator, "
+	],
+	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
+	"denominator_where": [
+		"(bnf_code LIKE '0103050%')"
+	]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Branded ciclosporin preparations", 
+  "title": [
+    "Prescribing of branded ciclosporin preparations"
+  ], 
+  "description": [
+    "Total items of branded ciclosporin preparations (0703021Q0BB),", 
+    "as a proportion of total items of all ciclosporin items", 
+    "(0703021Q0)."
+  ], 
+  "why_it_matters": [
+    "<a href='http://www.evidence.nhs.uk/formulary/bnf/current/8-malignant-disease-and-immunosuppression/82-drugs-affecting-the-immune-response/822-corticosteroids-and-other-immunosuppressants/ciclosporin' The BNF states </a>:",
+    "Patients should be stabilised on a particular brand of oral ciclosporin",
+    "because switching between formulations without close monitoring may lead to clinically ",
+    "important changes in blood-ciclosporin concentration.",
+    "Prescribing and dispensing of ciclosporin should be by brand name to avoid inadvertent switching."
+  ], 
+  "numerator_short": "Branded ciclosporin items", 
+  "denominator_short": "Ciclosporin items", 
+  "url": null, 
+  "is_percentage": true, 
+  "is_cost_based": false, 
+  "low_is_good": false, 
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ], 
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "numerator_where": [
+    "(bnf_code LIKE '0802020G0B%')  "
+  ], 
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ], 
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  "denominator_where": [
+    "(bnf_code LIKE '0802020G0%')  "
+  ]
+}
