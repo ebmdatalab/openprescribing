@@ -1,39 +1,39 @@
 {
-	"name": "Soluble/effervescent forms of paracetamol and co-codamol",
-	"title": [
-		"Prescribing of soluble/effervescent forms of paracetamol and co-codamol ",
-		"as a percentage of prescribing of all paracetamol and co-codamol tablets and capsules"
-	],
-	"description": [
-		"Prescribing of soluble/effervescent forms of paracetamol and co-codamol ",
-		"as a percentage of prescribing of all paracetamol and co-codamol tablets and capsules"
-	],
-	"why_it_matters": [
-		"Soluble and effervescent preparations of analgesics contain high sodium content.",
-		"8 soluble paracetamol per day will exceed the recommended sodium intake for an adult of 2.4g (6g salt).",
-		"In addition, these products are considerably more expensive than standard tablets or capsules.",
-		"Therefore, ideally they should only be recommended in patients with genuine swallowing difficulties."
-	],
-	"numerator_short": "Soluble paracetamol and co-codamol",
-	"denominator_short": "All paracetamol and co-codamol tabs and caps",
-	"url": null,
-	"is_percentage": true,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"numerator_columns": [
-		"SUM(items) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '0407010H0%AQ' OR bnf_code LIKE '0407010F0%AC' OR bnf_code LIKE '0407010F0%AF')"
-	],
-	"denominator_columns": [
-		"SUM(items) AS denominator, "
-	],
-	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
-	"denominator_where": [
-		"(bnf_code LIKE '0407010F0%AA'OR bnf_code LIKE '0407010F0%AB' OR bnf_code LIKE '0407010F0%AC'",
-		"OR bnf_code LIKE '0407010F0%AD' OR bnf_code LIKE '0407010F0%AF' OR bnf_code LIKE '0407010F0%AH'",
-		"OR bnf_code LIKE '0407010H0%AA' OR bnf_code LIKE '0407010H0%AM' OR bnf_code LIKE '0407010H0%AQ'"
-	]
+        "name": "Soluble/effervescent forms of paracetamol and co-codamol",
+        "title": [
+                "Prescribing of soluble/effervescent forms of paracetamol and co-codamol ",
+                "as a percentage of prescribing of all paracetamol and co-codamol tablets and capsules"
+        ],
+        "description": [
+                "Prescribing of soluble/effervescent forms of paracetamol and co-codamol ",
+                "as a percentage of prescribing of all paracetamol and co-codamol tablets and capsules"
+        ],
+        "why_it_matters": [
+                "Soluble and effervescent preparations of analgesics contain high sodium content.",
+                "8 soluble paracetamol per day will exceed the recommended sodium intake for an adult of 2.4g (6g salt).",
+                "In addition, these products are considerably more expensive than standard tablets or capsules.",
+                "Therefore, ideally they should only be recommended in patients with genuine swallowing difficulties."
+        ],
+        "numerator_short": "Soluble paracetamol and co-codamol",
+        "denominator_short": "All paracetamol and co-codamol tabs and caps",
+        "url": null,
+        "is_percentage": true,
+        "is_cost_based": false,
+        "low_is_good": true,
+        "numerator_columns": [
+                "SUM(items) AS numerator, "
+        ],
+        "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+        "numerator_where": [
+                "(bnf_code LIKE '0407010H0%AQ' OR bnf_code LIKE '0407010F0%AC' OR bnf_code LIKE '0407010F0%AF')"
+        ],
+        "denominator_columns": [
+                "SUM(items) AS denominator, "
+        ],
+        "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+        "denominator_where": [
+                "(bnf_code LIKE '0407010F0%AA'OR bnf_code LIKE '0407010F0%AB' OR bnf_code LIKE '0407010F0%AC'",
+                "OR bnf_code LIKE '0407010F0%AD' OR bnf_code LIKE '0407010F0%AF' OR bnf_code LIKE '0407010F0%AH'",
+                "OR bnf_code LIKE '0407010H0%AA' OR bnf_code LIKE '0407010H0%AM' OR bnf_code LIKE '0407010H0%AQ')"
+        ]
 }
