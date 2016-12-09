@@ -1,32 +1,32 @@
 {
-	"name": "Prescribing of pregabalin",
-	"title": [
-		"Prescribing of pregabalin per 1000 patients"
-	],
-	"description": [
-	"Prescribing of pregabalin per 1000 patients"
-	],
-	"why_it_matters": [
-	"Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
-    	"However, it is expensive when compared to other NICE receommended treatments, and costs are increasingly rapidly in the NHS. ",
-    	"Patients should be regularly review to ensure continued benefit, and that side effects are not troublesome."
-	],
-	"numerator_short": "Pregabalin cost",
-	"denominator_short": "1000 patients",
-	"url": null,
-	"is_percentage": false,
-	"is_cost_based": true,
-	"low_is_good": false,
-	"numerator_columns": [
-		"SUM(actual_cost) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '00408010AE%')  "
-	],
-	"denominator_columns": [
-		"SUM(total_list_size / 1000.0) AS denominator, "
-	],
-	"denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
-	"denominator_where": ["1 = 1"]
+        "name": "Prescribing of pregabalin",
+        "title": [
+                "Prescribing of pregabalin per 1000 patients"
+        ],
+        "description": [
+        "Prescribing of pregabalin per 1000 patients"
+        ],
+        "why_it_matters": [
+        "Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
+        "However, it is expensive when compared to other NICE receommended treatments, and costs are increasingly rapidly in the NHS. ",
+        "Patients should be regularly review to ensure continued benefit, and that side effects are not troublesome."
+        ],
+        "numerator_short": "Pregabalin cost",
+        "denominator_short": "1000 patients",
+        "url": null,
+        "is_percentage": false,
+        "is_cost_based": false,
+        "low_is_good": false,
+        "numerator_columns": [
+                "SUM(actual_cost) AS numerator, "
+        ],
+        "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+        "numerator_where": [
+                "(bnf_code LIKE '00408010AE%')  "
+        ],
+        "denominator_columns": [
+                "SUM(total_list_size / 1000.0) AS denominator, "
+        ],
+        "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+        "denominator_where": ["1 = 1"]
 }
