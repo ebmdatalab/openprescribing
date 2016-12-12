@@ -15,21 +15,21 @@
 		"and any other prescribed medicine(e.g.folic acid);only one strength of methotrexate tablet ",
 		"(usually 2.5 mg) is prescribed and dispensed;"
 	],
-	"numerator_short": "Generic eye drop items",
-	"denominator_short": "All eye drop items",
+	"numerator_short": "Items for 10mg methotrexate tablets",
+	"denominator_short": "Items for 2.5mg and 10mg methotrexate tablets",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
 	"low_is_good": true,
 	"numerator_columns": [
-		"SUM(quantity) AS numerator, "
+		"SUM(items) AS numerator, "
 	],
 	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
 	"numerator_where": [
 		"(bnf_code LIKE '1001030U0%AC')"
 	],
 	"denominator_columns": [
-		"SUM(quantity) AS denominator, "
+		"SUM(items) AS denominator, "
 	],
 	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
 	"denominator_where": [
