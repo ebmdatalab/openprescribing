@@ -1,11 +1,11 @@
 {
   "name": "Prescribing of standard release tramadol", 
   "title": [
-    "Prescribing of standardvrelease tramadol", 
+    "Prescribing of standard release tramadol", 
     "compared with prescribing of all tramadol preparations"
   ], 
   "description": [
-    "Prescribing of standardrelease tramadol", 
+    "Prescribing of standard release tramadol", 
     "compared with prescribing of all tramadol preparations"
   ], 
   "why_it_matters": [
@@ -30,6 +30,6 @@
   ], 
   "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
   "denominator_where": [
-    "(bnf_code like '040702040AAAAAA%')  "
+    "(bnf_code like ''040702040%')  "
   ]
 }
