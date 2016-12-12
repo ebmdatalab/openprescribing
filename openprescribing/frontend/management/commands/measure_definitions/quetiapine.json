@@ -28,7 +28,7 @@
 		"OR bnf_code LIKE '0402010AB%AF' OR bnf_code LIKE '0402010AB%AK' )"
 	],
 	"denominator_columns": [
-		"SUM(quantity) AS denominator, "
+		"SUM(items) AS denominator, "
 	],
 	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
 	"denominator_where": [
