@@ -32,7 +32,8 @@
 		"OR bnf_code LIKE '0302000C0%BK' OR bnf_code LIKE '0302000K0%AU' OR bnf_code LIKE '0302000K0%AH' ",
 		"OR bnf_code LIKE '0302000U0%AB' OR bnf_code LIKE '0302000U0%AC' OR bnf_code LIKE '0302000N0%BC' ",
 		"OR bnf_code LIKE '0302000N0%AU' OR bnf_code LIKE '0302000N0%AF' OR bnf_code LIKE '0302000N0%AP' ",
-		"OR bnf_code LIKE '0302000N0%BG' OR bnf_code LIKE '0302000N0%AZ' OR bnf_code LIKE '0302000N0%BM') "
+		"OR bnf_code LIKE '0302000N0%BG' OR bnf_code LIKE '0302000N0%AZ' OR bnf_code LIKE '0302000N0%BM' ",
+		"OR bnf_code LIKE '0302000N0%BK' OR bnf_code LIKE '0302000C0%BZ') "
 	],
 	"denominator_columns": [
 		"SUM(items) AS denominator, "
