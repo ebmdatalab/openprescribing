@@ -56,11 +56,11 @@ def send_ga_event(event, user):
 
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
+    user = get_user_by_email(event.recipient)
+    send_ga_event(event, user)
     if event.tags and 'monthly_update' in event.tags:
-        user = get_user_by_email(event.recipient)
         logger.debug("Handling webhook from %s: %s" % (
             esp_name, event.__dict__))
-        send_ga_event(event, user)
         if user:
             if event.event_type == 'delivered':
                 user.profile.emails_received += 1
