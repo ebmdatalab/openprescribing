@@ -1,10 +1,10 @@
 {
-	"name": "Branded diltiazem preparations",
+	"name": "Diltiazem preparations prescribed generically",
 	"title": [
-		"Prescribing of branded diltiazem preparations"
+		"Prescribing of generic diltiazem preparations"
 	],
 	"description": [
-		"Total items of branded diltiazem modified-release preparations,",
+		"Total items of generic diltiazem modified-release preparations,",
 		"as a proportion of total items of all dilitiazem modified-release items (>60mg)"
 	],
 	"why_it_matters": [
@@ -12,33 +12,25 @@
 		"Different versions of modified-release preparations containing more than 60 mg diltiazem hydrochloride may not have the same clinical effect. ",
 		"To avoid confusion between these different formulations of diltiazem, prescribers should specify the brand to be dispensed."
 	],
-	"numerator_short": "Branded diltiazem items",
+	"numerator_short": "Generic diltiazem items",
 	"denominator_short": "Dilitazem items",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
-	"low_is_good": false,
+	"low_is_good": true,
 	"numerator_columns": [
 		"SUM(items) AS numerator, "
 	],
 	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
 	"numerator_where": [
-		"((bnf_code LIKE '0206020C0%AI' OR bnf_code LIKE '0206020C0%AU' OR bnf_code LIKE '0206020C0%AL' ",
-		"OR bnf_code LIKE '0206020C0%AG' OR bnf_code LIKE '0206020C0%AV' OR bnf_code LIKE '0206020C0%AN' ",
-		"OR bnf_code LIKE '0206020C0%AX' OR bnf_code LIKE '0206020C0%AM' OR bnf_code LIKE '0206020C0%AW' ",
-		"OR bnf_code LIKE '0206020C0%AY' OR bnf_code LIKE '0206020C0%AP' OR bnf_code LIKE '0206020C0%AH' ",
-		"OR bnf_code LIKE '0206020C0%AE' OR bnf_code LIKE '0206020C0%BA' OR bnf_code LIKE '0206020C0%AJ' ",
-		"OR bnf_code LIKE '0206020C0%AF' OR bnf_code LIKE '0206020C0%AT' OR bnf_code LIKE '0206020C0%AK' ",
-		"OR bnf_code LIKE '0206020C0%AB' OR bnf_code LIKE '0206020C0%AS' OR bnf_code LIKE '0206020C0%AD' ",
-		"OR bnf_code LIKE '0206020C0%AC') ",
-		"AND (bnf_code NOT LIKE '0206020C0A%AI' AND bnf_code NOT LIKE '0206020C0A%AU' AND bnf_code NOT LIKE '0206020C0A%AL' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AG' AND bnf_code NOT LIKE '0206020C0A%AV' AND bnf_code NOT LIKE '0206020C0A%AN' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AX' AND bnf_code NOT LIKE '0206020C0A%AM' AND bnf_code NOT LIKE '0206020C0A%AW' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AY' AND bnf_code NOT LIKE '0206020C0A%AP' AND bnf_code NOT LIKE '0206020C0A%AH' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AE' AND bnf_code NOT LIKE '0206020C0A%BA' AND bnf_code NOT LIKE '0206020C0A%AJ' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AF' AND bnf_code NOT LIKE '0206020C0A%AT' AND bnf_code NOT LIKE '0206020C0A%AK' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AB' AND bnf_code NOT LIKE '0206020C0A%AS' AND bnf_code NOT LIKE '0206020C0A%AD' ",
-		"AND bnf_code NOT LIKE '0206020C0A%AC' ))  "
+		"(bnf_code LIKE '0206020C0AA%AI' OR bnf_code LIKE '0206020C0AA%AU' OR bnf_code LIKE '0206020C0AA%AL' ",
+		"OR bnf_code LIKE '0206020C0AA%AG' OR bnf_code LIKE '0206020C0AA%AV' OR bnf_code LIKE '0206020C0AA%AN' ",
+		"OR bnf_code LIKE '0206020C0AA%AX' OR bnf_code LIKE '0206020C0AA%AM' OR bnf_code LIKE '0206020C0AA%AW' ",
+		"OR bnf_code LIKE '0206020C0AA%AY' OR bnf_code LIKE '0206020C0AA%AP' OR bnf_code LIKE '0206020C0AA%AH' ",
+		"OR bnf_code LIKE '0206020C0AA%AE' OR bnf_code LIKE '0206020C0AA%BA' OR bnf_code LIKE '0206020C0AA%AJ' ",
+		"OR bnf_code LIKE '0206020C0AA%AF' OR bnf_code LIKE '0206020C0AA%AT' OR bnf_code LIKE '0206020C0AA%AK' ",
+		"OR bnf_code LIKE '0206020C0AA%AB' OR bnf_code LIKE '0206020C0AA%AS' OR bnf_code LIKE '0206020C0AA%AD' ",
+		"OR bnf_code LIKE '0206020C0AA%AC') ")  "
 	],
 	"denominator_columns": [
 		"SUM(items) AS denominator, "
