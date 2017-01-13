@@ -1,28 +1,28 @@
 {
-	"name": "Generic glaucoma eye drops",
+	"name": "Glaucoma eye drops prescribed by brand",
 	"title": [
-		"Prescribing of generic formulations of eye drops to treat glaucoma ",
+		"Prescribing of branded formulations of eye drops to treat glaucoma ",
 		"as a percentage of prescribing of all eye drops to treat glaucoma"
 	],
 	"description": [
-		"Prescribing of generic formulations of eye drops to treat glaucoma ",
+		"Prescribing of branded formulations of eye drops to treat glaucoma ",
 		"as a percentage of prescribing of all eye drops to treat glaucoma"
 	],
 	"why_it_matters": [
 		"There are a number of generic preparations avaialble to treat glaucoma. These are cheaper than the branded equivalents."
 	],
-	"numerator_short": "Generic eye drop items",
+	"numerator_short": "Branded eye drop items",
 	"denominator_short": "All eye drop items",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
-	"low_is_good": false,
+	"low_is_good": true,
 	"numerator_columns": [
 		"SUM(quantity) AS numerator, "
 	],
 	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
 	"numerator_where": [
-		"(bnf_code LIKE '1106000__A%')"
+		"(bnf_code LIKE '1106000__B%')"
 	],
 	"denominator_columns": [
 		"SUM(quantity) AS denominator, "
