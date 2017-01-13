@@ -21,7 +21,7 @@
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
-	"low_is_good": false,
+	"low_is_good": true,
 	"numerator_columns": [
 		"SUM(items) AS numerator, "
 	],
