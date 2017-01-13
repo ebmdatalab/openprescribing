@@ -23,7 +23,7 @@
   ], 
   "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
   "numerator_where": [
-    "(bnf_code LIKE '040702040% AND bnf_code NOT LIKE '040702040AAAAAA%') "
+    "(bnf_code LIKE '040702040%' AND bnf_code NOT LIKE '040702040AAAAAA%') "
   ], 
   "denominator_columns": [
     "SUM(items) AS denominator, "
