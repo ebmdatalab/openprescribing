@@ -1,20 +1,20 @@
 {
 	"name": "Extended-release quetiapine",
 	"title": [
-		"Prescribing of extended-release quetiapine ",
-		"as a percentage of prescribing of all quetiapine"
+		"Prescribing of extended-release quetiapine tablets ",
+		"as a percentage of prescribing of all quetiapine tablets"
 	],
 	"description": [
-		"Prescribing of extended-release quetiapine ",
-		"as a percentage of prescribing of all quetiapine."
+		"Prescribing of extended-release quetiapine tablets ",
+		"as a percentage of prescribing of all quetiapine tablets."
 	],
 	"why_it_matters": [
 		"There is a huge difference in cost between immediate and extended release preparations of quetiapine. ",
 		"The extended release preparations should ideally be reserved for patients who cannot tolerate the IR version",
 		"or for whom compliance may be an issue."
 	],
-	"numerator_short": "Extended-release quetiapine items",
-	"denominator_short": "Total quetiapine items",
+	"numerator_short": "Extended-release quetiapine tablet items",
+	"denominator_short": "Total quetiapine tablet items",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
