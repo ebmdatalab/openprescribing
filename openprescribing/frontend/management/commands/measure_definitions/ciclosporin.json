@@ -1,10 +1,10 @@
 {
-  "name": "Branded ciclosporin preparations", 
+  "name": "Ciclosporin oral preparations prescribed generically", 
   "title": [
-    "Prescribing of branded ciclosporin preparations"
+    "Prescribing of generic ciclosporin preparations"
   ], 
   "description": [
-    "Total items of branded ciclosporin preparations (0703021Q0BB),", 
+    "Total items of generic ciclosporin preparations (0703021Q0AA),", 
     "as a proportion of total items of all ciclosporin items", 
     "(0703021Q0)."
   ], 
@@ -15,18 +15,18 @@
     "important changes in blood-ciclosporin concentration.",
     "Prescribing and dispensing of ciclosporin should be by brand name to avoid inadvertent switching."
   ], 
-  "numerator_short": "Branded ciclosporin items", 
+  "numerator_short": "Generic ciclosporin items", 
   "denominator_short": "Ciclosporin items", 
   "url": null, 
   "is_percentage": true, 
   "is_cost_based": false, 
-  "low_is_good": false, 
+  "low_is_good": true, 
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ], 
   "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
   "numerator_where": [
-    "(bnf_code LIKE '0802020G0B%')  "
+    "(bnf_code LIKE '0802020G0A%')  "
   ], 
   "denominator_columns": [
     "SUM(items) AS denominator, "
