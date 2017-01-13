@@ -1,26 +1,26 @@
 {
-	"name": "Maintainance Proton Pump Inhibitors (PPIs)",
+	"name": "Higher dose Proton Pump Inhibitors (PPIs)",
 	"title": [
-		"Prescribing of maintainance dose Proton Prump Inhibitors",
-		"compared with prescribing of all PPIs"
+		"Prescribing of higher dose Proton Prump Inhibitors",
+		"compared with prescribing of all PPIs (excluding liquids)"
 	],
 	"description": [
 		"Prescribing of maintainance dose Proton Prump Inhibitors",
-		"compared with prescribing of all PPIs"
+		"compared with prescribing of all PPIs (excluding liquids)"
 	],
 	"why_it_matters": [
 		"PPIs are used to reduce acid levels in the stomach, in order to treat conditions such as gastro-oesphogeal reflux disease. ",
 		"NICE guidance recommends that the lowest dose is used to treat the symptoms. ",
 		"Although PPIs are safe drugs, their use has been associated with an increase in a number of disorders, ",
 		"including Clostridium difficile infection and a higher risk of community-aquired pneunmonia. ",
-		"Low dose PPIs are defined in the <a href='https://www.nice.org.uk/guidance/cg184/chapter/appendix-a-dosage-information-on-proton-pump-inhibitors'> NICE guidance</a>."
+		"The doses of PPIs are defined in the <a href='https://www.nice.org.uk/guidance/cg184/chapter/appendix-a-dosage-information-on-proton-pump-inhibitors'> NICE guidance</a>."
 	],
-	"numerator_short": "Maintainance dose PPI items",
-	"denominator_short": "All PPI items",
+	"numerator_short": "Higher dose PPI items (excluding liquids)",
+	"denominator_short": "All PPI items (excluding liquids)",
 	"url": null,
 	"is_percentage": true,
 	"is_cost_based": false,
-	"low_is_good": false,
+	"low_is_good": true,
 	"numerator_columns": [
 		"SUM(items) AS numerator, "
 	],
