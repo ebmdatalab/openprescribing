@@ -26,11 +26,14 @@
 	],
 	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
 	"numerator_where": [
-		"(bnf_code LIKE '0103050L0%AB' OR bnf_code LIKE '0103050L0%AE' OR bnf_code LIKE '0103050L0%AG' ",
-		"OR bnf_code LIKE '0103050L0%AR' OR bnf_code LIKE '0103050P0%AB' OR bnf_code LIKE '0103050P0%AC' ",
-		"OR bnf_code LIKE '0103050P0%AF' OR bnf_code LIKE '0103050P0%AU' OR bnf_code LIKE '0103050P0%AT' ",
-		"OR bnf_code LIKE '0103050P0%AM' OR bnf_code LIKE '0103050P0%BC' OR bnf_code LIKE '0103050R0%AB' ",
-		"OR bnf_code LIKE '0103050T0%AA' )"
+		"(bnf_code LIKE '0103050E0%AF' OR bnf_code LIKE '0103050E0%AG' OR bnf_code LIKE '0103050E0%AE' ",
+		"OR bnf_code LIKE '0103050E0%AA' OR bnf_code LIKE '0103050E0%AB' OR bnf_code LIKE '0103050L0%AA' ",
+		"OR bnf_code LIKE '0103050L0%AC' OR bnf_code LIKE '0103050L0%AD' OR bnf_code LIKE '0103050L0%AH' ",
+		"OR bnf_code LIKE '0103050L0%AF' OR bnf_code LIKE '0103050P0%AA' OR bnf_code LIKE '0103050P0%AG' ",
+		"OR bnf_code LIKE '0103050P0%AE' OR bnf_code LIKE '0103050P0%AN' OR bnf_code LIKE '0103050P0%AP' ",
+		"OR bnf_code LIKE '0103050P0%BD' OR bnf_code LIKE '0103050P0%BE' OR bnf_code LIKE '0103050R0%AB' ",
+		"OR bnf_code LIKE '0103050R0%AA' OR bnf_code LIKE '0103050R0%AD' OR bnf_code LIKE '0103050T0%AB' )"
+
 	],
 	"denominator_columns": [
 		"SUM(items) AS denominator, "
