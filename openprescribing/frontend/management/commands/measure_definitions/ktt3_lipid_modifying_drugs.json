@@ -1,5 +1,5 @@
 {
-  "name": "Lipid-modifying drugs (KTT3)",
+  "name": "Other lipid-modifying drugs (KTT3)",
   "description": [
     "Number of prescription items for Bile acid sequestrants,",
     "Fibrates, Nicotinic acid, and Omega-3 fatty acid compounds,",
@@ -10,7 +10,7 @@
     "The latest NICE guidance suggests that, for the vast majority of people who need treatment for high cholesterol, these drugs should not be used.  There is no evidence that omega 3 fatty acids reduce the chances of patients getting cardiovascular disease."
   ],
   "title": [
-    "KTT3 (Lipid-modifying drugs): Number of prescription",
+    "KTT3 (Other lipid-modifying drugs): Number of prescription",
     "items for Bile acid sequestrants, Fibrates, Nicotinic",
     "acid, and Omega-3 fatty acid compounds, and \u2018Other",
     "lipid modifying drugs\u2019 (BNF 2.12 sub-set) as a percentage",
