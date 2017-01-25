@@ -25,7 +25,7 @@
   ], 
   "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
   "numerator_where": [
-    "(bnf_code LIKE '1001010J0%' ",
+    "(bnf_code LIKE '100101%' ",
     "AND (bnf_code NOT like '1001010J0%' AND bnf_code NOT like '1001010P0%'))  "
   ], 
   "denominator_columns": [
