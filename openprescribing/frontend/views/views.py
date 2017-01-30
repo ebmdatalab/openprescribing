@@ -241,7 +241,7 @@ def last_bookmark(request):
                 "to any monthly alerts!")
         return redirect(next_url)
     else:
-        messages.success("Thanks, you're now subscribed to monthly alerts!")
+        messages.success(request, "Thanks, you're now subscribed to monthly alerts!")
         return redirect('home')
 
 
