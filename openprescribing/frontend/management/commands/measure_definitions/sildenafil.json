@@ -1,0 +1,36 @@
+{
+	"name": "High-cost drugs for erectile dysfunction",
+	"title": [
+		"high-cost drugs ",
+		"as a percentage of prescribing of all drugs for erectile dysfunction"
+	],
+	"description": [
+		"Prescribing of drugs which are not generic sildenafil tablets ",
+		"as a percentage of prescribing of all drugs for erectile dysfunction"
+	],
+	"why_it_matters": [
+		"The main drugs used to treat erectile dysfunction are probably equally effective <a href='https://cks.nice.org.uk/erectile-dysfunction'>(CKS 2014)</a>.",
+		"Currently sildenafil is significantly cheaper than other drugs, and therefore should probably be considered as the first-line agent."
+	],
+	"numerator_short": "Drugs for erectile dysfunction excl generic sildenafil tablets items",
+	"denominator_short": "Drugs for erectile dysfunction items",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"numerator_columns": [
+		"SUM(items) AS numerator, "
+	],
+	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
+	"numerator_where": [
+		"((bnf_code LIKE '070405%')",
+		"AND (bnf_code not like '0704050Z0AAAAAA%' and bnf_code not like '0704050Z0AAABAB%' and bnf_code not like '0704050Z0AAACAC%'))"
+	],
+	"denominator_columns": [
+		"SUM(items) AS denominator, "
+	],
+	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
+	"denominator_where": [
+		"(bnf_code LIKE '070405%')"
+	]
+}

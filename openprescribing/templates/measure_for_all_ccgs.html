@@ -15,7 +15,7 @@
 <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
 {% endif %}
 
-<p><strong>Why it matters</strong>: {{ measure.why_it_matters }}</p>
+<p><strong>Why it matters</strong>: {{ measure.why_it_matters|safe }}</p>
 
 <p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}</p>
 

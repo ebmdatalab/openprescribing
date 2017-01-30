@@ -10,11 +10,8 @@
     "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
   ], 
   "why_it_matters": [
-    "PPIs are used to reduce acid levels in the stomach, in order to treat conditions such as gastro-oesphogeal reflux disease. ",
-    "NICE guidance recommends that the lowest dose is used to treat the symptoms. ",
-    "Although PPIs are safe drugs, their use has been associated with an increase in a number of disorders, including Clostridium difficile infection ",
-    "and a higher risk of community-aquired pneunmonia. ",
-    "Low dose PPIs are defined in the <a href='https://www.nice.org.uk/guidance/cg184/chapter/appendix-a-dosage-information-on-proton-pump-inhibitors)'> NICE guidance</a>."
+    "Proton-punp inhibitors (PPIs) have been generic for several years, and the generic is significantly cheaper than the branded product. ",
+    "Therefore the vast majority of patients can be prescribed the generic"
   ], 
   "numerator_short": "High-cost PPIs quantity", 
   "denominator_short": "All included PPIs quantity", 

@@ -1,7 +1,7 @@
 {
-  "name": "Co-amoxiclav, cephalosporins & quinolones (KTT9)", 
+  "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9)", 
   "title": [
-    "KTT9 (Co-amoxiclav, Cephalosporins & Quinolones % items):", 
+    "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9):", 
     "Number of prescription items for co-amoxiclav,", 
     "cephalosporins and quinolones as a percentage of the", 
     "total number of prescription items for selected", 
@@ -10,8 +10,10 @@
   "description": [
     "Number of prescription items for co-amoxiclav (0501013K0),", 
     "cephalosporins (0501021) and quinolones (050112), as a percentage", 
-    "of total prescription items for BNF 5.1.1; 5.1.2.1;", 
-    "5.1.3; 5.1.5; 5.1.8; 5.1.11; 5.1.12; and 5.1.13."
+    "of total prescription items for cephalosporins (0501021), macrolides (050105), ",
+    "metronidazole tinidazole & ornidazole (050111), penicillins (050101), quinolones (050112), ",
+    "sulphonamides & trimethoprim (050108), tetracyclines (050103) and drugs for urinary-tract infections (050113)"
+
   ], 
   "why_it_matters": [
     "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can ", 

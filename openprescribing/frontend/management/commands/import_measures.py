@@ -118,15 +118,6 @@ class Command(BaseCommand):
         else:
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
-        # Get months to cover from options.
-        if not (options['month'] or options['start_date']) \
-           and not options['month_from_prescribing_filename']:
-            err = 'You must supply either --month or --start_date '
-            err += 'in the format YYYY-MM-DD, or supply a path to a file which'
-            err += ' includes the timestamp in the path. You can also '
-            err += 'optionally supply a start date.'
-            print err
-            sys.exit()
         options['months'] = []
         if 'month' in options and options['month']:
             options['start_date'] = options['end_date'] = options['month']
