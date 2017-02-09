@@ -9,7 +9,7 @@ import os
 import requests
 
 
-env.hosts = ['138.68.140.164']
+env.hosts = ['web2.openprescribing.net']
 env.forward_agent = True
 env.colorize_errors = True
 env.user = 'hello'
