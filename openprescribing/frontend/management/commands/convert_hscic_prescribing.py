@@ -25,7 +25,7 @@ class Command(BaseCommand):
             filenames = [options['filename']]
         else:
             filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.*')
-
+        converted_filenames = []
         for f in filenames:
             if self.IS_VERBOSE:
                 print "--------- Converting %s -----------" % f
@@ -38,6 +38,8 @@ class Command(BaseCommand):
                     continue
                 data = self.format_row_for_sql_copy(row)
                 writer.writerow(data)
+            converted_filenames.append(filename_for_output)
+        return converted_filenames
 
     def create_filename_for_output_file(self, filename):
         if self.IS_TEST:
