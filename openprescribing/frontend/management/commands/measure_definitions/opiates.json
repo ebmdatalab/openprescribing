@@ -1,20 +1,24 @@
 {
-	"name": "High dose opiates",
+	"name": "High dose opioids",
 	"title": [
-		"Prescribing of high dose opiates",
-		"compared with prescribing of opiates"
+		"high dose opioids compared with prescribing of high and lower dose opioids"
 	],
 	"description": [
-		"High dose opiates ",
-		"compared with prescribing of opiates"
+		"Opioids with likely daily dose of ≥120mg morphine equivalence compared with prescribing of all doses of these opioids"
 	],
 	"why_it_matters": [
 		"The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
 		"improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
 		"and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
 		"We have assumed that if a patient is on regular doses of 120mg morphine a day or above that they are likely to have also had ",
-		"additional opioids for breakthrough pain.  This is why we have set the threshold at ≥120mg morphine equivalence per day.",
-		"Morphine equivalencies have been calculated using the <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids'> tables available </a> from the Royal College of Anesthetists Faculty of Pain Medicine."
+		"additional opioids for breakthrough pain.  This is why we have set the threshold at ≥120mg morphine equivalence per day. ",
+		"The calculations are based on likely doses of long acting, regular opioids, for example morphine sulphate tablets or ",
+		"fentanyl patches. For example, we have assumed that MST 60mg tablets are “high dose”, as they are usually taken as one tablet ",
+		"twice daily (120mg daily dose), whereas MST 30mg are not, as the daily dose is 60mg. ",
+		"We have not included preparations used for breakthrough pain, e.g. Oramorph, or opioid injections which tend to be ",
+		"used more commonly in palliative care.  We have calculated morphine equivalencies using ",
+		"the <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids'> ",
+		"tables available </a> from the Faculty of Pain Medicine, Royal College of Anaesthetists."
 	],
 	"numerator_short": "High dose opiate items",
 	"denominator_short": "All opiate items",
