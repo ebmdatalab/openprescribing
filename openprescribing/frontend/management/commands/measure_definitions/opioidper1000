@@ -1,0 +1,49 @@
+{
+	"name": "High dose opioids",
+	"title": [
+		"high dose opioid items per 1000 patients"
+	],
+	"description": [
+		"Opioids with likely daily dose of ≥120mg morphine equivalence per 1000 patients"
+	],
+	"why_it_matters": [
+		"The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
+		"improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
+		"and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
+		"We have assumed that if a patient is on regular doses of 120mg morphine a day or above that they are likely to have also had ",
+		"additional opioids for breakthrough pain.  This is why we have set the threshold at ≥120mg morphine equivalence per day. ",
+		"The calculations are based on likely doses of long acting, regular opioids, for example morphine sulphate tablets or ",
+		"fentanyl patches. For example, we have assumed that MST 60mg tablets are “high dose”, as they are usually taken as one tablet ",
+		"twice daily (120mg daily dose), whereas MST 30mg are not, as the daily dose is 60mg. ",
+		"We have not included preparations used for breakthrough pain, e.g. Oramorph, or opioid injections which tend to be ",
+		"used more commonly in palliative care.  We have calculated morphine equivalencies using ",
+		"the <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids'> ",
+		"tables available </a> from the Faculty of Pain Medicine, Royal College of Anaesthetists."
+	],
+	"numerator_short": "High dose opiate items",
+	"denominator_short": "1000 patients",
+	"url": null,
+	"is_percentage": false,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"numerator_columns": [
+		"SUM(items) AS numerator, "
+	],
+	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
+	"numerator_where": [
+		"(bnf_code LIKE '0407020Q0%AI' OR bnf_code LIKE '0407020Q0%DC' OR bnf_code LIKE '0407020Q0%EH' ",
+		"OR bnf_code LIKE '0407020Q0%DU' OR bnf_code LIKE '0407020Q0%AH' OR bnf_code LIKE '0407020Q0%DD' ",
+		"OR bnf_code LIKE '0407020Q0%EB' OR bnf_code LIKE '0407020Q0%DV' OR bnf_code LIKE '0407020Q0%DW' ",
+		"OR bnf_code LIKE '0407020Q0%AG' OR bnf_code LIKE '0407020Q0%DE' OR bnf_code LIKE '0407020Q0%EI' ",
+		"OR bnf_code LIKE '0407020AD%AR' OR bnf_code LIKE '0407020AD%AH' OR bnf_code LIKE '0407020AD%AI' ",
+		"OR bnf_code LIKE '0407020AD%AP' OR bnf_code LIKE '0407020AD%AQ' OR bnf_code LIKE '0407020AF%AD' ",
+		"OR bnf_code LIKE '0407020AG%AF' OR bnf_code LIKE '0407020AG%AG' OR bnf_code LIKE '0407020A0%AF' ",
+		"OR bnf_code LIKE '0407020A0%AG' OR bnf_code LIKE '0407020A0%AH' OR bnf_code LIKE '0407020B0%AF' ",
+		"OR bnf_code LIKE '0407020B0%AG')  "
+	],
+	"denominator_columns": [
+		"SUM(total_list_size / 1000.0) AS denominator, "
+	],
+	"denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+	"denominator_where": ["1 = 1"]
+  }
