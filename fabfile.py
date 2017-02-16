@@ -23,6 +23,29 @@ environments = {
 # Run `fab list_cloudflare_zones` to get a full list
 ZONE_ID = "a0965a9865f3c77f44fa06569fcfa714"
 
+# Newrelic Apps
+NEWRELIC_APPIDS = {
+    'production': '45170403',
+    'staging': '45937313',
+    'test': '45170011'
+}
+
+def notify_newrelic(revision, url):
+    payload = {
+        "deployment": {
+            "revision": revision,
+            "changelog": url
+        }
+    }
+    app_id = NEWRELIC_APPIDS[env.environment]
+    headers = {'X-Api-Key': os.environ['NEWRELIC_API_KEY']}
+    response = requests.post(
+        ("https://api.newrelic.com/v2/applications/"
+         "%s/deployments.json" % app_id),
+        headers=headers,
+        json=payload)
+    response.raise_for_status()
+
 
 def git_init():
     run('git init . && '
@@ -105,13 +128,14 @@ def purge_urls(paths_from_git, changed_in_static):
 
 
 def log_deploy():
-    url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
     current_commit = run("git rev-parse --verify HEAD")
+    url = ("https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
+           % (env.previous_commit, current_commit))
     log_line = json.dumps({'started_at': str(env.started_at),
                            'ended_at': str(datetime.utcnow()),
-                           'changes_url': url % (env.previous_commit,
-                                                 current_commit)})
+                           'changes_url': url})
     run("echo '%s' >> deploy-log.json" % log_line)
+    notify_newrelic(current_commit, url)
 
 
 def checkpoint(force_build):
