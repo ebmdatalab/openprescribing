@@ -122,13 +122,13 @@ def query_and_export(dataset, view, prescribing_date):
         # formatting as some of the SQL has braces in.
         sql = open(view, "r").read().replace('{{dataset}}', dataset)
         sql = sql.replace("{{this_month}}", prescribing_date)
-        print sql
         # Execute query and wait
         job_id = query_and_return(
             project_id, dataset, tablename, sql)
         logger.info("Awaiting query completion")
         wait_for_job(job_id, project_id)
-
+        # Delete existing GCS files
+        delete_from_gcs(gzip_destination)
         # Export to GCS and wait
         job_id = export_to_gzip(
             project_id, dataset, tablename, gzip_destination)
@@ -177,6 +177,15 @@ def export_to_gzip(project_id, dataset_id, table_id, destination):
         }
     }
     return insert_job(project_id, payload)
+
+
+def delete_from_gcs(gcs_uri):
+    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
+    client = storage.Client(project='embdatalab')
+    bucket = client.get_bucket(bucket)
+    prefix = blob_name.split('*')[0]
+    for blob in bucket.list_blobs(prefix=prefix):
+        blob.delete()
 
 
 def download_from_gcs(gcs_uri):
