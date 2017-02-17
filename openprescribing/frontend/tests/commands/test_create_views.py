@@ -72,7 +72,6 @@ class CommandsTestCase(SimpleTestCase):
             with connection.cursor() as c:
                 c.execute(f.read())
 
-
     @classmethod
     def tearDownClass(cls):
         # Is this redundant?

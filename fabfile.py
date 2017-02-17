@@ -30,6 +30,7 @@ NEWRELIC_APPIDS = {
     'test': '45170011'
 }
 
+
 def notify_newrelic(revision, url):
     payload = {
         "deployment": {
