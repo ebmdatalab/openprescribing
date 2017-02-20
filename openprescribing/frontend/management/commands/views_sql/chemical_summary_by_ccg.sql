@@ -7,7 +7,7 @@ SELECT
   CAST(SUM(quantity) AS INT64) AS quantity
 FROM
   ebmdatalab.{{dataset}}.prescribing
-WHERE month >= TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
+WHERE month > TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
 GROUP BY
   processing_date,
   pct_id,
