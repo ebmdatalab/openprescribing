@@ -20,7 +20,7 @@ FROM
   ebmdatalab.{{dataset}}.practice_statistics AS statistics
 JOIN ebmdatalab.{{dataset}}.ccgs ccgs
 ON (statistics.pct_id = ccgs.code AND ccgs.org_type = 'CCG')
-WHERE month >= TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
+WHERE month > TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
 GROUP BY
   month,
   pct_id,
