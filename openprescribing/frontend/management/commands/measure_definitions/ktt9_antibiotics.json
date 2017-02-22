@@ -16,6 +16,7 @@
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
+  "is_ordinal": true,
   "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
@@ -28,5 +29,7 @@
     "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator "
   ],
   "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
-  "denominator_where": [" 1 = 1 "]
+  "denominator_where": [
+    " 1 = 1 "
+  ]
 }

@@ -1,34 +1,35 @@
 {
-  "name": "Prescribing of high cost tramadol preparations ", 
+  "name": "Prescribing of high cost tramadol preparations ",
   "title": [
-    "high cost tramadol preparations ", 
+    "high cost tramadol preparations ",
     "compared with prescribing of all tramadol preparations"
-  ], 
+  ],
   "description": [
-    "Prescribing of high cost tramadol preparations ", 
+    "Prescribing of high cost tramadol preparations ",
     "compared with prescribing of all tramadol preparations"
-  ], 
+  ],
   "why_it_matters": [
-  "Modified release and non-standard tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
-  "Ideally modified-release and other high cost preparations should be reserved for patients who have compliance issues."
-  ], 
-  "numerator_short": "High cost tramadol items ", 
-  "denominator_short": "All tramadol items", 
-  "url": null, 
-  "is_percentage": true, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+    "Modified release and non-standard tramadol preparations vary widely in cost. Generic tramadol 50mg capsules are low-cost. ",
+    "Ideally modified-release and other high cost preparations should be reserved for patients who have compliance issues."
+  ],
+  "numerator_short": "High cost tramadol items ",
+  "denominator_short": "All tramadol items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
     "(bnf_code LIKE '040702040%' AND bnf_code NOT LIKE '040702040AAAAAA%') "
-  ], 
+  ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code like '040702040%')  "
   ]

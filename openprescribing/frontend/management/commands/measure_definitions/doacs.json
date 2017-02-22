@@ -1,39 +1,40 @@
 {
-	"name": "Direct Oral Anticoagulants (DOACs)",
-	"title": [
-		"Direct Oral Anticoagulants (DOACs) as proportion of all DOACs and warfarin"
-	],
-	"description": [
-		"Prescribing of Direct Oral Anticoagulants (DOACs) as proportion of all DOACs and warfarin"
-	],
-	"why_it_matters": [
-      "Direct Oral Anticoagulants (DOACs - also known as Novel Oral Anticoagulants - NOACs) are recommended in various NICE guidance, ",
-      "including for the <a href='https://www.nice.org.uk/guidance/CG180/chapter/1-Recommendations#interventions-to-prevent-stroke-2'>prevention of stroke in patients with Atrial Fibrillation (AF)</a>. ",
-      "Before the introduction of DOACs warfarin was the mainstay of anticoagulant treatment.  ",
-      "DOACs cost more than warfarin.  Nationally oral anticoagulant costs have <a href='https://openprescribing.net/bnf/020802/'>increased 9-fold in three years from 2013</a>,  ",
-      "an increase of approximately £200 million per year. ",
-      "DOACs do not requre INR testing, unlike warfarin. ",
-      "There has been considerable debate about the place of DOACs in AF stroke prevention given the positive NICE recommendation ",
-      "and the cost impact to the NHS, and consequently there has been variable uptake across the country."
-	],
-	"numerator_short": "DOAC items",
-	"denominator_short": "DOAC and warfarin items",
-	"url": null,
-	"is_percentage": true,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"numerator_columns": [
-		"SUM(items) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '0208020Y0%' OR bnf_code LIKE '0208020Z0%' OR bnf_code LIKE '0208020X0%' OR bnf_code LIKE '0208020AA%')  "
-	],
-	  "denominator_columns": [
+  "name": "Direct Oral Anticoagulants (DOACs)",
+  "title": [
+    "Direct Oral Anticoagulants (DOACs) as proportion of all DOACs and warfarin"
+  ],
+  "description": [
+    "Prescribing of Direct Oral Anticoagulants (DOACs) as proportion of all DOACs and warfarin"
+  ],
+  "why_it_matters": [
+    "Direct Oral Anticoagulants (DOACs - also known as Novel Oral Anticoagulants - NOACs) are recommended in various NICE guidance, ",
+    "including for the <a href='https://www.nice.org.uk/guidance/CG180/chapter/1-Recommendations#interventions-to-prevent-stroke-2'>prevention of stroke in patients with Atrial Fibrillation (AF)</a>. ",
+    "Before the introduction of DOACs warfarin was the mainstay of anticoagulant treatment.  ",
+    "DOACs cost more than warfarin.  Nationally oral anticoagulant costs have <a href='https://openprescribing.net/bnf/020802/'>increased 9-fold in three years from 2013</a>,  ",
+    "an increase of approximately £200 million per year. ",
+    "DOACs do not requre INR testing, unlike warfarin. ",
+    "There has been considerable debate about the place of DOACs in AF stroke prevention given the positive NICE recommendation ",
+    "and the cost impact to the NHS, and consequently there has been variable uptake across the country."
+  ],
+  "numerator_short": "DOAC items",
+  "denominator_short": "DOAC and warfarin items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0208020Y0%' OR bnf_code LIKE '0208020Z0%' OR bnf_code LIKE '0208020X0%' OR bnf_code LIKE '0208020AA%')  "
+  ],
+  "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
-		"(bnf_code LIKE '0208020Y0%' OR bnf_code LIKE '0208020Z0%' OR bnf_code LIKE '0208020X0%' OR bnf_code LIKE '0208020AA%' OR bnf_code LIKE '0208020V0%')  "
+    "(bnf_code LIKE '0208020Y0%' OR bnf_code LIKE '0208020Z0%' OR bnf_code LIKE '0208020X0%' OR bnf_code LIKE '0208020AA%' OR bnf_code LIKE '0208020V0%')  "
   ]
 }

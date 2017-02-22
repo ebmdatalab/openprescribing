@@ -1,35 +1,36 @@
 {
-  "name": "Ciclosporin and tacrolimus oral preparations prescribed generically", 
+  "name": "Ciclosporin and tacrolimus oral preparations prescribed generically",
   "title": [
     "ciclosporin and tacrolimus preparations (whether branded or generic)"
-  ], 
+  ],
   "description": [
-    "Total items of generic ciclosporin and tacrolimus preparations (0802020G0AA and 0802020T0AA),", 
-    "as a proportion of total items of all ciclosporin and tacrolimus items", 
+    "Total items of generic ciclosporin and tacrolimus preparations (0802020G0AA and 0802020T0AA),",
+    "as a proportion of total items of all ciclosporin and tacrolimus items",
     "(0802020G0 and 0802020T0)."
-  ], 
+  ],
   "why_it_matters": [
     "It is recommended for both <a href='http://www.evidence.nhs.uk/formulary/bnf/current/8-malignant-disease-and-immunosuppression/82-drugs-affecting-the-immune-response/822-corticosteroids-and-other-immunosuppressants/ciclosporin'> ciclosporin </a>:",
     "and  <a href='http://www.evidence.nhs.uk/formulary/bnf/current/8-malignant-disease-and-immunosuppression/82-drugs-affecting-the-immune-response/822-corticosteroids-and-other-immunosuppressants/tacrolimus'> tacrolimus </a>:",
     "that patients are prescribed and dispensed by brand name, to reduce the problems of patients switching formulations. "
-  ], 
-  "numerator_short": "Generic ciclosporin and tacrolimus items", 
-  "denominator_short": "Ciclosporin and tacrolimus items", 
-  "url": null, 
-  "is_percentage": true, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+  ],
+  "numerator_short": "Generic ciclosporin and tacrolimus items",
+  "denominator_short": "Ciclosporin and tacrolimus items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
     "(bnf_code LIKE '0802020G0A%' OR bnf_code LIKE '0802020T0A%') "
-  ], 
+  ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code LIKE '0802020G0%' OR bnf_code LIKE '0802020T0%')   "
   ]

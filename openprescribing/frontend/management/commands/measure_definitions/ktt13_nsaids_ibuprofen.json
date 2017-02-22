@@ -1,37 +1,38 @@
 {
-  "name": "Non-preferred NSAIDs and COX-2 inhibitors (KTT13)", 
+  "name": "Non-preferred NSAIDs and COX-2 inhibitors (KTT13)",
   "title": [
     "KTT13: NSAIDs (including COX-2 inhibitors) - percentage items excluding naproxen and ibuprofen"
-  ], 
+  ],
   "description": [
-    "Number of prescription items for all NSAIDs excluding ibuprofen and naproxen", 
-    "as a percentage of the total number of prescription items", 
+    "Number of prescription items for all NSAIDs excluding ibuprofen and naproxen",
+    "as a percentage of the total number of prescription items",
     "for all NSAIDs."
-  ], 
+  ],
   "why_it_matters": [
     "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some 'traditional' NSAIDS, for ",
     "their effects on the stomach, kidneys and the risk of blood clots.  ",
     "The latest evidence shows that ibuprofen and naproxen are two of the drugs with a lower level of risk, ",
     "and therefore doctors should prescribe these to patients before trying the others."
-  ], 
-  "numerator_short": "NSAID items (excl naproxen and ibuprofen)", 
-  "denominator_short": "NSAID items", 
-  "url": null, 
-  "is_percentage": true, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+  ],
+  "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
+  "denominator_short": "NSAID items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
     "(bnf_code LIKE '100101%' ",
     "AND (bnf_code NOT like '1001010J0%' AND bnf_code NOT like '1001010P0%'))  "
-  ], 
+  ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code LIKE '100101%')  "
   ]

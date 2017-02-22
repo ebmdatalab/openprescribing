@@ -1,45 +1,46 @@
 {
-        "name": "Prescribing of dipyridamole",
-        "title": [
-                "dipyridamole compared with prescribing of clopidogrel"
-        ],
-        "description": [
-                "Total items for dipyridamole and dipyridamole and aspirin,",
-                "as a proportion of total items of dipyridamole, dipyridamole & aspirin and clopidogrel",
-                "(0703021Q0)."
-        ],
-        "why_it_matters": [
-                "Although the <a href='https://www.nice.org.uk/guidance/TA210'>2010 NICE Technology Appraisal </a>",
-                "recommends dipyridamole for the prevention of further occlusive events in patients who have had a Transient Ischaemic Attack (TIA), ",
-                "<a href='https://www.strokeaudit.org/SupportFiles/Documents/Guidelines/2016-National-Clinical-Guideline-for-Stroke-5t-(1).aspx'> 2016 guidance from the Royal College of Physicians </a> states: ",
-                "the Working Party considers that a unified approach to the treatment of TIA and ischaemic stroke is more appropriate.",
-                "Whilst clopidogrel does not have a licence for use after TIA, the Working Party considers that the benefits of recommending ",
-                "this drug first-line outweigh any disadvantages. ",
-                "For long-term vascular prevention in people with ischaemic stroke or TIA without paroxysmal or permanent atrial fibrillation:",
-                " - clopidogrel 75mg daily should be the standard antithrombotic treatment; ",
-                "- aspirin 75 mg daily with modified-release dipyridamole 200 mg twice daily should be used for those who are unable to tolerate clopidogrel; ",
-                "- aspirin 75mg daily should be used if both clopidogrel and modified-release dipyridamole are contraindicated or not tolerated; ",
-                "- modified-release dipyridamole 200 mg twice daily should be used if both clopidogrel and aspirin are contraindicated or not tolerated."
-        ],
-        "numerator_short": "Dipyridamole items",
-        "denominator_short": "Total items",
-        "url": null,
-        "is_percentage": true,
-        "is_cost_based": false,
-        "low_is_good": true,
-        "numerator_columns": [
-                "SUM(items) AS numerator, "
-        ],
-        "numerator_from": "[ebmdatalab:hscic.prescribing] ",
-        "numerator_where": [
-          "(bnf_code LIKE '0209000L0%')",
-          " OR (bnf_code LIKE '0209000V0%') "
-        ],
-        "denominator_columns": [
-                "SUM(items) AS denominator, "
-        ],
-        "denominator_from": "[ebmdatalab:hscic.prescribing] ",
-        "denominator_where": [
-                "(bnf_code LIKE '0209000L0%' OR bnf_code LIKE '0209000V0%' OR bnf_code LIKE '0209000C0%') "
-        ]
+  "name": "Prescribing of dipyridamole",
+  "title": [
+    "dipyridamole compared with prescribing of clopidogrel"
+  ],
+  "description": [
+    "Total items for dipyridamole and dipyridamole and aspirin,",
+    "as a proportion of total items of dipyridamole, dipyridamole & aspirin and clopidogrel",
+    "(0703021Q0)."
+  ],
+  "why_it_matters": [
+    "Although the <a href='https://www.nice.org.uk/guidance/TA210'>2010 NICE Technology Appraisal </a>",
+    "recommends dipyridamole for the prevention of further occlusive events in patients who have had a Transient Ischaemic Attack (TIA), ",
+    "<a href='https://www.strokeaudit.org/SupportFiles/Documents/Guidelines/2016-National-Clinical-Guideline-for-Stroke-5t-(1).aspx'> 2016 guidance from the Royal College of Physicians </a> states: ",
+    "the Working Party considers that a unified approach to the treatment of TIA and ischaemic stroke is more appropriate.",
+    "Whilst clopidogrel does not have a licence for use after TIA, the Working Party considers that the benefits of recommending ",
+    "this drug first-line outweigh any disadvantages. ",
+    "For long-term vascular prevention in people with ischaemic stroke or TIA without paroxysmal or permanent atrial fibrillation:",
+    " - clopidogrel 75mg daily should be the standard antithrombotic treatment; ",
+    "- aspirin 75 mg daily with modified-release dipyridamole 200 mg twice daily should be used for those who are unable to tolerate clopidogrel; ",
+    "- aspirin 75mg daily should be used if both clopidogrel and modified-release dipyridamole are contraindicated or not tolerated; ",
+    "- modified-release dipyridamole 200 mg twice daily should be used if both clopidogrel and aspirin are contraindicated or not tolerated."
+  ],
+  "numerator_short": "Dipyridamole items",
+  "denominator_short": "Total items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0209000L0%')",
+    " OR (bnf_code LIKE '0209000V0%') "
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "(bnf_code LIKE '0209000L0%' OR bnf_code LIKE '0209000V0%' OR bnf_code LIKE '0209000C0%') "
+  ]
 }

@@ -1,38 +1,39 @@
 {
-	"name": "Methotrexate 10 mg tablets ",
-	"title": [
-		"methotrexate 10mg tablets ",
-		"as a percentage of prescribing of all methotrexate tablets"
-	],
-	"description": [
-		"Prescribing of methotrexate 10mg tablets ",
-		"as a percentage of prescribing of all methotrexate tablets"
-	],
-	"why_it_matters": [
-		"<a href='https://www.evidence.nhs.uk/formulary/bnf/current/10-musculoskeletal-and-joint-diseases/101-drugs-used-in-rheumatic-diseases-and-gout/1013-drugs-that-suppress-the-rheumatic-disease-process/drugs-affecting-the-immune-response/methotrexate'>The BNF states: </a>",
-		"To avoid error with low-dose methotrexate, it is recommended that: ",
-		"the patient is carefully advised of the dose and frequency and the reason for taking methotrexate ",
-		"and any other prescribed medicine(e.g.folic acid);only one strength of methotrexate tablet ",
-		"(usually 2.5 mg) is prescribed and dispensed;"
-	],
-	"numerator_short": "Items for 10mg methotrexate tablets",
-	"denominator_short": "Items for 2.5mg and 10mg methotrexate tablets",
-	"url": null,
-	"is_percentage": true,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"numerator_columns": [
-		"SUM(items) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '1001030U0%AC')"
-	],
-	"denominator_columns": [
-		"SUM(items) AS denominator, "
-	],
-	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
-	"denominator_where": [
-		"(bnf_code LIKE '1001030U0%AB' OR bnf_code LIKE '1001030U0%AC')"
-	]
+  "name": "Methotrexate 10 mg tablets ",
+  "title": [
+    "methotrexate 10mg tablets ",
+    "as a percentage of prescribing of all methotrexate tablets"
+  ],
+  "description": [
+    "Prescribing of methotrexate 10mg tablets ",
+    "as a percentage of prescribing of all methotrexate tablets"
+  ],
+  "why_it_matters": [
+    "<a href='https://www.evidence.nhs.uk/formulary/bnf/current/10-musculoskeletal-and-joint-diseases/101-drugs-used-in-rheumatic-diseases-and-gout/1013-drugs-that-suppress-the-rheumatic-disease-process/drugs-affecting-the-immune-response/methotrexate'>The BNF states: </a>",
+    "To avoid error with low-dose methotrexate, it is recommended that: ",
+    "the patient is carefully advised of the dose and frequency and the reason for taking methotrexate ",
+    "and any other prescribed medicine(e.g.folic acid);only one strength of methotrexate tablet ",
+    "(usually 2.5 mg) is prescribed and dispensed;"
+  ],
+  "numerator_short": "Items for 10mg methotrexate tablets",
+  "denominator_short": "Items for 2.5mg and 10mg methotrexate tablets",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "is_ordinal": true,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '1001030U0%AC')"
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "(bnf_code LIKE '1001030U0%AB' OR bnf_code LIKE '1001030U0%AC')"
+  ]
 }

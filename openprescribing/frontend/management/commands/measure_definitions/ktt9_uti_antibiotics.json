@@ -22,6 +22,7 @@
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
+  "is_ordinal": true,
   "low_is_good": true,
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
