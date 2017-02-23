@@ -123,6 +123,12 @@ class Command(BaseCommand):
             cursor.execute(function)
             cursor.execute(trigger)
 
+    def drop_redundant_columns(self, date):
+        partition_name = self._partition_name(date)
+        with connection.cursor() as cursor:
+            cursor.execute("ALTER TABLE %s DROP COLUMN sha" % partition_name)
+            cursor.execute(
+                "ALTER TABLE %s DROP COLUMN presentation_name" % partition_name)
     def create_partition_indexes(self, date):
         indexes = [
             ("CREATE INDEX %s_6ea07fe3 "
@@ -184,7 +190,7 @@ class Command(BaseCommand):
         # start = time.clock()
         copy_str = "COPY %s(pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
-        copy_str += "presentation_name,total_items,actual_cost,"
+        copy_str += "total_items,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
         i = 0

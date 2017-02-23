@@ -326,7 +326,6 @@ class Prescription(models.Model):
     chemical = models.ForeignKey(Chemical)
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
-    presentation_name = models.CharField(max_length=1000)
     total_items = models.IntegerField()
     actual_cost = models.FloatField()
     quantity = models.FloatField()

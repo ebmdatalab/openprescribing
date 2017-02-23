@@ -55,8 +55,8 @@ class Command(BaseCommand):
         quantity = int(row[8])
         month = row[9]
         formatted_date = '%s-%s-01' % (month[:4], month[4:])
-        output = [row[0], row[1], row[2], chemical_id, row[3],
-                  row[4], int(row[5]), float(row[7]),
+        output = [row[1], row[2], chemical_id, row[3],
+                  int(row[5]), float(row[7]),
                   quantity, formatted_date]
         return output
 

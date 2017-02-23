@@ -4,7 +4,6 @@
         "pk": 1000000,
         "fields": {
             "presentation_code": "0202010F0AAAAAA",
-            "presentation_name": "Chlortalidone_Tab 50mg",
             "total_items": 2,
             "actual_cost": 3.05,
             "quantity": 56,
@@ -12,7 +11,6 @@
             "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
-            "sha": "Q48"
         }
     },
     {
@@ -20,7 +18,6 @@
         "pk": 1000001,
         "fields": {
             "presentation_code": "0202010F0AAAAAA",
-            "presentation_name": "Chlortalidone_Tab 50mg",
             "total_items": 1,
             "actual_cost": 1.53,
             "quantity": 28,
@@ -28,7 +25,6 @@
             "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
-            "sha": "Q48"
         }
     },
     {
@@ -36,7 +32,6 @@
         "pk": 1000002,
         "fields": {
             "presentation_code": "0202010F0AAAAAA",
-            "presentation_name": "Chlortalidone_Tab 50mg",
             "total_items": 1,
             "actual_cost": 11.99,
             "quantity": 128,
@@ -44,7 +39,6 @@
             "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
-            "sha": "Q48"
         }
     },
     {
@@ -52,7 +46,6 @@
         "pk": 1000003,
         "fields": {
             "presentation_code": "0202010F0AAAAAA",
-            "presentation_name": "Chlortalidone_Tab 50mg",
             "total_items": 1,
             "actual_cost": 1.99,
             "quantity": 32,
@@ -60,7 +53,6 @@
             "chemical": "0202010F0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -68,7 +60,6 @@
         "pk": 1000004,
         "fields": {
             "presentation_code": "0202010B0AAACAC",
-            "presentation_name": "Bendroflumethiazide_Tab 5mg",
             "total_items": 1,
             "actual_cost": 1.56,
             "quantity": 26,
@@ -76,7 +67,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -84,7 +74,6 @@
         "pk": 1000005,
         "fields": {
             "presentation_code": "0202010B0AAACAC",
-            "presentation_name": "Bendroflumethiazide_Tab 5mg",
             "total_items": 1,
             "actual_cost": 1.69,
             "quantity": 23,
@@ -92,7 +81,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -100,7 +88,6 @@
         "pk": 1000006,
         "fields": {
             "presentation_code": "0202010B0AAACAC",
-            "presentation_name": "Bendroflumethiazide_Tab 5mg",
             "total_items": 1,
             "actual_cost": 1.62,
             "quantity": 24,
@@ -108,7 +95,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -116,7 +102,6 @@
         "pk": 1000007,
         "fields": {
             "presentation_code": "0202010B0AAABAB",
-            "presentation_name": "Bendroflumethiazide_Tab 2.5mg",
             "total_items": 40,
             "actual_cost": 36.29,
             "quantity": 1209,
@@ -124,7 +109,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -132,7 +116,6 @@
         "pk": 1000008,
         "fields": {
             "presentation_code": "0202010B0AAABAB",
-            "presentation_name": "Bendroflumethiazide_Tab 2.5mg",
             "total_items": 50,
             "actual_cost": 58.08,
             "quantity": 1953,
@@ -140,7 +123,6 @@
             "chemical": "0202010B0",
             "pct": "03Q",
             "practice": "N84014",
-            "sha": "Q48"
         }
     },
     {
@@ -148,7 +130,6 @@
         "pk": 1000009,
         "fields": {
             "presentation_code": "0202010B0AAABAB",
-            "presentation_name": "Bendroflumethiazide_Tab 2.5mg",
             "total_items": 38,
             "actual_cost": 42.13,
             "quantity": 1399,
@@ -156,7 +137,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -164,7 +144,6 @@
         "pk": 1000010,
         "fields": {
             "presentation_code": "0202010B0AAABAB",
-            "presentation_name": "Bendroflumethiazide_Tab 2.5mg",
             "total_items": 24,
             "actual_cost": 12.13,
             "quantity": 1389,
@@ -172,7 +151,6 @@
             "chemical": "0202010B0",
             "pct": "03V",
             "practice": "K83059",
-            "sha": "Q46"
         }
     },
     {
@@ -180,7 +158,6 @@
         "pk": 1000011,
         "fields": {
             "presentation_code": "0204000I0BCAAAB",
-            "presentation_name": "Trandate_Tab 50mg",
             "total_items": 17,
             "actual_cost": 22.13,
             "quantity": 1200,
@@ -188,7 +165,6 @@
             "chemical": "0204000I0",
             "pct": "03V",
             "practice": "P87629",
-            "sha": "Q46"
         }
     },
     {
@@ -196,7 +172,6 @@
         "pk": 1000012,
         "fields": {
             "presentation_code": "0204000I0BCAAAB",
-            "presentation_name": "Trandate_Tab 50mg",
             "total_items": 12,
             "actual_cost": 10.13,
             "quantity": 1150,
@@ -204,7 +179,6 @@
             "chemical": "0204000I0",
             "pct": "03V",
             "practice": "K83059",
-            "sha": "Q46"
         }
     },
     {
@@ -212,7 +186,6 @@
         "pk": 1000013,
         "fields": {
             "presentation_code": "0204000I0AAALAL",
-            "presentation_name": "Labetalol 50mg",
             "total_items": 4,
             "actual_cost": 4.02,
             "quantity": 4,
@@ -220,7 +193,6 @@
             "chemical": "0204000I0",
             "pct": "03V",
             "practice": "K83059",
-            "sha": "Q46"
         }
     }
 ]

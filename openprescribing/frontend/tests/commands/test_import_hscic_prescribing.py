@@ -57,7 +57,7 @@ class CommandsTestCase(TestCase):
             Prescription.objects.create(
                 pct=self.pct, practice=self.practice,
                 chemical=self.chemical, presentation_code='0000',
-                presentation_name='asd', total_items=4,
+                total_items=4,
                 actual_cost=4, quantity=4,
                 processing_date='2013-04-01')
 
@@ -75,7 +75,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.pct.code, '5D7')
         self.assertEqual(p.practice.code, 'Y01957')
         self.assertEqual(p.chemical.bnf_code, '0410030C0')
-        self.assertEqual(p.presentation_name, 'Methadone HCl_Mix 1mg/1ml S/F')
         self.assertEqual(p.total_items, 1346)
         self.assertEqual(p.actual_cost, 11270.33)
         self.assertEqual(p.quantity, 878870)
