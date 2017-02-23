@@ -3,11 +3,10 @@ import unittest
 import datetime
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import SHA, PCT
+from frontend.models import PCT
 
 
 def setUpModule():
-    SHA.objects.create(code='Q48')
     PCT.objects.create(code='06F',
                        name='NHS Bedfordshire')
 

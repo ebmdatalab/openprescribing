@@ -47,19 +47,6 @@ class Section(models.Model):
         ordering = ["bnf_id"]
 
 
-class SHA(models.Model):
-    '''
-    SHAs or Area Teams (depending on date).
-    '''
-    code = models.CharField(max_length=3, primary_key=True,
-                            help_text='Strategic health authority code')
-    ons_code = models.CharField(max_length=9, null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    boundary = models.MultiPolygonField(null=True, blank=True)
-
-    objects = models.GeoManager()
-
-
 class PCT(models.Model):
     '''
     PCTs or CCGs (depending on date).
@@ -77,7 +64,6 @@ class PCT(models.Model):
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
                                 default='Unknown')
     boundary = models.GeometryField(null=True, blank=True)
-    managing_group = models.ForeignKey(SHA, null=True, blank=True)
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
@@ -128,7 +114,6 @@ class Practice(models.Model):
         ('P', 'Proposed')
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True)
-    area_team = models.ForeignKey(SHA, null=True, blank=True)
     code = models.CharField(max_length=6, primary_key=True,
                             help_text='Practice code')
     name = models.CharField(max_length=200)
@@ -336,7 +321,6 @@ class Prescription(models.Model):
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
     '''
-    sha = models.ForeignKey(SHA)
     pct = models.ForeignKey(PCT)
     practice = models.ForeignKey(Practice)
     chemical = models.ForeignKey(Chemical)

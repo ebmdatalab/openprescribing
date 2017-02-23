@@ -10,7 +10,7 @@ from django.test import TestCase
 from common import utils
 from frontend.management.commands.import_hscic_prescribing import Command
 from frontend.models import Chemical, PCT, Practice
-from frontend.models import Prescription, SHA, ImportLog
+from frontend.models import Prescription, ImportLog
 
 
 class UnitTests(unittest.TestCase):
@@ -32,7 +32,6 @@ class CommandsTestCase(TestCase):
             bnf_code='0401020K0', chem_name='test')
         self.practice = Practice.objects.create(code='Y03375', name='test')
         self.pct = PCT.objects.create(code='5D7', name='test')
-        self.sha = SHA.objects.create(code='Q30', name='test')
         Chemical.objects.create(bnf_code='0410030C0', chem_name='test')
         Practice.objects.create(code='Y00135', name='test')
         Practice.objects.create(code='Y01957', name='test')
@@ -56,15 +55,13 @@ class CommandsTestCase(TestCase):
     def test_inserts_fail(self):
         with self.assertRaises(InternalError):
             Prescription.objects.create(
-                sha=self.sha, pct=self.pct, practice=self.practice,
+                pct=self.pct, practice=self.practice,
                 chemical=self.chemical, presentation_code='0000',
                 presentation_name='asd', total_items=4,
                 actual_cost=4, quantity=4,
                 processing_date='2013-04-01')
 
     def test_import_creates_prescriptions(self):
-        shas = SHA.objects.all()
-        self.assertEqual(shas.count(), 1)
         pcts = PCT.objects.all()
         self.assertEqual(pcts.count(), 1)
 
@@ -75,7 +72,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.count(), 3)
 
         p = Prescription.objects.get(presentation_code='0410030C0AAAFAF')
-        self.assertEqual(p.sha.code, 'Q30')
         self.assertEqual(p.pct.code, '5D7')
         self.assertEqual(p.practice.code, 'Y01957')
         self.assertEqual(p.chemical.bnf_code, '0410030C0')

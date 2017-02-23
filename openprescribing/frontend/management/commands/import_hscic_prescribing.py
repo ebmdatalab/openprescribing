@@ -7,7 +7,7 @@ import re
 from django.core.management.base import BaseCommand
 from django.db import connection
 
-from frontend.models import SHA, PCT, ImportLog
+from frontend.models import PCT, ImportLog
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ class Command(BaseCommand):
             else:
                 date = self._date_from_filename(f)
             if not options['skip_orgs']:
-                self.import_shas_and_pcts(f, date)
+                self.import_pcts(f, date)
             self.drop_partition(date)
             self.create_partition(date)
             self.import_prescriptions(f, date)
@@ -53,26 +53,20 @@ class Command(BaseCommand):
             self.add_parent_trigger()
             self.drop_oldest_month(date)
 
-    def import_shas_and_pcts(self, filename, date):
-        logger.info('Importing SHAs and PCTs from %s' % filename)
+    def import_pcts(self, filename, date):
+        logger.info('Importing PCTs from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
-        sha_codes = set()
         pct_codes = set()
         i = 0
         for row in rows:
-            sha_codes.add(row[0])
             pct_codes.add(row[1])
             i += 1
             if self.truncate and i > 500:
                 break
-        shas_created = pcts_created = 0
-        for sha_code in sha_codes:
-            s, created = SHA.objects.get_or_create(code=sha_code)
-            shas_created += created
+        pcts_created = 0
         for pct_code in pct_codes:
             p, created = PCT.objects.get_or_create(code=pct_code)
             pcts_created += created
-        logger.info("%s SHAs created" % shas_created)
         logger.info("%s PCTs created" % pcts_created)
 
     def create_partition(self, date):
@@ -169,10 +163,6 @@ class Command(BaseCommand):
              "cnstrt_%s__pct_code "
              "FOREIGN KEY (pct_id) REFERENCES frontend_pct(code) "
              "DEFERRABLE INITIALLY DEFERRED"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s__sha_code "
-             "FOREIGN KEY (sha_id) REFERENCES frontend_sha(code) "
-             "DEFERRABLE INITIALLY DEFERRED")
             ]
         partition_name = self._partition_name(date)
         with connection.cursor() as cursor:
@@ -192,7 +182,7 @@ class Command(BaseCommand):
     def import_prescriptions(self, filename, date):
         logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
-        copy_str = "COPY %s(sha_id,pct_id,"
+        copy_str = "COPY %s(pct_id,"
         copy_str += "practice_id,chemical_id,presentation_code,"
         copy_str += "presentation_name,total_items,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "

@@ -1,7 +1,7 @@
 import csv
 import sys
 from django.core.management.base import BaseCommand, CommandError
-from frontend.models import PCT, SHA
+from frontend.models import PCT
 
 
 class Command(BaseCommand):
