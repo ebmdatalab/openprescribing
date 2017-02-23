@@ -323,7 +323,6 @@ class Prescription(models.Model):
     '''
     pct = models.ForeignKey(PCT)
     practice = models.ForeignKey(Practice)
-    chemical = models.ForeignKey(Chemical)
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     total_items = models.IntegerField()

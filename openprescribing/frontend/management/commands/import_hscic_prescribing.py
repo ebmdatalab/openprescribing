@@ -126,7 +126,8 @@ class Command(BaseCommand):
     def drop_redundant_columns(self, date):
         partition_name = self._partition_name(date)
         with connection.cursor() as cursor:
-            cursor.execute("ALTER TABLE %s DROP COLUMN sha" % partition_name)
+            cursor.execute("ALTER TABLE %s DROP COLUMN sha_id" % partition_name)
+            cursor.execute("ALTER TABLE %s DROP COLUMN chemical_id" % partition_name)
             cursor.execute(
                 "ALTER TABLE %s DROP COLUMN presentation_name" % partition_name)
     def create_partition_indexes(self, date):
