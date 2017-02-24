@@ -132,36 +132,21 @@ class Command(BaseCommand):
                 "ALTER TABLE %s DROP COLUMN presentation_name" % partition_name)
     def create_partition_indexes(self, date):
         indexes = [
-            ("CREATE INDEX %s_6ea07fe3 "
+            ("CREATE INDEX idx_%s_presentation "
+             "ON %s (presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX idx_%s_practice_id "
              "ON %s "
              "USING btree (practice_id)"),
-            ("CREATE INDEX %s_by_pct "
-             "ON %s "
-             "USING btree (presentation_code, pct_id)"),
-            ("CREATE INDEX %s_by_pct_and_presentation "
-             "ON %s "
-             "USING btree (pct_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_by_prac_date_code "
-             "ON %s "
-             "USING btree (practice_id, processing_date, presentation_code)"),
-            ("CREATE INDEX %s_by_practice "
-             "ON %s "
-             "USING btree (presentation_code, practice_id)"),
-            ("CREATE INDEX %s_by_practice_and_code "
-             "ON %s "
-             "USING btree ("
-             "practice_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_idx_date_and_code "
-             "ON %s "
-             "USING btree (processing_date, presentation_code)")]
+            ("CREATE INDEX idx_%s_pct_id "
+             "ON %s (pct_id)"),
+            ("CREATE INDEX idx_%s_date "
+             "ON %s (processing_date)"),
+            ("CLUSTER %s USING idx_%s_presentation"),
+        ]
         constraints = [
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s_pkey "
              "PRIMARY KEY (id)"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s_chemical_bnf_code "
-             "FOREIGN KEY (chemical_id) REFERENCES frontend_chemical(bnf_code)"
-             " DEFERRABLE INITIALLY DEFERRED"),
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s__practice_code "
              "FOREIGN KEY (practice_id) REFERENCES frontend_practice(code) "
