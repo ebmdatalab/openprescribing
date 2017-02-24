@@ -55,15 +55,6 @@
   }
 },
 {
-  "model": "frontend.sha",
-  "pk": "Q51",
-  "fields": {
-    "ons_code": null,
-    "name": null,
-    "boundary": null
-  }
-},
-{
   "model": "frontend.pct",
   "pk": "02Q",
   "fields": {
@@ -472,7 +463,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84001",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 10,
     "actual_cost": 1000.0,
@@ -486,7 +476,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84001",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 100,
     "actual_cost": 1000.0,
@@ -500,7 +489,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84024",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 100,
     "actual_cost": 10000.0,
@@ -514,7 +502,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84024",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
     "actual_cost": 2000.0,
@@ -528,7 +515,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "B82005",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 700,
     "actual_cost": 70000.0,
@@ -542,7 +528,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "B82005",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 300,
     "actual_cost": 3000.0,
@@ -556,7 +541,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "A85017",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 10,
     "actual_cost": 1000.0,
@@ -570,7 +554,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "A86030",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 10,
     "actual_cost": 100.0,
@@ -584,7 +567,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 15,
     "actual_cost": 1500.0,
@@ -598,7 +580,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
     "actual_cost": 2000.0,
@@ -612,7 +593,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 20,
     "actual_cost": 2000.0,
@@ -626,7 +606,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 150,
     "actual_cost": 1500.0,
@@ -640,7 +619,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84001",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 10,
     "actual_cost": 100000.0,
@@ -654,7 +632,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "C84001",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 1,
     "actual_cost": 500.0,
@@ -668,7 +645,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 1,
     "actual_cost": 10.0,
@@ -682,7 +658,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 5,
     "actual_cost": 50.0,
@@ -696,7 +671,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 1,
     "actual_cost": 10.0,
@@ -710,7 +684,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0408010A0",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 5,
     "actual_cost": 50.0,
@@ -724,7 +697,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 15,
     "actual_cost": 1500.0,
@@ -738,7 +710,6 @@
   "fields": {
     "pct": "04D",
     "practice": "C83051",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
     "actual_cost": 2000.0,
@@ -752,7 +723,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 20,
     "actual_cost": 1000.0,
@@ -766,7 +736,6 @@
   "fields": {
     "pct": "03T",
     "practice": "C83019",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 150,
     "actual_cost": 1500.0,
@@ -780,7 +749,6 @@
   "fields": {
     "pct": "02Q",
     "practice": "A86030",
-    "chemical": "0703021Q0",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 10,
     "actual_cost": 100.0,

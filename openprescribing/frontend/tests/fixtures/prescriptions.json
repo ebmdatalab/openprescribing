@@ -8,7 +8,6 @@
             "actual_cost": 3.05,
             "quantity": 56,
             "processing_date": "2013-04-01",
-            "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
         }
@@ -22,7 +21,6 @@
             "actual_cost": 1.53,
             "quantity": 28,
             "processing_date": "2013-08-01",
-            "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
         }
@@ -36,7 +34,6 @@
             "actual_cost": 11.99,
             "quantity": 128,
             "processing_date": "2014-09-01",
-            "chemical": "0202010F0",
             "pct": "03Q",
             "practice": "N84014",
         }
@@ -50,7 +47,6 @@
             "actual_cost": 1.99,
             "quantity": 32,
             "processing_date": "2014-09-01",
-            "chemical": "0202010F0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -64,7 +60,6 @@
             "actual_cost": 1.56,
             "quantity": 26,
             "processing_date": "2013-04-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -78,7 +73,6 @@
             "actual_cost": 1.69,
             "quantity": 23,
             "processing_date": "2013-08-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -92,7 +86,6 @@
             "actual_cost": 1.62,
             "quantity": 24,
             "processing_date": "2013-10-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -106,7 +99,6 @@
             "actual_cost": 36.29,
             "quantity": 1209,
             "processing_date": "2014-09-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -120,7 +112,6 @@
             "actual_cost": 58.08,
             "quantity": 1953,
             "processing_date": "2014-10-01",
-            "chemical": "0202010B0",
             "pct": "03Q",
             "practice": "N84014",
         }
@@ -134,7 +125,6 @@
             "actual_cost": 42.13,
             "quantity": 1399,
             "processing_date": "2014-11-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -148,7 +138,6 @@
             "actual_cost": 12.13,
             "quantity": 1389,
             "processing_date": "2014-11-01",
-            "chemical": "0202010B0",
             "pct": "03V",
             "practice": "K83059",
         }
@@ -162,7 +151,6 @@
             "actual_cost": 22.13,
             "quantity": 1200,
             "processing_date": "2014-11-01",
-            "chemical": "0204000I0",
             "pct": "03V",
             "practice": "P87629",
         }
@@ -176,7 +164,6 @@
             "actual_cost": 10.13,
             "quantity": 1150,
             "processing_date": "2014-11-01",
-            "chemical": "0204000I0",
             "pct": "03V",
             "practice": "K83059",
         }
@@ -190,7 +177,33 @@
             "actual_cost": 4.02,
             "quantity": 4,
             "processing_date": "2014-11-01",
-            "chemical": "0204000I0",
+            "pct": "03V",
+            "practice": "K83059",
+        }
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000014,
+        "fields": {
+            "presentation_code": "0204000I0JKKKAL",
+            "total_items": 1,
+            "actual_cost": 140.00,
+            "quantity": 1,
+            "processing_date": "2014-11-01",
+            "pct": "03V",
+            "practice": "K83059",
+        }
+
+    },
+    {
+        "model": "frontend.prescription",
+        "pk": 1000015,
+        "fields": {
+            "presentation_code": "0202010B0AAACAZ",
+            "total_items": 1,
+            "actual_cost": 1.56,
+            "quantity": 26,
+            "processing_date": "2013-04-01",
             "pct": "03V",
             "practice": "K83059",
         }

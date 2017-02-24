@@ -1,14 +1,5 @@
 [
 {
-  "model": "frontend.sha",
-  "pk": "Q51",
-  "fields": {
-    "ons_code": null,
-    "name": null,
-    "boundary": null
-  }
-},
-{
   "model": "frontend.pct",
   "pk": "02Q",
   "fields": {
