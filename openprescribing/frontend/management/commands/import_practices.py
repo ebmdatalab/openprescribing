@@ -1,7 +1,7 @@
 import csv
 import glob
 from django.core.management.base import BaseCommand, CommandError
-from frontend.models import Practice, PCT, SHA
+from frontend.models import Practice, PCT
 
 
 class Command(BaseCommand):

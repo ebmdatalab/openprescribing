@@ -93,7 +93,7 @@ class Command(BaseCommand):
         pct_codes = set()
         i = 0
         for row in rows:
-            pct_codes.add(row[1])
+            pct_codes.add(row[0])
             i += 1
             if self.truncate and i > 500:
                 break
@@ -245,7 +245,7 @@ class Command(BaseCommand):
         logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
         copy_str = "COPY %s(pct_id,"
-        copy_str += "practice_id,chemical_id,presentation_code,"
+        copy_str += "practice_id,presentation_code,"
         copy_str += "total_items,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
