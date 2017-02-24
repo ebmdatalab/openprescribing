@@ -87,7 +87,8 @@ var baseOptions = {
     style: {
       color: '#ccc',
       fontSize: '24px',
-      opacity: 0.2
+      opacity: 0.2,
+      cursor: 'crosshair'
     },
     text: "openprescribing.net"
   },
