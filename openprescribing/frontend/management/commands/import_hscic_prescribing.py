@@ -19,6 +19,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--filename')
+        parser.add_argument('--migrate', action='store_true')
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
@@ -27,31 +28,64 @@ class Command(BaseCommand):
             help="Don't parse orgs from the file")
         parser.add_argument('--truncate')
 
+    def get_all_dates(self):
+        sql = """
+        SELECT
+          CONCAT(LEFT(split_part(table_name,
+                '_',
+                3), 4), '-', RIGHT(split_part(table_name,
+                '_',
+                3), 2), '-01')
+        FROM
+          information_schema.tables
+        WHERE
+          table_schema = 'public'
+          AND table_name LIKE 'frontend_prescription_%'
+        ORDER BY
+          table_name;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            return [datetime.datetime.strptime(
+                x[0], '%Y-%m-%d').date() for x in cursor.fetchall()]
+
     def handle(self, *args, **options):
         if options['truncate']:
             self.truncate = True
         else:
             self.truncate = False
-
-        if options['filename']:
-            files_to_import = [options['filename']]
-        else:
-            filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
-            files_to_import = glob.glob(filepath)
-        for f in files_to_import:
+        if options['migrate']:
             if options['date']:
                 date = datetime.datetime.strptime(
                     options['date'], '%Y-%m-%d').date()
+                dates = [date]
             else:
-                date = self._date_from_filename(f)
-            if not options['skip_orgs']:
-                self.import_pcts(f, date)
-            self.drop_partition(date)
-            self.create_partition(date)
-            self.import_prescriptions(f, date)
-            self.create_partition_indexes(date)
-            self.add_parent_trigger()
-            self.drop_oldest_month(date)
+                dates = self.get_all_dates()
+            self.drop_redundant_columns()
+            for date in dates:
+                print "migrating", date
+                self.drop_redundant_indexes(date)
+                self.create_new_indexes(date)
+        else:
+            if options['filename']:
+                files_to_import = [options['filename']]
+            else:
+                filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
+                files_to_import = glob.glob(filepath)
+            for f in files_to_import:
+                if options['date']:
+                    date = datetime.datetime.strptime(
+                        options['date'], '%Y-%m-%d').date()
+                else:
+                    date = self._date_from_filename(f)
+                if not options['skip_orgs']:
+                    self.import_pcts(f, date)
+                self.drop_partition(date)
+                self.create_partition(date)
+                self.import_prescriptions(f, date)
+                self.create_partition_indexes(date)
+                self.add_parent_trigger()
+                self.drop_oldest_month(date)
 
     def import_pcts(self, filename, date):
         logger.info('Importing PCTs from %s' % filename)
@@ -123,13 +157,49 @@ class Command(BaseCommand):
             cursor.execute(function)
             cursor.execute(trigger)
 
-    def drop_redundant_columns(self, date):
+    def drop_redundant_columns(self):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN sha_id CASCADE")
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN chemical_id CASCADE")
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN presentation_name CASCADE")
+
+    def drop_redundant_indexes(self, date):
+        indexes = [
+            "DROP INDEX %s_by_pct",
+            "DROP INDEX %s_by_prac_date_code ",
+            "DROP INDEX %s_by_practice",
+            "DROP INDEX %s_idx_date_and_code",
+            "DROP INDEX %s_by_pct_and_presentation",
+            "DROP INDEX %s_by_practice_and_code"
+        ]
         partition_name = self._partition_name(date)
         with connection.cursor() as cursor:
-            cursor.execute("ALTER TABLE %s DROP COLUMN sha_id" % partition_name)
-            cursor.execute("ALTER TABLE %s DROP COLUMN chemical_id" % partition_name)
-            cursor.execute(
-                "ALTER TABLE %s DROP COLUMN presentation_name" % partition_name)
+            for index_sql in indexes:
+                cursor.execute(index_sql % (
+                    partition_name))
+
+    def create_new_indexes(self, date):
+        indexes = [
+            ("CREATE INDEX idx_%s_presentation "
+             "ON %s (presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX idx_%s_pct_id "
+             "ON %s (pct_id)"),
+            ("CREATE INDEX idx_%s_date "
+             "ON %s (processing_date)"),
+            ("CLUSTER %s USING idx_%s_presentation"),
+        ]
+        partition_name = self._partition_name(date)
+        with connection.cursor() as cursor:
+            for index_sql in indexes:
+                cursor.execute(index_sql % (
+                    partition_name, partition_name))
+
     def create_partition_indexes(self, date):
         indexes = [
             ("CREATE INDEX idx_%s_presentation "
