@@ -379,9 +379,6 @@ describe('Measures', function() {
       expect(result.total).to.equal(7);
       expect(result.worseThanMedian).to.equal(3);
       expect(result.potentialSavings50th).to.equal(300);
-      var str = "Over the past 6 months, 3 of 7 CCGs have prescribed ";
-      str += 'worse than the national median.';
-      expect(result.performanceDescription).to.equal(str);
       str = 'Over the past 6 months, if all CCGs had prescribed at ';
       str += 'the median ratio or better, then NHS England would have ';
       str += 'spent £300.00 less. (We use the national median as a ';
@@ -411,9 +408,6 @@ describe('Measures', function() {
       expect(result.total).to.equal(6);
       expect(result.worseThanMedian).to.equal(2);
       expect(result.potentialSavings50th).to.equal(12000);
-      var str = "Over the past 6 months, this organisation has ";
-      str += "prescribed worse than the median on 2 of 6 measures.";
-      expect(result.performanceDescription).to.equal(str);
       str = "Over the past 6 months, if this practice  had prescribed ";
       str += "at the median ratio or better on all cost-saving measures ";
       str += "below, then it would have spent £12,000.00 less. (We use ";
