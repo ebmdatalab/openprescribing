@@ -7,7 +7,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -22,7 +21,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": "2013-04-01",
     "close_date": "2015-01-01",
     "address": null,
@@ -37,7 +35,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -49,7 +46,6 @@
   "pk": "A85017",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BEWICK ROAD SURGERY",
     "address1": null,
     "address2": null,
@@ -71,7 +67,6 @@
   "pk": "A86030",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BETTS AVENUE MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -93,7 +88,6 @@
   "pk": "B82005",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "PRIORY MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -115,7 +109,6 @@
   "pk": "B82008",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "NORTH SURGERY",
     "address1": null,
     "address2": null,
@@ -137,7 +130,6 @@
   "pk": "B82010",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "RIPON SPA SURGERY",
     "address1": null,
     "address2": null,
@@ -159,7 +151,6 @@
   "pk": "C83019",
   "fields": {
     "ccg": "03T",
-    "area_team": null,
     "name": "BEACON MEDICAL PRACTICE",
     "address1": null,
     "address2": null,
@@ -181,7 +172,6 @@
   "pk": "C83051",
   "fields": {
     "ccg": "04D",
-    "area_team": null,
     "name": "ABBEY MEDICAL PRACTICE",
     "address1": null,
     "address2": null,
@@ -203,7 +193,6 @@
   "pk": "C84001",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "LARWOOD SURGERY",
     "address1": null,
     "address2": null,
@@ -225,7 +214,6 @@
   "pk": "C84024",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "NEWGATE MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -247,7 +235,6 @@
   "pk": "Y00581",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BASSETLAW DRUG & ALCOHOL SERVICE",
     "address1": null,
     "address2": null,

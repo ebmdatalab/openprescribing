@@ -62,7 +62,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -77,7 +76,6 @@
     "name": "NHS Vale of York",
     "org_type": "CCG",
     "boundary": "SRID=4326;MULTIPOLYGON (((-117.0000000000000284 33.9794307631842827, -117.0000000000000284 32.9999999999999858, -117.0735592950724140 32.9999999999999858, -117.1109876134197094 33.0564681119540893, -117.1440879436102591 33.1143913965012757, -117.1548284484030944 33.1458054049181499, -117.1587611170690195 33.1783271568916263, -117.1544240956589249 33.2098968876784255, -117.1293059776068333 33.2720786429111115, -117.1297879555974220 33.3033747683331427, -117.1416243306352953 33.3350621994500500, -117.1602037062559702 33.3634909419218815, -117.1870564151785459 33.3869648252237425, -117.2193257957326153 33.4058924411327496, -117.2915579185745685 33.4301340584446649, -117.3612314041401561 33.4594138200975948, -117.3911427956023346 33.4798435915357970, -117.4186117085522767 33.5030477950865162, -117.4649833082258255 33.5548224305209999, -117.6540080810584499 33.7900940799815146, -117.6376759730218140 33.8001446349885128, -117.3514719836719422 33.8984678288236978, -117.1869112717077854 33.9509596279791168, -117.0170223710189958 33.9798014918877556, -117.0000000000000284 33.9794307631842827)))",
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -92,7 +90,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -107,7 +104,6 @@
     "name": "NHS Corby",
     "org_type": "CCG",
     "boundary": "SRID=4326;MULTIPOLYGON (((-117.0000000000000284 33.9794307631842827, -117.0000000000000284 32.9999999999999858, -117.0735592950724140 32.9999999999999858, -117.1109876134197094 33.0564681119540893, -117.1440879436102591 33.1143913965012757, -117.1548284484030944 33.1458054049181499, -117.1587611170690195 33.1783271568916263, -117.1544240956589249 33.2098968876784255, -117.1293059776068333 33.2720786429111115, -117.1297879555974220 33.3033747683331427, -117.1416243306352953 33.3350621994500500, -117.1602037062559702 33.3634909419218815, -117.1870564151785459 33.3869648252237425, -117.2193257957326153 33.4058924411327496, -117.2915579185745685 33.4301340584446649, -117.3612314041401561 33.4594138200975948, -117.3911427956023346 33.4798435915357970, -117.4186117085522767 33.5030477950865162, -117.4649833082258255 33.5548224305209999, -117.6540080810584499 33.7900940799815146, -117.6376759730218140 33.8001446349885128, -117.3514719836719422 33.8984678288236978, -117.1869112717077854 33.9509596279791168, -117.0170223710189958 33.9798014918877556, -117.0000000000000284 33.9794307631842827)))",
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -122,7 +118,6 @@
     "name": null,
     "org_type": "CCG",
     "boundary": null,
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -134,7 +129,6 @@
   "pk": "A85017",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BEWICK ROAD SURGERY",
     "address1": null,
     "address2": null,
@@ -156,7 +150,6 @@
   "pk": "A86030",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BETTS AVENUE MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -178,7 +171,6 @@
   "pk": "B82005",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "PRIORY MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -200,7 +192,6 @@
   "pk": "B82008",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "NORTH HOUSE SURGERY",
     "address1": null,
     "address2": null,
@@ -222,7 +213,6 @@
   "pk": "B82010",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "RIPON SPA SURGERY",
     "address1": null,
     "address2": null,
@@ -244,7 +234,6 @@
   "pk": "C83019",
   "fields": {
     "ccg": "03T",
-    "area_team": null,
     "name": "BEACON MEDICAL PRACTICE",
     "address1": null,
     "address2": null,
@@ -266,7 +255,6 @@
   "pk": "C83051",
   "fields": {
     "ccg": "04D",
-    "area_team": null,
     "name": "ABBEY MEDICAL PRACTICE",
     "address1": null,
     "address2": null,
@@ -288,7 +276,6 @@
   "pk": "C84001",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "LARWOOD SURGERY",
     "address1": null,
     "address2": null,
@@ -310,7 +297,6 @@
   "pk": "C84024",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "NEWGATE MEDICAL GROUP",
     "address1": null,
     "address2": null,
@@ -332,7 +318,6 @@
   "pk": "K83059",
   "fields": {
     "ccg": "03V",
-    "area_team": null,
     "name": "DR KHALID & PARTNERS",
     "address1": "WOODSEND MEDICAL CENTRE",
     "address2": "SCHOOL PLACE",
@@ -354,7 +339,6 @@
   "pk": "N84014",
   "fields": {
     "ccg": "03Q",
-    "area_team": null,
     "name": "AINSDALE VILLAGE SURGERY",
     "address1": "THE SURGERY",
     "address2": "2 LEAMINGTON RD AINSDALE",
@@ -376,7 +360,6 @@
   "pk": "P87629",
   "fields": {
     "ccg": "03V",
-    "area_team": null,
     "name": "1/ST ANDREWS MEDICAL PRACTICE",
     "address1": "ST.ANDREWS MEDICAL CENTRE",
     "address2": "30 RUSSELL STREET ECCLES",
@@ -398,7 +381,6 @@
   "pk": "Y00581",
   "fields": {
     "ccg": "02Q",
-    "area_team": null,
     "name": "BASSETLAW DRUG & ALCOHOL SERVICE",
     "address1": null,
     "address2": null,
