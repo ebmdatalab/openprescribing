@@ -471,16 +471,14 @@ describe('Measures', function() {
         rollUpBy: 'org_id',
         orgType: 'CCG',
         orgId: null,
-        parentOrg: null
+        parentOrg: null,
+        lowIsGood: null
       };
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      str = 'This CCG was at the 80th percentile on average across the past ';
-      str += '6 months. If it had prescribed in line ';
-      str += 'with the median, this CCG would have spent £10.00 less ';
-      str += 'over the past 6 months.';
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. In this case, it  was at the 80th percentile on average across the past 6 months. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 

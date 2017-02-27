@@ -68,7 +68,11 @@ class TestBookmarkViews(TransactionTestCase):
     def test_preview_ccg_bookmark(self, tmpfile, subprocess, finder):
         from test_bookmark_utils import _makeContext
         from django.conf import settings
-        context = _makeContext(declines=[(Measure(id='foo'), 30, 10, 0)])
+        context = _makeContext(
+            declines=[(Measure(id='foo'), 30, 10, 0)],
+            interesting=[Measure(id='bar')],
+            most_changing_interesting=[(Measure(id='baz'), 30, 10, 0)],
+        )
         test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
                          'alert-email-image.png')
 
@@ -80,6 +84,8 @@ class TestBookmarkViews(TransactionTestCase):
         response = self.client.get(url)
         self.assertContains(
             response, "this CCG")
+        self.assertContains(
+            response, "we found that this CCG was in the top or bottom 10%")
         with open(test_img_path, 'rb') as expected:
             self.assertContains(
                 response, base64.b64encode(expected.read()))

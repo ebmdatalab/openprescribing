@@ -595,8 +595,11 @@ class TestContextForOrgEmail(unittest.TestCase):
             worst_performing_in_period):
         ordinal_measure = MagicMock(low_is_good=True)
         non_ordinal_measure = MagicMock(low_is_good=None)
-        most_change_in_period.return_value = [
-            ordinal_measure, non_ordinal_measure]
+        most_change_in_period.return_value = {
+            'improvements': [
+                ordinal_measure],
+            'declines': [non_ordinal_measure]
+        }
         best_performing_in_period.return_value = [
             ordinal_measure, non_ordinal_measure]
         worst_performing_in_period.return_value = [
@@ -613,7 +616,7 @@ class TestContextForOrgEmail(unittest.TestCase):
         self.assertEqual(
             context['worst'], [ordinal_measure])
         self.assertEqual(
-            context['most_changing'], [ordinal_measure])
+            context['most_changing']['improvements'], [ordinal_measure])
 
 
 class TruncateSubjectTestCase(unittest.TestCase):
@@ -658,6 +661,10 @@ def _makeContext(**kwargs):
         'worst': [
         ],
         'best': [
+        ],
+        'most_changing_interesting': [
+        ],
+        'interesting': [
         ]
     }
     if 'declines' in kwargs:
@@ -678,4 +685,9 @@ def _makeContext(**kwargs):
         empty_context['worst'] = kwargs['worst']
     if 'best' in kwargs:
         empty_context['best'] = kwargs['best']
+    if 'interesting' in kwargs:
+        empty_context['interesting'] = kwargs['interesting']
+    if 'most_changing_interesting' in kwargs:
+        empty_context['most_changing_interesting'] = \
+          kwargs['most_changing_interesting']
     return empty_context

@@ -266,7 +266,12 @@ class InterestingMeasureFinder(object):
 
     def _move_non_ordinal(self, from_list, to_list):
         for measure in from_list:
-            if measure.low_is_good is None:
+            if type(from_list[0]) == tuple:
+                # As returned by most_changing function
+                m = measure[0]
+            else:
+                m = measure
+            if m.low_is_good is None:
                 from_list.remove(measure)
                 if measure not in to_list:
                     to_list.append(measure)
@@ -280,8 +285,8 @@ class InterestingMeasureFinder(object):
 
         for extreme in [worst, best]:
             self._move_non_ordinal(extreme, interesting)
-        for measure in most_changing:
-            self._move_non_ordinal(most_changing, most_changing_interesting)
+        for extreme in [most_changing['improvements'], most_changing['declines']]:
+            self._move_non_ordinal(extreme, most_changing_interesting)
         return {
             'interesting': interesting,
             'most_changing_interesting': most_changing_interesting,
@@ -388,6 +393,8 @@ def getIntroText(stats, org_type):
 def _hasStats(stats):
     return (stats['worst'] or
             stats['best'] or
+            stats['interesting'] or
+            stats['most_changing_interesting'] or
             stats['top_savings']['possible_top_savings_total'] or
             stats['top_savings']['possible_savings'] or
             stats['top_savings']['achieved_savings'] or
@@ -453,7 +460,7 @@ def make_org_email(org_bookmark, stats):
     with NamedTemporaryFile(suffix='.png') as getting_worse_file, \
             NamedTemporaryFile(suffix='.png') as still_bad_file:
         most_changing = stats['most_changing']
-        getting_worse_img = still_bad_img = None
+        getting_worse_img = still_bad_img = interesting_img = None
         if most_changing['declines']:
             getting_worse_img = attach_image(
                 msg,
@@ -467,6 +474,12 @@ def make_org_email(org_bookmark, stats):
                 org_bookmark.dashboard_url(),
                 still_bad_file.name,
                 '#' + stats['worst'][0].id)
+        if stats['interesting']:
+            interesting_img = attach_image(
+                msg,
+                org_bookmark.dashboard_url(),
+                still_bad_file.name,
+                '#' + stats['interesting'][0].id)
         html = html_email.render(
             context={
                 'intro_text': getIntroText(
@@ -479,6 +492,7 @@ def make_org_email(org_bookmark, stats):
                 'measures_count': Measure.objects.count(),
                 'getting_worse_image': getting_worse_img,
                 'still_bad_image': still_bad_img,
+                'interesting_image': interesting_img,
                 'bookmark': org_bookmark,
                 'dashboard_uri': mark_safe(dashboard_uri),
                 'qs': mark_safe(msg.qs),

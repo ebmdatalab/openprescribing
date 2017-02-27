@@ -331,7 +331,12 @@ var utils = {
       chartExplanation = 'No data available.';
     } else {
       var p = humanize.numberFormat(d.meanPercentile, 0);
-      chartExplanation = 'This ' + options.orgType + ' was at the ' +
+      if (d.lowIsGood === null) {
+        chartExplanation = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a ' + options.orgType + ' is a long way from average prescribing behaviour. In this case, it ';
+      } else {
+        chartExplanation = 'This ' + options.orgType;
+      }
+      chartExplanation += ' was at the ' +
         humanize.ordinal(p) +
         ' percentile on average across the ' +
         'past ' + numMonths + ' months. ';
