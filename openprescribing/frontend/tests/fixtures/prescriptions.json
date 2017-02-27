@@ -9,7 +9,7 @@
             "quantity": 56,
             "processing_date": "2013-04-01",
             "pct": "03Q",
-            "practice": "N84014",
+            "practice": "N84014"
         }
     },
     {
@@ -22,7 +22,7 @@
             "quantity": 28,
             "processing_date": "2013-08-01",
             "pct": "03Q",
-            "practice": "N84014",
+            "practice": "N84014"
         }
     },
     {
@@ -35,7 +35,7 @@
             "quantity": 128,
             "processing_date": "2014-09-01",
             "pct": "03Q",
-            "practice": "N84014",
+            "practice": "N84014"
         }
     },
     {
@@ -48,7 +48,7 @@
             "quantity": 32,
             "processing_date": "2014-09-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -61,7 +61,7 @@
             "quantity": 26,
             "processing_date": "2013-04-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -74,7 +74,7 @@
             "quantity": 23,
             "processing_date": "2013-08-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -87,7 +87,7 @@
             "quantity": 24,
             "processing_date": "2013-10-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -100,7 +100,7 @@
             "quantity": 1209,
             "processing_date": "2014-09-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -113,7 +113,7 @@
             "quantity": 1953,
             "processing_date": "2014-10-01",
             "pct": "03Q",
-            "practice": "N84014",
+            "practice": "N84014"
         }
     },
     {
@@ -126,7 +126,7 @@
             "quantity": 1399,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -139,7 +139,7 @@
             "quantity": 1389,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "K83059",
+            "practice": "K83059"
         }
     },
     {
@@ -152,7 +152,7 @@
             "quantity": 1200,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "P87629",
+            "practice": "P87629"
         }
     },
     {
@@ -165,7 +165,7 @@
             "quantity": 1150,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "K83059",
+            "practice": "K83059"
         }
     },
     {
@@ -178,7 +178,7 @@
             "quantity": 4,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "K83059",
+            "practice": "K83059"
         }
     },
     {
@@ -191,7 +191,7 @@
             "quantity": 1,
             "processing_date": "2014-11-01",
             "pct": "03V",
-            "practice": "K83059",
+            "practice": "K83059"
         }
 
     },
@@ -205,7 +205,7 @@
             "quantity": 26,
             "processing_date": "2013-04-01",
             "pct": "03V",
-            "practice": "K83059",
+            "practice": "K83059"
         }
     }
 ]

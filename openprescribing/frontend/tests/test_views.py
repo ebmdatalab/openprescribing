@@ -194,7 +194,7 @@ class TestAlertViews(TransactionTestCase):
 
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'shas', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
