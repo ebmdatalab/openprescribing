@@ -264,11 +264,30 @@ class InterestingMeasureFinder(object):
             'possible_top_savings_total': total_savings
         }
 
+    def _move_non_ordinal(self, from_list, to_list):
+        for measure in from_list:
+            if measure.low_is_good is None:
+                from_list.remove(measure)
+                if measure not in to_list:
+                    to_list.append(measure)
+
     def context_for_org_email(self):
+        worst = self.worst_performing_in_period(3)
+        best = self.best_performing_in_period(3)
+        most_changing = self.most_change_in_period(9)
+        interesting = []
+        most_changing_interesting = []
+
+        for extreme in [worst, best]:
+            self._move_non_ordinal(extreme, interesting)
+        for measure in most_changing:
+            self._move_non_ordinal(most_changing, most_changing_interesting)
         return {
-            'worst': self.worst_performing_in_period(3),
-            'best': self.best_performing_in_period(3),
-            'most_changing': self.most_change_in_period(9),
+            'interesting': interesting,
+            'most_changing_interesting': most_changing_interesting,
+            'worst': worst,
+            'best': best,
+            'most_changing': most_changing,
             'top_savings': self.top_and_total_savings_in_period(6)}
 
 

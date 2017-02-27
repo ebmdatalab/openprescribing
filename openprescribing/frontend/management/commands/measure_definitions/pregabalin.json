@@ -16,8 +16,7 @@
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
-  "is_ordinal": true,
-  "low_is_good": true,
+  "low_is_good": null,
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],

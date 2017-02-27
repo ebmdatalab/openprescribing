@@ -20,7 +20,6 @@
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
-  "is_ordinal": true,
   "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "

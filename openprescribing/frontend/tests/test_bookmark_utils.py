@@ -11,6 +11,8 @@ from threading import Thread
 import requests
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from mock import patch
+from mock import MagicMock
 
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -580,6 +582,38 @@ class UnescapeTestCase(unittest.TestCase):
                     'Baz')
         self.assertEqual(
             bookmark_utils.unescape_href(example), expected)
+
+
+class TestContextForOrgEmail(unittest.TestCase):
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.worst_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.best_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.most_change_in_period')
+    def test_non_ordinal_sorting(
+            self,
+            most_change_in_period,
+            best_performing_in_period,
+            worst_performing_in_period):
+        ordinal_measure = MagicMock(low_is_good=True)
+        non_ordinal_measure = MagicMock(low_is_good=None)
+        most_change_in_period.return_value = [
+            ordinal_measure, non_ordinal_measure]
+        best_performing_in_period.return_value = [
+            ordinal_measure, non_ordinal_measure]
+        worst_performing_in_period.return_value = [
+            ordinal_measure, non_ordinal_measure]
+        finder = bookmark_utils.InterestingMeasureFinder(
+            pct='foo')
+        context = finder.context_for_org_email()
+        self.assertEqual(
+            context['most_changing_interesting'], [non_ordinal_measure])
+        self.assertEqual(
+            context['interesting'], [non_ordinal_measure])
+        self.assertEqual(
+            context['best'], [ordinal_measure])
+        self.assertEqual(
+            context['worst'], [ordinal_measure])
+        self.assertEqual(
+            context['most_changing'], [ordinal_measure])
 
 
 class TruncateSubjectTestCase(unittest.TestCase):
