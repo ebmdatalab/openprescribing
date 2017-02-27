@@ -313,6 +313,7 @@ var utils = {
     var chartTitle;
     var chartTitleUrl;
     var chartExplanation;
+    var measureUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -320,6 +321,7 @@ var utils = {
       chartTitleUrl = '/ccg/';
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
+      measureUrl = '/measure/' + d.id;
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.
@@ -355,6 +357,7 @@ var utils = {
       }
     }
     return {
+      measureUrl: measureUrl,
       chartTitle: chartTitle,
       chartTitleUrl: chartTitleUrl,
       chartExplanation: chartExplanation

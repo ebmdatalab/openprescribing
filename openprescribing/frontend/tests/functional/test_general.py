@@ -111,5 +111,22 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//div[@id='charts']/div[1]").get_attribute("id"),
                          'measure_keppra')
 
+    def test_ccg_measures_explore_link(self):
+        url = self.live_server_url + '/ccg/02Q/'
+        self.browser.get(url)
+        measure = self.browser.find_element_by_xpath(
+            "//div[@id='measure_keppra']")
+        self.assertEqual(
+            measure.find_element_by_link_text(
+                "compare performance with other CCGs").get_attribute('href'),
+            '/measure/keppra'
+            )
+        self.assertEqual(
+            measure.find_element_by_link_text(
+                "show all practices in this CCG").get_attribute('href'),
+            '/ccg/02Q/keppra'
+            )
+
+
 if __name__ == '__main__':
     unittest.main()
