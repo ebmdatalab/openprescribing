@@ -193,25 +193,6 @@ var utils = {
           }
         }
       });
-      if (options.rollUpBy === 'measure_id') {
-        perf.performanceDescription = "Over the past " + numMonths +
-          " months, this organisation has prescribed worse than the median on " +
-          perf.worseThanMedian + " of " + perf.total + " measures.";
-      } else {
-        perf.performanceDescription = "Over the past " + numMonths +
-          " months, " + perf.worseThanMedian + " of " + perf.total + ' ';
-        perf.performanceDescription += (options.orgType === 'practice') ?
-          "practices " : "CCGs ";
-        perf.performanceDescription += "have prescribed worse than the " +
-          "national median.";
-      }
-      if (options.rollUpBy === 'measure_id') {
-        var p = humanize.numberFormat(orderedData[0].meanPercentile, 0);
-        perf.topOpportunity = 'The measure with the biggest potential for ' +
-          ' improvement was ' + orderedData[0].name + ', where this ' +
-          options.orgType + ' was at the ' + humanize.ordinal(p) +
-          ' percentile on average across the past ' + numMonths + ' months.';
-      }
       perf.proportionAboveMedian =
         humanize.numberFormat(perf.proportionAboveMedian * 100, 1);
       if (options.isCostBasedMeasure) {
