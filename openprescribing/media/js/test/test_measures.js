@@ -187,11 +187,16 @@ describe('Measures', function() {
           id: 6,
           meanPercentile: null,
           lowIsGood: false
+        },
+        {
+          id: 7,
+          meanPercentile: 40,
+          lowIsGood: null
         }
       ];
       var result = mu.sortData(data);
       var positions = _.map(result, function(d) {return d.id});
-      expect(positions).to.eql([2,5,3,4,1,6]);
+      expect(positions).to.eql([2,5,3,4,1,7,6]);
     });
   });
 
@@ -465,17 +470,14 @@ describe('Measures', function() {
         rollUpBy: 'org_id',
         orgType: 'CCG',
         orgId: null,
-        parentOrg: null
+        parentOrg: null,
+        lowIsGood: null
       };
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      expect(result[0].measureUrl).to.be.undefined;
-      str = 'This CCG was at the 80th percentile on average across the past ';
-      str += '6 months. If it had prescribed in line ';
-      str += 'with the median, this CCG would have spent £10.00 less ';
-      str += 'over the past 6 months.';
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. In this case, it  was at the 80th percentile on average across the past 6 months. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -707,6 +709,22 @@ describe('Measures', function() {
       result = mu._getChartOptions(d, true,
         options, chartOptions);
       expect(result.yAxis.reversed).not.to.equal(true);
+    });
+
+    it('does not reverse the yAxis when low_is_good is null', function() {
+      var d = {
+        lowIsGood: null,
+        data: [{x: 0, y: 60}, {x: 10, y: 0}]
+      },
+      options = {
+        rollUpBy: 'org_id',
+        globalYMax: {y: 100},
+        globalYMin: {y: 10}
+      },
+      chartOptions = {dashOptions: { chart: {}, legend: {}}};
+      var result = mu._getChartOptions(d, true,
+        options, chartOptions);
+      expect(result.yAxis.reversed).to.be.undefined;
     });
 
     it('sets correct Highcharts options for non-% measures', function() {

@@ -84,7 +84,7 @@ var utils = {
       var score = d.meanPercentile;
       if (score === null) {
         score = 101;
-      } else if (d.lowIsGood) {
+      } else if (d.lowIsGood !== false) {
         score = 100 - score;
       }
       return score;
@@ -178,9 +178,9 @@ var utils = {
       _.each(orderedData, function(d) {
         if (d.meanPercentile !== null) {
           perf.total += 1;
-          if (d.lowIsGood && d.meanPercentile > 50) {
+          if (d.lowIsGood !== false && d.meanPercentile > 50) {
             perf.worseThanMedian += 1;
-          } else if (!d.lowIsGood && d.meanPercentile < 50) {
+          } else if (d.lowIsGood === false && d.meanPercentile < 50) {
             perf.worseThanMedian += 1;
           }
           if (d.meanPercentile > 50) {
@@ -314,7 +314,16 @@ var utils = {
       chartExplanation = 'No data available.';
     } else {
       var p = humanize.numberFormat(d.meanPercentile, 0);
-      chartExplanation = 'This ' + options.orgType + ' was at the ' +
+      if (d.lowIsGood === null) {
+        chartExplanation = (
+          'This is a measure where there is disagreement about whether ' +
+            'higher, or lower, is better. Nonetheless it is interesting to ' +
+            'know if a ' + options.orgType + ' is a long way from average ' +
+            'prescribing behaviour. In this case, it ');
+      } else {
+        chartExplanation = 'This ' + options.orgType;
+      }
+      chartExplanation += ' was at the ' +
         humanize.ordinal(p) +
         ' percentile on average across the ' +
         'past ' + numMonths + ' months. ';
@@ -416,7 +425,7 @@ var utils = {
         // because it prefers that formatting. Force zero as the lowest value.
       min: _.max([0, ymin])
     };
-    if (!d.lowIsGood) {
+    if (d.lowIsGood === false) {
       chOptions.yAxis.reversed = true;
     }
     chOptions.tooltip = {

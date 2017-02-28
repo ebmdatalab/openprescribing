@@ -1,35 +1,35 @@
 {
-  "name": "Silver dressings", 
+  "name": "Silver dressings",
   "title": [
-    "silver dressings", 
+    "silver dressings",
     "compared with prescribing of all dressings"
-  ], 
+  ],
   "description": [
-    "Prescribing of silver dressings", 
+    "Prescribing of silver dressings",
     "compared with prescribing of all dressings"
-  ], 
+  ],
   "why_it_matters": [
-      "<a href:'https://www.nice.org.uk/advice/ktt14/chapter/evidence-context'>NICE states </a>: There is at present no robust clinical- or cost-effectiveness evidence to support the use of antimicrobial dressings ",
-      "(for example, silver, iodine or honey) over non-medicated dressings for preventing or treating chronic wounds. ",
-      "Indiscriminate use should be discouraged because of concerns over bacterial resistance and toxicity."
-  ], 
-  "numerator_short": "Silver dressing items", 
-  "denominator_short": "All dressing items", 
-  "url": null, 
-  "is_percentage": true, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+    "<a href:'https://www.nice.org.uk/advice/ktt14/chapter/evidence-context'>NICE states </a>: There is at present no robust clinical- or cost-effectiveness evidence to support the use of antimicrobial dressings ",
+    "(for example, silver, iodine or honey) over non-medicated dressings for preventing or treating chronic wounds. ",
+    "Indiscriminate use should be discouraged because of concerns over bacterial resistance and toxicity."
+  ],
+  "numerator_short": "Silver dressing items",
+  "denominator_short": "All dressing items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
     "(bnf_code like '20%' AND (bnf_name LIKE '%Silv%' OR bnf_name LIKE '% Ag %')) "
-  ], 
+  ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code like '20%')  "
   ]

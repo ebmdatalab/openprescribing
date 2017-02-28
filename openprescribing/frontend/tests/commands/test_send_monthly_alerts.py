@@ -11,6 +11,8 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
+from frontend.tests.test_bookmark_utils import _makeContext
+
 
 CMD_NAME = 'send_monthly_alerts'
 
@@ -337,42 +339,3 @@ def call_mocked_command(context, mock_finder, **opts):
     for k, v in opts.items():
         default_opts[k] = v
     call_command(CMD_NAME, **default_opts)
-
-
-def _makeContext(**kwargs):
-    empty_context = {
-        'most_changing': {
-            'declines': [
-            ],
-            'improvements': [
-            ]
-        },
-        'top_savings': {
-            'possible_top_savings_total': 0.0,
-            'possible_savings': [],
-            'achieved_savings': []
-        },
-        'worst': [
-        ],
-        'best': [
-        ]
-    }
-    if 'declines' in kwargs:
-        empty_context['most_changing']['declines'] = kwargs['declines']
-    if 'improvements' in kwargs:
-        empty_context['most_changing']['improvements'] = (
-            kwargs['improvements'])
-    if 'possible_top_savings_total' in kwargs:
-        empty_context['top_savings']['possible_top_savings_total'] = (
-            kwargs['possible_top_savings_total'])
-    if 'possible_savings' in kwargs:
-        empty_context['top_savings']['possible_savings'] = (
-            kwargs['possible_savings'])
-    if 'achieved_savings' in kwargs:
-        empty_context['top_savings']['achieved_savings'] = (
-            kwargs['achieved_savings'])
-    if 'worst' in kwargs:
-        empty_context['worst'] = kwargs['worst']
-    if 'best' in kwargs:
-        empty_context['best'] = kwargs['best']
-    return empty_context

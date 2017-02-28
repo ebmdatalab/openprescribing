@@ -125,6 +125,51 @@
       {% endfor %}
   {% endif %}
 
+  {% if stats.interesting or stats.most_changing_interesting %}
+  <h3 class="better">Prescribing measures which are outliers</h3>
+    There are some areas where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know when an organisation is very different from standard prescribing behaviour.
+  {% endif %}
+  {% if stats.interesting %}
+      {% for measure in stats.interesting %}
+        {% if forloop.first %}
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the top or bottom 10% on
+          <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
+          <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ interesting_image }}"></a><br>
+        {% elif stats.interesting|length == 2 %}
+          It was also in the top or bottom 10% on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% else %}
+          {% if forloop.counter == 2 %}
+            It was also in the top or bottom 10% on:
+            <ul>
+          {% endif %}
+              <li><a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+            </ul>
+          {% endif %}
+        {% endif %}
+     {% endfor %}
+  {% endif %}
+
+  {% if stats.most_changing_interesting %}
+      {% for measure, percent_from, percent_to, _ in stats.most_changing_interesting %}
+        {% if forloop.counter == 1 %}
+          <p>We found that over the last 9 months this {{ bookmark.org_type }} moved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+        {% elif stats.most_changing.improvements|length == 2 %}
+          It also changed {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+        {% else %}
+          {% if forloop.counter == 2 %}
+           </p>
+           It also changed:
+           <ul>
+          {% endif %}
+            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+          {% if forloop.last %}
+           </ul>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
+
   {% if stats.top_savings.achieved_savings %}
    <h3 class="better">Achieved savings</h3>
    {% if stats.top_savings.achieved_savings|length == 1 %}
