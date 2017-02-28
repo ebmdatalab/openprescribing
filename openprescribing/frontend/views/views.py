@@ -15,7 +15,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
 from frontend.models import Chemical, Prescription
-from frontend.models import Practice, SHA, PCT, Section
+from frontend.models import Practice, PCT, Section
 from frontend.models import Measure
 from frontend.models import OrgBookmark
 from frontend.forms import OrgBookmarkForm
@@ -113,31 +113,6 @@ def all_practices(request):
         'practices': practices
     }
     return render(request, 'all_practices.html', context)
-
-
-##################################################
-# AREA TEAMS
-##################################################
-
-def all_area_teams(request):
-    area_teams = SHA.objects.all().order_by('code')
-    context = {
-        'area_teams': area_teams
-    }
-    return render(request, 'all_area_teams.html', context)
-
-
-def area_team(request, at_code):
-    requested_at = get_object_or_404(SHA, code=at_code)
-    prescriptions = Prescription.objects.filter(sha=requested_at)
-    num_prescriptions = prescriptions.count()
-    prescriptions_to_return = prescriptions[:100]
-    context = {
-        'area_team': requested_at,
-        'num_prescriptions': num_prescriptions,
-        'prescriptions': prescriptions_to_return
-    }
-    return render(request, 'area_team.html', context)
 
 
 ##################################################

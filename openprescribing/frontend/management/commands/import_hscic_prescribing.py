@@ -7,7 +7,7 @@ import re
 from django.core.management.base import BaseCommand
 from django.db import connection
 
-from frontend.models import SHA, PCT, ImportLog
+from frontend.models import PCT, ImportLog
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--filename')
+        parser.add_argument('--migrate', action='store_true')
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
@@ -27,52 +28,79 @@ class Command(BaseCommand):
             help="Don't parse orgs from the file")
         parser.add_argument('--truncate')
 
+    def get_all_dates(self):
+        sql = """
+        SELECT
+          CONCAT(LEFT(split_part(table_name,
+                '_',
+                3), 4), '-', RIGHT(split_part(table_name,
+                '_',
+                3), 2), '-01')
+        FROM
+          information_schema.tables
+        WHERE
+          table_schema = 'public'
+          AND table_name LIKE 'frontend_prescription_%'
+        ORDER BY
+          table_name;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            return [datetime.datetime.strptime(
+                x[0], '%Y-%m-%d').date() for x in cursor.fetchall()]
+
     def handle(self, *args, **options):
         if options['truncate']:
             self.truncate = True
         else:
             self.truncate = False
-
-        if options['filename']:
-            files_to_import = [options['filename']]
-        else:
-            filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
-            files_to_import = glob.glob(filepath)
-        for f in files_to_import:
+        if options['migrate']:
             if options['date']:
                 date = datetime.datetime.strptime(
                     options['date'], '%Y-%m-%d').date()
+                dates = [date]
             else:
-                date = self._date_from_filename(f)
-            if not options['skip_orgs']:
-                self.import_shas_and_pcts(f, date)
-            self.drop_partition(date)
-            self.create_partition(date)
-            self.import_prescriptions(f, date)
-            self.create_partition_indexes(date)
-            self.add_parent_trigger()
-            self.drop_oldest_month(date)
+                dates = self.get_all_dates()
+            self.drop_redundant_columns()
+            for date in dates:
+                print "migrating", date
+                self.drop_redundant_indexes(date)
+                self.create_new_indexes(date)
+        else:
+            if options['filename']:
+                files_to_import = [options['filename']]
+            else:
+                filepath = './data/raw_data/T*PDPI+BNFT_formatted*'
+                files_to_import = glob.glob(filepath)
+            for f in files_to_import:
+                if options['date']:
+                    date = datetime.datetime.strptime(
+                        options['date'], '%Y-%m-%d').date()
+                else:
+                    date = self._date_from_filename(f)
+                if not options['skip_orgs']:
+                    self.import_pcts(f, date)
+                self.drop_partition(date)
+                self.create_partition(date)
+                self.import_prescriptions(f, date)
+                self.create_partition_indexes(date)
+                self.add_parent_trigger()
+                self.drop_oldest_month(date)
 
-    def import_shas_and_pcts(self, filename, date):
-        logger.info('Importing SHAs and PCTs from %s' % filename)
+    def import_pcts(self, filename, date):
+        logger.info('Importing PCTs from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
-        sha_codes = set()
         pct_codes = set()
         i = 0
         for row in rows:
-            sha_codes.add(row[0])
-            pct_codes.add(row[1])
+            pct_codes.add(row[0])
             i += 1
             if self.truncate and i > 500:
                 break
-        shas_created = pcts_created = 0
-        for sha_code in sha_codes:
-            s, created = SHA.objects.get_or_create(code=sha_code)
-            shas_created += created
+        pcts_created = 0
         for pct_code in pct_codes:
             p, created = PCT.objects.get_or_create(code=pct_code)
             pcts_created += created
-        logger.info("%s SHAs created" % shas_created)
         logger.info("%s PCTs created" % pcts_created)
 
     def create_partition(self, date):
@@ -129,38 +157,66 @@ class Command(BaseCommand):
             cursor.execute(function)
             cursor.execute(trigger)
 
+    def drop_redundant_columns(self):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN sha_id CASCADE")
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN chemical_id CASCADE")
+            cursor.execute(
+                "ALTER TABLE frontend_prescription "
+                "DROP COLUMN presentation_name CASCADE")
+
+    def drop_redundant_indexes(self, date):
+        indexes = [
+            "DROP INDEX %s_by_pct",
+            "DROP INDEX %s_by_prac_date_code ",
+            "DROP INDEX %s_by_practice",
+            "DROP INDEX %s_idx_date_and_code",
+            "DROP INDEX %s_by_pct_and_presentation",
+            "DROP INDEX %s_by_practice_and_code"
+        ]
+        partition_name = self._partition_name(date)
+        with connection.cursor() as cursor:
+            for index_sql in indexes:
+                cursor.execute(index_sql % (
+                    partition_name))
+
+    def create_new_indexes(self, date):
+        indexes = [
+            ("CREATE INDEX idx_%s_presentation "
+             "ON %s (presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX idx_%s_pct_id "
+             "ON %s (pct_id)"),
+            ("CREATE INDEX idx_%s_date "
+             "ON %s (processing_date)"),
+            ("CLUSTER %s USING idx_%s_presentation"),
+        ]
+        partition_name = self._partition_name(date)
+        with connection.cursor() as cursor:
+            for index_sql in indexes:
+                cursor.execute(index_sql % (
+                    partition_name, partition_name))
+
     def create_partition_indexes(self, date):
         indexes = [
-            ("CREATE INDEX %s_6ea07fe3 "
+            ("CREATE INDEX idx_%s_presentation "
+             "ON %s (presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX idx_%s_practice_id "
              "ON %s "
              "USING btree (practice_id)"),
-            ("CREATE INDEX %s_by_pct "
-             "ON %s "
-             "USING btree (presentation_code, pct_id)"),
-            ("CREATE INDEX %s_by_pct_and_presentation "
-             "ON %s "
-             "USING btree (pct_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_by_prac_date_code "
-             "ON %s "
-             "USING btree (practice_id, processing_date, presentation_code)"),
-            ("CREATE INDEX %s_by_practice "
-             "ON %s "
-             "USING btree (presentation_code, practice_id)"),
-            ("CREATE INDEX %s_by_practice_and_code "
-             "ON %s "
-             "USING btree ("
-             "practice_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_idx_date_and_code "
-             "ON %s "
-             "USING btree (processing_date, presentation_code)")]
+            ("CREATE INDEX idx_%s_pct_id "
+             "ON %s (pct_id)"),
+            ("CREATE INDEX idx_%s_date "
+             "ON %s (processing_date)"),
+            ("CLUSTER %s USING idx_%s_presentation"),
+        ]
         constraints = [
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s_pkey "
              "PRIMARY KEY (id)"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s_chemical_bnf_code "
-             "FOREIGN KEY (chemical_id) REFERENCES frontend_chemical(bnf_code)"
-             " DEFERRABLE INITIALLY DEFERRED"),
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s__practice_code "
              "FOREIGN KEY (practice_id) REFERENCES frontend_practice(code) "
@@ -169,10 +225,6 @@ class Command(BaseCommand):
              "cnstrt_%s__pct_code "
              "FOREIGN KEY (pct_id) REFERENCES frontend_pct(code) "
              "DEFERRABLE INITIALLY DEFERRED"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s__sha_code "
-             "FOREIGN KEY (sha_id) REFERENCES frontend_sha(code) "
-             "DEFERRABLE INITIALLY DEFERRED")
             ]
         partition_name = self._partition_name(date)
         with connection.cursor() as cursor:
@@ -192,9 +244,9 @@ class Command(BaseCommand):
     def import_prescriptions(self, filename, date):
         logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
-        copy_str = "COPY %s(sha_id,pct_id,"
-        copy_str += "practice_id,chemical_id,presentation_code,"
-        copy_str += "presentation_name,total_items,actual_cost,"
+        copy_str = "COPY %s(pct_id,"
+        copy_str += "practice_id,presentation_code,"
+        copy_str += "total_items,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
         i = 0

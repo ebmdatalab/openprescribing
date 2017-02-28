@@ -14,7 +14,7 @@ from allauth.account.models import EmailAddress
 
 class TestAlertViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'shas', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures']
 
     def _post_org_signup(self, entity_id, email='foo@baz.com'):
         form_data = {'email': email}
@@ -194,7 +194,7 @@ class TestAlertViews(TransactionTestCase):
 
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'shas', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
