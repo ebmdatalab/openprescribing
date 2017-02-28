@@ -14,6 +14,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='prescription',
+            name='chemical',
+        ),
+        migrations.RemoveField(
+            model_name='prescription',
             name='presentation_name',
         ),
     ]

@@ -20,11 +20,4 @@ class Migration(migrations.Migration):
             model_name='practice',
             name='area_team',
         ),
-        migrations.RemoveField(
-            model_name='prescription',
-            name='sha',
-        ),
-        migrations.DeleteModel(
-            name='SHA',
-        ),
     ]
