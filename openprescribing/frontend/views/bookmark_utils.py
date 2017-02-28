@@ -458,7 +458,8 @@ def make_org_email(org_bookmark, stats):
         '?' + msg.qs)
     html_email = get_template('bookmarks/email_for_measures.html')
     with NamedTemporaryFile(suffix='.png') as getting_worse_file, \
-            NamedTemporaryFile(suffix='.png') as still_bad_file:
+            NamedTemporaryFile(suffix='.png') as still_bad_file, \
+            NamedTemporaryFile(suffix='.png') as interesting_file:
         most_changing = stats['most_changing']
         getting_worse_img = still_bad_img = interesting_img = None
         if most_changing['declines']:
@@ -478,7 +479,7 @@ def make_org_email(org_bookmark, stats):
             interesting_img = attach_image(
                 msg,
                 org_bookmark.dashboard_url(),
-                still_bad_file.name,
+                interesting_file.name,
                 '#' + stats['interesting'][0].id)
         html = html_email.render(
             context={
