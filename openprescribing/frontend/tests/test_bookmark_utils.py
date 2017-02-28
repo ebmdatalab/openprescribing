@@ -310,7 +310,6 @@ class TestBookmarkUtilsChanging(TestCase):
                          {'improvements': [],
                           'declines': []})
 
-
     def test_low_change_not_returned_for_ccg(self):
         # This test will raise a warning due to all imput being
         # None. Silence it.
@@ -585,9 +584,12 @@ class UnescapeTestCase(unittest.TestCase):
 
 
 class TestContextForOrgEmail(unittest.TestCase):
-    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.worst_performing_in_period')
-    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.best_performing_in_period')
-    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.most_change_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'worst_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'best_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'most_change_in_period')
     def test_non_ordinal_sorting(
             self,
             most_change_in_period,

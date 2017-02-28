@@ -285,7 +285,8 @@ class InterestingMeasureFinder(object):
 
         for extreme in [worst, best]:
             self._move_non_ordinal(extreme, interesting)
-        for extreme in [most_changing['improvements'], most_changing['declines']]:
+        for extreme in [most_changing['improvements'],
+                        most_changing['declines']]:
             self._move_non_ordinal(extreme, most_changing_interesting)
         return {
             'interesting': interesting,

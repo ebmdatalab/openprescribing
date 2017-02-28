@@ -195,8 +195,8 @@ var utils = {
       });
       if (options.rollUpBy === 'measure_id') {
         perf.performanceDescription = "Over the past " + numMonths +
-          " months, this organisation has prescribed worse than the median on " +
-          perf.worseThanMedian + " of " + perf.total + " measures.";
+          " months, this organisation has prescribed worse than the median " +
+          "on " + perf.worseThanMedian + " of " + perf.total + " measures.";
       } else {
         perf.performanceDescription = "Over the past " + numMonths +
           " months, " + perf.worseThanMedian + " of " + perf.total + ' ';
@@ -332,7 +332,11 @@ var utils = {
     } else {
       var p = humanize.numberFormat(d.meanPercentile, 0);
       if (d.lowIsGood === null) {
-        chartExplanation = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a ' + options.orgType + ' is a long way from average prescribing behaviour. In this case, it ';
+        chartExplanation = (
+          'This is a measure where there is disagreement about whether ' +
+            'higher, or lower, is better. Nonetheless it is interesting to ' +
+            'know if a' + options.orgType + ' is a long way from average ' +
+            'prescribing behaviour. In this case, it ');
       } else {
         chartExplanation = 'This ' + options.orgType;
       }
