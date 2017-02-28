@@ -7,7 +7,6 @@
     "name": "NHS Corby",
     "org_type": "CCG",
     "boundary": "",
-    "managing_group": null,
     "open_date": null,
     "close_date": null,
     "address": null,
@@ -19,7 +18,6 @@
   "pk": "P87629",
   "fields": {
     "ccg": "03V",
-    "area_team": null,
     "name": "1/ST ANDREWS MEDICAL PRACTICE",
     "address1": "ST.ANDREWS MEDICAL CENTRE",
     "address2": "30 RUSSELL STREET ECCLES",
@@ -41,7 +39,6 @@
   "pk": "P87630",
   "fields": {
     "ccg": "03V",
-    "area_team": null,
     "name": "2/ST ANDREWS MEDICAL PRACTICE",
     "address1": "ST.ANDREWS MEDICAL CENTRE",
     "address2": "30 RUSSELL STREET ECCLES",
@@ -63,7 +60,6 @@
   "pk": "P87631",
   "fields": {
     "ccg": "03V",
-    "area_team": null,
     "name": "3/ST ANDREWS MEDICAL PRACTICE",
     "address1": "ST.ANDREWS MEDICAL CENTRE",
     "address2": "30 RUSSELL STREET ECCLES",

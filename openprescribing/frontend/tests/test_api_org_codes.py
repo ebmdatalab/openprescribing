@@ -13,8 +13,6 @@ def setUpModule():
                             verbosity=0)
     management.call_command('loaddata', fix_dir + 'practices.json',
                             verbosity=0)
-    management.call_command('loaddata', fix_dir + 'shas.json',
-                            verbosity=0)
 
 
 def tearDownModule():

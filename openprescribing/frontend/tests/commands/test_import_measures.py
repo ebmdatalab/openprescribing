@@ -15,7 +15,6 @@ from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
 from frontend.models import Practice
-from frontend.models import SHA
 
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
@@ -426,7 +425,6 @@ class BigqueryFunctionalTests(TestCase):
 
     @classmethod
     def _createData(cls):
-        SHA.objects.create(code='Q51')
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
         lincs_east = PCT.objects.create(code='03T', org_type='CCG',
