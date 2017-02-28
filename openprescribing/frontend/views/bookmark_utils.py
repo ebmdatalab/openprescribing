@@ -265,8 +265,8 @@ class InterestingMeasureFinder(object):
         }
 
     def _move_non_ordinal(self, from_list, to_list):
-        for measure in from_list:
-            if type(from_list[0]) == tuple:
+        for measure in from_list[:]:
+            if type(measure) == tuple:
                 # As returned by most_changing function
                 m = measure[0]
             else:
@@ -282,7 +282,6 @@ class InterestingMeasureFinder(object):
         most_changing = self.most_change_in_period(9)
         interesting = []
         most_changing_interesting = []
-
         for extreme in [worst, best]:
             self._move_non_ordinal(extreme, interesting)
         for extreme in [most_changing['improvements'],

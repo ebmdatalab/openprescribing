@@ -595,30 +595,32 @@ class TestContextForOrgEmail(unittest.TestCase):
             most_change_in_period,
             best_performing_in_period,
             worst_performing_in_period):
-        ordinal_measure = MagicMock(low_is_good=True)
-        non_ordinal_measure = MagicMock(low_is_good=None)
+        ordinal_measure_1 = MagicMock(low_is_good=True)
+        non_ordinal_measure_1 = MagicMock(low_is_good=None)
+        non_ordinal_measure_2 = MagicMock(low_is_good=None)
         most_change_in_period.return_value = {
             'improvements': [
-                ordinal_measure],
-            'declines': [non_ordinal_measure]
+                (ordinal_measure_1,)],
+            'declines': [(non_ordinal_measure_1,), (non_ordinal_measure_2,)]
         }
         best_performing_in_period.return_value = [
-            ordinal_measure, non_ordinal_measure]
+            ordinal_measure_1, non_ordinal_measure_1]
         worst_performing_in_period.return_value = [
-            ordinal_measure, non_ordinal_measure]
+            ordinal_measure_1, non_ordinal_measure_1]
         finder = bookmark_utils.InterestingMeasureFinder(
             pct='foo')
         context = finder.context_for_org_email()
         self.assertEqual(
-            context['most_changing_interesting'], [non_ordinal_measure])
+            context['most_changing_interesting'],
+            [(non_ordinal_measure_1,), (non_ordinal_measure_2,)])
         self.assertEqual(
-            context['interesting'], [non_ordinal_measure])
+            context['interesting'], [non_ordinal_measure_1])
         self.assertEqual(
-            context['best'], [ordinal_measure])
+            context['best'], [ordinal_measure_1])
         self.assertEqual(
-            context['worst'], [ordinal_measure])
+            context['worst'], [ordinal_measure_1])
         self.assertEqual(
-            context['most_changing']['improvements'], [ordinal_measure])
+            context['most_changing']['improvements'], [(ordinal_measure_1,)])
 
 
 class TruncateSubjectTestCase(unittest.TestCase):
