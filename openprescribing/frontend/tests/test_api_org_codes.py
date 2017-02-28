@@ -68,26 +68,6 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(content[0]['code'], '03Q')
         self.assertEqual(content[0]['name'], 'NHS Vale of York')
 
-        url = '%s/org_code?q=Mer&org_type=AT&format=json' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(len(content), 1)
-        self.assertEqual(content[0]['code'], 'Q48')
-        self.assertEqual(content[0]['name'], 'Merseyside')
-
-        url = '%s/org_code?q=a&org_type=CCG,AT&format=json' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(len(content), 2)
-        self.assertEqual(content[0]['code'], '03Q')
-        self.assertEqual(content[0]['name'], 'NHS Vale of York')
-        self.assertEqual(content[0]['type'], 'CCG')
-        self.assertEqual(content[1]['code'], 'Q46')
-        self.assertEqual(content[1]['name'], 'Greater Manchester')
-        self.assertEqual(content[1]['type'], 'Area Team')
-
     def test_api_view_org_code_is_exact(self):
         url = '%s/org_code?q=N84014&exact=true&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
@@ -108,13 +88,10 @@ class TestAPIOrgViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
-        self.assertEqual(len(content), 7)
-        self.assertEqual(content[0]['code'], 'Q48')
-        self.assertEqual(content[0]['name'], 'Merseyside')
-        self.assertEqual(content[0]['type'], 'Area Team')
-        self.assertEqual(content[2]['code'], '03Q')
-        self.assertEqual(content[2]['name'], 'NHS Vale of York')
-        self.assertEqual(content[2]['type'], 'CCG')
+        self.assertEqual(len(content), 5)
+        self.assertEqual(content[0]['code'], '03Q')
+        self.assertEqual(content[0]['name'], 'NHS Vale of York')
+        self.assertEqual(content[0]['type'], 'CCG')
         self.assertEqual(content[-1]['code'], 'K83059')
         self.assertEqual(content[-1]['name'], 'DR KHALID & PARTNERS')
         self.assertEqual(content[-1]['type'], 'Practice')
