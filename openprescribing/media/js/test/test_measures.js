@@ -724,9 +724,8 @@ describe('Measures', function() {
       chartOptions = {dashOptions: { chart: {}, legend: {}}};
       var result = mu._getChartOptions(d, true,
         options, chartOptions);
-      expect(result.yAxis.reversed).to.be.undefined
+      expect(result.yAxis.reversed).to.be.undefined;
     });
-
 
     it('sets correct Highcharts options for non-% measures', function() {
       var d = {
