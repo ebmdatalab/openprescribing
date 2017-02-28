@@ -187,11 +187,16 @@ describe('Measures', function() {
           id: 6,
           meanPercentile: null,
           lowIsGood: false
+        },
+        {
+          id: 7,
+          meanPercentile: 40,
+          lowIsGood: null
         }
       ];
       var result = mu.sortData(data);
       var positions = _.map(result, function(d) {return d.id});
-      expect(positions).to.eql([2,5,3,4,1,6]);
+      expect(positions).to.eql([2,5,3,4,1,7,6]);
     });
   });
 
@@ -709,6 +714,23 @@ describe('Measures', function() {
         options, chartOptions);
       expect(result.yAxis.reversed).not.to.equal(true);
     });
+
+    it('does not reverse the yAxis when low_is_good is null', function() {
+      var d = {
+        lowIsGood: null,
+        data: [{x: 0, y: 60}, {x: 10, y: 0}]
+      },
+      options = {
+        rollUpBy: 'org_id',
+        globalYMax: {y: 100},
+        globalYMin: {y: 10}
+      },
+      chartOptions = {dashOptions: { chart: {}, legend: {}}};
+      var result = mu._getChartOptions(d, true,
+        options, chartOptions);
+      expect(result.yAxis.reversed).to.be.undefined
+    });
+
 
     it('sets correct Highcharts options for non-% measures', function() {
       var d = {
