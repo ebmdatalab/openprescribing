@@ -97,6 +97,23 @@ def constraint_and_index_reconstructor(table_name):
                    "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
             cursor.execute(cmd)
             logger.info("Recreated constraint %s" % name)
+        sql = """
+        SELECT
+          i.relname AS index_for_cluster
+        FROM
+          pg_index AS idx
+        JOIN
+          pg_class AS i
+        ON
+          i.oid = idx.indexrelid
+        WHERE
+          idx.indisclustered
+          AND idx.indrelid::regclass = '%s'::regclass;
+        """
+        cursor.execute(sql % table_name)
+        if cursor.fetchone():
+            cursor.execute("CLUSTER %s" % table_name)
+            logger.info("CLUSTERED %s" % table_name)
 
 
 def google_user_id(user):
