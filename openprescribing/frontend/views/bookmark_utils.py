@@ -307,7 +307,7 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
         wait = 500
         dimensions = '800x600'
     else:
-        wait = 500
+        wait = 1000
     cmd = '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions} {wait}'
     cmd = (
         cmd.format(
