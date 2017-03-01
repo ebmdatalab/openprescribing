@@ -566,7 +566,7 @@ class EmailMessageManager(models.Manager):
         user = User.objects.filter(email=msg.to)
         user = user and user[0] or None
         m = self.create(
-            message_id=msg.headers['message-id'],
+            message_id=msg.extra_headers['message-id'],
             to=msg.to,
             subject=msg.subject,
             tags=msg.tags,
@@ -594,7 +594,7 @@ class EmailMessage(models.Model):
 
     @property
     def message(self):
-        return cPickle.loads(self.pickled_message)
+        return cPickle.loads(str(self.pickled_message))
 
     @message.setter
     def message(self, value):
