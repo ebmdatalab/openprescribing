@@ -1,10 +1,14 @@
+import cPickle
 import uuid
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from validators import isAlphaNumeric
 import model_prescribing_units
+
+from anymail.signals import EventType
 
 
 class Section(models.Model):
@@ -555,3 +559,76 @@ class Profile(models.Model):
         search_bookmark = self.user.searchbookmark_set.last()
         bookmarks = [x for x in [org_bookmark, search_bookmark] if x]
         return sorted(bookmarks, key=lambda x: x.created_at)[-1]
+
+
+class EmailMessageManager(models.Manager):
+    def create_from_message(self, msg):
+        user = User.objects.filter(email=msg.to)
+        user = user and user[0] or None
+        m = self.create(
+            message_id=msg.headers['message-id'],
+            to=msg.to,
+            subject=msg.subject,
+            tags=msg.tags,
+            user=user,
+            message=msg
+        )
+        return m
+
+
+class EmailMessage(models.Model):
+    message_id = models.CharField(max_length=998, primary_key=True)
+    pickled_message = models.BinaryField()
+    to = ArrayField(
+        models.CharField(max_length=254, db_index=True)
+    )
+    subject = models.CharField(max_length=200)
+    tags = ArrayField(
+        models.CharField(max_length=100, db_index=True),
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    user = models.ForeignKey(User, null=True, blank=True)
+    send_count = models.SmallIntegerField(default=0)
+    objects = EmailMessageManager()
+
+    @property
+    def message(self):
+        return cPickle.loads(self.pickled_message)
+
+    @message.setter
+    def message(self, value):
+        self.pickled_message = cPickle.dumps(value)
+
+    def send(self):
+        self.message.send()
+        self.send_count += 1
+        self.save()
+
+
+class MailLog(models.Model):
+    EVENT_TYPE_CHOICES = [
+        (value, value)
+        for name, value in vars(EventType).iteritems()
+        if not name.startswith('_')]
+    # delievered, accepted (by mailgun), error, warn
+    metadata = JSONField(null=True, blank=True)
+    recipient = models.CharField(max_length=254, db_index=True)
+    tags = ArrayField(
+        models.CharField(max_length=100, db_index=True),
+        null=True
+    )
+    reject_reason = models.CharField(max_length=15, null=True, blank=True)
+    message_id = models.CharField(max_length=998, db_index=True)
+    event_type = models.CharField(
+        max_length=15,
+        choices=EVENT_TYPE_CHOICES,
+        db_index=True)
+    timestamp = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def email(self):
+        try:
+            return EmailMessage.objects.get(pk=self.message_id)
+        except EmailMessage.DoesNotExist:
+            return None

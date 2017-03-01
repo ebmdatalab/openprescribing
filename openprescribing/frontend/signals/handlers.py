@@ -10,6 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from common.utils import google_user_id
+from frontend.models import MailLog
 from frontend.models import Profile
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,18 @@ def handle_user_save(sender, instance, created, **kwargs):
 def handle_user_logged_in(sender, request, user, **kwargs):
     user.searchbookmark_set.update(approved=True)
     user.orgbookmark_set.update(approved=True)
+
+
+def log_email_event(event):
+    MailLog.objects.create(
+        metadata=event.esp_event,
+        recipient=event.recipient,
+        tags=event.tags,
+        reject_reason=event.reject_reason,
+        message_id=event.message_id,
+        event_type=event.event_type,
+        timestamp=event.timestamp
+    )
 
 
 def send_ga_event(event, user):
@@ -56,6 +69,7 @@ def send_ga_event(event, user):
 
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
+    log_email_event(event)
     user = get_user_by_email(event.recipient)
     send_ga_event(event, user)
     if event.tags and 'monthly_update' in event.tags:
@@ -71,9 +85,6 @@ def handle_anymail_webhook(sender, event, esp_name, **kwargs):
             elif event.event_type == 'clicked':
                 user.profile.emails_clicked += 1
                 user.profile.save()
-    else:
-        logger.debug("Received unhandled webhook from %s: %s" % (
-            esp_name, event.__dict__))
 
 
 def get_user_by_email(email):

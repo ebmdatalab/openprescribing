@@ -448,6 +448,8 @@ def make_email_with_campaign(bookmark, campaign_source):
                 "email_id": email_id}
     msg.metadata = metadata
     msg.qs = ga_tracking_qs(metadata)
+    # Set the message id now, so we can reuse it
+    msg.headers = {'message-id': msg.message()['message-id']}
     return msg
 
 
