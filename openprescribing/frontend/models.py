@@ -629,10 +629,3 @@ class MailLog(models.Model):
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
     message = models.ForeignKey(EmailMessage, null=True)
-
-    @property
-    def email(self):
-        try:
-            return EmailMessage.objects.get(pk=self.message_id)
-        except EmailMessage.DoesNotExist:
-            return None
