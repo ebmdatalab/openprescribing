@@ -90,7 +90,6 @@ class UserWithProfile(UserAdmin):
         EmailMessageInline,
     ]
 
-
     def get_queryset(self, request):
         qs = super(UserAdmin, self).get_queryset(request)
         return qs.annotate(

@@ -67,6 +67,7 @@ def send_ga_event(event, user):
     session.post(
         'https://www.google-analytics.com/collect', data=payload)
 
+
 @receiver(tracking)
 def handle_anymail_webhook(sender, event, esp_name, **kwargs):
     log_email_event(event)
