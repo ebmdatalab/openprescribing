@@ -567,7 +567,8 @@ class EmailMessageManager(models.Manager):
         user = user and user[0] or None
         if 'message-id' not in msg.extra_headers:
             raise StandardError(
-                "Messages stored as frontend.EmailMessage must have a message-id header")
+                "Messages stored as frontend.EmailMessage"
+                "must have a message-id header")
         m = self.create(
             message_id=msg.extra_headers['message-id'],
             to=msg.to,

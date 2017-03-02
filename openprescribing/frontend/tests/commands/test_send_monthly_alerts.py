@@ -300,7 +300,7 @@ class SearchEmailTestCase(TestCase):
         self.assertEqual(
             mail_queue.to, [opts['recipient_email']])
         self.assertEqual(
-            mail_queue.headers['message-id'], email_message.message_id)
+            mail_queue.extra_headers['message-id'], email_message.message_id)
 
     def test_email_message_id(self, attach_image):
         opts = {'recipient_email': 's@s.com',
@@ -310,7 +310,7 @@ class SearchEmailTestCase(TestCase):
         email_message = EmailMessage.objects.first()
         mail_queue = mail.outbox[-1]
         self.assertEqual(
-            mail_queue.headers['message-id'], email_message.message_id)
+            mail_queue.extra_headers['message-id'], email_message.message_id)
 
     def test_email_body(self, attach_image):
         opts = {'recipient_email': 's@s.com',
