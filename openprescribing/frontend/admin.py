@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count
 from django.utils.html import format_html
 
+from .models import EmailMessage
+from .models import MailLog
 from .models import OrgBookmark
 from .models import SearchBookmark
 from .models import User
@@ -73,6 +75,10 @@ class OrgBookmarkAdmin(admin.ModelAdmin):
             '<a href="{}">view in site</a>', obj.dashboard_url())
 
 
+class EmailMessageInline(admin.TabularInline):
+    model = EmailMessage
+
+
 @admin.register(User)
 class UserWithProfile(UserAdmin):
     list_display = (UserAdmin.list_display[0], ) + (
@@ -80,6 +86,9 @@ class UserWithProfile(UserAdmin):
         'orgbookmarks', 'searchbookmarks'
     )
     list_filter = (UserVerifiedFilter, )
+    inlines = [
+        EmailMessageInline,
+    ]
 
     def get_queryset(self, request):
         qs = super(UserAdmin, self).get_queryset(request)
@@ -111,3 +120,22 @@ class UserWithProfile(UserAdmin):
         return obj.profile.emails_clicked
     emails_clicked.short_description = 'Links clicked'
     emails_clicked.admin_order_field = 'profile__emails_clicked'
+
+
+class MailLogInline(admin.TabularInline):
+    date_hierarchy = 'timestamp'
+    model = MailLog
+
+
+@admin.register(EmailMessage)
+class EmailMessageAdmin(admin.ModelAdmin):
+    list_display = ('to', 'subject', 'tags', 'created_at', 'send_count')
+    inlines = [
+        MailLogInline
+    ]
+
+
+@admin.register(MailLog)
+class MailLogAdmin(admin.ModelAdmin):
+    list_display = (
+        'timestamp', 'event_type', 'message_id', 'recipient', 'tags')

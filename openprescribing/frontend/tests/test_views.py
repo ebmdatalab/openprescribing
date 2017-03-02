@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core import mail
 from django.test import TransactionTestCase
 
+from frontend.models import EmailMessage
 from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
 
@@ -61,6 +62,12 @@ class TestAlertViews(TransactionTestCase):
             response, "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about mysearch", mail.outbox[0].body)
+
+    def test_search_email_copy_kept(self):
+        self._post_search_signup('stuff', 'mysearch')
+        msg = EmailMessage.objects.first()
+        self.assertIn("about mysearch", msg.message.body)
+        self.assertIn("foo@baz.com", msg.to)
 
     def test_preview_appears_for_admins(self):
         self._create_user_and_login('a@a.com', is_superuser=True)

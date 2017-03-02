@@ -4,6 +4,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+from frontend.models import EmailMessage
 from frontend.models import OrgBookmark
 from frontend.models import Profile
 from frontend.models import SearchBookmark
@@ -85,13 +86,15 @@ class Command(BaseCommand):
 
             msg = bookmark_utils.make_org_email(
                 org_bookmark, stats)
+            msg = EmailMessage.objects.create_from_message(msg)
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
-                msg.recipients(), org_bookmark.id))
+                msg.to, org_bookmark.id))
         for search_bookmark in self.get_search_bookmarks(**options):
             recipient_id = search_bookmark.user.id
             msg = bookmark_utils.make_search_email(
                 search_bookmark)
+            msg = EmailMessage.objects.create_from_message(msg)
             msg.send()
             logger.info("Sent message to user %s about bookmark %s" % (
                 recipient_id, search_bookmark.id))
