@@ -1,7 +1,6 @@
 import logging
 
 from allauth.account.signals import user_logged_in
-from allauth.account.signals import user_signed_up
 
 from anymail.signals import tracking
 from requests_futures.sessions import FuturesSession
@@ -28,12 +27,6 @@ def handle_user_save(sender, instance, created, **kwargs):
 def handle_user_logged_in(sender, request, user, **kwargs):
     user.searchbookmark_set.update(approved=True)
     user.orgbookmark_set.update(approved=True)
-
-
-@receiver(user_signed_up, sender=User)
-def handle_password_set(sender, request, user, **kwargs):
-    import pdb; pdb.set_trace()
-    x = 5
 
 
 def log_email_event(event):
