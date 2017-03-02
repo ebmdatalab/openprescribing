@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from frontend.models import Chemical, Section, Practice
 from frontend.models import EmailMessage
+from frontend.models import SearchBookmark
+from frontend.models import User
 
 
 class ValidationTestCase(TestCase):
@@ -90,7 +92,7 @@ class TestMessage(object):
 
 
 class EmailMessageTestCase(TestCase):
-    def test_mesage_pickled(self):
+    def test_message_pickled(self):
         msg = TestMessage()
         m = EmailMessage.objects.create_from_message(msg)
         self.assertEqual(msg, m.message)
@@ -99,4 +101,17 @@ class EmailMessageTestCase(TestCase):
         msg = TestMessage()
         msg.extra_headers = {}
         with self.assertRaises(StandardError):
-            m = EmailMessage.objects.create_from_message(msg)
+            EmailMessage.objects.create_from_message(msg)
+
+
+class SearchBookmarkTestCase(TestCase):
+    fixtures = ['users']
+
+    def test_name_is_truncated(self):
+        very_long_name = 'l' * 2000
+        SearchBookmark.objects.create(
+            name=very_long_name,
+            user=User.objects.first(),
+            url='foo'
+        )
+        self.assertEqual(len(SearchBookmark.objects.first().name), 200)

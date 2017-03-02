@@ -446,10 +446,18 @@ class MeasureGlobal(models.Model):
         unique_together = (('measure', 'month'),)
 
 
+class TruncatingCharField(models.CharField):
+    def get_prep_value(self, value):
+        value = super(TruncatingCharField, self).get_prep_value(value)
+        if value:
+            return value[:self.max_length]
+        return value
+
+
 class SearchBookmark(models.Model):
     '''A bookmark for an individual analyse search made by a user.
     '''
-    name = models.CharField(max_length=200)
+    name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
