@@ -623,12 +623,12 @@ class MailLog(models.Model):
         null=True
     )
     reject_reason = models.CharField(max_length=15, null=True, blank=True)
-    message_id = models.CharField(max_length=998, db_index=True)
     event_type = models.CharField(
         max_length=15,
         choices=EVENT_TYPE_CHOICES,
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
+    message = models.ForeignKey(EmailMessage, null=True)
 
     @property
     def email(self):
