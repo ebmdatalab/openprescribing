@@ -1,8 +1,10 @@
 from contextlib import contextmanager
 from os import environ
+from titlecase import titlecase
 import hashlib
 import logging
-from titlecase import titlecase
+import re
+import string
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
@@ -12,12 +14,23 @@ logger = logging.getLogger(__name__)
 
 
 def nhs_abbreviations(word, **kwargs):
-    if word.upper() in ('NHS', 'CCG', 'GP'):
+    if len(word) == 2 and word.lower() not in [
+            'at', 'of', 'in', 'on', 'to', 'me', 'dr', 'st']:
+        return word.upper()
+    elif word.lower() in ['dr', 'st']:
+        return word.title()
+    elif word.upper() in ('NHS', 'CCG', 'PMS', 'SMA', 'PWSI', 'OOH', 'HIV'):
+        return word.upper()
+    elif '&' in word:
+        return word.upper()
+    elif ((word.lower() not in ['ptnrs']) and
+          (not re.match(r'.*[aeiou]{1}', word.lower()))):
         return word.upper()
 
 
 def nhs_titlecase(words):
-    return titlecase(words, callback=nhs_abbreviations)
+    title_cased = titlecase(words, callback=nhs_abbreviations)
+    return re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
 
 
 def get_env_setting(setting, default=None):
