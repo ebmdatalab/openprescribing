@@ -571,7 +571,7 @@ class Profile(models.Model):
 
 class EmailMessageManager(models.Manager):
     def create_from_message(self, msg):
-        user = User.objects.filter(email=msg.to)
+        user = User.objects.filter(email=msg.to[0])
         user = user and user[0] or None
         if 'message-id' not in msg.extra_headers:
             raise StandardError(
@@ -616,6 +616,9 @@ class EmailMessage(models.Model):
         self.message.send()
         self.send_count += 1
         self.save()
+
+    def __unicode__(self):
+        return self.subject
 
 
 class MailLog(models.Model):

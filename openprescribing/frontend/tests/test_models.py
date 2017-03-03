@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from frontend.models import Chemical, Section, Practice
 from frontend.models import EmailMessage
+from frontend.models import MailLog
 from frontend.models import SearchBookmark
 from frontend.models import User
 
@@ -76,7 +77,7 @@ class PracticeTestCase(TestCase):
 
 
 class TestMessage(object):
-    to = 'foo',
+    to = ['foo']
     subject = 'subject'
     tags = []
     extra_headers = {'message-id': '123'}
@@ -115,3 +116,13 @@ class SearchBookmarkTestCase(TestCase):
             url='foo'
         )
         self.assertEqual(len(SearchBookmark.objects.first().name), 200)
+
+
+class MailLogTestCase(TestCase):
+    def test_metadata_nests_correctly(self):
+        MailLog.objects.create(
+            recipient='me',
+            event_type='accepted',
+            metadata={'thing': ['foo']}
+        )
+        self.assertEqual(MailLog.objects.first().metadata['thing'][0], 'foo')

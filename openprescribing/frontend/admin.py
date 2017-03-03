@@ -1,7 +1,10 @@
+import json
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from .models import EmailMessage
 from .models import MailLog
@@ -123,19 +126,63 @@ class UserWithProfile(UserAdmin):
 
 
 class MailLogInline(admin.TabularInline):
-    date_hierarchy = 'timestamp'
     model = MailLog
+    fields = readonly_fields = (
+        'timestamp', 'event_type', 'message_id', 'recipient', 'tags',
+        'reject_reason', 'metadata_prettyprinted')
+
+    def metadata_prettyprinted(self, obj):
+        return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(EmailMessage)
 class EmailMessageAdmin(admin.ModelAdmin):
     list_display = ('to', 'subject', 'tags', 'created_at', 'send_count')
+    list_filter = (
+        'tags', 'subject')
+    readonly_fields = fields = (
+        'message_id', 'to', 'subject', 'tags', 'created_at', 'send_count',
+        'user', 'message_html',)
     inlines = [
         MailLogInline
     ]
+    date_hierarchy = 'timestamp'
+
+    def message_html(self, obj):
+        if obj.message.alternatives:
+            return mark_safe(obj.message.alternatives[0][0])
+        else:
+            return mark_safe(obj.message.body)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(MailLog)
 class MailLogAdmin(admin.ModelAdmin):
+    date_hierarchy = 'timestamp'
     list_display = (
         'timestamp', 'event_type', 'message_id', 'recipient', 'tags')
+    list_filter = (
+        'event_type', 'recipient', 'tags')
+    readonly_fields = fields = (
+        'timestamp', 'event_type', 'message_id', 'recipient', 'tags',
+        'reject_reason', 'metadata_prettyprinted')
+
+    def metadata_prettyprinted(self, obj):
+        return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
