@@ -76,7 +76,7 @@ class PracticeTestCase(TestCase):
 
 
 class TestMessage(object):
-    to = 'foo',
+    to = ['foo']
     subject = 'subject'
     tags = []
     extra_headers = {'message-id': '123'}
