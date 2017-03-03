@@ -26,7 +26,12 @@ class Command(BaseCommand):
     help += 'Set DEBUG to False in your settings before running this.'
 
     def add_arguments(self, parser):
-        parser.add_argument('--filename')
+        parser.add_argument(
+            '--filename',
+            help=(
+                'A path to a properly converted file on the filesystem, '
+                'or a URI for a raw file in Google Cloud, e.g. '
+                'gs://embdatalab/hscic/'))
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
@@ -41,8 +46,6 @@ class Command(BaseCommand):
         else:
             self.truncate = False
 
-        # This can still point to files in the filesystem, but must assume
-        # they've been uploaded to GCS and can be referenced as URIs
         fname = options['filename']
         if options['date']:
             self.date = datetime.datetime.strptime(
@@ -59,7 +62,7 @@ class Command(BaseCommand):
         self.add_parent_trigger()
         self.drop_oldest_month()
 
-    def _get_path_to_formatted_data(fname):
+    def _get_path_to_formatted_data(self, fname):
         if fname.startswith('T'):
             # Data from HSCIC (which we used to use until we found the
             # more timely version from HSCIC). Convert it to formatted
@@ -67,12 +70,12 @@ class Command(BaseCommand):
             opts = {
                 'verbosity': 0,
                 'filename': fname}
-            converted = ConvertCommand().hanlder([], opts)
+            converted = ConvertCommand().handler([], opts)
             return converted[0]
         else:
             # Data from NHS Digital. This requires aggregating which
             # we do in BigQuery, then download the result for ingestion
-            return aggregate_nhs_digital_data(fname)
+            return self.aggregate_nhs_digital_data(fname)
 
     def import_pcts(self, filename):
         logger.info('Importing SHAs and PCTs from %s' % filename)
