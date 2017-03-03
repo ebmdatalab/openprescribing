@@ -1,15 +1,13 @@
 import csv
 import datetime
-import glob
 import logging
-import re
+import os
 import time
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
 from google.cloud.bigquery.table import Table
 from google.cloud.bigquery.dataset import Dataset
-from google.cloud.bigquery.job import QueryJob
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -63,15 +61,19 @@ class Command(BaseCommand):
         self.drop_oldest_month()
 
     def _get_path_to_formatted_data(self, fname):
-        if fname.startswith('T'):
+        if os.path.split(fname)[-1].startswith('T'):
             # Data from HSCIC (which we used to use until we found the
             # more timely version from HSCIC). Convert it to formatted
             # version and return the path to that
-            opts = {
-                'verbosity': 0,
-                'filename': fname}
-            converted = ConvertCommand().handler([], opts)
-            return converted[0]
+            if not fname.endswith('_formatted.CSV'):
+                opts = {
+                    'verbosity': 0,
+                    'filename': fname}
+                converted = ConvertCommand().handle(**opts)
+                return converted[0]
+            else:
+                return fname
+
         else:
             # Data from NHS Digital. This requires aggregating which
             # we do in BigQuery, then download the result for ingestion
@@ -123,9 +125,11 @@ class Command(BaseCommand):
             self.date.year - 5, self.date.month, self.date.day)
         self.drop_partition(five_years_ago)
 
-    def _partition_name(self):
+    def _partition_name(self, date=None):
+        if not date:
+            date = self.date
         return "frontend_prescription_%s%s" % (
-            self.date.year, str(self.date.month).zfill(2))
+            date.year, str(date.month).zfill(2))
 
     def add_parent_trigger(self):
         """A trigger to prevent accidental adding of data to the parent table
@@ -184,9 +188,9 @@ class Command(BaseCommand):
                 cursor.execute(constraint_sql % (
                     partition_name, partition_name))
 
-    def drop_partition(self):
-        logger.info('Dropping partition %s' % self._partition_name())
-        sql = "DROP TABLE IF EXISTS %s" % self._partition_name()
+    def drop_partition(self, date=None):
+        logger.info('Dropping partition %s' % self._partition_name(date=date))
+        sql = "DROP TABLE IF EXISTS %s" % self._partition_name(date=date)
         with connection.cursor() as cursor:
             cursor.execute(sql)
 
@@ -219,7 +223,7 @@ class Command(BaseCommand):
             )
 
     def _date_from_filename(self, filename):
-        file_str = filename.split('/')[-1].split('.')[0]
+        file_str = filename.replace('T', '').split('/')[-1].split('.')[0]
         return datetime.date(int(file_str[0:4]), int(file_str[4:6]), 1)
 
     def aggregate_nhs_digital_data(self, fname):

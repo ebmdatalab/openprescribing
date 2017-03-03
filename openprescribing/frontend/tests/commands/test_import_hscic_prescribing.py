@@ -17,7 +17,9 @@ class UnitTests(unittest.TestCase):
     @patch('django.db.connection.cursor')
     def test_create_partition_december(self, mock_cursor):
         date = datetime.date(2011, 12, 1)
-        Command().create_partition(date)
+        cmd = Command()
+        cmd.date = date
+        cmd.create_partition()
         mock_execute = mock_cursor.return_value.__enter__.return_value.execute
         execute_args = mock_execute.call_args[0][0]
         self.assertIn(
