@@ -11,6 +11,7 @@ import urlparse
 from anymail.message import attach_inline_image_file
 from dateutil.relativedelta import relativedelta
 from premailer import Premailer
+from titlecase import titlecase
 import numpy as np
 
 from django.conf import settings
@@ -416,10 +417,7 @@ def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
     max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
     ellipsis = '...'
-    if subject[1].islower():
-        # downcase the first letter of the first word, only if it is
-        # already in titlecase (or lowercase)
-        subject = subject[0].lower() + subject[1:]
+    subject = titlecase(subject)
     if len(subject) <= max_length:
         truncated = subject
     else:
