@@ -485,6 +485,9 @@ def make_org_email(org_bookmark, stats):
                 org_bookmark.dashboard_url(),
                 interesting_file.name,
                 '#' + stats['interesting'][0].id)
+        unsubscribe_link = settings.GRAB_HOST + reverse(
+            'bookmark-login',
+            kwargs={'key': org_bookmark.user.profile.key})
         html = html_email.render(
             context={
                 'intro_text': getIntroText(
@@ -502,16 +505,15 @@ def make_org_email(org_bookmark, stats):
                 'dashboard_uri': mark_safe(dashboard_uri),
                 'qs': mark_safe(msg.qs),
                 'stats': stats,
-                'unsubscribe_link': settings.GRAB_HOST + reverse(
-                    'bookmark-login',
-                    kwargs={'key': org_bookmark.user.profile.key})
+                'unsubscribe_link': unsubscribe_link
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         html = unescape_href(html)
         text = email_as_text(html)
-        msg.attach_alternative(text, "text/plain")
+        msg.body = text
         msg.attach_alternative(html, "text/html")
+        msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
         msg.tags = ["monthly_update", "measures"]
         return msg
 
@@ -533,22 +535,24 @@ def make_search_email(search_bookmark):
             graph_file.name,
             '#results .tab-pane.active'
         )
+        unsubscribe_link = settings.GRAB_HOST + reverse(
+            'bookmark-login',
+            kwargs={'key': search_bookmark.user.profile.key})
         html = html_email.render(
             context={
                 'bookmark': search_bookmark,
                 'domain': settings.GRAB_HOST,
                 'graph': graph,
                 'dashboard_uri': mark_safe(dashboard_uri),
-                'unsubscribe_link': settings.GRAB_HOST + reverse(
-                    'bookmark-login',
-                    kwargs={'key': search_bookmark.user.profile.key})
+                'unsubscribe_link': unsubscribe_link
             })
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         html = unescape_href(html)
         text = email_as_text(html)
-        msg.attach_alternative(text, "text/plain")
+        msg.body = text
         msg.attach_alternative(html, "text/html")
+        msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
         msg.tags = ["monthly_update", "analyse"]
         return msg
 
