@@ -649,4 +649,4 @@ class MailLog(models.Model):
         choices=EVENT_TYPE_CHOICES,
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
-    message = models.ForeignKey(EmailMessage, null=True)
+    message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)

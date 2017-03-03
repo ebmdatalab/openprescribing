@@ -134,6 +134,15 @@ class MailLogTestCase(TestCase):
         )
         self.assertEqual(MailLog.objects.first().metadata['thing'][0], 'foo')
 
+    def test_no_constraint_on_message_id(self):
+        MailLog.objects.create(
+            recipient='me',
+            event_type='accepted',
+            metadata={'thing': ['foo']},
+            message_id='123'
+        )
+        self.assertEqual(MailLog.objects.first().message_id, '123')
+
 
 class PCTTestCase(TestCase):
     def test_name_titlecase(self):
