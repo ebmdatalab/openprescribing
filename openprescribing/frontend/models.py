@@ -617,6 +617,9 @@ class EmailMessage(models.Model):
         self.send_count += 1
         self.save()
 
+    def __unicode__(self):
+        return self.subject
+
 
 class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
