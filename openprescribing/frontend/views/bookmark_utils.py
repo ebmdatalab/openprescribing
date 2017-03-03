@@ -20,6 +20,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
+from common.utils import email_as_text
 from common.utils import nhs_titlecase
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -508,6 +509,8 @@ def make_org_email(org_bookmark, stats):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         html = unescape_href(html)
+        text = email_as_text(html)
+        msg.attach_alternative(text, "text/plain")
         msg.attach_alternative(html, "text/html")
         msg.tags = ["monthly_update", "measures"]
         return msg
@@ -543,6 +546,8 @@ def make_search_email(search_bookmark):
         html = Premailer(
             html, cssutils_logging_level=logging.ERROR).transform()
         html = unescape_href(html)
+        text = email_as_text(html)
+        msg.attach_alternative(text, "text/plain")
         msg.attach_alternative(html, "text/html")
         msg.tags = ["monthly_update", "analyse"]
         return msg

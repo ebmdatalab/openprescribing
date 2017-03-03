@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from os import environ
 from titlecase import titlecase
 import hashlib
+import html2text
 import logging
 import re
 import string
@@ -31,6 +32,17 @@ def nhs_abbreviations(word, **kwargs):
 def nhs_titlecase(words):
     title_cased = titlecase(words, callback=nhs_abbreviations)
     return re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+
+
+def email_as_text(html):
+    text_maker = html2text.HTML2Text()
+    text_maker.images_to_alt = True
+    text_maker.asterisk_emphasis = True
+    text_maker.no_wrap_links = True
+    text_maker.pad_tables = True
+    text_maker.default_images_alt = "[image]"
+    text = text_maker.handle(html)
+    return text
 
 
 def get_env_setting(setting, default=None):
