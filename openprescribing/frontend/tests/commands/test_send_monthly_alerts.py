@@ -125,6 +125,13 @@ class OrgEmailTestCase(TestCase):
         self.assertIn('/bookmarks/dummykey', html)
         self.assertIn("We've no new information", html)
 
+    def test_email_body_text(self, attach_image, finder):
+        test_context = _makeContext()
+        call_mocked_command(test_context, finder)
+        message = mail.outbox[-1].alternatives[0]
+        text = message[0]
+        self.assertIn('**Hello!**', text)
+
     def test_email_body_has_ga_tracking(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command(
@@ -326,6 +333,21 @@ class SearchEmailTestCase(TestCase):
         self.assertIn('/bookmarks/dummykey', html)
         self.assertRegexpMatches(
             html, '<a href="http://localhost/analyse/.*#%s' % 'something')
+
+    def test_email_body_text(self, attach_image):
+        opts = {'recipient_email': 's@s.com',
+                'url': 'something',
+                'search_name': 'some name'}
+        call_command(CMD_NAME, **opts)
+        message = mail.outbox[-1].alternatives[0]
+        text = message[0]
+        mime_type = message[1]
+        self.assertIn("**Hello!**", text)
+        self.assertEquals(mime_type, 'text/plain')
+
+        self.assertIn('/bookmarks/dummykey', text)
+        self.assertRegexpMatches(
+            text, "http://localhost/analyse/.*#%s" % 'something')
 
 
 def call_mocked_command(context, mock_finder, **opts):

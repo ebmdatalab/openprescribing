@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def nhs_abbreviations(word, **kwargs):
     if len(word) == 2 and word.lower() not in [
-            'at', 'of', 'in', 'on', 'to', 'me', 'dr', 'st']:
+            'at', 'of', 'in', 'on', 'to', 'is', 'me', 'by', 'dr', 'st']:
         return word.upper()
     elif word.lower() in ['dr', 'st']:
         return word.title()
@@ -24,7 +24,7 @@ def nhs_abbreviations(word, **kwargs):
         return word.upper()
     elif '&' in word:
         return word.upper()
-    elif ((word.lower() not in ['ptnrs']) and
+    elif ((word.lower() not in ['ptnrs', 'by', 'ccgs']) and
           (not re.match(r'.*[aeiou]{1}', word.lower()))):
         return word.upper()
 
@@ -38,9 +38,9 @@ def email_as_text(html):
     text_maker = html2text.HTML2Text()
     text_maker.images_to_alt = True
     text_maker.asterisk_emphasis = True
-    text_maker.no_wrap_links = True
+    text_maker.wrap_links = False
     text_maker.pad_tables = True
-    text_maker.default_images_alt = "[image]"
+    text_maker.ignore_images = True
     text = text_maker.handle(html)
     return text
 

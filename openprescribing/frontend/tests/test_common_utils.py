@@ -8,6 +8,10 @@ class TitleCaseTests(TestCase):
         from common.utils import nhs_titlecase
         tests = [
             (
+                'THING BY THE CHURCH',
+                'Thing by the Church'
+            ),
+            (
                 'DR AS RAGHUNATH AND PTNRS',
                 'Dr AS Raghunath and Ptnrs'
             ),
