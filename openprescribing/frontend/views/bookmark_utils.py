@@ -416,7 +416,10 @@ def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
     max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
     ellipsis = '...'
-    subject = subject[0].lower() + subject[1:]
+    if subject[1].islower():
+        # downcase the first letter of the first word, only if it is
+        # already in titlecase (or lowercase)
+        subject = subject[0].lower() + subject[1:]
     if len(subject) <= max_length:
         truncated = subject
     else:

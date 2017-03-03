@@ -628,6 +628,8 @@ class TruncateSubjectTestCase(unittest.TestCase):
         data = [
             {'input': 'a short title by me',
              'expected': 'Your monthly update about a short title by me'},
+            {'input': 'THING IN CAPS',
+             'expected': 'Your monthly update about THING IN CAPS'},
             {'input':
              ('Items for Abacavir + Levocabastine + Levacetylmethadol '
               'Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + '
