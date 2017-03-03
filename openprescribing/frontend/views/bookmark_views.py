@@ -118,7 +118,7 @@ def preview_bookmark(request, practice=None, pct=None, url=None, name=None):
     else:
         bookmark = SearchBookmark(url=url, user=user, name=name)
         msg = bookmark_utils.make_search_email(bookmark)
-    html = msg.alternatives[0][0]
+    html = msg.alternatives[1][0]
     images = msg.attachments
     return HttpResponse(_convert_images_to_data_uris(html, images))
 

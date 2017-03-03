@@ -152,7 +152,7 @@ class EmailMessageAdmin(admin.ModelAdmin):
     inlines = [
         MailLogInline
     ]
-    date_hierarchy = 'timestamp'
+    date_hierarchy = 'created_at'
 
     def message_html(self, obj):
         if obj.message.alternatives:

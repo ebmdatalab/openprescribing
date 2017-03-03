@@ -626,23 +626,23 @@ class TestContextForOrgEmail(unittest.TestCase):
 class TruncateSubjectTestCase(unittest.TestCase):
     def test_truncate_subject(self):
         data = [
-            {'input': 'a short title by me',
-             'expected': 'Your monthly update about a short title by me'},
+            {'input': 'short title by me',
+             'expected': 'Your monthly update about Short Title by Me'},
             {'input': 'THING IN CAPS',
-             'expected': 'Your monthly update about THING IN CAPS'},
+             'expected': 'Your monthly update about Thing in Caps'},
             {'input':
              ('Items for Abacavir + Levocabastine + Levacetylmethadol '
               'Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + '
-              'Alverine Citrate + Boceprevir by all CCGs'),
+              'Alverine Citrate + Boceprevir by All CCGs'),
              'expected':
-             ('Your monthly update about items for Abacavir + Levocaba...'
-              'by all CCGs')},
+             ('Your monthly update about Items for Abacavir + Levocaba...'
+              'by All CCGs')},
             {'input':
              ('The point is that the relative freedom which we enjoy'
               'depends of public opinion. The law is no protection.'),
              'expected':
-             ('Your monthly update about the point is that the relative '
-              'freedom w...')}]
+             ('Your monthly update about The Point Is That the Relative '
+              'Freedom W...')}]
 
         for test_case in data:
             self.assertEqual(

@@ -3,6 +3,58 @@ from django.test import TestCase
 from frontend.models import Measure
 
 
+class TitleCaseTests(TestCase):
+    def test_variaous_cases(self):
+        from common.utils import nhs_titlecase
+        tests = [
+            (
+                'THING BY THE CHURCH',
+                'Thing by the Church'
+            ),
+            (
+                'DR AS RAGHUNATH AND PTNRS',
+                'Dr AS Raghunath and Ptnrs'
+            ),
+            (
+                'OUT OF HOURS',
+                'Out of Hours'
+            ),
+            (
+                'NHS CORBY CCG',
+                'NHS Corby CCG'
+            ),
+            (
+                'CN HIV THREE BOROUGHS TEAM',
+                'CN HIV Three Boroughs Team'
+            ),
+            (
+                'DMC VICARAGE LANE',
+                'DMC Vicarage Lane'
+            ),
+            (
+                'DR CHEUNG KK PRACTICE',
+                'Dr Cheung KK Practice'
+            ),
+            (
+                'DR PM OPIE & DR AE SPALDING PRACTICE',
+                'Dr PM Opie & Dr AE Spalding Practice'
+            ),
+            (
+                'LUNDWOOD MEDICAL CENTRE PMS PRACTICE',
+                'Lundwood Medical Centre PMS Practice'
+            ),
+            (
+                "ST ANN'S MEDICAL CENTRE",
+                "St Ann's Medical Centre"
+            ),
+            (
+                "C&RH BIGGIN HILL",
+                "C&RH Biggin Hill")
+        ]
+        for words, expected in tests:
+            self.assertEquals(nhs_titlecase(words), expected)
+
+
 class FunctionalTests(TestCase):
     fixtures = ['measures']
 

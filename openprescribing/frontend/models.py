@@ -1,14 +1,17 @@
 import cPickle
 import uuid
+
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from validators import isAlphaNumeric
-import model_prescribing_units
 
 from anymail.signals import EventType
+
+from common.utils import nhs_titlecase
+from frontend.validators import isAlphaNumeric
+from frontend import model_prescribing_units
 
 
 class Section(models.Model):
@@ -19,7 +22,7 @@ class Section(models.Model):
     bnf_section = models.IntegerField(null=True, blank=True)
     bnf_para = models.IntegerField(null=True, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -77,6 +80,10 @@ class PCT(models.Model):
 
     def __unicode__(self):
         return self.name or ""
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
 
 
 class Practice(models.Model):
@@ -141,6 +148,10 @@ class Practice(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
 
     def address_pretty(self):
         address = self.address1 + ', '
@@ -508,9 +519,9 @@ class OrgBookmark(models.Model):
     @property
     def name(self):
         if self.practice is None:
-            return self.pct.name
+            return self.pct.cased_name
         else:
-            return self.practice.name
+            return self.practice.cased_name
 
     def org_type(self):
         if self.practice is None:
@@ -639,4 +650,4 @@ class MailLog(models.Model):
         choices=EVENT_TYPE_CHOICES,
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
-    message = models.ForeignKey(EmailMessage, null=True)
+    message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
