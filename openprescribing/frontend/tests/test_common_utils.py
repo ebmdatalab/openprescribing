@@ -55,7 +55,6 @@ class TitleCaseTests(TestCase):
             self.assertEquals(nhs_titlecase(words), expected)
 
 
-
 class FunctionalTests(TestCase):
     fixtures = ['measures']
 

@@ -85,6 +85,7 @@ class PCT(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+
 class Practice(models.Model):
     '''
     GP practices. HSCIC practice status is from:
