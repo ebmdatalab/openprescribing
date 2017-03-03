@@ -36,6 +36,9 @@ if (system.args.length < 6) {
         timeout: 10000,
         check: function() {
           return page.evaluate(function(s) {
+            // trigger scroll-related events in measures pages.
+            // without this, we'd be screenshotting undrawn charts
+            $('body').scrollTop(1);
             return $(s).is(':visible');
           }, selector);
         },

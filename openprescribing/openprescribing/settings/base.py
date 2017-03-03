@@ -340,7 +340,7 @@ ANYMAIL = {
 SERVER_EMAIL = "errors@openprescribing.net"
 
 # django-allauth configuration
-ACCOUNT_ADAPTER = 'frontend.account.adapter.MessageBlockingAdapter'
+ACCOUNT_ADAPTER = 'frontend.account.adapter.CustomAdapter'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True

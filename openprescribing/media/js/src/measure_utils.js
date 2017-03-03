@@ -84,7 +84,7 @@ var utils = {
       var score = d.meanPercentile;
       if (score === null) {
         score = 101;
-      } else if (d.lowIsGood) {
+      } else if (d.lowIsGood !== false) {
         score = 100 - score;
       }
       return score;
@@ -178,9 +178,9 @@ var utils = {
       _.each(orderedData, function(d) {
         if (d.meanPercentile !== null) {
           perf.total += 1;
-          if (d.lowIsGood && d.meanPercentile > 50) {
+          if (d.lowIsGood !== false && d.meanPercentile > 50) {
             perf.worseThanMedian += 1;
-          } else if (!d.lowIsGood && d.meanPercentile < 50) {
+          } else if (d.lowIsGood === false && d.meanPercentile < 50) {
             perf.worseThanMedian += 1;
           }
           if (d.meanPercentile > 50) {
@@ -193,25 +193,6 @@ var utils = {
           }
         }
       });
-      if (options.rollUpBy === 'measure_id') {
-        perf.performanceDescription = "Over the past " + numMonths +
-          " months, this organisation has prescribed worse than the median on " +
-          perf.worseThanMedian + " of " + perf.total + " measures.";
-      } else {
-        perf.performanceDescription = "Over the past " + numMonths +
-          " months, " + perf.worseThanMedian + " of " + perf.total + ' ';
-        perf.performanceDescription += (options.orgType === 'practice') ?
-          "practices " : "CCGs ";
-        perf.performanceDescription += "have prescribed worse than the " +
-          "national median.";
-      }
-      if (options.rollUpBy === 'measure_id') {
-        var p = humanize.numberFormat(orderedData[0].meanPercentile, 0);
-        perf.topOpportunity = 'The measure with the biggest potential for ' +
-          ' improvement was ' + orderedData[0].name + ', where this ' +
-          options.orgType + ' was at the ' + humanize.ordinal(p) +
-          ' percentile on average across the past ' + numMonths + ' months.';
-      }
       perf.proportionAboveMedian =
         humanize.numberFormat(perf.proportionAboveMedian * 100, 1);
       if (options.isCostBasedMeasure) {
@@ -313,6 +294,7 @@ var utils = {
     var chartTitle;
     var chartTitleUrl;
     var chartExplanation;
+    var measureUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -320,6 +302,7 @@ var utils = {
       chartTitleUrl = '/ccg/';
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
+      measureUrl = '/measure/' + d.id;
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.
@@ -331,7 +314,16 @@ var utils = {
       chartExplanation = 'No data available.';
     } else {
       var p = humanize.numberFormat(d.meanPercentile, 0);
-      chartExplanation = 'This ' + options.orgType + ' was at the ' +
+      if (d.lowIsGood === null) {
+        chartExplanation = (
+          'This is a measure where there is disagreement about whether ' +
+            'higher, or lower, is better. Nonetheless it is interesting to ' +
+            'know if a ' + options.orgType + ' is a long way from average ' +
+            'prescribing behaviour. In this case, it ');
+      } else {
+        chartExplanation = 'This ' + options.orgType;
+      }
+      chartExplanation += ' was at the ' +
         humanize.ordinal(p) +
         ' percentile on average across the ' +
         'past ' + numMonths + ' months. ';
@@ -355,6 +347,7 @@ var utils = {
       }
     }
     return {
+      measureUrl: measureUrl,
       chartTitle: chartTitle,
       chartTitleUrl: chartTitleUrl,
       chartExplanation: chartExplanation
@@ -432,7 +425,7 @@ var utils = {
         // because it prefers that formatting. Force zero as the lowest value.
       min: _.max([0, ymin])
     };
-    if (!d.lowIsGood) {
+    if (d.lowIsGood === false) {
       chOptions.yAxis.reversed = true;
     }
     chOptions.tooltip = {

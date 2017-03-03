@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from frontend.models import Chemical, Section, Practice
-from frontend.validators import isAlphaNumeric
+from frontend.models import EmailMessage
+from frontend.models import MailLog
+from frontend.models import SearchBookmark
+from frontend.models import User
 
 
 class ValidationTestCase(TestCase):
@@ -71,3 +74,55 @@ class PracticeTestCase(TestCase):
         address = "HOPEVILLE AVE ST PETERSY, "
         address += "BROADSTAIRS, KENT, CT10 2TR"
         self.assertEqual(practice.address_pretty_minus_firstline(), address)
+
+
+class TestMessage(object):
+    to = ['foo']
+    subject = 'subject'
+    tags = []
+    extra_headers = {'message-id': '123'}
+
+    def __eq__(self, other):
+        match = True
+        for attr in dir(self):
+            if not attr.startswith('_'):
+                match = getattr(self, attr) == getattr(other, attr)
+                if not match:
+                    return False
+        return match
+
+
+class EmailMessageTestCase(TestCase):
+    def test_message_pickled(self):
+        msg = TestMessage()
+        m = EmailMessage.objects.create_from_message(msg)
+        self.assertEqual(msg, m.message)
+
+    def test_message_id_assertion(self):
+        msg = TestMessage()
+        msg.extra_headers = {}
+        with self.assertRaises(StandardError):
+            EmailMessage.objects.create_from_message(msg)
+
+
+class SearchBookmarkTestCase(TestCase):
+    fixtures = ['users']
+
+    def test_name_is_truncated(self):
+        very_long_name = 'l' * 2000
+        SearchBookmark.objects.create(
+            name=very_long_name,
+            user=User.objects.first(),
+            url='foo'
+        )
+        self.assertEqual(len(SearchBookmark.objects.first().name), 200)
+
+
+class MailLogTestCase(TestCase):
+    def test_metadata_nests_correctly(self):
+        MailLog.objects.create(
+            recipient='me',
+            event_type='accepted',
+            metadata={'thing': ['foo']}
+        )
+        self.assertEqual(MailLog.objects.first().metadata['thing'][0], 'foo')

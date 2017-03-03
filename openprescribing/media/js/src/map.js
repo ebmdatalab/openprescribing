@@ -66,9 +66,7 @@ var analyseMap = {
       }
       _this.addLayerEvents();
       _this.updateMap('ratio_items',
-                            options.activeMonth,
-                            options.friendly.chartTitle,
-                            options.friendly.chartSubTitle);
+                      options);
     }
 
     function joinFeaturesWithData(currentJson, data) {
@@ -141,12 +139,12 @@ var analyseMap = {
     });
   },
 
-  updateMap: function(ratio, month, title, subtitle) {
+  updateMap: function(ratio, options) {
     var _this = this;
-    month = month.replace(/\//g, '-');
+    var month = options.activeMonth.replace(/\//g, '-');
     var quintiles = (month in _this.quintiles) ? _this.quintiles[month][ratio] : [];
     _this.map.legendControl.removeLegend(_this.legendHtml);
-    _this.legendHtml = _this.getLegend(quintiles, ratio, title, subtitle);
+    _this.legendHtml = _this.getLegend(quintiles, ratio, options);
     _this.map.legendControl.addLegend(_this.legendHtml);
     _this.orgLayer.eachLayer(function(layer) {
       var layerData = layer.feature.properties.data;
@@ -229,7 +227,7 @@ var analyseMap = {
     return color;
   },
 
-  getLegend: function(quintiles, ratio, title, subtitle) {
+  getLegend: function(quintiles, ratio, options) {
         // console.log('getLegend', quintiles);
     var labels = [], from, to, label;
     for (var i = 0; i < quintiles.length - 1; i++) {
@@ -247,9 +245,13 @@ var analyseMap = {
       label += '</li>';
       labels.push(label);
     }
-    var legend = '<span class="legend-header">' + title.replace('<br/>', '');
-    legend += ' ' + subtitle + '</span>';
+    // move the suffix to the end
+    // swap `vs` for `per 1000 items for` when it's not spending
+    // and `per 1000 patients on list for` when it's vs. list size
+    var legend = '<span class="legend-header">' + options.friendly.yAxisTitle.replace('<br/>', '');
+    legend += ' ' + options.friendly.chartSubTitle + '</span>';
     legend += '<ul>' + labels.join('') + '</ul>';
+    legend += 'by ' + options.friendly.friendlyOrgs;
     return legend;
   }
 

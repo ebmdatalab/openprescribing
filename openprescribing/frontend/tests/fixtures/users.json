@@ -1,0 +1,20 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2",
+      "last_login": "2017-02-20T09:13:08.243Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "admin@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2016-07-07T11:23:27Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

@@ -52,24 +52,11 @@ class Command(BaseCommand):
         Transform the data into the format needed for COPY.
         '''
         row = [r.strip() for r in row]
-        chemical_id = self.get_chemical_id(row[3])
         actual_cost = float(row[7])
         quantity = int(row[8])
         month = row[9]
         formatted_date = '%s-%s-01' % (month[:4], month[4:])
-        output = [row[0], row[1], row[2], chemical_id, row[3],
-                  row[4], int(row[5]), float(row[7]),
+        output = [row[1], row[2], row[3],
+                  int(row[5]), actual_cost,
                   quantity, formatted_date]
         return output
-
-    def get_chemical_id(self, presentation_id):
-        '''In most cases the chemical ID for the presentation is a 9-letter
-        code, but where the chapter starts with '2', the HSCIC
-        specifies 4-letter codes.
-
-        '''
-        if presentation_id[0] == '2':
-            chemical_id = presentation_id[:4]
-        else:
-            chemical_id = presentation_id[:9]
-        return chemical_id

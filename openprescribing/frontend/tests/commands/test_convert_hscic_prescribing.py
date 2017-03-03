@@ -30,20 +30,13 @@ class CommandsTestCase(TestCase):
         self.assertEqual(len(rows), 51)
 
         # Test the basics are in the order expected by our COPY statement:
-        # sha_id,pct_id,practice_id,chemical_id,presentation_code,
-        # presentation_name,total_items,net_cost,actual_cost,
+        # pct_id,practice_id,presentation_code,
+        # total_items,actual_cost,
         # quantity,processing_date,price_per_unit
-        self.assertEqual(rows[0][0], 'Q44')
-        self.assertEqual(rows[0][1], 'RXA')
-        self.assertEqual(rows[0][2], 'N81646')
-        self.assertEqual(rows[0][3], '0102000N0')
-        self.assertEqual(rows[0][4], '0102000N0AAABAB')
-        self.assertEqual(rows[0][5], 'Hyoscine Butylbrom_Tab 10mg')
-        self.assertEqual(rows[0][6], '1')
-        self.assertEqual(rows[0][7], '0.7')
-        self.assertEqual(rows[0][8], '12')
-        self.assertEqual(rows[0][9], '2014-10-01')
-
-        # Test for 4-character chemical IDs.
-        self.assertEqual(rows[0][3], '0102000N0')
-        self.assertEqual(rows[-1][3], '2138')
+        self.assertEqual(rows[0][0], 'RXA')
+        self.assertEqual(rows[0][1], 'N81646')
+        self.assertEqual(rows[0][2], '0102000N0AAABAB')
+        self.assertEqual(rows[0][3], '1')
+        self.assertEqual(rows[0][4], '0.7')
+        self.assertEqual(rows[0][5], '12')
+        self.assertEqual(rows[0][6], '2014-10-01')

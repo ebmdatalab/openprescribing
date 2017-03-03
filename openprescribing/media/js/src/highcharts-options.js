@@ -62,6 +62,17 @@ var baseOptions = {
   chart: {
     type: 'scatter',
     zoomType: 'xy',
+    plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
+    events: {
+      load: function() {
+        // change cursor to crosshair to indicate zoom is possible
+        if (this.plotBackground) {
+          this.plotBackground.toFront().css({ // move on top to get all events
+            cursor: 'crosshair'
+          });
+        }
+      }
+    },
     style: {
       fontFamily: "'sofia-pro', 'Helvetica Neue', 'Arial', sans-serif"
     }
@@ -76,7 +87,8 @@ var baseOptions = {
     style: {
       color: '#ccc',
       fontSize: '24px',
-      opacity: 0.2
+      opacity: 0.2,
+      cursor: 'crosshair'
     },
     text: "openprescribing.net"
   },
@@ -143,6 +155,16 @@ var barOptions = $.extend(true, {}, baseOptions);
 barOptions.chart.type = 'column';
 barOptions.chart.marginTop = 60;
 barOptions.chart.renderTo = 'summarychart';
+// Our default of moving the background to the front works for all
+// charts except the bar chart, where we have to stack it manually.
+barOptions.chart.events.load = function() {
+  if (this.plotBackground) {
+    this.plotBackground.css({
+      zIndex: 2,
+      cursor: 'crosshair'
+    });
+  }
+};
 barOptions.xAxis.type = 'category';
 barOptions.legend.enabled = false;
 barOptions.xAxis.labels = {

@@ -1,35 +1,35 @@
 {
-  "name": "Nebivolol 2.5mg tablets", 
+  "name": "Nebivolol 2.5mg tablets",
   "title": [
-    "nebivolol 2.5mg tablets", 
+    "nebivolol 2.5mg tablets",
     "compared with prescribing of all nebivolol preparations"
-  ], 
+  ],
   "description": [
-    "Prescribing of nebivolol 2.5mg tablets", 
+    "Prescribing of nebivolol 2.5mg tablets",
     "compared with prescribing of all nebivolol preparations"
-  ], 
+  ],
   "why_it_matters": [
-  "Nebivolol is a beta-blocker used in heart failure. Many patients can't tolerate a full 5mg dose. ",
-  "However, the 2.5mg tablet is 45 times more expensive than the equivalent number of 5mg tablets, which are scored so they can be broken. ",
-  "Ideally, the 2.5mg tablets should be reserved for patients who are unable to tolerate the full dose and are also unable to break the 5mg tablets in half."
-  ], 
-  "numerator_short": "Nebivolol 2.5mg items", 
-  "denominator_short": "All nebivolol items", 
-  "url": null, 
-  "is_percentage": true, 
-  "is_cost_based": false, 
-  "low_is_good": true, 
+    "Nebivolol is a beta-blocker used in heart failure. Many patients can't tolerate a full 5mg dose. ",
+    "However, the 2.5mg tablet is 45 times more expensive than the equivalent number of 5mg tablets, which are scored so they can be broken. ",
+    "Ideally, the 2.5mg tablets should be reserved for patients who are unable to tolerate the full dose and are also unable to break the 5mg tablets in half."
+  ],
+  "numerator_short": "Nebivolol 2.5mg items",
+  "denominator_short": "All nebivolol items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
-  ], 
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
     "(bnf_code LIKE '0204000ABAAABAB%')  "
-  ], 
+  ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
-  ], 
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ", 
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code like '0204000AB%')  "
   ]

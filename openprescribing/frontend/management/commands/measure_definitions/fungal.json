@@ -1,33 +1,35 @@
 {
-	"name": "Topical treatment of fungal nail infections",
-	"title": [
-		" topical treatment of fungal nail infections",
-		"per 1000 patients"
-	],
-	"description": [
-		"Prescribing of topical treatment of fungal nail infections",
-		"per 1000 patients"
-	],
-	"why_it_matters": [
-		"These treatments have a low cure rate, and treatment is required for three to six months.",
-		"Consideration should be given as to whether this is an effective treatment."
-	],
-	"numerator_short": "Topical antifungal items",
-	"denominator_short": "1000 patients",
-	"url": null,
-	"is_percentage": false,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"numerator_columns": [
-		"SUM(items) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '1310020A0%' OR bnf_code LIKE '1310020T0%AA')  "
-	],
-	"denominator_columns": [
-		"SUM(total_list_size / 1000.0) AS denominator, "
-	],
-	"denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
-	"denominator_where": ["1 = 1"]
+  "name": "Topical treatment of fungal nail infections",
+  "title": [
+    " topical treatment of fungal nail infections",
+    "per 1000 patients"
+  ],
+  "description": [
+    "Prescribing of topical treatment of fungal nail infections",
+    "per 1000 patients"
+  ],
+  "why_it_matters": [
+    "These treatments have a low cure rate, and treatment is required for three to six months.",
+    "Consideration should be given as to whether this is an effective treatment."
+  ],
+  "numerator_short": "Topical antifungal items",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '1310020A0%' OR bnf_code LIKE '1310020T0%AA')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
 }

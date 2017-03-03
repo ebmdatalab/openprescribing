@@ -11,6 +11,8 @@ from threading import Thread
 import requests
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from mock import patch
+from mock import MagicMock
 
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -308,7 +310,6 @@ class TestBookmarkUtilsChanging(TestCase):
                          {'improvements': [],
                           'declines': []})
 
-
     def test_low_change_not_returned_for_ccg(self):
         # This test will raise a warning due to all imput being
         # None. Silence it.
@@ -582,11 +583,53 @@ class UnescapeTestCase(unittest.TestCase):
             bookmark_utils.unescape_href(example), expected)
 
 
+class TestContextForOrgEmail(unittest.TestCase):
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'worst_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'best_performing_in_period')
+    @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
+           'most_change_in_period')
+    def test_non_ordinal_sorting(
+            self,
+            most_change_in_period,
+            best_performing_in_period,
+            worst_performing_in_period):
+        ordinal_measure_1 = MagicMock(low_is_good=True)
+        non_ordinal_measure_1 = MagicMock(low_is_good=None)
+        non_ordinal_measure_2 = MagicMock(low_is_good=None)
+        most_change_in_period.return_value = {
+            'improvements': [
+                (ordinal_measure_1,)],
+            'declines': [(non_ordinal_measure_1,), (non_ordinal_measure_2,)]
+        }
+        best_performing_in_period.return_value = [
+            ordinal_measure_1, non_ordinal_measure_1]
+        worst_performing_in_period.return_value = [
+            ordinal_measure_1, non_ordinal_measure_1]
+        finder = bookmark_utils.InterestingMeasureFinder(
+            pct='foo')
+        context = finder.context_for_org_email()
+        self.assertEqual(
+            context['most_changing_interesting'],
+            [(non_ordinal_measure_1,), (non_ordinal_measure_2,)])
+        self.assertEqual(
+            context['interesting'], [non_ordinal_measure_1])
+        self.assertEqual(
+            context['best'], [ordinal_measure_1])
+        self.assertEqual(
+            context['worst'], [ordinal_measure_1])
+        self.assertEqual(
+            context['most_changing']['improvements'], [(ordinal_measure_1,)])
+
+
 class TruncateSubjectTestCase(unittest.TestCase):
     def test_truncate_subject(self):
         data = [
             {'input': 'a short title by me',
              'expected': 'Your monthly update about a short title by me'},
+            {'input': 'THING IN CAPS',
+             'expected': 'Your monthly update about THING IN CAPS'},
             {'input':
              ('Items for Abacavir + Levocabastine + Levacetylmethadol '
               'Hydrochloride + 5-Hydroxytryptophan vs Frovatriptan + '
@@ -624,6 +667,10 @@ def _makeContext(**kwargs):
         'worst': [
         ],
         'best': [
+        ],
+        'most_changing_interesting': [
+        ],
+        'interesting': [
         ]
     }
     if 'declines' in kwargs:
@@ -644,4 +691,9 @@ def _makeContext(**kwargs):
         empty_context['worst'] = kwargs['worst']
     if 'best' in kwargs:
         empty_context['best'] = kwargs['best']
+    if 'interesting' in kwargs:
+        empty_context['interesting'] = kwargs['interesting']
+    if 'most_changing_interesting' in kwargs:
+        empty_context['most_changing_interesting'] = \
+          kwargs['most_changing_interesting']
     return empty_context

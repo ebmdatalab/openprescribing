@@ -187,11 +187,16 @@ describe('Measures', function() {
           id: 6,
           meanPercentile: null,
           lowIsGood: false
+        },
+        {
+          id: 7,
+          meanPercentile: 40,
+          lowIsGood: null
         }
       ];
       var result = mu.sortData(data);
       var positions = _.map(result, function(d) {return d.id});
-      expect(positions).to.eql([2,5,3,4,1,6]);
+      expect(positions).to.eql([2,5,3,4,1,7,6]);
     });
   });
 
@@ -379,9 +384,6 @@ describe('Measures', function() {
       expect(result.total).to.equal(7);
       expect(result.worseThanMedian).to.equal(3);
       expect(result.potentialSavings50th).to.equal(300);
-      var str = "Over the past 6 months, 3 of 7 CCGs have prescribed ";
-      str += 'worse than the national median.';
-      expect(result.performanceDescription).to.equal(str);
       str = 'Over the past 6 months, if all CCGs had prescribed at ';
       str += 'the median ratio or better, then NHS England would have ';
       str += 'spent £300.00 less. (We use the national median as a ';
@@ -411,9 +413,6 @@ describe('Measures', function() {
       expect(result.total).to.equal(6);
       expect(result.worseThanMedian).to.equal(2);
       expect(result.potentialSavings50th).to.equal(12000);
-      var str = "Over the past 6 months, this organisation has ";
-      str += "prescribed worse than the median on 2 of 6 measures.";
-      expect(result.performanceDescription).to.equal(str);
       str = "Over the past 6 months, if this practice  had prescribed ";
       str += "at the median ratio or better on all cost-saving measures ";
       str += "below, then it would have spent £12,000.00 less. (We use ";
@@ -471,16 +470,14 @@ describe('Measures', function() {
         rollUpBy: 'org_id',
         orgType: 'CCG',
         orgId: null,
-        parentOrg: null
+        parentOrg: null,
+        lowIsGood: null
       };
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      str = 'This CCG was at the 80th percentile on average across the past ';
-      str += '6 months. If it had prescribed in line ';
-      str += 'with the median, this CCG would have spent £10.00 less ';
-      str += 'over the past 6 months.';
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. In this case, it  was at the 80th percentile on average across the past 6 months. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -506,6 +503,7 @@ describe('Measures', function() {
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
+      expect(result[0].measureUrl).to.be.undefined;
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
       var str = 'This CCG was at the 80th percentile ';
       str += 'on average across the past 6 months. ';
@@ -536,6 +534,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
+      expect(result[0].measureUrl).to.equal('/measure/ace');
       str = 'This CCG was at the 80th percentile on average across the ';
       str += 'past 6 months. If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
@@ -710,6 +709,22 @@ describe('Measures', function() {
       result = mu._getChartOptions(d, true,
         options, chartOptions);
       expect(result.yAxis.reversed).not.to.equal(true);
+    });
+
+    it('does not reverse the yAxis when low_is_good is null', function() {
+      var d = {
+        lowIsGood: null,
+        data: [{x: 0, y: 60}, {x: 10, y: 0}]
+      },
+      options = {
+        rollUpBy: 'org_id',
+        globalYMax: {y: 100},
+        globalYMin: {y: 10}
+      },
+      chartOptions = {dashOptions: { chart: {}, legend: {}}};
+      var result = mu._getChartOptions(d, true,
+        options, chartOptions);
+      expect(result.yAxis.reversed).to.be.undefined;
     });
 
     it('sets correct Highcharts options for non-% measures', function() {

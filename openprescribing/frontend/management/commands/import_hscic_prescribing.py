@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 
 from frontend.management.commands.convert_hscic_prescribing import Command as ConvertCommand
-from frontend.models import SHA, PCT, ImportLog
+from frontend.models import PCT, ImportLog
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class Command(BaseCommand):
             self.date = self._date_from_filename(fname)
         f = self._get_path_to_formatted_data(fname)
         if not options['skip_orgs']:
-            self.import_shas_and_pcts(f)
+            self.import_pcts(f)
         self.drop_partition()
         self.create_partition()
         self.import_prescriptions(f)
@@ -74,26 +74,20 @@ class Command(BaseCommand):
             # we do in BigQuery, then download the result for ingestion
             return aggregate_nhs_digital_data(fname)
 
-    def import_shas_and_pcts(self, filename):
+    def import_pcts(self, filename):
         logger.info('Importing SHAs and PCTs from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
-        sha_codes = set()
         pct_codes = set()
         i = 0
         for row in rows:
-            sha_codes.add(row[0])
-            pct_codes.add(row[1])
+            pct_codes.add(row[0])
             i += 1
             if self.truncate and i > 500:
                 break
-        shas_created = pcts_created = 0
-        for sha_code in sha_codes:
-            s, created = SHA.objects.get_or_create(code=sha_code)
-            shas_created += created
+        pcts_created = 0
         for pct_code in pct_codes:
             p, created = PCT.objects.get_or_create(code=pct_code)
             pcts_created += created
-        logger.info("%s SHAs created" % shas_created)
         logger.info("%s PCTs created" % pcts_created)
 
     def create_partition(self):
@@ -154,36 +148,21 @@ class Command(BaseCommand):
 
     def create_partition_indexes(self):
         indexes = [
-            ("CREATE INDEX %s_6ea07fe3 "
+            ("CREATE INDEX idx_%s_presentation "
+             "ON %s (presentation_code varchar_pattern_ops)"),
+            ("CREATE INDEX idx_%s_practice_id "
              "ON %s "
              "USING btree (practice_id)"),
-            ("CREATE INDEX %s_by_pct "
-             "ON %s "
-             "USING btree (presentation_code, pct_id)"),
-            ("CREATE INDEX %s_by_pct_and_presentation "
-             "ON %s "
-             "USING btree (pct_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_by_prac_date_code "
-             "ON %s "
-             "USING btree (practice_id, processing_date, presentation_code)"),
-            ("CREATE INDEX %s_by_practice "
-             "ON %s "
-             "USING btree (presentation_code, practice_id)"),
-            ("CREATE INDEX %s_by_practice_and_code "
-             "ON %s "
-             "USING btree ("
-             "practice_id, presentation_code varchar_pattern_ops)"),
-            ("CREATE INDEX %s_idx_date_and_code "
-             "ON %s "
-             "USING btree (processing_date, presentation_code)")]
+            ("CREATE INDEX idx_%s_pct_id "
+             "ON %s (pct_id)"),
+            ("CREATE INDEX idx_%s_date "
+             "ON %s (processing_date)"),
+            ("CLUSTER %s USING idx_%s_presentation"),
+        ]
         constraints = [
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s_pkey "
              "PRIMARY KEY (id)"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s_chemical_bnf_code "
-             "FOREIGN KEY (chemical_id) REFERENCES frontend_chemical(bnf_code)"
-             " DEFERRABLE INITIALLY DEFERRED"),
             ("ALTER TABLE %s ADD CONSTRAINT "
              "cnstrt_%s__practice_code "
              "FOREIGN KEY (practice_id) REFERENCES frontend_practice(code) "
@@ -192,10 +171,6 @@ class Command(BaseCommand):
              "cnstrt_%s__pct_code "
              "FOREIGN KEY (pct_id) REFERENCES frontend_pct(code) "
              "DEFERRABLE INITIALLY DEFERRED"),
-            ("ALTER TABLE %s ADD CONSTRAINT "
-             "cnstrt_%s__sha_code "
-             "FOREIGN KEY (sha_id) REFERENCES frontend_sha(code) "
-             "DEFERRABLE INITIALLY DEFERRED")
             ]
         partition_name = self._partition_name()
         with connection.cursor() as cursor:
@@ -215,9 +190,9 @@ class Command(BaseCommand):
     def import_prescriptions(self, filename):
         logger.info('Importing Prescriptions from %s' % filename)
         # start = time.clock()
-        copy_str = "COPY %s(sha_id,pct_id,"
-        copy_str += "practice_id,chemical_id,presentation_code,"
-        copy_str += "presentation_name,total_items,actual_cost,"
+        copy_str = "COPY %s(pct_id,"
+        copy_str += "practice_id,presentation_code,"
+        copy_str += "total_items,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
         i = 0

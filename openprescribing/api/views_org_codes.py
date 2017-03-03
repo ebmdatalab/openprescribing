@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import view_utils as utils
 from django.db.models import Q
-from frontend.models import PCT, Practice, SHA
+from frontend.models import PCT, Practice
 
 
 @api_view(['GET'])
@@ -26,18 +26,10 @@ def _get_org_from_code(q, is_exact, org_type):
         if len(q) == 3:
             results = PCT.objects.filter(Q(code=q) | Q(name=q)) \
                                  .filter(org_type='CCG')
-            values = results.values('name', 'code', 'managing_group')
+            values = results.values('name', 'code')
             for v in values:
                 v['id'] = v['code']
                 v['type'] = 'CCG'
-                v['area_team'] = v['managing_group']
-                del v['managing_group']
-            if results.count() == 0:
-                results = SHA.objects.filter(Q(code=q) | Q(name=q))
-                values = results.values('name', 'code')
-                for v in values:
-                    v['id'] = v['code']
-                    v['type'] = 'Area Team'
         else:
             results = Practice.objects.filter(Q(code=q) | Q(name=q))
             values = results.values('name', 'code', 'ccg')
@@ -50,10 +42,7 @@ def _get_org_from_code(q, is_exact, org_type):
             values += _get_practices_like_code(q)
         elif org_type == 'CCG':
             values += _get_pcts_like_code(q)
-        elif org_type == 'AT':
-            values += _get_shas_like_code(q)
         else:
-            values += _get_shas_like_code(q)
             values += _get_pcts_like_code(q)
             values += _get_practices_like_code(q)
     return values
@@ -90,23 +79,8 @@ def _get_pcts_like_code(q):
                           .filter(org_type='CCG')
     else:
         pcts = PCT.objects.all()
-    pct_values = pcts.values('name', 'code', 'managing_group')
+    pct_values = pcts.values('name', 'code')
     for p in pct_values:
         p['id'] = p['code']
         p['type'] = 'CCG'
-        p['area_team'] = p['managing_group']
-        del p['managing_group']
     return pct_values
-
-
-def _get_shas_like_code(q):
-    if q:
-        shas = SHA.objects.filter(Q(code__istartswith=q) |
-                                  Q(name__icontains=q))
-    else:
-        shas = SHA.objects.all()
-    sha_values = shas.values('name', 'code')
-    for p in sha_values:
-        p['id'] = p['code']
-        p['type'] = 'Area Team'
-    return sha_values

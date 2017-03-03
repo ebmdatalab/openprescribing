@@ -1,38 +1,38 @@
 {
-	"name": "Vitamin B complex",
-	"title": [
-		"vitamin B complex ",
-		"as a percentage of prescribing of vitamin B and thiamine tablets"
-	],
-	"description": [
-		"Prescribing of vitamin B complex (normal and strong tablets)",
-		"as a percentage of prescribing of vitamin B and thiamine tablets"
-	],
-	"why_it_matters": [
-      "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
-      "<a href='https://www.nice.org.uk/guidance/cg100/chapter/1-Guidance#wernickes-encephalopathy'>2010 NICE guidance</a> states: ",
-      "thiamine should be given in doses toward the upper end of the British national formulary range.  ",
-      "This range is: <a href='https://www.evidence.nhs.uk/formulary/bnf/current/9-nutrition-and-blood/96-vitamins/962-vitamin-b-group/thiamine'>Mild deficiency, by mouth, 25–100 mg daily; severe deficiency, 200–300 mg daily in divided dose</a>. ",
-      "Vitamin B compound tablets and compound strong tablets have 1mg and 5mg of thiamine respectively, and are not recommended in the NICE guidance."
-	],
-	"numerator_short": "Vitamin B complex items",
-	"denominator_short": "Vitamin B complex and thiamine items",
-	"url": null,
-	"is_percentage": true,
-	"is_cost_based": false,
-	"low_is_good": true,
-	"numerator_columns": [
-		"SUM(items) AS numerator, "
-	],
-	"numerator_from": "[ebmdatalab:hscic.prescribing] ",
-	"numerator_where": [
-		"(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA')"
-	],
-	"denominator_columns": [
-		"SUM(items) AS denominator, "
-	],
-	"denominator_from": "[ebmdatalab:hscic.prescribing] ",
-	"denominator_where": [
-		"(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA' OR bnf_code LIKE '0906026M0%AG' OR bnf_code LIKE '0906026M0%AF')"
-	]
+  "name": "Vitamin B complex",
+  "title": [
+    "vitamin B complex ",
+    "as a percentage of prescribing of vitamin B and thiamine tablets"
+  ],
+  "description": [
+    "Prescribing of vitamin B complex (normal and strong tablets)",
+    "as a percentage of prescribing of vitamin B and thiamine tablets"
+  ],
+  "why_it_matters": [
+    "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
+    "<a href='https://www.nice.org.uk/guidance/cg100/chapter/1-Guidance#wernickes-encephalopathy'>2010 NICE guidance</a> states: ",
+    "thiamine should be given in doses toward the upper end of the British national formulary range.  ",
+    "This range is: <a href='https://www.evidence.nhs.uk/formulary/bnf/current/9-nutrition-and-blood/96-vitamins/962-vitamin-b-group/thiamine'>Mild deficiency, by mouth, 25–100 mg daily; severe deficiency, 200–300 mg daily in divided dose</a>. ",
+    "Vitamin B compound tablets and compound strong tablets have 1mg and 5mg of thiamine respectively, and are not recommended in the NICE guidance."
+  ],
+  "numerator_short": "Vitamin B complex items",
+  "denominator_short": "Vitamin B complex and thiamine items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA')"
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA' OR bnf_code LIKE '0906026M0%AG' OR bnf_code LIKE '0906026M0%AF')"
+  ]
 }

@@ -1,10 +1,14 @@
+import cPickle
 import uuid
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from validators import isAlphaNumeric
 import model_prescribing_units
+
+from anymail.signals import EventType
 
 
 class Section(models.Model):
@@ -47,19 +51,6 @@ class Section(models.Model):
         ordering = ["bnf_id"]
 
 
-class SHA(models.Model):
-    '''
-    SHAs or Area Teams (depending on date).
-    '''
-    code = models.CharField(max_length=3, primary_key=True,
-                            help_text='Strategic health authority code')
-    ons_code = models.CharField(max_length=9, null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    boundary = models.MultiPolygonField(null=True, blank=True)
-
-    objects = models.GeoManager()
-
-
 class PCT(models.Model):
     '''
     PCTs or CCGs (depending on date).
@@ -77,7 +68,6 @@ class PCT(models.Model):
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
                                 default='Unknown')
     boundary = models.GeometryField(null=True, blank=True)
-    managing_group = models.ForeignKey(SHA, null=True, blank=True)
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
@@ -128,7 +118,6 @@ class Practice(models.Model):
         ('P', 'Proposed')
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True)
-    area_team = models.ForeignKey(SHA, null=True, blank=True)
     code = models.CharField(max_length=6, primary_key=True,
                             help_text='Practice code')
     name = models.CharField(max_length=200)
@@ -336,13 +325,10 @@ class Prescription(models.Model):
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
     '''
-    sha = models.ForeignKey(SHA)
     pct = models.ForeignKey(PCT)
     practice = models.ForeignKey(Practice)
-    chemical = models.ForeignKey(Chemical)
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
-    presentation_name = models.CharField(max_length=1000)
     total_items = models.IntegerField()
     actual_cost = models.FloatField()
     quantity = models.FloatField()
@@ -460,10 +446,18 @@ class MeasureGlobal(models.Model):
         unique_together = (('measure', 'month'),)
 
 
+class TruncatingCharField(models.CharField):
+    def get_prep_value(self, value):
+        value = super(TruncatingCharField, self).get_prep_value(value)
+        if value:
+            return value[:self.max_length]
+        return value
+
+
 class SearchBookmark(models.Model):
     '''A bookmark for an individual analyse search made by a user.
     '''
-    name = models.CharField(max_length=200)
+    name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -573,3 +567,76 @@ class Profile(models.Model):
         search_bookmark = self.user.searchbookmark_set.last()
         bookmarks = [x for x in [org_bookmark, search_bookmark] if x]
         return sorted(bookmarks, key=lambda x: x.created_at)[-1]
+
+
+class EmailMessageManager(models.Manager):
+    def create_from_message(self, msg):
+        user = User.objects.filter(email=msg.to[0])
+        user = user and user[0] or None
+        if 'message-id' not in msg.extra_headers:
+            raise StandardError(
+                "Messages stored as frontend.EmailMessage"
+                "must have a message-id header")
+        m = self.create(
+            message_id=msg.extra_headers['message-id'],
+            to=msg.to,
+            subject=msg.subject,
+            tags=msg.tags,
+            user=user,
+            message=msg
+        )
+        return m
+
+
+class EmailMessage(models.Model):
+    message_id = models.CharField(max_length=998, primary_key=True)
+    pickled_message = models.BinaryField()
+    to = ArrayField(
+        models.CharField(max_length=254, db_index=True)
+    )
+    subject = models.CharField(max_length=200)
+    tags = ArrayField(
+        models.CharField(max_length=100, db_index=True),
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    user = models.ForeignKey(User, null=True, blank=True)
+    send_count = models.SmallIntegerField(default=0)
+    objects = EmailMessageManager()
+
+    @property
+    def message(self):
+        return cPickle.loads(str(self.pickled_message))
+
+    @message.setter
+    def message(self, value):
+        self.pickled_message = cPickle.dumps(value)
+
+    def send(self):
+        self.message.send()
+        self.send_count += 1
+        self.save()
+
+    def __unicode__(self):
+        return self.subject
+
+
+class MailLog(models.Model):
+    EVENT_TYPE_CHOICES = [
+        (value, value)
+        for name, value in vars(EventType).iteritems()
+        if not name.startswith('_')]
+    # delievered, accepted (by mailgun), error, warn
+    metadata = JSONField(null=True, blank=True)
+    recipient = models.CharField(max_length=254, db_index=True)
+    tags = ArrayField(
+        models.CharField(max_length=100, db_index=True),
+        null=True
+    )
+    reject_reason = models.CharField(max_length=15, null=True, blank=True)
+    event_type = models.CharField(
+        max_length=15,
+        choices=EVENT_TYPE_CHOICES,
+        db_index=True)
+    timestamp = models.DateTimeField(null=True, blank=True)
+    message = models.ForeignKey(EmailMessage, null=True)
