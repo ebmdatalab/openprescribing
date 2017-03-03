@@ -11,7 +11,6 @@ import urlparse
 from anymail.message import attach_inline_image_file
 from dateutil.relativedelta import relativedelta
 from premailer import Premailer
-from titlecase import titlecase
 import numpy as np
 
 from django.conf import settings
@@ -21,6 +20,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
+from common.utils import nhs_titlecase
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
@@ -417,7 +417,7 @@ def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
     max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
     ellipsis = '...'
-    subject = titlecase(subject)
+    subject = nhs_titlecase(subject)
     if len(subject) <= max_length:
         truncated = subject
     else:

@@ -1,9 +1,12 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from frontend.models import Chemical, Section, Practice
+from frontend.models import Chemical
 from frontend.models import EmailMessage
 from frontend.models import MailLog
+from frontend.models import PCT
+from frontend.models import Practice
 from frontend.models import SearchBookmark
+from frontend.models import Section
 from frontend.models import User
 
 
@@ -75,6 +78,10 @@ class PracticeTestCase(TestCase):
         address += "BROADSTAIRS, KENT, CT10 2TR"
         self.assertEqual(practice.address_pretty_minus_firstline(), address)
 
+    def test_name_titlecase(self):
+        practice = Practice.objects.get(code='G82650')
+        self.assertEqual(practice.cased_name, 'Mocketts Wood Surgery')
+
 
 class TestMessage(object):
     to = ['foo']
@@ -126,3 +133,13 @@ class MailLogTestCase(TestCase):
             metadata={'thing': ['foo']}
         )
         self.assertEqual(MailLog.objects.first().metadata['thing'][0], 'foo')
+
+
+class PCTTestCase(TestCase):
+    def test_name_titlecase(self):
+        PCT.objects.create(
+            code='asd',
+            org_type='CCG',
+            name='NHS BACON CCG'
+        )
+        self.assertEqual(PCT.objects.first().cased_name, 'NHS Bacon CCG')

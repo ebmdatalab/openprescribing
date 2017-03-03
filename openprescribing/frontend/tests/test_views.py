@@ -179,7 +179,7 @@ class TestAlertViews(TransactionTestCase):
         self.assertContains(
             response, "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("about prescribing in 1/ST ANDREWS", mail.outbox[0].body)
+        self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
 
     def test_practice_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
@@ -195,7 +195,7 @@ class TestAlertViews(TransactionTestCase):
         response = self.client.get(confirm_url, follow=True)
         self.assertContains(
             response, "subscribed to monthly alerts about "
-            "<em>prescribing in 1/ST ANDREWS")
+            "<em>prescribing in 1/ST Andrews")
         self.assertTrue(response.context['user'].is_active)
 
 

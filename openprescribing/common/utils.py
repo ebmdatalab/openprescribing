@@ -2,12 +2,22 @@ from contextlib import contextmanager
 from os import environ
 import hashlib
 import logging
+from titlecase import titlecase
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
 
 logger = logging.getLogger(__name__)
+
+
+def nhs_abbreviations(word, **kwargs):
+    if word.upper() in ('NHS', 'CCG', 'GP'):
+        return word.upper()
+
+
+def nhs_titlecase(words):
+    return titlecase(words, callback=nhs_abbreviations)
 
 
 def get_env_setting(setting, default=None):
