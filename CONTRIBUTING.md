@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing! If you haven't already, drop us a line on mail@openprescribing.net. We want you working on things you're excited about.
 
-We use GitHub issues for suggestions, and [Trello](https://trello.com/b/RGR9BttD/oxford-data-lab) is our bug tracking system. Mail us and we'll add you.
+We use GitHub issues for suggestions and for bug tracking.
 
 ## Testing
 
