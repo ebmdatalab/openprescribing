@@ -11,98 +11,99 @@
 
 <p>We strongly recommend reading NHS Digital's <a href="http://content.digital.nhs.uk/gpprescribingdata">introduction to prescribing data</a>, including their excellent <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) and <a href="http://content.digital.nhs.uk/media/10686/Download-glossary-of-terms-for-GP-prescribing---presentation-level/pdf/PLP_Presentation_Level_Glossary_April_2015.pdf">glossary of terms</a> (PDF).</p>
 
-<p>Is your question not listed below? Send us a message <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">here</a>!</p>, and we'll get back to you</p>
+<p>Is your question not listed below? Send us a message <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">here</a> and we'll get back to you</p>
 
-<p><strong>General</strong></p>
+<h2>General</h2>
 <p><a href="#siteupdate">When do you update the site?</a></p>
 <p><a href="#extractdownload">How do I download an extract of the data?</a></p>
 <p><a href="#cite">How do I cite OpenPrescribing?</a></p>
 <p><a href="#timeperiod">What time period does the dataset cover?</a></p>
 
-<p><strong>Prescribing data</strong></p>
+<h2>Prescribing data</h2>
 <p><a href="#prescitem">What is a prescription item?</a></p>
 <p><a href="#prescquantity">What does quantity mean?</a></p>
 <p><a href="#actualcost">What is actual cost?</a></p>
 <p><a href="#bnfchange">How do you deal with BNF code changes?</a></p>
 
-<p><strong>Analyse</strong></p>
+<h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
 <p><a href="#denominator">What denominator should I use?</a></p>
 <p><a href="#appliance">How can I search for appliance data?</a></p>
 
-<p><strong>CCG & GP Dashboards</strong></p>
+<h2>CCG &amp; GP Dashboards</h2>
 <p><a href="#measureinterpret">How do I interpret the measures?</a></p>
 <p><a href="#measurechose">How are the measures chosen?</a></p>
 <p><a href="#gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</a></p>
 
-<p><strong><a href="#Disclaimer">Disclaimer</a></strong></p>
+<h2>Disclaimer</h2>
+<p><a href="#Disclaimer">Disclaimer</a></p>
 
 <hr/>
 
-<h3>General</h3>
+<h2>General</h2>
 
-<p><strong><a id="siteupdate">When do you update the site?</a></strong></p>
+<h3 id="siteupdate">When do you update the site?</h3>
 <p>NHS Digital publish the prescribing data on the first Friday of the month. We aim to update OpenPrescribing by the Wednesday of the following week. The data from NHS Digital is three months behind so for example January's prescribing data is published in April</p>
 
-<p><strong><a id="extractdownload">How do I download an extract of the data?</a></strong></p>
+<h3 id="extractdownload">How do I download an extract of the data?</h3>
 <p>You can download data from the ‘Trends’ section of the site, either by <a href="/chemical">chemical</a> or by <a href="/bnf">BNF section</a>.</p>
-<p>It isn’t currently possible to download data extract on our dashboards or from the analyse page. This is a feature we will be adding in the future. In the meantime, if you are unable to download the data you need from Trends, <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a>! and we may be able to send you an extract.</p>
+<p>It isn’t currently possible to download data extract on our dashboards or from the analyse page. This is a feature we will be adding in the future. In the meantime, if you are unable to download the data you need from Trends, <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a> and we may be able to send you an extract.</p>
 
-<p><strong><a id="cite">How do I cite OpenPrescribing?</a></strong></p>
+<h3 id="cite">How do I cite OpenPrescribing?</h3>
 <p>You are welcome to use data or graphs from this site in your academic output with attribution. Our methods paper will be published shortly, until then please cite "OpenPrescribing.net, EBM DataLab, University of Oxford, 2017" as the source for academic attribution.</p>
 
 <p>If you use data or images from this site online or in a report, please link back to us. Your readers will then be able to see live updates to the data you are interested in, and explore other queries for themselves.</p>
 
-<p><strong><a id="timeperiod">What time period does the dataset cover?</a></strong></p>
+<h3 id="timeperiod">What time period does the dataset cover?</h3>
 <p>The prescribing dataset includes data from August 2010, and you can search for GP practice data from this date using the analyse page. CCGs were formed in April 2013, so searching for CCG data will only show you data from this date onwards.</p>
 
-<h3>Prescribing Dataset</h3>
+<h2>Prescribing Dataset</h2>
 
-<p><strong><a id="prescitem">What is a prescription item?</a></strong></p>
+<h3 id="prescitem">What is a prescription item?<h3>
 <p>NHS Digital define a prescription item in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
 <p>‘A prescription item is a single supply of a medicine, dressing or appliance written on a prescription form. If a prescription form includes three medicines it is counted as three prescription items.</p>
 
 <p>Item figures do not provide any indication of the length of treatment or quantity of medicine prescribed. Patients with a long term condition usually get regular prescriptions. While many prescriptions are for one month (28 or 30 days supply), items will be for varying length of treatment and quantity.’</p>
 
-<p><strong><a id="prescquantity">What does quantity mean?</a></strong></p>
+<h3 id="prescquantity">What does quantity mean?</h3>
 <p>NHS Digital define quantity in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
-<p>The quantity of a drug dispensed is measured in units depending on the formulation of the product, which is given in the drug name. Quantities should not be added together across preparations because of different strengths and formulations.</p>
+<p>'The quantity of a drug dispensed is measured in units depending on the formulation of the product, which is given in the drug name. Quantities should not be added together across preparations because of different strengths and formulations.</p>
 <p>• Where the formulation is tablet, capsule, ampoule, vial etc the quantity will be the number of tablets, capsules, ampoules, vials etc</p>
 <p>• Where the formulation is a liquid the quantity will be the number of MLS</p>
-<p>• Where the formulation is a solid form (eg. Cream, gel, ointment) the quantity will be the number of grammes’</p>
+<p>• Where the formulation is a solid form (eg. Cream, gel, ointment) the quantity will be the number of grammes'</p>
 
-<p><strong><a id="actualcost">What is Actual Cost?</a></strong></p>
+<h3 id="actualcost">What is actual cost?</h3>
 <p>NHS Digital define actual cost in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
 <p>‘The Net Ingredient Cost (NIC) is the basic price of a drug, i.e. the price listed in the Drug Tariff or price lists. Actual Cost is the estimated cost to the NHS, which is usually lower than Net Ingredient Cost. Actual Cost is calculated by subtracting the average percentage discount per item received by pharmacists (based on the previous month) from the Net Ingredient Cost, but adding in the value of a container allowance for each prescription item’</p>
 
-<p><strong><a id="bnfchange">How do you deal with BNF code changes?</a></strong></p>
-<p>Chemicals can occasionally be re-classified from one BNF code to another. An example of this is Linaclotide, which changed from 0102000AH to 0106070B0 in 2013. We do not reconcile these codes back together. If a chemical moves from one BNF chapter to another, it will appear in any analyse searches under the old chapter up until the date it moved. We do sometimes reconcile the BNF codes for our own internal analyses, and we may be able to help you with this - <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a>!</p> 
+<h3 id="bnfchange">How do you deal with BNF code changes?</h3>
+<p>Chemicals can occasionally be re-classified from one BNF code to another. An example of this is Linaclotide, which changed from <a href="/chemical/0102000AH/">0102000AH<\a> to <a href="/chemical/0106070B0">0106070B0<\a> in 2013. We do not reconcile these codes back together. If a chemical moves from one BNF chapter to another, it will appear in any analyse searches under the old chapter up until the date it moved. We do sometimes reconcile the BNF codes for our own internal analyses, and we may be able to help you with this - <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a>!</p> 
 
-<h3>Analyse</h3>
-<p><strong><a id="analysetutorial">How do I use the analyse page?</a></strong></p>
+<h2>Analyse</h2>
+<h3 id="analysetutorial">How do I use the analyse page?</h3>
 <p>Instructions are found <a href="/docs/analyse">here</a></p>
 
-<p><strong><a id="denominator">What denominator should I use?</a></strong></p>
-<p>See our <a href="/caution/">guidelines</a></p> on using the data responsibly</p>
+<h3 id="denominator">What denominator should I use?</h3>
+<p>See our <a href="/caution/">guidelines</a> on using the data responsibly</p>
 
-<p><strong><a id="appliance">How can I search for appliance data?</a></strong></p>
+<h3 id="appliance">How can I search for appliance data?</h3>
 <p>Most appliances are currently not available to search for on the OpenPrescribing site. We are working to add this, but in the meantime you can <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">contact us</a> to ask for a data extract. </p>
                                                              
-<h3>CCG & GP Dashboards</h3>
+<h2>CCG &amp; GP Dashboards</h2>
 
-<p><strong><a id="measureinterpret">How should I interpret the measures?</a></strong></p>
-<p>See our <a href="/caution/">guidelines</a></p> on using the data responsibly</p>
+<h3 id="measureinterpret">How should I interpret the measures?</h3>
+<p>See our <a href="/caution/">guidelines</a> on using the data responsibly</p>
 <div class="alert alert-danger" role="alert" style="max-width: 800pxt">
 <strong>Warning!</strong> These are important measures, but they should be interpreted thoughtfully. There may be good reasons why a practice is prescribing more or less of something than other practices in the country, e.g. they may have a very different patient population to the national average.
 </div>
 
-<p><strong><a id="measurechose">How are the measures chosen?</a></strong></p>
-<p>Our measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a>) from Northern, Eastern & Western Devon CCG</p>
+<h3 id="measurechose">How are the measures chosen?</h3>
+<p>Our measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a> from Northern, Eastern & Western Devon CCG</p>
 
-<p><strong><a id="gpclose">A GP Practice has closed or merged - why is it included on your dashboards?<a/></strong></p>
+<h3 id="gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</h3>
 <p>OpenPrescribing uses the prescribing dataset published monthly by NHS Digital, which includes the past prescribing for practices that have merged or closed. Data will still show for a closed practice if a prescription prescribed by that surgery was dispensed in the community after the closure date. The historical data for closed practices will continue to be shown on OpenPrescribing, and we are currently thinking about how we can indicate to the user that the practice no longer operates.</p>
 
-<h3><a id="Disclaimer">Disclaimer</a></h3>
+<h3 id="Disclaimer">Disclaimer</h3>
 <p>We accept no liability for any errors in the data or its publication here: use this data at your own risk. You should not use this data to make individual prescribing decisions.</p>
 
 
