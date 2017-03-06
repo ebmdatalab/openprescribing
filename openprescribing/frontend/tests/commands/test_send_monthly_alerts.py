@@ -3,6 +3,7 @@ import re
 import unittest
 
 from mock import patch
+from mock import MagicMock
 
 from django.core import mail
 from django.core.management import call_command
@@ -11,6 +12,7 @@ from django.test import TestCase
 from frontend.models import EmailMessage
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
+from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
 from frontend.tests.test_bookmark_utils import _makeContext
 
 
@@ -100,21 +102,50 @@ class GetBookmarksTestCase(TestCase):
 
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
 @patch('frontend.views.bookmark_utils.attach_image')
+class FailingEmailTestCase(TestCase):
+    fixtures = ['bookmark_alerts', 'measures']
+
+    def test_successful_sends(self, attach_image, finder):
+        attach_image.side_effect = [StandardError, None, None]
+        test_context = _makeContext(worst=[MagicMock()])
+        with self.assertRaises(BatchedEmailErrors):
+            call_mocked_command(test_context, finder, max_errors=4)
+        self.assertEqual(EmailMessage.objects.count(), 2)
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_max_errors(self, attach_image, finder):
+        attach_image.side_effect = [StandardError, None, None]
+        test_context = _makeContext(worst=[MagicMock()])
+        self.assertEqual(EmailMessage.objects.count(), 0)
+        with self.assertRaises(BatchedEmailErrors):
+            call_mocked_command(test_context, finder, max_errors=0)
+        self.assertEqual(EmailMessage.objects.count(), 0)
+        self.assertEqual(len(mail.outbox), 0)
+
+
+@patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
+@patch('frontend.views.bookmark_utils.attach_image')
 class OrgEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
 
     def test_email_recipient(self, attach_image, finder):
         test_context = _makeContext()
-        call_mocked_command(test_context, finder)
+        call_mocked_command_with_defaults(test_context, finder)
         self.assertEqual(EmailMessage.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
         email_message = EmailMessage.objects.first()
         self.assertEqual(mail.outbox[-1].to, email_message.to)
         self.assertEqual(mail.outbox[-1].to, ['s@s.com'])
 
-    def test_email_body_no_data(self, attach_image, finder):
+    def test_email_all_recipients(self, attach_image, finder):
         test_context = _makeContext()
         call_mocked_command(test_context, finder)
+        self.assertEqual(EmailMessage.objects.count(), 3)
+        self.assertEqual(len(mail.outbox), 3)
+
+    def test_email_body_no_data(self, attach_image, finder):
+        test_context = _makeContext()
+        call_mocked_command_with_defaults(test_context, finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         # Name of the practice
@@ -125,7 +156,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_headers(self, attach_image, finder):
         test_context = _makeContext()
-        call_mocked_command(test_context, finder)
+        call_mocked_command_with_defaults(test_context, finder)
         message = mail.outbox[-1]
         self.assertIn(
             message.extra_headers['list-unsubscribe'],
@@ -133,13 +164,13 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_text(self, attach_image, finder):
         test_context = _makeContext()
-        call_mocked_command(test_context, finder)
+        call_mocked_command_with_defaults(test_context, finder)
         message = mail.outbox[-1].body
         self.assertIn('**Hello!**', message)
 
     def test_email_body_has_ga_tracking(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
             finder)
         message = mail.outbox[-1].alternatives[0]
@@ -150,7 +181,7 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_declines(self, attach_image, finder):
         attach_image.return_value = 'unique-image-id'
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
             finder)
         message = mail.outbox[-1].alternatives[0]
@@ -167,7 +198,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_two_declines(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(declines=[
                 (measure, 99.92, 0.12, 10.002),
                 (measure, 30, 10, 0),
@@ -180,7 +211,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_three_declines(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(declines=[
                 (measure, 99.92, 0.12, 10.002),
                 (measure, 30, 10, 0),
@@ -198,7 +229,7 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_worst(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         attach_image.return_value = 'unique-image-id'
-        call_mocked_command(_makeContext(worst=[measure]), finder)
+        call_mocked_command_with_defaults(_makeContext(worst=[measure]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("We've found", html)
@@ -211,7 +242,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_three_worst(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(worst=[measure, measure, measure]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -223,7 +254,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_two_savings(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(possible_savings=[
                 (measure, 9.9), (measure, 1.12)]),
             finder)
@@ -240,7 +271,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_one_saving(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(possible_savings=[(measure, 9.9)]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -254,7 +285,7 @@ class OrgEmailTestCase(TestCase):
 
     def test_email_body_achieved_saving(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(achieved_savings=[(measure, 9.9)]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -265,7 +296,7 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_two_achieved_savings(
             self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(
                 achieved_savings=[(measure, 9.9), (measure, 12.0)]),
             finder)
@@ -279,7 +310,7 @@ class OrgEmailTestCase(TestCase):
             html)
 
     def test_email_body_total_savings(self, attach_image, finder):
-        call_mocked_command(
+        call_mocked_command_with_defaults(
             _makeContext(possible_top_savings_total=9000.1), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -356,9 +387,13 @@ class SearchEmailTestCase(TestCase):
 
 def call_mocked_command(context, mock_finder, **opts):
     mock_finder.return_value.context_for_org_email.return_value = context
+    call_command(CMD_NAME, **opts)
+
+
+def call_mocked_command_with_defaults(context, mock_finder, **opts):
     default_opts = {'recipient_email': 's@s.com',
                     'ccg': '03V',
                     'practice': 'P87629'}
     for k, v in opts.items():
         default_opts[k] = v
-    call_command(CMD_NAME, **default_opts)
+    call_mocked_command(context, mock_finder, **default_opts)
