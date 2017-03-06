@@ -216,7 +216,8 @@ class MailLogAdmin(admin.ModelAdmin):
         TagsFilter, 'event_type')
     readonly_fields = fields = (
         'timestamp', 'event_type', 'subject_from_metadata', 'recipient',
-        'tags_str', 'reject_reason', 'raw_message_id', 'metadata_prettyprinted')
+        'tags_str', 'reject_reason', 'raw_message_id',
+        'metadata_prettyprinted')
 
     def metadata_prettyprinted(self, obj):
         return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
