@@ -2,6 +2,7 @@ import json
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.db import connection
 from django.db.models import Count
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -141,13 +142,48 @@ class MailLogInline(admin.TabularInline):
         return False
 
 
+class TagsFilter(admin.SimpleListFilter):
+    title = 'Tags'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'tags'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        tags = model_admin.model.objects.order_by().values('tags').distinct()
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT UNNEST(tags) AS tag "
+                "FROM frontend_maillog "
+                "GROUP BY tag")
+            tags = cursor.fetchall()
+            return ((t[0], t[0]) for t in tags)
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(tags__contains=[self.value()])
+        else:
+            return queryset
+
+
 @admin.register(EmailMessage)
 class EmailMessageAdmin(admin.ModelAdmin):
-    list_display = ('to', 'subject', 'tags', 'created_at', 'send_count')
+    list_display = ('to', 'subject', 'tags_str', 'created_at', 'send_count')
     list_filter = (
-        'tags', 'subject')
+        TagsFilter, 'subject')
     readonly_fields = fields = (
-        'message_id', 'to', 'subject', 'tags', 'created_at', 'send_count',
+        'message_id', 'to', 'subject', 'tags_str', 'created_at', 'send_count',
         'user', 'message_html',)
     inlines = [
         MailLogInline
@@ -160,6 +196,9 @@ class EmailMessageAdmin(admin.ModelAdmin):
         else:
             return mark_safe(obj.message.body)
 
+    def tags_str(self, obj):
+        return ", ".join(obj.tags)
+
     def has_add_permission(self, request, obj=None):
         return False
 
@@ -171,15 +210,26 @@ class EmailMessageAdmin(admin.ModelAdmin):
 class MailLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
     list_display = (
-        'timestamp', 'event_type', 'message_id', 'recipient', 'tags')
+        'timestamp', 'event_type', 'subject_from_metadata',
+        'recipient', 'tags_str')
     list_filter = (
-        'event_type', 'recipient', 'tags')
+        TagsFilter, 'event_type')
     readonly_fields = fields = (
-        'timestamp', 'event_type', 'message_id', 'recipient', 'tags',
-        'reject_reason', 'metadata_prettyprinted')
+        'timestamp', 'event_type', 'subject_from_metadata', 'recipient',
+        'tags_str', 'reject_reason', 'raw_message_id',
+        'metadata_prettyprinted')
 
     def metadata_prettyprinted(self, obj):
         return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
+
+    def tags_str(self, obj):
+        return ", ".join(obj.tags)
+
+    def raw_message_id(self, obj):
+        # We can't use `message_id` as this is resolved to a
+        # ForeignKey by Django, and we don't actually have a
+        # constraint on that
+        return obj.message_id
 
     def has_add_permission(self, request, obj=None):
         return False

@@ -1,4 +1,5 @@
 import cPickle
+import json
 import uuid
 
 from django.contrib.gis.db import models
@@ -651,3 +652,22 @@ class MailLog(models.Model):
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
     message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
+
+    def subject_from_metadata(self):
+        subject = 'n/a'
+        if 'subject' in self.metadata:
+            subject = self.metadata['subject']
+        elif 'message-headers' in self.metadata:
+                headers = json.loads(self.metadata['message-headers'])
+                subject_header = next(
+                    (h for h in headers if h[0] == 'Subject'),
+                    ['', 'n/a']
+                )
+                subject = subject_header[1]
+        else:
+            # likely to be "clicked" event
+            try:
+                subject = self.message.subject
+            except EmailMessage.DoesNotExist:
+                pass
+        return subject
