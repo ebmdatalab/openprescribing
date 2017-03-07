@@ -131,6 +131,7 @@ class MailLogInline(admin.TabularInline):
     fields = readonly_fields = (
         'timestamp', 'event_type', 'message_id', 'recipient', 'tags',
         'reject_reason', 'metadata_prettyprinted')
+    search_fields = ('recipient',)
 
     def metadata_prettyprinted(self, obj):
         return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
