@@ -229,7 +229,8 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_worst(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         attach_image.return_value = 'unique-image-id'
-        call_mocked_command_with_defaults(_makeContext(worst=[measure]), finder)
+        call_mocked_command_with_defaults(
+            _makeContext(worst=[measure]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("We've found", html)
