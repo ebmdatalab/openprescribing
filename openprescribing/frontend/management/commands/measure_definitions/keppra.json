@@ -28,7 +28,6 @@
   ],
   "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
-    "(bnf_code LIKE '0408010A0BB%AC')  "
     "(bnf_code LIKE '0408010A0BB%AC' OR bnf_code LIKE '0408010A0BB%AA' OR bnf_code LIKE '0408010A0BB%AB' ",
     "OR bnf_code LIKE '0408010A0BB%AI')"
   ],
