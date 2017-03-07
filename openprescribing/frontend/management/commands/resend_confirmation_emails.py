@@ -10,7 +10,15 @@ class Command(BaseCommand):
     """Command to resend confirmation emails to unverified users with
     emails filtered by the `email_contains` option.
 
-    The message in the confirmation emails is defined in XXX
+    The message in the confirmation emails is defined in templates at
+    `account/email/email_confirmation_message`. To override the
+    standard message when running this command, alter the templates in
+    `openprescribing/template_overrides/` and execute this command
+    with custom settings, thus:
+
+         python manage.py resend_confirmation_emails \
+           --email_contains=fred.bloggs \
+           --settings=openprescribing.settings.templateoverride
 
     """
     def add_arguments(self, parser):
