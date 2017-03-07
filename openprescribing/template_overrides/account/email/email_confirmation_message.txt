@@ -1,6 +1,6 @@
 {% load account %}{% autoescape off %}Hello from OpenPrescribing!
 
-We recently found out that NHSMail has been discarding all the emails we've been sending.
+We recently found out that NHSMail has been discarding all our emails as spam.
 
 As a result, we think that when you signed up for monthly alerts about {{ user.profile.most_recent_bookmark.topic }}, you never received an email requesting that you confirm this.
 
