@@ -29,25 +29,37 @@ ANYMAIL = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-if 'TRAVIS' not in os.environ:
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'handlers': {
-            'file': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': '../log/test-debug.log',
-            },
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s %(levelname)s [%(name)s:%(lineno)s] '
+                       '%(module)s %(process)d %(thread)d %(message)s')
+        }
+    },
+    'handlers': {
+        'test-file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': "%s/logs/test.log" % INSTALL_ROOT,
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
-        'loggers': {
-            'django': {
-                'handlers': ['file'],
-                'level': 'DEBUG',
-                'propagate': True,
-            },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['test-file'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
-    }
+        'frontend': {
+            'handlers': ['test-file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 # Prefix table names with `test_` to prevent namespace clashes in
 # BigQuery
 BQ_CCG_TABLE_PREFIX = 'test_' + BQ_CCG_TABLE_PREFIX

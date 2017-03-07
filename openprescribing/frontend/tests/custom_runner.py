@@ -28,6 +28,8 @@ class AssetBuildingTestRunner(DiscoverRunner):
         # means we don't have to remember to specify --settings on the
         # command line when testing.
         for key in dir(test_settings):
+            if key == 'LOGGING' and 'TRAVIS' in os.environ:
+                continue
             if key.isupper():
                 setattr(settings, key, getattr(test_settings, key))
 
