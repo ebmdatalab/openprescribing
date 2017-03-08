@@ -1,12 +1,12 @@
 {
   "name": "Keppra vs. levetiracetam",
   "title": [
-    "Prescribing of branded Keppra (BNF code 0408010A0BB)",
-    "compared with prescribing of all levetiracetam (BNF code 0408010A0)"
+    "Prescribing of branded Keppra tablets (BNF code 0408010A0BB)",
+    "compared with prescribing of all levetiracetam tablets (BNF code 0408010A0)"
   ],
   "description": [
-    "Total quantity of Keppra (0408010A0BB),",
-    "as a proportion of total quantity of levetiracetam",
+    "Total quantity of Keppra tablets (0408010A0BB),",
+    "as a proportion of total quantity of levetiracetam tablets",
     "(0408010A0)."
   ],
   "why_it_matters": [
@@ -17,8 +17,8 @@
     "unless there are specific concerns such as patient anxiety, or risk of ",
     "confusion or dosing errors."
   ],
-  "numerator_short": "Keppra quantity",
-  "denominator_short": "Levetiracetam quantity",
+  "numerator_short": "Keppra tablets quantity",
+  "denominator_short": "Levetiracetam tablets quantity",
   "url": null,
   "is_percentage": true,
   "is_cost_based": true,
@@ -28,13 +28,15 @@
   ],
   "numerator_from": "[ebmdatalab:hscic.prescribing] ",
   "numerator_where": [
-    "(bnf_code LIKE '0408010A0BB%%')  "
+    "(bnf_code LIKE '0408010A0BB%AC' OR bnf_code LIKE '0408010A0BB%AA' OR bnf_code LIKE '0408010A0BB%AB' ",
+    "OR bnf_code LIKE '0408010A0BB%AI')"
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
   "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
-    "(bnf_code LIKE '0408010A0%%')  "
+    "(bnf_code LIKE '0408010A0%AC' OR bnf_code LIKE '0408010A0%AA' OR bnf_code LIKE '0408010A0%AB' ",
+    "OR bnf_code LIKE '0408010A0%AI')"
   ]
 }
