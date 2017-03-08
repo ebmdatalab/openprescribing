@@ -1,6 +1,13 @@
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+
 import view_utils as utils
+
+
+class MissingParameter(APIException):
+    status_code = 400
+    default_detail = 'You are missing a required parameter.'
 
 
 @api_view(['GET'])
@@ -133,7 +140,8 @@ def measure_by_ccg(request, format=None):
 def measure_by_practice(request, format=None):
     measure = request.query_params.get('measure', None)
     orgs = utils.param_to_list(request.query_params.get('org', []))
-
+    if not orgs:
+        raise MissingParameter
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
