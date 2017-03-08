@@ -169,3 +169,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 11000)
         self.assertEqual("%.2f" % d['percentile'], '33.33')
         self.assertEqual("%.4f" % d['calc_value'], '0.0909')
+
+    def test_api_no_practice(self):
+        url = '/api/1.0/measure_by_practice/'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 400)
