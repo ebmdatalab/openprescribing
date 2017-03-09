@@ -1,4 +1,5 @@
 import datetime
+import tempfile
 import unittest
 
 from apiclient.http import MediaFileUpload
@@ -117,8 +118,11 @@ class AggregateTestCase(TestCase):
         self.gcs_uri = "gs://ebmdatalab/%s" % object_name
 
     def test_data_is_aggregated(self):
+        target = tempfile.NamedTemporaryFile(mode='r+')
         date = datetime.date(2011, 12, 1)
         cmd = Command()
         cmd.date = date
         cmd.aggregate_nhs_digital_data(
-            self.gcs_uri, '/tmp/bum.csv')
+            self.gcs_uri, target.name)
+        target.seek(0)
+        print target.read()

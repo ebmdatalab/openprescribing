@@ -2,7 +2,10 @@ import csv
 import datetime
 import logging
 import os
+import subprocess
+import tempfile
 import time
+
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
@@ -242,12 +245,17 @@ class Command(BaseCommand):
         client = storage.client.Client(project='ebmdatalab')
         bucket = client.get_bucket('ebmdatalab')
         path = uri.split('ebmdatalab/')[-1]
+        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         if bucket.get_blob(path) is None:
             raise NotFound(path)
 
         # Create table at raw_nhs_digital_data
         table_ref = create_temporary_data_source(uri)
+        temp_table = self.write_aggregated_data_to_temp_table(table_ref)
+        copy_table_to_gcs(temp_table, converted_uri)
+        download_from_gcs(converted_uri, local_path)
 
+    def write_aggregated_data_to_temp_table(self, source_table_ref):
         query = """
          SELECT
           BNF_Code AS presentation_code,
@@ -270,7 +278,7 @@ class Command(BaseCommand):
          GROUP BY
            presentation_code, presentation_name, pct_id,
            practice_code, sha_id, chemical_id
-        """ % (self.date.strftime("%Y-%m-%d"), table_ref)
+        """ % (self.date.strftime("%Y-%m-%d"), source_table_ref)
         client = bigquery.client.Client(project='ebmdatalab')
         dataset = client.dataset(TEMP_DATASET)
         table = dataset.table(
@@ -281,39 +289,32 @@ class Command(BaseCommand):
         job.use_query_cache = False
         job.write_disposition = 'WRITE_TRUNCATE'
         job.allow_large_results = True
-        job.begin()
-        retry_count = 1000
-        while retry_count > 0 and job.state != 'DONE':
-            retry_count -= 1
-            time.sleep(2)
-            job.reload()
-        assert not job.errors, job.errors
+        wait_for_job(job)
+        return table
 
-        # Download the result
-        # Copy to GCS
-        gcs_path = path[:-4] + '_formatted.CSV'
 
-        job = client.extract_table_to_storage(
-            "extract-formatted-table-job-%s" % int(time.time()), table,
-            "gs://ebmdatalab/%s" % (gcs_path)
-            )
-        job.destination_format = 'CSV'
-        job.print_header = False
-        job.begin()
-        retry_count = 1000
+def delete_from_gcs(gcs_uri):
+    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
+    client = storage.Client(project='embdatalab')
+    try:
+        bucket = client.get_bucket(bucket)
+        prefix = blob_name.split('*')[0]
+        for blob in bucket.list_blobs(prefix=prefix):
+            blob.delete()
+    except NotFound:
+        pass
 
-        while retry_count > 0 and job.state != 'DONE':
-            retry_count -= 1
-            time.sleep(2)
-            job.reload()
-        assert not job.errors, job.errors
-        # Download the results to a file
 
-        client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('ebmdatalab')
-        blob = bucket.get_blob(gcs_path)
-        blob.download_to_filename(local_path)
-        return local_path
+def copy_table_to_gcs(table, gcs_uri):
+    delete_from_gcs(gcs_uri)
+    client = bigquery.client.Client(project='ebmdatalab')
+    job = client.extract_table_to_storage(
+        "extract-formatted-table-job-%s" % int(time.time()), table,
+        gcs_uri)
+    job.destination_format = 'CSV'
+    job.compression = 'GZIP'
+    job.print_header = False
+    job = wait_for_job(job)
 
 
 def create_temporary_data_source(source_uri):
@@ -371,3 +372,32 @@ def create_temporary_data_source(source_uri):
     client._connection.api_request(
         method='POST', path=path, data=resource)
     return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, table_id)
+
+
+def wait_for_job(job):
+    job.begin()
+    retry_count = 1000
+    while retry_count > 0 and job.state != 'DONE':
+        retry_count -= 1
+        time.sleep(1)
+        job.reload()
+    assert not job.errors, job.errors
+    return job
+
+
+def download_from_gcs(gcs_uri, target_path):
+    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
+    client = storage.Client(project='embdatalab')
+    bucket = client.get_bucket(bucket)
+    prefix = blob_name.split('*')[0]
+    unzipped = open(target_path, 'w')
+    cmd = "zcat -f %s >> %s"
+    for blob in bucket.list_blobs(prefix=prefix):
+        with tempfile.NamedTemporaryFile(mode='rb+') as f:
+            logger.info("Downloading %s to %s" % (blob.path, f.name))
+            blob.chunk_size = 2 ** 30
+            blob.download_to_file(f)
+            f.flush()
+            f.seek(0)
+            subprocess.check_call(
+                cmd % (f.name, unzipped.name), shell=True)
