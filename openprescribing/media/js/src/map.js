@@ -1,4 +1,5 @@
 require('mapbox.js');
+var chroma = require('chroma-js');
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
 var _ = require('underscore');
@@ -205,45 +206,35 @@ var analyseMap = {
   },
 
   getColour: function(quintiles, d) {
-    var color;
-    if (quintiles.length === 6) {
-      color = d > quintiles[4] ? '#54278f' :
-              d > quintiles[3] ? '#756bb1' :
-              d > quintiles[2] ? '#9e9ac8' :
-              d > quintiles[1] ? '#cbc9e2' :
-              '#f2f0f7';
-    } else if (quintiles.length === 5) {
-      color = d > quintiles[3] ? '#54278f' :
-              d > quintiles[2] ? '#756bb1' :
-              d > quintiles[1] ? '#9e9ac8' :
-              '#f2f0f7';
-    } else if (quintiles.length === 4) {
-      color = d > quintiles[2] ? '#54278f' :
-              d > quintiles[1] ? '#9e9ac8' :
-              '#f2f0f7';
-    } else {
-      color = d > quintiles[1] ? '#9e9ac8' : '#f2f0f7';
+    var scale = chroma.scale('RdBu');
+    var index = 1;
+    for (var i = 1; i < quintiles.length; i++) {
+      if (d <= quintiles[i]) {
+        index = i / quintiles.length;
+        break;
+      }
     }
-    return color;
+    console.log(1 - index);
+    console.log(scale(1 - index).hex());
+    return scale(1 - index).hex();
   },
 
   getLegend: function(quintiles, ratio, options) {
         // console.log('getLegend', quintiles);
-    var labels = [], from, to, label;
+    var labels = [], from, to, label, prevTo;
     for (var i = 0; i < quintiles.length - 1; i++) {
       from = quintiles[i];
       to = quintiles[i + 1];
-      label = '<li><span class="swatch" style="background:';
-      label += this.getColour(quintiles, to) + '"></span> ';
-      label += (ratio === 'ratio_items') ? '' : '£';
-      label += Highcharts.numberFormat(from);
-      if (to) {
-        label += '&ndash;';
+      if (to !== prevTo) {
+        console.log(to);
+        label = '<li><span class="swatch" style="background:';
+        label += this.getColour(quintiles, to) + '"></span> ';
         label += (ratio === 'ratio_items') ? '' : '£';
         label += Highcharts.numberFormat(to);
+        label += '</li>';
+        labels.push(label);
+        prevTo = to;
       }
-      label += '</li>';
-      labels.push(label);
     }
     // move the suffix to the end
     // swap `vs` for `per 1000 items for` when it's not spending

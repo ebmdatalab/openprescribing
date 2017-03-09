@@ -2,6 +2,7 @@ var moment = require('moment');
 var _ = require('underscore');
 var ss = require('simple-statistics');
 var config = require('./config');
+var chroma = require('chroma-js');
 
 var utils = {
 
@@ -247,9 +248,8 @@ var utils = {
     }
     return monthRange;
   },
-
   calculateQuintiles: function(combinedData) {
-        // Used in maps.
+    // Used in maps.
     var quintiles = {},
       temp = {};
     _.each(combinedData, function(d) {
@@ -259,32 +259,26 @@ var utils = {
         temp[d.date] = [d];
       }
     });
-    var quintilePoints = [0, 20, 40, 60, 80, 100];
+    var breakCounts = 10;
     for (var date in temp) {
       quintiles[date] = {};
       quintiles[date].ratio_actual_cost = utils.calculatePercentiles(temp[date],
                                        'ratio_actual_cost',
-                                       quintilePoints);
+                                       breakCounts);
       quintiles[date].ratio_items = utils.calculatePercentiles(temp[date],
                                        'ratio_items',
-                                       quintilePoints);
+                                       breakCounts);
     }
     return quintiles;
   },
 
-  calculatePercentiles: function(data, field, percentiles) {
-    var vals = [],
-      quantiles = [];
+  calculatePercentiles: function(data, field, breakCounts) {
+    var vals = [];
     _.each(data, function(feature) {
       vals.push(feature[field]);
     });
-    _.each(percentiles, function(percentile) {
-      quantiles.push(ss.quantile(vals, percentile * 0.01));
-    });
-    while ((quantiles.length > 2) && (+quantiles[1] === 0)) {
-      quantiles.splice(1, 1);
-    }
-    return quantiles;
+    // q = quantiles, e = equidistant, k = k-means
+    return chroma.limits(vals, 'k', breakCounts);
   },
 
 
