@@ -42,7 +42,7 @@
   "denominator_from": "[ebmdatalab:hscic.prescribing] ",
   "denominator_where": [
     "(bnf_code LIKE '0302000K0%' OR bnf_code LIKE '0302000C0%' OR bnf_code LIKE '0302000R0%' ",
-    "OR bnf_code LIKE '0302000U0%' OR bnf_code LIKE '0302000N0%' OR OR bnf_code LIKE '0301011Y0%' ",
+    "OR bnf_code LIKE '0302000U0%' OR bnf_code LIKE '0302000N0%' OR bnf_code LIKE '0301011Y0%' ",
     "OR bnf_code LIKE '0302000V0%') "
   ]
 }
