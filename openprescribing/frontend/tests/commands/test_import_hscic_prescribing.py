@@ -1,7 +1,10 @@
 import datetime
 import unittest
 
+from apiclient.http import MediaFileUpload
 from mock import patch
+from google.cloud import storage
+from google.cloud.exceptions import NotFound
 
 from django.core.management import call_command
 from django.db import InternalError
@@ -11,6 +14,13 @@ from common import utils
 from frontend.management.commands.import_hscic_prescribing import Command
 from frontend.models import Chemical, PCT, Practice
 from frontend.models import Prescription, ImportLog
+
+
+# Number of bytes to send/receive in each request.
+CHUNKSIZE = 2 * 1024 * 1024
+
+# Mimetype to use if one can't be guessed from the file extension.
+DEFAULT_MIMETYPE = 'application/octet-stream'
 
 
 class UnitTests(unittest.TestCase):
@@ -28,7 +38,10 @@ class UnitTests(unittest.TestCase):
             "processing_date < DATE '2012-01-01'", execute_args)
 
 
-class CommandsTestCase(TestCase):
+class ImportTestCase(TestCase):
+    """Tests we can import data from a local flat file
+
+    """
     def setUp(self):
         self.chemical = Chemical.objects.create(
             bnf_code='0401020K0', chem_name='test')
@@ -82,3 +95,30 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))
         l = ImportLog.objects.latest_in_category('prescribing')
         self.assertEqual(l.current_at.strftime('%Y-%m-%d'), '2013-04-01')
+
+
+class AggregateTestCase(TestCase):
+    """Do stuff
+    """
+    def setUp(self):
+        # upload a file to GCS
+        # test that the file we get back is correct
+        test_file = 'frontend/tests/fixtures/commands/'
+        test_file += 'detailed_prescribing.csv'
+        bucket_name = 'ebmdatalab'
+        object_name = 'test_hscic/prescribing/sample.csv'
+        if False:
+            client = storage.client.Client(project='ebmdatalab')
+            bucket = client.get_bucket(bucket_name)
+            blob = storage.Blob(object_name, bucket)
+
+            with open(test_file, 'rb') as my_file:
+                blob.upload_from_file(my_file)
+        self.gcs_uri = "gs://ebmdatalab/%s" % object_name
+
+    def test_data_is_aggregated(self):
+        date = datetime.date(2011, 12, 1)
+        cmd = Command()
+        cmd.date = date
+        cmd.aggregate_nhs_digital_data(
+            self.gcs_uri, '/tmp/bum.csv')

@@ -12,10 +12,13 @@ from google.cloud.bigquery.dataset import Dataset
 from django.core.management.base import BaseCommand
 from django.db import connection
 
-from frontend.management.commands.convert_hscic_prescribing import Command as ConvertCommand
+from frontend.management.commands.convert_hscic_prescribing \
+    import Command as ConvertCommand
 from frontend.models import PCT, ImportLog
 
 logger = logging.getLogger(__name__)
+
+TEMP_DATASET = 'tmp_eu'
 
 
 class Command(BaseCommand):
@@ -226,53 +229,24 @@ class Command(BaseCommand):
         file_str = filename.replace('T', '').split('/')[-1].split('.')[0]
         return datetime.date(int(file_str[0:4]), int(file_str[4:6]), 1)
 
-    def aggregate_nhs_digital_data(self, fname):
-        # Check that something exists at that URI
+    def aggregate_nhs_digital_data(self, uri, local_path):
+        """Given a GCS URI for "detailed" prescribing data, run a query to
+        aggregate it into the format we use internally, and download
+        the resulting data to a `*_formatted.CSV` file, ready for
+        importing.
+
+        Returns the path to the formatted file.
+
+        """
+        # First, check we can access something at the given URI
         client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket("hscic")
-        if bucket.get_blob(fname) is None:
-            raise NotFound()
+        bucket = client.get_bucket('ebmdatalab')
+        path = uri.split('ebmdatalab/')[-1]
+        if bucket.get_blob(path) is None:
+            raise NotFound(path)
 
-        # Set up a temporary data source for the CSV
-        uri = bucket.path
-        schema = [
-            {"name": "Regional_Office_Name", "type": "string"},
-            {"name": "Regional_Office_Code", "type": "string"},
-            {"name": "Area_Team_Name", "type": "string"},
-            {"name": "Area_Team_Code", "type": "string", "mode": "required"},
-            {"name": "PCO_Name", "type": "string"},
-            {"name": "PCO_Code", "type": "string"},
-            {"name": "Practice_Name", "type": "string"},
-            {"name": "Practice_Code", "type": "string", "mode": "required"},
-            {"name": "BNF_Code", "type": "string", "mode": "required"},
-            {"name": "BNF_Description", "type": "string", "mode": "required"},
-            {"name": "Items", "type": "integer", "mode": "required"},
-            {"name": "Quantity", "type": "integer", "mode": "required"},
-            {"name": "ADQ_Usage", "type": "float"},
-            {"name": "NIC", "type": "float", "mode": "required"},
-            {"name": "Actual_Cost", "type": "float", "mode": "required"},
-        ]
-
-        resource = {
-            "tableReference": {
-                "tableId": "raw_nhs_digital_data"
-            },
-            "externalDataConfiguration": {
-                "csvOptions": {
-                    "skipLeadingRows": "1"
-                },
-                "sourceUris": [
-                    uri
-                ],
-                "schema": {"fields": schema}
-            }
-        }
-        client = bigquery.client.Client(project='ebmdatalab')
-        dataset = Dataset("tmp_eu", client, project="ebmdatalab")
-        table = Table.from_api_repr(resource, dataset)
-        table.create()
-        # Execute a query against that, writing to another temporary data source
-        # That has to be exported to GCS again
+        # Create table at raw_nhs_digital_data
+        table_ref = create_temporary_data_source(uri)
 
         query = """
          SELECT
@@ -283,44 +257,117 @@ class Command(BaseCommand):
           SUM(NIC) AS net_cost,
           SUM(Quantity * Items) AS quantity,
           '%s' AS processing_date,
-          CASE WHEN BNF_Code LIKE '2%' THEN LEFT(BNF_Code, 4) ELSE LEFT(BNF_Code, 9) END AS chemical_id,
+          CASE
+            WHEN BNF_Code LIKE '2%%' THEN
+               LEFT(BNF_Code, 4)
+            ELSE
+              LEFT(BNF_Code, 9)
+          END AS chemical_id,
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
           Area_Team_Code AS sha_id
-         FROM [ebmdatalab:tmp_eu.foo]
-         GROUP BY presentation_code, presentation_name, pct_id, practice_code, sha_id, chemical_id
-         LIMIT 10
-        """ % self.date.strftime("%Y-%m-%d")
-        dataset = client.dataset('tmp_eu')
+         FROM %s
+         GROUP BY
+           presentation_code, presentation_name, pct_id,
+           practice_code, sha_id, chemical_id
+        """ % (self.date.strftime("%Y-%m-%d"), table_ref)
+        client = bigquery.client.Client(project='ebmdatalab')
+        dataset = client.dataset(TEMP_DATASET)
         table = dataset.table(
-            name='formatted_prescribing_%s' % self.date.strftime("%Y-%m-%d"))
-        job = client.run_async_query('create-formatted-table-job', query)
+            name='formatted_prescribing_%s' % self.date.strftime("%Y_%m_%d"))
+        job = client.run_async_query("create_%s_%s" % (
+            table.name, int(time.time())), query)
         job.destination = table
+        job.use_query_cache = False
+        job.write_disposition = 'WRITE_TRUNCATE'
+        job.allow_large_results = True
         job.begin()
         retry_count = 1000
         while retry_count > 0 and job.state != 'DONE':
             retry_count -= 1
             time.sleep(2)
             job.reload()
+        assert not job.errors, job.errors
 
         # Download the result
         # Copy to GCS
-        destination_path = fname[:-4] + '_formatted.CSV'
+        gcs_path = path[:-4] + '_formatted.CSV'
+
         job = client.extract_table_to_storage(
-            'extract-formatted-table-job', table,
-            "gs://embdatalab/hscic/%s" % destination_path
+            "extract-formatted-table-job-%s" % int(time.time()), table,
+            "gs://ebmdatalab/%s" % (gcs_path)
             )
         job.destination_format = 'CSV'
         job.print_header = False
+        job.begin()
         retry_count = 1000
+
         while retry_count > 0 and job.state != 'DONE':
             retry_count -= 1
             time.sleep(2)
             job.reload()
+        assert not job.errors, job.errors
+        # Download the results to a file
 
-        # Check that something exists at that URI
         client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('hscic')
-        blob = bucket.get_blob(destination_path)
-        blob.download_to_filename(destination_path)
-        return destination_path
+        bucket = client.get_bucket('ebmdatalab')
+        blob = bucket.get_blob(gcs_path)
+        blob.download_to_filename(local_path)
+        return local_path
+
+
+def create_temporary_data_source(source_uri):
+    """Create a temporary data source so BigQuery can query the CSV in
+    Google Cloud Storage.
+
+    Nothing like this is currently implemented in the
+    google-cloud-python library.
+
+    Returns a table reference suitable for using in a BigQuery SQL
+    query (legacy format).
+
+    """
+
+    table_id = 'raw_nhs_digital_data'
+    schema = [
+        {"name": "Regional_Office_Name", "type": "string"},
+        {"name": "Regional_Office_Code", "type": "string"},
+        {"name": "Area_Team_Name", "type": "string"},
+        {"name": "Area_Team_Code", "type": "string", "mode": "required"},
+        {"name": "PCO_Name", "type": "string"},
+        {"name": "PCO_Code", "type": "string"},
+        {"name": "Practice_Name", "type": "string"},
+        {"name": "Practice_Code", "type": "string", "mode": "required"},
+        {"name": "BNF_Code", "type": "string", "mode": "required"},
+        {"name": "BNF_Description", "type": "string", "mode": "required"},
+        {"name": "Items", "type": "integer", "mode": "required"},
+        {"name": "Quantity", "type": "integer", "mode": "required"},
+        {"name": "ADQ_Usage", "type": "float"},
+        {"name": "NIC", "type": "float", "mode": "required"},
+        {"name": "Actual_Cost", "type": "float", "mode": "required"},
+    ]
+    resource = {
+        "tableReference": {
+            "tableId": table_id
+        },
+        "externalDataConfiguration": {
+            "csvOptions": {
+                "skipLeadingRows": "1"
+            },
+            "sourceFormat": "CSV",
+            "sourceUris": [
+                source_uri
+            ],
+            "schema": {"fields": schema}
+        }
+    }
+    client = bigquery.client.Client(project='ebmdatalab')
+    # delete the table if it exists
+    dataset = Dataset("tmp_eu", client)
+    table = Table.from_api_repr(resource, dataset)
+    table.delete()
+    # Now create it
+    path = "/projects/ebmdatalab/datasets/%s/tables" % TEMP_DATASET
+    client._connection.api_request(
+        method='POST', path=path, data=resource)
+    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, table_id)
