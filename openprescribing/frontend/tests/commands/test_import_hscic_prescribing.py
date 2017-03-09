@@ -1,11 +1,7 @@
 import datetime
-import tempfile
 import unittest
 
-from apiclient.http import MediaFileUpload
 from mock import patch
-from google.cloud import storage
-from google.cloud.exceptions import NotFound
 
 from django.core.management import call_command
 from django.db import InternalError
@@ -96,33 +92,3 @@ class ImportTestCase(TestCase):
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))
         l = ImportLog.objects.latest_in_category('prescribing')
         self.assertEqual(l.current_at.strftime('%Y-%m-%d'), '2013-04-01')
-
-
-class AggregateTestCase(TestCase):
-    """Do stuff
-    """
-    def setUp(self):
-        # upload a file to GCS
-        # test that the file we get back is correct
-        test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'detailed_prescribing.csv'
-        bucket_name = 'ebmdatalab'
-        object_name = 'test_hscic/prescribing/sample.csv'
-        if False:
-            client = storage.client.Client(project='ebmdatalab')
-            bucket = client.get_bucket(bucket_name)
-            blob = storage.Blob(object_name, bucket)
-
-            with open(test_file, 'rb') as my_file:
-                blob.upload_from_file(my_file)
-        self.gcs_uri = "gs://ebmdatalab/%s" % object_name
-
-    def test_data_is_aggregated(self):
-        target = tempfile.NamedTemporaryFile(mode='r+')
-        date = datetime.date(2011, 12, 1)
-        cmd = Command()
-        cmd.date = date
-        cmd.aggregate_nhs_digital_data(
-            self.gcs_uri, target.name)
-        target.seek(0)
-        print target.read()
