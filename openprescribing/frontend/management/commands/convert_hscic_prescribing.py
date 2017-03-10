@@ -100,13 +100,16 @@ class Command(BaseCommand):
         client = storage.client.Client(project='ebmdatalab')
         bucket = client.get_bucket('ebmdatalab')
         path = uri.split('ebmdatalab/')[-1]
-        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         if bucket.get_blob(path) is None:
+            # This conversion requires that the file referenced at
+            # options['file_name'] has been uploaded as a blob to
+            # Google Cloud Services at gs://ebmdatalab/<file_name>
             raise NotFound(path)
 
         # Create table at raw_nhs_digital_data
         table_ref = create_temporary_data_source(uri)
         temp_table = self.write_aggregated_data_to_temp_table(table_ref, date)
+        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         copy_table_to_gcs(temp_table, converted_uri)
         return download_from_gcs(converted_uri, local_path)
 
