@@ -7,10 +7,6 @@ var config = require('./config');
 
 var analyseMap = {
 
-  update: function(ratio, month, title, subtitle) {
-    this.updateMap('ratio_' + ratio, month, title, subtitle);
-  },
-
   setup: function(options) {
     this.options = options;
         // TODO: Deal with no data

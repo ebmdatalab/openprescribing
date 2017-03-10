@@ -331,34 +331,21 @@ describe('Utils', function () {
         });
     });
 
-    describe("#calculateQuintiles", function () {
-        it('should return a quintiles object, indexed by date', function () {
+    describe("#calculateMinMaxByDate", function () {
+        it('should return (min,max) tuples, indexed by date', function () {
             var combinedData = [
               {'date': '2010-04-01', 'ratio_items': 1, 'ratio_actual_cost': 10},
-              {'date': '2010-04-01', 'ratio_items': 2, 'ratio_actual_cost': 20},
-              {'date': '2010-04-01', 'ratio_items': 3, 'ratio_actual_cost': 30},
-              {'date': '2010-04-01', 'ratio_items': 4, 'ratio_actual_cost': 40},
-              {'date': '2010-04-01', 'ratio_items': 5, 'ratio_actual_cost': 50},
-              {'date': '2010-04-01', 'ratio_items': 6, 'ratio_actual_cost': 60},
-              {'date': '2010-04-01', 'ratio_items': 7, 'ratio_actual_cost': 70},
               {'date': '2010-04-01', 'ratio_items': 8, 'ratio_actual_cost': 80},
               {'date': '2010-04-01', 'ratio_items': 9, 'ratio_actual_cost': 90},
               {'date': '2010-04-01', 'ratio_items': 10, 'ratio_actual_cost': 100},
               {'date': '2010-04-02', 'ratio_items': 10, 'ratio_actual_cost': 100},
               {'date': '2010-04-02', 'ratio_items': 20, 'ratio_actual_cost': 200}
             ];
-            var quintiles = utils.calculateQuintiles(combinedData);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[0]).to.equal(10);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[1]).to.equal(25);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[2]).to.equal(45);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[3]).to.equal(65);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[4]).to.equal(85);
-            expect(quintiles['2010-04-01'].ratio_actual_cost[5]).to.equal(100);
-            expect(quintiles['2010-04-01'].ratio_items.length).to.equal(6);
-            expect(quintiles['2010-04-02'].ratio_items[0]).to.equal(10);
-            expect(quintiles['2010-04-02'].ratio_items[1]).to.equal(10);
-            expect(quintiles['2010-04-02'].ratio_items[3]).to.equal(20);
-            expect(quintiles['2010-04-02'].ratio_items[5]).to.equal(20);
+            var minMax = utils.calculateMinMaxByDate(combinedData);
+            expect(minMax['2010-04-01'].ratio_actual_cost[0]).to.equal(10);
+            expect(minMax['2010-04-01'].ratio_actual_cost[1]).to.equal(100);
+            expect(minMax['2010-04-02'].ratio_actual_cost[0]).to.equal(100);
+            expect(minMax['2010-04-02'].ratio_actual_cost[1]).to.equal(200);
         });
     });
 
