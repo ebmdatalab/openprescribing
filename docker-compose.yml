@@ -51,7 +51,7 @@ services:
     env_file: .env-dev
   dev:
     image: ebmdatalab/openprescribing-test:latest
-    command: /bin/bash -c './scripts/docker_setup.sh && /bin/bash -l'
+    command: /bin/bash -c './scripts/docker_setup.sh local &&  cd openprescribing && /bin/bash -l'
     env_file: .env-dev
     volumes:
       - .:/code
