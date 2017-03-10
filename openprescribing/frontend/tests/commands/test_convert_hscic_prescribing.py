@@ -16,8 +16,6 @@ from django.core.management.base import CommandError
 
 class CommandsTestCase(TestCase):
 
-    @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
-                     "Skipping this test on Travis CI.")
     def test_convert_legacy_hscic_prescribing(self):
         args = []
         test_file = 'frontend/tests/fixtures/commands/'
