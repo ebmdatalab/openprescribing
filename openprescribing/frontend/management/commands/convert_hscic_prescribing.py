@@ -18,9 +18,26 @@ from django.core.management.base import CommandError
 logger = logging.getLogger(__name__)
 
 TEMP_DATASET = 'tmp_eu'
+TEMP_SOURCE_NAME = 'raw_nhs_digital_data'
 
 
 class Command(BaseCommand):
+    """There are two kinds of source we use to generate data.
+
+
+    The legacy source (the code paths for which, once the new source
+    has successfully been imported a few times, can be removed) is
+    published erratically; the new "detailed" data source is published
+    regularly, each month, so we now prefer that.
+
+    The "detailed" source format has one iine for each presentation
+    *and pack size*, so prescriptions of 28 paracetamol will be on a
+    separate line from prescriptions of 100 paracetamol.
+
+    The destination format has one line for paracetamol of any pack
+    size.
+
+    """
     args = ''
     help = 'Converts HSCIC data files into the format needed for our SQL COPY '
     help += 'statement. We use COPY because it is much faster than INSERT.'
@@ -149,7 +166,7 @@ class Command(BaseCommand):
         client = bigquery.client.Client(project='ebmdatalab')
         dataset = client.dataset(TEMP_DATASET)
         table = dataset.table(
-            name='formatted_prescribing_%s' % self.date.strftime("%Y_%m_%d"))
+            name='formatted_prescribing_%s' % date)
         job = client.run_async_query("create_%s_%s" % (
             table.name, int(time.time())), query)
         job.destination = table
@@ -195,8 +212,6 @@ def create_temporary_data_source(source_uri):
     query (legacy format).
 
     """
-
-    table_id = 'raw_nhs_digital_data'
     schema = [
         {"name": "Regional_Office_Name", "type": "string"},
         {"name": "Regional_Office_Code", "type": "string"},
@@ -216,7 +231,7 @@ def create_temporary_data_source(source_uri):
     ]
     resource = {
         "tableReference": {
-            "tableId": table_id
+            "tableId": TEMP_SOURCE_NAME
         },
         "externalDataConfiguration": {
             "csvOptions": {
@@ -233,12 +248,15 @@ def create_temporary_data_source(source_uri):
     # delete the table if it exists
     dataset = Dataset("tmp_eu", client)
     table = Table.from_api_repr(resource, dataset)
-    table.delete()
+    try:
+        table.delete()
+    except NotFound:
+        pass
     # Now create it
     path = "/projects/ebmdatalab/datasets/%s/tables" % TEMP_DATASET
     client._connection.api_request(
         method='POST', path=path, data=resource)
-    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, table_id)
+    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, TEMP_SOURCE_NAME)
 
 
 def wait_for_job(job):

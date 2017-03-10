@@ -70,14 +70,26 @@ class CommandsTestCase(TestCase):
         with self.assertRaises(CommandError):
             call_command('convert_hscic_prescribing', **opts)
 
+
+@patch('frontend.management.commands.convert_hscic_prescribing'
+       '.TEMP_SOURCE_NAME', 'temp_raw_nhs_digital_data')
 class AggregateTestCase(TestCase):
-    """Do stuff
+    """Test that data in the "detailed" format is correctly aggregated to
+    the level we currently use in the website.
+
+    The source format has one iine for each presentation *and pack
+    size*, so prescriptions of 28 paracetamol will be on a separate
+    line from prescriptions of 100 paracetamol.
+
+    The destination format has one line for paracetamol of any pack
+    size.
+
     """
     def setUp(self):
         # upload a file to GCS
         # test that the file we get back is correct
         test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'detailed_prescribing.csv'
+        test_file += 'Detailed_Prescribing_Information.csv'
         bucket_name = 'ebmdatalab'
         object_name = 'test_hscic/prescribing/sample.csv'
         client = storage.client.Client(project='ebmdatalab')
@@ -88,17 +100,12 @@ class AggregateTestCase(TestCase):
             blob.upload_from_file(my_file)
         self.gcs_uri = "gs://ebmdatalab/%s" % object_name
 
-    def tearDown(self):
-        os.remove('frontend/tests/fixtures/commands/'
-                  'hscic_prescribing_sample_formatted.CSV')
-
     def test_data_is_aggregated(self):
         target = tempfile.NamedTemporaryFile(mode='r+')
-        date = datetime.date(2011, 12, 1)
         cmd = Command()
-        cmd.date = date
+        cmd.is_test = True
         cmd.aggregate_nhs_digital_data(
-            self.gcs_uri, target.name, date='2016-01-01')
+            self.gcs_uri, target.name, date='2016_01_01')
         target.seek(0)
         rows = list(csv.reader(open(target.name, 'rU')))
         # there are 11 rows in the input file; 2 are for the same
