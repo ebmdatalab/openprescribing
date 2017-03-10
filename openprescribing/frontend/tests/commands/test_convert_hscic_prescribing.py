@@ -67,6 +67,10 @@ class AggregateTestCase(TestCase):
             blob.upload_from_file(my_file)
         self.gcs_uri = "gs://ebmdatalab/%s" % object_name
 
+    def tearDown(self):
+        os.remove('frontend/tests/fixtures/commands/'
+                  'hscic_prescribing_sample_formatted.CSV')
+
     def test_data_is_aggregated(self):
         target = tempfile.NamedTemporaryFile(mode='r+')
         date = datetime.date(2011, 12, 1)
@@ -82,4 +86,4 @@ class AggregateTestCase(TestCase):
         self.assertEqual(len(rows), 9)
         dr_chan = next(
             x for x in rows if x[-2] == 'P92042' and x[0] == '0202010B0AAABAB')
-        self.assertEqual(int(dr_chan[5]), 644)  # combination of two rows
+        self.assertEqual(int(dr_chan[5]), 1288)  # combination of two rows
