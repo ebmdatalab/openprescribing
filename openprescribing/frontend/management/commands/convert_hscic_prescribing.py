@@ -13,6 +13,7 @@ from google.cloud.bigquery.table import Table
 from google.cloud.bigquery.dataset import Dataset
 
 from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +50,19 @@ class Command(BaseCommand):
 
             if f.endswith('Detailed_Prescribing_Information.csv'):
                 uri = 'gs://ebmdatalab/' + f
+                # Grab date from file path
+                try:
+                    date = datetime.datetime.strptime(
+                        uri.split("/")[-2] + "_01", "%Y_%m_%d"
+                    ).strftime('%Y-%m-%d')
+                except ValueError as e:
+                    message = ('The file path must have a YYYY_MM '
+                               'date component in the containing directory: ')
+                    message += e.message
+                    raise CommandError(message)
                 converted_filenames.append(
-                    self.aggregate_nhs_digital_data(uri, filename_for_output))
+                    self.aggregate_nhs_digital_data(
+                        uri, filename_for_output, date))
             else:
                 reader = csv.reader(open(f, 'rU'))
                 next(reader)
@@ -83,7 +95,7 @@ class Command(BaseCommand):
                   quantity, formatted_date]
         return output
 
-    def aggregate_nhs_digital_data(self, uri, local_path, date=None):
+    def aggregate_nhs_digital_data(self, uri, local_path, date):
         """Given a GCS URI for "detailed" prescribing data, run a query to
         aggregate it into the format we use internally, and download
         the resulting data to a `*_formatted.CSV` file, ready for
@@ -92,10 +104,6 @@ class Command(BaseCommand):
         Returns the path to the formatted file.
 
         """
-        if not date:
-            date = datetime.datetime.strptime(
-                uri.split("/")[-2] + "_01", "%Y_%m_%d").strftime('%Y-%m-%d')
-
         # First, check we can access something at the given URI
         client = storage.client.Client(project='ebmdatalab')
         bucket = client.get_bucket('ebmdatalab')

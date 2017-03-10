@@ -5,18 +5,20 @@ import tempfile
 import unittest
 
 from google.cloud import storage
+from mock import patch
 
 from django.core.management import call_command
 from django.test import TestCase
 
 from frontend.management.commands.convert_hscic_prescribing import Command
+from django.core.management.base import CommandError
 
 
 class CommandsTestCase(TestCase):
 
     @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
                      "Skipping this test on Travis CI.")
-    def test_convert_hscic_prescribing(self):
+    def test_convert_legacy_hscic_prescribing(self):
         args = []
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'hscic_prescribing_sample.csv'
@@ -48,6 +50,27 @@ class CommandsTestCase(TestCase):
         self.assertEqual(rows[0][5], '12')
         self.assertEqual(rows[0][6], '2014-10-01')
 
+    @patch('frontend.management.commands.convert_hscic_prescribing.Command'
+           '.aggregate_nhs_digital_data')
+    def test_convert_detailed_hscic_prescribing_call(self, method):
+        method.return_value = 'filename.csv'
+        opts = {
+            'filename': '2017_03/Detailed_Prescribing_Information.csv'
+        }
+        call_command('convert_hscic_prescribing', **opts)
+        method.assert_called_with(
+            'gs://ebmdatalab/2017_03/Detailed_Prescribing_Information.csv',
+            '2017_03/Detailed_Prescribing_Information_formatted.CSV',
+            '2017-03-01')
+
+    @patch('frontend.management.commands.convert_hscic_prescribing.Command'
+           '.aggregate_nhs_digital_data')
+    def test_convert_detailed_hscic_prescribing_has_date(self, method):
+        opts = {
+            'filename': 'Detailed_Prescribing_Information.csv'
+        }
+        with self.assertRaises(CommandError):
+            call_command('convert_hscic_prescribing', **opts)
 
 class AggregateTestCase(TestCase):
     """Do stuff
