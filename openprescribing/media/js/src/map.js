@@ -55,7 +55,7 @@ var analyseMap = {
 
     function joinDataAndSetupMap() {
       var dataByName = utils.indexDataByRowNameAndMonth(options.data.combinedData);
-      _this.quintiles = utils.calculateQuintiles(options.data.combinedData);
+      _this.minMaxByDate = utils.calculateMinMaxByDate(options.data.combinedData);
       var f = joinFeaturesWithData(_this.orgLayer.getGeoJSON(),
                                          dataByName);
       _this.orgLayer.setGeoJSON(f);
@@ -143,29 +143,29 @@ var analyseMap = {
   updateMap: function(ratio, options) {
     var _this = this;
     var month = options.activeMonth.replace(/\//g, '-');
-    var quintiles = (month in _this.quintiles) ? _this.quintiles[month][ratio] : [];
+    var minMax = (month in _this.minMaxByDate) ? _this.minMaxByDate[month][ratio] : null;
     _this.map.legendControl.removeLegend(_this.legendHtml);
-    _this.legendHtml = _this.getLegend(quintiles, ratio, options);
+    _this.legendHtml = _this.getLegend(minMax, options);
     _this.map.legendControl.addLegend(_this.legendHtml);
     _this.orgLayer.eachLayer(function(layer) {
       var layerData = layer.feature.properties.data;
       var val = ((typeof layerData !== 'undefined') && (month in layerData)) ? layerData[month][ratio] : null;
       var style = _this.getStyle(val,
-                                       quintiles,
-                                       layer.feature.properties.name,
-                                       _this.activeNames);
+                                 minMax[1],
+                                 layer.feature.properties.name,
+                                 _this.activeNames);
       layer.setStyle(style);
     });
   },
 
-  getStyle: function(val, quintiles, name, activeNames) {
+  getStyle: function(val, maxVal, name, activeNames) {
     var style = {
       color: 'black',
       fillOpacity: 0.7,
       radius: 8,
       weight: 2,
       opacity: 0.3,
-      fillColor: this.getColour(quintiles, val)
+      fillColor: this.getColour(maxVal, val)
     };
     if (_.contains(activeNames, name)) {
       style.weight = 3;
@@ -205,43 +205,22 @@ var analyseMap = {
     return boundsUrl;
   },
 
-  getColour: function(quintiles, d) {
+  getColour: function(topVal, d) {
     var scale = chroma.scale('RdBu');
-    var index = 1;
-    for (var i = 1; i < quintiles.length; i++) {
-      if (d <= quintiles[i]) {
-        index = i / quintiles.length;
-        break;
-      }
-    }
-    console.log(1 - index);
-    console.log(scale(1 - index).hex());
-    return scale(1 - index).hex();
+    return scale(1 - (d / topVal)).hex();
   },
 
-  getLegend: function(quintiles, ratio, options) {
-        // console.log('getLegend', quintiles);
-    var labels = [], from, to, label, prevTo;
-    for (var i = 0; i < quintiles.length - 1; i++) {
-      from = quintiles[i];
-      to = quintiles[i + 1];
-      if (to !== prevTo) {
-        console.log(to);
-        label = '<li><span class="swatch" style="background:';
-        label += this.getColour(quintiles, to) + '"></span> ';
-        label += (ratio === 'ratio_items') ? '' : '£';
-        label += Highcharts.numberFormat(to);
-        label += '</li>';
-        labels.push(label);
-        prevTo = to;
-      }
-    }
-    // move the suffix to the end
-    // swap `vs` for `per 1000 items for` when it's not spending
-    // and `per 1000 patients on list for` when it's vs. list size
+  getLegend: function(minMax, options) {
+    // console.log('getLegend', quintiles);
     var legend = '<span class="legend-header">' + options.friendly.yAxisTitle.replace('<br/>', '');
     legend += ' ' + options.friendly.chartSubTitle + '</span>';
-    legend += '<ul>' + labels.join('') + '</ul>';
+    legend += '<div class="gradient">'
+    for (var i = 1; i <= 100; i++) {
+      legend += '<span class="grad-step" style="background-color:'+this.getColour(100, i)+'"></span>';
+    }
+    legend += '<span class="domain-min">' +  + Highcharts.numberFormat(minMax[0]) + '</span>';
+    legend += '<span class="domain-max">' + Highcharts.numberFormat(minMax[1]) + '</span>';
+    legend += '</div>'
     legend += 'by ' + options.friendly.friendlyOrgs;
     return legend;
   }

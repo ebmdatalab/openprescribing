@@ -248,10 +248,11 @@ var utils = {
     }
     return monthRange;
   },
-  calculateQuintiles: function(combinedData) {
+
+  calculateMinMaxByDate: function(combinedData) {
     // Used in maps.
-    var quintiles = {},
-      temp = {};
+    var minMaxByDate = {};
+    var temp = {};
     _.each(combinedData, function(d) {
       if (d.date in temp) {
         temp[d.date].push(d);
@@ -259,28 +260,18 @@ var utils = {
         temp[d.date] = [d];
       }
     });
-    var breakCounts = 10;
     for (var date in temp) {
-      quintiles[date] = {};
-      quintiles[date].ratio_actual_cost = utils.calculatePercentiles(temp[date],
-                                       'ratio_actual_cost',
-                                       breakCounts);
-      quintiles[date].ratio_items = utils.calculatePercentiles(temp[date],
-                                       'ratio_items',
-                                       breakCounts);
+      minMaxByDate[date] = {};
+      minMaxByDate[date].ratio_actual_cost = this.calculateMinMax(temp[date], 'ratio_actual_cost');
+      minMaxByDate[date].ratio_items = this.calculateMinMax(temp[date], 'ratio_items');
     }
-    return quintiles;
+
+    return minMaxByDate;
   },
 
-  calculatePercentiles: function(data, field, breakCounts) {
-    var vals = [];
-    _.each(data, function(feature) {
-      vals.push(feature[field]);
-    });
-    // q = quantiles, e = equidistant, k = k-means
-    return chroma.limits(vals, 'k', breakCounts);
+  calculateMinMax: function(arr, key) {
+    return [_.min(_.pluck(arr, key)), _.max(_.pluck(arr, key))];
   },
-
 
   setChartValues: function(options) {
     var y = options.activeOption,
