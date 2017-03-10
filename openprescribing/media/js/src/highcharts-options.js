@@ -63,10 +63,11 @@ var baseOptions = {
     type: 'scatter',
     zoomType: 'xy',
     plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
+    showCrosshair: true,
     events: {
       load: function() {
         // change cursor to crosshair to indicate zoom is possible
-        if (this.plotBackground) {
+        if (this.plotBackground && this.userOptions.chart.showCrosshair) {
           this.plotBackground.toFront().css({ // move on top to get all events
             cursor: 'crosshair'
           });
@@ -156,7 +157,8 @@ barOptions.chart.type = 'column';
 barOptions.chart.marginTop = 60;
 barOptions.chart.renderTo = 'summarychart';
 // Our default of moving the background to the front works for all
-// charts except the bar chart, where we have to stack it manually.
+// charts except the bar chart, where we have to stack it manually, so
+// the tooltips still work
 barOptions.chart.events.load = function() {
   if (this.plotBackground) {
     this.plotBackground.css({

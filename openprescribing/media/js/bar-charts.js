@@ -44,6 +44,7 @@ var barChart = {
     initialiseChartOptions: function(chartOptions, graphType) {
         var _this = this;
         var options = chartOptions.baseOptions;
+        options.chart.showCrosshair = false;
         options.chart.marginTop = 40;
         options.chart.spacingTop = 20;
         options.chart.type = 'column';
