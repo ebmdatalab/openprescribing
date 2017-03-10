@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^api/$', TemplateView.as_view(template_name='api.html'), name="api"),
     url(r'^about/$', TemplateView.as_view(template_name='about.html'),
         name="about"),
+    url(r'^faq/$', TemplateView.as_view(template_name='faq.html'),
+        name="faq"),
     url(r'^caution/$', TemplateView.as_view(template_name='caution.html'),
         name="caution"),
     url(r'^how-to-use/$',
