@@ -13,11 +13,20 @@ from frontend.models import Chemical, PCT, Practice
 from frontend.models import Prescription, ImportLog
 
 
+# Number of bytes to send/receive in each request.
+CHUNKSIZE = 2 * 1024 * 1024
+
+# Mimetype to use if one can't be guessed from the file extension.
+DEFAULT_MIMETYPE = 'application/octet-stream'
+
+
 class UnitTests(unittest.TestCase):
     @patch('django.db.connection.cursor')
     def test_create_partition_december(self, mock_cursor):
         date = datetime.date(2011, 12, 1)
-        Command().create_partition(date)
+        cmd = Command()
+        cmd.date = date
+        cmd.create_partition()
         mock_execute = mock_cursor.return_value.__enter__.return_value.execute
         execute_args = mock_execute.call_args[0][0]
         self.assertIn(
@@ -26,7 +35,10 @@ class UnitTests(unittest.TestCase):
             "processing_date < DATE '2012-01-01'", execute_args)
 
 
-class CommandsTestCase(TestCase):
+class ImportTestCase(TestCase):
+    """Tests we can import data from a local flat file
+
+    """
     def setUp(self):
         self.chemical = Chemical.objects.create(
             bnf_code='0401020K0', chem_name='test')
