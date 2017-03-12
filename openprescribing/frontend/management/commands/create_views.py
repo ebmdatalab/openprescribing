@@ -149,12 +149,12 @@ def download_and_unzip(gcs_uri):
     for i, f in enumerate(download_from_gcs(gcs_uri)):
         # Unzip
         if i == 0:
-            cmd = "zcat -f %s >> %s"
+            cmd = "gunzip -c -f %s >> %s"
         else:
             # When the file is split into several shards in GCS, it
             # puts a header on every file, so we have to skip that
             # header on all except the first shard.
-            cmd = "zcat -f %s | tail -n +2 >> %s"
+            cmd = "gunzip -c -f %s | tail -n +2 >> %s"
         subprocess.check_call(
             cmd % (f.name, unzipped.name), shell=True)
     return unzipped
