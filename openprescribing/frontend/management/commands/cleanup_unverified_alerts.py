@@ -9,6 +9,8 @@ from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
 from frontend.models import User
 
+logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     args = ''
@@ -28,5 +30,5 @@ class Command(BaseCommand):
                      emailaddress__verified=False,
                      is_superuser=False,
                      date_joined__lte=one_month_ago).delete()
-        logging.info("Deleted %s user accounts & associated models" %
+        logger.info("Deleted %s user accounts & associated models" %
                      deleted_users[0])
