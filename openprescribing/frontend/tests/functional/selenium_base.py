@@ -67,7 +67,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display.start()
             try:
                 cls.browser = cls.get_firefox_driver()
-            except WebDriverException:
+            finally:
                 if not cls.use_saucelabs and cls.use_xvfb():
                     cls.display.stop()
 
