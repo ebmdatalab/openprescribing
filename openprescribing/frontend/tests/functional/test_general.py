@@ -1,10 +1,108 @@
 # -*- coding: utf-8 -*-
+import json
 import unittest
+
+from django.http import JsonResponse
 from mock import patch
 from mock import MagicMock
 from mock import PropertyMock
-
 from selenium_base import SeleniumTestCase
+
+
+class MockApiBase(dict):
+    """Mocks methods listed in `mock_methods` with functions that have
+    corresponding names in the MockApi class.
+
+    """
+
+    def __init__(self):
+        self.fixtures_base = 'frontend/tests/fixtures/functional/'
+        for method in self.__class__.mock_methods:
+            self[method] = MagicMock(side_effect=getattr(self, method))
+
+    def _load_json(self, name):
+        return json.load(open("%s/%s.json" % (self.fixtures_base, name), 'r'))
+
+
+class MockSpendingApi(MockApiBase):
+    mock_methods = ['spending_by_ccg']
+
+    def spending_by_ccg(self, request):
+        data = {}
+        code = request.GET.get('code', '')
+        if code == '2.12':
+            data = self._load_json('spending_by_ccg_denom')
+        elif code == '0212000AA':
+            data = self._load_json('spending_by_ccg_num')
+        return JsonResponse(data, status=200, safe=False)
+
+
+class MockBnfApi(MockApiBase):
+    mock_methods = ['bnf_codes']
+
+    def bnf_codes(self, request):
+        data = {}
+        code = request.GET.get('q', '')
+        if code.startswith('0212000AA'):
+            data = self._load_json('bnf_code_num')
+        elif code.startswith('2.12'):
+            data = self._load_json('bnf_code_denom')
+        return JsonResponse(data, status=200, safe=False)
+
+
+class MockLocationApi(MockApiBase):
+    mock_methods = ['org_location']
+
+    def org_location(self, request):
+        data = self._load_json('org_location_ccg')
+        return JsonResponse(data, status=200, safe=False)
+
+
+mock_spending_api = MockSpendingApi()
+mock_bnf_api = MockBnfApi()
+mock_location_api = MockLocationApi()
+
+
+class MapTest(SeleniumTestCase):
+    @patch.dict('api.views_spending.__dict__', mock_spending_api)
+    @patch.dict('api.views_bnf_codes.__dict__', mock_bnf_api)
+    @patch.dict('api.views_org_location.__dict__', mock_location_api)
+    def test_map_slider(self):
+        # Check that Gravesend has the expected popover by default
+        self.browser.get(
+            self.live_server_url +
+            '/analyse/#org=CCG&numIds=0212000AA&denomIds=2.12&selectedTab=map')
+        gravesend = self.find_by_xpath(
+            "//*[@fill='#67001f' and name()='path']")
+        gravesend.click()
+        popup = self.find_by_xpath(
+            "//*[contains(@class, 'leaflet-popup-content')]")
+        self.assertTrue(popup.is_displayed())
+        self.assertIn(
+            "NHS DARTFORD, GRAVESHAM AND SWANLEY CCG\nItems for Rosuvastatin "
+            "Calcium in Sep '16", popup.text)
+
+        # Move the slider
+        #
+        # The firefox webdriver doesn't currently support mouse
+        # events, so we have to inject them straight into the browser.
+        js = """
+        var slider = $('#chart-date-slider');
+        slider.val(0);
+        slider.trigger('change');
+        """
+        self.browser.execute_script(js)
+
+        # Check the values for Gravesend have changed as expected
+        gravesend = self.find_by_xpath(
+            "//*[@fill='#ed9576' and name()='path']")
+        gravesend.click()
+        popup = self.find_by_xpath(
+            "//*[contains(@class, 'leaflet-popup-content')]")
+        self.assertIn(
+            "NHS DARTFORD, GRAVESHAM AND SWANLEY CCG\nItems for Rosuvastatin "
+            "Calcium in Apr '13", popup.text)
+        self.assertTrue(popup.is_displayed())
 
 
 class GeneralFrontendTest(SeleniumTestCase):
@@ -56,7 +154,8 @@ class GeneralFrontendTest(SeleniumTestCase):
                     '/analyse/']:
             url = self.live_server_url + url
             self.browser.get(url)
-            self.find_by_xpath('//button[@id="doorbell-button"]')  # Wait for button load
+            self.find_by_xpath(
+                '//button[@id="doorbell-button"]')  # Wait for button load
             try:
                 el = self.find_visible_by_xpath(
                     '//button[@id="doorbell-button"]')
