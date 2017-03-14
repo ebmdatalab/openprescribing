@@ -31,8 +31,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         caps = DesiredCapabilities.FIREFOX
         caps["marionette"] = True
         return webdriver.Firefox(
-            capabilities=caps, log_path="%s/logs/webdriver.log"
-        ) % settings.INSTALL_ROOT
+            capabilities=caps,
+            log_path="%s/logs/webdriver.log" % settings.INSTALL_ROOT)
 
     @classmethod
     def setUpClass(cls):
