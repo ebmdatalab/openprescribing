@@ -132,6 +132,7 @@ var analyseMap = {
       }, _this);
       layer.on('click', function(e) {
         this.map.fitBounds(e.target.getBounds());
+        e.target.fireEvent('mousemove', e);
       }, _this);
     });
   },
