@@ -6,10 +6,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.conf import settings
 
 
 @unittest.skipIf(
@@ -29,7 +30,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     def get_firefox_driver(cls):
         caps = DesiredCapabilities.FIREFOX
         caps["marionette"] = True
-        return webdriver.Firefox(capabilities=caps)
+        return webdriver.Firefox(
+            capabilities=caps, log_path="%s/logs/webdriver.log"
+        ) % settings.INSTALL_ROOT
 
     @classmethod
     def setUpClass(cls):
