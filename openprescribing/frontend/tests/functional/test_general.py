@@ -72,6 +72,9 @@ class MapTest(SeleniumTestCase):
         self.browser.get(
             self.live_server_url +
             '/analyse/#org=CCG&numIds=0212000AA&denomIds=2.12&selectedTab=map')
+        # Await map
+        self.find_by_xpath(
+            "//*[@class='leaflet-zoom-animated' and name()='svg']")
         gravesend = self.find_by_xpath(
             "//*[@fill='#67001f' and name()='path']")
         gravesend.click()
