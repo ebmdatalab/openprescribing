@@ -60,6 +60,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             cls.browser = webdriver.Remote(
                 desired_capabilities=caps,
                 command_executor="http://%s/wd/hub" % hub_url)
+            cls.browser.maximize_window()
+            cls.browser.implicitly_wait(1)
         else:
             if cls.use_xvfb():
                 from pyvirtualdisplay import Display
@@ -67,12 +69,12 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display.start()
             try:
                 cls.browser = cls.get_firefox_driver()
-            finally:
+                cls.browser.maximize_window()
+                cls.browser.implicitly_wait(1)
+            except Exception:
                 if not cls.use_saucelabs and cls.use_xvfb():
                     cls.display.stop()
 
-        cls.browser.maximize_window()
-        cls.browser.implicitly_wait(1)
 
     @classmethod
     def tearDownClass(cls):
