@@ -149,12 +149,12 @@ def download_and_unzip(gcs_uri):
     for i, f in enumerate(download_from_gcs(gcs_uri)):
         # Unzip
         if i == 0:
-            cmd = "zcat -f %s >> %s"
+            cmd = "gunzip -c -f %s >> %s"
         else:
             # When the file is split into several shards in GCS, it
             # puts a header on every file, so we have to skip that
             # header on all except the first shard.
-            cmd = "zcat -f %s | tail -n +2 >> %s"
+            cmd = "gunzip -c -f %s | tail -n +2 >> %s"
         subprocess.check_call(
             cmd % (f.name, unzipped.name), shell=True)
     return unzipped
@@ -226,7 +226,7 @@ def query_and_return(project_id, dataset_id, table_id, query):
             }
         }
     }
-    logging.info("Writing to bigquery table %s" % table_id)
+    logger.info("Writing to bigquery table %s" % table_id)
     return insert_job(project_id, payload)
 
 
@@ -255,7 +255,7 @@ def wait_for_job(job_id, project_id):
                     query = str(response['configuration']['query']['query'])
                     for i, l in enumerate(query.split("\n")):
                         # print SQL query with line numbers for debugging
-                        logging.error(
+                        logger.error(
                             error + ":\n" + "{:>3}: {}".format(i + 1, l))
                 raise StandardError(error)
             else:
@@ -272,5 +272,5 @@ def wait_for_job(job_id, project_id):
                              'gb_processed': gb_processed}
     else:
         est_cost = 'n/a'
-    logging.warn("Time %ss, cost $%s" % (elapsed, est_cost))
+    logger.warn("Time %ss, cost $%s" % (elapsed, est_cost))
     return response

@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+import os
 import unittest
 
 from django.test import TestCase
@@ -522,8 +523,13 @@ class GenerateImageTestCase(unittest.TestCase):
         self.selector = "#thing2"
 
     def tearDown(self):
-        import os
-        os.remove(self.file_path)
+        try:
+            os.remove(self.file_path)
+        except OSError as e:
+            import errno
+            # We don't care about a "No such file or directory" error
+            if e.errno != errno.ENOENT:
+                raise
 
     def test_image_generated(self):
         self.assertEqual(len(self.msg.attachments), 0)

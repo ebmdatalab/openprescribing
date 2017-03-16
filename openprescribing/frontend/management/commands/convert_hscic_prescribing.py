@@ -276,7 +276,7 @@ def download_from_gcs(gcs_uri, target_path):
     bucket = client.get_bucket(bucket)
     prefix = blob_name.split('*')[0]
     unzipped = open(target_path, 'w')
-    cmd = "zcat -f %s >> %s"
+    cmd = "gunzip -c -f %s >> %s"
     for blob in bucket.list_blobs(prefix=prefix):
         with tempfile.NamedTemporaryFile(mode='rb+') as f:
             logger.info("Downloading %s to %s" % (blob.path, f.name))
