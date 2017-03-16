@@ -29,9 +29,13 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     @classmethod
     def get_firefox_driver(cls):
         caps = DesiredCapabilities.FIREFOX
+        fp = webdriver.FirefoxProfile()
+        # https://github.com/SeleniumHQ/selenium/issues/2701#issuecomment-275895137
+        fp.set_preference('browser.tabs.remote.autostart.2', False)
         caps["marionette"] = True
         return webdriver.Firefox(
             capabilities=caps,
+            firefox_profile=fp,
             log_path="%s/logs/webdriver.log" % settings.INSTALL_ROOT)
 
     @classmethod
