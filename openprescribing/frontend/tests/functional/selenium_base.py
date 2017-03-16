@@ -13,6 +13,10 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.conf import settings
 
 
+def use_saucelabs():
+    return os.environ.get('TRAVIS') or os.environ.get('USE_SAUCELABS')
+
+
 @unittest.skipIf(
     os.environ.get('TEST_SUITE') == 'nonfunctional',
     "nonfunctional tests specified in TEST_SUITE environment variable")
@@ -40,10 +44,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(SeleniumTestCase, cls).setUpClass()
-        cls.use_saucelabs = os.environ.get('TRAVIS') \
-            or os.environ.get('USE_SAUCELABS')
-        if cls.use_saucelabs:
+        if use_saucelabs():
             browser, version, platform = os.environ['BROWSER'].split(":")
             caps = {'browserName': browser}
             caps['platform'] = platform
@@ -57,15 +58,13 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 caps["tags"] = ["CI"]
             else:
                 caps["tags"] = ["from-dev-sandbox"]
-            if os.environ.get('TRAVIS'):
+            if os.environ.get('TRAVIS') or os.path.exists('/.dockerenv'):
                 hub_url = "%s:%s@saucehost:4445" % (username, access_key)
             else:
                 hub_url = "%s:%s@localhost:4445" % (username, access_key)
             cls.browser = webdriver.Remote(
                 desired_capabilities=caps,
                 command_executor="http://%s/wd/hub" % hub_url)
-            cls.browser.maximize_window()
-            cls.browser.implicitly_wait(1)
         else:
             if cls.use_xvfb():
                 from pyvirtualdisplay import Display
@@ -73,23 +72,28 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display.start()
             try:
                 cls.browser = cls.get_firefox_driver()
-                cls.browser.maximize_window()
-                cls.browser.implicitly_wait(1)
             except Exception:
-                if not cls.use_saucelabs and cls.use_xvfb():
+                if not use_saucelabs() and cls.use_xvfb():
                     cls.display.stop()
-
+                    raise
+        cls.browser.maximize_window()
+        cls.browser.implicitly_wait(1)
+        super(SeleniumTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
         cls.browser.quit()
-        if not cls.use_saucelabs and cls.use_xvfb():
+        if not use_saucelabs() and cls.use_xvfb():
             cls.display.stop()
         super(SeleniumTestCase, cls).tearDownClass()
 
     def _find_and_wait(self, locator, waiter):
+        if use_saucelabs():
+            wait = 60
+        else:
+            wait = 5
         try:
-            element = WebDriverWait(self.browser, 5).until(
+            element = WebDriverWait(self.browser, wait).until(
                 waiter((By.XPATH, locator))
             )
             return element

@@ -211,13 +211,13 @@ var analyseMap = {
     // console.log('getLegend', quintiles);
     var legend = '<span class="legend-header">' + options.friendly.yAxisTitle.replace('<br/>', '');
     legend += ' ' + options.friendly.chartSubTitle + '</span>';
-    legend += '<div class="gradient">'
+    legend += '<div class="gradient">';
     for (var i = 1; i <= 100; i++) {
-      legend += '<span class="grad-step" style="background-color:'+this.getColour(100, i)+'"></span>';
+      legend += '<span class="grad-step" style="background-color:' + this.getColour(100, i) + '"></span>';
     }
-    legend += '<span class="domain-min">' +  + Highcharts.numberFormat(minMax[0]) + '</span>';
+    legend += '<span class="domain-min">' + Highcharts.numberFormat(minMax[0]) + '</span>';
     legend += '<span class="domain-max">' + Highcharts.numberFormat(minMax[1]) + '</span>';
-    legend += '</div>'
+    legend += '</div>';
     legend += 'by ' + options.friendly.friendlyOrgs;
     return legend;
   }

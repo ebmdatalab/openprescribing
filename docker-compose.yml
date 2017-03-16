@@ -10,16 +10,19 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
       - TRAVIS=${TRAVIS}
+      - BROWSER=${BROWSER}
       - TEST_SUITE=${TEST_SUITE}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+      - USE_SAUCELABS=${USE_SAUCELABS}
       - GOOGLE_APPLICATION_CREDENTIALS=/code/google-credentials.json
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:
       - "6080:6080"
+      - "6060:6060"
     volumes:
       - .:/code
     depends_on:
@@ -32,15 +35,18 @@ services:
     environment:
       - TRAVIS=${TRAVIS}
       - TEST_SUITE=${TEST_SUITE}
+      - BROWSER=${BROWSER}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
+      - USE_SAUCELABS=${USE_SAUCELABS}
       - GOOGLE_APPLICATION_CREDENTIALS=/code/google-credentials.json
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:
       - "6080:6080"
+      - "6060:6060"
     volumes:
       - .:/code
     depends_on:

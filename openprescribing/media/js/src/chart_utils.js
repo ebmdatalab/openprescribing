@@ -1,8 +1,6 @@
 var moment = require('moment');
 var _ = require('underscore');
-var ss = require('simple-statistics');
 var config = require('./config');
-var chroma = require('chroma-js');
 
 var utils = {
 
