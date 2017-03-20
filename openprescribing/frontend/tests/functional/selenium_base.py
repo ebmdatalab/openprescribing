@@ -49,6 +49,14 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             caps = {'browserName': browser}
             caps['platform'] = platform
             caps['version'] = version
+            # Disable slow script warning in IE
+            caps['prerun'] = {
+                'executable': ('https://raw.githubusercontent.com/'
+                               'ebmdatalab/openprescribing/'
+                               'map-improvements-%23347/'
+                               'scripts/setup_ie_8.bat'),
+                'background': 'false'
+            }
             username = os.environ["SAUCE_USERNAME"]
             access_key = os.environ["SAUCE_ACCESS_KEY"]
             if os.environ.get('TRAVIS'):
