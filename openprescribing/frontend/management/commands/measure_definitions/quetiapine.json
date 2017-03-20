@@ -17,7 +17,7 @@
   "denominator_short": "Total quetiapine tablet items",
   "url": null,
   "is_percentage": true,
-  "is_cost_based": false,
+  "is_cost_based": true,
   "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
