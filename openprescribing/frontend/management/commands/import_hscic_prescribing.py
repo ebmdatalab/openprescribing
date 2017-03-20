@@ -1,14 +1,14 @@
 import csv
 import datetime
 import logging
-import os
 
 from django.core.management.base import BaseCommand
 from django.db import connection
+from django.db import transaction
 
-from frontend.management.commands.convert_hscic_prescribing \
-    import Command as ConvertCommand
-from frontend.models import PCT, ImportLog
+from frontend.models import ImportLog
+from frontend.models import PCT
+from frontend.models import Practice
 
 logger = logging.getLogger(__name__)
 
@@ -46,29 +46,38 @@ class Command(BaseCommand):
         else:
             self.date = self._date_from_filename(fname)
         if not options['skip_orgs']:
-            self.import_pcts(fname)
+            self.import_pcts_and_practices(fname)
         self.drop_partition()
         self.create_partition()
         self.import_prescriptions(fname)
         self.create_partition_indexes()
         self.add_parent_trigger()
         self.drop_oldest_month()
+        self.log_missing_relations()
 
-    def import_pcts(self, filename):
-        logger.info('Importing SHAs and PCTs from %s' % filename)
+    def import_pcts_and_practices(self, filename):
+        logger.info('Importing PCTs and practices from %s' % filename)
         rows = csv.reader(open(filename, 'rU'))
         pct_codes = set()
+        practices = set()
         i = 0
         for row in rows:
             pct_codes.add(row[0])
+            practices.add(row[1])
             i += 1
             if self.truncate and i > 500:
                 break
-        pcts_created = 0
-        for pct_code in pct_codes:
-            p, created = PCT.objects.get_or_create(code=pct_code)
-            pcts_created += created
+        pcts_created = practices_created = 0
+        with transaction.atomic():
+            for pct_code in pct_codes:
+                p, created = PCT.objects.get_or_create(code=pct_code)
+                pcts_created += created
+            for practice_code in practices:
+                p, created = Practice.objects.get_or_create(code=practice_code)
+                practices_created += created
+
         logger.info("%s PCTs created" % pcts_created)
+        logger.info("%s Practices created" % practices_created)
 
     def create_partition(self):
         date = self.date

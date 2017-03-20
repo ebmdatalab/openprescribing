@@ -337,8 +337,8 @@ class Prescription(models.Model):
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
     '''
-    pct = models.ForeignKey(PCT)
-    practice = models.ForeignKey(Practice)
+    pct = models.ForeignKey(PCT, db_constraint=False, null=True)
+    practice = models.ForeignKey(Practice, db_constraint=False, null=True)
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     total_items = models.IntegerField()

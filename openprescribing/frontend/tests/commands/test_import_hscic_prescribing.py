@@ -9,8 +9,11 @@ from django.test import TestCase
 
 from common import utils
 from frontend.management.commands.import_hscic_prescribing import Command
-from frontend.models import Chemical, PCT, Practice
-from frontend.models import Prescription, ImportLog
+from frontend.models import Chemical
+from frontend.models import ImportLog
+from frontend.models import PCT
+from frontend.models import Practice
+from frontend.models import Prescription
 
 
 # Number of bytes to send/receive in each request.
@@ -73,10 +76,12 @@ class ImportTestCase(TestCase):
                 actual_cost=4, quantity=4,
                 processing_date='2013-04-01')
 
-    def test_import_creates_prescriptions(self):
+    def test_import_creates_missing_entities(self):
         pcts = PCT.objects.all()
-        self.assertEqual(pcts.count(), 1)
+        self.assertEqual(pcts.count(), 2)
+        self.assertEqual(Practice.objects.all(), 4)
 
+    def test_import_creates_prescriptions(self):
         prescriptions = Prescription.objects.all()
         self.assertEqual(prescriptions.count(), 15)
 
