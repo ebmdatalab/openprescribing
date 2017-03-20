@@ -53,7 +53,6 @@ class Command(BaseCommand):
         self.create_partition_indexes()
         self.add_parent_trigger()
         self.drop_oldest_month()
-        self.log_missing_relations()
 
     def import_pcts_and_practices(self, filename):
         logger.info('Importing PCTs and practices from %s' % filename)
