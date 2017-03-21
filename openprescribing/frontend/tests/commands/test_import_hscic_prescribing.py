@@ -79,7 +79,7 @@ class ImportTestCase(TestCase):
     def test_import_creates_missing_entities(self):
         pcts = PCT.objects.all()
         self.assertEqual(pcts.count(), 2)
-        self.assertEqual(Practice.objects.all(), 4)
+        self.assertEqual(len(Practice.objects.all()), 4)
 
     def test_import_creates_prescriptions(self):
         prescriptions = Prescription.objects.all()
