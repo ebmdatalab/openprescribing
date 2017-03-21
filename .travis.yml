@@ -5,7 +5,7 @@ env:
     - TEST_SUITE=nonfunctional
     - TEST_SUITE=functional BROWSER="firefox:latest:Windows 2012"
     - TEST_SUITE=functional BROWSER="safari:8.0:OS X 10.10"
-    - TEST_SUITE=functional BROWSER="internet explorer:8.0:Windows 7"
+    - TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
 sudo: required
 language: python
 before_install:
