@@ -66,7 +66,8 @@ class Command(BaseCommand):
             filename_for_output = self.create_filename_for_output_file(f)
 
             if f.endswith('Detailed_Prescribing_Information.csv'):
-                uri = 'gs://ebmdatalab/' + f
+                f = f.split('/prescribing/')[1]
+                uri = 'gs://ebmdatalab/hscic/prescribing/' + f
                 # Grab date from file path
                 try:
                     date = datetime.datetime.strptime(

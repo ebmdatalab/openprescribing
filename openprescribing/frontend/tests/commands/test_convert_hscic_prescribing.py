@@ -53,19 +53,23 @@ class CommandsTestCase(TestCase):
     def test_convert_detailed_hscic_prescribing_call(self, method):
         method.return_value = 'filename.csv'
         opts = {
-            'filename': '2017_03/Detailed_Prescribing_Information.csv'
+            'filename': ('/home/hello/openprescribing-data/data/prescribing'
+                         '/2017_03/Detailed_Prescribing_Information.csv')
         }
         call_command('convert_hscic_prescribing', **opts)
         method.assert_called_with(
-            'gs://ebmdatalab/2017_03/Detailed_Prescribing_Information.csv',
-            '2017_03/Detailed_Prescribing_Information_formatted.CSV',
+            ('gs://ebmdatalab/hscic/prescribing/2017_03/'
+             'Detailed_Prescribing_Information.csv'),
+            ('/home/hello/openprescribing-data/data/prescribing'
+             '/2017_03/Detailed_Prescribing_Information_formatted.CSV'),
             '2017-03-01')
 
     @patch('frontend.management.commands.convert_hscic_prescribing.Command'
            '.aggregate_nhs_digital_data')
     def test_convert_detailed_hscic_prescribing_has_date(self, method):
         opts = {
-            'filename': 'Detailed_Prescribing_Information.csv'
+            'filename': ('/home/hello/openprescribing-data/data/prescribing'
+                         '/Detailed_Prescribing_Information.csv')
         }
         with self.assertRaises(CommandError):
             call_command('convert_hscic_prescribing', **opts)
