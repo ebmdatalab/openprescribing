@@ -62,7 +62,7 @@ class CommandsTestCase(TestCase):
              'Detailed_Prescribing_Information.csv'),
             ('/home/hello/openprescribing-data/data/prescribing'
              '/2017_03/Detailed_Prescribing_Information_formatted.CSV'),
-            '2017-03-01')
+            '2017_03_01')
 
     @patch('frontend.management.commands.convert_hscic_prescribing.Command'
            '.aggregate_nhs_digital_data')

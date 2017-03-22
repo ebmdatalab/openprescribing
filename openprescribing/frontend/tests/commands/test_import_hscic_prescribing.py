@@ -37,6 +37,15 @@ class UnitTests(unittest.TestCase):
         self.assertIn(
             "processing_date < DATE '2012-01-01'", execute_args)
 
+    def test_date_from_filename(self):
+        cmd = Command()
+        old_style = cmd._date_from_filename(
+            'something/T201304PDPI+BNFT_formatted.CSV')
+        self.assertEqual(old_style, datetime.date(2013, 4, 1))
+        new_style = cmd._date_from_filename(
+            'something/2013_04/formatted.CSV')
+        self.assertEqual(new_style, datetime.date(2013, 4, 1))
+
 
 class ImportTestCase(TestCase):
     """Tests we can import data from a local flat file

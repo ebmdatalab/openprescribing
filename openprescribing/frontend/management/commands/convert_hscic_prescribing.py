@@ -72,7 +72,7 @@ class Command(BaseCommand):
                 try:
                     date = datetime.datetime.strptime(
                         uri.split("/")[-2] + "_01", "%Y_%m_%d"
-                    ).strftime('%Y-%m-%d')
+                    ).strftime('%Y_%m_%d')
                 except ValueError as e:
                     message = ('The file path must have a YYYY_MM '
                                'date component in the containing directory: ')

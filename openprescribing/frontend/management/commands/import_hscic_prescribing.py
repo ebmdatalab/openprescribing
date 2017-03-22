@@ -1,6 +1,7 @@
 import csv
 import datetime
 import logging
+import re
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -206,5 +207,11 @@ class Command(BaseCommand):
             )
 
     def _date_from_filename(self, filename):
-        file_str = filename.replace('T', '').split('/')[-1].split('.')[0]
-        return datetime.date(int(file_str[0:4]), int(file_str[4:6]), 1)
+        new_style = re.match(r'.*/([0-9]{4}_[0-9]{2})/', filename)
+        if new_style:
+            year, month = new_style.groups()[0].split('_')
+            date = datetime.date(int(year), int(month), 1)
+        else:
+            file_str = filename.replace('T', '').split('/')[-1].split('.')[0]
+            date = datetime.date(int(file_str[0:4]), int(file_str[4:6]), 1)
+        return date
