@@ -87,9 +87,9 @@ class Command(BaseCommand):
             fieldnames = f.readline().split(',')
             with connection.cursor() as cursor:
                 with utils.constraint_and_index_reconstructor(tablename):
-                    self.log("Deleting from table...")
+                    self.log("Deleting from table %s..." % tablename)
                     cursor.execute("DELETE FROM %s" % tablename)
-                    self.log("Copying CSV to postgres...")
+                    self.log("Copying CSV to %s..." % tablename)
                     try:
                         cursor.copy_expert(copy_str % (
                             tablename, ','.join(fieldnames)), f)
