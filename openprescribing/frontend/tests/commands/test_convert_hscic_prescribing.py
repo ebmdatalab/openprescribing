@@ -117,5 +117,5 @@ class AggregateTestCase(TestCase):
         # an UNKNONWN SURGERY (see issue #349)
         self.assertEqual(len(rows), 9)
         dr_chan = next(
-            x for x in rows if x[-2] == 'P92042' and x[0] == '0202010B0AAABAB')
+            x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
         self.assertEqual(int(dr_chan[5]), 1288)  # combination of two rows

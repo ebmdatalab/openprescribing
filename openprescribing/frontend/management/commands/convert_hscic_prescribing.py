@@ -142,27 +142,17 @@ class Command(BaseCommand):
     def write_aggregated_data_to_temp_table(self, source_table_ref, date):
         query = """
          SELECT
-          BNF_Code AS presentation_code,
-          BNF_Description AS presentation_name,
-          SUM(Items) AS total_items,
-          SUM(Actual_Cost) AS actual_cost,
-          SUM(NIC) AS net_cost,
-          SUM(Quantity * Items) AS quantity,
-          '%s' AS processing_date,
-          CASE
-            WHEN BNF_Code LIKE '2%%' THEN
-               LEFT(BNF_Code, 4)
-            ELSE
-              LEFT(BNF_Code, 9)
-          END AS chemical_id,
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
-          Area_Team_Code AS sha_id
+          BNF_Code AS presentation_code,
+          SUM(Items) AS total_items,
+          SUM(Actual_Cost) AS actual_cost,
+          SUM(Quantity * Items) AS quantity,
+          '%s' AS processing_date,
          FROM %s
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
-           presentation_code, presentation_name, pct_id,
-           practice_code, sha_id, chemical_id
+           presentation_code, pct_id, practice_code
         """ % (date, source_table_ref)
         client = bigquery.client.Client(project='ebmdatalab')
         dataset = client.dataset(TEMP_DATASET)
