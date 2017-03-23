@@ -50,13 +50,11 @@ class CommandsTestCase(TestCase):
         args = [fname % '2040_02', fname % '2040_05']
         opts = {}
         call_command('import_list_sizes', *args, **opts)
-
         list_sizes = PracticeStatistics.objects.all()
-        self.assertEqual(len(list_sizes), 9)
-        self.assertEqual(str(list_sizes[8].date), '2040-03-01')
+        self.assertEqual(len(list_sizes), 6)
+        self.assertEqual(str(list_sizes[5].date), '2040-03-01')
 
     def test_import_bsa_list_size_quarterly(self):
-
         args = []
         fname = 'frontend/tests/fixtures/commands/'
         fname += 'patient_list_size/2040_02/Patient_List_Size_2013_10-12.csv'
@@ -66,98 +64,23 @@ class CommandsTestCase(TestCase):
         call_command('import_list_sizes', *args, **opts)
         last_list_size_date = '2040-02-01'
         list_sizes = PracticeStatistics.objects.all()
-        self.assertEqual(len(list_sizes), 6)
+
+        self.assertEqual(len(list_sizes), 4)
 
         p = PracticeStatistics.objects.get(practice_id='N84014',
                                            date=last_list_size_date)
-        self.assertEqual(p.total_list_size, 2932)
-        self.assertEqual(p.astro_pu_cost, 12358.6840999993)
-        self.assertEqual(p.astro_pu_items, 45377.5747635734)
+        self.assertEqual(p.total_list_size, 40)
+        self.assertEqual(p.astro_pu_cost, 199.419458446917)
+        self.assertEqual(p.astro_pu_items, 780.191218783541)
         self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
-                         '1764.245')
+                         '27.135')
         self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
-                         '968.672')
+                         '13.050')
         self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
-                         '66516.700')
+                         '887.100')
         for k in p.star_pu:
             self.assertNotEqual(p.star_pu[k], 0)
             self.assertNotEqual(p.star_pu[k], None)
-
-        # Test that our script creates all months in the quarter.
-        p = PracticeStatistics.objects.get(practice_id='N84014',
-                                           date=last_list_size_date)
-        self.assertEqual(p.total_list_size, 2932)
-        self.assertEqual(p.astro_pu_cost, 12358.6840999993)
-        self.assertEqual(p.astro_pu_items, 45377.5747635734)
-        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
-                         '1764.245')
-        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
-                         '968.672')
-        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
-                         '66516.700')
-
-        p = PracticeStatistics.objects.get(practice_id='N84014',
-                                           date=last_list_size_date)
-        self.assertEqual(p.total_list_size, 2932)
-        self.assertEqual(p.astro_pu_cost, 12358.6840999993)
-        self.assertEqual(p.astro_pu_items, 45377.5747635734)
-        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
-                         '1764.245')
-        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
-                         '968.672')
-        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
-                         '66516.700')
-
-        p = PracticeStatistics.objects.get(practice_id='P84034',
-                                           date=last_list_size_date)
-        self.assertEqual(p.total_list_size, 13439)
-        self.assertEqual(p.astro_pu_cost, 41303.5675254791)
-        self.assertEqual(p.astro_pu_items, 144028.821414122)
-        self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
-                         '7100.005')
-        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
-                         '3287.111')
-        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
-                         '295093.300')
-
-        p = PracticeStatistics.objects.get(practice_id='Y02229',
-                                           date=last_list_size_date)
-        self.assertEqual(p.total_list_size, 0)
-        self.assertEqual(p.astro_pu_cost, 0)
-        self.assertEqual(p.astro_pu_items, 0)
-        self.assertEqual(p.star_pu['oral_antibacterials_item'], 0)
-        self.assertEqual(p.star_pu['cox-2_inhibitors_cost'], 0)
-        self.assertEqual(p.star_pu['antidepressants_adq'], 0)
-
-    def test_import_foi_file(self):
-
-        # Test that the FOI file, with an explicit 'Month' field
-        # rather than months in the filename, also loads correctly.
-        args = []
-        fname = 'frontend/tests/fixtures/commands/'
-        fname += 'Patient_List_Size_nodate.csv'
-        opts = {
-            'filename': fname
-        }
-        call_command('import_list_sizes', *args, **opts)
-
-        p = PracticeStatistics.objects.get(practice_id='P84034',
-                                           date='2011-04-01')
-        self.assertEqual(p.total_list_size, 12842)
-        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
-        self.assertEqual(p.astro_pu_items, 136780.949819498)
-
-        p = PracticeStatistics.objects.get(practice_id='P84034',
-                                           date='2011-05-01')
-        self.assertEqual(p.total_list_size, 12842)
-        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
-        self.assertEqual(p.astro_pu_items, 136780.949819498)
-
-        p = PracticeStatistics.objects.get(practice_id='P84034',
-                                           date='2011-06-01')
-        self.assertEqual(p.total_list_size, 12842)
-        self.assertEqual(p.astro_pu_cost, 39098.6573715275)
-        self.assertEqual(p.astro_pu_items, 136780.949819498)
 
 
 class MissingMonthsTestCase(TestCase):
