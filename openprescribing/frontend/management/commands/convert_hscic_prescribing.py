@@ -142,7 +142,7 @@ class Command(BaseCommand):
         copy_table_to_gcs(temp_table, converted_uri)
         return download_from_gcs(converted_uri, local_path)
 
-    def append_aggregated_data_to_prescrbing_table(
+    def append_aggregated_data_to_prescribing_table(
             self, source_table_ref, date):
         query = """
          SELECT
