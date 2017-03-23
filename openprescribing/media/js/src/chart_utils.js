@@ -1,6 +1,5 @@
 var moment = require('moment');
 var _ = require('underscore');
-var ss = require('simple-statistics');
 var config = require('./config');
 
 var utils = {
@@ -248,10 +247,10 @@ var utils = {
     return monthRange;
   },
 
-  calculateQuintiles: function(combinedData) {
-        // Used in maps.
-    var quintiles = {},
-      temp = {};
+  calculateMinMaxByDate: function(combinedData) {
+    // Used in maps.
+    var minMaxByDate = {};
+    var temp = {};
     _.each(combinedData, function(d) {
       if (d.date in temp) {
         temp[d.date].push(d);
@@ -259,34 +258,18 @@ var utils = {
         temp[d.date] = [d];
       }
     });
-    var quintilePoints = [0, 20, 40, 60, 80, 100];
     for (var date in temp) {
-      quintiles[date] = {};
-      quintiles[date].ratio_actual_cost = utils.calculatePercentiles(temp[date],
-                                       'ratio_actual_cost',
-                                       quintilePoints);
-      quintiles[date].ratio_items = utils.calculatePercentiles(temp[date],
-                                       'ratio_items',
-                                       quintilePoints);
+      minMaxByDate[date] = {};
+      minMaxByDate[date].ratio_actual_cost = this.calculateMinMax(temp[date], 'ratio_actual_cost');
+      minMaxByDate[date].ratio_items = this.calculateMinMax(temp[date], 'ratio_items');
     }
-    return quintiles;
+
+    return minMaxByDate;
   },
 
-  calculatePercentiles: function(data, field, percentiles) {
-    var vals = [],
-      quantiles = [];
-    _.each(data, function(feature) {
-      vals.push(feature[field]);
-    });
-    _.each(percentiles, function(percentile) {
-      quantiles.push(ss.quantile(vals, percentile * 0.01));
-    });
-    while ((quantiles.length > 2) && (+quantiles[1] === 0)) {
-      quantiles.splice(1, 1);
-    }
-    return quantiles;
+  calculateMinMax: function(arr, key) {
+    return [_.min(_.pluck(arr, key)), _.max(_.pluck(arr, key))];
   },
-
 
   setChartValues: function(options) {
     var y = options.activeOption,

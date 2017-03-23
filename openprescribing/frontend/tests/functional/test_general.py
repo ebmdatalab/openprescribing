@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
-from mock import patch
-from mock import MagicMock
-from mock import PropertyMock
 
+from mock import patch
+from mock import PropertyMock
 from selenium_base import SeleniumTestCase
 
 
@@ -56,7 +55,8 @@ class GeneralFrontendTest(SeleniumTestCase):
                     '/analyse/']:
             url = self.live_server_url + url
             self.browser.get(url)
-            self.find_by_xpath('//button[@id="doorbell-button"]')  # Wait for button load
+            self.find_by_xpath(
+                '//button[@id="doorbell-button"]')  # Wait for button load
             try:
                 el = self.find_visible_by_xpath(
                     '//button[@id="doorbell-button"]')
@@ -114,17 +114,17 @@ class GeneralFrontendTest(SeleniumTestCase):
     def test_ccg_measures_explore_link(self):
         url = self.live_server_url + '/ccg/02Q/'
         self.browser.get(url)
-        measure = self.browser.find_element_by_xpath(
+        measure = self.find_by_xpath(
             "//div[@id='measure_keppra']")
-        self.assertEqual(
+        self.assertIn(
+            '/measure/keppra',
             measure.find_element_by_link_text(
                 "compare performance with other CCGs").get_attribute('href'),
-            '/measure/keppra'
             )
-        self.assertEqual(
+        self.assertIn(
+            '/ccg/02Q/keppra',
             measure.find_element_by_link_text(
                 "show all practices in this CCG").get_attribute('href'),
-            '/ccg/02Q/keppra'
             )
 
 

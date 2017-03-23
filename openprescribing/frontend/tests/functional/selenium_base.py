@@ -6,10 +6,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.conf import settings
+
+
+def use_saucelabs():
+    return os.environ.get('TRAVIS') or os.environ.get('USE_SAUCELABS')
 
 
 @unittest.skipIf(
@@ -28,19 +33,30 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     @classmethod
     def get_firefox_driver(cls):
         caps = DesiredCapabilities.FIREFOX
+        fp = webdriver.FirefoxProfile()
+        # https://github.com/SeleniumHQ/selenium/issues/2701#issuecomment-275895137
+        fp.set_preference('browser.tabs.remote.autostart.2', False)
         caps["marionette"] = True
-        return webdriver.Firefox(capabilities=caps)
+        return webdriver.Firefox(
+            capabilities=caps,
+            firefox_profile=fp,
+            log_path="%s/logs/webdriver.log" % settings.INSTALL_ROOT)
 
     @classmethod
     def setUpClass(cls):
-        super(SeleniumTestCase, cls).setUpClass()
-        cls.use_saucelabs = os.environ.get('TRAVIS') \
-            or os.environ.get('USE_SAUCELABS')
-        if cls.use_saucelabs:
+        if use_saucelabs():
             browser, version, platform = os.environ['BROWSER'].split(":")
             caps = {'browserName': browser}
             caps['platform'] = platform
             caps['version'] = version
+            # Disable slow script warning in IE
+            caps['prerun'] = {
+                'executable': ('https://raw.githubusercontent.com/'
+                               'ebmdatalab/openprescribing/'
+                               'map-improvements-%23347/'
+                               'scripts/setup_ie_8.bat'),
+                'background': 'false'
+            }
             username = os.environ["SAUCE_USERNAME"]
             access_key = os.environ["SAUCE_ACCESS_KEY"]
             if os.environ.get('TRAVIS'):
@@ -50,7 +66,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 caps["tags"] = ["CI"]
             else:
                 caps["tags"] = ["from-dev-sandbox"]
-            if os.environ.get('TRAVIS'):
+            if os.environ.get('TRAVIS') or os.path.exists('/.dockerenv'):
                 hub_url = "%s:%s@saucehost:4445" % (username, access_key)
             else:
                 hub_url = "%s:%s@localhost:4445" % (username, access_key)
@@ -64,23 +80,28 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 cls.display.start()
             try:
                 cls.browser = cls.get_firefox_driver()
-            except WebDriverException:
-                if not cls.use_saucelabs and cls.use_xvfb():
+            except Exception:
+                if not use_saucelabs() and cls.use_xvfb():
                     cls.display.stop()
-
+                    raise
         cls.browser.maximize_window()
         cls.browser.implicitly_wait(1)
+        super(SeleniumTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
         cls.browser.quit()
-        if not cls.use_saucelabs and cls.use_xvfb():
+        if not use_saucelabs() and cls.use_xvfb():
             cls.display.stop()
         super(SeleniumTestCase, cls).tearDownClass()
 
     def _find_and_wait(self, locator, waiter):
+        if use_saucelabs():
+            wait = 60
+        else:
+            wait = 5
         try:
-            element = WebDriverWait(self.browser, 5).until(
+            element = WebDriverWait(self.browser, wait).until(
                 waiter((By.XPATH, locator))
             )
             return element

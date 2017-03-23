@@ -3,7 +3,8 @@ import subprocess
 
 from django.conf import settings
 from django.test.runner import DiscoverRunner
-from openprescribing.settings import test as test_settings
+
+from frontend.tests.functional.mock_api_server import MockApiServer
 
 
 class AssetBuildingTestRunner(DiscoverRunner):
@@ -12,6 +13,7 @@ class AssetBuildingTestRunner(DiscoverRunner):
       * Building JS and CSS assets when running functional tests
       * Only running functional tests when TEST_SUITE environment says so
       * Custom settings to support running in SauceLabs
+      * Starting a mock API server
     """
     # We must run the test server on a port supported by Saucelabs
     os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = "0.0.0.0:6080"
@@ -24,14 +26,9 @@ class AssetBuildingTestRunner(DiscoverRunner):
             test_labels, extra_tests, **kwargs)
 
     def setup_test_environment(self):
-        # Use the settings in settings/test.py. Doing it this way
-        # means we don't have to remember to specify --settings on the
-        # command line when testing.
-        for key in dir(test_settings):
-            if key == 'LOGGING' and 'TRAVIS' in os.environ:
-                continue
-            if key.isupper():
-                setattr(settings, key, getattr(test_settings, key))
+        # Get a free port for starting a mock API server
+        os.environ['API_HOST'] = (
+            "http://localhost:%s" % MockApiServer.api_port())
 
         # Before we load any func tests, ensure we've got assets built
         npm_cmd = "mkdir -p ../../static/js && npm run build"
@@ -42,4 +39,10 @@ class AssetBuildingTestRunner(DiscoverRunner):
         if not os.environ.get('BROWSER'):
             # Default test environment for Saucelabs
             os.environ['BROWSER'] = 'firefox:latest:Windows 10'
+        # I had previously tried patching the API methods, but patching
+        # is not a thread-safe operation: the methods are set in the
+        # global namespace, and a LiveServerTestCase (of which this is a
+        # subclass) starts a new server in a subprocess.
+        if os.environ.get('TEST_SUITE', '') != 'nonfunctional':
+            MockApiServer().start()
         super(AssetBuildingTestRunner, self).setup_test_environment()

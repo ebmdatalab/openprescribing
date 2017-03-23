@@ -1,0 +1,674 @@
+[
+  {
+    "items": 45469,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-04-01",
+    "row_id": "00C",
+    "actual_cost": 123109.72,
+    "quantity": 1277891
+  },
+  {
+    "items": 45469,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-04-01",
+    "row_id": "00D",
+    "actual_cost": 123109.72,
+    "quantity": 1277891
+  },
+  {
+    "items": 13017,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-05-01",
+    "row_id": "00C",
+    "actual_cost": 35124.52,
+    "quantity": 414417
+  },
+  {
+    "items": 47528,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-05-01",
+    "row_id": "00D",
+    "actual_cost": 128691.51,
+    "quantity": 1340483
+  },
+  {
+    "items": 12006,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-06-01",
+    "row_id": "00C",
+    "actual_cost": 32335.64,
+    "quantity": 370960
+  },
+  {
+    "items": 43365,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-06-01",
+    "row_id": "00D",
+    "actual_cost": 116643.47,
+    "quantity": 1212863
+  },
+  {
+    "items": 13221,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-07-01",
+    "row_id": "00C",
+    "actual_cost": 33749.59,
+    "quantity": 405007
+  },
+  {
+    "items": 48224,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-07-01",
+    "row_id": "00D",
+    "actual_cost": 125822.54,
+    "quantity": 1322830
+  },
+  {
+    "items": 13034,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-08-01",
+    "row_id": "00C",
+    "actual_cost": 34633.46,
+    "quantity": 405468
+  },
+  {
+    "items": 45954,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-08-01",
+    "row_id": "00D",
+    "actual_cost": 123619.63,
+    "quantity": 1289703
+  },
+  {
+    "items": 12173,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-09-01",
+    "row_id": "00C",
+    "actual_cost": 32557.1,
+    "quantity": 375503
+  },
+  {
+    "items": 45183,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-09-01",
+    "row_id": "00D",
+    "actual_cost": 118012.15,
+    "quantity": 1237072
+  },
+  {
+    "items": 13514,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-10-01",
+    "row_id": "00C",
+    "actual_cost": 32747.77,
+    "quantity": 414281
+  },
+  {
+    "items": 48234,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-10-01",
+    "row_id": "00D",
+    "actual_cost": 122477.75,
+    "quantity": 1323049
+  },
+  {
+    "items": 12282,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-11-01",
+    "row_id": "00C",
+    "actual_cost": 32736.3,
+    "quantity": 391302
+  },
+  {
+    "items": 48150,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-11-01",
+    "row_id": "00D",
+    "actual_cost": 116724.02,
+    "quantity": 1323261
+  },
+  {
+    "items": 13817,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2013-12-01",
+    "row_id": "00C",
+    "actual_cost": 35701.11,
+    "quantity": 421699
+  },
+  {
+    "items": 49055,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2013-12-01",
+    "row_id": "00D",
+    "actual_cost": 121737.22,
+    "quantity": 1347880
+  },
+  {
+    "items": 13253,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-01-01",
+    "row_id": "00C",
+    "actual_cost": 32962.19,
+    "quantity": 405162
+  },
+  {
+    "items": 47752,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-01-01",
+    "row_id": "00D",
+    "actual_cost": 116785.35,
+    "quantity": 1313736
+  },
+  {
+    "items": 11910,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-02-01",
+    "row_id": "00C",
+    "actual_cost": 30503.14,
+    "quantity": 369493
+  },
+  {
+    "items": 43759,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-02-01",
+    "row_id": "00D",
+    "actual_cost": 103466.09,
+    "quantity": 1192152
+  },
+  {
+    "items": 12779,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-03-01",
+    "row_id": "00C",
+    "actual_cost": 32441.7,
+    "quantity": 390733
+  },
+  {
+    "items": 47213,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-03-01",
+    "row_id": "00D",
+    "actual_cost": 115862.82,
+    "quantity": 1292353
+  },
+  {
+    "items": 12395,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-04-01",
+    "row_id": "00C",
+    "actual_cost": 29936.61,
+    "quantity": 388935
+  },
+  {
+    "items": 47143,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-04-01",
+    "row_id": "00D",
+    "actual_cost": 106890.99,
+    "quantity": 1269974
+  },
+  {
+    "items": 12735,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-05-01",
+    "row_id": "00C",
+    "actual_cost": 30948.47,
+    "quantity": 394060
+  },
+  {
+    "items": 49410,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-05-01",
+    "row_id": "00D",
+    "actual_cost": 119727.06,
+    "quantity": 1365101
+  },
+  {
+    "items": 12654,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-06-01",
+    "row_id": "00C",
+    "actual_cost": 30547.62,
+    "quantity": 388279
+  },
+  {
+    "items": 46541,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-06-01",
+    "row_id": "00D",
+    "actual_cost": 105774.76,
+    "quantity": 1243194
+  },
+  {
+    "items": 13594,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-07-01",
+    "row_id": "00C",
+    "actual_cost": 33109.97,
+    "quantity": 403973
+  },
+  {
+    "items": 50785,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-07-01",
+    "row_id": "00D",
+    "actual_cost": 122736.29,
+    "quantity": 1372549
+  },
+  {
+    "items": 12122,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-08-01",
+    "row_id": "00C",
+    "actual_cost": 30914.27,
+    "quantity": 372034
+  },
+  {
+    "items": 46834,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-08-01",
+    "row_id": "00D",
+    "actual_cost": 111586.57,
+    "quantity": 1258172
+  },
+  {
+    "items": 13222,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-09-01",
+    "row_id": "00C",
+    "actual_cost": 33234.13,
+    "quantity": 400273
+  },
+  {
+    "items": 48842,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-09-01",
+    "row_id": "00D",
+    "actual_cost": 113262.76,
+    "quantity": 1294895
+  },
+  {
+    "items": 13601,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-10-01",
+    "row_id": "00C",
+    "actual_cost": 34931.6,
+    "quantity": 406274
+  },
+  {
+    "items": 52254,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-10-01",
+    "row_id": "00D",
+    "actual_cost": 133791.66,
+    "quantity": 1415500
+  },
+  {
+    "items": 12407,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-11-01",
+    "row_id": "00C",
+    "actual_cost": 32324.94,
+    "quantity": 376915
+  },
+  {
+    "items": 45965,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-11-01",
+    "row_id": "00D",
+    "actual_cost": 111255.62,
+    "quantity": 1222760
+  },
+  {
+    "items": 14512,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2014-12-01",
+    "row_id": "00C",
+    "actual_cost": 37174.08,
+    "quantity": 428412
+  },
+  {
+    "items": 52802,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2014-12-01",
+    "row_id": "00D",
+    "actual_cost": 131593.1,
+    "quantity": 1413170
+  },
+  {
+    "items": 13029,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-01-01",
+    "row_id": "00C",
+    "actual_cost": 33155.84,
+    "quantity": 391990
+  },
+  {
+    "items": 48414,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-01-01",
+    "row_id": "00D",
+    "actual_cost": 116534.18,
+    "quantity": 1284804
+  },
+  {
+    "items": 12052,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-02-01",
+    "row_id": "00C",
+    "actual_cost": 31375.28,
+    "quantity": 366440
+  },
+  {
+    "items": 44546,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-02-01",
+    "row_id": "00D",
+    "actual_cost": 108768.25,
+    "quantity": 1190917
+  },
+  {
+    "items": 13141,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-03-01",
+    "row_id": "00C",
+    "actual_cost": 32382.31,
+    "quantity": 383760
+  },
+  {
+    "items": 49749,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-03-01",
+    "row_id": "00D",
+    "actual_cost": 119144.54,
+    "quantity": 1294938
+  },
+  {
+    "items": 13081,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-04-01",
+    "row_id": "00C",
+    "actual_cost": 33822.91,
+    "quantity": 394669
+  },
+  {
+    "items": 49109,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-04-01",
+    "row_id": "00D",
+    "actual_cost": 118413.53,
+    "quantity": 1303562
+  },
+  {
+    "items": 12997,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-05-01",
+    "row_id": "00C",
+    "actual_cost": 34394.9,
+    "quantity": 393572
+  },
+  {
+    "items": 47156,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-05-01",
+    "row_id": "00D",
+    "actual_cost": 115022.89,
+    "quantity": 1255275
+  },
+  {
+    "items": 13285,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-06-01",
+    "row_id": "00C",
+    "actual_cost": 33538.74,
+    "quantity": 394383
+  },
+  {
+    "items": 49970,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-06-01",
+    "row_id": "00D",
+    "actual_cost": 119075,
+    "quantity": 1305249
+  },
+  {
+    "items": 14454,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-07-01",
+    "row_id": "00C",
+    "actual_cost": 36415.05,
+    "quantity": 424721
+  },
+  {
+    "items": 51786,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-07-01",
+    "row_id": "00D",
+    "actual_cost": 120800.94,
+    "quantity": 1363740
+  },
+  {
+    "items": 12253,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-08-01",
+    "row_id": "00C",
+    "actual_cost": 30292.23,
+    "quantity": 356488
+  },
+  {
+    "items": 47514,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-08-01",
+    "row_id": "00D",
+    "actual_cost": 111918.7,
+    "quantity": 1232659
+  },
+  {
+    "items": 13589,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-09-01",
+    "row_id": "00C",
+    "actual_cost": 33746.04,
+    "quantity": 400841
+  },
+  {
+    "items": 49702,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-09-01",
+    "row_id": "00D",
+    "actual_cost": 114920.79,
+    "quantity": 1300937
+  },
+  {
+    "items": 13103,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-10-01",
+    "row_id": "00C",
+    "actual_cost": 32667.37,
+    "quantity": 385636
+  },
+  {
+    "items": 73226,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-10-01",
+    "row_id": "00D",
+    "actual_cost": 153522.75,
+    "quantity": 1882897
+  },
+  {
+    "items": 12640,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-11-01",
+    "row_id": "00C",
+    "actual_cost": 31759.52,
+    "quantity": 375001
+  },
+  {
+    "items": 50353,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-11-01",
+    "row_id": "00D",
+    "actual_cost": 136149.57,
+    "quantity": 1311371
+  },
+  {
+    "items": 14738,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2015-12-01",
+    "row_id": "00C",
+    "actual_cost": 37723.58,
+    "quantity": 436864
+  },
+  {
+    "items": 80190,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2015-12-01",
+    "row_id": "00D",
+    "actual_cost": 150647.71,
+    "quantity": 2060894
+  },
+  {
+    "items": 12463,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-01-01",
+    "row_id": "00C",
+    "actual_cost": 28949.82,
+    "quantity": 362999
+  },
+  {
+    "items": 48958,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-01-01",
+    "row_id": "00D",
+    "actual_cost": 105655.35,
+    "quantity": 1258898
+  },
+  {
+    "items": 13527,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-02-01",
+    "row_id": "00C",
+    "actual_cost": 31684.95,
+    "quantity": 389562
+  },
+  {
+    "items": 49148,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-02-01",
+    "row_id": "00D",
+    "actual_cost": 107036.68,
+    "quantity": 1279657
+  },
+  {
+    "items": 13477,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-03-01",
+    "row_id": "00C",
+    "actual_cost": 31970.63,
+    "quantity": 398620
+  },
+  {
+    "items": 52946,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-03-01",
+    "row_id": "00D",
+    "actual_cost": 112982.72,
+    "quantity": 1352801
+  },
+  {
+    "items": 13853,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-04-01",
+    "row_id": "00C",
+    "actual_cost": 32890.56,
+    "quantity": 406054
+  },
+  {
+    "items": 52183,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-04-01",
+    "row_id": "00D",
+    "actual_cost": 112715.95,
+    "quantity": 1343832
+  },
+  {
+    "items": 13148,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-05-01",
+    "row_id": "00C",
+    "actual_cost": 31303.65,
+    "quantity": 385314
+  },
+  {
+    "items": 50226,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-05-01",
+    "row_id": "00D",
+    "actual_cost": 107761.88,
+    "quantity": 1294370
+  },
+  {
+    "items": 14210,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-06-01",
+    "row_id": "00C",
+    "actual_cost": 31692.02,
+    "quantity": 408517
+  },
+  {
+    "items": 52353,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-06-01",
+    "row_id": "00D",
+    "actual_cost": 122995.29,
+    "quantity": 1327631
+  },
+  {
+    "items": 13858,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-07-01",
+    "row_id": "00C",
+    "actual_cost": 31261.12,
+    "quantity": 406170
+  },
+  {
+    "items": 51033,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-07-01",
+    "row_id": "00D",
+    "actual_cost": 104337.33,
+    "quantity": 1316550
+  },
+  {
+    "items": 14119,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-08-01",
+    "row_id": "00C",
+    "actual_cost": 32013.1,
+    "quantity": 408792
+  },
+  {
+    "items": 52663,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-08-01",
+    "row_id": "00D",
+    "actual_cost": 106933.11,
+    "quantity": 1346110
+  },
+  {
+    "items": 14642,
+    "row_name": "NHS DARLINGTON CCG",
+    "date": "2016-09-01",
+    "row_id": "00C",
+    "actual_cost": 32488.13,
+    "quantity": 427955
+  },
+  {
+    "items": 52846,
+    "row_name": "NHS DURHAM DALES, EASINGTON AND SEDGEFIELD CCG",
+    "date": "2016-09-01",
+    "row_id": "00D",
+    "actual_cost": 105094.53,
+    "quantity": 1347558
+  }
+]

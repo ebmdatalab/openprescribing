@@ -339,9 +339,7 @@ var analyseChart = {
                         _this.globalOptions.friendly.yAxisTitle,
                         _this.globalOptions.friendly.yAxisFormatter);
     if (!_this.isOldIe) {
-      map.update(_this.globalOptions.activeOption, _this.globalOptions.activeMonth,
-                       _this.globalOptions.friendly.chartTitle,
-                       _this.globalOptions.friendly.chartSubTitle);
+      map.updateMap('ratio_items', _this.globalOptions);
     }
   },
 
