@@ -53,8 +53,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             caps['prerun'] = {
                 'executable': ('https://raw.githubusercontent.com/'
                                'ebmdatalab/openprescribing/'
-                               'map-improvements-%23347/'
-                               'scripts/setup_ie_8.bat'),
+                               'master/scripts/setup_ie_8.bat'),
                 'background': 'false'
             }
             username = os.environ["SAUCE_USERNAME"]
