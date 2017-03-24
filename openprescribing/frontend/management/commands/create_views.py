@@ -116,24 +116,28 @@ def query_and_export(dataset, view, prescribing_date):
         tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
         gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
             dataset, tablename)
+        logger.info("Generating view %s and saving to %s" % (
+            tablename, gzip_destination))
         # We do a string replacement here as we don't know how many
         # times a dataset substitution token (i.e. `{{dataset}}') will
         # appear in each SQL template. And we can't use new-style
         # formatting as some of the SQL has braces in.
         sql = open(view, "r").read().replace('{{dataset}}', dataset)
         sql = sql.replace("{{this_month}}", prescribing_date)
+        logger.info("Running SQL for %s: %s" % (tablename, sql))
         # Execute query and wait
         job_id = query_and_return(
             project_id, dataset, tablename, sql)
-        logger.info("Awaiting query completion")
+        logger.info("Awaiting query completion for %s" % tablename)
         wait_for_job(job_id, project_id)
         # Delete existing GCS files
         delete_from_gcs(gzip_destination)
         # Export to GCS and wait
         job_id = export_to_gzip(
             project_id, dataset, tablename, gzip_destination)
-        logger.info("Awaiting export completion")
+        logger.info("Awaiting export completion for %s" % tablename)
         wait_for_job(job_id, project_id)
+        logger.info("View generation complete for %s" % tablename)
         return (tablename, gzip_destination)
     except Exception:
         # Log the formatted error, because the multiprocessing pool
