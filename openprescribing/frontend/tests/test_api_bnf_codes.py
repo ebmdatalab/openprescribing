@@ -142,3 +142,10 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
         self.assertEqual(len(content), 0)
+
+    def test_api_view_bnf_presentation_replacements(self):
+        url = '%s/bnf_code?q=Labetalol+50&format=json' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)

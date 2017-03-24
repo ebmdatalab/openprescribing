@@ -73,6 +73,7 @@ def _get_matching_products(codes, is_exact):
                               .extra(select={'type': 2}) \
                               .order_by('name')
             presentations = Presentation.objects \
+                                        .current() \
                                         .filter(Q(bnf_code=code) |
                                                 Q(name=code)) \
                                         .extra(select={'type': 3}) \
@@ -91,6 +92,7 @@ def _get_matching_products(codes, is_exact):
                               .extra(select={'type': 2}) \
                               .order_by('name')
             presentations = Presentation.objects \
+                                        .current() \
                                         .filter(Q(bnf_code__startswith=code) |
                                                 Q(name__icontains=code)) \
                                         .extra(select={'type': 3}) \
