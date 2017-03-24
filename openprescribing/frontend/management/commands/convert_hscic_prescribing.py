@@ -134,12 +134,49 @@ class Command(BaseCommand):
 
         # Create table at raw_nhs_digital_data
         table_ref = create_temporary_data_source(uri)
-        temp_table = self.write_aggregated_data_to_temp_table(table_ref, date)
+        self.append_aggregated_data_to_prescribing_table(
+            table_ref, date)
+        temp_table = self.write_aggregated_data_to_temp_table(
+            table_ref, date)
         converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         copy_table_to_gcs(temp_table, converted_uri)
         return download_from_gcs(converted_uri, local_path)
 
-    def write_aggregated_data_to_temp_table(self, source_table_ref, date):
+    def append_aggregated_data_to_prescribing_table(
+            self, source_table_ref, date):
+        query = """
+         SELECT
+          Area_Team_Code AS sha,
+          LEFT(PCO_Code, 3) AS pct,
+          Practice_Code AS practice,
+          BNF_Code AS bnf_code,
+          BNF_Description AS bnf_name,
+          SUM(Items) AS items,
+          SUM(NIC) AS net_cost,
+          SUM(Actual_Cost) AS actual_cost,
+          SUM(Quantity * Items) AS quantity,
+          TIMESTAMP('%s') AS month,
+         FROM %s
+         WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
+         GROUP BY
+           bnf_code, bnf_name, pct,
+           practice, sha
+        """ % (date.replace('_', '-'), source_table_ref)
+        client = bigquery.client.Client(project='ebmdatalab')
+        dataset = client.dataset('hscic')
+        table = dataset.table(
+            name='prescribing')
+        job = client.run_async_query("create_%s_%s" % (
+            table.name, int(time.time())), query)
+        job.destination = table
+        job.use_query_cache = False
+        job.write_disposition = 'WRITE_APPEND'
+        job.allow_large_results = True
+        wait_for_job(job)
+        return table
+
+    def write_aggregated_data_to_temp_table(
+            self, source_table_ref, date):
         query = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
