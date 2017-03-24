@@ -21,6 +21,7 @@ BNF_MAP_SCHEMA = [
 
 
 def create_code_mapping(filenames):
+    Presentation.objects.filter(replaced_by__isnull=False).delete()
     for f in filenames:
         with transaction.atomic():
             for line in open(f, 'r'):
@@ -69,6 +70,7 @@ class Command(BaseCommand):
     help = 'Imports presentation replacements.'
 
     def add_arguments(self, parser):
+        # XXX document that this argument only exists for tests
         parser.add_argument('filenames', nargs='*')
 
     def handle(self, *args, **options):
