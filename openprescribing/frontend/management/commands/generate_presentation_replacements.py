@@ -5,6 +5,8 @@ import tempfile
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+from django.db import transaction
+
 from google.cloud.bigquery import SchemaField
 
 from frontend.models import Presentation
@@ -20,25 +22,26 @@ BNF_MAP_SCHEMA = [
 
 def create_code_mapping(filenames):
     for f in filenames:
-        for line in open(f, 'r'):
-            if not line.strip():
-                continue  # skip blank lines
-            if "\t" not in line:
-                raise CommandError(
-                    "Input lines must be tab delimited: %s" % line)
-            prev_code, next_code = line.split("\t")
-            prev_code = prev_code.strip()
-            next_code = next_code.strip()
-            if re.match(r'^[0-9A-Z]+$', next_code):  # Skip 'withdrawn' &c
-                matches = Presentation.objects.filter(
-                    bnf_code__startswith=next_code)
-                for row in matches:
-                    replaced_by_id = row.pk
-                    row.pk = None  # allows us to clone
-                    row.replaced_by_id = replaced_by_id
-                    row.bnf_code = (
-                        prev_code + replaced_by_id[len(prev_code):])
-                    row.save()
+        with transaction.atomic():
+            for line in open(f, 'r'):
+                if not line.strip():
+                    continue  # skip blank lines
+                if "\t" not in line:
+                    raise CommandError(
+                        "Input lines must be tab delimited: %s" % line)
+                prev_code, next_code = line.split("\t")
+                prev_code = prev_code.strip()
+                next_code = next_code.strip()
+                if re.match(r'^[0-9A-Z]+$', next_code):  # Skip 'withdrawn' &c
+                    matches = Presentation.objects.filter(
+                        bnf_code__startswith=next_code)
+                    for row in matches:
+                        replaced_by_id = row.pk
+                        row.pk = None  # allows us to clone
+                        row.replaced_by_id = replaced_by_id
+                        row.bnf_code = (
+                            prev_code + replaced_by_id[len(prev_code):])
+                        row.save()
 
 
 def create_bigquery_table():
