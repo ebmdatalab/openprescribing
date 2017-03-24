@@ -5,6 +5,7 @@ import tempfile
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+from django.db import connection
 from django.db import transaction
 
 from google.cloud.bigquery import SchemaField
@@ -43,6 +44,29 @@ def create_code_mapping(filenames):
                         row.bnf_code = (
                             prev_code + replaced_by_id[len(prev_code):])
                         row.save()
+
+
+def mark_current_chemicals():
+    sql = """
+      UPDATE
+        frontend_chemical
+      SET
+        is_current = FALSE;
+
+      UPDATE
+        frontend_chemical
+      SET
+        is_current = TRUE
+      FROM (
+        SELECT DISTINCT LEFT(bnf_code, 9) AS chemical
+        FROM frontend_presentation
+        WHERE replaced_by_id IS NULL
+      ) AS active_chemicals
+      WHERE
+         frontend_chemical.bnf_code = active_chemicals.chemical;
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
 
 
 def create_bigquery_table():
@@ -84,5 +108,6 @@ class Command(BaseCommand):
                 )
             )
         create_code_mapping(filenames)
-        create_bigquery_table()
-        create_bigquery_view()
+        mark_current_chemicals()
+        #create_bigquery_table()
+        #create_bigquery_view()

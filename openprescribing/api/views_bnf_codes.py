@@ -65,6 +65,7 @@ def _get_matching_products(codes, is_exact):
             chemicals = Chemical.objects \
                                 .filter(Q(bnf_code=code) |
                                         Q(chem_name=code)) \
+                                .filter(is_current=True) \
                                 .extra(select={'type': 1}) \
                                 .order_by('chem_name')
             products = Product.objects \
@@ -85,6 +86,7 @@ def _get_matching_products(codes, is_exact):
                               .order_by('number_str')
             chemicals = Chemical.objects.filter(Q(bnf_code__startswith=code) |
                                                 Q(chem_name__icontains=code)) \
+                                .filter(is_current=True) \
                                 .extra(select={'type': 1}) \
                                 .order_by('chem_name')
             products = Product.objects.filter(Q(bnf_code__startswith=code) |

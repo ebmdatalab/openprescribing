@@ -87,6 +87,15 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]['name'], 'Chlotride')
         self.assertEqual(content[0]['is_generic'], False)
 
+    def test_inactive_chemical(self):
+        url = ('%s/bnf_code?q=0204ZZZZZ&exact=true&format=json' %
+               self.api_prefix)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 0)
+
+
     def test_api_view_bnf_section(self):
         url = '%s/bnf_code?q=diuretics&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)

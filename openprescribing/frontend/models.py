@@ -258,6 +258,7 @@ class Chemical(models.Model):
     bnf_code = models.CharField(max_length=9, primary_key=True,
                                 validators=[isAlphaNumeric])
     chem_name = models.CharField(max_length=200)
+    is_current = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.chem_name)

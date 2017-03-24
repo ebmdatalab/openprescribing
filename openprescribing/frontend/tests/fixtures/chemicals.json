@@ -30,5 +30,15 @@
       "bnf_code": "0204000I0",
       "chem_name": "Labetalol Hydrochloride"
     }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0204ZZZZZ",
+    "fields": {
+      "bnf_code": "0204ZZZZZ",
+      "chem_name": "Chemical Z",
+      "is_current": false
+    }
   }
+
 ]
