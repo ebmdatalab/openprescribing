@@ -10,7 +10,10 @@ from django.db import transaction
 
 from google.cloud.bigquery import SchemaField
 
+from frontend.models import Chemical
 from frontend.models import Presentation
+from frontend.models import Product
+from frontend.models import Section
 
 from ebmdatalab.bigquery import load_data_from_file
 
@@ -34,6 +37,18 @@ def create_code_mapping(filenames):
                 prev_code, next_code = line.split("\t")
                 prev_code = prev_code.strip()
                 next_code = next_code.strip()
+
+                if len(prev_code) <= 7:  # section, subsection, paragraph
+                    Section.objects.filter(
+                        bnf_id__startswith=prev_code).update(
+                            is_current=False)
+                elif len(prev_code) == 9:
+                    Chemical.objects.filter(
+                        bnf_code=prev_code).update(is_current=False)
+                elif len(prev_code) == 11:
+                    Product.objects.filter(
+                        bnf_code=prev_code).update(is_current=False)
+
                 if re.match(r'^[0-9A-Z]+$', next_code):  # Skip 'withdrawn' &c
                     matches = Presentation.objects.filter(
                         bnf_code__startswith=next_code)
@@ -44,29 +59,6 @@ def create_code_mapping(filenames):
                         row.bnf_code = (
                             prev_code + replaced_by_id[len(prev_code):])
                         row.save()
-
-
-def mark_current_chemicals():
-    sql = """
-      UPDATE
-        frontend_chemical
-      SET
-        is_current = FALSE;
-
-      UPDATE
-        frontend_chemical
-      SET
-        is_current = TRUE
-      FROM (
-        SELECT DISTINCT LEFT(bnf_code, 9) AS chemical
-        FROM frontend_presentation
-        WHERE replaced_by_id IS NULL
-      ) AS active_chemicals
-      WHERE
-         frontend_chemical.bnf_code = active_chemicals.chemical;
-    """
-    with connection.cursor() as cursor:
-        cursor.execute(sql)
 
 
 def create_bigquery_table():
@@ -108,6 +100,5 @@ class Command(BaseCommand):
                 )
             )
         create_code_mapping(filenames)
-        mark_current_chemicals()
-        #create_bigquery_table()
-        #create_bigquery_view()
+        create_bigquery_table()
+        create_bigquery_view()

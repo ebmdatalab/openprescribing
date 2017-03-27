@@ -22,6 +22,7 @@ class Section(models.Model):
     bnf_chapter = models.IntegerField()
     bnf_section = models.IntegerField(null=True, blank=True)
     bnf_para = models.IntegerField(null=True, blank=True)
+    is_current = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
@@ -283,6 +284,7 @@ class Product(models.Model):
                                 validators=[isAlphaNumeric])
     name = models.CharField(max_length=200)
     is_generic = models.BooleanField()
+    is_current = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.name)
