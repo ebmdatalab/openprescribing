@@ -22,14 +22,14 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing] ",
   "numerator_where": [
     "(bnf_code LIKE '0204000ABAAABAB%')  "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing] ",
   "denominator_where": [
     "(bnf_code like '0204000AB%')  "
   ]

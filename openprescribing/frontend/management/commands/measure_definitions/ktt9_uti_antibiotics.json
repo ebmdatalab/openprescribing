@@ -26,14 +26,14 @@
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.prescribing] p  LEFT JOIN [ebmdatalab:hscic.presentation] r  ON p.bnf_code = r.bnf_code ",
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing] p  LEFT JOIN [ebmdatalab:hscic.presentation] r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
     "((p.bnf_code='0501130R0BBAAAD')  OR (p.bnf_code='0501130R0BGAAAG')  OR (p.bnf_code='0501130R0BCAAAA')  OR (p.bnf_code='0501130R0AAAGAG')  OR (p.bnf_code='0501130R0AAAAAA')  OR (p.bnf_code='0501130R0AAADAD')  OR (p.bnf_code='0501015P0AAABAB')  OR (p.bnf_code='0501015P0BBABAB')  OR (p.bnf_code='0501080W0AAAEAE')) "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing] ",
   "denominator_where": [
     "((bnf_code='0501130R0BBAAAD')  OR (bnf_code='0501130R0BGAAAG')  OR (bnf_code='0501130R0BCAAAA')  OR (bnf_code='0501130R0AAAGAG')  OR (bnf_code='0501130R0AAAAAA')  OR (bnf_code='0501130R0AAADAD')  OR (bnf_code='0501015P0AAABAB')  OR (bnf_code='0501015P0BBABAB')  OR (bnf_code='0501080W0AAAEAE'))  "
   ]

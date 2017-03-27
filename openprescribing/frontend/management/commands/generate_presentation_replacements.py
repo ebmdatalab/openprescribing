@@ -9,6 +9,9 @@ from django.db import connection
 from django.db import transaction
 
 from google.cloud.bigquery import SchemaField
+from google.cloud import bigquery
+from google.cloud.bigquery.dataset import Dataset
+from google.cloud.exceptions import Conflict
 
 from frontend.models import Chemical
 from frontend.models import Presentation
@@ -78,7 +81,28 @@ def create_bigquery_table():
 
 
 def create_bigquery_view():
-    pass  # XXX not implemented
+    sql = """
+    SELECT
+      prescribing.*,
+      COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code) AS normalised_bnf_code
+    FROM
+      ebmdatalab.hscic.prescribing AS prescribing
+    LEFT JOIN
+      ebmdatalab.hscic.bnf_map AS bnf_map
+    ON
+      bnf_map.former_bnf_code = prescribing.bnf_code
+
+    """
+    client = bigquery.client.Client(project='ebmdatalab')
+    # delete the table if it exists
+    dataset = Dataset("hscic", client)
+    table = dataset.table('normalised_prescribing')
+    table.view_query = sql
+    try:
+        table.create()
+    except Conflict:
+        pass
+
 
 
 class Command(BaseCommand):

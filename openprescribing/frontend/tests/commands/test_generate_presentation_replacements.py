@@ -10,6 +10,8 @@ from mock import patch
 
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.load_data_from_file')
+@patch('frontend.management.commands.generate_presentation_replacements'
+       '.create_bigquery_view')
 class CommandsTestCase(TestCase):
     def setUp(self):
         Section.objects.create(bnf_id='0000',
@@ -55,7 +57,7 @@ class CommandsTestCase(TestCase):
             fixtures_dir + 'presentation_replacements_2016.txt']
         self.opts = {}
 
-    def test_replacements(self, mock_loader):
+    def test_replacements(self, mock_create_view, mock_loader):
         # Simple replacement
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)
@@ -71,7 +73,7 @@ class CommandsTestCase(TestCase):
         p = Presentation.objects.get(bnf_code='MMMMMMMMMMMMMMM')
         self.assertEqual(p.current_version.bnf_code, 'MMMMMMMMMMMMMMM')
 
-    def test_chemical_currency(self, mock_loader):
+    def test_chemical_currency(self, mock_create_view, mock_loader):
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)
         self.assertEqual(
@@ -98,7 +100,7 @@ class CommandsTestCase(TestCase):
 
     @patch('frontend.management.commands.generate_presentation_replacements'
        '.csv')
-    def test_bigquery_csv(self, mock_csv, mock_loader):
+    def test_bigquery_csv(self, mock_csv, mock_create_view, mock_loader):
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)
         mock_loader.assert_called()
