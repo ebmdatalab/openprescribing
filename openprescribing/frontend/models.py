@@ -71,7 +71,7 @@ class PCT(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
                                 default='Unknown')
-    boundary = models.GeometryField(null=True, blank=True)
+    boundary = models.GeometryField(null=True, blank=True, srid=4326)
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
