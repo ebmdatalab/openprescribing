@@ -80,11 +80,46 @@ def create_bigquery_table():
         )
 
 
+def update_existing_prescribing():
+    update_sql = """
+        UPDATE %s
+        SET presentation_code = '%s'
+        WHERE presentation_code = '%s'"""
+    tables_sql = """
+        SELECT
+          c.relname AS child
+        FROM
+          pg_inherits
+        JOIN pg_class AS c
+          ON (inhrelid=c.oid)
+        JOIN pg_class AS p
+          ON (inhparent=p.oid)
+         WHERE p.relname = 'frontend_prescription'"""
+
+    with connection.cursor() as cursor:
+        cursor.execute(tables_sql)
+        for row in cursor.fetchall():
+            table_name = row[0]
+            print "Updating", table_name
+            with transaction.atomic():
+                for p in Presentation.objects.filter(
+                        replaced_by__isnull=False):
+                    print update_sql
+                    cursor.execute(
+                        update_sql % (
+                            table_name,
+                            p.current_version.bnf_code,
+                            p.bnf_code)
+                    )
+    print "Now delete `update_existing_prescribing` migration"
+
+
 def create_bigquery_view():
     sql = """
     SELECT
       prescribing.*,
-      COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code) AS normalised_bnf_code
+      COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
+        AS normalised_bnf_code
     FROM
       ebmdatalab.hscic.prescribing AS prescribing
     LEFT JOIN
@@ -126,3 +161,4 @@ class Command(BaseCommand):
         create_code_mapping(filenames)
         create_bigquery_table()
         create_bigquery_view()
+        update_existing_prescribing()
