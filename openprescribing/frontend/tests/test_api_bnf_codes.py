@@ -95,7 +95,6 @@ class TestAPIBNFCodeViews(ApiTestBase):
         content = json.loads(response.content)
         self.assertEqual(len(content), 0)
 
-
     def test_api_view_bnf_section(self):
         url = '%s/bnf_code?q=diuretics&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
