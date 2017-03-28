@@ -54,11 +54,15 @@ def bnf_section(request, section_id):
         pass
     chemicals = None
     subsections = Section.objects.filter(
-        bnf_id__startswith=section_id) \
-        .extra(where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
+        bnf_id__startswith=section_id,
+        is_current=True
+    ).extra(
+        where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
     if not subsections:
-        chemicals = Chemical.objects.filter(bnf_code__startswith=section_id) \
-                            .order_by('chem_name')
+        chemicals = Chemical.objects.filter(
+            bnf_code__startswith=section_id,
+            is_current=True
+        ).order_by('chem_name')
     context = {
         'section': section,
         'bnf_chapter': bnf_chapter,
@@ -75,7 +79,9 @@ def bnf_section(request, section_id):
 ##################################################
 
 def all_chemicals(request):
-    chemicals = Chemical.objects.all().order_by('bnf_code')
+    chemicals = Chemical.objects.filter(
+        is_current=True
+    ).order_by('bnf_code')
     context = {
         'chemicals': chemicals
     }
