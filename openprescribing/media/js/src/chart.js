@@ -339,7 +339,7 @@ var analyseChart = {
                         _this.globalOptions.friendly.yAxisTitle,
                         _this.globalOptions.friendly.yAxisFormatter);
     if (!_this.isOldIe) {
-      map.updateMap('ratio_items', _this.globalOptions);
+      map.updateMap(_this.globalOptions.activeOption, _this.globalOptions);
     }
   },
 

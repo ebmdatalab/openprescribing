@@ -62,7 +62,7 @@ var analyseMap = {
         });
       }
       _this.addLayerEvents();
-      _this.updateMap('ratio_items',
+      _this.updateMap('items',
                       options);
     }
 
@@ -139,6 +139,7 @@ var analyseMap = {
 
   updateMap: function(ratio, options) {
     var _this = this;
+    ratio = 'ratio_' + ratio;
     var month = options.activeMonth.replace(/\//g, '-');
     var minMax = (month in _this.minMaxByDate) ? _this.minMaxByDate[month][ratio] : null;
     _this.map.legendControl.removeLegend(_this.legendHtml);
