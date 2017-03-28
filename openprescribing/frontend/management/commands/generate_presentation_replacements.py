@@ -139,14 +139,17 @@ def create_bigquery_view():
         pass
 
 
-
 class Command(BaseCommand):
     args = ''
     help = 'Imports presentation replacements.'
 
     def add_arguments(self, parser):
-        # XXX document that this argument only exists for tests
-        parser.add_argument('filenames', nargs='*')
+        parser.add_argument(
+            'filenames',
+            nargs='*',
+            help='This argument only exists for tests. Normally the command '
+            'is expected to work on the contents of `presentation_commands/`'
+        )
 
     def handle(self, *args, **options):
         if options['filenames']:
