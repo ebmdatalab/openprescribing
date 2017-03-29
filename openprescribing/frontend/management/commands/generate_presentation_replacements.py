@@ -1,7 +1,9 @@
 import csv
 import glob
+import logging
 import re
 import tempfile
+import time
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
@@ -19,6 +21,12 @@ from frontend.models import Product
 from frontend.models import Section
 
 from ebmdatalab.bigquery import load_data_from_file
+from ebmdatalab.bigquery import copy_table_to_gcs
+from ebmdatalab.bigquery import download_from_gcs
+from ebmdatalab.bigquery import wait_for_job
+
+
+logger = logging.getLogger(__name__)
 
 
 BNF_MAP_SCHEMA = [
@@ -80,6 +88,84 @@ def create_bigquery_table():
         )
 
 
+def write_temp_code_table(level):
+    sql = """
+    SELECT
+      bnf.%s
+    FROM
+      ebmdatalab.hscic.normalised_prescribing AS prescribing
+    RIGHT JOIN
+      ebmdatalab.hscic.bnf bnf
+    ON
+      prescribing.normalised_bnf_code = bnf.presentation_code
+    GROUP BY
+      bnf.%s
+    HAVING
+      COUNT(prescribing.bnf_code) = 0
+    """ % (level, level)
+    client = bigquery.client.Client(project='ebmdatalab')
+    dataset = client.dataset('tmp_eu')
+    table = dataset.table(
+        name="unused_codes_%s" % level)
+    job = client.run_async_query("create_%s_%s" % (
+        table.name, int(time.time())), sql)
+    job.destination = table
+    job.use_query_cache = False
+    job.use_legacy_sql = False
+    job.write_disposition = 'WRITE_TRUNCATE'
+    job.allow_large_results = True
+    logger.info("Scanning %s to see if it has zero prescribing" % level)
+    wait_for_job(job)
+    return table
+
+
+def cleanup_empty_classes():
+    classes = [
+        ('section_code',
+         Section,
+         'bnf_id'),
+        ('para_code',
+         Section,
+         'bnf_id'),
+        ('chemical_code',
+         Chemical,
+         'bnf_code'),
+        ('product_code',
+         Product,
+         'bnf_code'),
+    ]
+    for class_column, model, bnf_field in classes:
+        temp_table = write_temp_code_table(class_column)
+        converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
+        logger.info("Copying %s to %s", (temp_table.name, converted_uri))
+        copy_table_to_gcs(temp_table, converted_uri)
+        local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+        logger.info("Downloading %s to %s" % (converted_uri, local_path))
+        csv_path = download_from_gcs(converted_uri, local_path)
+        logger.info("Marking all classes in %s as not current" % local_path)
+        with transaction.atomic():
+            with open(csv_path, 'r') as f:
+                reader = csv.reader(f)
+                next(reader, None)  # skip header
+                for row in reader:
+                    code = row[0]
+                    kwargs = {bnf_field: code}
+                    try:
+                        obj = model.objects.get(**kwargs)
+                        obj.is_current = False
+                        obj.save()
+                    except model.DoesNotExist:
+                        #  Reasons this might happen without cause for alarm:
+                        #
+                        #  * We don't create paragraphs ending in
+                        #    zero, as these data properly belong with
+                        #   their section;
+                        #
+                        #  * We don't currently import appliances and similar
+                        logger.warn("Couldn't find %s(pk=%s)", (
+                            model.__name__, code))
+
+
 def update_existing_prescribing():
     update_sql = """
         UPDATE %s
@@ -100,11 +186,9 @@ def update_existing_prescribing():
         cursor.execute(tables_sql)
         for row in cursor.fetchall():
             table_name = row[0]
-            print "Updating", table_name
             with transaction.atomic():
                 for p in Presentation.objects.filter(
                         replaced_by__isnull=False):
-                    print update_sql
                     cursor.execute(
                         update_sql % (
                             table_name,
@@ -165,3 +249,4 @@ class Command(BaseCommand):
         create_bigquery_table()
         create_bigquery_view()
         update_existing_prescribing()
+        cleanup_empty_classes()
