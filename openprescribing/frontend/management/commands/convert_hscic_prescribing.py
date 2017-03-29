@@ -2,8 +2,6 @@ import csv
 import datetime
 import glob
 import logging
-import subprocess
-import tempfile
 import time
 
 from google.cloud import storage
@@ -14,6 +12,10 @@ from google.cloud.bigquery.dataset import Dataset
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+
+from ebmdatalab.bigquery import copy_table_to_gcs
+from ebmdatalab.bigquery import download_from_gcs
+from ebmdatalab.bigquery import wait_for_job
 
 logger = logging.getLogger(__name__)
 
@@ -168,30 +170,6 @@ class Command(BaseCommand):
         return table
 
 
-def delete_from_gcs(gcs_uri):
-    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
-    client = storage.Client(project='embdatalab')
-    try:
-        bucket = client.get_bucket(bucket)
-        prefix = blob_name.split('*')[0]
-        for blob in bucket.list_blobs(prefix=prefix):
-            blob.delete()
-    except NotFound:
-        pass
-
-
-def copy_table_to_gcs(table, gcs_uri):
-    delete_from_gcs(gcs_uri)
-    client = bigquery.client.Client(project='ebmdatalab')
-    job = client.extract_table_to_storage(
-        "extract-formatted-table-job-%s" % int(time.time()), table,
-        gcs_uri)
-    job.destination_format = 'CSV'
-    job.compression = 'GZIP'
-    job.print_header = False
-    job = wait_for_job(job)
-
-
 def create_temporary_data_source(source_uri):
     """Create a temporary data source so BigQuery can query the CSV in
     Google Cloud Storage.
@@ -248,33 +226,3 @@ def create_temporary_data_source(source_uri):
     client._connection.api_request(
         method='POST', path=path, data=resource)
     return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, TEMP_SOURCE_NAME)
-
-
-def wait_for_job(job):
-    job.begin()
-    retry_count = 1000
-    while retry_count > 0 and job.state != 'DONE':
-        retry_count -= 1
-        time.sleep(1)
-        job.reload()
-    assert not job.errors, job.errors
-    return job
-
-
-def download_from_gcs(gcs_uri, target_path):
-    bucket, blob_name = gcs_uri.replace('gs://', '').split('/', 1)
-    client = storage.Client(project='embdatalab')
-    bucket = client.get_bucket(bucket)
-    prefix = blob_name.split('*')[0]
-    unzipped = open(target_path, 'w')
-    cmd = "gunzip -c -f %s >> %s"
-    for blob in bucket.list_blobs(prefix=prefix):
-        with tempfile.NamedTemporaryFile(mode='rb+') as f:
-            logger.info("Downloading %s to %s" % (blob.path, f.name))
-            blob.chunk_size = 2 ** 30
-            blob.download_to_file(f)
-            f.flush()
-            f.seek(0)
-            subprocess.check_call(
-                cmd % (f.name, unzipped.name), shell=True)
-    return unzipped.name
