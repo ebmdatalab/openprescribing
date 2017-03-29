@@ -14,6 +14,7 @@ from frontend.models import ImportLog
 from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import Prescription
+from frontend.models import Section
 
 
 # Number of bytes to send/receive in each request.
@@ -59,6 +60,8 @@ class ImportTestCase(TestCase):
         Chemical.objects.create(bnf_code='0410030C0', chem_name='test')
         Practice.objects.create(code='Y00135', name='test')
         Practice.objects.create(code='Y01957', name='test')
+        Section.objects.create(bnf_id='0401', bnf_chapter=4, is_current=False)
+        Section.objects.create(bnf_id='0909', bnf_chapter=9, is_current=False)
 
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'T201304PDPI+BNFT_formatted.CSV'
@@ -106,3 +109,7 @@ class ImportTestCase(TestCase):
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))
         l = ImportLog.objects.latest_in_category('prescribing')
         self.assertEqual(l.current_at.strftime('%Y-%m-%d'), '2013-04-01')
+
+    def test_mark_as_current(self):
+        self.assertFalse(Section.objects.get(bnf_id='0909').is_current)
+        self.assertTrue(Section.objects.get(bnf_id='0401').is_current)
