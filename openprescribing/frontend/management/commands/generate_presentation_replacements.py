@@ -53,9 +53,9 @@ For each old code -> new code mapping, in reverse order of date
   data, our measures, and so on, henceforward.
 
 * Replace all the codes that have new normalised versions in all local
-  version of the prescribing data.  (This method will be removed once
-  run, as it's only ever needed for an initial migration; look in git
-  history if interested)
+  version of the prescribing data.  (If this command ever needs
+  running again, some time could be saved by applying this only to
+  prescribing data downloaded since the last this command was run)
 
 * Iterate over all known BNF codes, sections, paragraphs etc, looking
   for codes which have never been prescribed, and mark these as not
@@ -285,7 +285,6 @@ def update_existing_prescribing():
                             p.current_version.bnf_code,
                             p.bnf_code)
                     )
-    print "Now delete `update_existing_prescribing` migration"
 
 
 def create_bigquery_views():
