@@ -22,14 +22,14 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing] ",
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_legacy] ",
   "numerator_where": [
     "(bnf_code LIKE '0802020G0A%' OR bnf_code LIKE '0802020T0A%') "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing] ",
+  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_legacy] ",
   "denominator_where": [
     "(bnf_code LIKE '0802020G0%' OR bnf_code LIKE '0802020T0%')   "
   ]

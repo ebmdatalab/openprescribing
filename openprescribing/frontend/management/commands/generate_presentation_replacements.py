@@ -288,13 +288,22 @@ def update_existing_prescribing():
     print "Now delete `update_existing_prescribing` migration"
 
 
-def create_bigquery_view():
-    # XXX this seems to create a legacy view, which we don't want
+def create_bigquery_views():
+    # We have to create legacy and standard versions of the view, as a
+    # legacy query cannot address a standard view, and vice versa.
     sql = """
     SELECT
-      prescribing.*,
+      prescribing.sha AS sha,
+      prescribing.pct AS pct,
+      prescribing.practice AS practice,
       COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
-        AS normalised_bnf_code
+        AS bnf_code
+      prescribing.bnf_name AS bnf_name,
+      prescribing.items AS items,
+      prescribing.net_cost AS net_cost,
+      prescribing.actual_cost AS actual_cost,
+      prescribing.quantity AS quantity,
+      prescribing.month AS month,
     FROM
       ebmdatalab.hscic.prescribing AS prescribing
     LEFT JOIN
@@ -306,8 +315,23 @@ def create_bigquery_view():
     client = bigquery.client.Client(project='ebmdatalab')
     # delete the table if it exists
     dataset = Dataset("hscic", client)
-    table = dataset.table('normalised_prescribing')
+    table = dataset.table('normalised_prescribing_standard')
     table.view_query = sql
+    table.view_use_legacy_sql = False
+    try:
+        table.create()
+    except Conflict:
+        pass
+    table = dataset.table('normalised_prescribing_legacy')
+    sql = sql.replace(
+        'ebmdatalab.hscic.prescribing',
+        '[ebmdatalab:hscic.prescribing]')
+    sql = sql.replace(
+        'ebmdatalab.hscic.bnf_map',
+        '[ebmdatalab:hscic.bnf_map]',
+        )
+    table.view_query = sql
+    table.view_use_legacy_sql = True
     try:
         table.create()
     except Conflict:
@@ -338,6 +362,6 @@ class Command(BaseCommand):
             )
         create_code_mapping(filenames)
         create_bigquery_table()
-        create_bigquery_view()
+        create_bigquery_views()
         update_existing_prescribing()
         cleanup_empty_classes()

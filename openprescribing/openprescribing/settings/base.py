@@ -319,7 +319,7 @@ BQ_CCG_TABLE_PREFIX = "ccg_data"
 # Prefix for global table name
 BQ_GLOBALS_TABLE_PREFIX = "global_data"
 # The name of the table containing core prescribing data
-BQ_PRESCRIBING_TABLE_NAME = "normalised_prescribing"
+BQ_PRESCRIBING_TABLE_NAME = "normalised_prescribing_legacy"
 # The name of the table containing practice information (names,
 # addresses etc)
 BQ_PRACTICES_TABLE_NAME = "practices"
