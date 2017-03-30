@@ -317,7 +317,7 @@ class MeasureCalculation(object):
         """
         if self.under_test:
             query = query.replace(
-                "[ebmdatalab:hscic.normalised_prescribing]",
+                "[ebmdatalab:hscic.normalised_prescribing_legacy]",
                 "[ebmdatalab:measures.%s]" %
                 settings.BQ_PRESCRIBING_TABLE_NAME)
         return bigquery.query_and_return(
