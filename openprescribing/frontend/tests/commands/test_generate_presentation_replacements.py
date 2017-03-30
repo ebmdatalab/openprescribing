@@ -11,7 +11,7 @@ from mock import patch
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.load_data_from_file')
 @patch('frontend.management.commands.generate_presentation_replacements'
-       '.create_bigquery_view')
+       '.create_bigquery_views')
 class CommandsTestCase(TestCase):
     def setUp(self):
         Section.objects.create(bnf_id='0000',
@@ -99,7 +99,7 @@ class CommandsTestCase(TestCase):
             Product.objects.get(pk='33333333333').is_current, True)
 
     @patch('frontend.management.commands.generate_presentation_replacements'
-       '.csv')
+           '.csv')
     def test_bigquery_csv(self, mock_csv, mock_create_view, mock_loader):
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)

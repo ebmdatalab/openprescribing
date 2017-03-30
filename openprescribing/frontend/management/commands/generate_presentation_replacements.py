@@ -289,7 +289,8 @@ def update_existing_prescribing():
 
 def create_bigquery_views():
     # We have to create legacy and standard versions of the view, as a
-    # legacy query cannot address a standard view, and vice versa.
+    # legacy query cannot address a standard view, and vice versa, and
+    # we use both flavours in our code.
     sql = """
     SELECT
       prescribing.sha AS sha,
