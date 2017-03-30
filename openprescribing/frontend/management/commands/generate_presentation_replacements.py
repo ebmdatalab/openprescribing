@@ -252,7 +252,7 @@ def cleanup_empty_classes():
                         #   their section;
                         #
                         #  * We don't currently import appliances and similar
-                        logger.warn("Couldn't find %s(pk=%s)", (
+                        logger.warn("Couldn't find %s(pk=%s)" % (
                             model.__name__, code))
 
 
