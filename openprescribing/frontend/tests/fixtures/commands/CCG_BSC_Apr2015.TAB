@@ -1,0 +1,25 @@
+!table
+!version 300
+!charset WindowsLatin1
+
+Definition Table
+  Type NATIVE Charset "WindowsLatin1"
+  Fields 2
+    CCGcode Char (6) Index 1 ;
+    CCGname_short Char (40) ;
+ReadOnly
+begin_metadata
+"\SNAPTHIN" = ""
+"\SNAPTHIN\EnableSnap" = "TRUE"
+"\SNAPTHIN\Node" = "200"
+"\SNAPTHIN\Vec" = "200"
+"\SNAPTHIN\TolUnit" = "7"
+"\SNAPTHIN\EnableThin" = "TRUE"
+"\SNAPTHIN\Bend" = "300"
+"\SNAPTHIN\Dist" = "300"
+"\SNAPTHIN\ThinUnit" = "7"
+"\SNAPTHIN\EnableArea" = "TRUE"
+"\SNAPTHIN\Area" = "200"
+"\SNAPTHIN\AreaUnit" = "21"
+"\IsReadOnly" = "FALSE"
+end_metadata

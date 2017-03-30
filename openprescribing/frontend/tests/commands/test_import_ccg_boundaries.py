@@ -18,9 +18,9 @@ class CommandsTestCase(TestCase):
         args = []
         opts = {
             'filename': ('frontend/tests/fixtures/commands/'
-                         'ccg_boundaries_2013_02_01.kml')
+                         'CCG_BSC_Apr2015.TAB')
         }
         call_command('import_ccg_boundaries', *args, **opts)
 
         pct = PCT.objects.get(code='03Q')
-        self.assertEqual(pct.boundary.centroid.x, -1.0307532485238158)
+        self.assertEqual(pct.boundary.centroid.x, -1.0307530606980588)
