@@ -297,7 +297,7 @@ def create_bigquery_views():
       prescribing.pct AS pct,
       prescribing.practice AS practice,
       COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
-        AS bnf_code
+        AS bnf_code,
       prescribing.bnf_name AS bnf_name,
       prescribing.items AS items,
       prescribing.net_cost AS net_cost,
