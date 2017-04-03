@@ -242,7 +242,7 @@ def cleanup_empty_classes():
         with transaction.atomic():
             with open(csv_path, 'r') as f:
                 reader = csv.reader(f)
-                next(reader, None)  # skip header
+                reader.next()  # skip header
                 for row in reader:
                     code = row[0]
                     kwargs = {bnf_field: code}
