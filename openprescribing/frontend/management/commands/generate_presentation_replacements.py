@@ -233,7 +233,7 @@ def cleanup_empty_classes():
     for class_column, model, bnf_field in classes:
         temp_table = write_temp_code_table(class_column)
         converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
-        logger.info("Copying %s to %s", (temp_table.name, converted_uri))
+        logger.info("Copying %s to %s" % (temp_table.name, converted_uri))
         copy_table_to_gcs(temp_table, converted_uri)
         local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
         logger.info("Downloading %s to %s" % (converted_uri, local_path))
