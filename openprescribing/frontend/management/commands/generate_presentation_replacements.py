@@ -223,6 +223,9 @@ def cleanup_empty_classes():
         ('product_code',
          Product,
          'bnf_code'),
+        ('presentation_code',
+         Presentation,
+         'bnf_code'),
     ]
     for class_column, model, bnf_field in classes:
         temp_table = write_temp_code_table(class_column)
