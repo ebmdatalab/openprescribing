@@ -317,6 +317,7 @@ class Presentation(models.Model):
     active_quantity = models.FloatField(null=True, blank=True)
     adq = models.FloatField(null=True, blank=True)
     adq_unit = models.CharField(max_length=10, null=True, blank=True)
+    is_current = models.BooleanField(default=True)
     percent_of_adq = models.FloatField(null=True, blank=True)
     replaced_by = models.ForeignKey('self', null=True, blank=True)
 

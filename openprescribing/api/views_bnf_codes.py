@@ -60,6 +60,7 @@ def _get_matching_products(codes, is_exact):
             sections = Section.objects \
                               .filter(Q(number_str=code) |
                                       Q(name=code)) \
+                              .filter(is_current=True) \
                               .extra(select={'type': 0}) \
                               .order_by('number_str')
             chemicals = Chemical.objects \
@@ -71,17 +72,20 @@ def _get_matching_products(codes, is_exact):
             products = Product.objects \
                               .filter(Q(bnf_code=code) |
                                       Q(name=code)) \
+                              .filter(is_current=True) \
                               .extra(select={'type': 2}) \
                               .order_by('name')
             presentations = Presentation.objects \
                                         .current() \
                                         .filter(Q(bnf_code=code) |
                                                 Q(name=code)) \
+                                        .filter(is_current=True) \
                                         .extra(select={'type': 3}) \
                                         .order_by('name')
         else:
             sections = Section.objects.filter(Q(number_str__startswith=code) |
                                               Q(name__icontains=code)) \
+                              .filter(is_current=True) \
                               .extra(select={'type': 0}) \
                               .order_by('number_str')
             chemicals = Chemical.objects.filter(Q(bnf_code__startswith=code) |
@@ -91,12 +95,14 @@ def _get_matching_products(codes, is_exact):
                                 .order_by('chem_name')
             products = Product.objects.filter(Q(bnf_code__startswith=code) |
                                               Q(name__icontains=code)) \
+                              .filter(is_current=True) \
                               .extra(select={'type': 2}) \
                               .order_by('name')
             presentations = Presentation.objects \
                                         .current() \
                                         .filter(Q(bnf_code__startswith=code) |
                                                 Q(name__icontains=code)) \
+                                        .filter(is_current=True) \
                                         .extra(select={'type': 3}) \
                                         .order_by('name')
         querysets.append(sections)

@@ -25,5 +25,15 @@
       "name": "Diuril",
       "is_generic": false
     }
+  },
+  {
+    "model": "frontend.product",
+    "pk": "0202010D0ZZ",
+    "fields": {
+      "bnf_code": "0202010D0ZZ",
+      "name": "Non current product",
+      "is_generic": false,
+      "is_current": false
+    }
   }
 ]
