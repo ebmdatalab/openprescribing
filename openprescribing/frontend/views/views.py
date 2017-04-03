@@ -33,7 +33,7 @@ from allauth.account.models import EmailAddress
 # BNF SECTIONS
 ##################################################
 def all_bnf(request):
-    sections = Section.objects.all()
+    sections = Section.objects.filter(is_current=True)
     context = {
         'sections': sections
     }
