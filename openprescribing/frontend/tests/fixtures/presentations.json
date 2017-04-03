@@ -43,5 +43,25 @@
       "name": "Labetalol 50mg",
       "is_generic": true
     }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0204000I0AAAZAZ",
+    "fields": {
+      "bnf_code": "0204000I0AAAZAZ",
+      "name": "Labetalol 50mg",
+      "is_generic": true,
+      "replaced_by_id": "0204000I0AAALAL"
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0204000I0AAZZZZ",
+    "fields": {
+      "bnf_code": "0204000I0AAZZZZ",
+      "name": "non-current product",
+      "is_generic": true,
+      "is_current": false
+    }
   }
 ]

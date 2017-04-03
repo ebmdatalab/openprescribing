@@ -7,9 +7,13 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
 
+from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import Prescription
+from frontend.models import Product
+from frontend.models import Section
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +58,32 @@ class Command(BaseCommand):
         self.create_partition_indexes()
         self.add_parent_trigger()
         self.drop_oldest_month()
+        self.refresh_class_currency()
+        logger.info("Done!")
+
+    def refresh_class_currency(self):
+        # For every section, paragraph, chemical and product which is
+        # currently marked as not current, see if there has been any
+        # prescribing for it in the current month, and if there has,
+        # mark it as current
+        logger.info("Updating `is_current` on various classifications...")
+        classes = [
+            (Section, 'bnf_id'),
+            (Chemical, 'bnf_code'),
+            (Product, 'bnf_code')
+        ]
+        with transaction.atomic():
+            for model, field_name in classes:
+                for obj in model.objects.filter(is_current=False):
+                    kwargs = {
+                        'processing_date': self.date,
+                        'presentation_code__startswith': getattr(
+                            obj, field_name)
+                    }
+                    count = Prescription.objects.filter(**kwargs).count()
+                    if count > 0:
+                        obj.is_current = True
+                        obj.save()
 
     def import_pcts_and_practices(self, filename):
         logger.info('Importing PCTs and practices from %s' % filename)

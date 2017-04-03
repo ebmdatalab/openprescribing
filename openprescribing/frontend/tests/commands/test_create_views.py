@@ -57,10 +57,13 @@ class CommandsTestCase(SimpleTestCase):
             with env:
                 # We patch the environment as this is how the
                 # ebmdatalab/bigquery library selects a database
-                bigquery.load_prescribing_data_from_file(
-                    'test_hscic',
-                    'prescribing',
-                    prescribing_fixture)
+                for table in [
+                        'normalised_prescribing_standard',
+                        'normalised_prescribing_legacy']:
+                    bigquery.load_prescribing_data_from_file(
+                        'test_hscic',
+                        table,
+                        prescribing_fixture)
                 bigquery.load_ccgs_from_pg('test_hscic')
                 bigquery.load_statistics_from_pg('test_hscic')
 
@@ -110,7 +113,7 @@ class CommandsTestCase(SimpleTestCase):
             self.assertEqual(results[1][4], 38500)
 
             cmd = 'SELECT * FROM vw__presentation_summary '
-            cmd += 'ORDER BY processing_date'
+            cmd += 'ORDER BY processing_date, presentation_code'
             c.execute(cmd)
             results = c.fetchall()
             self.assertEqual(len(results), 4)

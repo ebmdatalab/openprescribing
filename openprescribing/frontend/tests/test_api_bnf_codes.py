@@ -87,6 +87,14 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]['name'], 'Chlotride')
         self.assertEqual(content[0]['is_generic'], False)
 
+    def test_inactive_chemical(self):
+        url = ('%s/bnf_code?q=0204ZZZZZ&exact=true&format=json' %
+               self.api_prefix)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 0)
+
     def test_api_view_bnf_section(self):
         url = '%s/bnf_code?q=diuretics&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
@@ -118,6 +126,14 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]['name'], 'Diuretics')
         self.assertEqual(content[0]['type'], 'BNF section')
 
+    def test_inactive_section(self):
+        url = ('%s/bnf_code?q=5.99&exact=true&format=json' %
+               self.api_prefix)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 0)
+
     def test_api_view_bnf_presentation(self):
         url = '%s/bnf_code?q=Bendroflume&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
@@ -142,3 +158,18 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
         self.assertEqual(len(content), 0)
+
+    def test_inactive_presentation(self):
+        url = ('%s/bnf_code?q=non-current+product&format=json' %
+               self.api_prefix)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 0)
+
+    def test_api_view_bnf_presentation_replacements(self):
+        url = '%s/bnf_code?q=Labetalol+50&format=json' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)

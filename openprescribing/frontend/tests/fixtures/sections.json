@@ -53,5 +53,18 @@
       "bnf_chapter": 5,
       "bnf_section": 3
     }
+  },
+  {
+    "model": "frontend.section",
+    "pk": "0599",
+    "fields": {
+      "bnf_id": "0599",
+      "name": "Non active section",
+      "number_str": "5.99",
+      "bnf_chapter": 5,
+      "bnf_section": 99,
+      "is_current": false
+    }
   }
+
 ]

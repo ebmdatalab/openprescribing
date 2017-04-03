@@ -5,6 +5,7 @@ from frontend.models import EmailMessage
 from frontend.models import MailLog
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import Presentation
 from frontend.models import SearchBookmark
 from frontend.models import Section
 from frontend.models import User
@@ -152,3 +153,19 @@ class PCTTestCase(TestCase):
             name='NHS BACON CCG'
         )
         self.assertEqual(PCT.objects.first().cased_name, 'NHS Bacon CCG')
+
+
+class PresentationTestCase(TestCase):
+    def test_manager(self):
+        drug_n = Presentation.objects.create(
+            bnf_code='NNNNNNNNNNNNNNN',
+            name='Drug N'
+            )
+        Presentation.objects.create(
+            bnf_code='MMMMMMMMMMMMMMM',
+            name='Drug M',
+            replaced_by=drug_n
+        )
+        current = Presentation.objects.current()
+        self.assertEqual(len(current), 1)
+        self.assertEqual(current[0].name, 'Drug N')

@@ -22,6 +22,7 @@ class Section(models.Model):
     bnf_chapter = models.IntegerField()
     bnf_section = models.IntegerField(null=True, blank=True)
     bnf_para = models.IntegerField(null=True, blank=True)
+    is_current = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
@@ -258,6 +259,7 @@ class Chemical(models.Model):
     bnf_code = models.CharField(max_length=9, primary_key=True,
                                 validators=[isAlphaNumeric])
     chem_name = models.CharField(max_length=200)
+    is_current = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.chem_name)
@@ -282,6 +284,7 @@ class Product(models.Model):
                                 validators=[isAlphaNumeric])
     name = models.CharField(max_length=200)
     is_generic = models.BooleanField()
+    is_current = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.name)
@@ -294,10 +297,18 @@ class Product(models.Model):
         app_label = 'frontend'
 
 
+class PresentationManager(models.Manager):
+    def current(self):
+        return self.filter(replaced_by__isnull=True)
+
+
 class Presentation(models.Model):
-    '''
-    GP prescribing products. Import from BNF codes file from BSA.
+    '''GP prescribing products. Import from BNF codes file from BSA.
     ADQs imported from BSA data.
+
+    Where codes have changed or otherwise been mapped, the
+    `replaced_by` field has a value.
+
     '''
     bnf_code = models.CharField(max_length=15, primary_key=True,
                                 validators=[isAlphaNumeric])
@@ -306,7 +317,11 @@ class Presentation(models.Model):
     active_quantity = models.FloatField(null=True, blank=True)
     adq = models.FloatField(null=True, blank=True)
     adq_unit = models.CharField(max_length=10, null=True, blank=True)
+    is_current = models.BooleanField(default=True)
     percent_of_adq = models.FloatField(null=True, blank=True)
+    replaced_by = models.ForeignKey('self', null=True, blank=True)
+
+    objects = PresentationManager()
 
     def __str__(self):
         return '%s: %s' % (self.bnf_code, self.name)
@@ -319,6 +334,24 @@ class Presentation(models.Model):
             is_generic = None
         self.is_generic = is_generic
         super(Presentation, self).save(*args, **kwargs)
+
+    @property
+    def current_version(self):
+        """BNF codes are replaced over time.
+
+        Return the most recent version the code.
+        """
+        version = self
+        next_version = self.replaced_by
+        seen = []
+        while next_version:
+            if next_version in seen:
+                break  # avoid loops
+            else:
+                seen.append(next_version)
+                version = next_version
+                next_version = version.replaced_by
+        return version
 
     class Meta:
         app_label = 'frontend'
