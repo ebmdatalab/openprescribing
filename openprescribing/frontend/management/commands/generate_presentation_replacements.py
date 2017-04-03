@@ -188,6 +188,9 @@ def write_temp_code_table(level):
       ebmdatalab.hscic.bnf bnf
     ON
       prescribing.normalised_bnf_code = bnf.presentation_code
+    WHERE (
+        bnf.presentation_code NOT LIKE '2%%'  -- appliances, etc
+    )
     GROUP BY
       bnf.%s
     HAVING
