@@ -1,6 +1,7 @@
 var moment = require('moment');
 var _ = require('underscore');
 var config = require('./config');
+var Cookies = require('cookies-js');
 
 var utils = {
 
@@ -92,19 +93,36 @@ var utils = {
     return str;
   },
 
-  combineXAndYDatasets: function(xData, yData, values) {
-        // console.log('combineXAndYDatasets');
-        // Glue the x and y series data points together,
-        // and returns a dataset with a row for each organisation and each month.
-        // Also calculates ratios for cost and items.
-    var isSpecialDenominator = ((values.x_val !== 'x_actual_cost') &&
-                                    (values.x_val !== 'x_items') &&
-                                    (typeof values.x_val !== 'undefined'));
-    var combinedData = this.combineDatasets(xData, yData, values.x, values.x_val);
+  combineXAndYDatasets: function(xData, yData, options) {
+    // console.log('combineXAndYDatasets');
+    // Glue the x and y series data points together,
+    // and returns a dataset with a row for each organisation and each month.
+    // Also calculates ratios for cost and items.
+    var isSpecialDenominator = (
+      (options.chartValues.x_val !== 'x_actual_cost') &&
+        (options.chartValues.x_val !== 'x_items') &&
+        (typeof options.chartValues.x_val !== 'undefined'));
+    var combinedData = this.combineDatasets(
+      xData, yData, options.chartValues.x, options.chartValues.x_val);
     combinedData = this.calculateRatiosForData(combinedData,
                                              isSpecialDenominator,
-                                             values.x_val);
+                                             options.chartValues.x_val);
     this.sortByDateAndRatio(combinedData, 'ratio_items');
+    if (options.denom === 'total_list_size') {
+      var filteredData = _.filter(combinedData, function(d) {
+        // when list size is denominator only
+        // and include_small cookie is falsey
+        return d.ratio_items < 1000;
+      });
+      if (filteredData.length !== combinedData.length) {
+        options.hasSmallListSize = true;
+      }
+      if (options.hideSmallListSize) {
+        combinedData = filteredData;
+      }
+      // also set an option to toggle a notice about either there
+      // being small list sizes which are exlcuded, or included
+    }
     return combinedData;
   },
 

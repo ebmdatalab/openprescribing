@@ -4,6 +4,7 @@ require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 require('bootstrap');
+var Cookies = require('cookies-js');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
@@ -39,7 +40,8 @@ var analyseChart = {
     title: '.chart-title',
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
-    alertForm: ('#alert-form')
+    alertForm: ('#alert-form'),
+    smallListToggle: ('.small-list-toggle')
   },
 
   renderChart: function(globalOptions) {
@@ -104,7 +106,24 @@ var analyseChart = {
     var _this = this;
     this.el.submitButton.button('reset');
     this.globalOptions.activeOption = 'items';
+    if (typeof _this.el.smallListToggle === 'undefined') {
+      // It will have been defined on page load if it's provided as a
+      // query param in the URL.
+      if (Cookies.get('hide_small_lists') === '1') {
+        this.globalOptions.hideSmallListSize = true;
+      } else {
+        this.globalOptions.hideSmallListSize = false;
+      }
+    }
+    if (this.globalOptions.hideSmallListSize) {
+      $(_this.el.smallListToggle).find('a').text('Show them in the chart');
+    } else {
+      $(_this.el.smallListToggle).find('a').text('Remove them from the chart');
+    }
     this.setUpData();
+    if (this.globalOptions.hasSmallListSize) {
+      $('.small-list-toggle').show();
+    }
     this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions.data.combinedData);
     this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length - 1];
     this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
@@ -117,7 +136,6 @@ var analyseChart = {
       'eventAction': 'click',
       'eventLabel': _this.hash
     });
-
     if (this.globalOptions.data.combinedData.length > 0) {
       this.addDataDownload();
       this.el.loadingEl.hide();
@@ -171,7 +189,7 @@ var analyseChart = {
     this.globalOptions.chartValues = utils.setChartValues(this.globalOptions);
         // Combines the datasets and calculates the ratios.
     var combinedData = utils.combineXAndYDatasets(xData, yData,
-                                                      this.globalOptions.chartValues);
+                                                      this.globalOptions);
     this.globalOptions.data.combinedData = combinedData;
   },
 
@@ -307,6 +325,35 @@ var analyseChart = {
       _this.setUpSaveUrlUI();
       _this.setUpAlertSubscription();
     });
+    // Small list size toggle
+    console.log('default option hideSmallListSize: ' + _this.globalOptions.hideSmallListSize)
+    $(_this.el.smallListToggle).on('click', function(e) {
+      e.preventDefault();
+      if (_this.globalOptions.hasSmallListSize) {
+        if (_this.globalOptions.hideSmallListSize) {
+          _this.globalOptions.hideSmallListSize = false;
+          $(_this.el.smallListToggle).find('a').text('Remove them from the chart')
+          Cookies.set('hide_small_lists', '0');
+        } else {
+          // set a cookie
+          _this.globalOptions.hideSmallListSize = true;
+          $(_this.el.smallListToggle).find('a').text('Show them in the chart')
+          Cookies.set('hide_small_lists', '1');
+        }
+        _this.hash = hashHelper.setHashParams(_this.globalOptions);
+        _this.setUpData();
+        _this.globalOptions.barChart = barChart.setUp(
+          chartOptions.barOptions,
+          _this.globalOptions);
+        if (!this.isOldIe) {
+          _this.globalOptions.lineChart = lineChart.setUp(
+            chartOptions.lineOptions,
+            _this.globalOptions);
+          map.setup(_this.globalOptions);
+        }
+      }
+    });
+
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
       e.preventDefault();
