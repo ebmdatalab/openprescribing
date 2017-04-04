@@ -17,7 +17,13 @@ def _load_json(name):
 
 
 class MockApiRequestHandler(BaseHTTPRequestHandler):
+    """This Mock API server was the minimum necessary to support some
+    basic map tests.
 
+    It now needs refactoring so that the tests can specify the data
+    under test, via some kind of IPC
+
+    """
     def log_message(self, format, *args):
         logger.info(format % args)
 
@@ -31,12 +37,20 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
                 data = _load_json('spending_by_ccg_denom')
             elif code == '0212000AA':
                 data = _load_json('spending_by_ccg_num')
+        if '/spending_by_practice' in o.path:
+            # for SmallListTest
+            data = '[{"items":23.0,"actual_cost":1026.22,"setting":4,"row_name":"THE GREEN PRACTICE","date":"2012-02-01","row_id":"L81006","ccg":"11H","quantity":966.0},{"items":23.0,"actual_cost":1026.22,"setting":4,"row_name":"THE YELLOW PRACTICE","date":"2012-02-01","row_id":"L81007","ccg":"11H","quantity":966.0}]'
         elif '/bnf_code' in o.path:
             code = q.get('q')[0]
             if code.startswith('0212000AA'):
                 data = _load_json('bnf_code_num')
             elif code.startswith('2.12'):
                 data = _load_json('bnf_code_denom')
+        elif '/org_details' in o.path:
+            # for SmallListTest
+            data = '[{"date":"2012-02-01","row_id":"L81006","total_list_size":1,"row_name":"THE GREEN PRACTICE AT WHITCHURCH H C"},{"date":"2012-02-01","row_id":"L81007","total_list_size":100,"row_name":"THE YELLOW PRACTICE AT WHITCHURCH H C"}]'
+        elif '/org_code' in o.path:
+            data = '[{"ccg":"11H","code":"L81006","type":"practice","name":"THE GREEN PRACTICE","id":"L81006"}]'
         elif '/org_location' in o.path:
             data = _load_json('org_location_ccg')
         elif '/measure_by_ccg/' in o.path:

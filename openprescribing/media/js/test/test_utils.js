@@ -85,6 +85,26 @@ describe('Utils', function () {
             var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
             expect(combinedData).to.eql([]);
         });
+        it('should set hasSmallListSize where ratio is greater than 1000', function () {
+            var xData = [
+              { 'actual_cost': '1', 'items': 1, 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'},
+            ];
+            var yData = [
+              { 'actual_cost': '1000', 'items': 1000, 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'},
+            ];
+          var opts = {
+              denom: 'total_list_size',
+              hideSmallListSize: true,
+              chartValues: {
+                y: 'y_actual_cost',
+                ratio: 'ratio_actual_cost',
+                x: 'actual_cost',
+                x_val: 'x_actual_cost'
+              }
+            };
+            var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
+            expect(combinedData.length).to.equal(0);
+        });
         it('should combine multiple datasets properly', function () {
             var yData = [
               { 'actual_cost': '480', 'items': 1, 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
@@ -99,7 +119,7 @@ describe('Utils', function () {
               { 'actual_cost': '9', 'items': 3, 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-04-01'}
             ];
             var opts = {
-              chartValues{
+              chartValues: {
                 y: 'y_actual_cost',
                 ratio: 'ratio_actual_cost',
                 x: 'actual_cost',
@@ -130,7 +150,7 @@ describe('Utils', function () {
               { 'actual_cost': '500', 'items': '11', 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-04-01'}
             ];
           var opts = {
-            chartValues{ {
+            chartValues: {
                 y: 'y_actual_cost',
                 x: 'total_list_size',
                 x_val: 'total_list_size',
