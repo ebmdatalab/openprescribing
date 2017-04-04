@@ -94,10 +94,11 @@ var utils = {
   },
 
   combineXAndYDatasets: function(xData, yData, options) {
-    // console.log('combineXAndYDatasets');
-    // Glue the x and y series data points together,
-    // and returns a dataset with a row for each organisation and each month.
-    // Also calculates ratios for cost and items.
+    // Glue the x and y series data points together, and returns a
+    // dataset with a row for each organisation and each month.  Also
+    // calculates ratios for cost and items, and optionally filters
+    // out CCGs or practices with significant numbers of ratios where
+    // the denominator is greater than the numerator.
     var isSpecialDenominator = (
       (options.chartValues.x_val !== 'x_actual_cost') &&
         (options.chartValues.x_val !== 'x_items') &&
@@ -108,20 +109,39 @@ var utils = {
                                              isSpecialDenominator,
                                              options.chartValues.x_val);
     this.sortByDateAndRatio(combinedData, 'ratio_items');
+
+    // Optionally remove practices or CCGs that have a number of data
+    // points where the denominator is greater than the numerator
     if (options.denom === 'total_list_size') {
+      // make a list of practices or CCGs with counts of outliers
+      var outlierCounts = {};
+      _.each(combinedData, function(d) {
+        if (d.ratio_items > 1000) {
+          if (d.id in outlierCounts) {
+            outlierCounts[d.id] += 1;
+          } else {
+            outlierCounts[d.id] = 1;
+          }
+        }
+      });
+      // From this, create an array of ids that could be skipped
+      var threshold = _.keys(outlierCounts).length / 10;
+      var skipIds = [];
+      for (var k in outlierCounts) {
+        if (outlierCounts[k] > threshold) {
+          skipIds.push(k);
+        }
+      }
       var filteredData = _.filter(combinedData, function(d) {
-        // when list size is denominator only
-        // and include_small cookie is falsey
-        return d.ratio_items < 1000;
+        return !(_.contains(skipIds, d.id));
       });
       if (filteredData.length !== combinedData.length) {
         options.hasSmallListSize = true;
       }
+      // If the option is set, actually hide these practices or CCGs
       if (options.hideSmallListSize) {
         combinedData = filteredData;
       }
-      // also set an option to toggle a notice about either there
-      // being small list sizes which are exlcuded, or included
     }
     return combinedData;
   },
