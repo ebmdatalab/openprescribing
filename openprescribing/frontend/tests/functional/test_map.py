@@ -50,25 +50,16 @@ class SmallListTest(SeleniumTestCase):
             self.live_server_url +
             ('/analyse/#org=practice&orgIds=X&numIds=0212000AA'
              '&denom=total_list_size&selectedTab=summary'))
-        warning = self.find_by_xpath("//div[contains(@class, 'small-list-toggle')]/a")
+        warning = self.find_by_xpath(
+            "//div[contains(@class, 'small-list-toggle')]/a")
         self.assertIn('Remove', warning.text)
-        xlabels = self.find_by_xpath("//*[contains(@class, 'highcharts-xaxis-labels')]")
+        xlabels = self.find_by_xpath(
+            "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertIn('GREEN', xlabels.text)
         warning.click()
-        warning = self.find_by_xpath("//div[contains(@class, 'small-list-toggle')]/a")
+        warning = self.find_by_xpath(
+            "//div[contains(@class, 'small-list-toggle')]/a")
         self.assertIn('Show', warning.text)
-        xlabels = self.find_by_xpath("//*[contains(@class, 'highcharts-xaxis-labels')]")
+        xlabels = self.find_by_xpath(
+            "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertNotIn('GREEN', xlabels.text)
-
-
-    def test_link_toggle_changes_display(self):
-        pass
-
-    def test_link_toggle_changes_link_text(self):
-        pass
-
-    def test_link_toggle_sets_cookie(self):
-        pass
-
-    def test_link_toggle_only_shown_when_appropriate(self):
-        pass

@@ -1,7 +1,6 @@
 var moment = require('moment');
 var _ = require('underscore');
 var config = require('./config');
-var Cookies = require('cookies-js');
 
 var utils = {
 

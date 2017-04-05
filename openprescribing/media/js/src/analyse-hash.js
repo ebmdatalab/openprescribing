@@ -9,9 +9,9 @@ var hashHelper = {
       d = function(s) {
         if (typeof s === 'string') {
           if (s === 'true') {
-            return true
+            return true;
           } else if (s === 'false') {
-            return false
+            return false;
           } else {
             return decodeURIComponent(s.replace(a, " "));
           }
@@ -69,7 +69,8 @@ var hashHelper = {
           });
           hash += '&';
         }
-      } else if ((k === 'hideSmallListSize') || (k === 'num') || (k === 'denom') || (k === 'org') || (k === 'selectedTab')) {
+      } else if ((k === 'hideSmallListSize') || (k === 'num') ||
+                 (k === 'denom') || (k === 'org') || (k === 'selectedTab')) {
         if (params[k] !== 'chemical') {
           hash += k + '=' + params[k] + '&';
         }
