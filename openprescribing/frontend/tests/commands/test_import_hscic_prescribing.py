@@ -13,6 +13,7 @@ from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import PracticeStatistics
 from frontend.models import Prescription
 from frontend.models import Section
 
@@ -59,9 +60,33 @@ class ImportTestCase(TestCase):
         self.pct = PCT.objects.create(code='5D7', name='test')
         Chemical.objects.create(bnf_code='0410030C0', chem_name='test')
         Practice.objects.create(code='Y00135', name='test')
-        Practice.objects.create(code='Y01957', name='test')
+        p = Practice.objects.create(code='Y01957', name='test')
         Section.objects.create(bnf_id='0401', bnf_chapter=4, is_current=False)
         Section.objects.create(bnf_id='0909', bnf_chapter=9, is_current=False)
+        PracticeStatistics.objects.create(
+            practice=p,
+            date='2001-01-01',
+            male_0_4=1,
+            female_0_4=1,
+            male_5_14=1,
+            female_5_14=1,
+            male_15_24=1,
+            female_15_24=1,
+            male_25_34=1,
+            female_25_34=1,
+            male_35_44=1,
+            female_35_44=1,
+            male_45_54=1,
+            female_45_54=1,
+            male_55_64=1,
+            female_55_64=1,
+            male_65_74=1,
+            female_65_74=1,
+            male_75_plus=1,
+            female_75_plus=1,
+            total_list_size=28,
+            astro_pu_cost=205.7,
+            astro_pu_items=400.2)
 
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'T201304PDPI+BNFT_formatted.CSV'
@@ -78,6 +103,7 @@ class ImportTestCase(TestCase):
         with self.env:
             call_command('import_hscic_prescribing', **self.new_opts)
         self.assertEqual(Prescription.objects.count(), 15)
+        self.assertEqual(PracticeStatistics.objects.count(), 0)
 
     def test_inserts_fail(self):
         with self.assertRaises(InternalError):

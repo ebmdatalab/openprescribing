@@ -150,21 +150,7 @@ var utils = {
       return p;
     }, xDataDict);
 
-        // Polyfill for IE8 etc.
-    var keys = [];
-    if (!Object.keys) {
-      for (var i in xAndYDataDict) {
-        if (xAndYDataDict.hasOwnProperty(i)) {
-          keys.push(i);
-        }
-      }
-    } else {
-      keys = Object.keys(xAndYDataDict);
-    }
-
-    var combined = _.map(keys, function(key) {
-      return xAndYDataDict[key];
-    });
+    var combined = _.values(xAndYDataDict);
     return _.filter(combined, function(p) {
             // Filter out non-prescribing practices. Ignore this for CCGs.
       return (typeof (p.setting) === 'undefined') || (p.setting === 4);
@@ -228,12 +214,20 @@ var utils = {
     return newData;
   },
 
-  getAllMonthsInData: function(combinedData) {
+  getAllMonthsInData: function(options) {
+    var combinedData = options.data.combinedData;
         // Used for date slider.
     var monthRange = [];
     if (combinedData.length > 0) {
-      var firstMonth = combinedData[0].date,
-        lastMonth = combinedData[combinedData.length - 1].date;
+      var firstMonth = combinedData[0].date;
+      if (options.org === 'CCG') {
+        // CCGs were formed in Aug 2013. This special-casing can be
+        // removed after Aug 2018, as we only deal with 5 years of
+        // data.
+        var firstCCGDate = '2013-08-01';
+        firstMonth = firstMonth > firstCCGDate ? firstMonth : firstCCGDate;
+      }
+      var lastMonth = combinedData[combinedData.length - 1].date;
       var startDate = moment(firstMonth);
       var endDate = moment(lastMonth);
       if (endDate.isBefore(startDate)) {

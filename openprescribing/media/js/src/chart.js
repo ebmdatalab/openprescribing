@@ -105,7 +105,7 @@ var analyseChart = {
     this.el.submitButton.button('reset');
     this.globalOptions.activeOption = 'items';
     this.setUpData();
-    this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions.data.combinedData);
+    this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions);
     this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length - 1];
     this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
     this.hash = hashHelper.setHashParams(this.globalOptions);
