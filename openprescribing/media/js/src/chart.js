@@ -41,7 +41,7 @@ var analyseChart = {
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
     alertForm: ('#alert-form'),
-    smallListToggle: ('.small-list-toggle')
+    outliersToggle: ('.outliers-toggle')
   },
 
   renderChart: function(globalOptions) {
@@ -102,27 +102,50 @@ var analyseChart = {
       });
   },
 
+  setOutlierLinkText: function() {
+    var _this = this;
+    var link = $(_this.el.outliersToggle).find('a');
+    var items = $(_this.el.outliersToggle).find('span.outliers');
+    var outliers = _.values(this.globalOptions.skippedOutliers);
+    var pronoun;
+    if (outliers.length === 1) {
+      pronoun = 'it';
+    } else {
+      pronoun = 'them';
+    }
+    outliers = [outliers.slice(0, -1).join(', '),
+                outliers.slice(-1)[0]]
+      .join(outliers.length < 2 ? '' : ' and ');
+    items.html(outliers);
+    if (this.globalOptions.hideOutliers) {
+      link.text(
+        'Show ' + pronoun + ' it in the charts.');
+    } else {
+      link.text(
+        'Remove ' + pronoun + ' from the charts.');
+    }
+  },
+
   loadChart: function() {
     var _this = this;
     this.el.submitButton.button('reset');
     this.globalOptions.activeOption = 'items';
-    if (typeof _this.el.smallListToggle === 'undefined') {
-      // It will have been defined on page load if it's provided as a
-      // query param in the URL.
+
+    // Set option that defines if we should show a link to show or
+    // hide practices with ratios suggestive of small list sizes...
+    if (typeof _this.el.outliersToggle === 'undefined') {
+      // Defined on page load when provided as a query param in the
+      // URL.
       if (Cookies.get('hide_small_lists') === '1') {
-        this.globalOptions.hideSmallListSize = true;
+        this.globalOptions.hideOutliers = true;
       } else {
-        this.globalOptions.hideSmallListSize = false;
+        this.globalOptions.hideOutliers = false;
       }
     }
-    if (this.globalOptions.hideSmallListSize) {
-      $(_this.el.smallListToggle).find('a').text('Show them in the chart');
-    } else {
-      $(_this.el.smallListToggle).find('a').text('Remove them from the chart');
-    }
     this.setUpData();
-    if (this.globalOptions.hasSmallListSize) {
-      $('.small-list-toggle').show();
+    if (this.globalOptions.hasOutliers) {
+      _this.setOutlierLinkText();
+      $(_this.el.outliersToggle).show();
     }
     this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions.data.combinedData);
     this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length - 1];
@@ -327,22 +350,23 @@ var analyseChart = {
       _this.setUpSaveUrlUI();
       _this.setUpAlertSubscription();
     });
-    // Small list size toggle
-    $(_this.el.smallListToggle).on('click', function(e) {
+    // Outlier toggle
+    $(_this.el.outliersToggle).on('click', function(e) {
       e.preventDefault();
-      if (_this.globalOptions.hasSmallListSize) {
-        if (_this.globalOptions.hideSmallListSize) {
-          _this.globalOptions.hideSmallListSize = false;
-          $(_this.el.smallListToggle).find('a').text(
+      if (_this.globalOptions.hasOutliers) {
+        if (_this.globalOptions.hideOutliers) {
+          _this.globalOptions.hideOutliers = false;
+          $(_this.el.outliersToggle).find('a').text(
             'Remove them from the chart');
           Cookies.set('hide_small_lists', '0');
         } else {
           // set a cookie
-          _this.globalOptions.hideSmallListSize = true;
-          $(_this.el.smallListToggle).find('a').text(
+          _this.globalOptions.hideOutliers = true;
+          $(_this.el.outliersToggle).find('a').text(
             'Show them in the chart');
           Cookies.set('hide_small_lists', '1');
         }
+        _this.setOutlierLinkText();
         _this.hash = hashHelper.setHashParams(_this.globalOptions);
         _this.setUpData();
         _this.globalOptions.barChart = barChart.setUp(

@@ -108,39 +108,44 @@ var utils = {
                                              isSpecialDenominator,
                                              options.chartValues.x_val);
     this.sortByDateAndRatio(combinedData, 'ratio_items');
+    return this.partitionOutliers(combinedData, options);
+  },
 
-    // Optionally remove practices or CCGs that have a number of data
-    // points where the denominator is greater than the numerator
-    if (options.denom === 'total_list_size') {
-      // make a list of practices or CCGs with counts of outliers
-      var outlierCounts = {};
-      _.each(combinedData, function(d) {
-        if (d.ratio_items > 1000) {
-          if (d.id in outlierCounts) {
-            outlierCounts[d.id] += 1;
-          } else {
-            outlierCounts[d.id] = 1;
-          }
-        }
+  partitionOutliers: function(combinedData, options) {
+    // Optionally separate practices or CCGs that have a number of
+    // data points that are extreme outliers (which we count as the
+    // upper quartile plus five times the interquartile range)
+    var byDate = _.groupBy(combinedData, 'date');
+    var candidates = {};
+    _.mapObject(byDate, function(val, key) {
+      var ratios = _.pluck(val, 'ratio_items');
+      ratios.sort(function(a, b) {
+        return a - b;
       });
-      // From this, create an array of ids that could be skipped
-      var threshold = _.keys(outlierCounts).length / 10;
-      var skipIds = [];
-      for (var k in outlierCounts) {
-        if (outlierCounts[k] > threshold) {
-          skipIds.push(k);
-        }
-      }
-      var filteredData = _.filter(combinedData, function(d) {
-        return !(_.contains(skipIds, d.id));
+      var l = ratios.length;
+      var LQ = ratios[Math.round(l / 4) - 1];
+      var UQ = ratios[Math.round(3 * l / 4) - 1];
+      var IQR = UQ - LQ;
+      var outliers = _.filter(val, function(d) {
+        return d.ratio_items > UQ + 5 * IQR;
       });
-      if (filteredData.length !== combinedData.length) {
-        options.hasSmallListSize = true;
+      if (outliers.length > 0) {
       }
-      // If the option is set, actually hide these practices or CCGs
-      if (options.hideSmallListSize) {
-        combinedData = filteredData;
+      if (outliers.length === 1) {
+        candidates[outliers[0].id] = outliers[0].row_name;
       }
+    });
+    var skipIds = _.keys(candidates);
+    var filteredData = _.filter(combinedData, function(d) {
+      return !(_.contains(skipIds, d.id));
+    });
+    if (filteredData.length !== combinedData.length) {
+      options.hasOutliers = true;
+      options.skippedOutliers = candidates;
+    }
+    // If the option is set, actually hide these practices or CCGs
+    if (options.hideOutliers) {
+      combinedData = filteredData;
     }
     return combinedData;
   },

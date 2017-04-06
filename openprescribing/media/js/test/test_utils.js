@@ -85,16 +85,24 @@ describe('Utils', function () {
       var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
       expect(combinedData).to.eql([]);
     });
-    it('should set hasSmallListSize where ratio is greater than 1000', function () {
+    it('should hide outliers where ratio is greater than 1000', function () {
       var xData = [
-        { 'actual_cost': '1', 'items': 1, 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'},
+        { 'actual_cost': '1', 'items': 1, 'row_id': 'XXX', 'row_name': 'XXX', 'date': '2014-03-01'},
+        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'YY1', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'YY2', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'YY3', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'YY4', 'row_name': 'YYY', 'date': '2014-03-01'},
       ];
       var yData = [
-        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2014-03-01'},
+        { 'actual_cost': '1000', 'items': 1000, 'row_id': 'XXX', 'row_name': 'XXX', 'date': '2014-03-01'},
+        { 'actual_cost': '1', 'items': 1, 'row_id': 'YY1', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1', 'items': 1, 'row_id': 'YY2', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1', 'items': 1, 'row_id': 'YY3', 'row_name': 'YYY', 'date': '2014-03-01'},
+        { 'actual_cost': '1', 'items': 1, 'row_id': 'YY4', 'row_name': 'YYY', 'date': '2014-03-01'},
       ];
       var opts = {
         denom: 'total_list_size',
-        hideSmallListSize: true,
+        hideOutliers: true,
         chartValues: {
           y: 'y_actual_cost',
           ratio: 'ratio_actual_cost',
@@ -103,7 +111,7 @@ describe('Utils', function () {
         }
       };
       var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
-      expect(combinedData.length).to.equal(0);
+      expect(combinedData.length).to.equal(4);
     });
     it('should combine multiple datasets properly', function () {
       var yData = [

@@ -45,20 +45,22 @@ class MapTest(SeleniumTestCase):
 
 
 class SmallListTest(SeleniumTestCase):
+    # These tests run against a MockAPIServer started by the
+    # custom_runner
     def test_nothing_hidden_by_default(self):
         self.browser.get(
             self.live_server_url +
             ('/analyse/#org=practice&orgIds=X&numIds=0212000AA'
              '&denom=total_list_size&selectedTab=summary'))
         warning = self.find_by_xpath(
-            "//div[contains(@class, 'small-list-toggle')]/a")
+            "//div[contains(@class, 'toggle')]/a")
         self.assertIn('Remove', warning.text)
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertIn('GREEN', xlabels.text)
         warning.click()
         warning = self.find_by_xpath(
-            "//div[contains(@class, 'small-list-toggle')]/a")
+            "//div[contains(@class, 'toggle')]/a")
         self.assertIn('Show', warning.text)
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")
