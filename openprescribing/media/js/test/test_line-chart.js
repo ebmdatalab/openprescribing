@@ -28,7 +28,7 @@ describe('LineChart', function () {
         it('should omit data before Aug 2013 for CCGs', function () {
             var combinedData = [
               { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'astro_pu_cost': 10, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2013-07-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2013-08-01'},
+              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'O3Q', 'name': 'NHS Corby', 'date': '2013-08-01'}
             ];
             var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
                                x_val: "astro_pu_cost", x: "astro_pu_cost"};
@@ -39,7 +39,7 @@ describe('LineChart', function () {
         it('should not omit data before Aug 2013 for practices', function () {
             var combinedData = [
               { 'ratio_actual_cost': 12, 'y_actual_cost': 105, 'astro_pu_cost': 10, 'id': 'Y00135', 'name': 'YELLOW SURGERY', 'date': '2013-07-01'},
-              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'Y00135', 'name': 'YELLOW SURGERY', 'date': '2013-08-01'},
+              { 'ratio_actual_cost': 15, 'y_actual_cost': 128, 'astro_pu_cost': 12, 'id': 'Y00135', 'name': 'YELLOW SURGERY', 'date': '2013-08-01'}
             ];
             var chartValues = {y: "y_actual_cost", ratio: "ratio_actual_cost",
                                x_val: "astro_pu_cost", x: "astro_pu_cost"};
