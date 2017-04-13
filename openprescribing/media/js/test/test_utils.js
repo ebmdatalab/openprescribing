@@ -357,11 +357,13 @@ describe('Utils', function () {
 
   describe('#getAllMonthsInData', function () {
     it('should return a range of months', function () {
-      var combinedData = [
-        {'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2010-04-01'},
-        {'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2011-02-01'}
-      ];
-      var months = utils.getAllMonthsInData(combinedData);
+      var options = {
+        data: {combinedData: [
+          {'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2010-04-01'},
+          {'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2011-02-01'}
+        ]}
+      };
+      var months = utils.getAllMonthsInData(options);
       expect(months.length).to.equal(11);
       expect(months).to.eql(["2010-04-01", "2010-05-01", "2010-06-01", "2010-07-01",
                              "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01",
