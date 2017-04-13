@@ -50,7 +50,13 @@ For each old code -> new code mapping, in reverse order of date
 * Create a View in bigquery that joins with this table to produce a
   version of the prescribing data with only the most current BNF
   codes; this is used to generate our local version of the prescribing
-  data, our measures, and so on, henceforward.
+  data, our measures, and so on, henceforward.  Specifically, due to
+  limitations of BigQuery, there are two views:
+
+  * `embdatalab:hscic.normalised_prescribing_legacy`: to be queried
+    using BigQuery legacy SQL
+  * `embdatalab:hscic.normalised_prescribing_standard`: to be queried
+    using BigQuery standard SQL
 
 * Replace all the codes that have new normalised versions in all local
   version of the prescribing data.  (If this command ever needs
@@ -71,11 +77,11 @@ For each old code -> new code mapping, in reverse order of date
 
   * The problem with this approach is that recently added codes may
     not yet have prescribing, but may do so at some point in the
-    future. Therefore, there is a `refresh_class_currency` method that
-    is always called as part of the `import_hscic_prescribing`
-    management command, which iterates over all sections, paragraphs,
-    chemicals and products currently listed as not current, and checks
-    to see if there has been any prescribing this month.
+    future. Therefore, there is a `refresh_class_currency` method
+    within the `import_hscic_prescribing` management command, which
+    iterates over all sections, paragraphs, chemicals and products
+    currently listed as not current, and checks to see if there has
+    been any prescribing this month.
 
 This command should in theory only have to be run once a year, as
 we've been told mappings only happen this frequently.  And in theory,
