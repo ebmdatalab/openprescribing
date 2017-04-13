@@ -47,13 +47,19 @@ var lineChart = {
       }
       var dataPoint = {};
       var dates = d.date.split('-');
-      var date = Date.UTC(dates[0], dates[1] - 1, dates[2]);
-      dataPoint.original_y = d[chartValues.y];
-      dataPoint.original_x = d[chartValues.x_val];
-      dataPoint.x = date;
-      dataPoint.y = d[chartValues.ratio];
-      dataForOrganisation[d.id].data.push(dataPoint);
-      allIds.push(d.id);
+      if (d.id.length === 3 && d.date < '2013-08-01') {
+        // Skip CCGs for months before they existed. As we keep just 5
+        // years of data, this special casing can be removed after
+        // August 2018.
+      } else {
+        var date = Date.UTC(dates[0], dates[1] - 1, dates[2]);
+        dataPoint.original_y = d[chartValues.y];
+        dataPoint.original_x = d[chartValues.x_val];
+        dataPoint.x = date;
+        dataPoint.y = d[chartValues.ratio];
+        dataForOrganisation[d.id].data.push(dataPoint);
+        allIds.push(d.id);
+      }
     });
     hasActiveOrg = (_.intersection(allIds, activeOrgs).length !== 0);
     for (var k in dataForOrganisation) {

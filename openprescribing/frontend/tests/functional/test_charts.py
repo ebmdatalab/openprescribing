@@ -41,7 +41,7 @@ class MapTest(SeleniumTestCase):
             2)
         self.assertEqual(
             self.find_by_xpath("//p[@class='chart-sub-title']").text,
-            "in Apr '13")
+            "in Aug '13")
 
 
 class SmallListTest(SeleniumTestCase):

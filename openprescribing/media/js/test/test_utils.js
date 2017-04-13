@@ -367,6 +367,18 @@ describe('Utils', function () {
                              "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01",
                              "2010-12-01", "2011-01-01", "2011-02-01"]);
     });
+    it('should start in Aug 2013 for CCGs', function () {       var options = {
+        org: 'CCG',
+        data: {
+          combinedData : [
+            {'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2013-04-01'},
+            {'row_id': 'O3V', 'row_name': 'NHS Vale of York', 'date': '2013-09-01'}
+          ]
+        }
+      };
+      var months = utils.getAllMonthsInData(options);
+      expect(months).to.eql(["2013-08-01", "2013-09-01"]);
+    });
   });
 
   describe("#calculateMinMaxByDate", function () {

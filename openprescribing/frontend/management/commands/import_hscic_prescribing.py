@@ -11,6 +11,7 @@ from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import PracticeStatistics
 from frontend.models import Prescription
 from frontend.models import Product
 from frontend.models import Section
@@ -138,6 +139,7 @@ class Command(BaseCommand):
         five_years_ago = datetime.date(
             self.date.year - 5, self.date.month, self.date.day)
         self.drop_partition(five_years_ago)
+        PracticeStatistics.objects.filter(date__lte=five_years_ago).delete()
 
     def _partition_name(self, date=None):
         if not date:
