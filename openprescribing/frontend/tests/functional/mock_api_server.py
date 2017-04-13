@@ -38,12 +38,15 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
                 data = _load_json('spending_by_ccg_num')
         if '/spending_by_practice' in o.path:
             # for SmallListTest
-            data = ('[{"items":23.0,"actual_cost":1026.22,"setting":4,'
+            data = ('[{"items":9000000.0,"actual_cost":1026.22,"setting":4,'
                     '"row_name":"THE GREEN PRACTICE","date":"2012-02-01",'
                     '"row_id":"6","ccg":"11H","quantity":966.0},'
                     '{"items":23.0,"actual_cost":1026.22,"setting":4,'
                     '"row_name":"THE YELLOW PRACTICE","date":"2012-02-01",'
                     '"row_id":"7","ccg":"11H","quantity":966.0},'
+                    '{"items":23.0,"actual_cost":1026.22,"setting":4,'
+                    '"row_name":"THE PINK PRACTICE","date":"2012-02-01",'
+                    '"row_id":"10","ccg":"11H","quantity":966.0},'
                     '{"items":23.0,"actual_cost":1026.22,"setting":4,'
                     '"row_name":"THE BLUE PRACTICE","date":"2012-02-01",'
                     '"row_id":"7","ccg":"11H","quantity":966.0},'
@@ -61,11 +64,13 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
             data = (
                 '[{"date":"2012-02-01","row_id":"6",'
                 '"total_list_size":1,"row_name":"THE GREEN PRACTICE"},'
-                '{"date":"2012-02-01","row_id":"7","total_list_size":1000,'
+                '{"date":"2012-02-01","row_id":"7","total_list_size":10000,'
                 '"row_name":"THE YELLOW PRACTICE"},'
-                '{"date":"2012-02-01","row_id":"8","total_list_size":1000,'
+                '{"date":"2012-02-01","row_id":"10","total_list_size":10000,'
+                '"row_name":"THE PINK PRACTICE"},'
+                '{"date":"2012-02-01","row_id":"8","total_list_size":10000,'
                 '"row_name":"THE BLUE PRACTICE"},'
-                '{"date":"2012-02-01","row_id":"9","total_list_size":1000,'
+                '{"date":"2012-02-01","row_id":"9","total_list_size":10000,'
                 '"row_name":"THE RED PRACTICE"}]')
         elif '/org_code' in o.path:
             data = ('[{"ccg":"11H","code":"6","type":"practice",'
