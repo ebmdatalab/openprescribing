@@ -47,7 +47,11 @@ class Command(BaseCommand):
                 approved=True,
                 user__is_active=True)
         else:
-            bookmarks = []
+            bookmarks = OrgBookmark.objects.filter(
+                approved=True,
+                user__is_active=True,
+                user__email=options['recipient_email']
+            )
         return bookmarks
 
     def get_search_bookmarks(self, **options):
@@ -64,7 +68,10 @@ class Command(BaseCommand):
                 approved=True,
                 user__is_active=True)
         else:
-            bookmarks = []
+            bookmarks = SearchBookmark.objects.filter(
+                approved=True,
+                user__is_active=True,
+                user__email=options['recipient_email'])
         return bookmarks
 
     def validate_options(self, **options):
