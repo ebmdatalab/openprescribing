@@ -92,21 +92,36 @@ def spending_by_practice(request, format=None):
 
 
 def _get_query_for_total_spending(codes):
-    query = 'SELECT SUM(cost) AS actual_cost, '
-    query += 'SUM(items) AS items, '
-    query += 'SUM(quantity) AS quantity, '
-    query += 'processing_date AS date '
-    query += "FROM vw__presentation_summary "
+    query = """SELECT
+                 SUM(cost) AS actual_cost,
+                 SUM(items) AS items,
+                 SUM(quantity) AS quantity,
+                 log.current_at AS date
+               FROM (
+                 SELECT *
+                 FROM
+                   vw__presentation_summary
+                 %s
+               ) pr
+               RIGHT OUTER JOIN (
+                 SELECT
+                   current_at
+                 FROM
+                    frontend_importlog
+                 WHERE category = 'prescribing'
+               ) log
+               ON log.current_at = pr.processing_date
+               GROUP BY date
+               ORDER BY date;"""
     if codes:
-        query += " WHERE ("
+        condition = " WHERE ("
         for i, c in enumerate(codes):
-            query += "presentation_code LIKE %s "
+            condition += "presentation_code LIKE %s "
             if (i != len(codes) - 1):
-                query += ' OR '
-        query += ") "
-    query += "GROUP BY date ORDER BY date"
-    return query
-
+                condition += ' OR '
+        condition += ") "
+    else:
+        condition = ""
 
     return query % condition
 
