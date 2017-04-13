@@ -7,26 +7,13 @@ import view_utils as utils
 def total_spending(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    subdivide = request.GET.get('subdivide', None)
-
-    if subdivide:
-        if codes:
-            if len(codes) > 1:
-                err = 'Error: You can only subdivide a single code'
-                return Response(err, status=400)
-            elif len(codes[0]) > 11:
-                err = 'Error: Code to subdivide must be 11 characters or fewer'
-                return Response(err, status=400)
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
         err = 'Error: Codes must all be the same length'
         return Response(err, status=400)
 
-    if subdivide:
-        query = _get_query_for_total_spending_with_subdivide(codes)
-    else:
-        query = _get_query_for_total_spending(codes)
+    query = _get_query_for_total_spending(codes)
 
     if spending_type != 'presentation':
         codes = [c + '%' for c in codes]
@@ -121,38 +108,7 @@ def _get_query_for_total_spending(codes):
     return query
 
 
-def _get_query_for_total_spending_with_subdivide(codes):
-    '''
-    TODO: Deal with the case where there are no subsections,
-    e.g. section 2.12. In this case we should jump straight to
-    chemical level.
-    '''
-    code = codes[0] if len(codes) else None
-    end_char = 0
-    if not code:
-        end_char = 2
-    elif len(code) == 2 or len(code) == 4 or len(code) == 9:
-        end_char = len(code) + 2
-    elif len(code) == 6:
-        end_char = 9
-    elif len(code) == 11:
-        end_char = 15
-    query = 'SELECT SUM(cost) AS actual_cost, SUM(items) AS items, '
-    query += 'SUM(quantity) AS quantity, '
-    query += 'SUBSTR(vwps.presentation_code, 1, %s) AS code, ' % end_char
-    query += 'frontend_section.number_str AS bnf_code, '
-    query += 'processing_date AS date, '
-    query += 'frontend_section.name AS name '
-    query += 'FROM vw__presentation_summary vwps '
-    query += 'LEFT JOIN frontend_section ON '
-    query += 'frontend_section.bnf_id'
-    query += '=SUBSTR(vwps.presentation_code, 1, %s) ' % end_char
-    if code:
-        query += 'WHERE vwps.presentation_code LIKE %s '
-        code += '%'
-    query += 'GROUP BY code, name, number_str, date '
-    query += 'ORDER BY date, code'
-    return query
+    return query % condition
 
 
 def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
