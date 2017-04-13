@@ -114,7 +114,7 @@ var utils = {
   partitionOutliers: function(combinedData, options) {
     // Optionally separate practices or CCGs that have a number of
     // data points that are extreme outliers (which we count as the
-    // upper quartile plus five times the interquartile range)
+    // upper quartile plus 20 times the interquartile range)
     var byDate = _.groupBy(combinedData, 'date');
     var candidates = {};
     _.mapObject(byDate, function(val, key) {
@@ -122,18 +122,21 @@ var utils = {
       ratios.sort(function(a, b) {
         return a - b;
       });
+      // Discount zero values when calculating outliers
+      ratios = _.filter(ratios, function(d) {
+        return d > 0;
+      });
       var l = ratios.length;
       var LQ = ratios[Math.round(l / 4) - 1];
       var UQ = ratios[Math.round(3 * l / 4) - 1];
       var IQR = UQ - LQ;
+      var cutoff = UQ + 20 * IQR;
       var outliers = _.filter(val, function(d) {
-        return d.ratio_items > UQ + 5 * IQR;
+        return d.ratio_items > cutoff;
       });
-      if (outliers.length > 0) {
-      }
-      if (outliers.length === 1) {
-        candidates[outliers[0].id] = outliers[0].row_name;
-      }
+      _.each(outliers, function(d) {
+        candidates[d.id] = d.row_name;
+      });
     });
     var skipIds = _.keys(candidates);
     var filteredData = _.filter(combinedData, function(d) {
