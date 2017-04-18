@@ -136,7 +136,7 @@ var formatters = {
     tt += (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     tt += options.friendly.friendlyNumerator;
     tt += ' in ' + date + ': ';
-    tt += (options.activeOption === 'items') ? '' : '£';
+    tt += (force_items || options.activeOption === 'items') ? '' : '£';
     tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_y, numDecimals) : original_y;
     tt += '<br/>';
 
@@ -144,13 +144,13 @@ var formatters = {
     p += options.friendly.partialDenominator.substring(1);
     tt += p + ' in ' + date + ': ';
     if (options.activeOption !== 'items') {
-      tt += (options.denom === 'chemical') ? '£' : '';
+      tt += (!force_items && options.denom === 'chemical') ? '£' : '';
     }
     tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
     tt += '<br/>';
 
     tt += options.friendly.yAxisTitle.replace('<br/>', "") + ': ';
-    tt += (options.activeOption === 'items') ? '' : '£';
+    tt += (force_items || options.activeOption === 'items') ? '' : '£';
     tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
         // The line chart tooltips will only ever show items, regardless
         // of what global items have been set elsewhere.

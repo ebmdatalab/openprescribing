@@ -162,9 +162,9 @@ describe('Formatters', function () {
             var str = formatters.constructTooltip(options, '03V', '2014-01-01',
                                                   10, 14, 1.4, true);
             var expected = '<b>03V</b><br/>';
-            expected += 'Items for 514 + 564 in 2014/01/01: £10<br/>';
-            expected += '5234 + 534 in 2014/01/01: £14<br/>';
-            expected += 'Items for something: £1.4';
+            expected += 'Items for 514 + 564 in 2014/01/01: 10<br/>';
+            expected += '5234 + 534 in 2014/01/01: 14<br/>';
+            expected += 'Items for something: 1.4';
             expect(str).to.equal(expected);
         });
 
