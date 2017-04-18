@@ -74,6 +74,7 @@ var analyseChart = {
     this.el.errorContainer.show();
     this.el.resultsEl.hide();
     this.el.loadingEl.hide();
+    this.el.submitButton.button('reset');
   },
 
   getBackendData: function() {
