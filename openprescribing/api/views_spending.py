@@ -93,9 +93,9 @@ def spending_by_practice(request, format=None):
 
 def _get_query_for_total_spending(codes):
     query = """SELECT
-                 SUM(cost) AS actual_cost,
-                 SUM(items) AS items,
-                 SUM(quantity) AS quantity,
+                 COALESCE(SUM(cost), 0) AS actual_cost,
+                 COALESCE(SUM(items), 0) AS items,
+                 COALESCE(SUM(quantity), 0) AS quantity,
                  log.current_at AS date
                FROM (
                  SELECT *
