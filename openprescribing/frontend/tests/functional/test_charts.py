@@ -54,7 +54,7 @@ class SmallListTest(SeleniumTestCase):
              '&denom=total_list_size&selectedTab=summary'))
         warning = self.find_by_xpath(
             "//div[contains(@class, 'toggle')]/a")
-        self.assertIn('remove', warning.text)
+        self.assertIn('Remove', warning.text)
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertIn('GREEN', xlabels.text)
