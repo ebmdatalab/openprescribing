@@ -1,7 +1,28 @@
 import csv
+import datetime
+
+from django.db import connection
 from django.http import Http404
 
 from .api_test_base import ApiTestBase
+
+from frontend.models import ImportLog
+
+
+def _create_prescribing_tables():
+    current = datetime.date(2013, 4, 1)
+    cmd = "CREATE TABLE %s () INHERITS (frontend_prescription)"
+    with connection.cursor() as cursor:
+        for _ in range(0, 59):
+            table_name = "frontend_prescription_%s%s" % (
+                current.year, str(current.month).zfill(2))
+            cursor.execute(cmd % table_name)
+            current = datetime.date(
+                current.year + (current.month / 12),
+                ((current.month % 12) + 1),
+                1)
+    ImportLog.objects.create(
+        current_at=current, category='prescribing')
 
 
 class TestAPISpendingViews(ApiTestBase):
@@ -36,58 +57,63 @@ class TestAPISpendingViews(ApiTestBase):
     # Spending across all NHS England.
     ########################################
     def test_total_spending(self):
+        _create_prescribing_tables()
         rows = self._rows_from_api('/spending?format=csv')
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 60)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
         self.assertEqual(rows[0]['items'], '3')
         self.assertEqual(rows[0]['quantity'], '82')
-        self.assertEqual(rows[5]['date'], '2014-11-01')
-        self.assertEqual(rows[5]['actual_cost'], '90.54')
-        self.assertEqual(rows[5]['items'], '95')
-        self.assertEqual(rows[5]['quantity'], '5142')
+        self.assertEqual(rows[1]['date'], '2013-05-01')
+        self.assertEqual(rows[1]['actual_cost'], '0.0')
+        self.assertEqual(rows[1]['items'], '0')
+        self.assertEqual(rows[1]['quantity'], '0')
+        self.assertEqual(rows[19]['date'], '2014-11-01')
+        self.assertEqual(rows[19]['actual_cost'], '90.54')
+        self.assertEqual(rows[19]['items'], '95')
+        self.assertEqual(rows[19]['quantity'], '5142')
 
     def test_total_spending_by_bnf_section(self):
+        _create_prescribing_tables()
         rows = self._rows_from_api('/spending?format=csv&code=2')
-        self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
         self.assertEqual(rows[0]['items'], '3')
         self.assertEqual(rows[0]['quantity'], '82')
-        self.assertEqual(rows[5]['date'], '2014-11-01')
-        self.assertEqual(rows[5]['actual_cost'], '90.54')
-        self.assertEqual(rows[5]['items'], '95')
-        self.assertEqual(rows[5]['quantity'], '5142')
+        self.assertEqual(rows[19]['date'], '2014-11-01')
+        self.assertEqual(rows[19]['actual_cost'], '90.54')
+        self.assertEqual(rows[19]['items'], '95')
+        self.assertEqual(rows[19]['quantity'], '5142')
 
     def test_total_spending_by_bnf_section_full_code(self):
+        _create_prescribing_tables()
         rows = self._rows_from_api('/spending?format=csv&code=02')
-        self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]['date'], '2013-04-01')
         self.assertEqual(rows[0]['actual_cost'], '4.61')
         self.assertEqual(rows[0]['items'], '3')
         self.assertEqual(rows[0]['quantity'], '82')
-        self.assertEqual(rows[5]['date'], '2014-11-01')
-        self.assertEqual(rows[5]['actual_cost'], '90.54')
-        self.assertEqual(rows[5]['items'], '95')
-        self.assertEqual(rows[5]['quantity'], '5142')
+        self.assertEqual(rows[19]['date'], '2014-11-01')
+        self.assertEqual(rows[19]['actual_cost'], '90.54')
+        self.assertEqual(rows[19]['items'], '95')
+        self.assertEqual(rows[19]['quantity'], '5142')
 
     def test_total_spending_by_code(self):
+        _create_prescribing_tables()
         rows = self._rows_from_api('/spending?format=csv&code=0204000I0')
-        self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0]['date'], '2014-11-01')
-        self.assertEqual(rows[0]['actual_cost'], '36.28')
-        self.assertEqual(rows[0]['items'], '33')
-        self.assertEqual(rows[0]['quantity'], '2354')
+        self.assertEqual(rows[19]['date'], '2014-11-01')
+        self.assertEqual(rows[19]['actual_cost'], '36.28')
+        self.assertEqual(rows[19]['items'], '33')
+        self.assertEqual(rows[19]['quantity'], '2354')
 
     def test_total_spending_by_codes(self):
+        _create_prescribing_tables()
         url = '/spending?format=csv'
         url += '&code=0204000I0,0202010B0'
         rows = self._rows_from_api(url)
-        self.assertEqual(len(rows), 6)
-        self.assertEqual(rows[3]['date'], '2014-09-01')
-        self.assertEqual(rows[3]['actual_cost'], '36.29')
-        self.assertEqual(rows[3]['items'], '40')
-        self.assertEqual(rows[3]['quantity'], '1209')
+        self.assertEqual(rows[17]['date'], '2014-09-01')
+        self.assertEqual(rows[17]['actual_cost'], '36.29')
+        self.assertEqual(rows[17]['items'], '40')
+        self.assertEqual(rows[17]['quantity'], '1209')
 
     ########################################
     # Total spending by CCG.
