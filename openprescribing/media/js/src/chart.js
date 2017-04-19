@@ -119,10 +119,10 @@ var analyseChart = {
     items.html(outliers);
     if (this.globalOptions.hideOutliers) {
       link.text(
-        'Show ' + pronoun + ' in the charts anyway.');
+        pronoun + 'Show ' + pronoun + ' in the charts anyway.');
     } else {
       link.text(
-        'Remove ' + pronoun + ' from the charts.');
+        'You can remove ' + pronoun + ' if you would like to make the rest of the chart easier to read');
     }
   },
 
