@@ -1,4 +1,5 @@
 import requests
+import sys
 from lxml import html
 
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import Http404
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
@@ -344,7 +346,17 @@ def gdoc_view(request, doc_id):
 
 
 ##################################################
-# TEST HTTP CODES
+# Custom HTTP errors
 ##################################################
-def test_500_view(request):
-    return HttpResponse(status=500)
+def custom_500(request):
+    type_, value, traceback = sys.exc_info()
+    context = {}
+    if 'canceling statement due to statement timeout' in value.message:
+        context['reason'] = ("The database took too long to respond.  If you "
+                             "were running an analysis with multiple codes, "
+                             "try again with fewer.")
+    if (request.META['HTTP_ACCEPT'].find('application/json') > -1 or
+       request.is_ajax()):
+        return HttpResponse(context['reason'], status=500)
+    else:
+        return render(request, '500.html', context, status=500)

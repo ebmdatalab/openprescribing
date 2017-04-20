@@ -6,6 +6,8 @@ from frontend.views import bookmark_views
 
 admin.autodiscover()
 
+handler500 = frontend_views.custom_500
+
 urlpatterns = [
     # Static pages.
     url(r'^$', TemplateView.as_view(template_name='index.html'), name="home"),
@@ -62,9 +64,6 @@ urlpatterns = [
     url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
     url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
         name='bnf_section'),
-    url(r'^500/$', frontend_views.test_500_view,
-        name='test_500'),
-
     url(r'^api/1.0/', include('api.urls')),
 
     url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',
