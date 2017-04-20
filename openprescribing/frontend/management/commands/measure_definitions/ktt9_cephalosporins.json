@@ -30,14 +30,14 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_legacy] ",
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
   "numerator_where": [
     "((bnf_code LIKE '0501013K0%%')  OR (bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050112%%'))  "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_legacy] ",
+  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
   "denominator_where": [
     "((bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050105%%')  OR (bnf_code LIKE '050111%%')  OR (bnf_code LIKE '050101%%')  OR (bnf_code LIKE '050112%%')  OR (bnf_code LIKE '050108%%')  OR (bnf_code LIKE '050103%%')  OR (bnf_code LIKE '050113%%'))  "
   ]

@@ -20,7 +20,7 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_legacy] ",
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
   "numerator_where": [
     "(bnf_code LIKE '0408010AE%')  "
   ],
