@@ -4,6 +4,7 @@ require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 require('bootstrap');
+var Cookies = require('cookies-js');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
@@ -39,13 +40,14 @@ var analyseChart = {
     title: '.chart-title',
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
-    alertForm: ('#alert-form')
+    alertForm: ('#alert-form'),
+    outliersToggle: ('.outliers-toggle')
   },
 
   renderChart: function(globalOptions) {
-        // console.log('renderChart', globalOptions);
-        // For older Internet Explorer, we deliberately want to
-        // delay execution in places, to prevent slow-running script errors.
+    // console.log('renderChart', globalOptions);
+    // For older Internet Explorer, we deliberately want to
+    // delay execution in places, to prevent slow-running script errors.
     this.isOldIe = utils.getIEVersion();
     this.scriptDelay = (this.isOldIe) ? 1500 : 0;
     this.globalOptions = globalOptions;
@@ -65,10 +67,10 @@ var analyseChart = {
   showErrorMessage: function(status, error) {
     var errorHtml;
     if (error !== null) {
-      errorHtml += '<p>Sorry, something went wrong.</br>';
-      errorHtml += 'This is what we know: ' + status + ': ' + error + '</p>';
+      errorHtml += '<p class="alert alert-danger">Sorry, something went wrong.</p>';
+      errorHtml += '<p>This is what we know: ' + status + ': ' + error + '</p>';
     } else {
-      errorHtml = "<p>" + status + "</p>";
+      errorHtml = "<p class='alert alert-danger'>" + status + "</p>";
     }
     this.el.errorMessage.html(errorHtml);
     this.el.errorContainer.show();
@@ -83,29 +85,69 @@ var analyseChart = {
     var _this = this;
     _this.el.loadingMessage.text('Fetching data...');
     $.when(
-            $.ajax(_this.globalOptions.urls.numeratorUrl),
-            $.ajax(_this.globalOptions.urls.denominatorUrl)
-            ).done(function(response1, response2) {
-              _this.el.loadingMessage.text('Parsing data...');
-              _this.globalOptions.data.numeratorData = response1[0];
-              _this.globalOptions.data.denominatorData = response2[0];
-              _this.el.loadingMessage.text('Rendering chart...');
-              setTimeout(function() {
-                _this.loadChart();
-              }, _this.scriptDelay);
-            })
-            .fail(function(status, error) {
-              var msg = (_.has(status, 'responseText')) ? status.responseText :
-                                 "Sorry, something went wrong.";
-              _this.showErrorMessage(msg.replace(/"/g, ""), null);
-            });
+      $.ajax(_this.globalOptions.urls.numeratorUrl),
+      $.ajax(_this.globalOptions.urls.denominatorUrl)
+    ).done(function(response1, response2) {
+      _this.el.loadingMessage.text('Parsing data...');
+      _this.globalOptions.data.numeratorData = response1[0];
+      _this.globalOptions.data.denominatorData = response2[0];
+      _this.el.loadingMessage.text('Rendering chart...');
+      setTimeout(function() {
+        _this.loadChart();
+      }, _this.scriptDelay);
+    })
+      .fail(function(status, error) {
+        var msg = (_.has(status, 'responseText')) ? status.responseText :
+            "Sorry, something went wrong.";
+        _this.showErrorMessage(msg.replace(/"/g, ""), null);
+      });
+  },
+
+  setOutlierLinkText: function() {
+    var _this = this;
+    var link = $(_this.el.outliersToggle).find('a');
+    var items = $(_this.el.outliersToggle).find('span.outliers');
+    var outliers = _.values(this.globalOptions.skippedOutliers);
+    var pronoun;
+    if (outliers.length === 1) {
+      pronoun = 'it';
+    } else {
+      pronoun = 'them';
+    }
+    outliers = [outliers.slice(0, -1).join(', '),
+                outliers.slice(-1)[0]]
+      .join(outliers.length < 2 ? '' : ' and ');
+    items.html(outliers);
+    if (this.globalOptions.hideOutliers) {
+      link.text(
+        'Show ' + pronoun + ' in the charts anyway.');
+    } else {
+      link.text(
+        'Remove ' + pronoun + ' from the chart.');
+    }
   },
 
   loadChart: function() {
     var _this = this;
     this.el.submitButton.button('reset');
     this.globalOptions.activeOption = 'items';
+
+    // Set option that defines if we should show a link to show or
+    // hide practices with ratios suggestive of small list sizes...
+    if (typeof _this.el.outliersToggle === 'undefined') {
+      // Defined on page load when provided as a query param in the
+      // URL.
+      if (Cookies.get('hide_small_lists') === '1') {
+        this.globalOptions.hideOutliers = true;
+      } else {
+        this.globalOptions.hideOutliers = false;
+      }
+    }
     this.setUpData();
+    if (this.globalOptions.hasOutliers) {
+      _this.setOutlierLinkText();
+      $(_this.el.outliersToggle).show();
+    }
     this.globalOptions.allMonths = utils.getAllMonthsInData(this.globalOptions);
     this.globalOptions.activeMonth = this.globalOptions.allMonths[this.globalOptions.allMonths.length - 1];
     this.globalOptions.friendly = formatters.getFriendlyNamesForChart(this.globalOptions);
@@ -118,27 +160,26 @@ var analyseChart = {
       'eventAction': 'click',
       'eventLabel': _this.hash
     });
-
     if (this.globalOptions.data.combinedData.length > 0) {
       this.addDataDownload();
       this.el.loadingEl.hide();
       this.el.resultsEl.show();
       this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
-                                                         this.globalOptions);
+                                                   this.globalOptions);
 
-            // For now, don't render the map and line chart in older browsers -
-            // they are just too slow.
-            // This could be fixed by adding more pauses in the data calculations,
-            // and making the data calculations more efficient.
+      // For now, don't render the map and line chart in older browsers -
+      // they are just too slow.
+      // This could be fixed by adding more pauses in the data calculations,
+      // and making the data calculations more efficient.
       if (!this.isOldIe) {
         $(_this.el.tabChart).removeClass('hidden');
         $(_this.el.tabMap).removeClass('hidden');
         _this.globalOptions.lineChart = lineChart.setUp(chartOptions.lineOptions,
-                                                               _this.globalOptions);
+                                                        _this.globalOptions);
         map.setup(_this.globalOptions);
       }
 
-            // TODO: Text for tabs. Tidy this up.
+      // TODO: Text for tabs. Tidy this up.
       var summaryTab = '';
       var numOrgs = this.globalOptions.orgIds.length;
       if (this.globalOptions.org === 'CCG') {
@@ -166,13 +207,13 @@ var analyseChart = {
   },
 
   setUpData: function() {
-        // console.log('setUpData');
-    var xData = this.globalOptions.data.denominatorData,
-      yData = this.globalOptions.data.numeratorData;
+    // console.log('setUpData');
+    var xData = this.globalOptions.data.denominatorData;
+    var yData = this.globalOptions.data.numeratorData;
     this.globalOptions.chartValues = utils.setChartValues(this.globalOptions);
-        // Combines the datasets and calculates the ratios.
+    // Combines the datasets and calculates the ratios.
     var combinedData = utils.combineXAndYDatasets(xData, yData,
-                                                      this.globalOptions.chartValues);
+                                                  this.globalOptions);
     this.globalOptions.data.combinedData = combinedData;
   },
 
@@ -235,8 +276,10 @@ var analyseChart = {
 
   addDataDownload: function() {
     var _this = this;
-    var csvHeader = ['date', 'id', 'name', 'y_items', 'y_actual_cost'],
-      sampleItem, csvRows, encodedUri;
+    var csvHeader = ['date', 'id', 'name', 'y_items', 'y_actual_cost'];
+    var sampleItem;
+    var csvRows;
+    var encodedUri;
     sampleItem = this.globalOptions.data.combinedData[0];
     if ('astro_pu_cost' in sampleItem) {
       csvHeader.push('astro_pu_cost');
@@ -266,7 +309,7 @@ var analyseChart = {
         'hitType': 'event',
         'eventCategory': 'data_link',
         'eventAction': 'click',
-        'eventLabel':  _this.hash
+        'eventLabel': _this.hash
       });
       window.open(encodedUri);
     });
@@ -308,6 +351,37 @@ var analyseChart = {
       _this.setUpSaveUrlUI();
       _this.setUpAlertSubscription();
     });
+    // Outlier toggle
+    $(_this.el.outliersToggle).on('click', function(e) {
+      e.preventDefault();
+      if (_this.globalOptions.hasOutliers) {
+        if (_this.globalOptions.hideOutliers) {
+          _this.globalOptions.hideOutliers = false;
+          $(_this.el.outliersToggle).find('a').text(
+            'Remove them from the chart');
+          Cookies.set('hide_small_lists', '0');
+        } else {
+          // set a cookie
+          _this.globalOptions.hideOutliers = true;
+          $(_this.el.outliersToggle).find('a').text(
+            'Show them in the chart');
+          Cookies.set('hide_small_lists', '1');
+        }
+        _this.setOutlierLinkText();
+        _this.hash = hashHelper.setHashParams(_this.globalOptions);
+        _this.setUpData();
+        _this.globalOptions.barChart = barChart.setUp(
+          chartOptions.barOptions,
+          _this.globalOptions);
+        if (!this.isOldIe) {
+          _this.globalOptions.lineChart = lineChart.setUp(
+            chartOptions.lineOptions,
+            _this.globalOptions);
+          map.setup(_this.globalOptions);
+        }
+      }
+    });
+
     // Items/spending toggle.
     $('#items-spending-toggle .btn').on('click', function(e) {
       e.preventDefault();
@@ -328,17 +402,17 @@ var analyseChart = {
   },
 
   updateCharts: function() {
-        // console.log('updateCharts', this.globalOptions.activeOption, this.globalOptions.activeMonth);
+    // console.log('updateCharts', this.globalOptions.activeOption, this.globalOptions.activeMonth);
     var _this = this;
     _this.globalOptions.chartValues = utils.setChartValues(_this.globalOptions);
     _this.globalOptions.friendly = formatters.getFriendlyNamesForChart(_this.globalOptions);
     $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
     $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
     barChart.update(_this.globalOptions.barChart,
-                        _this.globalOptions.activeMonth,
-                        _this.globalOptions.chartValues.ratio,
-                        _this.globalOptions.friendly.yAxisTitle,
-                        _this.globalOptions.friendly.yAxisFormatter);
+                    _this.globalOptions.activeMonth,
+                    _this.globalOptions.chartValues.ratio,
+                    _this.globalOptions.friendly.yAxisTitle,
+                    _this.globalOptions.friendly.yAxisFormatter);
     if (!_this.isOldIe) {
       map.updateMap(_this.globalOptions.activeOption, _this.globalOptions);
     }
@@ -364,7 +438,7 @@ var analyseChart = {
           to: function(val) {
             var d = _this.globalOptions.allMonths[val];
             return Highcharts.dateFormat('%b \'%y',
-                                  new Date(d.replace(/-/g, '/')));
+                                         new Date(d.replace(/-/g, '/')));
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -393,7 +467,7 @@ var analyseChart = {
           to: function(val) {
             var d = _this.globalOptions.allMonths[val];
             return Highcharts.dateFormat('%b \'%y',
-                                  new Date(d.replace(/-/g, '/')));
+                                         new Date(d.replace(/-/g, '/')));
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -409,7 +483,7 @@ var analyseChart = {
       'hitType': 'event',
       'eventCategory': 'time_slider',
       'eventAction': 'slide',
-      'eventLabel':  _this.hash
+      'eventLabel': _this.hash
     });
     var monthIndex = parseInt(this.el.slider.val());
     this.globalOptions.activeMonth = this.globalOptions.allMonths[monthIndex];

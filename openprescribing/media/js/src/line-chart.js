@@ -25,9 +25,10 @@ var lineChart = {
                     month, original_y, original_x, y, true);
       }
     };
-    lineOptions.series = this.getDataForLineChart(globalOptions.data.combinedData,
-                                            globalOptions.chartValues,
-                                            _.pluck(globalOptions.orgIds, 'id'));
+    lineOptions.series = this.getDataForLineChart(
+      globalOptions.data.combinedData,
+      globalOptions.chartValues,
+      _.pluck(globalOptions.orgIds, 'id'));
     return new Highcharts.Chart(lineOptions);
   },
 
@@ -52,6 +53,7 @@ var lineChart = {
         // years of data, this special casing can be removed after
         // August 2018.
       } else {
+        // Use date of previous month to calculate x value
         var date = Date.UTC(dates[0], dates[1] - 1, dates[2]);
         dataPoint.original_y = d[chartValues.y];
         dataPoint.original_x = d[chartValues.x_val];

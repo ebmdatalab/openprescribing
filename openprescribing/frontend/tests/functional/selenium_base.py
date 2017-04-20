@@ -49,6 +49,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             caps = {'browserName': browser}
             caps['platform'] = platform
             caps['version'] = version
+            caps['screenResolution'] = '1600x1200'
             # Disable slow script warning in IE
             caps['prerun'] = {
                 'executable': ('https://raw.githubusercontent.com/'

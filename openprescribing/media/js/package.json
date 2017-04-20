@@ -54,6 +54,7 @@
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
     "compute-quantile": "^1.0.1",
+    "cookies-js": "1.2.3",
     "handlebars": "4.0.5",
     "humanize": "^0.0.9",
     "jquery": "^1.11.3",

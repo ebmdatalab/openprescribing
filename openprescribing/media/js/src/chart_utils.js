@@ -92,19 +92,64 @@ var utils = {
     return str;
   },
 
-  combineXAndYDatasets: function(xData, yData, values) {
-        // console.log('combineXAndYDatasets');
-        // Glue the x and y series data points together,
-        // and returns a dataset with a row for each organisation and each month.
-        // Also calculates ratios for cost and items.
-    var isSpecialDenominator = ((values.x_val !== 'x_actual_cost') &&
-                                    (values.x_val !== 'x_items') &&
-                                    (typeof values.x_val !== 'undefined'));
-    var combinedData = this.combineDatasets(xData, yData, values.x, values.x_val);
+  combineXAndYDatasets: function(xData, yData, options) {
+    // Glue the x and y series data points together, and returns a
+    // dataset with a row for each organisation and each month.  Also
+    // calculates ratios for cost and items, and optionally filters
+    // out CCGs or practices with significant numbers of ratios where
+    // the denominator is greater than the numerator.
+    var isSpecialDenominator = (
+      (options.chartValues.x_val !== 'x_actual_cost') &&
+        (options.chartValues.x_val !== 'x_items') &&
+        (typeof options.chartValues.x_val !== 'undefined'));
+    var combinedData = this.combineDatasets(
+      xData, yData, options.chartValues.x, options.chartValues.x_val);
     combinedData = this.calculateRatiosForData(combinedData,
                                              isSpecialDenominator,
-                                             values.x_val);
+                                             options.chartValues.x_val);
     this.sortByDateAndRatio(combinedData, 'ratio_items');
+    return this.partitionOutliers(combinedData, options);
+  },
+
+  partitionOutliers: function(combinedData, options) {
+    // Optionally separate practices or CCGs that have a number of
+    // data points that are extreme outliers (which we count as the
+    // upper quartile plus 20 times the interquartile range)
+    var byDate = _.groupBy(combinedData, 'date');
+    var candidates = {};
+    _.mapObject(byDate, function(val, key) {
+      var ratios = _.pluck(val, 'ratio_items');
+      ratios.sort(function(a, b) {
+        return a - b;
+      });
+      // Discount zero values when calculating outliers
+      ratios = _.filter(ratios, function(d) {
+        return d > 0;
+      });
+      var l = ratios.length;
+      var LQ = ratios[Math.round(l / 4) - 1];
+      var UQ = ratios[Math.round(3 * l / 4) - 1];
+      var IQR = UQ - LQ;
+      var cutoff = UQ + 20 * IQR;
+      var outliers = _.filter(val, function(d) {
+        return d.ratio_items > cutoff;
+      });
+      _.each(outliers, function(d) {
+        candidates[d.id] = d.row_name;
+      });
+    });
+    var skipIds = _.keys(candidates);
+    var filteredData = _.filter(combinedData, function(d) {
+      return !(_.contains(skipIds, d.id));
+    });
+    if (filteredData.length !== combinedData.length) {
+      options.hasOutliers = true;
+      options.skippedOutliers = candidates;
+    }
+    // If the option is set, actually hide these practices or CCGs
+    if (options.hideOutliers) {
+      combinedData = filteredData;
+    }
     return combinedData;
   },
 
