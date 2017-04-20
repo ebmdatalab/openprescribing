@@ -67,10 +67,10 @@ var analyseChart = {
   showErrorMessage: function(status, error) {
     var errorHtml;
     if (error !== null) {
-      errorHtml += '<p>Sorry, something went wrong.</br>';
-      errorHtml += 'This is what we know: ' + status + ': ' + error + '</p>';
+      errorHtml += '<p class="alert alert-danger">Sorry, something went wrong.</p>';
+      errorHtml += '<p>This is what we know: ' + status + ': ' + error + '</p>';
     } else {
-      errorHtml = "<p>" + status + "</p>";
+      errorHtml = "<p class='alert alert-danger'>" + status + "</p>";
     }
     this.el.errorMessage.html(errorHtml);
     this.el.errorContainer.show();
