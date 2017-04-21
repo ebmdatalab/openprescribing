@@ -2,6 +2,27 @@ import itertools
 from django.db import connection
 from django.shortcuts import get_object_or_404
 from frontend.models import Practice, Section
+from functools import wraps
+
+
+def db_timeout(timeout):
+    """A decorator that applies a timeout to the current database
+    connection.
+
+    Note this will only work as expected so long as CONN_MAX_AGE is
+    zero.  Otherwise, connection pooling will lead to unexpected
+    timeouts
+
+    """
+    def timeout_decorator(func):
+        @wraps(func)
+        def func_wrapper(*args, **kwargs):
+            from django.db import connection
+            cursor = connection.cursor()
+            cursor.execute("set statement_timeout to %s; commit;" % timeout)
+            return func(*args, **kwargs)
+        return func_wrapper
+    return timeout_decorator
 
 
 def param_to_list(str):

@@ -7,7 +7,6 @@ from requests_futures.sessions import FuturesSession
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.backends.signals import connection_created
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -95,10 +94,3 @@ def get_user_by_email(email):
     if not user:
         logger.warn("Could not find recipient %s" % email)
     return user or None
-
-
-@receiver(connection_created)
-def set_timeout(sender, **kwargs):
-    from django.db import connection
-    cursor = connection.cursor()
-    cursor.execute("set statement_timeout to 55000; commit;")
