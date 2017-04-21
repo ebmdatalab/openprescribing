@@ -146,6 +146,15 @@ class Command(BaseCommand):
 
     def append_aggregated_data_to_prescribing_table(
             self, source_table_ref, date):
+        # ensure we don't do this if already there
+        client = bigquery.client.Client(project='ebmdatalab')
+        sql = """SELECT COUNT(*)
+        FROM [ebmdatalab:hscic.prescribing]
+        WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
+        query = client.run_sync_query(sql)
+        query.run()
+        assert query.rows[0][0] == 0
+
         query = """
          SELECT
           Area_Team_Code AS sha,
@@ -164,7 +173,6 @@ class Command(BaseCommand):
            bnf_code, bnf_name, pct,
            practice, sha
         """ % (date.replace('_', '-'), source_table_ref)
-        client = bigquery.client.Client(project='ebmdatalab')
         dataset = client.dataset('hscic')
         table = dataset.table(
             name='prescribing')
