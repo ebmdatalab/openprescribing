@@ -1,0 +1,37 @@
+{
+  "name": "Desogestrel prescribed as a branded product",
+  "title": [
+    "Prescribing of branded desogestrel ",
+    "compared with prescribing of all desogestrel "
+  ],
+  "description": [
+    "Total quantity of branded desogestrel ,",
+    "as a proportion of total quantity of desogestrel",
+    "(0703021Q0)."
+  ],
+  "why_it_matters": [
+    Desogestrel is available as both generic tablets and as a number of brands. ",
+    "For a time some of these brands were cheaper than the generic tablets, so CCGs started to use them. ",
+    "However the price of the generic has now fallen and is the cheapest option to prescribe."
+  ],
+  "numerator_short": "Branded desogestrel quantity",
+  "denominator_short": "Total Desogestrel quantity",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(quantity) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0703021Q0B%')  "
+  ],
+  "denominator_columns": [
+    "SUM(quantity) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "denominator_where": [
+    "(bnf_code LIKE '0703021Q0%')  "
+  ]
+}
