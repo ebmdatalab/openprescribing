@@ -6,6 +6,7 @@ from frontend.management.commands.import_list_sizes import Command
 
 PRESCRIBING_DATE = '2040-03-01'
 
+
 def setUpModule():
     Practice.objects.create(code='N84014',
                             name='AINSDALE VILLAGE SURGERY')
@@ -53,6 +54,10 @@ class CommandsTestCase(TestCase):
         list_sizes = PracticeStatistics.objects.all()
         self.assertEqual(len(list_sizes), 6)
         self.assertEqual(str(list_sizes[5].date), '2040-03-01')
+        last_log = ImportLog.objects.latest_in_category('patient_list_size')
+        self.assertEqual(
+            last_log.current_at.strftime('%Y-%m-%d'),
+            PRESCRIBING_DATE)
 
     def test_import_bsa_list_size_quarterly(self):
         args = []
@@ -81,6 +86,7 @@ class CommandsTestCase(TestCase):
         for k in p.star_pu:
             self.assertNotEqual(p.star_pu[k], 0)
             self.assertNotEqual(p.star_pu[k], None)
+
 
 
 class MissingMonthsTestCase(TestCase):
