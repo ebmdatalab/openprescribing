@@ -1,8 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import view_utils as utils
+from view_utils import db_timeout
 
 
+@db_timeout(58000)
 @api_view(['GET'])
 def total_spending(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
@@ -22,6 +24,7 @@ def total_spending(request, format=None):
     return Response(data)
 
 
+@db_timeout(58000)
 @api_view(['GET'])
 def spending_by_ccg(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
@@ -47,6 +50,7 @@ def spending_by_ccg(request, format=None):
     return Response(data)
 
 
+@db_timeout(58000)
 @api_view(['GET'])
 def spending_by_practice(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
