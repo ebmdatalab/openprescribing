@@ -105,15 +105,15 @@ class Command(BaseCommand):
                         break
                     else:
                         self.process_hscic_row(row, m)
+                    ImportLog.objects.create(
+                        current_at=m,
+                        filename=filename,
+                        category='patient_list_size'
+                    )
             if self.IS_VERBOSE:
                 print
                 print ("Timestamping patient_list_log with date %s" %
                        importfile_quarter_end)
-            ImportLog.objects.create(
-                current_at=importfile_quarter_end,
-                filename=filename,
-                category='patient_list_size'
-            )
             months_without_list_data = \
                 self.months_with_prescribing_data_but_no_list_data(
                     self.IS_VERBOSE)
