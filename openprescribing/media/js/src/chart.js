@@ -1,8 +1,8 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
 require('bootstrap');
-require('Highcharts');
-require('Highcharts-export');
+global.Highcharts = require('Highcharts');
+require('exporting')(global.Highcharts);
 require('bootstrap');
 var Cookies = require('cookies-js');
 var noUiSlider = require('noUiSlider');
