@@ -27,7 +27,7 @@
     "select2": "./vendor/select2.full.min.js",
     "noUiSlider": "./vendor/jquery.nouislider.all.js",
     "Highcharts": "./vendor/highcharts.js",
-    "Highcharts-export": "./vendor/highcharts-export.js"
+    "exporting": "./vendor/exporting.js"
   },
   "browserify": {
     "transform": [
