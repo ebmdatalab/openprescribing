@@ -56,6 +56,20 @@ Highcharts.setOptions({
 });
 
 var baseOptions = {
+  addWatermark: function(chart) {
+    $(chart.container.parentNode).find('.highcharts-watermark').remove();
+    var f = chart.renderer.label(
+      'openprescribing.net', 0, 0, 'rect', 0, 0, false, false, 'watermark').css({
+        color: '#DDD',
+        fontSize: '24px'
+      }).add();
+    var x = chart.chartWidth / 2 - f.width / 2;
+    var y = chart.chartHeight / 4;
+    f.attr({
+      transform: 'translate(' + x + ', ' + y + ')',
+    });
+    f.toFront();
+  },
   global: {
     useUTC: false
   },
@@ -65,6 +79,9 @@ var baseOptions = {
     plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
     showCrosshair: true,
     events: {
+      render: function() {
+        this.options.addWatermark(this);
+      },
       load: function() {
         // change cursor to crosshair to indicate zoom is possible
         if (this.plotBackground && this.userOptions.chart.showCrosshair) {
@@ -79,19 +96,7 @@ var baseOptions = {
     }
   },
   credits: {
-    enabled: true,
-    position: {
-      align: 'center',
-      verticalAlign: 'top',
-      y: 96
-    },
-    style: {
-      color: '#ccc',
-      fontSize: '24px',
-      opacity: 0.2,
-      cursor: 'crosshair'
-    },
-    text: "openprescribing.net"
+    enabled: false,
   },
   title: {
     text: null
