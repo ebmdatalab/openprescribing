@@ -1,8 +1,8 @@
 from django.db import connection
-from django.test import TestCase
+from django.test import TransactionTestCase
 
 
-class ApiTestBase(TestCase):
+class ApiTestBase(TransactionTestCase):
     """Base test case that sets up all the fixtures required by any of the
     API tests.
 
