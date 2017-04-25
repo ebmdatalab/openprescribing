@@ -11,12 +11,13 @@ from frontend.models import ImportLog
 
 def _create_prescribing_tables():
     current = datetime.date(2013, 4, 1)
-    cmd = "CREATE TABLE %s () INHERITS (frontend_prescription)"
+    cmd = ("DROP TABLE IF EXISTS %s; "
+           "CREATE TABLE %s () INHERITS (frontend_prescription)")
     with connection.cursor() as cursor:
         for _ in range(0, 59):
             table_name = "frontend_prescription_%s%s" % (
                 current.year, str(current.month).zfill(2))
-            cursor.execute(cmd % table_name)
+            cursor.execute(cmd % (table_name, table_name))
             current = datetime.date(
                 current.year + (current.month / 12),
                 ((current.month % 12) + 1),

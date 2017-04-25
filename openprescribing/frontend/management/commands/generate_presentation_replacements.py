@@ -239,7 +239,7 @@ def write_zero_prescribing_codes_table(level):
 
 
 def get_csv_of_empty_classes_for_level(level):
-    """Using BigQuery, make a CSV of BNG codes at the given level
+    """Using BigQuery, make a CSV of BNF codes at the given level
     (e.g. `section`, `paragraph`) that have never had any prescribing.
 
     Returns a path to the CSV

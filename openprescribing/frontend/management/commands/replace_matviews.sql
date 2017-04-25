@@ -3,7 +3,7 @@
 
 -- It is also called by tests that rely on the view tables.
 
-DROP MATERIALIZED VIEW IF EXISTS vw__presentation_summary ;
+DROP TABLE IF EXISTS vw__presentation_summary ;
 CREATE TABLE IF NOT EXISTS vw__presentation_summary (
   processing_date date,
   presentation_code character varying(15),
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS vw__presentation_summary (
 CREATE INDEX IF NOT EXISTS vw__idx_presentation_summary
   ON vw__presentation_summary(presentation_code varchar_pattern_ops);
 
-DROP MATERIALIZED VIEW IF EXISTS vw__presentation_summary_by_ccg;
+DROP TABLE IF EXISTS vw__presentation_summary_by_ccg;
 CREATE TABLE IF NOT EXISTS vw__presentation_summary_by_ccg (
   processing_date date,
   pct_id character varying(3),
@@ -29,7 +29,7 @@ CREATE INDEX IF NOT EXISTS vw__idx_pres_by_ccg_joint_code
    ON vw__presentation_summary_by_ccg(pct_id, presentation_code);
 
 
-DROP MATERIALIZED VIEW IF EXISTS vw__chemical_summary_by_ccg;
+DROP TABLE IF EXISTS vw__chemical_summary_by_ccg;
 CREATE TABLE IF NOT EXISTS vw__chemical_summary_by_ccg (
   processing_date date,
   pct_id character varying(3),
@@ -43,7 +43,7 @@ CREATE INDEX IF NOT EXISTS vw__idx_chem_by_ccg
 CREATE INDEX IF NOT EXISTS vw__idx_ccg_by_chem
   ON vw__chemical_summary_by_ccg(pct_id, chemical_id varchar_pattern_ops);
 
-DROP MATERIALIZED VIEW IF EXISTS vw__chemical_summary_by_practice;
+DROP TABLE IF EXISTS vw__chemical_summary_by_practice;
 CREATE TABLE IF NOT EXISTS vw__chemical_summary_by_practice (
   processing_date date,
   practice_id character varying(6),
@@ -59,7 +59,7 @@ CREATE INDEX IF NOT EXISTS vw__idx_chem_by_practice
 CREATE INDEX IF NOT EXISTS idx_chem_by_practice_bydate
   ON vw__chemical_summary_by_practice (chemical_id varchar_pattern_ops, processing_date);
 
-DROP MATERIALIZED VIEW IF EXISTS vw__practice_summary;
+DROP TABLE IF EXISTS vw__practice_summary;
 CREATE TABLE IF NOT EXISTS vw__practice_summary (
   processing_date date,
   practice_id character varying(6),
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS vw__practice_summary (
 CREATE INDEX IF NOT EXISTS vw__practice_summary_prac_id ON vw__practice_summary(practice_id);
 
 
-DROP MATERIALIZED VIEW IF EXISTS vw__ccgstatistics;
+DROP TABLE IF EXISTS vw__ccgstatistics;
 CREATE TABLE IF NOT EXISTS vw__ccgstatistics (
   date date,
   pct_id character varying(3),
