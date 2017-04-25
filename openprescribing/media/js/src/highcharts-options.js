@@ -79,10 +79,11 @@ var baseOptions = {
     plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
     showCrosshair: true,
     events: {
-      render: function() {
+      redraw: function() {
         this.options.addWatermark(this);
       },
       load: function() {
+        this.options.addWatermark(this);
         // change cursor to crosshair to indicate zoom is possible
         if (this.plotBackground && this.userOptions.chart.showCrosshair) {
           this.plotBackground.toFront().css({ // move on top to get all events
@@ -165,6 +166,7 @@ barOptions.chart.renderTo = 'summarychart';
 // charts except the bar chart, where we have to stack it manually, so
 // the tooltips still work
 barOptions.chart.events.load = function() {
+  this.options.addWatermark(this);
   if (this.plotBackground) {
     this.plotBackground.css({
       zIndex: 2,
