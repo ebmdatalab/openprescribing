@@ -127,6 +127,15 @@ BNF_MAP_SCHEMA = [
 
 
 def create_code_mapping(filenames):
+    """Given a list of filenames containing tab-delimited old->new BNF
+    code changes:
+
+      * find the matching entity in our local database (e.g. Section
+        or Presentation, etc); mark the old version as
+      * no-longer-current add a reference (by BNF code) to its
+      * replacement
+
+    """
     Presentation.objects.filter(replaced_by__isnull=False).delete()
     for f in filenames:
         with transaction.atomic():
@@ -169,6 +178,11 @@ def create_code_mapping(filenames):
 
 
 def create_bigquery_table():
+    """Create a table in bigquery of all BNF codes for presentations that
+    are no longer current, along with the BNF code of their latest
+    incarnation
+
+    """
     dataset_name = 'hscic'
     bq_table_name = 'bnf_map'
     # output a row for each presentation and its ultimate replacement
@@ -184,7 +198,13 @@ def create_bigquery_table():
         )
 
 
-def write_temp_code_table(level):
+def write_zero_prescribing_codes_table(level):
+    """Given a BNF `level` (`section`, `chapter`, `paragraph`, etc), write
+    a table in bigquery listing all such levels that have zero prescribing.
+
+    Returns a bigquery Table.
+
+    """
     sql = """
     SELECT
       bnf.%s
@@ -218,7 +238,29 @@ def write_temp_code_table(level):
     return table
 
 
+def get_csv_of_empty_classes_for_level(level):
+    """Using BigQuery, make a CSV of BNG codes at the given level
+    (e.g. `section`, `paragraph`) that have never had any prescribing.
+
+    Returns a path to the CSV
+
+    """
+    temp_table = write_zero_prescribing_codes_table(level)
+    converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
+    logger.info("Copying %s to %s" % (temp_table.name, converted_uri))
+    copy_table_to_gcs(temp_table, converted_uri)
+    local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+    logger.info("Downloading %s to %s" % (converted_uri, local_path))
+    csv_path = download_from_gcs(converted_uri, local_path)
+    return csv_path
+
+
 def cleanup_empty_classes():
+    """In BigQuery, find all BNF classes/levels (e.g. `section`,
+    `paragraph`) that have never had any prescribing, and mark their
+    corresponding entities in our local database as not current.
+
+    """
     classes = [
         ('section_code',
          Section,
@@ -237,14 +279,8 @@ def cleanup_empty_classes():
          'bnf_code'),
     ]
     for class_column, model, bnf_field in classes:
-        temp_table = write_temp_code_table(class_column)
-        converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
-        logger.info("Copying %s to %s" % (temp_table.name, converted_uri))
-        copy_table_to_gcs(temp_table, converted_uri)
-        local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
-        logger.info("Downloading %s to %s" % (converted_uri, local_path))
-        csv_path = download_from_gcs(converted_uri, local_path)
-        logger.info("Marking all classes in %s as not current" % local_path)
+        csv_path = get_csv_of_empty_classes_for_level(class_column)
+        logger.info("Marking all classes in %s as not current" % csv_path)
         with transaction.atomic():
             with open(csv_path, 'r') as f:
                 reader = csv.reader(f)
@@ -269,6 +305,11 @@ def cleanup_empty_classes():
 
 
 def update_existing_prescribing():
+    """For every child table of the prescribing table, update all the data
+    so that the BNF codes are always normalised to the current BNF
+    code.
+
+    """
     update_sql = """
         UPDATE %s
         SET presentation_code = '%s'
@@ -300,6 +341,12 @@ def update_existing_prescribing():
 
 
 def create_bigquery_views():
+    """Create BigQuery views on the main prescribing data which map
+    historic BNF codes to their current equivalent.
+
+    If they already exist, do nothing.
+
+    """
     # We have to create legacy and standard versions of the view, as a
     # legacy query cannot address a standard view, and vice versa, and
     # we use both flavours in our code.
@@ -325,7 +372,6 @@ def create_bigquery_views():
 
     """
     client = bigquery.client.Client(project='ebmdatalab')
-    # delete the table if it exists
     dataset = Dataset("hscic", client)
     table = dataset.table('normalised_prescribing_standard')
     table.view_query = sql
