@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load template_extras %}
 
 {% block title %}Prescribing measures{% endblock %}
 {% block active_class %}ccg{% endblock %}
@@ -20,4 +21,8 @@
 {% endfor %}
 </ul>
 
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
 {% endblock %}

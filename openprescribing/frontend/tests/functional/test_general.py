@@ -32,6 +32,7 @@ class GeneralFrontendTest(SeleniumTestCase):
                     '/chemical/0202010D0/',
                     '/bnf/020201/',
                     '/analyse/',
+                    '/measure/',
                     '/about']:
             url = self.live_server_url + url
             self.browser.get(url)
