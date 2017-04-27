@@ -23,12 +23,40 @@ class Command(BaseCommand):
     user for the specified organisation.'''
 
     def add_arguments(self, parser):
-        parser.add_argument('--recipient-email')
-        parser.add_argument('--ccg')
-        parser.add_argument('--practice')
-        parser.add_argument('--search-name')
-        parser.add_argument('--url')
-        parser.add_argument('--max_errors', default=3)
+        parser.add_argument(
+            '--recipient-email',
+            help=('A single alert recipient to which the batch should be sent'))
+        parser.add_argument(
+            '--recipient-email-file',
+            help=('The subset of alert recipients to which the batch should '
+                  'be sent. One email per line.'))
+        parser.add_argument(
+            '--skip-email-file',
+            help=('The subset of alert recipients to which the batch should '
+                  'NOT be sent. One email per line.'))
+        parser.add_argument(
+            '--ccg',
+            help=('If specified, a CCG code for which a test alert should be '
+                  'sent to `recipient-email`')
+        )
+        parser.add_argument(
+            '--practice',
+            help=('If specified, a Practice code for which a test alert '
+                  'should be sent to `recipient-email`'))
+        parser.add_argument(
+            '--search-name',
+            help=('If specified, a name (could be anything) for a test search '
+                  'alert about `url` which should be sent to '
+                  '`recipient-email`'))
+        parser.add_argument(
+            '--url',
+            help=('If specified, a URL for a test search '
+                  'alert with name `search-name` which should be sent to '
+                  '`recipient-email`'))
+        parser.add_argument(
+            '--max_errors',
+            help='Max number of permitted errors before aborting the batch',
+            default=3)
 
     def get_org_bookmarks(self, **options):
         if options['recipient_email'] and (
@@ -40,18 +68,28 @@ class Command(BaseCommand):
                 pct_id=options['ccg'],
                 practice_id=options['practice']
             )]
-        elif not options['recipient_email']:
+        elif options['recipient_email'] or options['recipient_email_file']:
+            recipients = []
+            if options['recipient_email_file']:
+                with open(options['recipient_email_file'], 'r') as f:
+                    recipients = [x.strip() for x in f]
+            else:
+                recipients = [options['recipient_email']]
+            bookmarks = OrgBookmark.objects.filter(
+                approved=True,
+                user__is_active=True,
+                user__email__in=recipients)
+        else:
             # Perhaps add a constraint here to ensure we don't send two
             # emails for one month?
             bookmarks = OrgBookmark.objects.filter(
                 approved=True,
                 user__is_active=True)
-        else:
-            bookmarks = OrgBookmark.objects.filter(
-                approved=True,
-                user__is_active=True,
-                user__email=options['recipient_email']
-            )
+            if options['skip_email_file']:
+                with open(options['skip_email_file'], 'r') as f:
+                    skip = [x.strip() for x in f]
+                bookmarks = bookmarks.exclude(user__email__in=skip)
+        logger.info("Found %s matching org bookmarks" % bookmarks.count())
         return bookmarks
 
     def get_search_bookmarks(self, **options):
@@ -72,6 +110,7 @@ class Command(BaseCommand):
                 approved=True,
                 user__is_active=True,
                 user__email=options['recipient_email'])
+        logger.info("Found %s matching search bookmarks" % bookmarks.count())
         return bookmarks
 
     def validate_options(self, **options):

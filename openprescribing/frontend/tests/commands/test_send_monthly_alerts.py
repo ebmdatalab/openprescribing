@@ -64,16 +64,22 @@ class GetBookmarksTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
     def test_get_org_bookmarks_without_options(self):
-        bookmarks = Command().get_org_bookmarks(recipient_email=None)
+        bookmarks = Command().get_org_bookmarks(
+            recipient_email=None,
+            recipient_email_file=None,
+            skip_email_file=None
+        )
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 2)
         self.assertTrue(active)
 
-    def test_get_org_bookmarks_with_options(self):
+    def test_get_org_bookmarks_with_test_options(self):
         bookmarks = Command().get_org_bookmarks(
             recipient_email='s@s.com',
             ccg='03V',
-            practice='P87629'
+            practice='P87629',
+            recipient_email_file=None,
+            skip_email_file=None
         )
         self.assertEqual(len(bookmarks), 1)
         self.assertEqual(bookmarks[0].user.email, 's@s.com')
@@ -81,6 +87,16 @@ class GetBookmarksTestCase(TestCase):
         self.assertTrue(bookmarks[0].user.id)
         self.assertEqual(bookmarks[0].pct.code, '03V')
         self.assertEqual(bookmarks[0].practice.code, 'P87629')
+
+    def test_get_org_bookmarks_with_skip_file(self):
+        skip_file = ('frontend/tests/fixtures/commands/'
+                     'skip_alerts_recipients.txt')
+        bookmarks = Command().get_org_bookmarks(
+            skip_email_file=skip_file,
+            recipient_email=None,
+            recipient_email_file=None
+        )
+        self.assertEqual(len(bookmarks), 0)
 
     def test_get_search_bookmarks_without_options(self):
         bookmarks = Command().get_search_bookmarks(recipient_email=None)
