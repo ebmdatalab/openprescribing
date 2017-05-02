@@ -82,8 +82,6 @@ class Command(BaseCommand):
                 user__email__in=recipients)
             logger.info("Found %s matching org bookmarks" % bookmarks.count())
         else:
-            # Perhaps add a constraint here to ensure we don't send two
-            # emails for one month?
             bookmarks = OrgBookmark.objects.filter(
                 approved=True,
                 user__is_active=True)
