@@ -68,6 +68,7 @@ class Command(BaseCommand):
                 pct_id=options['ccg'],
                 practice_id=options['practice']
             )]
+            logger.info("Created a single test org bookmark")
         elif options['recipient_email'] or options['recipient_email_file']:
             recipients = []
             if options['recipient_email_file']:
@@ -79,6 +80,7 @@ class Command(BaseCommand):
                 approved=True,
                 user__is_active=True,
                 user__email__in=recipients)
+            logger.info("Found %s matching org bookmarks" % bookmarks.count())
         else:
             # Perhaps add a constraint here to ensure we don't send two
             # emails for one month?
@@ -89,7 +91,7 @@ class Command(BaseCommand):
                 with open(options['skip_email_file'], 'r') as f:
                     skip = [x.strip() for x in f]
                 bookmarks = bookmarks.exclude(user__email__in=skip)
-        logger.info("Found %s matching org bookmarks" % bookmarks.count())
+            logger.info("Found %s matching org bookmarks" % bookmarks.count())
         return bookmarks
 
     def get_search_bookmarks(self, **options):
@@ -101,16 +103,18 @@ class Command(BaseCommand):
                 url=options['url'],
                 name=options['search_name']
             )]
+            logger.info("Created a single test search bookmark")
         elif not options['recipient_email']:
             bookmarks = SearchBookmark.objects.filter(
                 approved=True,
                 user__is_active=True)
+            logger.info("Found %s matching search bookmarks" % bookmarks.count())
         else:
             bookmarks = SearchBookmark.objects.filter(
                 approved=True,
                 user__is_active=True,
                 user__email=options['recipient_email'])
-        logger.info("Found %s matching search bookmarks" % bookmarks.count())
+            logger.info("Found %s matching search bookmarks" % bookmarks.count())
         return bookmarks
 
     def validate_options(self, **options):
