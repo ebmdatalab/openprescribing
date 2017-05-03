@@ -204,7 +204,8 @@ class BigqueryFunctionalTests(TestCase):
             'test_mode': True,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures.parse_measures',
+        with patch('frontend.management.commands.import_measures'
+                   '.parse_measures',
                    new=MagicMock(return_value=test_measures())):
             call_command('import_measures', *args, **opts)
 
@@ -503,7 +504,8 @@ class BigqueryFunctionalTests(TestCase):
             'test_mode': True,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures.parse_measures',
+        with patch('frontend.management.commands.import_measures'
+                   '.parse_measures',
                    new=MagicMock(return_value=test_measures())):
             call_command('import_measures', *args, **opts)
 
