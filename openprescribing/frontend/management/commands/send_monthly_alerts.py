@@ -25,7 +25,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--recipient-email',
-            help=('A single alert recipient to which the batch should be sent'))
+            help=('A single alert recipient to which the batch should be sent')
+        )
         parser.add_argument(
             '--recipient-email-file',
             help=('The subset of alert recipients to which the batch should '
@@ -106,13 +107,15 @@ class Command(BaseCommand):
             bookmarks = SearchBookmark.objects.filter(
                 approved=True,
                 user__is_active=True)
-            logger.info("Found %s matching search bookmarks" % bookmarks.count())
+            logger.info(
+                "Found %s matching search bookmarks" % bookmarks.count())
         else:
             bookmarks = SearchBookmark.objects.filter(
                 approved=True,
                 user__is_active=True,
                 user__email=options['recipient_email'])
-            logger.info("Found %s matching search bookmarks" % bookmarks.count())
+            logger.info(
+                "Found %s matching search bookmarks" % bookmarks.count())
         return bookmarks
 
     def validate_options(self, **options):
