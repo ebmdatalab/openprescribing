@@ -88,7 +88,6 @@ class CommandsTestCase(TestCase):
             self.assertNotEqual(p.star_pu[k], None)
 
 
-
 class MissingMonthsTestCase(TestCase):
     """In order to track which months of patient list data are required,
     we store last-imported dates for both lists. These tests check
@@ -104,7 +103,8 @@ class MissingMonthsTestCase(TestCase):
             current_at='2050-01-01',
             category='prescribing'
         )
-        self.assertEqual(Command().months_with_prescribing_data_but_no_list_data(), [])
+        self.assertEqual(
+            Command().months_with_prescribing_data_but_no_list_data(), [])
 
     def test_imported_list_sizes_are_behind_prescribing_data(self):
         ImportLog.objects.create(
