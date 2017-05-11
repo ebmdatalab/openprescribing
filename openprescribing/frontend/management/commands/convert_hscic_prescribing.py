@@ -144,9 +144,7 @@ class Command(BaseCommand):
         copy_table_to_gcs(temp_table, converted_uri)
         return download_from_gcs(converted_uri, local_path)
 
-    def append_aggregated_data_to_prescribing_table(
-            self, source_table_ref, date):
-        # ensure we don't do this if already there
+    def assert_latest_data_not_already_uploaded(self, date):
         client = bigquery.client.Client(project='ebmdatalab')
         sql = """SELECT COUNT(*)
         FROM [ebmdatalab:hscic.prescribing]
@@ -155,6 +153,10 @@ class Command(BaseCommand):
         query.run()
         assert query.rows[0][0] == 0
 
+    def append_aggregated_data_to_prescribing_table(
+            self, source_table_ref, date):
+        self.assert_latest_data_not_already_uploaded(date)
+        client = bigquery.client.Client(project='ebmdatalab')
         query = """
          SELECT
           Area_Team_Code AS sha,
