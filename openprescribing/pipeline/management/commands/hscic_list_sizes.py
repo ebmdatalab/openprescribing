@@ -1,10 +1,11 @@
 import requests
-from basecommand import BaseCommand
 from lxml import html
 import re
 from dateutil.parser import parse
 import subprocess
 import urlparse
+
+from django.core.management import BaseCommand
 
 
 """The HSCIC data is the source of prescribing data.
@@ -18,12 +19,14 @@ class Command(BaseCommand):
     help = ('Fetches all HSCIC data and rewrites filenames to be consistent.'
             'With no arguments, fetches data for every month since Aug 2010')
 
-    def handle(self):
+    def handle(self, *args, **kwargs):
+        self.verbose = (kwargs['verbosity'] > 1)
+
         date, source_url = self.most_recent_data()
-        if self.args.verbose:
+        if self.verbose:
             print "Getting data for %s-%s" % (date.year, date.month)
         self.get_data(date, source_url)
-        if self.args.verbose:
+        if self.verbose:
             print "Done"
 
     def get_data(self, date, source_url):
@@ -43,7 +46,7 @@ class Command(BaseCommand):
         '''
         wget_command = 'wget -c -O %s' % target_file
         cmd = '%s %s' % (wget_command, url)
-        if self.args.verbose:
+        if self.verbose:
             print 'Runing %s' % cmd
         subprocess.check_call(cmd.split())
 
@@ -70,6 +73,11 @@ class Command(BaseCommand):
         return (parse(most_recent_date),
                 "http://content.digital.nhs.uk/%s" % first_link)
 
-
-if __name__ == '__main__':
-    Command().handle()
+    def mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:  # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise

@@ -1,11 +1,12 @@
 import requests
-from basecommand import BaseCommand
 from lxml import html
 import re
 from dateutil.parser import parse
 import calendar
 import subprocess
 from zipfile import ZipFile
+
+from django.core.management import BaseCommand
 
 
 """The HSCIC data is the source of prescribing data.
@@ -27,14 +28,16 @@ class Command(BaseCommand):
             action='store_true',
             help="Download a representative sample, useful for development")
 
-    def handle(self):
-        if self.args.sample:
+    def handle(self, *args, **kwargs):
+        self.verbose = (kwargs['verbosity'] > 1)
+
+        if kwargs['sample']:
             date_range = self.sample_date_range()
         else:
-            if self.args.start_date:
-                start_date = parse(self.args.start_date)
+            if kwargs['start_date']:
+                start_date = parse(kwargs['start_date'])
                 end_date = self.most_recent_date()
-            elif self.args.most_recent_date:
+            elif kwargs['most_recent_date']:
                 start_date = self.most_recent_date()
                 end_date = start_date
             else:
@@ -42,7 +45,7 @@ class Command(BaseCommand):
                 end_date = self.most_recent_date()
             date_range = self.date_range(start_date, end_date)
         for year, month in date_range:
-            if self.args.verbose:
+            if self.verbose:
                 print "Getting data for %s-%s" % (year, month)
             target_path = "%s/%s_%s" % (PREFIX, year, str(month).zfill(2))
             self.mkdir_p(target_path)
@@ -51,7 +54,7 @@ class Command(BaseCommand):
             except subprocess.CalledProcessError:
                 self.get_unzipped_version(year, month, target_path)
             self.extension_to_uppercase(target_path, 'csv')
-        if self.args.verbose:
+        if self.verbose:
             print "Done"
 
     def get_zipped_version(self, year, month, target_path):
@@ -106,7 +109,7 @@ class Command(BaseCommand):
         base_url = "http://datagov.ic.nhs.uk/presentation"
         wget_command = 'wget -c -O %s' % target_file
         cmd = '%s %s' % (wget_command, "%s/%s" % (base_url, url))
-        if self.args.verbose:
+        if self.verbose:
             print 'Runing %s' % cmd
         subprocess.check_call(cmd.split())
 
@@ -151,5 +154,18 @@ class Command(BaseCommand):
                     break
                 yield [year, month]
 
-if __name__ == '__main__':
-    Command().handle()
+    def extension_to_uppercase(self, path, suffix):
+        for name in glob.glob("%s/*.%s" % (path, suffix.lower())):
+            os.rename(
+                name,
+                "%s.%s" % (name[:-(len(suffix)+1)], suffix.upper())
+            )
+
+    def mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:  # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise

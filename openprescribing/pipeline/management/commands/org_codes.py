@@ -7,7 +7,7 @@ import filecmp
 import datetime
 import os
 
-from basecommand import BaseCommand
+from django.core.management import BaseCommand
 
 """Practice and CCG metadata, keyed by code.
 
@@ -30,12 +30,14 @@ class Command(BaseCommand):
         parser.add_argument('--practice', action='store_true')
         parser.add_argument('--postcode', action='store_true')
 
-    def handle(self):
-        if self.args.practice:
+    def handle(self, *args, **kwargs):
+        self.verbose = (kwargs['verbosity'] > 1)
+
+        if kwargs['practice']:
             self.fetch_practice_details()
-        if self.args.ccg:
+        if kwargs['ccg']:
             self.fetch_ccg_details()
-        if self.args.postcode:
+        if kwargs['postcode']:
             self.fetch_org_postcodes()
 
     def fetch_ccg_details(self):
@@ -78,10 +80,10 @@ class Command(BaseCommand):
             new_folder = datetime.datetime.today().strftime("%Y_%m")
             new_path = "%s/%s/" % (dest, new_folder)
             os.makedirs(new_path)
-            if self.args.verbose:
+            if self.verbose:
                 print "%s has changed; creating new copy" % most_recent
             shutil.copy(extracted_file_path, new_path)
         shutil.rmtree(t)
 
-if __name__ == '__main__':
-    Command().handle()
+    def most_recent_file(self, path):
+        return sorted(glob.glob("%s/*/*" % path))[-1]
