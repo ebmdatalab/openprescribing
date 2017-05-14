@@ -5,14 +5,16 @@ from dateutil.parser import parse
 import calendar
 import subprocess
 from zipfile import ZipFile
+import os
 
+from django.conf import settings
 from django.core.management import BaseCommand
 
 
 """The HSCIC data is the source of prescribing data.
 """
 
-PREFIX = 'data/prescribing'
+PREFIX = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'prescribing')
 
 
 class Command(BaseCommand):

@@ -7,6 +7,7 @@ import filecmp
 import datetime
 import os
 
+from django.conf import settings
 from django.core.management import BaseCommand
 
 """Practice and CCG metadata, keyed by code.
@@ -44,20 +45,20 @@ class Command(BaseCommand):
         self.fetch_and_extract_zipped_csv(
             "https://digital.nhs.uk/media/354/eccg/zip/eccg1",
             "eccg.csv",
-            "data/ccg_details")
+            os.path.join(settings.PIPELINE_DATA_BASEDIR, "ccg_details"))
 
     def fetch_practice_details(self):
         self.fetch_and_extract_zipped_csv(
             "https://digital.nhs.uk/media/372/epraccur/zip/epraccur",
             "epraccur.csv",
-            "data/practice_details")
+            os.path.join(settings.PIPELINE_DATA_BASEDIR, "practice_details"))
 
     def fetch_org_postcodes(self):
         url = "https://digital.nhs.uk/media/636/Gridall/zip/gridall"
         self.fetch_and_extract_zipped_csv(
             url,
             'gridall.csv',
-            'data/nhs_postcode_file')
+            os.path.join(settings.PIPELINE_DATA_BASEDIR, "nhs_postcode_file"))
 
     def fetch_and_extract_zipped_csv(self, url, expected_filename, dest):
         """Grab a zipfile from a url, and extract a CSV.

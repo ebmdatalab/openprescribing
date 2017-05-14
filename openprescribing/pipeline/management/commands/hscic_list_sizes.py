@@ -4,14 +4,16 @@ import re
 from dateutil.parser import parse
 import subprocess
 import urlparse
+import os
 
+from django.conf import settings
 from django.core.management import BaseCommand
 
 
 """The HSCIC data is the source of prescribing data.
 """
 
-PREFIX = 'data/patient_list_size'
+PREFIX = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'patient_list_size')
 
 
 class Command(BaseCommand):
@@ -33,6 +35,8 @@ class Command(BaseCommand):
         target_path = "%s/%s_%s" % (
             PREFIX, date.year, str(date.month).zfill(2))
         self.mkdir_p(target_path)
+        # TODO `target_path` is created and then ignored -- should `target_file`
+        # be inside `target_path`?
         target_file = "patient_list_size_new.csv"
         try:
             self.wget_and_return(source_url, target_file)
