@@ -82,95 +82,45 @@ class IntroTextTest(unittest.TestCase):
                       "are some potential cost savings", msg)
 
 
-class TestRemoveJagged(unittest.TestCase):
-    def _makeSome(self, percentiles):
-        m = Measure(is_percentage=False)
-        return [MeasureValue(percentile=percentile, measure=m)
-                for percentile in percentiles]
-
-    def _makeSomeWithPercentCalcValues(self, percentiles):
-        m = Measure(is_percentage=True)
-        return [MeasureValue(measure=m,
-                             percentile=percentile,
-                             calc_value=value)
-                for percentile, value in percentiles]
-
-    def _makeSomeWithNumeratorValues(self, percentiles):
-        m = Measure(is_percentage=False)
-        return [MeasureValue(measure=m, percentile=percentile, numerator=value)
-                for percentile, value in percentiles]
+class TestCUSUM(unittest.TestCase):
+    def foo(self, result):
+        neg = result['alert_percentile_neg']
+        pos = result['alert_percentile_pos']
+        combined = []
+        assert len(neg) == len(pos)
+        for i, val in enumerate(neg):
+            if val:
+                assert not pos[i]
+                combined.append('d')
+            elif pos[i]:
+                combined.append('u')
+            else:
+                combined.append(' ')
+        return "   ".join(combined).rstrip()
 
     def test_percentiles_at_extremes_one_extreme_ok(self):
-        vals = [(5, 0.9), (6, 1.0), (4, 0.8)]
-        filtered = bookmark_utils.remove_jagged(
-            self._makeSomeWithPercentCalcValues(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
-
-    def test_percentiles_at_extremes_two_extremes_bad(self):
-        vals = [(5, 0.9), (6, 1.0), (4, 0.0)]
-        filtered = bookmark_utils.remove_jagged(
-            self._makeSomeWithPercentCalcValues(vals))
-        self.assertNotEqual(
-            len(filtered), len(vals))
-
-    def test_non_percentiles_extremes(self):
-        vals = [5, 5, 5, 5, 5, 5, 5, 0, 0]
-        filtered = bookmark_utils.remove_jagged(
-            self._makeSome(vals))
-        self.assertNotEqual(
-            len(filtered), len(vals))
-
-    def test_non_percentiles_no_low_numerators(self):
-        vals = [(5, 30), (6, 20), (4, 30)]
-        filtered = bookmark_utils.remove_jagged(
-            self._makeSomeWithNumeratorValues(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
-
-    def test_non_percentiles_with_low_numerators(self):
-        vals = [(5, 10), (6, 12), (4, 30)]
-        filtered = bookmark_utils.remove_jagged(
-            self._makeSomeWithNumeratorValues(vals))
-        self.assertNotEqual(
-            len(filtered), len(vals))
-
-    def test_very_jagged(self):
-        vals = [1, 100, 1, 100, 1, 50, 40, 100]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertNotEqual(
-            len(filtered), len(vals))
-
-    @unittest.skip('should be fixed by better algorithm')
-    def test_low_not_jagged(self):
-        vals = [0, 1, 0, 1, 0, 1, 0, 1]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
-
-    def test_low_not_jagged_not_zero(self):
-        vals = [1, 2, 1, 2, 1, 2, 1, 2]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
-
-    def test_quite_jagged(self):
-        vals = [0, 100, 0, 50, 10, 20, 100]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertNotEqual(
-            len(filtered), len(vals))
-
-    def test_slightly_jagged(self):
-        vals = [30, 70, 50, 60, 50, 40, 10]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
-
-    def test_not_at_all_jagged(self):
-        vals = [40, 50, 60, 70, 80]
-        filtered = bookmark_utils.remove_jagged(self._makeSome(vals))
-        self.assertEqual(
-            len(filtered), len(vals))
+        with open(
+                settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                'alert_test_cases.txt', 'rb') as expected:
+            test_cases = expected.readlines()
+        import re
+        import json
+        alignment_header = '*'.join(['...'] * 12)
+        for i in range(0, len(test_cases), 4):
+            assert test_cases[i].startswith("#"), "At line %s: %s does not start with #" % (i, test_cases[i])
+            test_name = test_cases[i].strip()
+            assert test_cases[i+1][3::4].strip() == '', "%s: Every column must be three wide followed by a space: \n%s\n%s" % (test_name, alignment_header, test_cases[i+1])
+            directions = [n for n, ltr in enumerate(test_cases[i+2]) if ltr in ('u', 'd')]
+            assert sum([x % 4 for x in directions]) == 0, "%s: Every column must be three wide followed by a space:\n%s\n%s" % (test_name, alignment_header,  str(test_cases[i+2]))
+            data = [int(x) if x.strip() else None for x in re.findall('....', test_cases[i+1])]
+            result = self.foo(bookmark_utils.cusum(data, 3, 5))
+            result = self.foo(bookmark_utils.CUSUM(data, window_size=3, sensitivity=5).work())
+            expected = test_cases[i+2].rstrip()
+            error_message = "In test '%s':\n" % test_name
+            error_message += "   Input values: %s" % test_cases[i+1]
+            error_message += "Expected alerts: %s" % test_cases[i+2]
+            error_message += "            Got: %s" % result
+            self.assertEqual(result, expected, error_message)
 
 
 class TestBookmarkUtilsPerforming(TestCase):

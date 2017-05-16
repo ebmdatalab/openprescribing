@@ -33,6 +33,139 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
 logger = logging.getLogger(__name__)
 
 
+class CUSUM(object):
+    # so the problem is smin changing by wrong amoung (by more), and
+    # reference percentile not changing at all
+    def __init__(self, data, window_size=12, sensitivity=5):
+        data = np.array(map(lambda x: np.nan
+                            if x is None else x, data))
+        self.data = data
+        if data.any():
+            self.current_datum = self.data[0]
+        else:
+            self.current_datum = None
+        self.window_size = window_size
+        self.sensitivity = sensitivity
+        self.pos_cusums = [0]
+        self.neg_cusums = [0]
+        self.reference_percentiles = []
+        self.thresholds = []
+        self.alert_indices = []
+        self.pos_alerts = [None]
+        self.neg_alerts = [None]
+        self.set_initial_values()
+        self.i = 0
+
+    def set_initial_values(self):
+        non_null_data = self.data[~np.isnan(self.data)]
+        self.reference_percentiles.append(
+            np.mean(non_null_data[0:self.window_size]))
+        self.thresholds.append(
+            np.std(non_null_data[0:self.window_size]) * self.sensitivity
+            )
+
+    def work(self):
+        for i in range(1, len(self.data)):
+            self.i = i
+            next_datum = self.data[i]
+            if self.currently_outside_threshold():
+                self.set_new_reference_percentile()  # XXX
+                next_pos_cusum, next_neg_cusum = self.compute_cusum(
+                    self.thresholds[-1])
+                if (self.pos_cusums[-1] < next_pos_cusum and
+                   self.currently_above_threshold()):
+                    # Positive change still occuring
+                    self.maintain_threshold()
+                    self.pos_cusums.append(next_pos_cusum)
+                    self.neg_cusums.append(next_neg_cusum)
+                    self.alert_indices.append(i-1)
+                    self.pos_alerts.append(next_datum)
+                    self.neg_alerts.append(None)
+                elif (self.neg_cusums[-1] > next_neg_cusum and
+                      self.currently_below_threshold()):
+                    # Negative change still occuring
+                    self.maintain_threshold()
+                    self.pos_cusums.append(next_pos_cusum)
+                    self.neg_cusums.append(next_neg_cusum)
+                    self.alert_indices.append(i-1)
+                    self.pos_alerts.append(None)
+                    self.neg_alerts.append(next_datum)
+                else:
+                    # End of continuing change
+                    self.alert_indices.append(i-1)
+                    threshold = self.set_new_threshold()
+                    next_pos_cusum, next_neg_cusum = self.compute_cusum(
+                        threshold, reset=True)  # XXX possibly here
+                    self.pos_cusums.append(next_pos_cusum)
+                    self.neg_cusums.append(next_neg_cusum)
+                    self.pos_alerts.append(None)
+                    self.neg_alerts.append(None)
+            else:
+                threshold = self.maintain_threshold()
+                self.maintain_reference_percentile()
+                cusum_pos, cusum_neg = self.compute_cusum(threshold)
+                self.pos_cusums.append(cusum_pos)
+                self.neg_cusums.append(cusum_neg)
+                if self.currently_below_threshold():
+                    self.neg_alerts.append(self.data[self.i])
+                    self.pos_alerts.append(None)
+                elif self.currently_above_threshold():
+                    self.neg_alerts.append(None)
+                    self.pos_alerts.append(self.data[self.i])
+                else:
+                    self.neg_alerts.append(None)
+                    self.pos_alerts.append(None)
+        return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
+                'reference_percentile': self.reference_percentiles,
+                'threshold': self.thresholds,
+                'alert': self.alert_indices,
+                'alert_percentile_pos': self.pos_alerts,
+                'alert_percentile_neg': self.neg_alerts}
+
+    def maintain_threshold(self):
+        self.thresholds.append(self.thresholds[-1])
+        return self.thresholds[-1]
+
+    def maintain_reference_percentile(self):
+        self.reference_percentiles.append(self.reference_percentiles[-1])
+        return self.reference_percentiles[-1]
+
+    def currently_above_threshold(self):
+        return self.pos_cusums[-1] > self.thresholds[-1]
+
+    def currently_below_threshold(self):
+        return self.neg_cusums[-1] < -self.thresholds[-1]
+
+    def currently_outside_threshold(self):
+        return (self.currently_above_threshold() or
+                self.currently_below_threshold())
+
+    def get_current_window(self):
+        window = self.data[self.i-self.window_size:self.i]
+        non_null_window = window[~np.isnan(window)]
+        return non_null_window
+
+    def set_new_reference_percentile(self):
+        self.reference_percentiles.append(
+            np.mean(self.get_current_window()))
+
+    def set_new_threshold(self):
+        self.thresholds.append(
+            np.std(self.get_current_window() * self.sensitivity))
+        return self.thresholds[-1]
+
+    def compute_cusum(self, threshold, reset=False):
+        delta = 0.5 * threshold / self.sensitivity
+        current_reference = self.reference_percentiles[self.i]
+        current_datum = self.data[self.i]
+        cusum_pos = current_datum - (current_reference + delta)
+        cusum_neg = current_datum - (current_reference - delta)
+        if not reset:
+            cusum_pos += self.pos_cusums[self.i-1] # wrong
+            cusum_neg += self.neg_cusums[self.i-1] # right
+        return max(0, cusum_pos), min(0, cusum_neg)
+
+
 def remove_jagged(measurevalues):
     """Remove records that are outside the standard error of the mean or
     where they hit 0% or 100% more than once.
@@ -89,6 +222,126 @@ def remove_jagged_logit(measurevalues):
         else:
             keep.append(m)
     return keep
+
+
+def cusum(data, months_smoothing, sensitivity):
+    """performs the CUSUM algorithm on input data string"""
+    # convert missing percentile values from None to numpy nan
+    data = np.array(map(lambda x: np.nan
+                        if x is None else x, data))
+    smax = [0]
+    smin = [0]
+    # set reference_percentile and threshold at start
+    # & if threshold reached
+    non_missing_percentiles = data[~np.isnan(data)]
+
+    # the reference percentile is the first N non-missing months.  is
+    # this correct? Should it actually include the nulls? Let's wait
+    # to see how we reset the reference later.
+    reference_percentile = [
+        np.mean(non_missing_percentiles[0:months_smoothing])]
+
+    # relative to how close all the measurements are to the mean. So
+    # if they deviate from the mean by a total of X...
+    threshold = [
+        np.std(non_missing_percentiles[0:months_smoothing]) * sensitivity]
+    alert = []
+    alert_percentile_pos = [None]
+    alert_percentile_neg = [None]
+    # we never get an alert at position len(data). Why?
+    for i in range(1, len(data)):
+        if smax[i-1] > threshold[i-1] or smin[i-1] < -threshold[i-1]:
+            # generate temp smax/smin
+            # Windows where n = 3
+            #      1, 2, 3, 4, 5, 6
+            # ref  -  -  -
+            # i=1  -
+            # i=2  -  -
+            # i=3  -  -  -
+            # i=4     -  -  -
+            # i=5        -  -  -
+            #
+            # initial ref perc:  2
+            # initial threshold: 0.408
+            #      1, x, 3, 4, 5, 6
+            # ref  -     -  -
+            # i=1  -
+            # i=2  -
+            # i=3  -     -
+            # i=4        -  -
+            # i=5        -  -  -
+            # initial ref per: 2.67
+            # initial threshold: 0.624
+            window = data[i-months_smoothing:i]
+            non_null_window = window[~np.isnan(window)]
+            reference_percentile.append(np.mean(non_null_window))
+            smax_temp = (max(0, data[i] - (reference_percentile[i] +
+                                           (0.5 * threshold[i-1] /
+                                            sensitivity)) + smax[i-1]))
+            smin_temp = (min(0, data[i] - (reference_percentile[i] -
+                                           (0.5 * threshold[i-1] /
+                                            sensitivity)) + smin[i-1]))
+
+            #test whether change still occuring *IN THE SAME DIRECTION*
+            ## positive change
+            if smax[i-1] < smax_temp and smax[i-1] > threshold[i-1]:
+                threshold.append(threshold[i-1])
+                smax.append(smax_temp)
+                smin.append(smin_temp)
+                alert.append(i-1)
+                alert_percentile_pos.append(data[i])
+                alert_percentile_neg.append(None)
+            ## negative change
+            elif smin[i-1] > smin_temp and smin[i-1] < -threshold[i-1]:
+                threshold.append(threshold[i-1])
+                smax.append(smax_temp)
+                smin.append(smin_temp)
+                alert.append(i-1)
+                alert_percentile_pos.append(None)
+                alert_percentile_neg.append(data[i])
+            ## if not, reset
+            else:
+                alert.append(i-1)
+                threshold.append(np.std(data[i-months_smoothing:i]
+                                [~np.isnan(data[i-months_smoothing:i])])
+                                 * sensitivity) # +remove nan values
+                #reset smax/smin to 0
+                #modified to include the value for the current month
+                smax.append(max(0, data[i] - (reference_percentile[i] +
+                                              (0.5 * threshold[i] /
+                                               sensitivity))))
+                smin.append(min(0, data[i] - (reference_percentile[i] -
+                                              (0.5 * threshold[i] /
+                                               sensitivity))))
+                alert_percentile_pos.append(None)
+                alert_percentile_neg.append(None)
+        #else append previous values
+        else:
+            reference_percentile.append(reference_percentile[i-1])
+            threshold.append(threshold[i-1])
+
+            #calculate smax/smin XXX I think this should be i-1
+            smax.append(max(0, data[i] - (reference_percentile[i] +
+                                          (0.5 * threshold[i] /
+                                           sensitivity)) + smax[i-1]))
+            smin.append(min(0, data[i] - (reference_percentile[i] -
+                                          (0.5 * threshold[i] /
+                                           sensitivity)) + smin[i-1]))
+            if smax[i] > threshold[i]:
+                alert_percentile_pos.append(data[i])
+                alert_percentile_neg.append(None)
+            elif smin[i] < -threshold[i]:
+                alert_percentile_neg.append(data[i])
+                alert_percentile_pos.append(None)
+            else:
+                alert_percentile_pos.append(None)
+                alert_percentile_neg.append(None)
+    return {'smax':smax, 'smin':smin,
+            'reference_percentile':reference_percentile,
+            'threshold':threshold,
+            'alert':alert,
+            'alert_percentile_pos':alert_percentile_pos,
+            'alert_percentile_neg':alert_percentile_neg}
 
 
 class InterestingMeasureFinder(object):
@@ -179,10 +432,9 @@ class InterestingMeasureFinder(object):
             else:
                 measure_filter['pct'] = self.pct
                 measure_filter['practice'] = None
-            percentiles = [x.percentile for x in
-                           remove_jagged(
-                               MeasureValue.objects.filter(**measure_filter)
-                               .order_by('month'))]
+            percentiles = MeasureValue.objects.filter(
+                **measure_filter).order_by('month').values_list(
+                    'percentile', flat=True)
             if len(percentiles) == period:
                 x = np.arange(period)
                 y = np.array(percentiles)
