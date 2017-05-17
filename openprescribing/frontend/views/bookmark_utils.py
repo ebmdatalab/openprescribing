@@ -46,8 +46,8 @@ class CUSUM(object):
             self.current_datum = None
         self.window_size = window_size
         self.sensitivity = sensitivity
-        self.pos_cusums = [0]
-        self.neg_cusums = [0]
+        self.pos_cusums = []
+        self.neg_cusums = []
         self.moving_averages = []
         self.moving_stddevs = []
         self.alert_indices = []
@@ -56,33 +56,36 @@ class CUSUM(object):
         self.i = 0
 
     def work(self):
-        # sets initial moving average and stddev to first N samples
-        # based on window size
-        self.update_moving_average()
-        self.update_moving_stddev()
-        # XXX turn to an iterator. Maybe "for window in...."?
-        for i in range(1, len(self.data)):
+        for i, datum in enumerate(self.data):
             # `i` is used for exactly 2 things: to compute current window
             # and to select the data with which to calculate cusum
             self.i = i
-            if self.cusum_within_moving_stddev(): # this will always be the case for the first N data
+            if i == 0:
+                # sets initial moving average and stddev to first N samples
+                # based on window size
+                self.update_moving_average()
+                self.update_moving_stddev()
+                self.compute_cusum(datum, reset=True)
+                continue
+            if self.cusum_within_moving_stddev():
+                # this will always be the case for the first N data. Note initial cusum is preset to zero
                 self.repeat_moving_average()
                 self.repeat_moving_stddev()
                 # add to lists of cusums. Does so by comparing datum
                 # at `i` with most recent moving_averages and
                 # moving_stddevs
-                self.compute_cusum()
+                self.compute_cusum(datum)
             else:
                 self.update_moving_average()  # uses window
-                if self.moving_in_same_direction():  # this "peeks ahead"
+                if self.moving_in_same_direction(datum):  # this "peeks ahead"
                     self.repeat_moving_stddev()
-                    self.compute_cusum()
+                    self.compute_cusum(datum)
                 else:
                     self.update_moving_stddev()  # uses window
-                    self.compute_cusum(reset=True)
+                    self.compute_cusum(datum, reset=True)
                 self.alert_indices.append(i-1)
             # Record alert
-            next_datum = self.data[i]
+            next_datum = self.data[i]  # XXX
             if self.cusum_below_moving_stddev():
                 self.record_alert(next_datum, kind='down')
             elif self.cusum_above_moving_stddev():
@@ -97,9 +100,9 @@ class CUSUM(object):
                 'alert_percentile_pos': self.pos_alerts,
                 'alert_percentile_neg': self.neg_alerts}
 
-    def moving_in_same_direction(self):
+    def moving_in_same_direction(self, datum):
         # Peek ahead to see what the next CUSUM would be
-        next_pos_cusum, next_neg_cusum = self.compute_cusum(store=False)
+        next_pos_cusum, next_neg_cusum = self.compute_cusum(datum, store=False)
         going_up = (next_pos_cusum > self.current_pos_cusum() and
                     self.cusum_above_moving_stddev())
         going_down = (next_neg_cusum < self.current_neg_cusum() and
@@ -163,13 +166,12 @@ class CUSUM(object):
         return self.neg_cusums[-1]
 
 
-    def compute_cusum(self, reset=False, store=True):
+    def compute_cusum(self, datum, reset=False, store=True):
         moving_stddev = self.moving_stddevs[-1]
         delta = 0.5 * moving_stddev / self.sensitivity
         current_average = self.moving_averages[-1]
-        current_datum = self.data[self.i]
-        cusum_pos = current_datum - (current_average + delta)
-        cusum_neg = current_datum - (current_average - delta)
+        cusum_pos = datum - (current_average + delta)
+        cusum_neg = datum - (current_average - delta)
         if not reset:
             cusum_pos += self.pos_cusums[-1]
             cusum_neg += self.neg_cusums[-1]
