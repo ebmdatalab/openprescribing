@@ -121,6 +121,8 @@ class TestCUSUM(unittest.TestCase):
             error_message = "In test '%s':\n" % test_name
             error_message += "   Input values: %s" % test_cases[i+1]
             error_message += "Expected alerts: %s" % test_cases[i+2]
+            print test_name
+            print "-" * 78
             self.assertEqual(
                 old_result_formatted,
                 expected,

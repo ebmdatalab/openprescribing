@@ -40,61 +40,55 @@ class CUSUM(object):
         data = np.array(map(lambda x: np.nan
                             if x is None else x, data))
         self.data = data
-        if data.any():
-            self.current_datum = self.data[0]
-        else:
-            self.current_datum = None
+        self.non_null_data = self.data[~np.isnan(self.data)]
         self.window_size = window_size
         self.sensitivity = sensitivity
         self.pos_cusums = []
         self.neg_cusums = []
-        self.moving_averages = []
+        self.moving_means = []
         self.moving_stddevs = []
         self.alert_indices = []
         self.pos_alerts = [None]
         self.neg_alerts = [None]
-        self.i = 0
 
     def work(self):
         for i, datum in enumerate(self.data):
-            # `i` is used for exactly 2 things: to compute current window
-            # and to select the data with which to calculate cusum
-            self.i = i
             if i == 0:
-                # sets initial moving average and stddev to first N samples
-                # based on window size
-                self.update_moving_average()
-                self.update_moving_stddev()
+                window = self.non_null_data[0:self.window_size]
+                self.update_moving_mean(window)
+                self.update_moving_stddev(window)
                 self.compute_cusum(datum, reset=True)
                 continue
+
             if self.cusum_within_moving_stddev():
-                # this will always be the case for the first N data. Note initial cusum is preset to zero
-                self.repeat_moving_average()
+                # Note this will always be true for the first `window_size`
+                # data points
+                self.repeat_moving_mean()
                 self.repeat_moving_stddev()
-                # add to lists of cusums. Does so by comparing datum
-                # at `i` with most recent moving_averages and
-                # moving_stddevs
                 self.compute_cusum(datum)
             else:
-                self.update_moving_average()  # uses window
+                # Assemble a moving window of the last `window_size`
+                # non-null values
+                window = self.non_null_data[i-self.window_size:i]
+                self.update_moving_mean(window)
                 if self.moving_in_same_direction(datum):  # this "peeks ahead"
                     self.repeat_moving_stddev()
                     self.compute_cusum(datum)
                 else:
-                    self.update_moving_stddev()  # uses window
+                    # Change of direction; reset
+                    self.update_moving_stddev(window)  # uses window
                     self.compute_cusum(datum, reset=True)
                 self.alert_indices.append(i-1)
             # Record alert
-            next_datum = self.data[i]  # XXX
             if self.cusum_below_moving_stddev():
-                self.record_alert(next_datum, kind='down')
+                self.record_alert(datum, kind='down')
             elif self.cusum_above_moving_stddev():
-                self.record_alert(next_datum, kind='up')
+                self.record_alert(datum, kind='up')
             else:
-                self.record_alert(next_datum, kind=None)
+                self.record_alert(datum, kind=None)
 
         return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
-                'moving_average': self.moving_averages,
+                'moving_mean': self.moving_means,
                 'moving_stddev': self.moving_stddevs,
                 'alert': self.alert_indices,
                 'alert_percentile_pos': self.pos_alerts,
@@ -127,9 +121,9 @@ class CUSUM(object):
         self.moving_stddevs.append(self.moving_stddevs[-1])
         return self.moving_stddevs[-1]
 
-    def repeat_moving_average(self):
-        self.moving_averages.append(self.moving_averages[-1])
-        return self.moving_averages[-1]
+    def repeat_moving_mean(self):
+        self.moving_means.append(self.moving_means[-1])
+        return self.moving_means[-1]
 
     def cusum_above_moving_stddev(self):
         return self.pos_cusums[-1] > self.moving_stddevs[-1]
@@ -141,23 +135,13 @@ class CUSUM(object):
         return not (self.cusum_above_moving_stddev() or
                 self.cusum_below_moving_stddev())
 
-    def get_current_window(self):
-        non_null_data = self.data[~np.isnan(self.data)]
-        if self.i == 0:
-            # For the starting condition, take a mean of all values in
-            # the first full window.
-            window = non_null_data[0:self.window_size]
-        else:
-            window = non_null_data[self.i-self.window_size:self.i]
-        return window
+    def update_moving_mean(self, window):
+        self.moving_means.append(
+            np.mean(window))
 
-    def update_moving_average(self):
-        self.moving_averages.append(
-            np.mean(self.get_current_window()))
-
-    def update_moving_stddev(self):
+    def update_moving_stddev(self, window):
         self.moving_stddevs.append(
-            np.std(self.get_current_window() * self.sensitivity))  # XXX didn't other version use n-1?
+            np.std(window * self.sensitivity))  # XXX didn't other version use n-1?
 
     def current_pos_cusum(self):
         return self.pos_cusums[-1]
@@ -169,9 +153,9 @@ class CUSUM(object):
     def compute_cusum(self, datum, reset=False, store=True):
         moving_stddev = self.moving_stddevs[-1]
         delta = 0.5 * moving_stddev / self.sensitivity
-        current_average = self.moving_averages[-1]
-        cusum_pos = datum - (current_average + delta)
-        cusum_neg = datum - (current_average - delta)
+        current_mean = self.moving_means[-1]
+        cusum_pos = datum - (current_mean + delta)
+        cusum_neg = datum - (current_mean - delta)
         if not reset:
             cusum_pos += self.pos_cusums[-1]
             cusum_neg += self.neg_cusums[-1]
@@ -249,14 +233,14 @@ def cusum(data, months_smoothing, sensitivity):
                         if x is None else x, data))
     smax = [0]
     smin = [0]
-    # set moving_average and moving_stddev at start
+    # set moving_mean and moving_stddev at start
     # & if moving_stddev reached
     non_missing_percentiles = data[~np.isnan(data)]
 
     # the reference percentile is the first N non-missing months.  is
     # this correct? Should it actually include the nulls? Let's wait
     # to see how we reset the reference later.
-    moving_average = [
+    moving_mean = [
         np.mean(non_missing_percentiles[0:months_smoothing])]
 
     # relative to how close all the measurements are to the mean. So
@@ -292,11 +276,11 @@ def cusum(data, months_smoothing, sensitivity):
             # initial moving_stddev: 0.624
             window = data[i-months_smoothing:i]
             non_null_window = window[~np.isnan(window)]
-            moving_average.append(np.mean(non_null_window))
-            smax_temp = (max(0, data[i] - (moving_average[i] +
+            moving_mean.append(np.mean(non_null_window))
+            smax_temp = (max(0, data[i] - (moving_mean[i] +
                                            (0.5 * moving_stddev[i-1] /
                                             sensitivity)) + smax[i-1]))
-            smin_temp = (min(0, data[i] - (moving_average[i] -
+            smin_temp = (min(0, data[i] - (moving_mean[i] -
                                            (0.5 * moving_stddev[i-1] /
                                             sensitivity)) + smin[i-1]))
 
@@ -325,24 +309,24 @@ def cusum(data, months_smoothing, sensitivity):
                                  * sensitivity) # +remove nan values
                 #reset smax/smin to 0
                 #modified to include the value for the current month
-                smax.append(max(0, data[i] - (moving_average[i] +
+                smax.append(max(0, data[i] - (moving_mean[i] +
                                               (0.5 * moving_stddev[i] /
                                                sensitivity))))
-                smin.append(min(0, data[i] - (moving_average[i] -
+                smin.append(min(0, data[i] - (moving_mean[i] -
                                               (0.5 * moving_stddev[i] /
                                                sensitivity))))
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
         #else append previous values
         else:
-            moving_average.append(moving_average[i-1])
+            moving_mean.append(moving_mean[i-1])
             moving_stddev.append(moving_stddev[i-1])
 
             #calculate smax/smin XXX I think this should be i-1
-            smax.append(max(0, data[i] - (moving_average[i] +
+            smax.append(max(0, data[i] - (moving_mean[i] +
                                           (0.5 * moving_stddev[i] /
                                            sensitivity)) + smax[i-1]))
-            smin.append(min(0, data[i] - (moving_average[i] -
+            smin.append(min(0, data[i] - (moving_mean[i] -
                                           (0.5 * moving_stddev[i] /
                                            sensitivity)) + smin[i-1]))
             if smax[i] > moving_stddev[i]:
@@ -355,7 +339,7 @@ def cusum(data, months_smoothing, sensitivity):
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
     return {'smax':smax, 'smin':smin,
-            'moving_average':moving_average,
+            'moving_mean':moving_mean,
             'moving_stddev':moving_stddev,
             'alert':alert,
             'alert_percentile_pos':alert_percentile_pos,
