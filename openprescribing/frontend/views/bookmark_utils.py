@@ -48,122 +48,138 @@ class CUSUM(object):
         self.sensitivity = sensitivity
         self.pos_cusums = [0]
         self.neg_cusums = [0]
-        self.reference_percentiles = []
-        self.thresholds = []
+        self.moving_averages = []
+        self.moving_stddevs = []
         self.alert_indices = []
         self.pos_alerts = [None]
         self.neg_alerts = [None]
-        self.set_initial_values()
         self.i = 0
 
-    def set_initial_values(self):
-        non_null_data = self.data[~np.isnan(self.data)]
-        self.reference_percentiles.append(
-            np.mean(non_null_data[0:self.window_size]))
-        self.thresholds.append(
-            np.std(non_null_data[0:self.window_size]) * self.sensitivity
-            )
-
     def work(self):
+        # sets initial moving average and stddev to first N samples
+        # based on window size
+        self.update_moving_average()
+        self.update_moving_stddev()
+        # XXX turn to an iterator. Maybe "for window in...."?
         for i in range(1, len(self.data)):
+            # `i` is used for exactly 2 things: to compute current window
+            # and to select the data with which to calculate cusum
             self.i = i
-            next_datum = self.data[i]
-            if self.currently_outside_threshold():
-                self.set_new_reference_percentile()  # XXX
-                next_pos_cusum, next_neg_cusum = self.compute_cusum(
-                    self.thresholds[-1])
-                if (self.pos_cusums[-1] < next_pos_cusum and
-                   self.currently_above_threshold()):
-                    # Positive change still occuring
-                    self.maintain_threshold()
-                    self.pos_cusums.append(next_pos_cusum)
-                    self.neg_cusums.append(next_neg_cusum)
-                    self.alert_indices.append(i-1)
-                    self.pos_alerts.append(next_datum)
-                    self.neg_alerts.append(None)
-                elif (self.neg_cusums[-1] > next_neg_cusum and
-                      self.currently_below_threshold()):
-                    # Negative change still occuring
-                    self.maintain_threshold()
-                    self.pos_cusums.append(next_pos_cusum)
-                    self.neg_cusums.append(next_neg_cusum)
-                    self.alert_indices.append(i-1)
-                    self.pos_alerts.append(None)
-                    self.neg_alerts.append(next_datum)
-                else:
-                    # End of continuing change
-                    self.alert_indices.append(i-1)
-                    threshold = self.set_new_threshold()
-                    next_pos_cusum, next_neg_cusum = self.compute_cusum(
-                        threshold, reset=True)  # XXX possibly here
-                    self.pos_cusums.append(next_pos_cusum)
-                    self.neg_cusums.append(next_neg_cusum)
-                    self.pos_alerts.append(None)
-                    self.neg_alerts.append(None)
+            if self.cusum_within_moving_stddev(): # this will always be the case for the first N data
+                self.repeat_moving_average()
+                self.repeat_moving_stddev()
+                # add to lists of cusums. Does so by comparing datum
+                # at `i` with most recent moving_averages and
+                # moving_stddevs
+                self.compute_cusum()
             else:
-                threshold = self.maintain_threshold()
-                self.maintain_reference_percentile()
-                cusum_pos, cusum_neg = self.compute_cusum(threshold)
-                self.pos_cusums.append(cusum_pos)
-                self.neg_cusums.append(cusum_neg)
-                if self.currently_below_threshold():
-                    self.neg_alerts.append(self.data[self.i])
-                    self.pos_alerts.append(None)
-                elif self.currently_above_threshold():
-                    self.neg_alerts.append(None)
-                    self.pos_alerts.append(self.data[self.i])
+                self.update_moving_average()  # uses window
+                if self.moving_in_same_direction():  # this "peeks ahead"
+                    self.repeat_moving_stddev()
+                    self.compute_cusum()
                 else:
-                    self.neg_alerts.append(None)
-                    self.pos_alerts.append(None)
+                    self.update_moving_stddev()  # uses window
+                    self.compute_cusum(reset=True)
+                self.alert_indices.append(i-1)
+            # Record alert
+            next_datum = self.data[i]
+            if self.cusum_below_moving_stddev():
+                self.record_alert(next_datum, kind='down')
+            elif self.cusum_above_moving_stddev():
+                self.record_alert(next_datum, kind='up')
+            else:
+                self.record_alert(next_datum, kind=None)
+
         return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
-                'reference_percentile': self.reference_percentiles,
-                'threshold': self.thresholds,
+                'moving_average': self.moving_averages,
+                'moving_stddev': self.moving_stddevs,
                 'alert': self.alert_indices,
                 'alert_percentile_pos': self.pos_alerts,
                 'alert_percentile_neg': self.neg_alerts}
 
-    def maintain_threshold(self):
-        self.thresholds.append(self.thresholds[-1])
-        return self.thresholds[-1]
+    def moving_in_same_direction(self):
+        # Peek ahead to see what the next CUSUM would be
+        next_pos_cusum, next_neg_cusum = self.compute_cusum(store=False)
+        going_up = (next_pos_cusum > self.current_pos_cusum() and
+                    self.cusum_above_moving_stddev())
+        going_down = (next_neg_cusum < self.current_neg_cusum() and
+                      self.cusum_below_moving_stddev())
+        return going_up or going_down
 
-    def maintain_reference_percentile(self):
-        self.reference_percentiles.append(self.reference_percentiles[-1])
-        return self.reference_percentiles[-1]
 
-    def currently_above_threshold(self):
-        return self.pos_cusums[-1] > self.thresholds[-1]
 
-    def currently_below_threshold(self):
-        return self.neg_cusums[-1] < -self.thresholds[-1]
+    def record_alert(self, datum, kind=None):
+        assert kind in ['up', 'down', None]
+        if kind == 'up':
+            self.pos_alerts.append(datum)
+            self.neg_alerts.append(None)
+        elif kind == 'down':
+            self.pos_alerts.append(None)
+            self.neg_alerts.append(datum)
+        else:
+            self.pos_alerts.append(None)
+            self.neg_alerts.append(None)
 
-    def currently_outside_threshold(self):
-        return (self.currently_above_threshold() or
-                self.currently_below_threshold())
+    def repeat_moving_stddev(self):
+        self.moving_stddevs.append(self.moving_stddevs[-1])
+        return self.moving_stddevs[-1]
+
+    def repeat_moving_average(self):
+        self.moving_averages.append(self.moving_averages[-1])
+        return self.moving_averages[-1]
+
+    def cusum_above_moving_stddev(self):
+        return self.pos_cusums[-1] > self.moving_stddevs[-1]
+
+    def cusum_below_moving_stddev(self):
+        return self.neg_cusums[-1] < -self.moving_stddevs[-1]
+
+    def cusum_within_moving_stddev(self):
+        return not (self.cusum_above_moving_stddev() or
+                self.cusum_below_moving_stddev())
 
     def get_current_window(self):
-        window = self.data[self.i-self.window_size:self.i]
-        non_null_window = window[~np.isnan(window)]
-        return non_null_window
+        non_null_data = self.data[~np.isnan(self.data)]
+        if self.i == 0:
+            # For the starting condition, take a mean of all values in
+            # the first full window.
+            window = non_null_data[0:self.window_size]
+        else:
+            window = non_null_data[self.i-self.window_size:self.i]
+        return window
 
-    def set_new_reference_percentile(self):
-        self.reference_percentiles.append(
+    def update_moving_average(self):
+        self.moving_averages.append(
             np.mean(self.get_current_window()))
 
-    def set_new_threshold(self):
-        self.thresholds.append(
-            np.std(self.get_current_window() * self.sensitivity))
-        return self.thresholds[-1]
+    def update_moving_stddev(self):
+        self.moving_stddevs.append(
+            np.std(self.get_current_window() * self.sensitivity))  # XXX didn't other version use n-1?
 
-    def compute_cusum(self, threshold, reset=False):
-        delta = 0.5 * threshold / self.sensitivity
-        current_reference = self.reference_percentiles[self.i]
+    def current_pos_cusum(self):
+        return self.pos_cusums[-1]
+
+    def current_neg_cusum(self):
+        return self.neg_cusums[-1]
+
+
+    def compute_cusum(self, reset=False, store=True):
+        moving_stddev = self.moving_stddevs[-1]
+        delta = 0.5 * moving_stddev / self.sensitivity
+        current_average = self.moving_averages[-1]
         current_datum = self.data[self.i]
-        cusum_pos = current_datum - (current_reference + delta)
-        cusum_neg = current_datum - (current_reference - delta)
+        cusum_pos = current_datum - (current_average + delta)
+        cusum_neg = current_datum - (current_average - delta)
         if not reset:
-            cusum_pos += self.pos_cusums[self.i-1] # wrong
-            cusum_neg += self.neg_cusums[self.i-1] # right
-        return max(0, cusum_pos), min(0, cusum_neg)
+            cusum_pos += self.pos_cusums[-1]
+            cusum_neg += self.neg_cusums[-1]
+        cusum_pos = max(0, cusum_pos)
+        cusum_neg = min(0, cusum_neg)
+        if store:
+            self.pos_cusums.append(cusum_pos)
+            self.neg_cusums.append(cusum_neg)
+        return cusum_pos, cusum_neg
+
 
 
 def remove_jagged(measurevalues):
@@ -231,26 +247,26 @@ def cusum(data, months_smoothing, sensitivity):
                         if x is None else x, data))
     smax = [0]
     smin = [0]
-    # set reference_percentile and threshold at start
-    # & if threshold reached
+    # set moving_average and moving_stddev at start
+    # & if moving_stddev reached
     non_missing_percentiles = data[~np.isnan(data)]
 
     # the reference percentile is the first N non-missing months.  is
     # this correct? Should it actually include the nulls? Let's wait
     # to see how we reset the reference later.
-    reference_percentile = [
+    moving_average = [
         np.mean(non_missing_percentiles[0:months_smoothing])]
 
     # relative to how close all the measurements are to the mean. So
     # if they deviate from the mean by a total of X...
-    threshold = [
+    moving_stddev = [
         np.std(non_missing_percentiles[0:months_smoothing]) * sensitivity]
     alert = []
     alert_percentile_pos = [None]
     alert_percentile_neg = [None]
     # we never get an alert at position len(data). Why?
     for i in range(1, len(data)):
-        if smax[i-1] > threshold[i-1] or smin[i-1] < -threshold[i-1]:
+        if smax[i-1] > moving_stddev[i-1] or smin[i-1] < -moving_stddev[i-1]:
             # generate temp smax/smin
             # Windows where n = 3
             #      1, 2, 3, 4, 5, 6
@@ -262,7 +278,7 @@ def cusum(data, months_smoothing, sensitivity):
             # i=5        -  -  -
             #
             # initial ref perc:  2
-            # initial threshold: 0.408
+            # initial moving_stddev: 0.408
             #      1, x, 3, 4, 5, 6
             # ref  -     -  -
             # i=1  -
@@ -271,29 +287,29 @@ def cusum(data, months_smoothing, sensitivity):
             # i=4        -  -
             # i=5        -  -  -
             # initial ref per: 2.67
-            # initial threshold: 0.624
+            # initial moving_stddev: 0.624
             window = data[i-months_smoothing:i]
             non_null_window = window[~np.isnan(window)]
-            reference_percentile.append(np.mean(non_null_window))
-            smax_temp = (max(0, data[i] - (reference_percentile[i] +
-                                           (0.5 * threshold[i-1] /
+            moving_average.append(np.mean(non_null_window))
+            smax_temp = (max(0, data[i] - (moving_average[i] +
+                                           (0.5 * moving_stddev[i-1] /
                                             sensitivity)) + smax[i-1]))
-            smin_temp = (min(0, data[i] - (reference_percentile[i] -
-                                           (0.5 * threshold[i-1] /
+            smin_temp = (min(0, data[i] - (moving_average[i] -
+                                           (0.5 * moving_stddev[i-1] /
                                             sensitivity)) + smin[i-1]))
 
             #test whether change still occuring *IN THE SAME DIRECTION*
             ## positive change
-            if smax[i-1] < smax_temp and smax[i-1] > threshold[i-1]:
-                threshold.append(threshold[i-1])
+            if smax[i-1] < smax_temp and smax[i-1] > moving_stddev[i-1]:
+                moving_stddev.append(moving_stddev[i-1])
                 smax.append(smax_temp)
                 smin.append(smin_temp)
                 alert.append(i-1)
                 alert_percentile_pos.append(data[i])
                 alert_percentile_neg.append(None)
             ## negative change
-            elif smin[i-1] > smin_temp and smin[i-1] < -threshold[i-1]:
-                threshold.append(threshold[i-1])
+            elif smin[i-1] > smin_temp and smin[i-1] < -moving_stddev[i-1]:
+                moving_stddev.append(moving_stddev[i-1])
                 smax.append(smax_temp)
                 smin.append(smin_temp)
                 alert.append(i-1)
@@ -302,43 +318,43 @@ def cusum(data, months_smoothing, sensitivity):
             ## if not, reset
             else:
                 alert.append(i-1)
-                threshold.append(np.std(data[i-months_smoothing:i]
+                moving_stddev.append(np.std(data[i-months_smoothing:i]
                                 [~np.isnan(data[i-months_smoothing:i])])
                                  * sensitivity) # +remove nan values
                 #reset smax/smin to 0
                 #modified to include the value for the current month
-                smax.append(max(0, data[i] - (reference_percentile[i] +
-                                              (0.5 * threshold[i] /
+                smax.append(max(0, data[i] - (moving_average[i] +
+                                              (0.5 * moving_stddev[i] /
                                                sensitivity))))
-                smin.append(min(0, data[i] - (reference_percentile[i] -
-                                              (0.5 * threshold[i] /
+                smin.append(min(0, data[i] - (moving_average[i] -
+                                              (0.5 * moving_stddev[i] /
                                                sensitivity))))
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
         #else append previous values
         else:
-            reference_percentile.append(reference_percentile[i-1])
-            threshold.append(threshold[i-1])
+            moving_average.append(moving_average[i-1])
+            moving_stddev.append(moving_stddev[i-1])
 
             #calculate smax/smin XXX I think this should be i-1
-            smax.append(max(0, data[i] - (reference_percentile[i] +
-                                          (0.5 * threshold[i] /
+            smax.append(max(0, data[i] - (moving_average[i] +
+                                          (0.5 * moving_stddev[i] /
                                            sensitivity)) + smax[i-1]))
-            smin.append(min(0, data[i] - (reference_percentile[i] -
-                                          (0.5 * threshold[i] /
+            smin.append(min(0, data[i] - (moving_average[i] -
+                                          (0.5 * moving_stddev[i] /
                                            sensitivity)) + smin[i-1]))
-            if smax[i] > threshold[i]:
+            if smax[i] > moving_stddev[i]:
                 alert_percentile_pos.append(data[i])
                 alert_percentile_neg.append(None)
-            elif smin[i] < -threshold[i]:
+            elif smin[i] < -moving_stddev[i]:
                 alert_percentile_neg.append(data[i])
                 alert_percentile_pos.append(None)
             else:
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
     return {'smax':smax, 'smin':smin,
-            'reference_percentile':reference_percentile,
-            'threshold':threshold,
+            'moving_average':moving_average,
+            'moving_stddev':moving_stddev,
             'alert':alert,
             'alert_percentile_pos':alert_percentile_pos,
             'alert_percentile_neg':alert_percentile_neg}

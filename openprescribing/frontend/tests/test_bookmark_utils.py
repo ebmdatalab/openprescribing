@@ -83,7 +83,7 @@ class IntroTextTest(unittest.TestCase):
 
 
 class TestCUSUM(unittest.TestCase):
-    def foo(self, result):
+    def extract_percentiles_for_alerts(self, result):
         neg = result['alert_percentile_neg']
         pos = result['alert_percentile_pos']
         combined = []
@@ -113,15 +113,28 @@ class TestCUSUM(unittest.TestCase):
             directions = [n for n, ltr in enumerate(test_cases[i+2]) if ltr in ('u', 'd')]
             assert sum([x % 4 for x in directions]) == 0, "%s: Every column must be three wide followed by a space:\n%s\n%s" % (test_name, alignment_header,  str(test_cases[i+2]))
             data = [int(x) if x.strip() else None for x in re.findall('....', test_cases[i+1])]
-            result = self.foo(bookmark_utils.cusum(data, 3, 5))
-            result = self.foo(bookmark_utils.CUSUM(data, window_size=3, sensitivity=5).work())
+            old_result = bookmark_utils.cusum(data, 3, 5)
+            new_result = bookmark_utils.CUSUM(data, window_size=3, sensitivity=5).work()
+            old_result_formatted = self.extract_percentiles_for_alerts(old_result)
+            new_result_formatted = self.extract_percentiles_for_alerts(new_result)
             expected = test_cases[i+2].rstrip()
             error_message = "In test '%s':\n" % test_name
             error_message += "   Input values: %s" % test_cases[i+1]
             error_message += "Expected alerts: %s" % test_cases[i+2]
-            error_message += "            Got: %s" % result
-            self.assertEqual(result, expected, error_message)
-
+            self.assertEqual(
+                old_result_formatted,
+                expected,
+                error_message + "            Got: %s" % old_result_formatted)
+            self.assertEqual(
+                new_result_formatted,
+                expected,
+                error_message + "            Got: %s" % new_result_formatted)
+            self.assertEqual(old_result['alert'], new_result['alert'])
+            #print test_name
+            #print "-" * 78
+            #print json.dumps(old_result, indent=2)
+            #print json.dumps(new_result, indent=2)
+            #print self.assertEqual(json.dumps(old_result, indent=2), json.dumps(new_result, indent=2))
 
 class TestBookmarkUtilsPerforming(TestCase):
     fixtures = ['bookmark_alerts', 'measures']
