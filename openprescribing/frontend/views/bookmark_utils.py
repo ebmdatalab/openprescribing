@@ -45,33 +45,32 @@ class CUSUM(object):
         self.sensitivity = sensitivity
         self.pos_cusums = []
         self.neg_cusums = []
-        self.moving_means = []
-        self.moving_stddevs = []
+        self.target_means = []
+        self.alert_thresholds = []
         self.alert_indices = []
-        self.pos_alerts = [None]
-        self.neg_alerts = [None]
+        self.pos_alerts = []
+        self.neg_alerts = []
 
     def work(self):
         for i, datum in enumerate(self.data):
             if i == 0:
                 window = self.non_null_data[0:self.window_size]
-                self.update_moving_mean(window)
-                self.update_moving_stddev(window)
+                self.new_target_mean(window)
+                self.new_alert_threshold(window)
                 self.compute_cusum(datum, reset=True)
-                continue
-            if self.cusum_within_moving_stddev():
+            elif self.cusum_within_alert_threshold():
                 # Note this will always be true for the first `window_size`
                 # data points
-                self.repeat_moving_mean()
-                self.repeat_moving_stddev()
+                self.maintain_target_mean()
+                self.maintain_alert_threshold()
                 self.compute_cusum(datum)
             else:
                 # Assemble a moving window of the last `window_size`
                 # non-null values
                 window = self.data[i-self.window_size:i]
-                self.update_moving_mean(window)
+                self.new_target_mean(window)
                 if self.moving_in_same_direction(datum):  # this "peeks ahead"
-                    self.repeat_moving_stddev()
+                    self.maintain_alert_threshold()
                     self.compute_cusum(datum)
                 else:
                     # Change of direction; reset so the previous
@@ -80,19 +79,19 @@ class CUSUM(object):
                     # it at 142.15 at position 7 similarly the moving
                     # means are different at position 7; old version
                     # has 70, new has 86.
-                    self.update_moving_stddev(window)  # uses window
+                    self.new_alert_threshold(window)  # uses window
                     self.compute_cusum(datum, reset=True)
             # Record alert
-            if self.cusum_below_moving_stddev():
+            if self.cusum_below_alert_threshold():
                 self.record_alert(datum, i, kind='down')
-            elif self.cusum_above_moving_stddev():
+            elif self.cusum_above_alert_threshold():
                 self.record_alert(datum, i, kind='up')
             else:
                 self.record_alert(datum, i, kind=None)
 
         return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
-                'moving_mean': self.moving_means,
-                'moving_stddev': self.moving_stddevs,
+                'target_mean': self.target_means,
+                'alert_threshold': self.alert_thresholds,
                 'alert': self.alert_indices,
                 'alert_percentile_pos': self.pos_alerts,
                 'alert_percentile_neg': self.neg_alerts}
@@ -101,9 +100,9 @@ class CUSUM(object):
         # Peek ahead to see what the next CUSUM would be
         next_pos_cusum, next_neg_cusum = self.compute_cusum(datum, store=False)
         going_up = (next_pos_cusum > self.current_pos_cusum() and
-                    self.cusum_above_moving_stddev())
+                    self.cusum_above_alert_threshold())
         going_down = (next_neg_cusum < self.current_neg_cusum() and
-                      self.cusum_below_moving_stddev())
+                      self.cusum_below_alert_threshold())
         return going_up or going_down
 
     def __repr__(self):
@@ -111,8 +110,8 @@ class CUSUM(object):
         data:           {data}
         pos_cusums:     {pos_cusums}
         neg_cusums:     {neg_cusums}
-        moving_means:   {moving_means}
-        moving_stddevs: {moving_stddevs}"
+        target_means:   {target_means}
+        alert_thresholds: {alert_thresholds}"
         """.format(**self.__dict__)
 
     def record_alert(self, datum, i, kind=None):
@@ -129,30 +128,30 @@ class CUSUM(object):
             self.pos_alerts.append(None)
             self.neg_alerts.append(None)
 
-    def repeat_moving_stddev(self):
-        self.moving_stddevs.append(self.moving_stddevs[-1])
-        return self.moving_stddevs[-1]
+    def maintain_alert_threshold(self):
+        self.alert_thresholds.append(self.alert_thresholds[-1])
+        return self.alert_thresholds[-1]
 
-    def repeat_moving_mean(self):
-        self.moving_means.append(self.moving_means[-1])
-        return self.moving_means[-1]
+    def maintain_target_mean(self):
+        self.target_means.append(self.target_means[-1])
+        return self.target_means[-1]
 
-    def cusum_above_moving_stddev(self):
-        return self.pos_cusums[-1] > self.moving_stddevs[-1]
+    def cusum_above_alert_threshold(self):
+        return self.pos_cusums[-1] > self.alert_thresholds[-1]
 
-    def cusum_below_moving_stddev(self):
-        return self.neg_cusums[-1] < -self.moving_stddevs[-1]
+    def cusum_below_alert_threshold(self):
+        return self.neg_cusums[-1] < -self.alert_thresholds[-1]
 
-    def cusum_within_moving_stddev(self):
-        return not (self.cusum_above_moving_stddev() or
-                self.cusum_below_moving_stddev())
+    def cusum_within_alert_threshold(self):
+        return not (self.cusum_above_alert_threshold() or
+                self.cusum_below_alert_threshold())
 
-    def update_moving_mean(self, window):
-        self.moving_means.append(
+    def new_target_mean(self, window):
+        self.target_means.append(
             np.nanmean(window))
 
-    def update_moving_stddev(self, window):
-        self.moving_stddevs.append(
+    def new_alert_threshold(self, window):
+        self.alert_thresholds.append(
             np.nanstd(window * self.sensitivity))  # XXX didn't other version use n-1?
 
     def current_pos_cusum(self):
@@ -162,9 +161,9 @@ class CUSUM(object):
         return self.neg_cusums[-1]
 
     def compute_cusum(self, datum, reset=False, store=True):
-        moving_stddev = self.moving_stddevs[-1]
-        delta = 0.5 * moving_stddev / self.sensitivity
-        current_mean = self.moving_means[-1]
+        alert_threshold = self.alert_thresholds[-1]
+        delta = 0.5 * alert_threshold / self.sensitivity
+        current_mean = self.target_means[-1]
         cusum_pos = datum - (current_mean + delta)
         cusum_neg = datum - (current_mean - delta)
         if not reset:
@@ -244,26 +243,26 @@ def cusum(data, months_smoothing, sensitivity):
                         if x is None else x, data))
     smax = [0]
     smin = [0]
-    # set moving_mean and moving_stddev at start
-    # & if moving_stddev reached
+    # set target_mean and alert_threshold at start
+    # & if alert_threshold reached
     non_missing_percentiles = data[~np.isnan(data)]
 
     # the reference percentile is the first N non-missing months.  is
     # this correct? Should it actually include the nulls? Let's wait
     # to see how we reset the reference later.
-    moving_mean = [
+    target_mean = [
         np.mean(non_missing_percentiles[0:months_smoothing])]
 
     # relative to how close all the measurements are to the mean. So
     # if they deviate from the mean by a total of X...
-    moving_stddev = [
+    alert_threshold = [
         np.std(non_missing_percentiles[0:months_smoothing]) * sensitivity]
     alert = []
     alert_percentile_pos = [None]
     alert_percentile_neg = [None]
     # we never get an alert at position len(data). Why?
     for i in range(1, len(data)):
-        if smax[i-1] > moving_stddev[i-1] or smin[i-1] < -moving_stddev[i-1]:
+        if smax[i-1] > alert_threshold[i-1] or smin[i-1] < -alert_threshold[i-1]:
             # generate temp smax/smin
             # Windows where n = 3
             #      1, 2, 3, 4, 5, 6
@@ -275,7 +274,7 @@ def cusum(data, months_smoothing, sensitivity):
             # i=5        -  -  -
             #
             # initial ref perc:  2
-            # initial moving_stddev: 0.408
+            # initial alert_threshold: 0.408
             #      1, x, 3, 4, 5, 6
             # ref  -     -  -
             # i=1  -
@@ -284,14 +283,14 @@ def cusum(data, months_smoothing, sensitivity):
             # i=4        -  -
             # i=5        -  -  -
             # initial ref per: 2.67
-            # initial moving_stddev: 0.624
+            # initial alert_threshold: 0.624
             window = data[i-months_smoothing:i]
 
             # smax is C+
             # smin is C-
             # C+ is cumulative difference between current value and the current mean + slack value (K)
-            # so "moving_mean" should be "target_mean", moving_stddev should be current_slack_value.
-            # moving_stddev is defined as half of the difference between the next mean and the current one
+            # so "target_mean" should be "target_mean", alert_threshold should be current_slack_value.
+            # alert_threshold is defined as half of the difference between the next mean and the current one
 
             # Define H = hs and K = ks, where s is the standard deviation of the sample variable
             # used in forming the cusum. Using h = 4 or h = 5 and k = 0.5 gives good results
@@ -306,26 +305,26 @@ def cusum(data, months_smoothing, sensitivity):
             # for any `i`, the window is everything up to but not
             # including it; the calculated cusum is based on a mean
             # that doesn't include it and on a stddev before *that*, the
-            moving_mean.append(np.nanmean(window))
-            smax_temp = (max(0, data[i] - (moving_mean[i] +
-                                           (0.5 * moving_stddev[i-1] /
+            target_mean.append(np.nanmean(window))
+            smax_temp = (max(0, data[i] - (target_mean[i] +
+                                           (0.5 * alert_threshold[i-1] /
                                             sensitivity)) + smax[i-1]))
-            smin_temp = (min(0, data[i] - (moving_mean[i] -
-                                           (0.5 * moving_stddev[i-1] /
+            smin_temp = (min(0, data[i] - (target_mean[i] -
+                                           (0.5 * alert_threshold[i-1] /
                                             sensitivity)) + smin[i-1]))
 
             #test whether change still occuring *IN THE SAME DIRECTION*
             ## positive change
-            if smax[i-1] < smax_temp and smax[i-1] > moving_stddev[i-1]:
-                moving_stddev.append(moving_stddev[i-1])
+            if smax[i-1] < smax_temp and smax[i-1] > alert_threshold[i-1]:
+                alert_threshold.append(alert_threshold[i-1])
                 smax.append(smax_temp)
                 smin.append(smin_temp)
                 alert.append(i-1)
                 alert_percentile_pos.append(data[i])
                 alert_percentile_neg.append(None)
             ## negative change
-            elif smin[i-1] > smin_temp and smin[i-1] < -moving_stddev[i-1]:
-                moving_stddev.append(moving_stddev[i-1])
+            elif smin[i-1] > smin_temp and smin[i-1] < -alert_threshold[i-1]:
+                alert_threshold.append(alert_threshold[i-1])
                 smax.append(smax_temp)
                 smin.append(smin_temp)
                 alert.append(i-1)
@@ -334,43 +333,43 @@ def cusum(data, months_smoothing, sensitivity):
             ## if not, reset
             else:
                 alert.append(i-1)
-                moving_stddev.append(np.std(data[i-months_smoothing:i]
+                alert_threshold.append(np.std(data[i-months_smoothing:i]
                                 [~np.isnan(data[i-months_smoothing:i])])
                                  * sensitivity) # +remove nan values
                 #reset smax/smin to 0
                 #modified to include the value for the current month
-                smax.append(max(0, data[i] - (moving_mean[i] +
-                                              (0.5 * moving_stddev[i] /
+                smax.append(max(0, data[i] - (target_mean[i] +
+                                              (0.5 * alert_threshold[i] /
                                                sensitivity))))
-                smin.append(min(0, data[i] - (moving_mean[i] -
-                                              (0.5 * moving_stddev[i] /
+                smin.append(min(0, data[i] - (target_mean[i] -
+                                              (0.5 * alert_threshold[i] /
                                                sensitivity))))
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
         #else append previous values
         else:
-            moving_mean.append(moving_mean[i-1])
-            moving_stddev.append(moving_stddev[i-1])
+            target_mean.append(target_mean[i-1])
+            alert_threshold.append(alert_threshold[i-1])
 
             #calculate smax/smin XXX I think this should be i-1
-            smax.append(max(0, data[i] - (moving_mean[i] +
-                                          (0.5 * moving_stddev[i] /
+            smax.append(max(0, data[i] - (target_mean[i] +
+                                          (0.5 * alert_threshold[i] /
                                            sensitivity)) + smax[i-1]))
-            smin.append(min(0, data[i] - (moving_mean[i] -
-                                          (0.5 * moving_stddev[i] /
+            smin.append(min(0, data[i] - (target_mean[i] -
+                                          (0.5 * alert_threshold[i] /
                                            sensitivity)) + smin[i-1]))
-            if smax[i] > moving_stddev[i]:
+            if smax[i] > alert_threshold[i]:
                 alert_percentile_pos.append(data[i])
                 alert_percentile_neg.append(None)
-            elif smin[i] < -moving_stddev[i]:
+            elif smin[i] < -alert_threshold[i]:
                 alert_percentile_neg.append(data[i])
                 alert_percentile_pos.append(None)
             else:
                 alert_percentile_pos.append(None)
                 alert_percentile_neg.append(None)
     return {'smax':smax, 'smin':smin,
-            'moving_mean':moving_mean,
-            'moving_stddev':moving_stddev,
+            'target_mean':target_mean,
+            'alert_threshold':alert_threshold,
             'alert':alert,
             'alert_percentile_pos':alert_percentile_pos,
             'alert_percentile_neg':alert_percentile_neg}
