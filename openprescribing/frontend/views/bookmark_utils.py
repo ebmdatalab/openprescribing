@@ -59,7 +59,6 @@ class CUSUM(object):
                 self.update_moving_stddev(window)
                 self.compute_cusum(datum, reset=True)
                 continue
-
             if self.cusum_within_moving_stddev():
                 # Note this will always be true for the first `window_size`
                 # data points
@@ -69,23 +68,27 @@ class CUSUM(object):
             else:
                 # Assemble a moving window of the last `window_size`
                 # non-null values
-                window = self.non_null_data[i-self.window_size:i]
+                window = self.data[i-self.window_size:i]
                 self.update_moving_mean(window)
                 if self.moving_in_same_direction(datum):  # this "peeks ahead"
                     self.repeat_moving_stddev()
                     self.compute_cusum(datum)
                 else:
-                    # Change of direction; reset
+                    # Change of direction; reset so the previous
+                    # calculation of current_post_cusum underestimated
+                    # it. We have it at 125.49 but the old method had
+                    # it at 142.15 at position 7 similarly the moving
+                    # means are different at position 7; old version
+                    # has 70, new has 86.
                     self.update_moving_stddev(window)  # uses window
                     self.compute_cusum(datum, reset=True)
-                self.alert_indices.append(i-1)
             # Record alert
             if self.cusum_below_moving_stddev():
-                self.record_alert(datum, kind='down')
+                self.record_alert(datum, i, kind='down')
             elif self.cusum_above_moving_stddev():
-                self.record_alert(datum, kind='up')
+                self.record_alert(datum, i, kind='up')
             else:
-                self.record_alert(datum, kind=None)
+                self.record_alert(datum, i, kind=None)
 
         return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
                 'moving_mean': self.moving_means,
@@ -103,14 +106,23 @@ class CUSUM(object):
                       self.cusum_below_moving_stddev())
         return going_up or going_down
 
+    def __repr__(self):
+        return """
+        data:           {data}
+        pos_cusums:     {pos_cusums}
+        neg_cusums:     {neg_cusums}
+        moving_means:   {moving_means}
+        moving_stddevs: {moving_stddevs}"
+        """.format(**self.__dict__)
 
-
-    def record_alert(self, datum, kind=None):
+    def record_alert(self, datum, i, kind=None):
         assert kind in ['up', 'down', None]
         if kind == 'up':
+            self.alert_indices.append(i)
             self.pos_alerts.append(datum)
             self.neg_alerts.append(None)
         elif kind == 'down':
+            self.alert_indices.append(i)
             self.pos_alerts.append(None)
             self.neg_alerts.append(datum)
         else:
@@ -137,18 +149,17 @@ class CUSUM(object):
 
     def update_moving_mean(self, window):
         self.moving_means.append(
-            np.mean(window))
+            np.nanmean(window))
 
     def update_moving_stddev(self, window):
         self.moving_stddevs.append(
-            np.std(window * self.sensitivity))  # XXX didn't other version use n-1?
+            np.nanstd(window * self.sensitivity))  # XXX didn't other version use n-1?
 
     def current_pos_cusum(self):
         return self.pos_cusums[-1]
 
     def current_neg_cusum(self):
         return self.neg_cusums[-1]
-
 
     def compute_cusum(self, datum, reset=False, store=True):
         moving_stddev = self.moving_stddevs[-1]
@@ -275,8 +286,27 @@ def cusum(data, months_smoothing, sensitivity):
             # initial ref per: 2.67
             # initial moving_stddev: 0.624
             window = data[i-months_smoothing:i]
-            non_null_window = window[~np.isnan(window)]
-            moving_mean.append(np.mean(non_null_window))
+
+            # smax is C+
+            # smin is C-
+            # C+ is cumulative difference between current value and the current mean + slack value (K)
+            # so "moving_mean" should be "target_mean", moving_stddev should be current_slack_value.
+            # moving_stddev is defined as half of the difference between the next mean and the current one
+
+            # Define H = hs and K = ks, where s is the standard deviation of the sample variable
+            # used in forming the cusum. Using h = 4 or h = 5 and k = 0.5 gives good results
+
+            # So that means we want to use a target mean of the first
+            # N values, then when we go outside it, reset the target
+            # mean to be what? Should it include the sample variable or not?
+
+            # And what about K
+
+
+            # for any `i`, the window is everything up to but not
+            # including it; the calculated cusum is based on a mean
+            # that doesn't include it and on a stddev before *that*, the
+            moving_mean.append(np.nanmean(window))
             smax_temp = (max(0, data[i] - (moving_mean[i] +
                                            (0.5 * moving_stddev[i-1] /
                                             sensitivity)) + smax[i-1]))
