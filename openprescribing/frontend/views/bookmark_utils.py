@@ -34,8 +34,10 @@ logger = logging.getLogger(__name__)
 
 
 class CUSUM(object):
-    # so the problem is smin changing by wrong amoung (by more), and
-    # reference percentile not changing at all
+    """See Introduction to Statistical Quality Control, Montgomery DC, Wiley, 2009
+    and our paper
+    http://dl4a.org/uploads/pdf/581SPC.pdf
+    """
     def __init__(self, data, window_size=12, sensitivity=5):
         data = np.array(map(lambda x: np.nan
                             if x is None else x, data))
@@ -73,12 +75,6 @@ class CUSUM(object):
                     self.maintain_alert_threshold()
                     self.compute_cusum(datum)
                 else:
-                    # Change of direction; reset so the previous
-                    # calculation of current_post_cusum underestimated
-                    # it. We have it at 125.49 but the old method had
-                    # it at 142.15 at position 7 similarly the moving
-                    # means are different at position 7; old version
-                    # has 70, new has 86.
                     self.new_alert_threshold(window)  # uses window
                     self.compute_cusum(datum, reset=True)
             # Record alert
