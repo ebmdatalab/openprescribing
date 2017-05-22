@@ -115,7 +115,7 @@ class TestCUSUM(unittest.TestCase):
             assert test_cases[i+1][3::4].strip() == '', "%s: Every column must be three wide followed by a space: \n%s\n%s" % (test_name, alignment_header, test_cases[i+1])
             directions = [n for n, ltr in enumerate(test_cases[i+2]) if ltr in ('u', 'd')]
             assert sum([x % 4 for x in directions]) == 0, "%s: Every column must be three wide followed by a space:\n%s\n%s" % (test_name, alignment_header,  str(test_cases[i+2]))
-            data = [int(x) if x.strip() else None for x in re.findall('....?', test_cases[i+1])]
+            data = [round(int(x)/100.0,2) if x.strip() else None for x in re.findall('(   |\d+ {0,2}) ?', test_cases[i+1])]
             old_result = bookmark_utils.cusum(data, 3, 5)
             new_result = bookmark_utils.CUSUM(data, window_size=3, sensitivity=5).work()
             old_result_formatted = self.extract_percentiles_for_alerts(old_result)

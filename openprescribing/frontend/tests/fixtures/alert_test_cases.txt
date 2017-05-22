@@ -1,0 +1,95 @@
+# Flat line: no alerts
+100 100 100 100 100 100 100
+
+
+# Simple decline
+100 100 100 100 90  80  70  70  70  70
+                d   d   d   d   d
+
+# Short, reversing decline
+100 100 100 100 90  80  100 100 100 100
+                d   d
+
+# Symmetric decline/increase
+100  90  80 70  60  70  80  90  100
+                d               u
+
+# Symmetric increase/decline 2
+10  20  30  40  50  40  30  20  10  0
+                u               d
+
+# Symmetric increase/decline 3
+10  20  30  40  50  40  30  20  10  10
+                u               d   d
+
+# Symmetric increase/decline, but ending with zeros  XXX
+10  20  30  40  50  40  30  20  10  0   0
+                u               d
+
+# Small changes which are persistent at extreme percentiles (note difference with following; mentioned in our paper)
+1   1   2   3   4   5   5   5   100
+                u   u   u       u
+
+# Small changes which are persistent at mid percentiles
+47  47  48  49  50  51  52  52  100
+                u   u   u   u   u
+
+# Counterpart to the following - this behaves as expected
+0   20  30  40  50  60  70  80  90
+                    u   u   u   u
+
+# A noisy start breaks the algorithm. We'd expect Up from 60 but don't because the threshold is set very high by the noise and then is never crossed. XXX
+100 0   100 0   100 0   20  30  40  50  60  70  80  90
+
+
+# Linear increase
+10  20  30  40  50  60  100 100 100 100
+                u   u   u   u   u
+
+# Sharp increase but not enough data
+20  40  60  80
+
+
+# Sharp increase and enough data
+0   20  40  60  80  90  100
+                u   u   u
+
+# Wobbly peak. XXX all except last two are odd
+0   30  60  90  80  80  80  30  0   30  60  90  100
+                    u       d       d       u   d
+
+# Jagged without zeros
+5   50  100 50  5   50  100 50  5   50  100 50  5
+
+
+# Less jagged without zeros
+5   30  50  30  5   30  50  30  5   30  50  30  5
+
+
+# Single big peak
+5   6   7   90  5   6   7   6   5   6   7   6   5
+            u
+
+# Linear increase without nulls
+10  20  30  40  50  60  70
+                u   u   u
+
+# Linear increase without nulls
+10  20  30  40  50  60  100 100 100
+                u   u   u   u   u
+
+# Linear increase with nulls
+10      30  40  50  60  100 100 100
+                    u   u   u   u
+
+# More nulls at the start than the window size
+                    30  40  50  60  70  80
+                        u   u   u   u   u
+
+# Fewer nulls at the start than the window size
+        30  40  50
+            u   u
+
+# A plateau that never goes down stops sending alerts when the new target mean is hit
+10  20  30  40  50  60  100 100 100 100
+                u   u   u   u   u

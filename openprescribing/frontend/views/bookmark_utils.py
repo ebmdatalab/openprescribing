@@ -12,6 +12,7 @@ from anymail.message import attach_inline_image_file
 from dateutil.relativedelta import relativedelta
 from premailer import Premailer
 import numpy as np
+import pandas as pd
 
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
@@ -41,8 +42,16 @@ class CUSUM(object):
     def __init__(self, data, window_size=12, sensitivity=5):
         data = np.array(map(lambda x: np.nan
                             if x is None else x, data))
+        ## Remove sufficient leading nulls to ensure we can start with
+        ## any value
+        self.start_index = 0
+        while pd.isnull(data[self.start_index:self.start_index+window_size]).all():
+            if self.start_index > len(data):
+                data = []
+                start_index = 0
+                break
+            self.start_index += 1
         self.data = data
-        self.non_null_data = self.data[~np.isnan(self.data)]
         self.window_size = window_size
         self.sensitivity = sensitivity
         self.pos_cusums = []
@@ -55,8 +64,9 @@ class CUSUM(object):
 
     def work(self):
         for i, datum in enumerate(self.data):
-            if i == 0:
-                window = self.non_null_data[0:self.window_size]
+            if i <= self.start_index:
+                # If they're all nans, advance
+                window = self.data[i:self.window_size+i]
                 self.new_target_mean(window)
                 self.new_alert_threshold(window)
                 self.compute_cusum(datum, reset=True)
