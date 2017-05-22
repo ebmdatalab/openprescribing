@@ -48,7 +48,6 @@ class CUSUM(object):
         while pd.isnull(data[self.start_index:self.start_index+window_size]).all():
             if self.start_index > len(data):
                 data = []
-                start_index = 0
                 break
             self.start_index += 1
         self.data = data
@@ -65,7 +64,6 @@ class CUSUM(object):
     def work(self):
         for i, datum in enumerate(self.data):
             if i <= self.start_index:
-                # If they're all nans, advance
                 window = self.data[i:self.window_size+i]
                 self.new_target_mean(window)
                 self.new_alert_threshold(window)
@@ -88,19 +86,41 @@ class CUSUM(object):
                     self.new_alert_threshold(window)  # uses window
                     self.compute_cusum(datum, reset=True)
             # Record alert
-            if self.cusum_below_alert_threshold():
-                self.record_alert(datum, i, kind='down')
-            elif self.cusum_above_alert_threshold():
-                self.record_alert(datum, i, kind='up')
-            else:
-                self.record_alert(datum, i, kind=None)
+            self.record_alert(datum, i)
+        return self.as_dict()
 
+    def as_dict(self):
         return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
                 'target_mean': self.target_means,
                 'alert_threshold': self.alert_thresholds,
                 'alert': self.alert_indices,
                 'alert_percentile_pos': self.pos_alerts,
                 'alert_percentile_neg': self.neg_alerts}
+
+    def get_last_alert_info(self):
+        if any(self.alert_indices):
+            last_alert = self.alert_indices[-1]
+            if self.pos_alerts[last_alert]:
+                # the last change was positive
+                alerts = self.pos_alerts
+            elif self.neg_alerts[last_alert]:
+                # the last change was negative
+                alerts = self.neg_alerts
+            start_index = end_index = None
+            for i in range(len(alerts), 0, -1):
+                if start_index and end_index:
+                    break
+                if alerts[i-1]:
+                    if end_index:
+                        start_index = i-1
+                    elif not end_index:
+                        end_index = i-1
+            return {
+                'from': self.data[start_index-1],
+                'to': self.data[end_index],
+                'period': (end_index - start_index) + 1}
+        else:
+            return None
 
     def moving_in_same_direction(self, datum):
         # Peek ahead to see what the next CUSUM would be
@@ -113,20 +133,20 @@ class CUSUM(object):
 
     def __repr__(self):
         return """
-        data:           {data}
-        pos_cusums:     {pos_cusums}
-        neg_cusums:     {neg_cusums}
-        target_means:   {target_means}
+        data:             {data}
+        pos_cusums:       {pos_cusums}
+        neg_cusums:       {neg_cusums}
+        target_means:     {target_means}
         alert_thresholds: {alert_thresholds}"
+        alert_incides:    {alert_indices}"
         """.format(**self.__dict__)
 
-    def record_alert(self, datum, i, kind=None):
-        assert kind in ['up', 'down', None]
-        if kind == 'up':
+    def record_alert(self, datum, i):
+        if self.cusum_above_alert_threshold():
             self.alert_indices.append(i)
             self.pos_alerts.append(datum)
             self.neg_alerts.append(None)
-        elif kind == 'down':
+        elif self.cusum_below_alert_threshold():
             self.alert_indices.append(i)
             self.pos_alerts.append(None)
             self.neg_alerts.append(datum)
@@ -150,7 +170,7 @@ class CUSUM(object):
 
     def cusum_within_alert_threshold(self):
         return not (self.cusum_above_alert_threshold() or
-                self.cusum_below_alert_threshold())
+                    self.cusum_below_alert_threshold())
 
     def new_target_mean(self, window):
         self.target_means.append(
@@ -175,8 +195,8 @@ class CUSUM(object):
         if not reset:
             cusum_pos += self.pos_cusums[-1]
             cusum_neg += self.neg_cusums[-1]
-        cusum_pos = max(0, cusum_pos)
-        cusum_neg = min(0, cusum_neg)
+        cusum_pos = round(max(0, cusum_pos), 2)
+        cusum_neg = round(min(0, cusum_neg), 2)
         if store:
             self.pos_cusums.append(cusum_pos)
             self.neg_cusums.append(cusum_neg)
@@ -212,183 +232,14 @@ def remove_jagged(measurevalues):
     return keep
 
 
-def remove_jagged_logit(measurevalues):
-    """Remove records that are outside the standard error of the mean.
-
-    Bit of a guess as to if this'll work or not. Pending review by
-    real statistivcian.
-
-    """
-    values = []
-    for m in measurevalues:
-        val = m.percentile / 100.0
-        if val > 0 and val < 1:
-            values.append(np.log(val/(100-val)))
-        else:
-            values.append(
-                np.log(
-                    (val + 0.5/len(measurevalues)) /
-                    (1 - val + (0.5/len(measurevalues)))
-                )
-            )
-    sem = (np.std(values) /
-           np.sqrt(len(values)))
-    keep = []
-    for m in measurevalues:
-        if m.percentile < sem or m.percentile > (100 - sem):
-            next
-        else:
-            keep.append(m)
-    return keep
-
-
-def cusum(data, months_smoothing, sensitivity):
-    """performs the CUSUM algorithm on input data string"""
-    # convert missing percentile values from None to numpy nan
-    data = np.array(map(lambda x: np.nan
-                        if x is None else x, data))
-    smax = [0]
-    smin = [0]
-    # set target_mean and alert_threshold at start
-    # & if alert_threshold reached
-    non_missing_percentiles = data[~np.isnan(data)]
-
-    # the reference percentile is the first N non-missing months.  is
-    # this correct? Should it actually include the nulls? Let's wait
-    # to see how we reset the reference later.
-    target_mean = [
-        np.mean(non_missing_percentiles[0:months_smoothing])]
-
-    # relative to how close all the measurements are to the mean. So
-    # if they deviate from the mean by a total of X...
-    alert_threshold = [
-        np.std(non_missing_percentiles[0:months_smoothing]) * sensitivity]
-    alert = []
-    alert_percentile_pos = [None]
-    alert_percentile_neg = [None]
-    # we never get an alert at position len(data). Why?
-    for i in range(1, len(data)):
-        if smax[i-1] > alert_threshold[i-1] or smin[i-1] < -alert_threshold[i-1]:
-            # generate temp smax/smin
-            # Windows where n = 3
-            #      1, 2, 3, 4, 5, 6
-            # ref  -  -  -
-            # i=1  -
-            # i=2  -  -
-            # i=3  -  -  -
-            # i=4     -  -  -
-            # i=5        -  -  -
-            #
-            # initial ref perc:  2
-            # initial alert_threshold: 0.408
-            #      1, x, 3, 4, 5, 6
-            # ref  -     -  -
-            # i=1  -
-            # i=2  -
-            # i=3  -     -
-            # i=4        -  -
-            # i=5        -  -  -
-            # initial ref per: 2.67
-            # initial alert_threshold: 0.624
-            window = data[i-months_smoothing:i]
-
-            # smax is C+
-            # smin is C-
-            # C+ is cumulative difference between current value and the current mean + slack value (K)
-            # so "target_mean" should be "target_mean", alert_threshold should be current_slack_value.
-            # alert_threshold is defined as half of the difference between the next mean and the current one
-
-            # Define H = hs and K = ks, where s is the standard deviation of the sample variable
-            # used in forming the cusum. Using h = 4 or h = 5 and k = 0.5 gives good results
-
-            # So that means we want to use a target mean of the first
-            # N values, then when we go outside it, reset the target
-            # mean to be what? Should it include the sample variable or not?
-
-            # And what about K
-
-
-            # for any `i`, the window is everything up to but not
-            # including it; the calculated cusum is based on a mean
-            # that doesn't include it and on a stddev before *that*, the
-            target_mean.append(np.nanmean(window))
-            smax_temp = (max(0, data[i] - (target_mean[i] +
-                                           (0.5 * alert_threshold[i-1] /
-                                            sensitivity)) + smax[i-1]))
-            smin_temp = (min(0, data[i] - (target_mean[i] -
-                                           (0.5 * alert_threshold[i-1] /
-                                            sensitivity)) + smin[i-1]))
-
-            #test whether change still occuring *IN THE SAME DIRECTION*
-            ## positive change
-            if smax[i-1] < smax_temp and smax[i-1] > alert_threshold[i-1]:
-                alert_threshold.append(alert_threshold[i-1])
-                smax.append(smax_temp)
-                smin.append(smin_temp)
-                alert.append(i-1)
-                alert_percentile_pos.append(data[i])
-                alert_percentile_neg.append(None)
-            ## negative change
-            elif smin[i-1] > smin_temp and smin[i-1] < -alert_threshold[i-1]:
-                alert_threshold.append(alert_threshold[i-1])
-                smax.append(smax_temp)
-                smin.append(smin_temp)
-                alert.append(i-1)
-                alert_percentile_pos.append(None)
-                alert_percentile_neg.append(data[i])
-            ## if not, reset
-            else:
-                alert.append(i-1)
-                alert_threshold.append(np.std(data[i-months_smoothing:i]
-                                [~np.isnan(data[i-months_smoothing:i])])
-                                 * sensitivity) # +remove nan values
-                #reset smax/smin to 0
-                #modified to include the value for the current month
-                smax.append(max(0, data[i] - (target_mean[i] +
-                                              (0.5 * alert_threshold[i] /
-                                               sensitivity))))
-                smin.append(min(0, data[i] - (target_mean[i] -
-                                              (0.5 * alert_threshold[i] /
-                                               sensitivity))))
-                alert_percentile_pos.append(None)
-                alert_percentile_neg.append(None)
-        #else append previous values
-        else:
-            target_mean.append(target_mean[i-1])
-            alert_threshold.append(alert_threshold[i-1])
-
-            #calculate smax/smin XXX I think this should be i-1
-            smax.append(max(0, data[i] - (target_mean[i] +
-                                          (0.5 * alert_threshold[i] /
-                                           sensitivity)) + smax[i-1]))
-            smin.append(min(0, data[i] - (target_mean[i] -
-                                          (0.5 * alert_threshold[i] /
-                                           sensitivity)) + smin[i-1]))
-            if smax[i] > alert_threshold[i]:
-                alert_percentile_pos.append(data[i])
-                alert_percentile_neg.append(None)
-            elif smin[i] < -alert_threshold[i]:
-                alert_percentile_neg.append(data[i])
-                alert_percentile_pos.append(None)
-            else:
-                alert_percentile_pos.append(None)
-                alert_percentile_neg.append(None)
-    return {'smax':smax, 'smin':smin,
-            'target_mean':target_mean,
-            'alert_threshold':alert_threshold,
-            'alert':alert,
-            'alert_percentile_pos':alert_percentile_pos,
-            'alert_percentile_neg':alert_percentile_neg}
-
-
 class InterestingMeasureFinder(object):
     def __init__(self, practice=None, pct=None,
                  interesting_saving=1000,
-                 interesting_percentile_change=10):
+                 interesting_change_window=12):
         assert practice or pct
         self.practice = practice
         self.pct = pct
-        self.interesting_percentile_change = interesting_percentile_change
+        self.interesting_change_window = interesting_change_window
         self.interesting_saving = interesting_saving
 
     def months_ago(self, period):
@@ -446,22 +297,23 @@ class InterestingMeasureFinder(object):
         """
         return self._best_or_worst_performing_in_period(period, 'best')
 
-    def most_change_in_period(self, period):
-        """Every measure where the specified organisation has changed by more
-        than 10 centiles in the specified time period, ordered by rate
-        of change.
-
-        The rate of change is worked out using a line of best fit.
+    def most_change_against_window(self, window):
+        """
+        XXX
 
         Returns a list of triples of (measure, change_from, change_to)
 
         """
         improvements = []
         declines = []
+        # We multiply the window because we want to include alerts
+        # that are continuing after they were first detected
+        window_multiplier = 1.5
+        window_plus = int(round(window * window_multiplier))
         for measure in Measure.objects.all():
             measure_filter = {
                 'measure': measure,
-                'month__gte': self.months_ago(period),
+                'month__gte': self.months_ago(window_plus),
                 'percentile__isnull': False
             }
             if self.practice:
@@ -472,33 +324,25 @@ class InterestingMeasureFinder(object):
             percentiles = MeasureValue.objects.filter(
                 **measure_filter).order_by('month').values_list(
                     'percentile', flat=True)
-            if len(percentiles) == period:
-                x = np.arange(period)
-                y = np.array(percentiles)
-                p, res, _, _, _ = np.polyfit(x, y, 1, full=True)
-                m, b = p
-                residuals = res[0]
-                start_centile = b
-                end_centile = m * (period - 1) + b
-                if residuals < 1200:
-                    delta = start_centile - end_centile
-                    data = (m, measure, start_centile,
-                            end_centile, residuals)
-                    if delta >= self.interesting_percentile_change:
-                        if measure.low_is_good:
-                            improvements.append(data)
-                        else:
-                            declines.append(data)
-                    elif delta <= (0 - self.interesting_percentile_change):
-                        if measure.low_is_good:
-                            declines.append(data)
-                        else:
-                            improvements.append(data)
-
-        improvements = sorted(improvements, key=lambda x: -abs(x[0]))
-        declines = sorted(declines, key=lambda x: -abs(x[0]))
-        return {'improvements': [d[1:] for d in improvements],
-                'declines': [d[1:] for d in declines]}
+            cusum = CUSUM(percentiles, window_size=window, sensitivity=5)
+            cusum.work()
+            last_alert = cusum.get_last_alert_info()
+            if last_alert:
+                last_alert['measure'] = measure
+                if last_alert['from'] < last_alert['to']:
+                    if measure.low_is_good:
+                        declines.append(last_alert)
+                    else:
+                        improvements.append(last_alert)
+                else:
+                    if measure.low_is_good:
+                        improvements.append(last_alert)
+                    else:
+                        declines.append(last_alert)
+        improvements = sorted(improvements, key=lambda x: -abs(x['to'] - x['from']))
+        declines = sorted(declines, key=lambda x: -abs(x['to'] - x['from']))
+        return {'improvements': improvements,
+                'declines': declines}
 
     def top_and_total_savings_in_period(self, period):
         """Sum total possible savings over time, and find measures where
@@ -570,7 +414,7 @@ class InterestingMeasureFinder(object):
     def context_for_org_email(self):
         worst = self.worst_performing_in_period(3)
         best = self.best_performing_in_period(3)
-        most_changing = self.most_change_in_period(9)
+        most_changing = self.most_change_against_window(12)
         interesting = []
         most_changing_interesting = []
         for extreme in [worst, best]:
