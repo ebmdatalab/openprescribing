@@ -22,7 +22,7 @@
 10  20  30  40  50  40  30  20  10  10
                 u               d   d
 
-# Symmetric increase/decline, but ending with zeros  XXX
+# Symmetric increase/decline, but ending with zeros. This is an odd edge case: if they were ones the downward alerts would continue
 10  20  30  40  50  40  30  20  10  0   0
                 u               d
 
@@ -38,7 +38,7 @@
 0   20  30  40  50  60  70  80  90
                     u   u   u   u
 
-# A noisy start breaks the algorithm. We'd expect Up from 60 but don't because the threshold is set very high by the noise and then is never crossed. XXX
+# A noisy start breaks the algorithm. We'd expect an up alert from 60 but don't because the threshold is set very high by the noise and then is never crossed.
 100 0   100 0   100 0   20  30  40  50  60  70  80  90
 
 
@@ -54,7 +54,7 @@
 0   20  40  60  80  90  100
                 u   u   u
 
-# Wobbly peak. XXX all except last two are odd
+# Wobbly peak. All except last two are odd. This is partly because the smoothing windows are very short, so the standard deviations are low.
 0   30  60  90  80  80  80  30  0   30  60  90  100
                     u       d       d       u   d
 
