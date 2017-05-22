@@ -604,7 +604,7 @@ def make_org_email(org_bookmark, stats):
                 msg,
                 org_bookmark.dashboard_url(),
                 getting_worse_file.name,
-                '#' + most_changing['declines'][0][0].id
+                '#' + most_changing['declines']['measure'][0].id
             )
         if stats['worst']:
             still_bad_img = attach_image(
