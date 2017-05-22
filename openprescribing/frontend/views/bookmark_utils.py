@@ -42,10 +42,11 @@ class CUSUM(object):
     def __init__(self, data, window_size=12, sensitivity=5):
         data = np.array(map(lambda x: np.nan
                             if x is None else x, data))
-        ## Remove sufficient leading nulls to ensure we can start with
-        ## any value
+        # Remove sufficient leading nulls to ensure we can start with
+        # any value
         self.start_index = 0
-        while pd.isnull(data[self.start_index:self.start_index+window_size]).all():
+        while pd.isnull(
+                data[self.start_index:self.start_index+window_size]).all():
             if self.start_index > len(data):
                 data = []
                 break
@@ -203,7 +204,6 @@ class CUSUM(object):
         return cusum_pos, cusum_neg
 
 
-
 def remove_jagged(measurevalues):
     """Remove records that are outside the standard error of the mean or
     where they hit 0% or 100% more than once.
@@ -339,8 +339,12 @@ class InterestingMeasureFinder(object):
                         improvements.append(last_alert)
                     else:
                         declines.append(last_alert)
-        improvements = sorted(improvements, key=lambda x: -abs(x['to'] - x['from']))
-        declines = sorted(declines, key=lambda x: -abs(x['to'] - x['from']))
+        improvements = sorted(
+            improvements,
+            key=lambda x: -abs(x['to'] - x['from']))
+        declines = sorted(
+            declines,
+            key=lambda x: -abs(x['to'] - x['from']))
         return {'improvements': improvements,
                 'declines': declines}
 
@@ -400,10 +404,14 @@ class InterestingMeasureFinder(object):
         }
 
     def _move_non_ordinal(self, from_list, to_list):
+        """Move any non-ordinal measures (i.e. where `low_is_good` is None)
+        from one list to another
+
+        """
         for measure in from_list[:]:
             if type(measure) == tuple:
                 # As returned by most_changing function
-                m = measure[0]
+                m = measure['measure']
             else:
                 m = measure
             if m.low_is_good is None:
@@ -604,7 +612,7 @@ def make_org_email(org_bookmark, stats):
                 msg,
                 org_bookmark.dashboard_url(),
                 getting_worse_file.name,
-                '#' + most_changing['declines']['measure'][0].id
+                '#' + most_changing['declines'][0]['measure'].id
             )
         if stats['worst']:
             still_bad_img = attach_image(

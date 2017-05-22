@@ -39,7 +39,7 @@
     <p>
       {% for d in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          We found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:d.to}} over the last {{ d.period }} months on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>:<br>
+          We found that this {{ bookmark.org_type }} slipped {{d.from|deltawords:d.to}} over the last {{ d.period }} months on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>:<br>
         <a href="{{ dashboard_uri }}#{{d.measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
           It also slipped {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
@@ -48,7 +48,7 @@
            It also slipped:
            <ul>
           {% endif %}
-            <li>{{percent_from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
+            <li>{{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -110,7 +110,7 @@
         {% if forloop.counter == 1 %}
           <p>Over the last {{d.period}} months this {{ bookmark.org_type }} improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also improved {{percent_from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
+          It also improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
@@ -151,18 +151,18 @@
   {% endif %}
 
   {% if stats.most_changing_interesting %}
-      {% for measure, percent_from, percent_to, _ in stats.most_changing_interesting %}
+      {% for d in stats.most_changing_interesting %}
         {% if forloop.counter == 1 %}
-          <p>We found that over the last 9 months this {{ bookmark.org_type }} moved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>We found that over the last {{ d.period }} months this {{ bookmark.org_type }} moved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also changed {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also changed {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
            It also changed:
            <ul>
           {% endif %}
-            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}

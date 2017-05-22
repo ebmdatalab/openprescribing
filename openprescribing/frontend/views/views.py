@@ -355,7 +355,7 @@ def custom_500(request):
         context['reason'] = ("The database took too long to respond.  If you "
                              "were running an analysis with multiple codes, "
                              "try again with fewer.")
-    if (request.META['HTTP_ACCEPT'].find('application/json') > -1 or
+    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1 or
        request.is_ajax()):
         return HttpResponse(context['reason'], status=500)
     else:

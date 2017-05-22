@@ -69,9 +69,14 @@ class TestBookmarkViews(TransactionTestCase):
         from test_bookmark_utils import _makeContext
         from django.conf import settings
         context = _makeContext(
-            declines=[(Measure(id='foo'), 30, 10, 0)],
+            declines=[{'measure': Measure(id='foo'), 'from': 30, 'to': 10}],
             interesting=[Measure(id='bar')],
-            most_changing_interesting=[(Measure(id='baz'), 30, 10, 0)],
+            most_changing_interesting=[
+                {
+                    'measure': Measure(id='baz'),
+                    'from': 30,
+                    'to': 10
+                }],
         )
         test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
                          'alert-email-image.png')
