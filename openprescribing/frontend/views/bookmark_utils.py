@@ -389,7 +389,6 @@ class InterestingMeasureFinder(object):
             measure_filter['practice'] = None
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), 'cost_savings')
-
         for row in df.itertuples():
             measure = Measure.objects.get(pk=row[0])
             cost_savings = row[1:]
@@ -397,7 +396,7 @@ class InterestingMeasureFinder(object):
                 if len(cost_savings) != period:
                     continue
                 savings_at_50th = [
-                    saving['50'] for saving in cost_savings]
+                    saving['50'] for saving in cost_savings if isinstance(saving, dict)]
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if savings_or_loss_for_measure >= self.interesting_saving:
                     possible_savings.append(
@@ -408,10 +407,10 @@ class InterestingMeasureFinder(object):
                         (measure, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
-                        max(0, saving['10']) for saving in cost_savings])
+                        max(0, saving['10']) for saving in cost_savings if isinstance(saving, dict)])
                 else:
                     savings_at_10th = sum([
-                        max(0, saving['90']) for saving in cost_savings])
+                        max(0, saving['90']) for saving in cost_savings if isinstance(saving, dict)])
                 total_savings += savings_at_10th
         return {
             'possible_savings': sorted(
@@ -448,13 +447,14 @@ class InterestingMeasureFinder(object):
         for extreme in [most_changing['improvements'],
                         most_changing['declines']]:
             self._move_non_ordinal(extreme, most_changing_interesting)
+        top_savings = self.top_and_total_savings_in_period(6)
         return {
             'interesting': interesting,
             'most_changing_interesting': most_changing_interesting,
             'worst': worst,
             'best': best,
             'most_changing': most_changing,
-            'top_savings': self.top_and_total_savings_in_period(6)}
+            'top_savings': top_savings}
 
 
 def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
