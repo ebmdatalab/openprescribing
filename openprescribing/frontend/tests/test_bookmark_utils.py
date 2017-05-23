@@ -583,6 +583,11 @@ class UnescapeTestCase(unittest.TestCase):
 
 
 class TestContextForOrgEmail(unittest.TestCase):
+    def setUp(self):
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.today())
+
     @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
            'worst_performing_in_period')
     @patch('frontend.views.bookmark_utils.InterestingMeasureFinder.'
@@ -599,8 +604,10 @@ class TestContextForOrgEmail(unittest.TestCase):
         non_ordinal_measure_2 = MagicMock(low_is_good=None)
         most_change_against_window.return_value = {
             'improvements': [
-                (ordinal_measure_1,)],
-            'declines': [(non_ordinal_measure_1,), (non_ordinal_measure_2,)]
+                {'measure': ordinal_measure_1}],
+            'declines': [
+                {'measure': non_ordinal_measure_1},
+                {'measure': non_ordinal_measure_2}]
         }
         best_performing_in_period.return_value = [
             ordinal_measure_1, non_ordinal_measure_1]
@@ -611,7 +618,9 @@ class TestContextForOrgEmail(unittest.TestCase):
         context = finder.context_for_org_email()
         self.assertEqual(
             context['most_changing_interesting'],
-            [(non_ordinal_measure_1,), (non_ordinal_measure_2,)])
+            [{'measure': non_ordinal_measure_1},
+             {'measure': non_ordinal_measure_2}]
+        )
         self.assertEqual(
             context['interesting'], [non_ordinal_measure_1])
         self.assertEqual(
@@ -619,7 +628,8 @@ class TestContextForOrgEmail(unittest.TestCase):
         self.assertEqual(
             context['worst'], [ordinal_measure_1])
         self.assertEqual(
-            context['most_changing']['improvements'], [(ordinal_measure_1,)])
+            context['most_changing']['improvements'],
+            [{'measure': ordinal_measure_1}])
 
 
 class TruncateSubjectTestCase(unittest.TestCase):

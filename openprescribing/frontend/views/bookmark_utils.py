@@ -39,7 +39,7 @@ class CUSUM(object):
     and our paper
     http://dl4a.org/uploads/pdf/581SPC.pdf
     """
-    def __init__(self, data, window_size=12, sensitivity=5):
+    def __init__(self, data, window_size=12, sensitivity=5, name=""):
         data = np.array(map(lambda x: np.nan
                             if x is None else x, data))
         # Remove sufficient leading nulls to ensure we can start with
@@ -61,6 +61,7 @@ class CUSUM(object):
         self.alert_indices = []
         self.pos_alerts = []
         self.neg_alerts = []
+        self.name = name
 
     def work(self):
         for i, datum in enumerate(self.data):
@@ -126,6 +127,7 @@ class CUSUM(object):
 
     def __repr__(self):
         return """
+        name:             {name}
         data:             {data}
         pos_cusums:       {pos_cusums}
         neg_cusums:       {neg_cusums}
