@@ -198,6 +198,21 @@ class CUSUM(object):
         return cusum_pos, cusum_neg
 
 
+def percentiles_without_jaggedness(df2, is_percentage=False):
+    sem = df2.percentile.std() / np.sqrt(len(df2))
+    df2.extremes = 0
+    if is_percentage:
+        df2.extremes += df2.calc_value[df2.calc_value == 1.0].count()
+    df2.extremes += df2.calc_value[df2.calc_value == 0.0].count()
+    df2.extremes += df2.numerator[df2.numerator < 15].count()
+    df2.extremes += df2.percentile[(df2.percentile < sem) |
+                                   (df2.percentile > (100 - sem))].count()
+    if df2.extremes == 0:
+        return df2.percentile
+    else:
+        return []
+
+
 def remove_jagged(measurevalues):
     """Remove records that are outside the standard error of the mean or
     where they hit 0% or 100% more than once.
@@ -243,34 +258,30 @@ class InterestingMeasureFinder(object):
     def _best_or_worst_performing_in_period(self, period, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
         worst = []
-        for measure in Measure.objects.all():
-            measure_filter = {
-                'measure': measure, 'month__gte': self.months_ago(period)}
-            if self.practice:
-                measure_filter['practice'] = self.practice
-            else:
-                measure_filter['pct'] = self.pct
-                measure_filter['practice'] = None
-            invert_percentile_for_comparison = False
-            if measure.low_is_good:
-                if best_or_worst == 'worst':
-                    invert_percentile_for_comparison = True
-                    measure_filter['percentile__gte'] = 90
-                else:
-                    measure_filter['percentile__lte'] = 10
-            else:
-                if best_or_worst == 'worst':
-                    measure_filter['percentile__lte'] = 10
-                else:
-                    invert_percentile_for_comparison = True
-                    measure_filter['percentile__gte'] = 90
-            is_worst = remove_jagged(
-                MeasureValue.objects.filter(**measure_filter))
-            if len(is_worst) == period:
+        measure_filter = {
+            'month__gte': self.months_ago(period)}
+        if self.practice:
+            measure_filter['practice'] = self.practice
+        else:
+            measure_filter['pct'] = self.pct
+            measure_filter['practice'] = None
+        invert_percentile_for_comparison = False
+        if best_or_worst == 'worst':
+            invert_percentile_for_comparison = True
+            measure_filter['percentile__gte'] = 90
+        else:
+            measure_filter['percentile__lte'] = 10
+        df = self.measurevalues_dataframe(
+            MeasureValue.objects.filter(**measure_filter),
+            ['numerator', 'calc_value', 'percentile'])
+        for row in df.iterrows():
+            measure = Measure.objects.get(pk=row[0])
+            df2 = row[1]
+            non_jagged = percentiles_without_jaggedness(df2, measure.is_percentage)
+            if len(non_jagged) == period:
+                comparator = non_jagged[-1]
                 if invert_percentile_for_comparison:
-                    comparator = 100 - is_worst[-1].percentile
-                else:
-                    comparator = is_worst[-1].percentile
+                    comparator = 100 - comparator
                 worst.append((measure, comparator))
         worst = sorted(worst, key=lambda x: x[-1])
         return [x[0] for x in worst]
@@ -354,7 +365,9 @@ class InterestingMeasureFinder(object):
         `data_col` values.
 
         """
-        data_cols = ['month', 'measure_id'] + [data_col]
+        if not isinstance(data_col, list):
+            data_col = [data_col]
+        data_cols = ['month', 'measure_id'] + data_col
         data = list(queryset.order_by('measure_id', 'month').values_list(
             *data_cols))
         if data:

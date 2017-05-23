@@ -202,14 +202,6 @@ class TestBookmarkUtilsPerforming(TestCase):
         worst_measures = finder.worst_performing_in_period(3)
         self.assertIn(self.measure, worst_measures)
 
-    def test_miss_where_not_better_in_specified_number_of_months(self):
-        self.measure.low_is_good = False
-        self.measure.save()
-        finder = bookmark_utils.InterestingMeasureFinder(
-            pct=self.pct)
-        worst_measures = finder.worst_performing_in_period(3)
-        self.assertFalse(worst_measures)
-
     def test_miss_where_not_enough_global_data(self):
         finder = bookmark_utils.InterestingMeasureFinder(
             pct=self.pct)
@@ -236,14 +228,6 @@ class TestBookmarkUtilsPerforming(TestCase):
             practice=self.low_percentile_practice)
         best_measures = finder.best_performing_in_period(3)
         self.assertIn(self.measure, best_measures)
-
-    def test_no_hit_where_practice_best_and_low_is_bad(self):
-        self.measure.low_is_good = False
-        self.measure.save()
-        finder = bookmark_utils.InterestingMeasureFinder(
-            practice=self.low_percentile_practice)
-        best_measures = finder.best_performing_in_period(3)
-        self.assertFalse(best_measures)
 
 
 class TestLastAlertFinding(SimpleTestCase):
