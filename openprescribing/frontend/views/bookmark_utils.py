@@ -304,22 +304,25 @@ class InterestingMeasureFinder(object):
         # that are continuing after they were first detected
         window_multiplier = 1.5
         window_plus = int(round(window * window_multiplier))
-        for measure in Measure.objects.all():
-            measure_filter = {
-                'measure': measure,
-                'month__gte': self.months_ago(window_plus),
-                'percentile__isnull': False
-            }
-            if self.practice:
-                measure_filter['practice'] = self.practice
-            else:
-                measure_filter['pct'] = self.pct
-                measure_filter['practice'] = None
-            percentiles = MeasureValue.objects.filter(
-                **measure_filter).order_by('month').values_list(
-                    'percentile', flat=True)
-            cusum = CUSUM(percentiles, window_size=window, sensitivity=5)
+        measure_filter = {
+            'month__gte': self.months_ago(window_plus)
+        }
+        if self.practice:
+            measure_filter['practice'] = self.practice
+        else:
+            measure_filter['pct'] = self.pct
+            measure_filter['practice'] = None
+        import datetime
+        df = self.measurevalues_dataframe(
+            MeasureValue.objects.filter(**measure_filter), 'percentile')
+        for row in df.itertuples():
+            measure = Measure.objects.get(pk=row[0])
+            percentiles = row[1:]
+            logger.error("##### %s" % measure.id)
+            cusum = CUSUM(percentiles, window_size=window, sensitivity=5, name=measure.id)
             cusum.work()
+            logger.error(cusum)
+
             last_alert = cusum.get_last_alert_info()
             if last_alert:
                 last_alert['measure'] = measure
@@ -333,14 +336,35 @@ class InterestingMeasureFinder(object):
                         improvements.append(last_alert)
                     else:
                         declines.append(last_alert)
+        logger.error("##### worked out changes %s" % datetime.datetime.now())
         improvements = sorted(
             improvements,
             key=lambda x: -abs(x['to'] - x['from']))
         declines = sorted(
             declines,
             key=lambda x: -abs(x['to'] - x['from']))
+        logger.error("improvements %s" % improvements)
+        logger.error("declines %s" % declines)
+        logger.error("-------")
         return {'improvements': improvements,
                 'declines': declines}
+
+    def measurevalues_dataframe(self, queryset=None, data_col=None):
+        """Return a dataframe indexed by measure, with month columns, and
+        `data_col` values.
+
+        """
+        data_cols = ['month', 'measure_id'] + [data_col]
+        data = list(queryset.order_by('measure_id', 'month').values_list(
+            *data_cols))
+        if data:
+            df = pd.DataFrame.from_records(
+                data,
+                columns=data_cols,
+                index=['measure_id', 'month'])
+            return df.unstack(level='month')
+        else:
+            return pd.DataFrame()
 
     def top_and_total_savings_in_period(self, period):
         """Sum total possible savings over time, and find measures where
@@ -356,22 +380,24 @@ class InterestingMeasureFinder(object):
         possible_savings = []
         achieved_savings = []
         total_savings = 0
-        for measure in Measure.objects.all():
+        measure_filter = {
+            'month__gte': self.months_ago(period)}
+        if self.practice:
+            measure_filter['practice'] = self.practice
+        else:
+            measure_filter['pct'] = self.pct
+            measure_filter['practice'] = None
+        df = self.measurevalues_dataframe(
+            MeasureValue.objects.filter(**measure_filter), 'cost_savings')
+
+        for row in df.itertuples():
+            measure = Measure.objects.get(pk=row[0])
+            cost_savings = row[1:]
             if measure.is_cost_based:
-                measure_filter = {
-                    'measure': measure, 'month__gte': self.months_ago(period)}
-                if self.practice:
-                    measure_filter['practice'] = self.practice
-                else:
-                    measure_filter['pct'] = self.pct
-                    measure_filter['practice'] = None
-                values = list(
-                    MeasureValue.objects.filter(**measure_filter))
-                if len(values) != period:
+                if len(cost_savings) != period:
                     continue
                 savings_at_50th = [
-                    x.cost_savings['50'] for x in
-                    values]
+                    saving['50'] for saving in cost_savings]
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if savings_or_loss_for_measure >= self.interesting_saving:
                     possible_savings.append(
@@ -382,12 +408,10 @@ class InterestingMeasureFinder(object):
                         (measure, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
-                        max(0, x.cost_savings['10']) for x in
-                        values])
+                        max(0, saving['10']) for saving in cost_savings])
                 else:
                     savings_at_10th = sum([
-                        max(0, x.cost_savings['90']) for x in
-                        values])
+                        max(0, saving['90']) for saving in cost_savings])
                 total_savings += savings_at_10th
         return {
             'possible_savings': sorted(
@@ -403,7 +427,7 @@ class InterestingMeasureFinder(object):
 
         """
         for measure in from_list[:]:
-            if type(measure) == tuple:
+            if type(measure) == dict:
                 # As returned by most_changing function
                 m = measure['measure']
             else:
