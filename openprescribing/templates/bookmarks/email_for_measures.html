@@ -39,7 +39,7 @@
     <p>
       {% for d in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          We found that this {{ bookmark.org_type }} slipped {{d.from|deltawords:d.to}} over the last {{ d.period }} months on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>:<br>
+          We found that this {{ bookmark.org_type }} slipped {{d.from|deltawords:d.to}} over the last {{ d.period }} month{{ d.period|pluralize }} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>:<br>
         <a href="{{ dashboard_uri }}#{{d.measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
           It also slipped {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
@@ -108,7 +108,7 @@
     <h3 class="better">Prescribing measures which are getting better</h3>
       {% for d in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>Over the last {{d.period}} months this {{ bookmark.org_type }} improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
+          <p>Over the last {{d.period}} month{{ d.period|pluralize }} this {{ bookmark.org_type }} improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
           It also improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
         {% else %}
