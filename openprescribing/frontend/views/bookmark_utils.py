@@ -99,27 +99,19 @@ class CUSUM(object):
                 'alert_percentile_neg': self.neg_alerts}
 
     def get_last_alert_info(self):
-        if any(self.alert_indices):
-            last_alert = self.alert_indices[-1]
-            if self.pos_alerts[last_alert]:
-                # the last change was positive
-                alerts = self.pos_alerts
-            elif self.neg_alerts[last_alert]:
-                # the last change was negative
-                alerts = self.neg_alerts
-            start_index = end_index = None
-            for i in range(len(alerts), 0, -1):
-                if start_index and end_index:
+        if (any(self.alert_indices) and
+           self.alert_indices[-1] == len(self.data) - 1):
+            end_index = start_index = self.alert_indices[-1]
+            for x in list(reversed(self.alert_indices))[1:]:
+                if x == start_index - 1:
+                    start_index = x
+                else:
                     break
-                if alerts[i-1]:
-                    if end_index:
-                        start_index = i-1
-                    elif not end_index:
-                        end_index = i-1
+            duration = (end_index - start_index) + 1
             return {
                 'from': self.data[start_index-1],
                 'to': self.data[end_index],
-                'period': (end_index - start_index) + 1}
+                'period': duration}
         else:
             return None
 

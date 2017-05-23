@@ -1,9 +1,9 @@
 from dateutil.relativedelta import relativedelta
-import json
 import os
 import re
 import unittest
 
+from django.test import SimpleTestCase
 from django.test import TestCase
 import base64
 from datetime import datetime
@@ -244,6 +244,48 @@ class TestBookmarkUtilsPerforming(TestCase):
             practice=self.low_percentile_practice)
         best_measures = finder.best_performing_in_period(3)
         self.assertFalse(best_measures)
+
+
+class TestLastAlertFinding(SimpleTestCase):
+    def test_no_alert_when_empty(self):
+        cusum = bookmark_utils.CUSUM(['a', 'b'])
+        cusum.alert_indices = []
+        self.assertIsNone(cusum.get_last_alert_info(), None)
+
+    def test_no_alert_when_alert_not_most_recent(self):
+        cusum = bookmark_utils.CUSUM(['a', 'b'])
+        cusum.alert_indices = [0]
+        self.assertIsNone(cusum.get_last_alert_info(), None)
+
+    def test_alert_parsed_when_only_alert(self):
+        cusum = bookmark_utils.CUSUM(['a', 'b', 'c'])
+        cusum.alert_indices = [2]
+        self.assertDictEqual(
+            cusum.get_last_alert_info(),
+            {'from': 'b',
+             'to': 'c',
+             'period': 1}
+        )
+
+    def test_period_parsed(self):
+        cusum = bookmark_utils.CUSUM(['a', 'b', 'c'])
+        cusum.alert_indices = [1, 2]
+        self.assertDictEqual(
+            cusum.get_last_alert_info(),
+            {'from': 'a',
+             'to': 'c',
+             'period': 2}
+        )
+
+    def test_alert_parsed_when_more_than_one_alert(self):
+        cusum = bookmark_utils.CUSUM(['1', '2', 'a', 'b'])
+        cusum.alert_indices = [1, 3]
+        self.assertDictEqual(
+            cusum.get_last_alert_info(),
+            {'from': 'a',
+             'to': 'b',
+             'period': 1}
+        )
 
 
 class TestBookmarkUtilsChanging(TestCase):
