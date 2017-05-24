@@ -187,7 +187,10 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_has_ga_tracking(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            _makeContext(declines=[
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12}]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -198,7 +201,10 @@ class OrgEmailTestCase(TestCase):
         attach_image.return_value = 'unique-image-id'
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            _makeContext(declines=[
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12}]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -216,8 +222,12 @@ class OrgEmailTestCase(TestCase):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                (measure, 99.92, 0.12, 10.002),
-                (measure, 30, 10, 0),
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12},
+                {'measure': measure,
+                 'from': 30,
+                 'to': 10},
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
@@ -229,9 +239,15 @@ class OrgEmailTestCase(TestCase):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                (measure, 99.92, 0.12, 10.002),
-                (measure, 30, 10, 0),
-                (measure, 20, 10, 0)
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12},
+                {'measure': measure,
+                 'from': 30,
+                 'to': 10},
+                {'measure': measure,
+                 'from': 20,
+                 'to': 10},
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
