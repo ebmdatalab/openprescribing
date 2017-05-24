@@ -56,6 +56,20 @@ Highcharts.setOptions({
 });
 
 var baseOptions = {
+  addWatermark: function(chart) {
+    $(chart.container.parentNode).find('.highcharts-watermark').remove();
+    var f = chart.renderer.label(
+      'openprescribing.net', 0, 0, 'rect', 0, 0, false, false, 'watermark').css({
+        color: '#DDD',
+        fontSize: '24px'
+      }).add();
+    var x = chart.chartWidth / 2 - f.width / 2;
+    var y = chart.chartHeight / 4;
+    f.attr({
+      transform: 'translate(' + x + ', ' + y + ')',
+    });
+    f.toFront();
+  },
   global: {
     useUTC: false
   },
@@ -65,7 +79,11 @@ var baseOptions = {
     plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
     showCrosshair: true,
     events: {
+      redraw: function() {
+        this.options.addWatermark(this);
+      },
       load: function() {
+        this.options.addWatermark(this);
         // change cursor to crosshair to indicate zoom is possible
         if (this.plotBackground && this.userOptions.chart.showCrosshair) {
           this.plotBackground.toFront().css({ // move on top to get all events
@@ -79,19 +97,7 @@ var baseOptions = {
     }
   },
   credits: {
-    enabled: true,
-    position: {
-      align: 'center',
-      verticalAlign: 'top',
-      y: 96
-    },
-    style: {
-      color: '#ccc',
-      fontSize: '24px',
-      opacity: 0.2,
-      cursor: 'crosshair'
-    },
-    text: "openprescribing.net"
+    enabled: false,
   },
   title: {
     text: null
@@ -160,6 +166,7 @@ barOptions.chart.renderTo = 'summarychart';
 // charts except the bar chart, where we have to stack it manually, so
 // the tooltips still work
 barOptions.chart.events.load = function() {
+  this.options.addWatermark(this);
   if (this.plotBackground) {
     this.plotBackground.css({
       zIndex: 2,

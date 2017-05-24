@@ -330,6 +330,8 @@ var analyseChart = {
     // Tab clicks.
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
       $(window).resize(); // CSS hack.
+      var chart = _this.el.chartEl.highcharts();
+      chart.reflow();
       var target = ($(this).data('target'));
       if ((target === '#chart-panel') ||
           (target === '#data-panel')) {
