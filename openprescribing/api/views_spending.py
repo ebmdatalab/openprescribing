@@ -12,7 +12,7 @@ def total_spending(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-        err = 'Error: Codes must all be the same length'
+        err = "Error: BNF Codes must all be the same length if written in the same search box. For example, you cannot search for Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this data, please <a href='mailto:feedback@openprescribing.net' class='doorbell-show'>get in touch</a> and we may be able to extract it for you"
         return Response(err, status=400)
 
     query = _get_query_for_total_spending(codes)
@@ -33,7 +33,7 @@ def spending_by_ccg(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-        err = 'Error: Codes must all be the same length'
+        err = "Error: BNF Codes must all be the same length if written in the same search box. For example, you cannot search for Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this data, please <a href='mailto:feedback@openprescribing.net' class='doorbell-show'>get in touch</a> and we may be able to extract it for you"
         return Response(err, status=400)
 
     if not spending_type or spending_type == 'bnf-section' \
