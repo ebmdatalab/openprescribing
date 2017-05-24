@@ -100,12 +100,24 @@ def each_cusum_test(test_cases):
     for i in range(0, len(test_cases), 4):
         # Validate each row first
         alignment_header = '*'.join(['...'] * 12)
-        assert test_cases[i].startswith("#"), "At line %s: %s does not start with #" % (i, test_cases[i])
+        comment_msg = "At line %s: %s does not start with #" % (
+            i, test_cases[i])
+        assert test_cases[i].startswith("#"), comment_msg
         test_name = test_cases[i].strip()
-        assert test_cases[i+1][3::4].strip() == '', "%s: Every column must be three wide followed by a space: \n%s\n%s" % (test_name, alignment_header, test_cases[i+1])
-        directions = [n for n, ltr in enumerate(test_cases[i+2]) if ltr in ('u', 'd')]
-        assert sum([x % 4 for x in directions]) == 0, "%s: Every column must be three wide followed by a space:\n%s\n%s" % (test_name, alignment_header,  str(test_cases[i+2]))
-        data = [round(int(x)/100.0, 2) if x.strip() else None for x in re.findall('(   |\d+ {0,2}) ?', test_cases[i+1])]
+        alignment_msg = ("%s: Every column must be three wide "
+                         "followed by a space: \n%s\n%s" %
+                         (test_name, alignment_header, test_cases[i+1]))
+        assert test_cases[i+1][3::4].strip() == '', alignment_msg
+        directions = [n for n, ltr in enumerate(test_cases[i+2])
+                      if ltr in ('u', 'd')]
+        alignment_msg = ("%s: Every column must be three wide followed "
+                         "by a space:\n%s\n%s" % (
+                               test_name,
+                               alignment_header,
+                               str(test_cases[i+2])))
+        assert sum([x % 4 for x in directions]) == 0, alignment_msg
+        data = [round(int(x)/100.0, 2) if x.strip() else None
+                for x in re.findall('(   |\d+ {0,2}) ?', test_cases[i+1])]
         expected = test_cases[i+2].rstrip()
         yield {'name': test_name, 'data': data, 'expected': expected}
 
@@ -143,7 +155,8 @@ class TestCUSUM(unittest.TestCase):
                 'alert_test_cases.txt', 'rb') as expected:
             test_cases = expected.readlines()
         for test in each_cusum_test(test_cases):
-            new_result = bookmark_utils.CUSUM(test['data'], window_size=3, sensitivity=5).work()
+            new_result = bookmark_utils.CUSUM(
+                test['data'], window_size=3, sensitivity=5).work()
             new_result_formatted = extract_percentiles_for_alerts(new_result)
             error_message = "In test '%s':\n" % test['name']
             error_message += "   Input values: %s\n" % test['data']
@@ -152,6 +165,7 @@ class TestCUSUM(unittest.TestCase):
                 new_result_formatted,
                 test['expected'],
                 error_message + "            Got: %s" % new_result_formatted)
+
 
 class TestBookmarkUtilsPerforming(TestCase):
     fixtures = ['bookmark_alerts', 'measures']

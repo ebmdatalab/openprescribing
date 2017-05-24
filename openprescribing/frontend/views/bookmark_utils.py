@@ -173,7 +173,7 @@ class CUSUM(object):
 
     def new_alert_threshold(self, window):
         self.alert_thresholds.append(
-            np.nanstd(window * self.sensitivity))  # XXX didn't other version use n-1?
+            np.nanstd(window * self.sensitivity))
 
     def current_pos_cusum(self):
         return self.pos_cusums[-1]
@@ -199,6 +199,12 @@ class CUSUM(object):
 
 
 def percentiles_without_jaggedness(df2, is_percentage=False):
+    """Remove records that are outside the standard error of the mean or
+    where they hit 0% or 100% more than once.
+
+    The parameters used are no more than an educated guess.
+
+    """
     sem = df2.percentile.std() / np.sqrt(len(df2))
     df2.extremes = 0
     if is_percentage:
@@ -211,34 +217,6 @@ def percentiles_without_jaggedness(df2, is_percentage=False):
         return df2.percentile
     else:
         return []
-
-
-def remove_jagged(measurevalues):
-    """Remove records that are outside the standard error of the mean or
-    where they hit 0% or 100% more than once.
-
-    Bit of a guess as to if this'll work or not. Pending review by
-    real statistician.
-
-    """
-    values = [x.percentile for x in measurevalues]
-    sem = (np.std(values) /
-           np.sqrt(len(values)))
-    keep = []
-    extremes = 0
-    for x in measurevalues:
-        if x.measure.is_percentage:
-            if x.calc_value == 1.0:
-                extremes += 1
-        if x.calc_value == 0.0:
-            extremes += 1
-        if x.numerator and x.numerator < 15:
-            extremes += 1
-        if extremes > 1 or x.percentile < sem or x.percentile > (100 - sem):
-            next
-        else:
-            keep.append(x)
-    return keep
 
 
 class InterestingMeasureFinder(object):
@@ -276,8 +254,9 @@ class InterestingMeasureFinder(object):
             ['numerator', 'calc_value', 'percentile'])
         for row in df.iterrows():
             measure = Measure.objects.get(pk=row[0])
-            df2 = row[1]
-            non_jagged = percentiles_without_jaggedness(df2, measure.is_percentage)
+            measure_df = row[1]
+            non_jagged = percentiles_without_jaggedness(
+                measure_df, measure.is_percentage)
             if len(non_jagged) == period:
                 comparator = non_jagged[-1]
                 if invert_percentile_for_comparison:
@@ -303,10 +282,10 @@ class InterestingMeasureFinder(object):
         return self._best_or_worst_performing_in_period(period, 'best')
 
     def most_change_against_window(self, window):
-        """
-        XXX
+        """Use CUSUM algorithm to detect cumulative change from a reference
+        mean averaged over the previous `window` months.
 
-        Returns a list of triples of (measure, change_from, change_to)
+        Returns a list of dicts of `measure`, `from`, and `to`
 
         """
         improvements = []
@@ -323,16 +302,17 @@ class InterestingMeasureFinder(object):
         else:
             measure_filter['pct'] = self.pct
             measure_filter['practice'] = None
-        import datetime
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), 'percentile')
         for row in df.itertuples():
             measure = Measure.objects.get(pk=row[0])
             percentiles = row[1:]
-            logger.error("##### %s" % measure.id)
-            cusum = CUSUM(percentiles, window_size=window, sensitivity=5, name=measure.id)
+            cusum = CUSUM(
+                percentiles,
+                window_size=window,
+                sensitivity=5,
+                name=measure.id)
             cusum.work()
-            logger.error(cusum)
 
             last_alert = cusum.get_last_alert_info()
             if last_alert:
@@ -347,22 +327,19 @@ class InterestingMeasureFinder(object):
                         improvements.append(last_alert)
                     else:
                         declines.append(last_alert)
-        logger.error("##### worked out changes %s" % datetime.datetime.now())
         improvements = sorted(
             improvements,
             key=lambda x: -abs(x['to'] - x['from']))
         declines = sorted(
             declines,
             key=lambda x: -abs(x['to'] - x['from']))
-        logger.error("improvements %s" % improvements)
-        logger.error("declines %s" % declines)
-        logger.error("-------")
         return {'improvements': improvements,
                 'declines': declines}
 
     def measurevalues_dataframe(self, queryset=None, data_col=None):
-        """Return a dataframe indexed by measure, with month columns, and
-        `data_col` values.
+        """Given a queryset of many measurevalues across many measures,
+        returns a dataframe indexed by measure, with month columns,
+        and `data_col` values.
 
         """
         if not isinstance(data_col, list):
@@ -409,7 +386,8 @@ class InterestingMeasureFinder(object):
                 if len(cost_savings) != period:
                     continue
                 savings_at_50th = [
-                    saving['50'] for saving in cost_savings if isinstance(saving, dict)]
+                    saving['50'] for saving in cost_savings
+                    if isinstance(saving, dict)]
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if savings_or_loss_for_measure >= self.interesting_saving:
                     possible_savings.append(
@@ -420,10 +398,12 @@ class InterestingMeasureFinder(object):
                         (measure, -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
-                        max(0, saving['10']) for saving in cost_savings if isinstance(saving, dict)])
+                        max(0, saving['10']) for saving in cost_savings
+                        if isinstance(saving, dict)])
                 else:
                     savings_at_10th = sum([
-                        max(0, saving['90']) for saving in cost_savings if isinstance(saving, dict)])
+                        max(0, saving['90']) for saving in cost_savings
+                        if isinstance(saving, dict)])
                 total_savings += savings_at_10th
         return {
             'possible_savings': sorted(
