@@ -61,14 +61,13 @@ var baseOptions = {
     var f = chart.renderer.label(
       'openprescribing.net', 0, 0, 'rect', 0, 0, false, false, 'watermark').css({
         color: '#DDD',
-        fontSize: '24px'
+        fontSize: '20px'
       }).add();
     var x = chart.chartWidth / 2 - f.width / 2;
     var y = chart.chartHeight / 4;
     f.attr({
-      transform: 'translate(' + x + ', ' + y + ')',
+      transform: 'translate(' + x + ', ' + y + ')'
     });
-    f.toFront();
   },
   global: {
     useUTC: false
