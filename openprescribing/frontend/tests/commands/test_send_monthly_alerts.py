@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import re
 import unittest
 
@@ -10,6 +11,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import EmailMessage
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
@@ -354,7 +356,12 @@ class OrgEmailTestCase(TestCase):
 
 @patch('frontend.views.bookmark_utils.attach_image')
 class SearchEmailTestCase(TestCase):
-    fixtures = ['bookmark_alerts']
+    fixtures = ['bookmark_alerts', 'measures']
+
+    def setUp(self):
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
 
     def test_all_recipients(self, attach_image):
         call_command(CMD_NAME)

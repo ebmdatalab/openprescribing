@@ -169,8 +169,10 @@ class BatchedEmailErrors(Exception):
                 "".join(traceback.format_exception_only(
                     exception[0], exception[1])).strip())
         if len(exceptions) > 1:
-            msg = ("Encountered %s mail exceptions (showing last traceback only): `%s`" % (
-                len(exceptions), ", ".join(individual_messages)))
+            msg = ("Encountered %s mail exceptions "
+                   "(showing last traceback only): `%s`" % (
+                       len(exceptions),
+                       ", ".join(individual_messages)))
         else:
             msg = individual_messages.pop()
         super(BatchedEmailErrors, self).__init__(msg)
@@ -196,4 +198,7 @@ class EmailRetrier(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.exceptions:
-            raise BatchedEmailErrors(self.exceptions), None, self.exceptions[-1][2]
+            exception = BatchedEmailErrors(self.exceptions)
+            raise (exception,
+                   None,
+                   self.exceptions[-1][2])
