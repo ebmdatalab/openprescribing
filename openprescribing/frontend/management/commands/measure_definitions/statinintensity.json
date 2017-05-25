@@ -5,7 +5,7 @@
     "as a percentage of prescribing of all statins"
   ],
   "description": [
-    "Items of high-intensity statins ",
+    "Items of low and medium intensity statins ",
     "as a percentage of items of all statins."
   ],
   "why_it_matters": [
@@ -13,7 +13,7 @@
     "recommends the use of a high-intensity statin (i.e. one that reduces LDL cholesterol by 40% or more) with a low aquisition cost. ",
     "A table showing the percentage reduction of LDL cholesterol by statin doses can be found <a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'> here </a>" 
   ],
-  "numerator_short": "High-intensity statin items",
+  "numerator_short": "Low and medium intensity statin items",
   "denominator_short": "All statins items",
   "url": null,
   "is_percentage": true,
