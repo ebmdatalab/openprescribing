@@ -1,7 +1,7 @@
 {
-  "name": "High-intensity statins",
+  "name": "Low and medium intensity statins",
   "title": [
-    "Prescribing of high-intensity statins ",
+    "Prescribing of low and medium intensity statins ",
     "as a percentage of prescribing of all statins"
   ],
   "description": [
@@ -9,22 +9,27 @@
     "as a percentage of items of all statins."
   ],
   "why_it_matters": [
-    "tba"
+    "2014 NICE guidance on <a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations#lipid-modification-therapy-for-the-primary-and-secondary-prevention-of-cvd-2'> primary and secondary lipid modification </a>",
+    "recommends the use of a high-intensity statin (i.e. one that reduces LDL cholesterol by 40% or more) with a low aquisition cost. ",
+    "A table showing the percentage reduction of LDL cholesterol by statin doses can be found <a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'> here </a>" 
   ],
   "numerator_short": "High-intensity statin items",
   "denominator_short": "All statins items",
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
-  "low_is_good": false,
+  "low_is_good": true,
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
   "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
   "numerator_where": [
-    "(bnf_code like '0212000Y0%AH' or bnf_code like '0212000B0%AB' or bnf_code like '0212000B0%AN' ",
-    "or bnf_code like '0212000B0%AC or bnf_code like '0212000B0%AP' or bnf_code like '0212000B0%AD' ",
-    "or bnf_code like '0212000AA%AA' or or bnf_code like '0212000AA%AB' or or bnf_code like '0212000AA%AC')"
+        "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
+    "or bnf_code like '0212000C0%' or bnf_code like '0212000M0% or bnf_code like '0212000X0%' ",
+    "or bnf_code like '0212000Y0%') AND ",
+    "(bnf_code not like '0212000Y0%AH' and bnf_code not like '0212000B0%AB' and bnf_code not like '0212000B0%AN' ",
+    "and bnf_code not like '0212000B0%AC' and bnf_code not like '0212000B0%AP' and bnf_code not like '0212000B0%AD' ",
+    "and bnf_code not like '0212000AA%AA' and bnf_code not like '0212000AA%AB' and or bnf_code not like '0212000AA%AC')"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
