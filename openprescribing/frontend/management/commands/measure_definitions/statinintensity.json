@@ -29,7 +29,7 @@
     "or bnf_code like '0212000Y0%') AND ",
     "(bnf_code not like '0212000Y0%AH' and bnf_code not like '0212000B0%AB' and bnf_code not like '0212000B0%AN' ",
     "and bnf_code not like '0212000B0%AC' and bnf_code not like '0212000B0%AP' and bnf_code not like '0212000B0%AD' ",
-    "and bnf_code not like '0212000AA%AA' and bnf_code not like '0212000AA%AB' and or bnf_code not like '0212000AA%AC')"
+    "and bnf_code not like '0212000AA%AA' and bnf_code not like '0212000AA%AB' and bnf_code not like '0212000AA%AC')"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
