@@ -19,6 +19,9 @@ def google_tracking_id(request):
     tracking_id = None
     if hasattr(settings, 'GOOGLE_TRACKING_ID'):
         tracking_id = settings.GOOGLE_TRACKING_ID
+        container_id = getattr(settings, 'GOOGLE_OPTIMIZE_CONTAINER_ID', '')
     else:
         logger.warn("No GOOGLE_TRACKING_ID set")
-    return {'GOOGLE_TRACKING_ID': tracking_id}
+    return {
+        'GOOGLE_TRACKING_ID': tracking_id,
+        'GOOGLE_OPTIMIZE_CONTAINER_ID': container_id}
