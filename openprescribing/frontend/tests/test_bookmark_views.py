@@ -85,8 +85,7 @@ class TestBookmarkViews(TransactionTestCase):
         tmpfile.return_value.__enter__.return_value.name = test_img_path
         url = reverse('preview-ccg-bookmark',
                       kwargs={'code': PCT.objects.first().pk})
-        self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url)
         self.assertContains(
             response, "this CCG")
         self.assertContains(
@@ -102,8 +101,7 @@ class TestBookmarkViews(TransactionTestCase):
         finder.return_value.context_for_org_email.return_value = context
         url = reverse('preview-practice-bookmark',
                       kwargs={'code': Practice.objects.first().pk})
-        self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url)
         self.assertContains(
             response, "about this practice")
 
@@ -111,8 +109,7 @@ class TestBookmarkViews(TransactionTestCase):
     def test_preview_analysis_bookmark(self, subprocess):
         bookmark = SearchBookmark.objects.first()
         url = reverse('preview-analyse-bookmark')
-        url += '?url=' + bookmark.url + '&name=foo'
         self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url, {'url': bookmark.url, 'name' :'foo'})
         self.assertContains(
             response, "your monthly update")
