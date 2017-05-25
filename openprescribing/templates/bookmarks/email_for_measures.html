@@ -11,7 +11,7 @@
 
 <p>Welcome to your monthly update about <a href="{{ dashboard_uri }}">{{bookmark.name}}</a>. This is an experimental new service from OpenPrescribing and we are keen for feedback: just reply to this email.</p>
 
-<p>{{ intro_text }} Note that there can sometimes be good reasons why one {{ bookmark.org_type }} is an outlier, and you should interpret the data thoughtfully: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
+<p>{{ intro_text }}</p>
 
 {% if has_stats %}
   {% if stats.worst %}
@@ -186,8 +186,8 @@
      </ul>
     {% endif %}
   {% endif %}
+  <p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 {% endif %}
 
-<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 
 {% endblock %}
