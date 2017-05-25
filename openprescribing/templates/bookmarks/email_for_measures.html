@@ -1,9 +1,11 @@
-{% extends "bookmarks/email_base.html" %}
+{% extends base_template %}
 {% load template_extras %}
 {% load humanize %}
 {% block title %}Your monthly alert from OpenPrescribing{% endblock %}
 
 {% block content %}
+
+{% include 'bookmarks/_email_preview_header.html' %}
 
 <p><b>Hello!</b></p>
 

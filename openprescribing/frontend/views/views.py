@@ -9,14 +9,14 @@ from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth import HASH_SESSION_KEY
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import Http404
 from django.http import HttpResponse
-from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
-from frontend.models import Chemical, Prescription
+from frontend.models import Chemical
 from frontend.models import Practice, PCT, Section
 from frontend.models import Measure
 from frontend.models import OrgBookmark
@@ -192,7 +192,9 @@ def measures_for_one_ccg(request, ccg_code):
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
+    alert_preview_action = reverse('preview-ccg-bookmark', args=[requested_ccg.code])
     context = {
+        'alert_preview_action': alert_preview_action,
         'ccg': requested_ccg,
         'practices': practices,
         'page_id': ccg_code,
@@ -243,7 +245,9 @@ def analyse(request):
         # page load (see `alertForm` in `chart.js`)
         form = SearchBookmarkForm(
             initial={'email': getattr(request.user, 'email', '')})
+    alert_preview_action = reverse('preview-analyse-bookmark')
     context = {
+        'alert_preview_action': alert_preview_action,
         'form': form
     }
     return render(request, 'analyse.html', context)
@@ -315,8 +319,10 @@ def measures_for_one_practice(request, code):
             practice=p)
     else:
         signed_up_for_alert = False
+    alert_preview_action = reverse('preview-practice-bookmark', p.code)
     context = {
         'practice': p,
+        'alert_preview_action': alert_preview_action,
         'page_id': code,
         'form': form,
         'signed_up_for_alert': signed_up_for_alert

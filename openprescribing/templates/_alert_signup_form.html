@@ -1,19 +1,22 @@
 {% load crispy_forms_tags %}
 {% if not signed_up_for_alert %}
 <p>
-  Get monthly alerts about prescribing at this {{entity_type}}:
+  <form method="post" action="{{ alert_preview_action }}">
+   {% csrf_token %}
+   {% if alert_type == 'analyse' %}
+     <input type="hidden" name="url" value="">
+     <input type="hidden" name="name" value="">
+     We offer a service which emails you an update of this chart once a month. Subscribe by entering your email address below.
+   {% else %}
+     We offer a service which emails you about unusual or interesting prescribing at this {{entity_type}} once a month. Subscribe by entering your email address below.
+   {% endif %}
+   You can <input type="submit" class="btn-link" value="preview"></input> the email first.
+  </form>
   <form method="post" class="form form-inline">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {{ form | crispy }}
     <input class="btn btn-primary" type="submit" value="Subscribe">
-    {% if request.user.is_superuser %}
-     {% if entity_type == 'CCG' %}
-       <a href="{% url 'preview-ccg-bookmark' ccg.code %}" class="btn btn-danger">Preview alert email</a>
-     {% else %}
-       <a href="{% url 'preview-practice-bookmark' practice.code %}" class="btn btn-danger">Preview alert email</a>
-     {% endif %}
-    {% endif %}
 
   </form>
 </p>
