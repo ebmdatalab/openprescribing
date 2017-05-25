@@ -319,7 +319,7 @@ def measures_for_one_practice(request, code):
             practice=p)
     else:
         signed_up_for_alert = False
-    alert_preview_action = reverse('preview-practice-bookmark', p.code)
+    alert_preview_action = reverse('preview-practice-bookmark', args=p.code)
     context = {
         'practice': p,
         'alert_preview_action': alert_preview_action,
