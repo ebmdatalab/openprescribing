@@ -123,7 +123,7 @@
         ]
     },
     {
-        "id": "import_prescribing_metadata_0",
+        "id": "import_hscic_chemicals",
         "type": "import",
         "source": "prescribing_metadata",
         "command": "import_hscic_chemicals --chem_file T\\d+CHEM.*\\.CSV",
@@ -137,13 +137,13 @@
         ]
     },
     {
-        "id": "import_prescribing_metadata_1",
+        "id": "import_hscic_practices",
         "type": "import",
         "source": "prescribing_metadata",
         "command": "import_practices --hscic_address T\\d+ADDR.*\\.CSV",
         "dependencies": [
             "fetch_prescribing_metadata",
-            "import_prescribing_metadata_0",
+            "import_hscic_chemicals",
             "import_bnf_codes",
             "import_adqs",
             "import_nhs_postcode_file",
@@ -152,26 +152,26 @@
         ]
     },
     {
-        "id": "import_prescribing_0",
+        "id": "convert_hscic_prescribing",
         "type": "import",
         "source": "prescribing",
         "command": "convert_hscic_prescribing --filename .*Detailed_Prescribing_Information.csv",
         "dependencies": [
             "fetch_prescribing",
-            "import_prescribing_metadata_0",
-            "import_prescribing_metadata_1"
+            "import_hscic_chemicals",
+            "import_hscic_practices"
         ]
     },
     {
-        "id": "import_prescribing_1",
+        "id": "import_hscic_prescribing",
         "type": "import",
         "source": "prescribing",
         "command": "import_hscic_prescribing --filename .*Detailed_Prescribing_Information_formatted.CSV",
         "dependencies": [
             "fetch_prescribing",
-            "import_prescribing_0",
-            "import_prescribing_metadata_0",
-            "import_prescribing_metadata_1"
+            "convert_hscic_prescribing",
+            "import_hscic_chemicals",
+            "import_hscic_practices"
         ]
     },
     {
@@ -180,8 +180,8 @@
         "source": "dispensing_practices",
         "command": "import_practice_dispensing_status --filename dispensing_practices.*\\.csv",
         "dependencies": [
-            "import_prescribing_0",
-            "import_prescribing_1",
+            "convert_hscic_prescribing",
+            "import_hscic_prescribing",
             "import_practice_details"
         ]
     },
@@ -192,8 +192,8 @@
         "command": "import_list_sizes --filename patient_list_size_new.csv",
         "dependencies": [
             "fetch_patient_list_size",
-            "import_prescribing_0",
-            "import_prescribing_1",
+            "convert_hscic_prescribing",
+            "import_hscic_prescribing",
             "import_practice_details",
             "import_patient_list_weightings"
         ]
@@ -204,14 +204,14 @@
         "command": "runner:bigquery_upload",
         "dependencies": [
             "import_patient_list_size",
-            "import_prescribing_0",
-            "import_prescribing_1",
+            "convert_hscic_prescribing",
+            "import_hscic_prescribing",
             "import_ccg_details",
             "import_practice_details"
         ]
     },
     {
-        "id": "measures_0",
+        "id": "import_measure_definitions",
         "type": "post_process",
         "command": "import_measures --definitions_only",
         "dependencies": [
@@ -219,12 +219,12 @@
         ]
     },
     {
-        "id": "measures_1",
+        "id": "import_measures",
         "type": "post_process",
         "command": "import_measures",
         "dependencies": [
             "upload_to_bigquery",
-            "measures_0"
+            "import_measure_definitions"
         ]
     },
     {
