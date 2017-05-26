@@ -11,6 +11,7 @@ import shlex
 import networkx as nx
 
 from django.conf import settings
+from django.core.management import call_command
 
 
 class Source(object):
@@ -118,11 +119,62 @@ class Task(object):
         return [path for path in self.input_paths() if path not in imported_paths]
 
 
-class ManualFetchTask(Task): pass
-class AutoFetchTask(Task): pass
-class ConvertTask(Task): pass
-class ImportTask(Task): pass
-class PostProcessTask(Task): pass
+class ManualFetchTask(Task):
+    def run(self):
+        instructions = self.manual_fetch_instructions()
+        print(instructions)
+        raw_input('Press return when done, or to skip this step')
+
+    def manual_fetch_instructions(self):
+        year_and_month = datetime.datetime.now().strftime('%Y_%m')
+        expected_location = "%s/%s/%s" % (settings.PIPELINE_DATA_BASEDIR, self.source.name, year_and_month)
+        output = []
+        output.append('~' * 80)
+        output.append('You should now locate the latest data for %s, if available' % self.source.name)
+        output.append('You should save it at:')
+        output.append('    %s' % expected_location)
+        # TODO: include index_url, urls, publication_schedule, notes
+        output.append('The last saved data can be found at:')  # TODO should this be "last imported data"?
+        for task in self.source.tasks_that_use_raw_source_data():
+            paths = task.imported_paths()
+            if paths:
+                path = paths[-1]
+            else:
+                path = '<never imported>'  # TODO Can we say what it is that's never been imported?
+            output.append('    %s' % path)
+        return '\n'.join(output)
+
+
+class AutoFetchTask(Task):
+    def run(self):
+        tokens = shlex.split(self.command)
+        call_command(*tokens)
+
+
+class ConvertTask(Task):
+    def run(self):
+        unimported_paths = self.unimported_paths()
+        for path in unimported_paths:
+            command = self.command.replace(self.filename_regex(), path)
+            tokens = shlex.split(command)
+            call_command(*tokens)
+            self.set_last_imported_path(path)
+
+
+class ImportTask(Task):
+    def run(self):
+        unimported_paths = self.unimported_paths()
+        for path in unimported_paths:
+            command = self.command.replace(self.filename_regex(), path)
+            tokens = shlex.split(command)
+            call_command(*tokens)
+            self.set_last_imported_path(path)
+
+
+class PostProcessTask(Task):
+    def run(self):
+        tokens = shlex.split(self.command)
+        call_command(*tokens)
 
 
 class TaskCollection(object):

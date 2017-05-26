@@ -1,3 +1,5 @@
+import datetime
+import mock
 import os
 import json
 
@@ -193,6 +195,67 @@ class PipelineTests(TestCase):
             build_path('source_b', '2017_03', 'source_b_1703.csv'),
         ]
         self.assertEqual(task.unimported_paths(), expected_output)
+
+    def test_manual_fetch_instructions(self):
+        task = self.tasks['fetch_source_a']
+        expected_output = '''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You should now locate the latest data for source_a, if available
+You should save it at:
+    {data_basedir}/source_a/{year_and_month}
+The last saved data can be found at:
+    {data_basedir}/source_a/2017_02/source_a.csv
+'''.strip().format(
+            data_basedir=settings.PIPELINE_DATA_BASEDIR,
+            year_and_month=datetime.datetime.now().strftime('%Y_%m'),
+        )
+        output = task.manual_fetch_instructions()
+        self.assertEqual(output, expected_output)
+
+        task = self.tasks['fetch_source_c']
+        expected_output = '''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You should now locate the latest data for source_c, if available
+You should save it at:
+    {data_basedir}/source_c/{year_and_month}
+The last saved data can be found at:
+    <never imported>
+    {data_basedir}/source_c/2017_02/source_c2.csv
+'''.strip().format(
+            data_basedir=settings.PIPELINE_DATA_BASEDIR,
+            year_and_month=datetime.datetime.now().strftime('%Y_%m'),
+        )
+        output = task.manual_fetch_instructions()
+        self.assertEqual(output, expected_output)
+
+    def test_run_auto_fetch(self):
+        task = self.tasks['fetch_source_b']
+        with mock.patch('pipeline.runner.call_command') as cc:
+            task.run()
+            cc.assert_called_with('fetch_source_b', '--yes-please')
+
+    def test_run_convert(self):
+        task = self.tasks['convert_source_a']
+        path = build_path('source_a', '2017_03', 'source_a.csv')
+        with mock.patch('pipeline.runner.call_command') as cc:
+            task.run()
+            cc.assert_called_with('convert_source_a', '--filename', path)
+
+    def test_run_import(self):
+        task = self.tasks['import_source_c1']
+        expected_calls = [
+            mock.call('import_source_c', '--filename', build_path('source_c', year_and_month, 'source_c1.csv'))
+            for year_and_month in ['2017_01', '2017_02']
+        ]
+        with mock.patch('pipeline.runner.call_command') as cc:
+            task.run()
+            cc.assert_has_calls(expected_calls)
+
+    def test_run_post_process(self):
+        task = self.tasks['post_process']
+        with mock.patch('pipeline.runner.call_command') as cc:
+            task.run()
+            cc.assert_called_with('post_process')
 
 
 def build_path(source_id, year_and_month, filename):
