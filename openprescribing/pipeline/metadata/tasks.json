@@ -1,0 +1,238 @@
+[
+    {
+        "id": "fetch_bnf_codes",
+        "type": "manual_fetch",
+        "source": "bnf_codes"
+    },
+    {
+        "id": "fetch_adqs",
+        "type": "manual_fetch",
+        "source": "adqs"
+    },
+    {
+        "id": "fetch_patient_list_size",
+        "type": "auto_fetch",
+        "source": "patient_list_size",
+        "command": "hscic_list_sizes.py"
+    },
+    {
+        "id": "fetch_ccg_details",
+        "type": "auto_fetch",
+        "source": "ccg_details",
+        "command": "org_codes.py --ccg"
+    },
+    {
+        "id": "fetch_practice_details",
+        "type": "auto_fetch",
+        "source": "practice_details",
+        "command": "org_codes.py --practice"
+    },
+    {
+        "id": "import_bnf_codes",
+        "type": "import",
+        "source": "bnf_codes",
+        "command": "import_bnf_codes --filename bnf_codes.csv",
+        "dependencies": [
+            "fetch_bnf_codes"
+        ]
+    },
+    {
+        "id": "fetch_prescribing_metadata",
+        "type": "auto_fetch",
+        "source": "prescribing_metadata",
+        "command": "hscic_prescribing.py --most_recent_date"
+    },
+    {
+        "id": "fetch_ccg_boundaries",
+        "type": "manual_fetch",
+        "source": "ccg_boundaries"
+    },
+    {
+        "id": "import_ccg_boundaries",
+        "type": "import",
+        "source": "ccg_boundaries",
+        "command": "import_ccg_boundaries --filename ccg_boundaries.*\\.kml",
+        "dependencies": [
+            "fetch_ccg_boundaries"
+        ]
+    },
+    {
+        "id": "import_ccg_details",
+        "type": "import",
+        "source": "ccg_details",
+        "command": "import_org_names --ccg eccg.csv",
+        "dependencies": [
+            "fetch_ccg_details",
+            "import_ccg_boundaries"
+        ]
+    },
+    {
+        "id": "fetch_prescribing",
+        "type": "manual_fetch",
+        "source": "prescribing"
+    },
+    {
+        "id": "import_adqs",
+        "type": "import",
+        "source": "adqs",
+        "command": "import_adqs --filename adqs_.*csv",
+        "dependencies": [
+            "fetch_adqs",
+            "import_bnf_codes"
+        ]
+    },
+    {
+        "id": "fetch_patient_list_weightings",
+        "type": "manual_fetch",
+        "source": "patient_list_weightings"
+    },
+    {
+        "id": "import_patient_list_weightings",
+        "type": "import",
+        "source": "patient_list_weightings",
+        "command": "calculate_star_pu_weights --filename prescribing_units.xlsx",
+        "dependencies": [
+            "fetch_patient_list_weightings"
+        ]
+    },
+    {
+        "id": "import_practice_details",
+        "type": "import",
+        "source": "practice_details",
+        "command": "import_practices --epraccur epraccur.csv",
+        "dependencies": [
+            "fetch_practice_details",
+            "import_ccg_details",
+            "import_patient_list_weightings"
+        ]
+    },
+    {
+        "id": "fetch_nhs_postcode_file",
+        "type": "auto_fetch",
+        "source": "nhs_postcode_file",
+        "command": "org_codes.py --postcode"
+    },
+    {
+        "id": "import_nhs_postcode_file",
+        "type": "import",
+        "source": "nhs_postcode_file",
+        "command": "geocode_practices --filename gridall\\.csv",
+        "dependencies": [
+            "fetch_nhs_postcode_file",
+            "import_practice_details"
+        ]
+    },
+    {
+        "id": "import_prescribing_metadata_0",
+        "type": "import",
+        "source": "prescribing_metadata",
+        "command": "import_hscic_chemicals --chem_file T\\d+CHEM.*\\.CSV",
+        "dependencies": [
+            "fetch_prescribing_metadata",
+            "import_bnf_codes",
+            "import_adqs",
+            "import_nhs_postcode_file",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    {
+        "id": "import_prescribing_metadata_1",
+        "type": "import",
+        "source": "prescribing_metadata",
+        "command": "import_practices --hscic_address T\\d+ADDR.*\\.CSV",
+        "dependencies": [
+            "fetch_prescribing_metadata",
+            "import_prescribing_metadata_0",
+            "import_bnf_codes",
+            "import_adqs",
+            "import_nhs_postcode_file",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    {
+        "id": "import_prescribing_0",
+        "type": "import",
+        "source": "prescribing",
+        "command": "convert_hscic_prescribing --filename .*Detailed_Prescribing_Information.csv",
+        "dependencies": [
+            "fetch_prescribing",
+            "import_prescribing_metadata_0",
+            "import_prescribing_metadata_1"
+        ]
+    },
+    {
+        "id": "import_prescribing_1",
+        "type": "import",
+        "source": "prescribing",
+        "command": "import_hscic_prescribing --filename .*Detailed_Prescribing_Information_formatted.CSV",
+        "dependencies": [
+            "fetch_prescribing",
+            "import_prescribing_0",
+            "import_prescribing_metadata_0",
+            "import_prescribing_metadata_1"
+        ]
+    },
+    {
+        "id": "import_dispensing_practices",
+        "type": "import",
+        "source": "dispensing_practices",
+        "command": "import_practice_dispensing_status --filename dispensing_practices.*\\.csv",
+        "dependencies": [
+            "import_prescribing_0",
+            "import_prescribing_1",
+            "import_practice_details"
+        ]
+    },
+    {
+        "id": "import_patient_list_size",
+        "type": "import",
+        "source": "patient_list_size",
+        "command": "import_list_sizes --filename patient_list_size_new.csv",
+        "dependencies": [
+            "fetch_patient_list_size",
+            "import_prescribing_0",
+            "import_prescribing_1",
+            "import_practice_details",
+            "import_patient_list_weightings"
+        ]
+    },
+    {
+        "id": "upload_to_bigquery",
+        "type": "post_process",
+        "command": "runner:bigquery_upload",
+        "dependencies": [
+            "import_patient_list_size",
+            "import_prescribing_0",
+            "import_prescribing_1",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    {
+        "id": "measures_0",
+        "type": "post_process",
+        "command": "import_measures --definitions_only",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
+    },
+    {
+        "id": "measures_1",
+        "type": "post_process",
+        "command": "import_measures",
+        "dependencies": [
+            "upload_to_bigquery",
+            "measures_0"
+        ]
+    },
+    {
+        "id": "refresh_views",
+        "type": "post_process",
+        "command": "create_views",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
+    }
+]
