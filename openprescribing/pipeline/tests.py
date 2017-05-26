@@ -1,3 +1,7 @@
+import os
+import json
+
+from django.conf import settings
 from django.test import TestCase
 
 from pipeline.runner import load_tasks
@@ -5,7 +9,69 @@ from pipeline.runner import load_tasks
 
 class PipelineTests(TestCase):
     def setUp(self):
+        # Load tasks
         self.tasks = load_tasks()
+
+        # Set up dummy files on filesystem
+        for source_id, year_and_month, filename in [
+            ['source_a', '2017_01', 'source_a.csv'],
+            ['source_a', '2017_02', 'source_a.csv'],
+            ['source_a', '2017_03', 'source_a.csv'],
+            ['source_b', '2017_01', 'source_b_1701.csv'],
+            ['source_b', '2017_02', 'source_b_1702.csv'],
+            ['source_b', '2017_03', 'source_b_1703.csv'],
+            ['source_c', '2017_01', 'source_c1.csv'],
+            ['source_c', '2017_01', 'source_c2.csv'],
+            ['source_c', '2017_02', 'source_c1.csv'],
+            ['source_c', '2017_02', 'source_c2.csv'],
+        ]:
+            path = build_path(source_id, year_and_month, filename)
+            dir_path = os.path.dirname(path)
+            try:
+                os.makedirs(dir_path)
+            except OSError as e:
+                import errno
+                if e.errno != errno.EEXIST or not os.path.isdir(dir_path):
+                    raise
+            with open(path, 'w') as f:
+                f.write('1,2,3\n')
+
+        # Set up dummy log data
+        log_data = {
+            'source_a': [
+                {
+                    'imported_file': build_path('source_a', '2017_01', 'source_a.csv'),
+                    'imported_at': '2017-01-01T12:00:00'
+                },
+                {
+                    'imported_file': build_path('source_a', '2017_02', 'source_a.csv'),
+                    'imported_at': '2017-02-01T12:00:00'
+                }
+            ],
+            'source_b': [
+                {
+                    'imported_file': build_path('source_b', '2017_01', 'source_b_1701.csv'),
+                    'imported_at': '2017-01-01T12:00:00'
+                },
+                {
+                    'imported_file': build_path('source_b', '2017_02', 'source_b_1702.csv'),
+                    'imported_at': '2017-02-01T12:00:00'
+                }
+            ],
+            'source_c': [
+                {
+                    'imported_file': build_path('source_c', '2017_01', 'source_c2.csv'),
+                    'imported_at': '2017-01-01T12:00:00'
+                },
+                {
+                    'imported_file': build_path('source_c', '2017_02', 'source_c2.csv'),
+                    'imported_at': '2017-02-01T12:00:00'
+                }
+            ]
+        }
+
+        with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
+            json.dump(log_data, f)
 
     def test_task_initialisation(self):
         task = self.tasks['fetch_source_a']
@@ -66,3 +132,68 @@ class PipelineTests(TestCase):
         source = self.tasks['import_source_a'].source
         self.assertEqual(source.name, 'source_a')
         self.assertEqual(source.title, 'Source A')
+
+    def test_filename_regex(self):
+        task = self.tasks['convert_source_a']
+        self.assertEqual(task.filename_regex(), 'source_a.csv')
+
+    def test_imported_paths(self):
+        task = self.tasks['convert_source_a']
+        expected_output = [
+            build_path('source_a', '2017_01', 'source_a.csv'),
+            build_path('source_a', '2017_02', 'source_a.csv'),
+        ]
+        self.assertEqual(task.imported_paths(), expected_output)
+
+        task = self.tasks['import_source_b']
+        expected_output = [
+            build_path('source_b', '2017_01', 'source_b_1701.csv'),
+            build_path('source_b', '2017_02', 'source_b_1702.csv'),
+        ]
+        self.assertEqual(task.imported_paths(), expected_output)
+
+        task = self.tasks['import_source_c1']
+        self.assertEqual(task.imported_paths(), [])
+
+    def test_set_last_imported_path(self):
+        task = self.tasks['import_source_b']
+        task.set_last_imported_path(build_path('source_b', '2017_03', 'source_b_1703.csv'))
+        expected_output = [
+            build_path('source_b', '2017_01', 'source_b_1701.csv'),
+            build_path('source_b', '2017_02', 'source_b_1702.csv'),
+            build_path('source_b', '2017_03', 'source_b_1703.csv'),
+        ]
+        self.assertEqual(task.imported_paths(), expected_output)
+
+        # According to the log data in setUp(), no data has been imported for source_c yet
+        task1 = self.tasks['import_source_c1']
+        task1.set_last_imported_path(build_path('source_c', '2017_03', 'source_c1.csv'))
+        expected_output = [
+            build_path('source_c', '2017_03', 'source_c1.csv'),
+        ]
+        self.assertEqual(task1.imported_paths(), expected_output)
+        expected_output = [
+            build_path('source_b', '2017_01', 'source_b_1701.csv'),
+            build_path('source_b', '2017_02', 'source_b_1702.csv'),
+            build_path('source_b', '2017_03', 'source_b_1703.csv'),
+        ]
+        self.assertEqual(task.imported_paths(), expected_output)
+
+    def test_input_paths(self):
+        task = self.tasks['import_source_b']
+        expected_output = [
+            build_path('source_b', '2017_{}'.format(month), 'source_b_17{}.csv'.format(month))
+            for month in ['01', '02', '03']
+        ]
+        self.assertEqual(task.input_paths(), expected_output)
+
+    def test_unimported_paths(self):
+        task = self.tasks['import_source_b']
+        expected_output = [
+            build_path('source_b', '2017_03', 'source_b_1703.csv'),
+        ]
+        self.assertEqual(task.unimported_paths(), expected_output)
+
+
+def build_path(source_id, year_and_month, filename):
+    return os.path.join(settings.PIPELINE_DATA_BASEDIR, source_id, year_and_month, filename)

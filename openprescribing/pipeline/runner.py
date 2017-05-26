@@ -1,7 +1,12 @@
 from __future__ import print_function
 
+from collections import defaultdict
+import datetime
+import glob
 import json
 import os
+import re
+import shlex
 
 import networkx as nx
 
@@ -54,6 +59,63 @@ class Task(object):
 
     def resolve_dependencies(self, task_collection):
         self.dependencies = [task_collection[name] for name in self.dependency_names]
+
+    def filename_regex(self):
+        '''Return regex that matches the part of the task's command that should
+        be substituted for the task's input filename.'''
+        # TODO Can we change this to filename_glob?
+        filename_flags = [
+            'filename',
+            'ccg',
+            'epraccur',
+            'chem_file',
+            'hscic_address',
+            'month_from_prescribing_filename',
+        ]
+
+        cmd_parts = shlex.split(self.command.encode('unicode-escape'))
+        filename_idx = None
+        for flag in filename_flags:
+            try:
+                filename_idx = cmd_parts.index("--%s" % flag) + 1
+            except ValueError:
+                pass
+        assert filename_idx is not None
+        return cmd_parts[filename_idx]
+
+    def imported_paths(self):
+        '''Return a list of import records for all imported data for this
+        task.'''
+        records = load_import_records()
+
+        records_for_source = records[self.source.name]
+        matched_records = [
+            record for record in records_for_source
+            if re.search(self.filename_regex(), record['imported_file'])
+        ]
+        sorted_records = sorted(matched_records, key=lambda record: record['imported_at'])
+        return [record['imported_file'] for record in sorted_records]
+
+    def input_paths(self):
+        '''Return list of of paths to input files for task.'''
+        paths = glob.glob("%s/*/*" % self.source.data_dir)
+        return [path for path in paths if re.search(self.filename_regex(), path)]
+
+    def set_last_imported_path(self, path):
+        '''Set the path of the most recently imported data for this source.  '''
+        now = datetime.datetime.now().replace(microsecond=0).isoformat()
+        records = load_import_records()
+        records[self.source.name].append({
+            'imported_file': path,
+            'imported_at': now,
+        })
+        dump_import_records(records)
+
+    def unimported_paths(self):
+        '''Return list of of paths to input files for task that have not been
+        imported.'''
+        imported_paths = [record for record in self.imported_paths()]
+        return [path for path in self.input_paths() if path not in imported_paths]
 
 
 class ManualFetchTask(Task): pass
@@ -145,3 +207,14 @@ def load_tasks():
         task.resolve_dependencies(tasks)
 
     return tasks
+
+
+def load_import_records():
+    with open(settings.PIPELINE_IMPORT_LOG_PATH) as f:
+        log_data = json.load(f)
+    return defaultdict(list, log_data)
+
+
+def dump_import_records(records):
+    with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
+        json.dump(records, f, indent=2, separators=(',', ': '))
