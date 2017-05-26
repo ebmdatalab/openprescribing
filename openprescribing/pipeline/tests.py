@@ -135,6 +135,19 @@ class PipelineTests(TestCase):
         self.assertEqual(source.name, 'source_a')
         self.assertEqual(source.title, 'Source A')
 
+    def test_tasks_that_use_raw_source_data(self):
+        source_a = self.tasks['fetch_source_a'].source
+        self.assertEqual(
+            [task.name for task in source_a.tasks_that_use_raw_source_data()],
+            ['convert_source_a']
+        )
+
+        source_c = self.tasks['fetch_source_c'].source
+        self.assertEqual(
+            [task.name for task in source_c.tasks_that_use_raw_source_data()],
+            ['import_source_c1', 'import_source_c2']
+        )
+
     def test_filename_regex(self):
         task = self.tasks['convert_source_a']
         self.assertEqual(task.filename_regex(), 'source_a.csv')
