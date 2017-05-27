@@ -378,4 +378,7 @@ def run_all():
     for task in tasks.by_type('post_process').ordered():
         task.run()
 
-    # TODO Run smoke tests
+    prescribing_path = tasks['import_hscic_prescribing'].imported_paths[-1]
+    smoketest_handler = SmokeTestHandler(prescribing_path)
+    smoketest_handler.update_smoketests()
+    smoketest_handler.run_smoketests()
