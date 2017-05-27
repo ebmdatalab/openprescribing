@@ -296,6 +296,67 @@ class BigQueryUploader(CloudHandler):
             self.upload(path, bucket, name)
 
 
+class SmokeTestHandler(ManifestReader, CloudHandler):
+    def last_imported(self):
+        prescribing = self.source_by_id('prescribing')
+        if 'LAST_IMPORTED' in os.environ:
+            date = os.environ['LAST_IMPORTED']
+        else:
+            last_imported = prescribing.last_imported_file_record(
+                r'_formatted\.CSV$')['imported_file']
+            date = re.findall(r'/(\d{4}_\d{2})/', last_imported)[0]
+        return date
+
+    def run_smoketests(self):
+        date = self.last_imported()
+        my_env = os.environ.copy()
+        my_env['LAST_IMPORTED'] = date
+        command = "%s smoketests/smoke.py" % OPENP_DATA_PYTHON
+        print "Running %s with LAST_IMPORTED=%s" % (command, date)
+        subprocess.check_call(shlex.split(command), env=my_env)
+
+    def rows_to_dict(self, bigquery_result):
+        fields = bigquery_result['schema']['fields']
+        for row in bigquery_result['rows']:
+            dict_row = {}
+            for i, item in enumerate(row['f']):
+                value = item['v']
+                key = fields[i]['name']
+                dict_row[key] = value
+            yield dict_row
+
+    def update_smoketests(self):
+        prescribing_date = "-".join(self.last_imported().split('_')) + '-01'
+        date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
+                          'INTERVAL 5 YEAR))' % prescribing_date)
+
+        for sql_file in glob.glob('smoketests/*sql'):
+            test_name = os.path.splitext(
+                os.path.basename(sql_file))[0]
+            with open(sql_file, 'rb') as f:
+                query = f.read().replace(
+                    '{{ date_condition }}', date_condition)
+                print query
+                response = self.bigquery.jobs().query(
+                    projectId='ebmdatalab',
+                    body={'useLegacySql': False,
+                          'timeoutMs': 20000,
+                          'query': query}).execute()
+                quantity = []
+                cost = []
+                items = []
+                for r in self.rows_to_dict(response):
+                    quantity.append(r['quantity'])
+                    cost.append(r['actual_cost'])
+                    items.append(r['items'])
+                print "Updating test expectations for %s" % test_name
+                with open("smoketests/%s.json" % test_name, 'wb') as f:
+                    obj = {'cost': cost,
+                           'items': items,
+                           'quantity': quantity}
+                    json.dump(obj, f, indent=2)
+
+
 def run_all():
     tasks = load_tasks()
 
