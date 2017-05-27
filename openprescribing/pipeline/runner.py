@@ -275,17 +275,25 @@ def dump_import_records(records):
 
 
 class BigQueryUploader(CloudHandler):
+    def __init__(self, tasks):
+        self.tasks = tasks
+
     def upload_all_to_storage(self):
+        # TODO Can we just sync the whole of PIPELINE_DATA_BASEDIR?
+        for task in self.tasks.by_type('convert'):
+            self.upload_task_input_files(task)
+        for task in self.tasks.by_type('import'):
+            self.upload_task_input_files(task)
+
+    def upload_task_input_files(self, task):
         bucket = 'ebmdatalab'
-        for source in self.sources:
-            for importer in source.get('importers', []):
-                for path in source.files_by_date(importer):
-                    name = 'hscic' + path.replace(OPENP_DATA_BASEDIR, '')
-                    if self.dataset_exists(bucket, name):
-                        print "Skipping %s, already uploaded" % name
-                        continue
-                    print "Uploading %s to %s" % (path, name)
-                    self.upload(path, bucket, name)
+        for path in task.input_paths():
+            name = 'hscic' + path.replace(settings.PIPELINE_DATA_BASEDIR, '')
+            if self.dataset_exists(bucket, name):
+                print("Skipping %s, already uploaded" % name)
+                continue
+            print("Uploading %s to %s" % (path, name))
+            self.upload(path, bucket, name)
 
 
 def run_all():
