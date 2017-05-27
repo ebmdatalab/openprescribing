@@ -305,7 +305,7 @@ def run_all():
     for task in tasks.by_type('auto_fetch'):
         task.run()
 
-    # TODO Archive data
+    BigQueryUploader(tasks).upload_all_to_storage()
 
     for task in tasks.by_type('convert').ordered():
         task.run()
