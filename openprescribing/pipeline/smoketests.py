@@ -12,7 +12,7 @@ Spending BY: one practice, multiple practices, one CCG,
 multiple CCGs, all
 Spending ON: one presentation, multiple presentations, one chemical,
 multiple chemicals, one section, multiple sections, all
-The expected numbers are generated from smoke.sh
+The expected numbers are generated from pipeline/misc/smoke.sh
 '''
 
 PRESCRIBING_DATA_MONTHS = 5 * 12
