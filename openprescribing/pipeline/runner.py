@@ -308,12 +308,11 @@ class SmokeTestHandler(CloudHandler):
         return date
 
     def run_smoketests(self):
-        date = self.last_imported()
-        my_env = os.environ.copy()
-        my_env['LAST_IMPORTED'] = date
-        command = "%s smoketests/smoke.py" % OPENP_DATA_PYTHON
-        print("Running %s with LAST_IMPORTED=%s" % (command, date))
-        subprocess.check_call(shlex.split(command), env=my_env)
+        os.environ['LAST_IMPORTED'] = self.last_imported()
+        try:
+            unittest.main('pipeline.smoketests', argv=['smoketests'])  # The value of argv is not important
+        except SystemExit:
+            pass
 
     def rows_to_dict(self, bigquery_result):
         fields = bigquery_result['schema']['fields']
