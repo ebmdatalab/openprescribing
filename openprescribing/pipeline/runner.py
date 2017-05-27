@@ -13,6 +13,8 @@ import networkx as nx
 from django.conf import settings
 from django.core.management import call_command
 
+from .cloud_utils import CloudHandler
+
 
 class Source(object):
     def __init__(self, name, attrs):
@@ -270,6 +272,20 @@ def load_import_records():
 def dump_import_records(records):
     with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
         json.dump(records, f, indent=2, separators=(',', ': '))
+
+
+class BigQueryUploader(CloudHandler):
+    def upload_all_to_storage(self):
+        bucket = 'ebmdatalab'
+        for source in self.sources:
+            for importer in source.get('importers', []):
+                for path in source.files_by_date(importer):
+                    name = 'hscic' + path.replace(OPENP_DATA_BASEDIR, '')
+                    if self.dataset_exists(bucket, name):
+                        print "Skipping %s, already uploaded" % name
+                        continue
+                    print "Uploading %s to %s" % (path, name)
+                    self.upload(path, bucket, name)
 
 
 def run_all():
