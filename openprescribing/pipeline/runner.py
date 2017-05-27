@@ -296,15 +296,15 @@ class BigQueryUploader(CloudHandler):
             self.upload(path, bucket, name)
 
 
-class SmokeTestHandler(ManifestReader, CloudHandler):
+class SmokeTestHandler(CloudHandler):
+    def __init__(self, prescribing_path):
+        self.prescribing_path = prescribing_path
+
     def last_imported(self):
-        prescribing = self.source_by_id('prescribing')
         if 'LAST_IMPORTED' in os.environ:
             date = os.environ['LAST_IMPORTED']
         else:
-            last_imported = prescribing.last_imported_file_record(
-                r'_formatted\.CSV$')['imported_file']
-            date = re.findall(r'/(\d{4}_\d{2})/', last_imported)[0]
+            date = re.findall(r'/(\d{4}_\d{2})/', self.prescribing_path)[0]
         return date
 
     def run_smoketests(self):
@@ -312,7 +312,7 @@ class SmokeTestHandler(ManifestReader, CloudHandler):
         my_env = os.environ.copy()
         my_env['LAST_IMPORTED'] = date
         command = "%s smoketests/smoke.py" % OPENP_DATA_PYTHON
-        print "Running %s with LAST_IMPORTED=%s" % (command, date)
+        print("Running %s with LAST_IMPORTED=%s" % (command, date))
         subprocess.check_call(shlex.split(command), env=my_env)
 
     def rows_to_dict(self, bigquery_result):
@@ -330,13 +330,14 @@ class SmokeTestHandler(ManifestReader, CloudHandler):
         date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
                           'INTERVAL 5 YEAR))' % prescribing_date)
 
-        for sql_file in glob.glob('smoketests/*sql'):
+        smoketests_path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'smoketests')
+        for sql_file in glob.glob(os.path.join(smoketests_path, '*.sql')):
             test_name = os.path.splitext(
                 os.path.basename(sql_file))[0]
             with open(sql_file, 'rb') as f:
                 query = f.read().replace(
                     '{{ date_condition }}', date_condition)
-                print query
+                print(query)
                 response = self.bigquery.jobs().query(
                     projectId='ebmdatalab',
                     body={'useLegacySql': False,
@@ -349,8 +350,9 @@ class SmokeTestHandler(ManifestReader, CloudHandler):
                     quantity.append(r['quantity'])
                     cost.append(r['actual_cost'])
                     items.append(r['items'])
-                print "Updating test expectations for %s" % test_name
-                with open("smoketests/%s.json" % test_name, 'wb') as f:
+                print("Updating test expectations for %s" % test_name)
+                json_path = os.path.join(smoketests_path, '%s.json' % test_name)
+                with open(json_path, 'wb') as f:
                     obj = {'cost': cost,
                            'items': items,
                            'quantity': quantity}
