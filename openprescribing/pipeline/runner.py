@@ -270,3 +270,26 @@ def load_import_records():
 def dump_import_records(records):
     with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
         json.dump(records, f, indent=2, separators=(',', ': '))
+
+
+def run_all():
+    tasks = load_tasks()
+
+    for task in tasks.by_type('manual_fetch'):
+        task.run()
+
+    for task in tasks.by_type('auto_fetch'):
+        task.run()
+
+    # TODO Archive data
+
+    for task in tasks.by_type('convert').ordered():
+        task.run()
+
+    for task in tasks.by_type('import').ordered():
+        task.run()
+
+    for task in tasks.by_type('post_process').ordered():
+        task.run()
+
+    # TODO Run smoke tests
