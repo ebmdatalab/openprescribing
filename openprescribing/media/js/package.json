@@ -61,7 +61,8 @@
     "localforage": "^1.2.2",
     "mapbox.js": "^2.2.1",
     "moment": "^2.10.3",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "downloadjs": "^1.4.7"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
