@@ -9,9 +9,9 @@
     "as a percentage of items of all statins."
   ],
   "why_it_matters": [
-    "2014 NICE guidance on <a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations#lipid-modification-therapy-for-the-primary-and-secondary-prevention-of-cvd-2'> primary and secondary lipid modification </a>",
+    "2014 NICE guidance on <a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations#lipid-modification-therapy-for-the-primary-and-secondary-prevention-of-cvd-2'>primary and secondary lipid modification</a>",
     "recommends the use of a high-intensity statin (i.e. one that reduces LDL cholesterol by 40% or more) with a low aquisition cost. ",
-    "A table showing the percentage reduction of LDL cholesterol by statin doses can be found <a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'> here </a>" 
+    "A table showing the percentage reduction of LDL cholesterol by statin doses can be found <a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'>here</a>" 
   ],
   "numerator_short": "Low and medium intensity statin items",
   "denominator_short": "All statins items",
