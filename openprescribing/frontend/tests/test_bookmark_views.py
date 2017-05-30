@@ -110,6 +110,6 @@ class TestBookmarkViews(TransactionTestCase):
         bookmark = SearchBookmark.objects.first()
         url = reverse('preview-analyse-bookmark')
         self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.post(url, {'url': bookmark.url, 'name' :'foo'})
+        response = self.client.post(url, {'url': bookmark.url, 'name': 'foo'})
         self.assertContains(
             response, "your monthly update")

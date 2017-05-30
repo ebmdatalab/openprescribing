@@ -192,7 +192,8 @@ def measures_for_one_ccg(request, ccg_code):
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
-    alert_preview_action = reverse('preview-ccg-bookmark', args=[requested_ccg.code])
+    alert_preview_action = reverse(
+        'preview-ccg-bookmark', args=[requested_ccg.code])
     context = {
         'alert_preview_action': alert_preview_action,
         'ccg': requested_ccg,
@@ -226,7 +227,8 @@ def last_bookmark(request):
                 "to any monthly alerts!")
         return redirect(next_url)
     else:
-        messages.success(request, "Thanks, you're now subscribed to monthly alerts!")
+        messages.success(
+            request, "Thanks, you're now subscribed to monthly alerts!")
         return redirect('home')
 
 
