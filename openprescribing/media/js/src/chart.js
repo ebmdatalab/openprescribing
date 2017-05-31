@@ -305,7 +305,7 @@ var analyseChart = {
       });
       csvRows.push(str);
     });
-    encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvRows.join("\n"));
+    encodedUri = "data:text/csv," + encodeURIComponent(csvRows.join("\n"));
     filename = this.globalOptions.friendly.filename + '.csv';
     $('#data-link').on('click', function(e) {
       e.preventDefault();
