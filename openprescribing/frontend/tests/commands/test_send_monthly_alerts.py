@@ -212,7 +212,7 @@ class OrgEmailTestCase(TestCase):
         html = message[0]
         self.assertIn("this practice slipped", html)
         self.assertRegexpMatches(
-            html, 'slipped massively .* on '
+            html, 'slipped massively on '
             '<a href=".*/practice/P87629/.*#cerazette".*>'
             'Cerazette vs. Desogestrel</a>')
         self.assertIn('<span class="worse"', html)
