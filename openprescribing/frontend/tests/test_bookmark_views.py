@@ -69,9 +69,14 @@ class TestBookmarkViews(TransactionTestCase):
         from test_bookmark_utils import _makeContext
         from django.conf import settings
         context = _makeContext(
-            declines=[(Measure(id='foo'), 30, 10, 0)],
+            declines=[{'measure': Measure(id='foo'), 'from': 30, 'to': 10}],
             interesting=[Measure(id='bar')],
-            most_changing_interesting=[(Measure(id='baz'), 30, 10, 0)],
+            most_changing_interesting=[
+                {
+                    'measure': Measure(id='baz'),
+                    'from': 30,
+                    'to': 10
+                }],
         )
         test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
                          'alert-email-image.png')
@@ -80,8 +85,7 @@ class TestBookmarkViews(TransactionTestCase):
         tmpfile.return_value.__enter__.return_value.name = test_img_path
         url = reverse('preview-ccg-bookmark',
                       kwargs={'code': PCT.objects.first().pk})
-        self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url)
         self.assertContains(
             response, "this CCG")
         self.assertContains(
@@ -97,8 +101,7 @@ class TestBookmarkViews(TransactionTestCase):
         finder.return_value.context_for_org_email.return_value = context
         url = reverse('preview-practice-bookmark',
                       kwargs={'code': Practice.objects.first().pk})
-        self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url)
         self.assertContains(
             response, "about this practice")
 
@@ -106,8 +109,7 @@ class TestBookmarkViews(TransactionTestCase):
     def test_preview_analysis_bookmark(self, subprocess):
         bookmark = SearchBookmark.objects.first()
         url = reverse('preview-analyse-bookmark')
-        url += '?url=' + bookmark.url + '&name=foo'
         self.client.force_login(User.objects.get(username='admin-user'))
-        response = self.client.get(url)
+        response = self.client.post(url, {'url': bookmark.url, 'name': 'foo'})
         self.assertContains(
             response, "your monthly update")

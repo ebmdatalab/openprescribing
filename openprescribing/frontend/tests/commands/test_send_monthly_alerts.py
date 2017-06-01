@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import re
 import unittest
 
@@ -10,6 +11,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import EmailMessage
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
@@ -187,7 +189,10 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_has_ga_tracking(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            _makeContext(declines=[
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12}]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -198,13 +203,16 @@ class OrgEmailTestCase(TestCase):
         attach_image.return_value = 'unique-image-id'
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[(measure, 99.92, 0.12, 10.002)]),
+            _makeContext(declines=[
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12}]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("this practice slipped", html)
         self.assertRegexpMatches(
-            html, 'slipped massively .* on '
+            html, 'slipped massively on '
             '<a href=".*/practice/P87629/.*#cerazette".*>'
             'Cerazette vs. Desogestrel</a>')
         self.assertIn('<span class="worse"', html)
@@ -216,8 +224,12 @@ class OrgEmailTestCase(TestCase):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                (measure, 99.92, 0.12, 10.002),
-                (measure, 30, 10, 0),
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12},
+                {'measure': measure,
+                 'from': 30,
+                 'to': 10},
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
@@ -229,9 +241,15 @@ class OrgEmailTestCase(TestCase):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                (measure, 99.92, 0.12, 10.002),
-                (measure, 30, 10, 0),
-                (measure, 20, 10, 0)
+                {'measure': measure,
+                 'from': 99.92,
+                 'to': 0.12},
+                {'measure': measure,
+                 'from': 30,
+                 'to': 10},
+                {'measure': measure,
+                 'from': 20,
+                 'to': 10},
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
@@ -338,7 +356,12 @@ class OrgEmailTestCase(TestCase):
 
 @patch('frontend.views.bookmark_utils.attach_image')
 class SearchEmailTestCase(TestCase):
-    fixtures = ['bookmark_alerts']
+    fixtures = ['bookmark_alerts', 'measures']
+
+    def setUp(self):
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at=datetime.datetime.today())
 
     def test_all_recipients(self, attach_image):
         call_command(CMD_NAME)

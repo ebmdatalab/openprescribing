@@ -1,15 +1,17 @@
-{% extends "bookmarks/email_base.html" %}
+{% extends base_template %}
 {% load template_extras %}
 {% load humanize %}
 {% block title %}Your monthly alert from OpenPrescribing{% endblock %}
 
 {% block content %}
 
+{% include 'bookmarks/_email_preview_header.html' %}
+
 <p><b>Hello!</b></p>
 
 <p>Welcome to your monthly update about <a href="{{ dashboard_uri }}">{{bookmark.name}}</a>. This is an experimental new service from OpenPrescribing and we are keen for feedback: just reply to this email.</p>
 
-<p>{{ intro_text }} Note that there can sometimes be good reasons why one {{ bookmark.org_type }} is an outlier, and you should interpret the data thoughtfully: these are <a href="https://openprescribing.net/caution/">measures, not indicators.</p>
+<p>{{ intro_text }}</p>
 
 {% if has_stats %}
   {% if stats.worst %}
@@ -37,18 +39,18 @@
   {% if stats.most_changing.declines %}
     <h3 class="worse">Prescribing measures which are getting worse</h3>
     <p>
-      {% for measure, percent_from, percent_to, _ in stats.most_changing.declines %}
+      {% for d in stats.most_changing.declines %}
         {% if forloop.counter == 1 %}
-          We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that this {{ bookmark.org_type }} slipped {{percent_from|deltawords:percent_to}} over the last 9 months on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
-        <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
+          In comparison with other {{ bookmark.org_type }}s, we found that this {{ bookmark.org_type }} slipped {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>:<br>
+        <a href="{{ dashboard_uri }}#{{d.measure.id}}"><img src="cid:{{ getting_worse_image }}"></a><br>
         {% elif stats.most_changing.declines|length == 2 %}
-          It also slipped {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          It also slipped {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
            It also slipped:
            <ul>
           {% endif %}
-            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -106,18 +108,18 @@
 
   {% if stats.most_changing.improvements %}
     <h3 class="better">Prescribing measures which are getting better</h3>
-      {% for measure, percent_from, percent_to, _ in stats.most_changing.improvements %}
+      {% for d in stats.most_changing.improvements %}
         {% if forloop.counter == 1 %}
-          <p>We are currently developing algorithms to detect changes in prescribing. From our earliest iteration of this service, we found that over the last 9 months this {{ bookmark.org_type }} improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>In comparison with other {{ bookmark.org_type }}s, we found that this {{ bookmark.org_type }} improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also improved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also improved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
            It also improved:
            <ul>
           {% endif %}
-            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -151,18 +153,18 @@
   {% endif %}
 
   {% if stats.most_changing_interesting %}
-      {% for measure, percent_from, percent_to, _ in stats.most_changing_interesting %}
+      {% for d in stats.most_changing_interesting %}
         {% if forloop.counter == 1 %}
-          <p>We found that over the last 9 months this {{ bookmark.org_type }} moved {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          <p>We found that over the last {{ d.period }} months this {{ bookmark.org_type }} moved {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.
         {% elif stats.most_changing.improvements|length == 2 %}
-          It also changed {{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.</p>
+          It also changed {{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a>.</p>
         {% else %}
           {% if forloop.counter == 2 %}
            </p>
            It also changed:
            <ul>
           {% endif %}
-            <li>{{percent_from|deltawords:percent_to}} on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
+            <li>{{d.from|deltawords:d.to}} on <a href="{{ dashboard_uri }}#{{d.measure.id}}">{{ d.measure.name }}</a></li>
           {% if forloop.last %}
            </ul>
           {% endif %}
@@ -184,8 +186,8 @@
      </ul>
     {% endif %}
   {% endif %}
+  <p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 {% endif %}
 
-<p>These alerts are still experimental, so if you see things that don't make sense, then please let us know by replying to this email.</p>
 
 {% endblock %}

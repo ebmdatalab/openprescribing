@@ -69,11 +69,6 @@ class TestAlertViews(TransactionTestCase):
         self.assertIn("about mysearch", msg.message.body)
         self.assertIn("foo@baz.com", msg.to)
 
-    def test_preview_appears_for_admins(self):
-        self._create_user_and_login('a@a.com', is_superuser=True)
-        response = self.client.get('/analyse/')
-        self.assertContains(response, "Preview alert email")
-
     def test_search_bookmark_created(self):
         self.assertEqual(SearchBookmark.objects.count(), 0)
         self._post_search_signup('stuff', '%7Emysearch')
@@ -212,12 +207,12 @@ class TestFrontendViews(TransactionTestCase):
         with self.settings(DEBUG=False):
             response = self.client.get('')
             doc = pq(response.content)
-            mainjs = doc('script')[-3].attrib['src']
+            mainjs = doc('script')[-2].attrib['src']
             self.assertIn('openprescribing.min.js', mainjs)
         with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
             response = self.client.get('')
             doc = pq(response.content)
-            mainjs = doc('script')[-3].attrib['src']
+            mainjs = doc('script')[-2].attrib['src']
             self.assertIn('openprescribing.js', mainjs)
 
     def test_call_view_analyse(self):
