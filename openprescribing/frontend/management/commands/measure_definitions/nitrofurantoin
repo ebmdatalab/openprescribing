@@ -1,0 +1,37 @@
+{
+  "name": "Antibiotic stewardship: inappropriate antibiotic prescribing for UTI",
+  "title": [
+    "Antibiotic stewardship: inappropriate antibiotic prescribing for UTI:",
+    "Number of prescription items for trimethoprim,",
+    "as a ratio to the number of prescription items for nitrofuratoin"
+  ],
+  "description": [
+    "Number of prescription items for trimethoprim,",
+    "as a ratio to the number of prescription items for nitrofuratoin"
+  ],
+  "why_it_matters": [
+    "The latest NHS England Quality Premium for CCGs targets a 10% reduction in the trimethoprim:nitrofurantoin ratio. ",
+    "This is due to increasing antimicrobial resistance and E. coli bacteraemia, where nitrofurantoin is more suitable. ",
+    "The Quality Premium targets a 10% reduction in the ratio of trimethoprim:nitrofurantoin"
+  ],
+  "numerator_short": "Trimethoprim items",
+  "denominator_short": "Nitrofurantoins items",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.prescribing] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0501080W0%')"
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.prescribing] ",
+  "denominator_where": [
+    "(bnf_code LIKE '0501130R0%')"
+  ]
+}
