@@ -534,7 +534,7 @@ def getIntroText(stats, org_type):
             else:
                 msg = "We've found "
             msg += ("%s prescribing measure%s where there are some "
-                    "potential cost savings." % (
+                    "potential cost savings. " % (
                         apnumber(possible_savings),
                         possible_savings > 1 and 's' or ''))
         msg += ('Note that there can sometimes be good reasons why one CCG is '
@@ -544,7 +544,7 @@ def getIntroText(stats, org_type):
     else:
         msg = ("We've no new information about this %s this month! "
                "Its performance is not an outlier on any "
-               "of our common prescribing measures." % org_type)
+               "of our common prescribing measures. " % org_type)
     return mark_safe(msg)
 
 
