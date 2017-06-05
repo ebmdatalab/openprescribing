@@ -20,8 +20,11 @@ var formatters = {
                                                 f.friendlyOrgs);
     f.chartSubTitle = this.constructChartSubTitle(options.activeMonth);
     f.yAxisTitle = this.constructYAxisTitle(options.activeOption,
-                                                f.friendlyNumerator,
-                                                f.fullDenominator);
+                                            f.friendlyNumerator,
+                                            f.fullDenominator);
+    f.filename = this.constructFilename(options.activeOption,
+                                        f.friendlyNumerator,
+                                        f.fullDenominator);
     f.yAxisFormatter = this.getYAxisLabelFormatter(options.chartValues);
     return f;
   },
@@ -112,11 +115,17 @@ var formatters = {
   },
 
   constructYAxisTitle: function(activeOption, friendlyNumerator, fullDenominator) {
-        // console.log('constructYAxisTitle', fullDenominator);
     var axisTitle = (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     axisTitle += friendlyNumerator + '<br/>';
     axisTitle += ' per ' + fullDenominator;
     return axisTitle;
+  },
+
+  constructFilename: function(activeOption, friendlyNumerator, fullDenominator) {
+    var axisTitle = (activeOption == 'items') ? 'items for ' : 'spend on ';
+    axisTitle += friendlyNumerator;
+    axisTitle += ' per' + fullDenominator;
+    return axisTitle.toLowerCase();
   },
 
   constructTooltip: function(options, series_name, date, original_y, original_x, ratio, force_items) {
