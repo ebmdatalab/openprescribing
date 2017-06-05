@@ -1,6 +1,5 @@
-[
-    {
-        "id": "adqs",
+{
+    "adqs": {
         "title": "Average Daily Quantities (ADQ)",
         "description": "An ADQ is how much of the active ingredient in the drug a patient would take per day, on average.  This is useful because the prescribing data tells you how many pills were prescribed, but not how many patients were taking the drug.",
         "publisher": "Health & Social Care Information Centre",
@@ -10,8 +9,7 @@
         "notes": "Source is data provided privately by HSCIC, extracted from ePACT in April 2016. Not all presentations are included. Their ref NIC-23748-Q0D1L enquiries@hscic.gov.uk. We should refresh this approx yearly.",
         "core_data": true
     },
-    {
-        "id": "bnf_codes",
+    "bnf_codes": {
         "title": "Human readable terms for BNF prescription codes",
         "description": "Every row of prescribing data has a `presentation` field, a 15 character code that encodes the chemical, a classification, and its formulation (e.g. 5ml per 100ml solution, etc). The BNF codes allow us to decode the presentation.",
         "publisher": "NHS Business Services Authority",
@@ -21,8 +19,7 @@
         "requires_captcha": true,
         "core_data": true
     },
-    {
-        "id": "ccg_boundaries",
+    "ccg_boundaries": {
         "title": "Boundaries of CCGs in mapinfo format",
         "publisher": "NHS England",
         "publication_schedule": "irregular (less than yealy)",
@@ -30,8 +27,7 @@
         "notes": "Currently using version as of 2015",
         "core_data": true
     },
-    {
-        "id": "ccg_details",
+    "ccg_details": {
         "title": "Addresses and dates for CCGs",
         "description": "The definitive source of NHS organisational data",
         "publisher": "Health & Social Care Information Centre",
@@ -40,8 +36,7 @@
         "notes": "Quarterly and monthly diffs are also available",
         "core_data": true
     },
-    {
-        "id": "dispensing_practices",
+    "dispensing_practices": {
         "title": "List of dispensing practices, addresses, and GP counts",
         "description": "A Dispensing Practice has the authority to dispense as well as prescribe drugs, on the grounds they are very rural. There are a bit over 1000 in England.",
         "publisher": "NHS Business Services Authority",
@@ -49,8 +44,7 @@
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/report/viewReportList.do?reportMenuItemId=211",
         "requires_captcha": true
     },
-    {
-        "id": "nhs_payments_to_general_practice",
+    "nhs_payments_to_general_practice": {
         "title": "Summary of annual payments by NHS to GPs",
         "description": "Payments are broken down by category, The formula for working out payments is based on a weighted patient list size, which we might find useful. It is calculated as per the [GP Contract](http://systems.hscic.gov.uk/ssd/downloads/newgpcontractpay/ngms-contents/appaglobalsum#CalcPracPCOWeightedListsize), and factors in Age/Sex, Additional Needs, Turnover, Market Forces, Rurality, and Nursing/Residential homes.",
         "publisher": "Health & Social Care Information Centre",
@@ -62,8 +56,7 @@
         "notes": "The 2013/14 version was described as 'experimental'. I'm not sure if this has ever been used, so tagged as `research`",
         "research": true
     },
-    {
-        "id": "nhs_postcode_file",
+    "nhs_postcode_file": {
         "title": "NHS postcodes with geography data",
         "description": "Data originating with ONS for NHS-related postcodes, including ONS census districts, etc, and most importantly georeferences",
         "publisher": "Health & Social Care Information Centre",
@@ -78,8 +71,7 @@
         ],
         "core_data": true
     },
-    {
-        "id": "patient_list_size",
+    "patient_list_size": {
         "title": "Patient list sizes of practice broken down by age decile and gender",
         "publisher": "NHS Business Services Authority",
         "publication_schedule": "quarterly",
@@ -88,8 +80,7 @@
         "notes": "The data doesn't contain date stamps, so we rely on the correct datestamping of the containing folder to verify the validity of the data. For example, if a CSV is valid for Jan - March 2016, then it should be placed in a folder like `2016_03/patient_list_size_new.csv`",
         "core_data": true
     },
-    {
-        "id": "patient_list_weightings",
+    "patient_list_weightings": {
         "title": "ASTRO-PU and STAR-PU weightings",
         "description": "When comparing between practices, it is common to calculate cost per patient (for example). However, different demographics have different needs and may be lumpily represented for particular practices. Weightings are used to correct for this.",
         "publisher": "Health & Social Care Information Centre",
@@ -98,8 +89,7 @@
         "notes": "The importer actually dumps values to JSON, rather than importing. This json is then saved to the PracticeStatistics model whenever tha model is saved, which in practice is whenever the `import_list_sizes` importer is run.",
         "core_data": true
     },
-    {
-        "id": "practice_details",
+    "practice_details": {
         "title": "Addresses and dates for GP Practices",
         "description": "The definitive source of NHS organisational data: includes practice setting and practice-CCG membership",
         "publisher": "Health & Social Care Information Centre",
@@ -108,8 +98,7 @@
         "notes": "Quarterly and monthly diffs are also available",
         "core_data": true
     },
-    {
-        "id": "prescribing",
+    "prescribing": {
         "title": "GP Practice Prescribing",
         "description": "General practice prescribing data is a list of all medicines, dressings and appliances that are prescribed and dispensed each month.",
         "publisher": "NHSBSA",
@@ -118,8 +107,7 @@
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=124",
         "core_data": true
     },
-    {
-        "id": "prescribing_metadata",
+    "prescribing_metadata": {
         "title": "GP Practice Prescribing metadata",
         "description": "Metadata for joining with prescribing data",
         "publisher": "Health & Social Care Information Centre",
@@ -128,8 +116,7 @@
         "index_url": "http://content.digital.nhs.uk/article/2021/Website-Search?q=presentation+level+data&go=Go&area=both",
         "core_data": true
     },
-    {
-        "id": "qof",
+    "qof": {
         "title": "The Quality and Outcomes Framework (QOF) is the annual reward and incentive programme for GPs",
         "description": "The incentives are based on prevalence of certain conditions, and the data is presented at various output levels, including practice and CCG. It runs across a financial year (i.e. April - March)",
         "publisher": "Health & Social Care Information Centre",
@@ -142,4 +129,4 @@
         },
         "research": true
     }
-]
+}

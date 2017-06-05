@@ -4,7 +4,7 @@ import os
 import json
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from pipeline.runner import load_tasks
 
@@ -108,6 +108,12 @@ class PipelineTests(TestCase):
 
         task = self.tasks['convert_source_a']
         self.assertEqual(task.dependency_names, ['fetch_source_a'])
+
+    def test_load_real_tasks(self):
+        # We're just checking that no exceptions get raised here
+        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        with override_settings(PIPELINE_METADATA_DIR=path):
+            tasks = load_tasks()
 
     def test_tasks_by_type(self):
         tasks = self.tasks.by_type('manual_fetch')
