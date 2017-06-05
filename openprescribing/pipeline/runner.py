@@ -114,10 +114,10 @@ class Task(object):
     def input_paths(self):
         '''Return list of of paths to input files for task.'''
         paths = glob.glob("%s/*/*" % self.source.data_dir)
-        return [
+        return sorted(
             path for path in paths
             if re.search(self.filename_regex(), path)
-        ]
+        )
 
     def set_last_imported_path(self, path):
         '''Set the path of the most recently imported data for this source.'''
