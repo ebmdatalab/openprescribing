@@ -7,6 +7,7 @@ import json
 import os
 import re
 import shlex
+import textwrap
 
 import networkx as nx
 
@@ -24,7 +25,14 @@ class Source(object):
             settings.PIPELINE_DATA_BASEDIR,
             attrs.get('data_dir', name)
         )
-        # TODO all the other attributes
+
+        self.publisher = attrs.get('publisher')
+        self.publication_schedule = attrs.get('publication_schedule')
+        self.publication_lag = attrs.get('publication_lag')
+        self.notes = attrs.get('notes')
+        self.index_url = attrs.get('index_url')
+        self.urls = attrs.get('urls')
+
         self.tasks = TaskCollection()
 
     def add_task(self, task):
@@ -146,22 +154,41 @@ class ManualFetchTask(Task):
         raw_input('Press return when done, or to skip this step')
 
     def manual_fetch_instructions(self):
+        source = self.source
         year_and_month = datetime.datetime.now().strftime('%Y_%m')
         expected_location = "%s/%s/%s" % (
             settings.PIPELINE_DATA_BASEDIR,
-            self.source.name,
+            source.name,
             year_and_month
         )
         output = []
         output.append('~' * 80)
         output.append('You should now locate the latest data for %s, if '
-                      'available' % self.source.name)
+                      'available' % source.name)
         output.append('You should save it at:')
         output.append('    %s' % expected_location)
-        # TODO: include index_url, urls, publication_schedule, notes
+
+        if source.index_url:
+            output.append('Where to look:')
+            output.append('    %s' % source.index_url)
+
+        if source.urls:
+            output.append('Previous data has been found at:')
+            for k, v in source.urls.items():
+                output.append('    %s: %s' % (k, v))
+
+        if source.publication_schedule:
+            output.append('Publication frequency:')
+            output.append('    %s' % source.publication_schedule)
+
+        if source.notes:
+            output.append('Notes:')
+            for line in textwrap.wrap(source.notes):
+                output.append('    %s' % line)
+
         # TODO should this be "last imported data"?
         output.append('The last saved data can be found at:')
-        for task in self.source.tasks_that_use_raw_source_data():
+        for task in source.tasks_that_use_raw_source_data():
             paths = task.imported_paths()
             if paths:
                 path = paths[-1]

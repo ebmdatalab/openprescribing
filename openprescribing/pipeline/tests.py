@@ -280,6 +280,15 @@ The last saved data can be found at:
         output = task.manual_fetch_instructions()
         self.assertEqual(output, expected_output)
 
+    def test_manual_fetch_instructions_with_real_data(self):
+        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        with override_settings(PIPELINE_METADATA_DIR=path):
+            tasks = load_tasks()
+
+        # We're just checking that no exceptions get raised here
+        for task in tasks.by_type('manual_fetch'):
+            task.manual_fetch_instructions()
+
     def test_run_auto_fetch(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command') as cc:
