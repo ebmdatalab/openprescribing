@@ -42,31 +42,55 @@ class PipelineTests(TestCase):
         log_data = {
             'source_a': [
                 {
-                    'imported_file': build_path('source_a', '2017_01', 'source_a.csv'),
+                    'imported_file': build_path(
+                        'source_a',
+                        '2017_01',
+                        'source_a.csv'
+                    ),
                     'imported_at': '2017-01-01T12:00:00'
                 },
                 {
-                    'imported_file': build_path('source_a', '2017_02', 'source_a.csv'),
+                    'imported_file': build_path(
+                        'source_a',
+                        '2017_02',
+                        'source_a.csv'
+                    ),
                     'imported_at': '2017-02-01T12:00:00'
                 }
             ],
             'source_b': [
                 {
-                    'imported_file': build_path('source_b', '2017_01', 'source_b_1701.csv'),
+                    'imported_file': build_path(
+                        'source_b',
+                        '2017_01',
+                        'source_b_1701.csv'
+                    ),
                     'imported_at': '2017-01-01T12:00:00'
                 },
                 {
-                    'imported_file': build_path('source_b', '2017_02', 'source_b_1702.csv'),
+                    'imported_file': build_path(
+                        'source_b',
+                        '2017_02',
+                        'source_b_1702.csv'
+                    ),
                     'imported_at': '2017-02-01T12:00:00'
                 }
             ],
             'source_c': [
                 {
-                    'imported_file': build_path('source_c', '2017_01', 'source_c2.csv'),
+                    'imported_file': build_path(
+                        'source_c',
+                        '2017_01',
+                        'source_c2.csv'
+                    ),
                     'imported_at': '2017-01-01T12:00:00'
                 },
                 {
-                    'imported_file': build_path('source_c', '2017_02', 'source_c2.csv'),
+                    'imported_file': build_path(
+                        'source_c',
+                        '2017_02',
+                        'source_c2.csv'
+                    ),
                     'imported_at': '2017-02-01T12:00:00'
                 }
             ]
@@ -111,7 +135,8 @@ class PipelineTests(TestCase):
             self.assertTrue(task_names.index(name1) < task_names.index(name2))
 
     def test_tasks_by_type_ordered(self):
-        task_names = [task.name for task in self.tasks.by_type('import').ordered()]
+        tasks = self.tasks.by_type('import').ordered()
+        task_names = [task.name for task in tasks]
         expected_output = [
             'import_source_a',
             'import_source_b',
@@ -121,7 +146,8 @@ class PipelineTests(TestCase):
         self.assertEqual(task_names, expected_output)
 
     def test_tasks_ordered_by_type(self):
-        task_names = [task.name for task in self.tasks.ordered().by_type('import')]
+        tasks = self.tasks.ordered().by_type('import')
+        task_names = [task.name for task in tasks]
         expected_output = [
             'import_source_a',
             'import_source_b',
@@ -172,7 +198,8 @@ class PipelineTests(TestCase):
 
     def test_set_last_imported_path(self):
         task = self.tasks['import_source_b']
-        task.set_last_imported_path(build_path('source_b', '2017_03', 'source_b_1703.csv'))
+        path = build_path('source_b', '2017_03', 'source_b_1703.csv')
+        task.set_last_imported_path(path)
         expected_output = [
             build_path('source_b', '2017_01', 'source_b_1701.csv'),
             build_path('source_b', '2017_02', 'source_b_1702.csv'),
@@ -180,9 +207,11 @@ class PipelineTests(TestCase):
         ]
         self.assertEqual(task.imported_paths(), expected_output)
 
-        # According to the log data in setUp(), no data has been imported for source_c yet
+        # According to the log data in setUp(), no data has been imported for
+        # source_c yet
         task1 = self.tasks['import_source_c1']
-        task1.set_last_imported_path(build_path('source_c', '2017_03', 'source_c1.csv'))
+        path = build_path('source_c', '2017_03', 'source_c1.csv')
+        task1.set_last_imported_path(path)
         expected_output = [
             build_path('source_c', '2017_03', 'source_c1.csv'),
         ]
@@ -197,7 +226,11 @@ class PipelineTests(TestCase):
     def test_input_paths(self):
         task = self.tasks['import_source_b']
         expected_output = [
-            build_path('source_b', '2017_{}'.format(month), 'source_b_17{}.csv'.format(month))
+            build_path(
+                'source_b',
+                '2017_{}'.format(month),
+                'source_b_17{}.csv'.format(month)
+            )
             for month in ['01', '02', '03']
         ]
         self.assertEqual(task.input_paths(), expected_output)
@@ -256,10 +289,12 @@ The last saved data can be found at:
 
     def test_run_import(self):
         task = self.tasks['import_source_c1']
-        expected_calls = [
-            mock.call('import_source_c', '--filename', build_path('source_c', year_and_month, 'source_c1.csv'))
-            for year_and_month in ['2017_01', '2017_02']
-        ]
+        expected_calls = []
+        for year_and_month in ['2017_01', '2017_02']:
+            path = build_path('source_c', year_and_month, 'source_c1.csv')
+            call = mock.call('import_source_c', '--filename', path)
+            expected_calls.append(call)
+
         with mock.patch('pipeline.runner.call_command') as cc:
             task.run()
             cc.assert_has_calls(expected_calls)
@@ -272,4 +307,9 @@ The last saved data can be found at:
 
 
 def build_path(source_id, year_and_month, filename):
-    return os.path.join(settings.PIPELINE_DATA_BASEDIR, source_id, year_and_month, filename)
+    return os.path.join(
+        settings.PIPELINE_DATA_BASEDIR,
+        source_id,
+        year_and_month,
+        filename
+    )

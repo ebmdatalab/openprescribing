@@ -20,7 +20,10 @@ class Source(object):
     def __init__(self, name, attrs):
         self.name = name
         self.title = attrs['title']
-        self.data_dir = os.path.join(settings.PIPELINE_DATA_BASEDIR, attrs.get('data_dir', name))
+        self.data_dir = os.path.join(
+            settings.PIPELINE_DATA_BASEDIR,
+            attrs.get('data_dir', name)
+        )
         # TODO all the other attributes
         self.tasks = TaskCollection()
 
@@ -36,7 +39,10 @@ class Source(object):
 
 class SourceCollection(object):
     def __init__(self, source_data):
-        self._sources = {name: Source(name, attrs) for name, attrs in source_data.items()}
+        self._sources = {
+            name: Source(name, attrs)
+            for name, attrs in source_data.items()
+        }
 
     def __getitem__(self, name):
         return self._sources[name]
@@ -61,7 +67,10 @@ class Task(object):
         self.source = source
 
     def resolve_dependencies(self, task_collection):
-        self.dependencies = [task_collection[name] for name in self.dependency_names]
+        self.dependencies = [
+            task_collection[name]
+            for name in self.dependency_names
+        ]
 
     def filename_regex(self):
         '''Return regex that matches the part of the task's command that should
@@ -96,16 +105,22 @@ class Task(object):
             record for record in records_for_source
             if re.search(self.filename_regex(), record['imported_file'])
         ]
-        sorted_records = sorted(matched_records, key=lambda record: record['imported_at'])
+        sorted_records = sorted(
+            matched_records,
+            key=lambda record: record['imported_at']
+        )
         return [record['imported_file'] for record in sorted_records]
 
     def input_paths(self):
         '''Return list of of paths to input files for task.'''
         paths = glob.glob("%s/*/*" % self.source.data_dir)
-        return [path for path in paths if re.search(self.filename_regex(), path)]
+        return [
+            path for path in paths
+            if re.search(self.filename_regex(), path)
+        ]
 
     def set_last_imported_path(self, path):
-        '''Set the path of the most recently imported data for this source.  '''
+        '''Set the path of the most recently imported data for this source.'''
         now = datetime.datetime.now().replace(microsecond=0).isoformat()
         records = load_import_records()
         records[self.source.name].append({
@@ -118,7 +133,10 @@ class Task(object):
         '''Return list of of paths to input files for task that have not been
         imported.'''
         imported_paths = [record for record in self.imported_paths()]
-        return [path for path in self.input_paths() if path not in imported_paths]
+        return [
+            path for path in self.input_paths()
+            if path not in imported_paths
+        ]
 
 
 class ManualFetchTask(Task):
@@ -129,20 +147,27 @@ class ManualFetchTask(Task):
 
     def manual_fetch_instructions(self):
         year_and_month = datetime.datetime.now().strftime('%Y_%m')
-        expected_location = "%s/%s/%s" % (settings.PIPELINE_DATA_BASEDIR, self.source.name, year_and_month)
+        expected_location = "%s/%s/%s" % (
+            settings.PIPELINE_DATA_BASEDIR,
+            self.source.name,
+            year_and_month
+        )
         output = []
         output.append('~' * 80)
-        output.append('You should now locate the latest data for %s, if available' % self.source.name)
+        output.append('You should now locate the latest data for %s, if '
+                      'available' % self.source.name)
         output.append('You should save it at:')
         output.append('    %s' % expected_location)
         # TODO: include index_url, urls, publication_schedule, notes
-        output.append('The last saved data can be found at:')  # TODO should this be "last imported data"?
+        # TODO should this be "last imported data"?
+        output.append('The last saved data can be found at:')
         for task in self.source.tasks_that_use_raw_source_data():
             paths = task.imported_paths()
             if paths:
                 path = paths[-1]
             else:
-                path = '<never imported>'  # TODO Can we say what it is that's never been imported?
+                # TODO Can we say what it is that's never been imported?
+                path = '<never imported>'
             output.append('    %s' % path)
         return '\n'.join(output)
 
@@ -233,7 +258,8 @@ class TaskCollection(object):
             return bool(self._tasks)
 
     def by_type(self, task_type):
-        return TaskCollection(list(self), ordered=self._ordered, task_type=task_type)
+        return TaskCollection(list(self), ordered=self._ordered,
+                              task_type=task_type)
 
     def ordered(self):
         return TaskCollection(list(self), ordered=True, task_type=self._type)
@@ -310,7 +336,8 @@ class SmokeTestHandler(CloudHandler):
     def run_smoketests(self):
         os.environ['LAST_IMPORTED'] = self.last_imported()
         try:
-            unittest.main('pipeline.smoketests', argv=['smoketests'])  # The value of argv is not important
+            # The value of argv is not important
+            unittest.main('pipeline.smoketests', argv=['smoketests'])
         except SystemExit:
             pass
 
@@ -329,8 +356,8 @@ class SmokeTestHandler(CloudHandler):
         date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
                           'INTERVAL 5 YEAR))' % prescribing_date)
 
-        smoketests_path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'smoketests')
-        for sql_file in glob.glob(os.path.join(smoketests_path, '*.sql')):
+        path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'smoketests')
+        for sql_file in glob.glob(os.path.join(path, '*.sql')):
             test_name = os.path.splitext(
                 os.path.basename(sql_file))[0]
             with open(sql_file, 'rb') as f:
@@ -350,7 +377,7 @@ class SmokeTestHandler(CloudHandler):
                     cost.append(r['actual_cost'])
                     items.append(r['items'])
                 print("Updating test expectations for %s" % test_name)
-                json_path = os.path.join(smoketests_path, '%s.json' % test_name)
+                json_path = os.path.join(path, '%s.json' % test_name)
                 with open(json_path, 'wb') as f:
                     obj = {'cost': cost,
                            'items': items,
