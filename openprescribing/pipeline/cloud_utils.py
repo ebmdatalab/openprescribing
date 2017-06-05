@@ -57,7 +57,7 @@ class CloudHandler(object):
             raise error
 
         sleeptime = random.random() * (2**progressless_iters)
-        print ('Caught exception (%s). '
+        print('Caught exception (%s). '
                'Sleeping for %s seconds before retry #%d'
                % (str(error), sleeptime, progressless_iters))
         time.sleep(sleeptime)
@@ -285,4 +285,3 @@ class CloudHandler(object):
                 progressless_iters = 0
 
         print '\nUpload complete!'
-
