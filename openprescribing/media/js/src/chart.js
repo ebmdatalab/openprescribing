@@ -336,7 +336,10 @@ var analyseChart = {
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
       $(window).resize(); // CSS hack.
       var chart = _this.el.chartEl.highcharts();
-      chart.reflow();
+      if (typeof chart != 'undefined') {
+        // Don't break in IE8
+        chart.reflow();
+      }
       var target = ($(this).data('target'));
       if ((target === '#chart-panel') ||
           (target === '#data-panel')) {
