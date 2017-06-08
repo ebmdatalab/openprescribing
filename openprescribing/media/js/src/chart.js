@@ -166,7 +166,11 @@ var analyseChart = {
       this.el.resultsEl.show();
       this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
                                                    this.globalOptions);
-      this.addDataDownload();
+      if (this.isOldIe) {
+        $('#data-link').text("Sorry, you must use a newer web browser to make use of this feature").show();
+      } else {
+        this.addDataDownload();
+      }
 
       // For now, don't render the map and line chart in older browsers -
       // they are just too slow.
