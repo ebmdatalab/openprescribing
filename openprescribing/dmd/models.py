@@ -85,7 +85,8 @@ class DMDProduct(models.Model):
     dmdid = models.IntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
     vpid = models.IntegerField(primary_key=True)  # could become foreign key
-    display_name = models.CharField(max_length=40)
+    name = models.CharField(max_length=40)
+    full_name = models.CharField(max_length=40)
     # requiring additional monitoring in accordance with the European
     # Medicines Agency Additional Monitoring Scheme
     ema = models.CharField(max_length=15)
@@ -135,4 +136,4 @@ class DMDProduct(models.Model):
         managed = False
 
     def __str__(self):
-        return self.display_name
+        return self.full_name
