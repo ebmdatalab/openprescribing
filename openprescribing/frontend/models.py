@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
+from dmd.models import DMDProduct
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
 
@@ -352,6 +353,30 @@ class Presentation(models.Model):
                 version = next_version
                 next_version = version.replaced_by
         return version
+
+    @property
+    def product(self):
+        if self.is_generic:
+            concept_class = 1
+        else:
+            concept_class = 2
+        # Sometimes we get more than one DMD+D VMP for a single BNF
+        # code. This is usually where something is available in a
+        # suspension or a solution, or similar clinical equivalencies,
+        # so we just pick the first one.
+        return DMDProduct.objects.filter(
+            bnf_code=self.bnf_code, concept_class=concept_class).first()
+
+    @property
+    def product_name(self):
+        if self.product:
+            name = self.product.display_name
+        else:
+            try:
+                name = Presentation.objects.get(bnf_code=self.bnf_code).name
+            except Presentation.DoesNotExist:
+                name = "n/a"
+        return name
 
     class Meta:
         app_label = 'frontend'
