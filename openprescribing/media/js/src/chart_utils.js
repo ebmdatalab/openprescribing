@@ -16,7 +16,7 @@ var utils = {
             );
       return v > 4 ? v : undef;
     }());
-    if ((typeof ie !== 'undefined') && (ie < 9)) {
+    if ((typeof ie !== 'undefined') && (ie <= 9)) {
       return true;
     } else {
       return false;
