@@ -324,6 +324,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--source_directory')
+        parser.add_argument(
+            '--extract_test',
+            help=("Write test fixtures to source_directory, based on the "
+                  "smallest possible subset of data from the raw XML files"))
 
     def handle(self, *args, **options):
         '''
@@ -331,11 +335,14 @@ class Command(BaseCommand):
         '''
         if not options['source_directory']:
             raise CommandError('Please supply a source directory')
-        with transaction.atomic():
-            process_datafiles(options['source_directory'])
-        with connection.cursor() as cursor:
-            cursor.execute('ANALYZE VERBOSE')
-        with transaction.atomic():
-            create_dmd_product()
-        with transaction.atomic():
-            add_bnf_codes(options['source_directory'])
+        if options['extract_test']:
+            extract_test(options['source_directory'])
+        else:
+            with transaction.atomic():
+                process_datafiles(options['source_directory'])
+            with connection.cursor() as cursor:
+                cursor.execute('ANALYZE VERBOSE')
+            with transaction.atomic():
+                create_dmd_product()
+            with transaction.atomic():
+                add_bnf_codes(options['source_directory'])
