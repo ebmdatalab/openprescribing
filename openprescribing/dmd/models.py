@@ -113,7 +113,8 @@ class DMDProduct(models.Model):
     # This flag indicates where a prescriber will receive a fee for
     # administering an item. This is only applicable to NHS primary
     # medical services contractors.
-    can_have_personal_administration_fee = models.BooleanField(db_column='padm')
+    can_have_personal_administration_fee = models.BooleanField(
+        db_column='padm')
     # Indicates items that can be prescribed in instalments on a FP10
     # MDA form.
     is_fp10 = models.BooleanField(db_column='fp10_mda')
