@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+
+from dmd.models import DMDProduct
 from frontend.models import Chemical
 from frontend.models import EmailMessage
 from frontend.models import MailLog
@@ -156,16 +158,28 @@ class PCTTestCase(TestCase):
 
 
 class PresentationTestCase(TestCase):
+    fixtures = ['presentations', 'dmdproducts']
+
     def test_manager(self):
-        drug_n = Presentation.objects.create(
-            bnf_code='NNNNNNNNNNNNNNN',
-            name='Drug N'
-            )
-        Presentation.objects.create(
-            bnf_code='MMMMMMMMMMMMMMM',
-            name='Drug M',
-            replaced_by=drug_n
-        )
         current = Presentation.objects.current()
-        self.assertEqual(len(current), 1)
-        self.assertEqual(current[0].name, 'Drug N')
+        old_count = len(current)
+        to_make_not_current = current[0]
+        to_make_not_current.replaced_by = current[1]
+        to_make_not_current.save()
+        self.assertEqual(len(Presentation.objects.current()), old_count - 1)
+
+    def test_dmd_product_which_exists(self):
+        p = Presentation.objects.get(pk='0202010F0AAAAAA')
+        self.assertEqual(p.dmd_product.vpid, 318248001)
+
+    def test_dmd_product_which_does_not_exist(self):
+        p = Presentation.objects.get(pk='0202010B0AAACAC')
+        self.assertEqual(p.dmd_product, None)
+
+    def test_product_name_with_dmd_product(self):
+        p = Presentation.objects.get(pk='0202010F0AAAAAA')
+        self.assertEqual(p.product_name, 'Verapamil 160mg tablets')
+
+    def test_product_name_without_dmd_product(self):
+        p = Presentation.objects.get(pk='0202010B0AAACAC')
+        self.assertEqual(p.product_name, 'Bendroflumethiazide_Tab 5mg')

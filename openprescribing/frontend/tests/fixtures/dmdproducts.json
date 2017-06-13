@@ -1,0 +1,67 @@
+[{
+  "model": "dmd.dmdproduct",
+  "pk": 526311000001106,
+  "fields": {
+    "bnf_code": "0202010F0AAAAAA",
+    "vpid": 318248001,
+    "name": "Verapamil 160mg tablets",
+    "full_name": "Verapamil 160mg tablets (A A H Pharmaceuticals Ltd)",
+    "ema": null,
+    "prescribability": 1,
+    "availability_restrictions": 1,
+    "vmp_non_availability": 0,
+    "concept_class": 1,
+    "product_type": 3,
+    "is_in_nurse_formulary": false,
+    "is_in_dentist_formulary": false,
+    "product_order_no": null,
+    "is_blacklisted": false,
+    "is_schedule_2": false,
+    "can_have_personal_administration_fee": false,
+    "is_fp10": false,
+    "is_borderline_substance": false,
+    "has_assorted_flavours": false,
+    "controlled_drug_category": 0,
+    "tariff_category": 1,
+    "is_imported": false,
+    "is_broken_bulk": false,
+    "is_non_bioequivalent": false,
+    "is_special_container": false
+  }
+},
+{
+  "model": "dmd.availabilityrestriction",
+  "pk": 1,
+  "fields": {
+    "desc": "None"
+  }
+},
+{
+  "model": "dmd.prescribability",
+  "pk": 1,
+  "fields": {
+    "desc": "Valid as a prescribable product"
+  }
+},
+{
+  "model": "dmd.vmpnonavailability",
+  "pk": 0,
+  "fields": {
+    "desc": "Actual Products Available"
+  }
+},
+{
+  "model": "dmd.controlleddrugcategory",
+  "pk": 0,
+  "fields": {
+    "desc": "No Controlled Drug Status"
+  }
+},
+{
+  "model": "dmd.tariffcategory",
+  "pk": 1,
+  "fields": {
+    "desc": "Part VIIIA Category A"
+  }
+}
+]
