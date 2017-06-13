@@ -12,6 +12,10 @@ Data Model and Implementation Guides published by the NHS BSA:
  * Data Model: docs/Data_Model_R2_v3.1_May_2015.pdf
  * Implementation: docs/dmd_Implemention_Guide_%28Primary_Care%29_v1.0.pdf
 
+Note that many other tables are imported but not necessarily modelled
+here. For some examples of the kinds of query that are possible, see:
+
+https://github.com/ebmdatalab/price-per-dose/blob/master/snomed-bnf-mapping.ipynb
 
 """
 from __future__ import unicode_literals
@@ -137,3 +141,17 @@ class DMDProduct(models.Model):
 
     def __str__(self):
         return self.full_name
+
+    @property
+    def amps(self):
+        return DMDProduct.objects.filter(
+            vpid=self.dmdid).filter(concept_class=2)
+
+    @property
+    def vmp(self):
+        if self.concept_class == 1:
+            raise DMDProduct.DoesNotExist("You can't find a VMP of a VMP")
+        vmp = DMDProduct.objects.filter(
+            dmdid=self.vpid, concept_class=1).exclude(vpid=self.dmdid)
+        assert len(vmp) < 2, "An AMP should only ever have one VMP"
+        return vmp[0]
