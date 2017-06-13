@@ -355,7 +355,7 @@ class Presentation(models.Model):
         return version
 
     @property
-    def product(self):
+    def dmd_product(self):
         if self.is_generic:
             concept_class = 1
         else:
@@ -369,8 +369,8 @@ class Presentation(models.Model):
 
     @property
     def product_name(self):
-        if self.product:
-            name = self.product.display_name
+        if self.dmd_product:
+            name = self.dmd_product.name
         else:
             try:
                 name = Presentation.objects.get(bnf_code=self.bnf_code).name

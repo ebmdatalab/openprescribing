@@ -23,7 +23,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class AvailabalityRestriction(models.Model):
+class AvailabilityRestriction(models.Model):
     cd = models.IntegerField(primary_key=True)
     desc = models.CharField(max_length=50)
 
@@ -32,7 +32,6 @@ class AvailabalityRestriction(models.Model):
 
     class Meta:
         db_table = 'dmd_lookup_availability_restriction'
-        managed = False
 
 
 class Prescribability(models.Model):
@@ -44,7 +43,6 @@ class Prescribability(models.Model):
 
     class Meta:
         db_table = 'dmd_lookup_virtual_product_pres_status'
-        managed = False
 
 
 class VMPNonAvailability(models.Model):
@@ -56,7 +54,6 @@ class VMPNonAvailability(models.Model):
 
     class Meta:
         db_table = 'dmd_lookup_virtual_product_non_avail'
-        managed = False
 
 
 class ControlledDrugCategory(models.Model):
@@ -68,7 +65,6 @@ class ControlledDrugCategory(models.Model):
 
     class Meta:
         db_table = 'dmd_lookup_control_drug_category'
-        managed = False
 
 
 class TariffCategory(models.Model):
@@ -80,35 +76,36 @@ class TariffCategory(models.Model):
 
     class Meta:
         db_table = 'dmd_lookup_dt_payment_category'
-        managed = False
 
 
 class DMDProduct(models.Model):
+    '''A model that combines AMPs and VPMs to make mapping to legacy BNF
+    codes easier, and to cache lookups on commonly-useful relations.
+
     '''
-    '''
-    dmdid = models.IntegerField(primary_key=True)
+    dmdid = models.BigIntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
-    vpid = models.IntegerField(primary_key=True)  # could become foreign key
+    vpid = models.BigIntegerField(unique=True, db_index=True)
     name = models.CharField(max_length=40)
-    full_name = models.CharField(max_length=40)
+    full_name = models.TextField()
     # requiring additional monitoring in accordance with the European
     # Medicines Agency Additional Monitoring Scheme
-    ema = models.CharField(max_length=15)
+    ema = models.CharField(max_length=15, null=True)
     prescribability = models.ForeignKey(
         Prescribability, db_column='pres_statcd')
     availability_restrictions = models.ForeignKey(
-        AvailabalityRestriction, db_column='avail_restrictcd')
+        AvailabilityRestriction, db_column='avail_restrictcd')
     vmp_non_availability = models.ForeignKey(
         VMPNonAvailability, db_column='non_availcd')
     # 1 = VMP, 2 = AMP
-    concept_class = models.IntegerField(primary_key=True)
+    concept_class = models.IntegerField(db_index=True)
     # 1 = Generic, 2 = brand, 3 = Mannufactured Generic
     product_type = models.IntegerField()
     # in the nurse prescribers' formulary?
     is_in_nurse_formulary = models.BooleanField(db_column='nurse_f')
     is_in_dentist_formulary = models.BooleanField(db_column='dent_f')
     # Product order number - Order number of product within Drug Tariff
-    product_order_no = models.TextField(db_column='prod_order_no')
+    product_order_no = models.TextField(db_column='prod_order_no', null=True)
     # indicates AMPs listed in part XVIIIA of the Drug Tariff
     is_blacklisted = models.BooleanField(db_column='sched_1')
     # Indicates items that are part of the Selected List Scheme
@@ -137,7 +134,6 @@ class DMDProduct(models.Model):
 
     class Meta:
         db_table = 'dmd_product'
-        managed = False
 
     def __str__(self):
         return self.full_name
