@@ -325,7 +325,7 @@ class Presentation(models.Model):
     objects = PresentationManager()
 
     def __str__(self):
-        return '%s: %s' % (self.bnf_code, self.name)
+        return '%s: %s' % (self.bnf_code, self.product_name)
 
     def save(self, *args, **kwargs):
         if len(self.bnf_code) > 10:
