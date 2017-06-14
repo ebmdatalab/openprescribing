@@ -1,11 +1,12 @@
 from contextlib import contextmanager
+from datetime import datetime
 from os import environ
 from titlecase import titlecase
+import argparse
 import hashlib
 import html2text
 import logging
 import re
-import string
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
@@ -159,3 +160,13 @@ def google_user_id(user):
     else:
         client_id = None
     return client_id
+
+
+def valid_date(s):
+    """Validate ISO-formatted dates. For use in argparse arguments.
+    """
+    try:
+        return datetime.strptime(s, "%Y-%m-%d")
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(s)
+        raise argparse.ArgumentTypeError(msg)

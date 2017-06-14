@@ -729,3 +729,24 @@ class MailLog(models.Model):
             except EmailMessage.DoesNotExist:
                 pass
         return subject
+
+
+class PPUSaving(models.Model):
+    """A Price-per-unit Saving describes a possible saving for a CCG or a
+    practice for an individual presentation.
+
+    Records with a blank practice_id are for data at a CCG level;
+    those with a practice_id are for data at a practice level.
+
+    """
+    date = models.DateField(db_index=True)
+    presentation = models.ForeignKey(
+        Presentation, db_column='bnf_code')
+    lowest_decile = models.FloatField()
+    quantity = models.IntegerField()
+    price_per_unit = models.FloatField()
+    possible_savings = models.FloatField()
+    formulation_swap = models.TextField(null=True, blank=True)
+    pct = models.ForeignKey(PCT, null=True, blank=True, db_index=True)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, db_index=True)
