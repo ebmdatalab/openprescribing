@@ -323,7 +323,7 @@ class Command(BaseCommand):
             'https://isd.digital.nhs.uk/trud3.')
 
     def add_arguments(self, parser):
-        parser.add_argument('--source_directory')
+        parser.add_argument('--source_directory', required=True)
         parser.add_argument(
             '--extract_test',
             help=("Write test fixtures to source_directory, based on the "
@@ -333,8 +333,6 @@ class Command(BaseCommand):
         '''
         Import dm+d dataset.
         '''
-        if not options['source_directory']:
-            raise CommandError('Please supply a source directory')
         if options['extract_test']:
             extract_test(options['source_directory'])
         else:
