@@ -229,7 +229,7 @@ def add_bnf_codes(source_directory):
             rowcount = cursor.rowcount
             if not rowcount:
                 logging.warn(
-                    "When adding BNF codes, could not find", snomed_code)
+                    "When adding BNF codes, could not find %s", snomed_code)
 
 
 def process_gtin(cursor, f):
