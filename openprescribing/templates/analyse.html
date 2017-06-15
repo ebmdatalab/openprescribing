@@ -118,17 +118,17 @@
 {% include '_share_button.html' %}
 
 <ul id="tabs" class="nav nav-tabs" role="tablist">
-  <li role="presentation" id="summary-tab" class="summary-tab active">
+  <li role="presentation" id="summary-tab" class="summary-tab active saveable">
     <a href="#summary-panel" data-target="#summary-panel" aria-controls="settings" role="tab" data-toggle="tab">Show summary</a>
   </li>
-  <li role="presentation" id="chart-tab" class="chart-tab hidden">
-    <a href="#chart-panel" data-target="#chart-panel" aria-controls="settings" role="tab" data-toggle="tab">Show over time</a>
+  <li role="presentation" id="chart-tab" class="chart-tab hidden saveable">
+    <a href="#chart-panel" data-target="#chart-panel" aria-controls="settings" role="tab" data-toggle="tab">Time series</a>
   </li>
-  <li role="presentation" id="map-tab" class="map-tab hidden">
-    <a href="#map-panel" data-target="#map-panel" aria-controls="settings" role="tab" data-toggle="tab">Show on map</a>
+  <li role="presentation" id="map-tab" class="map-tab hidden saveable">
+    <a href="#map-panel" data-target="#map-panel" aria-controls="settings" role="tab" data-toggle="tab">Map</a>
   </li>
-  <li role="presentation" id="data-tab" class="data-tab hidden">
-    <a href="#data-panel" data-target="#data-panel" aria-controls="settings" role="tab" data-toggle="tab">Get raw data</a>
+  <li role="presentation" id="data-tab" class="data-tab">
+    <a href="#data-panel" data-target="#data-panel" aria-controls="settings" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
   </li>
 </ul>
 
@@ -152,7 +152,7 @@
             <div class="chart-sub-title"></div>
         </div>
         <div class="chart-container">
-            <div id="summarychart"></div>
+          <div id="summarychart"></div>
             <div class="practice-warning">
                 For clarity, practice graphs and maps only show standard GP practices, and exclude non-standard settings like prisons, out-of-hours services, etc.
             </div>
@@ -192,8 +192,18 @@
     </div>
 
     <div role="tabpanel" class="tab-pane fade" id="data-panel" class="data-tab">
-      <p>If you use this data, please credit this site.</p>
-      <p><a id="data-link" href="#">Data as CSV</a> <span id="data-rows-count"></span></p>
+      <p>
+        You are welcome to use data from this site in your academic
+        output with attribution. Please cite "OpenPrescribing.net, EBM
+        DataLab, University of Oxford, 2017" as the source for
+        academic attribution.</p>
+
+      <p>If you use data or images from this site online or in a
+        report, please link back to us. Your readers will then be able
+        to see live updates to the data you are interested in, and
+        explore other queries for themselves.</p>
+
+      <p><a id="data-link" download="data.csv" class="btn btn-info" href="#">Download as CSV <span id="data-rows-count"></span></a> </p>
     </div>
 
 </div>
