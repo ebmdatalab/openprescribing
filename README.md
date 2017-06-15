@@ -3,7 +3,7 @@
 
 # Open Prescribing
 
-Website code for https://openprescribing.net - a Django application that provides a REST API and dashboards for the NHS Digitals's [GP-level prescribing data](http://content.digital.nhs.uk/searchcatalogue?q=title%3A%22presentation+level+data%22&area=&size=10&sort=Relevance) and [NHS BSA's Detailed Prescribing Information Report](https://apps.nhsbsa.nhs.uk/infosystems/welcome). 
+Website code for https://openprescribing.net - a Django application that provides a REST API and dashboards for the NHS Digitals's [GP-level prescribing data](http://content.digital.nhs.uk/searchcatalogue?q=title%3A%22presentation+level+data%22&area=&size=10&sort=Relevance) and [NHS BSA's Detailed Prescribing Information Report](https://apps.nhsbsa.nhs.uk/infosystems/welcome).
 
 Information about data sources used on OpenPrescribing can be found [here](https://openprescribing.net/about/)
 
@@ -146,6 +146,24 @@ The script at `contrib/bin/gunicorn_start` is responsible for starting up a back
 Run migrations:
 
     python manage.py migrate
+
+## Sandbox data
+
+You can copy everything from the production server, if you want, but the full set of prescribing data is enormous. To get a sample of that, you can run something like the following on production (this example grabs 1% of the September 2016 data):
+
+    copy (
+    SELECT
+      *
+    FROM
+      frontend_prescription_201609 TABLESAMPLE SYSTEM (1)) TO '/tmp/sample' WITH binary;
+
+You can then import this data locally using `pg_restore`:
+
+    copy frontend_prescription_201609 from '/tmp/sample' WITH BINARY;
+
+
+This does require you to have all associated tables (BNF codes, practices etc) up-to-date.
+
 
 # Run tests
 
