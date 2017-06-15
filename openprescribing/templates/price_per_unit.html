@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load template_extras %}
+{% load humanize %}
+
+{% block title %}Price-per-dose savings for {{ entity.name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block content %}
+
+<h1>Top saving opportunities for {{entity.name }} in {{ date|date:"F Y"}}</h1>
+
+
+<p>There can be wide variation in the price paid across England for
+the same presentation of a drug or appliance. Every month we calculate
+the average price-per-unit (PPU) achieved by practices for each
+presentation. We then work out what you could save if you were
+prescribing alongside the best 10%. </p>
+
+
+<table id="price_per_pill" class="table">
+  <thead>
+    <tr>
+      <th>
+        Presentation
+      </th>
+      <th>
+        Possible savings in month
+      </th>
+      <th>
+        PPU
+      </th>
+      <th>
+        Target PPU
+      </th>
+      <th>
+        Quantity
+      </th>
+      <th>
+        Formulation swap
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Loading...
+      </th>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript">
+  $('#price_per_pill').DataTable(
+    {
+      "ajax": {"url": "/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date=2016-09-01&format=json", "dataSrc": ""},
+      "order": [[1, "desc"]],
+      "columns": [
+        {"data": "presentation",
+         "render": function(data, type, full, meta) {
+           var link = '<a href="/ppu_histogram/?bnf_code='+data+'&date='+ full['date'] + '&highlight={{ entity.code }}">'+full['name']+'</a>';
+           if(full['flag_bioequivalence']) {
+             return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span>' + link;
+           } else {
+             return link;
+           }
+         }
+        },
+        {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "quantity", render: $.fn.dataTable.render.number(',')},
+        {"data": "formulation_swap", "defaultContent": "-"},
+      ]
+    }
+  );
+</script>
+{% endblock %}

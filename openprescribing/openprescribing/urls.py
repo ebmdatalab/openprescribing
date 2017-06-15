@@ -23,6 +23,9 @@ urlpatterns = [
         name="how-to-use"),
 
     # User-facing pages.
+
+    url(r'^ppu_histogram/$', frontend_views.price_per_unit_histogram, name="ppu_histogram"),
+
     url(r'^analyse/$', frontend_views.analyse,
         name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,
@@ -37,6 +40,9 @@ urlpatterns = [
     url(r'^practice/(?P<code>[A-Z\d]+)/preview_bookmark/$',
         bookmark_views.preview_practice_bookmark,
         name='preview-practice-bookmark'),
+    url(r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$',
+        frontend_views.practice_price_per_unit,
+        name='practice_price_per_unit'),
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_practice'),
@@ -54,6 +60,9 @@ urlpatterns = [
     url(r'^ccg/(?P<code>[A-Z\d]+)/preview_bookmark/$',
         bookmark_views.preview_ccg_bookmark,
         name='preview-ccg-bookmark'),
+    url(r'^ccg/(?P<code>[A-Z\d]+)/price_per_unit/$',
+        frontend_views.ccg_price_per_unit,
+        name='ccg_price_per_unit'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_ccg'),

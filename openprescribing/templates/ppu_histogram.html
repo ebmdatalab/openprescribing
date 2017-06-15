@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Plotting{% endblock %}
+
+{% block content %}
+<h1>Price per unit (PPU) data for {{ name }}</h2>
+
+<p>There can be wide variation in the price paid across England for
+  the same presentation of a drug or appliance. We can compare this variation by computing a <em>Price per Unit</em> (PPU) for each prescription, where "unit" is most commonly a pill, but might be an ampule, sachet, or so on.</p>
+
+<p>This histogram shows the PPU for all generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, alongside the PPU for all equivalent branded presentations, including formulation swaps (e.g. considering capsules and tablets to be equivalent). Each colour indicates a different brand or formulation.</p>
+
+<div id="container"></div>
+
+
+{% if product %}
+<table class="table table-condensed">
+  <caption>{{ name }}</caption>
+  <tr>
+    <th>Tariff category</th>
+    <td>{{ product.tariff_category }}</td>
+  </tr>
+  <tr>
+    <th>Availability restrictions (special, imported, etc)</th>
+    <td>{{ product.availability_restrictions }}</td>
+  </tr>
+  <tr>
+    <th>Prescribability status (non-bioequivalence, etc)</th>
+    <td>{{ product.prescribability }}</td>
+  </tr>
+</table>
+
+{% else %}
+
+Extended information from dm+d not available for this presentation.
+
+{% endif %}
+
+<a id="logtog" class="btn btn-info">Toggle logarithmic scale on chart</a>
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#logtog').click(function(e) {
+      var target = $(e.target);
+      var yAxis = $('#container').highcharts().yAxis[0];
+      if (target.data('scale') == 'logarithmic') {
+        yAxis.update({'type': 'linear'});
+        target.data('scale', 'linear')
+      } else {
+        yAxis.update({'type': 'logarithmic'});
+        target.data('scale', 'logarithmic')
+      }
+      return false;
+    });
+    $.getJSON(
+      '/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}',
+      function(data) {
+        console.log(data);
+        $('#container').highcharts({
+          chart: {
+            type: 'column',
+            marginTop: 70
+          },
+          title: {
+            text: 'England-wide distribution of PPU for {{ name }}',
+            x: 25,
+          },
+          subtitle: {
+            text:  'in {{ date|date:"F Y"}}',
+            x: 25
+          },
+          legend: {
+            enabled: false,
+          },
+          tooltip: {
+            headerFormat: '<span style="font-size: 10px">£{point.key:.2f} / unit</span><br/>'
+          },
+          credits: {
+            enabled: false
+          },
+          exporting: {
+            enabled: false
+          },
+          plotOptions: {
+            series: {
+              pointPadding: 0,
+              groupPadding: 0,
+              borderWidth: 0.5,
+              borderColor: 'rgba(255,255,255,0.5)'
+            }
+          },
+          xAxis: {
+            plotLines: [{
+              color: '#FF0000', // Red
+              width: 1,
+              value: data.plotline,
+              label: {
+                text: 'Mean PPU for {{ highlight_name }}',
+                verticalAlign: 'middle',
+                textAlign: 'center'
+              }
+            }],
+            title: {
+              text: 'Price per unit (£)'
+            },
+            labels: {
+              format: "{value:.2f}"
+            }
+          },
+          yAxis: {
+            title: {
+              text: ''
+            }
+          },
+          series: data.series
+        });
+      }
+    )
+  });
+</script>
+{% endblock %}

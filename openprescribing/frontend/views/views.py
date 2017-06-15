@@ -16,13 +16,17 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
+from common.utils import valid_date
 from frontend.models import Chemical
+from frontend.models import ImportLog
 from frontend.models import Practice, PCT, Section
 from frontend.models import Measure
 from frontend.models import OrgBookmark
 from frontend.forms import OrgBookmarkForm
+from frontend.models import Presentation
 from frontend.models import SearchBookmark
 from frontend.forms import SearchBookmarkForm
+from dmd.models import DMDProduct
 from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 from django.http.response import HttpResponseRedirect
@@ -112,6 +116,39 @@ def chemical(request, bnf_code):
 
 
 ##################################################
+# Price per unit
+##################################################
+
+def price_per_unit_histogram(request):
+    bnf_code = request.GET['bnf_code']
+    product = DMDProduct.objects.filter(bnf_code=bnf_code).first()
+
+    name = Presentation.objects.get(pk=bnf_code).product_name
+    date = request.GET.get('date', '')
+    highlight = request.GET.get('highlight', '')
+    if len(highlight) == 3:
+        highlight_name = get_object_or_404(PCT, code=highlight).name
+    elif len(highlight) == 6:
+        highlight_name = get_object_or_404(Practice, code=highlight).name
+    else:
+        highlight_name = ''
+    if date:
+        date = valid_date(date)
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
+    context = {
+        'bnf_code': bnf_code,
+        'date': date,
+        'name': name,
+        'highlight': highlight,
+        'highlight_name': highlight_name,
+        'product': product
+    }
+
+    return render(request, 'ppu_histogram.html', context)
+
+
+##################################################
 # GP PRACTICES
 ##################################################
 
@@ -121,6 +158,16 @@ def all_practices(request):
         'practices': practices
     }
     return render(request, 'all_practices.html', context)
+
+
+def practice_price_per_unit(request, code):
+    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    practice = get_object_or_404(Practice, code=code)
+    context = {
+        'entity': practice,
+        'date': date
+    }
+    return render(request, 'price_per_unit.html', context)
 
 
 ##################################################
@@ -134,6 +181,16 @@ def all_ccgs(request):
     }
     return render(request, 'all_ccgs.html', context)
 
+
+def ccg_price_per_unit(request, code):
+    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    ccg = get_object_or_404(PCT, code=code)
+    context = {
+        'entity': ccg,
+        'date': date
+    }
+
+    return render(request, 'price_per_unit.html', context)
 
 ##################################################
 # MEASURES

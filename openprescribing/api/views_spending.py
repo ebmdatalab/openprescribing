@@ -1,7 +1,151 @@
+from sets import Set
+import datetime
+import re
+
+import numpy as np
+import pandas as pd
+
+from django.db import connection
+from django.db.models import Q
+from django.forms.models import model_to_dict
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
+
+from frontend.models import GenericCodeMapping
+from frontend.models import ImportLog
+from frontend.models import PPUSaving
 import view_utils as utils
 from view_utils import db_timeout
+
+
+class NotValid(APIException):
+    status_code = 400
+    default_detail = 'The code you provided is not valid'
+
+
+
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+
+@api_view(['GET'])
+def ppu_histogram(request, format=None):
+    code = request.query_params.get('bnf_code', '')
+    date = request.query_params.get('date', None)
+    highlight = request.query_params.get('highlight', None)
+    if date:
+        try:
+            date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            raise NotValid("%s is not a valid date" % date)
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
+    if not re.match(r'[A-Z0-9]{15}', code):
+        raise NotValid("%s is not a valid code" % code)
+    extra_codes = GenericCodeMapping.objects.filter(
+        Q(from_code=code) | Q(to_code=code))
+    # flatten and uniquify the list of codes
+    extra_codes = Set(np.array(
+        [[x.from_code, x.to_code] for x in extra_codes]).flatten())
+    patterns = ["%s____%s" % (code[:9], code[13:15])]
+    for extra_code in extra_codes:
+        if extra_code.endswith('%'):
+            pattern = extra_code
+        else:
+            pattern = "%s____%s" % (extra_code[:9], extra_code[13:15])
+        patterns.append(pattern)
+    conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
+    conditions = "AND (%s) " % conditions
+    sql = (
+            "SELECT presentation_code, name as presentation_name, "
+            "quantity, actual_cost, pct_id, practice_id "
+            "FROM frontend_prescription "
+            "LEFT JOIN frontend_presentation "
+            "ON frontend_prescription.presentation_code = frontend_presentation.bnf_code "
+            "WHERE processing_date = %s "
+            + conditions +
+            "ORDER BY presentation_code, quantity DESC"
+    )
+    params = [date] + patterns
+    df = pd.read_sql(sql, connection, params=params)
+    df['ppu'] = df['actual_cost'] / df['quantity']
+    df = df[df.ppu <= df.ppu.quantile(0.99)]  # XXX
+    ordered = df.groupby(
+        'presentation_name')['ppu'].aggregate(
+            {'mean_ppu': 'mean'}).sort_values(
+                'mean_ppu').index
+    # Get plotline for specified entity
+    if highlight:
+        if len(highlight) == 3:
+            plotline = df[df.pct_id == highlight].mean().ppu
+        else:
+            plotline = df[df.practice_id == highlight].mean().ppu
+    else:
+        plotline = None
+    if np.isnan(plotline):
+        plotline = None
+    series = []
+    # Compute limits for entire dataset so all histograms use the same
+    # scale
+    hist, bins = np.histogram(df.ppu)
+    # Generate histogram for each presentation
+    for name in ordered:
+        current = df[df.presentation_name == name]
+        current_histogram = np.histogram(
+            current.ppu,
+            bins=len(bins),
+            range=(bins[0], bins[-1])
+        )
+        series.append(
+            {'name': name,
+             'data': [list(x) for x in zip(
+                 current_histogram[1], current_histogram[0])]})
+    return Response({'plotline': plotline,
+                     'series': series})
+
+
+@api_view(['GET'])
+def price_per_unit(request, format=None):
+    entity_code = request.query_params.get('entity_code', None)
+    date = request.query_params.get('date')
+    bnf_code = request.query_params.get('bnf_code', None)
+    if not date:
+        raise NotValid("You must supply a date")
+    if not (entity_code or bnf_code):
+        raise NotValid("You must supply a value for entity_code or bnf_code")
+
+    query = {'date': date}
+    filename = date
+    if entity_code:
+        filename += "-%s" % entity_code
+        if len(entity_code) == 3:
+            query['pct'] = entity_code
+            query['practice__isnull'] = True
+        else:
+            query['practice'] = entity_code
+    if bnf_code:
+        filename += "-%s" % bnf_code
+        query['bnf_code'] = bnf_code
+    savings = []
+    for x in PPUSaving.objects.filter(
+            **query).prefetch_related('presentation'):
+        d = model_to_dict(x)
+        d['name'] = x.presentation.product_name
+        d['flag_bioequivalence'] = getattr(
+            x.presentation.dmd_product, 'is_non_bioequivalent', None)
+        savings.append(d)
+    response = Response(savings)
+    if request.accepted_renderer.format == 'csv':
+        filename = "%s-ppd.csv" % (filename)
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 @db_timeout(58000)

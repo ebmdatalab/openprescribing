@@ -731,6 +731,23 @@ class MailLog(models.Model):
         return subject
 
 
+class GenericCodeMapping(models.Model):
+    """A mapping between BNF codes that allows us to collapse clinically
+    equivalent chemicals together.
+
+    See https://github.com/ebmdatalab/price-per-dose/issues/11 for
+    background.
+
+    A `to_code` may end in `%`, which means it's a special case which
+    should be treated as a stem against which to search for generics.
+
+    """
+    from_code = models.CharField(max_length=15, primary_key=True,
+                                 validators=[isAlphaNumeric], db_index=True)
+    to_code = models.CharField(max_length=15,
+                               validators=[isAlphaNumeric], db_index=True)
+
+
 class PPUSaving(models.Model):
     """A Price-per-unit Saving describes a possible saving for a CCG or a
     practice for an individual presentation.

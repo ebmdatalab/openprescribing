@@ -48,3 +48,13 @@ def roundpound(num):
         return intcomma(int(round(num/order) * order))
     else:
         return str(int(round(num)))
+
+
+@register.simple_tag
+def url_toggle(request, field):
+    dict_ = request.GET.copy()
+    if field in dict_:
+        del(dict_[field])
+    else:
+        dict_[field] = 1
+    return dict_.urlencode()
