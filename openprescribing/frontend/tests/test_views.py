@@ -382,3 +382,41 @@ class TestFrontendViews(TransactionTestCase):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
+
+
+class TestPPUViews(TransactionTestCase):
+    fixtures = ['ccgs', 'importlog', 'dmdproducts',
+                'practices', 'prescriptions', 'presentations']
+
+    def test_practice_price_per_unit(self):
+        response = self.client.get('/practice/P87629/price_per_unit/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['entity'].code, 'P87629')
+
+    def test_ccg_price_per_unit(self):
+        response = self.client.get('/ccg/03V/price_per_unit/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['entity'].code, '03V')
+        self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
+                         '2014-11-01')
+
+    def test_price_per_unit_histogram(self):
+        response = self.client.get('/ppu_histogram/0202010F0AAAAAA/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_price_per_unit_histogram_with_ccg(self):
+        response = self.client.get(
+            '/ppu_histogram/0202010F0AAAAAA/?highlight=03V')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['highlight_name'], 'NHS Corby')
+        self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
+                         '2014-11-01')
+
+    def test_price_per_unit_histogram_with_practice(self):
+        response = self.client.get(
+            '/ppu_histogram/0202010F0AAAAAA/?highlight=P87629')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['highlight_name'],
+                         '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
+                         '2014-11-01')

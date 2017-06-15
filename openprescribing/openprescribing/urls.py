@@ -24,8 +24,8 @@ urlpatterns = [
 
     # User-facing pages.
 
-    url(r'^ppu_histogram/$', frontend_views.price_per_unit_histogram, name="ppu_histogram"),
-
+    url(r'^ppu_histogram/(?P<bnf_code>[A-Z\d]+)/$',
+        frontend_views.price_per_unit_histogram, name="ppu_histogram"),
     url(r'^analyse/$', frontend_views.analyse,
         name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,
