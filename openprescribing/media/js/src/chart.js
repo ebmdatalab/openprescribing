@@ -167,7 +167,7 @@ var analyseChart = {
       this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
                                                    this.globalOptions);
       if (this.isOldIe) {
-        $('#data-link').text("Sorry, you must use a newer web browser to make use of this feature").show();
+        $('#data-link').replaceWith("<div class='alert alert-danger'>Sorry, you must use a newer web browser to make use of this feature</strong>").show();
       } else {
         this.addDataDownload();
       }
