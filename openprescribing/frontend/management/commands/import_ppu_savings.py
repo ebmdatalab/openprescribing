@@ -84,7 +84,7 @@ def make_merged_table_for_month(
       FROM
         ebmdatalab.%s.%s
       WHERE month = TIMESTAMP('%s')
-    """ % (''.join(
+    """ % (' '.join(
         ["WHEN '%s' THEN '%s'" % (when_code, then_code)
          for (when_code, then_code) in cases]),
            namespace,
