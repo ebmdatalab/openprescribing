@@ -25,16 +25,6 @@ class NotValid(APIException):
     default_detail = 'The code you provided is not valid'
 
 
-
-def dictfetchall(cursor):
-    "Return all rows from a cursor as a dict"
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
-
-
 @api_view(['GET'])
 def ppu_histogram(request, format=None):
     code = request.query_params.get('bnf_code', '')

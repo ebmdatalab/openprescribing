@@ -338,8 +338,6 @@ class Command(BaseCommand):
         else:
             with transaction.atomic():
                 process_datafiles(options['source_directory'])
-            with connection.cursor() as cursor:
-                cursor.execute('ANALYZE VERBOSE')
             with transaction.atomic():
                 create_dmd_product()
             with transaction.atomic():
