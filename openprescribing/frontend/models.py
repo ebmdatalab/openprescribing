@@ -757,8 +757,10 @@ class PPUSaving(models.Model):
 
     """
     date = models.DateField(db_index=True)
+    # Sometimes we there are codes in prescribing data which are not
+    # present in our presentations
     presentation = models.ForeignKey(
-        Presentation, db_column='bnf_code')
+        Presentation, db_column='bnf_code', db_constraint=False)
     lowest_decile = models.FloatField()
     quantity = models.IntegerField()
     price_per_unit = models.FloatField()
