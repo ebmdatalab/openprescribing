@@ -447,6 +447,7 @@
     "practice": "C84001",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 10,
+    "net_cost": 1000.0,
     "actual_cost": 1000.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01"
@@ -460,6 +461,7 @@
     "practice": "C84001",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 100,
+    "net_cost": 1000.0,
     "actual_cost": 1000.0,
     "quantity": 10000.0,
     "processing_date": "2015-09-01"
@@ -473,6 +475,7 @@
     "practice": "C84024",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 100,
+    "net_cost": 10000.0,
     "actual_cost": 10000.0,
     "quantity": 10000.0,
     "processing_date": "2015-09-01"
@@ -486,6 +489,7 @@
     "practice": "C84024",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
+    "net_cost": 2000.0,
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-09-01"
@@ -499,6 +503,7 @@
     "practice": "B82005",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 700,
+    "net_cost": 70000.0,
     "actual_cost": 70000.0,
     "quantity": 70000.0,
     "processing_date": "2015-09-01"
@@ -512,6 +517,7 @@
     "practice": "B82005",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 300,
+    "net_cost": 3000.0,
     "actual_cost": 3000.0,
     "quantity": 30000.0,
     "processing_date": "2015-09-01"
@@ -525,6 +531,7 @@
     "practice": "A85017",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 10,
+    "net_cost": 1000.0,
     "actual_cost": 1000.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01"
@@ -538,6 +545,7 @@
     "practice": "A86030",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 10,
+    "net_cost": 100.0,
     "actual_cost": 100.0,
     "quantity": 1000.0,
     "processing_date": "2015-09-01"
@@ -551,6 +559,7 @@
     "practice": "C83051",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 15,
+    "net_cost": 1500.0,
     "actual_cost": 1500.0,
     "quantity": 1500.0,
     "processing_date": "2015-09-01"
@@ -564,6 +573,7 @@
     "practice": "C83051",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
+    "net_cost": 2000.0,
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-09-01"
@@ -577,6 +587,7 @@
     "practice": "C83019",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 20,
+    "net_cost": 2000.0,
     "actual_cost": 2000.0,
     "quantity": 2000.0,
     "processing_date": "2015-09-01"
@@ -590,6 +601,7 @@
     "practice": "C83019",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 150,
+    "net_cost": 1500.0,
     "actual_cost": 1500.0,
     "quantity": 15000.0,
     "processing_date": "2015-09-01"
@@ -603,6 +615,7 @@
     "practice": "C84001",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 10,
+    "net_cost": 100000.0,
     "actual_cost": 100000.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01"
@@ -616,6 +629,7 @@
     "practice": "C84001",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 1,
+    "net_cost": 500.0,
     "actual_cost": 500.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01"
@@ -629,6 +643,7 @@
     "practice": "C83019",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 1,
+    "net_cost": 10.0,
     "actual_cost": 10.0,
     "quantity": 1.0,
     "processing_date": "2015-09-01"
@@ -642,6 +657,7 @@
     "practice": "C83019",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 5,
+    "net_cost": 50.0,
     "actual_cost": 50.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01"
@@ -655,6 +671,7 @@
     "practice": "C83051",
     "presentation_code": "0408010A0BBAAAA",
     "total_items": 1,
+    "net_cost": 10.0,
     "actual_cost": 10.0,
     "quantity": 1.0,
     "processing_date": "2015-09-01"
@@ -668,6 +685,7 @@
     "practice": "C83051",
     "presentation_code": "0408010A0AAACAC",
     "total_items": 5,
+    "net_cost": 50.0,
     "actual_cost": 50.0,
     "quantity": 5.0,
     "processing_date": "2015-09-01"
@@ -681,6 +699,7 @@
     "practice": "C83051",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 15,
+    "net_cost": 1500.0,
     "actual_cost": 1500.0,
     "quantity": 1500.0,
     "processing_date": "2015-10-01"
@@ -694,6 +713,7 @@
     "practice": "C83051",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 200,
+    "net_cost": 2000.0,
     "actual_cost": 2000.0,
     "quantity": 20000.0,
     "processing_date": "2015-10-01"
@@ -707,6 +727,7 @@
     "practice": "C83019",
     "presentation_code": "0703021Q0BBAAAA",
     "total_items": 20,
+    "net_cost": 1000.0,
     "actual_cost": 1000.0,
     "quantity": 2000.0,
     "processing_date": "2015-10-01"
@@ -720,6 +741,7 @@
     "practice": "C83019",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 150,
+    "net_cost": 1500.0,
     "actual_cost": 1500.0,
     "quantity": 15000.0,
     "processing_date": "2015-10-01"
@@ -733,6 +755,7 @@
     "practice": "A86030",
     "presentation_code": "0703021Q0AAAAAA",
     "total_items": 10,
+    "net_cost": 100.0,
     "actual_cost": 100.0,
     "quantity": 1000.0,
     "processing_date": "2015-10-01"

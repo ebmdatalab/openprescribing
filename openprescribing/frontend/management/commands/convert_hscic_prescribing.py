@@ -111,7 +111,7 @@ class Command(BaseCommand):
         month = row[9]
         formatted_date = '%s-%s-01' % (month[:4], month[4:])
         output = [row[1], row[2], row[3],
-                  int(row[5]), actual_cost,
+                  int(row[5]), float(row[6]), actual_cost,
                   quantity, formatted_date]
         return output
 

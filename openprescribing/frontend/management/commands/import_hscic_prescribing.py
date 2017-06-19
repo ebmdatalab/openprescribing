@@ -270,7 +270,7 @@ class Command(BaseCommand):
         # start = time.clock()
         copy_str = "COPY %s(pct_id,"
         copy_str += "practice_id,presentation_code,"
-        copy_str += "total_items,actual_cost,"
+        copy_str += "total_items,net_cost,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
         i = 0
