@@ -68,7 +68,7 @@ def make_merged_table_for_month(
             cases.append((code_to_merge, source_code))
         seen.add(source_code)
         seen.add(code_to_merge)
-    prescribing_table = settings.BQ_PRESCRIBING_TABLE_NAME + '_legacy'
+    prescribing_table = 'normalised_prescribing_standard'  # XXX shouldn't hard code
     query = """
       SELECT
         practice,
