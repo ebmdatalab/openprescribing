@@ -1,8 +1,7 @@
-import csv
 import datetime
+import json
 
 from django.db import connection
-from django.http import Http404
 
 from .api_test_base import ApiTestBase
 
@@ -27,17 +26,6 @@ def _create_prescribing_tables():
 
 
 class TestAPISpendingViews(ApiTestBase):
-    def _rows_from_api(self, url):
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        if response.status_code == 404:
-            raise Http404("URL %s does not exist" % url)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        return rows
-
     def test_codes_are_rejected_if_not_same_length(self):
         url = '%s/spending' % self.api_prefix
         url += '?format=csv&code=0202010B0,0202010B0AAAAAA'
@@ -413,3 +401,62 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['actual_cost'], '3.05')
         self.assertEqual(rows[0]['items'], '2')
         self.assertEqual(rows[0]['quantity'], '56')
+
+
+class TestAPISpendingViewsPPU(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog']
+
+    def test_simple(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['series']), 1)  # Only Trandate prescribed
+        self.assertEqual(len([x for x in data if x[1]]), 2)  # two bars of height one
+
+    def test_date(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2000-01-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['series']), 0)
+
+    def test_with_highlight(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(data['plotline'], 0.01362518115942029)
+
+    def test_code_without_matches(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertIsNone(data['plotline'])
+
+
+class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']
+
+    def test_with_wildcard(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        # Expecting the total to be quite different
+        self.assertEqual(data['plotline'], 0.01652440777300516)
+        self.assertEqual(len(data['series']), 2)  # Bendroflumethiazide and Trandate
+
+    def test_with_specific(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(data['plotline'], 0.01362518115942029)

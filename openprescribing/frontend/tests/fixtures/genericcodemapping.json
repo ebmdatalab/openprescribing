@@ -1,0 +1,16 @@
+[
+  {
+    "model": "frontend.genericcodemapping",
+    "pk": "0204000I0BCAAAB",
+    "fields": {
+      "to_code": "0202%"
+    }
+  },
+  {
+    "model": "frontend.genericcodemapping",
+    "pk": "0204000I0BCAAAX",
+    "fields": {
+      "to_code": "0204000I0BCAAAB"
+    }
+  }
+]

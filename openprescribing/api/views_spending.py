@@ -65,40 +65,43 @@ def ppu_histogram(request, format=None):
     )
     params = [date] + patterns
     df = pd.read_sql(sql, connection, params=params)
-    df['ppu'] = df['actual_cost'] / df['quantity']
-    df = df[df.ppu <= df.ppu.quantile(0.99)]  # XXX
-    ordered = df.groupby(
-        'presentation_name')['ppu'].aggregate(
-            {'mean_ppu': 'mean'}).sort_values(
-                'mean_ppu').index
-    # Get plotline for specified entity
-    if highlight:
-        if len(highlight) == 3:
-            plotline = df[df.pct_id == highlight].mean().ppu
+    if len(df):
+        df['ppu'] = df['actual_cost'] / df['quantity']
+        ordered = df.groupby(
+            'presentation_name')['ppu'].aggregate(
+                {'mean_ppu': 'mean'}).sort_values(
+                    'mean_ppu').index
+
+        # Get plotline for specified entity
+        if highlight:
+            if len(highlight) == 3:
+                plotline = df[df.pct_id == highlight].mean().ppu
+            else:
+                plotline = df[df.practice_id == highlight].mean().ppu
         else:
-            plotline = df[df.practice_id == highlight].mean().ppu
+            plotline = None
+        if np.isnan(plotline):
+            plotline = None
+        series = []
+        # Compute limits for entire dataset so all histograms use the same
+        # scale
+        hist, bins = np.histogram(df.ppu)
+        # Generate histogram for each presentation
+        for name in ordered:
+            current = df[df.presentation_name == name]
+            current_histogram = np.histogram(
+                current.ppu,
+                bins=len(bins),
+                range=(bins[0], bins[-1])
+            )
+            series.append(
+                {'name': name,
+                 'data': [list(x) for x in zip(
+                     current_histogram[1], current_histogram[0])]})
+        return Response({'plotline': plotline,
+                         'series': series})
     else:
-        plotline = None
-    if np.isnan(plotline):
-        plotline = None
-    series = []
-    # Compute limits for entire dataset so all histograms use the same
-    # scale
-    hist, bins = np.histogram(df.ppu)
-    # Generate histogram for each presentation
-    for name in ordered:
-        current = df[df.presentation_name == name]
-        current_histogram = np.histogram(
-            current.ppu,
-            bins=len(bins),
-            range=(bins[0], bins[-1])
-        )
-        series.append(
-            {'name': name,
-             'data': [list(x) for x in zip(
-                 current_histogram[1], current_histogram[0])]})
-    return Response({'plotline': plotline,
-                     'series': series})
+        return Response({'plotline': None, 'series': []})
 
 
 @api_view(['GET'])
