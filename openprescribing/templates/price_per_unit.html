@@ -71,7 +71,7 @@ prescribing alongside the best 10%. </p>
 <script type="text/javascript">
   $('#price_per_pill').DataTable(
     {
-      "ajax": {"url": "/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date=2016-09-01&format=json", "dataSrc": ""},
+      "ajax": {"url": "/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&format=json", "dataSrc": ""},
       "order": [[1, "desc"]],
       "columns": [
         {"data": "presentation",
