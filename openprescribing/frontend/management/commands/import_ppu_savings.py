@@ -120,7 +120,7 @@ def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
         "AND p.bnf_code NOT LIKE '0302000C0____BG' "  # issue #10
         "AND p.bnf_code NOT LIKE '0904010H0%' "  # issue #9
         "AND p.bnf_code NOT LIKE '0904010H0%' "  # issue #9
-        "AND p.bnf_code NOT LIKE '1311070S0A____AA' "  # issue #9
+        "AND p.bnf_code NOT LIKE '1311070S0____AA' "  # issue #9
         "AND p.bnf_code NOT LIKE '1311020L0____BS' "  # issue #9
         "AND p.bnf_code NOT LIKE '0301020S0____AA' "  # issue #12
         "AND p.bnf_code NOT LIKE '190700000BBCJA0' "  # issue #12
