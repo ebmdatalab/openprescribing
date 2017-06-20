@@ -7,13 +7,13 @@
 <h1>Price per unit (PPU) data for {{ name }}</h2>
 
 <p>There can be wide variation in the price paid across England for
-  the same presentation of a drug or appliance. We can compare this variation by computing a <em>Price per Unit</em> (PPU) for each prescription, where "unit" is most commonly a pill, but might be an ampule, sachet, or so on.</p>
+  the same presentation of a drug or appliance. We can compare this variation by computing a <em>Price per Unit</em> (PPU) for each prescription, where "unit" is most commonly a pill, but might be an ampule, sachet, or so on, and the price is based on the <em>Net Ingredient Cost</em> (NIC)</p>
 
-<p>This histogram shows the PPU for all generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, alongside the PPU for all equivalent branded presentations, including formulation swaps (e.g. considering capsules and tablets to be equivalent). Each colour indicates a different brand or formulation.</p>
+  <p>This histogram shows the PPU for all generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, alongside the PPU for all equivalent branded presentations, including formulation swaps (e.g. considering capsules and tablets to be equivalent). Each colour indicates a different brand or formulation, with grey indicating the price where a presentation was prescribed generically.</p>
 
-<div id="container"></div>
+<div id="container" style="width: 100%; height: 490px;"></div>
 
-
+<h2>Extended information</h2>
 {% if product %}
 <table class="table table-condensed">
   <caption>{{ name }}</caption>
@@ -32,8 +32,9 @@
 </table>
 
 {% else %}
-
-Extended information from dm+d not available for this presentation.
+<p>
+  Extended information from dm+d not available for this presentation.
+</p>
 
 {% endif %}
 
@@ -58,9 +59,15 @@ Extended information from dm+d not available for this presentation.
       return false;
     });
     $.getJSON(
-      '/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}',
+      '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}',
       function(data) {
-        console.log(data);
+        // find the series with generic, and set it to gray
+        for (var i = 0, l = data.series.length; i < l; i++) {
+          if (data.series[i].is_generic) {
+              data.series[i].color = '#ccc';
+              break;
+          }
+        }
         $('#container').highcharts({
           chart: {
             type: 'column',

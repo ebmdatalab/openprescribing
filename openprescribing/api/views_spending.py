@@ -54,17 +54,20 @@ def ppu_histogram(request, format=None):
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
     sql = (
-            "SELECT presentation_code, name as presentation_name, "
-            "quantity, actual_cost, pct_id, practice_id "
-            "FROM frontend_prescription "
-            "LEFT JOIN frontend_presentation "
-            "ON frontend_prescription.presentation_code = frontend_presentation.bnf_code "
-            "WHERE processing_date = %s "
-            + conditions +
-            "ORDER BY presentation_code, quantity DESC"
+        "SELECT presentation_code, name as presentation_name, "
+        "quantity, actual_cost, pct_id, practice_id "
+        "FROM frontend_prescription "
+        "LEFT JOIN frontend_presentation "
+        "ON frontend_prescription.presentation_code = "
+        "frontend_presentation.bnf_code "
+        "WHERE processing_date = %s " + conditions +
+        "ORDER BY presentation_code, quantity DESC"
     )
     params = [date] + patterns
     df = pd.read_sql(sql, connection, params=params)
+    # apparent coding errors lead to absurdly expensive drugs, and
+    # these outliers make the charts hard to read, so we remove them
+    df = df[df.ppq <= df.ppq.quantile(0.99)]
     if len(df):
         df['ppu'] = df['actual_cost'] / df['quantity']
         ordered = df.groupby(
@@ -94,8 +97,13 @@ def ppu_histogram(request, format=None):
                 bins=len(bins),
                 range=(bins[0], bins[-1])
             )
+            if current.iloc[0].presentation_code[9:11] == 'AA':
+                is_generic = True
+            else:
+                is_generic = False
             series.append(
                 {'name': name,
+                 'is_generic': is_generic,
                  'data': [list(x) for x in zip(
                      current_histogram[1], current_histogram[0])]})
         return Response({'plotline': plotline,

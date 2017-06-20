@@ -146,7 +146,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
-                'frontend.context_processors.google_user_id'
+                'frontend.context_processors.google_user_id',
+                'frontend.context_processors.api_host'
             ],
             'debug': DEBUG
         },
@@ -306,6 +307,8 @@ GDOC_DOCS = {
     'analyse-by-practice': '1idnk9yczLLBLbYUbp06dMglfivobTNoKY7pA2zCDPI8',
     'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0'
 }
+
+API_HOST = utils.get_env_setting('API_HOST', default='')
 
 # BigQuery settings (used for measure calculations)
 

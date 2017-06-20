@@ -76,7 +76,7 @@ prescribing alongside the best 10%. </p>
       "columns": [
         {"data": "presentation",
          "render": function(data, type, full, meta) {
-           var link = '<a href="/ppu_histogram/?bnf_code='+data+'&date='+ full['date'] + '&highlight={{ entity.code }}">'+full['name']+'</a>';
+           var link = '<a href="/ppu_histogram/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}">'+full['name']+'</a>';
            if(full['flag_bioequivalence']) {
              return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span>' + link;
            } else {

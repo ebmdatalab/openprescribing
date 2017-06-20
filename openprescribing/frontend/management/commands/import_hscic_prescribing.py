@@ -102,19 +102,14 @@ class Command(BaseCommand):
             logger.info("Copying data for %s to cloud storage" % self.date)
             bigquery.copy_table_to_gcs(table, uri)
             with tempfile.NamedTemporaryFile(mode='wb') as tmpfile:
-                with tempfile.NamedTemporaryFile() as tmpfile_unzipped:
-                    logger.info("Importing data for %s" % self.date)
-                    bigquery.download_from_gcs(uri, tmpfile)
-                    # unzip it
-                    subprocess.check_call(
-                        "unzip %s -p > %s" % (
-                            tmpfile, tmpfile_unzipped), shell=True)
-                    with transaction.atomic():
-                        self.drop_partition()
-                        self.create_partition()
-                        self.import_prescriptions(tmpfile_unzipped)
-                        self.create_partition_indexes()
-                        self.add_parent_trigger()
+                logger.info("Importing data for %s" % self.date)
+                bigquery.download_from_gcs(uri, tmpfile.name)
+                with transaction.atomic():
+                    self.drop_partition()
+                    self.create_partition()
+                    self.import_prescriptions(tmpfile.name)
+                    self.create_partition_indexes()
+                    self.add_parent_trigger()
             self.date += relativedelta(months=1)
 
     def refresh_class_currency(self):
