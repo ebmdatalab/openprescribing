@@ -9,9 +9,12 @@
 <p>There can be wide variation in the price paid across England for
   the same presentation of a drug or appliance. We can compare this variation by computing a <em>Price per Unit</em> (PPU) for each prescription, where "unit" is most commonly a pill, but might be an ampule, sachet, or so on, and the price is based on the <em>Net Ingredient Cost</em> (NIC)</p>
 
-  <p>This histogram shows the PPU for all generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, alongside the PPU for all equivalent branded presentations, including formulation swaps (e.g. considering capsules and tablets to be equivalent). Each colour indicates a different brand or formulation, with grey indicating the price where a presentation was prescribed generically.</p>
+  <p>This histogram shows the PPU for all generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, alongside the PPU for all equivalent branded presentations, including formulation swaps (e.g. considering capsules and tablets to be equivalent). Each colour indicates a different brand or formulation, with grey indicating the PPUs where a presentation was prescribed generically.</p>
 
 <div id="container" style="width: 100%; height: 490px;"></div>
+
+<hr>
+<a id="logtog" class="btn btn-info">Toggle logarithmic scale on chart</a>
 
 <h2>Extended information</h2>
 {% if product %}
@@ -37,8 +40,6 @@
 </p>
 
 {% endif %}
-
-<a id="logtog" class="btn btn-info">Toggle logarithmic scale on chart</a>
 
 {% endblock %}
 
@@ -106,6 +107,7 @@
               color: '#FF0000', // Red
               width: 1,
               value: data.plotline,
+              zIndex: 50,
               label: {
                 text: 'Mean PPU for {{ highlight_name }}',
                 verticalAlign: 'middle',

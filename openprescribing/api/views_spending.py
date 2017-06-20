@@ -67,9 +67,9 @@ def ppu_histogram(request, format=None):
     df = pd.read_sql(sql, connection, params=params)
     # apparent coding errors lead to absurdly expensive drugs, and
     # these outliers make the charts hard to read, so we remove them
+    df['ppu'] = df['net_cost'] / df['quantity']
+    df = df[df.ppu <= df.ppu.quantile(0.99)]
     if len(df):
-        df['ppu'] = df['net_cost'] / df['quantity']
-        df = df[df.ppu <= df.ppu.quantile(0.99)]
         ordered = df.groupby(
             'presentation_name')['ppu'].aggregate(
                 {'mean_ppu': 'mean'}).sort_values(
@@ -83,18 +83,24 @@ def ppu_histogram(request, format=None):
                 plotline = df[df.practice_id == highlight].mean().ppu
         else:
             plotline = None
-        if np.isnan(plotline):
+        if plotline is not None and np.isnan(plotline):
             plotline = None
         series = []
         # Compute limits for entire dataset so all histograms use the same
         # scale
         hist, bins = np.histogram(df.ppu)
+        # find a number of bins whereby the bin sizes aren't too close
+        # together
+        bin_count = len(bins)
+        while bin_count > 1 and (bins[1] - bins[0]) < 0.01:
+            bin_count = bin_count / 2
+            hist, bins = np.histogram(df.ppu, bins=bin_count)
         # Generate histogram for each presentation
         for name in ordered:
             current = df[df.presentation_name == name]
             current_histogram = np.histogram(
                 current.ppu,
-                bins=len(bins),
+                bins=bin_count,
                 range=(bins[0], bins[-1])
             )
             if current.iloc[0].presentation_code[9:11] == 'AA':
