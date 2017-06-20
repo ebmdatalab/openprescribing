@@ -54,7 +54,7 @@ def get_env_setting(setting, default=None):
     try:
         return environ[setting]
     except KeyError:
-        if default:
+        if default is not None:
             return default
         else:
             error_msg = "Set the %s env variable" % setting
