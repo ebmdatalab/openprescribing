@@ -79,8 +79,8 @@ class Command(BaseCommand):
             date_str = self.date.strftime('%Y-%m-%d')
             sql = ('SELECT pct AS pct_id, practice AS practice_id, '
                    'bnf_code AS presentation_code, items AS total_items, '
-                   'actual_cost, quantity, '
-                   'FORMAT_TIMESTAMP("%%F", month) AS processing_date '
+                   'net_cost, actual_cost, quantity, '
+                   'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
                    'FROM ebmdatalab.hscic.normalised_prescribing_standard '
                    "WHERE month > '%s'" % date_str)
             table_name = "prescribing_%s" % date_str.replace('-', '_')
@@ -261,7 +261,6 @@ class Command(BaseCommand):
         copy_str += "total_items,net_cost,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
-        i = 0
         file_obj = open(filename)
         with connection.cursor() as cursor:
             cursor.copy_expert(copy_str % self._partition_name(), file_obj)
