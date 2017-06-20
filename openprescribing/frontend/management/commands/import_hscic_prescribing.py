@@ -36,9 +36,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--filename',
             help=(
-                'A path to a properly converted file on the filesystem, '
-                'or a URI for a raw file in Google Cloud, e.g. '
-                'gs://embdatalab/hscic/'))
+                'A path to a properly converted file on the filesystem'
+            ))
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
@@ -50,17 +49,11 @@ class Command(BaseCommand):
             action='store_true',
             help='Download all data from bigquery and make new set of tables'
         )
-        parser.add_argument('--truncate')
 
     def handle(self, *args, **options):
         if options['reimport_all']:
             self.reimport_all()
         else:
-            if options['truncate']:
-                self.truncate = True
-            else:
-                self.truncate = False
-
             fname = options['filename']
             if options['date']:
                 self.date = datetime.datetime.strptime(
@@ -269,17 +262,7 @@ class Command(BaseCommand):
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
         i = 0
-        if self.truncate:
-            with open("/tmp/sample", "wb") as outfile:
-                with open(filename) as infile:
-                    for line in infile:
-                        outfile.write(line)
-                        i += 1
-                        if self.truncate and i > 500:
-                            break
-            file_obj = open("/tmp/sample")
-        else:
-            file_obj = open(filename)
+        file_obj = open(filename)
         with connection.cursor() as cursor:
             cursor.copy_expert(copy_str % self._partition_name(), file_obj)
             ImportLog.objects.create(
