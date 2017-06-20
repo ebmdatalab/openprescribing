@@ -31,8 +31,10 @@ def nhs_abbreviations(word, **kwargs):
 
 
 def nhs_titlecase(words):
-    title_cased = titlecase(words, callback=nhs_abbreviations)
-    return re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+    if words:
+        title_cased = titlecase(words, callback=nhs_abbreviations)
+        words = re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+    return words
 
 
 def email_as_text(html):
