@@ -21,7 +21,7 @@
 <table class="table table-condensed">
   <caption>{{ name }}</caption>
   <tr>
-    <th>Tariff category</th>
+    <th>Tariff category <super style="color:red">*</super></th>
     <td>{{ product.tariff_category }}</td>
   </tr>
   <tr>
@@ -33,6 +33,8 @@
     <td>{{ product.prescribability }}</td>
   </tr>
 </table>
+
+  <super style="color:red">*</super>The Drug Tariff category shown is the <em>current</em> category.  It may have been different in {{ date|date:"F Y"}}.
 
 {% else %}
 <p>
