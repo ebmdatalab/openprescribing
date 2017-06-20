@@ -67,9 +67,9 @@ def ppu_histogram(request, format=None):
     df = pd.read_sql(sql, connection, params=params)
     # apparent coding errors lead to absurdly expensive drugs, and
     # these outliers make the charts hard to read, so we remove them
-    df = df[df.ppq <= df.ppq.quantile(0.99)]
     if len(df):
         df['ppu'] = df['actual_cost'] / df['quantity']
+        df = df[df.ppu <= df.ppu.quantile(0.99)]
         ordered = df.groupby(
             'presentation_name')['ppu'].aggregate(
                 {'mean_ppu': 'mean'}).sort_values(

@@ -7,14 +7,14 @@
 
 {% block content %}
 
-<h1>Top saving opportunities for {{entity.name }} in {{ date|date:"F Y"}}</h1>
+<h1>Top saving opportunities for {{entity.cased_name }} in {{ date|date:"F Y"}}</h1>
 
 
 <p>There can be wide variation in the price paid across England for
 the same presentation of a drug or appliance. Every month we calculate
 the average price-per-unit (PPU) achieved by practices for each
-presentation. We then work out what you could save if you were
-prescribing alongside the best 10%. </p>
+presentation. We then work out what {{entity.cased_name }} could save
+if it were prescribing alongside the best 10%. </p>
 
 
 <table id="price_per_pill" class="table">
@@ -60,6 +60,30 @@ prescribing alongside the best 10%. </p>
 </table>
 
 <a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+
+<h2>Explanatory notes</h2>
+
+<h3>Method</h3>
+<p>Within a single month, we calculate the average PPU achieved by each practice for each presentation (generic and branded combined). We then approximate a realistic, best-case PPU by finding the average PPU which is at the cheapest decile for that presentation.</p>
+
+<p>We then work out what each GP Practice or CCG could save if it prescribed that presentation at the best decile.</p>
+
+<ul>
+  <li>We only consider data from a single month, because the Drug Tariff changes monthly, making price-per-dose comparisons meaningless between months</li>
+  <li>We cover data from standard GP Practices only</li>
+  <li>When summing total possible savings, for a given practice or CCG, we don't consider savings that they are already making</li>
+  <li>We use the NIC cost rather than the actual cost for these calculations (see below)</li>
+  <li>When calculating PPU, we combine all formulations (e.g. tablets and capsules) that we consider to be clinically equivalent.</li>
+</ul>
+
+<h3>Limitations</h3>
+<p>Cost-saving opportunities are calculated on the basis of <em>Net Ingredient Cost</em> (NIC). We use NIC because it excludes container payments, bulk discounting and out-of-pocket expenses. This allows our calculations to be consistent across NHS England; however, this approach will, on average, overestimate possible savings by around 7%.</p>
+
+<p>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands.  We have marked presentations with non-bioequivalence issues with a warning sign <span class="glyphicon glyphicon-warning-sign" style="color:red"></span>.  Licencing differences may also play a role.</p>
+
+<p>For a full discussion of our approach, including further limitations and discussion of the issues, see our <a href="https://github.com/ebmdatalab/price-per-dose">code repository</a>.  We are also in the process of writing a paper on the subject, which we will refer to here when it's published.</p>
+
+
 
 {% endblock %}
 
