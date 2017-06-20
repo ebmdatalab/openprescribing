@@ -55,7 +55,7 @@ def ppu_histogram(request, format=None):
     conditions = "AND (%s) " % conditions
     sql = (
         "SELECT presentation_code, name as presentation_name, "
-        "quantity, actual_cost, pct_id, practice_id "
+        "quantity, net_cost, pct_id, practice_id "
         "FROM frontend_prescription "
         "LEFT JOIN frontend_presentation "
         "ON frontend_prescription.presentation_code = "
@@ -68,7 +68,7 @@ def ppu_histogram(request, format=None):
     # apparent coding errors lead to absurdly expensive drugs, and
     # these outliers make the charts hard to read, so we remove them
     if len(df):
-        df['ppu'] = df['actual_cost'] / df['quantity']
+        df['ppu'] = df['net_cost'] / df['quantity']
         df = df[df.ppu <= df.ppu.quantile(0.99)]
         ordered = df.groupby(
             'presentation_name')['ppu'].aggregate(
