@@ -126,9 +126,9 @@ def price_per_unit_histogram(request, bnf_code):
     date = request.GET.get('date', '')
     highlight = request.GET.get('highlight', '')
     if len(highlight) == 3:
-        highlight_name = get_object_or_404(PCT, code=highlight).name
+        highlight_name = get_object_or_404(PCT, code=highlight).cased_name
     elif len(highlight) == 6:
-        highlight_name = get_object_or_404(Practice, code=highlight).name
+        highlight_name = get_object_or_404(Practice, code=highlight).cased_name
     else:
         highlight_name = ''
     if date:
