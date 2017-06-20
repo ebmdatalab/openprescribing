@@ -82,7 +82,7 @@ class Command(BaseCommand):
                    'net_cost, actual_cost, quantity, '
                    'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
                    'FROM ebmdatalab.hscic.normalised_prescribing_standard '
-                   "WHERE month > '%s'" % date_str)
+                   "WHERE month = '%s'" % date_str)
             table_name = "prescribing_%s" % date_str.replace('-', '_')
             bigquery.query_and_return(
                 'ebmdatalab', 'tmp_eu', table_name, sql)
