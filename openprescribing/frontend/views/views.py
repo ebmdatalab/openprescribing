@@ -147,6 +147,20 @@ def price_per_unit_histogram(request, bnf_code):
     return render(request, 'ppu_histogram.html', context)
 
 
+def price_per_unit_by_presentation(request, ccg_code, bnf_code):
+    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    presentation = get_object_or_404(Presentation, pk=bnf_code)
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    context = {
+        'entity': ccg,
+        'bnf_code': presentation.bnf_code,
+        'presentation': presentation,
+        'date': date,
+        'by_presentation': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
 ##################################################
 # GP PRACTICES
 ##################################################
@@ -164,7 +178,8 @@ def practice_price_per_unit(request, code):
     practice = get_object_or_404(Practice, code=code)
     context = {
         'entity': practice,
-        'date': date
+        'date': date,
+        'by_practice': True
     }
     return render(request, 'price_per_unit.html', context)
 
@@ -186,7 +201,8 @@ def ccg_price_per_unit(request, code):
     ccg = get_object_or_404(PCT, code=code)
     context = {
         'entity': ccg,
-        'date': date
+        'date': date,
+        'by_ccg': True
     }
 
     return render(request, 'price_per_unit.html', context)

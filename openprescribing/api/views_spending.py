@@ -8,6 +8,7 @@ import pandas as pd
 from django.db import connection
 from django.db.models import Q
 from django.forms.models import model_to_dict
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -16,6 +17,7 @@ from rest_framework.exceptions import APIException
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
+from frontend.models import Presentation
 import view_utils as utils
 from view_utils import db_timeout
 
@@ -133,20 +135,28 @@ def price_per_unit(request, format=None):
     if entity_code:
         filename += "-%s" % entity_code
         if len(entity_code) == 3:
+            # CCG focus
             query['pct'] = entity_code
-            query['practice__isnull'] = True
+            if bnf_code:
+                # All-practices-for-code-for-one-ccg
+                presentation = get_object_or_404(Presentation, pk=bnf_code)
+                query['practice__isnull'] = False
+                query['presentation'] = presentation
+                filename += "-%s" % bnf_code
+            else:
+                query['practice__isnull'] = True
         else:
+            # Practice focus
             query['practice'] = entity_code
-    if bnf_code:
-        filename += "-%s" % bnf_code
-        query['bnf_code'] = bnf_code
     savings = []
     for x in PPUSaving.objects.filter(
-            **query).prefetch_related('presentation'):
+            **query).prefetch_related('presentation', 'practice'):
         d = model_to_dict(x)
         d['name'] = x.presentation.product_name
         d['flag_bioequivalence'] = getattr(
             x.presentation.dmd_product, 'is_non_bioequivalent', None)
+        if x.practice:
+            d['practice_name'] = x.practice.cased_name
         savings.append(d)
     response = Response(savings)
     if request.accepted_renderer.format == 'csv':
