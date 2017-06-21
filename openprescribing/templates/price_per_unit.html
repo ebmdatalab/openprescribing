@@ -24,9 +24,6 @@ presentation. We then work out what {{entity.cased_name }} could save
     Each presentation name links to a table showing the breakdown by
   practice for this CCG.
   {% endif %}
-  {% if by_presentation %}
-    <a target="_blank" href="/ppu_histogram/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight={{ entity.code }}"><span class="glyphicon glyphicon-signal"></span> Compare PPUs for different prescriptions of {{ presentation.product_name }}</a>
- {% endif %}
 </p>
 
 {% if by_practice %}
@@ -126,6 +123,7 @@ presentation. We then work out what {{entity.cased_name }} could save
     var first_column = 'practice_name';
     var first_column_render = function(data, type, full, meta) {
       var link = '<a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
+      link += ' <a target="_blank" href="/ppu_histogram/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight={{ entity.code }}"><span class="glyphicon glyphicon-signal" data-toggle="tooltip" data-placement="left" title="Compare PPUs for different prescriptions"></span></a>';
       return link;
     }
   {% elif by_ccg %}

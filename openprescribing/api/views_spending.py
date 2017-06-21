@@ -111,7 +111,10 @@ def ppu_histogram(request, format=None):
         for name in ordered:
             current = df[df.presentation_name == name]
             if focus:
-                current = df[df.pct_id == highlight]
+                if len(highlight) == 3:
+                    current = df[df.pct_id == highlight]
+                else:
+                    current = df[df.practice_id == highlight]
             current_histogram = np.histogram(
                 current.ppu,
                 bins=bin_count,
