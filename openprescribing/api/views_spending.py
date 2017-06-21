@@ -117,7 +117,7 @@ def ppu_histogram(request, format=None):
                 bins=bin_count,
                 range=(max(bins[0], 0), bins[-1])
             )
-            if current.iloc[0].presentation_code[9:11] == 'AA':
+            if len(current) and current.iloc[0].presentation_code[9:11] == 'AA':
                 is_generic = True
             else:
                 is_generic = False
