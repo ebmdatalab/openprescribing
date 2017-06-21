@@ -101,6 +101,13 @@ def make_merged_table_for_month(
 def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
                 sql_only=False, limit=1000, order_by_savings=True,
                 min_saving=0, namespace='hscic', substitutions_csv=''):
+    """Execute SQL to calculate savings in BigQuery, and return as a
+    DataFrame.
+
+    References to issues below are for
+    https://github.com/ebmdatalab/price-per-dose/issues
+
+    """
     assert month
     assert group_by or for_entity
     assert group_by in ['', 'pct', 'practice', 'product']

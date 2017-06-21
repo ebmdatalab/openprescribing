@@ -27,11 +27,7 @@ class NotValid(APIException):
     default_detail = 'The code you provided is not valid'
 
 
-@api_view(['GET'])
-def ppu_histogram(request, format=None):
-    code = request.query_params.get('bnf_code', '')
-    date = request.query_params.get('date', None)
-    highlight = request.query_params.get('highlight', None)
+def _valid_or_latest_date(date):
     if date:
         try:
             date = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -39,6 +35,10 @@ def ppu_histogram(request, format=None):
             raise NotValid("%s is not a valid date" % date)
     else:
         date = ImportLog.objects.latest_in_category('prescribing').current_at
+    return date
+
+
+def _build_conditions_and_patterns(code):
     if not re.match(r'[A-Z0-9]{15}', code):
         raise NotValid("%s is not a valid code" % code)
     extra_codes = GenericCodeMapping.objects.filter(
@@ -55,6 +55,16 @@ def ppu_histogram(request, format=None):
         patterns.append(pattern)
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
+    return conditions, patterns
+
+
+@api_view(['GET'])
+def ppu_histogram(request, format=None):
+    code = request.query_params.get('bnf_code', '')
+    date = _valid_or_latest_date(request.query_params.get('date', None))
+    highlight = request.query_params.get('highlight', None)
+    focus = request.query_params.get('focus', None)
+    conditions, patterns = _build_conditions_and_patterns(code)
     sql = (
         "SELECT presentation_code, name as presentation_name, "
         "quantity, net_cost, pct_id, practice_id "
@@ -100,10 +110,12 @@ def ppu_histogram(request, format=None):
         # Generate histogram for each presentation
         for name in ordered:
             current = df[df.presentation_name == name]
+            if focus:
+                current = df[df.pct_id == highlight]
             current_histogram = np.histogram(
                 current.ppu,
                 bins=bin_count,
-                range=(bins[0], bins[-1])
+                range=(max(bins[0], 0), bins[-1])
             )
             if current.iloc[0].presentation_code[9:11] == 'AA':
                 is_generic = True
