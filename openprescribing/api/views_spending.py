@@ -167,9 +167,13 @@ def price_per_unit(request, format=None):
     for x in PPUSaving.objects.filter(
             **query).prefetch_related('presentation', 'practice'):
         d = model_to_dict(x)
-        d['name'] = x.presentation.product_name
-        d['flag_bioequivalence'] = getattr(
-            x.presentation.dmd_product, 'is_non_bioequivalent', None)
+        try:
+            d['name'] = x.presentation.product_name
+            d['flag_bioequivalence'] = getattr(
+                x.presentation.dmd_product, 'is_non_bioequivalent', None)
+        except Presentation.DoesNotExist:
+            d['name'] = x.presentation_id
+            d['flag_bioequivalence'] = None
         if x.practice:
             d['practice_name'] = x.practice.cased_name
         savings.append(d)
