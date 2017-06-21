@@ -177,11 +177,9 @@
           }
         }
         var options = $.extend(true, {}, highchartsOptions);
-        console.log(options.xAxis.plotLines[0]);
         options.series = data.series;
         options.title.text = 'Distribution of PPU for {{ name }} at {{ highlight_name }}';
         options.xAxis.plotLines = [];
-        console.log(options.xAxis.plotLines[0]);
         $('#highlight_chart').highcharts(options);
       }
     );
