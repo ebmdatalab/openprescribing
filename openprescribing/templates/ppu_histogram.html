@@ -161,7 +161,7 @@
       return data
     }
     $.getJSON(
-      '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}',
+      '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}',
       function(data) {
         data = setGenericColours(data);
         var options = $.extend(true, {}, highchartsOptions);
@@ -173,7 +173,7 @@
     );
 
     $.getJSON(
-      '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&focus=1',
+      '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&focus=1&trim={{request.GET.trim}}',
       function(data) {
         data = setGenericColours(data);
         var options = $.extend(true, {}, highchartsOptions);

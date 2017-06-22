@@ -64,6 +64,7 @@ def ppu_histogram(request, format=None):
     date = _valid_or_latest_date(request.query_params.get('date', None))
     highlight = request.query_params.get('highlight', None)
     focus = request.query_params.get('focus', None)
+    trim = request.query_params.get('trim', None)
     conditions, patterns = _build_conditions_and_patterns(code)
     sql = (
         "SELECT presentation_code, name as presentation_name, "
@@ -80,6 +81,8 @@ def ppu_histogram(request, format=None):
     # apparent coding errors lead to absurdly expensive drugs, and
     # these outliers make the charts hard to read, so we remove them
     df['ppu'] = df['net_cost'] / df['quantity']
+    if trim:
+        df = df[df.ppu <= df.ppu.quantile(0.99)]
     if len(df):
         ordered = df.groupby(
             'presentation_name')['ppu'].aggregate(
