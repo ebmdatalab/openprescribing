@@ -140,21 +140,26 @@
       },
       series: null
     };
-
+    function setGenericColours(data) {
+      var shades = ['#ccc', '#ddd'];
+      var c = 0;
+      // find the series with generic, and set it to gray
+      for (var i = 0, l = data.series.length; i < l; i++) {
+        if (data.series[i].is_generic) {
+          data.series[i].color = shades[c % 2];
+          data.series[i].showInLegend = true;
+          data.series[i].name = "Generically prescribed " + data.series[i].name;
+          c += 1;
+        } else {
+          data.series[i].showInLegend = false;
+        }
+      }
+      return data
+    }
     $.getJSON(
       '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}',
       function(data) {
-        // find the series with generic, and set it to gray
-        for (var i = 0, l = data.series.length; i < l; i++) {
-          if (data.series[i].is_generic) {
-            data.series[i].color = '#ccc';
-            data.series[i].showInLegend = true;
-            data.series[i].name = "Generically prescribed " + data.series[i].name
-          } else {
-            data.series[i].showInLegend = false;
-          }
-        }
-
+        data = setGenericColours(data);
         var options = $.extend(true, {}, highchartsOptions);
         options.series = data.series;
         options.title.text = 'England-wide distribution of PPU for {{ name }}';
@@ -166,16 +171,7 @@
     $.getJSON(
       '{{ API_HOST }}/api/1.0/ppu_histogram/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&focus=1',
       function(data) {
-        // find the series with generic, and set it to gray
-        for (var i = 0, l = data.series.length; i < l; i++) {
-          if (data.series[i].is_generic) {
-            data.series[i].color = '#ccc';
-            data.series[i].showInLegend = true;
-            data.series[i].name = "Generically prescribed " + data.series[i].name
-          } else {
-            data.series[i].showInLegend = false;
-          }
-        }
+        data = setGenericColours(data);
         var options = $.extend(true, {}, highchartsOptions);
         options.series = data.series;
         options.title.text = 'Distribution of PPU for {{ name }} at {{ highlight_name }}';
