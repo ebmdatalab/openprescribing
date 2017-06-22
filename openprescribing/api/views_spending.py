@@ -131,6 +131,7 @@ def ppu_histogram(request, format=None):
                  'is_generic': is_generic,
                  'data': [list(x) for x in zip(
                      current_histogram[1], current_histogram[0])]})
+        series = sorted(series, key=lambda x: x['is_generic'])
         return Response({'plotline': plotline,
                          'series': series})
     else:
