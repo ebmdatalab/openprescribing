@@ -116,9 +116,7 @@ LOGGING = {
 }
 
 # Base directory for pipeline metadata
-PIPELINE_METADATA_DIR = os.path.join(
-    SITE_ROOT, 'pipeline', 'data', 'metadata'
-)
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
 
 # Base directory for pipeline data
 PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
