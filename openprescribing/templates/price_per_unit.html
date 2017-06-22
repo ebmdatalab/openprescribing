@@ -122,16 +122,16 @@ presentation. We then work out what {{entity.cased_name }} could save
     // When viewing at Presentation level, link back to practice-level
     var first_column = 'practice_name';
     var first_column_render = function(data, type, full, meta) {
-      var link = '<a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
-      link += ' <a target="_blank" href="/ppu_histogram/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '"><span class="glyphicon glyphicon-signal" data-toggle="tooltip" data-placement="left" title="Compare PPUs for different prescriptions"></span></a>';
+      var link = '<a target="_blank" href="/ppu_histogram/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '"><span class="label label-info">chart</span></a>';
+      link += ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
       return link;
     }
   {% elif by_ccg %}
     // When viewing at CCG level, drill down to practices
     var first_column = 'presentation';
     var first_column_render = function(data, type, full, meta) {
-      var link = '<a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
-      link += ' <a target="_blank" href="/ppu_histogram/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="glyphicon glyphicon-signal" data-toggle="tooltip" data-placement="left" title="Compare PPUs for different prescriptions"></span></a>';
+      var link = '<a target="_blank" href="/ppu_histogram/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
+      link += ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
       if(full['flag_bioequivalence']) {
         return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
       } else {
@@ -142,8 +142,8 @@ presentation. We then work out what {{entity.cased_name }} could save
     // When viewing at Practice level, group up to CCG
     var first_column = 'name';
     var first_column_render = function(data, type, full, meta) {
-      var link = data;
-      link += ' <a target="_blank" href="/ppu_histogram/'+full['presentation']+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="glyphicon glyphicon-signal" data-toggle="tooltip" data-placement="left" title="Compare PPUs for different prescriptions"></span></a>';
+      var link = '<a target="_blank" href="/ppu_histogram/'+full['presentation']+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
+      link += (' ' + data);
       if(full['flag_bioequivalence']) {
         return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
       } else {
