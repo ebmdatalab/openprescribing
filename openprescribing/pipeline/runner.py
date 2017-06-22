@@ -4,6 +4,7 @@ from collections import defaultdict
 import datetime
 import glob
 import json
+import logging
 import os
 import re
 import shlex
@@ -12,9 +13,12 @@ import textwrap
 import networkx as nx
 
 from django.conf import settings
-from django.core.management import call_command
+from django.core.management import call_command as django_call_command
 
 from .cloud_utils import CloudHandler
+
+
+logger = logging.getLogger(__name__)
 
 
 class Source(object):
@@ -149,6 +153,7 @@ class Task(object):
 
 class ManualFetchTask(Task):
     def run(self):
+        logger.info('Running manual fetch task {}'.format(self.name))
         instructions = self.manual_fetch_instructions()
         print(instructions)
         raw_input('Press return when done, or to skip this step')
@@ -201,12 +206,14 @@ class ManualFetchTask(Task):
 
 class AutoFetchTask(Task):
     def run(self):
+        logger.info('Running auto fetch task {}'.format(self.name))
         tokens = shlex.split(self.command)
         call_command(*tokens)
 
 
 class ConvertTask(Task):
     def run(self):
+        logger.info('Running convert task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_regex(), path)
@@ -217,6 +224,7 @@ class ConvertTask(Task):
 
 class ImportTask(Task):
     def run(self):
+        logger.info('Running import task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_regex(), path)
@@ -227,6 +235,7 @@ class ImportTask(Task):
 
 class PostProcessTask(Task):
     def run(self):
+        logger.info('Running post-process task {}'.format(self.name))
         tokens = shlex.split(self.command)
         call_command(*tokens)
 
@@ -410,6 +419,11 @@ class SmokeTestHandler(CloudHandler):
                            'items': items,
                            'quantity': quantity}
                     json.dump(obj, f, indent=2)
+
+
+def call_command(*args):
+    logger.info('call_command {}'.format(*args))
+    return django_call_command(*args)
 
 
 def run_all():
