@@ -423,13 +423,16 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         data = json.loads(response.content)
         self.assertEqual(len(data['series']), 0)
 
-    def test_with_highlight(self):
+    def test_highlight(self):
         url = '/ppu_histogram?format=json'
         url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(data['plotline'], 0.01362518115942029)
+        # N.B. This is the mean of a *single* value; although there
+        # are two values in the raw data, one is trimmed as it is
+        # outside the 99th percentile
+        self.assertEqual(data['plotline'], 0.03233695652173913)
 
     def test_code_without_matches(self):
         url = '/ppu_histogram?format=json'
@@ -450,7 +453,7 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
         # Expecting the total to be quite different
-        self.assertEqual(data['plotline'], 0.01652440777300516)
+        self.assertEqual(data['plotline'], 0.030569283133111542)
         self.assertEqual(len(data['series']), 2)  # Bendroflumethiazide and Trandate
 
     def test_with_specific(self):
@@ -459,4 +462,4 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(data['plotline'], 0.01362518115942029)
+        self.assertEqual(data['plotline'], 0.03233695652173913)
