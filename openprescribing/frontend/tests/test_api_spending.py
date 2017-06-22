@@ -413,7 +413,8 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
         self.assertEqual(len(data['series']), 1)  # Only Trandate prescribed
-        self.assertEqual(len([x for x in data if x[1]]), 2)  # two bars of height one
+        # two bars of height one:
+        self.assertEqual(len([x for x in data if x[1]]), 2)
 
     def test_date(self):
         url = '/ppu_histogram?format=json'
@@ -442,6 +443,60 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         data = json.loads(response.content)
         self.assertIsNone(data['plotline'])
 
+    def test_focus(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V&focus=1'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(
+            data,
+            {'series': [
+                {'is_generic': True,
+                 'data': [[0.08875, 1]],
+                 'name': 'Chlortalidone_Tab 50mg'}
+            ],
+             'plotline': 0.08875}
+        )
+
+    def test_no_focus(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(
+            data,
+            {'series': [
+                {'is_generic': True,
+                 'data': [[0.08875, 2]],
+                 'name': 'Chlortalidone_Tab 50mg'}
+            ],
+             'plotline': 0.08875}
+        )
+
+    def test_is_generic(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0JKKKAL&date=2014-11-01'
+        url += '&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEquals(
+            [x['is_generic'] for x in data['series']], [True, False])
+
+    def test_is_generic_when_focussing(self):
+        url = '/ppu_histogram?format=json'
+        url += '&bnf_code=0204000I0JKKKAL&date=2014-11-01'
+        url += '&highlight=03V&focus=1'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEquals(
+            [x['is_generic'] for x in data['series']], [True, False])
+
 
 class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']
@@ -453,8 +508,9 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
         # Expecting the total to be quite different
-        self.assertEqual(data['plotline'], 0.030569283133111542)
-        self.assertEqual(len(data['series']), 2)  # Bendroflumethiazide and Trandate
+        self.assertEqual(data['plotline'], 0.031051962349833657)
+        # Bendroflumethiazide and Trandate:
+        self.assertEqual(len(data['series']), 2)
 
     def test_with_specific(self):
         url = '/ppu_histogram?format=json'

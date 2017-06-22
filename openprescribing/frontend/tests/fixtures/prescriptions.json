@@ -201,6 +201,7 @@
         "fields": {
             "presentation_code": "0204000I0JKKKAL",
             "total_items": 1,
+            "net_cost": 140.00,
             "actual_cost": 140.00,
             "quantity": 1,
             "processing_date": "2014-11-01",

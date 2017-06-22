@@ -80,7 +80,6 @@ def ppu_histogram(request, format=None):
     # apparent coding errors lead to absurdly expensive drugs, and
     # these outliers make the charts hard to read, so we remove them
     df['ppu'] = df['net_cost'] / df['quantity']
-    df = df[df.ppu <= df.ppu.quantile(0.99)]
     if len(df):
         ordered = df.groupby(
             'presentation_name')['ppu'].aggregate(
@@ -101,26 +100,29 @@ def ppu_histogram(request, format=None):
         # Compute limits for entire dataset so all histograms use the same
         # scale
         hist, bins = np.histogram(df.ppu)
-        # find a number of bins whereby the bin sizes aren't too close
+        # Find a number of bins whereby the bin sizes aren't too close
         # together
         bin_count = len(bins)
         while bin_count > 1 and (bins[1] - bins[0]) < 0.01:
             bin_count = bin_count / 2
             hist, bins = np.histogram(df.ppu, bins=bin_count)
+        # Reduce the set we display to individual CCG/Practice, if
+        # requested to do so
+        if focus:
+            if len(highlight) == 3:
+                df = df[df.pct_id == highlight]
+            else:
+                df = df[df.practice_id == highlight]
         # Generate histogram for each presentation
         for name in ordered:
             current = df[df.presentation_name == name]
-            if focus:
-                if len(highlight) == 3:
-                    current = df[df.pct_id == highlight]
-                else:
-                    current = df[df.practice_id == highlight]
             current_histogram = np.histogram(
                 current.ppu,
                 bins=bin_count,
                 range=(max(bins[0], 0), bins[-1])
             )
-            if len(current) and current.iloc[0].presentation_code[9:11] == 'AA':
+            if (len(current) and
+                    current.iloc[0].presentation_code[9:11] == 'AA'):
                 is_generic = True
             else:
                 is_generic = False
@@ -192,7 +194,14 @@ def total_spending(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-        err = 'Error: BNF Codes must all be the same length if written in the same search box. For example, you cannot search for Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this data, please <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a> and we may be able to extract it for you'
+        err = ('Error: BNF Codes must all be the same length if written in '
+               'the same search box. For example, you cannot search for '
+               'Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle '
+               '(0703021Q0BD), but you could search for Cerazette '
+               '(0703021Q0BB) and Cerelle (0703021Q0BD). If you need this '
+               'data, please <a href="mailto:{{ SUPPORT_EMAIL }}" '
+               'class="doorbell-show">get in touch</a> and we may be able to '
+               'extract it for you')
         return Response(err, status=400)
 
     query = _get_query_for_total_spending(codes)
@@ -213,7 +222,14 @@ def spending_by_ccg(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-        err = 'Error: BNF Codes must all be the same length if written in the same search box. For example, you cannot search for Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this data, please <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a> and we may be able to extract it for you'
+        err = ('Error: BNF Codes must all be the same length if written in '
+               'the same search box. For example, you cannot search for '
+               'Cerazette_Tab 75mcg (0703021Q0BBAAAA) and Cerelle '
+               '(0703021Q0BD), but you could search for Cerazette '
+               '(0703021Q0BB) and Cerelle (0703021Q0BD). If you need this '
+               'data, please <a href="mailto:{{ SUPPORT_EMAIL }}" '
+               'class="doorbell-show">get in touch</a> '
+               'and we may be able to extract it for you')
         return Response(err, status=400)
 
     if not spending_type or spending_type == 'bnf-section' \
