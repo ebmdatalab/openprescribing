@@ -179,7 +179,7 @@
         var options = $.extend(true, {}, highchartsOptions);
         options.series = data.series;
         options.title.text = 'Distribution of PPU for {{ name }} at {{ highlight_name }}';
-        options.xAxis.plotLines = [];
+        options.xAxis.plotLines[0].value = data.plotline;
         $('#highlight_chart').highcharts(options);
       }
     );
