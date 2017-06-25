@@ -167,6 +167,7 @@ class Command(BaseCommand):
         try:
             os.makedirs(path)
         except OSError as exc:  # Python >2.5
+            import errno
             if exc.errno == errno.EEXIST and os.path.isdir(path):
                 pass
             else:
