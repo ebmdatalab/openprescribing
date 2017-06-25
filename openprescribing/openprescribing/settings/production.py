@@ -122,4 +122,4 @@ PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
 PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
 
 # Path to import log for pipeline data
-PIPELINE_IMPORT_LOG_PATH =  '/home/hello/openprescribing-data/import.json'
+PIPELINE_IMPORT_LOG_PATH =  '/home/hello/openprescribing-data/log.json'
