@@ -123,7 +123,7 @@
         ]
     },
     "convert_hscic_prescribing": {
-        "type": "import",
+        "type": "convert",
         "source_id": "prescribing",
         "command": "convert_hscic_prescribing --filename .*Detailed_Prescribing_Information.csv",
         "dependencies": [
