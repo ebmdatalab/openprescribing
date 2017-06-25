@@ -115,6 +115,31 @@ class PipelineTests(TestCase):
         with override_settings(PIPELINE_METADATA_DIR=path):
             tasks = load_tasks()
 
+    def test_run_real_tasks(self):
+        # We're not actually going to run the management commands, but we're
+        # going to check that the management commands exist and can be run with
+        # the given input
+        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        with override_settings(PIPELINE_METADATA_DIR=path):
+            tasks = load_tasks()
+
+        with mock.patch('django.core.management.base.BaseCommand.execute'):
+            for task in tasks.by_type('auto_fetch'):
+                task.run()
+
+            with mock.patch('pipeline.runner.Task.unimported_paths',
+                            return_value=['/some/path']):
+                for task in tasks.by_type('convert'):
+                        task.run()
+
+            with mock.patch('pipeline.runner.Task.unimported_paths',
+                            return_value=['/some/path']):
+                for task in tasks.by_type('import'):
+                        task.run()
+
+            for task in tasks.by_type('post_process'):
+                task.run()
+
     def test_tasks_by_type(self):
         tasks = self.tasks.by_type('manual_fetch')
         self.assertIn('fetch_source_a', [task.name for task in tasks])
