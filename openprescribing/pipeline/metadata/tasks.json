@@ -10,17 +10,17 @@
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
-        "command": "hscic_list_sizes.py"
+        "command": "hscic_list_sizes"
     },
     "fetch_ccg_details": {
         "type": "auto_fetch",
         "source_id": "ccg_details",
-        "command": "org_codes.py --ccg"
+        "command": "org_codes --ccg"
     },
     "fetch_practice_details": {
         "type": "auto_fetch",
         "source_id": "practice_details",
-        "command": "org_codes.py --practice"
+        "command": "org_codes --practice"
     },
     "import_bnf_codes": {
         "type": "import",
@@ -33,7 +33,7 @@
     "fetch_prescribing_metadata": {
         "type": "auto_fetch",
         "source_id": "prescribing_metadata",
-        "command": "hscic_prescribing.py --most_recent_date"
+        "command": "hscic_prescribing --most_recent_date"
     },
     "fetch_ccg_boundaries": {
         "type": "manual_fetch",
@@ -93,7 +93,7 @@
     "fetch_nhs_postcode_file": {
         "type": "auto_fetch",
         "source_id": "nhs_postcode_file",
-        "command": "org_codes.py --postcode"
+        "command": "org_codes --postcode"
     },
     "import_nhs_postcode_file": {
         "type": "import",
