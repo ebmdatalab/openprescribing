@@ -164,7 +164,7 @@
     },
     "upload_to_bigquery": {
         "type": "post_process",
-        "command": "runner:bigquery_upload",
+        "command": "bigquery_upload",
         "dependencies": [
             "import_patient_list_size",
             "import_hscic_practices",
