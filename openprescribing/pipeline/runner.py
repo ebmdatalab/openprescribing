@@ -335,6 +335,7 @@ def dump_import_records(records):
 
 class BigQueryUploader(CloudHandler):
     def __init__(self, tasks):
+        super(BigQueryUploader, self).__init__()
         self.tasks = tasks
 
     def upload_all_to_storage(self):
