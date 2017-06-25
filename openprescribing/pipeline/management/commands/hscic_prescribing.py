@@ -6,6 +6,7 @@ import calendar
 import subprocess
 from zipfile import ZipFile
 import os
+import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand

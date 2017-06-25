@@ -8,6 +8,7 @@ import os
 import re
 import shlex
 import textwrap
+import unittest
 
 import networkx as nx
 
