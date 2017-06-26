@@ -422,7 +422,7 @@ class SmokeTestHandler(CloudHandler):
 
 
 def call_command(*args):
-    print('call_command {}'.format(*args))
+    print('call_command {}'.format(args))
     return django_call_command(*args)
 
 
