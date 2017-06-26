@@ -74,7 +74,7 @@ class CloudHandler(object):
             mode = 'WRITE_APPEND'
         else:
             raise StandardError("invalid mode")
-        with open("schemas/%s" % schema, 'rb') as f:
+        with open("pipeline/schemas/%s" % schema, 'rb') as f:
             schema = json.load(f)
             payload = {
                 "configuration": {

@@ -1,0 +1,13 @@
+[
+  {"name": "sha", "type": "string", "mode": "required"},
+  {"name": "pct", "type": "string", "mode": "required"},
+  {"name": "practice", "type": "string", "mode": "required"},
+  {"name": "bnf_code", "type": "string", "mode": "required"},
+  {"name": "bnf_name", "type": "string", "mode": "required"},
+  {"name": "items", "type": "integer", "mode": "required"},
+  {"name": "net_cost", "type": "float", "mode": "required"},
+  {"name": "actual_cost", "type": "float", "mode": "required"},
+  {"name": "quantity", "type": "integer", "mode": "required"},
+  {"name": "period", "type": "string", "mode": "required"},
+  {"name": "dummy", "type": "string", "mode": "nullable"}
+]
