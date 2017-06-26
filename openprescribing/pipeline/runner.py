@@ -348,7 +348,9 @@ class BigQueryUploader(CloudHandler):
     def upload_task_input_files(self, task):
         bucket = 'ebmdatalab'
         for path in task.input_paths():
-            name = 'hscic' + path.replace(settings.PIPELINE_DATA_BASEDIR, '')
+            assert path[0] == '/'
+            assert settings.PIPELINE_DATA_BASEDIR[-1] == '/'
+            name = 'hscic' + path.replace(settings.PIPELINE_DATA_BASEDIR, '/')
             if self.dataset_exists(bucket, name):
                 print("Skipping %s, already uploaded" % name)
                 continue
