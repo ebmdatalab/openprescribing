@@ -92,13 +92,13 @@ def ppu_histogram(request, format=None):
         # Get plotline for specified entity
         if highlight:
             if len(highlight) == 3:
-                plotline = df[df.pct_id == highlight].mean().ppu
+                mean_ppu = df[df.pct_id == highlight].mean().ppu
             else:
-                plotline = df[df.practice_id == highlight].mean().ppu
+                mean_ppu = df[df.practice_id == highlight].mean().ppu
         else:
-            plotline = None
-        if plotline is not None and np.isnan(plotline):
-            plotline = None
+            mean_ppu = None
+        if mean_ppu is not None and np.isnan(mean_ppu):
+            mean_ppu = None
         series = []
         # Compute limits for entire dataset so all histograms use the same
         # scale
@@ -119,6 +119,7 @@ def ppu_histogram(request, format=None):
         # Generate histogram for each presentation
         for name in ordered:
             current = df[df.presentation_name == name]
+            # values, bin edges
             current_histogram = np.histogram(
                 current.ppu,
                 bins=bin_count,
@@ -129,13 +130,20 @@ def ppu_histogram(request, format=None):
                 is_generic = True
             else:
                 is_generic = False
+
             series.append(
                 {'name': name,
                  'is_generic': is_generic,
-                 'data': [list(x) for x in zip(
-                     current_histogram[1], current_histogram[0])]})
+                 'data': current_histogram[0]})
         series = sorted(series, key=lambda x: x['is_generic'])
-        return Response({'plotline': plotline,
+        categories = current_histogram[1]
+        plotline = mean_ppu
+        if plotline:
+            # convert it to a ratio that will work with the categories
+            plotline = ((plotline - bins[0]) / bins[-1] * len(bins))
+        return Response({'mean_ppu': mean_ppu,
+                         'plotline': plotline,
+                         'categories': categories,
                          'series': series})
     else:
         return Response({'plotline': None, 'series': []})

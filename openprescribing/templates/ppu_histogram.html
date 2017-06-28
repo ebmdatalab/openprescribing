@@ -98,7 +98,14 @@
         x: -50
       },
       tooltip: {
-        headerFormat: '<span style="font-size: 10px">£{point.key:.2f} / unit</span><br/>'
+        formatter: function() {
+          var interval = this.series.xAxis.categories[1] - this.series.xAxis.categories[0];
+          var html = '<span style="font-size: 10px">';
+          html += '£' + this.key.toFixed(2) + ' - £' + (this.key + interval).toFixed(2) + ' / unit</span><br/>'
+          html += '<span style="color:' + this.point.color + '">\u25CF</span> ';
+          html += this.series.name + '<br/>';
+          return html
+        }
       },
       credits: {
         enabled: false
@@ -111,7 +118,8 @@
           pointPadding: 0,
           groupPadding: 0,
           borderWidth: 0.5,
-          borderColor: 'rgba(255,255,255,0.5)'
+          borderColor: 'rgba(255,255,255,0.5)',
+          pointPlacement: 'between'
         },
         column: {
           stacking: 'normal'
@@ -119,6 +127,7 @@
 
       },
       xAxis: {
+        categories: [],
         plotLines: [{
           color: '#FF0000', // Red
           width: 1,
@@ -168,6 +177,7 @@
         options.series = data.series;
         options.title.text = 'England-wide distribution of PPU for {{ name }}';
         options.xAxis.plotLines[0].value = data.plotline;
+        options.xAxis.categories = data.categories;
         $('#all_practices_chart').highcharts(options);
       }
     );
@@ -180,6 +190,7 @@
         options.series = data.series;
         options.title.text = 'Distribution of PPU for {{ name }} at {{ highlight_name }}';
         options.xAxis.plotLines[0].value = data.plotline;
+        options.xAxis.categories = data.categories;
         $('#highlight_chart').highcharts(options);
       }
     );

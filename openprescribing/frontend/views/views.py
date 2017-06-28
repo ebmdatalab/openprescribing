@@ -174,9 +174,9 @@ def all_practices(request):
 
 
 def practice_price_per_unit(request, code):
-    date = request.GET('date', None)
+    date = request.GET.get('date', None)
     if date:
-        date = valid_date
+        date = valid_date(date)
     else:
         date = ImportLog.objects.latest_in_category('prescribing').current_at
     practice = get_object_or_404(Practice, code=code)
@@ -201,9 +201,9 @@ def all_ccgs(request):
 
 
 def ccg_price_per_unit(request, code):
-    date = request.GET('date', None)
+    date = request.GET.get('date', None)
     if date:
-        date = valid_date
+        date = valid_date(date)
     else:
         date = ImportLog.objects.latest_in_category('prescribing').current_at
     ccg = get_object_or_404(PCT, code=code)
