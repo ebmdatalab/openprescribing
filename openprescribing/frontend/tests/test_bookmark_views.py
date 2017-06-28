@@ -113,3 +113,9 @@ class TestBookmarkViews(TransactionTestCase):
         response = self.client.post(url, {'url': bookmark.url, 'name': 'foo'})
         self.assertContains(
             response, "your monthly update")
+
+    def test_preview_practice_bookmark_with_get_is_not_error(self):
+        url = reverse('preview-practice-bookmark',
+                      kwargs={'code': Practice.objects.first().pk})
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 200)

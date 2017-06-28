@@ -120,6 +120,8 @@ def preview_bookmark(request, practice=None, pct=None, url=None, name=None):
         html = msg.alternatives[0][0]
         images = msg.attachments
         return HttpResponse(_convert_images_to_data_uris(html, images))
+    else:
+        return HttpResponse()
 
 
 def email_verification_sent(request):
