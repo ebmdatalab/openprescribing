@@ -67,13 +67,15 @@ def ppu_histogram(request, format=None):
     trim = request.query_params.get('trim', None)
     conditions, patterns = _build_conditions_and_patterns(code)
     sql = (
-        "SELECT presentation_code, name as presentation_name, "
+        "SELECT presentation_code, "
+        "frontend_presentation.name as presentation_name, "
         "quantity, net_cost, pct_id, practice_id "
         "FROM frontend_prescription "
         "LEFT JOIN frontend_presentation "
         "ON frontend_prescription.presentation_code = "
         "frontend_presentation.bnf_code "
-        "WHERE processing_date = %s " + conditions +
+        "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
+        "WHERE processing_date = %s AND setting = 4 " + conditions +
         "ORDER BY presentation_code, quantity DESC"
     )
     params = [date] + patterns
