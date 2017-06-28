@@ -174,7 +174,11 @@ def all_practices(request):
 
 
 def practice_price_per_unit(request, code):
-    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    date = request.GET('date', None)
+    if date:
+        date = valid_date
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
     practice = get_object_or_404(Practice, code=code)
     context = {
         'entity': practice,
@@ -197,7 +201,11 @@ def all_ccgs(request):
 
 
 def ccg_price_per_unit(request, code):
-    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    date = request.GET('date', None)
+    if date:
+        date = valid_date
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
     ccg = get_object_or_404(PCT, code=code)
     context = {
         'entity': ccg,
