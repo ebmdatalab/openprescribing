@@ -148,7 +148,11 @@ def price_per_unit_histogram(request, bnf_code):
 
 
 def price_per_unit_by_presentation(request, ccg_code, bnf_code):
-    date = ImportLog.objects.latest_in_category('prescribing').current_at
+    date = request.GET.get('date', None)
+    if date:
+        date = valid_date(date)
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     ccg = get_object_or_404(PCT, code=ccg_code)
     context = {
