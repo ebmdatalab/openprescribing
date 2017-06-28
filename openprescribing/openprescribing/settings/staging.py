@@ -7,7 +7,7 @@ from common import utils
 
 # DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
+DEBUG = False  # Not so safe to set to True as staging is not behind a password
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 # END DEBUG CONFIGURATION
 
