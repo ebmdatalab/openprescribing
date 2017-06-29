@@ -203,6 +203,7 @@ class Command(BaseCommand):
             )
             for k, v in data:
                 setattr(prac_list, k, v)
+            prac_list.pct = practice.ccg  # Reset CCG membership
             prac_list.save()
         except ObjectDoesNotExist:
             data['practice'] = practice
