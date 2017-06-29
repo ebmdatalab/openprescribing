@@ -353,7 +353,7 @@ def create_bigquery_views():
     sql = """
     SELECT
       prescribing.sha AS sha,
-      prescribing.pct AS pct,
+      practices.ccg_id AS pct,
       prescribing.practice AS practice,
       COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
         AS bnf_code,
@@ -362,14 +362,16 @@ def create_bigquery_views():
       prescribing.net_cost AS net_cost,
       prescribing.actual_cost AS actual_cost,
       prescribing.quantity AS quantity,
-      prescribing.month AS month,
+      prescribing.month AS month
     FROM
       ebmdatalab.hscic.prescribing AS prescribing
     LEFT JOIN
       ebmdatalab.hscic.bnf_map AS bnf_map
     ON
       bnf_map.former_bnf_code = prescribing.bnf_code
-
+    INNER JOIN
+      ebmdatalab.hscic.practices  AS practices
+    ON practices.code = prescribing.practice
     """
     client = bigquery.client.Client(project='ebmdatalab')
     dataset = Dataset("hscic", client)
@@ -387,6 +389,10 @@ def create_bigquery_views():
     sql = sql.replace(
         'ebmdatalab.hscic.bnf_map',
         '[ebmdatalab:hscic.bnf_map]',
+        )
+    sql = sql.replace(
+        'ebmdatalab.hscic.practices',
+        '[ebmdatalab:hscic.practices]',
         )
     table.view_query = sql
     table.view_use_legacy_sql = True
