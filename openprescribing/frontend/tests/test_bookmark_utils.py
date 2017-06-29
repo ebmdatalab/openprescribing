@@ -649,7 +649,16 @@ class TruncateSubjectTestCase(unittest.TestCase):
               'depends of public opinion. The law is no protection.'),
              'expected':
              ('Your monthly update about The Point Is That the Relative '
-              'Freedom W...')}]
+              'Freedom W...')},
+            {'input':
+             ('Items for Zopiclone + Zolpidem Tartrate + Lorazepam + '
+              'Chlordiazepoxide Hydrochloride + Diazepam + Clonazepam + '
+              'Temazepam vs patients on list by HEATHCOT MEDICAL PRACTICE '
+              'and other practices in CCG'),
+             'expected':
+             ('Your monthly update about Items for Zopiclone + Zolpidem '
+              'Tartrate ...')}
+        ]
 
         for test_case in data:
             self.assertEqual(

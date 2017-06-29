@@ -583,6 +583,8 @@ def truncate_subject(prefix, subject):
             end_bit = 'by' + end_bit
         else:
             end_bit = ''
+        if len(end_bit) > max_length:
+            end_bit = ''
         start_bit = subject[:(max_length - len(end_bit) - len(ellipsis))]
         truncated = start_bit + ellipsis + end_bit
     return prefix + truncated
