@@ -15,9 +15,9 @@
 
 <h1>Search GP prescribing data</h1>
 
-<p>Search 700 million rows of prescribing data, and get prescribing information by CCG or practice. You can search for any numerator over any denominator. For example, prescriptions by CCG for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">branded Rosuvastatin as a proportion of all lipid-regulating drugs <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>; or for <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=0212000B0">Rosuvastatin vs generic Atorvastatin <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>; or for <a target="_blank" href="{% url 'analyse' %}#numIds=0205051I0&denomIds=2.5.5">Enalapril as a proportion of its drug class <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>. Add the name of a CCG or practice to check how an organisation compares with its peers. Don't forget to look at time trends, and maps!</p>
+<p>Search 700 million rows of prescribing data, and get prescribing information by CCG or practice. You can search for any numerator over any denominator.</p>
 
-<p>Unsure how to create your own searches? <a href="http://openprescribing.net/docs/analyse">Read more</a> about how to use this tool and check our <a href="{% url 'faq' %}">FAQs</a>.</p>
+<p>Unsure how to create your own searches? <a target="_blank" href="{% url 'analyse' %}#numIds=0212000AA&denomIds=2.12">Try an example</a>, <a target="_blank" href="http://openprescribing.net/docs/analyse">read more</a> about how to use this tool and check our <a target="_blank" href="{% url 'faq' %}">FAQs</a>.</p>
 
 <div class="alert alert-danger" role="alert" style="margin-top: 10px;" id="old-browser">
   <strong>Warning!</strong> It looks like you're using an older browser. This form may be very slow, as it has to crunch through a lot of data to render the graphs. If you can, please try again with a modern browser.
