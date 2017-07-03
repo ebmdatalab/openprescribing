@@ -46,11 +46,11 @@
 
 <h3 id="siteupdate">When do you update the site?</h3>
 <p>We use NHS Business Services Authority's (BSA) Detailed Prescribing Information report from their Information Service Portal. The BSA have a release calendar for this dataset, although the data is sometimes released early. We aim to update OpenPrescribing by the Wednesday following the release date, but do try to update earlier if the BSA publish sooner. The data is two months behind, so for example January's prescribing data is published in March. </p>
-<p> You can find out when OpenPrescribing has been updated by following us on <a href="www.twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://ebmdatalab.net/openprescribing-e-mail-alerts-2/">e-mail alerts</a> </p>
+<p> You can find out when OpenPrescribing has been updated by following us on <a href="www.twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://ebmdatalab.net/openprescribing-e-mail-alerts-2/">e-mail alerts</a>.</p>
 
 <h3 id="extractdownload">How do I download an extract of the data?</h3>
-<p>You can download data from the ‘Trends’ section of the site, either by <a href="/chemical">chemical</a> or by <a href="/bnf">BNF section</a>.</p>
-<p>It isn’t currently possible to download data extract on our dashboards or from the analyse page. This is a feature we will be adding in the future. In the meantime, if you are unable to download the data you need from Trends, <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a> and we may be able to send you an extract.</p>
+<p>We have written a <a href="https://ebmdatalab.net/downloading-data-from-openprescribing/">blog post</a> on how to download data from the Trends and Analyse sections of the site
+<p>It isn’t currently possible to download data an extract from our dashboards. If you are unable to download the data you need <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a> and we may be able to send you an extract.</p>
 
 <h3 id="cite">How do I cite OpenPrescribing?</h3>
 <p>You are welcome to use data or graphs from this site in your academic output with attribution. Our methods paper will be published shortly, until then please cite "OpenPrescribing.net, EBM DataLab, University of Oxford, 2017" as the source for academic attribution.</p>
@@ -63,9 +63,9 @@
 <h2>Prescribing Dataset</h2>
 
 <h3 id="datasource">Where do you get the data from?</h3>
-<p>See our <a href="/about">About</a> page</p>
+<p>See our <a href="/about">About</a> page.</p>
 
-<h3 id="patientinfo"></h3>
+<h3 id="patientinfo">Is there any patient age or disease information in the dataset?</h3>
 <p>No, the prescribing dataset we use does not contain any patient information.</p>
 
 <h3 id="prescitem">What is a prescription item?</h3>
@@ -83,16 +83,17 @@
 
 <h3 id="actualcost">What is actual cost?</h3>
 <p>NHS Digital define actual cost in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
-<p>‘The Net Ingredient Cost (NIC) is the basic price of a drug, i.e. the price listed in the Drug Tariff or price lists. Actual Cost is the estimated cost to the NHS, which is usually lower than Net Ingredient Cost. Actual Cost is calculated by subtracting the average percentage discount per item received by pharmacists (based on the previous month) from the Net Ingredient Cost, but adding in the value of a container allowance for each prescription item’</p>
+<p>‘The Net Ingredient Cost (NIC) is the basic price of a drug, i.e. the price listed in the Drug Tariff or price lists. Actual Cost is the estimated cost to the NHS, which is usually lower than Net Ingredient Cost. Actual Cost is calculated by subtracting the average percentage discount per item received by pharmacists (based on the previous month) from the Net Ingredient Cost, but adding in the value of a container allowance for each prescription item.’</p>
 
 <h3 id="bnfchange">How do you deal with BNF code changes?</h3>
 <p>Chemicals can occasionally be re-classified from one BNF code to another. An example of this is Linaclotide, which changed from 0102000AH to <a href="/chemical/0106070B0">0106070B0</a> in 2013.</p>
 <p>We have aimed to normalise the data so that past prescribing is always listed under the current BNF code. This means if you look at Linaclotide’s trends page, you will see the prescribing pre-2013 even though the code changed.</p>
-<p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a></p> 
+<p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p> 
+<p>You can read more about BNF codes and how they are structured <a href=https://ebmdatalab.net/prescribing-data-bnf-codes/>here</a>.</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>
-<p>Instructions are found <a href="/docs/analyse">here</a></p>
+<p>Instructions are found <a href="/docs/analyse">here</a>.</p>
 
 <h3 id="denominator">What denominator should I use?</h3>
 <p>We use this site a lot for our own work and our own research. When we use the <a href="{% url 'analyse' %}">analysis page</a>, we find it useful to choose denominators cautiously.</p>
@@ -124,7 +125,7 @@
 </div>
 
 <h3 id="measurechose">How are the measures chosen?</h3>
-<p>Our measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a> from Northern, Eastern & Western Devon CCG</p>
+<p>Our measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a> from Northern, Eastern & Western Devon CCG.</p>
 
 <h3 id="gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</h3>
 <p>OpenPrescribing uses the prescribing dataset published monthly by NHS Digital, which includes the past prescribing for practices that have merged or closed. Data will still show for a closed practice if a prescription prescribed by that surgery was dispensed in the community after the closure date. The historical data for closed practices will continue to be shown on OpenPrescribing, and we are currently thinking about how we can indicate to the user that the practice no longer operates.</p>
