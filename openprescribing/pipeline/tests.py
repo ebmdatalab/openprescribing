@@ -365,6 +365,7 @@ The last saved data can be found at:
         log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')
         self.assertEqual(log.status, 'failed')
         self.assertIsNotNone(log.ended_at)
+        self.assertIn('KeyboardInterrupt', log.formatted_tb)
 
     def test_run_task_after_success(self):
         task = self.tasks['fetch_source_b']

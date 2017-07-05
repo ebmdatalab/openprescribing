@@ -428,7 +428,11 @@ def call_command(*args):
 
 
 def run_task(run_id, task):
-    if TaskLog.objects.filter(run_id=run_id, task_name=task.name, status='successful').exists():
+    if TaskLog.objects.filter(
+        run_id=run_id,
+        task_name=task.name,
+        status=TaskLog.SUCCESSFUL,
+    ).exists():
         # This task has already been run successfully
         return
 
@@ -441,7 +445,8 @@ def run_task(run_id, task):
         # We want to catch absolutely every error here, including things that
         # wouldn't be caught by `except Exception` (like `KeyboardInterrupt`),
         # since we want to log that the task didn't complete.
-        task_log.mark_failed()
+        import traceback
+        task_log.mark_failed(formatted_tb=traceback.format_exc())
         raise
 
 
