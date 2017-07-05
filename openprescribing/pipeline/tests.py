@@ -6,7 +6,8 @@ import json
 from django.conf import settings
 from django.test import TestCase, override_settings
 
-from pipeline.runner import load_tasks
+from pipeline.models import TaskLog
+from pipeline.runner import load_tasks, run_task
 
 
 class PipelineTests(TestCase):
@@ -344,6 +345,51 @@ The last saved data can be found at:
         with mock.patch('pipeline.runner.call_command') as cc:
             task.run()
             cc.assert_called_with('post_process')
+
+    def test_run_task(self):
+        task = self.tasks['fetch_source_b']
+        with mock.patch('pipeline.runner.call_command') as cc:
+            run_task('test', task)
+
+        log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')
+        self.assertEqual(log.status, 'successful')
+        self.assertIsNotNone(log.ended_at)
+
+    def test_run_task_that_fails(self):
+        task = self.tasks['fetch_source_b']
+        with self.assertRaises(KeyboardInterrupt):
+            with mock.patch('pipeline.runner.call_command') as cc:
+                cc.side_effect = KeyboardInterrupt
+                run_task('test', task)
+
+        log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')
+        self.assertEqual(log.status, 'failed')
+        self.assertIsNotNone(log.ended_at)
+
+    def test_run_task_after_success(self):
+        task = self.tasks['fetch_source_b']
+        with mock.patch('pipeline.runner.call_command') as cc:
+            run_task('test', task)
+
+        with mock.patch('pipeline.runner.call_command') as cc:
+            run_task('test', task)
+            cc.assert_not_called()
+
+        logs = TaskLog.objects.filter(run_id='test', task_name='fetch_source_b')
+        self.assertEqual(1, logs.count())
+
+    def test_run_task_after_failure(self):
+        task = self.tasks['fetch_source_b']
+        with self.assertRaises(KeyboardInterrupt):
+            with mock.patch('pipeline.runner.call_command') as cc:
+                cc.side_effect = KeyboardInterrupt
+                run_task('test', task)
+
+        with mock.patch('pipeline.runner.call_command') as cc:
+            run_task('test', task)
+
+        logs = TaskLog.objects.filter(run_id='test', task_name='fetch_source_b')
+        self.assertEqual(2, logs.count())
 
 
 def build_path(source_id, year_and_month, filename):

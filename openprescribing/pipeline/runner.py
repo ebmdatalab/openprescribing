@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.management import call_command as django_call_command
 
 from .cloud_utils import CloudHandler
+from .models import TaskLog
 
 
 class Source(object):
@@ -426,25 +427,46 @@ def call_command(*args):
     return django_call_command(*args)
 
 
-def run_all():
+def run_task(run_id, task):
+    if TaskLog.objects.filter(run_id=run_id, task_name=task.name, status='successful').exists():
+        # This task has already been run successfully
+        return
+
+    task_log = TaskLog.objects.create(run_id=run_id, task_name=task.name)
+
+    try:
+        task.run()
+        task_log.mark_succeeded()
+    except:
+        # We want to catch absolutely every error here, including things that
+        # wouldn't be caught by `except Exception` (like `KeyboardInterrupt`),
+        # since we want to log that the task didn't complete.
+        task_log.mark_failed()
+        raise
+
+
+def run_all(run_id=None):
+    if run_id is None:
+        run_id = datetime.datetime.now().strftime('%Y-%m-%d')
+
     tasks = load_tasks()
 
     for task in tasks.by_type('manual_fetch'):
-        task.run()
+        run_task(run_id, task)
 
     for task in tasks.by_type('auto_fetch'):
-        task.run()
+        run_task(run_id, task)
 
     BigQueryUploader(tasks).upload_all_to_storage()
 
     for task in tasks.by_type('convert').ordered():
-        task.run()
+        run_task(run_id, task)
 
     for task in tasks.by_type('import').ordered():
-        task.run()
+        run_task(run_id, task)
 
     for task in tasks.by_type('post_process').ordered():
-        task.run()
+        run_task(run_id, task)
 
     prescribing_path = tasks['import_hscic_prescribing'].imported_paths()[-1]
     smoketest_handler = SmokeTestHandler(prescribing_path)
