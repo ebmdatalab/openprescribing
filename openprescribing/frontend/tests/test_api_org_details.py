@@ -111,7 +111,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(len(rows), 3)
+        self.assertEqual(len(rows), 4)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
         self.assertEqual(rows[0]['date'], '2015-01-01')
@@ -120,11 +120,11 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(rows[0]['astro_pu_items'], '819.2')
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
                          '10')
-        self.assertEqual(rows[2]['row_id'], 'P87629')
-        self.assertEqual(rows[2]['date'], '2015-02-01')
-        self.assertEqual(float(rows[2]['total_list_size']), 29)
-        self.assertEqual(rows[2]['astro_pu_items'], '1600.2')
-        self.assertEqual(rows[2]['star_pu.oral_antibacterials_item'],
+        self.assertEqual(rows[3]['row_id'], 'P87629')
+        self.assertEqual(rows[3]['date'], '2015-02-01')
+        self.assertEqual(float(rows[3]['total_list_size']), 29)
+        self.assertEqual(rows[3]['astro_pu_items'], '1600.2')
+        self.assertEqual(rows[3]['star_pu.oral_antibacterials_item'],
                          '29')
 
     def test_api_view_org_details_ccg_code_to_practices(self):
@@ -136,7 +136,10 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(len(rows), 1)
+        # Although in the practicestatistics fixtures, N84014 was in
+        # 03Q in only one month, we want to return all practices as if
+        # they were always in their current CCG membership
+        self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
         self.assertEqual(rows[0]['date'], '2015-01-01')
@@ -155,7 +158,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
         self.assertEqual(rows[0]['date'], '2015-01-01')
@@ -175,7 +178,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = []
         for row in reader:
             rows.append(row)
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
         self.assertEqual(rows[0]['date'], '2015-01-01')
