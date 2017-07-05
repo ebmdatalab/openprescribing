@@ -91,5 +91,36 @@
       "astro_pu_items": 819.2,
       "star_pu": { "oral_antibacterials_item": 10}
     }
+  },
+  {
+    "model": "frontend.practicestatistics",
+    "pk": "12347",
+    "fields": {
+      "practice": "N84014",
+      "pct": "03V",
+      "date": "2015-02-01",
+      "male_0_4": 1,
+      "female_0_4": 1,
+      "male_5_14": 1,
+      "female_5_14": 1,
+      "male_15_24": 1,
+      "female_15_24": 1,
+      "male_25_34": 1,
+      "female_25_34": 1,
+      "male_35_44": 1,
+      "female_35_44": 1,
+      "male_45_54": 1,
+      "female_45_54": 1,
+      "male_55_64": 1,
+      "female_55_64": 1,
+      "male_65_74": 1,
+      "female_65_74": 1,
+      "male_75_plus": 1,
+      "female_75_plus": 1,
+      "total_list_size": 25,
+      "astro_pu_cost": 489.7,
+      "astro_pu_items": 819.2,
+      "star_pu": { "oral_antibacterials_item": 10}
+    }
   }
 ]
