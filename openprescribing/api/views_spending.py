@@ -85,10 +85,11 @@ def bubble(request, format=None):
     )
     binned_ppus_sql = rounded_ppus_cte_sql + (
         "SELECT presentation_code, presentation_name, ppu, "
-        "SUM(quantity) AS quantity "
+        "SUM(quantity) AS quantity, "
+        "percentile_cont(0.5) WITHIN GROUP (ORDER BY ppu) AS median_ppu "
         "FROM rounded_ppus "
         "GROUP BY presentation_code, presentation_name, ppu "
-        "ORDER BY presentation_code, ppu "
+        "ORDER BY presentation_code, median_ppu, ppu "
     )
     mean_ppu = rounded_ppus_cte_sql + (
         "SELECT AVG(ppu) FROM rounded_ppus "  # XXX add WHERE condition for pct
