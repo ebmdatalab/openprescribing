@@ -78,9 +78,11 @@ jQuery(document).ready(function(){
   function setGenericColours(data) {
     var scale = chroma.scale(['green', 'red']);
     var maxY = _.max(_.map(data.series, function(d) { return d.y }));
+    var minY = _.min(_.map(data.series, function(d) { return d.y }));
+    var maxRange = maxY - minY;
     _.each(data.series, function(d) {
-      var ratio = d.y / maxY;
-      d.color = scale(ratio);
+      var ratio = (d.y - minY) / maxRange;
+      d.color = scale(ratio).hex();
     });
   }
 
@@ -90,7 +92,6 @@ jQuery(document).ready(function(){
       setGenericColours(data);
       var options = $.extend(true, {}, highchartsOptions);
       options.series[0]['data'] = data.series;
-      console.log(options.series);
       options.title.text = 'England-wide distribution of PPU for {{ name }}';
       options.xAxis.categories = data.categories;
       options.yAxis.plotLines[0].value = data.plotline;
