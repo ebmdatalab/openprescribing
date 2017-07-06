@@ -84,21 +84,23 @@ def bubble(request, format=None):
         ") "
     )
     binned_ppus_sql = rounded_ppus_cte_sql + (
-        "SELECT presentation_code, presentation_name, ppu, "
-        "SUM(quantity) AS quantity, "
-        "percentile_cont(0.5) WITHIN GROUP (ORDER BY ppu) AS median_ppu "
+        ", binned_ppus AS (SELECT presentation_code, presentation_name, ppu, "
+        "SUM(quantity) AS quantity "
         "FROM rounded_ppus "
-        "GROUP BY presentation_code, presentation_name, ppu "
-        "ORDER BY presentation_code, median_ppu, ppu "
+        "GROUP BY presentation_code, presentation_name, ppu) "
     )
-    mean_ppu = rounded_ppus_cte_sql + (
+    ordered_ppus_sql = binned_ppus_sql + (
+        "SELECT *, AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu from binned_ppus "
+        "ORDER BY mean_ppu, presentation_name"
+    )
+    mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
         "SELECT AVG(ppu) FROM rounded_ppus "  # XXX add WHERE condition for pct
     )
     params = [date] + patterns
     with connection.cursor() as cursor:
-        cursor.execute(mean_ppu, params)
+        cursor.execute(mean_ppu_for_entity_sql, params)
         plotline = cursor.fetchone()[0]
-        cursor.execute(binned_ppus_sql, params)
+        cursor.execute(ordered_ppus_sql, params)
         series = []
         categories = []
         pos = 0
