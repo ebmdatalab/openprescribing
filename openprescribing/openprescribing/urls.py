@@ -26,6 +26,8 @@ urlpatterns = [
 
     url(r'^ppu_histogram/(?P<bnf_code>[A-Z\d]+)/$',
         frontend_views.price_per_unit_histogram, name="ppu_histogram"),
+    url(r'^bubble/(?P<bnf_code>[A-Z\d]+)/$',
+        frontend_views.bubble, name="bubble"),
     url(r'^analyse/$', frontend_views.analyse,
         name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,

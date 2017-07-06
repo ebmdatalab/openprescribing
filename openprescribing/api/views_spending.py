@@ -14,6 +14,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
+from common.utils import namedtuplefetchall
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -56,6 +57,53 @@ def _build_conditions_and_patterns(code):
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
     return conditions, patterns
+
+
+@api_view(['GET'])
+def bubble(request, format=None):
+    code = request.query_params.get('bnf_code', '')
+    date = _valid_or_latest_date(request.query_params.get('date', None))
+    highlight = request.query_params.get('highlight', None)
+    focus = request.query_params.get('focus', None)
+    trim = request.query_params.get('trim', None)
+    conditions, patterns = _build_conditions_and_patterns(code)  # XXX optionally add pct filter here
+    rounded_ppus_cte_sql = (
+        "WITH rounded_ppus AS (SELECT presentation_code, "
+        "COALESCE(frontend_presentation.name, 'XXX') as presentation_name, "
+        "quantity, practice_id, pct_id, "
+        "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
+        "FROM frontend_prescription "
+        "LEFT JOIN frontend_presentation "
+        "ON frontend_prescription.presentation_code = "
+        "frontend_presentation.bnf_code "
+        #"LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
+        "WHERE processing_date = %s "
+        #"AND setting = 4 "
+        + conditions +
+        ") "
+    )
+    binned_ppus_sql = rounded_ppus_cte_sql + (
+        "SELECT presentation_code, presentation_name, ppu, "
+        "SUM(quantity) AS quantity "
+        "FROM rounded_ppus "
+        "GROUP BY presentation_code, presentation_name, ppu "
+        "ORDER BY presentation_code, ppu "
+    )
+    mean_ppu = rounded_ppus_cte_sql + (
+        "SELECT AVG(ppu) FROM rounded_ppus "  # XXX add WHERE condition for pct
+    )
+    params = [date] + patterns
+    with connection.cursor() as cursor:
+        cursor.execute(mean_ppu, params)
+        plotline = cursor.fetchone()[0]
+        cursor.execute(binned_ppus_sql, params)
+        series = []
+        for result in namedtuplefetchall(cursor):
+            series.append({
+                'y': result.ppu,
+                'z': result.quantity,
+                'name': result.presentation_name})
+        return Response({'plotline': plotline, 'series': series})
 
 
 @api_view(['GET'])

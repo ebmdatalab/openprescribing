@@ -403,6 +403,19 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '56')
 
 
+class TestAPISpendingViewsPPUBubble(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog']
+
+    def test_simple(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        print json.dumps(data, indent=2)
+        self.assertEqual(len(data['series']), 1)
+
+
 class TestAPISpendingViewsPPU(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog']
 

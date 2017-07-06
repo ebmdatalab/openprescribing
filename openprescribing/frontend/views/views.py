@@ -119,6 +119,32 @@ def chemical(request, bnf_code):
 ##################################################
 # Price per unit
 ##################################################
+def bubble(request, bnf_code):
+    presentation = get_object_or_404(Presentation, bnf_code=bnf_code)
+    product = presentation.dmd_product
+    date = request.GET.get('date', '')
+    highlight = request.GET.get('highlight', '')
+    if len(highlight) == 3:
+        highlight_name = get_object_or_404(PCT, code=highlight).cased_name
+    elif len(highlight) == 6:
+        highlight_name = get_object_or_404(Practice, code=highlight).cased_name
+    else:
+        highlight_name = ''
+    if date:
+        date = valid_date(date)
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
+    context = {
+        'bnf_code': bnf_code,
+        'date': date,
+        'name': presentation.product_name,
+        'highlight': highlight,
+        'highlight_name': highlight_name,
+        'product': product
+    }
+
+    return render(request, 'bubble.html', context)
+
 
 def price_per_unit_histogram(request, bnf_code):
     presentation = get_object_or_404(Presentation, bnf_code=bnf_code)

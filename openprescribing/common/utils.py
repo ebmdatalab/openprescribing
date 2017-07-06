@@ -1,3 +1,4 @@
+from collections import namedtuple
 from contextlib import contextmanager
 from datetime import datetime
 from os import environ
@@ -10,6 +11,7 @@ import re
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
+from django.forms.models import model_to_dict
 from django import db
 
 logger = logging.getLogger(__name__)
@@ -172,3 +174,10 @@ def valid_date(s):
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
         raise argparse.ArgumentTypeError(msg)
+
+
+def namedtuplefetchall(cursor):
+    "Return all rows from a cursor as a namedtuple"
+    desc = cursor.description
+    nt_result = namedtuple('Result', [col[0] for col in desc])
+    return [nt_result(*row) for row in cursor.fetchall()]

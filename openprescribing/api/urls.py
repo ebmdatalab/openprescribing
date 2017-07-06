@@ -12,8 +12,8 @@ import views_measures
 urlpatterns = [
     url(r'^spending/$', views_spending.total_spending,
         name='total_spending'),
-    url(r'^ppu_histogram/$', views_spending.ppu_histogram,
-        name='ppu_histogram'),
+    url(r'^bubble/$', views_spending.bubble,
+        name='bubble'),
     url(r'^spending_by_ccg/$', views_spending.spending_by_ccg,
         name='spending_by_ccg'),
     url(r'^spending_by_practice/$', views_spending.spending_by_practice,

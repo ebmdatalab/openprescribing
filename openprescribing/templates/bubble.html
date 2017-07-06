@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Price per unit (PPU) data for {{ name }}{% endblock %}
+
+{% block content %}
+<h1>Price per unit (PPU) data for {{ name }}</h2>
+
+<p>There is often wide variation in the price paid across England for
+  the same presentation of a drug or appliance. We describe this variation by computing a <em>Price per Unit</em> (PPU) for each prescription.</p>
+
+  <p>{% if highlight %}These histograms show{% else %}This histogram shows{% endif %} the PPU for all generically and non-generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, including formulation swaps (e.g. considering capsules and tablets to be equivalent).</p>
+
+<h2>Prescribing by all practices</h2>
+
+<div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;"></div>
+
+{% if highlight %}
+ <h2>Prescribing by {{ highlight_name }}</h2>
+ <div id="highlight_chart" class="chart" style="width: 100%; height: 490px;"></div>
+{% endif %}
+
+<hr>
+<a id="logtog" class="btn btn-info">Toggle logarithmic scale on chart{% if highlight %}s{% endif %}</a>
+
+<h2>Extended information</h2>
+{% if product %}
+<table class="table table-condensed">
+  <caption>{{ name }}</caption>
+  <tr>
+    <th>Tariff category <super style="color:red">*</super></th>
+    <td>{{ product.tariff_category }}</td>
+  </tr>
+  <tr>
+    <th>Availability restrictions (special, imported, etc)</th>
+    <td>{{ product.availability_restrictions }}</td>
+  </tr>
+  <tr>
+    <th>Prescribability status (non-bioequivalence, etc)</th>
+    <td>{{ product.prescribability }}</td>
+  </tr>
+</table>
+
+  <super style="color:red">*</super>The Drug Tariff category shown is the <em>current</em> category.  It may have been different in {{ date|date:"F Y"}}.
+
+{% else %}
+<p>
+  Extended information from dm+d not available for this presentation.
+</p>
+
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'bubble' %}
+  <script>
+  var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
+  </script>
+{% endblock %}
