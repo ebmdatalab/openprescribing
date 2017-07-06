@@ -122,7 +122,7 @@ presentation. We then work out what {{entity.cased_name }} could save
     // When viewing at Presentation level, link back to practice-level
     var first_column = 'practice_name';
     var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/ppu_histogram/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '"><span class="label label-info">chart</span></a>';
+      var link = '<a target="_blank" href="/bubble/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '"><span class="label label-info">chart</span></a>';
       link += ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
       return link;
     }
@@ -130,7 +130,7 @@ presentation. We then work out what {{entity.cased_name }} could save
     // When viewing at CCG level, drill down to practices
     var first_column = 'presentation';
     var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/ppu_histogram/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
+      var link = '<a target="_blank" href="/bubble/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
       link += ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
       if(full['flag_bioequivalence']) {
         return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
@@ -142,7 +142,7 @@ presentation. We then work out what {{entity.cased_name }} could save
     // When viewing at Practice level, group up to CCG
     var first_column = 'name';
     var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/ppu_histogram/'+full['presentation']+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
+      var link = '<a target="_blank" href="/bubble/'+full['presentation']+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
       link += (' ' + data);
       if(full['flag_bioequivalence']) {
         return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
