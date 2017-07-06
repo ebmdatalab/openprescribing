@@ -40,7 +40,7 @@ def _valid_or_latest_date(date):
     return date
 
 
-def _build_conditions_and_patterns(code, highlight):
+def _build_conditions_and_patterns(code):
     if not re.match(r'[A-Z0-9]{15}', code):
         raise NotValid("%s is not a valid code" % code)
     extra_codes = GenericCodeMapping.objects.filter(
@@ -57,12 +57,6 @@ def _build_conditions_and_patterns(code, highlight):
         patterns.append(pattern)
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
-    if highlight:
-        patterns.append(highlight)
-        if len(highlight) == 3:
-            conditions += "AND pct_id = %s"
-        else:
-            conditions += "AND practice_id = %s"
     return conditions, patterns
 
 
@@ -73,7 +67,7 @@ def bubble(request, format=None):
     highlight = request.query_params.get('highlight', None)
     focus = request.query_params.get('focus', None)
     trim = request.query_params.get('trim', None)
-    conditions, patterns = _build_conditions_and_patterns(code, highlight)
+    conditions, patterns = _build_conditions_and_patterns(code)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
         "COALESCE(frontend_presentation.name, 'XXX') as presentation_name, "
@@ -83,9 +77,9 @@ def bubble(request, format=None):
         "LEFT JOIN frontend_presentation "
         "ON frontend_prescription.presentation_code = "
         "frontend_presentation.bnf_code "
-        #"LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
+        "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
         "WHERE processing_date = %s "
-        #"AND setting = 4 "
+        "AND setting = 4 "
         + conditions +
         ") "
     )
@@ -100,8 +94,15 @@ def bubble(request, format=None):
         "ORDER BY mean_ppu, presentation_name"
     )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
-        "SELECT AVG(ppu) FROM rounded_ppus "  # XXX add WHERE condition for pct
+        "SELECT AVG(ppu) FROM rounded_ppus "
     )
+    if highlight:
+        patterns.append(highlight)
+        if len(highlight) == 3:
+            mean_ppu_for_entity_sql += "WHERE pct_id = %s "
+        else:
+            mean_ppu_for_entity_sql += "WHERE practice_id = %s "
+
     params = [date] + patterns
     with connection.cursor() as cursor:
         cursor.execute(mean_ppu_for_entity_sql, params)
