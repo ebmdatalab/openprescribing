@@ -96,17 +96,8 @@ def bubble(request, format=None):
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
         "SELECT AVG(ppu) FROM rounded_ppus "
     )
-    if highlight:
-        patterns.append(highlight)
-        if len(highlight) == 3:
-            mean_ppu_for_entity_sql += "WHERE pct_id = %s "
-        else:
-            mean_ppu_for_entity_sql += "WHERE practice_id = %s "
-
     params = [date] + patterns
     with connection.cursor() as cursor:
-        cursor.execute(mean_ppu_for_entity_sql, params)
-        plotline = cursor.fetchone()[0]
         cursor.execute(ordered_ppus_sql, params)
         series = []
         categories = []
@@ -122,6 +113,14 @@ def bubble(request, format=None):
                 'mean_ppu': result.mean_ppu,
                 'name': result.presentation_name})
         categories = list(OrderedDict.fromkeys([x['name'] for x in series]))
+        if highlight:
+            patterns.append(highlight)
+            if len(highlight) == 3:
+                mean_ppu_for_entity_sql += "WHERE pct_id = %s "
+            else:
+                mean_ppu_for_entity_sql += "WHERE practice_id = %s "
+        cursor.execute(mean_ppu_for_entity_sql, params)
+        plotline = cursor.fetchone()[0]
         return Response({'plotline': plotline, 'series': series, 'categories': categories})
 
 
