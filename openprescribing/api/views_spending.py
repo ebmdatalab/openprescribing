@@ -40,7 +40,7 @@ def _valid_or_latest_date(date):
     return date
 
 
-def _build_conditions_and_patterns(code):
+def _build_conditions_and_patterns(code, highlight):
     if not re.match(r'[A-Z0-9]{15}', code):
         raise NotValid("%s is not a valid code" % code)
     extra_codes = GenericCodeMapping.objects.filter(
@@ -57,6 +57,12 @@ def _build_conditions_and_patterns(code):
         patterns.append(pattern)
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
+    if highlight:
+        patterns.append(highlight)
+        if len(highlight) == 3:
+            conditions += "AND pct_id = %s"
+        else:
+            conditions += "AND practice_id = %s"
     return conditions, patterns
 
 
@@ -67,7 +73,7 @@ def bubble(request, format=None):
     highlight = request.query_params.get('highlight', None)
     focus = request.query_params.get('focus', None)
     trim = request.query_params.get('trim', None)
-    conditions, patterns = _build_conditions_and_patterns(code)  # XXX optionally add pct filter here
+    conditions, patterns = _build_conditions_and_patterns(code, highlight)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
         "COALESCE(frontend_presentation.name, 'XXX') as presentation_name, "
