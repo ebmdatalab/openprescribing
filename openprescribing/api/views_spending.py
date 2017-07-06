@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from sets import Set
 import datetime
 import re
@@ -98,12 +99,14 @@ def bubble(request, format=None):
         plotline = cursor.fetchone()[0]
         cursor.execute(binned_ppus_sql, params)
         series = []
-        for result in namedtuplefetchall(cursor):
+        for i, result in enumerate(namedtuplefetchall(cursor)):
             series.append({
+                'x': (i + 1),
                 'y': result.ppu,
                 'z': result.quantity,
                 'name': result.presentation_name})
-        return Response({'plotline': plotline, 'series': series})
+        categories = list(OrderedDict.fromkeys([x['name'] for x in series]))
+        return Response({'plotline': plotline, 'series': series, 'categories': categories})
 
 
 @api_view(['GET'])

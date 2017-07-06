@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
       title: {
         text: 'Drugs'
       },
-      type: 'category',
+      categories: null
     },
 
     yAxis: {
@@ -92,6 +92,7 @@ jQuery(document).ready(function(){
       options.series[0]['data'] = data.series;
       console.log(options.series);
       options.title.text = 'England-wide distribution of PPU for {{ name }}';
+      options.xAxis.categories = data.categories;
       options.yAxis.plotLines[0].value = data.plotline;
       $('#all_practices_chart').highcharts(options);
     }
