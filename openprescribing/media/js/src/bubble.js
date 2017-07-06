@@ -77,11 +77,11 @@ jQuery(document).ready(function(){
   };
   function setGenericColours(data) {
     var scale = chroma.scale(['green', 'red']);
-    var maxY = _.max(_.map(data.series, function(d) { return d.y }));
-    var minY = _.min(_.map(data.series, function(d) { return d.y }));
-    var maxRange = maxY - minY;
+    var maxPPU = _.max(_.map(data.series, function(d) { return d.mean_ppu }));
+    var minPPU = _.min(_.map(data.series, function(d) { return d.mean_ppu }));
+    var maxRange = maxPPU - minPPU;
     _.each(data.series, function(d) {
-      var ratio = (d.y - minY) / maxRange;
+      var ratio = (d.mean_ppu - minPPU) / maxRange;
       d.color = scale(ratio).hex();
     });
   }

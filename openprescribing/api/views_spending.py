@@ -112,6 +112,7 @@ def bubble(request, format=None):
                 'x': pos,
                 'y': result.ppu,
                 'z': result.quantity,
+                'mean_ppu': result.mean_ppu,
                 'name': result.presentation_name})
         categories = list(OrderedDict.fromkeys([x['name'] for x in series]))
         return Response({'plotline': plotline, 'series': series, 'categories': categories})
