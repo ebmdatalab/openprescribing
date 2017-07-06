@@ -100,9 +100,14 @@ def bubble(request, format=None):
         plotline = cursor.fetchone()[0]
         cursor.execute(binned_ppus_sql, params)
         series = []
-        for i, result in enumerate(namedtuplefetchall(cursor)):
+        categories = []
+        pos = 0
+        for result in namedtuplefetchall(cursor):
+            if result.presentation_name not in categories:
+                categories.append(result.presentation_name)
+                pos += 1
             series.append({
-                'x': (i + 1),
+                'x': pos,
                 'y': result.ppu,
                 'z': result.quantity,
                 'name': result.presentation_name})
