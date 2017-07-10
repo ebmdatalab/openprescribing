@@ -6,6 +6,8 @@ import unittest
 import os
 from datetime import datetime
 
+from django.conf import settings
+
 '''
 Run smoke tests against live site. 35 separate tests to run.
 Spending BY: one practice, multiple practices, one CCG,
@@ -41,7 +43,8 @@ class SmokeTestBase(unittest.TestCase):
         for row in reader:
             all_rows.append(row)
         self.assertEqual(len(all_rows), expected_total)
-        with open("smoketests/%s.json" % test, 'rb') as f:
+        path = os.path.join(settings.PIPELINE_METADATA_DIR, 'smoketests', test + '.json')
+        with open(path, 'rb') as f:
             expected = json.load(f)
             for i, row in enumerate(all_rows):
                 self.assertEqual(

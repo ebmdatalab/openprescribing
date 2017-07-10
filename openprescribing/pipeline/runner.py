@@ -362,6 +362,7 @@ class BigQueryUploader(CloudHandler):
 class SmokeTestHandler(CloudHandler):
     def __init__(self, prescribing_path):
         self.prescribing_path = prescribing_path
+        super(SmokeTestHandler, self).__init__()
 
     def last_imported(self):
         if 'LAST_IMPORTED' in os.environ:
@@ -393,7 +394,7 @@ class SmokeTestHandler(CloudHandler):
         date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
                           'INTERVAL 5 YEAR))' % prescribing_date)
 
-        path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'smoketests')
+        path = os.path.join(settings.PIPELINE_METADATA_DIR, 'smoketests')
         for sql_file in glob.glob(os.path.join(path, '*.sql')):
             test_name = os.path.splitext(
                 os.path.basename(sql_file))[0]
