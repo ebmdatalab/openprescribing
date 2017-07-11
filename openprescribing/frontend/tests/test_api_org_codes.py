@@ -1,10 +1,9 @@
-import csv
-import os
+import datetime
 import json
-import unittest
 from django.core import management
 from django.test import TestCase
-from common import utils
+
+from frontend.models import PCT
 
 
 def setUpModule():
@@ -50,6 +49,17 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['code'], '03Q')
         self.assertEqual(content[0]['name'], 'NHS Vale of York')
+
+    def test_api_view_org_code_org_type_open_ccgs_only(self):
+        closed = PCT.objects.first()
+        closed.close_date = datetime.date(2001, 1, 1)
+        closed.save()
+
+        url = '%s/org_code?q=03&format=json' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
 
     def test_api_view_org_code_org_type(self):
         url = '%s/org_code?q=a&org_type=practice&format=json' % self.api_prefix

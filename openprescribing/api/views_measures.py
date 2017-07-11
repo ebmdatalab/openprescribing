@@ -80,7 +80,7 @@ def measure_by_ccg(request, format=None):
     query += "JOIN frontend_pct pc ON "
     query += "(mv.pct_id=pc.code AND pc.org_type = 'CCG') "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
-    query += "WHERE "
+    query += "WHERE pc.close_date IS NULL AND "
     if orgs:
         query += "("
     for i, org in enumerate(orgs):
