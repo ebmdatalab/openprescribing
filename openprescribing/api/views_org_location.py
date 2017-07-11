@@ -12,9 +12,9 @@ def org_location(request, format=None):
     org_codes = utils.param_to_list(request.GET.get('q', ''))
     if org_type == 'practice':
         org_codes = utils.get_practice_ids_from_org(org_codes)
-
     if org_type == 'ccg':
-        results = PCT.objects.filter(org_type='CCG')
+        results = PCT.objects.filter(close_date__isnull=True) \
+                             .filter(org_type='CCG')
         if org_codes:
             results = results.filter(code__in=org_codes)
         geo_field = 'boundary'
