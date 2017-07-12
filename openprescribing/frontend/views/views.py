@@ -1,34 +1,36 @@
+from lxml import html
 import requests
 import sys
-from lxml import html
+
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth import HASH_SESSION_KEY
+from django.contrib.auth import SESSION_KEY
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import Http404
 from django.http import HttpResponse
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
-from frontend.models import Chemical
-from frontend.models import Practice, PCT, Section
-from frontend.models import Measure
-from frontend.models import OrgBookmark
-from frontend.forms import OrgBookmarkForm
-from frontend.models import SearchBookmark
-from frontend.forms import SearchBookmarkForm
-from django.contrib.auth import authenticate
-from django.shortcuts import redirect
-from django.http.response import HttpResponseRedirect
-from allauth.account.utils import perform_login
 from allauth.account import app_settings
 from allauth.account.models import EmailAddress
+from allauth.account.utils import perform_login
+
+from frontend.forms import OrgBookmarkForm
+from frontend.forms import SearchBookmarkForm
+from frontend.models import Chemical
+from frontend.models import Measure
+from frontend.models import OrgBookmark
+from frontend.models import Practice, PCT, Section
+from frontend.models import SearchBookmark
 
 
 ##################################################
