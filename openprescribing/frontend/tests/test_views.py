@@ -366,7 +366,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
         doc = pq(response.content)
         title = doc('h1')
-        t = ('Cerazette vs. Desogestrel prescribing by GP practices '
+        t = ('Cerazette vs. Desogestrel by GP practices '
              'in NHS Corby')
         self.assertEqual(title.text(), t)
 
