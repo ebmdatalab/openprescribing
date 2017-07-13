@@ -10,7 +10,7 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def conditional_js(context, filename):
     tag_format = '<script src="/static/js/%s.%sjs?q=123456"></script>'
-    if context.get('debug', False):
+    if context.get('debug', True):
         tag = tag_format % (filename, '')
     else:
         tag = tag_format % (filename, 'min.')
