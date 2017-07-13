@@ -76,7 +76,7 @@ def _get_pcts_like_code(q):
     pcts = PCT.objects.filter(close_date__isnull=True)
     if q:
         pcts = pcts.filter(Q(code__istartswith=q) |
-                                Q(name__icontains=q)) \
+                           Q(name__icontains=q)) \
                         .filter(org_type='CCG')
     pct_values = pcts.values('name', 'code')
     for p in pct_values:
