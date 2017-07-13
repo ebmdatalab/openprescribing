@@ -31,7 +31,7 @@ you can reproduce with
 To open a shell (from where you can run migrations, start a server,
 etc), run
 
-    docker-compose run dev
+    docker-compose run --service-ports dev
 
 The project code is mounted as a volume within the docker container,
 at `/code/openprescribing`. Note that the container runs as the `root`
@@ -62,7 +62,7 @@ travis.
 ### Running the application from within Docker
 To be able to access the django instance running inside Docker from outside the container, docker must be told to publish the port on which Django will listen:
 
-    docker-compose run -p 8000:8000 dev
+    docker-compose run --service-ports dev
 
 This will give a shell, at which you can start Django, specifying the ``0.0.0.0`` interface so that it will accept connections from all IP addesses (not just localhost):
 
