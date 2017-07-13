@@ -40,7 +40,7 @@ def _valid_or_latest_date(date):
     return date
 
 
-def _build_conditions_and_patterns(code):
+def _build_conditions_and_patterns(code, focus):
     if not re.match(r'[A-Z0-9]{15}', code):
         raise NotValid("%s is not a valid code" % code)
     extra_codes = GenericCodeMapping.objects.filter(
@@ -57,6 +57,9 @@ def _build_conditions_and_patterns(code):
         patterns.append(pattern)
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
+    if focus:
+        conditions += "AND pct_id = %s "
+        patterns.append(focus)
     return conditions, patterns
 
 
@@ -65,9 +68,8 @@ def bubble(request, format=None):
     code = request.query_params.get('bnf_code', '')
     date = _valid_or_latest_date(request.query_params.get('date', None))
     highlight = request.query_params.get('highlight', None)
-    focus = request.query_params.get('focus', None)
-    trim = request.query_params.get('trim', None)
-    conditions, patterns = _build_conditions_and_patterns(code)
+    focus = request.query_params.get('focus', None) and highlight
+    conditions, patterns = _build_conditions_and_patterns(code, focus)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
         "COALESCE(frontend_presentation.name, 'XXX') as presentation_name, "
@@ -90,7 +92,8 @@ def bubble(request, format=None):
         "GROUP BY presentation_code, presentation_name, ppu) "
     )
     ordered_ppus_sql = binned_ppus_sql + (
-        "SELECT *, AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu from binned_ppus "
+        "SELECT *, AVG(ppu) OVER (PARTITION BY presentation_code) "
+        "AS mean_ppu from binned_ppus "
         "ORDER BY mean_ppu, presentation_name"
     )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
@@ -114,14 +117,15 @@ def bubble(request, format=None):
                 'name': result.presentation_name})
         categories = list(OrderedDict.fromkeys([x['name'] for x in series]))
         if highlight:
-            patterns.append(highlight)
+            params.append(highlight)
             if len(highlight) == 3:
                 mean_ppu_for_entity_sql += "WHERE pct_id = %s "
             else:
                 mean_ppu_for_entity_sql += "WHERE practice_id = %s "
         cursor.execute(mean_ppu_for_entity_sql, params)
         plotline = cursor.fetchone()[0]
-        return Response({'plotline': plotline, 'series': series, 'categories': categories})
+        return Response(
+            {'plotline': plotline, 'series': series, 'categories': categories})
 
 
 @api_view(['GET'])

@@ -11,12 +11,12 @@
 
   <p>{% if highlight %}These histograms show{% else %}This histogram shows{% endif %} the PPU for all generically and non-generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, including formulation swaps (e.g. considering capsules and tablets to be equivalent).</p>
 
-<h2>Prescribing by all practices</h2>
+<h2>Prescribing by all practices in England</h2>
 
 <div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;"></div>
 
 {% if highlight %}
- <h2>Prescribing by {{ highlight_name }}</h2>
+ <h2>Prescribing by practices in {{ highlight_name }}</h2>
  <div id="highlight_chart" class="chart" style="width: 100%; height: 490px;"></div>
 {% endif %}
 
@@ -55,6 +55,7 @@
 {% block extra_js %}
 {% conditional_js 'bubble' %}
   <script>
-  var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
+    var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
+    var entity_name = '{{ name }}';
   </script>
 {% endblock %}

@@ -20,20 +20,16 @@ jQuery(document).ready(function(){
     },
 
     title: {
-      text: 'Sugar and fat intake per country'
+      text: null
     },
-
-    subtitle: {
-      text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
-    },
-
     xAxis: {
-      tickMarkPlacement: 'between',
+      //tickMarkPlacement: 'between',#
+
+      type: 'category',
       gridLineWidth: 1,
       title: {
-        text: 'Drugs'
-      },
-      categories: null
+        text: 'Presentation'
+      }
     },
 
     yAxis: {
@@ -61,11 +57,8 @@ jQuery(document).ready(function(){
     },
     tooltip: {
       useHTML: true,
-      headerFormat: '<table>',
-      pointFormat: '<tr><th colspan="2"><h3>{point.name}</h3></th></tr>' +
-        '<tr><th>PPU:</th><td>£{point.y}</td></tr>' +
-        '<tr><th>Total quantity:</th><td>{point.z} units</td></tr>',
-      footerFormat: '</table>',
+      headerFormat: '',
+      pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.y:,.2f}',
       followPointer: true
     },
 
@@ -76,7 +69,7 @@ jQuery(document).ready(function(){
 
   };
   function setGenericColours(data) {
-    var scale = chroma.scale(['green', 'red']);
+    var scale = chroma.scale(['green', 'yellow', 'red']);
     var maxPPU = _.max(_.map(data.series, function(d) { return d.mean_ppu }));
     var minPPU = _.min(_.map(data.series, function(d) { return d.mean_ppu }));
     var maxRange = maxPPU - minPPU;
@@ -92,10 +85,24 @@ jQuery(document).ready(function(){
       setGenericColours(data);
       var options = $.extend(true, {}, highchartsOptions);
       options.series[0]['data'] = data.series;
-      options.title.text = 'England-wide distribution of PPU for {{ name }}';
-      options.xAxis.categories = data.categories;
+      options.title.text = 'England-wide distribution of PPU for ' + entity_name;
+      console.log(data.categories);
+      console.log(data.series);
       options.yAxis.plotLines[0].value = data.plotline;
       $('#all_practices_chart').highcharts(options);
+    }
+  );
+  $.getJSON(
+    bubble_data_url + '&focus=1',
+    function(data) {
+      setGenericColours(data);
+      var options = $.extend(true, {}, highchartsOptions);
+      options.series[0]['data'] = data.series;
+      options.title.text = 'CCG-wide distribution of PPU for ' + entity_name;
+      console.log(data.categories);
+      console.log(data.series);
+      options.yAxis.plotLines[0].value = data.plotline;
+      $('#highlight_chart').highcharts(options);
     }
   );
 });
