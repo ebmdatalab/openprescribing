@@ -1,10 +1,10 @@
 import csv
+import datetime
 import json
 import StringIO
+import os
 import requests
 import unittest
-import os
-from datetime import datetime
 
 from django.conf import settings
 
@@ -31,10 +31,6 @@ class SmokeTestBase(unittest.TestCase):
             now = datetime.now()
         return now
 
-    def _months_since_ccg_creation(self):
-        now = self._now_date()
-        return (now.year - 2013) * 12 + (now.month - 4) + 1
-
     def _run_tests(self, test, url, expected_total):
         r = requests.get(url)
         f = StringIO.StringIO(r.text)
@@ -43,7 +39,8 @@ class SmokeTestBase(unittest.TestCase):
         for row in reader:
             all_rows.append(row)
         self.assertEqual(len(all_rows), expected_total)
-        path = os.path.join(settings.PIPELINE_METADATA_DIR, 'smoketests', test + '.json')
+        path = os.path.join(
+            settings.PIPELINE_METADATA_DIR, 'smoketests', test + '.json')
         with open(path, 'rb') as f:
             expected = json.load(f)
             for i, row in enumerate(all_rows):
@@ -113,21 +110,21 @@ class TestSmokeTestSpendingByCCG(SmokeTestBase):
         url += 'format=csv&code=0403030E0AAAAAA&org=10Q'
         self._run_tests('presentation_by_one_ccg',
                         url,
-                        self._months_since_ccg_creation())
+                        PRESCRIBING_DATA_MONTHS)
 
     def test_chemical_by_one_ccg(self):
         url = '%s/api/1.0/spending_by_ccg?' % self.DOMAIN
         url += 'format=csv&code=0212000AA&org=10Q'
         self._run_tests('chemical_by_one_ccg',
                         url,
-                        self._months_since_ccg_creation())
+                        PRESCRIBING_DATA_MONTHS)
 
     def test_bnf_section_by_one_ccg(self):
         url = '%s/api/1.0/spending_by_ccg?' % self.DOMAIN
         url += 'format=csv&code=0801&org=10Q'
         self._run_tests('bnf_section_by_one_ccg',
                         url,
-                        self._months_since_ccg_creation())
+                        PRESCRIBING_DATA_MONTHS)
 
 
 class TestSmokeTestMeasures(SmokeTestBase):
