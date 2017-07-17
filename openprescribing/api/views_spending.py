@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from sets import Set
 import datetime
 import re
@@ -106,16 +105,24 @@ def bubble(request, format=None):
         categories = []
         pos = 0
         for result in namedtuplefetchall(cursor):
-            if result.presentation_name not in categories:
-                categories.append(result.presentation_name)
+            if result.presentation_name not in [x['name'] for x in categories]:
                 pos += 1
+                is_generic = False
+                if result.presentation_code[9:11] == 'AA':
+                    is_generic = True
+                categories.append(
+                    {
+                        'name': result.presentation_name,
+                        'is_generic': is_generic
+                    }
+                )
+
             series.append({
                 'x': pos,
                 'y': result.ppu,
                 'z': result.quantity,
                 'mean_ppu': result.mean_ppu,
                 'name': result.presentation_name})
-        categories = list(OrderedDict.fromkeys([x['name'] for x in series]))
         if highlight:
             params.append(highlight)
             if len(highlight) == 3:

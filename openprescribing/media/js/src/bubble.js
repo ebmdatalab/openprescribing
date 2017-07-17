@@ -30,6 +30,11 @@ jQuery(document).ready(function(){
       gridLineWidth: 1,
       title: {
         text: null
+      },
+      labels: {
+        style: {
+          textOverflow: 'none'
+        }
       }
     },
 
@@ -80,10 +85,22 @@ jQuery(document).ready(function(){
     });
   }
 
+  function labelGenericInSeries(data) {
+    var generic_name = data.categories[
+      _.findIndex(data.categories, function(x) { return x.is_generic })
+    ].name;
+    _.each(data.series, function(d) {
+      if (d.name == generic_name) {
+        d.name += '<span style="color: red"> (prescribed generically)</span>';
+      }
+    });
+  }
+
   $.getJSON(
     bubble_data_url,
     function(data) {
       setGenericColours(data);
+      labelGenericInSeries(data);
       var options = $.extend(true, {}, highchartsOptions);
       options.subtitle.text = 'for prescriptions within NHS England';
       options.series[0]['data'] = data.series;
@@ -95,6 +112,7 @@ jQuery(document).ready(function(){
     bubble_data_url + '&focus=1',
     function(data) {
       setGenericColours(data);
+      labelGenericInSeries(data);
       var options = $.extend(true, {}, highchartsOptions);
       // Set the width explicitly, because highcharts can't tell the
       // width of a hidden tab container
