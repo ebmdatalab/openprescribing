@@ -20,15 +20,16 @@ jQuery(document).ready(function(){
     },
 
     title: {
+      text: 'Price-per-unit cost of ' + generic_name
+    },
+    subtitle: {
       text: null
     },
     xAxis: {
-      //tickMarkPlacement: 'between',#
-
       type: 'category',
       gridLineWidth: 1,
       title: {
-        text: 'Presentation'
+        text: null
       }
     },
 
@@ -50,7 +51,7 @@ jQuery(document).ready(function(){
           style: {
             fontStyle: 'italic'
           },
-          text: 'Mean PPU for entity'
+          text: 'Mean PPU for ' + highlight_name
         },
         zIndex: 3
       }]
@@ -84,10 +85,8 @@ jQuery(document).ready(function(){
     function(data) {
       setGenericColours(data);
       var options = $.extend(true, {}, highchartsOptions);
+      options.subtitle.text = 'for prescriptions within NHS England';
       options.series[0]['data'] = data.series;
-      options.title.text = 'England-wide distribution of PPU for ' + entity_name;
-      console.log(data.categories);
-      console.log(data.series);
       options.yAxis.plotLines[0].value = data.plotline;
       $('#all_practices_chart').highcharts(options);
     }
@@ -97,10 +96,11 @@ jQuery(document).ready(function(){
     function(data) {
       setGenericColours(data);
       var options = $.extend(true, {}, highchartsOptions);
+      // Set the width explicitly, because highcharts can't tell the
+      // width of a hidden tab container
+      options.chart.width = $('.tab-content').width();
+      options.subtitle.text = 'for prescriptions within ' + highlight_name;
       options.series[0]['data'] = data.series;
-      options.title.text = 'CCG-wide distribution of PPU for ' + entity_name;
-      console.log(data.categories);
-      console.log(data.series);
       options.yAxis.plotLines[0].value = data.plotline;
       $('#highlight_chart').highcharts(options);
     }
