@@ -3,7 +3,6 @@ import datetime
 import re
 
 import numpy as np
-import pandas as pd
 
 from django.db import connection
 from django.db.models import Q
@@ -133,99 +132,6 @@ def bubble(request, format=None):
         plotline = cursor.fetchone()[0]
         return Response(
             {'plotline': plotline, 'series': series, 'categories': categories})
-
-
-@api_view(['GET'])
-def ppu_histogram(request, format=None):
-    code = request.query_params.get('bnf_code', '')
-    date = _valid_or_latest_date(request.query_params.get('date', None))
-    highlight = request.query_params.get('highlight', None)
-    focus = request.query_params.get('focus', None)
-    trim = request.query_params.get('trim', None)
-    conditions, patterns = _build_conditions_and_patterns(code)
-    sql = (
-        "SELECT presentation_code, "
-        "frontend_presentation.name as presentation_name, "
-        "quantity, net_cost, pct_id, practice_id "
-        "FROM frontend_prescription "
-        "LEFT JOIN frontend_presentation "
-        "ON frontend_prescription.presentation_code = "
-        "frontend_presentation.bnf_code "
-        "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
-        "WHERE processing_date = %s AND setting = 4 " + conditions +
-        "ORDER BY presentation_code, quantity DESC"
-    )
-    params = [date] + patterns
-    df = pd.read_sql(sql, connection, params=params)
-    # apparent coding errors lead to absurdly expensive drugs, and
-    # these outliers make the charts hard to read, so we remove them
-    df['ppu'] = df['net_cost'] / df['quantity']
-    if trim:
-        df = df[df.ppu <= df.ppu.quantile(0.99)]
-    if len(df):
-        ordered = df.groupby(
-            'presentation_name')['ppu'].aggregate(
-                {'mean_ppu': 'mean'}).sort_values(
-                    'mean_ppu').index
-
-        # Get plotline for specified entity
-        if highlight:
-            if len(highlight) == 3:
-                mean_ppu = df[df.pct_id == highlight].mean().ppu
-            else:
-                mean_ppu = df[df.practice_id == highlight].mean().ppu
-        else:
-            mean_ppu = None
-        if mean_ppu is not None and np.isnan(mean_ppu):
-            mean_ppu = None
-        series = []
-        # Compute limits for entire dataset so all histograms use the same
-        # scale
-        hist, bins = np.histogram(df.ppu)
-        # Find a number of bins whereby the bin sizes aren't too close
-        # together
-        bin_count = len(bins)
-        while bin_count > 1 and (bins[1] - bins[0]) < 0.01:
-            bin_count = bin_count / 2
-            hist, bins = np.histogram(df.ppu, bins=bin_count)
-        # Reduce the set we display to individual CCG/Practice, if
-        # requested to do so
-        if focus:
-            if len(highlight) == 3:
-                df = df[df.pct_id == highlight]
-            else:
-                df = df[df.practice_id == highlight]
-        # Generate histogram for each presentation
-        for name in ordered:
-            current = df[df.presentation_name == name]
-            # values, bin edges
-            current_histogram = np.histogram(
-                current.ppu,
-                bins=bin_count,
-                range=(max(bins[0], 0), bins[-1])
-            )
-            if (len(current) and
-                    current.iloc[0].presentation_code[9:11] == 'AA'):
-                is_generic = True
-            else:
-                is_generic = False
-
-            series.append(
-                {'name': name,
-                 'is_generic': is_generic,
-                 'data': current_histogram[0]})
-        series = sorted(series, key=lambda x: x['is_generic'])
-        categories = current_histogram[1]
-        plotline = mean_ppu
-        if plotline:
-            # convert it to a ratio that will work with the categories
-            plotline = ((plotline - bins[0]) / bins[-1] * len(bins))
-        return Response({'mean_ppu': mean_ppu,
-                         'plotline': plotline,
-                         'categories': categories,
-                         'series': series})
-    else:
-        return Response({'plotline': None, 'series': []})
 
 
 @api_view(['GET'])
