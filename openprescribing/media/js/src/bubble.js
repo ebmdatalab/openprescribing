@@ -25,7 +25,7 @@ jQuery(document).ready(function(){
     subtitle: {
       text: null
     },
-    yAxis: {
+    xAxis: {
       type: 'category',
       gridLineWidth: 1,
       title: {
@@ -38,7 +38,7 @@ jQuery(document).ready(function(){
       }
     },
 
-    xAxis: {
+    yAxis: {
       gridLineWidth: 1,
       title: {
         text: 'PPU'
@@ -64,7 +64,7 @@ jQuery(document).ready(function(){
     tooltip: {
       useHTML: true,
       headerFormat: '',
-      pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.x:,.2f}',
+      pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.y:,.2f}',
       followPointer: true
     },
 
@@ -85,15 +85,6 @@ jQuery(document).ready(function(){
     });
   }
 
-  function invert(data) {
-    _.each(data.series, function(d) {
-      var _ = d.x;
-      d.x = d.y;
-      d.y = _;
-    });
-
-  }
-
   function labelGenericInSeries(data) {
     var generic_name = data.categories[
       _.findIndex(data.categories, function(x) { return x.is_generic })
@@ -110,16 +101,10 @@ jQuery(document).ready(function(){
     function(data) {
       setGenericColours(data);
       labelGenericInSeries(data);
-      invert(data);
       var options = $.extend(true, {}, highchartsOptions);
       options.subtitle.text = 'for prescriptions within NHS England';
       options.series[0]['data'] = data.series;
-      options.xAxis.plotLines[0].value = data.plotline;
-      options.yAxis.min = 1;
-      options.yAxis.max = 11;
-      options.yAxis.categories = _.map(data.categories, function(x) { return x.name });
-      options.yAxis.categories.unshift('')
-      console.log(options);
+      options.yAxis.plotLines[0].value = data.plotline;
       $('#all_practices_chart').highcharts(options);
     }
   );
@@ -128,18 +113,13 @@ jQuery(document).ready(function(){
     function(data) {
       setGenericColours(data);
       labelGenericInSeries(data);
-      invert(data);
       var options = $.extend(true, {}, highchartsOptions);
       // Set the width explicitly, because highcharts can't tell the
       // width of a hidden tab container
       options.chart.width = $('.tab-content').width();
       options.subtitle.text = 'for prescriptions within ' + highlight_name;
       options.series[0]['data'] = data.series;
-      options.xAxis.plotLines[0].value = data.plotline;
-      options.yAxis.min = 1;
-      options.yAxis.max = 6;
-      options.yAxis.categories = _.map(data.categories, function(x) { return x.name });
-      options.yAxis.categories.unshift('')
+      options.yAxis.plotLines[0].value = data.plotline;
       $('#highlight_chart').highcharts(options);
     }
   );
