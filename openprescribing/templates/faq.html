@@ -26,6 +26,7 @@
 <p><a href="#prescquantity">What does quantity mean?</a></p>
 <p><a href="#actualcost">What is actual cost?</a></p>
 <p><a href="#bnfchange">How do you deal with BNF code changes?</a></p>
+<p><a href="#ccgchange">How do you determine CCG membership when GP practices have moved CCGs or CCGs have merged?</a></p>
 
 <h2>Analyse</h2>
 <p><a href="#analysetutorial">How do I use the analyse page?</a></p>
@@ -46,7 +47,7 @@
 
 <h3 id="siteupdate">When do you update the site?</h3>
 <p>We use NHS Business Services Authority's (BSA) Detailed Prescribing Information report from their Information Service Portal. The BSA have a release calendar for this dataset, although the data is sometimes released early. We aim to update OpenPrescribing by the Wednesday following the release date, but do try to update earlier if the BSA publish sooner. The data is two months behind, so for example January's prescribing data is published in March. </p>
-<p> You can find out when OpenPrescribing has been updated by following us on <a href="www.twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://ebmdatalab.net/openprescribing-e-mail-alerts-2/">e-mail alerts</a>.</p>
+<p> You can find out when OpenPrescribing has been updated by following us on <a href="https://twitter.com/OpenPrescribing">Twitter</a> or signing up to one of our <a href="https://ebmdatalab.net/openprescribing-e-mail-alerts-2/">e-mail alerts</a>.</p>
 
 <h3 id="extractdownload">How do I download an extract of the data?</h3>
 <p>We have written a <a href="https://ebmdatalab.net/downloading-data-from-openprescribing/">blog post</a> on how to download data from the Trends and Analyse sections of the site
@@ -58,7 +59,7 @@
 <p>If you use data or images from this site online or in a report, please link back to us. Your readers will then be able to see live updates to the data you are interested in, and explore other queries for themselves.</p>
 
 <h3 id="timeperiod">What time period does the dataset cover?</h3>
-<p>We have data from the past 5 years on OpenPrescribing.net. CCGs were formed in April 2013, so searching for CCG data will only show you data from this date onwards. We do have the prescribing dataset from August 2010 onwards in our databases, and national data going back to 1999. If you require this information <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a>, as we may be able to help. </p>
+<p>We have data from the past 5 years on OpenPrescribing.net. We do have the prescribing dataset from August 2010 onwards in our databases, and national data going back to 1999. If you require this information <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">get in touch</a>, as we may be able to help. </p>
 
 <h2>Prescribing Dataset</h2>
 
@@ -90,6 +91,11 @@
 <p>We have aimed to normalise the data so that past prescribing is always listed under the current BNF code. This means if you look at Linaclotide’s trends page, you will see the prescribing pre-2013 even though the code changed.</p>
 <p>We have done this by mapping the old codes to the new codes, by using a map the NHS Business Services Authority provided us in a personal communication (after correcting for obvious typos etc.). You can read how we did this on <a href="https://github.com/ebmdatalab/openprescribing/pull/380/commits/7f968027263c62318403584e4ad5e0b96869bb7e">github</a>.</p> 
 <p>You can read more about BNF codes and how they are structured <a href=https://ebmdatalab.net/prescribing-data-bnf-codes/>here</a>.</p>
+
+<h3 id="ccgchange">"How do you determine CCG membership when GP practices have moved CCGs or CCGs have merged?</h3>
+<p>We use the current CCG membership of a practice in our analyses. If a GP Practice moved CCG, the data from before the move will be included in the data for their current CCG. Their former CCG will not include that practice's data. This means that when you look at our prescribing measures, you will be looking at the past prescribing of the current GP practices in that CCG.</p>
+<p>When CCGs merge, we create a new dashboard for the newly formed CCG and remove the old CCG dashboards. We use the prescribing data for the current practices in the new CCG in our measures. Any data for practices in the old CCGs that closed prior to the merger will be included in the new CCG's data</p>
+<p>Data from our analyse and trends pages also use current practice membership of a CCG when aggregating the data by CCG</p>
 
 <h2>Analyse</h2>
 <h3 id="analysetutorial">How do I use the analyse page?</h3>
