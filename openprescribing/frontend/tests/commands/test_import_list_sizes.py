@@ -29,36 +29,6 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-    def test_error_for_missing_list_data(self):
-        """Supplied patient list size data must always cover any existing gaps
-        in previously-imported list size data.
-
-        """
-        args = []
-        fname = 'frontend/tests/fixtures/commands/'
-        fname += 'patient_list_size/2040_05/Patient_List_Size_2013_10-12.csv'
-        opts = {
-            'filename': fname,
-            'verbosity': 0
-        }
-        # Now check that we get an error (because there is now a gap)
-        with self.assertRaises(CommandError):
-            call_command('import_list_sizes', *args, **opts)
-
-    def test_import_bsa_multiple_list_size(self):
-        fname = ("frontend/tests/fixtures/commands/patient_list_size/"
-                 "%s/Patient_List_Size_2013_10-12.csv")
-        args = [fname % '2040_02', fname % '2040_05']
-        opts = {}
-        call_command('import_list_sizes', *args, **opts)
-        list_sizes = PracticeStatistics.objects.all()
-        self.assertEqual(len(list_sizes), 6)
-        self.assertEqual(str(list_sizes[5].date), '2040-03-01')
-        last_log = ImportLog.objects.latest_in_category('patient_list_size')
-        self.assertEqual(
-            last_log.current_at.strftime('%Y-%m-%d'),
-            PRESCRIBING_DATE)
-
     def test_import_bsa_list_size_quarterly(self):
         args = []
         fname = 'frontend/tests/fixtures/commands/'
@@ -86,49 +56,3 @@ class CommandsTestCase(TestCase):
         for k in p.star_pu:
             self.assertNotEqual(p.star_pu[k], 0)
             self.assertNotEqual(p.star_pu[k], None)
-
-
-class MissingMonthsTestCase(TestCase):
-    """In order to track which months of patient list data are required,
-    we store last-imported dates for both lists. These tests check
-    that the missing months returned by the method in question are correct.
-
-    """
-    def test_imported_list_sizes_are_up_to_date_with_prescribing_data(self):
-        ImportLog.objects.create(
-            current_at='2050-01-01',
-            category='patient_list_size'
-        )
-        ImportLog.objects.create(
-            current_at='2050-01-01',
-            category='prescribing'
-        )
-        self.assertEqual(
-            Command().months_with_prescribing_data_but_no_list_data(), [])
-
-    def test_imported_list_sizes_are_behind_prescribing_data(self):
-        ImportLog.objects.create(
-            current_at='2050-01-01',
-            category='patient_list_size'
-        )
-        ImportLog.objects.create(
-            current_at='2050-03-01',
-            category='prescribing'
-        )
-
-        self.assertEqual(
-            Command().months_with_prescribing_data_but_no_list_data(),
-            ['2050-02-01', '2050-03-01'])
-
-    def test_imported_list_sizes_are_ahead_of_prescribing_data(self):
-        ImportLog.objects.create(
-            current_at='2050-04-01',
-            category='patient_list_size'
-        )
-        ImportLog.objects.create(
-            current_at='2050-03-01',
-            category='prescribing'
-        )
-        self.assertEqual(
-            Command().months_with_prescribing_data_but_no_list_data(),
-            [])
