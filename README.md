@@ -291,7 +291,7 @@ If the fabfile detects no undeployed changes, it will refuse to run. You can for
 
 Or for staging:
 
-    fab deploy:staging,force_build=true,branch=deployment
+    fab deploy:staging,force_build=true,branch=deployment...
 
 # Philosophy
 
