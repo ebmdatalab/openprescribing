@@ -29,18 +29,14 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-    def test_import_bsa_list_size_quarterly(self):
-        args = []
+    def test_import_list_sizes(self):
         fname = 'frontend/tests/fixtures/commands/'
-        fname += 'patient_list_size/2040_02/Patient_List_Size_2013_10-12.csv'
-        opts = {
-            'filename': fname
-        }
-        call_command('import_list_sizes', *args, **opts)
+        fname += 'patient_list_size/2040_02/patient_list_size_new.csv'
+        call_command('import_list_sizes', '--filename={}'.format(fname))
         last_list_size_date = '2040-02-01'
         list_sizes = PracticeStatistics.objects.all()
 
-        self.assertEqual(len(list_sizes), 4)
+        self.assertEqual(len(list_sizes), 2)
 
         p = PracticeStatistics.objects.get(practice_id='N84014',
                                            date=last_list_size_date)
