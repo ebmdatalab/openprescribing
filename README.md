@@ -29,7 +29,7 @@ you can reproduce with
     docker-compose run test-production
 
 To open a shell (from where you can run migrations, start a server,
-etc), run
+etc), run..
 
     docker-compose run dev
 
@@ -291,7 +291,7 @@ If the fabfile detects no undeployed changes, it will refuse to run. You can for
 
 Or for staging:
 
-    fab deploy:staging,force_build=true,branch=deployment
+    fab deploy:staging,force_build=true,branch=deployment...
 
 # Philosophy
 
