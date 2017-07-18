@@ -105,6 +105,7 @@
         "publication_schedule": "middle of each month",
         "publication_lag": "60 days",
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=124",
+        "notes": "Run `./manage.py fetch_prescribing_data --help` for more instructions",
         "core_data": true
     },
     "prescribing_metadata": {
