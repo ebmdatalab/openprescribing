@@ -85,7 +85,6 @@ class Task(object):
     def filename_regex(self):
         '''Return regex that matches the part of the task's command that should
         be substituted for the task's input filename.'''
-        # TODO Can we change this to filename_glob?
         filename_flags = [
             'filename',
             'ccg',
@@ -189,14 +188,12 @@ class ManualFetchTask(Task):
             for line in textwrap.wrap(source.notes):
                 output.append('    %s' % line)
 
-        # TODO should this be "last imported data"?
-        output.append('The last saved data can be found at:')
+        output.append('The last imported data can be found at:')
         for task in source.tasks_that_use_raw_source_data():
             paths = task.imported_paths()
             if paths:
                 path = paths[-1]
             else:
-                # TODO Can we say what it is that's never been imported?
                 path = '<never imported>'
             output.append('    %s' % path)
         return '\n'.join(output)
@@ -340,7 +337,6 @@ class BigQueryUploader(CloudHandler):
         self.tasks = tasks
 
     def upload_all_to_storage(self):
-        # TODO Can we just sync the whole of PIPELINE_DATA_BASEDIR?
         for task in self.tasks.by_type('convert'):
             self.upload_task_input_files(task)
         for task in self.tasks.by_type('import'):
