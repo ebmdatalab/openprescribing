@@ -281,7 +281,7 @@ class PipelineTests(TestCase):
 You should now locate the latest data for source_a, if available
 You should save it at:
     {data_basedir}/source_a/{year_and_month}
-The last saved data can be found at:
+The last imported data can be found at:
     {data_basedir}/source_a/2017_02/source_a.csv
 '''.strip().format(
             data_basedir=settings.PIPELINE_DATA_BASEDIR,
@@ -296,7 +296,7 @@ The last saved data can be found at:
 You should now locate the latest data for source_c, if available
 You should save it at:
     {data_basedir}/source_c/{year_and_month}
-The last saved data can be found at:
+The last imported data can be found at:
     <never imported>
     {data_basedir}/source_c/2017_02/source_c2.csv
 '''.strip().format(
