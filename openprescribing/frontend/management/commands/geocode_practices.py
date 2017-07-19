@@ -36,7 +36,8 @@ class Command(BaseCommand):
             bng = SpatialReference(27700)
             trans = CoordTransform(bng, wgs84)
 
-            practices = Practice.objects.filter(postcode__isnull=False).reverse()
+            practices = Practice.objects.filter(postcode__isnull=False)\
+                .reverse()
             for practice in practices:
                 practice.location = None
                 postcode = practice.postcode.replace(' ', '').strip()

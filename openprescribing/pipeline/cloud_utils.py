@@ -57,9 +57,10 @@ class CloudHandler(object):
             raise error
 
         sleeptime = random.random() * (2**progressless_iters)
-        print('Caught exception (%s). '
-               'Sleeping for %s seconds before retry #%d'
-               % (str(error), sleeptime, progressless_iters))
+        print(
+            'Caught exception (%s). Sleeping for %s seconds before retry #%d' %
+             (str(error), sleeptime, progressless_iters)
+        )
         time.sleep(sleeptime)
 
     def print_with_carriage_return(self, s):
