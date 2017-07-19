@@ -376,7 +376,10 @@ The last saved data can be found at:
             run_task('test', task)
             cc.assert_not_called()
 
-        logs = TaskLog.objects.filter(run_id='test', task_name='fetch_source_b')
+        logs = TaskLog.objects.filter(
+            run_id='test',
+            task_name='fetch_source_b'
+        )
         self.assertEqual(1, logs.count())
 
     def test_run_task_after_failure(self):
@@ -389,7 +392,10 @@ The last saved data can be found at:
         with mock.patch('pipeline.runner.call_command') as cc:
             run_task('test', task)
 
-        logs = TaskLog.objects.filter(run_id='test', task_name='fetch_source_b')
+        logs = TaskLog.objects.filter(
+            run_id='test',
+            task_name='fetch_source_b'
+        )
         self.assertEqual(2, logs.count())
 
 
