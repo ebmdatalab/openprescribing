@@ -1,0 +1,196 @@
+{
+    "fetch_bnf_codes": {
+        "type": "manual_fetch",
+        "source_id": "bnf_codes"
+    },
+    "fetch_adqs": {
+        "type": "manual_fetch",
+        "source_id": "adqs"
+    },
+    "fetch_patient_list_size": {
+        "type": "auto_fetch",
+        "source_id": "patient_list_size",
+        "command": "hscic_list_sizes"
+    },
+    "fetch_ccg_details": {
+        "type": "auto_fetch",
+        "source_id": "ccg_details",
+        "command": "org_codes --ccg"
+    },
+    "fetch_practice_details": {
+        "type": "auto_fetch",
+        "source_id": "practice_details",
+        "command": "org_codes --practice"
+    },
+    "import_bnf_codes": {
+        "type": "import",
+        "source_id": "bnf_codes",
+        "command": "import_bnf_codes --filename bnf_codes.csv",
+        "dependencies": [
+            "fetch_bnf_codes"
+        ]
+    },
+    "fetch_prescribing_metadata": {
+        "type": "auto_fetch",
+        "source_id": "prescribing_metadata",
+        "command": "hscic_prescribing --most_recent_date"
+    },
+    "fetch_ccg_boundaries": {
+        "type": "manual_fetch",
+        "source_id": "ccg_boundaries"
+    },
+    "import_ccg_boundaries": {
+        "type": "import",
+        "source_id": "ccg_boundaries",
+        "command": "import_ccg_boundaries --filename ccg_boundaries.*\\.kml",
+        "dependencies": [
+            "fetch_ccg_boundaries"
+        ]
+    },
+    "import_ccg_details": {
+        "type": "import",
+        "source_id": "ccg_details",
+        "command": "import_org_names --ccg eccg.csv",
+        "dependencies": [
+            "fetch_ccg_details",
+            "import_ccg_boundaries"
+        ]
+    },
+    "fetch_prescribing": {
+        "type": "manual_fetch",
+        "source_id": "prescribing"
+    },
+    "import_adqs": {
+        "type": "import",
+        "source_id": "adqs",
+        "command": "import_adqs --filename adqs_.*csv",
+        "dependencies": [
+            "fetch_adqs",
+            "import_bnf_codes"
+        ]
+    },
+    "fetch_patient_list_weightings": {
+        "type": "manual_fetch",
+        "source_id": "patient_list_weightings"
+    },
+    "import_patient_list_weightings": {
+        "type": "import",
+        "source_id": "patient_list_weightings",
+        "command": "calculate_star_pu_weights --filename prescribing_units.xlsx",
+        "dependencies": [
+            "fetch_patient_list_weightings"
+        ]
+    },
+    "import_practice_details": {
+        "type": "import",
+        "source_id": "practice_details",
+        "command": "import_practices --epraccur epraccur.csv",
+        "dependencies": [
+            "fetch_practice_details",
+            "import_ccg_details"
+        ]
+    },
+    "fetch_nhs_postcode_file": {
+        "type": "auto_fetch",
+        "source_id": "nhs_postcode_file",
+        "command": "org_codes --postcode"
+    },
+    "import_nhs_postcode_file": {
+        "type": "import",
+        "source_id": "nhs_postcode_file",
+        "command": "geocode_practices --filename gridall\\.csv",
+        "dependencies": [
+            "fetch_nhs_postcode_file",
+            "import_practice_details"
+        ]
+    },
+    "import_hscic_chemicals": {
+        "type": "import",
+        "source_id": "prescribing_metadata",
+        "command": "import_hscic_chemicals --chem_file T\\d+CHEM.*\\.CSV",
+        "dependencies": [
+            "fetch_prescribing_metadata"
+        ]
+    },
+    "import_hscic_practices": {
+        "type": "import",
+        "source_id": "prescribing_metadata",
+        "command": "import_practices --hscic_address T\\d+ADDR.*\\.CSV",
+        "dependencies": [
+            "fetch_prescribing_metadata",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    "convert_hscic_prescribing": {
+        "type": "convert",
+        "source_id": "prescribing",
+        "command": "convert_hscic_prescribing --filename .*Detailed_Prescribing_Information.csv",
+        "dependencies": [
+            "fetch_prescribing"
+        ]
+    },
+    "import_hscic_prescribing": {
+        "type": "import",
+        "source_id": "prescribing",
+        "command": "import_hscic_prescribing --filename .*Detailed_Prescribing_Information_formatted.CSV",
+        "dependencies": [
+            "convert_hscic_prescribing",
+            "import_hscic_practices",
+            "import_bnf_codes",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    "import_dispensing_practices": {
+        "type": "import",
+        "source_id": "dispensing_practices",
+        "command": "import_practice_dispensing_status --filename dispensing_practices.*\\.csv",
+        "dependencies": [
+            "import_hscic_practices",
+            "import_practice_details"
+        ]
+    },
+    "import_patient_list_size": {
+        "type": "import",
+        "source_id": "patient_list_size",
+        "command": "import_list_sizes --filename patient_list_size_new.csv",
+        "dependencies": [
+            "fetch_patient_list_size",
+            "import_hscic_practices",
+            "import_practice_details",
+            "import_patient_list_weightings"
+        ]
+    },
+    "upload_to_bigquery": {
+        "type": "post_process",
+        "command": "bigquery_upload",
+        "dependencies": [
+            "import_patient_list_size",
+            "import_hscic_practices",
+            "import_hscic_prescribing",
+            "import_ccg_details",
+            "import_practice_details"
+        ]
+    },
+    "import_measure_definitions": {
+        "type": "post_process",
+        "command": "import_measures --definitions_only",
+        "dependencies": []
+    },
+    "import_measures": {
+        "type": "post_process",
+        "command": "import_measures",
+        "dependencies": [
+            "upload_to_bigquery",
+            "import_measure_definitions"
+        ]
+    },
+    "refresh_views": {
+        "type": "post_process",
+        "command": "create_views",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
+    }
+}

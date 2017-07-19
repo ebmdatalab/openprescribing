@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from .base import *
 from common import utils
+import os
 
 
 # DEBUG CONFIGURATION
@@ -92,3 +93,9 @@ ANYMAIL = {
     "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
         'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
 }
+
+# Base directory for pipeline metadata
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = os.path.join(SITE_ROOT, 'pipeline')

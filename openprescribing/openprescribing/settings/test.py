@@ -75,3 +75,18 @@ GRAB_HOST = "http://localhost"
 
 # This is the same as the dev/local one
 GOOGLE_TRACKING_ID = 'UA-62480003-2'
+
+# Base directory for pipeline metadata
+PIPELINE_METADATA_DIR = os.path.join(
+    SITE_ROOT, 'pipeline', 'test-data', 'metadata'
+)
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = os.path.join(
+    SITE_ROOT, 'pipeline', 'test-data', 'data'
+)
+
+# Path to import log for pipeline data
+PIPELINE_IMPORT_LOG_PATH = os.path.join(
+    SITE_ROOT, 'pipeline', 'test-data', 'log.json'
+)

@@ -1,6 +1,7 @@
 """Production settings and globals."""
 
 from __future__ import absolute_import
+import os
 from .base import *
 from common import utils
 
@@ -113,3 +114,12 @@ LOGGING = {
         },
     }
 }
+
+# Base directory for pipeline metadata
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
+
+# Path to import log for pipeline data
+PIPELINE_IMPORT_LOG_PATH = '/home/hello/openprescribing-data/log.json'
