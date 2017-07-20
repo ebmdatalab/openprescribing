@@ -1,0 +1,32 @@
+{
+  "name": "NHS England Low Priority Treatment - paracetamol and tramadol combination",
+  "title": [
+    "Paracetamol and tramadol combination cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of paracetamol and tramadol combination per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Paracetamol and Tramadol are widely available. There is no advantage in a single pill."
+  ],
+  "numerator_short": "Paracetamol and tramadol combination cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '040702040%AU' OR bnf_code LIKE '040702040%BA')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
