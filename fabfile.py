@@ -155,8 +155,9 @@ def log_deploy():
                            'changes_url': url})
     run("echo '%s' >> deploy-log.json" % log_line)
     notify_newrelic(current_commit, url)
-    notify_slack(
-        "A #deploy just happened. Changes here: %s" % url)
+    if env.environment == 'production':
+        notify_slack(
+            "A #deploy just happened. Changes here: %s" % url)
 
 
 def checkpoint(force_build):
