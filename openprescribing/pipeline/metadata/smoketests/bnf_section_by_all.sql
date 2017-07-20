@@ -4,7 +4,7 @@
     FORMAT("%.2f", ROUND(SUM(actual_cost), 2)) AS actual_cost,
     SUM(quantity) AS quantity
   FROM
-    `hscic.prescribing`
+    `hscic.normalised_prescribing_standard`
   WHERE
     bnf_code LIKE '0702%'
     AND {{ date_condition }}

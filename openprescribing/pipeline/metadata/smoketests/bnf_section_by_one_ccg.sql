@@ -4,7 +4,7 @@ SELECT
   SUM(items) AS items,
   SUM(quantity) AS quantity
 FROM
-  `hscic.prescribing`
+  `hscic.normalised_prescribing_standard`
 WHERE
   (bnf_code LIKE '0801%')
   AND pct='10Q'
