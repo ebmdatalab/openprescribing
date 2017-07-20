@@ -1,0 +1,53 @@
+{
+  "name": "NHS England Low Priority Treatment - lutein and antioxidants",
+  "title": [
+    "Lutein and antioxidant cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of lutein and antioxidant per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Lutein and antioxidants (e.g. vitamin A, C E and zinc) are supplements taken for Age Related Macular Degeneration but there is no evidence they work."
+  ],
+  "numerator_short": "Lutein and antioxidant  cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '091000000BBVZA0%' ",
+    "OR bnf_code LIKE '091000000BBVGA0%' ",
+    "OR bnf_code LIKE '091000000BBWQA0%' ",
+    "OR bnf_code LIKE '091000000BBTPA0%' ",
+    "OR bnf_code LIKE '091000000BBVFA0%' ",
+    "OR bnf_code LIKE '091000000BBVXA0%' ",
+    "OR bnf_code LIKE '091000000BBVTA0%' ",
+    "OR bnf_code LIKE '091000000BBWVA0%' ",
+    "OR bnf_code LIKE '091000000BBUZA0%' ",
+    "OR bnf_code LIKE '091000000BBWPA0%' ",
+    "OR bnf_code LIKE '091000000BBTAA0%' ",
+    "OR bnf_code LIKE '091000000BBUQA0%' ",
+    "OR bnf_code LIKE '091000000BBWNA0%' ",
+    "OR bnf_code LIKE '091000000BBVQA0%' ",
+    "OR bnf_code LIKE '091000000BBWHA0%' ",
+    "OR bnf_code LIKE '091000000BBUSA0%' ",
+    "OR bnf_code LIKE '091000000BBWWA0%' ",
+    "OR bnf_code LIKE '091000000BBVSA0%' ",
+    "OR bnf_code LIKE '091200000BFLHA0%' ",
+    "OR bnf_code LIKE '091200000BEJYA0%' ",
+    "OR bnf_code LIKE '091200000BEXXA0%') "
+
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
