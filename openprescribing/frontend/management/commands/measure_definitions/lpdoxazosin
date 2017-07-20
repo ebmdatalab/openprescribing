@@ -1,0 +1,32 @@
+{
+  "name": "NHS England Low Priority Treatment - doxazosin modified release",
+  "title": [
+    "Doxazosin modified release cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of doxazosin modified release per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Drug for hypertension. MR (modified release) version is more expensive than standard release with no clear benefits"
+  ],
+  "numerator_short": "Doxazosin modified release cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0205040D0%AQ' or bnf_code LIKE '0205040D0%AR')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
