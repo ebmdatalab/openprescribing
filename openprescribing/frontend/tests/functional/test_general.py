@@ -119,6 +119,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         # when no measures are shown
         import time
         time.sleep(1)
+        print self.browser.page_source
         self.assertTrue(self.find_by_xpath(
             "//p[contains(text(), 'prescribed on any')]"))
 
