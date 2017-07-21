@@ -55,8 +55,7 @@
     "OR bnf_code LIKE '0407020A0%BJ%' ",
     "OR bnf_code LIKE '0407020A0%AP%' ",
     "OR bnf_code LIKE '0407020A0%BG%' ",
-    "OR bnf_code LIKE '0407020A0%AL%') ",
-
+    "OR bnf_code LIKE '0407020A0%AL%') "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
