@@ -64,7 +64,6 @@
 <script>
 var measureData = {
     'orgType': 'CCG',
-    'tags': '{{ request.GET.tags }}',
     'measure': '{{ measure.id }}',
     'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
     'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},
