@@ -13,7 +13,8 @@ class MissingParameter(APIException):
 @api_view(['GET'])
 def measure_global(request, format=None):
     measure = request.query_params.get('measure', None)
-
+    tags = request.query_params.get('tags', None)
+    params = []
     query = 'SELECT mg.month AS date, mg.numerator,  '
     query += 'mg.denominator, mg.measure_id, '
     query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
@@ -26,9 +27,13 @@ def measure_global(request, format=None):
     query += "JOIN frontend_measure ms ON mg.measure_id=ms.id "
     if measure:
         query += "WHERE mg.measure_id=%s "
+        params.append(measure)
+    if tags:
+        for tag in tags.split(','):
+            query += "AND %s = ANY(ms.tags) "
+            params.append(tag)
     query += "ORDER BY mg.measure_id, mg.month"
-
-    data = utils.execute_query(query, [[measure]])
+    data = utils.execute_query(query, [params])
     rolled = {}
     for d in data:
         id = d['measure_id']
@@ -67,7 +72,8 @@ def measure_global(request, format=None):
 def measure_by_ccg(request, format=None):
     measure = request.query_params.get('measure', None)
     orgs = utils.param_to_list(request.query_params.get('org', []))
-
+    tags = request.query_params.get('tags', None)
+    params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.pct_id, pc.name as pct_name, measure_id, '
@@ -83,22 +89,22 @@ def measure_by_ccg(request, format=None):
     query += "WHERE pc.close_date IS NULL AND "
     if orgs:
         query += "("
-    for i, org in enumerate(orgs):
-        query += "mv.pct_id=%s "
-        if (i != len(orgs) - 1):
-            query += ' OR '
-    if orgs:
+        for i, org in enumerate(orgs):
+            query += "mv.pct_id=%s "
+            params.append(org)
+            if (i != len(orgs) - 1):
+                query += ' OR '
         query += ") AND "
     query += 'mv.practice_id IS NULL '
     if measure:
         query += "AND mv.measure_id=%s "
+        params.append(measure)
+    if tags:
+        for tag in tags.split(','):
+            query += "AND %s = ANY(ms.tags) "
+            params.append(tag)
     query += "ORDER BY mv.pct_id, measure_id, date"
-
-    if measure:
-        data = utils.execute_query(query, [orgs, [measure]])
-    else:
-        data = utils.execute_query(query, [orgs])
-
+    data = utils.execute_query(query, [params])
     rolled = {}
     for d in data:
         id = d['measure_id']
@@ -142,6 +148,8 @@ def measure_by_practice(request, format=None):
     orgs = utils.param_to_list(request.query_params.get('org', []))
     if not orgs:
         raise MissingParameter
+    tags = request.query_params.get('tags', None)
+    params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
     query += 'mv.practice_id, pc.name as practice_name, measure_id, '
@@ -160,15 +168,16 @@ def measure_by_practice(request, format=None):
             query += "mv.practice_id=%s "
         if (i != len(orgs) - 1):
             query += ' OR '
+        params.append(org)
     if measure:
         query += "AND mv.measure_id=%s "
+        params.append(measure)
+    if tags:
+        for tag in tags.split(','):
+            query += "AND %s = ANY(ms.tags) "
+            params.append(tag)
     query += "ORDER BY mv.practice_id, measure_id, date"
-
-    if measure:
-        data = utils.execute_query(query, [orgs, [measure]])
-    else:
-        data = utils.execute_query(query, [orgs])
-
+    data = utils.execute_query(query, [params])
     rolled = {}
     for d in data:
         id = d['measure_id']
