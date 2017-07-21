@@ -117,6 +117,8 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.browser.get(url)
         # nothing is tagged foobar, so should return the text expected
         # when no measures are shown
+        import time
+        time.sleep(1)
         self.assertTrue(self.find_by_xpath(
             "//p[contains(text(), 'prescribed on any')]"))
 
