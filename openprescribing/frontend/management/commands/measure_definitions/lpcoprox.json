@@ -16,6 +16,7 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
+  "tags": ["lowpriority"],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],

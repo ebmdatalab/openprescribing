@@ -26,6 +26,7 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
+  "tags": ["core"],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
