@@ -21,7 +21,7 @@
   ],
   "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
   "numerator_where": [
-    "(OR bnf_code LIKE '100302000%' ",
+    "(bnf_code LIKE '100302000%' ",
     "OR bnf_code LIKE '100302040%' ",
     "OR bnf_code LIKE '1003020AA%' ",
     "OR bnf_code LIKE '1003020AB%' ",
@@ -45,7 +45,7 @@
     "OR bnf_code LIKE '1003020W0%' ",
     "OR bnf_code LIKE '1003020X0%' ",
     "OR bnf_code LIKE '1003020Y0%' ",
-    "OR bnf_code LIKE '1003020Z0%')"
+    "OR bnf_code LIKE '1003020Z0%') "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
