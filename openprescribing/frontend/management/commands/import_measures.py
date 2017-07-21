@@ -17,7 +17,6 @@ import logging
 import os
 import psycopg2
 import re
-import sys
 import tempfile
 
 from django.conf import settings
@@ -469,6 +468,7 @@ class GlobalCalculation(MeasureCalculation):
         try:
             measure = Measure.objects.get(id=self.measure_id)
             measure.name = v['name']
+            measure.tags = v['tags']
             measure.title = v['title']
             measure.description = v['description']
             measure.why_it_matters = v['why_it_matters']
@@ -483,6 +483,7 @@ class GlobalCalculation(MeasureCalculation):
             measure = Measure.objects.create(
                 id=self.measure_id,
                 name=v['name'],
+                tags=v['tags'],
                 title=v['title'],
                 description=v['description'],
                 why_it_matters=v['why_it_matters'],
