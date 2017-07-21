@@ -55,7 +55,8 @@ We have experimental new features. Our first is this: <a href="{% url 'ccg_price
 {% include '_get_in_touch.html' %}
 
 <script>
-var measureData = {
+ var measureData = {
+    'tags': '{{ request.GET.tags }}',
     'orgId': '{{ ccg.code }}',
     'orgName': '{{ ccg.name }}',
     'orgType': 'CCG'

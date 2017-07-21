@@ -70,6 +70,7 @@ var measureData = {
     'measure': '{{ measure.id }}',
     'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
     'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},
+    'tags': '{{ request.GET.tags }}',
     'numerator': '{{ measure.numerator_short }}',
     'denominator': '{{ measure.denominator_short }}'
 };
