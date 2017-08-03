@@ -154,7 +154,7 @@ presentation. We then work out what {{entity.cased_name }} could save
 
   $('#price_per_pill').DataTable(
     {
-      "ajax": {"url": "/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
+      "ajax": {"url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
       "order": [[1, "desc"]],
       "columns": [
         {"data": first_column,
