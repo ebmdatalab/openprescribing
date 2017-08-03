@@ -1,0 +1,55 @@
+<ul id="tabs" class="nav nav-tabs" role="tablist">
+  {% if highlight %}
+  <li role="presentation" id="local-tab" class="active">
+    <a href="#local-panel" data-target="#local-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing within {{ highlight_name }}</a>
+  </li>
+  {% endif %}
+  <li role="presentation" id="england-tab">
+    <a href="#england-panel" data-target="#england-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing across NHS in England</a>
+  </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Tab content -->
+    {% if highlight %}
+    <div role="tabpanel" class="tab-pane active" id="local-panel">
+       <div id="highlight_chart" class="chart" style="width: 100%; height: 490px;"></div>
+    </div>
+    {% endif %}
+    <div role="tabpanel" class="tab-pane" id="england-panel">
+      <div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;"></div>
+    </div>
+</div>
+
+{% if highlight %}
+  <p><a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">View PPU data tables for all presentations in {{ highlight_name }}</a></p>
+{% endif %}
+
+<hr>
+
+<h2>Extended information</h2>
+{% if product %}
+<table class="table table-condensed">
+  <caption>{{ name }}</caption>
+  <tr>
+    <th>Tariff category <super style="color:red">*</super></th>
+    <td>{{ product.tariff_category }}</td>
+  </tr>
+  <tr>
+    <th>Availability restrictions (special, imported, etc)</th>
+    <td>{{ product.availability_restrictions }}</td>
+  </tr>
+  <tr>
+    <th>Prescribability status (non-bioequivalence, etc)</th>
+    <td>{{ product.prescribability }}</td>
+  </tr>
+</table>
+
+  <super style="color:red">*</super>The Drug Tariff category shown is the <em>current</em> category.  It may have been different in {{ date|date:"F Y"}}.
+
+{% else %}
+<p>
+  Extended information from dm+d not available for this presentation.
+</p>
+
+{% endif %}

@@ -24,7 +24,6 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
 from common.utils import valid_date
-from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
@@ -173,16 +172,22 @@ def price_per_unit_histogram(request, bnf_code):
     return render(request, 'ppu_histogram.html', context)
 
 
-def price_per_unit_by_presentation(request, ccg_code, bnf_code):
+def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = request.GET.get('date', None)
     if date:
         date = valid_date(date)
     else:
         date = ImportLog.objects.latest_in_category('prescribing').current_at
     presentation = get_object_or_404(Presentation, pk=bnf_code)
-    ccg = get_object_or_404(PCT, code=ccg_code)
+    if len(entity_code) == 3:
+        entity = get_object_or_404(PCT, code=entity_code)
+    elif len(entity_code) == 6:
+        entity = get_object_or_404(Practice, code=entity_code)
     context = {
-        'entity': ccg,
+        'entity': entity,
+        'highlight': entity.code,
+        'highlight_name': entity.cased_name,
+        'name': presentation.product_name,
         'bnf_code': presentation.bnf_code,
         'presentation': presentation,
         'date': date,
@@ -212,6 +217,8 @@ def practice_price_per_unit(request, code):
     practice = get_object_or_404(Practice, code=code)
     context = {
         'entity': practice,
+        'highlight': practice.code,
+        'highlight_name': practice.cased_name,
         'date': date,
         'by_practice': True
     }
@@ -239,11 +246,14 @@ def ccg_price_per_unit(request, code):
     ccg = get_object_or_404(PCT, code=code)
     context = {
         'entity': ccg,
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
         'date': date,
         'by_ccg': True
     }
 
     return render(request, 'price_per_unit.html', context)
+
 
 ##################################################
 # MEASURES

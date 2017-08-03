@@ -20,7 +20,7 @@ jQuery(document).ready(function(){
     },
 
     title: {
-      text: 'Price-per-unit cost of ' + generic_name
+      text: 'Price-per-unit cost of <br>' + generic_name
     },
     subtitle: {
       text: null

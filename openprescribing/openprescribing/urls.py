@@ -24,8 +24,6 @@ urlpatterns = [
 
     # User-facing pages.
 
-    url(r'^ppu_histogram/(?P<bnf_code>[A-Z\d]+)/$',
-        frontend_views.price_per_unit_histogram, name="ppu_histogram"),
     url(r'^bubble/(?P<bnf_code>[A-Z\d]+)/$',
         frontend_views.bubble, name="bubble"),
     url(r'^analyse/$', frontend_views.analyse,
@@ -45,6 +43,10 @@ urlpatterns = [
     url(r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.practice_price_per_unit,
         name='practice_price_per_unit'),
+    url(r'^practice/(?P<entity_code>[A-Z\d]+)/'
+        '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
+        frontend_views.price_per_unit_by_presentation,
+        name='price_per_unit_by_presentation_practice'),
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         RedirectView.as_view(permanent=True,
                              pattern_name='measures_for_one_practice'),
@@ -65,7 +67,8 @@ urlpatterns = [
     url(r'^ccg/(?P<code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.ccg_price_per_unit,
         name='ccg_price_per_unit'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
+    url(r'^ccg/(?P<entity_code>[A-Z\d]+)/'
+        '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',

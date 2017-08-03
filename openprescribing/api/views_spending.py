@@ -56,7 +56,8 @@ def _build_conditions_and_patterns(code, focus):
     conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
     conditions = "AND (%s) " % conditions
     if focus:
-        conditions += "AND pct_id = %s "
+        conditions += "AND (pct_id = %s OR practice_id = %s)"
+        patterns.append(focus)
         patterns.append(focus)
     return conditions, patterns
 
