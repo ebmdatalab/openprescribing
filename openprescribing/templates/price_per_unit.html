@@ -26,18 +26,17 @@ presentation. We then work out what {{entity.cased_name }} could save
   {% endif %}
 </p>
 
-{% if by_practice %}
- <p>You can also <a href="/ccg/{{entity.ccg.code}}/price_per_unit/?&date={{ date|date:'Y-m-d' }}">view top savings for this practice's CCG.</a></p>
+{% if by_practice or by_presentation %}
+ <p>You can also <a href="/ccg/{{entity.ccg.code}}/price_per_unit/?&date={{ date|date:'Y-m-d' }}">view all savings for {{ entity.ccg.name|default:entity.cased_name }}.</a></p>
 {% endif %}
 <table id="price_per_pill" class="table">
   <thead>
     <tr>
       <th>
-        {% if by_presentation %}
-          Practice
-        {% else %}
-          Presentation
-        {% endif %}
+        Presentation
+      </th>
+      <th>
+        Location
       </th>
       <th>
         Possible savings in month
@@ -120,36 +119,34 @@ presentation. We then work out what {{entity.cased_name }} could save
 <script type="text/javascript">
   {% if by_presentation %}
     // When viewing at Presentation level, link back to practice-level
-    var first_column = 'practice_name';
-    var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/bubble/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '"><span class="label label-info">chart</span></a>';
-      link += ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
+    var location_column = 'practice_name';
+    var presentation_column_render = function(data, type, full, meta) {
+      var link = '<a target="_blank" href="/bubble/{{ bnf_code }}/?date={{ date|date:'Y-m-d' }}&highlight=' + full['practice'] + '">{{ presentation.product_name }}</a>';
       return link;
-    }
+  }
+    var location_column_render = function(data, type, full, meta) {
+      return '<a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
+  }
+
   {% elif by_ccg %}
-    // When viewing at CCG level, drill down to practices
-    var first_column = 'presentation';
-    var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/bubble/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
-      link += ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
-      if(full['flag_bioequivalence']) {
-        return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
-      } else {
-         return link;
-      }
+  // When viewing at CCG level, drill down to practices
+    var presentation_column_render = function(data, type, full, meta) {
+      return '<a target="_blank" href="/bubble/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}">' + full['name'] + '</a>';
     }
+    var location_column_render = function(data, type, full, meta) {
+      return '<a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">{{ entity.cased_name }}</a>';
+    }
+    var location_column = 'presentation';
   {% else %}
     // When viewing at Practice level, group up to CCG
-    var first_column = 'name';
-    var first_column_render = function(data, type, full, meta) {
-      var link = '<a target="_blank" href="/bubble/'+full['presentation']+'/?date='+ full['date'] + '&highlight={{ entity.code }}"><span class="label label-info">chart</span></a>';
-      link += (' ' + data);
-      if(full['flag_bioequivalence']) {
-        return '<span class="glyphicon glyphicon-warning-sign" style="color:red"></span> ' + link;
-      } else {
-         return link;
-      }
+    var presentation_column_render = function(data, type, full, meta) {
+      return '<a target="_blank" href="/bubble/'+data+'/?date='+ full['date'] + '&highlight={{ entity.code }}">' + full['name'] + '</a>';
     }
+
+    var location_column_render = function(data, type, full, meta) {
+      return '<a href="/ccg/{{ entity.ccg.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">{{ entity.ccg.name }}</a>';
+    }
+    var location_column = 'presentation';
   {% endif %}
 
   $('#price_per_pill').DataTable(
@@ -157,8 +154,11 @@ presentation. We then work out what {{entity.cased_name }} could save
       "ajax": {"url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
       "order": [[1, "desc"]],
       "columns": [
-        {"data": first_column,
-         "render": first_column_render
+        {"data": "presentation",
+         "render": presentation_column_render
+        },
+        {"data": location_column,
+         "render": location_column_render
         },
         {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
         {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
