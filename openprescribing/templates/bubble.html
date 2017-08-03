@@ -13,26 +13,26 @@
 
 
 <ul id="tabs" class="nav nav-tabs" role="tablist">
-  <li role="presentation" id="england-tab" class="active">
-    <a href="#england-panel" data-target="#england-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing in England</a>
-  </li>
   {% if highlight %}
-  <li role="presentation" id="local-tab">
-    <a href="#local-panel" data-target="#local-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing in {{ highlight_name }}</a>
+  <li role="presentation" id="local-tab" class="active">
+    <a href="#local-panel" data-target="#local-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing within {{ highlight_name }}</a>
   </li>
   {% endif %}
+  <li role="presentation" id="england-tab">
+    <a href="#england-panel" data-target="#england-panel" aria-controls="settings" role="tab" data-toggle="tab">Compare prescribing across NHS in England</a>
+  </li>
 </ul>
 
 <div class="tab-content">
     <!-- Tab content -->
-    <div role="tabpanel" class="tab-pane active" id="england-panel">
-      <div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;"></div>
-    </div>
     {% if highlight %}
-    <div role="tabpanel" class="tab-pane" id="local-panel">
+    <div role="tabpanel" class="tab-pane active" id="local-panel">
        <div id="highlight_chart" class="chart" style="width: 100%; height: 490px;"></div>
     </div>
     {% endif %}
+    <div role="tabpanel" class="tab-pane" id="england-panel">
+      <div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;"></div>
+    </div>
 </div>
 
 <hr>
