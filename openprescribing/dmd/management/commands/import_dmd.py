@@ -45,7 +45,7 @@ import glob
 import os
 import re
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
 
@@ -212,7 +212,11 @@ def create_dmd_product():
 
 def add_bnf_codes(source_directory):
     """Parse BNF->dm+d mapping supplied by NHSBSA and update tables
-    accordingly
+    accordingly.
+
+    This mapping should be updated monthly. At present we have to
+    request it by email from NHSBSA, but they are planning to publish
+    it automatically some time during 2017.
 
     """
     from openpyxl import load_workbook
