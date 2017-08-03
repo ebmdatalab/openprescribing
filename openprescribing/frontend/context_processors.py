@@ -19,6 +19,10 @@ def api_host(request):
     return {'API_HOST': settings.API_HOST}
 
 
+def debug(request):
+    return {'DEBUG': settings.DEBUG}
+
+
 def google_tracking_id(request):
     tracking_id = None
     if hasattr(settings, 'GOOGLE_TRACKING_ID'):

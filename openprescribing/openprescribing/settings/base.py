@@ -1,8 +1,6 @@
 """Common settings and globals."""
-from os import environ
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-from django.core.exceptions import ImproperlyConfigured
 from common import utils
 
 # PATH CONFIGURATION
@@ -147,7 +145,8 @@ TEMPLATES = [
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
                 'frontend.context_processors.google_user_id',
-                'frontend.context_processors.api_host'
+                'frontend.context_processors.api_host',
+                'frontend.context_processors.debug'
             ],
             'debug': DEBUG
         },
@@ -230,7 +229,9 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s'
+            'format': ('%(asctime)s %(levelname)s '
+                       '[%(name)s:%(lineno)s] %(module)s '
+                       '%(process)d %(thread)d %(message)s')
         }
     },
     'filters': {
