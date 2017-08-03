@@ -86,14 +86,15 @@ jQuery(document).ready(function(){
   }
 
   function labelGenericInSeries(data) {
-    var generic_name = data.categories[
-      _.findIndex(data.categories, function(x) { return x.is_generic })
-    ].name;
-    _.each(data.series, function(d) {
-      if (d.name == generic_name) {
-        d.name += '<span style="color: red"> (prescribed generically)</span>';
-      }
-    });
+    var generic_index = _.findIndex(data.categories, function(x) { return x.is_generic });
+    if (generic_index > -1 ) {
+      var generic_name = data.categories[generic_index].name;
+      _.each(data.series, function(d) {
+        if (d.name == generic_name) {
+          d.name += '<span style="color: red"> (prescribed generically)</span>';
+        }
+      });
+    }
   }
 
   $.getJSON(
