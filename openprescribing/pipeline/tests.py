@@ -126,20 +126,20 @@ class PipelineTests(TestCase):
 
         with mock.patch('django.core.management.base.BaseCommand.execute'):
             for task in tasks.by_type('auto_fetch'):
-                task.run()
+                task.run(2017, 7)
 
             with mock.patch('pipeline.runner.Task.unimported_paths',
                             return_value=['/some/path']):
                 for task in tasks.by_type('convert'):
-                        task.run()
+                        task.run(2017, 7)
 
             with mock.patch('pipeline.runner.Task.unimported_paths',
                             return_value=['/some/path']):
                 for task in tasks.by_type('import'):
-                        task.run()
+                        task.run(2017, 7)
 
             for task in tasks.by_type('post_process'):
-                task.run()
+                task.run(2017, 7)
 
     def test_tasks_by_type(self):
         tasks = self.tasks.by_type('manual_fetch')
@@ -280,14 +280,13 @@ class PipelineTests(TestCase):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You should now locate the latest data for source_a, if available
 You should save it at:
-    {data_basedir}/source_a/{year_and_month}
+    {data_basedir}/source_a/2017_07
 The last imported data can be found at:
     {data_basedir}/source_a/2017_02/source_a.csv
 '''.strip().format(
             data_basedir=settings.PIPELINE_DATA_BASEDIR,
-            year_and_month=datetime.datetime.now().strftime('%Y_%m'),
         )
-        output = task.manual_fetch_instructions()
+        output = task.manual_fetch_instructions(2017, 7)
         self.assertEqual(output, expected_output)
 
         task = self.tasks['fetch_source_c']
@@ -295,15 +294,14 @@ The last imported data can be found at:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You should now locate the latest data for source_c, if available
 You should save it at:
-    {data_basedir}/source_c/{year_and_month}
+    {data_basedir}/source_c/2017_07
 The last imported data can be found at:
     <never imported>
     {data_basedir}/source_c/2017_02/source_c2.csv
 '''.strip().format(
             data_basedir=settings.PIPELINE_DATA_BASEDIR,
-            year_and_month=datetime.datetime.now().strftime('%Y_%m'),
         )
-        output = task.manual_fetch_instructions()
+        output = task.manual_fetch_instructions(2017, 7)
         self.assertEqual(output, expected_output)
 
     def test_manual_fetch_instructions_with_real_data(self):
@@ -313,19 +311,19 @@ The last imported data can be found at:
 
         # We're just checking that no exceptions get raised here
         for task in tasks.by_type('manual_fetch'):
-            task.manual_fetch_instructions()
+            task.manual_fetch_instructions(2017, 7)
 
     def test_run_auto_fetch(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command') as cc:
-            task.run()
-            cc.assert_called_with('fetch_source_b', '--yes-please')
+            task.run(2017, 7)
+            cc.assert_called_with('fetch_source_b', '2017', '7', '--yes-please')
 
     def test_run_convert(self):
         task = self.tasks['convert_source_a']
         path = build_path('source_a', '2017_03', 'source_a.csv')
         with mock.patch('pipeline.runner.call_command') as cc:
-            task.run()
+            task.run(2017, 7)
             cc.assert_called_with('convert_source_a', '--filename', path)
 
     def test_run_import(self):
@@ -337,21 +335,21 @@ The last imported data can be found at:
             expected_calls.append(call)
 
         with mock.patch('pipeline.runner.call_command') as cc:
-            task.run()
+            task.run(2017, 7)
             cc.assert_has_calls(expected_calls)
 
     def test_run_post_process(self):
         task = self.tasks['post_process']
         with mock.patch('pipeline.runner.call_command') as cc:
-            task.run()
+            task.run(2017, 7)
             cc.assert_called_with('post_process')
 
     def test_run_task(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command'):
-            run_task('test', task)
+            run_task(task, '2017_07', 2017, 7)
 
-        log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')
+        log = TaskLog.objects.get(run_id='2017_07', task_name='fetch_source_b')
         self.assertEqual(log.status, 'successful')
         self.assertIsNotNone(log.ended_at)
 
@@ -360,9 +358,9 @@ The last imported data can be found at:
         with self.assertRaises(KeyboardInterrupt):
             with mock.patch('pipeline.runner.call_command') as cc:
                 cc.side_effect = KeyboardInterrupt
-                run_task('test', task)
+                run_task(task, '2017_07', 2017, 7)
 
-        log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')
+        log = TaskLog.objects.get(run_id='2017_07', task_name='fetch_source_b')
         self.assertEqual(log.status, 'failed')
         self.assertIsNotNone(log.ended_at)
         self.assertIn('KeyboardInterrupt', log.formatted_tb)
@@ -370,14 +368,14 @@ The last imported data can be found at:
     def test_run_task_after_success(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task('test', task)
+            run_task(task, '2017_07', 2017, 7)
 
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task('test', task)
+            run_task(task, '2017_07', 2017, 7)
             cc.assert_not_called()
 
         logs = TaskLog.objects.filter(
-            run_id='test',
+            run_id='2017_07',
             task_name='fetch_source_b'
         )
         self.assertEqual(1, logs.count())
@@ -387,13 +385,13 @@ The last imported data can be found at:
         with self.assertRaises(KeyboardInterrupt):
             with mock.patch('pipeline.runner.call_command') as cc:
                 cc.side_effect = KeyboardInterrupt
-                run_task('test', task)
+                run_task(task, '2017_07', 2017, 7)
 
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task('test', task)
+            run_task(task, '2017_07', 2017, 7)
 
         logs = TaskLog.objects.filter(
-            run_id='test',
+            run_id='2017_07',
             task_name='fetch_source_b'
         )
         self.assertEqual(2, logs.count())

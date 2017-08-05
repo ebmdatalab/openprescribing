@@ -150,9 +150,9 @@ class Task(object):
 
 
 class ManualFetchTask(Task):
-    def run(self):
+    def run(self, year, month):
         print('Running manual fetch task {}'.format(self.name))
-        instructions = self.manual_fetch_instructions()
+        instructions = self.manual_fetch_instructions(year, month)
         print(instructions)
         raw_input('Press return when done, or to skip this step')
         unimported_paths = self.source.unimported_paths()
@@ -165,9 +165,9 @@ class ManualFetchTask(Task):
         raw_input('Press return to confirm, or Ctrl+C to cancel '
                   'and resolve any problems')
 
-    def manual_fetch_instructions(self):
+    def manual_fetch_instructions(self, year, month):
         source = self.source
-        year_and_month = datetime.datetime.now().strftime('%Y_%m')
+        year_and_month = datetime.date(year, month, 1).strftime('%Y_%m')
         expected_location = "%s/%s/%s" % (
             settings.PIPELINE_DATA_BASEDIR,
             source.name,
@@ -210,14 +210,16 @@ class ManualFetchTask(Task):
 
 
 class AutoFetchTask(Task):
-    def run(self):
+    def run(self, year, month):
         print('Running auto fetch task {}'.format(self.name))
-        tokens = shlex.split(self.command)
+        command = self.command.format(year=year, month=month)
+        tokens = shlex.split(command)
         call_command(*tokens)
 
 
 class ConvertTask(Task):
-    def run(self):
+    def run(self, year, month):
+        # For now, year and month are ignored
         print('Running convert task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
@@ -228,7 +230,8 @@ class ConvertTask(Task):
 
 
 class ImportTask(Task):
-    def run(self):
+    def run(self, year, month):
+        # For now, year and month are ignored
         print('Running import task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
@@ -239,7 +242,8 @@ class ImportTask(Task):
 
 
 class PostProcessTask(Task):
-    def run(self):
+    def run(self, year, month):
+        # For now, year and month are ignored
         print('Running post-process task {}'.format(self.name))
         tokens = shlex.split(self.command)
         call_command(*tokens)
@@ -438,7 +442,7 @@ def call_command(*args):
     return django_call_command(*args)
 
 
-def run_task(run_id, task):
+def run_task(task, run_id, year, month):
     if TaskLog.objects.filter(
         run_id=run_id,
         task_name=task.name,
@@ -450,7 +454,7 @@ def run_task(run_id, task):
     task_log = TaskLog.objects.create(run_id=run_id, task_name=task.name)
 
     try:
-        task.run()
+        task.run(year, month)
         task_log.mark_succeeded()
     except:
         # We want to catch absolutely every error here, including things that
@@ -461,28 +465,27 @@ def run_task(run_id, task):
         raise
 
 
-def run_all(run_id=None):
-    if run_id is None:
-        run_id = datetime.datetime.now().strftime('%Y-%m-%d')
+def run_all(year, month):
+    run_id = datetime.date(year, month, 1).strftime('%Y_%m')
 
     tasks = load_tasks()
 
     for task in tasks.by_type('manual_fetch'):
-        run_task(run_id, task)
+        run_task(task, run_id, year, month)
 
     for task in tasks.by_type('auto_fetch'):
-        run_task(run_id, task)
+        run_task(task, run_id, year, month)
 
     BigQueryUploader(tasks).upload_all_to_storage()
 
     for task in tasks.by_type('convert').ordered():
-        run_task(run_id, task)
+        run_task(task, run_id, year, month)
 
     for task in tasks.by_type('import').ordered():
-        run_task(run_id, task)
+        run_task(task, run_id, year, month)
 
     for task in tasks.by_type('post_process').ordered():
-        run_task(run_id, task)
+        run_task(task, run_id, year, month)
 
     prescribing_path = tasks['import_hscic_prescribing'].imported_paths()[-1]
     smoketest_handler = SmokeTestHandler(prescribing_path)

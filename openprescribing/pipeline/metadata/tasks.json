@@ -22,7 +22,7 @@
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
-        "command": "hscic_list_sizes"
+        "command": "hscic_list_sizes {year} {month}"
     },
     "fetch_ccg_details": {
         "type": "auto_fetch",
