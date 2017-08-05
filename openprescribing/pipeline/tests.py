@@ -206,9 +206,9 @@ class PipelineTests(TestCase):
             ['import_source_c1', 'import_source_c2']
         )
 
-    def test_filename_regex(self):
+    def test_filename_pattern(self):
         task = self.tasks['convert_source_a']
-        self.assertEqual(task.filename_regex(), 'source_a.csv')
+        self.assertEqual(task.filename_pattern(), 'source_a.csv')
 
     def test_imported_paths(self):
         task = self.tasks['convert_source_a']

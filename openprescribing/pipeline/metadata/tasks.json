@@ -42,7 +42,7 @@
     "import_ccg_boundaries": {
         "type": "import",
         "source_id": "ccg_boundaries",
-        "command": "import_ccg_boundaries --filename ccg_boundaries.*\\.kml",
+        "command": "import_ccg_boundaries --filename ccg_boundaries*.kml",
         "dependencies": [
             "fetch_ccg_boundaries"
         ]
@@ -63,7 +63,7 @@
     "import_adqs": {
         "type": "import",
         "source_id": "adqs",
-        "command": "import_adqs --filename adqs_.*csv",
+        "command": "import_adqs --filename adqs_*csv",
         "dependencies": [
             "fetch_adqs",
             "import_bnf_codes"
@@ -98,7 +98,7 @@
     "import_nhs_postcode_file": {
         "type": "import",
         "source_id": "nhs_postcode_file",
-        "command": "geocode_practices --filename gridall\\.csv",
+        "command": "geocode_practices --filename gridall.csv",
         "dependencies": [
             "fetch_nhs_postcode_file",
             "import_practice_details"
@@ -107,7 +107,7 @@
     "import_hscic_chemicals": {
         "type": "import",
         "source_id": "prescribing_metadata",
-        "command": "import_hscic_chemicals --chem_file T\\d+CHEM.*\\.CSV",
+        "command": "import_hscic_chemicals --chem_file T*CHEM*.CSV",
         "dependencies": [
             "fetch_prescribing_metadata"
         ]
@@ -115,7 +115,7 @@
     "import_hscic_practices": {
         "type": "import",
         "source_id": "prescribing_metadata",
-        "command": "import_practices --hscic_address T\\d+ADDR.*\\.CSV",
+        "command": "import_practices --hscic_address T*ADDR*.CSV",
         "dependencies": [
             "fetch_prescribing_metadata",
             "import_ccg_details",
@@ -125,7 +125,7 @@
     "convert_hscic_prescribing": {
         "type": "convert",
         "source_id": "prescribing",
-        "command": "convert_hscic_prescribing --filename .*Detailed_Prescribing_Information.csv",
+        "command": "convert_hscic_prescribing --filename *Detailed_Prescribing_Information.csv",
         "dependencies": [
             "fetch_prescribing"
         ]
@@ -133,7 +133,7 @@
     "import_hscic_prescribing": {
         "type": "import",
         "source_id": "prescribing",
-        "command": "import_hscic_prescribing --filename .*Detailed_Prescribing_Information_formatted.CSV",
+        "command": "import_hscic_prescribing --filename *Detailed_Prescribing_Information_formatted.CSV",
         "dependencies": [
             "convert_hscic_prescribing",
             "import_hscic_practices",
@@ -145,7 +145,7 @@
     "import_dispensing_practices": {
         "type": "import",
         "source_id": "dispensing_practices",
-        "command": "import_practice_dispensing_status --filename dispensing_practices.*\\.csv",
+        "command": "import_practice_dispensing_status --filename dispensing_practices*.csv",
         "dependencies": [
             "import_hscic_practices",
             "import_practice_details"
