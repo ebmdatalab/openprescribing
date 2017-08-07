@@ -23,7 +23,11 @@
       <p>
        The following chart shows prescribing on all brands and formulations of <span id="extended-info-link">{{ presentation.product_name }}</span>{% if entity.code|length == 3 %}, for all practices within {{ entity.cased_name }}.  Data for individual practices is displayed below the chart.{% else %}  for {{ entity.cased_name }}; the summary data is displayed below the chart.{% endif %}
        {% if highlight %}
-         Alternatively, you can <a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">remove focus on {{ presentation.product_name }}.</a>
+         {% if entity.ccg %}
+           Alternatively, you can <a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">view savings for all products in {{ entity.cased_name }}.</a>
+         {% else %}
+           Alternatively, you can <a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">view savings for all products in {{ entity.cased_name }}.</a>
+         {% endif %}
        {% endif %}
       </p>
     {% endif %}
