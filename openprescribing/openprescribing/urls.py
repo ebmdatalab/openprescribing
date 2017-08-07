@@ -16,6 +16,9 @@ urlpatterns = [
         name="about"),
     url(r'^faq/$', TemplateView.as_view(template_name='faq.html'),
         name="faq"),
+    url(r'^price-per-unit-faq/$', TemplateView.as_view(
+        template_name='price_per_unit_faq.html'),
+        name="price_per_unit_faq"),
     url(r'^caution/$', TemplateView.as_view(template_name='caution.html'),
         name="caution"),
     url(r'^how-to-use/$',
