@@ -73,12 +73,11 @@ def _get_practices_like_code(q):
 
 
 def _get_pcts_like_code(q):
+    pcts = PCT.objects.filter(close_date__isnull=True)
     if q:
-        pcts = PCT.objects.filter(Q(code__istartswith=q) |
-                                  Q(name__icontains=q)) \
-                          .filter(org_type='CCG')
-    else:
-        pcts = PCT.objects.all()
+        pcts = pcts.filter(Q(code__istartswith=q) |
+                           Q(name__icontains=q)) \
+                        .filter(org_type='CCG')
     pct_values = pcts.values('name', 'code')
     for p in pct_values:
         p['id'] = p['code']

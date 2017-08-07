@@ -1,0 +1,16 @@
+[
+  {"name": "chapter", "type": "string", "mode": "required"},
+  {"name": "chapter_code", "type": "string", "mode": "required"},
+  {"name": "section", "type": "string", "mode": "required"},
+  {"name": "section_code", "type": "string"},
+  {"name": "para", "type": "string"},
+  {"name": "para_code", "type": "string"},
+  {"name": "subpara", "type": "string"},
+  {"name": "subpara_code", "type": "string"},
+  {"name": "chemical", "type": "string"},
+  {"name": "chemical_code", "type": "string"},
+  {"name": "product", "type": "string"},
+  {"name": "product_code", "type": "string"},
+  {"name": "presentation", "type": "string"},
+  {"name": "presentation_code", "type": "string"}
+]

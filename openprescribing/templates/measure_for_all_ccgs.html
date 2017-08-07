@@ -2,14 +2,12 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Prescribing of {{ measure }} by all CCGs{% endblock %}
+{% block title %} {{ measure }} by all CCGs{% endblock %}
 {% block active_class %}ccg{% endblock %}
 
 {% block content %}
 
-<h1>{{measure.name}} prescribing by all CCGs</h1>
-
-<p>How all CCGs prescribed {{ measure.title }}.</p>
+<h1>{{measure.name}} by all CCGs</h1>
 
 {% if measure.url %}
 <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
@@ -25,7 +23,7 @@
 
 {% endif %}
 
-<p>CCGs are ordered by mean percentile over the past six months, with the worst-performing at the top. Each chart shows the results for the individual CCG, plus deciles across all CCGs in NHS England.</p>
+<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
 
 <div id="measures">
 <div id="charts" class="row">

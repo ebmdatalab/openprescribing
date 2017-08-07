@@ -6,6 +6,7 @@ from fabric.context_managers import cd
 from datetime import datetime
 import json
 import os
+
 import requests
 
 
@@ -29,6 +30,24 @@ NEWRELIC_APPIDS = {
     'staging': '45937313',
     'test': '45170011'
 }
+
+
+def notify_slack(message):
+    """Posts the message to #general
+    """
+    # Set the webhook_url to the one provided by Slack when you create
+    # the webhook at
+    # https://my.slack.com/services/new/incoming-webhook/
+    webhook_url = os.environ['SLACK_GENERAL_POST_KEY']
+    slack_data = {'text': message}
+
+    response = requests.post(webhook_url, json=slack_data)
+    if response.status_code != 200:
+        raise ValueError(
+            'Request to slack returned an error %s, the response is:\n%s'
+            % (response.status_code, response.text)
+        )
+
 
 def notify_newrelic(revision, url):
     payload = {
@@ -136,6 +155,9 @@ def log_deploy():
                            'changes_url': url})
     run("echo '%s' >> deploy-log.json" % log_line)
     notify_newrelic(current_commit, url)
+    if env.environment == 'production':
+        notify_slack(
+            "A #deploy just happened. Changes here: %s" % url)
 
 
 def checkpoint(force_build):

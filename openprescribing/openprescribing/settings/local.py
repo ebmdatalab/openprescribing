@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from .base import *
 from common import utils
+import os
 
 
 # DEBUG CONFIGURATION
@@ -93,6 +94,7 @@ ANYMAIL = {
         'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
 }
 
+<<<<<<< HEAD
 # LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
 LOGGING = {
@@ -139,3 +141,10 @@ LOGGING = {
         },
     }
 }
+=======
+# Base directory for pipeline metadata
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = os.path.join(SITE_ROOT, 'pipeline')
+>>>>>>> master

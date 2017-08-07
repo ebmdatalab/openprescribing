@@ -1,5 +1,9 @@
+import datetime
 import json
+
 from django.test import TestCase
+
+from frontend.models import PCT
 
 
 class TestAPIMeasureViews(TestCase):
@@ -58,7 +62,7 @@ class TestAPIMeasureViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(len(data['measures'][0]['data']), 3)
+        self.assertEqual(len(data['measures'][0]['data']), 2)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['pct_id'], '02Q')  # we get 02Q
@@ -83,6 +87,17 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['10'], '63588.51')
         self.assertEqual("%.2f" % d['cost_savings']['50'], '58658.82')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '11731.76')
+
+    def test_api_measure_by_ccg_excludes_closed(self):
+        url = '/api/1.0/measure_by_ccg/'
+        url += '?org=02Q&measure=cerazette&format=json'
+        pct = PCT.objects.get(pk='02Q')
+        pct.close_date = datetime.date(2001, 1, 1)
+        pct.save()
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertFalse(data['measures'])
 
     def test_api_all_measures_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'

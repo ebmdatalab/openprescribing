@@ -4,6 +4,7 @@ require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
 require('bootstrap');
+var downloadjs = require('downloadjs');
 var Cookies = require('cookies-js');
 var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
@@ -161,11 +162,15 @@ var analyseChart = {
       'eventLabel': _this.hash
     });
     if (this.globalOptions.data.combinedData.length > 0) {
-      this.addDataDownload();
       this.el.loadingEl.hide();
       this.el.resultsEl.show();
       this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
                                                    this.globalOptions);
+      if (this.isOldIe) {
+        $('#data-link').replaceWith("<div class='alert alert-danger'>Sorry, you must use a newer web browser to make use of this feature</strong>").show();
+      } else {
+        this.addDataDownload();
+      }
 
       // For now, don't render the map and line chart in older browsers -
       // they are just too slow.
@@ -248,7 +253,8 @@ var analyseChart = {
     });
 
     // Move the button to the currently selected tab
-    $('.save-url-button').appendTo('.nav-tabs .active');
+    $('.save-url-button').hide();
+    $('.save-url-button').appendTo('.nav-tabs .active.saveable').show();
 
     // Set up the clipboard functionality, including a fallback for
     // unsupported browsers
@@ -277,6 +283,7 @@ var analyseChart = {
     var sampleItem;
     var csvRows;
     var encodedUri;
+    var filename;
     sampleItem = this.globalOptions.data.combinedData[0];
     if ('astro_pu_cost' in sampleItem) {
       csvHeader.push('astro_pu_cost');
@@ -299,7 +306,8 @@ var analyseChart = {
       });
       csvRows.push(str);
     });
-    encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvRows.join("\n"));
+    encodedUri = "data:text/csv," + encodeURIComponent(csvRows.join("\n"));
+    filename = this.globalOptions.friendly.filename + '.csv';
     $('#data-link').on('click', function(e) {
       e.preventDefault();
       ga('send', {
@@ -308,9 +316,10 @@ var analyseChart = {
         'eventAction': 'click',
         'eventLabel': _this.hash
       });
-      window.open(encodedUri);
+      downloadjs(encodedUri, filename, 'text/csv');
     });
     $(this.el.rowCount).text('(' + this.globalOptions.data.combinedData.length + ' rows)');
+    $('#data-link').show();
   },
 
   setUpSaveUrl: function () {
@@ -328,7 +337,10 @@ var analyseChart = {
     $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
       $(window).resize(); // CSS hack.
       var chart = _this.el.chartEl.highcharts();
-      chart.reflow();
+      if (typeof chart != 'undefined') {
+        // Don't break in IE8
+        chart.reflow();
+      }
       var target = ($(this).data('target'));
       if ((target === '#chart-panel') ||
           (target === '#data-panel')) {

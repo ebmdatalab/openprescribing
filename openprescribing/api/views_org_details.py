@@ -34,7 +34,7 @@ def org_details(request, format=None):
             query += "WHERE "
             for i, c in enumerate(orgs):
                 if len(c) == 3:
-                    query += 'pr.pct_id=%s '
+                    query += 'pc.ccg_id=%s '
                 else:
                     query += "pr.practice_id=%s "
                 if (i != len(orgs) - 1):
