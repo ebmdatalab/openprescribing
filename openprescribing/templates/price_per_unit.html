@@ -15,7 +15,7 @@
 
     <p id="more-text"><a name="more-text"></a>We have developed a new method of identifying cost savings which identifies a greater volume of cost savings than generic switching, and does not require switching patients between drugs, as with therapeutic switching.  The cost to the NHS of even generic prescriptions for the same treatment at the same dose can vary widely between practices, depending on the specific presentation that is dispensed. For example, a branded or generic version of the same treatment may have different prices; but different specific “brands” of “branded generic” may also have different prices. Our tool automatically identifies cost-saving opportunities from variation in the price-per-unit of a given treatment, by identifying the price-per-unit in each practice for each dose of each treatment, and comparing this against the price-per-unit in the best 10% of most efficient prescribers. The cost savings can be viewed using this tool, ranked in order of which drug has the most cost saving opportunities. The full methodology and findings are described <a href="https://doi.org/10.1101/172569">in our paper</a>.</p>
     {% if entity.ccg %}
-      <p>{{entity.cased_name }} is a GP practice in <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}">{{ entity.ccg.cased_name }}</a>.</p>
+      <p>{{entity.cased_name }} is a GP practice in <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}?date={{ date|date:"Y-m-d" }}">{{ entity.ccg.cased_name }}</a>.</p>
     {% endif %}
     {% if by_presentation %}
      <h3>Focus on savings for {{ presentation.product_name }}
