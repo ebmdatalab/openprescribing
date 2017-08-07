@@ -4,13 +4,13 @@ import os
 import pandas as pd
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from django.db import transaction
 
 from ebmdatalab.bigquery import query_and_return
 
 from common.utils import valid_date
 from dmd.models import DMDProduct
+from dmd.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
 
@@ -68,7 +68,7 @@ def make_merged_table_for_month(
             cases.append((code_to_merge, source_code))
         seen.add(source_code)
         seen.add(code_to_merge)
-    prescribing_table = 'normalised_prescribing_standard'  # XXX shouldn't hard code
+    prescribing_table = 'normalised_prescribing_standard'
     query = """
       SELECT
         practice,
@@ -300,3 +300,7 @@ class Command(BaseCommand):
                             pct_id=d.get('pct', None),
                             practice_id=d.get('practice', None)
                         )
+            ImportLog.objects.create(
+                category='ppu',
+                filename='n/a',
+                current_at=options['month'])
