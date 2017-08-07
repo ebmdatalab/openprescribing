@@ -7,7 +7,7 @@ require('Highcharts-more');
 var chroma = require('chroma-js');
 var _ = require('underscore');
 
-jQuery(document).ready(function(){
+jQuery(document).ready(function() {
   var highchartsOptions = {
     chart: {
       type: 'bubble',
@@ -79,23 +79,30 @@ jQuery(document).ready(function(){
     }]
 
   };
+  /** Sets color on each presentation on a green-red scale according
+   * to its mean PPU */
   function setGenericColours(data) {
     var scale = chroma.scale(['green', 'yellow', 'red']);
-    var maxPPU = _.max(_.map(data.series, function(d) { return d.mean_ppu }));
-    var minPPU = _.min(_.map(data.series, function(d) { return d.mean_ppu }));
+    var means = _.map(data.series, function(d) {
+      return d.mean_ppu
+    });
+    var maxPPU = _.max(means);
+    var minPPU = _.min(means);
     var maxRange = maxPPU - minPPU;
     _.each(data.series, function(d) {
       var ratio = (d.mean_ppu - minPPU) / maxRange;
       d.color = scale(ratio).hex();
     });
   }
-
+  /*** Add some text indicating which presentation is the generic
+   */
   function labelGenericInSeries(data) {
-    var generic_index = _.findIndex(data.categories, function(x) { return x.is_generic });
+    var generic_index = _.findIndex(data.categories, function(x) {
+      return x.is_generic });
     if (generic_index > -1 ) {
       var generic_name = data.categories[generic_index].name;
       _.each(data.series, function(d) {
-        if (d.name == generic_name) {
+        if (d.name === generic_name) {
           d.name += '<span style="color: red"> (prescribed generically)</span>';
         }
       });
@@ -110,7 +117,7 @@ jQuery(document).ready(function(){
       var options = $.extend(true, {}, highchartsOptions);
       options.chart.width = $('.tab-content').width();
       options.subtitle.text = 'for prescriptions within NHS England';
-      options.series[0]['data'] = data.series;
+      options.series[0].data = data.series;
       options.yAxis.plotLines[0].value = data.plotline;
       $('#all_practices_chart').highcharts(options);
     }

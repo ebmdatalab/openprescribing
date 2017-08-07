@@ -400,7 +400,8 @@ class Prescription(models.Model):
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     total_items = models.IntegerField()
-    net_cost = models.FloatField(blank=True, null=True)  # XXX change this post-migration
+    # XXX change this post-deploy; in fact we should not allow blanks
+    net_cost = models.FloatField(blank=True, null=True)
     actual_cost = models.FloatField()
     quantity = models.FloatField()
     processing_date = models.DateField()

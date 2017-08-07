@@ -81,7 +81,7 @@ def bubble(request, format=None):
     conditions, patterns = _build_conditions_and_patterns(code, focus)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
-        "COALESCE(frontend_presentation.name, 'XXX') as presentation_name, "
+        "COALESCE(frontend_presentation.name, 'unknown') as presentation_name, "
         "quantity, practice_id, pct_id, "
         "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
         "FROM frontend_prescription "
@@ -90,8 +90,8 @@ def bubble(request, format=None):
         "frontend_presentation.bnf_code "
         "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
         "WHERE processing_date = %s "
-        "AND setting = 4 "
-        + conditions +
+        "AND setting = 4 " +
+        conditions +
         ") "
     )
     binned_ppus_sql = rounded_ppus_cte_sql + (
