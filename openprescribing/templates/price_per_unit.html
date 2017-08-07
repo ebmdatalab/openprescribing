@@ -7,88 +7,69 @@
 
 {% block content %}
 
-{% if by_ccg or by_practice %}
- <h1>Top saving opportunities for {{entity.cased_name }} in {{ date|date:"F Y"}}</h1>
-{% elif by_presentation %}
- <h1>Savings for {{ presentation.product_name }} in {{ date|date:"F Y"}}
-  {% if entity.code|length == 3 %}
-   <br><span class="small">for all practices within {{ entity.cased_name }}</span></h1>
- {% else %}
-   <br><span class="small">at {{ entity.cased_name }}</span></h1>
- {% endif %}
-{% endif %}
+<h1>Top saving opportunities for {{entity.cased_name }} in {{ date|date:"F Y"}}</h1>
 
-<p>There can be wide variation in the price paid across England for
-the same presentation of a drug or appliance. Every month we calculate
-the average price-per-unit (PPU) achieved by practices for each
-presentation. We then work out what {{entity.cased_name }} could save
-  if it were prescribing as well as the best 10%. </p>
+<div class="row">
+  <div class="col-md-12">
+    <p>There can be wide variation in the price paid across England for
+    the same presentation of a drug or appliance. Every month we calculate
+    the average price-per-unit (PPU) achieved by practices for each
+    presentation. We then work out what {{entity.cased_name }} could save
+      if it were prescribing as well as the best 10%. </p>
 
-<p>
-  {% if by_ccg %}
-    Each presentation name links to a table showing the breakdown by
-  practice for this CCG.
-  {% endif %}
-</p>
-
-{% if by_practice %}
- <p>You can also <a href="/ccg/{{entity.ccg.code}}/price_per_unit/?&date={{ date|date:'Y-m-d' }}">view top savings for this practice's CCG.</a></p>
- {% endif %}
-
-<table id="price_per_pill" class="table">
-  <thead>
-    <tr>
-      <th>
-        {% if by_presentation %}
-          Practice
-        {% else %}
-          Presentation
-        {% endif %}
-      </th>
-      <th>
-        Possible savings in month
-      </th>
-      <th>
-        PPU
-      </th>
-      <th>
-        Target PPU
-      </th>
-      <th>
-        Quantity
-      </th>
-      <th>
-        Formulation swap
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Loading...
-      </th>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-    </tr>
-  </tbody>
-
-</table>
-
-<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
-<hr>
+    {% if by_presentation %}
+     <h3>Focus on savings for {{ presentation.product_name }}
+     </h3>
+      <p>
+       The following chart shows prescribing on all brands and formulations of <span id="extended-info-link">{{ presentation.product_name }}</span>{% if entity.code|length == 3 %}, for all practices within {{ entity.cased_name }}.  Data for individual practices is displayed below the chart.{% else %}  for {{ entity.cased_name }}; the summary data is displayed below the chart.{% endif %}
+       {% if highlight %}
+         Alternatively, you can <a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">remove focus on {{ presentation.product_name }}.</a>
+       {% endif %}
+      </p>
+    {% else %}
+     <p>Click on a presentation name to drill down.</p>
+    {% endif %}
+     <div id="extended-info">
+      <h4>Extended information about {{name}}</h4>
+      <div id="extended-info-content">
+      {% if product %}
+       <table class="table table-condensed">
+         <tr>
+           <th>Tariff category <super style="color:red">*</super></th>
+           <td>{{ product.tariff_category }}</td>
+         </tr>
+         <tr>
+           <th>Availability restrictions (special, imported, etc)</th>
+           <td>{{ product.availability_restrictions }}</td>
+         </tr>
+         <tr>
+           <th>Prescribability status (non-bioequivalence, etc)</th>
+           <td>{{ product.prescribability }}</td>
+         </tr>
+       </table>
+      {% else %}
+       <p>
+         Extended information from dm+d not available for this presentation.
+       </p>
+       {% endif %}
+       </div>
+     </div>
+  </div>
+</div>
 
 {% if by_presentation %}
-{% include '_bubble_chart.html' %}
-<hr>
+<div class="row">
+  <div class="col-md-12">
+  {% include '_bubble_chart.html' %}
+  </div>
+</div>
 {% endif %}
 
+<div class="row">
+  <div class="col-md-12">
+{% include '_ppu_data_table.html' %}
+  </div>
+</div>
 
 <h2>Explanatory notes</h2>
 
@@ -131,6 +112,20 @@ presentation. We then work out what {{entity.cased_name }} could save
     var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
     var highlight_name = '{{ highlight_name }}';
     var generic_name = '{{ name }}';
+    $('#price_per_pill .info-link').popover();
+    {% if product %}
+     $('#extended-info-link').popover({
+       html: true,
+       trigger: 'click focus',
+       content: function() {
+         return $('#extended-info-content').html();
+       },
+       title: function() {
+         return $('#extended-info h2').html();
+       }
+     }).addClass('info-link');
+    {% endif %}
+
   </script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
 
@@ -159,6 +154,7 @@ presentation. We then work out what {{entity.cased_name }} could save
 
   $('#price_per_pill').DataTable(
     {
+      "dom": '<"top"f>rt<"bottom"lip><"clear">',
       "ajax": {"url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
       "order": [[1, "desc"]],
       "columns": [

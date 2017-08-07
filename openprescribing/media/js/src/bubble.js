@@ -25,6 +25,11 @@ jQuery(document).ready(function(){
     subtitle: {
       text: null
     },
+    plotOptions: {
+      bubble: {
+        minSize: 3
+      }
+    },
     xAxis: {
       type: 'category',
       gridLineWidth: 1,
