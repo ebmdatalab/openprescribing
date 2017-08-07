@@ -27,7 +27,7 @@
   "import_source_b": {
     "type": "import",
     "source_id": "source_b",
-    "command": "import_source_b --filename source_b_\\d+\\.csv",
+    "command": "import_source_b --filename source_b_*.csv",
     "dependencies": ["fetch_source_b", "import_source_a"]
   },
   "import_source_c1": {
