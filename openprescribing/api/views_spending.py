@@ -147,6 +147,10 @@ def price_per_unit(request, format=None):
 
     query = {'date': date}
     filename = date
+    if bnf_code:
+        presentation = get_object_or_404(Presentation, pk=bnf_code)
+        query['presentation'] = presentation
+        filename += "-%s" % bnf_code
     if entity_code:
         filename += "-%s" % entity_code
         if len(entity_code) == 3:
@@ -154,10 +158,7 @@ def price_per_unit(request, format=None):
             query['pct'] = entity_code
             if bnf_code:
                 # All-practices-for-code-for-one-ccg
-                presentation = get_object_or_404(Presentation, pk=bnf_code)
                 query['practice__isnull'] = False
-                query['presentation'] = presentation
-                filename += "-%s" % bnf_code
             else:
                 query['practice__isnull'] = True
         else:
