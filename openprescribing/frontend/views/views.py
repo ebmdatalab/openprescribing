@@ -118,67 +118,14 @@ def chemical(request, bnf_code):
 ##################################################
 # Price per unit
 ##################################################
-def bubble(request, bnf_code):
-    presentation = get_object_or_404(Presentation, bnf_code=bnf_code)
-    product = presentation.dmd_product
-    date = request.GET.get('date', '')
-    highlight = request.GET.get('highlight', '')
-    if len(highlight) == 3:
-        highlight_name = get_object_or_404(PCT, code=highlight).cased_name
-    elif len(highlight) == 6:
-        highlight_name = get_object_or_404(Practice, code=highlight).cased_name
-    else:
-        highlight_name = ''
-    if date:
-        date = valid_date(date)
-    else:
-        date = ImportLog.objects.latest_in_category('prescribing').current_at
-    context = {
-        'bnf_code': bnf_code,
-        'date': date,
-        'name': presentation.product_name,
-        'highlight': highlight,
-        'highlight_name': highlight_name,
-        'product': product
-    }
-
-    return render(request, 'bubble.html', context)
-
-
-def price_per_unit_histogram(request, bnf_code):
-    presentation = get_object_or_404(Presentation, bnf_code=bnf_code)
-    product = presentation.dmd_product
-    date = request.GET.get('date', '')
-    highlight = request.GET.get('highlight', '')
-    if len(highlight) == 3:
-        highlight_name = get_object_or_404(PCT, code=highlight).cased_name
-    elif len(highlight) == 6:
-        highlight_name = get_object_or_404(Practice, code=highlight).cased_name
-    else:
-        highlight_name = ''
-    if date:
-        date = valid_date(date)
-    else:
-        date = ImportLog.objects.latest_in_category('prescribing').current_at
-    context = {
-        'bnf_code': bnf_code,
-        'date': date,
-        'name': presentation.product_name,
-        'highlight': highlight,
-        'highlight_name': highlight_name,
-        'product': product
-    }
-
-    return render(request, 'ppu_histogram.html', context)
-
-
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = request.GET.get('date', None)
     if date:
         date = valid_date(date)
     else:
-        date = ImportLog.objects.latest_in_category('prescribing').current_at
+        date = ImportLog.objects.latest_in_category('ppu').current_at
     presentation = get_object_or_404(Presentation, pk=bnf_code)
+    product = presentation.dmd_product
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
@@ -190,6 +137,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         'name': presentation.product_name,
         'bnf_code': presentation.bnf_code,
         'presentation': presentation,
+        'product': product,
         'date': date,
         'by_presentation': True
     }

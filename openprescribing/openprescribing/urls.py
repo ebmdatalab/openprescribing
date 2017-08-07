@@ -23,9 +23,6 @@ urlpatterns = [
         name="how-to-use"),
 
     # User-facing pages.
-
-    url(r'^bubble/(?P<bnf_code>[A-Z\d]+)/$',
-        frontend_views.bubble, name="bubble"),
     url(r'^analyse/$', frontend_views.analyse,
         name="analyse"),
     url(r'^chemical/$', frontend_views.all_chemicals,
