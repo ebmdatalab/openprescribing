@@ -108,6 +108,7 @@ jQuery(document).ready(function(){
       setGenericColours(data);
       labelGenericInSeries(data);
       var options = $.extend(true, {}, highchartsOptions);
+      options.chart.width = $('.tab-content').width();
       options.subtitle.text = 'for prescriptions within NHS England';
       options.series[0]['data'] = data.series;
       options.yAxis.plotLines[0].value = data.plotline;
