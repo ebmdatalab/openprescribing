@@ -11,12 +11,12 @@
 
 <div class="row">
   <div class="col-md-12">
-    <p>There can be wide variation in the price paid across England for
-    the same presentation of a drug or appliance. Every month we calculate
-    the average price-per-unit (PPU) achieved by practices for each
-    presentation. We then work out what {{entity.cased_name }} could save
-      if it were prescribing as well as the best 10%. </p>
+    <p>There is wide variation in the unit cost of a number of medicines prescribed across  England, due to the way the reimbursement system is structured.  Every month we estimate what {{entity.cased_name }} could save if it were prescribing as well as the best 10%. <a href="#more-text" id="read-more">Read more...</a></p>
 
+    <p id="more-text"><a name="more-text"></a>We have developed a new method of identifying cost savings which identifies a greater volume of cost savings than generic switching, and does not require switching patients between drugs, as with therapeutic switching.  The cost to the NHS of even generic prescriptions for the same treatment at the same dose can vary widely between practices, depending on the specific presentation that is dispensed. For example, a branded or generic version of the same treatment may have different prices; but different specific “brands” of “branded generic” may also have different prices. Our tool automatically identifies cost-saving opportunities from variation in the price-per-unit of a given treatment, by identifying the price-per-unit in each practice for each dose of each treatment, and comparing this against the price-per-unit in the best 10% of most efficient prescribers. The cost savings can be viewed using this tool, ranked in order of which drug has the most cost saving opportunities. The full methodology and findings are described <a href="https://doi.org/10.1101/172569">in our paper</a>.</p>
+    {% if entity.ccg %}
+      <p>{{entity.cased_name }} is a GP practice in <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}">{{ entity.ccg.cased_name }}</a>.</p>
+    {% endif %}
     {% if by_presentation %}
      <h3>Focus on savings for {{ presentation.product_name }}
      </h3>
@@ -26,9 +26,8 @@
          Alternatively, you can <a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">remove focus on {{ presentation.product_name }}.</a>
        {% endif %}
       </p>
-    {% else %}
-     <p>Click on a presentation name to drill down.</p>
     {% endif %}
+    {% if product %}
      <div id="extended-info">
       <h4>Extended information about {{name}}</h4>
       <div id="extended-info-content">
@@ -54,6 +53,7 @@
        {% endif %}
        </div>
      </div>
+   {% endif %}
   </div>
 </div>
 
@@ -71,37 +71,12 @@
   </div>
 </div>
 
-<h2>Explanatory notes</h2>
+<h2>Interpretation</h2>
 
-<h3>Interpretation</h3>
-<p>This model assumes that every practice could achieve the same value for money as the practice at the 10th percentile. In general, if pill <strong>A1</strong> is expensive and pill <strong>A2</strong> is cheap, the savings could be achieved by switching to prescribing as much as possible of pill <strong>A2</strong>.</p>
-<p>We don't identify <strong>A2</strong> on your behalf, because there may be many reasons why particular switches might not make sense (see <em>Limitations</em>, below).</p>
-<p>We do, however, provide charts for each presentation which show the distribution of different PPUs for all brands that have been prescribed in a given month. This can help identify brands (or generics) to which it might make sense to switch.</p>
-
-<h3>Method</h3>
-<p>Within a single month, we calculate the average PPU achieved by each practice for each presentation (generic and branded combined). We then approximate a realistic, best-case PPU by finding the average PPU which is at the cheapest decile for that presentation.</p>
-
-<p>We then work out what each GP Practice or CCG could save if it prescribed that presentation at the best decile.</p>
-
-<ul>
-  <li>We only consider data from a single month, because the Drug Tariff changes monthly, making price-per-dose comparisons meaningless between months</li>
-  <li>We cover data from standard GP Practices only</li>
-  <li>When summing total possible savings, for a given practice or CCG, we don't consider savings that they are already making</li>
-  <li>We use the NIC cost rather than the actual cost for these calculations (see below)</li>
-  <li>When calculating PPU, we combine all formulations (e.g. tablets and capsules) that we consider to be clinically equivalent.</li>
-</ul>
-
-<h3>Limitations</h3>
-<ul>
-<li>Cost-saving opportunities are calculated on the basis of <em>Net Ingredient Cost</em> (NIC). We use NIC because it excludes container payments, bulk discounting and out-of-pocket expenses. This allows our calculations to be consistent across NHS England; however, this approach will, on average, overestimate possible savings by around 7%.</li>
-
-<li>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands.  We have marked presentations with non-bioequivalence issues with a warning sign <span class="glyphicon glyphicon-warning-sign" style="color:red"></span>.  Licencing differences may also play a role.</li>
-
-<li>This analysis is carried out against GP Practice prescribing data for NHS England, which typically has a 3 month lag to its release.  If the Department of Health has updated the Drug Tariff to reflect the cheaper list prices, then a switch may no longer be necessary to achieve savings.</li>
-
-<li>For a full discussion of our approach, including further limitations and discussion of the issues, see our <a href="https://github.com/ebmdatalab/price-per-dose">code repository</a>.  We are also in the process of writing a paper on the subject, which we will refer to here when it's published.</li>
-</ul>
-
+<p>In general, if pill <strong>A1</strong> is expensive and pill <strong>A2</strong> is cheap, the savings could be achieved by switching to prescribing as much as possible of pill <strong>A2</strong>.</p>
+<p>We don't identify <strong>A2</strong> on your behalf, because there may be many reasons why particular switches might not make sense (see <em>FAQ</em>, below).</p>
+<p>We do, however, provide charts for each presentation which show the distribution of different PPUs for all brands that have been prescribed in a given month. This can help identify brands (or generics) to which it might make sense to switch.  Click the presentation name to drill down and view this data.</p>
+<p>Read <a href="/price-per-unit-faq">Frequently Asked Questions</a> here.</p>
 
 
 {% endblock %}
@@ -112,6 +87,11 @@
     var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
     var highlight_name = '{{ highlight_name }}';
     var generic_name = '{{ name }}';
+    $('#read-more').click(function (e) {
+      e.preventDefault();
+      $('#more-text').show();
+      $('#read-more').hide();
+    })
     $('#price_per_pill .info-link').popover();
     {% if product %}
      $('#extended-info-link').popover({
@@ -154,7 +134,7 @@
 
   $('#price_per_pill').DataTable(
     {
-      "dom": '<"top"f>rt<"bottom"lip><"clear">',
+      "dom": '<"top">rt<"bottom"lifp><"clear">',
       "ajax": {"url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
       "order": [[1, "desc"]],
       "columns": [
