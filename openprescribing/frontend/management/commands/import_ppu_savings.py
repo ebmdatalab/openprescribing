@@ -53,7 +53,12 @@ def make_merged_table_for_month(
     we treat them as Tramadol tablets (for example).
 
     The mapping of what we consider equivalent is stored in a Google
-    Sheet.
+    Sheet, currently at
+    https://docs.google.com/spreadsheets/d/1SvMGCKrmqsNkZYuGW18Sf0wTluXyV4bhyZQaVLcO41c/edit
+
+    The process of updating this spreadsheet (which should be done
+    periodically) is documented
+    [here](https://github.com/ebmdatalab/price-per-dose/issues/11)
 
     """
     cases = []
