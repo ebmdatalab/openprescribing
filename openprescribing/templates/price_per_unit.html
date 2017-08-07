@@ -34,15 +34,15 @@
       {% if product %}
        <table class="table table-condensed">
          <tr>
-           <th>Tariff category <super style="color:red">*</super></th>
+           <th>Tariff category</th>
            <td>{{ product.tariff_category }}</td>
          </tr>
          <tr>
-           <th>Availability restrictions (special, imported, etc)</th>
+           <th>Availability restrictions</th>
            <td>{{ product.availability_restrictions }}</td>
          </tr>
          <tr>
-           <th>Prescribability status (non-bioequivalence, etc)</th>
+           <th>Prescribability status</th>
            <td>{{ product.prescribability }}</td>
          </tr>
        </table>
@@ -96,12 +96,12 @@
     {% if product %}
      $('#extended-info-link').popover({
        html: true,
-       trigger: 'click focus',
+       trigger: 'hover',
        content: function() {
          return $('#extended-info-content').html();
        },
        title: function() {
-         return $('#extended-info h2').html();
+         return $('#extended-info h4').html();
        }
      }).addClass('info-link');
     {% endif %}
