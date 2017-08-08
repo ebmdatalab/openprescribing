@@ -445,7 +445,7 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         # N.B. This is the mean of a *single* value; although there
         # are two values in the raw data, one is trimmed as it is
         # outside the 99th percentile
-        self.assertEqual(data['plotline'], 0.03233695652173913)
+        self.assertEqual(data['plotline'], 0.03)
 
     # XXX these should mostly become `bubble` tests
     def test_code_without_matches(self):

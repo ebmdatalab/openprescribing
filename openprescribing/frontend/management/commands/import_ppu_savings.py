@@ -10,7 +10,7 @@ from ebmdatalab.bigquery import query_and_return
 
 from common.utils import valid_date
 from dmd.models import DMDProduct
-from dmd.models import ImportLog
+from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
 

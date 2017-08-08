@@ -8,11 +8,8 @@ from dmd.models import DMDProduct
 class CommandsTestCase(TestCase):
 
     def test_models(self):
-        args = []
-        test_source_directory = 'dmd/tests/fixtures/commands/'
-        opts = {
-            'source_directory': test_source_directory
-        }
+        args = ['--source_directory', test_source_directory]
+        opts = {}
         call_command('import_dmd', *args, **opts)
         self.assertEqual(DMDProduct.objects.count(), 2)
         vmp = DMDProduct.objects.get(concept_class=1)
@@ -29,11 +26,9 @@ class CommandsTestCase(TestCase):
             vmp.tariff_category.desc, 'Part VIIIA Category A')
 
     def test_import_dmd(self):
-        args = []
         test_source_directory = 'dmd/tests/fixtures/commands/'
-        opts = {
-            'source_directory': test_source_directory
-        }
+        args = ['--source_directory', test_source_directory]
+        opts = {}
         call_command('import_dmd', *args, **opts)
 
         # DMDProduct
