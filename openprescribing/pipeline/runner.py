@@ -155,6 +155,15 @@ class ManualFetchTask(Task):
         instructions = self.manual_fetch_instructions()
         print(instructions)
         raw_input('Press return when done, or to skip this step')
+        unimported_paths = self.source.unimported_paths()
+        if unimported_paths:
+            print('The following files have been manually fetched:')
+            for path in unimported_paths:
+                print(' * {}'.format(path))
+        else:
+            print('No new files were found at {}'.format(self.source.data_dir))
+        raw_input('Press return to confirm, or Ctrl+C to cancel '
+                  'and resolve any problems')
 
     def manual_fetch_instructions(self):
         source = self.source
