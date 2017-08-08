@@ -138,9 +138,6 @@ class Command(BaseCommand):
         for row in rows:
             pct_codes.add(row[0])
             practices.add(row[1])
-            i += 1
-            if self.truncate and i > 500:
-                break
         pcts_created = practices_created = 0
         with transaction.atomic():
             for pct_code in pct_codes:

@@ -162,6 +162,7 @@ def _specified_or_last_date(request, category):
         date = valid_date(date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
+    return date
 
 
 def practice_price_per_unit(request, code):
@@ -199,7 +200,6 @@ def ccg_price_per_unit(request, code):
         'date': date,
         'by_ccg': True
     }
-
     return render(request, 'price_per_unit.html', context)
 
 

@@ -400,23 +400,17 @@ class TestPPUViews(TransactionTestCase):
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
 
-    def test_price_per_unit_histogram(self):
-        response = self.client.get('/ppu_histogram/0202010F0AAAAAA/')
-        self.assertEqual(response.status_code, 200)
-
     def test_price_per_unit_histogram_with_ccg(self):
-        response = self.client.get(
-            '/ppu_histogram/0202010F0AAAAAA/?highlight=03V')
+        response = self.client.get('/ccg/03V/0202010F0AAAAAA/price_per_unit/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['highlight_name'], 'NHS Corby')
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
 
     def test_price_per_unit_histogram_with_practice(self):
-        response = self.client.get(
-            '/ppu_histogram/0202010F0AAAAAA/?highlight=P87629')
+        response = self.client.get('/practice/P87629/0202010F0AAAAAA/price_per_unit/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['highlight_name'],
-                         '1/ST ANDREWS MEDICAL PRACTICE')
+                         '1/ST Andrews Medical Practice')
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
