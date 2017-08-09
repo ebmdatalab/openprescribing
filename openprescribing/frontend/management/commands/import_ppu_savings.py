@@ -269,7 +269,7 @@ class Command(BaseCommand):
             Presentation.objects.get_or_create(
                 bnf_code='0601060D0AAA0A0',
                 name='Glucose Blood Testing Reagents',
-                is_generic=False)
+                is_generic=True)
             DMDProduct.objects.get_or_create(
                 dmdid=10000000001,
                 vpid=10000000001,
@@ -280,7 +280,7 @@ class Command(BaseCommand):
             Presentation.objects.get_or_create(
                 bnf_code='0601060U0AAA0A0',
                 name='Urine Testing Reagents',
-                is_generic=False)
+                is_generic=True)
             PPUSaving.objects.filter(date=options['month']).delete()
             for entity_type, min_saving in [
                     ('pct', options['min_ccg_saving']),
