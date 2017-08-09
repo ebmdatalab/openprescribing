@@ -1,4 +1,3 @@
-import datetime
 import mock
 import os
 import json
@@ -317,7 +316,7 @@ The last imported data can be found at:
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command') as cc:
             task.run(2017, 7)
-            cc.assert_called_with('fetch_source_b', '2017', '7', '--yes-please')
+            cc.assert_called_with('fetch_source_b', '2017', '7', '--yes')
 
     def test_run_convert(self):
         task = self.tasks['convert_source_a']

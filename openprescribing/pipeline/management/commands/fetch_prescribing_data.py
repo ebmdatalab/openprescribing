@@ -3,7 +3,6 @@ from __future__ import print_function
 from argparse import RawTextHelpFormatter
 import datetime
 import os
-import re
 import zipfile
 
 from lxml import html
@@ -87,7 +86,7 @@ Specifically, you should:
         period_id = self.period_id(session, datestr)
 
         if period_id is None:
-            raise CommandError('Could not find any data for %s' % year_and_month)
+            raise CommandError('Could not find data for %s' % year_and_month)
 
         self.download_csv(session, year_and_month, period_id)
 
