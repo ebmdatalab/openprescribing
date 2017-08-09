@@ -1,11 +1,11 @@
 -- ACBS flag
 -- Section 6 of Implementation Guide (p50)
 
-update dmd_product
+update dmd_product_temp
 set acbs = true
 where dmdid in (
   select dmdid
-  from dmd_product
+  from dmd_product_temp
   inner join dmd_amp
     on dmd_amp.vpid = dmdid
     or dmd_amp.apid = dmdid

@@ -1,11 +1,11 @@
 -- Whether item is part of the Selected List Scheme
 -- Section 6 of Implementation Guide (p51)
 
-update dmd_product
+update dmd_product_temp
 set sched_2 = true
 where dmdid in (
   select dmdid
-  from dmd_product
+  from dmd_product_temp
   inner join dmd_amp
     on dmd_amp.vpid = dmdid
     or dmd_amp.apid = dmdid

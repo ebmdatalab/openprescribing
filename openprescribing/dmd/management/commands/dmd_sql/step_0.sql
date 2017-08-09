@@ -1,6 +1,11 @@
+-- We carry out operations on a temporary table this is to prevent the
+-- transaction acquiring an exclusive lock on the existing table.  See
+-- https://github.com/ebmdatalab/openprescribing/issues/547 for
+-- discussion.
+SET temp_buffers = '500MB'; -- enough for dmd_product to fit into RAM
+drop table if exists dmd_product_temp;
 -- Section 6 of Implementation Guide
-drop table if exists dmd_product;
-create table dmd_product (
+create table dmd_product_temp (
   dmdid bigint primary key,
   bnf_code text,
   vpid bigint,

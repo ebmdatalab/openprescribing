@@ -1,43 +1,43 @@
 -- Restrictions on availability of AMP
 -- Section 6 of Implementation Guide (p48)
 
-update dmd_product
+update dmd_product_temp
 set avail_restrictcd = 1
 where dmdid in (
   select dmdid
-  from dmd_product
+  from dmd_product_temp
   inner join dmd_amp
   on dmd_amp.vpid = dmdid
   where dmd_amp.avail_restrictcd = 1
 );
 
 
-UPDATE dmd_product
+UPDATE dmd_product_temp
 SET avail_restrictcd = subquery.avail_restrictcd2
 FROM (
   SELECT
-    dmd_product.*,
+    dmd_product_temp.*,
     dmd_amp.avail_restrictcd AS avail_restrictcd2
   FROM
-    dmd_product
+    dmd_product_temp
   INNER JOIN
     dmd_amp
   ON
-    dmd_amp.vpid = dmd_product.dmdid
+    dmd_amp.vpid = dmd_product_temp.dmdid
   WHERE
     dmd_amp.avail_restrictcd != 1
   AND
     dmd_amp.avail_restrictcd != 9
   AND
-    dmd_product.avail_restrictcd IS NULL)
+    dmd_product_temp.avail_restrictcd IS NULL)
 AS subquery
 WHERE
-  subquery.dmdid = dmd_product.dmdid;
+  subquery.dmdid = dmd_product_temp.dmdid;
 
-update dmd_product
+update dmd_product_temp
 set avail_restrictcd = 9
 where dmdid in (
   select dmdid
-  from dmd_product
-  where dmd_product.avail_restrictcd is null
+  from dmd_product_temp
+  where dmd_product_temp.avail_restrictcd is null
 );

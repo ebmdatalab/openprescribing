@@ -1,6 +1,6 @@
 -- Section 6 of Implementation Guide (p43)
 
-insert into dmd_product
+insert into dmd_product_temp
 select
   dmd_amp.apid as dmdid,
   NULL as bnf_code,
@@ -45,7 +45,7 @@ where
   and (parallel_import is NULL
     or parallel_import = 0);
 
-insert into dmd_product
+insert into dmd_product_temp
 select
   vpid as dmdid,
   NULL as bnf_code,
