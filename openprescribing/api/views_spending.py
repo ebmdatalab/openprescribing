@@ -74,6 +74,10 @@ def _build_conditions_and_patterns(code, focus):
 
 @api_view(['GET'])
 def bubble(request, format=None):
+    """Returns data relating to price-per-unit, in a format suitable for
+    use in Highcharts bubble chart.
+
+    """
     code = request.query_params.get('bnf_code', '')
     date = _valid_or_latest_date(request.query_params.get('date', None))
     highlight = request.query_params.get('highlight', None)
@@ -147,6 +151,10 @@ def bubble(request, format=None):
 
 @api_view(['GET'])
 def price_per_unit(request, format=None):
+    """Returns price per unit data for presentations and practices or
+    CCGs
+
+    """
     entity_code = request.query_params.get('entity_code', None)
     date = request.query_params.get('date')
     bnf_code = request.query_params.get('bnf_code', None)
