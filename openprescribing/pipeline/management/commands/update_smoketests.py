@@ -20,16 +20,6 @@ class Command(BaseCommand):
 
 
 class SmokeTestHandler(CloudHandler):
-    def rows_to_dict(self, bigquery_result):
-        fields = bigquery_result['schema']['fields']
-        for row in bigquery_result['rows']:
-            dict_row = {}
-            for i, item in enumerate(row['f']):
-                value = item['v']
-                key = fields[i]['name']
-                dict_row[key] = value
-            yield dict_row
-
     def update_smoketests(self, last_imported):
         prescribing_date = "-".join(last_imported.split('_')) + '-01'
         date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
