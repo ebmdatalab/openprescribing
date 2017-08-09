@@ -8,6 +8,7 @@ from dmd.models import DMDProduct
 class CommandsTestCase(TestCase):
 
     def test_models(self):
+        test_source_directory = 'dmd/tests/fixtures/commands/'
         args = ['--source_directory', test_source_directory]
         opts = {}
         call_command('import_dmd', *args, **opts)
