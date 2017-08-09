@@ -192,5 +192,20 @@
         "dependencies": [
             "upload_to_bigquery"
         ]
+    },
+    "update_smoketests": {
+        "type": "post_process",
+        "command": "update_smoketests {last_imported}",
+        "dependencies": [
+            "import_measures",
+            "refresh_views"
+        ]
+    },
+    "run_smoketests": {
+        "type": "post_process",
+        "command": "run_smoketests {last_imported}",
+        "dependencies": [
+            "update_smoketests"
+        ]
     }
 }
