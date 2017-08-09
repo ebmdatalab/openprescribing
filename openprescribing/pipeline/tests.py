@@ -138,7 +138,7 @@ class PipelineTests(TestCase):
                         task.run(2017, 7)
 
             for task in tasks.by_type('post_process'):
-                task.run(2017, 7)
+                task.run(2017, 7, last_imported='2017_01')
 
     def test_tasks_by_type(self):
         tasks = self.tasks.by_type('manual_fetch')
@@ -340,8 +340,8 @@ The last imported data can be found at:
     def test_run_post_process(self):
         task = self.tasks['post_process']
         with mock.patch('pipeline.runner.call_command') as cc:
-            task.run(2017, 7)
-            cc.assert_called_with('post_process')
+            task.run(2017, 7, '2017_01')
+            cc.assert_called_with('post_process', '2017_01')
 
     def test_run_task(self):
         task = self.tasks['fetch_source_b']

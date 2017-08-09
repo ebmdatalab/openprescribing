@@ -9,7 +9,6 @@ import os
 import re
 import shlex
 import textwrap
-import unittest
 
 import networkx as nx
 
@@ -241,10 +240,10 @@ class ImportTask(Task):
 
 
 class PostProcessTask(Task):
-    def run(self, year, month):
+    def run(self, year, month, last_imported):
         # For now, year and month are ignored
-        print('Running post-process task {}'.format(self.name))
-        tokens = shlex.split(self.command)
+        command = self.command.format(last_imported=last_imported)
+        tokens = shlex.split(command)
         call_command(*tokens)
 
 
@@ -441,7 +440,7 @@ def call_command(*args):
     return django_call_command(*args)
 
 
-def run_task(task, year, month):
+def run_task(task, year, month, **kwargs):
     if TaskLog.objects.filter(
         year=year,
         month=month,
@@ -458,7 +457,7 @@ def run_task(task, year, month):
     )
 
     try:
-        task.run(year, month)
+        task.run(year, month, **kwargs)
         task_log.mark_succeeded()
     except:
         # We want to catch absolutely every error here, including things that
@@ -486,10 +485,8 @@ def run_all(year, month):
     for task in tasks.by_type('import').ordered():
         run_task(task, year, month)
 
-    for task in tasks.by_type('post_process').ordered():
-        run_task(task, year, month)
-
     prescribing_path = tasks['import_hscic_prescribing'].imported_paths()[-1]
-    smoketest_handler = SmokeTestHandler(prescribing_path)
-    smoketest_handler.update_smoketests()
-    smoketest_handler.run_smoketests()
+    last_imported = re.findall(r'/(\d{4}_\d{2})/', prescribing_path)[0]
+
+    for task in tasks.by_type('post_process').ordered():
+        run_task(task, year, month, last_imported=last_imported)

@@ -44,7 +44,7 @@
   },
   "post_process": {
     "type": "post_process",
-    "command": "post_process",
+    "command": "post_process {last_imported}",
     "dependencies": ["import_source_a", "import_source_b", "import_source_c1"]
   }
 }
