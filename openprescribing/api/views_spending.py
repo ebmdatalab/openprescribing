@@ -88,7 +88,7 @@ def bubble(request, format=None):
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
         "COALESCE(frontend_presentation.name, 'unknown') as presentation_name, "
-        "quantity, practice_id, pct_id, "
+        "quantity, net_cost, practice_id, pct_id, "
         "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
         "FROM frontend_prescription "
         "LEFT JOIN frontend_presentation "
@@ -112,7 +112,7 @@ def bubble(request, format=None):
         "ORDER BY mean_ppu, presentation_name"
     )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
-        "SELECT AVG(ppu) FROM rounded_ppus "
+        "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
     )
     params = [date] + patterns
     with connection.cursor() as cursor:
