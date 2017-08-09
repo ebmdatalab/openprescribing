@@ -12,8 +12,8 @@
 <div class="row">
   <div class="col-md-7">
     We have identified about <strong>£<span id="total-savings">0</span>
-    of possible monthly savings</strong> for {{entity.cased_name }}.
-    There is wide variation in the unit cost of a number of medicines prescribed across  England, due to the way the reimbursement system is structured.  Every month we estimate what {% if entity.ccg %}<a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% else %}<a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% endif %} could save if it were prescribing as well as the best 10%.  <a href="#more-text" id="read-more">Read more...</a>
+    of possible savings</strong> for {% if entity.ccg %}<a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% else %}<a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% endif %} in {{ date|date:"F Y"}}.
+    There is wide variation in the unit cost of a number of medicines prescribed across  England, due to the way the reimbursement system is structured.  Every month we estimate what could be saved if every organisation were prescribing as well as the best 10%.  <a href="#more-text" id="read-more">Read more...</a>
   </div>
   <div class="col-md-5">
     <p class="alert alert-info" style="margin-top: 0">This is a new, experimental feature. We'd love to <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show" style="text-decoration: underline">hear your feedback</a>.</p>
