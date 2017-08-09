@@ -64,7 +64,8 @@ EXTRA_INDEXES = [
     'parallel_import',
     'lic_authcd',
     'pres_statcd',
-    'discdt'
+    'discdt',
+    'nurse_f'
 ]
 
 PG_TYPE_MAP = {
