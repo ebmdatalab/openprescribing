@@ -87,7 +87,8 @@ def bubble(request, format=None):
     conditions, patterns = _build_conditions_and_patterns(code, focus)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
-        "COALESCE(frontend_presentation.name, 'unknown') as presentation_name, "
+        "COALESCE(frontend_presentation.name, 'unknown') "
+        "AS presentation_name, "
         "quantity, net_cost, practice_id, pct_id, "
         "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
         "FROM frontend_prescription "
@@ -109,7 +110,7 @@ def bubble(request, format=None):
     ordered_ppus_sql = binned_ppus_sql + (
         "SELECT *, AVG(ppu) OVER (PARTITION BY presentation_code) "
         "AS mean_ppu from binned_ppus "
-        "ORDER BY mean_ppu, presentation_name"
+        "ORDER BY mean_ppu, presentation_name"  # XXX trim?
     )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
         "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "

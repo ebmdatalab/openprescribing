@@ -447,7 +447,6 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         # outside the 99th percentile
         self.assertEqual(data['plotline'], 0.0325)
 
-    # XXX these should mostly become `bubble` tests
     def test_code_without_matches(self):
         url = '/bubble?format=json'
         url += '&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V'
@@ -494,7 +493,6 @@ class TestAPISpendingViewsPPU(ApiTestBase):
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
              'plotline': 0.08875}
         )
-
 
 
 class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):

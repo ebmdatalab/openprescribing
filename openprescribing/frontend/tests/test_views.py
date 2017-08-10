@@ -408,7 +408,8 @@ class TestPPUViews(TransactionTestCase):
                          '2014-11-01')
 
     def test_price_per_unit_histogram_with_practice(self):
-        response = self.client.get('/practice/P87629/0202010F0AAAAAA/price_per_unit/')
+        response = self.client.get(
+            '/practice/P87629/0202010F0AAAAAA/price_per_unit/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['highlight_name'],
                          '1/ST Andrews Medical Practice')

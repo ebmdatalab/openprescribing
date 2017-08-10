@@ -95,16 +95,18 @@ jQuery(document).ready(function() {
         d.color = scale(ratio).hex();
       });
     }
-    /*** Add some text indicating which presentation is the generic
+    /** Add some text indicating which presentation is the generic
      */
     function labelGenericInSeries(data) {
       var generic_index = _.findIndex(data.categories, function(x) {
-        return x.is_generic });
-      if (generic_index > -1 ) {
+        return x.is_generic
+      });
+      if (generic_index > -1) {
         var generic_name = data.categories[generic_index].name;
         _.each(data.series, function(d) {
           if (d.name === generic_name) {
-            d.name += '<span style="color: red"> (prescribed generically)</span>';
+            d.name += '<span style="color: red">';
+            d.name += '(prescribed generically)</span>';
           }
         });
       }
@@ -132,7 +134,7 @@ jQuery(document).ready(function() {
         // width of a hidden tab container
         options.chart.width = $('.tab-content').width();
         options.subtitle.text = 'for prescriptions within ' + highlight_name;
-        options.series[0]['data'] = data.series;
+        options.series[0].data = data.series;
         options.yAxis.plotLines[0].value = data.plotline;
         $('#highlight_chart').highcharts(options);
       }
