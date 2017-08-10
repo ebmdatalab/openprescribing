@@ -106,6 +106,7 @@ class Command(BaseCommand):
         Transform the data into the format needed for COPY.
         '''
         row = [r.strip() for r in row]
+        net_cost = float(row[6])
         actual_cost = float(row[7])
         quantity = int(row[8])
         month = row[9]
@@ -195,6 +196,7 @@ class Command(BaseCommand):
           Practice_Code AS practice_code,
           BNF_Code AS presentation_code,
           SUM(Items) AS total_items,
+          SUM(NIC) AS net_cost,
           SUM(Actual_Cost) AS actual_cost,
           SUM(Quantity * Items) AS quantity,
           '%s' AS processing_date,
