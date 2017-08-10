@@ -3,6 +3,7 @@ import datetime
 import re
 
 import numpy as np
+import pandas as pd
 
 from django.db import connection
 from django.db.models import Q
@@ -14,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import namedtuplefetchall
+from dmd.models import DMDProduct
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -211,17 +213,35 @@ def price_per_unit(request, format=None):
     savings = []
     for x in PPUSaving.objects.filter(
             **query).prefetch_related('presentation', 'practice'):
+        # Get all products in one hit. They will all be generic.
+        #
         d = model_to_dict(x)
         try:
-            d['name'] = x.presentation.product_name
-            d['flag_bioequivalence'] = getattr(
-                x.presentation.dmd_product, 'is_non_bioequivalent', None)
+            d['name'] = x.presentation.name
         except Presentation.DoesNotExist:
             d['name'] = x.presentation_id
-            d['flag_bioequivalence'] = None
         if x.practice:
             d['practice_name'] = x.practice.cased_name
         savings.append(d)
+    # Inelegantly lookup DMDProduct metadata for all matched items.
+    # We do it this way to avoid N+1 lookup problems (the current
+    # DMDProduct schema makes this difficult to do using Django ORM)
+    if savings:
+        codes_with_metadata = DMDProduct.objects.filter(
+            bnf_code__in=[d['presentation'] for d in savings], concept_class=1).only(
+                'bnf_code', 'name', 'is_non_bioequivalent').all()
+        combined = pd.DataFrame(savings).set_index('presentation')
+        combined['presentation'] = combined.index
+        metadata = pd.DataFrame([
+            {'bnf_code': x.bnf_code, 'name': x.name, 'flag_bioequivalence': x.is_non_bioequivalent}
+            for x in codes_with_metadata]).set_index('bnf_code')
+        # We want all the fields in combined, but where there's a
+        # match, overwritten with the values in metadata
+        combined = metadata.combine_first(combined)
+        # Drop items where we had matching metadata but no savings values
+        combined = combined[combined['possible_savings'].notnull()]
+        # Turn nans to Nones and convert to dictionaries
+        savings = combined.where(combined.notnull(), None).to_dict('records')
     response = Response(savings)
     if request.accepted_renderer.format == 'csv':
         filename = "%s-ppd.csv" % (filename)

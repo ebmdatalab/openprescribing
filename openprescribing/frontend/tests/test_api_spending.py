@@ -403,20 +403,33 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '56')
 
 
-class TestAPISpendingViewsPPUBubble(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['importlog']
-
+class TestAPISpendingViewsPPUTable(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
     def test_simple(self):
-        url = '/bubble?format=json'
-        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = '/price_per_unit?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        print json.dumps(data, indent=2)
-        self.assertEqual(len(data['series']), 1)
+        expected = {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": None,
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 5,
+            "possible_savings": 100.0
+        }
+        self.assertEqual(data[0], expected)
 
 
-class TestAPISpendingViewsPPU(ApiTestBase):
+class TestAPISpendingViewsPPUBubble(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog']
 
     def test_simple(self):
@@ -502,7 +515,6 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        print data
         self.assertEqual(
             data,
             {'series': [
