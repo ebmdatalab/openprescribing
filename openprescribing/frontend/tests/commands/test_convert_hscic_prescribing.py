@@ -120,4 +120,4 @@ class AggregateTestCase(TestCase):
         self.assertEqual(len(rows), 9)
         dr_chan = next(
             x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
-        self.assertEqual(int(dr_chan[5]), 1288)  # combination of two rows
+        self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows
