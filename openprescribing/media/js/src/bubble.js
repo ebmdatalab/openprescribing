@@ -105,7 +105,7 @@ jQuery(document).ready(function() {
         var generic_name = data.categories[generic_index].name;
         _.each(data.series, function(d) {
           if (d.name === generic_name) {
-            d.name += '<span style="color: red">';
+            d.name += ' <span style="color: red">';
             d.name += '(prescribed generically)</span>';
           }
         });
