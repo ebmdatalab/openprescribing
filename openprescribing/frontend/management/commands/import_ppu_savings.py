@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -73,7 +74,7 @@ def make_merged_table_for_month(
             cases.append((code_to_merge, source_code))
         seen.add(source_code)
         seen.add(code_to_merge)
-    prescribing_table = 'normalised_prescribing_standard'
+    prescribing_table = settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD
     query = """
       SELECT
         practice,

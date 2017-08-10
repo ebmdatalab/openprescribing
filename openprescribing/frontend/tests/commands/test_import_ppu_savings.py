@@ -18,7 +18,7 @@ class BigqueryFunctionalTests(TestCase):
                                'prescribing_bigquery_fixture.csv')
         bigquery.load_prescribing_data_from_file(
             'hscic',
-            settings.BQ_PRESCRIBING_TABLE_NAME + '_legacy',
+            settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD,
             prescribing_fixture)
         month = date(2015, 9, 1)
         import_ppu_savings.Command().handle(

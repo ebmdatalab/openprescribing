@@ -445,7 +445,7 @@ class TestAPISpendingViewsPPU(ApiTestBase):
         # N.B. This is the mean of a *single* value; although there
         # are two values in the raw data, one is trimmed as it is
         # outside the 99th percentile
-        self.assertEqual(data['plotline'], 0.03)
+        self.assertEqual(data['plotline'], 0.0325)
 
     # XXX these should mostly become `bubble` tests
     def test_code_without_matches(self):
@@ -471,7 +471,7 @@ class TestAPISpendingViewsPPU(ApiTestBase):
                  'mean_ppu': 0.09}],
              'categories': [
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
-             'plotline': 0.09}
+             'plotline': 0.08875}
         )
 
     def test_no_focus(self):
@@ -492,7 +492,7 @@ class TestAPISpendingViewsPPU(ApiTestBase):
                  'mean_ppu': 0.095}],
              'categories': [
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
-             'plotline': 0.09}
+             'plotline': 0.08875}
         )
 
 
@@ -507,7 +507,7 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
         # Expecting the total to be quite different
-        self.assertEqual(data['plotline'], 0.03)
+        self.assertEqual(data['plotline'], 0.0315505963832243)
         # Bendroflumethiazide and Trandate:
         self.assertEqual(len(data['series']), 2)
 
@@ -517,4 +517,4 @@ class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(data['plotline'], 0.03)
+        self.assertEqual(data['plotline'], 0.0325)
