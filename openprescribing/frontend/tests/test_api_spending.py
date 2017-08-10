@@ -473,6 +473,7 @@ class TestAPISpendingViewsPPU(ApiTestBase):
              'plotline': 0.08875}
         )
 
+
     def test_no_focus(self):
         url = '/bubble?format=json'
         url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
@@ -494,6 +495,24 @@ class TestAPISpendingViewsPPU(ApiTestBase):
              'plotline': 0.08875}
         )
 
+    def test_trim(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V&trim=1'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        print data
+        self.assertEqual(
+            data,
+            {'series': [
+                {'y': 0.09, 'x': 1, 'z': 32.0,
+                 'name': 'Chlortalidone_Tab 50mg',
+                 'mean_ppu': 0.095}],
+             'categories': [
+                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
+             'plotline': 0.08875}
+        )
 
 class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']

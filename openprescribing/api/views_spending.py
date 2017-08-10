@@ -81,6 +81,7 @@ def bubble(request, format=None):
 
     """
     code = request.query_params.get('bnf_code', '')
+    trim = request.query_params.get('trim', '')
     date = _valid_or_latest_date(request.query_params.get('date', None))
     highlight = request.query_params.get('highlight', None)
     focus = request.query_params.get('focus', None) and highlight
@@ -107,11 +108,33 @@ def bubble(request, format=None):
         "FROM rounded_ppus "
         "GROUP BY presentation_code, presentation_name, ppu) "
     )
-    ordered_ppus_sql = binned_ppus_sql + (
-        "SELECT *, AVG(ppu) OVER (PARTITION BY presentation_code) "
-        "AS mean_ppu from binned_ppus "
-        "ORDER BY mean_ppu, presentation_name"  # XXX trim?
-    )
+    if trim:
+        # Skip items where PPU is outside <trim> percentile (where
+        # <trim> is out of 100)
+        trim = float(trim)
+        out_of = 100
+        while trim % 1 != 0:
+            trim = trim * 10
+            out_of = out_of * 10
+        ordered_ppus_sql = binned_ppus_sql + (
+            "SELECT * FROM ("
+            " SELECT *, "
+            " AVG(ppu) OVER ("
+            "  PARTITION BY presentation_code) AS mean_ppu, "
+            " NTILE(%s) OVER (ORDER BY ppu) AS ntiled "
+            " FROM binned_ppus "
+            " ORDER BY mean_ppu, presentation_name) ranked "
+            "WHERE ntiled <= %s" % (out_of, trim)
+        )
+        print ordered_ppus_sql
+    else:
+
+        ordered_ppus_sql = binned_ppus_sql + (
+            "SELECT *, "
+            "AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu "
+            "FROM binned_ppus "
+            "ORDER BY mean_ppu, presentation_name"
+        )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
         "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
     )
