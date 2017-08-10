@@ -2,6 +2,7 @@ from __future__ import print_function
 
 from collections import defaultdict
 import datetime
+import fnmatch
 import glob
 import json
 import os
@@ -82,9 +83,9 @@ class Task(object):
             for name in self.dependency_names
         ]
 
-    def filename_regex(self):
-        '''Return regex that matches the part of the task's command that should
-        be substituted for the task's input filename.'''
+    def filename_pattern(self):
+        '''Return pattern that matches the part of the task's command that
+        should be substituted for the task's input filename.'''
         filename_flags = [
             'filename',
             'ccg',
@@ -108,11 +109,11 @@ class Task(object):
         '''Return a list of import records for all imported data for this
         task.'''
         records = load_import_records()
-
         records_for_source = records[self.source.name]
+        pattern = self.filename_pattern()
         matched_records = [
             record for record in records_for_source
-            if re.search(self.filename_regex(), record['imported_file'])
+            if path_matches_pattern(record['imported_file'], pattern)
         ]
         sorted_records = sorted(
             matched_records,
@@ -125,7 +126,7 @@ class Task(object):
         paths = glob.glob("%s/*/*" % self.source.data_dir)
         return sorted(
             path for path in paths
-            if re.search(self.filename_regex(), path)
+            if path_matches_pattern(path, self.filename_pattern())
         )
 
     def set_last_imported_path(self, path):
@@ -154,6 +155,15 @@ class ManualFetchTask(Task):
         instructions = self.manual_fetch_instructions()
         print(instructions)
         raw_input('Press return when done, or to skip this step')
+        unimported_paths = self.source.unimported_paths()
+        if unimported_paths:
+            print('The following files have been manually fetched:')
+            for path in unimported_paths:
+                print(' * {}'.format(path))
+        else:
+            print('No new files were found at {}'.format(self.source.data_dir))
+        raw_input('Press return to confirm, or Ctrl+C to cancel '
+                  'and resolve any problems')
 
     def manual_fetch_instructions(self):
         source = self.source
@@ -211,7 +221,7 @@ class ConvertTask(Task):
         print('Running convert task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
-            command = self.command.replace(self.filename_regex(), path)
+            command = self.command.replace(self.filename_pattern(), path)
             tokens = shlex.split(command)
             call_command(*tokens)
             self.set_last_imported_path(path)
@@ -222,7 +232,7 @@ class ImportTask(Task):
         print('Running import task {}'.format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
-            command = self.command.replace(self.filename_regex(), path)
+            command = self.command.replace(self.filename_pattern(), path)
             tokens = shlex.split(command)
             call_command(*tokens)
             self.set_last_imported_path(path)
@@ -417,6 +427,10 @@ class SmokeTestHandler(CloudHandler):
                            'items': items,
                            'quantity': quantity}
                     json.dump(obj, f, indent=2)
+
+
+def path_matches_pattern(path, pattern):
+    return fnmatch.fnmatch(os.path.basename(path), pattern)
 
 
 def call_command(*args):

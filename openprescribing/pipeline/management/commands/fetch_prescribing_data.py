@@ -108,15 +108,12 @@ Specifically, you should:
 
         total_size = int(rsp.headers['content-length'])
 
-        with open(zip_path, 'wb') as f:
-            tqdm_iterator = tqdm(
-                rsp.iter_content(32 * 1024),
-                total=total_size,
-                unit='B',
-                unit_scale=True
-            )
-            for block in tqdm_iterator:
+        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
+
+        with open('download.zip', 'wb') as f:
+            for block in rsp.iter_content(32 * 1024),
                 f.write(block)
+                progress_bar.update(len(block))
 
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(dir_path)

@@ -15,7 +15,7 @@
         "publisher": "NHS Business Services Authority",
         "publication_schedule": "end of each month",
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126",
-        "notes": "We currently use a version that is correct as of Jan 2016; we should probably be importing this quarterly or so. There are monthly changes but not that many.",
+        "notes": "Run `./manage.py fetch_bnf_codes --help` for more instructions.",
         "requires_captcha": true,
         "core_data": true
     },

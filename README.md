@@ -68,7 +68,8 @@ This will give a shell, at which you can start Django, specifying the ``0.0.0.0`
 
      python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
 
-The application should then be accessible at ``http://localhost:8000/`` from a web-browser on the host computer.
+The application should then be accessible at ``http://localhost:8000/`` from a web-
+on the host computer.
 
 ## On bare metal
 
@@ -158,7 +159,9 @@ If required, you can run individual Django tests as follows:
     python manage.py test frontend.tests.test_api_views
 
 We support IE8 and above. We have a free account for testing across
-multiple browsers, thanks to [BrowserStack](www.browserstack.com).
+multiple browsers, thanks to [BrowserStack](www.browserstack.com). 
+
+![image](https://user-images.githubusercontent.com/211271/29110431-887941d2-7cde-11e7-8c2f-199d85c5a3b5.png)
 
 Note that tests are run using the settings in
 `openprescribing/settings/test.py`; this happens automatically
