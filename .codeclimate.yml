@@ -36,9 +36,11 @@ ratings:
   - "**.rb"
 exclude_paths:
  - "**/vendor/"
+ - "openprescribing/media/css/*bootstrap.css"
  - "openprescribing/static/rest_framework*"
  - "openprescribing/static/js/"
  - "openprescribing/static/css/"
  - "openprescribing/media/js/*.js"
  - "openprescribing/frontend/migrations/*"
+ - "openprescribing/openprescribing/settings/*"
  - "openprescribing/frontend/management/commands/grab_chart.js"

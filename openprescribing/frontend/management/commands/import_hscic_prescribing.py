@@ -2,6 +2,11 @@ import csv
 import datetime
 import logging
 import re
+import subprocess
+import tempfile
+
+from dateutil.relativedelta import relativedelta
+from google.cloud.bigquery.dataset import Dataset
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -16,6 +21,9 @@ from frontend.models import Prescription
 from frontend.models import Product
 from frontend.models import Section
 
+from ebmdatalab import bigquery
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,39 +36,74 @@ class Command(BaseCommand):
         parser.add_argument(
             '--filename',
             help=(
-                'A path to a properly converted file on the filesystem, '
-                'or a URI for a raw file in Google Cloud, e.g. '
-                'gs://embdatalab/hscic/'))
+                'A path to a properly converted file on the filesystem'
+            ))
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
             '--skip-orgs',
             action='store_true',
             help="Don't parse orgs from the file")
-        parser.add_argument('--truncate')
+        parser.add_argument(
+            '--reimport-all',
+            action='store_true',
+            help='Download all data from bigquery and make new set of tables'
+        )
 
     def handle(self, *args, **options):
-        if options['truncate']:
-            self.truncate = True
+        if options['reimport_all']:
+            self.reimport_all()
         else:
-            self.truncate = False
-
-        fname = options['filename']
-        if options['date']:
-            self.date = datetime.datetime.strptime(
-                options['date'], '%Y-%m-%d').date()
-        else:
-            self.date = self._date_from_filename(fname)
-        if not options['skip_orgs']:
-            self.import_pcts_and_practices(fname)
-        self.drop_partition()
-        self.create_partition()
-        self.import_prescriptions(fname)
-        self.create_partition_indexes()
-        self.add_parent_trigger()
-        self.drop_oldest_month()
-        self.refresh_class_currency()
+            fname = options['filename']
+            if options['date']:
+                self.date = datetime.datetime.strptime(
+                    options['date'], '%Y-%m-%d').date()
+            else:
+                self.date = self._date_from_filename(fname)
+            if not options['skip_orgs']:
+                self.import_pcts_and_practices(fname)
+            self.drop_partition()
+            self.create_partition()
+            self.import_prescriptions(fname)
+            self.create_partition_indexes()
+            self.add_parent_trigger()
+            self.drop_oldest_month()
+            self.refresh_class_currency()
         logger.info("Done!")
+
+    def reimport_all(self):
+        last_imported = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+        self.date = last_imported - relativedelta(years=5)
+        while self.date <= last_imported:
+            date_str = self.date.strftime('%Y-%m-%d')
+            sql = ('SELECT pct AS pct_id, practice AS practice_id, '
+                   'bnf_code AS presentation_code, items AS total_items, '
+                   'net_cost, actual_cost, quantity, '
+                   'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
+                   'FROM ebmdatalab.hscic.normalised_prescribing_standard '
+                   "WHERE month = '%s'" % date_str)
+            table_name = "prescribing_%s" % date_str.replace('-', '_')
+            bigquery.query_and_return(
+                'ebmdatalab', 'tmp_eu', table_name, sql)
+            uri = "gs://ebmdatalab/tmp/%s-*.csv.gz" % table_name
+            logger.info("Extracting data for %s" % self.date)
+            client = bigquery.bigquery.Client(project='ebmdatalab')
+            # delete the table if it exists
+            dataset = Dataset("tmp_eu", client)
+            table = dataset.table(table_name)
+            logger.info("Copying data for %s to cloud storage" % self.date)
+            bigquery.copy_table_to_gcs(table, uri)
+            with tempfile.NamedTemporaryFile(mode='wb') as tmpfile:
+                logger.info("Importing data for %s" % self.date)
+                bigquery.download_from_gcs(uri, tmpfile.name)
+                with transaction.atomic():
+                    self.drop_partition()
+                    self.create_partition()
+                    self.import_prescriptions(tmpfile.name)
+                    self.create_partition_indexes()
+                    self.add_parent_trigger()
+            self.date += relativedelta(months=1)
 
     def refresh_class_currency(self):
         # For every section, paragraph, chemical and product which is
@@ -95,9 +138,6 @@ class Command(BaseCommand):
         for row in rows:
             pct_codes.add(row[0])
             practices.add(row[1])
-            i += 1
-            if self.truncate and i > 500:
-                break
         pcts_created = practices_created = 0
         with transaction.atomic():
             for pct_code in pct_codes:
@@ -215,21 +255,10 @@ class Command(BaseCommand):
         # start = time.clock()
         copy_str = "COPY %s(pct_id,"
         copy_str += "practice_id,presentation_code,"
-        copy_str += "total_items,actual_cost,"
+        copy_str += "total_items,net_cost,actual_cost,"
         copy_str += "quantity,processing_date) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
-        i = 0
-        if self.truncate:
-            with open("/tmp/sample", "wb") as outfile:
-                with open(filename) as infile:
-                    for line in infile:
-                        outfile.write(line)
-                        i += 1
-                        if self.truncate and i > 500:
-                            break
-            file_obj = open("/tmp/sample")
-        else:
-            file_obj = open(filename)
+        file_obj = open(filename)
         with connection.cursor() as cursor:
             cursor.copy_expert(copy_str % self._partition_name(), file_obj)
             ImportLog.objects.create(

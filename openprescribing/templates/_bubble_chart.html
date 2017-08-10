@@ -1,0 +1,26 @@
+<div id="bubble-chart">
+  <ul id="tabs" class="nav nav-tabs" role="tablist">
+    <li role="presentation" id="england-tab" class="bubble-chart-tab active">
+      <a href="#england-panel" data-target="#england-panel" aria-controls="settings" role="tab" data-toggle="tab">NHS in England</a>
+    </li>
+    {% if highlight %}
+    <li role="presentation" id="local-tab" class="bubble-chart-tab">
+      <a href="#local-panel" data-target="#local-panel" aria-controls="settings" role="tab" data-toggle="tab">{{ highlight_name }}</a>
+    </li>
+    {% endif %}
+  </ul>
+
+  <div class="tab-content">
+      <!-- Tab content -->
+      <div role="tabpanel" class="tab-pane active" id="england-panel">
+        <div id="all_practices_chart" class="chart" style="width: 100%; height: 490px;">Loading...</div>
+      </div>
+      {% if highlight %}
+      <div role="tabpanel" class="tab-pane" id="local-panel">
+         <div id="highlight_chart" class="chart" style="width: 100%; height: 490px;">Loading...</div>
+      </div>
+      {% endif %}
+  </div>
+</div>
+
+<hr>

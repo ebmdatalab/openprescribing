@@ -1,8 +1,6 @@
 """Common settings and globals."""
-from os import environ
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-from django.core.exceptions import ImproperlyConfigured
 from common import utils
 
 # PATH CONFIGURATION
@@ -146,7 +144,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
-                'frontend.context_processors.google_user_id'
+                'frontend.context_processors.google_user_id',
+                'frontend.context_processors.api_host',
+                'frontend.context_processors.debug'
             ],
             'debug': DEBUG
         },
@@ -230,7 +230,9 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s'
+            'format': ('%(asctime)s %(levelname)s '
+                       '[%(name)s:%(lineno)s] %(module)s '
+                       '%(process)d %(thread)d %(message)s')
         }
     },
     'filters': {
@@ -308,6 +310,8 @@ GDOC_DOCS = {
     'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0'
 }
 
+API_HOST = utils.get_env_setting('API_HOST', default='')
+
 # BigQuery settings (used for measure calculations)
 
 # The BigQuery project name
@@ -322,6 +326,8 @@ BQ_CCG_TABLE_PREFIX = "ccg_data"
 BQ_GLOBALS_TABLE_PREFIX = "global_data"
 # The name of the table containing core prescribing data
 BQ_PRESCRIBING_TABLE_NAME = "normalised_prescribing_legacy"
+# The name of the table containing core prescribing data
+BQ_PRESCRIBING_TABLE_NAME_STANDARD = "normalised_prescribing_standard"
 # The name of the table containing practice information (names,
 # addresses etc)
 BQ_PRACTICES_TABLE_NAME = "practices"

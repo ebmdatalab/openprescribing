@@ -1,14 +1,17 @@
+from collections import namedtuple
 from contextlib import contextmanager
+from datetime import datetime
 from os import environ
 from titlecase import titlecase
+import argparse
 import hashlib
 import html2text
 import logging
 import re
-import string
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
+from django.forms.models import model_to_dict
 from django import db
 
 logger = logging.getLogger(__name__)
@@ -30,8 +33,10 @@ def nhs_abbreviations(word, **kwargs):
 
 
 def nhs_titlecase(words):
-    title_cased = titlecase(words, callback=nhs_abbreviations)
-    return re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+    if words:
+        title_cased = titlecase(words, callback=nhs_abbreviations)
+        words = re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+    return words
 
 
 def email_as_text(html):
@@ -53,7 +58,7 @@ def get_env_setting(setting, default=None):
     try:
         return environ[setting]
     except KeyError:
-        if default:
+        if default is not None:
             return default
         else:
             error_msg = "Set the %s env variable" % setting
@@ -159,3 +164,20 @@ def google_user_id(user):
     else:
         client_id = None
     return client_id
+
+
+def valid_date(s):
+    """Validate ISO-formatted dates. For use in argparse arguments.
+    """
+    try:
+        return datetime.strptime(s, "%Y-%m-%d")
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(s)
+        raise argparse.ArgumentTypeError(msg)
+
+
+def namedtuplefetchall(cursor):
+    "Return all rows from a cursor as a namedtuple"
+    desc = cursor.description
+    nt_result = namedtuple('Result', [col[0] for col in desc])
+    return [nt_result(*row) for row in cursor.fetchall()]

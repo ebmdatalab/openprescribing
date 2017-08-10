@@ -9,8 +9,8 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def conditional_js(context, filename):
-    tag_format = '<script src="/static/js/%s.%sjs?q=123456"></script>'
-    if context.get('debug', False):
+    tag_format = '<script src="/static/js/%s.%sjs"></script>'
+    if context.get('DEBUG', True):
         tag = tag_format % (filename, '')
     else:
         tag = tag_format % (filename, 'min.')
@@ -48,3 +48,13 @@ def roundpound(num):
         return intcomma(int(round(num/order) * order))
     else:
         return str(int(round(num)))
+
+
+@register.simple_tag
+def url_toggle(request, field):
+    dict_ = request.GET.copy()
+    if field in dict_:
+        del(dict_[field])
+    else:
+        dict_[field] = 1
+    return dict_.urlencode()

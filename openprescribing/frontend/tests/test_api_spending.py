@@ -1,8 +1,7 @@
-import csv
 import datetime
+import json
 
 from django.db import connection
-from django.http import Http404
 
 from .api_test_base import ApiTestBase
 
@@ -27,17 +26,6 @@ def _create_prescribing_tables():
 
 
 class TestAPISpendingViews(ApiTestBase):
-    def _rows_from_api(self, url):
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        if response.status_code == 404:
-            raise Http404("URL %s does not exist" % url)
-        reader = csv.DictReader(response.content.splitlines())
-        rows = []
-        for row in reader:
-            rows.append(row)
-        return rows
-
     def test_codes_are_rejected_if_not_same_length(self):
         url = '%s/spending' % self.api_prefix
         url += '?format=csv&code=0202010B0,0202010B0AAAAAA'
@@ -413,3 +401,137 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['actual_cost'], '3.05')
         self.assertEqual(rows[0]['items'], '2')
         self.assertEqual(rows[0]['quantity'], '56')
+
+
+class TestAPISpendingViewsPPUBubble(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog']
+
+    def test_simple(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        print json.dumps(data, indent=2)
+        self.assertEqual(len(data['series']), 1)
+
+
+class TestAPISpendingViewsPPU(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog']
+
+    def test_simple(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['series']), 1)  # Only Trandate prescribed
+        self.assertEqual(len([x for x in data if x[1]]), 3)
+
+    def test_date(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2000-01-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['series']), 0)
+
+    def test_highlight(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        # N.B. This is the mean of a *single* value; although there
+        # are two values in the raw data, one is trimmed as it is
+        # outside the 99th percentile
+        self.assertEqual(data['plotline'], 0.0325)
+
+    def test_code_without_matches(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertIsNone(data['plotline'])
+
+    def test_focus(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V&focus=1'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(
+            data,
+            {'series': [
+                {'y': 0.09, 'x': 1, 'z': 32.0,
+                 'name': 'Chlortalidone_Tab 50mg',
+                 'mean_ppu': 0.09}],
+             'categories': [
+                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
+             'plotline': 0.08875}
+        )
+
+
+    def test_no_focus(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(
+            data,
+            {'series': [
+                {'y': 0.09, 'x': 1, 'z': 32.0,
+                 'name': 'Chlortalidone_Tab 50mg',
+                 'mean_ppu': 0.095},
+                {'y': 0.1, 'x': 1, 'z': 128.0,
+                 'name': 'Chlortalidone_Tab 50mg',
+                 'mean_ppu': 0.095}],
+             'categories': [
+                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
+             'plotline': 0.08875}
+        )
+
+    def test_trim(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
+        url += '&highlight=03V&trim=1'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        print data
+        self.assertEqual(
+            data,
+            {'series': [
+                {'y': 0.09, 'x': 1, 'z': 32.0,
+                 'name': 'Chlortalidone_Tab 50mg',
+                 'mean_ppu': 0.095}],
+             'categories': [
+                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
+             'plotline': 0.08875}
+        )
+
+class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']
+
+    def test_with_wildcard(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAB&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        # Expecting the total to be quite different
+        self.assertEqual(data['plotline'], 0.0315505963832243)
+        # Bendroflumethiazide and Trandate:
+        self.assertEqual(len(data['series']), 2)
+
+    def test_with_specific(self):
+        url = '/bubble?format=json'
+        url += '&bnf_code=0204000I0BCAAAX&date=2014-11-01&highlight=03V'
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        data = json.loads(response.content)
+        self.assertEqual(data['plotline'], 0.0325)

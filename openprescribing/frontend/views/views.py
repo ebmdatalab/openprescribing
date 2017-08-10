@@ -2,7 +2,6 @@ from lxml import html
 import requests
 import sys
 
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import BACKEND_SESSION_KEY
@@ -24,12 +23,15 @@ from allauth.account import app_settings
 from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
+from common.utils import valid_date
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
+from frontend.models import Presentation
 from frontend.models import SearchBookmark
 
 
@@ -114,6 +116,35 @@ def chemical(request, bnf_code):
 
 
 ##################################################
+# Price per unit
+##################################################
+def price_per_unit_by_presentation(request, entity_code, bnf_code):
+    date = request.GET.get('date', None)
+    if date:
+        date = valid_date(date)
+    else:
+        date = ImportLog.objects.latest_in_category('ppu').current_at
+    presentation = get_object_or_404(Presentation, pk=bnf_code)
+    product = presentation.dmd_product
+    if len(entity_code) == 3:
+        entity = get_object_or_404(PCT, code=entity_code)
+    elif len(entity_code) == 6:
+        entity = get_object_or_404(Practice, code=entity_code)
+    context = {
+        'entity': entity,
+        'highlight': entity.code,
+        'highlight_name': entity.cased_name,
+        'name': presentation.product_name,
+        'bnf_code': presentation.bnf_code,
+        'presentation': presentation,
+        'product': product,
+        'date': date,
+        'by_presentation': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+##################################################
 # GP PRACTICES
 ##################################################
 
@@ -123,6 +154,28 @@ def all_practices(request):
         'practices': practices
     }
     return render(request, 'all_practices.html', context)
+
+
+def _specified_or_last_date(request, category):
+    date = request.GET.get('date', None)
+    if date:
+        date = valid_date(date)
+    else:
+        date = ImportLog.objects.latest_in_category(category).current_at
+    return date
+
+
+def practice_price_per_unit(request, code):
+    date = _specified_or_last_date(request, 'ppu')
+    practice = get_object_or_404(Practice, code=code)
+    context = {
+        'entity': practice,
+        'highlight': practice.code,
+        'highlight_name': practice.cased_name,
+        'date': date,
+        'by_practice': True
+    }
+    return render(request, 'price_per_unit.html', context)
 
 
 ##################################################
@@ -135,6 +188,19 @@ def all_ccgs(request):
         'ccgs': ccgs
     }
     return render(request, 'all_ccgs.html', context)
+
+
+def ccg_price_per_unit(request, code):
+    date = _specified_or_last_date(request, 'ppu')
+    ccg = get_object_or_404(PCT, code=code)
+    context = {
+        'entity': ccg,
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
+        'date': date,
+        'by_ccg': True
+    }
+    return render(request, 'price_per_unit.html', context)
 
 
 ##################################################

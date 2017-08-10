@@ -16,7 +16,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TaskLog',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('run_id', models.CharField(max_length=100)),
                 ('task_name', models.CharField(max_length=100)),
                 ('started_at', models.DateTimeField(auto_now_add=True)),

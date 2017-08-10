@@ -1,5 +1,23 @@
+from sets import Set
+import datetime
+import re
+
+import numpy as np
+
+from django.db import connection
+from django.db.models import Q
+from django.forms.models import model_to_dict
+from django.shortcuts import get_object_or_404
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
+
+from common.utils import namedtuplefetchall
+from frontend.models import GenericCodeMapping
+from frontend.models import ImportLog
+from frontend.models import PPUSaving
+from frontend.models import Presentation
 import view_utils as utils
 from view_utils import db_timeout
 
@@ -12,6 +30,203 @@ CODE_LENGTH_ERROR = (
     'data, please <a href="mailto:{{ SUPPORT_EMAIL }}" '
     'class="doorbell-show">get in touch</a> and we may be able to extract it '
     'for you')
+
+
+class NotValid(APIException):
+    status_code = 400
+    default_detail = 'The code you provided is not valid'
+
+
+def _valid_or_latest_date(date):
+    if date:
+        try:
+            date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            raise NotValid("%s is not a valid date" % date)
+    else:
+        date = ImportLog.objects.latest_in_category('prescribing').current_at
+    return date
+
+
+def _build_conditions_and_patterns(code, focus):
+    if not re.match(r'[A-Z0-9]{15}', code):
+        raise NotValid("%s is not a valid code" % code)
+    extra_codes = GenericCodeMapping.objects.filter(
+        Q(from_code=code) | Q(to_code=code))
+    # flatten and uniquify the list of codes
+    extra_codes = Set(np.array(
+        [[x.from_code, x.to_code] for x in extra_codes]).flatten())
+    patterns = ["%s____%s" % (code[:9], code[13:15])]
+    for extra_code in extra_codes:
+        if extra_code.endswith('%'):
+            pattern = extra_code
+        else:
+            pattern = "%s____%s" % (extra_code[:9], extra_code[13:15])
+        patterns.append(pattern)
+    conditions = " OR ".join(["presentation_code LIKE %s "] * len(patterns))
+    conditions = "AND (%s) " % conditions
+    if focus:
+        if len(focus) == 3:
+            conditions += "AND (pct_id = %s)"
+        else:
+            conditions += "AND (practice_id = %s)"
+        patterns.append(focus)
+    return conditions, patterns
+
+
+@api_view(['GET'])
+def bubble(request, format=None):
+    """Returns data relating to price-per-unit, in a format suitable for
+    use in Highcharts bubble chart.
+
+    """
+    code = request.query_params.get('bnf_code', '')
+    trim = request.query_params.get('trim', '')
+    date = _valid_or_latest_date(request.query_params.get('date', None))
+    highlight = request.query_params.get('highlight', None)
+    focus = request.query_params.get('focus', None) and highlight
+    conditions, patterns = _build_conditions_and_patterns(code, focus)
+    rounded_ppus_cte_sql = (
+        "WITH rounded_ppus AS (SELECT presentation_code, "
+        "COALESCE(frontend_presentation.name, 'unknown') "
+        "AS presentation_name, "
+        "quantity, net_cost, practice_id, pct_id, "
+        "ROUND(CAST(net_cost/NULLIF(quantity, 0) AS numeric), 2) AS ppu "
+        "FROM frontend_prescription "
+        "LEFT JOIN frontend_presentation "
+        "ON frontend_prescription.presentation_code = "
+        "frontend_presentation.bnf_code "
+        "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
+        "WHERE processing_date = %s "
+        "AND setting = 4 " +
+        conditions +
+        ") "
+    )
+    binned_ppus_sql = rounded_ppus_cte_sql + (
+        ", binned_ppus AS (SELECT presentation_code, presentation_name, ppu, "
+        "SUM(quantity) AS quantity "
+        "FROM rounded_ppus "
+        "GROUP BY presentation_code, presentation_name, ppu) "
+    )
+    if trim:
+        # Skip items where PPU is outside <trim> percentile (where
+        # <trim> is out of 100)
+        trim = float(trim)
+        out_of = 100
+        while trim % 1 != 0:
+            trim = trim * 10
+            out_of = out_of * 10
+        ordered_ppus_sql = binned_ppus_sql + (
+            "SELECT * FROM ("
+            " SELECT *, "
+            " AVG(ppu) OVER ("
+            "  PARTITION BY presentation_code) AS mean_ppu, "
+            " NTILE(%s) OVER (ORDER BY ppu) AS ntiled "
+            " FROM binned_ppus "
+            " ORDER BY mean_ppu, presentation_name) ranked "
+            "WHERE ntiled <= %s" % (out_of, trim)
+        )
+        print ordered_ppus_sql
+    else:
+
+        ordered_ppus_sql = binned_ppus_sql + (
+            "SELECT *, "
+            "AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu "
+            "FROM binned_ppus "
+            "ORDER BY mean_ppu, presentation_name"
+        )
+    mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
+        "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
+    )
+    params = [date] + patterns
+    with connection.cursor() as cursor:
+        cursor.execute(ordered_ppus_sql, params)
+        series = []
+        categories = []
+        pos = 0
+        for result in namedtuplefetchall(cursor):
+            if result.presentation_name not in [x['name'] for x in categories]:
+                pos += 1
+                is_generic = False
+                if result.presentation_code[9:11] == 'AA':
+                    is_generic = True
+                categories.append(
+                    {
+                        'name': result.presentation_name,
+                        'is_generic': is_generic
+                    }
+                )
+
+            series.append({
+                'x': pos,
+                'y': result.ppu,
+                'z': result.quantity,
+                'mean_ppu': result.mean_ppu,
+                'name': result.presentation_name})
+        if highlight:
+            params.append(highlight)
+            if len(highlight) == 3:
+                mean_ppu_for_entity_sql += "WHERE pct_id = %s "
+            else:
+                mean_ppu_for_entity_sql += "WHERE practice_id = %s "
+        cursor.execute(mean_ppu_for_entity_sql, params)
+        plotline = cursor.fetchone()[0]
+        return Response(
+            {'plotline': plotline, 'series': series, 'categories': categories})
+
+
+@api_view(['GET'])
+def price_per_unit(request, format=None):
+    """Returns price per unit data for presentations and practices or
+    CCGs
+
+    """
+    entity_code = request.query_params.get('entity_code', None)
+    date = request.query_params.get('date')
+    bnf_code = request.query_params.get('bnf_code', None)
+    if not date:
+        raise NotValid("You must supply a date")
+    if not (entity_code or bnf_code):
+        raise NotValid("You must supply a value for entity_code or bnf_code")
+
+    query = {'date': date}
+    filename = date
+    if bnf_code:
+        presentation = get_object_or_404(Presentation, pk=bnf_code)
+        query['presentation'] = presentation
+        filename += "-%s" % bnf_code
+    if entity_code:
+        filename += "-%s" % entity_code
+        if len(entity_code) == 3:
+            # CCG focus
+            query['pct'] = entity_code
+            if bnf_code:
+                # All-practices-for-code-for-one-ccg
+                query['practice__isnull'] = False
+            else:
+                query['practice__isnull'] = True
+        else:
+            # Practice focus
+            query['practice'] = entity_code
+    savings = []
+    for x in PPUSaving.objects.filter(
+            **query).prefetch_related('presentation', 'practice'):
+        d = model_to_dict(x)
+        try:
+            d['name'] = x.presentation.product_name
+            d['flag_bioequivalence'] = getattr(
+                x.presentation.dmd_product, 'is_non_bioequivalent', None)
+        except Presentation.DoesNotExist:
+            d['name'] = x.presentation_id
+            d['flag_bioequivalence'] = None
+        if x.practice:
+            d['practice_name'] = x.practice.cased_name
+        savings.append(d)
+    response = Response(savings)
+    if request.accepted_renderer.format == 'csv':
+        filename = "%s-ppd.csv" % (filename)
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 @db_timeout(58000)
@@ -70,7 +285,7 @@ def spending_by_practice(request, format=None):
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
-        err = CODE_LENGTH_ERROR
+        err = 'Error: Codes must all be the same length'
         return Response(err, status=400)
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]

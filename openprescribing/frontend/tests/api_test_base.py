@@ -1,4 +1,7 @@
+import csv
+
 from django.db import connection
+from django.http import Http404
 from django.test import TransactionTestCase
 
 
@@ -22,3 +25,14 @@ class ApiTestBase(TransactionTestCase):
                 # Fills them with test data
                 cursor.execute(f.read())
         super(ApiTestBase, self).setUp()
+
+    def _rows_from_api(self, url):
+        url = self.api_prefix + url
+        response = self.client.get(url, follow=True)
+        if response.status_code == 404:
+            raise Http404("URL %s does not exist" % url)
+        reader = csv.DictReader(response.content.splitlines())
+        rows = []
+        for row in reader:
+            rows.append(row)
+        return rows

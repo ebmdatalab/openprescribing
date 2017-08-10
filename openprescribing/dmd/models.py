@@ -87,50 +87,50 @@ class DMDProduct(models.Model):
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
     vpid = models.BigIntegerField(unique=True, db_index=True)
     name = models.CharField(max_length=40)
-    full_name = models.TextField()
+    full_name = models.TextField(null=True)
     # requiring additional monitoring in accordance with the European
     # Medicines Agency Additional Monitoring Scheme
     ema = models.CharField(max_length=15, null=True)
     prescribability = models.ForeignKey(
-        Prescribability, db_column='pres_statcd')
+        Prescribability, db_column='pres_statcd', null=True)
     availability_restrictions = models.ForeignKey(
-        AvailabilityRestriction, db_column='avail_restrictcd')
+        AvailabilityRestriction, db_column='avail_restrictcd', null=True)
     vmp_non_availability = models.ForeignKey(
-        VMPNonAvailability, db_column='non_availcd')
+        VMPNonAvailability, db_column='non_availcd', null=True)
     # 1 = VMP, 2 = AMP
-    concept_class = models.IntegerField(db_index=True)
+    concept_class = models.IntegerField(db_index=True, null=True)
     # 1 = Generic, 2 = brand, 3 = Mannufactured Generic
-    product_type = models.IntegerField()
+    product_type = models.IntegerField(null=True)
     # in the nurse prescribers' formulary?
-    is_in_nurse_formulary = models.BooleanField(db_column='nurse_f')
-    is_in_dentist_formulary = models.BooleanField(db_column='dent_f')
+    is_in_nurse_formulary = models.NullBooleanField(db_column='nurse_f')
+    is_in_dentist_formulary = models.NullBooleanField(db_column='dent_f')
     # Product order number - Order number of product within Drug Tariff
     product_order_no = models.TextField(db_column='prod_order_no', null=True)
     # indicates AMPs listed in part XVIIIA of the Drug Tariff
-    is_blacklisted = models.BooleanField(db_column='sched_1')
+    is_blacklisted = models.NullBooleanField(db_column='sched_1')
     # Indicates items that are part of the Selected List Scheme
-    is_schedule_2 = models.BooleanField(db_column='sched_2')
+    is_schedule_2 = models.NullBooleanField(db_column='sched_2')
     # This flag indicates where a prescriber will receive a fee for
     # administering an item. This is only applicable to NHS primary
     # medical services contractors.
-    can_have_personal_administration_fee = models.BooleanField(
+    can_have_personal_administration_fee = models.NullBooleanField(
         db_column='padm')
     # Indicates items that can be prescribed in instalments on a FP10
     # MDA form.
-    is_fp10 = models.BooleanField(db_column='fp10_mda')
+    is_fp10 = models.NullBooleanField(db_column='fp10_mda')
     # Borderline substances: foodstuffs and toiletries which can be
     # prescribed
-    is_borderline_substance = models.BooleanField(db_column='acbs')
-    has_assorted_flavours = models.BooleanField(db_column='assort_flav')
+    is_borderline_substance = models.NullBooleanField(db_column='acbs')
+    has_assorted_flavours = models.NullBooleanField(db_column='assort_flav')
     controlled_drug_category = models.ForeignKey(
-        ControlledDrugCategory, db_column='catcd')
+        ControlledDrugCategory, db_column='catcd', null=True)
     tariff_category = models.ForeignKey(
-        TariffCategory, db_column='tariff_category')
-    is_imported = models.BooleanField(db_column='flag_imported')
-    is_broken_bulk = models.BooleanField(db_column='flag_broken_bulk')
-    is_non_bioequivalent = models.BooleanField(
+        TariffCategory, db_column='tariff_category', null=True)
+    is_imported = models.NullBooleanField(db_column='flag_imported')
+    is_broken_bulk = models.NullBooleanField(db_column='flag_broken_bulk')
+    is_non_bioequivalent = models.NullBooleanField(
         db_column='flag_non_bioequivalence')
-    is_special_container = models.BooleanField(
+    is_special_container = models.NullBooleanField(
         db_column='flag_special_containers')
 
     class Meta:

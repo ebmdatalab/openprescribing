@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load template_extras %}
+{% load humanize %}
+
+{% block title %}PPU savings for {{ entity.cased_name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block content %}
+
+<h1>Top saving opportunities for {{entity.product_name }} in {{ date|date:"F Y"}}</h1>
+
+
+<p>There can be wide variation in the price paid across England for
+the same presentation of a drug or appliance. Every month we calculate
+the average price-per-unit (PPU) achieved by practices for each
+presentation. We then work out what {{entity.cased_name }} could save
+if it were prescribing alongside the best 10%. </p>
+<p>Each presentation name links to a chart that shows the different
+PPUs achieved across the country for all equivalent brands and
+formulations.</p>
+<table id="price_per_pill" class="table">
+  <thead>
+    <tr>
+      <th>
+        Practice
+      </th>
+      <th>
+        Possible savings in month
+      </th>
+      <th>
+        PPU
+      </th>
+      <th>
+        Target PPU
+      </th>
+      <th>
+        Quantity
+      </th>
+      <th>
+        Formulation swap
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Loading...
+      </th>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&bnf_code={{ bnf_code }}&date={{ date|date:'Y-m-d' }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+
+<h2>Explanatory notes</h2>
+
+<h3>Interpretation</h3>
+<p>This model assumes that if pill <strong>A1</strong> is expensive and pill <strong>A2</strong> is cheap, the perfect practice could switch to prescribing 100% of pill <strong>A2</strong>.</p>
+<p>We don't identify <strong>A2</strong> on your behalf, because there may be many reasons why particular switches might not make sense (see <em>Limitations</em>, below).</p>
+<p>We do, however, provide charts for each presentation which show the distribution of different PPUs for all brands that have been prescribed in a given month. This can help identify brands (or generics) to which it might make sense to switch.</p>
+
+<h3>Method</h3>
+<p>Within a single month, we calculate the average PPU achieved by each practice for each presentation (generic and branded combined). We then approximate a realistic, best-case PPU by finding the average PPU which is at the cheapest decile for that presentation.</p>
+
+<p>We then work out what each GP Practice or CCG could save if it prescribed that presentation at the best decile.</p>
+
+<ul>
+  <li>We only consider data from a single month, because the Drug Tariff changes monthly, making price-per-dose comparisons meaningless between months</li>
+  <li>We cover data from standard GP Practices only</li>
+  <li>When summing total possible savings, for a given practice or CCG, we don't consider savings that they are already making</li>
+  <li>We use the NIC cost rather than the actual cost for these calculations (see below)</li>
+  <li>When calculating PPU, we combine all formulations (e.g. tablets and capsules) that we consider to be clinically equivalent.</li>
+</ul>
+
+<h3>Limitations</h3>
+<ul>
+<li>Cost-saving opportunities are calculated on the basis of <em>Net Ingredient Cost</em> (NIC). We use NIC because it excludes container payments, bulk discounting and out-of-pocket expenses. This allows our calculations to be consistent across NHS England; however, this approach will, on average, overestimate possible savings by around 7%.</li>
+
+<li>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands.  We have marked presentations with non-bioequivalence issues with a warning sign <span class="glyphicon glyphicon-warning-sign" style="color:red"></span>.  Licencing differences may also play a role.</li>
+
+<li>This analysis is carried out against GP Practice prescribing data for NHS England, which typically has a 3 month lag to its release.  If the Department of Health has updated the Drug Tariff to reflect the cheaper list prices, then a switch may no longer be necessary to achieve savings.</li>
+
+<li>For a full discussion of our approach, including further limitations and discussion of the issues, see our <a href="https://github.com/ebmdatalab/price-per-dose">code repository</a>.  We are also in the process of writing a paper on the subject, which we will refer to here when it's published.</li>
+</ul>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript">
+  $('#price_per_pill').DataTable(
+    {
+      "ajax": {"url": "/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json", "dataSrc": ""},
+      "order": [[1, "desc"]],
+      "columns": [
+        {"data": "practice_name",
+         "render": function(data, type, full, meta) {
+           return '<a target="_blank" href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
+         }
+        },
+        {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+        {"data": "quantity", render: $.fn.dataTable.render.number(',')},
+        {"data": "formulation_swap", "defaultContent": "-"},
+      ]
+    }
+  );
+</script>
+{% endblock %}

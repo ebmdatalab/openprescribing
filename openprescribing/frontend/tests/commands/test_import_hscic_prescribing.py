@@ -130,6 +130,7 @@ class ImportTestCase(TestCase):
         self.assertEqual(p.pct.code, '5D7')
         self.assertEqual(p.practice.code, 'Y01957')
         self.assertEqual(p.total_items, 1346)
+        self.assertEqual(p.net_cost, 12038.02)
         self.assertEqual(p.actual_cost, 11270.33)
         self.assertEqual(p.quantity, 878870)
         self.assertEqual(p.processing_date, datetime.date(2013, 4, 1))

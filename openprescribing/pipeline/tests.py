@@ -114,7 +114,7 @@ class PipelineTests(TestCase):
         # We're just checking that no exceptions get raised here
         path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
         with override_settings(PIPELINE_METADATA_DIR=path):
-            tasks = load_tasks()
+            load_tasks()
 
     def test_run_real_tasks(self):
         # We're not actually going to run the management commands, but we're
@@ -348,7 +348,7 @@ The last imported data can be found at:
 
     def test_run_task(self):
         task = self.tasks['fetch_source_b']
-        with mock.patch('pipeline.runner.call_command') as cc:
+        with mock.patch('pipeline.runner.call_command'):
             run_task('test', task)
 
         log = TaskLog.objects.get(run_id='test', task_name='fetch_source_b')

@@ -28,7 +28,6 @@ from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
 from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
-from json import dumps as json_dumps
 
 # Retry transport and file IO errors.
 RETRYABLE_ERRORS = (httplib2.HttpLib2Error, IOError)

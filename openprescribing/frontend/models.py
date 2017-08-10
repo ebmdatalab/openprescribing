@@ -325,7 +325,7 @@ class Presentation(models.Model):
     objects = PresentationManager()
 
     def __str__(self):
-        return '%s: %s' % (self.bnf_code, self.name)
+        return '%s: %s' % (self.bnf_code, self.product_name)
 
     def save(self, *args, **kwargs):
         if len(self.bnf_code) > 10:
@@ -400,6 +400,8 @@ class Prescription(models.Model):
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     total_items = models.IntegerField()
+    # XXX change this post-deploy; in fact we should not allow blanks
+    net_cost = models.FloatField(blank=True, null=True)
     actual_cost = models.FloatField()
     quantity = models.FloatField()
     processing_date = models.DateField()
@@ -729,3 +731,43 @@ class MailLog(models.Model):
             except EmailMessage.DoesNotExist:
                 pass
         return subject
+
+
+class GenericCodeMapping(models.Model):
+    """A mapping between BNF codes that allows us to collapse clinically
+    equivalent chemicals together.
+
+    See https://github.com/ebmdatalab/price-per-dose/issues/11 for
+    background.
+
+    A `to_code` may end in `%`, which means it's a special case which
+    should be treated as a stem against which to search for generics.
+
+    """
+    from_code = models.CharField(max_length=15, primary_key=True,
+                                 validators=[isAlphaNumeric], db_index=True)
+    to_code = models.CharField(max_length=15,
+                               validators=[isAlphaNumeric], db_index=True)
+
+
+class PPUSaving(models.Model):
+    """A Price-per-unit Saving describes a possible saving for a CCG or a
+    practice for an individual presentation.
+
+    Records with a blank practice_id are for data at a CCG level;
+    those with a practice_id are for data at a practice level.
+
+    """
+    date = models.DateField(db_index=True)
+    # Sometimes we there are codes in prescribing data which are not
+    # present in our presentations
+    presentation = models.ForeignKey(
+        Presentation, db_column='bnf_code', db_constraint=False)
+    lowest_decile = models.FloatField()
+    quantity = models.IntegerField()
+    price_per_unit = models.FloatField()
+    possible_savings = models.FloatField()
+    formulation_swap = models.TextField(null=True, blank=True)
+    pct = models.ForeignKey(PCT, null=True, blank=True, db_index=True)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, db_index=True)

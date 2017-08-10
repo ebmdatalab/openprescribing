@@ -1,9 +1,5 @@
-import json
-import os
-
 from graphviz import Digraph
 
-from django.conf import settings
 from django.core.management import BaseCommand
 
 from ...runner import load_tasks

@@ -37,6 +37,15 @@
   },
   {
     "model": "frontend.presentation",
+    "pk": "0204000I0JKKKAL",
+    "fields": {
+      "bnf_code": "0204000I0JKKKAL",
+      "name": "Super Lab 50mg",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.presentation",
     "pk": "0204000I0AAALAL",
     "fields": {
       "bnf_code": "0204000I0AAALAL",

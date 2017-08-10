@@ -94,6 +94,53 @@ ANYMAIL = {
         'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
 }
 
+# LOGGING CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s %(levelname)s [%(name)s:%(lineno)s] '
+                       '%(module)s %(process)d %(thread)d %(message)s')
+        }
+    },
+    'handlers': {
+        'gunicorn': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': "%s/logs/gunicorn.log" % INSTALL_ROOT,
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+        'signals': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename':
+            "%s/logs/mail-signals.log" % INSTALL_ROOT,
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+            }
+    },
+    'loggers': {
+        'django': {
+            'level': 'WARN',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend': {
+            'level': 'DEBUG',
+            'handlers': ['gunicorn'],
+            'propagate': True,
+        },
+        'frontend.signals.handlers': {
+            'level': 'DEBUG',
+            'handlers': ['signals'],
+            'propagate': False,
+        },
+    }
+}
+
 # Base directory for pipeline metadata
 PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
 

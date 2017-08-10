@@ -45,7 +45,7 @@ import glob
 import os
 import re
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
 
@@ -213,7 +213,11 @@ def create_dmd_product():
 
 def add_bnf_codes(source_directory):
     """Parse BNF->dm+d mapping supplied by NHSBSA and update tables
-    accordingly
+    accordingly.
+
+    This mapping should be updated monthly. At present we have to
+    request it by email from NHSBSA, but they are planning to publish
+    it automatically some time during 2017.
 
     """
     from openpyxl import load_workbook
@@ -230,7 +234,7 @@ def add_bnf_codes(source_directory):
             rowcount = cursor.rowcount
             if not rowcount:
                 logging.warn(
-                    "When adding BNF codes, could not find", snomed_code)
+                    "When adding BNF codes, could not find %s", snomed_code)
 
 
 def process_gtin(cursor, f):
@@ -324,7 +328,7 @@ class Command(BaseCommand):
             'https://isd.digital.nhs.uk/trud3.')
 
     def add_arguments(self, parser):
-        parser.add_argument('--source_directory')
+        parser.add_argument('--source_directory', required=True)
         parser.add_argument(
             '--extract_test',
             help=("Write test fixtures to source_directory, based on the "
@@ -334,15 +338,11 @@ class Command(BaseCommand):
         '''
         Import dm+d dataset.
         '''
-        if not options['source_directory']:
-            raise CommandError('Please supply a source directory')
         if options['extract_test']:
             extract_test(options['source_directory'])
         else:
             with transaction.atomic():
                 process_datafiles(options['source_directory'])
-            with connection.cursor() as cursor:
-                cursor.execute('ANALYZE VERBOSE')
             with transaction.atomic():
                 create_dmd_product()
             with transaction.atomic():

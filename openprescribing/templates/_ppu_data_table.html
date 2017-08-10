@@ -1,0 +1,49 @@
+<h4>Top savings in {{ entity.cased_name }}</h4>
+<table id="price_per_pill" class="table">
+  <thead>
+    <tr>
+      <th>
+        {% if by_presentation %}
+          Practice
+        {% else %}
+          Presentation
+        {% endif %}
+      </th>
+      <th>
+        Possible savings in month <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Possible savings" data-content="The total amount we estimate {{ entity.cased_name}} could save in a month"><span class="glyphicon glyphicon-question-sign"></span></a>
+      </th>
+      <th>
+        PPU <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price per Unit" data-content="Mean price-per-unit achieved by {{ entity.cased_name}}"><span class="glyphicon glyphicon-question-sign"></span></a>
+      </th>
+      <th>
+        Target PPU <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Target price-per-unit" data-content="The price-per-unit achieved by the {% if entity.ccg %}practice{% else %}CCG{% endif %} at the best-value decile across the entire country"><span class="glyphicon glyphicon-question-sign"></span></a>
+      </th>
+      <th>
+        Quantity <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Quantity" data-content="Quantity of units prescribed in the month"><span class="glyphicon glyphicon-question-sign"></span></a>
+      </th>
+      <th>
+        Formulation swap <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Possible formulation swaps" data-content="When calculating a possible price-per-unit, we consider these formulations as equivalent"><span class="glyphicon glyphicon-question-sign"></span></a>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Loading...
+      </th>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+<hr>

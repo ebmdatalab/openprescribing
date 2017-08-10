@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Price per unit (PPU) data for {{ name }}{% endblock %}
+
+{% block content %}
+<h1>Price per unit (PPU) data for {{ name }} in {{ date|date:"F Y"}}</h2>
+
+<p>There is often wide variation in the price paid within the NHS in England for
+  the same presentation of a drug or appliance. We describe this variation by computing a <em>Price per Unit</em> (PPU) for each prescription.</p>
+
+  <p>{% if highlight %}These histograms show{% else %}This histogram shows{% endif %} the PPU for all generically and non-generically prescribed <em>{{ name }}</em> in {{ date|date:"F Y"}}, including formulation swaps (e.g. considering capsules and tablets to be equivalent).</p>
+
+{% include '_bubble_chart.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'bubble' %}
+  <script>
+    var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
+    var highlight_name = '{{ highlight_name }}';
+    var generic_name = '{{ name }}';
+  </script>
+{% endblock %}

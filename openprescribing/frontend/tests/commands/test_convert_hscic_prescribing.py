@@ -37,15 +37,16 @@ class CommandsTestCase(TestCase):
 
         # Test the basics are in the order expected by our COPY statement:
         # pct_id,practice_id,presentation_code,
-        # total_items,actual_cost,
+        # total_items,net_cost,actual_cost,
         # quantity,processing_date,price_per_unit
         self.assertEqual(rows[0][0], 'RXA')
         self.assertEqual(rows[0][1], 'N81646')
         self.assertEqual(rows[0][2], '0102000N0AAABAB')
         self.assertEqual(rows[0][3], '1')
-        self.assertEqual(rows[0][4], '0.7')
-        self.assertEqual(rows[0][5], '12')
-        self.assertEqual(rows[0][6], '2014-10-01')
+        self.assertEqual(rows[0][4], '0.64')
+        self.assertEqual(rows[0][5], '0.7')
+        self.assertEqual(rows[0][6], '12')
+        self.assertEqual(rows[0][7], '2014-10-01')
 
     @patch('frontend.management.commands.convert_hscic_prescribing.Command'
            '.aggregate_nhs_digital_data')
@@ -119,4 +120,4 @@ class AggregateTestCase(TestCase):
         self.assertEqual(len(rows), 9)
         dr_chan = next(
             x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
-        self.assertEqual(int(dr_chan[5]), 1288)  # combination of two rows
+        self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows

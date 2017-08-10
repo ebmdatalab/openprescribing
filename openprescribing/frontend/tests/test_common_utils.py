@@ -1,9 +1,16 @@
+from django.test import SimpleTestCase
 from django.test import TestCase
 
 from frontend.models import Measure
 
 
-class TitleCaseTests(TestCase):
+class GetEnvSettingTests(SimpleTestCase):
+    def test_falsey_default(self):
+        from common.utils import get_env_setting
+        self.assertEqual(get_env_setting('FROB123', ''), '')
+
+
+class TitleCaseTests(SimpleTestCase):
     def test_variaous_cases(self):
         from common.utils import nhs_titlecase
         tests = [
