@@ -147,10 +147,14 @@
       return '<a href="/practice/'+full['practice']+'/'+full['presentation']+'/price_per_unit/?date='+ full['date']+ '">'+data+'</a>';
     }
   {% endif %}
-
+    var pagination_text = "Showing page _PAGE_ of _PAGES_";
+  {% if by_presentation and not entity.ccg %}
+    pagination_text += ".  Where a practice is missing, no saving opportunities over £50 where identified for this product.";
+  {% endif %}
   $('#price_per_pill').DataTable(
     {
       "dom": '<"top"f>rt<"bottom"lip><"clear">',
+      "language": {"info" : pagination_text},
       "ajax": {
         "url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json",
         "dataSrc": function(data) {
