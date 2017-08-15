@@ -19,11 +19,12 @@ premailer
 django-anymail==0.6.1
 django-crispy-forms
 requests-futures
-google-api-python-client==1.5.3
 pip==8.1.2
 setuptools==27.3.0
-ebmdatalab-python==0.0.26
 titlecase==0.8.2
 html2text==2016.9.19
 networkx==1.11
 tqdm
+google-api-python-client==1.5.3
+google-cloud>=0.23.0
+google-cloud-bigquery>=0.23.0
