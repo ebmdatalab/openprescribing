@@ -200,6 +200,7 @@ LOCAL_APPS = (
     'frontend',
     'dmd',
     'pipeline',
+    'ebmdatalab',  # TODO rename this
 )
 
 CONTRIB_APPS = (
