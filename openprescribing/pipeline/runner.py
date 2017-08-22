@@ -442,16 +442,21 @@ def call_command(*args):
     return django_call_command(*args)
 
 
-def run_task(task, run_id, year, month):
+def run_task(task, year, month):
     if TaskLog.objects.filter(
-        run_id=run_id,
+        year=year,
+        month=month,
         task_name=task.name,
         status=TaskLog.SUCCESSFUL,
     ).exists():
         # This task has already been run successfully
         return
 
-    task_log = TaskLog.objects.create(run_id=run_id, task_name=task.name)
+    task_log = TaskLog.objects.create(
+        year=year,
+        month=month,
+        task_name=task.name,
+    )
 
     try:
         task.run(year, month)
@@ -466,26 +471,24 @@ def run_task(task, run_id, year, month):
 
 
 def run_all(year, month):
-    run_id = datetime.date(year, month, 1).strftime('%Y_%m')
-
     tasks = load_tasks()
 
     for task in tasks.by_type('manual_fetch'):
-        run_task(task, run_id, year, month)
+        run_task(task, year, month)
 
     for task in tasks.by_type('auto_fetch'):
-        run_task(task, run_id, year, month)
+        run_task(task, year, month)
 
     BigQueryUploader(tasks).upload_all_to_storage()
 
     for task in tasks.by_type('convert').ordered():
-        run_task(task, run_id, year, month)
+        run_task(task, year, month)
 
     for task in tasks.by_type('import').ordered():
-        run_task(task, run_id, year, month)
+        run_task(task, year, month)
 
     for task in tasks.by_type('post_process').ordered():
-        run_task(task, run_id, year, month)
+        run_task(task, year, month)
 
     prescribing_path = tasks['import_hscic_prescribing'].imported_paths()[-1]
     smoketest_handler = SmokeTestHandler(prescribing_path)

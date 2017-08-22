@@ -346,9 +346,13 @@ The last imported data can be found at:
     def test_run_task(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command'):
-            run_task(task, '2017_07', 2017, 7)
+            run_task(task, 2017, 7)
 
-        log = TaskLog.objects.get(run_id='2017_07', task_name='fetch_source_b')
+        log = TaskLog.objects.get(
+            year=2017,
+            month=7,
+            task_name='fetch_source_b',
+        )
         self.assertEqual(log.status, 'successful')
         self.assertIsNotNone(log.ended_at)
 
@@ -357,9 +361,13 @@ The last imported data can be found at:
         with self.assertRaises(KeyboardInterrupt):
             with mock.patch('pipeline.runner.call_command') as cc:
                 cc.side_effect = KeyboardInterrupt
-                run_task(task, '2017_07', 2017, 7)
+                run_task(task, 2017, 7)
 
-        log = TaskLog.objects.get(run_id='2017_07', task_name='fetch_source_b')
+        log = TaskLog.objects.get(
+            year=2017,
+            month=7,
+            task_name='fetch_source_b',
+        )
         self.assertEqual(log.status, 'failed')
         self.assertIsNotNone(log.ended_at)
         self.assertIn('KeyboardInterrupt', log.formatted_tb)
@@ -367,14 +375,14 @@ The last imported data can be found at:
     def test_run_task_after_success(self):
         task = self.tasks['fetch_source_b']
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task(task, '2017_07', 2017, 7)
+            run_task(task, 2017, 7)
 
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task(task, '2017_07', 2017, 7)
+            run_task(task, 2017, 7)
             cc.assert_not_called()
 
         logs = TaskLog.objects.filter(
-            run_id='2017_07',
+            year=2017, month=7,
             task_name='fetch_source_b'
         )
         self.assertEqual(1, logs.count())
@@ -384,13 +392,13 @@ The last imported data can be found at:
         with self.assertRaises(KeyboardInterrupt):
             with mock.patch('pipeline.runner.call_command') as cc:
                 cc.side_effect = KeyboardInterrupt
-                run_task(task, '2017_07', 2017, 7)
+                run_task(task, 2017, 7)
 
         with mock.patch('pipeline.runner.call_command') as cc:
-            run_task(task, '2017_07', 2017, 7)
+            run_task(task, 2017, 7)
 
         logs = TaskLog.objects.filter(
-            run_id='2017_07',
+            year=2017, month=7,
             task_name='fetch_source_b'
         )
         self.assertEqual(2, logs.count())
