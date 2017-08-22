@@ -142,8 +142,8 @@ Specifically, you should:
 
         progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
 
-        with open('download.zip', 'wb') as f:
-            for block in rsp.iter_content(32 * 1024),
+        with open(zip_path, 'wb') as f:
+            for block in rsp.iter_content(32 * 1024):
                 f.write(block)
                 progress_bar.update(len(block))
 
