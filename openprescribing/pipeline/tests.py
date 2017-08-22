@@ -279,13 +279,13 @@ class PipelineTests(TestCase):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You should now locate the latest data for source_a, if available
 You should save it at:
-    {data_basedir}/source_a/2017_07
+    {data_basedir}/source_a/YYYY_MM
 The last imported data can be found at:
     {data_basedir}/source_a/2017_02/source_a.csv
 '''.strip().format(
             data_basedir=settings.PIPELINE_DATA_BASEDIR,
         )
-        output = task.manual_fetch_instructions(2017, 7)
+        output = task.manual_fetch_instructions()
         self.assertEqual(output, expected_output)
 
         task = self.tasks['fetch_source_c']
@@ -293,14 +293,14 @@ The last imported data can be found at:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You should now locate the latest data for source_c, if available
 You should save it at:
-    {data_basedir}/source_c/2017_07
+    {data_basedir}/source_c/YYYY_MM
 The last imported data can be found at:
     <never imported>
     {data_basedir}/source_c/2017_02/source_c2.csv
 '''.strip().format(
             data_basedir=settings.PIPELINE_DATA_BASEDIR,
         )
-        output = task.manual_fetch_instructions(2017, 7)
+        output = task.manual_fetch_instructions()
         self.assertEqual(output, expected_output)
 
     def test_manual_fetch_instructions_with_real_data(self):
@@ -310,7 +310,7 @@ The last imported data can be found at:
 
         # We're just checking that no exceptions get raised here
         for task in tasks.by_type('manual_fetch'):
-            task.manual_fetch_instructions(2017, 7)
+            task.manual_fetch_instructions()
 
     def test_run_auto_fetch(self):
         task = self.tasks['fetch_source_b']

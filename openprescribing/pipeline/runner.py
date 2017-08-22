@@ -152,7 +152,7 @@ class Task(object):
 class ManualFetchTask(Task):
     def run(self, year, month):
         print('Running manual fetch task {}'.format(self.name))
-        instructions = self.manual_fetch_instructions(year, month)
+        instructions = self.manual_fetch_instructions()
         print(instructions)
         raw_input('Press return when done, or to skip this step')
         unimported_paths = self.source.unimported_paths()
@@ -165,13 +165,12 @@ class ManualFetchTask(Task):
         raw_input('Press return to confirm, or Ctrl+C to cancel '
                   'and resolve any problems')
 
-    def manual_fetch_instructions(self, year, month):
+    def manual_fetch_instructions(self):
         source = self.source
-        year_and_month = datetime.date(year, month, 1).strftime('%Y_%m')
-        expected_location = "%s/%s/%s" % (
+        expected_location = os.path.join(
             settings.PIPELINE_DATA_BASEDIR,
             source.name,
-            year_and_month
+            'YYYY_MM',
         )
         output = []
         output.append('~' * 80)
