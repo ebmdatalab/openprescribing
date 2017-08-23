@@ -149,21 +149,21 @@ var analyseMap = {
       var layerData = layer.feature.properties.data;
       var val = ((typeof layerData !== 'undefined') && (month in layerData)) ? layerData[month][ratio] : null;
       var style = _this.getStyle(val,
-                                 minMax[1],
+                                 minMax,
                                  layer.feature.properties.name,
                                  _this.activeNames);
       layer.setStyle(style);
     });
   },
 
-  getStyle: function(val, maxVal, name, activeNames) {
+  getStyle: function(val, minMax, name, activeNames) {
     var style = {
       color: 'black',
       fillOpacity: 0.7,
       radius: 8,
       weight: 2,
       opacity: 0.3,
-      fillColor: this.getColour(maxVal, val)
+      fillColor: this.getColour(minMax, val)
     };
     if (_.contains(activeNames, name)) {
       style.weight = 3;
@@ -203,9 +203,11 @@ var analyseMap = {
     return boundsUrl;
   },
 
-  getColour: function(topVal, d) {
+  getColour: function(minMax, d) {
     var scale = chroma.scale('RdBu');
-    return scale(1 - (d / topVal)).hex();
+    var botVal = minMax[0];
+    var topVal = minMax[1];
+    return scale(1 - ((d - botVal) / (topVal - botVal))).hex();
   },
 
   getLegend: function(minMax, options) {
@@ -215,8 +217,7 @@ var analyseMap = {
     legend += '<div class="gradient">';
     for (var i = 1; i <= 100; i++) {
       var j = minMax[0] + i * (minMax[1] - minMax[0]) / 100;
-      console.log(j, this.getColour(minMax[1], j));
-      legend += '<span class="grad-step" style="background-color:' + this.getColour(minMax[1], j) + '"></span>';
+      legend += '<span class="grad-step" style="background-color:' + this.getColour(minMax, j) + '"></span>';
     }
     legend += '<span class="domain-min">' + Highcharts.numberFormat(minMax[0]) + '</span>';
     legend += '<span class="domain-max">' + Highcharts.numberFormat(minMax[1]) + '</span>';
