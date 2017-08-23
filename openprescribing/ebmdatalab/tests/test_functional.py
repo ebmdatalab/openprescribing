@@ -17,5 +17,5 @@ class FunctionalTests(TestCase):
             'measures', 'test_table', path, TEST_SCHEMA)
         result = list(bigquery.get_rows(
             'ebmdatalab', 'measures', 'test_table'))
-        assert result[0] == {'id': 1, 'word': 'hello'}
-        assert result[1] == {'id': 2, 'word': 'goodbye'}
+        assert result[0] == {'id': 1, 'word': 'apple'}
+        assert result[1] == {'id': 2, 'word': 'banana'}

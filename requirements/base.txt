@@ -26,3 +26,4 @@ html2text==2016.9.19
 networkx==1.11
 tqdm
 google-cloud-bigquery==0.24.0
+google-cloud-storage==1.0.0
