@@ -214,7 +214,9 @@ var analyseMap = {
     legend += ' ' + options.friendly.chartSubTitle + '</span>';
     legend += '<div class="gradient">';
     for (var i = 1; i <= 100; i++) {
-      legend += '<span class="grad-step" style="background-color:' + this.getColour(100, i) + '"></span>';
+      var j = minMax[0] + i * (minMax[1] - minMax[0]) / 100;
+      console.log(j, this.getColour(minMax[1], j));
+      legend += '<span class="grad-step" style="background-color:' + this.getColour(minMax[1], j) + '"></span>';
     }
     legend += '<span class="domain-min">' + Highcharts.numberFormat(minMax[0]) + '</span>';
     legend += '<span class="domain-max">' + Highcharts.numberFormat(minMax[1]) + '</span>';
