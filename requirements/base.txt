@@ -25,4 +25,4 @@ titlecase==0.8.2
 html2text==2016.9.19
 networkx==1.11
 tqdm
-google-cloud-bigquery==0.26.0
+google-cloud-bigquery==0.24.0
