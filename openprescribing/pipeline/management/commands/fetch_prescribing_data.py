@@ -1,7 +1,8 @@
+from __future__ import print_function
+
 from argparse import RawTextHelpFormatter
 import datetime
 import os
-import re
 import zipfile
 
 from lxml import html
@@ -9,21 +10,21 @@ import requests
 from tqdm import tqdm
 
 from django.conf import settings
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError
 
 from openprescribing.utils import mkdir_p
 
 
 class Command(BaseCommand):
+    # Note that this is mostly-duplicated below, but I can't see a nice way of
+    # avoiding that.
     help = '''
-This command downloads the latest prescribing data.
+This command downloads the prescribing data for a given year and month.  Does
+nothing if data already downloaded.  Raises exception if data not found.
 
-It downloads any compressed CSV files that have a date that is later than the
-newest file that has already been downloaded.
-
-The files are on a site that is protected by a captcha.  To download the files,
-you will need to solve the captcha in your browser.  This will set a cookie in
-your browser which you will need to pass to this command.
+The data is on a site that is protected by a captcha.  To download it, you will
+need to solve the captcha in your browser.  This will set a cookie in your
+browser which you will need to pass to this command.
 
 Specifically, you should:
 
@@ -33,7 +34,7 @@ Specifically, you should:
     * Solve the captcha and click on "Guest Login"
     * Copy the value of the JSESSIONID cookie
       * In Chrome, this can be found in the Application tab of Developer Tools
-    * Run `./manage.py fetch_prescribing_data [cookie]`
+    * Run `./manage.py fetch_prescribing_data [year] [month] [cookie]`
     '''.strip()
 
     def create_parser(self, *args, **kwargs):
@@ -42,25 +43,57 @@ Specifically, you should:
         return parser
 
     def add_arguments(self, parser):
-        parser.add_argument('jsessionid')
+        parser.add_argument('year', type=int)
+        parser.add_argument('month', type=int)
+        parser.add_argument('--jsessionid')
 
     def handle(self, *args, **kwargs):
+        if kwargs['jsessionid'] is None:
+            # Note that this is mostly-duplicated above, but I can't see a nice
+            # way of avoiding this.
+            print('''
+The data is on a site that is protected by a captcha.  To download it, you will
+need to solve the captcha in your browser.  This will set a cookie in your
+browser which you will need to paste below.
+
+Specifically, you should:
+
+    * Visit https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=124 in your browser
+    * Solve the captcha and click on "Guest Login"
+    * Copy the value of the JSESSIONID cookie
+      * In Chrome, this can be found in the Application tab of Developer Tools
+    * Paste this value below:
+            ''').strip()
+
+            jsessionid = raw_input()
+        else:
+            jsessionid = kwargs['jsessionid']
+
         self.path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'prescribing')
         self.base_url = 'https://apps.nhsbsa.nhs.uk/infosystems/data/'
 
         session = requests.Session()
-        session.cookies['JSESSIONID'] = kwargs['jsessionid']
+        session.cookies['JSESSIONID'] = jsessionid
 
-        for year_and_month, period_id in self.new_download_metadata(session):
-            self.download_csv(session, year_and_month, period_id)
+        date = datetime.date(kwargs['year'], kwargs['month'], 1)
+        year_and_month = date.strftime('%Y_%m')  # eg 2017_01
+        datestr = date.strftime('%b, %Y').upper()  # eg JAN, 2017
 
-    def new_download_metadata(self, session):
-        paths = os.listdir(self.path)
-        last_downloaded_year_and_month = [
-            path for path in paths
-            if re.match('^\d{4}_\d{2}$', path)
-        ][-1]
+        if self.already_downloaded(year_and_month):
+            print('Already downloaded data for', year_and_month)
+            return
 
+        period_id = self.period_id(session, datestr)
+
+        if period_id is None:
+            raise CommandError('Could not find data for %s' % year_and_month)
+
+        self.download_csv(session, year_and_month, period_id)
+
+    def already_downloaded(self, year_and_month):
+        return os.path.exists(os.path.join(self.path, year_and_month))
+
+    def period_id(self, session, datestr):
         url = self.base_url + 'showDataSelector.do'
         params = {'reportId': '124'}
         rsp = session.get(url, params=params)
@@ -69,11 +102,8 @@ Specifically, you should:
 
         links = tree.xpath('//a[@filtertype="MONTHLY"]')
         for link in links:
-            date = datetime.datetime.strptime(link.text.strip(), '%b, %Y')
-            year_and_month = date.strftime('%Y_%m')
-            if year_and_month > last_downloaded_year_and_month:
-                period_id = link.attrib['id']
-                yield year_and_month, period_id
+            if link.text.strip() == datestr:
+                return link.attrib['id']
 
     def download_csv(self, session, year_and_month, period_id):
         dir_path = os.path.join(self.path, year_and_month)
@@ -112,8 +142,8 @@ Specifically, you should:
 
         progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
 
-        with open('download.zip', 'wb') as f:
-            for block in rsp.iter_content(32 * 1024),
+        with open(zip_path, 'wb') as f:
+            for block in rsp.iter_content(32 * 1024):
                 f.write(block)
                 progress_bar.update(len(block))
 
