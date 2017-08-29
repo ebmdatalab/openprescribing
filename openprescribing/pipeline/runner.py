@@ -15,6 +15,8 @@ import networkx as nx
 from django.conf import settings
 from django.core.management import call_command as django_call_command
 
+from openprescribing.utils import find_files
+
 from .cloud_utils import CloudHandler
 from .models import TaskLog
 
@@ -153,11 +155,13 @@ class ManualFetchTask(Task):
         print('Running manual fetch task {}'.format(self.name))
         instructions = self.manual_fetch_instructions()
         print(instructions)
+        paths_before = find_files(self.source.data_dir)
         raw_input('Press return when done, or to skip this step')
-        unimported_paths = self.source.unimported_paths()
-        if unimported_paths:
+        paths_after = find_files(self.source.data_dir)
+        new_paths = [path for path in paths_after if path not in paths_before]
+        if new_paths:
             print('The following files have been manually fetched:')
-            for path in unimported_paths:
+            for path in new_paths:
                 print(' * {}'.format(path))
         else:
             print('No new files were found at {}'.format(self.source.data_dir))
