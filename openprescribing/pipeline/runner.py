@@ -9,7 +9,6 @@ import os
 import re
 import shlex
 import textwrap
-import unittest
 
 import networkx as nx
 
@@ -241,10 +240,10 @@ class ImportTask(Task):
 
 
 class PostProcessTask(Task):
-    def run(self, year, month):
+    def run(self, year, month, last_imported):
         # For now, year and month are ignored
-        print('Running post-process task {}'.format(self.name))
-        tokens = shlex.split(self.command)
+        command = self.command.format(last_imported=last_imported)
+        tokens = shlex.split(command)
         call_command(*tokens)
 
 
@@ -368,70 +367,6 @@ class BigQueryUploader(CloudHandler):
             self.upload(path, bucket, name)
 
 
-class SmokeTestHandler(CloudHandler):
-    def __init__(self, prescribing_path):
-        self.prescribing_path = prescribing_path
-        super(SmokeTestHandler, self).__init__()
-
-    def last_imported(self):
-        if 'LAST_IMPORTED' in os.environ:
-            date = os.environ['LAST_IMPORTED']
-        else:
-            date = re.findall(r'/(\d{4}_\d{2})/', self.prescribing_path)[0]
-        return date
-
-    def run_smoketests(self):
-        os.environ['LAST_IMPORTED'] = self.last_imported()
-        try:
-            # The value of argv is not important
-            unittest.main('pipeline.smoketests', argv=['smoketests'])
-        except SystemExit:
-            pass
-
-    def rows_to_dict(self, bigquery_result):
-        fields = bigquery_result['schema']['fields']
-        for row in bigquery_result['rows']:
-            dict_row = {}
-            for i, item in enumerate(row['f']):
-                value = item['v']
-                key = fields[i]['name']
-                dict_row[key] = value
-            yield dict_row
-
-    def update_smoketests(self):
-        prescribing_date = "-".join(self.last_imported().split('_')) + '-01'
-        date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
-                          'INTERVAL 5 YEAR))' % prescribing_date)
-
-        path = os.path.join(settings.PIPELINE_METADATA_DIR, 'smoketests')
-        for sql_file in glob.glob(os.path.join(path, '*.sql')):
-            test_name = os.path.splitext(
-                os.path.basename(sql_file))[0]
-            with open(sql_file, 'rb') as f:
-                query = f.read().replace(
-                    '{{ date_condition }}', date_condition)
-                print(query)
-                response = self.bigquery.jobs().query(
-                    projectId='ebmdatalab',
-                    body={'useLegacySql': False,
-                          'timeoutMs': 20000,
-                          'query': query}).execute()
-                quantity = []
-                cost = []
-                items = []
-                for r in self.rows_to_dict(response):
-                    quantity.append(r['quantity'])
-                    cost.append(r['actual_cost'])
-                    items.append(r['items'])
-                print("Updating test expectations for %s" % test_name)
-                json_path = os.path.join(path, '%s.json' % test_name)
-                with open(json_path, 'wb') as f:
-                    obj = {'cost': cost,
-                           'items': items,
-                           'quantity': quantity}
-                    json.dump(obj, f, indent=2)
-
-
 def path_matches_pattern(path, pattern):
     return fnmatch.fnmatch(os.path.basename(path), pattern)
 
@@ -441,7 +376,7 @@ def call_command(*args):
     return django_call_command(*args)
 
 
-def run_task(task, year, month):
+def run_task(task, year, month, **kwargs):
     if TaskLog.objects.filter(
         year=year,
         month=month,
@@ -458,7 +393,7 @@ def run_task(task, year, month):
     )
 
     try:
-        task.run(year, month)
+        task.run(year, month, **kwargs)
         task_log.mark_succeeded()
     except:
         # We want to catch absolutely every error here, including things that
@@ -486,10 +421,8 @@ def run_all(year, month):
     for task in tasks.by_type('import').ordered():
         run_task(task, year, month)
 
-    for task in tasks.by_type('post_process').ordered():
-        run_task(task, year, month)
-
     prescribing_path = tasks['import_hscic_prescribing'].imported_paths()[-1]
-    smoketest_handler = SmokeTestHandler(prescribing_path)
-    smoketest_handler.update_smoketests()
-    smoketest_handler.run_smoketests()
+    last_imported = re.findall(r'/(\d{4}_\d{2})/', prescribing_path)[0]
+
+    for task in tasks.by_type('post_process').ordered():
+        run_task(task, year, month, last_imported=last_imported)
