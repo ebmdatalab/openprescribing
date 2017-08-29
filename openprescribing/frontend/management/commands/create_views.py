@@ -37,8 +37,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--view', help='view to update (default is to update all)')
-        parser.add_argument(
-            '--list-views', help='list available views', action='store_true')
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
@@ -48,14 +46,11 @@ class Command(BaseCommand):
         self.fpath = os.path.dirname(__file__)
         self.view_paths = glob.glob(
             os.path.join(self.fpath, "./views_sql/*.sql"))
-        self.view = None
-        if options['list_views']:
-            for view in self.view_paths:
-                print os.path.basename(view).replace('.sql', '')
+        if options['view']:
+            self.view = options['view']
         else:
-            if options['view']:
-                self.view = options['view']
-            self.fill_views()
+            self.view = None
+        self.fill_views()
 
     def fill_views(self):
         paths = []
