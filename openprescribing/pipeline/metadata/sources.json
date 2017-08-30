@@ -22,9 +22,9 @@
     "ccg_boundaries": {
         "title": "Boundaries of CCGs in mapinfo format",
         "publisher": "NHS England",
-        "publication_schedule": "irregular (less than yealy)",
-        "index_url": "http://www.england.nhs.uk/resources/ccg-maps/",
-        "notes": "Currently using version as of 2015",
+        "publication_schedule": "irregular (less than yearly)",
+        "index_url": "http://geoportal.statistics.gov.uk/datasets/clinical-commissioning-groups-april-2017-super-generalised-clipped-boundaries-in-england-v4",
+        "notes": "Currently using version as of April 2017. If a new version of this file is found by the pipeline, the importer for this will fail without custom intervention; see the comments in the file (`import_ccg_boundaries`) for more info and carry out these steps before continuing.",
         "core_data": true
     },
     "ccg_details": {
