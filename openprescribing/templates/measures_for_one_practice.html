@@ -59,7 +59,7 @@ faq<p id="perfsummary">Loading...</p>
 
 <script>
 var measureData = {
-    'tags': '{{ request.GET.tags }}',
+    'tags': '{{ request.GET.tags|default:"core" }}',
     'orgId': '{{ practice.code }}',
     'parentOrg': '{{ practice.ccg.code }}',
     'orgName': '{{ practice.name }}',

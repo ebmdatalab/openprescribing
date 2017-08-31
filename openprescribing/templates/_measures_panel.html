@@ -17,6 +17,22 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-12">
+    <p class="alert alert-info">
+    {% if request.GET.tags %}
+      This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding by NHS England; we welcome feedback.
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}">Go back to standard measures</a>.
+    {% else %}
+      <strong>NEW</strong>: NHS England has recently announced a tranche of 18
+      products to be considered a low priority for NHS funding. We've
+      brought them together in an <strong>experimental</strong> list
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">here</a>.
+    {% endif %}
+    </p>
+  </div>
+</div>
+
 <div id="measures">
   <div id="charts" class="row">
     <div class="loading-wrapper col-xs-12">
