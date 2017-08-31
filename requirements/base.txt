@@ -19,7 +19,7 @@ premailer
 django-anymail==0.6.1
 django-crispy-forms
 requests-futures
-google-api-python-client==1.5.3
+google-api-python-client==1.6.2
 pip==8.1.2
 setuptools==27.3.0
 ebmdatalab-python==0.0.26

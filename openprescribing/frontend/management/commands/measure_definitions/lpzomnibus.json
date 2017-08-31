@@ -1,0 +1,33 @@
+{
+  "name": "All Low Priority Treatments",
+  "title": [
+    "All low priority treatments"
+  ],
+  "description": [
+    "An aggregation of prescribing on all low priority treatments as defined by NHS England"
+  ],
+  "why_it_matters": [
+    "<a href='?tags=lowpriority'>View the individual measures here</a>"
+  ],
+  "numerator_short": "All low-priority prescribing numerators",
+  "denominator_short": "All low-priority prescribing denominators",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": ["core"],
+  "numerator_columns": [
+    "SUM(numerator) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:measures.practice_data_all_low_priority] ",
+  "numerator_where": [
+    "1 = 1 "
+  ],
+  "denominator_columns": [
+    "SUM(denominator) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:measures.practice_data_all_low_priority] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
