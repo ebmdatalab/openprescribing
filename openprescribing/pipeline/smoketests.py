@@ -31,100 +31,91 @@ class SmokeTestBase(unittest.TestCase):
             now = datetime.now()
         return now
 
-    def _run_tests(self, test, url, expected_total):
-        r = requests.get(url)
+    def _run_tests(self, test_name, path_fragment, params):
+        url = '{}/api/1.0/{}/'.format(self.DOMAIN, path_fragment)
+        params['format'] = 'csv'
+        r = requests.get(url, params=params)
         f = StringIO.StringIO(r.text)
-        reader = csv.DictReader(f)
-        all_rows = []
-        for row in reader:
-            all_rows.append(row)
-        self.assertEqual(len(all_rows), expected_total)
+        all_rows = list(csv.DictReader(f))
+        self.assertEqual(len(all_rows), PRESCRIBING_DATA_MONTHS)
+
         path = os.path.join(
-            settings.PIPELINE_METADATA_DIR, 'smoketests', test + '.json')
+            settings.PIPELINE_METADATA_DIR, 'smoketests', test_name + '.json')
+
         with open(path, 'rb') as f:
             expected = json.load(f)
-            for i, row in enumerate(all_rows):
-                self.assertEqual(
-                    '%.2f' % float(row['actual_cost']), expected['cost'][i])
-                self.assertEqual(row['items'], expected['items'][i])
-                self.assertEqual(row['quantity'], expected['quantity'][i])
+
+        for i, row in enumerate(all_rows):
+            self.assertEqual(
+                '%.2f' % float(row['actual_cost']), expected['cost'][i])
+            self.assertEqual(row['items'], expected['items'][i])
+            self.assertEqual(row['quantity'], expected['quantity'][i])
 
 
 class TestSmokeTestSpendingByEveryone(SmokeTestBase):
     def test_presentation_by_all(self):
-        url = '%s/api/1.0/spending/?format=csv&' % self.DOMAIN
-        url += 'code=0501013B0AAAAAA'
-        self._run_tests('presentation_by_all',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0501013B0AAAAAA'}
+        self._run_tests('presentation_by_all', 'spending', params)
 
     def test_chemical_by_all(self):
-        url = '%s/api/1.0/spending/?format=csv&' % self.DOMAIN
-        url += 'code=0407010F0'
-        self._run_tests('chemical_by_all',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0407010F0'}
+        self._run_tests('chemical_by_all', 'spending', params)
 
     def test_bnf_section_by_all(self):
-        url = '%s/api/1.0/spending/?format=csv&' % self.DOMAIN
-        url += 'code=0702'
-        self._run_tests('bnf_section_by_all',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0702'}
+        self._run_tests('bnf_section_by_all', 'spending', params)
 
 
 class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
     def test_presentation_by_one_practice(self):
-        url = '%s/api/1.0/spending_by_practice/?format=csv&' % self.DOMAIN
-        url += 'code=0703021Q0BBAAAA&org=A81015'  # Cerazette 75mcg.
-        self._run_tests('presentation_by_one_practice',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0703021Q0BBAAAA', 'org': 'A81015'}  # Cerazette 75mcg.
+        self._run_tests(
+            'presentation_by_one_practice',
+            'spending_by_practice',
+            params
+        )
 
     def test_chemical_by_one_practice(self):
-        url = '%s/api/1.0/spending_by_practice/?' % self.DOMAIN
-        url += 'format=csv&code=0212000AA&org=A81015'  # Rosuvastatin Calcium.
-        self._run_tests('chemical_by_one_practice',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0212000AA', 'org': 'A81015'}  # Rosuvastatin Calcium.
+        self._run_tests(
+            'chemical_by_one_practice',
+            'spending_by_practice',
+            params
+        )
 
     def test_multiple_chemicals_by_one_practice(self):
-        url = '%s/api/1.0/spending_by_practice/?format=csv&' % self.DOMAIN
-        url += 'code=0212000B0,0212000C0,0212000M0,0212000X0,0212000Y0'
-        url += '&org=C85020'  # Multiple generic statins.
-        self._run_tests('multiple_chemicals_by_one_practice',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        # Multiple generic statins.
+        params = {
+            'code': '0212000B0,0212000C0,0212000M0,0212000X0,0212000Y0',
+            'org': 'C85020',
+        }
+        self._run_tests(
+            'multiple_chemicals_by_one_practice',
+            'spending_by_practice',
+            params
+        )
 
     def test_bnf_section_by_one_practice(self):
-        url = '%s/api/1.0/spending_by_practice/' % self.DOMAIN
-        url += '?format=csv&code=0304&org=L84077'
-        self._run_tests('bnf_section_by_one_practice',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0304', 'org': 'L84077'}
+        self._run_tests(
+            'bnf_section_by_one_practice',
+            'spending_by_practice',
+            params
+        )
 
 
 class TestSmokeTestSpendingByCCG(SmokeTestBase):
     def test_presentation_by_one_ccg(self):
-        url = '%s/api/1.0/spending_by_ccg?' % self.DOMAIN
-        url += 'format=csv&code=0403030E0AAAAAA&org=10Q'
-        self._run_tests('presentation_by_one_ccg',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0403030E0AAAAAA', 'org': '10Q'}
+        self._run_tests('presentation_by_one_ccg', 'spending_by_ccg', params)
 
     def test_chemical_by_one_ccg(self):
-        url = '%s/api/1.0/spending_by_ccg?' % self.DOMAIN
-        url += 'format=csv&code=0212000AA&org=10Q'
-        self._run_tests('chemical_by_one_ccg',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0212000AA', 'org': '10Q'}
+        self._run_tests('chemical_by_one_ccg', 'spending_by_ccg', params)
 
     def test_bnf_section_by_one_ccg(self):
-        url = '%s/api/1.0/spending_by_ccg?' % self.DOMAIN
-        url += 'format=csv&code=0801&org=10Q'
-        self._run_tests('bnf_section_by_one_ccg',
-                        url,
-                        PRESCRIBING_DATA_MONTHS)
+        params = {'code': '0801', 'org': '10Q'}
+        self._run_tests('bnf_section_by_one_ccg', 'spending_by_ccg', params)
 
 
 class TestSmokeTestMeasures(SmokeTestBase):
