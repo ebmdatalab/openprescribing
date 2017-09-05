@@ -100,7 +100,7 @@ class CommandsTestCase(SimpleTestCase):
             self.assertNotIn(suffix, blob.path)
 
     def test_import_create_views(self):
-        call_command('create_views', dataset='test_hscic')
+        call_command('create_views')
         with connection.cursor() as c:
             cmd = 'SELECT * FROM vw__practice_summary '
             cmd += 'ORDER BY processing_date, practice_id'

@@ -56,8 +56,7 @@ class BQClientTest(TestCase):
 
         t1.export_to_storage()
 
-        t1.download_from_storage(dir_path)
+        with t1.download_from_storage_and_unzip() as f:
+            data = list(csv.reader(f))
 
-        with gzip.open(os.path.join(dir_path, 'sandpit3', 't1', 't1-000000000000.csv.gz')) as f:
-            reader = csv.reader(f)
-            self.assertEqual(list(reader), [[str(x) for x in row] for row in [headers] + rows])
+        self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])

@@ -123,3 +123,6 @@ PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
 
 # Path to import log for pipeline data
 PIPELINE_IMPORT_LOG_PATH = '/home/hello/openprescribing-data/log.json'
+
+# BigQuery datasets and tables
+BQ_HSCIC_DATASET = 'hscic'

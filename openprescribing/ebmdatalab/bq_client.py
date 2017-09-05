@@ -1,5 +1,8 @@
+from contextlib import contextmanager
 import os
 import re
+import subprocess
+import tempfile
 import time
 import uuid
 
@@ -31,9 +34,10 @@ class Client(object):
         table.create()
         return Table(table)
 
-    def get_table(self, table_name):
+    def get_table(self, table_name, reload=True):
         table = self.dataset.table(table_name)
-        table.reload()
+        if reload:
+            table.reload()
         return Table(table)
 
     def get_or_create_table(self, table_name, schema):
@@ -129,22 +133,38 @@ class Table(object):
 
         wait_for_job(job)
 
-    def storage_blobs(self):
-        prefix = '{}/views/{}'.format(self.dataset_name, self.name)
+    @property
+    def storage_prefix(self):
+        return '{}/views/{}-'.format(self.dataset_name, self.name)
 
-        for blob in self.bucket.list_blobs(prefix=prefix):
+    def storage_blobs(self):
+        for blob in self.bucket.list_blobs(prefix=self.storage_prefix):
             yield blob
 
-    def download_from_storage(self, base_path):
-        prefix = '{}/views/{}'.format(self.dataset_name, self.name)
-
-        dir_path = os.path.join(base_path, self.dataset_name, self.name)
-        mkdir_p(dir_path)
-
+    def download_from_storage(self):
         for blob in self.storage_blobs():
-            filename = blob.name.split('/')[-1]
-            with open(os.path.join(dir_path, filename), 'wb') as f:
+            with tempfile.NamedTemporaryFile(mode='rb+') as f:
                 blob.download_to_file(f)
+                f.flush()
+                f.seek(0)
+                yield f
+
+    @contextmanager
+    def download_from_storage_and_unzip(self):
+        with tempfile.NamedTemporaryFile(mode='r+') as f_unzipped:
+            for i, f_zipped in enumerate(self.download_from_storage()):
+                # Unzip
+                if i == 0:
+                    cmd = "gunzip -c -f %s >> %s"
+                else:
+                    # When the file is split into several shards in GCS, it
+                    # puts a header on every file, so we have to skip that
+                    # header on all except the first shard.
+                    cmd = "gunzip -c -f %s | tail -n +2 >> %s"
+                subprocess.check_call(
+                    cmd % (f_zipped.name, f_unzipped.name), shell=True)
+
+            yield f_unzipped
 
     def delete_from_storage(self):
         for blob in self.storage_blobs():
