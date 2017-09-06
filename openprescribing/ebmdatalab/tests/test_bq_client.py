@@ -2,11 +2,15 @@ import csv
 import gzip
 import os
 from tempfile import mkdtemp
-from unittest import TestCase
 
 from google.cloud.bigquery import SchemaField
 from google.cloud.exceptions import Conflict
+
+from django.core.management import call_command
+from django.test import TestCase
+
 from ebmdatalab.bq_client import Client
+from frontend.bq_models import BQ_CCGs
 
 
 class BQClientTest(TestCase):
@@ -60,3 +64,16 @@ class BQClientTest(TestCase):
             data = list(csv.reader(f))
 
         self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])
+
+
+class TestBQModel(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command('import_org_names', ccg='frontend/tests/fixtures/commands/eccg.csv')
+
+    def test_insert_rows_from_pg(self):
+        bq_ccgs = BQ_CCGs()
+        bq_ccgs.insert_rows_from_pg()
+        client = Client('test_hscic')
+        results = client.query('SELECT * FROM test_hscic.ccgs')
+        self.assertEqual(len(list(results.rows)), 3)

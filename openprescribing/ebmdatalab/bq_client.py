@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import csv
 import os
 import re
 import subprocess
@@ -9,6 +10,9 @@ import uuid
 from google.cloud import bigquery as gcbq
 from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict
+
+from django.conf import settings
+from django.db import connection
 
 from openprescribing.utils import mkdir_p
 
@@ -169,6 +173,61 @@ class Table(object):
     def delete_from_storage(self):
         for blob in self.storage_blobs():
             blob.delete()
+
+
+class BQModelTable(object):
+    '''Represents a table in BQ that mirrors table of ORM model.
+
+    Subclasses should define class attributes:
+
+        * table_name
+        * fields
+        * model
+    '''
+
+    def get_table(self):
+        client = Client(settings.BQ_HSCIC_DATASET)
+        return client.get_table(self.table_name)
+
+    # def create_table(self):
+    #     # TODO
+
+    def insert_rows_from_csv(self, path):
+        table = self.get_table()
+        table.insert_rows_from_csv(path)
+
+    @contextmanager
+    def dump_rows_from_pg(self):
+        sql = "COPY %s(%s) TO STDOUT (FORMAT CSV, NULL '')" % (
+            self.pg_table_name, ','.join(self.pg_columns))
+
+        with tempfile.NamedTemporaryFile(mode='r+b') as f:
+            with connection.cursor() as c:
+                c.copy_expert(sql, f)
+            f.seek(0)
+            yield f
+
+    def insert_rows_from_pg(self):
+        with self.dump_rows_from_pg() as f1:
+            with tempfile.NamedTemporaryFile(mode='r+b') as f2:
+                reader = csv.reader(f1)
+                writer = csv.writer(f2)
+                for row in reader:
+                    writer.writerow(self.pg_to_bq_transform(row))
+                f2.seek(0)
+                self.insert_rows_from_csv(f2.name)
+
+    @property
+    def pg_table_name(self):
+        return self.model._meta.db_table
+
+    @property
+    def pg_columns(self):
+        return [f[0] for f in self.fields]
+
+    @staticmethod
+    def pg_to_bq_transform(row):
+        return row
 
 
 def wait_for_job(job, timeout_s=3600):
