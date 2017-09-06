@@ -26,7 +26,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db import transaction
 
-from ebmdatalab import bigquery
+from ebmdatalab.bq_client import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
@@ -298,7 +298,7 @@ class MeasureCalculation(object):
             cols[-1] = re.sub(r',\s*$', '', cols[-1])
         return cols
 
-    def query_and_return(self, query_id, table_id, context, legacy=False):
+    def query_and_return(self, query_id, table_name, context, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
 
@@ -324,16 +324,18 @@ class MeasureCalculation(object):
             '[ebmdatalab:%s' % settings.BQ_HSCIC_DATASET
         )
 
-        return bigquery.query_and_return(
-            settings.BQ_PROJECT, settings.BQ_MEASURES_DATASET, table_id, sql, legacy)
+        self.get_table(table_name).insert_rows_from_query(sql, legacy=legacy)
 
-    def get_rows(self, table_name):
+    def get_rows_as_dicts(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for
         each row of data.
 
         """
-        return bigquery.get_rows(
-            settings.BQ_PROJECT, settings.BQ_MEASURES_DATASET, table_name)
+        return self.get_table(table_name).get_rows_as_dicts()
+
+    def get_table(self, table_name):
+        client = Client(settings.BQ_MEASURES_DATASET)
+        return client.get_table(table_name)
 
     def add_percent_rank(self):
         """Add a percentile rank to the ratios table
@@ -423,7 +425,7 @@ class GlobalCalculation(MeasureCalculation):
         self.log("Writing global centiles from %s to database"
                  % self.globals_table_name())
         count = 0
-        for d in self.get_rows(self.globals_table_name()):
+        for d in self.get_rows_as_dicts(self.globals_table_name()):
             ccg_deciles = {}
             practice_deciles = {}
             ccg_cost_savings = {}
@@ -621,7 +623,7 @@ class PracticeCalculation(MeasureCalculation):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         c = 0
         # Write the data we want to load into a file
-        for datum in self.get_rows(self.table_name()):
+        for datum in self.get_rows_as_dicts(self.table_name()):
             datum['measure_id'] = self.measure_id
             if self.measure['is_cost_based']:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
@@ -728,7 +730,7 @@ class CCGCalculation(MeasureCalculation):
         """
         with transaction.atomic():
             c = 0
-            for datum in self.get_rows(self.table_name()):
+            for datum in self.get_rows_as_dicts(self.table_name()):
                 datum['measure_id'] = self.measure_id
                 if self.measure['is_cost_based']:
                     datum['cost_savings'] = convertSavingsToDict(datum)

@@ -64,7 +64,7 @@ class UnitTests(TestCase):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
         g = GlobalCalculation('cerazette')
-        with patch.object(g, 'get_rows') as patched_calc:
+        with patch.object(g, 'get_rows_as_dicts') as patched_calc:
             patched_calc.return_value = [
                 {
                     'ccg_cost_savings_10': 1785,
@@ -131,7 +131,7 @@ class UnitTests(TestCase):
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
         p = PracticeCalculation('cerazette')
-        with patch.object(p, 'get_rows') as patched_calc:
+        with patch.object(p, 'get_rows_as_dicts') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
             patched_calc.return_value = [
                 {'calc_value': 0,

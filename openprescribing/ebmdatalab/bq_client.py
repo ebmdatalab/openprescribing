@@ -77,15 +77,23 @@ class Table(object):
         self.name = gcbq_table.name
         self.dataset_name = gcbq_table._dataset.name
 
-    def fetch_data(self):
+
+    def get_rows(self):
         return self.gcbq_table.fetch_data()
+
+    def get_rows_as_dicts(self):
+        self.gcbq_table.reload()
+        field_names = [field.name for field in self.gcbq_table.schema]
+
+        for row in self.get_rows():
+            yield row_to_dict(row, field_names)
 
     def insert_rows_from_query(self, sql, legacy=False, **options):
         if not legacy:
             sql = convert_legacy_table_names(sql)
 
         default_options = {
-            'useLegacySql': legacy,
+            'use_legacy_sql': legacy,
             'allow_large_results': True,
             'write_disposition': 'WRITE_TRUNCATE',
             'destination': self.gcbq_table,
@@ -276,3 +284,16 @@ def merge_options(options, default_options):
 
 def gen_job_name():
     return uuid.uuid4().hex
+
+
+def row_to_dict(row, field_names):
+    """Convert a row from bigquery into a dictionary, and convert NaN to
+    None
+
+    """
+    dict_row = {}
+    for value, field_name in zip(row, field_names):
+        if value and str(value).lower() == 'nan':
+            value = None
+        dict_row[field_name] = value
+    return dict_row

@@ -48,11 +48,11 @@ class BQClientTest(TestCase):
             (3, 'coconut'),
         ]
 
-        self.assertEqual(list(t1.fetch_data()), rows)
+        self.assertEqual(list(t1.get_rows()), rows)
 
         t2.insert_rows_from_query('SELECT * FROM sandpit3.t1 WHERE a > 1 ORDER BY a')
 
-        self.assertEqual(list(t2.fetch_data()), rows[1:])
+        self.assertEqual(list(t2.get_rows()), rows[1:])
 
         results = client.query('SELECT * FROM sandpit3.t1 WHERE a > 2 ORDER BY a')
 
