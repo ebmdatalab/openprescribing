@@ -490,11 +490,6 @@ class BigqueryFunctionalTests(TestCase):
                 'measures',
                 settings.BQ_PRESCRIBING_TABLE_NAME,
                 prescribing_fixture)
-            bigquery.load_data_from_file(
-                'measures',
-                settings.BQ_PRACTICES_TABLE_NAME,
-                practices_fixture,
-                bigquery.PRACTICE_SCHEMA)
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
