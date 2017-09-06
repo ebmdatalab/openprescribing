@@ -46,8 +46,8 @@ class Command(BaseCommand):
             'views_sql'
         )
 
-        dataset = settings.BQ_HSCIC_DATASET
-        client = bq_client.Client(dataset)
+        dataset_name = settings.BQ_HSCIC_DATASET
+        client = bq_client.Client(dataset_name)
 
         pool = Pool()
         tables = []
@@ -66,7 +66,7 @@ class Command(BaseCommand):
             # formatting as some of the SQL has braces in.
             with open(path) as f:
                 sql = f.read()
-            sql = sql.replace('{{dataset}}', dataset)
+            sql = sql.replace('{{dataset}}', dataset_name)
             sql = sql.replace('{{this_month}}', prescribing_date)
             pool.apply_async(self.query_and_export, [table, sql])
 
