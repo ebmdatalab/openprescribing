@@ -1,10 +1,10 @@
 from __future__ import print_function
 
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
-from ebmdatalab import bigquery
 from frontend.models import PracticeStatistics, Prescription
+from frontend.bq_model_tables import BQ_Practices, BQ_Presentation, BQ_CCGs, BQ_PracticeStatistics
 
 from ...cloud_utils import CloudHandler
 
@@ -25,12 +25,11 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         BigQueryUploader().update_bnf_table()
-        bigquery.load_data_from_pg(
-            'hscic', 'practices', 'frontend_practice',
-            bigquery.PRACTICE_SCHEMA)
-        bigquery.load_presentation_from_pg()
-        bigquery.load_statistics_from_pg()
-        bigquery.load_ccgs_from_pg()
+
+        BQ_Practices.insert_rows_from_pg()
+        BQ_Presentation.insert_rows_from_pg()
+        BQ_CCGs().insert_rows_from_pg()
+        BQ_PracticeStatistics().insert_rows_from_pg()
 
 
 class BigQueryUploader(CloudHandler):
