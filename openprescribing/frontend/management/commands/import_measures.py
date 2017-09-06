@@ -325,7 +325,7 @@ class MeasureCalculation(object):
         )
 
         return bigquery.query_and_return(
-            settings.BQ_PROJECT, 'measures', table_id, sql, legacy)
+            settings.BQ_PROJECT, settings.BQ_MEASURES_DATASET, table_id, sql, legacy)
 
     def get_rows(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for

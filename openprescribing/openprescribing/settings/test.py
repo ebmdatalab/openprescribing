@@ -74,6 +74,7 @@ BQ_FULL_PRACTICES_TABLE_NAME = "[%s:measures.%s]" % (
 # BigQuery datasets and tables
 # The plan is to get rid of the stuff above
 BQ_HSCIC_DATASET = 'test_hscic'
+BQ_MEASURES_DATASET = 'test_measures'
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://localhost"
