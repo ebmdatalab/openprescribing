@@ -3,7 +3,6 @@ import argparse
 import json
 import os
 
-from ebmdatalab import bigquery
 from mock import patch
 from mock import MagicMock
 
@@ -16,6 +15,7 @@ from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.bq_model_tables import BQ_Prescribing_Standard
 
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
@@ -482,13 +482,15 @@ class BigqueryFunctionalTests(TestCase):
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
-            fixtures_base = 'frontend/tests/fixtures/commands/'
-            prescribing_fixture = (fixtures_base +
-                                   'prescribing_bigquery_fixture.csv')
-            bigquery.load_prescribing_data_from_file(
-                'test_hscic',
-                'normalised_prescribing_standard',
-                prescribing_fixture)
+            prescribing_fixture_path = os.path.join(
+                'frontend',
+                'tests',
+                'fixtures',
+                'commands',
+                'prescribing_bigquery_fixture.csv'
+            )
+            BQ_Prescribing_Standard().insert_rows_from_csv(prescribing_fixture_path)
+
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
