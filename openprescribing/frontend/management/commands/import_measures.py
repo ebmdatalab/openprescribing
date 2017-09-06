@@ -58,16 +58,14 @@ class Command(BaseCommand):
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
                 measure_start = datetime.datetime.now()
-                global_calculation = GlobalCalculation(
-                    measure_id, verbose=verbose,
-                    under_test=options['test_mode'])
+                global_calculation = GlobalCalculation(measure_id, verbose=verbose)
                 practice_calculation = PracticeCalculation(
                     measure_id, start_date=start_date, end_date=end_date,
-                    verbose=verbose, under_test=options['test_mode']
+                    verbose=verbose
                 )
                 ccg_calculation = CCGCalculation(
                     measure_id, start_date=start_date, end_date=end_date,
-                    verbose=verbose, under_test=options['test_mode']
+                    verbose=verbose
                 )
                 measure = global_calculation.create_or_update_measure()
                 if options['definitions_only']:
@@ -224,14 +222,13 @@ class MeasureCalculation(object):
 
     """
     def __init__(self, measure_id, start_date=None, end_date=None,
-                 verbose=False, under_test=False):
+                 verbose=False):
         self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
         self.measure_id = measure_id
         self.measure = parse_measures()[measure_id]
         self.start_date = start_date
         self.end_date = end_date
-        self.under_test = under_test
 
         self.setup_db()
 
@@ -322,11 +319,10 @@ class MeasureCalculation(object):
 
         sql = sql.format(**context)
 
-        if self.under_test:
-            sql = sql.replace(
-                "[ebmdatalab:hscic.normalised_prescribing_standard]",
-                "[ebmdatalab:test_hscic.%s]" %
-                settings.BQ_PRESCRIBING_TABLE_NAME)
+        sql = sql.replace(
+            '[ebmdatalab:hscic',
+            '[ebmdatalab:%s' % settings.BQ_HSCIC_DATASET
+        )
 
         return bigquery.query_and_return(
             settings.BQ_PROJECT, 'measures', table_id, sql, legacy)
@@ -680,8 +676,7 @@ class CCGCalculation(MeasureCalculation):
                 col, col)
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-        from_table = PracticeCalculation(
-            self.measure_id, under_test=self.under_test).full_table_name()
+        from_table = PracticeCalculation(self.measure_id).full_table_name()
 
         context = {
             'denominator_aliases': denominator_aliases,

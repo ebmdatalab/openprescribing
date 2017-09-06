@@ -63,7 +63,7 @@ class UnitTests(TestCase):
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
-        g = GlobalCalculation('cerazette', under_test=True)
+        g = GlobalCalculation('cerazette')
         with patch.object(g, 'get_rows') as patched_calc:
             patched_calc.return_value = [
                 {
@@ -130,7 +130,7 @@ class UnitTests(TestCase):
         Measure.objects.create(id='cerazette')
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
-        p = PracticeCalculation('cerazette', under_test=True)
+        p = PracticeCalculation('cerazette')
         with patch.object(p, 'get_rows') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
             patched_calc.return_value = [
@@ -487,7 +487,7 @@ class BigqueryFunctionalTests(TestCase):
                                    'prescribing_bigquery_fixture.csv')
             bigquery.load_prescribing_data_from_file(
                 'test_hscic',
-                settings.BQ_PRESCRIBING_TABLE_NAME,
+                'normalised_prescribing_standard',
                 prescribing_fixture)
         month = '2015-09-01'
         measure_id = 'cerazette'
