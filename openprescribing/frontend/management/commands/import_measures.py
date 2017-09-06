@@ -354,16 +354,12 @@ class MeasureCalculation(object):
         else:
             logger.info(message)
 
-    def _query_and_write_global_centiles(self,
-                                         sql_path,
-                                         value_var,
-                                         from_table,
-                                         extra_select_sql):
+    def _query_and_write_global_centiles(self, sql_path, extra_select_sql):
         with open(sql_path) as sql_file:
             value_var = 'calc_value'
             sql = sql_file.read()
             sql = sql.format(
-                from_table=from_table,
+                from_table=self.full_table_name(),
                 extra_select_sql=extra_select_sql,
                 value_var=value_var,
                 global_centiles_table=self.full_globals_table_name())
@@ -575,7 +571,6 @@ class PracticeCalculation(MeasureCalculation):
         """
         sql_path = os.path.join(
             self.fpath, "./measure_sql/global_deciles_practices.sql")
-        from_table = self.full_table_name()
         extra_fields = []
         # Add prefixes to the select columns so we can reference the
         # joined tables (bigquery legacy SQL flattens columns names
@@ -593,9 +588,7 @@ class PracticeCalculation(MeasureCalculation):
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
                 "- SUM(num_quantity)) AS cost_per_denom,"
                 "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
-        value_var = 'calc_value'
-        return self._query_and_write_global_centiles(
-            sql_path, value_var, from_table, extra_select_sql)
+        return self._query_and_write_global_centiles(sql_path, extra_select_sql)
 
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
@@ -718,10 +711,7 @@ class CCGCalculation(MeasureCalculation):
                 ", practice_deciles.cost_per_num AS cost_per_num")
         sql_path = os.path.join(
             self.fpath, "./measure_sql/global_deciles_ccgs.sql")
-        from_table = self.full_table_name()
-        value_var = 'calc_value'
-        return self._query_and_write_global_centiles(
-            sql_path, value_var, from_table, extra_select_sql)
+        return self._query_and_write_global_centiles(sql_path, extra_select_sql)
 
     def calculate_cost_savings_for_ccgs(self):
         """Appends cost savings column to the CCG ratios table"""
