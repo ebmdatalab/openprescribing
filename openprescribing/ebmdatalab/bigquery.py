@@ -254,7 +254,7 @@ def load_prescribing_data_from_file(
     """
     return load_data_from_file(
         dataset_name, table_name,
-        source_file_name, PRESCRIBING_SCHEMA, _transform=prescribing_transform)
+        source_file_name, PRESCRIBING_SCHEMA)
 
 
 def load_statistics_from_pg(dataset='hscic'):
