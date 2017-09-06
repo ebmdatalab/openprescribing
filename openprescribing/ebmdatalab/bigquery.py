@@ -209,45 +209,6 @@ def load_data_from_file(
         return job
 
 
-def prescribing_transform(row):
-    """Transform a row from a formatted file into data suitable for
-    storing in our bigquery schema
-
-
-    A 'formatted file' is a file created by the
-    import_hscic_prescribing Django management command.
-
-    """
-    # To match the prescribing table format in BigQuery, we have
-    # to re-encode the date field as a bigquery TIMESTAMP and drop
-    # a couple of columns
-    row[10] = "%s 00:00:00" % row[10]
-    del(row[3])
-    del(row[-1])
-    return row
-
-
-def statistics_transform(row):
-    """Transform a row from the frontend_practicestatistics table so it
-    matches our statistics schema
-
-    """
-    row[0] = "%s 00:00:00" % row[0]  # BQ TIMESTAMP format
-    return row
-
-
-def presentation_transform(row):
-    """Transform a row from the frontend_presentation table so it
-    matches our statistics schema
-
-    """
-    if row[2] == 't':
-        row[2] = 'true'
-    else:
-        row[2] = 'false'
-    return row
-
-
 def load_prescribing_data_from_file(
         dataset_name, table_name, source_file_name):
     """Given a formatted file of prescribing data, load it into BigQuery.
@@ -255,80 +216,6 @@ def load_prescribing_data_from_file(
     return load_data_from_file(
         dataset_name, table_name,
         source_file_name, PRESCRIBING_SCHEMA)
-
-
-def load_statistics_from_pg(dataset='hscic'):
-    """Load the frontend_stataistics table from the openprescribing
-    application into BigQuery
-
-    """
-    schema = PRACTICE_STATISTICS_SCHEMA
-
-    pg_cols = [x.name for x in schema]
-    pg_cols[0] = 'date'
-    pg_cols[-1] = 'practice_id'
-
-    load_data_from_pg(
-        dataset, 'practice_statistics', 'frontend_practicestatistics',
-        schema, cols=pg_cols, _transform=statistics_transform)
-
-
-def load_presentation_from_pg(dataset='hscic'):
-    """Load the frontend_presentation table from the openprescribing
-    application into BigQuery
-
-    """
-    load_data_from_pg(
-        dataset, 'presentation', 'frontend_presentation',
-        PRESENTATION_SCHEMA, _transform=presentation_transform)
-
-
-def load_ccgs_from_pg(dataset='hscic'):
-    """Load the frontend_practices table from the openprescribing
-    application into BigQuery
-
-    """
-    def transform(row):
-        if row[4]:
-            row[4] = "%s 00:00:00" % row[4]
-        if row[5]:
-            row[5] = "%s 00:00:00" % row[5]
-        return row
-
-    load_data_from_pg(
-        dataset, 'ccgs', 'frontend_pct',
-        CCG_SCHEMA, cols=[x.name for x in CCG_SCHEMA], _transform=transform)
-
-
-def load_data_from_pg(dataset_name, bq_table_name,
-                      pg_table_name, schema, cols=None, _transform=None):
-    """Loads every row currently in named postgres table to a
-    specified table (with schema) in BigQuery
-
-    """
-    db_name = get_env_setting('DB_NAME')
-    db_user = get_env_setting('DB_USER')
-    db_pass = get_env_setting('DB_PASS')
-    db_host = get_env_setting('DB_HOST', '127.0.0.1')
-    conn = psycopg2.connect(database=db_name, user=db_user,
-                            password=db_pass, host=db_host)
-    with tempfile.NamedTemporaryFile(mode='r+b') as csv_file:
-        if not cols:
-            cols = [x.name for x in schema]
-        sql = "COPY %s(%s) TO STDOUT (FORMAT CSV, NULL '')" % (
-            pg_table_name, ",".join(cols))
-        conn.cursor().copy_expert(
-            sql, csv_file)
-        csv_file.seek(0)
-        load_data_from_file(
-            dataset_name, bq_table_name,
-            csv_file.name,
-            schema,
-            _transform
-        )
-        conn.commit()
-        conn.close()
-
 
 def wait_for_job(job):
     """Poll a BigQuery job until it is finished.
