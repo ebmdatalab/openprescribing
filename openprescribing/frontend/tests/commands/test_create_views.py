@@ -9,7 +9,6 @@ from django.db import connection
 from django.test import SimpleTestCase
 
 from common import utils
-from ebmdatalab import bigquery
 from frontend.management.commands import create_views
 from frontend.models import ImportLog
 from frontend.bq_model_tables import BQ_Prescribing_Standard, BQ_Prescribing_Legacy, BQ_CCGs, BQ_PracticeStatistics
