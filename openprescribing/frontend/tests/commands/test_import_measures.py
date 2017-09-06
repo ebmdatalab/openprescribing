@@ -485,9 +485,8 @@ class BigqueryFunctionalTests(TestCase):
             fixtures_base = 'frontend/tests/fixtures/commands/'
             prescribing_fixture = (fixtures_base +
                                    'prescribing_bigquery_fixture.csv')
-            practices_fixture = fixtures_base + 'practices.csv'
             bigquery.load_prescribing_data_from_file(
-                'measures',
+                'test_hscic',
                 settings.BQ_PRESCRIBING_TABLE_NAME,
                 prescribing_fixture)
         month = '2015-09-01'
