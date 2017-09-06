@@ -301,7 +301,7 @@ class MeasureCalculation(object):
             cols[-1] = re.sub(r',\s*$', '', cols[-1])
         return cols
 
-    def query_and_return(self, query, table_id, legacy=False):
+    def query_and_return(self, query_id, table_id, context, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
 
@@ -315,13 +315,21 @@ class MeasureCalculation(object):
         specifically for testing.
 
         """
+        query_path = os.path.join(self.fpath, 'measure_sql', query_id + '.sql')
+
+        with open(query_path) as f:
+            sql = f.read()
+
+        sql = sql.format(**context)
+
         if self.under_test:
-            query = query.replace(
+            sql = sql.replace(
                 "[ebmdatalab:hscic.normalised_prescribing_standard]",
                 "[ebmdatalab:measures.%s]" %
                 settings.BQ_PRESCRIBING_TABLE_NAME)
+
         return bigquery.query_and_return(
-            settings.BQ_PROJECT, 'measures', table_id, query, legacy)
+            settings.BQ_PROJECT, 'measures', table_id, sql, legacy)
 
     def get_rows(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for
@@ -334,17 +342,18 @@ class MeasureCalculation(object):
     def add_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
-        from_table = self.full_table_name()
-        target_table = self.table_name()
-        value_var = 'calc_value'
-        sql_path = os.path.join(self.fpath, "./measure_sql/percent_rank.sql")
-        with open(sql_path, "r") as sql_file:
-            sql = sql_file.read()
-            sql = sql.format(
-                from_table=from_table,
-                target_table=target_table,
-                value_var=value_var)
-            return self.query_and_return(sql, target_table, legacy=True)
+        context = {
+            'from_table': self.full_table_name(),
+            'target_table': self.table_name(),
+            'value_var': 'calc_value',
+        }
+
+        return self.query_and_return(
+            'percent_rank',
+            self.table_name(),
+            context,
+            legacy=True
+        )
 
     def log(self, message):
         if self.verbose:
@@ -352,19 +361,22 @@ class MeasureCalculation(object):
         else:
             logger.info(message)
 
-    def _query_and_write_global_centiles(self, sql_path, extra_select_sql):
-        with open(sql_path) as sql_file:
-            value_var = 'calc_value'
-            sql = sql_file.read()
-            sql = sql.format(
-                from_table=self.full_table_name(),
-                extra_select_sql=extra_select_sql,
-                value_var=value_var,
-                global_centiles_table=self.full_globals_table_name())
-            # We have to use legacy SQL because there' no
-            # PERCENTILE_CONT equivalent in the standard SQL
-            return self.query_and_return(
-                sql, self.globals_table_name(), legacy=True)
+    def _query_and_write_global_centiles(self, query_id, extra_select_sql):
+        context = {
+            'from_table': self.full_table_name(),
+            'extra_select_sql': extra_select_sql,
+            'value_var': 'calc_value',
+            'global_centiles_table': self.full_globals_table_name(),
+        }
+
+        # We have to use legacy SQL because there' no
+        # PERCENTILE_CONT equivalent in the standard SQL
+        self.query_and_return(
+            query_id,
+            self.globals_table_name(),
+            context,
+            legacy=True
+        )
 
     def _get_col_aliases(self, num_or_denom=None):
         """Return column names referred to in measure definitions for both
@@ -396,17 +408,18 @@ class GlobalCalculation(MeasureCalculation):
 
         Reads from the existing global table and writes back to it again.
         """
-        sql_path = os.path.join(
-            self.fpath, "./measure_sql/global_cost_savings.sql")
-        with open(sql_path, "r") as sql_file:
-            sql = sql_file.read()
-            sql = sql.format(
-                practice_table=practice_table_name,
-                ccg_table=ccg_table_name,
-                global_table=self.full_globals_table_name()
-            )
-            target_table = self.globals_table_name()
-            self.query_and_return(sql, target_table, legacy=True)
+        context = {
+            'practice_table': practice_table_name,
+            'ccg_table': ccg_table_name,
+            'global_table': self.full_globals_table_name()
+        }
+
+        self.query_and_return(
+            'global_cost_savings',
+            self.globals_table_name(),
+            context,
+            legacy=True
+        )
 
     def write_global_centiles_to_database(self):
         """Write the globals data from BigQuery to the local database
@@ -536,36 +549,30 @@ class PracticeCalculation(MeasureCalculation):
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", num.%s AS num_%s" % (col, col)
             aliased_numerators += ", num_%s" % col
-        sql_path = os.path.join(
-            self.fpath, "./measure_sql/practice_ratios.sql")
-        with open(sql_path, "r") as sql_file:
-            sql = sql_file.read()
-            sql = sql.format(
-                numerator_from=self.measure['numerator_from'],
-                numerator_where=numerator_where,
-                numerator_columns=" ".join(
-                    self.get_columns_for_select('numerator')),
-                denominator_columns=" ".join(
-                    self.get_columns_for_select('denominator')),
-                denominator_from=self.measure['denominator_from'],
-                denominator_where=denominator_where,
-                numerator_aliases=numerator_aliases,
-                denominator_aliases=denominator_aliases,
-                aliased_denominators=aliased_denominators,
-                aliased_numerators=aliased_numerators,
-                practices_from=self.full_practices_table_name(),
-                start_date=self.start_date,
-                end_date=self.end_date
 
-            )
-            return self.query_and_return(sql, self.table_name())
+        context = {
+            'numerator_from': self.measure['numerator_from'],
+            'numerator_where': numerator_where,
+            'numerator_columns': " ".join(
+                self.get_columns_for_select('numerator')),
+            'denominator_columns': " ".join(
+                self.get_columns_for_select('denominator')),
+            'denominator_from': self.measure['denominator_from'],
+            'denominator_where': denominator_where,
+            'numerator_aliases': numerator_aliases,
+            'denominator_aliases': denominator_aliases,
+            'aliased_denominators': aliased_denominators,
+            'aliased_numerators': aliased_numerators,
+            'practices_from': self.full_practices_table_name(),
+            'start_date': self.start_date,
+            'end_date': self.end_date
+
+        }
+
+        self.query_and_return('practice_ratios', self.table_name(), context)
 
     def calculate_global_centiles_for_practices(self):
-        """Compute overall sums and centiles for each practice.
-
-        """
-        sql_path = os.path.join(
-            self.fpath, "./measure_sql/global_deciles_practices.sql")
+        """Compute overall sums and centiles for each practice."""
         extra_fields = []
         # Add prefixes to the select columns so we can reference the
         # joined tables (bigquery legacy SQL flattens columns names
@@ -583,22 +590,20 @@ class PracticeCalculation(MeasureCalculation):
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
                 "- SUM(num_quantity)) AS cost_per_denom,"
                 "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
-        return self._query_and_write_global_centiles(sql_path, extra_select_sql)
+
+        self._query_and_write_global_centiles(
+            'global_deciles_practices',
+            extra_select_sql
+        )
 
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
-        sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
-        with open(sql_path, "r") as sql_file:
-            sql = sql_file.read()
-            ratios_table = self.full_table_name()
-            global_table = self.full_globals_table_name()
-            target_table = self.table_name()
-            sql = sql.format(
-                local_table=ratios_table,
-                global_table=global_table,
-                unit='practice'
-            )
-            self.query_and_return(sql, target_table)
+        context = {
+            'local_table': self.full_table_name(),
+            'global_table': self.full_globals_table_name(),
+            'unit': 'practice'
+        }
+        self.query_and_return('cost_savings', self.table_name(), context)
 
     def write_practice_ratios_to_database(self):
         """Copy the bigquery ratios data to the local postgres database.
@@ -669,21 +674,21 @@ class CCGCalculation(MeasureCalculation):
         CCG. Stores in a new table.
 
         """
-        with open(os.path.join(
-              self.fpath, "./measure_sql/ccg_ratios.sql")) as sql_file:
-            sql = sql_file.read()
-            numerator_aliases = denominator_aliases = ''
-            for col in self._get_col_aliases('denominator'):
-                denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (
-                    col, col)
-            for col in self._get_col_aliases('numerator'):
-                numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-            from_table = PracticeCalculation(
-                self.measure_id, under_test=self.under_test).full_table_name()
-            sql = sql.format(denominator_aliases=denominator_aliases,
-                             numerator_aliases=numerator_aliases,
-                             from_table=from_table)
-            self.query_and_return(sql, self.table_name())
+        numerator_aliases = denominator_aliases = ''
+        for col in self._get_col_aliases('denominator'):
+            denominator_aliases += ", SUM(denom_%s) AS denom_%s" % (
+                col, col)
+        for col in self._get_col_aliases('numerator'):
+            numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
+        from_table = PracticeCalculation(
+            self.measure_id, under_test=self.under_test).full_table_name()
+
+        context = {
+            'denominator_aliases': denominator_aliases,
+            'numerator_aliases': numerator_aliases,
+            'from_table': from_table
+        }
+        self.query_and_return('ccg_ratios', self.table_name(), context)
 
     def calculate_global_centiles_for_ccgs(self):
         """Adds CCG centiles to the already-existing CCG centiles table
@@ -704,25 +709,20 @@ class CCGCalculation(MeasureCalculation):
             extra_select_sql += (
                 ", practice_deciles.cost_per_denom AS cost_per_denom"
                 ", practice_deciles.cost_per_num AS cost_per_num")
-        sql_path = os.path.join(
-            self.fpath, "./measure_sql/global_deciles_ccgs.sql")
-        return self._query_and_write_global_centiles(sql_path, extra_select_sql)
+
+        self._query_and_write_global_centiles(
+            'global_deciles_ccgs',
+            extra_select_sql
+        )
 
     def calculate_cost_savings_for_ccgs(self):
         """Appends cost savings column to the CCG ratios table"""
-
-        sql_path = os.path.join(self.fpath, "./measure_sql/cost_savings.sql")
-        with open(sql_path, "r") as sql_file:
-            sql = sql_file.read()
-            ratios_table = self.full_table_name()
-            global_table = self.full_globals_table_name()
-            target_table = self.table_name()
-            sql = sql.format(
-                local_table=ratios_table,
-                global_table=global_table,
-                unit='ccg'
-            )
-            self.query_and_return(sql, target_table)
+        context = {
+            'local_table': self.full_table_name(),
+            'global_table': self.full_globals_table_name(),
+            'unit': 'ccg'
+        }
+        self.query_and_return('cost_savings', self.table_name(), context)
 
     def write_ccg_ratios_to_database(self):
         """Create measure values for CCG ratios (these are distinguished from
