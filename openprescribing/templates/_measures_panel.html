@@ -1,45 +1,41 @@
-<div class="row">
-  <div class="col-md-6">
-     {% include '_alert_signup_form.html' %}
-  </div>
-  <div class="col-md-6">
-    <div id="toggle">
-      <p>Sort prescribing measures by:</p>
-    <div class="btn-group" id="order">
-        <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
-            Potential for improvement
-        </button>
-        <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
-            Potential savings
-        </button>
+<div class="row" >
+  {% if request.GET.tags %}
+  <h2>Low Value Prescribing measures</h2>
+  <p class="alert alert-info">
+    This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding <a href="https://www.england.nhs.uk/2017/07/medicine-consultation/">by NHS England</a>; we welcome feedback.  These are indicative only, and should be approached with caution (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).<br>
+    {% if entity_type == 'practice' %}
+    <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.
+    {% else %}
+    <a href="{% url 'measures_for_one_ccg' ccg.code %}">View standard measures instead</a>.
+    {% endif %}
+  </p>
+{% else %}
+  <h2>Prescribing measures</h2>
+  <p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+{% endif %}
+
+  <div class="row">
+    <div class="col-md-6">
+      {% include '_alert_signup_form.html' %}
     </div>
+    <div class="col-md-6">
+      <div id="toggle">
+        <p>Sort prescribing measures by:</p>
+        <div class="btn-group" id="order">
+          <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
+            Potential for improvement
+          </button>
+          <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
+            Potential savings
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <p class="alert alert-info">
-    {% if request.GET.tags %}
-      This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding by NHS England; we welcome feedback.
-      {% if entity_type == 'practice' %}
-        <a href="{% url 'measures_for_one_practice' practice.code %}">Go back to standard measures</a>.
-      {% else %}
-        <a href="{% url 'measures_for_one_ccg' ccg.code %}">Go back to standard measures</a>.
-      {% endif %}
-    {% else %}
-      <strong>NEW</strong>: NHS England has recently announced a tranche of 18
-      products to be considered a low priority for NHS funding. We've
-      brought them together in an <strong>experimental</strong> list
-      {% if entity_type == 'practice' %}
-        <a href="{% url 'measures_for_one_practice' practice.code %}?tags=lowpriority">here</a>.
-      {% else %}
-        <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">here</a>.
-      {% endif %}
-    {% endif %}
-    </p>
-  </div>
-</div>
+
+<p id="perfsummary">Loading...</p>
 
 <div id="measures">
   <div id="charts" class="row">

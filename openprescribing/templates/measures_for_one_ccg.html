@@ -31,8 +31,14 @@
     {% if practices.count > 6 %}
       <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
     {% endif %}
+    <img src="/static/img/bang.jpg" style="float: left; margin: 10px">
+    <p>
+      Latest features from <strong>OpenPrescribing Labs</strong>:
+      <a href="{% url 'ccg_price_per_unit' ccg.code %}">a tool to
+      catch up to £400m of NHS savings</a> per month, and
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">measures
+      for NHS England's list of low value prescription items</a></p>
   </div>
-
   <div class="col-md-6" id="map-container">
     <div id="map-measure"></div>
   </div>
@@ -40,13 +46,6 @@
 </div>
 
 <hr/>
-<h2><img src="/static/img/bang.jpg" style="float: left; margin: 10px">Openprescribing Labs</h2>
-<p>
-We have experimental new features. Our first is this: <a href="{% url 'ccg_price_per_unit' ccg.code  %}">a tool to catch up to £400m of NHS savings</a> per year!</p>
-<h2>Measures</h2>
-<p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
-
-<p id="perfsummary">Loading...</p>
 
 {% include '_measures_panel.html' with entity_type='CCG' %}
 
