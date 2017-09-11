@@ -8,7 +8,9 @@
     "Cost of dosulepin per 1000 patients"
   ],
   "why_it_matters": [
-    "Formerly known as dothiapen it is an antidepressant that NICE has raised safety concerns over. Newer anti-depressants are available."
+    "Dosulepin (formerly known as dothiepin) is an antidepressant. ",
+    "<a href='https://www.nice.org.uk/donotdo/do-not-switch-to-or-start-dosulepin-because-evidence-supporting-its-tolerability-relative-to-other-antidepressants-is-outweighed-by-the-increased-cardiac-risk-and-toxicity-in-overdose'> NICE recommends that it is not used for new patients due to safety concerns</a>. ",
+    "There are many newer anti-depressants available."
   ],
   "numerator_short": "Dosulepin cost (£)",
   "denominator_short": "1000 patients",
