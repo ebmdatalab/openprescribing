@@ -7,7 +7,8 @@
     "Cost of homeopathy per 1000 patients"
   ],
   "why_it_matters": [
-    "The House of Commons Science and Technology Committee found homeopathy not evidence based and based on a placebo effect."
+    "In 2010 House of Commons Science and Technology Committee found that the use of homeopathy was ",
+    "<a href='https://publications.parliament.uk/pa/cm200910/cmselect/cmsctech/45/4504.htm#a18'>not evidence-based, and any benefits to patients was due to placebo effect</a>. "
   ],
   "numerator_short": "Homeopathy cost (£)",
   "denominator_short": "1000 patients",
