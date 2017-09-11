@@ -7,7 +7,8 @@
     "Cost of rubefacients per 1000 patients"
   ],
   "why_it_matters": [
-    "Evidence available does not support the use of topical rubefacients (deep heat rubs and ointments)."
+    "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",
+    "However, the BNF states that <a href='https://bnf.nice.org.uk/treatment-summary/soft-tissue-disorders.html'>the evidence available does not support the use of topical rubefacients in acute or chronic musculoskeletal pain</a>."
   ],
   "numerator_short": "Rubefacients cost (£)",
   "denominator_short": "1000 patients",
