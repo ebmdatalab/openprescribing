@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - rrimipramine",
+  "name": "NHS England Low Priority Treatment - trimipramine",
   "title": [
     "Trimipramine cost per 1000 patients"
   ],
@@ -7,7 +7,9 @@
     "Cost of trimipramine per 1000 patients"
   ],
   "why_it_matters": [
-    "A tricyclic antidepressant (TCA). Newer alternatives are available."
+    "Trimipramine is an older tricyclic antidepressant. The cost has increased significantly recently, ",
+    "and there are newer, cheaper alternatives are available, which are ",
+    "<a href='https://www.nice.org.uk/Guidance/CG90'> recommended by NICE in preference to tricyclic antidepressants</a>. "
   ],
   "numerator_short": "Trimipramine cost (£)",
   "denominator_short": "1000 patients",
