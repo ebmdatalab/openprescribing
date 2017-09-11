@@ -7,8 +7,9 @@
     "Cost of travel vaccines per 1000 patients"
   ],
   "why_it_matters": [
-    "Seven vaccines - Hepatitis B, Japanese Encephalitis, Meningitis ACWY, Yellow Fever, Tick-borne encephalitis, ",
-    "Rabies and the BCG  - are not supposed which have been prescribed by practices in error. "
+    "There are seven vaccines - Hepatitis B, Japanese Encephalitis, Meningitis ACWY, Yellow Fever, Tick-borne encephalitis, ",
+    "Rabies and Bacillus Calmette–Guérin (BCG) - which are not supposed which have been prescribed by practices for travel purposes. ",
+    "Sometimes GP practices supply them in error for travel"
   ],
   "numerator_short": "Travel vaccines cost (£)",
   "denominator_short": "1000 patients",
