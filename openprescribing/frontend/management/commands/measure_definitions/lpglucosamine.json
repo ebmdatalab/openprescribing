@@ -7,7 +7,8 @@
     "Cost of glucosamine and chondroitin per 1000 patients"
   ],
   "why_it_matters": [
-    "Nutraceuticals which are taken to improve pain associated with osteoarthritis but there is no evidence they work.."
+    "Glucosamine and chondroitin are nutrition supplements which are taken to improve pain associated with osteoarthritis. ",
+    "However, there is little evidence of benefit and <a href='https://www.nice.org.uk/guidance/cg177/chapter/1-Recommendations#nutraceuticals'>NICE do not recommend their use in osteoarthritis</a>. "
   ],
   "numerator_short": "Glucosamine and chondroitin cost (£)",
   "denominator_short": "1000 patients",
