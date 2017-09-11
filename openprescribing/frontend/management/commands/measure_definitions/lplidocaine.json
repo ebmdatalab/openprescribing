@@ -7,8 +7,9 @@
     "Cost of lidocaine plasters per 1000 patients"
   ],
   "why_it_matters": [
-    "Licensed for treatment of post herpetic neuralgia, a complication of Shingles, but limited evidence. ",
-    "NICE do not recommend and alternatives are available."
+    "Lidocaine plasters as licensed for treatment of post herpetic neuralgia, which is a complication of shingles. ",
+    "However there is limited evidence to the benefit, and they are ",
+    "<a href='https://www.nice.org.uk/guidance/cg173/chapter/1-Recommendations'>not included in the recommendations for neuralgia in NICE guidance</a>. "
   ],
   "numerator_short": "Lidocaine plasters cost (£)",
   "denominator_short": "1000 patients",
