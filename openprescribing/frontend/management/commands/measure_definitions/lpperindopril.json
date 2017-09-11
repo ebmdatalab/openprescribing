@@ -7,8 +7,9 @@
     "Cost of perindopril arginine per 1000 patients"
   ],
   "why_it_matters": [
-    "Perindopril is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy ",
-    "and prophylaxis of cardiovascular events. A cheaper alternative with a longer shelf-life is available."
+    "Perindopril arginine is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy ",
+    "and prophylaxis of cardiovascular events. A different salt (perindopril erbumine) is considerably cheaper, and the arginine form ",
+    "does not have provide any additional clinical benefit."
   ],
   "numerator_short": "Perindopril arginine cost (£)",
   "denominator_short": "1000 patients",
