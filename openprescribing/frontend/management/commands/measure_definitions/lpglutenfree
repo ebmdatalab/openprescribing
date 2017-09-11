@@ -1,0 +1,62 @@
+{
+  "name": "NHS England Low Priority Treatment - gluten free products",
+  "title": [
+    "Gluten-free products: cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of gluten-free products per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Gluten-free products are available on prescription for patients who have a biopsy-confirmed diagnosis of coeliac disease. ",
+    "These products are also now avilable to purchase, e.g. from supermarkets, and many NHS areas are considering stopping or restricting their supply on prescribing."
+  ],
+  "numerator_short": "Gluten-free products cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0904010AK%' ",
+    "OR bnf_code LIKE '0904010I0%' ",
+    "OR bnf_code LIKE '0904010H0%' ",
+    "OR bnf_code LIKE '0904010L0%' ",
+    "OR bnf_code LIKE '0904010J0%' ",
+    "OR bnf_code LIKE '0904010Z0%' ",
+    "OR bnf_code LIKE '0904010F0%' ",
+    "OR bnf_code LIKE '0904010AE%' ",
+    "OR bnf_code LIKE '090401050%' ",
+    "OR bnf_code LIKE '0904010V0%' ",
+    "OR bnf_code LIKE '090401060%' ",
+    "OR bnf_code LIKE '0904010E0%' ",
+    "OR bnf_code LIKE '0904010T0%' ",
+    "OR bnf_code LIKE '0904010AF%' ",
+    "OR bnf_code LIKE '090401030%' ",
+    "OR bnf_code LIKE '0904010Q0%' ",
+    "OR bnf_code LIKE '0904010A0%' ",
+    "OR bnf_code LIKE '0904010U0%' ",
+    "OR bnf_code LIKE '0904010AD%' ",
+    "OR bnf_code LIKE '0904010AC%' ",
+    "OR bnf_code LIKE '0904010AB%' ",
+    "OR bnf_code LIKE '090401070%' ",
+    "OR bnf_code LIKE '0904010AI%' ",
+    "OR bnf_code LIKE '0904010AJ%' ",
+    "OR bnf_code LIKE '0904010AH%' ",
+    "OR bnf_code LIKE '0904010AG%' ",
+    "OR bnf_code LIKE '0904010AA%' ",
+    "OR bnf_code LIKE '090401080%' ",
+    "OR bnf_code LIKE '0904010AU%') "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
