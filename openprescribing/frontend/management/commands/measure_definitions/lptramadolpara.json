@@ -7,7 +7,8 @@
     "Cost of paracetamol and tramadol combination per 1000 patients"
   ],
   "why_it_matters": [
-    "Paracetamol and Tramadol are widely available. There is no advantage in a single pill."
+    "Prescribing the combination product of paracetamol and tramadol costs more than prescribing the preparations separately. ",
+    "The doses are also different (32.5mg of tramadol, 325mg of paracetamol) than those generally used (50mg tramadol, 500mg paracetamol)."
   ],
   "numerator_short": "Paracetamol and tramadol combination cost (£)",
   "denominator_short": "1000 patients",
