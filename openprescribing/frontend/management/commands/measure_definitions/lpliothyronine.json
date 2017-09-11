@@ -7,9 +7,9 @@
     "Cost of liothyronine per 1000 patients"
   ],
   "why_it_matters": [
-    "Used for underactive thyroid. High cost and limited evidence. ",
+    "Liothyronine is used to treat an underactive thyroid. It has a very high cost and limited evidence. ",
     "Most patients can have symptoms controlled on much cheaper levothyroxine. ",
-    "Manufacturer has been subject of a Competition and Markets Authority investigation."
+    "The manufacturer has been the subject of a Competition and Markets Authority investigation."
   ],
   "numerator_short": "Liothyronine cost (£)",
   "denominator_short": "1000 patients",
