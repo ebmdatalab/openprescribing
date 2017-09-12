@@ -48,52 +48,37 @@ class Command(BaseCommand):
         parser.add_argument('--filename')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
+        self.IS_VERBOSE = (options['verbosity'] > 1)
 
         if 'is_test' in options:
             self.IS_TEST = True
         else:
             self.IS_TEST = False
 
-        if options['filename']:
-            filenames = [options['filename']]
-        else:
-            filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.*')
-        converted_filenames = []
-        for f in filenames:
-            if self.IS_VERBOSE:
-                print "--------- Converting %s -----------" % f
-            filename_for_output = self.create_filename_for_output_file(f)
+        filename = options['filename']
 
-            if f.endswith('Detailed_Prescribing_Information.csv'):
-                f = f.split('/prescribing/')[1]
-                uri = 'gs://ebmdatalab/hscic/prescribing/' + f
-                # Grab date from file path
-                try:
-                    date = datetime.datetime.strptime(
-                        uri.split("/")[-2] + "_01", "%Y_%m_%d"
-                    ).strftime('%Y_%m_%d')
-                except ValueError as e:
-                    message = ('The file path must have a YYYY_MM '
-                               'date component in the containing directory: ')
-                    message += e.message
-                    raise CommandError(message)
-                converted_filenames.append(
-                    self.aggregate_nhs_digital_data(
-                        uri, filename_for_output, date))
-            else:
-                reader = csv.reader(open(f, 'rU'))
-                next(reader)
-                writer = csv.writer(open(filename_for_output, 'wb'))
-                for row in reader:
-                    if len(row) == 1:
-                        continue
-                    data = self.format_row_for_sql_copy(row)
-                    writer.writerow(data)
-                converted_filenames.append(filename_for_output)
-        return ", ".join(converted_filenames)
+        if self.IS_VERBOSE:
+            print "--------- Converting %s -----------" % filename
+
+        filename_for_output = self.create_filename_for_output_file(filename)
+
+        filename = filename.split('/prescribing/')[1]
+        uri = 'gs://ebmdatalab/hscic/prescribing/' + filename
+        # Grab date from file path
+        try:
+            date = datetime.datetime.strptime(
+                uri.split("/")[-2] + "_01", "%Y_%m_%d"
+            ).strftime('%Y_%m_%d')
+        except ValueError as e:
+            message = ('The file path must have a YYYY_MM '
+                       'date component in the containing directory: ')
+            message += e.message
+            raise CommandError(message)
+
+        converted_filename = self.aggregate_nhs_digital_data(
+                uri, filename_for_output, date)
+
+        return converted_filename
 
     def create_filename_for_output_file(self, filename):
         if self.IS_TEST:
