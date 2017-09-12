@@ -123,6 +123,19 @@ class Table(object):
 
         wait_for_job(job)
 
+    def insert_rows_from_storage(self, gcs_uri, **options):
+        default_options = {
+            'write_disposition': 'WRITE_TRUNCATE',
+        }
+
+        job = self.gcbq_client.load_table_from_storage(gen_job_name(), self.gcbq_table, gcs_uri)
+
+        set_options(job, options, default_options)
+
+        job.begin()
+
+        wait_for_job(job)
+
     def export_to_storage(self, **options):
         default_options = {
             'compression': 'GZIP',

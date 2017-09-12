@@ -5,12 +5,13 @@ from tempfile import mkdtemp
 
 from google.cloud.bigquery import SchemaField
 from google.cloud.exceptions import Conflict
+from google.cloud import storage
 
 from django.core.management import call_command
 from django.test import TestCase
 
 from ebmdatalab.bq_client import Client
-from frontend.bq_models import BQ_CCGs
+from frontend.bq_model_tables import BQ_CCGs
 
 
 class BQClientTest(TestCase):
@@ -36,17 +37,16 @@ class BQClientTest(TestCase):
         t1 = client.get_table('t1')
         t2 = client.get_table('t2')
 
-        dir_path = mkdtemp()
-        print dir_path
-
-        t1.insert_rows_from_csv('ebmdatalab/tests/test_table.csv')
-
         headers = ['a', 'b']
         rows = [
             (1, 'apple'),
             (2, 'banana'),
             (3, 'coconut'),
         ]
+
+        csv_path = 'ebmdatalab/tests/test_table.csv'
+
+        t1.insert_rows_from_csv(csv_path)
 
         self.assertEqual(list(t1.get_rows()), rows)
 
@@ -64,6 +64,17 @@ class BQClientTest(TestCase):
             data = list(csv.reader(f))
 
         self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])
+
+        client = storage.client.Client(project='ebmdatalab')
+        bucket = client.get_bucket('ebmdatalab')
+        blob = bucket.blob('test_bq_client/test_table.csv')
+
+        with open(csv_path) as f:
+            blob.upload_from_file(f)
+
+        t2.insert_rows_from_storage('gs://ebmdatalab/test_bq_client/blob.csv')
+
+        self.assertEqual(list(t2.get_rows()), rows)
 
 
 class TestBQModel(TestCase):
