@@ -21,7 +21,10 @@ class Client(object):
     def __init__(self, dataset_name):
         # TODO: pass in credentials, rather than inferring from environment
         # TODO: get this from settings
-        self.gcbq_client = gcbq.Client(project='ebmdatalab')
+        self.project_name = 'ebmdatalab'
+        self.dataset_name = dataset_name
+
+        self.gcbq_client = gcbq.Client(project=self.project_name)
         self.dataset = self.gcbq_client.dataset(dataset_name)
 
     def list_jobs(self):
@@ -51,6 +54,28 @@ class Client(object):
             table = self.get_table(table_name)
         return table
 
+    def create_table_referencing_storage(self, table_name, schema, gcs_uri):
+        resource = {
+            'tableReference': {'tableId': table_name},
+            'externalDataConfiguration': {
+                'csvOptions': {'skipLeadingRows': '1'},
+                'sourceFormat': 'CSV',
+                'sourceUris': [gcs_uri],
+                'schema': {'fields': schema}
+            }
+        }
+
+        path = '/projects/{}/datasets/{}/tables'.format(self.project_name, self.dataset_name)
+        self.gcbq_client._connection.api_request(method='POST', path=path, data=resource)
+
+    def get_or_create_table_referencing_storage(self, table_name, schema, gcs_uri):
+        try:
+            self.create_table_referencing_storage(table_name, schema, gcs_uri)
+        except Conflict:
+            pass
+
+        return self.get_table(table_name)
+
     def query(self, sql, legacy=False, **options):
         if not legacy:
             sql = convert_legacy_table_names(sql)
@@ -72,11 +97,14 @@ class Table(object):
         self.gcbq_table = gcbq_table
         self.gcbq_client = gcbq_table._dataset._client
         # TODO don't hardcode this
-        self.gcs_client = gcs.Client(project='ebmdatalab')
-        self.bucket = self.gcs_client.bucket('ebmdatalab')
+        self.project_name = 'ebmdatalab'
+        self.gcs_client = gcs.Client(project=self.project_name)
+        self.bucket = self.gcs_client.bucket(self.project_name)
         self.name = gcbq_table.name
         self.dataset_name = gcbq_table._dataset.name
 
+    def legacy_qualified_name(self):
+        return '[{}:{}.{}]'.format(self.project_name, self.dataset_name, self.name)
 
     def get_rows(self):
         return self.gcbq_table.fetch_data()

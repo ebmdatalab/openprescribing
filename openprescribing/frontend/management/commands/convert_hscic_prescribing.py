@@ -10,12 +10,15 @@ from google.cloud.exceptions import NotFound
 from google.cloud.bigquery.table import Table
 from google.cloud.bigquery.dataset import Dataset
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
 from ebmdatalab.bigquery import copy_table_to_gcs
 from ebmdatalab.bigquery import download_from_gcs
 from ebmdatalab.bigquery import wait_for_job
+
+from ebmdatalab.bq_client import Client
 
 logger = logging.getLogger(__name__)
 
@@ -106,29 +109,30 @@ class Command(BaseCommand):
             raise NotFound(path)
 
         # Create table at raw_nhs_digital_data
-        table_ref = create_temporary_data_source(uri)
-        self.append_aggregated_data_to_prescribing_table(
-            table_ref, date)
-        temp_table = self.write_aggregated_data_to_temp_table(
-            table_ref, date)
+        table = create_temporary_data_source(uri)
+        table_ref = table.legacy_qualified_name()
+        self.append_aggregated_data_to_prescribing_table(table_ref, date)
+        temp_table = self.write_aggregated_data_to_temp_table(table_ref, date).gcbq_table
         converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         copy_table_to_gcs(temp_table, converted_uri)
         return download_from_gcs(converted_uri, local_path)
 
     def assert_latest_data_not_already_uploaded(self, date):
-        client = bigquery.client.Client(project='ebmdatalab')
+        client = Client(settings.BQ_HSCIC_DATASET)
         sql = """SELECT COUNT(*)
         FROM [ebmdatalab:hscic.prescribing]
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
-        query = client.run_sync_query(sql)
-        query.run()
+        results = client.query(sql)
         assert query.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
             self, source_table_ref, date):
         self.assert_latest_data_not_already_uploaded(date)
-        client = bigquery.client.Client(project='ebmdatalab')
-        query = """
+
+        client = Client(settings.BQ_HSCIC_DATASET)
+        table = client.get_table('prescribing', reload=False)
+
+        sql = """
          SELECT
           Area_Team_Code AS sha,
           LEFT(PCO_Code, 3) AS pct,
@@ -146,21 +150,11 @@ class Command(BaseCommand):
            bnf_code, bnf_name, pct,
            practice, sha
         """ % (date.replace('_', '-'), source_table_ref)
-        dataset = client.dataset('hscic')
-        table = dataset.table(
-            name='prescribing')
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_APPEND'
-        job.allow_large_results = True
-        wait_for_job(job)
-        return table
 
-    def write_aggregated_data_to_temp_table(
-            self, source_table_ref, date):
-        query = """
+        table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
+
+    def write_aggregated_data_to_temp_table(self, source_table_ref, date):
+        sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
@@ -175,17 +169,10 @@ class Command(BaseCommand):
          GROUP BY
            presentation_code, pct_id, practice_code
         """ % (date, source_table_ref)
-        client = bigquery.client.Client(project='ebmdatalab')
-        dataset = client.dataset(TEMP_DATASET)
-        table = dataset.table(
-            name='formatted_prescribing_%s' % date)
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_TRUNCATE'
-        job.allow_large_results = True
-        wait_for_job(job)
+
+        client = Client(TEMP_DATASET)
+        table = client.get_table('formatted_prescribing_%s' % date, reload=False)
+        table.insert_rows_from_query(sql, legacy=True)
         return table
 
 
@@ -217,31 +204,5 @@ def create_temporary_data_source(source_uri):
         {"name": "NIC", "type": "float", "mode": "required"},
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
-    resource = {
-        "tableReference": {
-            "tableId": TEMP_SOURCE_NAME
-        },
-        "externalDataConfiguration": {
-            "csvOptions": {
-                "skipLeadingRows": "1"
-            },
-            "sourceFormat": "CSV",
-            "sourceUris": [
-                source_uri
-            ],
-            "schema": {"fields": schema}
-        }
-    }
-    client = bigquery.client.Client(project='ebmdatalab')
-    # delete the table if it exists
-    dataset = Dataset("tmp_eu", client)
-    table = Table.from_api_repr(resource, dataset)
-    try:
-        table.delete()
-    except NotFound:
-        pass
-    # Now create it
-    path = "/projects/ebmdatalab/datasets/%s/tables" % TEMP_DATASET
-    client._connection.api_request(
-        method='POST', path=path, data=resource)
-    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, TEMP_SOURCE_NAME)
+    client = Client(TEMP_DATASET)
+    return client.get_or_create_table_referencing_storage(TEMP_SOURCE_NAME, schema, source_uri)
