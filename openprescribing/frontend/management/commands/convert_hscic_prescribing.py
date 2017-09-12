@@ -76,7 +76,7 @@ class Command(BaseCommand):
             raise CommandError(message)
 
         converted_filename = self.aggregate_nhs_digital_data(
-                uri, filename_for_output, date))
+                uri, filename_for_output, date)
 
         return converted_filename
 
