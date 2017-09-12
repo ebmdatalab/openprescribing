@@ -86,21 +86,6 @@ class Command(BaseCommand):
         else:
             return filename[:-4] + '_formatted.CSV'
 
-    def format_row_for_sql_copy(self, row):
-        '''
-        Transform the data into the format needed for COPY.
-        '''
-        row = [r.strip() for r in row]
-        net_cost = float(row[6])
-        actual_cost = float(row[7])
-        quantity = int(row[8])
-        month = row[9]
-        formatted_date = '%s-%s-01' % (month[:4], month[4:])
-        output = [row[1], row[2], row[3],
-                  int(row[5]), float(row[6]), actual_cost,
-                  quantity, formatted_date]
-        return output
-
     def aggregate_nhs_digital_data(self, uri, local_path, date):
         """Given a GCS URI for "detailed" prescribing data, run a query to
         aggregate it into the format we use internally, and download
