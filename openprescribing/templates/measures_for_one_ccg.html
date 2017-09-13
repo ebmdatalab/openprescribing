@@ -12,7 +12,17 @@
 {% block content %}
 
 <h1>CCG: {{ ccg.name }}</h1>
-
+<div class="row">
+  <div class="col-md-12">
+    <img src="/static/img/bang.jpg" style="float: left; margin-right: 10px">
+    <p>
+      Latest features from <strong>OpenPrescribing Labs</strong>:
+      <a href="{% url 'ccg_price_per_unit' ccg.code %}">a tool to
+        catch up to £400m of NHS savings</a> per month; and
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">measures
+        for NHS England's list of low value prescription items</a></p>
+  </div>
+</div>
 <div class="row" id="intro">
   <div class="col-md-6">
     <p>Standard practices currently in this CCG:</p>
@@ -31,13 +41,6 @@
     {% if practices.count > 6 %}
       <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
     {% endif %}
-    <img src="/static/img/bang.jpg" style="float: left; margin: 10px">
-    <p>
-      Latest features from <strong>OpenPrescribing Labs</strong>:
-      <a href="{% url 'ccg_price_per_unit' ccg.code %}">a tool to
-      catch up to £400m of NHS savings</a> per month, and
-      <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">measures
-      for NHS England's list of low value prescription items</a></p>
   </div>
   <div class="col-md-6" id="map-container">
     <div id="map-measure"></div>
