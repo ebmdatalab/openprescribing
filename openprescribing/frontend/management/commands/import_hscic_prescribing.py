@@ -6,8 +6,8 @@ import subprocess
 import tempfile
 
 from dateutil.relativedelta import relativedelta
-from google.cloud.bigquery.dataset import Dataset
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
@@ -21,7 +21,7 @@ from frontend.models import Prescription
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab import bigquery
+from ebmdatalab.bq_client import Client, TableExporter
 
 
 logger = logging.getLogger(__name__)
@@ -75,6 +75,7 @@ class Command(BaseCommand):
         last_imported = ImportLog.objects.latest_in_category(
             'prescribing').current_at
         self.date = last_imported - relativedelta(years=5)
+        client = Client(settings.BQ_HSCIC_DATASET)
         while self.date <= last_imported:
             date_str = self.date.strftime('%Y-%m-%d')
             sql = ('SELECT pct AS pct_id, practice AS practice_id, '
@@ -83,26 +84,23 @@ class Command(BaseCommand):
                    'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
                    'FROM ebmdatalab.hscic.normalised_prescribing_standard '
                    "WHERE month = '%s'" % date_str)
-            table_name = "prescribing_%s" % date_str.replace('-', '_')
-            bigquery.query_and_return(
-                'ebmdatalab', 'tmp_eu', table_name, sql)
-            uri = "gs://ebmdatalab/tmp/%s-*.csv.gz" % table_name
-            logger.info("Extracting data for %s" % self.date)
-            client = bigquery.bigquery.Client(project='ebmdatalab')
-            # delete the table if it exists
-            dataset = Dataset("tmp_eu", client)
-            table = dataset.table(table_name)
-            logger.info("Copying data for %s to cloud storage" % self.date)
-            bigquery.copy_table_to_gcs(table, uri)
+
+            table_name = 'tmp_prescribing_%s' % date_str.replace('-', '_')
+            table = client.get_or_create_table(table_name)
+            table.insert_rows_from_query(sql)
+            exporter = TableExporter(table, 'tmp/{}-*'.format(table_name))
+            exporter.export_to_storage()
+
             with tempfile.NamedTemporaryFile(mode='wb') as tmpfile:
                 logger.info("Importing data for %s" % self.date)
-                bigquery.download_from_gcs(uri, tmpfile.name)
+                exporter.download_from_storage_and_unzip(tmpfile)
                 with transaction.atomic():
                     self.drop_partition()
                     self.create_partition()
                     self.import_prescriptions(tmpfile.name)
                     self.create_partition_indexes()
                     self.add_parent_trigger()
+
             self.date += relativedelta(months=1)
 
     def refresh_class_currency(self):
