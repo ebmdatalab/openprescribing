@@ -217,26 +217,36 @@ class TableExporter(object):
                 f.seek(0)
                 yield f
 
-    @contextmanager
-    def download_from_storage_and_unzip(self):
-        with tempfile.NamedTemporaryFile(mode='r+') as f_unzipped:
-            for i, f_zipped in enumerate(self.download_from_storage()):
-                # Unzip
-                if i == 0:
-                    cmd = "gunzip -c -f %s >> %s"
-                else:
-                    # When the file is split into several shards in GCS, it
-                    # puts a header on every file, so we have to skip that
-                    # header on all except the first shard.
-                    cmd = "gunzip -c -f %s | tail -n +2 >> %s"
-                subprocess.check_call(
-                    cmd % (f_zipped.name, f_unzipped.name), shell=True)
-
-            yield f_unzipped
+    def download_from_storage_and_unzip(self, f_out):
+        for i, f_zipped in enumerate(self.download_from_storage()):
+            # Unzip
+            if i == 0:
+                cmd = "gunzip -c -f %s >> %s"
+            else:
+                # When the file is split into several shards in GCS, it
+                # puts a header on every file, so we have to skip that
+                # header on all except the first shard.
+                cmd = "gunzip -c -f %s | tail -n +2 >> %s"
+            subprocess.check_call(
+                cmd % (f_zipped.name, f_out.name), shell=True)
 
     def delete_from_storage(self):
         for blob in self.storage_blobs():
             blob.delete()
+
+
+class BQTableDefinition(object):
+    '''Represents a table in BQ.
+
+    Subclasses should define class attributes:
+
+        * table_name
+        * fields
+    '''
+
+    @classmethod
+    def schema(cls):
+        return [gcbq.SchemaField(*field) for field in cls.fields]
 
 
 class BQModelTable(object):
@@ -294,7 +304,7 @@ class BQModelTable(object):
         return row
 
 
-def wait_for_job(job, timeout_s=3600):
+def wait_for_job(job, timeout_s=60):
     t0 = time.time()
 
     # Would like to use `while not job.done():` but cannot until we upgrade

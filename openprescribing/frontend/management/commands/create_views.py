@@ -2,6 +2,7 @@ from multiprocessing.pool import Pool
 import glob
 import logging
 import os
+import tempfile
 import traceback
 
 from django.conf import settings
@@ -104,7 +105,8 @@ class Command(BaseCommand):
 
     def download_and_import(self, table):
         exporter = TableExporter(table, self.storage_prefix(table))
-        with exporter.download_from_storage_and_unzip() as f:
+        with tempfile.NamedTemporaryFile(mode='r+') as f:
+            exporter.download_from_storage_and_unzip(f)
             f.seek(0)
             field_names = f.readline()
             copy_sql = "COPY %s(%s) FROM STDIN WITH (FORMAT CSV)" % (table.name, field_names)

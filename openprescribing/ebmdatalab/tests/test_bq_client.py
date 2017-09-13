@@ -1,5 +1,6 @@
 import csv
 import random
+import tempfile
 
 from google.cloud.bigquery import SchemaField
 from google.cloud.exceptions import Conflict
@@ -60,7 +61,9 @@ class BQClientTest(TestCase):
         t1_exporter = TableExporter(t1, 'test_bq_client/test_table-')
         t1_exporter.export_to_storage()
 
-        with t1_exporter.download_from_storage_and_unzip() as f:
+        with tempfile.NamedTemporaryFile(mode='r+') as f:
+            t1_exporter.download_from_storage_and_unzip(f)
+            f.seek(0)
             data = list(csv.reader(f))
 
         self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])
