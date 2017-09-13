@@ -1,7 +1,5 @@
 import csv
-import gzip
-import os
-from tempfile import mkdtemp
+import random
 
 from google.cloud.bigquery import SchemaField
 from google.cloud.exceptions import Conflict
@@ -10,32 +8,28 @@ from google.cloud import storage
 from django.core.management import call_command
 from django.test import TestCase
 
-from ebmdatalab.bq_client import Client
+from ebmdatalab.bq_client import Client, TableExporter
 from frontend.bq_model_tables import BQ_CCGs
 
 
 class BQClientTest(TestCase):
     def setUp(self):
-        # TODO Rationalise this
-        client = Client('sandpit3')
+        self.dataset_name = 'bq_test_{:02d}'.format(random.randrange(100))
 
-        try:
-            client.create_dataset()
-        except Conflict:
-            pass
+        client = Client(self.dataset_name)
+        client.create_dataset()
+
+    def tearDown(self):
+        client = Client(self.dataset_name)
+        client.delete_dataset()
+
+    def test_the_lot(self):
+        client = Client(self.dataset_name)
 
         schema = [
             SchemaField('a', 'INTEGER'),
             SchemaField('b', 'STRING'),
         ]
-
-        t1 = client.get_or_create_table('t1', schema)
-        t2 = client.get_or_create_table('t2', schema)
-
-    def test_the_lot(self):
-        client = Client('sandpit3')
-        t1 = client.get_table('t1')
-        t2 = client.get_table('t2')
 
         headers = ['a', 'b']
         rows = [
@@ -44,37 +38,69 @@ class BQClientTest(TestCase):
             (3, 'coconut'),
         ]
 
-        csv_path = 'ebmdatalab/tests/test_table.csv'
+        t1 = client.get_or_create_table('t1', schema)
+        t2 = client.get_or_create_table('t2', schema)
 
-        t1.insert_rows_from_csv(csv_path)
+        # Test Table.insert_rows_from_csv
+        t1.insert_rows_from_csv('ebmdatalab/tests/test_table.csv')
 
         self.assertEqual(list(t1.get_rows()), rows)
 
-        t2.insert_rows_from_query('SELECT * FROM sandpit3.t1 WHERE a > 1 ORDER BY a')
+        # Test Table.insert_rows_from_query
+        t2.insert_rows_from_query('SELECT * FROM {} WHERE a > 1 ORDER BY a'.format(t1.qualified_name))
 
         self.assertEqual(list(t2.get_rows()), rows[1:])
 
-        results = client.query('SELECT * FROM sandpit3.t1 WHERE a > 2 ORDER BY a')
+        # Test Client.query
+        results = client.query('SELECT * FROM {} WHERE a > 2 ORDER BY a'.format(t1.qualified_name))
 
         self.assertEqual(list(results.rows), rows[2:])
 
-        t1.export_to_storage()
+        # Test TableExporter.export_to_storage and TableExporter.download_from_storage_and_unzip
+        t1_exporter = TableExporter(t1, 'test_bq_client/test_table-')
+        t1_exporter.export_to_storage()
 
-        with t1.download_from_storage_and_unzip() as f:
+        with t1_exporter.download_from_storage_and_unzip() as f:
             data = list(csv.reader(f))
 
         self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])
 
-        client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('ebmdatalab')
-        blob = bucket.blob('test_bq_client/test_table.csv')
+        # Test Table.insert_rows_from_storage
+        self.upload_to_storage('ebmdatalab/tests/test_table.csv', 'test_bq_client/test_table.csv')
 
-        with open(csv_path) as f:
-            blob.upload_from_file(f)
-
-        t2.insert_rows_from_storage('gs://ebmdatalab/test_bq_client/blob.csv')
+        t2.insert_rows_from_storage('gs://ebmdatalab/test_bq_client/test_table.csv')
 
         self.assertEqual(list(t2.get_rows()), rows)
+
+        # Test Client.get_or_create_table_referencing_storage
+        self.upload_to_storage('ebmdatalab/tests/test_table_headers.csv', 'test_bq_client/test_table_headers.csv')
+
+        schema = [
+            {'name': 'a', 'type': 'integer'},
+            {'name': 'b', 'type': 'string'},
+        ]
+
+        t3 = client.get_or_create_table_referencing_storage('t3', schema, 'test_bq_client/test_table_headers.csv')
+
+        results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
+
+        self.assertEqual(list(results.rows), rows)
+
+        self.upload_to_storage(
+            'ebmdatalab/tests/test_table_headers_2.csv',
+            'test_bq_client/test_table_headers.csv'
+        )
+
+        results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
+
+        self.assertEqual(list(results.rows), rows + [(4, u'damson')])
+
+    def upload_to_storage(self, local_path, storage_path):
+        client = storage.client.Client(project='ebmdatalab')
+        bucket = client.bucket('ebmdatalab')
+        blob = bucket.blob(storage_path)
+        with open(local_path) as f:
+            blob.upload_from_file(f)
 
 
 class TestBQModel(TestCase):

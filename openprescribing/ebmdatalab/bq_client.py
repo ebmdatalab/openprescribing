@@ -9,7 +9,7 @@ import uuid
 
 from google.cloud import bigquery as gcbq
 from google.cloud import storage as gcs
-from google.cloud.exceptions import Conflict
+from google.cloud.exceptions import BadRequest, Conflict
 
 from django.conf import settings
 from django.db import connection
@@ -34,7 +34,12 @@ class Client(object):
         self.dataset.create()
 
     def delete_dataset(self):
-        self.dataset.delete()
+        for _ in range(5):
+            try:
+                self.dataset.delete()
+                return
+            except BadRequest:
+                pass
 
     def create_table(self, table_name, schema):
         table = self.dataset.table(table_name, schema)
@@ -54,7 +59,14 @@ class Client(object):
             table = self.get_table(table_name)
         return table
 
-    def create_table_referencing_storage(self, table_name, schema, gcs_uri):
+    def get_or_create_table_referencing_storage(self, table_name, schema, gcs_path):
+        gcs_client = gcs.client.Client(project=self.project_name)
+        bucket = gcs_client.bucket(self.project_name)
+        if bucket.get_blob(gcs_path) is None:
+            raise RuntimeError('Could not find blob at {}'.format(gcs_path))
+
+        gcs_uri = 'gs://{}/{}'.format(self.project_name, gcs_path)
+
         resource = {
             'tableReference': {'tableId': table_name},
             'externalDataConfiguration': {
@@ -66,11 +78,9 @@ class Client(object):
         }
 
         path = '/projects/{}/datasets/{}/tables'.format(self.project_name, self.dataset_name)
-        self.gcbq_client._connection.api_request(method='POST', path=path, data=resource)
 
-    def get_or_create_table_referencing_storage(self, table_name, schema, gcs_uri):
         try:
-            self.create_table_referencing_storage(table_name, schema, gcs_uri)
+            self.gcbq_client._connection.api_request(method='POST', path=path, data=resource)
         except Conflict:
             pass
 
@@ -98,12 +108,15 @@ class Table(object):
         self.gcbq_client = gcbq_table._dataset._client
         # TODO don't hardcode this
         self.project_name = 'ebmdatalab'
-        self.gcs_client = gcs.Client(project=self.project_name)
-        self.bucket = self.gcs_client.bucket(self.project_name)
         self.name = gcbq_table.name
         self.dataset_name = gcbq_table._dataset.name
 
-    def legacy_qualified_name(self):
+    @property
+    def qualified_name(self):
+        return '{}.{}'.format(self.dataset_name, self.name)
+
+    @property
+    def legacy_full_qualified_name(self):
         return '[{}:{}.{}]'.format(self.project_name, self.dataset_name, self.name)
 
     def get_rows(self):
@@ -164,19 +177,25 @@ class Table(object):
 
         wait_for_job(job)
 
+
+class TableExporter(object):
+    def __init__(self, table, storage_prefix):
+        self.table = table
+        self.storage_prefix = storage_prefix
+        self.bucket = gcs.Client(project=table.project_name).bucket(table.project_name)
+
     def export_to_storage(self, **options):
         default_options = {
             'compression': 'GZIP',
         }
 
-        destination_uri = 'gs://ebmdatalab/{}/views/{}-*.csv.gz'.format(
-            self.dataset_name,
-            self.name,
+        destination_uri = 'gs://ebmdatalab/{}*.csv.gz'.format(
+            self.storage_prefix,
         )
 
-        job = self.gcbq_client.extract_table_to_storage(
+        job = self.table.gcbq_client.extract_table_to_storage(
             options.pop('job_name', gen_job_name()),
-            self.gcbq_table,
+            self.table.gcbq_table,
             destination_uri,
         )
 
@@ -185,10 +204,6 @@ class Table(object):
         job.begin()
 
         wait_for_job(job)
-
-    @property
-    def storage_prefix(self):
-        return '{}/views/{}-'.format(self.dataset_name, self.name)
 
     def storage_blobs(self):
         for blob in self.bucket.list_blobs(prefix=self.storage_prefix):
