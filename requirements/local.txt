@@ -6,3 +6,4 @@ when-changed
 django-extensions
 werkzeug
 flake8
+fabric==1.13.1

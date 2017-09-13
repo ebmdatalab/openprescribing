@@ -5,7 +5,8 @@ from django.db import models
 
 
 class TaskLog(models.Model):
-    run_id = models.CharField(max_length=100)
+    year = models.IntegerField()
+    month = models.IntegerField()
     task_name = models.CharField(max_length=100)
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True)

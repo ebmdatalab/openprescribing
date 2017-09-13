@@ -7,10 +7,22 @@
         "type": "manual_fetch",
         "source_id": "adqs"
     },
+    "fetch_ccg_boundaries": {
+        "type": "manual_fetch",
+        "source_id": "ccg_boundaries"
+    },
+    "fetch_prescribing": {
+        "type": "manual_fetch",
+        "source_id": "prescribing"
+    },
+    "fetch_patient_list_weightings": {
+        "type": "manual_fetch",
+        "source_id": "patient_list_weightings"
+    },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
-        "command": "hscic_list_sizes"
+        "command": "hscic_list_sizes {year} {month}"
     },
     "fetch_ccg_details": {
         "type": "auto_fetch",
@@ -22,6 +34,16 @@
         "source_id": "practice_details",
         "command": "org_codes --practice"
     },
+    "fetch_prescribing_metadata": {
+        "type": "auto_fetch",
+        "source_id": "prescribing_metadata",
+        "command": "hscic_prescribing --most_recent_date"
+    },
+    "fetch_nhs_postcode_file": {
+        "type": "auto_fetch",
+        "source_id": "nhs_postcode_file",
+        "command": "org_codes --postcode"
+    },
     "import_bnf_codes": {
         "type": "import",
         "source_id": "bnf_codes",
@@ -29,15 +51,6 @@
         "dependencies": [
             "fetch_bnf_codes"
         ]
-    },
-    "fetch_prescribing_metadata": {
-        "type": "auto_fetch",
-        "source_id": "prescribing_metadata",
-        "command": "hscic_prescribing --most_recent_date"
-    },
-    "fetch_ccg_boundaries": {
-        "type": "manual_fetch",
-        "source_id": "ccg_boundaries"
     },
     "import_ccg_boundaries": {
         "type": "import",
@@ -56,10 +69,6 @@
             "import_ccg_boundaries"
         ]
     },
-    "fetch_prescribing": {
-        "type": "manual_fetch",
-        "source_id": "prescribing"
-    },
     "import_adqs": {
         "type": "import",
         "source_id": "adqs",
@@ -68,10 +77,6 @@
             "fetch_adqs",
             "import_bnf_codes"
         ]
-    },
-    "fetch_patient_list_weightings": {
-        "type": "manual_fetch",
-        "source_id": "patient_list_weightings"
     },
     "import_patient_list_weightings": {
         "type": "import",
@@ -89,11 +94,6 @@
             "fetch_practice_details",
             "import_ccg_details"
         ]
-    },
-    "fetch_nhs_postcode_file": {
-        "type": "auto_fetch",
-        "source_id": "nhs_postcode_file",
-        "command": "org_codes --postcode"
     },
     "import_nhs_postcode_file": {
         "type": "import",
@@ -191,6 +191,21 @@
         "command": "create_views",
         "dependencies": [
             "upload_to_bigquery"
+        ]
+    },
+    "update_smoketests": {
+        "type": "post_process",
+        "command": "update_smoketests {last_imported}",
+        "dependencies": [
+            "import_measures",
+            "refresh_views"
+        ]
+    },
+    "run_smoketests": {
+        "type": "post_process",
+        "command": "run_smoketests {last_imported}",
+        "dependencies": [
+            "update_smoketests"
         ]
     }
 }

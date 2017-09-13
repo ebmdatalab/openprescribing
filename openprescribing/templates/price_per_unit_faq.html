@@ -51,18 +51,18 @@
 <p>There are often considerable cost savings to the NHS for switching from branded to generic prescribing, and we have measures for some of these switches on our CCG and GP Practice dashboards. Examples include switching from prescribing <a href="https://openprescribing.net/measure/desogestrel/">Cerazette to generic desogestrel</a> or from <a href="https://openprescribing.net/measure/keppra/">Keppra to generic levetiracetam</a>.</p>
 
 <h4>Branded Generics</h4>
-<p>Prescribing generically may not always be the lowest cost option. Once a patent has expired, other manufacturers can create their own branded products which are called ‘branded generics’. These branded generics sometimes have a lower list price in comparison to the price of the generic in the Drug Tariff. For more information about branded generics, <a href="#brandedgeneric">read this</a></p>
-<p>Branded generics are not always cheaper than the price of a generic prescription, and the prices do fluctuate from month to month. An example of this is desogestrel. Cerazette was the original branded product. Once the patent expired, generic manufacturers produced the drug and packaged it under the generic name of desogestrel. Some manufacturers also started producing ‘branded generics’. One of these branded generics is called Cerelle, and for a time the cheapest option was guaranteed by prescribing by this brand name. Cerelle is no longer the cheapest branded generic, and the Drug Tariff price for the generic presentation currently reflects the cheapest branded generic price (correct as of March 2017).</p>
+<p>Prescribing generically may not always be the lowest cost option. Once a patent has expired, other manufacturers can create their own branded products which are called ‘branded generics’. These branded generics sometimes have a lower list price in comparison to the price of the generic in the Drug Tariff. For more information about branded generics, <a href="#brandedgeneric">read this</a>.</p>
+<p>Branded generics are not always cheaper than the price of a generic prescription, and the prices do fluctuate from month to month. An example of this is desogestrel. Cerazette was the original branded product. Once the patent expired, generic manufacturers produced the drug and packaged it under the generic name of desogestrel. Some manufacturers also started producing ‘branded generics’. One of these branded generics is called Cerelle, and for a time the cheapest option was guaranteed by prescribing by this brand name. However the generic price has fallen, and is now below all of the branded generic prices. This means that prescribing generically, rather than Cerelle, is now the cheapest option. </p>
 
 <h4>Different formulations</h4>
-<p>There can be more than one formulation of the same product on the market (such as capsules and tablets). These may be available at different prices: while for some drugs these different formulations will have different clinical benefits, for others it is effectively interchangeable.</p>
+<p>There can be more than one formulation of the same product on the market (such as capsules and tablets) which may be available at different prices. For some drugs these different formulations will have different clinical benefits, while others they are effectively interchangeable.</p>
 
 <h4>Drugs not listed in the Drug Tariff (NP8)</h4>
 <p>Some drugs are not listed in Part VIII of the Drug Tariff, and therefore when prescribed pharmacies will be reimbursed at the invoiced cost of the brand they choose to dispense. This has led to some instances of very large variation in costs depending on which pharmacy dispensed the prescription.</p>
 <p>This is also the case for individually formulated (“specials”) medicines and unlicensed and imported medicines.</p>
 
 <h4 id="packsize">Different pack sizes</h4>
-<p>For some medicines, such as emollient creams, there may be multiple pack sizes available. Where there are multiple pack sizes the reimbursement to the pharmacy depends on what pack size was dispensed. This can lead to a variation in the price per unit e.g. it may cost more if the pharmacy dispenses 5x100g rather than 1x500g for a prescription for 500g. The prescriber has no control over the pack sizes chosen by the pharmacy.</p>
+<p>For some medicines, such as emollient creams, there may be multiple pack sizes available. Different pack sizes may have different costs per unit, and the reimbursement to the pharmacy depends on what pack size was dispensed. E.g. it may cost more if the pharmacy dispenses 5x100g rather than 1x500g for a prescription for 500g. The prescriber has no control over the pack sizes chosen by the pharmacy.</p>
 
 <h3 id="savings">Are these savings achievable?</h3>
 <p>Not all potential savings can be realised:</p>
@@ -85,7 +85,7 @@
 
 <h4>Imports & Specials not in the Drug Tariff</h4>
 <p>According to the Drug Tariff, specials are:</p>
-<p>“Specials are unlicensed medicinal products manufactured in the UK for human use which have been specially prepared to meet a prescription ordered for individual patients without the need for the manufacturer to hold a marketing authorisation for the medicinal product concerned.”</p>
+<p>“unlicensed medicinal products manufactured in the UK for human use which have been specially prepared to meet a prescription ordered for individual patients without the need for the manufacturer to hold a marketing authorisation for the medicinal product concerned.”</p>
 <p>Imports may have marketing authorisation but are only available via an import route.</p>
 <p>In many cases there is no Drug Tariff list price for imports or unlicensed specials. Therefore, we would expect many items which are imports and specials to have a range of prices.</p>
 
@@ -94,8 +94,9 @@
 <p>Despite this, we do sometimes see different price per units even for items in the Drug Tariff. We do not always know the reason for this, but here are a couple of examples illustrating why this might happen:</p>
 <ul type="disc">
         <li>Some of the issues may be due to the rounding of Net Ingredient Cost (link) (NIC).  For example, as of July 2017 Chemydur XL tabs 60mg were £3.49 for 28 tablets. Depending on the number of tablets prescribed, the rounded NIC for that month  varies between 12p and 13p per pill.</li>
-        <li>There is not 100% accuracy in NHS Business Services Authority pricing. The NHS BSA publishes monthly accuracy figures <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/payments-and-pricing/how-we-process-prescriptions">here</a></li>
-<p>There may be other reasons, and you can see our discussion of this issue <a href="https://github.com/ebmdatalab/openprescribing/issues/476">here</a></p>
+        <li>There is not 100% accuracy in NHS Business Services Authority pricing. The NHS BSA publishes monthly accuracy figures <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/payments-and-pricing/how-we-process-prescriptions">here</a>.</li>
+</ul>        
+<p>There may be other reasons, and you can see our discussion of this issue <a href="https://github.com/ebmdatalab/openprescribing/issues/476">here</a>.</p>
 
 <h3 id="brandedgeneric">What is a branded generic?</h3>
 <p>The brand is the name given to a drug by the pharmaceutical company that develops it. The generic name of a drug is the name given to the active ingredient.</p>
@@ -109,7 +110,7 @@
 <p>We used the BNF codes of drugs in the prescribing data to identify whether they were a branded or generic product. Branded drugs are identified as anything other than “AA” in characters 10 and 11 of their BNF code. You can read more about BNF codes <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">here</a>.</p>
 
 <h3 id="calculate">How do you calculate the cost-savings?</h3>
-<p>Each month we we calculated the mean <a href="#PPU">price-per-unit</a> for every <a href="#GEPresentation">generic-equivalent presentation</a> for every GP Practice in England.</p>
+<p>Each month we we calculated the mean <a href="#PPU">price-per-unit</a> for every set of <a href="#GEPresentation">generic-equivalent presentations</a> for every GP Practice in England.</p>
 <p>Once we have calculated the mean price-per-unit for each individual practice, we then identify the practices at the 10th centile for each generic-equivalent presentation. We use this price to calculate how much each practice could have saved if it had been prescribing as cost-efficiently as the practice at the 10th centile. See our <a href="https://doi.org/10.1101/172569">paper</a> for more information.</p>
 
 <h3 id="cost">Why do you use Net Ingredient Cost rather than Actual Cost?</h3>
@@ -121,7 +122,7 @@
 We accept no liability for any errors in the data or its publication here: use this data at your own risk. You should not use this data to make individual prescribing decisions.
 </div>
 <h3 id="License">Licensing issues</h3>
-<p>Sometimes medicines can only be prescribed generically  for specific conditions. An example of this is pregabalin, which until recently could only be prescribed generically for epilepsy.</p>
+<p>Sometimes only particular brands hold the license for certain conditions. An example of this is pregabalin, which until recently could only be prescribed generically for epilepsy (its licence for this indication having expired in 2014), but prescribed as the branded product (Lyrica) for pain, under a second licence from the same manufacturer, which expired in July 2017.</p>
 
 <h3 id="Bioequivalence">Bioequivalence</h3>
 <p>Some theoretical switches may not be advisable due to the non-bioequivalence of different brands. <a href="https://ebmdatalab.net/prescribing-data-using-the-dictionary-of-medicines-and-devices/">dm+d</a> has a flag for non-bioequivalence, and we have indicated where this is flagged at the top of each generic-equivalent presentation's chart under 'Prescribability Status' (found by hovering the mouse over the presentation name)</p>
@@ -132,7 +133,7 @@ We accept no liability for any errors in the data or its publication here: use t
 
 <h2>Definitions</h2>
 <h3 id="BNF">BNF</h3>
-<p>See our blog post on the <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">BNF</a></p>
+<p>See our blog post on the <a href="https://ebmdatalab.net/prescribing-data-bnf-codes/">BNF</a>.</p>
 
 <h3 id="Chemical">Chemical</h3>
 <p>A chemical is the name of the active ingredient in a medicine e.g. “tramadol hydrochloride”. Prescription items in BNF Chapters 19-23 have no chemical name. These chapters include items like dressings and appliances.</p>
@@ -150,7 +151,7 @@ We accept no liability for any errors in the data or its publication here: use t
 <p>• Where the formulation is a solid form (eg. Cream, gel, ointment) the quantity will be the number of grammes'</p>
 
 <h3 id="NIC">Net Ingredient Cost</h3>
-<p>NHS Digital define quantity in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
+<p>NHS Digital define Net Ingredient Cost in their <a href="http://content.digital.nhs.uk/media/10048/FAQs-Practice-Level-Prescribingpdf/pdf/PLP_FAQs_April_2015.pdf">FAQ</a> (PDF) as:</p>
 <p>‘The Net Ingredient Cost (NIC) is the basic price of a drug, i.e. the price listed in the Drug Tariff or price lists’</p>
 
 <h3 id="ActualCost">Actual Cost</h3>
@@ -172,7 +173,7 @@ We accept no liability for any errors in the data or its publication here: use t
 <h3 id="PPU">Price per Unit</h3>
 <p>Every prescription is for a <a href="#Quantity">quantity</a> of the units of the treatment. For example, each prescription is for a number of tablets or capsules; or the number of injections or inhalers; or millilitres of a liquid; or grams of a cream.</p>
 <p>The “price-per-unit” is the cost paid by the NHS for each “unit” (one tablet, or one capsule, or one injection).</p>
-<p>Our calculations use <a href="NIC">Net Ingredient Cost (NIC)</a>.</p>
+<p>Our calculations use <a href="#NIC">Net Ingredient Cost (NIC)</a>.</p>
 
 
 {% endblock %}

@@ -183,7 +183,8 @@ def practice_price_per_unit(request, code):
 ##################################################
 
 def all_ccgs(request):
-    ccgs = PCT.objects.filter(org_type="CCG").order_by('name')
+    ccgs = PCT.objects.filter(
+        close_date__isnull=True, org_type="CCG").order_by('name')
     context = {
         'ccgs': ccgs
     }

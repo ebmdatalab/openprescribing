@@ -145,4 +145,4 @@ LOGGING = {
 PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
 
 # Base directory for pipeline data
-PIPELINE_DATA_BASEDIR = os.path.join(SITE_ROOT, 'pipeline')
+PIPELINE_DATA_BASEDIR = os.path.join(SITE_ROOT, 'pipeline', 'data')
