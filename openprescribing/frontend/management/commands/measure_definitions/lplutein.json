@@ -7,14 +7,14 @@
     "Cost of lutein and antioxidant per 1000 patients"
   ],
   "why_it_matters": [
-    "Lutein and antioxidants (e.g. vitamin A, C E and zinc) are supplements taken for Age Related Macular Degeneration but there is no evidence they work."
+    "Lutein and antioxidants (e.g. zinc, and vitamins A, C and E) are supplements taken for Age Related Macular Degeneration but there is no evidence they work."
   ],
   "numerator_short": "Lutein and antioxidant  cost (£)",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
+  "is_cost_based": true,
+  "low_is_good": true,
   "tags": ["lowpriority"],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "

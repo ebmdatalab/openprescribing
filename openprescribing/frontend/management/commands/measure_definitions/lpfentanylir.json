@@ -7,14 +7,16 @@
     "Cost of fentanyl immediate release per 1000 patients"
   ],
   "why_it_matters": [
-    "Used for breakthrough pain in palliative care. Little evidence it is more effective than morphine but it is much more expensive."
+    "Fentanyl, in the form of tablets, lozenges, films and nasal spray, is an opioid analgesic used for breakthrough cancer pain.",
+    "There is little evidence it is more effective than oral morphine (such as oramorph) but it is much more expensive.",
+    "This indicator does not include fentanyl patches, which are not immediate release."
   ],
   "numerator_short": "Fentanyl immediate release cost (£)",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
+  "is_cost_based": true,
+  "low_is_good": true,
   "tags": ["lowpriority"],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "

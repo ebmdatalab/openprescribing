@@ -1,20 +1,21 @@
 {
-  "name": "NHS England Low Priority Treatment - oxycodone and naloxone",
+  "name": "NHS England Low Priority Treatment - oxycodone and naloxone combination product",
   "title": [
-    "Oxycodone and naloxone cost per 1000 patients"
+    "Oxycodone and naloxone combination cost per 1000 patients"
   ],
   "description": [
-    "Cost of oxycodone and naloxone per 1000 patients"
+    "Cost of oxycodone and naloxone combination per 1000 patients"
   ],
   "why_it_matters": [
-    "Oxycodone and Naloxone combination product is used to treat severe pain. Morphine is more effective.."
+    "Oxycodone is an opioid analgesic used to treat severe pain. Naloxone is added to reduce constipation.  ",
+    "The combination product is expensive, and the benefit is unclear."
   ],
-  "numerator_short": "Oxycodone and naloxone cost (£)",
+  "numerator_short": "Oxycodone and naloxone combination cost (£)",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
-  "is_cost_based": false,
-  "low_is_good": null,
+  "is_cost_based": true,
+  "low_is_good": true,
   "tags": ["lowpriority"],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
