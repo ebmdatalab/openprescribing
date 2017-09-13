@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 
 from common import utils
-from ebmdatalab import bq_client
+from ebmdatalab.bq_client import Client, TableExporter
 from frontend.models import ImportLog
 
 
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         )
 
         dataset_name = settings.BQ_HSCIC_DATASET
-        client = bq_client.Client(dataset_name)
+        client = Client(dataset_name)
 
         pool = Pool()
         tables = []
@@ -87,11 +87,13 @@ class Command(BaseCommand):
             self.log("Running SQL for %s: %s" % (table.name, sql))
             table.insert_rows_from_query(sql)
 
-            self.log('Deleting existing data in storage at %s' % table.storage_prefix)
-            table.delete_from_storage()
+            exporter = TableExporter(table, self.storage_prefix(table))
 
-            self.log('Exporting data to storage at %s' % table.storage_prefix)
-            table.export_to_storage()
+            self.log('Deleting existing data in storage at %s' % exporter.storage_prefix)
+            exporter.delete_from_storage()
+
+            self.log('Exporting data to storage at %s' % exporter.storage_prefix)
+            exporter.export_to_storage()
 
         except Exception:
             # Log the formatted error, because the multiprocessing pool
@@ -101,7 +103,8 @@ class Command(BaseCommand):
             raise
 
     def download_and_import(self, table):
-        with table.download_from_storage_and_unzip() as f:
+        exporter = TableExporter(table, self.storage_prefix(table))
+        with exporter.download_from_storage_and_unzip() as f:
             f.seek(0)
             field_names = f.readline()
             copy_sql = "COPY %s(%s) FROM STDIN WITH (FORMAT CSV)" % (table.name, field_names)
@@ -118,3 +121,6 @@ class Command(BaseCommand):
                         import shutil
                         shutil.copyfile(f.name, "/tmp/error")
                         raise
+
+    def storage_prefix(self, table):
+        return '{}/views/{}-'.format(table.dataset_name, table.name)
