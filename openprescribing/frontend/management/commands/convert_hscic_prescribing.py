@@ -4,26 +4,13 @@ import glob
 import logging
 import time
 
-from google.cloud import storage
-from google.cloud import bigquery
-from google.cloud.exceptions import NotFound
-from google.cloud.bigquery.table import Table
-from google.cloud.bigquery.dataset import Dataset
-
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from ebmdatalab.bigquery import copy_table_to_gcs
-from ebmdatalab.bigquery import download_from_gcs
-from ebmdatalab.bigquery import wait_for_job
-
-from ebmdatalab.bq_client import Client
+from ebmdatalab.bq_client import Client, TableExporter
 
 logger = logging.getLogger(__name__)
-
-TEMP_DATASET = 'tmp_eu'
-TEMP_SOURCE_NAME = 'raw_nhs_digital_data'
 
 
 class Command(BaseCommand):
@@ -78,10 +65,7 @@ class Command(BaseCommand):
             message += e.message
             raise CommandError(message)
 
-        converted_filename = self.aggregate_nhs_digital_data(
-                uri, filename_for_output, date)
-
-        return converted_filename
+        self.aggregate_nhs_digital_data(uri, filename_for_output, date)
 
     def create_filename_for_output_file(self, filename):
         if self.IS_TEST:
@@ -98,95 +82,81 @@ class Command(BaseCommand):
         Returns the path to the formatted file.
 
         """
-        # First, check we can access something at the given URI
-        client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('ebmdatalab')
-        path = uri.split('ebmdatalab/')[-1]
-        if bucket.get_blob(path) is None:
-            # This conversion requires that the file referenced at
-            # options['file_name'] has been uploaded as a blob to
-            # Google Cloud Services at gs://ebmdatalab/<file_name>
-            raise NotFound(path)
-
-        # Create table at raw_nhs_digital_data
-        table = create_temporary_data_source(uri)
-        table_ref = table.legacy_qualified_name()
-        self.append_aggregated_data_to_prescribing_table(table_ref, date)
-        temp_table = self.write_aggregated_data_to_temp_table(table_ref, date).gcbq_table
-        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
-        copy_table_to_gcs(temp_table, converted_uri)
-        return download_from_gcs(converted_uri, local_path)
-
-    def assert_latest_data_not_already_uploaded(self, date):
-        client = Client(settings.BQ_HSCIC_DATASET)
-        sql = """SELECT COUNT(*)
-        FROM [ebmdatalab:hscic.prescribing]
-        WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
-        results = client.query(sql)
-        assert query.rows[0][0] == 0
-
-    def append_aggregated_data_to_prescribing_table(
-            self, source_table_ref, date):
-        self.assert_latest_data_not_already_uploaded(date)
+        gcs_path = uri.split('ebmdatalab/')[1]
 
         client = Client(settings.BQ_HSCIC_DATASET)
-        table = client.get_table('prescribing', reload=False)
 
-        sql = """
-         SELECT
-          Area_Team_Code AS sha,
-          LEFT(PCO_Code, 3) AS pct,
-          Practice_Code AS practice,
-          BNF_Code AS bnf_code,
-          BNF_Description AS bnf_name,
-          SUM(Items) AS items,
-          SUM(NIC) AS net_cost,
-          SUM(Actual_Cost) AS actual_cost,
-          SUM(Quantity * Items) AS quantity,
-          TIMESTAMP('%s') AS month,
-         FROM %s
-         WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
-         GROUP BY
-           bnf_code, bnf_name, pct,
-           practice, sha
-        """ % (date.replace('_', '-'), source_table_ref)
+        assert_latest_data_not_already_uploaded(client)
 
-        table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
+        raw_data_table = get_or_create_raw_data_table(client, gcs_path)
+        prescribing_table = client.get_table('prescribing', reload=False)
+        temp_table = client.get_table('formatted_prescribing_%s' % date, reload=False)
 
-    def write_aggregated_data_to_temp_table(self, source_table_ref, date):
-        sql = """
-         SELECT
-          LEFT(PCO_Code, 3) AS pct_id,
-          Practice_Code AS practice_code,
-          BNF_Code AS presentation_code,
-          SUM(Items) AS total_items,
-          SUM(NIC) AS net_cost,
-          SUM(Actual_Cost) AS actual_cost,
-          SUM(Quantity * Items) AS quantity,
-          '%s' AS processing_date,
-         FROM %s
-         WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
-         GROUP BY
-           presentation_code, pct_id, practice_code
-        """ % (date, source_table_ref)
+        append_aggregated_data_to_prescribing_table(client, prescribing_table, raw_data_table, date)
+        write_aggregated_data_to_temp_table(client, temp_table, raw_data_table, date)
 
-        client = Client(TEMP_DATASET)
-        table = client.get_table('formatted_prescribing_%s' % date, reload=False)
-        table.insert_rows_from_query(sql, legacy=True)
-        return table
+        exporter = TableExporter(temp_table, gcs_path + '_formatted-')
+        exporter.export_to_storage(print_header=False)
+        with open(local_path, 'w') as f:
+            exporter.download_from_storage_and_unzip(f)
 
 
-def create_temporary_data_source(source_uri):
-    """Create a temporary data source so BigQuery can query the CSV in
-    Google Cloud Storage.
+def assert_latest_data_not_already_uploaded(client):
+    sql = """SELECT COUNT(*)
+    FROM [ebmdatalab:hscic.prescribing]
+    WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
+    results = client.query(sql)
+    assert query.rows[0][0] == 0
 
-    Nothing like this is currently implemented in the
-    google-cloud-python library.
 
-    Returns a table reference suitable for using in a BigQuery SQL
-    query (legacy format).
+def append_aggregated_data_to_prescribing_table(client, prescribing_table, raw_data_table, date):
+    sql = """
+     SELECT
+      Area_Team_Code AS sha,
+      LEFT(PCO_Code, 3) AS pct,
+      Practice_Code AS practice,
+      BNF_Code AS bnf_code,
+      BNF_Description AS bnf_name,
+      SUM(Items) AS items,
+      SUM(NIC) AS net_cost,
+      SUM(Actual_Cost) AS actual_cost,
+      SUM(Quantity * Items) AS quantity,
+      TIMESTAMP('%s') AS month,
+     FROM %s
+     WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
+     GROUP BY
+       bnf_code, bnf_name, pct,
+       practice, sha
+    """ % (date.replace('_', '-'), raw_data_table.legacy_full_qualified_name)
 
-    """
+    prescribing_table.insert_rows_from_query(
+        sql,
+        legacy=True,
+        write_disposition='WRITE_APPEND'
+    )
+
+
+def write_aggregated_data_to_temp_table(client, temp_table, raw_data_table, date):
+    sql = """
+     SELECT
+      LEFT(PCO_Code, 3) AS pct_id,
+      Practice_Code AS practice_code,
+      BNF_Code AS presentation_code,
+      SUM(Items) AS total_items,
+      SUM(NIC) AS net_cost,
+      SUM(Actual_Cost) AS actual_cost,
+      SUM(Quantity * Items) AS quantity,
+      '%s' AS processing_date,
+     FROM %s
+     WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
+     GROUP BY
+       presentation_code, pct_id, practice_code
+    """ % (date, raw_data_table.legacy_full_qualified_name)
+
+    temp_table.insert_rows_from_query(sql, legacy=True)
+
+
+def get_or_create_raw_data_table(client, gcs_path):
     schema = [
         {"name": "Regional_Office_Name", "type": "string"},
         {"name": "Regional_Office_Code", "type": "string"},
@@ -204,5 +174,9 @@ def create_temporary_data_source(source_uri):
         {"name": "NIC", "type": "float", "mode": "required"},
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
-    client = Client(TEMP_DATASET)
-    return client.get_or_create_table_referencing_storage(TEMP_SOURCE_NAME, schema, source_uri)
+
+    return client.get_or_create_table_referencing_storage(
+        'raw_nhs_digital_data',
+        schema,
+        gcs_path
+    )

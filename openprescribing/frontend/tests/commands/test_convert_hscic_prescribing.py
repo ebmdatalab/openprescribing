@@ -42,9 +42,7 @@ class CommandsTestCase(TestCase):
 
 
 @patch('frontend.management.commands.convert_hscic_prescribing'
-       '.TEMP_SOURCE_NAME', 'temp_raw_nhs_digital_data')
-@patch('frontend.management.commands.convert_hscic_prescribing'
-       '.Command.assert_latest_data_not_already_uploaded', MagicMock())
+       '.assert_latest_data_not_already_uploaded', MagicMock())
 class AggregateTestCase(TestCase):
     """Test that data in the "detailed" format is correctly aggregated to
     the level we currently use in the website.
