@@ -13,7 +13,7 @@
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
-  "is_cost_based": true,
+  "is_cost_based": false,
   "low_is_good": true,
   "tags": ["lowpriority"],
   "numerator_columns": [
