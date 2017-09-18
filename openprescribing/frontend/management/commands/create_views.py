@@ -265,7 +265,7 @@ def wait_for_job(job_id, project_id):
             else:
                 break
     elapsed = (datetime.datetime.now() - start).total_seconds()
-    if 'query' in response['statistics']:
+    try:
         bytes_billed = float(
             response['statistics']['query']['totalBytesBilled'])
         gb_processed = round(bytes_billed / 1024 / 1024 / 1024, 2)
@@ -274,7 +274,7 @@ def wait_for_job(job_id, project_id):
         response['openp'] = {'est_cost': est_cost,
                              'time': elapsed,
                              'gb_processed': gb_processed}
-    else:
+    except KeyError:
         est_cost = 'n/a'
     logger.warn("Time %ss, cost $%s" % (elapsed, est_cost))
     return response
