@@ -1,8 +1,4 @@
 var expect = require('chai').expect;
-global.window = require("jsdom")
-                  .jsdom()
-                  .parentWindow;
-global.document = window.document;
 var barChart = require('../src/bar-chart');
 
 
