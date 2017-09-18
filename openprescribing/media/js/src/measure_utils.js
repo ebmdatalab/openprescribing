@@ -313,7 +313,6 @@ var utils = {
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';
     } else {
-      var p = humanize.numberFormat(d.meanPercentile, 0);
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
