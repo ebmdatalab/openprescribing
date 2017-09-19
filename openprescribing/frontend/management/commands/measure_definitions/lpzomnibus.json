@@ -7,6 +7,8 @@
     "An aggregation of prescribing on all low priority treatments as defined by NHS England"
   ],
   "why_it_matters": [
+    "NHS England have recently published a <a href='https://www.england.nhs.uk/wp-content/uploads/2017/07/Items-not-routinely-prescribed-in-primary-care.pdf'>number of areas which should not routinely prescribed in primary care</a>.",
+    "This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines). ",
     "<a href='?tags=lowpriority'>View the individual measures here</a>"
   ],
   "numerator_short": "All low-priority prescribing numerators",
