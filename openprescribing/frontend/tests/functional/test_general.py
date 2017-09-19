@@ -93,7 +93,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.find_by_xpath('//ul[@id="select2-orgIds-results"]//li')
 
     def test_ccg_measures_sorting(self):
-        url = self.live_server_url + '/ccg/02Q/measures/'
+        url = self.live_server_url + '/ccg/02Q/'
         self.browser.get(url)
         # The default should be sorting by percentile, then id
         self.assertEqual(self.find_by_xpath(
@@ -113,13 +113,12 @@ class GeneralFrontendTest(SeleniumTestCase):
                          'measure_keppra')
 
     def test_ccg_measures_tags(self):
-        url = self.live_server_url + '/ccg/02Q/measures/?tags=foobar'
+        url = self.live_server_url + '/ccg/02Q/?tags=foobar'
         self.browser.get(url)
         # nothing is tagged foobar, so should return the text expected
         # when no measures are shown
         import time
         time.sleep(1)
-        print "HERE IS THING: %s" % self.browser.page_source
         self.assertTrue(self.find_by_xpath(
             "//p[contains(text(), 'prescribed on any')]"))
 
