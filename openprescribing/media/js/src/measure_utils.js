@@ -293,7 +293,7 @@ var utils = {
   _getChartTitleEtc: function(d, options, numMonths) {
     var chartTitle;
     var chartTitleUrl;
-    var chartExplanation;
+    var chartExplanation = '';
     var measureUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
@@ -313,20 +313,13 @@ var utils = {
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';
     } else {
-      var p = humanize.numberFormat(d.meanPercentile, 0);
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
             'higher, or lower, is better. Nonetheless it is interesting to ' +
             'know if a ' + options.orgType + ' is a long way from average ' +
-            'prescribing behaviour. In this case, it ');
-      } else {
-        chartExplanation = 'This ' + options.orgType;
+            'prescribing behaviour. ');
       }
-      chartExplanation += ' was at the ' +
-        humanize.ordinal(p) +
-        ' percentile on average across the ' +
-        'past ' + numMonths + ' months. ';
       if (d.isCostBased || options.isCostBasedMeasure) {
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +

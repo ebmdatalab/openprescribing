@@ -477,7 +477,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. In this case, it  was at the 80th percentile on average across the past 6 months. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -505,9 +505,6 @@ describe('Measures', function() {
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].measureUrl).to.be.undefined;
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      var str = 'This CCG was at the 80th percentile ';
-      str += 'on average across the past 6 months. ';
-      expect(result[0].chartExplanation).to.equal(str);
     });
 
     it('sets the expected title, URL, and descriptions for one-CCG measure charts', function() {
@@ -535,8 +532,7 @@ describe('Measures', function() {
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
       expect(result[0].measureUrl).to.equal('/measure/ace');
-      str = 'This CCG was at the 80th percentile on average across the ';
-      str += 'past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -566,8 +562,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile on average across ';
-      str += 'the past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -622,8 +617,7 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile on average across ';
-      str += 'the past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months. If it had prescribed in line with ';
       str += 'the best 10%, it would have spent £30.00 less. ';
@@ -648,9 +642,6 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile ';
-      str += 'on average across the past 6 months. ';
-      expect(result.chartExplanation).to.equal(str);
     });
   });
 
