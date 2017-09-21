@@ -56,6 +56,15 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(rows[1].get('astro_pu_cost'), None)
         self.assertEqual(float(rows[1]['total_list_size']), 28)
 
+    def test_api_view_org_details_all_ccgs_with_nothing_key(self):
+        url = self.api_prefix
+        url += ('/org_details?format=csv&org_type=ccg&keys=nothing')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        reader = csv.DictReader(response.content.splitlines())
+        for row in reader:
+            self.assertEqual(row['nothing'], '1')
+
     def test_api_view_org_details_all_ccgs_with_unpermitted_key(self):
         url = self.api_prefix
         url += ('/org_details?format=csv&org_type=ccg&keys=borg')

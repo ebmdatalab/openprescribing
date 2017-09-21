@@ -98,18 +98,26 @@ describe('Formatters', function () {
 
     describe('#constructChartTitle', function () {
         it('should construct the chart title from options', function () {
-            var title = formatters.constructChartTitle('actual_cost',
-                                                       '514 + 564',
-                                                       '5234 + 534',
-                                                       'all practices');
-            expect(title).to.equal('Spend on 514 + 564 vs 5234 + 534<br/> by all practices');
-            title = formatters.constructChartTitle('items',
-                                                   '514 + 564 + 564 + 564 + 564 + 564',
-                                                   '5234 + 534',
-                                                   'all practices');
-            var expected = 'Items for 514 + 564 + 564 + 564 + 564 + 564<br/>';
-            expected += ' vs 5234 + 534<br/> by all practices';
-            expect(title).to.equal(expected);
+          var title = formatters.constructChartTitle('actual_cost',
+                                                     'chemical',
+                                                     '514 + 564',
+                                                     '5234 + 534',
+                                                     'all practices');
+          expect(title).to.equal('Spend on 514 + 564 vs 5234 + 534<br/> by all practices');
+          title = formatters.constructChartTitle('items',
+                                                 'chemical',
+                                                 '514 + 564 + 564 + 564 + 564 + 564',
+                                                 '5234 + 534',
+                                                 'all practices');
+          var expected = 'Items for 514 + 564 + 564 + 564 + 564 + 564<br/>';
+          expected += ' vs 5234 + 534<br/> by all practices';
+          expect(title).to.equal(expected);
+          title = formatters.constructChartTitle('actual_cost',
+                                                 'nothing',
+                                                 '514 + 564',
+                                                 '5234 + 534',
+                                                 'all practices');
+          expect(title).to.equal('Spend on 514 + 564 by all practices');
         });
     });
 
@@ -122,7 +130,8 @@ describe('Formatters', function () {
 
     describe('#constructYAxisTitle', function () {
         it('should construct the y-axis title from options', function () {
-            var title = formatters.constructYAxisTitle('actual_cost', '14 + 15', '1,000 patients on list');
+          var title = formatters.constructYAxisTitle(
+            'actual_cost', 'chemical', '14 + 15', '1,000 patients on list');
             expect(title).to.equal('Spend on 14 + 15<br/> per 1,000 patients on list');
         });
     });
