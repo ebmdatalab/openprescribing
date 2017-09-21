@@ -193,6 +193,13 @@
             "upload_to_bigquery"
         ]
     },
+    "generate_ppu": {
+        "type": "post_process",
+        "command": "import_ppu_savings",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
+    },
     "update_smoketests": {
         "type": "post_process",
         "command": "update_smoketests {last_imported}",

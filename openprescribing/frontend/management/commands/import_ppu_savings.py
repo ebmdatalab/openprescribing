@@ -1,4 +1,5 @@
 from sets import Set
+import argparse
 import os
 
 import pandas as pd
@@ -14,6 +15,12 @@ from dmd.models import DMDProduct
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
+
+SUBSTITUTIONS_SPREADSHEET = (
+    'https://docs.google.com/spreadsheets/d/e/'
+    '2PACX-1vSsTrjEdRekkcR0H8myL8RwP3XKg2YvTgQwGb5ypNei0IYn4ofr'
+    'ayVZJibLfN_lnpm6Q9qu_t0yXU5Z/pub?gid=1784930737&single=true'
+    '&output=csv')
 
 
 def gbq_sql_to_dataframe(sql):
@@ -37,10 +44,7 @@ def gbq_sql_to_dataframe(sql):
         raise
 
 
-def make_merged_table_for_month(
-        substitutions_csv='',
-        month='',
-        namespace='hscic'):
+def make_merged_table_for_month(month):
     """Create a new BigQuery table that includes code substitutions, off
     which our savings can be computed.
 
@@ -64,7 +68,7 @@ def make_merged_table_for_month(
     """
     cases = []
     seen = Set()
-    df = pd.read_csv(substitutions_csv)
+    df = pd.read_csv(SUBSTITUTIONS_SPREADSHEET)
     df = df[df['Really equivalent?'] == 'Y']
     for row in df.iterrows():
         data = row[1]
@@ -88,25 +92,22 @@ def make_merged_table_for_month(
         net_cost,
         quantity
       FROM
-        ebmdatalab.%s.%s
+        ebmdatalab.hscic.%s
       WHERE month = TIMESTAMP('%s')
     """ % (' '.join(
         ["WHEN '%s' THEN '%s'" % (when_code, then_code)
          for (when_code, then_code) in cases]),
-           namespace,
            prescribing_table,
            month)
     target_table_name = (
         'prescribing_with_merged_codes_%s' % month.strftime('%Y_%m'))
-    query_and_return('ebmdatalab', namespace,
+    query_and_return('ebmdatalab', 'hscic',
                      target_table_name,
                      query, legacy=False)
     return target_table_name
 
 
-def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
-                sql_only=False, limit=1000, order_by_savings=True,
-                min_saving=0, namespace='hscic', substitutions_csv=''):
+def get_savings(group_by, month, limit, min_saving=0):
     """Execute SQL to calculate savings in BigQuery, and return as a
     DataFrame.
 
@@ -114,16 +115,8 @@ def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
     https://github.com/ebmdatalab/price-per-dose/issues
 
     """
-    assert month
-    assert group_by or for_entity
-    assert group_by in ['', 'pct', 'practice', 'product']
-
-    prescribing_table = "ebmdatalab.%s.%s" % (
-        namespace,
-        make_merged_table_for_month(
-            substitutions_csv=substitutions_csv,
-            month=month,
-            namespace=namespace)
+    prescribing_table = "ebmdatalab.hscic.%s" % (
+        make_merged_table_for_month(month)
     )
     restricting_condition = (
         "AND LENGTH(RTRIM(p.bnf_code)) >= 15 "
@@ -152,12 +145,6 @@ def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
 
     # Generate variable SQL based on if we're interested in CCG or
     # practice-level data
-    if len(for_entity) == 3:
-        restricting_condition += 'AND pct = "%s"' % for_entity
-        group_by = 'pct'
-    elif len(for_entity) > 3:
-        restricting_condition += 'AND practice = "%s"' % for_entity
-        group_by = 'practice'
     if group_by == 'pct':
         select = 'savings.presentations.pct AS pct,'
         inner_select = 'presentations.pct, '
@@ -179,10 +166,7 @@ def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
     else:
         limit = ''
 
-    if order_by_savings:
-        order_by = "ORDER BY possible_savings DESC"
-    else:
-        order_by = ''
+    order_by = "ORDER BY possible_savings DESC"
     fpath = os.path.dirname(__file__)
 
     # Execute SQL
@@ -196,34 +180,31 @@ def get_savings(for_entity='', group_by='', month='', cost_field='net_cost',
             ('{{ order_by }}', order_by),
             ('{{ select }}', select),
             ('{{ prescribing_table }}', prescribing_table),
-            ('{{ cost_field }}', cost_field),
+            ('{{ cost_field }}', 'net_cost'),
             ('{{ inner_select }}', inner_select),
             ('{{ min_saving }}', min_saving)
         )
         for key, value in substitutions:
             sql = sql.replace(key, str(value))
-        if sql_only:
-            return sql
-        else:
-            # Format results in a DataFrame
-            df = gbq_sql_to_dataframe(sql)
-            # Rename null values in category, so we can group by it
-            df.loc[df['category'].isnull(), 'category'] = 'NP8'
-            df = df.set_index(
-                'generic_presentation')
-            df.index.name = 'bnf_code'
-            # Add in substitutions column
-            subs = pd.read_csv(substitutions_csv).set_index('Code')
-            subs = subs[subs['Really equivalent?'] == 'Y'].copy()
-            subs['formulation_swap'] = (
-                subs['Formulation'] +
-                ' / ' +
-                subs['Alternative formulation'])
-            df = df.join(
-                subs[['formulation_swap']], how='left')
-            # Convert nans to Nones
-            df = df.where((pd.notnull(df)), None)
-            return df
+        # Format results in a DataFrame
+        df = gbq_sql_to_dataframe(sql)
+        # Rename null values in category, so we can group by it
+        df.loc[df['category'].isnull(), 'category'] = 'NP8'
+        df = df.set_index(
+            'generic_presentation')
+        df.index.name = 'bnf_code'
+        # Add in substitutions column
+        subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index('Code')
+        subs = subs[subs['Really equivalent?'] == 'Y'].copy()
+        subs['formulation_swap'] = (
+            subs['Formulation'] +
+            ' / ' +
+            subs['Alternative formulation'])
+        df = df.join(
+            subs[['formulation_swap']], how='left')
+        # Convert nans to Nones
+        df = df.where((pd.notnull(df)), None)
+        return df
 
 
 class Command(BaseCommand):
@@ -233,14 +214,10 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--month',
-            type=valid_date, required=True)
+            type=valid_date)
         parser.add_argument(
             '--min-practice-saving',
             type=int, default=50)
-        parser.add_argument(
-            '--substitutions-csv',
-            help='Path to CSV detailing Tab/Cap substitutions etc',
-            type=str, required=True)
         parser.add_argument(
             '--min-ccg-saving',
             help="Disregard savings under this amount",
@@ -256,6 +233,14 @@ class Command(BaseCommand):
 
         Deletes any existing data for that month.
         '''
+        if not options['month']:
+            last_prescribing = ImportLog.objects.latest_in_category(
+                'prescribing').current_at
+            last_ppu = ImportLog.objects.latest_in_category(
+                'ppu').current_self.assertTrue()
+            options['month'] = past_prescribing
+            if options['month'] <= last_ppu:
+                raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
             # Create custom DMD Products for our overrides, if they
             # don't exist.
@@ -287,11 +272,8 @@ class Command(BaseCommand):
                     ('pct', options['min_ccg_saving']),
                     ('practice', options['min_practice_saving'])]:
                 result = get_savings(
-                    group_by=entity_type,
-                    month=options['month'],
-                    limit=options['limit'],
-                    min_saving=min_saving,
-                    substitutions_csv=options['substitutions_csv'])
+                    entity_type, options['month'],
+                    options['limit'], min_saving)
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
