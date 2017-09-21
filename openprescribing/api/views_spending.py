@@ -385,7 +385,7 @@ def _get_query_for_total_spending(codes):
 
 
 def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
-    query = 'SELECT pr.pct_id as row_id, '
+    query = 'SELECT pc.code as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
     query += 'SUM(pr.cost) AS actual_cost, '
@@ -415,13 +415,13 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
             if (i != len(orgs) - 1):
                 query += ' OR '
         query += ") "
-    query += "GROUP BY pr.pct_id, pc.code, date "
-    query += "ORDER BY date, pr.pct_id "
+    query += "GROUP BY pc.code, pc.name, date "
+    query += "ORDER BY date, pc.code "
     return query
 
 
 def _get_query_for_presentations_by_ccg(codes, orgs):
-    query = 'SELECT pr.pct_id as row_id, '
+    query = 'SELECT pc.code as row_id, '
     query += "pc.name as row_name, "
     query += 'pr.processing_date as date, '
     query += "SUM(pr.items) AS items, "
@@ -441,8 +441,8 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
             query += "pr.pct_id=%s "
             if (i != len(orgs) - 1):
                 query += ' OR '
-    query += ") GROUP BY pr.pct_id, pc.code, date "
-    query += "ORDER BY date, pr.pct_id"
+    query += ") GROUP BY pc.code, pc.name, date "
+    query += "ORDER BY date, pc.code"
     return query
 
 
@@ -480,7 +480,7 @@ def _get_total_spending_by_practice(orgs, date):
 
 def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
                                            date):
-    query = 'SELECT pr.practice_id AS row_id, '
+    query = 'SELECT pc.code AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
     query += "pc.ccg_id AS ccg, "
@@ -527,13 +527,13 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
         else:
             query += " WHERE ("
         query += "pr.processing_date=%s) "
-    query += "GROUP BY pr.practice_id, pc.code, date "
-    query += "ORDER BY date, pr.practice_id"
+    query += "GROUP BY pc.code, pc.name, date "
+    query += "ORDER BY date, pc.code"
     return query
 
 
 def _get_presentations_by_practice(codes, orgs, date):
-    query = 'SELECT pr.practice_id AS row_id, '
+    query = 'SELECT pc.code AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
     query += "pc.ccg_id AS ccg, "
@@ -559,6 +559,6 @@ def _get_presentations_by_practice(codes, orgs, date):
                 query += ' OR '
     if date:
         query += "AND pr.processing_date=%s "
-    query += ") GROUP BY pr.practice_id, pc.code, date "
-    query += "ORDER BY date, pr.practice_id"
+    query += ") GROUP BY pc.code, pc.name, date "
+    query += "ORDER BY date, pc.code"
     return query
