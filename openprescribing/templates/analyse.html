@@ -31,26 +31,8 @@
 <div id="analyse-options" class="invisible">
 
     <div class="form-row">
-        <div class="col left">See prescribing by:</div>
-        <div class="col middle">
-            <select style="width: 100%" id="org" class="form-select not-searchable">
-                <!-- <option value="all" selected>everyone</option> -->
-                <option value="CCG">a CCG or CCGs</option>
-                <option value="practice">a practice or practices</option>
-            </select>
-        </div>
-        <div class="col right">
-            <div id="orgIds-container" style="display: none">
-                <select style="width: 100%" id="orgIds" multiple="multiple">
-                </select>
-                <p class="help-block" id="org-help">Hint: add a CCG to see all its practices</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-row">
         <div class="col left">
-        <span class="help" id="numerator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">on:</span>
+        <span class="help" id="numerator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">See prescribing of:</span>
         <div class="hidden" id="numerator-help-text">You can add BNF sections, chemicals, products or product format.<br/>For example:
         <ul>
         <li><em>Atorvastatin</em> will show all prescribing on the chemical, across multiple products</li>
@@ -73,7 +55,6 @@
             </div>
         </div>
     </div>
-
     <div class="form-row">
         <div class="col left">
         <span class="help" id="denominator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">versus:</span>
@@ -93,6 +74,24 @@
             </div>
         </div>
     </div>
+    <div class="form-row">
+        <div class="col left">highlighting:</div>
+        <div class="col middle">
+            <select style="width: 100%" id="org" class="form-select not-searchable">
+                <!-- <option value="all" selected>everyone</option> -->
+                <option value="CCG">a CCG or CCGs</option>
+                <option value="practice">a practice or practices</option>
+            </select>
+        </div>
+        <div class="col right">
+            <div id="orgIds-container" style="display: none">
+                <select style="width: 100%" id="orgIds" multiple="multiple">
+                </select>
+                <p class="help-block" id="org-help">Hint: add a CCG to see all its practices</p>
+            </div>
+        </div>
+    </div>
+
     <p>
       <a href="/docs/analyse/">Tips on using this search</a>
     </p>
