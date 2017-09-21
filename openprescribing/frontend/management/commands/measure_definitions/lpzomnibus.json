@@ -11,12 +11,12 @@
     "This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines). ",
     "<a href='?tags=lowpriority'>View the individual measures here</a>"
   ],
-  "numerator_short": "All low-priority prescribing numerators",
-  "denominator_short": "All low-priority prescribing denominators",
+  "numerator_short": "cost (£)",
+  "denominator_short": "per 1000 patients",
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
-  "low_is_good": null,
+  "low_is_good": true,
   "tags": ["core"],
   "numerator_columns": [
     "SUM(numerator) AS numerator, "
