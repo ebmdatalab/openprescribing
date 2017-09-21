@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var humanize = require('humanize');
 
 var formatters = {
 
@@ -182,6 +183,7 @@ var formatters = {
   },
 
   _getStringForIds: function(ids, is_practices) {
+    var maxLength = 70;
     var str = '';
     _.each(ids, function(e, i) {
       var id = (e.display_id) ? e.display_id : e.id;
@@ -191,6 +193,7 @@ var formatters = {
       str += (e.name) ? e.name : id;
       str += (i === (ids.length - 1)) ? '' : ' + ';
     });
+    str = humanize.truncatechars(str, maxLength);
     return str;
   }
 };

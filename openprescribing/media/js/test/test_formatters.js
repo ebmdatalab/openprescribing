@@ -189,13 +189,28 @@ describe('Formatters', function () {
         });
     });
 
-    describe('#_getStringForIds', function () {
-        it('should ', function () {
-            var str = formatters._getStringForIds([{ id: 2 }, { id: 3}], true);
+    describe('#_getStringForIds', function() {
+        it('should join multiple ids with plusses', function() {
+            var str = formatters._getStringForIds([{id: 2}, {id: 3}], true);
             expect(str).to.equal('2 + 3');
-            str = formatters._getStringForIds([{ id: '03V' }], true);
+        });
+        it('should prepend "practices in" when second arg is true', function() {
+            var str = formatters._getStringForIds([{id: '03V'}], true);
             expect(str).to.equal('practices in 03V');
         });
+        it('should elide long lists to max length', function() {
+            var str = formatters._getStringForIds([
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'},
+              {id: 'asdfghjk qwerty zxcvb'}
+            ]);
+            expect(str).to.equal(
+              'asdfghjk qwerty zxcvb + asdfghjk ' +
+              'qwerty zxcvb + asdfghjk qwerty zxcvb …');
+        });
     });
-
 });
