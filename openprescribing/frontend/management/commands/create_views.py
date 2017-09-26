@@ -90,11 +90,11 @@ class Command(BaseCommand):
         pool.close()
         pool.join()  # wait for all worker processes to exit
         for result in pool_results:
-            tablename, gcs_uri = result.get()
-            self.download_and_import(tablename, gcs_uri)
+            tablename = result.get()
+            self.download_and_import(tablename)
             self.log("-------------")
 
-    def download_and_import(self, tablename, gcs_uri):
+    def download_and_import(self, tablename):
         client = Client(self.dataset_name)
         table = client.get_table_ref(tablename)
         storage_prefix = '{}/views/{}-'.format(self.dataset_name, table.name)
@@ -131,9 +131,8 @@ def query_and_export(dataset_name, tablename, sql):
     try:
         project_id = 'ebmdatalab'
         storage_prefix = '{}/views/{}-'.format(dataset_name, tablename)
-        gzip_destination = "gs://ebmdatalab/{}*.csv.gz".format(storage_prefix)
         logger.info("Generating view %s and saving to %s" % (
-            tablename, gzip_destination))
+            tablename, storage_prefix))
 
         client = Client(dataset_name)
         table = client.get_table_ref(tablename)
@@ -150,7 +149,7 @@ def query_and_export(dataset_name, tablename, sql):
         exporter.export_to_storage()
 
         logger.info("View generation complete for %s" % tablename)
-        return (tablename, gzip_destination)
+        return tablename
     except Exception:
         # Log the formatted error, because the multiprocessing pool
         # this is called from only shows the error message (with no
