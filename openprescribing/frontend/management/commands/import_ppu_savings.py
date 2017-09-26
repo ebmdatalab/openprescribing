@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from ebmdatalab.bigquery import query_and_return
+from ebmdatalab.bigquery_old import query_and_return
 
 from common.utils import valid_date
 from dmd.models import DMDProduct

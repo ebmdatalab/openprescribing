@@ -1,7 +1,7 @@
 from unittest import TestCase
 import os
 
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 from google.cloud.bigquery import SchemaField
 
 TEST_SCHEMA = [

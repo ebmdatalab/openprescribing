@@ -9,7 +9,7 @@ from django.db import connection
 from django.test import SimpleTestCase
 
 from common import utils
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 from frontend.management.commands import create_views
 from frontend.models import ImportLog
 from google.cloud import storage

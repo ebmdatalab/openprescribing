@@ -111,10 +111,10 @@ from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab.bigquery import load_data_from_file
-from ebmdatalab.bigquery import copy_table_to_gcs
-from ebmdatalab.bigquery import download_from_gcs
-from ebmdatalab.bigquery import wait_for_job
+from ebmdatalab.bigquery_old import load_data_from_file
+from ebmdatalab.bigquery_old import copy_table_to_gcs
+from ebmdatalab.bigquery_old import download_from_gcs
+from ebmdatalab.bigquery_old import wait_for_job
 
 
 logger = logging.getLogger(__name__)

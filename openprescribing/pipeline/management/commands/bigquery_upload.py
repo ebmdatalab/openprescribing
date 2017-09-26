@@ -3,7 +3,7 @@ from __future__ import print_function
 from django.core.management import BaseCommand
 from django.db.models import Max
 
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 from frontend.models import PracticeStatistics, Prescription
 
 from ...cloud_utils import CloudHandler

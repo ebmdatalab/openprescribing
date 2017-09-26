@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 from mock import patch
 from mock import MagicMock
 

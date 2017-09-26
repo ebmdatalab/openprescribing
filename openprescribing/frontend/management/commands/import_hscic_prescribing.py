@@ -21,7 +21,7 @@ from frontend.models import Prescription
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 
 
 logger = logging.getLogger(__name__)

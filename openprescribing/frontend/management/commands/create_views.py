@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 
 from common import utils
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 from frontend.models import ImportLog
 
 

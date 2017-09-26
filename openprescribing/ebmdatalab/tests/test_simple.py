@@ -2,7 +2,7 @@ from unittest import TestCase, skip
 import mock
 from mock import patch
 from mock import MagicMock
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 
 
 class SimpleTests(TestCase):

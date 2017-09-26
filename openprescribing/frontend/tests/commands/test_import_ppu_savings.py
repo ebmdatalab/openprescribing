@@ -1,6 +1,6 @@
 from datetime import date
 
-from ebmdatalab import bigquery
+from ebmdatalab import bigquery_old as bigquery
 
 from django.conf import settings
 from django.test import TestCase
