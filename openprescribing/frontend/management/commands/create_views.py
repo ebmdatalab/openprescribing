@@ -109,17 +109,17 @@ class Command(BaseCommand):
             exporter.download_from_storage_and_unzip(f)
             f.seek(0)
 
-            copy_str = "COPY %s(%s) FROM STDIN "
-            copy_str += "WITH (FORMAT CSV)"
-            fieldnames = f.readline().split(',')
+            field_names = f.readline()
+            copy_sql = "COPY %s(%s) FROM STDIN WITH (FORMAT CSV)" % (table.name, field_names)
+
             with connection.cursor() as cursor:
                 with utils.constraint_and_index_reconstructor(table.name):
                     self.log("Deleting from table %s..." % table.name)
                     cursor.execute("DELETE FROM %s" % table.name)
+
                     self.log("Copying CSV to %s..." % table.name)
                     try:
-                        cursor.copy_expert(copy_str % (
-                            table.name, ','.join(fieldnames)), f)
+                        cursor.copy_expert(copy_sql, f)
                     except Exception:
                         import shutil
                         shutil.copyfile(f.name, "/tmp/error")
