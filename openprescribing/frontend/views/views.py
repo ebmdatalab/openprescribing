@@ -284,6 +284,15 @@ def measure_for_one_ccg(request, measure, ccg_code):
     }
     return render(request, 'measure_for_one_ccg.html', context)
 
+def measure_for_one_practice(request, measure, practice_code):
+    practice = get_object_or_404(PCT, code=practice_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'practice': practice,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category('prescribing').current_at
+    }
+    return render(request, 'measure_for_one_ccg.html', context)
 
 def last_bookmark(request):
     """Redirect the logged in user to the CCG they last bookmarked, or if

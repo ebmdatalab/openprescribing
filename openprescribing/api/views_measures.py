@@ -76,15 +76,20 @@ def _getMeasureData(measure):
 
 
 @api_view(['GET'])
-def measure_numerators_by_ccg(request, format=None):
+def measure_numerators_by_org(request, format=None):
     # XXX assert hscic.normalised_prescribing_standard is in the
-    # numerator_from
+    # numerator_from, or use another flag in the measure definition
+    # (e.g. LP omnibus can't easily be broken down)
     measure = request.query_params.get('measure', None)
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    org = utils.param_to_list(request.query_params.get('org', []))[0]
+    if len(org) == 3:
+        org_selector = 'pct_id'
+    else:
+        org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     m = _getMeasureData(measure)
     query = ('SELECT '
-             '  pct_id AS ccg, '
+             '  %s AS entity, '
              '  presentation_code AS bnf_code, '
              '  COALESCE(dmd.name, p.name) AS presentation_name, '
              "  SUM(total_items) AS total_items, "
@@ -96,22 +101,27 @@ def measure_numerators_by_ccg(request, format=None):
              'LEFT JOIN '
              '  dmd_product dmd '
              'ON pr.presentation_code = dmd.bnf_code '
-             'LEFT JOIN ' # XXX should be inner join!
+             'INNER JOIN '
              '  frontend_presentation p '
              'ON pr.presentation_code = p.bnf_code '
              'WHERE '
-             "  pct_id = '%s' "
+             "  %s = '%s' "
              '  AND '
              "  processing_date = '%s' "
              '  AND (%s) '
              'GROUP BY '
-             '  pct_id, presentation_code, dmd.name, p.name '
+             '  %s, presentation_code, dmd.name, p.name '
              'ORDER BY numerator DESC '
              'LIMIT 50') % (
+                 org_selector,
                  " ".join(get_columns_for_select(m, 'numerator')).replace('items', 'total_items'),
-                 orgs[0], this_month.strftime('%Y-%m-%d'),
-                 " ".join(m['numerator_where']).replace('bnf_code', 'presentation_code')
+                 org_selector,
+                 org, this_month.strftime('%Y-%m-%d'),
+                 " ".join(m['numerator_where']).replace('bnf_code', 'presentation_code'),
+                 org_selector
              )
+    import pdb; pdb.set_trace()
+
     data = utils.execute_query(query, [])
     return Response(data)
 
