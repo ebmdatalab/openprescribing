@@ -303,7 +303,7 @@ class MeasureCalculation(object):
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
 
-    def insert_rows_from_query(self, query_id, table_name, context, legacy=False):
+    def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
 
@@ -322,7 +322,7 @@ class MeasureCalculation(object):
         with open(query_path) as f:
             sql = f.read()
 
-        sql = sql.format(**context)
+        sql = sql.format(**ctx)
 
         if self.under_test:
             sql = sql.replace(
@@ -576,7 +576,11 @@ class PracticeCalculation(MeasureCalculation):
 
         }
 
-        self.insert_rows_from_query('practice_ratios', self.table_name(), context)
+        self.insert_rows_from_query(
+            'practice_ratios',
+            self.table_name(),
+            context
+        )
 
     def calculate_global_centiles_for_practices(self):
         """Compute overall sums and centiles for each practice."""
