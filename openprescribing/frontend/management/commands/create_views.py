@@ -44,7 +44,7 @@ class Command(BaseCommand):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
-        self.dataset = options.get('dataset', 'hscic')
+        self.dataset_name = options.get('dataset', 'hscic')
         self.fpath = os.path.dirname(__file__)
         self.view_paths = glob.glob(
             os.path.join(self.fpath, "./views_sql/*.sql"))
@@ -75,7 +75,7 @@ class Command(BaseCommand):
                 continue
             # Perform bigquery parts of operation in parallel
             result = pool.apply_async(
-                query_and_export, [self.dataset, view, prescribing_date])
+                query_and_export, [self.dataset_name, view, prescribing_date])
             pool_results.append(result)
         pool.close()
         pool.join()  # wait for all worker processes to exit
@@ -110,31 +110,31 @@ class Command(BaseCommand):
 # BigQuery helper functions. Candidates for moving to
 # ebmdatalab-python.
 
-def query_and_export(dataset, view, prescribing_date):
+def query_and_export(dataset_name, view, prescribing_date):
     try:
         project_id = 'ebmdatalab'
         tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
         gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
-            dataset, tablename)
+            dataset_name, tablename)
         logger.info("Generating view %s and saving to %s" % (
             tablename, gzip_destination))
         # We do a string replacement here as we don't know how many
         # times a dataset substitution token (i.e. `{{dataset}}') will
         # appear in each SQL template. And we can't use new-style
         # formatting as some of the SQL has braces in.
-        sql = open(view, "r").read().replace('{{dataset}}', dataset)
+        sql = open(view, "r").read().replace('{{dataset}}', dataset_name)
         sql = sql.replace("{{this_month}}", prescribing_date)
         logger.info("Running SQL for %s: %s" % (tablename, sql))
         # Execute query and wait
         job_id = query_and_return(
-            project_id, dataset, tablename, sql)
+            project_id, dataset_name, tablename, sql)
         logger.info("Awaiting query completion for %s" % tablename)
         wait_for_job(job_id, project_id)
         # Delete existing GCS files
         delete_from_gcs(gzip_destination)
         # Export to GCS and wait
         job_id = export_to_gzip(
-            project_id, dataset, tablename, gzip_destination)
+            project_id, dataset_name, tablename, gzip_destination)
         logger.info("Awaiting export completion for %s" % tablename)
         wait_for_job(job_id, project_id)
         logger.info("View generation complete for %s" % tablename)
