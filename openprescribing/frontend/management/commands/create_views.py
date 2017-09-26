@@ -74,9 +74,18 @@ class Command(BaseCommand):
         for view in paths:
             if self.view and self.view not in view:
                 continue
-            # Perform bigquery parts of operation in parallel
+
+            tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
+
+            # We do a string replacement here as we don't know how many
+            # times a dataset substitution token (i.e. `{{dataset}}') will
+            # appear in each SQL template. And we can't use new-style
+            # formatting as some of the SQL has braces in.
+            sql = open(view, "r").read().replace('{{dataset}}', self.dataset_name)
+            sql = sql.replace("{{this_month}}", prescribing_date)
+
             result = pool.apply_async(
-                query_and_export, [self.dataset_name, view, prescribing_date])
+                query_and_export, [self.dataset_name, tablename, sql])
             pool_results.append(result)
         pool.close()
         pool.join()  # wait for all worker processes to exit
@@ -118,20 +127,13 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(dataset_name, view, prescribing_date):
+def query_and_export(dataset_name, tablename, sql):
     try:
         project_id = 'ebmdatalab'
-        tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
         storage_prefix = '{}/views/{}-'.format(dataset_name, tablename)
         gzip_destination = "gs://ebmdatalab/{}*.csv.gz".format(storage_prefix)
         logger.info("Generating view %s and saving to %s" % (
             tablename, gzip_destination))
-        # We do a string replacement here as we don't know how many
-        # times a dataset substitution token (i.e. `{{dataset}}') will
-        # appear in each SQL template. And we can't use new-style
-        # formatting as some of the SQL has braces in.
-        sql = open(view, "r").read().replace('{{dataset}}', dataset_name)
-        sql = sql.replace("{{this_month}}", prescribing_date)
 
         client = Client(dataset_name)
         table = client.get_table_ref(tablename)
