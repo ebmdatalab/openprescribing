@@ -2,12 +2,13 @@ import datetime
 import json
 
 from django.test import TestCase
+from mock import patch
 
 from frontend.models import PCT
 
 
 class TestAPIMeasureViews(TestCase):
-    fixtures = ['one_month_of_measures']
+    fixtures = ['one_month_of_measures', '']
     api_prefix = '/api/1.0'
 
     def test_api_measure_global(self):
@@ -57,19 +58,43 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
     def test_api_measure_by_all_ccgs(self):
-        url = '/api/1.0/measure_by_ccg/'
-        url += '?measure=cerazette&format=json'
+        url = '/api/1.0/measure/?format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(len(data['measures'][0]['data']), 2)
+        self.assertEqual(len(data['measures'][0]['data']), 1)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
         d = data['measures'][0]['data'][0]
-        self.assertEqual(d['pct_id'], '02Q')  # we get 02Q
-        self.assertEqual(d['numerator'], 82000)
-        self.assertEqual(d['denominator'], 143000)
-        self.assertEqual(d['percentile'], 100)
-        self.assertEqual("%.4f" % d['calc_value'], '0.5734')
+        self.assertEqual(d['numerator'], 85500)
+        self.assertEqual(d['denominator'], 181500)
+        self.assertEqual("%.4f" % d['calc_value'], '0.4711')
+
+    def test_api_measure_numerators_by_ccg(self):
+        testmeasure = {
+            "is_cost_based": True,
+            "numerator_columns": ["SUM(quantity) AS numerator, "],
+            "numerator_from": "",
+            "numerator_where": ["(bnf_code LIKE '0205%')"],
+            "denominator_columns": ["SUM(quantity) AS denominator"],
+            "denominator_from":"",
+            "denominator_where": ["(bnf_code LIKE '02%')"]
+        }
+
+        with patch('api.views_measures._getMeasureData', return_value=testmeasure):
+            url = '/api/1.0/measure_numerators_by_ccg/'
+            url += '?measure=cerazette&org=02Q&format=json'
+            response = self.client.get(url, follow=True)
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.content)
+            self.assertEqual(data, [
+                {'total_items': 1,
+                 'bnf_code': '0205010F0AAAAAA',
+                 'presentation_name': None,
+                 'numerator': 100.0,
+                 'cost': 1.0,
+                 'ccg': '02Q',
+                 'quantity': 100.0}])
+
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'

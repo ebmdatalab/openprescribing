@@ -1,6 +1,13 @@
+import json
+import os
+
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+
+from frontend.models import ImportLog
+from frontend.models import Measure
+from common.utils import get_columns_for_select
 
 import view_utils as utils
 
@@ -62,6 +69,51 @@ def measure_global(request, format=None):
     }
     return Response(d)
 
+def _getMeasureData(measure):
+    fpath = os.path.dirname(__file__)
+    fname = os.path.join(fpath, "../frontend/management/commands/measure_definitions/%s.json" % measure)
+    return json.load(open(fname, 'r'))
+
+
+@api_view(['GET'])
+def measure_numerators_by_ccg(request, format=None):
+    # XXX assert hscic.normalised_prescribing_standard is in the
+    # numerator_from
+    measure = request.query_params.get('measure', None)
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    this_month = ImportLog.objects.latest_in_category('prescribing').current_at
+    m = _getMeasureData(measure)
+    query = ('SELECT '
+             '  pct_id AS ccg, '
+             '  presentation_code AS bnf_code, '
+             '  COALESCE(dmd.name, p.name) AS presentation_name, '
+             "  SUM(total_items) AS total_items, "
+             "  SUM(actual_cost) AS cost, "
+             "  SUM(quantity) AS quantity, "
+             '  %s '
+             'FROM '
+             '  frontend_prescription pr '
+             'LEFT JOIN '
+             '  dmd_product dmd '
+             'ON pr.presentation_code = dmd.bnf_code '
+             'LEFT JOIN ' # XXX should be inner join!
+             '  frontend_presentation p '
+             'ON pr.presentation_code = p.bnf_code '
+             'WHERE '
+             "  pct_id = '%s' "
+             '  AND '
+             "  processing_date = '%s' "
+             '  AND (%s) '
+             'GROUP BY '
+             '  pct_id, presentation_code, dmd.name, p.name '
+             'ORDER BY numerator DESC '
+             'LIMIT 50') % (
+                 " ".join(get_columns_for_select(m, 'numerator')).replace('items', 'total_items'),
+                 orgs[0], this_month.strftime('%Y-%m-%d'),
+                 " ".join(m['numerator_where']).replace('bnf_code', 'presentation_code')
+             )
+    data = utils.execute_query(query, [])
+    return Response(data)
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):

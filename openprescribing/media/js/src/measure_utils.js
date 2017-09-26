@@ -295,6 +295,7 @@ var utils = {
     var chartTitleUrl;
     var chartExplanation = '';
     var measureUrl;
+    var oneEntityUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -303,6 +304,11 @@ var utils = {
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
       measureUrl = '/measure/' + d.id;
+      if (options.orgType === 'practice') {
+        oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId;
+      } else {
+        oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId;
+      }
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.
@@ -342,6 +348,7 @@ var utils = {
     return {
       measureUrl: measureUrl,
       chartTitle: chartTitle,
+      oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
       chartExplanation: chartExplanation
     };
@@ -397,7 +404,7 @@ var utils = {
     var ymin;
     isPercentageMeasure = (d.isPercentage || isPercentageMeasure);
     chOptions.chart.renderTo = d.chartId;
-    chOptions.chart.height = 200;
+    chOptions.chart.height = 250;
     chOptions.legend.enabled = false;
     if (options.rollUpBy === 'org_id') {
       ymax = _.max([localMax.y, options.globalYMax.y]);
