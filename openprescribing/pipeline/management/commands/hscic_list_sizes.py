@@ -27,10 +27,17 @@ class Command(BaseCommand):
         date = datetime.date(kwargs['year'], kwargs['month'], 1)
         datestamp = date.strftime('%Y_%m')
 
-        source_url = self.url_for_date(date)
+        url = date.strftime('http://digital.nhs.uk/pubs/numpatgp%b%y').lower()
 
-        if source_url is None:
+        rsp = requests.get(url)
+
+        if rsp.status_code != 200:
             raise CommandError('Could not find any data for %s' % datestamp)
+
+        filename = date.strftime('gp-reg-pat-prac-quin-age-%b-%y').lower()
+        tree = html.fromstring(rsp.content)
+        source_url = tree.xpath(
+            "//a[contains(@href, '{}')]/@href".format(filename))[0]
 
         target_dir = os.path.join(
             settings.PIPELINE_DATA_BASEDIR,
@@ -45,55 +52,16 @@ class Command(BaseCommand):
         if self.verbose:
             print 'Getting data for {}'.format(datestamp)
 
-        self.get_data(target_file, source_url)
+        self.curl_and_return(source_url, target_file)
 
         if self.verbose:
             print "Done"
 
-    def get_data(self, target_file, source_url):
-        try:
-            self.wget_and_return(source_url, target_file)
-        except subprocess.CalledProcessError:
-            print "Couldn't get url %s" % source_url
-
-    def wget_and_return(self, url, target_file):
+    def curl_and_return(self, url, target_file):
         '''
-        Call wget, raise exception on error
-        Does not overwrite existing files.
+        Call curl, raise exception on error
         '''
-        wget_command = 'wget -c -O %s' % target_file
-        cmd = '%s %s' % (wget_command, url)
+        cmd = 'curl {} -o {}'.format(url, target_file)
         if self.verbose:
             print 'Runing %s' % cmd
         subprocess.check_call(cmd.split())
-
-    def url_for_date(self, date):
-        datestr1 = date.strftime('%B %Y')  # eg January 2017
-        datestr2 = date.strftime('%b %Y')  # eg Jan 2017
-
-        url = ('http://content.digital.nhs.uk'
-               '/article/2021/Website-Search?'
-               'q=Numbers+of+Patients+Registered+at+a+GP+Practice'
-               '&go=Go&area=both')
-        rsp = requests.get(url)
-        tree = html.fromstring(rsp.content)
-
-        links = tree.xpath('//li[contains(@class, "HSCICProducts")]//a')
-
-        for link in links:
-            title = link.text
-            if datestr1 in title or datestr2 in title:
-                href = link.attrib['href']
-                break
-        else:
-            return
-
-        parsed_url = urlparse.urlparse(href)
-        params = urlparse.parse_qs(parsed_url.query)
-        rsp = requests.get(
-            "http://content.digital.nhs.uk/article/2021/Website-Search"
-            "?productid=%s" % params['productid'][0])
-        tree = html.fromstring(rsp.content)
-        href = tree.xpath(
-            "//a[contains(@href, 'gp-reg-pat-prac-quin-age')]/@href")[0]
-        return "http://content.digital.nhs.uk/%s" % href
