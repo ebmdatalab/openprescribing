@@ -15,7 +15,6 @@ import glob
 import json
 import logging
 import os
-import psycopg2
 import re
 import tempfile
 
@@ -257,8 +256,6 @@ class MeasureCalculation(object):
         self.end_date = end_date
         self.under_test = under_test
 
-        self.setup_db()
-
     def table_name(self):
         """Name of table to which we write ratios data.
         """
@@ -292,16 +289,6 @@ class MeasureCalculation(object):
 
         """
         return settings.BQ_FULL_PRACTICES_TABLE_NAME
-
-    def setup_db(self):
-        """Create a connection to postgres database
-        """
-        db_name = utils.get_env_setting('DB_NAME')
-        db_user = utils.get_env_setting('DB_USER')
-        db_pass = utils.get_env_setting('DB_PASS')
-        db_host = utils.get_env_setting('DB_HOST', '127.0.0.1')
-        self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass, host=db_host)
 
     def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
