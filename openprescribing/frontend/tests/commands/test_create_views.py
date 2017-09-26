@@ -21,16 +21,6 @@ def _mockFile(name):
     return mock
 
 
-class UnitTests(unittest.TestCase):
-    @patch('frontend.management.commands.create_views.download_from_gcs')
-    def test_download_and_unzip_skips_extra_headers(self, mock_download):
-        mock_download.return_value = [
-            _mockFile('csv_part_1.gz'),
-            _mockFile('csv_part_2.gz')]
-        unzipped = create_views.download_and_unzip('foo')
-        self.assertEqual(unzipped.read().count("a,b,c"), 1)
-
-
 class CommandsTestCase(SimpleTestCase):
     allow_database_queries = True
 
