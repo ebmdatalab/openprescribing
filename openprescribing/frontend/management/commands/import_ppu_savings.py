@@ -238,7 +238,7 @@ class Command(BaseCommand):
                 'prescribing').current_at
             last_ppu = ImportLog.objects.latest_in_category(
                 'ppu').current_at
-            options['month'] = past_prescribing
+            options['month'] = last_prescribing
             if options['month'] <= last_ppu:
                 raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
