@@ -32,6 +32,29 @@ def nhs_abbreviations(word, **kwargs):
         return word.upper()
 
 
+def get_columns_for_select(measure, num_or_denom=None):
+    """Parse measures definition for SELECT columns; add
+    cost-savings-related columns when necessary.
+
+    """
+    assert num_or_denom in ['numerator', 'denominator']
+    fieldname = "%s_columns" % num_or_denom
+    cols = measure[fieldname][:]
+    # Deal with possible inconsistencies in measure definition
+    # trailing commas
+    if cols[-1].strip()[-1] != ',':
+        cols[-1] += ", "
+    if measure['is_cost_based']:
+        cols += ["SUM(items) AS items, ",
+                 "SUM(actual_cost) AS cost, ",
+                 "SUM(quantity) AS quantity "]
+    # Deal with possible inconsistencies in measure definition
+    # trailing commas
+    if cols[-1].strip()[-1] == ',':
+        cols[-1] = re.sub(r',\s*$', '', cols[-1])
+    return cols
+
+
 def nhs_titlecase(words):
     if words:
         title_cased = titlecase(words, callback=nhs_abbreviations)
