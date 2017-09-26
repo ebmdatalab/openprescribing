@@ -303,7 +303,7 @@ class MeasureCalculation(object):
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
 
-    def query_and_return(self, query_id, table_name, context, legacy=False):
+    def insert_rows_from_query(self, query_id, table_name, context, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
 
@@ -352,7 +352,7 @@ class MeasureCalculation(object):
             'value_var': 'calc_value',
         }
 
-        return self.query_and_return(
+        return self.insert_rows_from_query(
             'percent_rank',
             self.table_name(),
             context,
@@ -375,7 +375,7 @@ class MeasureCalculation(object):
 
         # We have to use legacy SQL because there' no
         # PERCENTILE_CONT equivalent in the standard SQL
-        self.query_and_return(
+        self.insert_rows_from_query(
             query_id,
             self.globals_table_name(),
             context,
@@ -419,7 +419,7 @@ class GlobalCalculation(MeasureCalculation):
             'global_table': self.full_globals_table_name()
         }
 
-        self.query_and_return(
+        self.insert_rows_from_query(
             'global_cost_savings',
             self.globals_table_name(),
             context,
@@ -576,7 +576,7 @@ class PracticeCalculation(MeasureCalculation):
 
         }
 
-        self.query_and_return('practice_ratios', self.table_name(), context)
+        self.insert_rows_from_query('practice_ratios', self.table_name(), context)
 
     def calculate_global_centiles_for_practices(self):
         """Compute overall sums and centiles for each practice."""
@@ -610,7 +610,7 @@ class PracticeCalculation(MeasureCalculation):
             'global_table': self.full_globals_table_name(),
             'unit': 'practice'
         }
-        self.query_and_return('cost_savings', self.table_name(), context)
+        self.insert_rows_from_query('cost_savings', self.table_name(), context)
 
     def write_practice_ratios_to_database(self):
         """Copy the bigquery ratios data to the local postgres database.
@@ -695,7 +695,7 @@ class CCGCalculation(MeasureCalculation):
             'numerator_aliases': numerator_aliases,
             'from_table': from_table
         }
-        self.query_and_return('ccg_ratios', self.table_name(), context)
+        self.insert_rows_from_query('ccg_ratios', self.table_name(), context)
 
     def calculate_global_centiles_for_ccgs(self):
         """Adds CCG centiles to the already-existing CCG centiles table
@@ -729,7 +729,7 @@ class CCGCalculation(MeasureCalculation):
             'global_table': self.full_globals_table_name(),
             'unit': 'ccg'
         }
-        self.query_and_return('cost_savings', self.table_name(), context)
+        self.insert_rows_from_query('cost_savings', self.table_name(), context)
 
     def write_ccg_ratios_to_database(self):
         """Create measure values for CCG ratios (these are distinguished from
