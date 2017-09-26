@@ -120,6 +120,9 @@ from ebmdatalab.bigquery import wait_for_job
 logger = logging.getLogger(__name__)
 
 
+class BQ_BNFMap(BQModelTable):
+    table_name = 'bnf_map'
+    model = frontend_models.
 BNF_MAP_SCHEMA = [
     SchemaField('former_bnf_code', 'STRING'),
     SchemaField('current_bnf_code', 'STRING'),
@@ -350,6 +353,8 @@ def create_bigquery_views():
     # We have to create legacy and standard versions of the view, as a
     # legacy query cannot address a standard view, and vice versa, and
     # we use both flavours in our code.
+    client = Client(settings.BQ_HSCIC_DATASET)
+
     sql = """
     SELECT
       prescribing.sha AS sha,
@@ -373,31 +378,27 @@ def create_bigquery_views():
       ebmdatalab.hscic.practices  AS practices
     ON practices.code = prescribing.practice
     """
-    client = bigquery.client.Client(project='ebmdatalab')
-    dataset = Dataset("hscic", client)
-    table = dataset.table('normalised_prescribing_standard')
-    table.view_query = sql
-    table.view_use_legacy_sql = False
+
     try:
-        table.create()
+        client.create_table_with_view('normalised_prescribing_standard', sql, False)
     except Conflict:
         pass
-    table = dataset.table('normalised_prescribing_legacy')
+
     sql = sql.replace(
         'ebmdatalab.hscic.prescribing',
-        '[ebmdatalab:hscic.prescribing]')
+        '[ebmdatalab:hscic.prescribing]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.bnf_map',
-        '[ebmdatalab:hscic.bnf_map]',
-        )
+        '[ebmdatalab:hscic.bnf_map]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.practices',
-        '[ebmdatalab:hscic.practices]',
-        )
-    table.view_query = sql
-    table.view_use_legacy_sql = True
+        '[ebmdatalab:hscic.practices]'
+    )
+
     try:
-        table.create()
+        client.create_table_with_view('normalised_prescribing_legacy', sql, True)
     except Conflict:
         pass
 

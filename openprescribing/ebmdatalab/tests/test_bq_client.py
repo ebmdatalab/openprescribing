@@ -3,7 +3,6 @@ import random
 import tempfile
 
 from google.cloud.bigquery import SchemaField
-from google.cloud.exceptions import Conflict
 from google.cloud import storage
 
 from django.core.management import call_command
@@ -40,22 +39,25 @@ class BQClientTest(TestCase):
         ]
 
         t1 = client.get_or_create_table('t1', schema)
-        t2 = client.get_or_create_table('t2', schema)
 
         # Test Table.insert_rows_from_csv
         t1.insert_rows_from_csv('ebmdatalab/tests/test_table.csv')
 
-        self.assertEqual(list(t1.get_rows()), rows)
+        self.assertEqual(sorted(t1.get_rows()), rows)
 
         # Test Table.insert_rows_from_query
-        t2.insert_rows_from_query('SELECT * FROM {} WHERE a > 1 ORDER BY a'.format(t1.qualified_name))
+        t2 = client.get_table_ref('t2')
 
-        self.assertEqual(list(t2.get_rows()), rows[1:])
+        t2.insert_rows_from_query('SELECT * FROM {} WHERE a > 1'.format(t1.qualified_name))
+
+        t2 = client.get_table('t2')
+
+        self.assertEqual(sorted(t2.get_rows()), rows[1:])
 
         # Test Client.query
-        results = client.query('SELECT * FROM {} WHERE a > 2 ORDER BY a'.format(t1.qualified_name))
+        results = client.query('SELECT * FROM {} WHERE a > 2'.format(t1.qualified_name))
 
-        self.assertEqual(list(results.rows), rows[2:])
+        self.assertEqual(sorted(results.rows), rows[2:])
 
         # Test TableExporter.export_to_storage and TableExporter.download_from_storage_and_unzip
         t1_exporter = TableExporter(t1, 'test_bq_client/test_table-')
@@ -64,7 +66,8 @@ class BQClientTest(TestCase):
         with tempfile.NamedTemporaryFile(mode='r+') as f:
             t1_exporter.download_from_storage_and_unzip(f)
             f.seek(0)
-            data = list(csv.reader(f))
+            reader = csv.reader(f)
+            data = [reader.next()] + sorted(reader)
 
         self.assertEqual(data, [[str(x) for x in row] for row in [headers] + rows])
 
@@ -73,7 +76,7 @@ class BQClientTest(TestCase):
 
         t2.insert_rows_from_storage('gs://ebmdatalab/test_bq_client/test_table.csv')
 
-        self.assertEqual(list(t2.get_rows()), rows)
+        self.assertEqual(sorted(t2.get_rows()), rows)
 
         # Test Client.get_or_create_table_referencing_storage
         self.upload_to_storage('ebmdatalab/tests/test_table_headers.csv', 'test_bq_client/test_table_headers.csv')
@@ -87,7 +90,7 @@ class BQClientTest(TestCase):
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
 
-        self.assertEqual(list(results.rows), rows)
+        self.assertEqual(sorted(results.rows), rows)
 
         self.upload_to_storage(
             'ebmdatalab/tests/test_table_headers_2.csv',
@@ -96,7 +99,16 @@ class BQClientTest(TestCase):
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
 
-        self.assertEqual(list(results.rows), rows + [(4, u'damson')])
+        self.assertEqual(sorted(results.rows), rows + [(4, u'damson')])
+
+        # Test Client.create_table_with_view
+        sql = 'SELECT * FROM {} WHERE a > 1'.format(t1.qualified_name)
+
+        t4 = client.create_table_with_view('t4', sql, False)
+
+        results = client.query('SELECT * FROM {}'.format(t4.qualified_name))
+
+        self.assertEqual(sorted(results.rows), rows[1:])
 
     def upload_to_storage(self, local_path, storage_path):
         client = storage.client.Client(project='ebmdatalab')

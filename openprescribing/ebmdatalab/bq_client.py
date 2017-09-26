@@ -9,19 +9,16 @@ import uuid
 
 from google.cloud import bigquery as gcbq
 from google.cloud import storage as gcs
-from google.cloud.exceptions import BadRequest, Conflict
+from google.cloud.exceptions import Conflict
 
 from django.conf import settings
 from django.db import connection
-
-from openprescribing.utils import mkdir_p
 
 
 class Client(object):
     def __init__(self, dataset_name):
         # TODO: pass in credentials, rather than inferring from environment
-        # TODO: get this from settings
-        self.project_name = 'ebmdatalab'
+        self.project_name = settings.BQ_PROJECT
         self.dataset_name = dataset_name
 
         self.gcbq_client = gcbq.Client(project=self.project_name)
@@ -34,23 +31,23 @@ class Client(object):
         self.dataset.create()
 
     def delete_dataset(self):
-        for _ in range(5):
-            try:
-                self.dataset.delete()
-                return
-            except BadRequest:
-                pass
+        for table in self.dataset.list_tables():
+            table.delete()
+        self.dataset.delete()
 
     def create_table(self, table_name, schema):
         table = self.dataset.table(table_name, schema)
         table.create()
-        return Table(table)
+        return Table(table, self.project_name)
 
-    def get_table(self, table_name, reload=True):
+    def get_table_ref(self, table_name):
         table = self.dataset.table(table_name)
-        if reload:
-            table.reload()
-        return Table(table)
+        return Table(table, self.project_name)
+
+    def get_table(self, table_name):
+        table = self.dataset.table(table_name)
+        table.reload()
+        return Table(table, self.project_name)
 
     def get_or_create_table(self, table_name, schema):
         try:
@@ -86,6 +83,13 @@ class Client(object):
 
         return self.get_table(table_name)
 
+    def create_table_with_view(self, table_name, sql, legacy):
+        table = self.dataset.table(table_name)
+        table.view_query = sql
+        table.view_use_legacy_sql = legacy
+        table.create()
+        return Table(table, self.project_name)
+
     def query(self, sql, legacy=False, **options):
         if not legacy:
             sql = convert_legacy_table_names(sql)
@@ -103,11 +107,10 @@ class Client(object):
 
 
 class Table(object):
-    def __init__(self, gcbq_table):
+    def __init__(self, gcbq_table, project_name):
         self.gcbq_table = gcbq_table
         self.gcbq_client = gcbq_table._dataset._client
-        # TODO don't hardcode this
-        self.project_name = 'ebmdatalab'
+        self.project_name = project_name
         self.name = gcbq_table.name
         self.dataset_name = gcbq_table._dataset.name
 
@@ -189,7 +192,8 @@ class TableExporter(object):
             'compression': 'GZIP',
         }
 
-        destination_uri = 'gs://ebmdatalab/{}*.csv.gz'.format(
+        destination_uri = 'gs://{}/{}*.csv.gz'.format(
+            self.table.project_name,
             self.storage_prefix,
         )
 
