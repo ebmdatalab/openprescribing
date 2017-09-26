@@ -47,20 +47,6 @@ class Command(BaseCommand):
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
         self.dataset_name = options.get('dataset', 'hscic')
-        self.fpath = os.path.dirname(__file__)
-        self.view_paths = glob.glob(
-            os.path.join(self.fpath, "./views_sql/*.sql"))
-        self.view = None
-        if options['list_views']:
-            for view in self.view_paths:
-                print os.path.basename(view).replace('.sql', '')
-        else:
-            if options['view']:
-                self.view = options['view']
-            self.fill_views()
-
-    def fill_views(self):
-        client = Client(self.dataset_name)
 
         base_path = os.path.join(
             settings.SITE_ROOT,
@@ -70,17 +56,30 @@ class Command(BaseCommand):
             'views_sql'
         )
 
-        paths = glob.glob(os.path.join(base_path, '*.sql'))
-        pool = Pool(processes=len(paths))
+        if options['view'] is not None:
+            self.view_paths = [os.path.join(base_path), options['view'] + '.sql']
+        else:
+            self.view_paths = glob.glob(os.path.join(base_path, '*.sql'))
+
+        if options['list_views']:
+            self.list_views()
+        else:
+            self.fill_views()
+
+    def list_views(self):
+        for view in self.view_paths:
+            print os.path.basename(view).replace('.sql', '')
+
+    def fill_views(self):
+        client = Client(self.dataset_name)
+
+        pool = Pool(processes=len(self.view_paths))
         tables = []
 
         prescribing_date = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime('%Y-%m-%d')
 
-        for path in paths:
-            if self.view is not None:
-                if os.path.basename(path) != self.view + '.sql':
-                    continue
+        for path in self.view_paths:
             table_name = "vw__%s" % os.path.basename(path).replace('.sql', '')
             table = client.get_table_ref(table_name)
             tables.append(table)
