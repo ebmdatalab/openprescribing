@@ -86,23 +86,30 @@ class Command(BaseCommand):
             self.log("-------------")
 
     def download_and_import(self, tablename, gcs_uri):
-        f = download_and_unzip(gcs_uri)
-        copy_str = "COPY %s(%s) FROM STDIN "
-        copy_str += "WITH (FORMAT CSV)"
-        fieldnames = f.readline().split(',')
-        with connection.cursor() as cursor:
-            with utils.constraint_and_index_reconstructor(tablename):
-                self.log("Deleting from table %s..." % tablename)
-                cursor.execute("DELETE FROM %s" % tablename)
-                self.log("Copying CSV to %s..." % tablename)
-                try:
-                    cursor.copy_expert(copy_str % (
-                        tablename, ','.join(fieldnames)), f)
-                except Exception:
-                    import shutil
-                    shutil.copyfile(f.name, "/tmp/error")
-                    raise
-        f.close()
+        client = Client(self.dataset_name)
+        table = client.get_table_ref(tablename)
+        storage_prefix = '{}/views/{}-'.format(self.dataset_name, table.name)
+        exporter = TableExporter(table, storage_prefix)
+
+        with tempfile.NamedTemporaryFile(mode='r+') as f:
+            exporter.download_from_storage_and_unzip(f)
+            f.seek(0)
+
+            copy_str = "COPY %s(%s) FROM STDIN "
+            copy_str += "WITH (FORMAT CSV)"
+            fieldnames = f.readline().split(',')
+            with connection.cursor() as cursor:
+                with utils.constraint_and_index_reconstructor(tablename):
+                    self.log("Deleting from table %s..." % tablename)
+                    cursor.execute("DELETE FROM %s" % tablename)
+                    self.log("Copying CSV to %s..." % tablename)
+                    try:
+                        cursor.copy_expert(copy_str % (
+                            tablename, ','.join(fieldnames)), f)
+                    except Exception:
+                        import shutil
+                        shutil.copyfile(f.name, "/tmp/error")
+                        raise
 
     def log(self, message):
         if self.IS_VERBOSE:
