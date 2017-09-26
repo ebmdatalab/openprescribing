@@ -1,22 +1,15 @@
 from multiprocessing.pool import Pool
-import datetime
 import glob
-import json
 import logging
 import os
-import subprocess
 import tempfile
-import time
 import traceback
-
-from google.cloud import storage
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 
 from common import utils
-from ebmdatalab import bigquery_old as bigquery
 from ebmdatalab.bigquery import Client, TableExporter
 from frontend.models import ImportLog
 
@@ -134,7 +127,6 @@ class Command(BaseCommand):
 
 def query_and_export(dataset_name, table, sql):
     try:
-        project_id = 'ebmdatalab'
         storage_prefix = '{}/views/{}-'.format(dataset_name, table.name)
         logger.info("Generating view %s and saving to %s" % (
             table.name, storage_prefix))
