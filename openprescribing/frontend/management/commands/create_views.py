@@ -11,6 +11,7 @@ import traceback
 
 from google.cloud import storage
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 
@@ -59,44 +60,49 @@ class Command(BaseCommand):
             self.fill_views()
 
     def fill_views(self):
-        paths = []
-        if self.view:
-            for path in self.view_paths:
-                if self.view in path:
-                    paths.append(path)
-                    break
-        else:
-            paths = self.view_paths
+        client = Client(self.dataset_name)
+
+        base_path = os.path.join(
+            settings.SITE_ROOT,
+            'frontend',
+            'management',
+            'commands',
+            'views_sql'
+        )
+
+        paths = glob.glob(os.path.join(base_path, '*.sql'))
         pool = Pool(processes=len(paths))
-        pool_results = []
+        tables = []
+
         prescribing_date = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime('%Y-%m-%d')
-        for view in paths:
-            if self.view and self.view not in view:
-                continue
 
-            tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
+        for path in paths:
+            if self.view is not None:
+                if os.path.basename(path) != self.view + '.sql':
+                    continue
+            table_name = "vw__%s" % os.path.basename(path).replace('.sql', '')
+            table = client.get_table_ref(table_name)
+            tables.append(table)
 
             # We do a string replacement here as we don't know how many
             # times a dataset substitution token (i.e. `{{dataset}}') will
             # appear in each SQL template. And we can't use new-style
             # formatting as some of the SQL has braces in.
-            sql = open(view, "r").read().replace('{{dataset}}', self.dataset_name)
-            sql = sql.replace("{{this_month}}", prescribing_date)
+            with open(path) as f:
+                sql = f.read()
+            sql = sql.replace('{{dataset}}', self.dataset_name)
+            sql = sql.replace('{{this_month}}', prescribing_date)
+            pool.apply_async(query_and_export, [table, sql])
 
-            result = pool.apply_async(
-                query_and_export, [self.dataset_name, tablename, sql])
-            pool_results.append(result)
         pool.close()
         pool.join()  # wait for all worker processes to exit
-        for result in pool_results:
-            tablename = result.get()
-            self.download_and_import(tablename)
+
+        for table in tables:
+            self.download_and_import(table)
             self.log("-------------")
 
-    def download_and_import(self, tablename):
-        client = Client(self.dataset_name)
-        table = client.get_table_ref(tablename)
+    def download_and_import(self, table):
         storage_prefix = '{}/views/{}-'.format(self.dataset_name, table.name)
         exporter = TableExporter(table, storage_prefix)
 
@@ -108,13 +114,13 @@ class Command(BaseCommand):
             copy_str += "WITH (FORMAT CSV)"
             fieldnames = f.readline().split(',')
             with connection.cursor() as cursor:
-                with utils.constraint_and_index_reconstructor(tablename):
-                    self.log("Deleting from table %s..." % tablename)
-                    cursor.execute("DELETE FROM %s" % tablename)
-                    self.log("Copying CSV to %s..." % tablename)
+                with utils.constraint_and_index_reconstructor(table.name):
+                    self.log("Deleting from table %s..." % table.name)
+                    cursor.execute("DELETE FROM %s" % table.name)
+                    self.log("Copying CSV to %s..." % table.name)
                     try:
                         cursor.copy_expert(copy_str % (
-                            tablename, ','.join(fieldnames)), f)
+                            table.name, ','.join(fieldnames)), f)
                     except Exception:
                         import shutil
                         shutil.copyfile(f.name, "/tmp/error")
@@ -127,17 +133,14 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(dataset_name, tablename, sql):
+def query_and_export(dataset_name, table, sql):
     try:
         project_id = 'ebmdatalab'
-        storage_prefix = '{}/views/{}-'.format(dataset_name, tablename)
+        storage_prefix = '{}/views/{}-'.format(dataset_name, table.name)
         logger.info("Generating view %s and saving to %s" % (
-            tablename, storage_prefix))
+            table.name, storage_prefix))
 
-        client = Client(dataset_name)
-        table = client.get_table_ref(tablename)
-
-        logger.info("Running SQL for %s: %s" % (tablename, sql))
+        logger.info("Running SQL for %s: %s" % (table.name, sql))
         table.insert_rows_from_query(sql)
 
         exporter = TableExporter(table, storage_prefix)
@@ -148,8 +151,7 @@ def query_and_export(dataset_name, tablename, sql):
         logger.info('Exporting data to storage at %s' % exporter.storage_prefix)
         exporter.export_to_storage()
 
-        logger.info("View generation complete for %s" % tablename)
-        return tablename
+        logger.info("View generation complete for %s" % table.name)
     except Exception:
         # Log the formatted error, because the multiprocessing pool
         # this is called from only shows the error message (with no
