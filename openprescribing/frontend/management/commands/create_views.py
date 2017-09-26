@@ -50,7 +50,8 @@ class Command(BaseCommand):
         )
 
         if options['view'] is not None:
-            self.view_paths = [os.path.join(base_path), options['view'] + '.sql']
+            path = os.path.join(base_path), options['view'] + '.sql'
+            self.view_paths = [path]
         else:
             self.view_paths = glob.glob(os.path.join(base_path, '*.sql'))
 
@@ -103,7 +104,8 @@ class Command(BaseCommand):
             f.seek(0)
 
             field_names = f.readline()
-            copy_sql = "COPY %s(%s) FROM STDIN WITH (FORMAT CSV)" % (table.name, field_names)
+            copy_sql = "COPY {}({}) FROM STDIN WITH (FORMAT CSV)".format(
+                table.name, field_names)
 
             with connection.cursor() as cursor:
                 with utils.constraint_and_index_reconstructor(table.name):
@@ -136,10 +138,10 @@ def query_and_export(dataset_name, table, sql):
 
         exporter = TableExporter(table, storage_prefix)
 
-        logger.info('Deleting existing data in storage at %s' % exporter.storage_prefix)
+        logger.info('Deleting existing data in storage at %s' % storage_prefix)
         exporter.delete_from_storage()
 
-        logger.info('Exporting data to storage at %s' % exporter.storage_prefix)
+        logger.info('Exporting data to storage at %s' % storage_prefix)
         exporter.export_to_storage()
 
         logger.info("View generation complete for %s" % table.name)
