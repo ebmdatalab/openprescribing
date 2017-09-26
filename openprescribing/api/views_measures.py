@@ -120,8 +120,6 @@ def measure_numerators_by_org(request, format=None):
                  " ".join(m['numerator_where']).replace('bnf_code', 'presentation_code'),
                  org_selector
              )
-    import pdb; pdb.set_trace()
-
     data = utils.execute_query(query, [])
     return Response(data)
 
