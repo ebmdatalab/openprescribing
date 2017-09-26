@@ -16,6 +16,7 @@ from django.db import connection
 
 from common import utils
 from ebmdatalab import bigquery_old as bigquery
+from ebmdatalab.bigquery import Client, TableExporter
 from frontend.models import ImportLog
 
 
@@ -114,8 +115,8 @@ def query_and_export(dataset_name, view, prescribing_date):
     try:
         project_id = 'ebmdatalab'
         tablename = "vw__%s" % os.path.basename(view).replace('.sql', '')
-        gzip_destination = "gs://ebmdatalab/%s/views/%s-*.csv.gz" % (
-            dataset_name, tablename)
+        storage_prefix = '{}/views/{}-'.format(dataset_name, tablename)
+        gzip_destination = "gs://ebmdatalab/{}*.csv.gz".format(storage_prefix)
         logger.info("Generating view %s and saving to %s" % (
             tablename, gzip_destination))
         # We do a string replacement here as we don't know how many
@@ -124,19 +125,21 @@ def query_and_export(dataset_name, view, prescribing_date):
         # formatting as some of the SQL has braces in.
         sql = open(view, "r").read().replace('{{dataset}}', dataset_name)
         sql = sql.replace("{{this_month}}", prescribing_date)
+
+        client = Client(dataset_name)
+        table = client.get_table_ref(tablename)
+
         logger.info("Running SQL for %s: %s" % (tablename, sql))
-        # Execute query and wait
-        job_id = query_and_return(
-            project_id, dataset_name, tablename, sql)
-        logger.info("Awaiting query completion for %s" % tablename)
-        wait_for_job(job_id, project_id)
-        # Delete existing GCS files
-        delete_from_gcs(gzip_destination)
-        # Export to GCS and wait
-        job_id = export_to_gzip(
-            project_id, dataset_name, tablename, gzip_destination)
-        logger.info("Awaiting export completion for %s" % tablename)
-        wait_for_job(job_id, project_id)
+        table.insert_rows_from_query(sql)
+
+        exporter = TableExporter(table, storage_prefix)
+
+        logger.info('Deleting existing data in storage at %s' % exporter.storage_prefix)
+        exporter.delete_from_storage()
+
+        logger.info('Exporting data to storage at %s' % exporter.storage_prefix)
+        exporter.export_to_storage()
+
         logger.info("View generation complete for %s" % tablename)
         return (tablename, gzip_destination)
     except Exception:
