@@ -113,16 +113,6 @@ class Command(BaseCommand):
         Returns the path to the formatted file.
 
         """
-        # First, check we can access something at the given URI
-        client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('ebmdatalab')
-        path = uri.split('ebmdatalab/')[-1]
-        if bucket.get_blob(path) is None:
-            # This conversion requires that the file referenced at
-            # options['file_name'] has been uploaded as a blob to
-            # Google Cloud Services at gs://ebmdatalab/<file_name>
-            raise NotFound(path)
-
         # Create table at raw_nhs_digital_data
         table_ref = create_temporary_data_source(uri)
         self.append_aggregated_data_to_prescribing_table(
@@ -220,31 +210,7 @@ def create_temporary_data_source(source_uri):
         {"name": "NIC", "type": "float", "mode": "required"},
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
-    resource = {
-        "tableReference": {
-            "tableId": TEMP_SOURCE_NAME
-        },
-        "externalDataConfiguration": {
-            "csvOptions": {
-                "skipLeadingRows": "1"
-            },
-            "sourceFormat": "CSV",
-            "sourceUris": [
-                source_uri
-            ],
-            "schema": {"fields": schema}
-        }
-    }
-    client = bigquery.client.Client(project='ebmdatalab')
-    # delete the table if it exists
-    dataset = Dataset("tmp_eu", client)
-    table = Table.from_api_repr(resource, dataset)
-    try:
-        table.delete()
-    except NotFound:
-        pass
-    # Now create it
-    path = "/projects/ebmdatalab/datasets/%s/tables" % TEMP_DATASET
-    client._connection.api_request(
-        method='POST', path=path, data=resource)
-    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, TEMP_SOURCE_NAME)
+    client = Client(TEMP_DATASET)
+    gcs_path = source_uri.split('ebmdatalab/')[1]
+    table = client.get_or_create_storage_backed_table(TEMP_SOURCE_NAME, schema, gcs_path)
+    return table.legacy_full_qualified_name
