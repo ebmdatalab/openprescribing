@@ -126,10 +126,14 @@ class Command(BaseCommand):
            bnf_code, bnf_name, pct,
            practice, sha
         """ % (date.replace('_', '-'), raw_data_table_name)
-        table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
+        table.insert_rows_from_query(
+            sql,
+            legacy=True,
+            write_disposition='WRITE_APPEND'
+        )
 
     def write_aggregated_data_to_temp_table(
-        self, raw_data_table_name, date):
+            self, raw_data_table_name, date):
         sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
@@ -181,5 +185,9 @@ def get_or_create_raw_data_table(gcs_path):
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
     client = Client(TEMP_DATASET)
-    table = client.get_or_create_storage_backed_table(TEMP_SOURCE_NAME, schema, gcs_path)
+    table = client.get_or_create_storage_backed_table(
+        TEMP_SOURCE_NAME,
+        schema,
+        gcs_path
+    )
     return table
