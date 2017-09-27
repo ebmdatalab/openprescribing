@@ -76,10 +76,12 @@
                   <p><strong>Explore:</strong>
                     <ul>
                      {{#if numeratorCanBeQueried }}
-                     <li>
-                       <a href="{{ oneEntityUrl }}">Break the overall
-                       score down into individual presentations</a>
-                     </li>
+                       {{#if oneEntityUrl }}
+                        <li>
+                          <a href="{{ oneEntityUrl }}">Break the overall
+                           score down into individual presentations</a>
+                        </li>
+                       {{/if}}
                      {{/if}}
                      <li>
                        <a href="{{ chartTitleUrl }}">Split the measure

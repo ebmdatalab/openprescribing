@@ -309,10 +309,14 @@ var utils = {
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
       measureUrl = '/measure/' + d.id;
+
       if (options.orgType === 'practice') {
-        oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId;
+        oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId + '/';
       } else {
-        oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId;
+        oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId + '/';
+      }
+      if (window.location.pathname === oneEntityUrl) {
+        oneEntityUrl = null;
       }
     } else {
       // We want organisation charts to link to the appropriate
