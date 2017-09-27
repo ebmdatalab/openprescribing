@@ -78,10 +78,7 @@ class Command(BaseCommand):
             message += e.message
             raise CommandError(message)
 
-        converted_filename = self.aggregate_nhs_digital_data(
-                uri, filename_for_output, date)
-
-        return converted_filename
+        self.aggregate_nhs_digital_data(uri, filename_for_output, date)
 
     def create_filename_for_output_file(self, filename):
         if self.IS_TEST:
@@ -94,9 +91,6 @@ class Command(BaseCommand):
         aggregate it into the format we use internally, and download
         the resulting data to a `*_formatted.CSV` file, ready for
         importing.
-
-        Returns the path to the formatted file.
-
         """
         # Create table at raw_nhs_digital_data
         table_ref = create_temporary_data_source(uri)
@@ -106,7 +100,7 @@ class Command(BaseCommand):
             table_ref, date)
         converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         copy_table_to_gcs(temp_table, converted_uri)
-        return download_from_gcs(converted_uri, local_path)
+        download_from_gcs(converted_uri, local_path)
 
     def assert_latest_data_not_already_uploaded(self, date):
         client = Client(settings.BQ_HSCIC_DATASET)
