@@ -19,7 +19,6 @@ def _get_test_measure():
     }
 
 
-
 class TestAPIMeasureViews(TestCase):
     fixtures = ['one_month_of_measures', '']
     api_prefix = '/api/1.0'
