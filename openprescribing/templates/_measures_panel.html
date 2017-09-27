@@ -54,9 +54,18 @@
                   <p><strong>Performance:</strong> {{{ chartExplanation }}}</p>
                   <p><strong>Explore:</strong>
                     <ul>
-                      <li>see how each presentation of each drug <a href="{{ oneEntityUrl }}">contributes to the overall score</a></li>
-                      <li>see <a href="{{ chartTitleUrl }}">show all practices in this CCG</a> contribute to this CCG's performance</li>
-                      <li><a href="{{ measureUrl }}">compare performance with other CCGs</a></li>
+                     {{#if numeratorCanBeQueried }}
+                     <li>
+                       <a href="{{ oneEntityUrl }}">Break the overall
+                       score down into individual presentations</a>
+                     </li>
+                     {{/if}}
+                     <li>
+                       <a href="{{ chartTitleUrl }}">Split the measure
+                         into charts for individual practices</a>
+                     </li>
+                     <li><a href="{{ measureUrl }}">Compare the measure
+                         against other CCGs in England</a></li>
                     </ul>
                   </p>
               </div>

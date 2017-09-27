@@ -5,9 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from frontend.models import ImportLog
-from frontend.models import Measure
 from common.utils import get_columns_for_select
+from frontend.models import ImportLog
 
 import view_utils as utils
 
@@ -17,10 +16,28 @@ class MissingParameter(APIException):
     default_detail = 'You are missing a required parameter.'
 
 
+def _get_measure_data(measure_id):
+    fpath = os.path.dirname(__file__)
+    fname = os.path.join(
+        fpath,
+        ("../frontend/management/commands/measure_definitions/"
+         "%s.json") % measure_id)
+    return json.load(open(fname, 'r'))
+
+
+def _numerator_can_be_queried(measuredata):
+    """Is it possible for the numerators for a given measure to be
+    rewritten such that they can query the prescriptions table
+    directly?
+
+    """
+    return ('hscic.normalised_prescribing_standard'
+            in measuredata['numerator_from'])
+
+
 @api_view(['GET'])
 def measure_global(request, format=None):
     measure = request.query_params.get('measure', None)
-
     query = 'SELECT mg.month AS date, mg.numerator,  '
     query += 'mg.denominator, mg.measure_id, '
     query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
@@ -50,6 +67,8 @@ def measure_global(request, format=None):
         if id in rolled:
             rolled[id]['data'].append(d_copy)
         else:
+            measuredata = _get_measure_data(id)
+            numerator_can_be_queried = _numerator_can_be_queried(measuredata)
             rolled[id] = {
                 'id': id,
                 'name': d['name'],
@@ -62,6 +81,7 @@ def measure_global(request, format=None):
                 'is_cost_based': d['is_cost_based'],
                 'is_percentage': d['is_percentage'],
                 'low_is_good': d['low_is_good'],
+                'numerator_can_be_queried': numerator_can_be_queried,
                 'data': [d_copy]
             }
     d = {
@@ -69,17 +89,9 @@ def measure_global(request, format=None):
     }
     return Response(d)
 
-def _getMeasureData(measure):
-    fpath = os.path.dirname(__file__)
-    fname = os.path.join(fpath, "../frontend/management/commands/measure_definitions/%s.json" % measure)
-    return json.load(open(fname, 'r'))
-
 
 @api_view(['GET'])
 def measure_numerators_by_org(request, format=None):
-    # XXX assert hscic.normalised_prescribing_standard is in the
-    # numerator_from, or use another flag in the measure definition
-    # (e.g. LP omnibus can't easily be broken down)
     measure = request.query_params.get('measure', None)
     org = utils.param_to_list(request.query_params.get('org', []))[0]
     if len(org) == 3:
@@ -87,41 +99,55 @@ def measure_numerators_by_org(request, format=None):
     else:
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
-    m = _getMeasureData(measure)
-    query = ('SELECT '
-             '  %s AS entity, '
-             '  presentation_code AS bnf_code, '
-             '  COALESCE(dmd.name, p.name) AS presentation_name, '
-             "  SUM(total_items) AS total_items, "
-             "  SUM(actual_cost) AS cost, "
-             "  SUM(quantity) AS quantity, "
-             '  %s '
-             'FROM '
-             '  frontend_prescription pr '
-             'LEFT JOIN '
-             '  dmd_product dmd '
-             'ON pr.presentation_code = dmd.bnf_code '
-             'INNER JOIN '
-             '  frontend_presentation p '
-             'ON pr.presentation_code = p.bnf_code '
-             'WHERE '
-             "  %s = '%s' "
-             '  AND '
-             "  processing_date = '%s' "
-             '  AND (%s) '
-             'GROUP BY '
-             '  %s, presentation_code, dmd.name, p.name '
-             'ORDER BY numerator DESC '
-             'LIMIT 50') % (
-                 org_selector,
-                 " ".join(get_columns_for_select(m, 'numerator')).replace('items', 'total_items'),
-                 org_selector,
-                 org, this_month.strftime('%Y-%m-%d'),
-                 " ".join(m['numerator_where']).replace('bnf_code', 'presentation_code'),
-                 org_selector
-             )
-    data = utils.execute_query(query, [])
+    m = _get_measure_data(measure)
+    if _numerator_can_be_queried(m):
+        # Awkwardly, because the column names in the prescriptions table
+        # are different from those in bigquery (for which the measure
+        # defitions are defined), we have to rename them (e.g. `items` ->
+        # `total_items`)
+        numerator_selector = " ".join(
+            get_columns_for_select(m, 'numerator')).replace(
+                'items', 'total_items')
+        numerator_where = " ".join(
+            m['numerator_where']).replace(
+                'bnf_code', 'presentation_code')
+        query = ('SELECT '
+                 '  %s AS entity, '
+                 '  presentation_code AS bnf_code, '
+                 '  COALESCE(dmd.name, p.name) AS presentation_name, '
+                 "  SUM(total_items) AS total_items, "
+                 "  SUM(actual_cost) AS cost, "
+                 "  SUM(quantity) AS quantity, "
+                 '  %s '
+                 'FROM '
+                 '  frontend_prescription pr '
+                 'LEFT JOIN '
+                 '  dmd_product dmd '
+                 'ON pr.presentation_code = dmd.bnf_code '
+                 'INNER JOIN '
+                 '  frontend_presentation p '
+                 'ON pr.presentation_code = p.bnf_code '
+                 'WHERE '
+                 "  %s = '%s' "
+                 '  AND '
+                 "  processing_date = '%s' "
+                 '  AND (%s) '
+                 'GROUP BY '
+                 '  %s, presentation_code, dmd.name, p.name '
+                 'ORDER BY numerator DESC '
+                 'LIMIT 50') % (
+                     org_selector,
+                     numerator_selector,
+                     org_selector,
+                     org, this_month.strftime('%Y-%m-%d'),
+                     numerator_where,
+                     org_selector
+                 )
+        data = utils.execute_query(query, [])
+    else:
+        data = []
     return Response(data)
+
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):

@@ -251,6 +251,7 @@ var utils = {
         var series = _.findWhere(globalData, {id: d.id});
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
+          d.numeratorCanBeQueried = series.numerator_can_be_queried;
         }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
