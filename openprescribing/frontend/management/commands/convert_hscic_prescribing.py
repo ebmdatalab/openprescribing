@@ -17,6 +17,8 @@ from ebmdatalab.bigquery_old import copy_table_to_gcs
 from ebmdatalab.bigquery_old import download_from_gcs
 from ebmdatalab.bigquery_old import wait_for_job
 
+from ebmdatalab.bigquery import Client
+
 logger = logging.getLogger(__name__)
 
 TEMP_DATASET = 'tmp_eu'
@@ -131,12 +133,11 @@ class Command(BaseCommand):
         return download_from_gcs(converted_uri, local_path)
 
     def assert_latest_data_not_already_uploaded(self, date):
-        client = bigquery.client.Client(project='ebmdatalab')
+        client = Client(settings.BQ_HSCIC_DATASET)
         sql = """SELECT COUNT(*)
         FROM [ebmdatalab:hscic.prescribing]
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
-        query = client.run_sync_query(sql)
-        query.run()
+        results = client.query(sql)
         assert query.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
