@@ -7,6 +7,9 @@ from google.cloud import storage
 from django.test import TestCase
 
 from ebmdatalab.bigquery import Client, TableExporter, build_schema
+from ebmdatalab.table_dumper import TableDumper
+
+from frontend.models import PCT
 
 
 class BQClientTest(TestCase):
@@ -121,6 +124,17 @@ class BQClientTest(TestCase):
         results = client.query('SELECT * FROM {}'.format(t4.qualified_name))
 
         self.assertEqual(sorted(results.rows), rows[1:])
+
+        # Test Client.insert_rows_from_pg
+        PCT.objects.create(code='ABC', name='CCG 1')
+        PCT.objects.create(code='XYZ', name='CCG 2')
+
+        def transformer(row):
+            return [ord(row[0][0]), row[1]]
+        t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
+
+        self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
+
 
     def upload_to_storage(self, local_path, storage_path):
         client = storage.client.Client(project='ebmdatalab')

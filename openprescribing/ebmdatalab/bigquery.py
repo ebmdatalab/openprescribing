@@ -10,6 +10,8 @@ from google.cloud.exceptions import Conflict
 
 from django.conf import settings
 
+from ebmdatalab.table_dumper import TableDumper
+
 
 class Client(object):
     def __init__(self, dataset_name):
@@ -173,6 +175,14 @@ class Table(object):
             job = self.gcbq_table.upload_from_file(f, **options)
 
         wait_for_job(job)
+
+    def insert_rows_from_pg(self, model, columns, transformer=None):
+        table_dumper = TableDumper(model, columns, transformer)
+
+        with tempfile.NamedTemporaryFile() as f:
+            table_dumper.dump_to_file(f)
+            f.seek(0)
+            self.insert_rows_from_csv(f.name)
 
     def insert_rows_from_storage(self, gcs_uri, **options):
         default_options = {
