@@ -110,3 +110,49 @@ PRACTICE_STATISTICS_SCHEMA = build_schema(
     ('pct_id', 'STRING'),
     ('practice', 'STRING')
 )
+
+
+def prescribing_transform(row):
+    """Transform a row from a formatted file into data suitable for
+    storing in our bigquery schema
+
+
+    A 'formatted file' is a file created by the
+    import_hscic_prescribing Django management command.
+
+    """
+    # To match the prescribing table format in BigQuery, we have
+    # to re-encode the date field as a bigquery TIMESTAMP and drop
+    # a couple of columns
+    row[10] = "%s 00:00:00" % row[10]
+    del(row[3])
+    del(row[-1])
+    return row
+
+
+def statistics_transform(row):
+    """Transform a row from the frontend_practicestatistics table so it
+    matches our statistics schema
+
+    """
+    row[0] = "%s 00:00:00" % row[0]  # BQ TIMESTAMP format
+    return row
+
+
+def presentation_transform(row):
+    """Transform a row from the frontend_presentation table so it
+    matches our statistics schema
+
+    """
+    if row[2] == 't':
+        row[2] = 'true'
+    else:
+        row[2] = 'false'
+    return row
+
+def ccgs_transform(row):
+    if row[4]:
+        row[4] = "%s 00:00:00" % row[4]
+    if row[5]:
+        row[5] = "%s 00:00:00" % row[5]
+    return row
