@@ -275,6 +275,7 @@
     "why_it_matters": "This is the NHS Business Service Authority's top cost-saver from   generic switching. Cerazette and desogestrel are both exactly  the same drug, the same molecule, but Cerazette is an expensive  branded package, and desogestrel is a cheap generic package.",
     "numerator_short": "Cerazette quantity",
     "denominator_short": "Desogestrel quantity",
+    "tags": ["core"],
     "start_date": null,
     "end_date": null,
     "url": null,

@@ -15,6 +15,10 @@ var utils = {
     if (options.orgId) {
       urls.panelMeasuresUrl += '&org=' + options.orgId;
     }
+    if (options.tags) {
+      urls.panelMeasuresUrl += '&tags=' + options.tags;
+      urls.globalMeasuresUrl += '&tags=' + options.tags;
+    }
     if (options.measure) {
       urls.panelMeasuresUrl += '&measure=' + options.measure;
       urls.globalMeasuresUrl += '&measure=' + options.measure;

@@ -56,6 +56,19 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
+    def test_api_all_measures_global_with_tags(self):
+        url = '/api/1.0/measure/?format=json&tags=XXX'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['measures']), 0)
+
+        url = '/api/1.0/measure/?format=json&tags=core'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['measures']), 1)
+
     def test_api_measure_by_all_ccgs(self):
         url = '/api/1.0/measure_by_ccg/'
         url += '?measure=cerazette&format=json'

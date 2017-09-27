@@ -78,7 +78,11 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
         elif '/org_location' in o.path:
             data = _load_json('org_location_ccg')
         elif '/measure_by_ccg/' in o.path:
-            data = _load_json('measure_by_ccg')
+            code = q.get('tags', '')
+            if 'core' not in code:
+                data = '{"measures": []}'
+            else:
+                data = _load_json('measure_by_ccg')
         elif '/measure/' in o.path:
             data = _load_json('measure')
         if data:

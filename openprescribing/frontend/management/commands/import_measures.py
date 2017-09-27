@@ -17,7 +17,6 @@ import logging
 import os
 import psycopg2
 import re
-import sys
 import tempfile
 
 from django.conf import settings
@@ -25,6 +24,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db import transaction
+from google.cloud import bigquery as gbigquery
+from google.cloud.bigquery.dataset import Dataset
+from google.cloud.exceptions import Conflict
 
 from ebmdatalab import bigquery
 
@@ -57,6 +59,13 @@ class Command(BaseCommand):
         verbose = options['verbosity'] > 1
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
+                if measure_id == 'lpzomnibus':
+                    # Generalise this special case if we ever come
+                    # across it again (viz: a measure that depends on
+                    # a view existing; hence the `z` in the name to
+                    # ensure it is created after the other measures on
+                    # which it depends)
+                    create_omnibus_lp_view()
                 measure_start = datetime.datetime.now()
                 global_calculation = GlobalCalculation(
                     measure_id, verbose=verbose,
@@ -140,6 +149,21 @@ class Command(BaseCommand):
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
         datetime.datetime.strptime(options['end_date'], "%Y-%m-%d")
         return options
+
+
+def create_omnibus_lp_view():
+    fpath = os.path.dirname(__file__)
+    sql_path = os.path.join(fpath, "./measure_sql/lpomnibusview.sql")
+    with open(sql_path, "r") as sql_file:
+        client = gbigquery.client.Client(project='ebmdatalab')
+        dataset = Dataset("measures", client)
+        table = dataset.table('practice_data_all_low_priority')
+        table.view_query = sql_file.read()
+        table.view_use_legacy_sql = False
+        try:
+            table.create()
+        except Conflict:
+            pass
 
 
 def parse_measures():
@@ -469,6 +493,7 @@ class GlobalCalculation(MeasureCalculation):
         try:
             measure = Measure.objects.get(id=self.measure_id)
             measure.name = v['name']
+            measure.tags = v['tags']
             measure.title = v['title']
             measure.description = v['description']
             measure.why_it_matters = v['why_it_matters']
@@ -483,6 +508,7 @@ class GlobalCalculation(MeasureCalculation):
             measure = Measure.objects.create(
                 id=self.measure_id,
                 name=v['name'],
+                tags=v['tags'],
                 title=v['title'],
                 description=v['description'],
                 why_it_matters=v['why_it_matters'],

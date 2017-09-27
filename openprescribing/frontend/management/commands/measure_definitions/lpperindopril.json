@@ -1,0 +1,35 @@
+{
+  "name": "NHS England Low Priority Treatment - perindopril arginine",
+  "title": [
+    "Perindopril arginine cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of perindopril arginine per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Perindopril arginine is an ACE inhibitor used in heart failure, hypertension, diabetic nephropathy ",
+    "and prophylaxis of cardiovascular events. A different salt (perindopril erbumine) is considerably cheaper, and the arginine form ",
+    "does not provide any additional clinical benefit."
+  ],
+  "numerator_short": "Perindopril arginine cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0205051Y0%' or bnf_code LIKE '0205051Z0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

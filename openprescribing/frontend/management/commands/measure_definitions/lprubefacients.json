@@ -1,0 +1,58 @@
+{
+  "name": "NHS England Low Priority Treatment - rubefacients",
+  "title": [
+    "Rubefacients cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of rubefacients per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Rubifacients deep heat rubs and ointments are used to provide pain relief in musculoskeletal conditions. ",
+    "However, the BNF states that <a href='https://bnf.nice.org.uk/treatment-summary/soft-tissue-disorders.html'>the evidence available does not support the use of topical rubefacients in acute or chronic musculoskeletal pain</a>."
+  ],
+  "numerator_short": "Rubefacients cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '100302000%' ",
+    "OR bnf_code LIKE '100302040%' ",
+    "OR bnf_code LIKE '1003020AA%' ",
+    "OR bnf_code LIKE '1003020AB%' ",
+    "OR bnf_code LIKE '1003020B0%' ",
+    "OR bnf_code LIKE '1003020C0%' ",
+    "OR bnf_code LIKE '1003020D0%' ",
+    "OR bnf_code LIKE '1003020E0%' ",
+    "OR bnf_code LIKE '1003020F0%' ",
+    "OR bnf_code LIKE '1003020G0%' ",
+    "OR bnf_code LIKE '1003020H0%' ",
+    "OR bnf_code LIKE '1003020I0%' ",
+    "OR bnf_code LIKE '1003020J0%' ",
+    "OR bnf_code LIKE '1003020K0%' ",
+    "OR bnf_code LIKE '1003020L0%' ",
+    "OR bnf_code LIKE '1003020N0%' ",
+    "OR bnf_code LIKE '1003020Q0%' ",
+    "OR bnf_code LIKE '1003020R0%' ",
+    "OR bnf_code LIKE '1003020S0%' ",
+    "OR bnf_code LIKE '1003020T0%' ",
+    "OR bnf_code LIKE '1003020V0%' ",
+    "OR bnf_code LIKE '1003020W0%' ",
+    "OR bnf_code LIKE '1003020X0%' ",
+    "OR bnf_code LIKE '1003020Y0%' ",
+    "OR bnf_code LIKE '1003020Z0%') "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

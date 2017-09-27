@@ -127,7 +127,7 @@ class UnitTests(TestCase):
     def test_write_practice_ratios_to_database(self):
         from frontend.management.commands.import_measures \
             import PracticeCalculation
-        Measure.objects.create(id='cerazette')
+        Measure.objects.create(id='cerazette', tags=["foo"])
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
         p = PracticeCalculation('cerazette', under_test=True)
