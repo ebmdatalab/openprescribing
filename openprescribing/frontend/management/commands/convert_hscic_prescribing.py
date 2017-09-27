@@ -169,8 +169,8 @@ class Command(BaseCommand):
         table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
 
     def write_aggregated_data_to_temp_table(
-            self, source_table_ref, date):
-        query = """
+        self, source_table_ref, date):
+        sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
@@ -185,18 +185,11 @@ class Command(BaseCommand):
          GROUP BY
            presentation_code, pct_id, practice_code
         """ % (date, source_table_ref)
-        client = bigquery.client.Client(project='ebmdatalab')
-        dataset = client.dataset(TEMP_DATASET)
-        table = dataset.table(
-            name='formatted_prescribing_%s' % date)
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_TRUNCATE'
-        job.allow_large_results = True
-        wait_for_job(job)
-        return table
+
+        client = Client(TEMP_DATASET)
+        table = client.get_table_ref('formatted_prescribing_%s' % date)
+        table.insert_rows_from_query(sql, legacy=True)
+        return table.gcbq_table
 
 
 def create_temporary_data_source(source_uri):
