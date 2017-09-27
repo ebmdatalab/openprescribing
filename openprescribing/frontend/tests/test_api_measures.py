@@ -130,6 +130,16 @@ class TestAPIMeasureViews(TestCase):
              u'cost': 1.0,
              u'quantity': 100.0}])
 
+    def test_api_measure_numerators_bnf_name_in_condition(self):
+        testmeasure = _get_test_measure()
+        testmeasure["numerator_where"] = ["bnf_name like 'ZZZ%'"]
+        with patch('api.views_measures._get_measure_data',
+                   return_value=testmeasure):
+            url = '/api/1.0/measure_numerators_by_org/'
+            url += '?measure=cerazette&org=02Q&format=json'
+            data = self._get_json(url)
+            self.assertEqual(data, [])
+
     def test_api_measure_numerators_unusable_table(self):
         testmeasure = _get_test_measure()
         testmeasure["numerator_from"] = "some_nonstandard_table"

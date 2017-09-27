@@ -123,7 +123,12 @@ def measure_numerators_by_org(request, format=None):
                 'items', 'total_items')
         numerator_where = " ".join(
             m['numerator_where']).replace(
-                'bnf_code', 'presentation_code')
+                'bnf_code', 'presentation_code').replace(
+                    'bnf_name', 'pn.name'
+                )
+        # There is redundancy in the column names, so we can support
+        # various flavours of `WHERE` clause from the measure
+        # definitions
         query = ('SELECT '
                  '  %s AS entity, '
                  '  presentation_code AS bnf_code, '
