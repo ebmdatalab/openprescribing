@@ -96,6 +96,7 @@ import re
 import tempfile
 import time
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 from django.db import connection
@@ -115,6 +116,8 @@ from ebmdatalab.bigquery_old import load_data_from_file
 from ebmdatalab.bigquery_old import copy_table_to_gcs
 from ebmdatalab.bigquery_old import download_from_gcs
 from ebmdatalab.bigquery_old import wait_for_job
+
+from ebmdatalab.bigquery import Client
 
 
 logger = logging.getLogger(__name__)
@@ -373,31 +376,29 @@ def create_bigquery_views():
       ebmdatalab.hscic.practices  AS practices
     ON practices.code = prescribing.practice
     """
-    client = bigquery.client.Client(project='ebmdatalab')
-    dataset = Dataset("hscic", client)
-    table = dataset.table('normalised_prescribing_standard')
-    table.view_query = sql
-    table.view_use_legacy_sql = False
+
+    client = Client(settings.BQ_HSCIC_DATASET)
+
     try:
-        table.create()
+        client.create_table_with_view('normalised_prescribing_standard', sql, False)
     except Conflict:
         pass
-    table = dataset.table('normalised_prescribing_legacy')
+
     sql = sql.replace(
         'ebmdatalab.hscic.prescribing',
-        '[ebmdatalab:hscic.prescribing]')
+        '[ebmdatalab:hscic.prescribing]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.bnf_map',
-        '[ebmdatalab:hscic.bnf_map]',
-        )
+        '[ebmdatalab:hscic.bnf_map]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.practices',
-        '[ebmdatalab:hscic.practices]',
-        )
-    table.view_query = sql
-    table.view_use_legacy_sql = True
+        '[ebmdatalab:hscic.practices]'
+    )
+
     try:
-        table.create()
+        client.create_table_with_view('normalised_prescribing_legacy', sql, True)
     except Conflict:
         pass
 
