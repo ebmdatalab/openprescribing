@@ -1,10 +1,11 @@
 from __future__ import print_function
 
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
-from ebmdatalab import bigquery_old as bigquery
-from frontend.models import PracticeStatistics, Prescription
+from ebmdatalab.bigquery import Client
+from frontend import models
+from frontend import bq_schemas as schemas
 
 from ...cloud_utils import CloudHandler
 
@@ -13,9 +14,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Make sure that PracticeStatistics and Prescription tables both have
         # latest data.
-        latest_practice_statistic_date = PracticeStatistics.objects\
+        latest_practice_statistic_date = models.PracticeStatistics.objects\
             .aggregate(Max('date'))['date__max']
-        latest_prescription_date = Prescription.objects\
+        latest_prescription_date = models.Prescription.objects\
             .aggregate(Max('processing_date'))['processing_date__max']
 
         if latest_practice_statistic_date != latest_prescription_date:
@@ -25,12 +26,38 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         BigQueryUploader().update_bnf_table()
-        bigquery.load_data_from_pg(
-            'hscic', 'practices', 'frontend_practice',
-            bigquery.PRACTICE_SCHEMA)
-        bigquery.load_presentation_from_pg()
-        bigquery.load_statistics_from_pg()
-        bigquery.load_ccgs_from_pg()
+
+        client = Client('hscic')
+
+        table = client.get_table_ref('practices')
+        columns = [field.name for field in schemas.PRACTICE_SCHEMA]
+        table.insert_rows_from_pg(models.Practice, columns)
+
+        table = client.get_table_ref('presentation')
+        columns = [field.name for field in schemas.PRESENTATION_SCHEMA]
+        table.insert_rows_from_pg(
+            models.Presentation,
+            columns,
+            schemas.presentation_transform
+        )
+
+        table = client.get_table_ref('practice_statistics')
+        columns = [field.name for field in schemas.PRACTICE_STATISTICS_SCHEMA]
+        columns[0] = 'date'
+        columns[1] = 'practice_id'
+        table.insert_rows_from_pg(
+            models.PracticeStatistics,
+            columns,
+            schemas.statistics_transform
+        )
+
+        table = client.get_table_ref('ccgs')
+        columns = [field.name for field in schemas.CCG_SCHEMA]
+        table.insert_rows_from_pg(
+            models.PCT,
+            columns,
+            schemas.statistics_transform
+        )
 
 
 class BigQueryUploader(CloudHandler):
