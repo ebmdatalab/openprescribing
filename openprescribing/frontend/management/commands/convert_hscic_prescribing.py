@@ -10,6 +10,7 @@ from google.cloud.exceptions import NotFound
 from google.cloud.bigquery.table import Table
 from google.cloud.bigquery.dataset import Dataset
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
@@ -143,8 +144,11 @@ class Command(BaseCommand):
     def append_aggregated_data_to_prescribing_table(
             self, source_table_ref, date):
         self.assert_latest_data_not_already_uploaded(date)
-        client = bigquery.client.Client(project='ebmdatalab')
-        query = """
+
+        client = Client(settings.BQ_HSCIC_DATASET)
+        table = client.get_table_ref('prescribing')
+
+        sql = """
          SELECT
           Area_Team_Code AS sha,
           LEFT(PCO_Code, 3) AS pct,
@@ -162,17 +166,7 @@ class Command(BaseCommand):
            bnf_code, bnf_name, pct,
            practice, sha
         """ % (date.replace('_', '-'), source_table_ref)
-        dataset = client.dataset('hscic')
-        table = dataset.table(
-            name='prescribing')
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_APPEND'
-        job.allow_large_results = True
-        wait_for_job(job)
-        return table
+        table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
 
     def write_aggregated_data_to_temp_table(
             self, source_table_ref, date):
