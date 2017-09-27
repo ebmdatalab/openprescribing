@@ -20,6 +20,7 @@
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
+  "tags": ["core"],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],

@@ -335,7 +335,7 @@ class TestFrontendViews(TransactionTestCase):
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
-        lead = doc('.lead:first')
+        lead = doc('#intro p:first')
         self.assertEqual(
             lead.text(),
             ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '

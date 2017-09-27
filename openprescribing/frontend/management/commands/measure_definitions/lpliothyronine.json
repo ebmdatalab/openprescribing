@@ -1,0 +1,35 @@
+{
+  "name": "NHS England Low Priority Treatment - liothyronine",
+  "title": [
+    "Liothyronine cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of liothyronine per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Liothyronine is used to treat an underactive thyroid. It has a very high cost and limited evidence. ",
+    "Most patients can have symptoms controlled on much cheaper levothyroxine. ",
+    "The manufacturer has been the subject of a Competition and Markets Authority investigation."
+  ],
+  "numerator_short": "Liothyronine cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '0602010M0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

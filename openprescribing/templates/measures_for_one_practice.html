@@ -12,17 +12,29 @@
 {% block content %}
 
 <h1>{{ practice }}</h1>
+<div class="row">
+  <div class="col-md-12">
+    <img src="/static/img/bang.jpg" style="float: left; margin: 10px">
+    <p>
+      Latest features from <strong>OpenPrescribing Labs</strong>:
+      <a href="{% url 'practice_price_per_unit' practice.code %}">a
+      tool to catch up to £400m of NHS savings</a> per month;
+      and <a href="{% url 'measures_for_one_practice' practice.code %}?tags=lowpriority">
+      measures for NHS England's list of low value prescription items</a></p>
+  </div>
+</div>
 
 <div class="row" id="intro">
   <div class="col-md-6">
-    <p class="lead">Address: {{ practice.address_pretty }}</p>
+    <p>Address: {{ practice.address_pretty }}</p>
     {% if practice.ccg %}
-      <p class="lead">Part of CCG: <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
+      <p>Part of CCG: <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
     {% endif %}
     {% if practice.list_size_13 %}
       <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
     {% endif %}
-    <p class="lead">Current practice type: {{ practice.get_setting_display }}</p>
+    <p>Current practice type: {{ practice.get_setting_display }}</p>
+
   </div>
 
   <div class="col-md-6" id="map-container">
@@ -39,16 +51,6 @@
   </div>
 {% endif %}
 
-<h2><img src="/static/img/bang.jpg" style="float: left; margin: 10px">Openprescribing Labs</h2>
-<p>
-We have experimental new features. Our first is this: <a href="{% url 'practice_price_per_unit' practice.code  %}">a tool to catch up to £400m of NHS savings</a> per year!</p>
-
-<h2>Measures</h2>
-
-<p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href="{% url 'faq' %}#measureinterpret">Read more about measures</a>.</p>
-
-<p id="perfsummary">Loading...</p>
-
 {% include '_measures_panel.html' with entity_type='practice' %}
 
 <hr/>
@@ -59,6 +61,7 @@ We have experimental new features. Our first is this: <a href="{% url 'practice_
 
 <script>
 var measureData = {
+    'tags': '{{ request.GET.tags|default:"core" }}',
     'orgId': '{{ practice.code }}',
     'parentOrg': '{{ practice.ccg.code }}',
     'orgName': '{{ practice.name }}',
