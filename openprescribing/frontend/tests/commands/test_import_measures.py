@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from ebmdatalab import bigquery_old as bigquery
+from ebmdatalab.bigquery import Client
 from mock import patch
 from mock import MagicMock
 
@@ -482,14 +482,13 @@ class BigqueryFunctionalTests(TestCase):
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
-            fixtures_base = 'frontend/tests/fixtures/commands/'
-            prescribing_fixture = (fixtures_base +
-                                   'prescribing_bigquery_fixture.csv')
-            practices_fixture = fixtures_base + 'practices.csv'
-            bigquery.load_prescribing_data_from_file(
-                'measures',
-                settings.BQ_PRESCRIBING_TABLE_NAME,
-                prescribing_fixture)
+            prescribing_fixture_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands',
+                'prescribing_bigquery_fixture.csv'
+            )
+            client = Client('measures')
+            table = client.get_table_ref(settings.BQ_PRESCRIBING_TABLE_NAME)
+            table.insert_rows_from_csv(prescribing_fixture_path)
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
