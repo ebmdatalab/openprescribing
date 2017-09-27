@@ -1,6 +1,3 @@
-from contextlib import contextmanager
-import csv
-import os
 import re
 import subprocess
 import tempfile
@@ -12,7 +9,6 @@ from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict
 
 from django.conf import settings
-from django.db import connection
 
 
 class Client(object):
@@ -56,7 +52,7 @@ class Client(object):
             table = self.get_table(table_name)
         return table
 
-    def get_or_create_table_referencing_storage(self, table_name, schema, gcs_path):
+    def get_or_create_storage_backed_table(self, table_name, schema, gcs_path):
         gcs_client = gcs.client.Client(project=self.project_name)
         bucket = gcs_client.bucket(self.project_name)
         if bucket.get_blob(gcs_path) is None:
@@ -74,10 +70,17 @@ class Client(object):
             }
         }
 
-        path = '/projects/{}/datasets/{}/tables'.format(self.project_name, self.dataset_name)
+        path = '/projects/{}/datasets/{}/tables'.format(
+            self.project_name,
+            self.dataset_name
+        )
 
         try:
-            self.gcbq_client._connection.api_request(method='POST', path=path, data=resource)
+            self.gcbq_client._connection.api_request(
+                method='POST',
+                path=path,
+                data=resource
+            )
         except Conflict:
             pass
 
@@ -120,7 +123,11 @@ class Table(object):
 
     @property
     def legacy_full_qualified_name(self):
-        return '[{}:{}.{}]'.format(self.project_name, self.dataset_name, self.name)
+        return '[{}:{}.{}]'.format(
+            self.project_name,
+            self.dataset_name,
+            self.name
+        )
 
     def get_rows(self):
         return self.gcbq_table.fetch_data()
@@ -172,7 +179,10 @@ class Table(object):
             'write_disposition': 'WRITE_TRUNCATE',
         }
 
-        job = self.gcbq_client.load_table_from_storage(gen_job_name(), self.gcbq_table, gcs_uri)
+        job = self.gcbq_client.load_table_from_storage(
+            gen_job_name(),
+            self.gcbq_table, gcs_uri
+        )
 
         set_options(job, options, default_options)
 
@@ -185,7 +195,8 @@ class TableExporter(object):
     def __init__(self, table, storage_prefix):
         self.table = table
         self.storage_prefix = storage_prefix
-        self.bucket = gcs.Client(project=table.project_name).bucket(table.project_name)
+        storage_client = gcs.Client(project=table.project_name)
+        self.bucket = storage_client.bucket(table.project_name)
 
     def export_to_storage(self, **options):
         default_options = {
@@ -276,7 +287,7 @@ def set_options(thing, options, default_options=None):
         merge_options(options, default_options)
     for k, v in options.items():
         setattr(thing, k, v)
-        
+
 
 def merge_options(options, default_options):
     for k, v in default_options.items():
@@ -298,4 +309,3 @@ def row_to_dict(row, field_names):
             value = None
         dict_row[field_name] = value
     return dict_row
-
