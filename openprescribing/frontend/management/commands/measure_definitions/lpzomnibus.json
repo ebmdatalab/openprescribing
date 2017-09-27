@@ -26,7 +26,7 @@
     "1 = 1 "
   ],
   "denominator_columns": [
-    "SUM(denominator) AS denominator, "
+    "SUM(denominator)/18 AS denominator, "
   ],
   "denominator_from": "[ebmdatalab:measures.practice_data_all_low_priority] ",
   "denominator_where": [
