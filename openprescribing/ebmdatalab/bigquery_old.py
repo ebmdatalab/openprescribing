@@ -22,119 +22,12 @@ from google.cloud.exceptions import NotFound
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
+from frontend.bq_schemas import DMD_SCHEMA, CCG_SCHEMA, PRESCRIBING_SCHEMA, PRESENTATION_SCHEMA, PRACTICE_SCHEMA, PRACTICE_STATISTICS_SCHEMA
+
 
 logger = logging.getLogger(__name__)
 
 
-DMD_SCHEMA = [
-    SchemaField('dmdid', 'STRING'),
-    SchemaField('bnf_code', 'STRING'),
-    SchemaField('vpid', 'STRING'),
-    SchemaField('display_name', 'STRING'),
-    SchemaField('ema', 'STRING'),
-    SchemaField('pres_statcd', 'STRING'),
-    SchemaField('avail_restrictcd', 'STRING'),
-    SchemaField('product_type', 'STRING'),
-    SchemaField('non_availcd', 'STRING'),
-    SchemaField('concept_class', 'STRING'),
-    SchemaField('nurse_f', 'STRING'),
-    SchemaField('dent_f', 'STRING'),
-    SchemaField('prod_order_no', 'STRING'),
-    SchemaField('sched_1', 'STRING'),
-    SchemaField('sched_2', 'STRING'),
-    SchemaField('padm', 'STRING'),
-    SchemaField('fp10_mda', 'STRING'),
-    SchemaField('acbs', 'STRING'),
-    SchemaField('assort_flav', 'STRING'),
-    SchemaField('catcd', 'STRING'),
-    SchemaField('tariff_category', 'STRING'),
-    SchemaField('flag_imported', 'STRING'),
-    SchemaField('flag_broken_bulk', 'STRING'),
-    SchemaField('flag_non_bioequivalence', 'STRING'),
-    SchemaField('flag_special_containers', 'BOOLEAN')
-
-]
-
-CCG_SCHEMA = [
-    SchemaField('code', 'STRING'),
-    SchemaField('name', 'STRING'),
-    SchemaField('ons_code', 'STRING'),
-    SchemaField('org_type', 'STRING'),
-    SchemaField('open_date', 'TIMESTAMP'),
-    SchemaField('close_date', 'TIMESTAMP'),
-    SchemaField('address', 'STRING'),
-    SchemaField('postcode', 'STRING'),
-]
-
-PRESCRIBING_SCHEMA = [
-    SchemaField('sha', 'STRING'),
-    SchemaField('pct', 'STRING'),
-    SchemaField('practice', 'STRING'),
-    SchemaField('bnf_code', 'STRING'),
-    SchemaField('bnf_name', 'STRING'),
-    SchemaField('items', 'INTEGER'),
-    SchemaField('net_cost', 'FLOAT'),
-    SchemaField('actual_cost', 'FLOAT'),
-    SchemaField('quantity', 'INTEGER'),
-    SchemaField('month', 'TIMESTAMP'),
-]
-
-PRESENTATION_SCHEMA = [
-    SchemaField('bnf_code', 'STRING'),
-    SchemaField('name', 'STRING'),
-    SchemaField('is_generic', 'BOOLEAN'),
-    SchemaField('active_quantity', 'FLOAT'),
-    SchemaField('adq', 'FLOAT'),
-    SchemaField('adq_unit', 'STRING'),
-    SchemaField('percent_of_adq', 'FLOAT'),
-]
-
-PRACTICE_SCHEMA = [
-    SchemaField('code', 'STRING'),
-    SchemaField('name', 'STRING'),
-    SchemaField('address1', 'STRING'),
-    SchemaField('address2', 'STRING'),
-    SchemaField('address3', 'STRING'),
-    SchemaField('address4', 'STRING'),
-    SchemaField('address5', 'STRING'),
-    SchemaField('postcode', 'STRING'),
-    SchemaField('location', 'STRING'),
-    SchemaField('ccg_id', 'STRING'),
-    SchemaField('setting', 'INTEGER'),
-    SchemaField('close_date', 'STRING'),
-    SchemaField('join_provider_date', 'STRING'),
-    SchemaField('leave_provider_date', 'STRING'),
-    SchemaField('open_date', 'STRING'),
-    SchemaField('status_code', 'STRING'),
-]
-
-PRACTICE_STATISTICS_SCHEMA = [
-    SchemaField('month', 'TIMESTAMP'),
-    SchemaField('male_0_4', 'INTEGER'),
-    SchemaField('female_0_4', 'INTEGER'),
-    SchemaField('male_5_14', 'INTEGER'),
-    SchemaField('male_15_24', 'INTEGER'),
-    SchemaField('male_25_34', 'INTEGER'),
-    SchemaField('male_35_44', 'INTEGER'),
-    SchemaField('male_45_54', 'INTEGER'),
-    SchemaField('male_55_64', 'INTEGER'),
-    SchemaField('male_65_74', 'INTEGER'),
-    SchemaField('male_75_plus', 'INTEGER'),
-    SchemaField('female_5_14', 'INTEGER'),
-    SchemaField('female_15_24', 'INTEGER'),
-    SchemaField('female_25_34', 'INTEGER'),
-    SchemaField('female_35_44', 'INTEGER'),
-    SchemaField('female_45_54', 'INTEGER'),
-    SchemaField('female_55_64', 'INTEGER'),
-    SchemaField('female_65_74', 'INTEGER'),
-    SchemaField('female_75_plus', 'INTEGER'),
-    SchemaField('total_list_size', 'INTEGER'),
-    SchemaField('astro_pu_cost', 'FLOAT'),
-    SchemaField('astro_pu_items', 'FLOAT'),
-    SchemaField('star_pu', 'STRING'),
-    SchemaField('pct_id', 'STRING'),
-    SchemaField('practice', 'STRING')
-]
 
 
 def get_env_setting(setting, default=None):

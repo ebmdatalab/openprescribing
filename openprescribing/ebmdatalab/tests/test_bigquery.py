@@ -2,12 +2,11 @@ import csv
 import random
 import tempfile
 
-from google.cloud.bigquery import SchemaField
 from google.cloud import storage
 
 from django.test import TestCase
 
-from ebmdatalab.bigquery import Client, TableExporter
+from ebmdatalab.bigquery import Client, TableExporter, build_schema
 
 
 class BQClientTest(TestCase):
@@ -24,10 +23,10 @@ class BQClientTest(TestCase):
     def test_the_lot(self):
         client = Client(self.dataset_name)
 
-        schema = [
-            SchemaField('a', 'INTEGER'),
-            SchemaField('b', 'STRING'),
-        ]
+        schema = build_schema(
+            ('a', 'INTEGER'),
+            ('b', 'STRING'),
+        )
 
         headers = ['a', 'b']
         rows = [

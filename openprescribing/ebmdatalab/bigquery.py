@@ -309,3 +309,7 @@ def row_to_dict(row, field_names):
             value = None
         dict_row[field_name] = value
     return dict_row
+
+
+def build_schema(*fields):
+    return [gcbq.SchemaField(*field) for field in fields]
