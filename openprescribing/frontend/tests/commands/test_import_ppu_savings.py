@@ -1,6 +1,6 @@
 from datetime import date
 
-from ebmdatalab import bigquery_old as bigquery
+from ebmdatalab.bigquery import Client
 
 from django.conf import settings
 from django.test import TestCase
@@ -14,13 +14,13 @@ from frontend.models import PPUSaving
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        fixtures_base = 'frontend/tests/fixtures/commands/'
-        prescribing_fixture = (fixtures_base +
-                               'prescribing_bigquery_fixture.csv')
-        bigquery.load_prescribing_data_from_file(
-            'hscic',
-            settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD,
-            prescribing_fixture)
+        prescribing_fixture_path = os.path.join(
+            'frontend', 'tests', 'fixtures', 'commands',
+            'prescribing_bigquery_fixture.csv'
+        )
+        client = Client('hscic')
+        table = client.get_table_ref(settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD)
+        table.insert_rows_from_csv(prescribing_fixture_path)
         month = date(2015, 9, 1)
         dummy_substitutions = pd.read_csv(
             fixtures_base + 'ppu_substitutions.csv')
