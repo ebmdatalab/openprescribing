@@ -113,11 +113,8 @@ from frontend.models import Product
 from frontend.models import Section
 
 from ebmdatalab.bigquery_old import load_data_from_file
-from ebmdatalab.bigquery_old import copy_table_to_gcs
-from ebmdatalab.bigquery_old import download_from_gcs
-from ebmdatalab.bigquery_old import wait_for_job
 
-from ebmdatalab.bigquery import Client
+from ebmdatalab.bigquery import Client, TableExporter
 
 
 logger = logging.getLogger(__name__)
@@ -229,7 +226,7 @@ def write_zero_prescribing_codes_table(level):
     client = Client('tmp_eu')
     table = client.get_table_ref('unused_codes_%s' % level)
     table.insert_rows_from_query(sql)
-    return table.gcbq_table
+    return table
 
 
 def get_csv_of_empty_classes_for_level(level):
@@ -240,13 +237,17 @@ def get_csv_of_empty_classes_for_level(level):
 
     """
     temp_table = write_zero_prescribing_codes_table(level)
-    converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
-    logger.info("Copying %s to %s" % (temp_table.name, converted_uri))
-    copy_table_to_gcs(temp_table, converted_uri)
-    local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
-    logger.info("Downloading %s to %s" % (converted_uri, local_path))
-    csv_path = download_from_gcs(converted_uri, local_path)
-    return csv_path
+    storage_prefix = 'tmp/{}'.format(temp_table.name)
+    exporter = TableExporter(temp_table, storage_prefix)
+
+    logger.info("Copying %s to %s" % (temp_table.name, storage_prefix))
+    exporter.export_to_storage()
+
+    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+    logger.info("Downloading %s to %s" % (storage_prefix, path))
+    with open(path, 'w') as f:
+        exporter.download_from_storage_and_unzip(f)
+    return path
 
 
 def cleanup_empty_classes():
