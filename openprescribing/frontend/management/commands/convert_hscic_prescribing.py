@@ -93,11 +93,12 @@ class Command(BaseCommand):
         importing.
         """
         # Create table at raw_nhs_digital_data
-        table_ref = create_temporary_data_source(uri)
+        temp_table = get_or_create_raw_data_table(uri)
         self.append_aggregated_data_to_prescribing_table(
-            table_ref, date)
+            temp_table.legacy_full_qualified_name, date)
         temp_table = self.write_aggregated_data_to_temp_table(
-            table_ref, date)
+            temp_table.legacy_full_qualified_name, date)
+
         converted_uri = uri[:-4] + '_formatted-*.csv.gz'
         copy_table_to_gcs(temp_table, converted_uri)
         download_from_gcs(converted_uri, local_path)
@@ -111,7 +112,7 @@ class Command(BaseCommand):
         assert query.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
-            self, source_table_ref, date):
+            self, temp_table_name, date):
         self.assert_latest_data_not_already_uploaded(date)
 
         client = Client(settings.BQ_HSCIC_DATASET)
@@ -134,11 +135,11 @@ class Command(BaseCommand):
          GROUP BY
            bnf_code, bnf_name, pct,
            practice, sha
-        """ % (date.replace('_', '-'), source_table_ref)
+        """ % (date.replace('_', '-'), temp_table_name)
         table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
 
     def write_aggregated_data_to_temp_table(
-        self, source_table_ref, date):
+        self, temp_table_name, date):
         sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
@@ -153,7 +154,7 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
-        """ % (date, source_table_ref)
+        """ % (date, temp_table_name)
 
         client = Client(TEMP_DATASET)
         table = client.get_table_ref('formatted_prescribing_%s' % date)
@@ -161,7 +162,7 @@ class Command(BaseCommand):
         return table.gcbq_table
 
 
-def create_temporary_data_source(source_uri):
+def get_or_create_raw_data_table(source_uri):
     """Create a temporary data source so BigQuery can query the CSV in
     Google Cloud Storage.
 
@@ -192,4 +193,4 @@ def create_temporary_data_source(source_uri):
     client = Client(TEMP_DATASET)
     gcs_path = source_uri.split('ebmdatalab/')[1]
     table = client.get_or_create_storage_backed_table(TEMP_SOURCE_NAME, schema, gcs_path)
-    return table.legacy_full_qualified_name
+    return table
