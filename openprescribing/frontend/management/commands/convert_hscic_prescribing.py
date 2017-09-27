@@ -14,11 +14,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from ebmdatalab.bigquery_old import copy_table_to_gcs
-from ebmdatalab.bigquery_old import download_from_gcs
-from ebmdatalab.bigquery_old import wait_for_job
-
-from ebmdatalab.bigquery import Client
+from ebmdatalab.bigquery import Client, TableExporter
 
 logger = logging.getLogger(__name__)
 
@@ -93,15 +89,18 @@ class Command(BaseCommand):
         importing.
         """
         # Create table at raw_nhs_digital_data
-        temp_table = get_or_create_raw_data_table(uri)
-        self.append_aggregated_data_to_prescribing_table(
-            temp_table.legacy_full_qualified_name, date)
-        temp_table = self.write_aggregated_data_to_temp_table(
-            temp_table.legacy_full_qualified_name, date)
+        gcs_path = uri.split('ebmdatalab/')[1]
+        raw_data_table = get_or_create_raw_data_table(gcs_path)
 
-        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
-        copy_table_to_gcs(temp_table, converted_uri)
-        download_from_gcs(converted_uri, local_path)
+        self.append_aggregated_data_to_prescribing_table(
+            raw_data_table.legacy_full_qualified_name, date)
+        temp_table = self.write_aggregated_data_to_temp_table(
+            raw_data_table.legacy_full_qualified_name, date)
+
+        exporter = TableExporter(temp_table, gcs_path + '_formatted-')
+        exporter.export_to_storage(print_header=False)
+        with open(local_path, 'w') as f:
+            exporter.download_from_storage_and_unzip(f)
 
     def assert_latest_data_not_already_uploaded(self, date):
         client = Client(settings.BQ_HSCIC_DATASET)
@@ -112,7 +111,7 @@ class Command(BaseCommand):
         assert query.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
-            self, temp_table_name, date):
+            self, raw_data_table_name, date):
         self.assert_latest_data_not_already_uploaded(date)
 
         client = Client(settings.BQ_HSCIC_DATASET)
@@ -135,11 +134,11 @@ class Command(BaseCommand):
          GROUP BY
            bnf_code, bnf_name, pct,
            practice, sha
-        """ % (date.replace('_', '-'), temp_table_name)
+        """ % (date.replace('_', '-'), raw_data_table_name)
         table.insert_rows_from_query(sql, legacy=True, write_disposition='WRITE_APPEND')
 
     def write_aggregated_data_to_temp_table(
-        self, temp_table_name, date):
+        self, raw_data_table_name, date):
         sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
@@ -154,15 +153,15 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
-        """ % (date, temp_table_name)
+        """ % (date, raw_data_table_name)
 
         client = Client(TEMP_DATASET)
         table = client.get_table_ref('formatted_prescribing_%s' % date)
         table.insert_rows_from_query(sql, legacy=True)
-        return table.gcbq_table
+        return table
 
 
-def get_or_create_raw_data_table(source_uri):
+def get_or_create_raw_data_table(gcs_path):
     """Create a temporary data source so BigQuery can query the CSV in
     Google Cloud Storage.
 
@@ -191,6 +190,5 @@ def get_or_create_raw_data_table(source_uri):
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
     client = Client(TEMP_DATASET)
-    gcs_path = source_uri.split('ebmdatalab/')[1]
     table = client.get_or_create_storage_backed_table(TEMP_SOURCE_NAME, schema, gcs_path)
     return table
