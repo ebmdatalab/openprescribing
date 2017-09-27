@@ -1,736 +1,739 @@
 [
-{
-  "model": "frontend.pct",
-  "pk": "02Q",
-  "fields": {
-    "ons_code": null,
-    "name": null,
-    "org_type": "CCG",
-    "boundary": null,
-    "open_date": null,
-    "close_date": null,
-    "address": null,
-    "postcode": null
-  }
-},
-{
-  "model": "frontend.pct",
-  "pk": "03T",
-  "fields": {
-    "ons_code": null,
-    "name": null,
-    "org_type": "CCG",
-    "boundary": null,
-    "open_date": "2013-04-01",
-    "close_date": "2015-01-01",
-    "address": null,
-    "postcode": null
-  }
-},
-{
-  "model": "frontend.pct",
-  "pk": "04D",
-  "fields": {
-    "ons_code": null,
-    "name": null,
-    "org_type": "CCG",
-    "boundary": null,
-    "open_date": null,
-    "close_date": null,
-    "address": null,
-    "postcode": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "A85017",
-  "fields": {
-    "ccg": "02Q",
-    "name": "BEWICK ROAD SURGERY",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "A86030",
-  "fields": {
-    "ccg": "02Q",
-    "name": "BETTS AVENUE MEDICAL GROUP",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "B82005",
-  "fields": {
-    "ccg": "02Q",
-    "name": "PRIORY MEDICAL GROUP",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": "2015-01-01",
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "B82008",
-  "fields": {
-    "ccg": "02Q",
-    "name": "NORTH SURGERY",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": "2010-04-01",
-    "close_date": "2012-01-01",
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "B82010",
-  "fields": {
-    "ccg": "02Q",
-    "name": "RIPON SPA SURGERY",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "C83019",
-  "fields": {
-    "ccg": "03T",
-    "name": "BEACON MEDICAL PRACTICE",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "C83051",
-  "fields": {
-    "ccg": "04D",
-    "name": "ABBEY MEDICAL PRACTICE",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "C84001",
-  "fields": {
-    "ccg": "02Q",
-    "name": "LARWOOD SURGERY",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "C84024",
-  "fields": {
-    "ccg": "02Q",
-    "name": "NEWGATE MEDICAL GROUP",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 4,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.practice",
-  "pk": "Y00581",
-  "fields": {
-    "ccg": "02Q",
-    "name": "BASSETLAW DRUG & ALCOHOL SERVICE",
-    "address1": null,
-    "address2": null,
-    "address3": null,
-    "address4": null,
-    "address5": null,
-    "postcode": null,
-    "location": null,
-    "setting": 1,
-    "open_date": null,
-    "close_date": null,
-    "join_provider_date": null,
-    "leave_provider_date": null,
-    "status_code": null
-  }
-},
-{
-  "model": "frontend.chemical",
-  "pk": "0408010A0",
-  "fields": {
-    "chem_name": "Levetiracetam"
-  }
-},
-{
-  "model": "frontend.chemical",
-  "pk": "0703021Q0",
-  "fields": {
-    "chem_name": "Desogestrel"
-  }
-},
-{
-  "model": "frontend.measure",
-  "pk": "cerazette",
-  "fields": {
-    "name": "Cerazette vs. Desogestrel",
-    "title": "Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all desogestrel (BNF code 0703021Q0)",
-    "description": "Total quantity of Cerazette (0703021Q0BB), as a proportion of total quantity of desogestrel (0703021Q0).",
-    "why_it_matters": "This is the NHS Business Service Authority's top cost-saver from   generic switching. Cerazette and desogestrel are both exactly  the same drug, the same molecule, but Cerazette is an expensive  branded package, and desogestrel is a cheap generic package.",
-    "numerator_short": "Cerazette quantity",
-    "denominator_short": "Desogestrel quantity",
-    "tags": ["core"],
-    "start_date": null,
-    "end_date": null,
-    "url": null,
-    "is_percentage": true,
-    "is_cost_based": true,
-    "low_is_good": true
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 1,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "C84001",
-    "month": "2015-09-01",
-    "numerator": 1000.0,
-    "denominator": 11000.0,
-    "calc_value": 0.0909090909090909,
-    "num_items": 10,
-    "denom_items": 110,
-    "num_cost": 1000.0,
-    "denom_cost": 2000.0,
-    "num_quantity": 1000.0,
-    "denom_quantity": 11000.0,
-    "percentile": 33.3333333333333,
-    "cost_savings": {
-      "10": 485.5813953488371,
-      "20": 167.4418604651164,
-      "30": 41.8604651162791,
-      "50": -264.705882352941,
-      "40": -105.88235294117658,
-      "60": -1545.8823529411757,
-      "70": -3125.9999999999973,
-      "90": -7218.0,
-      "80": -5304.000000000002
+  {
+    "model": "frontend.pct",
+    "pk": "02Q",
+    "fields": {
+      "ons_code": null,
+      "name": null,
+      "org_type": "CCG",
+      "boundary": null,
+      "open_date": null,
+      "close_date": null,
+      "address": null,
+      "postcode": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 2,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "A85017",
-    "month": "2015-09-01",
-    "numerator": 1000.0,
-    "denominator": 1000.0,
-    "calc_value": 1.0,
-    "num_items": 10,
-    "denom_items": 10,
-    "num_cost": 1000.0,
-    "denom_cost": 1000.0,
-    "num_quantity": 1000.0,
-    "denom_quantity": 1000.0,
-    "percentile": 100.0,
-    "cost_savings": {
-      "10": 862.3255813953488,
-      "20": 833.4038054968287,
-      "30": 821.9873150105708,
-      "50": 794.1176470588235,
-      "40": 808.5561497326203,
-      "60": 677.6470588235295,
-      "70": 534.0000000000002,
-      "90": 161.9999999999999,
-      "80": 335.9999999999998
+  },
+  {
+    "model": "frontend.pct",
+    "pk": "03T",
+    "fields": {
+      "ons_code": null,
+      "name": null,
+      "org_type": "CCG",
+      "boundary": null,
+      "open_date": "2013-04-01",
+      "close_date": "2015-01-01",
+      "address": null,
+      "postcode": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 3,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "A86030",
-    "month": "2015-09-01",
-    "numerator": 0.0,
-    "denominator": 1000.0,
-    "calc_value": 0.0,
-    "num_items": null,
-    "denom_items": 10,
-    "num_cost": null,
-    "denom_cost": 100.0,
-    "num_quantity": null,
-    "denom_quantity": 1000.0,
-    "percentile": 0.0,
-    "cost_savings": {
-      "10": -37.67441860465118,
-      "20": -66.59619450317126,
-      "30": -78.01268498942918,
-      "50": -105.88235294117646,
-      "40": -91.4438502673797,
-      "60": -222.3529411764705,
-      "70": -365.9999999999998,
-      "90": -738.0000000000001,
-      "80": -564.0000000000002
+  },
+  {
+    "model": "frontend.pct",
+    "pk": "04D",
+    "fields": {
+      "ons_code": null,
+      "name": null,
+      "org_type": "CCG",
+      "boundary": null,
+      "open_date": null,
+      "close_date": null,
+      "address": null,
+      "postcode": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 4,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "B82010",
-    "month": "2015-09-01",
-    "numerator": 0.0,
-    "denominator": 0.0,
-    "calc_value": null,
-    "num_items": null,
-    "denom_items": null,
-    "num_cost": null,
-    "denom_cost": null,
-    "num_quantity": null,
-    "denom_quantity": null,
-    "percentile": null,
-    "cost_savings": {
-      "10": 0,
-      "20": 0,
-      "30": 0,
-      "50": 0,
-      "40": 0,
-      "60": 0,
-      "70": 0,
-      "90": 0,
-      "80": 0
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "A85017",
+    "fields": {
+      "ccg": "02Q",
+      "name": "BEWICK ROAD SURGERY",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 5,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "C84024",
-    "month": "2015-09-01",
-    "numerator": 10000.0,
-    "denominator": 30000.0,
-    "calc_value": 0.333333333333333,
-    "num_items": 100,
-    "denom_items": 300,
-    "num_cost": 10000.0,
-    "denom_cost": 12000.0,
-    "num_quantity": 10000.0,
-    "denom_quantity": 30000.0,
-    "percentile": 66.6666666666667,
-    "cost_savings": {
-      "10": 7869.767441860465,
-      "20": 7002.114164904862,
-      "30": 6659.619450317125,
-      "50": 5823.529411764705,
-      "40": 6256.684491978609,
-      "60": 2329.4117647058847,
-      "70": -1979.9999999999927,
-      "90": -13140.000000000004,
-      "80": -7920.000000000007
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "A86030",
+    "fields": {
+      "ccg": "02Q",
+      "name": "BETTS AVENUE MEDICAL GROUP",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 6,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "B82008",
-    "month": "2015-09-01",
-    "numerator": 0.0,
-    "denominator": 0.0,
-    "calc_value": null,
-    "num_items": null,
-    "denom_items": null,
-    "num_cost": null,
-    "denom_cost": null,
-    "num_quantity": null,
-    "denom_quantity": null,
-    "percentile": null,
-    "cost_savings": {
-      "10": 0,
-      "20": 0,
-      "30": 0,
-      "50": 0,
-      "40": 0,
-      "60": 0,
-      "70": 0,
-      "90": 0,
-      "80": 0
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "B82005",
+    "fields": {
+      "ccg": "02Q",
+      "name": "PRIORY MEDICAL GROUP",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": "2015-01-01",
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 7,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "04D",
-    "practice": "C83051",
-    "month": "2015-09-01",
-    "numerator": 1500.0,
-    "denominator": 21500.0,
-    "calc_value": 0.0697674418604651,
-    "num_items": 15,
-    "denom_items": 215,
-    "num_cost": 1500.0,
-    "denom_cost": 3500.0,
-    "num_quantity": 1500.0,
-    "denom_quantity": 21500.0,
-    "percentile": 16.6666666666667,
-    "cost_savings": {
-      "10": 540.0,
-      "20": -81.81818181818198,
-      "30": -327.272727272727,
-      "50": -926.4705882352946,
-      "40": -616.042780748664,
-      "60": -3430.5882352941153,
-      "70": -6518.9999999999945,
-      "90": -14517.0,
-      "80": -10776.000000000005
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "B82008",
+    "fields": {
+      "ccg": "02Q",
+      "name": "NORTH SURGERY",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": "2010-04-01",
+      "close_date": "2012-01-01",
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 8,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "03T",
-    "practice": "C83019",
-    "month": "2015-09-01",
-    "numerator": 2000.0,
-    "denominator": 17000.0,
-    "calc_value": 0.117647058823529,
-    "num_items": 20,
-    "denom_items": 170,
-    "num_cost": 2000.0,
-    "denom_cost": 3500.0,
-    "num_quantity": 2000.0,
-    "denom_quantity": 17000.0,
-    "percentile": 50.0,
-    "cost_savings": {
-      "10": 1159.5348837209303,
-      "20": 667.8646934460885,
-      "30": 473.7843551797041,
-      "50": 0.0,
-      "40": 245.45454545454504,
-      "60": -1979.9999999999982,
-      "70": -4421.999999999995,
-      "90": -10746.000000000002,
-      "80": -7788.000000000004
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "B82010",
+    "fields": {
+      "ccg": "02Q",
+      "name": "RIPON SPA SURGERY",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 9,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": "B82005",
-    "month": "2015-09-01",
-    "numerator": 70000.0,
-    "denominator": 100000.0,
-    "calc_value": 0.7,
-    "num_items": 700,
-    "denom_items": 1000,
-    "num_cost": 70000.0,
-    "denom_cost": 73000.0,
-    "num_quantity": 70000.0,
-    "denom_quantity": 100000.0,
-    "percentile": 83.3333333333333,
-    "cost_savings": {
-      "10": 59232.558139534885,
-      "20": 56340.38054968287,
-      "30": 55198.73150105708,
-      "50": 52411.76470588235,
-      "40": 53855.61497326203,
-      "60": 40764.70588235295,
-      "70": 26400.000000000022,
-      "90": -10800.0,
-      "80": 6599.999999999971
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "C83019",
+    "fields": {
+      "ccg": "03T",
+      "name": "BEACON MEDICAL PRACTICE",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 10,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "02Q",
-    "practice": null,
-    "month": "2015-09-01",
-    "numerator": 82000.0,
-    "denominator": 143000.0,
-    "calc_value": 0.573426573426573,
-    "num_items": 820,
-    "denom_items": 1430,
-    "num_cost": 82000.0,
-    "denom_cost": 88100.0,
-    "num_quantity": 82000.0,
-    "denom_quantity": 143000.0,
-    "percentile": 100.0,
-    "cost_savings": {
-      "10": 63588.50889192886,
-      "20": 62356.087551299584,
-      "30": 61123.666210670315,
-      "50": 58658.82352941176,
-      "40": 59891.24487004104,
-      "60": 46927.05882352941,
-      "70": 35195.29411764706,
-      "90": 11731.76470588235,
-      "80": 23463.52941176469
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "C83051",
+    "fields": {
+      "ccg": "04D",
+      "name": "ABBEY MEDICAL PRACTICE",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 11,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "04D",
-    "practice": null,
-    "month": "2015-09-01",
-    "numerator": 1500.0,
-    "denominator": 21500.0,
-    "calc_value": 0.0697674418604651,
-    "num_items": 15,
-    "denom_items": 215,
-    "num_cost": 1500.0,
-    "denom_cost": 3500.0,
-    "num_quantity": 1500.0,
-    "denom_quantity": 21500.0,
-    "percentile": 0.0,
-    "cost_savings": {
-      "10": -185.294117647059,
-      "20": -370.588235294118,
-      "30": -555.8823529411766,
-      "50": -926.4705882352946,
-      "40": -741.1764705882351,
-      "60": -2690.337309749074,
-      "70": -4454.204031262854,
-      "90": -7981.937474290415,
-      "80": -6218.070752776637
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "C84001",
+    "fields": {
+      "ccg": "02Q",
+      "name": "LARWOOD SURGERY",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measurevalue",
-  "pk": 12,
-  "fields": {
-    "measure": "cerazette",
-    "pct": "03T",
-    "practice": null,
-    "month": "2015-09-01",
-    "numerator": 2000.0,
-    "denominator": 17000.0,
-    "calc_value": 0.117647058823529,
-    "num_items": 20,
-    "denom_items": 170,
-    "num_cost": 2000.0,
-    "denom_cost": 3500.0,
-    "num_quantity": 2000.0,
-    "denom_quantity": 17000.0,
-    "percentile": 50.0,
-    "cost_savings": {
-      "10": 586.046511627907,
-      "20": 439.53488372093034,
-      "30": 293.02325581395326,
-      "50": 0.0,
-      "40": 146.51162790697708,
-      "60": -1394.6853146853146,
-      "70": -2789.370629370629,
-      "90": -5578.741258741258,
-      "80": -4184.0559440559455
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "C84024",
+    "fields": {
+      "ccg": "02Q",
+      "name": "NEWGATE MEDICAL GROUP",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 4,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
     }
-  }
-},
-{
-  "model": "frontend.measureglobal",
-  "pk": 1,
-  "fields": {
-    "measure": "cerazette",
-    "month": "2015-09-01",
-    "numerator": 85500.0,
-    "denominator": 181500.0,
-    "calc_value": 0.471074380165289,
-    "num_items": 855,
-    "denom_items": 1815,
-    "num_cost": 85500.0,
-    "denom_cost": 95100.0,
-    "num_quantity": 85500.0,
-    "denom_quantity": 181500.0,
-    "cost_per_num": 1.0,
-    "cost_per_denom": 0.1,
-    "percentiles": {
-      "ccg": {
-        "10": 0.07934336525307797,
-        "20": 0.08891928864569083,
-        "30": 0.09849521203830369,
-        "50": 0.11764705882352941,
-        "40": 0.10807113543091655,
-        "60": 0.2088029617441382,
-        "70": 0.29995886466474697,
-        "90": 0.4822706705059646,
-        "80": 0.3911147675853559
-      },
-      "practice": {
-        "10": 0.041860465116279076,
-        "20": 0.07399577167019028,
-        "30": 0.08668076109936575,
-        "50": 0.11764705882352941,
-        "40": 0.10160427807486633,
-        "60": 0.24705882352941166,
-        "70": 0.4066666666666664,
-        "90": 0.8200000000000001,
-        "80": 0.6266666666666669
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "Y00581",
+    "fields": {
+      "ccg": "02Q",
+      "name": "BASSETLAW DRUG & ALCOHOL SERVICE",
+      "address1": null,
+      "address2": null,
+      "address3": null,
+      "address4": null,
+      "address5": null,
+      "postcode": null,
+      "location": null,
+      "setting": 1,
+      "open_date": null,
+      "close_date": null,
+      "join_provider_date": null,
+      "leave_provider_date": null,
+      "status_code": null
+    }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0408010A0",
+    "fields": {
+      "chem_name": "Levetiracetam"
+    }
+  },
+  {
+    "model": "frontend.chemical",
+    "pk": "0703021Q0",
+    "fields": {
+      "chem_name": "Desogestrel"
+    }
+  },
+  {
+    "model": "frontend.measure",
+    "pk": "cerazette",
+    "fields": {
+      "name": "Cerazette vs. Desogestrel",
+      "title": "Prescribing of branded Cerazette (BNF code 0703021Q0BB) compared with prescribing of all desogestrel (BNF code 0703021Q0)",
+      "description": "Total quantity of Cerazette (0703021Q0BB), as a proportion of total quantity of desogestrel (0703021Q0).",
+      "why_it_matters": "This is the NHS Business Service Authority's top cost-saver from   generic switching. Cerazette and desogestrel are both exactly  the same drug, the same molecule, but Cerazette is an expensive  branded package, and desogestrel is a cheap generic package.",
+      "numerator_short": "Cerazette quantity",
+      "denominator_short": "Desogestrel quantity",
+      "tags": [
+        "core"
+      ],
+      "start_date": null,
+      "end_date": null,
+      "url": null,
+      "is_percentage": true,
+      "is_cost_based": true,
+      "low_is_good": true
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 1,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "C84001",
+      "month": "2015-09-01",
+      "numerator": 1000,
+      "denominator": 11000,
+      "calc_value": 0.0909090909090909,
+      "num_items": 10,
+      "denom_items": 110,
+      "num_cost": 1000,
+      "denom_cost": 2000,
+      "num_quantity": 1000,
+      "denom_quantity": 11000,
+      "percentile": 33.3333333333333,
+      "cost_savings": {
+        "10": 485.5813953488371,
+        "20": 167.4418604651164,
+        "30": 41.8604651162791,
+        "50": -264.705882352941,
+        "40": -105.88235294117658,
+        "60": -1545.8823529411757,
+        "70": -3125.9999999999973,
+        "90": -7218,
+        "80": -5304.000000000002
       }
-    },
-    "cost_savings": {
-      "ccg": {
-        "10": 64174.55540355677,
-        "20": 62795.622435020516,
-        "30": 61416.68946648427,
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 2,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "A85017",
+      "month": "2015-09-01",
+      "numerator": 1000,
+      "denominator": 1000,
+      "calc_value": 1,
+      "num_items": 10,
+      "denom_items": 10,
+      "num_cost": 1000,
+      "denom_cost": 1000,
+      "num_quantity": 1000,
+      "denom_quantity": 1000,
+      "percentile": 100,
+      "cost_savings": {
+        "10": 862.3255813953488,
+        "20": 833.4038054968287,
+        "30": 821.9873150105708,
+        "50": 794.1176470588235,
+        "40": 808.5561497326203,
+        "60": 677.6470588235295,
+        "70": 534.0000000000002,
+        "90": 161.9999999999999,
+        "80": 335.9999999999998
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 3,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "A86030",
+      "month": "2015-09-01",
+      "numerator": 0,
+      "denominator": 1000,
+      "calc_value": 0,
+      "num_items": null,
+      "denom_items": 10,
+      "num_cost": null,
+      "denom_cost": 100,
+      "num_quantity": null,
+      "denom_quantity": 1000,
+      "percentile": 0,
+      "cost_savings": {
+        "10": -37.67441860465118,
+        "20": -66.59619450317126,
+        "30": -78.01268498942918,
+        "50": -105.88235294117646,
+        "40": -91.4438502673797,
+        "60": -222.3529411764705,
+        "70": -365.9999999999998,
+        "90": -738.0000000000001,
+        "80": -564.0000000000002
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 4,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "B82010",
+      "month": "2015-09-01",
+      "numerator": 0,
+      "denominator": 0,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": null,
+      "cost_savings": {
+        "10": 0,
+        "20": 0,
+        "30": 0,
+        "50": 0,
+        "40": 0,
+        "60": 0,
+        "70": 0,
+        "90": 0,
+        "80": 0
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 5,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "C84024",
+      "month": "2015-09-01",
+      "numerator": 10000,
+      "denominator": 30000,
+      "calc_value": 0.333333333333333,
+      "num_items": 100,
+      "denom_items": 300,
+      "num_cost": 10000,
+      "denom_cost": 12000,
+      "num_quantity": 10000,
+      "denom_quantity": 30000,
+      "percentile": 66.6666666666667,
+      "cost_savings": {
+        "10": 7869.767441860465,
+        "20": 7002.114164904862,
+        "30": 6659.619450317125,
+        "50": 5823.529411764705,
+        "40": 6256.684491978609,
+        "60": 2329.4117647058847,
+        "70": -1979.9999999999927,
+        "90": -13140.000000000004,
+        "80": -7920.000000000007
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 6,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "B82008",
+      "month": "2015-09-01",
+      "numerator": 0,
+      "denominator": 0,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": null,
+      "cost_savings": {
+        "10": 0,
+        "20": 0,
+        "30": 0,
+        "50": 0,
+        "40": 0,
+        "60": 0,
+        "70": 0,
+        "90": 0,
+        "80": 0
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 7,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "04D",
+      "practice": "C83051",
+      "month": "2015-09-01",
+      "numerator": 1500,
+      "denominator": 21500,
+      "calc_value": 0.0697674418604651,
+      "num_items": 15,
+      "denom_items": 215,
+      "num_cost": 1500,
+      "denom_cost": 3500,
+      "num_quantity": 1500,
+      "denom_quantity": 21500,
+      "percentile": 16.6666666666667,
+      "cost_savings": {
+        "10": 540,
+        "20": -81.81818181818198,
+        "30": -327.272727272727,
+        "50": -926.4705882352946,
+        "40": -616.042780748664,
+        "60": -3430.5882352941153,
+        "70": -6518.9999999999945,
+        "90": -14517,
+        "80": -10776.000000000005
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 8,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03T",
+      "practice": "C83019",
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 1159.5348837209303,
+        "20": 667.8646934460885,
+        "30": 473.7843551797041,
+        "50": 0,
+        "40": 245.45454545454504,
+        "60": -1979.9999999999982,
+        "70": -4421.999999999995,
+        "90": -10746.000000000002,
+        "80": -7788.000000000004
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 9,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "B82005",
+      "month": "2015-09-01",
+      "numerator": 70000,
+      "denominator": 100000,
+      "calc_value": 0.7,
+      "num_items": 700,
+      "denom_items": 1000,
+      "num_cost": 70000,
+      "denom_cost": 73000,
+      "num_quantity": 70000,
+      "denom_quantity": 100000,
+      "percentile": 83.3333333333333,
+      "cost_savings": {
+        "10": 59232.558139534885,
+        "20": 56340.38054968287,
+        "30": 55198.73150105708,
+        "50": 52411.76470588235,
+        "40": 53855.61497326203,
+        "60": 40764.70588235295,
+        "70": 26400.000000000022,
+        "90": -10800,
+        "80": 6599.999999999971
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 10,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "02Q",
+      "practice": null,
+      "month": "2015-09-01",
+      "numerator": 82000,
+      "denominator": 143000,
+      "calc_value": 0.573426573426573,
+      "num_items": 820,
+      "denom_items": 1430,
+      "num_cost": 82000,
+      "denom_cost": 88100,
+      "num_quantity": 82000,
+      "denom_quantity": 143000,
+      "percentile": 100,
+      "cost_savings": {
+        "10": 63588.50889192886,
+        "20": 62356.087551299584,
+        "30": 61123.666210670315,
         "50": 58658.82352941176,
-        "40": 60037.756497948016,
+        "40": 59891.24487004104,
         "60": 46927.05882352941,
         "70": 35195.29411764706,
         "90": 11731.76470588235,
         "80": 23463.52941176469
-      },
-      "practice": {
-        "10": 70149.76744186046,
-        "20": 65011.20507399576,
-        "30": 63195.98308668076,
-        "50": 59029.41176470588,
-        "40": 61166.310160427805,
-        "60": 43771.764705882364,
-        "70": 26934.000000000022,
-        "90": 161.9999999999999,
-        "80": 6935.999999999971
       }
     }
-  }
-},
-{
-  "model": "frontend.importlog",
-  "pk": 1,
-  "fields": {
-    "imported_at": "2016-09-26T07:44:03.266Z",
-    "current_at": "2016-03-01",
-    "filename": "dummy-initial-value",
-    "category": "patient_list_size"
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 11,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "04D",
+      "practice": null,
+      "month": "2015-09-01",
+      "numerator": 1500,
+      "denominator": 21500,
+      "calc_value": 0.0697674418604651,
+      "num_items": 15,
+      "denom_items": 215,
+      "num_cost": 1500,
+      "denom_cost": 3500,
+      "num_quantity": 1500,
+      "denom_quantity": 21500,
+      "percentile": 0,
+      "cost_savings": {
+        "10": -185.294117647059,
+        "20": -370.588235294118,
+        "30": -555.8823529411766,
+        "50": -926.4705882352946,
+        "40": -741.1764705882351,
+        "60": -2690.337309749074,
+        "70": -4454.204031262854,
+        "90": -7981.937474290415,
+        "80": -6218.070752776637
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 12,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03T",
+      "practice": null,
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 586.046511627907,
+        "20": 439.53488372093034,
+        "30": 293.02325581395326,
+        "50": 0,
+        "40": 146.51162790697708,
+        "60": -1394.6853146853146,
+        "70": -2789.370629370629,
+        "90": -5578.741258741258,
+        "80": -4184.0559440559455
+      }
+    }
+  },
+  {
+    "model": "frontend.measureglobal",
+    "pk": 1,
+    "fields": {
+      "measure": "cerazette",
+      "month": "2015-09-01",
+      "numerator": 85500,
+      "denominator": 181500,
+      "calc_value": 0.471074380165289,
+      "num_items": 855,
+      "denom_items": 1815,
+      "num_cost": 85500,
+      "denom_cost": 95100,
+      "num_quantity": 85500,
+      "denom_quantity": 181500,
+      "cost_per_num": 1,
+      "cost_per_denom": 0.1,
+      "percentiles": {
+        "ccg": {
+          "10": 0.07934336525307797,
+          "20": 0.08891928864569083,
+          "30": 0.09849521203830369,
+          "50": 0.11764705882352941,
+          "40": 0.10807113543091655,
+          "60": 0.2088029617441382,
+          "70": 0.29995886466474697,
+          "90": 0.4822706705059646,
+          "80": 0.3911147675853559
+        },
+        "practice": {
+          "10": 0.041860465116279076,
+          "20": 0.07399577167019028,
+          "30": 0.08668076109936575,
+          "50": 0.11764705882352941,
+          "40": 0.10160427807486633,
+          "60": 0.24705882352941166,
+          "70": 0.4066666666666664,
+          "90": 0.8200000000000001,
+          "80": 0.6266666666666669
+        }
+      },
+      "cost_savings": {
+        "ccg": {
+          "10": 64174.55540355677,
+          "20": 62795.622435020516,
+          "30": 61416.68946648427,
+          "50": 58658.82352941176,
+          "40": 60037.756497948016,
+          "60": 46927.05882352941,
+          "70": 35195.29411764706,
+          "90": 11731.76470588235,
+          "80": 23463.52941176469
+        },
+        "practice": {
+          "10": 70149.76744186046,
+          "20": 65011.20507399576,
+          "30": 63195.98308668076,
+          "50": 59029.41176470588,
+          "40": 61166.310160427805,
+          "60": 43771.764705882364,
+          "70": 26934.000000000022,
+          "90": 161.9999999999999,
+          "80": 6935.999999999971
+        }
+      }
+    }
+  },
+  {
+    "model": "frontend.importlog",
+    "pk": 1,
+    "fields": {
+      "imported_at": "2016-09-26T07:44:03.266Z",
+      "current_at": "2016-03-01",
+      "filename": "dummy-initial-value",
+      "category": "patient_list_size"
+    }
   },
   {
     "model": "frontend.importlog",
@@ -769,5 +772,23 @@
       "pct": "02Q",
       "practice": "N84014"
     }
-}
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0202010F0AAAAAA",
+    "fields": {
+      "bnf_code": "0202010F0AAAAAA",
+      "name": "Thing 1",
+      "is_generic": true
+    }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0205010F0AAAAAA",
+    "fields": {
+      "bnf_code": "0205010F0AAAAAA",
+      "name": "Thing 2",
+      "is_generic": true
+    }
+  }
 ]

@@ -7,6 +7,18 @@ from mock import patch
 from frontend.models import PCT
 
 
+def _get_test_measure():
+    return {
+        "is_cost_based": True,
+        "numerator_columns": ["SUM(quantity) AS numerator, "],
+        "numerator_from": "hscic.normalised_prescribing_standard",
+        "numerator_where": ["(bnf_code LIKE '0205%')"],
+        "denominator_columns": ["SUM(quantity) AS denominator"],
+        "denominator_from": "",
+        "denominator_where": ["(bnf_code LIKE '02%')"]
+    }
+
+
 class TestAPIMeasureViews(TestCase):
     fixtures = ['one_month_of_measures', '']
     api_prefix = '/api/1.0'
@@ -83,31 +95,49 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
     def test_api_measure_numerators_by_ccg(self):
-        testmeasure = {
-            "is_cost_based": True,
-            "numerator_columns": ["SUM(quantity) AS numerator, "],
-            "numerator_from": "",
-            "numerator_where": ["(bnf_code LIKE '0205%')"],
-            "denominator_columns": ["SUM(quantity) AS denominator"],
-            "denominator_from":"",
-            "denominator_where": ["(bnf_code LIKE '02%')"]
-        }
-
-        with patch('api.views_measures._getMeasureData', return_value=testmeasure):
-            url = '/api/1.0/measure_numerators_by_ccg/'
+        with patch('api.views_measures._get_measure_data',
+                   return_value=_get_test_measure()):
+            url = '/api/1.0/measure_numerators_by_org/'
             url += '?measure=cerazette&org=02Q&format=json'
             response = self.client.get(url, follow=True)
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.content)
             self.assertEqual(data, [
-                {'total_items': 1,
-                 'bnf_code': '0205010F0AAAAAA',
-                 'presentation_name': None,
-                 'numerator': 100.0,
-                 'cost': 1.0,
-                 'ccg': '02Q',
-                 'quantity': 100.0}])
+                {u'total_items': 1,
+                 u'bnf_code': u'0205010F0AAAAAA',
+                 u'presentation_name': u'Thing 2',
+                 u'numerator': 100.0,
+                 u'entity': u'02Q',
+                 u'cost': 1.0,
+                 u'quantity': 100.0}])
 
+    def test_api_measure_numerators_by_practice(self):
+        with patch('api.views_measures._get_measure_data',
+                   return_value=_get_test_measure()):
+            url = '/api/1.0/measure_numerators_by_org/'
+            url += '?measure=cerazette&org=N84014&format=json'
+            response = self.client.get(url, follow=True)
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.content)
+            self.assertEqual(data, [
+                {u'total_items': 1,
+                 u'bnf_code': u'0205010F0AAAAAA',
+                 u'presentation_name': u'Thing 2',
+                 u'numerator': 100.0,
+                 u'entity': u'N84014',
+                 u'cost': 1.0,
+                 u'quantity': 100.0}])
+
+    def test_api_measure_numerators_unusable_table(self):
+        testmeasure = _get_test_measure()
+        testmeasure["numerator_from"] = "some_nonstandard_table"
+        with patch('api.views_measures._get_measure_data',
+                   return_value=testmeasure):
+            url = '/api/1.0/measure_numerators_by_org/'
+            url += '?measure=cerazette&org=02Q&format=json'
+            response = self.client.get(url, follow=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(json.loads(response.content), [])
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'
