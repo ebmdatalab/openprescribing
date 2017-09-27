@@ -94,7 +94,6 @@ import glob
 import logging
 import re
 import tempfile
-import time
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -103,8 +102,6 @@ from django.db import connection
 from django.db import transaction
 
 from google.cloud.bigquery import SchemaField
-from google.cloud import bigquery
-from google.cloud.bigquery.dataset import Dataset
 from google.cloud.exceptions import Conflict
 
 from frontend.models import Chemical
@@ -372,7 +369,11 @@ def create_bigquery_views():
     client = Client(settings.BQ_HSCIC_DATASET)
 
     try:
-        client.create_table_with_view('normalised_prescribing_standard', sql, False)
+        client.create_table_with_view(
+            'normalised_prescribing_standard',
+            sql,
+            False
+        )
     except Conflict:
         pass
 
@@ -390,7 +391,11 @@ def create_bigquery_views():
     )
 
     try:
-        client.create_table_with_view('normalised_prescribing_legacy', sql, True)
+        client.create_table_with_view(
+            'normalised_prescribing_legacy',
+            sql,
+            legacy=True
+        )
     except Conflict:
         pass
 
