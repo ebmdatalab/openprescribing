@@ -109,18 +109,16 @@ from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab.bigquery_old import load_data_from_file
-
-from ebmdatalab.bigquery import Client, TableExporter
+from ebmdatalab.bigquery import Client, TableExporter, build_schema
 
 
 logger = logging.getLogger(__name__)
 
 
-BNF_MAP_SCHEMA = [
-    SchemaField('former_bnf_code', 'STRING'),
-    SchemaField('current_bnf_code', 'STRING'),
-]
+BNF_MAP_SCHEMA = build_schema(
+    ('former_bnf_code', 'STRING'),
+    ('current_bnf_code', 'STRING'),
+)
 
 
 def create_code_mapping(filenames):
@@ -180,19 +178,15 @@ def create_bigquery_table():
     incarnation
 
     """
-    dataset_name = 'hscic'
-    bq_table_name = 'bnf_map'
     # output a row for each presentation and its ultimate replacement
     with tempfile.NamedTemporaryFile(mode='r+b') as csv_file:
         writer = csv.writer(csv_file)
         for p in Presentation.objects.filter(replaced_by__isnull=False):
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
         csv_file.seek(0)
-        load_data_from_file(
-            dataset_name, bq_table_name,
-            csv_file.name,
-            BNF_MAP_SCHEMA
-        )
+        client = Client('hscic')
+        table = Client.get_or_create_table('bnf_map', BNF_MAP_SCHEMA)
+        table.insert_rows_from_csv(csv_file.name)
 
 
 def write_zero_prescribing_codes_table(level):
