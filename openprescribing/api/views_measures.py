@@ -30,9 +30,16 @@ def _numerator_can_be_queried(measuredata):
     rewritten such that they can query the prescriptions table
     directly?
 
+    For now, this means we query the main prescriptions table only;
+    the consequence is that we can't support drilling down on JOINed
+    data. Specifically, this means ktt9_uti_antibiotics, at the
+    moment..
+
     """
-    return ('hscic.normalised_prescribing_standard'
-            in measuredata['numerator_from'])
+    table_there = ('hscic.normalised_prescribing_standard'
+                   in measuredata['numerator_from'])
+    join_not_there = 'JOIN' not in measuredata['numerator_from']
+    return table_there and join_not_there
 
 
 @api_view(['GET'])
@@ -120,26 +127,26 @@ def measure_numerators_by_org(request, format=None):
         query = ('SELECT '
                  '  %s AS entity, '
                  '  presentation_code AS bnf_code, '
-                 '  COALESCE(dmd.name, p.name) AS presentation_name, '
+                 '  COALESCE(dmd.name, pn.name) AS presentation_name, '
                  "  SUM(total_items) AS total_items, "
                  "  SUM(actual_cost) AS cost, "
                  "  SUM(quantity) AS quantity, "
                  '  %s '
                  'FROM '
-                 '  frontend_prescription pr '
+                 '  frontend_prescription p '
                  'LEFT JOIN '
                  '  dmd_product dmd '
-                 'ON pr.presentation_code = dmd.bnf_code '
+                 'ON p.presentation_code = dmd.bnf_code '
                  'INNER JOIN '
-                 '  frontend_presentation p '
-                 'ON pr.presentation_code = p.bnf_code '
+                 '  frontend_presentation pn '
+                 'ON p.presentation_code = pn.bnf_code '
                  'WHERE '
                  "  %s = '%s' "
                  '  AND '
                  "  processing_date = '%s' "
                  '  AND (%s) '
                  'GROUP BY '
-                 '  %s, presentation_code, dmd.name, p.name '
+                 '  %s, presentation_code, dmd.name, pn.name '
                  'ORDER BY numerator DESC '
                  'LIMIT 50') % (
                      org_selector,

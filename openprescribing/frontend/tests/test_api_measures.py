@@ -139,6 +139,15 @@ class TestAPIMeasureViews(TestCase):
             url += '?measure=cerazette&org=02Q&format=json'
             data = self._get_json(url)
             self.assertEqual(data, [])
+        testmeasure["numerator_from"] = (
+            "[ebmdatalab:hscic.normalised_prescribing_standard] p "
+            "LEFT JOIN [ebmdatalab:hscic.presentation]")
+        with patch('api.views_measures._get_measure_data',
+                   return_value=testmeasure):
+            url = '/api/1.0/measure_numerators_by_org/'
+            url += '?measure=cerazette&org=02Q&format=json'
+            data = self._get_json(url)
+            self.assertEqual(data, [])
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'
