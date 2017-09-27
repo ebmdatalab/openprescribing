@@ -1,14 +1,5 @@
-import csv
 import datetime
-import glob
 import logging
-import time
-
-from google.cloud import storage
-from google.cloud import bigquery
-from google.cloud.exceptions import NotFound
-from google.cloud.bigquery.table import Table
-from google.cloud.bigquery.dataset import Dataset
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
