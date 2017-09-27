@@ -60,7 +60,8 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_ccg,
         name='measure_for_one_ccg'),
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/practice/(?P<practice_code>[A-Z\d]+)/$',
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
+        'practice/(?P<practice_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_practice,
         name='measure_for_one_practice'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),

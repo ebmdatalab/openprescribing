@@ -383,7 +383,8 @@ class MeasureCalculation(object):
         """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        for col in utils.get_columns_for_select(self.measure, num_or_denom=num_or_denom):
+        for col in utils.get_columns_for_select(
+                self.measure, num_or_denom=num_or_denom):
             match = re.search(r"AS ([a-z0-9_]+)", col)
             if match:
                 alias = match.group(1)
