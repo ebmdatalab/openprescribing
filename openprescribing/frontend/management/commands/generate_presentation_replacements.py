@@ -208,6 +208,7 @@ def write_zero_prescribing_codes_table(level):
     Returns a bigquery Table.
 
     """
+    logger.info("Scanning %s to see if it has zero prescribing" % level)
     sql = """
     SELECT
       bnf.%s
@@ -225,20 +226,10 @@ def write_zero_prescribing_codes_table(level):
     HAVING
       COUNT(prescribing.bnf_code) = 0
     """ % (level, level)
-    client = bigquery.client.Client(project='ebmdatalab')
-    dataset = client.dataset('tmp_eu')
-    table = dataset.table(
-        name="unused_codes_%s" % level)
-    job = client.run_async_query("create_%s_%s" % (
-        table.name, int(time.time())), sql)
-    job.destination = table
-    job.use_query_cache = False
-    job.use_legacy_sql = False
-    job.write_disposition = 'WRITE_TRUNCATE'
-    job.allow_large_results = True
-    logger.info("Scanning %s to see if it has zero prescribing" % level)
-    wait_for_job(job)
-    return table
+    client = Client('tmp_eu')
+    table = client.get_table_ref('unused_codes_%s' % level)
+    table.insert_rows_from_query(sql)
+    return table.gcbq_table
 
 
 def get_csv_of_empty_classes_for_level(level):
