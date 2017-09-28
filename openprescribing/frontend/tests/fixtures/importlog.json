@@ -9,7 +9,7 @@
    }
   },
   {"model":"frontend.importlog",
-   "pk": 1,
+   "pk": 2,
    "fields":
    {"imported_at": "2016-06-23T13:25:15.003Z",
     "current_at": "2014-11-01",

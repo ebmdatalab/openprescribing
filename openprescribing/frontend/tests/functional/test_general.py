@@ -129,14 +129,16 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//div[@id='measure_keppra']")
         self.assertIn(
             '/measure/keppra',
-            measure.find_element_by_link_text(
-                "compare performance with other CCGs").get_attribute('href'),
-            )
+            measure.find_element_by_partial_link_text(
+                "Compare all CCGs"
+            ).get_attribute('href'),
+        )
         self.assertIn(
             '/ccg/02Q/keppra',
-            measure.find_element_by_link_text(
-                "show all practices in this CCG").get_attribute('href'),
-            )
+            measure.find_element_by_partial_link_text(
+                "Split the measure"
+            ).get_attribute('href'),
+        )
 
 
 if __name__ == '__main__':

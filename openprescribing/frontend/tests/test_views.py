@@ -196,7 +196,7 @@ class TestAlertViews(TransactionTestCase):
 
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures', 'importlog']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
@@ -318,6 +318,11 @@ class TestFrontendViews(TransactionTestCase):
         practices = doc('#practices li')
         self.assertEqual(len(practices), 1)
 
+    def test_call_single_measure_for_ccg(self):
+        response = self.client.get('/measure/cerazette/ccg/03V/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_one_ccg.html')
+
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
         self.assertEqual(response.status_code, 200)
@@ -341,6 +346,11 @@ class TestFrontendViews(TransactionTestCase):
             ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '
              'ECCLES, MANCHESTER, M30 0NU'))
         lead = doc('.lead:last')
+
+    def test_call_single_measure_for_practice(self):
+        response = self.client.get('/measure/cerazette/practice/P87629/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_one_practice.html')
 
     def test_call_view_measure_ccg(self):
         response = self.client.get('/ccg/03V/')

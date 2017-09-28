@@ -1,3 +1,5 @@
+{% if not measure.id %}
+<!-- only show sorting and alert signups when showing more than one measure -->
 <div class="row" >
   {% if request.GET.tags %}
   <h2>Low Value Prescribing measures</h2>
@@ -33,7 +35,7 @@
     </div>
   </div>
 </div>
-
+{% endif %}
 
 <p id="perfsummary">Loading...</p>
 
@@ -68,8 +70,27 @@
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
                   <p><strong>Why it matters:</strong> {{{ why_it_matters }}}</p>
                   <p><strong>Description:</strong> {{{ description }}}</p>
+                 {{#if chartExplanation }}
                   <p><strong>Performance:</strong> {{{ chartExplanation }}}</p>
-                  <p><strong>Explore:</strong> see <a href="{{ chartTitleUrl }}">show all practices in this CCG</a> contribute to this CCG's performance; or <a href="{{ measureUrl }}">compare performance with other CCGs</a>.</p>
+                 {{/if}}
+                  <p><strong>Explore:</strong>
+                    <ul>
+                     {{#if numeratorCanBeQueried }}
+                       {{#if oneEntityUrl }}
+                        <li>
+                          <a href="{{ oneEntityUrl }}">Break the overall
+                           score down into individual presentations</a>
+                        </li>
+                       {{/if}}
+                     {{/if}}
+                     <li>
+                       <a href="{{ chartTitleUrl }}">Split the measure
+                         into charts for individual practices</a>
+                     </li>
+                     <li><a href="{{ measureUrl }}">Compare all CCGs
+                     in England on this measure</a></li>
+                    </ul>
+                  </p>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
                   <div class="status"></div>

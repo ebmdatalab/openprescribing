@@ -507,6 +507,18 @@ describe('Measures', function() {
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
     });
 
+    it('copies selected properties from the global data', function() {
+      var data = [{id: 'ace', data: []}],
+      globalData = [{id: 'ace', low_is_good: true, numerator_can_be_queried: true}],
+      globalCentiles = [],
+      centiles = [],
+      options = {rollUpBy: 'measure_id'};
+      var result = mu.addChartAttributes(data, globalData, globalCentiles,
+        centiles, options, 6);
+      expect(result[0].lowIsGood).to.be.true;
+      expect(result[0].numeratorCanBeQueried).to.be.true;
+    });
+
     it('sets the expected title, URL, and descriptions for one-CCG measure charts', function() {
       var data = [
       {

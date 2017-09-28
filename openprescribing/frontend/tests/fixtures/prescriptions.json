@@ -1,15 +1,44 @@
 [
-    {
+
+  {
         "model": "frontend.prescription",
-        "pk": 1000000,
+        "pk": 9000002,
         "fields": {
-            "presentation_code": "0202010F0AAAAAA",
+            "presentation_code": "0408010A0BBAAAA",
             "total_items": 2,
             "net_cost": 3.28,
             "actual_cost": 3.05,
             "quantity": 56,
-            "processing_date": "2013-04-01",
-            "pct": "03Q",
+            "processing_date": "2016-02-01",
+            "pct": "03V",
+            "practice": "N84014"
+        }
+    },
+  {
+        "model": "frontend.prescription",
+        "pk": 9000001,
+        "fields": {
+            "presentation_code": "0408010A0BBAAAA",
+            "total_items": 2,
+            "net_cost": 3.28,
+            "actual_cost": 3.05,
+            "quantity": 56,
+            "processing_date": "2016-02-01",
+            "pct": "03V",
+            "practice": "N84014"
+        }
+    },
+  {
+        "model": "frontend.prescription",
+        "pk": 9000000,
+        "fields": {
+            "presentation_code": "0408010A0BBAAAB",
+            "total_items": 2,
+            "net_cost": 3.28,
+            "actual_cost": 3.05,
+            "quantity": 56,
+            "processing_date": "2016-02-01",
+            "pct": "03V",
             "practice": "N84014"
         }
     },

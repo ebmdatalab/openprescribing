@@ -274,6 +274,30 @@ def measures_for_one_ccg(request, ccg_code):
     return render(request, 'measures_for_one_ccg.html', context)
 
 
+def measure_for_one_ccg(request, measure, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'ccg': ccg,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_ccg.html', context)
+
+
+def measure_for_one_practice(request, measure, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'practice': practice,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_practice.html', context)
+
+
 def last_bookmark(request):
     """Redirect the logged in user to the CCG they last bookmarked, or if
     they're not logged in, just go straight to the homepage -- both

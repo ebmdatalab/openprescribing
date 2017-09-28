@@ -303,28 +303,6 @@ class MeasureCalculation(object):
         self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pass, host=db_host)
 
-    def get_columns_for_select(self, num_or_denom=None):
-        """Parse measures definition for SELECT columns; add
-        cost-savings-related columns when necessary.
-
-        """
-        assert num_or_denom in ['numerator', 'denominator']
-        fieldname = "%s_columns" % num_or_denom
-        cols = self.measure[fieldname][:]
-        # Deal with possible inconsistencies in measure definition
-        # trailing commas
-        if cols[-1].strip()[-1] != ',':
-            cols[-1] += ", "
-        if self.measure['is_cost_based']:
-            cols += ["SUM(items) AS items, ",
-                     "SUM(actual_cost) AS cost, ",
-                     "SUM(quantity) AS quantity "]
-        # Deal with possible inconsistencies in measure definition
-        # trailing commas
-        if cols[-1].strip()[-1] == ',':
-            cols[-1] = re.sub(r',\s*$', '', cols[-1])
-        return cols
-
     def query_and_return(self, query, table_id, legacy=False):
         """Send query to BigQuery, wait, and return response object when the
         job has completed.
@@ -405,7 +383,8 @@ class MeasureCalculation(object):
         """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        for col in self.get_columns_for_select(num_or_denom=num_or_denom):
+        for col in utils.get_columns_for_select(
+                self.measure, num_or_denom=num_or_denom):
             match = re.search(r"AS ([a-z0-9_]+)", col)
             if match:
                 alias = match.group(1)
@@ -574,9 +553,9 @@ class PracticeCalculation(MeasureCalculation):
                 numerator_from=self.measure['numerator_from'],
                 numerator_where=numerator_where,
                 numerator_columns=" ".join(
-                    self.get_columns_for_select('numerator')),
+                    utils.get_columns_for_select(self.measure, 'numerator')),
                 denominator_columns=" ".join(
-                    self.get_columns_for_select('denominator')),
+                    utils.get_columns_for_select(self.measure, 'denominator')),
                 denominator_from=self.measure['denominator_from'],
                 denominator_where=denominator_where,
                 numerator_aliases=numerator_aliases,

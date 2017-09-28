@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing on {{ measure.name }} for {{ ccg.name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<h1>{{ ccg.name }}: {{ measure.name }}</h2>
+<h2>Presentations contributing to variation</h2>
+
+<p>In the month for which we have the most recent data ({{ current_at|date:"M Y" }}), the
+numerator is composed of the following presentations:</p>
+
+<table id="numerator_breakdown" class="table">
+  <thead>
+    <tr>
+      <th>
+        Presentation
+      </th>
+      <th>
+        Items
+      </th>
+      <th>
+        Quantity
+      </th>
+      <th>
+        Cost
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Loading...
+      </th>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+
+{% include '_measures_panel.html' with entity_type='CCG' %}
+
+<p>
+  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all measures for {{ ccg.name }}</a>
+</p>
+
+<hr/>
+
+{% include '_get_in_touch.html' %}
+
+<script>
+var measureData = {
+    'orgId': '{{ ccg.code }}',
+    'orgName': '{{ ccg.name }}',
+    'measure': '{{ measure.id }}',
+    'rollUpBy': 'measure_id',
+    'orgType': 'CCG'
+};
+</script>
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'measures' %}
+{% include '_measure_breakdown_table.html' %}
+{% endblock %}
