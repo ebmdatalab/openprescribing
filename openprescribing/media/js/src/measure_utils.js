@@ -306,14 +306,7 @@ var utils = {
     var chartExplanation = '';
     var measureUrl;
     var oneEntityUrl;
-    if (options.orgType === 'practice') {
-      oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId + '/';
-    } else {
-      oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId + '/';
-    }
-    if (window.location.pathname === oneEntityUrl) {
-      oneEntityUrl = null;
-    }
+    var measureId;
 
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
@@ -323,12 +316,22 @@ var utils = {
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
       measureUrl = '/measure/' + d.id;
+      measureId = d.id;
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
         '/' + d.id;
+      measureId = options.measure;
+    }
+    if (options.orgType === 'practice') {
+      oneEntityUrl = '/measure/' + measureId + '/practice/' + options.orgId + '/';
+    } else {
+      oneEntityUrl = '/measure/' + measureId + '/ccg/' + options.orgId + '/';
+    }
+    if (window.location.pathname === oneEntityUrl) {
+      oneEntityUrl = null;
     }
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';
