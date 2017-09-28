@@ -4,7 +4,7 @@ x<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.
   $('#numerator_breakdown').DataTable(
     {
       "ajax": {
-        "url": "{{ API_HOST }}/api/1.0/measure_numerators_by_org/?org={{ ccg.code }}&measure={{ measure.id }}&format=json",
+        "url": "{{ API_HOST }}/api/1.0/measure_numerators_by_org/?org={% if ccg %}{{ ccg.code }}{% else %}{{ practice.code }}{% endif %}&measure={{ measure.id }}&format=json",
         "dataSrc": ""
       },
       "order": [[1, "desc"]],
