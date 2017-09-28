@@ -49,8 +49,6 @@ numerator in this measure is composed of the following presentations:</p>
 
 <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
 
-<p id="perfsummary">Loading...</p>
-
 {% include '_measures_panel.html' with entity_type='practice' %}
 
 <p>
@@ -75,25 +73,5 @@ var measureData = {
 
 {% block extra_js %}
 {% conditional_js 'measures' %}
-
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
-
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
-<script type="text/javascript">
-  $('#numerator_breakdown').DataTable(
-    {
-      "ajax": {
-        "url": "{{ API_HOST }}/api/1.0/measure_numerators_by_org/?org={{ practice.code }}&measure={{ measure.id }}&format=json",
-        "dataSrc": ""
-      },
-      "order": [[1, "desc"]],
-      "columns": [
-        {"data": "presentation_name", "orderable": false},
-        {"data": "total_items",  "className": "dt-right", render: $.fn.dataTable.render.number(',')},
-        {"data": "quantity", "className": "dt-right", render: $.fn.dataTable.render.number(',')},
-        {"data": "cost", "className": "dt-right", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-      ]
-    }
-  );
-</script>
+{% include '_measure_breakdown_table' %}
 {% endblock %}

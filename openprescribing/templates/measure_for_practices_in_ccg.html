@@ -21,7 +21,7 @@
 
 <p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}</p>
 
-<p><strong>How this CCG is doing:</strong> <span id="perfsummary">Loading...</span> See <a href="/ccg/{{ ccg.code }}/">how this CCG is doing on other standard measures</a>{% if 'lowpriority' in measure.tags %}, or specifically in <a href="/ccg/{{ ccg.code }}/?tags=lowpriority">NHS England Low Priority measures</a>{% endif %}.</p>
+<p><strong>How this CCG is doing:</strong> <span id="perfsummary">Loading...</span> See <a href="/ccg/{{ ccg.code }}/">how this CCG is doing on other standard measures</a>{% if 'lowpriority' in measure.tags %}, or specifically in <a href="/ccg/{{ ccg.code }}/?tags=lowpriority">NHS England Low Priority measures</a>{% endif %}.  You can also <a href="{% url 'measure_for_one_ccg' measure.id ccg.code %}">break down its overall score into individual presentations</a>.</a></p>
 
 <p>Practices are ordered by mean percentile over the past six months, with the worst-performing at the top. Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.</p>
 
