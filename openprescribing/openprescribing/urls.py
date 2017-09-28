@@ -19,8 +19,8 @@ urlpatterns = [
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
-    url(r'^caution/$', TemplateView.as_view(template_name='caution.html'),
-        name="caution"),
+    url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
+        name="contact"),
     url(r'^how-to-use/$',
         TemplateView.as_view(template_name='how-to-use.html'),
         name="how-to-use"),
@@ -47,10 +47,6 @@ urlpatterns = [
         '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation_practice'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='measures_for_one_practice'),
-        name='practice'),
     url(r'^measure/$',
         frontend_views.all_measures,
         name='all_measures'),
@@ -121,4 +117,12 @@ urlpatterns = [
 
     # anymail webhooks
     url(r'^anymail/', include('anymail.urls')),
+
+    # old page redirects
+    url(r'^caution/$', RedirectView.as_view(
+        pattern_name='faq', permanent=True)),
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+        RedirectView.as_view(
+            permanent=True, pattern_name='measures_for_one_practice'),
+        name='practice'),
 ]
