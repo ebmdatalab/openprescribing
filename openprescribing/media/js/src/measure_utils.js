@@ -326,7 +326,7 @@ var utils = {
       measureId = options.measure;
     }
     if (options.orgType === 'practice') {
-      oneEntityUrl = '/measure/' + measureId + '/practice/' + options.orgId + '/';
+      oneEntityUrl = '/measure/' + measureId + '/practice/' + d.id + '/';
     } else {
       oneEntityUrl = '/measure/' + measureId + '/ccg/' + options.orgId + '/';
     }

@@ -284,5 +284,5 @@ def deploy(environment, force_build=False, branch='master'):
         deploy_static()
         run_migrations()
         graceful_reload()
-        clear_cloudflare()
+        clear_cloudflare(purge_all=True)
         log_deploy()
