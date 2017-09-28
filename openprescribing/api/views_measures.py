@@ -132,16 +132,13 @@ def measure_numerators_by_org(request, format=None):
         query = ('SELECT '
                  '  %s AS entity, '
                  '  presentation_code AS bnf_code, '
-                 '  COALESCE(dmd.name, pn.name) AS presentation_name, '
+                 '  pn.name AS presentation_name, '
                  "  SUM(total_items) AS total_items, "
                  "  SUM(actual_cost) AS cost, "
                  "  SUM(quantity) AS quantity, "
                  '  %s '
                  'FROM '
                  '  frontend_prescription p '
-                 'LEFT JOIN '
-                 '  dmd_product dmd '
-                 'ON p.presentation_code = dmd.bnf_code '
                  'INNER JOIN '
                  '  frontend_presentation pn '
                  'ON p.presentation_code = pn.bnf_code '
@@ -151,7 +148,7 @@ def measure_numerators_by_org(request, format=None):
                  "  processing_date = '%s' "
                  '  AND (%s) '
                  'GROUP BY '
-                 '  %s, presentation_code, dmd.name, pn.name '
+                 '  %s, presentation_code, pn.name '
                  'ORDER BY numerator DESC '
                  'LIMIT 50') % (
                      org_selector,
