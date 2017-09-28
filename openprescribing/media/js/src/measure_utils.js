@@ -246,13 +246,14 @@ var utils = {
     */
     var _this = this;
     var newData = [];
+    var series;
     _.each(data, function(d) {
-      d.data = _this._addHighchartsXAndY(d.data, false,
-        d.isPercentage, options, null);
+      d.data = _this._addHighchartsXAndY(
+        d.data, false, d.isPercentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
         // centiles for that measure, and if lowIsGood
-        var series = _.findWhere(globalData, {id: d.id});
+        series = _.findWhere(globalData, {id: d.id});
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
           d.numeratorCanBeQueried = series.numerator_can_be_queried;
@@ -265,6 +266,10 @@ var utils = {
       } else {
         d.globalCentiles = globalCentiles;
         d.lowIsGood = options.lowIsGood;
+        series = _.findWhere(globalData, {id: options.measure});
+        if (typeof series !== 'undefined') {
+          d.numeratorCanBeQueried = series.numerator_can_be_queried;
+        }
       }
       d.chartId = d.id;
       _.extend(d, _this._getChartTitleEtc(d, options, numMonths));
@@ -301,6 +306,15 @@ var utils = {
     var chartExplanation = '';
     var measureUrl;
     var oneEntityUrl;
+    if (options.orgType === 'practice') {
+      oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId + '/';
+    } else {
+      oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId + '/';
+    }
+    if (window.location.pathname === oneEntityUrl) {
+      oneEntityUrl = null;
+    }
+
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -309,15 +323,6 @@ var utils = {
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
       measureUrl = '/measure/' + d.id;
-
-      if (options.orgType === 'practice') {
-        oneEntityUrl = '/measure/' + d.id + '/practice/' + options.orgId + '/';
-      } else {
-        oneEntityUrl = '/measure/' + d.id + '/ccg/' + options.orgId + '/';
-      }
-      if (window.location.pathname === oneEntityUrl) {
-        oneEntityUrl = null;
-      }
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.

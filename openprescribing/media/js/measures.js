@@ -103,7 +103,6 @@
           if (selectedMeasure !== '') {
             $('#overlay').fadeIn(300);
             var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
-            console.log(measureId);
             $(measureId).css('z-index', '99999');
             $('html, body').animate({
               scrollTop: $(measureId).offset().top
