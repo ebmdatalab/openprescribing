@@ -325,11 +325,18 @@ var utils = {
         '/' + d.id;
       measureId = options.measure;
     }
-    if (options.orgType === 'practice') {
-      oneEntityUrl = '/measure/' + measureId + '/practice/' + d.id + '/';
+    var orgId;
+    if (options.rollUpBy == 'org_id') {
+      orgId = d.id;
     } else {
-      oneEntityUrl = '/measure/' + measureId + '/ccg/' + options.orgId + '/';
+      orgId = options.orgId;
     }
+    if (options.orgType == 'practice') {
+      oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
+    } else {
+      oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
+    }
+    console.log(oneEntityUrl);
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
