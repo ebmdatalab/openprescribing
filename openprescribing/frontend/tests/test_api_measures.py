@@ -41,6 +41,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(data['measures'][0]['is_cost_based'], True)
         self.assertEqual(data['measures'][0]['is_percentage'], True)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
+        self.assertEqual(data['measures'][0]['tags_focus'], 'baz,foo')
         self.assertEqual(len(data['measures'][0]['data']), 1)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 85500)

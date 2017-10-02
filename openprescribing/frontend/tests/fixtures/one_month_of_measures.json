@@ -278,6 +278,7 @@
       "tags": [
         "core"
       ],
+      "tags_focus": ["baz", "foo"],
       "start_date": null,
       "end_date": null,
       "url": null,

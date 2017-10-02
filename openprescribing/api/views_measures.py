@@ -51,7 +51,7 @@ def measure_global(request, format=None):
     query += 'mg.denominator, mg.measure_id, '
     query += 'mg.calc_value, mg.percentiles, mg.cost_savings, '
     query += 'ms.name, ms.title, ms.description, '
-    query += 'ms.why_it_matters, '
+    query += 'ms.why_it_matters, ms.tags_focus, '
     query += ' ms.denominator_short, ms.numerator_short, '
     query += 'ms.url, ms.is_cost_based, ms.is_percentage, '
     query += 'ms.low_is_good '
@@ -82,6 +82,7 @@ def measure_global(request, format=None):
         else:
             measuredata = _get_measure_data(id)
             numerator_can_be_queried = _numerator_can_be_queried(measuredata)
+            tags_focus = d['tags_focus'] and ','.join(d['tags_focus']) or ''
             rolled[id] = {
                 'id': id,
                 'name': d['name'],
@@ -94,6 +95,7 @@ def measure_global(request, format=None):
                 'is_cost_based': d['is_cost_based'],
                 'is_percentage': d['is_percentage'],
                 'low_is_good': d['low_is_good'],
+                'tags_focus': tags_focus,
                 'numerator_can_be_queried': numerator_can_be_queried,
                 'data': [d_copy]
             }
