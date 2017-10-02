@@ -374,10 +374,6 @@ var utils = {
         }
       }
     }
-    if (oneEntityUrl) {
-      chartExplanation += '<a href="' + oneEntityUrl +
-        '">Break the overall score down into individual presentations</a>. ';
-    }
     return {
       measureUrl: measureUrl,
       chartTitle: chartTitle,
