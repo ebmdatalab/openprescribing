@@ -88,10 +88,12 @@
                         </li>
                        {{/if}}
                      {{/if}}
-                     <li>
-                       <a href="{{ chartTitleUrl }}">Split the measure
-                         into charts for individual practices</a>
-                     </li>
+                     {{#if isCCG }}
+                       <li>
+                         <a href="{{ chartTitleUrl }}">Split the measure
+                           into charts for individual practices</a>
+                       </li>
+                     {{/if}}
                      <li><a href="{{ measureUrl }}">Compare all CCGs
                      in England on this measure</a></li>
                     </ul>

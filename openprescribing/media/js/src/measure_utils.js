@@ -376,6 +376,7 @@ var utils = {
     }
     return {
       measureUrl: measureUrl,
+      isCCG: options.orgType == 'CCG',
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
