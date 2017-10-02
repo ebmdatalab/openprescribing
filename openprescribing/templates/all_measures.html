@@ -8,6 +8,12 @@
 {% block content %}
 
 <h1>Prescribing measures</h1>
+{% if request.GET.tags %}
+<p class="alert alert-info">
+  This list is filtered to show only <em>NHS Low Priority</em> measures.  <a href="{% url 'all_measures' %}">Switch back to core measures.</a>
+</p>
+{% endif %}
+</p>
 
 <p>See prescribing by all CCGs for:</p>
 

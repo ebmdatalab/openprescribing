@@ -388,6 +388,15 @@ class TestFrontendViews(TransactionTestCase):
         response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 301)
 
+    def test_all_measures(self):
+        response = self.client.get('/measure/')
+        self.assertContains(response, 'Cerazette')
+
+    def test_all_measures_with_tag_filter(self):
+        response = self.client.get('/measure/?tags=frob')
+        self.assertNotContains(response, 'Cerazette')
+        self.assertContains(response, 'This list is filtered')
+
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)

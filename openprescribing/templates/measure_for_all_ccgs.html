@@ -15,7 +15,12 @@
 
 <p><strong>Why it matters</strong>: {{ measure.why_it_matters|safe }}</p>
 
-<p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}</p>
+<p><strong>Definition</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}
+{% if measure.tags_focus %}
+  <a href="{% url 'all_measures' %}?tags={{measure.tags_focus|join:','}}">Break this measure down into its constituent measures.</a>
+{% endif %}
+
+</p>
 
 {% if measure.is_cost_based %}
 
