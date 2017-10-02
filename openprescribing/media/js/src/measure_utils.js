@@ -307,7 +307,6 @@ var utils = {
     var measureUrl;
     var oneEntityUrl;
     var measureId;
-
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -336,7 +335,6 @@ var utils = {
     } else {
       oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
     }
-    console.log(oneEntityUrl);
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
@@ -368,6 +366,10 @@ var utils = {
             humanize.numberFormat(d.costSaving10th, 2) + ' less. ';
         }
       }
+    }
+    if (oneEntityUrl) {
+      chartExplanation += '<a href="' + oneEntityUrl +
+        '">Break the overall score down into individual presentations</a>. ';
     }
     return {
       measureUrl: measureUrl,
