@@ -75,6 +75,11 @@
                  {{/if}}
                   <p><strong>Explore:</strong>
                     <ul>
+                     {{#if tagsFocusUrl }}
+                     <li>
+                       This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures.</a>
+                     </li>
+                     {{/if}}
                      {{#if numeratorCanBeQueried }}
                        {{#if oneEntityUrl }}
                         <li>

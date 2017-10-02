@@ -256,6 +256,7 @@ var utils = {
         series = _.findWhere(globalData, {id: d.id});
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
+          d.tagsFocus = series.tags_focus;
           d.numeratorCanBeQueried = series.numerator_can_be_queried;
         }
         d.globalCentiles = {};
@@ -264,8 +265,11 @@ var utils = {
             true, series.is_percentage, options, i);
         });
       } else {
+        // sometimes, the measure metadata is defined in javascript
+        // expressions within the django template.
         d.globalCentiles = globalCentiles;
         d.lowIsGood = options.lowIsGood;
+        d.tagsFocus = options.tagsFocus;
         series = _.findWhere(globalData, {id: options.measure});
         if (typeof series !== 'undefined') {
           d.numeratorCanBeQueried = series.numerator_can_be_queried;
@@ -307,6 +311,7 @@ var utils = {
     var measureUrl;
     var oneEntityUrl;
     var measureId;
+    var tagsFocusUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -332,8 +337,10 @@ var utils = {
     }
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
+      tagsFocusUrl = '/practice/' + orgId + '/?tags=' + d.tagsFocus;
     } else {
       oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
+      tagsFocusUrl = '/ccg/' + orgId + '/?tags=' + d.tagsFocus;
     }
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
@@ -376,6 +383,7 @@ var utils = {
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
+      tagsFocusUrl: tagsFocusUrl,
       chartExplanation: chartExplanation
     };
   },

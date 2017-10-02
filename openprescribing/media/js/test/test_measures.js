@@ -610,7 +610,43 @@ describe('Measures', function() {
   });
 
   describe('#_getChartTitleEtc', function() {
-    describe('working out oneEntityUrl', function() {
+    describe('tagsFocus defined', function() {
+      it('should return expected URL', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: '99P',
+          orgName: 'Devon',
+          orgType: 'CCG',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+      });
+      it('should return expected URL for practice', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: 'P111111',
+          orgName: 'Dr GP Surgery',
+          orgType: 'practice',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+      });
+    });
+    describe('oneEntityUrl output', function() {
       describe('input from measures_for_one_ccg', function() {
         it('should return expected URL', function() {
           var numMonths = 6; // required but not relevant to test
