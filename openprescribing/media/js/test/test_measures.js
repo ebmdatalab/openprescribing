@@ -611,7 +611,7 @@ describe('Measures', function() {
 
   describe('#_getChartTitleEtc', function() {
     describe('tagsFocus defined', function() {
-      it('should return expected URL', function() {
+      it('should return expected URL for CCG', function() {
         var numMonths = 6; // required but not relevant to test
         var options = {
           orgId: '99P',
