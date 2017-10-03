@@ -380,6 +380,7 @@ var utils = {
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
+      tagsFocus: d.tagsFocus,
       tagsFocusUrl: tagsFocusUrl,
       chartExplanation: chartExplanation
     };
