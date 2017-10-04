@@ -39,7 +39,6 @@
     "OR bnf_code LIKE '1003020L0%' ",
     "OR bnf_code LIKE '1003020N0%' ",
     "OR bnf_code LIKE '1003020Q0%' ",
-    "OR bnf_code LIKE '1003020R0%' ",
     "OR bnf_code LIKE '1003020S0%' ",
     "OR bnf_code LIKE '1003020T0%' ",
     "OR bnf_code LIKE '1003020V0%' ",
