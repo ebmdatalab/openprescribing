@@ -176,7 +176,11 @@ def measure_numerators_by_org(request, format=None):
         data = utils.execute_query(query, [])
     else:
         data = []
-    return Response(data)
+    response = Response(data)
+    filename = "%s-%s-breakdown.csv" % (measure, org)
+    if request.accepted_renderer.format == 'csv':
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 @api_view(['GET'])
