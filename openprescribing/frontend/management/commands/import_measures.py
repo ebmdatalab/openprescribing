@@ -473,6 +473,7 @@ class GlobalCalculation(MeasureCalculation):
             measure = Measure.objects.get(id=self.measure_id)
             measure.name = v['name']
             measure.tags = v['tags']
+            measure.tags_focus = v.get('tags_focus', [])
             measure.title = v['title']
             measure.description = v['description']
             measure.why_it_matters = v['why_it_matters']
@@ -488,6 +489,7 @@ class GlobalCalculation(MeasureCalculation):
                 id=self.measure_id,
                 name=v['name'],
                 tags=v['tags'],
+                tags_focus = v.get('tags_focus', []),
                 title=v['title'],
                 description=v['description'],
                 why_it_matters=v['why_it_matters'],
