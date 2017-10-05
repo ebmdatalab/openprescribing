@@ -238,7 +238,7 @@ class InterestingMeasureFinder(object):
         worst = []
         measure_filter = {
             'month__gte': self.months_ago(period),
-            'tags': ['core']
+            'measure__tags': ['core']
         }
         if self.practice:
             measure_filter['practice'] = self.practice
