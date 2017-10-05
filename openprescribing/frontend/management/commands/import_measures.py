@@ -66,19 +66,20 @@ class Command(BaseCommand):
                     # ensure it is created after the other measures on
                     # which it depends)
                     create_omnibus_lp_view()
+                logger.info('Updating measure: %s' % measure_id)
+                measure = create_or_update_measure(measure_id)
                 measure_start = datetime.datetime.now()
                 global_calculation = GlobalCalculation(
-                    measure_id, verbose=verbose,
+                    measure, verbose=verbose,
                     under_test=options['test_mode'])
                 practice_calculation = PracticeCalculation(
-                    measure_id, start_date=start_date, end_date=end_date,
+                    measure, start_date=start_date, end_date=end_date,
                     verbose=verbose, under_test=options['test_mode']
                 )
                 ccg_calculation = CCGCalculation(
-                    measure_id, start_date=start_date, end_date=end_date,
+                    measure, start_date=start_date, end_date=end_date,
                     verbose=verbose, under_test=options['test_mode']
                 )
-                measure = global_calculation.create_or_update_measure()
                 if options['definitions_only']:
                     continue
 
@@ -242,17 +243,87 @@ def normalisePercentile(percentile):
     return percentile
 
 
+def arrays_to_strings(measure_json):
+    """To facilitate readability via newlines, we express some JSON
+    strings as arrays, but store them as strings.
+
+    Returns the json with such fields converted to strings.
+
+    """
+    fields_to_convert = [
+        'title', 'description', 'why_it_matters', 'numerator_columns',
+        'numerator_where', 'denominator_columns', 'denominator_where']
+
+    for field in fields_to_convert:
+        if isinstance(measure_json[field], list):
+            measure_json[field] = ' '.join(measure_json[field])
+    return measure_json
+
+
+def create_or_update_measure(measure_id):
+    """Create a measure object based on a measure definition
+
+    """
+    measure_json = parse_measures()[measure_id]
+    v = arrays_to_strings(measure_json)
+    try:
+        measure = Measure.objects.get(pk=measure_id)
+        measure.title = v['title']
+        measure.description = v['description']
+        measure.why_it_matters = v['why_it_matters']
+        measure.name = v['name']
+        measure.tags = v['tags']
+        measure.tags_focus = v.get('tags_focus', [])
+        measure.title = v['title']
+        measure.description = v['description']
+        measure.numerator_short = v['numerator_short']
+        measure.denominator_short = v['denominator_short']
+        measure.numerator_from = v['numerator_from']
+        measure.numerator_where = v['numerator_where']
+        measure.numerator_columns = v['numerator_columns']
+        measure.denominator_from = v['denominator_from']
+        measure.denominator_where = v['denominator_where']
+        measure.denominator_columns = v['denominator_columns']
+        measure.url = v['url']
+        measure.is_cost_based = v['is_cost_based']
+        measure.is_percentage = v['is_percentage']
+        measure.low_is_good = v['low_is_good']
+        measure.save()
+    except ObjectDoesNotExist:
+        measure = Measure.objects.create(
+            id=measure_id,
+            name=v['name'],
+            tags=v['tags'],
+            tags_focus = v.get('tags_focus', []),
+            title=v['title'],
+            description=v['description'],
+            why_it_matters=v['why_it_matters'],
+            numerator_short=v['numerator_short'],
+            denominator_short=v['denominator_short'],
+            numerator_from = v['numerator_from'],
+            numerator_where = v['numerator_where'],
+            numerator_columns = v['numerator_columns'],
+            denominator_from = v['denominator_from'],
+            denominator_where = v['denominator_where'],
+            denominator_columns = v['denominator_columns'],
+            url=v['url'],
+            is_cost_based=v['is_cost_based'],
+            is_percentage=v['is_percentage'],
+            low_is_good=v['low_is_good']
+        )
+    return measure
+
+
 class MeasureCalculation(object):
     """An abstract base class containing bigquery connection helpers and
     logic common to both Practice- and CCG-level calculations.
 
     """
-    def __init__(self, measure_id, start_date=None, end_date=None,
+    def __init__(self, measure, start_date=None, end_date=None,
                  verbose=False, under_test=False):
         self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
-        self.measure_id = measure_id
-        self.measure = parse_measures()[measure_id]
+        self.measure = measure
         self.start_date = start_date
         self.end_date = end_date
         self.under_test = under_test
@@ -268,7 +339,7 @@ class MeasureCalculation(object):
         """Name of table to which we write overall summary data
 
         """
-        return "%s_%s" % (settings.BQ_GLOBALS_TABLE_PREFIX, self.measure_id)
+        return "%s_%s" % (settings.BQ_GLOBALS_TABLE_PREFIX, self.measure.id)
 
     def full_table_name(self):
         """Fully qualified table name as used in bigquery SELECT
@@ -383,16 +454,9 @@ class MeasureCalculation(object):
         """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        for col in utils.get_columns_for_select(
-                self.measure, num_or_denom=num_or_denom):
-            match = re.search(r"AS ([a-z0-9_]+)", col)
-            if match:
-                alias = match.group(1)
-            else:
-                raise CommandError("Could not find alias in %s" % col)
-            if alias != num_or_denom:
-                cols.append(alias)
-        return cols
+        cols = self.measure.columns_for_select(num_or_denom=num_or_denom)
+        aliases = re.findall(r"AS ([a-z0-9_]+)", cols)
+        return [x for x in aliases if x not in num_or_denom]
 
 
 class GlobalCalculation(MeasureCalculation):
@@ -426,7 +490,7 @@ class GlobalCalculation(MeasureCalculation):
             practice_deciles = {}
             ccg_cost_savings = {}
             practice_cost_savings = {}
-            d['measure_id'] = self.measure_id
+            d['measure_id'] = self.measure.id
             # The cost-savings calculations prepend columns with
             # global_. There is probably a better way of contstructing
             # the query so this clean-up doesn't have to happen...
@@ -436,12 +500,12 @@ class GlobalCalculation(MeasureCalculation):
             d = new_d
 
             mg, _ = MeasureGlobal.objects.get_or_create(
-                measure_id=self.measure_id,
+                measure_id=self.measure.id,
                 month=d['month']
             )
 
             # Coerce decile-based values into JSON objects
-            if self.measure['is_cost_based']:
+            if self.measure.is_cost_based:
                 practice_cost_savings = convertSavingsToDict(
                     d, prefix='practice')
                 ccg_cost_savings = convertSavingsToDict(
@@ -460,48 +524,6 @@ class GlobalCalculation(MeasureCalculation):
             count += 1
         self.log("Created %s measureglobals" % count)
 
-    def create_or_update_measure(self):
-        """Create a measure object based on a measure definition
-
-        """
-        v = self.measure
-        self.log('Updating measure: %s' % self.measure_id)
-        v['title'] = ' '.join(v['title'])
-        v['description'] = ' '.join(v['description'])
-        v['why_it_matters'] = ' '.join(v['why_it_matters'])
-        try:
-            measure = Measure.objects.get(id=self.measure_id)
-            measure.name = v['name']
-            measure.tags = v['tags']
-            measure.tags_focus = v.get('tags_focus', [])
-            measure.title = v['title']
-            measure.description = v['description']
-            measure.why_it_matters = v['why_it_matters']
-            measure.numerator_short = v['numerator_short']
-            measure.denominator_short = v['denominator_short']
-            measure.url = v['url']
-            measure.is_cost_based = v['is_cost_based']
-            measure.is_percentage = v['is_percentage']
-            measure.low_is_good = v['low_is_good']
-            measure.save()
-        except ObjectDoesNotExist:
-            measure = Measure.objects.create(
-                id=self.measure_id,
-                name=v['name'],
-                tags=v['tags'],
-                tags_focus = v.get('tags_focus', []),
-                title=v['title'],
-                description=v['description'],
-                why_it_matters=v['why_it_matters'],
-                numerator_short=v['numerator_short'],
-                denominator_short=v['denominator_short'],
-                url=v['url'],
-                is_cost_based=v['is_cost_based'],
-                is_percentage=v['is_percentage'],
-                low_is_good=v['low_is_good']
-            )
-        return measure
-
 
 class PracticeCalculation(MeasureCalculation):
     def calculate(self):
@@ -515,7 +537,7 @@ class PracticeCalculation(MeasureCalculation):
         self.add_percent_rank()
         self.log("Calculating global centiles for practices")
         self.calculate_global_centiles_for_practices()
-        if self.measure['is_cost_based']:
+        if self.measure.is_cost_based:
             self.log("Calculating cost savings for practices")
             self.calculate_cost_savings_for_practices()
         self.log("Writing practice ratios to postgres")
@@ -526,7 +548,7 @@ class PracticeCalculation(MeasureCalculation):
         """The name of the bigquery working table for practices
 
         """
-        return "%s_%s" % (settings.BQ_PRACTICE_TABLE_PREFIX, self.measure_id)
+        return "%s_%s" % (settings.BQ_PRACTICE_TABLE_PREFIX, self.measure.id)
 
     def calculate_practice_ratios(self):
         """Given a measure defition, construct a BigQuery query which computes
@@ -535,8 +557,7 @@ class PracticeCalculation(MeasureCalculation):
         See also comments in SQL.
 
         """
-        numerator_where = " ".join(self.measure['numerator_where'])
-        denominator_where = " ".join(self.measure['denominator_where'])
+        m = self.measure
         numerator_aliases = ''
         denominator_aliases = ''
         aliased_numerators = ''
@@ -552,14 +573,12 @@ class PracticeCalculation(MeasureCalculation):
         with open(sql_path, "r") as sql_file:
             sql = sql_file.read()
             sql = sql.format(
-                numerator_from=self.measure['numerator_from'],
-                numerator_where=numerator_where,
-                numerator_columns=" ".join(
-                    utils.get_columns_for_select(self.measure, 'numerator')),
-                denominator_columns=" ".join(
-                    utils.get_columns_for_select(self.measure, 'denominator')),
-                denominator_from=self.measure['denominator_from'],
-                denominator_where=denominator_where,
+                numerator_from=m.numerator_from,
+                numerator_where=m.numerator_where,
+                numerator_columns=m.columns_for_select('numerator'),
+                denominator_columns=m.columns_for_select('denominator'),
+                denominator_from=m.denominator_from,
+                denominator_where=m.denominator_where,
                 numerator_aliases=numerator_aliases,
                 denominator_aliases=denominator_aliases,
                 aliased_denominators=aliased_denominators,
@@ -589,7 +608,7 @@ class PracticeCalculation(MeasureCalculation):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", SUM(%s) as %s" % (f, f)
-        if self.measure["is_cost_based"]:
+        if self.measure.is_cost_based:
             extra_select_sql += (
                 ", "
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
@@ -635,8 +654,8 @@ class PracticeCalculation(MeasureCalculation):
         c = 0
         # Write the data we want to load into a file
         for datum in self.get_rows(self.table_name()):
-            datum['measure_id'] = self.measure_id
-            if self.measure['is_cost_based']:
+            datum['measure_id'] = self.measure.id
+            if self.measure.is_cost_based:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
             datum['percentile'] = normalisePercentile(datum['percentile'])
             writer.writerow(datum)
@@ -665,7 +684,7 @@ class CCGCalculation(MeasureCalculation):
         self.add_percent_rank()
         self.log("Calculating global CCG centiles")
         self.calculate_global_centiles_for_ccgs()
-        if self.measure['is_cost_based']:
+        if self.measure.is_cost_based:
             self.log("Calculating CCG cost savings")
             self.calculate_cost_savings_for_ccgs()
         self.log("Writing CCG data to postgres")
@@ -676,7 +695,7 @@ class CCGCalculation(MeasureCalculation):
         """The name of the bigquery working table for CCGs
 
         """
-        return "%s_%s" % (settings.BQ_CCG_TABLE_PREFIX, self.measure_id)
+        return "%s_%s" % (settings.BQ_CCG_TABLE_PREFIX, self.measure.id)
 
     def calculate_ccg_ratios(self):
         """Sums all the fields in the per-practice table, grouped by
@@ -693,7 +712,7 @@ class CCGCalculation(MeasureCalculation):
             for col in self._get_col_aliases('numerator'):
                 numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
             from_table = PracticeCalculation(
-                self.measure_id, under_test=self.under_test).full_table_name()
+                self.measure, under_test=self.under_test).full_table_name()
             sql = sql.format(denominator_aliases=denominator_aliases,
                              numerator_aliases=numerator_aliases,
                              from_table=from_table)
@@ -714,7 +733,7 @@ class CCGCalculation(MeasureCalculation):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", practice_deciles.%s as %s" % (f, f)
-        if self.measure["is_cost_based"]:
+        if self.measure.is_cost_based:
             extra_select_sql += (
                 ", practice_deciles.cost_per_denom AS cost_per_denom"
                 ", practice_deciles.cost_per_num AS cost_per_num")
@@ -751,8 +770,8 @@ class CCGCalculation(MeasureCalculation):
         with transaction.atomic():
             c = 0
             for datum in self.get_rows(self.table_name()):
-                datum['measure_id'] = self.measure_id
-                if self.measure['is_cost_based']:
+                datum['measure_id'] = self.measure.id
+                if self.measure.is_cost_based:
                     datum['cost_savings'] = convertSavingsToDict(datum)
                 datum['percentile'] = normalisePercentile(datum['percentile'])
                 MeasureValue.objects.create(**datum)

@@ -60,10 +60,13 @@ class UnitTests(TestCase):
     tests could be moved hree.
 
     """
+    fixtures = ['measures']
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
-        g = GlobalCalculation('cerazette', under_test=True)
+        # previously this was from cerazette_measure
+        m = Measure.objects.get(pk='cerazette')
+        g = GlobalCalculation(m, under_test=True)
         with patch.object(g, 'get_rows') as patched_calc:
             patched_calc.return_value = [
                 {
@@ -127,10 +130,10 @@ class UnitTests(TestCase):
     def test_write_practice_ratios_to_database(self):
         from frontend.management.commands.import_measures \
             import PracticeCalculation
-        Measure.objects.create(id='cerazette', tags=["foo"])
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
-        p = PracticeCalculation('cerazette', under_test=True)
+        m = Measure.objects.get(pk='cerazette')
+        p = PracticeCalculation(m, under_test=True)
         with patch.object(p, 'get_rows') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
             patched_calc.return_value = [

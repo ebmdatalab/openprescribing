@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from common.utils import get_columns_for_select
 from frontend.models import ImportLog
+from frontend.models import Measure
 
 import view_utils as utils
 
@@ -14,32 +14,6 @@ import view_utils as utils
 class MissingParameter(APIException):
     status_code = 400
     default_detail = 'You are missing a required parameter.'
-
-
-def _get_measure_data(measure_id):
-    fpath = os.path.dirname(__file__)
-    fname = os.path.join(
-        fpath,
-        ("../frontend/management/commands/measure_definitions/"
-         "%s.json") % measure_id)
-    return json.load(open(fname, 'r'))
-
-
-def _numerator_can_be_queried(measuredata):
-    """Is it possible for the numerators for a given measure to be
-    rewritten such that they can query the prescriptions table
-    directly?
-
-    For now, this means we query the main prescriptions table only;
-    the consequence is that we can't support drilling down on JOINed
-    data. Specifically, this means ktt9_uti_antibiotics, at the
-    moment..
-
-    """
-    table_there = ('hscic.normalised_prescribing_standard'
-                   in measuredata['numerator_from'])
-    join_not_there = 'JOIN' not in measuredata['numerator_from']
-    return table_there and join_not_there
 
 
 @api_view(['GET'])
@@ -69,6 +43,7 @@ def measure_global(request, format=None):
     rolled = {}
     for d in data:
         id = d['measure_id']
+        m = Measure.objects.get(pk=id)
         d_copy = {
             'date': d['date'],
             'numerator': d['numerator'],
@@ -80,8 +55,6 @@ def measure_global(request, format=None):
         if id in rolled:
             rolled[id]['data'].append(d_copy)
         else:
-            measuredata = _get_measure_data(id)
-            numerator_can_be_queried = _numerator_can_be_queried(measuredata)
             tags_focus = d['tags_focus'] and ','.join(d['tags_focus']) or ''
             rolled[id] = {
                 'id': id,
@@ -96,7 +69,7 @@ def measure_global(request, format=None):
                 'is_percentage': d['is_percentage'],
                 'low_is_good': d['low_is_good'],
                 'tags_focus': tags_focus,
-                'numerator_can_be_queried': numerator_can_be_queried,
+                'numerator_can_be_queried': m.numerator_can_be_queried(),
                 'data': [d_copy]
             }
     d = {
@@ -114,20 +87,19 @@ def measure_numerators_by_org(request, format=None):
     else:
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
-    m = _get_measure_data(measure)
-    if _numerator_can_be_queried(m):
+    m = Measure.objects.get(pk=measure)
+    if m.numerator_can_be_queried():
         # Awkwardly, because the column names in the prescriptions table
         # are different from those in bigquery (for which the measure
         # defitions are defined), we have to rename them (e.g. `items` ->
         # `total_items`)
-        numerator_selector = " ".join(
-            get_columns_for_select(m, 'numerator')).replace(
-                'items', 'total_items')
-        numerator_where = " ".join(
-            m['numerator_where']).replace(
-                'bnf_code', 'presentation_code').replace(
-                    'bnf_name', 'pn.name'
-                )
+        # this method assumes arrays, but on the model we store as straight strings
+        numerator_selector = m.columns_for_select('numerator').replace(
+            'items', 'total_items')
+        numerator_where = m.numerator_where.replace(
+            'bnf_code', 'presentation_code').replace(
+                'bnf_name', 'pn.name'
+            )
         # There is redundancy in the column names, so we can support
         # various flavours of `WHERE` clause from the measure
         # definitions
