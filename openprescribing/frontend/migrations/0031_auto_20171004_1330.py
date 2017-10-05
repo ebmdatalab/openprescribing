@@ -14,16 +14,36 @@ def _get_measure_data(measure_id):
          "%s.json") % measure_id)
     return json.load(open(fname, 'r'))
 
+def arrays_to_strings(measure_json):
+    """To facilitate readability via newlines, we express some JSON
+    strings as arrays, but store them as strings.
+
+    Returns the json with such fields converted to strings.
+
+    """
+    converted = {}
+    fields_to_convert = [
+        'title', 'description', 'why_it_matters', 'numerator_columns',
+        'numerator_where', 'denominator_columns', 'denominator_where']
+    for k, v in measure_json.items():
+        if k in fields_to_convert and isinstance(v, list):
+            converted[k] = ' '.join(v)
+        else:
+            converted[k] = v
+
+    return converted
+
+
 def set_measure_fields(apps, schema_editor):
     Measure = apps.get_model('frontend', 'Measure')
     for m in Measure.objects.all().iterator():
-        v = _get_measure_data(m.id)
-        m.numerator_from = v['numerator_from'],
-        m.numerator_where = " ".join(v['numerator_where']),
-        m.numerator_columns = " ".join(v['numerator_columns']),
-        m.denominator_from = v['denominator_from'],
-        m.denominator_where = " ".join(v['denominator_where']),
-        m.denominator_columns = " ".join(v['denominator_columns']),
+        v = arrays_to_strings(_get_measure_data(m.id))
+        m.numerator_from = v['numerator_from']
+        m.numerator_where = v['numerator_where']
+        m.numerator_columns = v['numerator_columns']
+        m.denominator_from = v['denominator_from']
+        m.denominator_where = v['denominator_where']
+        m.denominator_columns = v['denominator_columns']
         m.save()
 
 class Migration(migrations.Migration):
