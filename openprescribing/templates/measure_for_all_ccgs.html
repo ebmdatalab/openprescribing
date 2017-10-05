@@ -49,7 +49,14 @@ text
                 <div class="status"></div>
             </div>
         </div>
-        <div class="explanation">{{{ chartExplanation }}}</div>
+        <div class="explanation">
+          {{{ chartExplanation }}}
+          {{#if numeratorCanBeQueried }}
+            {{#if oneEntityUrl }}
+               <a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.
+            {{/if}}
+           {{/if}}
+        </div>
     </div>
 </div>
 </script>
