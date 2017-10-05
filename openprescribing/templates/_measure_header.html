@@ -22,7 +22,7 @@
       {% endif %}
     </li>
     {% endif %}
-    {% if ccg %}
+    {% if ccg and measure.numerator_can_be_queried %}
     <li>
       <a href="{% url 'measure_for_one_ccg' measure.id ccg.code %}">Break the overall score down into individual presentations</a>
     </li>
