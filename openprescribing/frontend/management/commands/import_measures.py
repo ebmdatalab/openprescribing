@@ -548,9 +548,9 @@ class PracticeCalculation(MeasureCalculation):
             'numerator_from': self.measure['numerator_from'],
             'numerator_where': numerator_where,
             'numerator_columns': " ".join(
-                utils.get_columns_for_select('numerator')),
+                utils.get_columns_for_select(self.measure, 'numerator')),
             'denominator_columns': " ".join(
-                utils.get_columns_for_select('denominator')),
+                utils.get_columns_for_select(self.measure, 'denominator')),
             'denominator_from': self.measure['denominator_from'],
             'denominator_where': denominator_where,
             'numerator_aliases': numerator_aliases,
