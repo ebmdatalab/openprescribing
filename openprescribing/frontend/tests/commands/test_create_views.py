@@ -12,7 +12,8 @@ from common import utils
 from ebmdatalab.bigquery import Client
 from frontend.management.commands import create_views
 from frontend.models import ImportLog, PCT, PracticeStatistics
-from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA
+from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
+    PRESCRIBING_SCHEMA)
 from frontend.bq_schemas import ccgs_transform, statistics_transform
 from google.cloud import storage
 
@@ -50,14 +51,20 @@ class CommandsTestCase(SimpleTestCase):
             for table_name in [
                     'normalised_prescribing_standard',
                     'normalised_prescribing_legacy']:
-                table = client.get_table_ref(table_name)
+                table = client.get_or_create_table(
+                    table_name,
+                    PRESCRIBING_SCHEMA
+                )
                 table.insert_rows_from_csv(prescribing_fixture_path)
 
-            table = client.get_table_ref('ccgs')
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             columns = [field.name for field in CCG_SCHEMA]
             table.insert_rows_from_pg(PCT, columns, ccgs_transform)
 
-            table = client.get_table_ref('practice_statistics')
+            table = client.get_or_create_table(
+                'practice_statistics',
+                PRACTICE_STATISTICS_SCHEMA
+            )
             columns = [field.name for field in PRACTICE_STATISTICS_SCHEMA]
             columns[0] = 'date'
             columns[-1] = 'practice_id'
