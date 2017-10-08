@@ -12,7 +12,7 @@ from mock import MagicMock
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.cleanup_empty_classes')
 @patch('frontend.management.commands.generate_presentation_replacements'
-       '.load_data_from_file')
+       '.create_bigquery_table')
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.create_bigquery_views')
 class CommandsTestCase(TestCase):
