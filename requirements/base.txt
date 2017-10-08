@@ -30,16 +30,17 @@ google-cloud-storage==1.3.2
 google-resumable-media==0.2.3  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.5.3  # via google-cloud-core
 html2text==2016.9.19
-httplib2==0.10.3          # via google-api-python-client, oauth2client
+httplib2==0.10.3          # via google-api-python-client, oauth2client, pandas-gbq
 idna==2.6                 # via cryptography, requests
 jdcal==1.3                # via openpyxl
 lxml==3.6.4
 monotonic==1.3            # via tenacity
 networkx==1.11
 numpy==1.13.1
-oauth2client==4.1.2       # via google-api-python-client
+oauth2client==4.1.2       # via google-api-python-client, pandas-gbq
 oauthlib==2.0.4           # via requests-oauthlib
 openpyxl==2.3.3
+pandas-gbq==0.1.6
 pandas==0.20.2
 premailer==3.0.1
 protobuf==3.4.0           # via google-cloud-core, googleapis-common-protos
