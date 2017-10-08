@@ -1,4 +1,5 @@
 from datetime import date
+import os
 
 from ebmdatalab.bigquery import Client
 
@@ -14,8 +15,11 @@ from frontend.models import PPUSaving
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        prescribing_fixture_path = os.path.join(
+        fixtures_base_path = os.path.join(
             'frontend', 'tests', 'fixtures', 'commands',
+        )
+        prescribing_fixture_path = os.path.join(
+            fixtures_base_path,
             'prescribing_bigquery_fixture.csv'
         )
         client = Client('hscic')
@@ -23,7 +27,7 @@ class BigqueryFunctionalTests(TestCase):
         table.insert_rows_from_csv(prescribing_fixture_path)
         month = date(2015, 9, 1)
         dummy_substitutions = pd.read_csv(
-            fixtures_base + 'ppu_substitutions.csv')
+            os.path.join(fixtures_base_path, 'ppu_substitutions.csv'))
         with patch(
                 'frontend.management.commands.import_ppu_savings.pd.read_csv',
                 return_value=dummy_substitutions):
