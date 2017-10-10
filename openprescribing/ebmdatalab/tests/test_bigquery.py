@@ -14,8 +14,8 @@ from frontend.models import PCT
 
 class BQClientTest(TestCase):
     def setUp(self):
-        self.nonce = random.randrange(100)
-        self.dataset_name = 'bq_test_{:02d}'.format(self.nonce)
+        self.n = random.randrange(100)
+        self.dataset_name = 'bq_test_{:02d}'.format(self.n)
 
         client = Client(self.dataset_name)
         client.create_dataset()
@@ -72,7 +72,10 @@ class BQClientTest(TestCase):
 
         # Test TableExporter.export_to_storage and
         # TableExporter.download_from_storage_and_unzip
-        t1_exporter = TableExporter(t1, 'test_bq_client/test_table-{}'.format(self.nonce))
+        t1_exporter = TableExporter(
+            t1,
+            'test_bq_client/test_table-{}'.format(self.n)
+        )
         t1_exporter.export_to_storage()
 
         with tempfile.NamedTemporaryFile(mode='r+') as f:
@@ -86,11 +89,11 @@ class BQClientTest(TestCase):
         # Test Table.insert_rows_from_storage
         self.upload_to_storage(
             'ebmdatalab/tests/test_table.csv',
-            'test_bq_client/test_table-{}.csv'.format(self.nonce)
+            'test_bq_client/test_table-{}.csv'.format(self.n)
         )
 
         t2.insert_rows_from_storage(
-            'gs://ebmdatalab/test_bq_client/test_table-{}.csv'.format(self.nonce)
+            'gs://ebmdatalab/test_bq_client/test_table-{}.csv'.format(self.n)
         )
 
         self.assertEqual(sorted(t2.get_rows()), rows)
@@ -98,7 +101,7 @@ class BQClientTest(TestCase):
         # Test Client.get_or_create_storage_backed_table
         self.upload_to_storage(
             'ebmdatalab/tests/test_table_headers.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.nonce)
+            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
         )
 
         schema = [
@@ -109,7 +112,7 @@ class BQClientTest(TestCase):
         t3 = client.get_or_create_storage_backed_table(
             't3',
             schema,
-            'test_bq_client/test_table_headers-{}.csv'.format(self.nonce)
+            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
         )
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
@@ -118,7 +121,7 @@ class BQClientTest(TestCase):
 
         self.upload_to_storage(
             'ebmdatalab/tests/test_table_headers_2.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.nonce)
+            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
         )
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
@@ -144,7 +147,6 @@ class BQClientTest(TestCase):
         t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
-
 
     def upload_to_storage(self, local_path, storage_path):
         client = storage.client.Client(project='ebmdatalab')

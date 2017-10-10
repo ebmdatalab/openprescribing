@@ -105,7 +105,7 @@ class Client(object):
         query.run()
 
         # The call to .run() might return before results are actually ready.
-        # See # https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query#timeoutMs
+        # See https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query#timeoutMs
         wait_for_job(query.job)
 
         return query

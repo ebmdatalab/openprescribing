@@ -86,7 +86,8 @@ class Command(BaseCommand):
                 sql = f.read()
             sql = sql.replace('{{dataset}}', self.dataset_name)
             sql = sql.replace('{{this_month}}', prescribing_date)
-            pool.apply_async(query_and_export, [self.dataset_name, table.name, sql])
+            args = [self.dataset_name, table.name, sql]
+            pool.apply_async(query_and_export, args)
 
         pool.close()
         pool.join()  # wait for all worker processes to exit

@@ -14,7 +14,9 @@ class TableDumperTests(TestCase):
         PCT.objects.create(code='XYZ', name='CCG 2')
 
     def test_dump_to_file_with_transformer(self):
-        transformer = lambda row: [row[0][::-1], row[1].lower()]
+        def transformer(row):
+            return [row[0][::-1], row[1].lower()]
+
         dumper = TableDumper(PCT, ['code', 'name'], transformer)
 
         with tempfile.TemporaryFile() as f:

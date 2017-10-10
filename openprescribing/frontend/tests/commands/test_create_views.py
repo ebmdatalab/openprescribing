@@ -13,7 +13,7 @@ from ebmdatalab.bigquery import Client
 from frontend.management.commands import create_views
 from frontend.models import ImportLog, PCT, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
-    PRESCRIBING_SCHEMA)
+                                 PRESCRIBING_SCHEMA)
 from frontend.bq_schemas import ccgs_transform, statistics_transform
 from google.cloud import storage
 
@@ -68,7 +68,11 @@ class CommandsTestCase(SimpleTestCase):
             columns = [field.name for field in PRACTICE_STATISTICS_SCHEMA]
             columns[0] = 'date'
             columns[-1] = 'practice_id'
-            table.insert_rows_from_pg(PracticeStatistics, columns, statistics_transform)
+            table.insert_rows_from_pg(
+                PracticeStatistics,
+                columns,
+                statistics_transform
+            )
 
             client = storage.Client(project='ebmdatalab')
             bucket = client.get_bucket('ebmdatalab')
