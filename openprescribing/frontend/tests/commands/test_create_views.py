@@ -70,6 +70,11 @@ class CommandsTestCase(SimpleTestCase):
             columns[-1] = 'practice_id'
             table.insert_rows_from_pg(PracticeStatistics, columns, statistics_transform)
 
+            client = storage.Client(project='ebmdatalab')
+            bucket = client.get_bucket('ebmdatalab')
+            for blob in bucket.list_blobs(prefix='test_hscic/views/vw__'):
+                blob.delete()
+
         ImportLog.objects.create(
             category='prescribing', current_at='2015-10-01')
         # Create view tables and indexes

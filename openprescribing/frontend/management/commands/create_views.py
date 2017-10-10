@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 sql = f.read()
             sql = sql.replace('{{dataset}}', self.dataset_name)
             sql = sql.replace('{{this_month}}', prescribing_date)
-            pool.apply_async(query_and_export, [table, sql])
+            pool.apply_async(query_and_export, [self.dataset_name, table.name, sql])
 
         pool.close()
         pool.join()  # wait for all worker processes to exit
@@ -127,13 +127,16 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(dataset_name, table, sql):
+def query_and_export(dataset_name, table_name, sql):
     try:
-        storage_prefix = '{}/views/{}-'.format(dataset_name, table.name)
-        logger.info("Generating view %s and saving to %s" % (
-            table.name, storage_prefix))
+        client = Client(dataset_name)
+        table = client.get_table_ref(table_name)
 
-        logger.info("Running SQL for %s: %s" % (table.name, sql))
+        storage_prefix = '{}/views/{}-'.format(dataset_name, table_name)
+        logger.info("Generating view %s and saving to %s" % (
+            table_name, storage_prefix))
+
+        logger.info("Running SQL for %s: %s" % (table_name, sql))
         table.insert_rows_from_query(sql)
 
         exporter = TableExporter(table, storage_prefix)
@@ -144,7 +147,7 @@ def query_and_export(dataset_name, table, sql):
         logger.info('Exporting data to storage at %s' % storage_prefix)
         exporter.export_to_storage()
 
-        logger.info("View generation complete for %s" % table.name)
+        logger.info("View generation complete for %s" % table_name)
     except Exception:
         # Log the formatted error, because the multiprocessing pool
         # this is called from only shows the error message (with no
