@@ -132,6 +132,7 @@ def presentation_transform(row):
         row[2] = 'false'
     return row
 
+
 def ccgs_transform(row):
     if row[4]:
         row[4] = "%s 00:00:00" % row[4]
