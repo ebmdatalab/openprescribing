@@ -110,7 +110,7 @@ Specifically, you should:
         div = divs_for_month[-1]
         href = div.find_class('download-release')[0].attrib['href']
 
-        rsp = session.get(base_url, stream=True)
+        rsp = session.get(base_url + href, stream=True)
         
         with open(zip_path, 'wb') as f:
             for block in rsp.iter_content(32 * 1024):
