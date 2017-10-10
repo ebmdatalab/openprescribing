@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 
 from common import utils
-from ebmdatalab.bigquery import Client, TableExporter
+from gcutils.bigquery import Client, TableExporter
 from frontend.models import ImportLog
 
 

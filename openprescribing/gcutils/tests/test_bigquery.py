@@ -6,8 +6,8 @@ from google.cloud import storage
 
 from django.test import TestCase
 
-from ebmdatalab.bigquery import Client, TableExporter, build_schema
-from ebmdatalab.table_dumper import TableDumper
+from gcutils.bigquery import Client, TableExporter, build_schema
+from gcutils.table_dumper import TableDumper
 
 from frontend.models import PCT
 
@@ -50,7 +50,7 @@ class BQClientTest(TestCase):
         t1 = client.get_or_create_table('t1', schema)
 
         # Test Table.insert_rows_from_csv
-        t1.insert_rows_from_csv('ebmdatalab/tests/test_table.csv')
+        t1.insert_rows_from_csv('gcutils/tests/test_table.csv')
 
         self.assertEqual(sorted(t1.get_rows()), rows)
 
@@ -86,7 +86,7 @@ class BQClientTest(TestCase):
 
         # Test Table.insert_rows_from_storage
         self.upload_to_storage(
-            'ebmdatalab/tests/test_table.csv',
+            'gcutils/tests/test_table.csv',
             'test_bq_client/test_table-{}.csv'.format(self.n)
         )
 
@@ -98,7 +98,7 @@ class BQClientTest(TestCase):
 
         # Test Client.get_or_create_storage_backed_table
         self.upload_to_storage(
-            'ebmdatalab/tests/test_table_headers.csv',
+            'gcutils/tests/test_table_headers.csv',
             'test_bq_client/test_table_headers-{}.csv'.format(self.n)
         )
 
@@ -118,7 +118,7 @@ class BQClientTest(TestCase):
         self.assertEqual(sorted(results.rows), rows)
 
         self.upload_to_storage(
-            'ebmdatalab/tests/test_table_headers_2.csv',
+            'gcutils/tests/test_table_headers_2.csv',
             'test_bq_client/test_table_headers-{}.csv'.format(self.n)
         )
 

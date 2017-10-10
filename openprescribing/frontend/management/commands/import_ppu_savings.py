@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 
 from common.utils import valid_date
 from dmd.models import DMDProduct

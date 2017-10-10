@@ -10,7 +10,7 @@ from google.cloud.exceptions import Conflict
 
 from django.conf import settings
 
-from ebmdatalab.table_dumper import TableDumper
+from gcutils.table_dumper import TableDumper
 
 
 class Client(object):

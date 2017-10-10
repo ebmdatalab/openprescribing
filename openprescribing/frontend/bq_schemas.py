@@ -1,4 +1,4 @@
-from ebmdatalab.bigquery import build_schema
+from gcutils.bigquery import build_schema
 
 
 DMD_SCHEMA = build_schema(

@@ -27,7 +27,7 @@ from google.cloud import bigquery as gbigquery
 from google.cloud.bigquery.dataset import Dataset
 from google.cloud.exceptions import Conflict
 
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog

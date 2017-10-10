@@ -1,7 +1,7 @@
 from datetime import date
 import os
 
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 
 from django.conf import settings
 from django.test import TestCase

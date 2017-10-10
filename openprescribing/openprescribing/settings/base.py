@@ -200,7 +200,7 @@ LOCAL_APPS = (
     'frontend',
     'dmd',
     'pipeline',
-    'ebmdatalab',  # TODO rename this
+    'gcutils',
 )
 
 CONTRIB_APPS = (

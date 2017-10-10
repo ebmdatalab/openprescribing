@@ -109,7 +109,7 @@ from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab.bigquery import Client, TableExporter, build_schema
+from gcutils.bigquery import Client, TableExporter, build_schema
 
 
 logger = logging.getLogger(__name__)

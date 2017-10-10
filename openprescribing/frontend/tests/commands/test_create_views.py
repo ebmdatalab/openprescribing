@@ -9,7 +9,7 @@ from django.db import connection
 from django.test import SimpleTestCase
 
 from common import utils
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 from frontend.management.commands import create_views
 from frontend.models import ImportLog, PCT, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,

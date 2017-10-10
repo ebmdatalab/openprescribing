@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 from mock import patch
 from mock import MagicMock
 

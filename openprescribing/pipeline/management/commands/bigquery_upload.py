@@ -3,7 +3,7 @@ from __future__ import print_function
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
-from ebmdatalab.bigquery import Client
+from gcutils.bigquery import Client
 from frontend import models
 from frontend import bq_schemas as schemas
 

@@ -3,7 +3,7 @@ import tempfile
 
 from django.test import TestCase
 
-from ebmdatalab.table_dumper import TableDumper
+from gcutils.table_dumper import TableDumper
 from frontend.models import PCT
 
 
