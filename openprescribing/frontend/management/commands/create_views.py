@@ -75,7 +75,7 @@ class Command(BaseCommand):
 
         for path in self.view_paths:
             table_name = "vw__%s" % os.path.basename(path).replace('.sql', '')
-            table = client.get_table_ref(table_name)
+            table = client.get_table(table_name)
             tables.append(table)
 
             # We do a string replacement here as we don't know how many
@@ -131,7 +131,7 @@ class Command(BaseCommand):
 def query_and_export(dataset_name, table_name, sql):
     try:
         client = Client(dataset_name)
-        table = client.get_table_ref(table_name)
+        table = client.get_table(table_name)
 
         storage_prefix = '{}/views/{}-'.format(dataset_name, table_name)
         logger.info("Generating view %s and saving to %s" % (

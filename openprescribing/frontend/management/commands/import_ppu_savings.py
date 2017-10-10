@@ -103,7 +103,7 @@ def make_merged_table_for_month(month):
         'prescribing_with_merged_codes_%s' % month.strftime('%Y_%m'))
 
     client = Client(settings.BQ_HSCIC_DATASET)
-    table = client.get_table_ref(target_table_name)
+    table = client.get_table(target_table_name)
     table.insert_rows_from_query(sql)
     return target_table_name
 

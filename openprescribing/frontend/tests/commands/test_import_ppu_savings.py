@@ -23,7 +23,7 @@ class BigqueryFunctionalTests(TestCase):
             'prescribing_bigquery_fixture.csv'
         )
         client = Client('hscic')
-        table = client.get_table_ref(
+        table = client.get_table(
             settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD)
         table.insert_rows_from_csv(prescribing_fixture_path)
         month = date(2015, 9, 1)

@@ -215,7 +215,7 @@ def write_zero_prescribing_codes_table(level):
       COUNT(prescribing.bnf_code) = 0
     """ % (level, level)
     client = Client('tmp_eu')
-    table = client.get_table_ref('unused_codes_%s' % level)
+    table = client.get_table('unused_codes_%s' % level)
     table.insert_rows_from_query(sql)
     return table
 

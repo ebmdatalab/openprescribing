@@ -29,11 +29,11 @@ class Command(BaseCommand):
 
         client = Client('hscic')
 
-        table = client.get_table_ref('practices')
+        table = client.get_table('practices')
         columns = [field.name for field in schemas.PRACTICE_SCHEMA]
         table.insert_rows_from_pg(models.Practice, columns)
 
-        table = client.get_table_ref('presentation')
+        table = client.get_table('presentation')
         columns = [field.name for field in schemas.PRESENTATION_SCHEMA]
         table.insert_rows_from_pg(
             models.Presentation,
@@ -41,7 +41,7 @@ class Command(BaseCommand):
             schemas.presentation_transform
         )
 
-        table = client.get_table_ref('practice_statistics')
+        table = client.get_table('practice_statistics')
         columns = [field.name for field in schemas.PRACTICE_STATISTICS_SCHEMA]
         columns[0] = 'date'
         columns[1] = 'practice_id'
@@ -51,7 +51,7 @@ class Command(BaseCommand):
             schemas.statistics_transform
         )
 
-        table = client.get_table_ref('ccgs')
+        table = client.get_table('ccgs')
         columns = [field.name for field in schemas.CCG_SCHEMA]
         table.insert_rows_from_pg(
             models.PCT,

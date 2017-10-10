@@ -106,7 +106,7 @@ class Command(BaseCommand):
         self.assert_latest_data_not_already_uploaded(date)
 
         client = Client(settings.BQ_HSCIC_DATASET)
-        table = client.get_table_ref('prescribing')
+        table = client.get_table('prescribing')
 
         sql = """
          SELECT
@@ -151,7 +151,7 @@ class Command(BaseCommand):
         """ % (date, raw_data_table_name)
 
         client = Client(TEMP_DATASET)
-        table = client.get_table_ref('formatted_prescribing_%s' % date)
+        table = client.get_table('formatted_prescribing_%s' % date)
         table.insert_rows_from_query(sql, legacy=True)
         return table
 

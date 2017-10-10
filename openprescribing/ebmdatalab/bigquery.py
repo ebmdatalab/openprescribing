@@ -38,13 +38,8 @@ class Client(object):
         table.create()
         return Table(table, self.project_name)
 
-    def get_table_ref(self, table_name):
-        table = self.dataset.table(table_name)
-        return Table(table, self.project_name)
-
     def get_table(self, table_name):
         table = self.dataset.table(table_name)
-        table.reload()
         return Table(table, self.project_name)
 
     def get_or_create_table(self, table_name, schema):
@@ -132,6 +127,7 @@ class Table(object):
         )
 
     def get_rows(self):
+        self.gcbq_table.reload()
         return self.gcbq_table.fetch_data()
 
     def get_rows_as_dicts(self):

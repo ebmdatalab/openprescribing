@@ -55,12 +55,10 @@ class BQClientTest(TestCase):
         self.assertEqual(sorted(t1.get_rows()), rows)
 
         # Test Table.insert_rows_from_query
-        t2 = client.get_table_ref('t2')
+        t2 = client.get_table('t2')
 
         sql = 'SELECT * FROM {} WHERE a > 1'.format(t1.qualified_name)
         t2.insert_rows_from_query(sql)
-
-        t2 = client.get_table('t2')
 
         self.assertEqual(sorted(t2.get_rows()), rows[1:])
 

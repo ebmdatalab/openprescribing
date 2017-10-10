@@ -487,7 +487,7 @@ class BigqueryFunctionalTests(TestCase):
                 'prescribing_bigquery_fixture.csv'
             )
             client = Client('measures')
-            table = client.get_table_ref(settings.BQ_PRESCRIBING_TABLE_NAME)
+            table = client.get_table(settings.BQ_PRESCRIBING_TABLE_NAME)
             table.insert_rows_from_csv(prescribing_fixture_path)
         month = '2015-09-01'
         measure_id = 'cerazette'
