@@ -44,6 +44,18 @@
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/report/viewReportList.do?reportMenuItemId=211",
         "requires_captcha": true
     },
+    "dmd": {
+      "title": "Dictionary of medicines and devices (dm+d)" ,
+      "description": "The dm+d is a dictionary of descriptions and codes which represent medicines and devices in use across the NHS.",
+      "publisher": "NHS Business Services Authority",
+      "publication_schedule": "weekly",
+      "index_url": "https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/dictionary-medicines-and-devices-dmd",
+      "requires_captcha": true,
+      "notes": "Run `./manage.py fetch_dmd {year} {month}` and follow the instructions."
+    },
+    "dmd_snomed": {
+      "title": "TODO"
+    },
     "nhs_payments_to_general_practice": {
         "title": "Summary of annual payments by NHS to GPs",
         "description": "Payments are broken down by category, The formula for working out payments is based on a weighted patient list size, which we might find useful. It is calculated as per the [GP Contract](http://systems.hscic.gov.uk/ssd/downloads/newgpcontractpay/ngms-contents/appaglobalsum#CalcPracPCOWeightedListsize), and factors in Age/Sex, Additional Needs, Turnover, Market Forces, Rurality, and Nursing/Residential homes.",
