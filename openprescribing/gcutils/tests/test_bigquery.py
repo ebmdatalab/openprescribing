@@ -14,8 +14,8 @@ from frontend.models import PCT
 
 class BQClientTest(TestCase):
     def setUp(self):
-        self.n = random.randrange(100)
-        self.dataset_name = 'bq_test_{:02d}'.format(self.n)
+        self.n = random.randrange(10000)
+        self.dataset_name = 'bq_test_{:04d}'.format(self.n)
 
         client = Client(self.dataset_name)
         client.create_dataset()
