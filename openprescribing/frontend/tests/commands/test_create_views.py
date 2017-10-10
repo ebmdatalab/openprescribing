@@ -9,9 +9,12 @@ from django.db import connection
 from django.test import SimpleTestCase
 
 from common import utils
-from ebmdatalab import bigquery
+from gcutils.bigquery import Client
 from frontend.management.commands import create_views
-from frontend.models import ImportLog
+from frontend.models import ImportLog, PCT, PracticeStatistics
+from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
+                                 PRESCRIBING_SCHEMA)
+from frontend.bq_schemas import ccgs_transform, statistics_transform
 from google.cloud import storage
 
 
@@ -19,16 +22,6 @@ def _mockFile(name):
     mock = MagicMock(spec=file, name=name)
     mock.configure_mock(name='frontend/tests/fixtures/commands/' + name)
     return mock
-
-
-class UnitTests(unittest.TestCase):
-    @patch('frontend.management.commands.create_views.download_from_gcs')
-    def test_download_and_unzip_skips_extra_headers(self, mock_download):
-        mock_download.return_value = [
-            _mockFile('csv_part_1.gz'),
-            _mockFile('csv_part_2.gz')]
-        unzipped = create_views.download_and_unzip('foo')
-        self.assertEqual(unzipped.read().count("a,b,c"), 1)
 
 
 class CommandsTestCase(SimpleTestCase):
@@ -48,24 +41,43 @@ class CommandsTestCase(SimpleTestCase):
             call_command('loaddata',
                          'frontend/tests/fixtures/practice_listsizes.json',
                          verbosity=0)
-            fixtures_base = 'frontend/tests/fixtures/commands/'
-            prescribing_fixture = (fixtures_base +
-                                   'prescribing_bigquery_views_fixture.csv')
-            db_name = 'test_' + utils.get_env_setting('DB_NAME')
-            env = patch.dict(
-                'os.environ', {'DB_NAME': db_name})
-            with env:
-                # We patch the environment as this is how the
-                # ebmdatalab/bigquery library selects a database
-                for table in [
-                        'normalised_prescribing_standard',
-                        'normalised_prescribing_legacy']:
-                    bigquery.load_prescribing_data_from_file(
-                        'test_hscic',
-                        table,
-                        prescribing_fixture)
-                bigquery.load_ccgs_from_pg('test_hscic')
-                bigquery.load_statistics_from_pg('test_hscic')
+            prescribing_fixture_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands',
+                'prescribing_bigquery_views_fixture.csv'
+            )
+
+            client = Client('test_hscic')
+
+            for table_name in [
+                    'normalised_prescribing_standard',
+                    'normalised_prescribing_legacy']:
+                table = client.get_or_create_table(
+                    table_name,
+                    PRESCRIBING_SCHEMA
+                )
+                table.insert_rows_from_csv(prescribing_fixture_path)
+
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
+            columns = [field.name for field in CCG_SCHEMA]
+            table.insert_rows_from_pg(PCT, columns, ccgs_transform)
+
+            table = client.get_or_create_table(
+                'practice_statistics',
+                PRACTICE_STATISTICS_SCHEMA
+            )
+            columns = [field.name for field in PRACTICE_STATISTICS_SCHEMA]
+            columns[0] = 'date'
+            columns[-1] = 'practice_id'
+            table.insert_rows_from_pg(
+                PracticeStatistics,
+                columns,
+                statistics_transform
+            )
+
+            client = storage.Client(project='ebmdatalab')
+            bucket = client.get_bucket('ebmdatalab')
+            for blob in bucket.list_blobs(prefix='test_hscic/views/vw__'):
+                blob.delete()
 
         ImportLog.objects.create(
             category='prescribing', current_at='2015-10-01')

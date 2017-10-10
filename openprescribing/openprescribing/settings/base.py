@@ -200,6 +200,7 @@ LOCAL_APPS = (
     'frontend',
     'dmd',
     'pipeline',
+    'gcutils',
 )
 
 CONTRIB_APPS = (

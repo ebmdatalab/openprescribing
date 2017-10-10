@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from ebmdatalab import bigquery
+from gcutils.bigquery import Client
 from mock import patch
 from mock import MagicMock
 
@@ -63,8 +63,8 @@ class UnitTests(TestCase):
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
-        g = GlobalCalculation('cerazette', under_test=True)
-        with patch.object(g, 'get_rows') as patched_calc:
+        g = GlobalCalculation('cerazette')
+        with patch.object(g, 'get_rows_as_dicts') as patched_calc:
             patched_calc.return_value = [
                 {
                     'ccg_cost_savings_10': 1785,
@@ -130,8 +130,8 @@ class UnitTests(TestCase):
         Measure.objects.create(id='cerazette', tags=["foo"])
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
-        p = PracticeCalculation('cerazette', under_test=True)
-        with patch.object(p, 'get_rows') as patched_calc:
+        p = PracticeCalculation('cerazette')
+        with patch.object(p, 'get_rows_as_dicts') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
             patched_calc.return_value = [
                 {'calc_value': 0,
@@ -482,19 +482,13 @@ class BigqueryFunctionalTests(TestCase):
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
-            fixtures_base = 'frontend/tests/fixtures/commands/'
-            prescribing_fixture = (fixtures_base +
-                                   'prescribing_bigquery_fixture.csv')
-            practices_fixture = fixtures_base + 'practices.csv'
-            bigquery.load_prescribing_data_from_file(
-                'measures',
-                settings.BQ_PRESCRIBING_TABLE_NAME,
-                prescribing_fixture)
-            bigquery.load_data_from_file(
-                'measures',
-                settings.BQ_PRACTICES_TABLE_NAME,
-                practices_fixture,
-                bigquery.PRACTICE_SCHEMA)
+            prescribing_fixture_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands',
+                'prescribing_bigquery_fixture.csv'
+            )
+            client = Client('measures')
+            table = client.get_table(settings.BQ_PRESCRIBING_TABLE_NAME)
+            table.insert_rows_from_csv(prescribing_fixture_path)
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
