@@ -19,6 +19,7 @@ django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-rest-swagger==0.3.5
 django==1.9.1
+djangorestframework-csv==1.4.1
 djangorestframework==3.3.2
 et-xmlfile==1.0.1         # via openpyxl
 futures==3.1.1            # via requests-futures, tenacity
@@ -57,7 +58,7 @@ requests-futures==0.9.7
 requests-oauthlib==0.8.0  # via django-allauth
 requests[security]==2.18.4
 rsa==3.4.2                # via google-auth, oauth2client
-six==1.11.0               # via cryptography, django-anymail, google-api-python-client, google-auth, google-cloud-core, google-resumable-media, oauth2client, protobuf, pyopenssl, python-dateutil, tenacity
+six==1.11.0               # via cryptography, django-anymail, djangorestframework-csv, google-api-python-client, google-auth, google-cloud-core, google-resumable-media, oauth2client, protobuf, pyopenssl, python-dateutil, tenacity
 tenacity==4.4.0           # via google-cloud-core
 titlecase==0.8.2
 tqdm==4.14.0
