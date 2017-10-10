@@ -96,6 +96,7 @@ class Client(object):
 
         query = self.gcbq_client.run_sync_query(sql)
         set_options(query, options)
+        query.use_legacy_sql = legacy
 
         query.run()
 
@@ -117,6 +118,14 @@ class Table(object):
     @property
     def qualified_name(self):
         return '{}.{}'.format(self.dataset_name, self.name)
+
+    @property
+    def full_qualified_name(self):
+        return '{}.{}.{}'.format(
+            self.project_name,
+            self.dataset_name,
+            self.name
+        )
 
     @property
     def legacy_full_qualified_name(self):
