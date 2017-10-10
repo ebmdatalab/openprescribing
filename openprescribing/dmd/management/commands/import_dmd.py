@@ -44,11 +44,10 @@ import logging
 import glob
 import os
 import re
+import zipfile
 
 from django.core.management.base import BaseCommand
-from django.db import connection
-from django.db import transaction
-
+from django.db import connection, transaction
 
 logger = logging.getLogger(__name__)
 
@@ -304,7 +303,7 @@ class Command(BaseCommand):
             'https://isd.digital.nhs.uk/trud3.')
 
     def add_arguments(self, parser):
-        parser.add_argument('--source_directory', required=True)
+        parser.add_argument('--zip_path', required=True)
         parser.add_argument(
             '--extract_test',
             help=("Write test fixtures to source_directory, based on the "
@@ -314,10 +313,15 @@ class Command(BaseCommand):
         '''
         Import dm+d dataset.
         '''
+        dir_path = os.dirname(options['zip_path'])
+
+        with zipfile.ZipFile(options['zip_path']) as zf:
+            zf.extractall(dir_path)
+
         if options['extract_test']:
-            extract_test(options['source_directory'])
+            extract_test(dir_path)
         else:
             with transaction.atomic():
-                process_datafiles(options['source_directory'])
+                process_datafiles(dir_path)
             with transaction.atomic():
                 create_dmd_product()

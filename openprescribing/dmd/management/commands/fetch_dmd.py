@@ -2,7 +2,6 @@ from argparse import RawTextHelpFormatter
 import datetime
 import os
 import re
-import zipfile
 
 from lxml import html
 import requests
@@ -78,14 +77,13 @@ Specifically, you should:
         zip_path = os.path.join(dir_path, 'download.zip')
 
         if os.path.exists(dir_path):
-            print('Data already downloaded for', year_and_month)
+            print 'Data already downloaded for', year_and_month
             return
 
         mkdir_p(dir_path)
 
         session = requests.Session()
         session.cookies['JSESSIONID'] = jsessionid
-
 
         base_url = 'https://isd.digital.nhs.uk/'
 
@@ -116,13 +114,9 @@ Specifically, you should:
             for block in rsp.iter_content(32 * 1024):
                 f.write(block)
 
-        with zipfile.ZipFile(zip_path) as zf:
-            zf.extractall(dir_path)
-
 
 def extract_date(div):
     return datetime.datetime.strptime(
         div.find('p').text.strip().splitlines()[1].strip(),
         '%A, %d %B %Y'
     )
-
