@@ -211,30 +211,6 @@ def create_dmd_product():
                 cursor.execute(sql)
 
 
-def add_bnf_codes(source_directory):
-    """Parse BNF->dm+d mapping supplied by NHSBSA and update tables
-    accordingly.
-
-    This mapping should be updated monthly. At present we have to
-    request it by email from NHSBSA, but they are planning to publish
-    it automatically some time during 2017.
-
-    """
-    from openpyxl import load_workbook
-    wb = load_workbook(
-        filename=os.path.join(
-            source_directory, "Converted_DRUG_SNOMED_BNF.xlsx"))
-    rows = wb.active.rows
-    with connection.cursor() as cursor:
-        for row in rows[1:]:  # skip header
-            bnf_code = row[0].value
-            snomed_code = row[4].value
-            sql = "UPDATE dmd_product SET BNF_CODE = %s WHERE DMDID = %s "
-            cursor.execute(sql.lower(), [bnf_code, snomed_code])
-            rowcount = cursor.rowcount
-            if not rowcount:
-                logging.warn(
-                    "When adding BNF codes, could not find %s", snomed_code)
 
 
 def process_gtin(cursor, f):
@@ -345,5 +321,3 @@ class Command(BaseCommand):
                 process_datafiles(options['source_directory'])
             with transaction.atomic():
                 create_dmd_product()
-            with transaction.atomic():
-                add_bnf_codes(options['source_directory'])
