@@ -15,10 +15,12 @@ from gcutils.table_dumper import TableDumper
 
 class Client(object):
     def __init__(self, dataset_name):
-        # TODO: pass in credentials, rather than inferring from environment
         self.project_name = settings.BQ_PROJECT
         self.dataset_name = dataset_name
 
+        # gcbq expects an environment variable called
+        # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
+        # containing the credentials to access Google Cloud Services.
         self.gcbq_client = gcbq.Client(project=self.project_name)
         self.dataset = self.gcbq_client.dataset(dataset_name)
 
@@ -281,8 +283,6 @@ def wait_for_job(job, timeout_s=60):
 
     if job.errors is not None:
         raise JobError(job.errors)
-
-    # TODO Log time and cost
 
 
 class TimeoutError(StandardError):
