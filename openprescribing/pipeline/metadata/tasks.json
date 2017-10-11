@@ -200,6 +200,13 @@
             "upload_to_bigquery"
         ]
     },
+    "backup_prescribing": {
+        "type": "post_process",
+        "command": "backup_prescribing_table",
+        "dependencies": [
+            "convert_hscic_prescribing"
+        ]
+    },
     "update_smoketests": {
         "type": "post_process",
         "command": "update_smoketests {last_imported}",
