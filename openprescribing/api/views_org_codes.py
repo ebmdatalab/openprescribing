@@ -4,7 +4,6 @@ import view_utils as utils
 from django.db.models import Q
 from frontend.models import PCT, Practice
 
-
 @api_view(['GET'])
 def org_codes(request, format=None):
     org_codes = utils.param_to_list(request.query_params.get('q', None))
@@ -50,8 +49,10 @@ def _get_org_from_code(q, is_exact, org_type):
 
 def _get_practices_like_code(q):
     if q:
-        practices = Practice.objects.filter(Q(code__istartswith=q) |
-                                            Q(name__icontains=q))
+        practices = Practice.objects.filter(
+            Q(setting=4) & Q(status_code='A') & (
+                Q(code__istartswith=q) |
+                Q(name__icontains=q) | Q(postcode__istartswith=q))).order_by('name')
     else:
         practices = Practice.objects.all()
     results = []
@@ -60,6 +61,7 @@ def _get_practices_like_code(q):
             'id': p.code,
             'code': p.code,
             'name': p.name,
+            'postcode': p.postcode,
             'setting': p.setting,
             'setting_name': None,
             'type': 'Practice',
