@@ -8,4 +8,5 @@ werkzeug
 flake8
 fabric==1.13.1
 django-dotenv
+graphviz
 pip-tools
