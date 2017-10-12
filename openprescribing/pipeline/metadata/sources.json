@@ -54,7 +54,12 @@
       "notes": "Run `./manage.py fetch_dmd {year} {month}` and follow the instructions."
     },
     "dmd_snomed": {
-      "title": "TODO"
+      "title": "Mapping of SNOMED to BNF codes",
+      "description": "This mapping is supplied privately via email (web version promised repeatedly). ",
+      "publisher": "NHS Business Services Authority",
+      "publication_schedule": "approximately monthly, or when they get back to us",
+      "index_url": "",
+      "notes": "Current contact is Margaret Dockey; the file to ask for is the BNF/SNOMED mapping. Seb has email threads that can be followed up"
     },
     "nhs_payments_to_general_practice": {
         "title": "Summary of annual payments by NHS to GPs",
