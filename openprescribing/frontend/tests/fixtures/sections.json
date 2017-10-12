@@ -8,18 +8,20 @@
       "number_str": "2.2.1",
       "bnf_chapter": 2,
       "bnf_section": 2,
-      "bnf_para": 1
+      "bnf_para": 1,
+      "is_current": true
     }
   },
   {
     "model": "frontend.section",
-    "pk": "0202",
+    "pk": "0204",
     "fields": {
       "bnf_id": "0204",
       "name": "Beta-Adrenoceptor Blocking Drugs",
       "number_str": "2.4",
       "bnf_chapter": 2,
-      "bnf_section": 4
+      "bnf_section": 4,
+      "is_current": true
     }
   },
   {
@@ -30,7 +32,8 @@
       "name": "Diuretics",
       "number_str": "2.2",
       "bnf_chapter": 2,
-      "bnf_section": 2
+      "bnf_section": 2,
+      "is_current": true
     }
   },
   {
@@ -40,7 +43,8 @@
       "bnf_id": "02",
       "name": "Cardiovascular System",
       "number_str": "2",
-      "bnf_chapter": 2
+      "bnf_chapter": 2,
+      "is_current": true
     }
   },
   {
@@ -51,7 +55,8 @@
       "name": "Antiviral Drugs",
       "number_str": "5.3",
       "bnf_chapter": 5,
-      "bnf_section": 3
+      "bnf_section": 3,
+      "is_current": true
     }
   },
   {
