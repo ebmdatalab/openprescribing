@@ -51,10 +51,16 @@ text
         </div>
         <div class="explanation">
           {{{ chartExplanation }}}
+          <ul>
+            <li>
+              <a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a>
+            </li>
           {{#if numeratorCanBeQueried }}
             {{#if oneEntityUrl }}
+              <li>
                <a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.
-            {{/if}}
+              </li>
+             {{/if}}
            {{/if}}
         </div>
     </div>

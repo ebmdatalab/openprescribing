@@ -312,6 +312,7 @@ var utils = {
     var oneEntityUrl;
     var measureId;
     var tagsFocusUrl;
+    var measureForAllPracticesUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -319,6 +320,7 @@ var utils = {
       chartTitleUrl = '/ccg/';
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
+      measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = '/measure/' + d.id;
       measureId = d.id;
     } else {
@@ -328,6 +330,7 @@ var utils = {
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
         '/' + d.id;
       measureId = options.measure;
+      measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }
     var orgId;
     if (options.rollUpBy == 'org_id') {
@@ -382,7 +385,8 @@ var utils = {
       chartTitleUrl: chartTitleUrl,
       tagsFocus: d.tagsFocus,
       tagsFocusUrl: tagsFocusUrl,
-      chartExplanation: chartExplanation
+      measureForAllPracticesUrl: measureForAllPracticesUrl,
+      chartExplanation: chartExplanation,
     };
   },
 
