@@ -32,3 +32,5 @@ tramp
 Thumbs.db
 Desktop.ini
 Icon?
+.coverage
+htmlcov
