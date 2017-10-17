@@ -184,7 +184,7 @@ def create_bigquery_table():
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
         csv_file.seek(0)
         client = Client('hscic')
-        table = Client.get_or_create_table('bnf_map', BNF_MAP_SCHEMA)
+        table = client.get_or_create_table('bnf_map', BNF_MAP_SCHEMA)
         table.insert_rows_from_csv(csv_file.name)
 
 

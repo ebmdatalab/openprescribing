@@ -1,4 +1,5 @@
 import csv
+import sys
 from django.core.management.base import BaseCommand
 from frontend.models import PCT, Practice, QOFPrevalence
 
@@ -23,7 +24,6 @@ class Command(BaseCommand):
             print 'Please supply an option for year, e.g. 2013'
             sys.exit
 
-    def handle(self, *args, **options):
         start_year = options['start_year']
         ccg_file = options['by_ccg']
         practice_file = options['by_practice']
