@@ -313,7 +313,7 @@ class Command(BaseCommand):
         '''
         Import dm+d dataset.
         '''
-        dir_path = os.dirname(options['zip_path'])
+        dir_path = os.path.dirname(options['zip_path'])
 
         with zipfile.ZipFile(options['zip_path']) as zf:
             zf.extractall(dir_path)
