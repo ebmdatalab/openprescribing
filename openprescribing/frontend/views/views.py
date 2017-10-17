@@ -1,4 +1,6 @@
 from lxml import html
+from requests.exceptions import HTTPError
+import hashlib
 import requests
 import sys
 
@@ -12,6 +14,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.db.models import Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -24,6 +27,8 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
 from common.utils import valid_date
+from common.utils import get_env_setting
+
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
@@ -32,8 +37,10 @@ from frontend.models import Measure
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
+from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
 
+from mailchimp3 import MailChimp
 
 ##################################################
 # BNF SECTIONS
@@ -238,38 +245,68 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     }
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
-
-def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+def ccg_home_page(request, ccg_code):
+    measure = get_object_or_404(Measure, id='keppra')
+    ccg = get_object_or_404(PCT, code=ccg_code)
     if request.method == 'POST':
         form = _handleCreateBookmark(
             request,
             OrgBookmark,
             OrgBookmarkForm,
             'pct')
+
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
         form = OrgBookmarkForm(
-            initial={'pct': requested_ccg.pk,
+            initial={'pct': ccg.pk,
                      'email': getattr(request.user, 'email', '')})
     if request.user.is_authenticated():
         signed_up_for_alert = request.user.orgbookmark_set.filter(
-            pct=requested_ccg)
+            pct=ccg)
     else:
         signed_up_for_alert = False
+    alert_preview_action = reverse(
+        'preview-ccg-bookmark', args=[ccg.code])
+    practices = Practice.objects.filter(
+        ccg=ccg).filter(
+            setting=4).order_by('name')
+    date = _specified_or_last_date(request, 'ppu')
+    total_possible_savings = PPUSaving.objects.filter(
+        date=date,
+        pct=ccg,
+        practice__isnull=True,
+
+        ).aggregate(Sum('possible_savings'))['possible_savings__sum']
+    # find an interesting measure which isn't NHS Low Priority
+    # XXX some of these aren't used
+    measures_count = Measure.objects.count()
+    context = {
+        'measure': measure,
+        'measures_count': measures_count,
+        'ccg': ccg,
+        'possible_savings': total_possible_savings,
+        'practices': practices,
+        'entity': ccg,
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
+        'date': date,
+        'alert_preview_action': alert_preview_action,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert,
+        'by_ccg': True
+    }
+    return render(request, 'ccg_home_page.html', context)
+
+def measures_for_one_ccg(request, ccg_code):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
-    alert_preview_action = reverse(
-        'preview-ccg-bookmark', args=[requested_ccg.code])
     context = {
-        'alert_preview_action': alert_preview_action,
         'ccg': requested_ccg,
         'practices': practices,
         'page_id': ccg_code,
-        'form': form,
-        'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
@@ -348,50 +385,74 @@ def analyse(request):
     return render(request, 'analyse.html', context)
 
 
+
 def _handleCreateBookmark(request, subject_class,
                           subject_form_class,
                           *subject_field_ids):
     form = subject_form_class(request.POST)
     if form.is_valid():
         email = form.cleaned_data['email']
-        try:
-            user = User.objects.create_user(
-                username=email, email=email)
-        except IntegrityError:
-            user = User.objects.get(username=email)
-        user = authenticate(key=user.profile.key)
-        kwargs = {
-            'user': user
-        }
-        for field in subject_field_ids:
-            kwargs[field] = form.cleaned_data[field]
-        # An unverified account can only create unapproved bookmarks.
-        # When an account is verified, all its bookmarks are
-        # approved. Whenever someone tries to add a bookmark for
-        # someone else's email address (or they're not logged in),
-        # that email address is marked as unverified again.  In this
-        # way we can allow people who remain logged in to add several
-        # alerts without having to reconfirm by email.
-        emailaddress = EmailAddress.objects.filter(user=user)
-        if user == request.user:
-            kwargs['approved'] = emailaddress.filter(verified=True).exists()
-        else:
-            kwargs['approved'] = False
-            emailaddress.update(verified=False)
-        subject_class.objects.get_or_create(**kwargs)
-        if hasattr(request, 'user'):
-            # Log the user out. We don't use Django's built-in logout
-            # mechanism because that clears the entire session, too,
-            # and we want to know if someone's logged in previously in
-            # this session.
-            request.user = AnonymousUser()
-            for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-                if k in request.session:
-                    del(request.session[k])
-        return perform_login(
-            request, user,
-            app_settings.EmailVerificationMethod.MANDATORY,
-            signup=True)
+        if 'newsletter' in form.cleaned_data['newsletters']:
+            list_id = 'b2b7873a73'
+            email_hash = hashlib.md5(email).hexdigest()
+            data = {
+                'email_address': email,
+                'status': 'subscribed'
+            }
+            client = MailChimp(
+                get_env_setting('MAILCHIMP_USER'),
+                get_env_setting('MAILCHIMP_API_KEY'))
+            try:
+                client.lists.members.get(list_id=list_id, subscriber_hash=email_hash)
+            except HTTPError:
+                try:
+                    client.lists.members.create(list_id=list_id, data=data)
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        'You have successfully signed up for the newsletter')
+                except HTTPError:
+                    # things like blacklisted emails, etc
+                    pass
+        if 'alerts' in form.cleaned_data['newsletters']:
+            try:
+                user = User.objects.create_user(
+                    username=email, email=email)
+            except IntegrityError:
+                user = User.objects.get(username=email)
+            user = authenticate(key=user.profile.key)
+            kwargs = {
+                'user': user
+            }
+            for field in subject_field_ids:
+                kwargs[field] = form.cleaned_data[field]
+            # An unverified account can only create unapproved bookmarks.
+            # When an account is verified, all its bookmarks are
+            # approved. Whenever someone tries to add a bookmark for
+            # someone else's email address (or they're not logged in),
+            # that email address is marked as unverified again.  In this
+            # way we can allow people who remain logged in to add several
+            # alerts without having to reconfirm by email.
+            emailaddress = EmailAddress.objects.filter(user=user)
+            if user == request.user:
+                kwargs['approved'] = emailaddress.filter(verified=True).exists()
+            else:
+                kwargs['approved'] = False
+                emailaddress.update(verified=False)
+            subject_class.objects.get_or_create(**kwargs)
+            if hasattr(request, 'user'):
+                # Log the user out. We don't use Django's built-in logout
+                # mechanism because that clears the entire session, too,
+                # and we want to know if someone's logged in previously in
+                # this session.
+                request.user = AnonymousUser()
+                for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
+                    if k in request.session:
+                        del(request.session[k])
+            return perform_login(
+                request, user,
+                app_settings.EmailVerificationMethod.MANDATORY,
+                signup=True)
     return form
 
 

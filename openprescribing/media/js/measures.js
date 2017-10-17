@@ -67,9 +67,11 @@
 
           var html = '';
           _.each(chartData, function(d) {
-            html += panelTemplate(d);
+            // is chartId being set here?
+            html = panelTemplate(d);
+            $(d.chartContainerId).append(html);
           });
-          $(_this.el.charts).html(html);
+          // So here, we need the ability to set the HTML of different ids.
           _.each(chartData, function(d, i) {
             if (i < _this.graphsToRenderInitially) {
               var chOptions = mu.getGraphOptions(d,

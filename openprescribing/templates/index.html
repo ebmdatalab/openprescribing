@@ -3,20 +3,38 @@
 
 {% block title %}Home{% endblock %}
 {% block active_class %}home{% endblock %}
+{% block container_class %}home{% endblock %}
 
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
-
+<center>
 <h1>Explore England's prescribing data</h1>
+
+<div class="row">
+  <div class="col md-8">
+<form>
+  <h3>Search for a practice or CCG:</h3>
 
 <div class="bigdrop">
 <select style="width: 100%" id="homeOrg">
 </select>
+</div>
+  </div>
+  </div>
+<div class="row">
+  <div class="col md-8">
 
+<h3>or search for a drug, class of drug, or chemical:</h3>
+<div class="bigdrop">
+<select style="width: 100%" id="homeDrug">
+</select>
+</div>
+</form>
+</div>
 </div>
 
 </div>
-
+</center>
 {% endblock %}
 
 {% block extra_js %}

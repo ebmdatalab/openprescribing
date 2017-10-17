@@ -44,7 +44,7 @@ def _numerator_can_be_queried(measuredata):
 
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measure = request.query_params.get('measure', None)
+    measures = request.query_params.get('measure', "").split(',')
     tags = request.query_params.get('tags', None)
     params = []
     query = 'SELECT mg.month AS date, mg.numerator,  '
@@ -57,9 +57,14 @@ def measure_global(request, format=None):
     query += 'ms.low_is_good '
     query += "FROM frontend_measureglobal mg "
     query += "JOIN frontend_measure ms ON mg.measure_id=ms.id "
-    if measure:
-        query += "WHERE mg.measure_id=%s "
-        params.append(measure)
+    if measures:
+        query += 'WHERE ('
+        for i, measure in enumerate(measures, 1):
+            query += "mg.measure_id=%s "
+            params.append(measure)
+            if i != len(measures):
+                query += 'OR '
+        query += ') '
     if tags:
         for tag in tags.split(','):
             query += "AND %s = ANY(ms.tags) "
@@ -166,7 +171,7 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measure = request.query_params.get('measure', None)
+    measures = request.query_params.get('measure', '').split(',')
     orgs = utils.param_to_list(request.query_params.get('org', []))
     tags = request.query_params.get('tags', None)
     params = []
@@ -192,9 +197,14 @@ def measure_by_ccg(request, format=None):
                 query += ' OR '
         query += ") AND "
     query += 'mv.practice_id IS NULL '
-    if measure:
-        query += "AND mv.measure_id=%s "
-        params.append(measure)
+    if measures:
+        query += 'AND ('
+        for i, measure in enumerate(measures, 1):
+            query += "mv.measure_id=%s "
+            params.append(measure)
+            if i != len(measures):
+                query += ' OR '
+        query += ') '
     if tags:
         for tag in tags.split(','):
             query += "AND %s = ANY(ms.tags) "
