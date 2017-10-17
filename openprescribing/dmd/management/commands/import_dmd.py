@@ -210,8 +210,6 @@ def create_dmd_product():
                 cursor.execute(sql)
 
 
-
-
 def process_gtin(cursor, f):
     doc = etree.parse(f)
     root = doc.getroot()
