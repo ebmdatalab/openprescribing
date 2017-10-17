@@ -1,0 +1,4 @@
+[flake8]
+exclude = *migrations*,*settings*
+ignore = E501
+statistics = true
