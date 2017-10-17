@@ -1,5 +1,4 @@
 import csv
-import os
 import tempfile
 
 from google.cloud import storage

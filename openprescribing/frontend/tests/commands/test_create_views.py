@@ -1,16 +1,12 @@
 import os
-import unittest
 
-from mock import patch
 from mock import MagicMock
 
 from django.core.management import call_command
 from django.db import connection
 from django.test import SimpleTestCase
 
-from common import utils
 from gcutils.bigquery import Client
-from frontend.management.commands import create_views
 from frontend.models import ImportLog, PCT, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
                                  PRESCRIBING_SCHEMA)

@@ -11,7 +11,6 @@ import re
 import uuid
 
 from django.core.exceptions import ImproperlyConfigured
-from django.forms.models import model_to_dict
 from django import db
 
 logger = logging.getLogger(__name__)

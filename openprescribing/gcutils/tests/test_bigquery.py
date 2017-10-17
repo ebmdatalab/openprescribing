@@ -7,7 +7,6 @@ from google.cloud import storage
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema
-from gcutils.table_dumper import TableDumper
 
 from frontend.models import PCT
 

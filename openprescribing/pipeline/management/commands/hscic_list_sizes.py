@@ -2,7 +2,6 @@ import requests
 from lxml import html
 import datetime
 import subprocess
-import urlparse
 import os
 
 from django.conf import settings

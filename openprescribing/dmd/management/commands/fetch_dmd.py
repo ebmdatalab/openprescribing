@@ -1,12 +1,10 @@
 from argparse import RawTextHelpFormatter
 import datetime
 import os
-import re
 import zipfile
 
 from lxml import html
 import requests
-from tqdm import tqdm
 
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError

@@ -2,7 +2,7 @@ import csv
 import re
 import sys
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from frontend.models import Presentation
 
 

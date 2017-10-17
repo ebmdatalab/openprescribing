@@ -1,4 +1,3 @@
-import sys
 import xlrd
 from django.core.management.base import BaseCommand
 from frontend.models import Practice, PracticeIsDispensing as PID

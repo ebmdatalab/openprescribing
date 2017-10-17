@@ -101,7 +101,6 @@ from django.core.management.base import CommandError
 from django.db import connection
 from django.db import transaction
 
-from google.cloud.bigquery import SchemaField
 from google.cloud.exceptions import Conflict
 
 from frontend.models import Chemical

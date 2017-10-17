@@ -2,11 +2,9 @@ import csv
 import datetime
 import logging
 import re
-import subprocess
 import tempfile
 
 from dateutil.relativedelta import relativedelta
-from google.cloud.bigquery.dataset import Dataset
 
 from django.core.management.base import BaseCommand
 from django.db import connection
