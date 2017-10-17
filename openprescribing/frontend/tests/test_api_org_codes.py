@@ -8,10 +8,9 @@ from frontend.models import PCT
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
+    management.call_command('loaddata', fix_dir + 'ccgs.json', verbosity=0)
+    management.call_command(
+        'loaddata', fix_dir + 'practices.json', verbosity=0)
 
 
 def tearDownModule():

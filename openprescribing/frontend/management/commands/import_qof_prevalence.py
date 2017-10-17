@@ -37,8 +37,7 @@ class Command(BaseCommand):
                 start_year=start_year,
                 indicator_group=row['indicator_group'],
                 register_description=row['Register_description'],
-                disease_register_size=row['disease_register_size']
-            )
+                disease_register_size=row['disease_register_size'])
 
         practice_prevalence = csv.DictReader(open(practice_file, 'rU'))
         for row in practice_prevalence:
@@ -49,5 +48,4 @@ class Command(BaseCommand):
                 start_year=start_year,
                 indicator_group=row['indicator_group'],
                 register_description=row['Register_description'],
-                disease_register_size=row['disease_register_size']
-            )
+                disease_register_size=row['disease_register_size'])

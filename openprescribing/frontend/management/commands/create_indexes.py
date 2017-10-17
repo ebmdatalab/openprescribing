@@ -6,7 +6,6 @@ from common import utils
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
         parser.add_argument('--db_name')
         parser.add_argument('--db_user')
@@ -30,8 +29,8 @@ class Command(BaseCommand):
         else:
             db_pass = utils.get_env_setting('DB_PASS')
         db_host = utils.get_env_setting('DB_HOST')
-        self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass, host=db_host)
+        self.conn = psycopg2.connect(
+            database=db_name, user=db_user, password=db_pass, host=db_host)
         cursor = self.conn.cursor()
 
         self.create_indexes(cursor)

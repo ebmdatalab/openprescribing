@@ -25,9 +25,7 @@ class Command(BaseCommand):
         ccgs = csv.reader(open(options['ccg'], 'rU'))
         for row in ccgs:
             row = [r.strip() for r in row]
-            ccg, created = PCT.objects.get_or_create(
-                code=row[0]
-            )
+            ccg, created = PCT.objects.get_or_create(code=row[0])
             ccg.name = row[1]
             ccg.address = ', '.join([r for r in row[4:9] if r])
             ccg.postcode = row[9]

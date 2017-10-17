@@ -20,6 +20,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='maillog',
             name='message',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.EmailMessage'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='frontend.EmailMessage'),
         ),
     ]

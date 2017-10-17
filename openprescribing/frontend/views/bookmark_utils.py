@@ -27,8 +27,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 
-GRAB_CMD = ('/usr/local/bin/phantomjs ' +
-            settings.SITE_ROOT +
+GRAB_CMD = ('/usr/local/bin/phantomjs ' + settings.SITE_ROOT +
             '/frontend/management/commands/grab_chart.js')
 
 logger = logging.getLogger(__name__)
@@ -39,14 +38,14 @@ class CUSUM(object):
     and our paper
     http://dl4a.org/uploads/pdf/581SPC.pdf
     """
+
     def __init__(self, data, window_size=12, sensitivity=5, name=""):
-        data = np.array(map(lambda x: np.nan
-                            if x is None else x, data))
+        data = np.array(map(lambda x: np.nan if x is None else x, data))
         # Remove sufficient leading nulls to ensure we can start with
         # any value
         self.start_index = 0
         while pd.isnull(
-                data[self.start_index:self.start_index+window_size]).all():
+                data[self.start_index:self.start_index + window_size]).all():
             if self.start_index > len(data):
                 data = []
                 break
@@ -66,7 +65,7 @@ class CUSUM(object):
     def work(self):
         for i, datum in enumerate(self.data):
             if i <= self.start_index:
-                window = self.data[i:self.window_size+i]
+                window = self.data[i:self.window_size + i]
                 self.new_target_mean(window)
                 self.new_alert_threshold(window)
                 self.compute_cusum(datum, reset=True)
@@ -79,7 +78,7 @@ class CUSUM(object):
             else:
                 # Assemble a moving window of the last `window_size`
                 # non-null values
-                window = self.data[i-self.window_size:i]
+                window = self.data[i - self.window_size:i]
                 self.new_target_mean(window)
                 if self.moving_in_same_direction(datum):  # this "peeks ahead"
                     self.maintain_alert_threshold()
@@ -92,16 +91,19 @@ class CUSUM(object):
         return self.as_dict()
 
     def as_dict(self):
-        return {'smax': self.pos_cusums, 'smin': self.neg_cusums,
-                'target_mean': self.target_means,
-                'alert_threshold': self.alert_thresholds,
-                'alert': self.alert_indices,
-                'alert_percentile_pos': self.pos_alerts,
-                'alert_percentile_neg': self.neg_alerts}
+        return {
+            'smax': self.pos_cusums,
+            'smin': self.neg_cusums,
+            'target_mean': self.target_means,
+            'alert_threshold': self.alert_thresholds,
+            'alert': self.alert_indices,
+            'alert_percentile_pos': self.pos_alerts,
+            'alert_percentile_neg': self.neg_alerts
+        }
 
     def get_last_alert_info(self):
-        if (any(self.alert_indices) and
-           self.alert_indices[-1] == len(self.data) - 1):
+        if (any(self.alert_indices)
+                and self.alert_indices[-1] == len(self.data) - 1):
             end_index = start_index = self.alert_indices[-1]
             for x in list(reversed(self.alert_indices))[1:]:
                 if x == start_index - 1:
@@ -110,19 +112,20 @@ class CUSUM(object):
                     break
             duration = (end_index - start_index) + 1
             return {
-                'from': self.data[start_index-1],
+                'from': self.data[start_index - 1],
                 'to': self.data[end_index],
-                'period': duration}
+                'period': duration
+            }
         else:
             return None
 
     def moving_in_same_direction(self, datum):
         # Peek ahead to see what the next CUSUM would be
         next_pos_cusum, next_neg_cusum = self.compute_cusum(datum, store=False)
-        going_up = (next_pos_cusum > self.current_pos_cusum() and
-                    self.cusum_above_alert_threshold())
-        going_down = (next_neg_cusum < self.current_neg_cusum() and
-                      self.cusum_below_alert_threshold())
+        going_up = (next_pos_cusum > self.current_pos_cusum()
+                    and self.cusum_above_alert_threshold())
+        going_down = (next_neg_cusum < self.current_neg_cusum()
+                      and self.cusum_below_alert_threshold())
         return going_up or going_down
 
     def __repr__(self):
@@ -164,16 +167,14 @@ class CUSUM(object):
         return self.neg_cusums[-1] < -self.alert_thresholds[-1]
 
     def cusum_within_alert_threshold(self):
-        return not (self.cusum_above_alert_threshold() or
-                    self.cusum_below_alert_threshold())
+        return not (self.cusum_above_alert_threshold()
+                    or self.cusum_below_alert_threshold())
 
     def new_target_mean(self, window):
-        self.target_means.append(
-            np.nanmean(window))
+        self.target_means.append(np.nanmean(window))
 
     def new_alert_threshold(self, window):
-        self.alert_thresholds.append(
-            np.nanstd(window * self.sensitivity))
+        self.alert_thresholds.append(np.nanstd(window * self.sensitivity))
 
     def current_pos_cusum(self):
         return self.pos_cusums[-1]
@@ -211,8 +212,8 @@ def percentiles_without_jaggedness(df2, is_percentage=False):
         df2.extremes += df2.calc_value[df2.calc_value == 1.0].count()
     df2.extremes += df2.calc_value[df2.calc_value == 0.0].count()
     df2.extremes += df2.numerator[df2.numerator < 15].count()
-    df2.extremes += df2.percentile[(df2.percentile < sem) |
-                                   (df2.percentile > (100 - sem))].count()
+    df2.extremes += df2.percentile[(df2.percentile < sem) | (
+        df2.percentile > (100 - sem))].count()
     if df2.extremes == 0:
         return df2.percentile
     else:
@@ -220,7 +221,9 @@ def percentiles_without_jaggedness(df2, is_percentage=False):
 
 
 class InterestingMeasureFinder(object):
-    def __init__(self, practice=None, pct=None,
+    def __init__(self,
+                 practice=None,
+                 pct=None,
                  interesting_saving=1000,
                  interesting_change_window=12):
         assert practice or pct
@@ -231,13 +234,12 @@ class InterestingMeasureFinder(object):
 
     def months_ago(self, period):
         now = ImportLog.objects.latest_in_category('prescribing').current_at
-        return now + relativedelta(months=-(period-1))
+        return now + relativedelta(months=-(period - 1))
 
     def _best_or_worst_performing_in_period(self, period, best_or_worst=None):
         assert best_or_worst in ['best', 'worst']
         worst = []
-        measure_filter = {
-            'month__gte': self.months_ago(period)}
+        measure_filter = {'month__gte': self.months_ago(period)}
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -294,9 +296,7 @@ class InterestingMeasureFinder(object):
         # that are continuing after they were first detected
         window_multiplier = 1.5
         window_plus = int(round(window * window_multiplier))
-        measure_filter = {
-            'month__gte': self.months_ago(window_plus)
-        }
+        measure_filter = {'month__gte': self.months_ago(window_plus)}
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -328,13 +328,9 @@ class InterestingMeasureFinder(object):
                     else:
                         declines.append(last_alert)
         improvements = sorted(
-            improvements,
-            key=lambda x: -abs(x['to'] - x['from']))
-        declines = sorted(
-            declines,
-            key=lambda x: -abs(x['to'] - x['from']))
-        return {'improvements': improvements,
-                'declines': declines}
+            improvements, key=lambda x: -abs(x['to'] - x['from']))
+        declines = sorted(declines, key=lambda x: -abs(x['to'] - x['from']))
+        return {'improvements': improvements, 'declines': declines}
 
     def measurevalues_dataframe(self, queryset=None, data_col=None):
         """Given a queryset of many measurevalues across many measures,
@@ -345,13 +341,11 @@ class InterestingMeasureFinder(object):
         if not isinstance(data_col, list):
             data_col = [data_col]
         data_cols = ['month', 'measure_id'] + data_col
-        data = list(queryset.order_by('measure_id', 'month').values_list(
-            *data_cols))
+        data = list(
+            queryset.order_by('measure_id', 'month').values_list(*data_cols))
         if data:
             df = pd.DataFrame.from_records(
-                data,
-                columns=data_cols,
-                index=['measure_id', 'month'])
+                data, columns=data_cols, index=['measure_id', 'month'])
             return df.unstack(level='month')
         else:
             return pd.DataFrame()
@@ -370,8 +364,7 @@ class InterestingMeasureFinder(object):
         possible_savings = []
         achieved_savings = []
         total_savings = 0
-        measure_filter = {
-            'month__gte': self.months_ago(period)}
+        measure_filter = {'month__gte': self.months_ago(period)}
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -387,29 +380,29 @@ class InterestingMeasureFinder(object):
                     continue
                 savings_at_50th = [
                     saving['50'] for saving in cost_savings
-                    if isinstance(saving, dict)]
+                    if isinstance(saving, dict)
+                ]
                 savings_or_loss_for_measure = sum(savings_at_50th)
                 if savings_or_loss_for_measure >= self.interesting_saving:
-                    possible_savings.append(
-                        (measure, savings_or_loss_for_measure)
-                    )
+                    possible_savings.append((measure,
+                                             savings_or_loss_for_measure))
                 if savings_or_loss_for_measure <= -self.interesting_saving:
-                    achieved_savings.append(
-                        (measure, -1 * savings_or_loss_for_measure))
+                    achieved_savings.append((measure,
+                                             -1 * savings_or_loss_for_measure))
                 if measure.low_is_good:
                     savings_at_10th = sum([
                         max(0, saving['10']) for saving in cost_savings
-                        if isinstance(saving, dict)])
+                        if isinstance(saving, dict)
+                    ])
                 else:
                     savings_at_10th = sum([
                         max(0, saving['90']) for saving in cost_savings
-                        if isinstance(saving, dict)])
+                        if isinstance(saving, dict)
+                    ])
                 total_savings += savings_at_10th
         return {
-            'possible_savings': sorted(
-                possible_savings, key=lambda x: -x[1]),
-            'achieved_savings': sorted(
-                achieved_savings, key=lambda x: x[1]),
+            'possible_savings': sorted(possible_savings, key=lambda x: -x[1]),
+            'achieved_savings': sorted(achieved_savings, key=lambda x: x[1]),
             'possible_top_savings_total': total_savings
         }
 
@@ -437,8 +430,9 @@ class InterestingMeasureFinder(object):
         most_changing_interesting = []
         for extreme in [worst, best]:
             self._move_non_ordinal(extreme, interesting)
-        for extreme in [most_changing['improvements'],
-                        most_changing['declines']]:
+        for extreme in [
+                most_changing['improvements'], most_changing['declines']
+        ]:
             self._move_non_ordinal(extreme, most_changing_interesting)
         top_savings = self.top_and_total_savings_in_period(6)
         return {
@@ -447,7 +441,8 @@ class InterestingMeasureFinder(object):
             'worst': worst,
             'best': best,
             'most_changing': most_changing,
-            'top_savings': top_savings}
+            'top_savings': top_savings
+        }
 
 
 def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
@@ -463,21 +458,17 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
     else:
         wait = 1000
     cmd = '{cmd} "{host}{url}" {file_path} "{selector}" {dimensions} {wait}'
-    cmd = (
-        cmd.format(
-            cmd=GRAB_CMD,
-            host=settings.GRAB_HOST,
-            url=url,
-            file_path=file_path,
-            selector=selector,
-            dimensions=dimensions,
-            wait=wait
-        )
-    )
+    cmd = (cmd.format(
+        cmd=GRAB_CMD,
+        host=settings.GRAB_HOST,
+        url=url,
+        file_path=file_path,
+        selector=selector,
+        dimensions=dimensions,
+        wait=wait))
     result = subprocess.check_output(cmd, shell=True)
     logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
-    return attach_inline_image_file(
-        msg, file_path, subtype='png')
+    return attach_inline_image_file(msg, file_path, subtype='png')
 
 
 def getIntroText(stats, org_type):
@@ -493,9 +484,7 @@ def getIntroText(stats, org_type):
     if not_great or pretty_good or possible_savings:
         if not_great:
             msg = "We've found %s prescribing measure%s where this %s " % (
-                apnumber(not_great),
-                not_great > 1 and 's' or '',
-                org_type)
+                apnumber(not_great), not_great > 1 and 's' or '', org_type)
             in_sentence = True
             if declines and worst:
                 msg += "is <span class='worse'>getting worse, or could be "
@@ -511,13 +500,11 @@ def getIntroText(stats, org_type):
         if pretty_good:
             if msg and in_sentence:
                 msg += ", and %s measure%s where it " % (
-                    apnumber(pretty_good),
-                    pretty_good > 1 and 's' or '')
+                    apnumber(pretty_good), pretty_good > 1 and 's' or '')
             else:
                 msg = ("We've found %s prescribing measure%s where "
                        "this %s " % (apnumber(pretty_good),
-                                     pretty_good > 1 and 's' or '',
-                                     org_type))
+                                     pretty_good > 1 and 's' or '', org_type))
             if best and improvements:
                 msg += "is <span class='better'>doing well</span>."
             elif improvements:
@@ -534,9 +521,9 @@ def getIntroText(stats, org_type):
             else:
                 msg = "We've found "
             msg += ("%s prescribing measure%s where there are some "
-                    "potential cost savings. " % (
-                        apnumber(possible_savings),
-                        possible_savings > 1 and 's' or ''))
+                    "potential cost savings. " %
+                    (apnumber(possible_savings),
+                     possible_savings > 1 and 's' or ''))
         msg += ('Note that there can sometimes be good reasons why one CCG is '
                 'an outlier, and you should interpret the data thoughtfully: '
                 'these are <a href="/faq/#measureinterpret">measures, not '
@@ -549,15 +536,13 @@ def getIntroText(stats, org_type):
 
 
 def _hasStats(stats):
-    return (stats['worst'] or
-            stats['best'] or
-            stats['interesting'] or
-            stats['most_changing_interesting'] or
-            stats['top_savings']['possible_top_savings_total'] or
-            stats['top_savings']['possible_savings'] or
-            stats['top_savings']['achieved_savings'] or
-            stats['most_changing']['declines'] or
-            stats['most_changing']['improvements'])
+    return (stats['worst'] or stats['best'] or stats['interesting']
+            or stats['most_changing_interesting']
+            or stats['top_savings']['possible_top_savings_total']
+            or stats['top_savings']['possible_savings']
+            or stats['top_savings']['achieved_savings']
+            or stats['most_changing']['declines']
+            or stats['most_changing']['improvements'])
 
 
 def ga_tracking_qs(context):
@@ -592,20 +577,19 @@ def truncate_subject(prefix, subject):
 
 def make_email_with_campaign(bookmark, campaign_source):
     campaign_name = "monthly alert %s" % date.today().strftime("%Y-%m-%d")
-    email_id = "/email/%s/%s/%s" % (
-        campaign_name,
-        campaign_source,
-        bookmark.id)
+    email_id = "/email/%s/%s/%s" % (campaign_name, campaign_source,
+                                    bookmark.id)
     subject_prefix = 'Your monthly update about '
     msg = EmailMultiAlternatives(
         truncate_subject(subject_prefix, bookmark.name),
-        "This email is only available in HTML",
-        settings.SUPPORT_EMAIL,
+        "This email is only available in HTML", settings.SUPPORT_EMAIL,
         [bookmark.user.email])
-    metadata = {"subject": msg.subject,
-                "campaign_name": campaign_name,
-                "campaign_source": campaign_source,
-                "email_id": email_id}
+    metadata = {
+        "subject": msg.subject,
+        "campaign_name": campaign_name,
+        "campaign_source": campaign_source,
+        "email_id": email_id
+    }
     msg.metadata = metadata
     msg.qs = ga_tracking_qs(metadata)
     # Set the message id now, so we can reuse it
@@ -630,46 +614,54 @@ def make_org_email(org_bookmark, stats, preview=False):
         if most_changing['declines']:
             getting_worse_img = attach_image(
                 msg,
-                org_bookmark.dashboard_url(),
-                getting_worse_file.name,
-                '#' + most_changing['declines'][0]['measure'].id
-            )
+                org_bookmark.dashboard_url(), getting_worse_file.name,
+                '#' + most_changing['declines'][0]['measure'].id)
         if stats['worst']:
-            still_bad_img = attach_image(
-                msg,
-                org_bookmark.dashboard_url(),
-                still_bad_file.name,
-                '#' + stats['worst'][0].id)
+            still_bad_img = attach_image(msg,
+                                         org_bookmark.dashboard_url(),
+                                         still_bad_file.name,
+                                         '#' + stats['worst'][0].id)
         if stats['interesting']:
-            interesting_img = attach_image(
-                msg,
-                org_bookmark.dashboard_url(),
-                interesting_file.name,
-                '#' + stats['interesting'][0].id)
+            interesting_img = attach_image(msg,
+                                           org_bookmark.dashboard_url(),
+                                           interesting_file.name,
+                                           '#' + stats['interesting'][0].id)
         unsubscribe_link = settings.GRAB_HOST + reverse(
-            'bookmark-login',
-            kwargs={'key': org_bookmark.user.profile.key})
-        html = html_email.render(
-            context={
-                'preview': preview,
-                'base_template': base_template,
-                'intro_text': getIntroText(
-                    stats, org_bookmark.org_type()),
-                'total_possible_savings': sum(
-                    [x[1] for x in
-                     stats['top_savings']['possible_savings']]),
-                'has_stats': _hasStats(stats),
-                'domain': settings.GRAB_HOST,
-                'measures_count': Measure.objects.count(),
-                'getting_worse_image': getting_worse_img,
-                'still_bad_image': still_bad_img,
-                'interesting_image': interesting_img,
-                'bookmark': org_bookmark,
-                'dashboard_uri': mark_safe(dashboard_uri),
-                'qs': mark_safe(msg.qs),
-                'stats': stats,
-                'unsubscribe_link': unsubscribe_link
+            'bookmark-login', kwargs={
+                'key': org_bookmark.user.profile.key
             })
+        html = html_email.render(context={
+            'preview':
+            preview,
+            'base_template':
+            base_template,
+            'intro_text':
+            getIntroText(stats, org_bookmark.org_type()),
+            'total_possible_savings':
+            sum([x[1] for x in stats['top_savings']['possible_savings']]),
+            'has_stats':
+            _hasStats(stats),
+            'domain':
+            settings.GRAB_HOST,
+            'measures_count':
+            Measure.objects.count(),
+            'getting_worse_image':
+            getting_worse_img,
+            'still_bad_image':
+            still_bad_img,
+            'interesting_image':
+            interesting_img,
+            'bookmark':
+            org_bookmark,
+            'dashboard_uri':
+            mark_safe(dashboard_uri),
+            'qs':
+            mark_safe(msg.qs),
+            'stats':
+            stats,
+            'unsubscribe_link':
+            unsubscribe_link
+        })
         if not preview:
             html = Premailer(
                 html, cssutils_logging_level=logging.ERROR).transform()
@@ -695,30 +687,27 @@ def make_search_email(search_bookmark, preview=False):
         base_template = 'base.html'
         dashboard_uri += '#' + parsed_url.fragment
     else:
-        dashboard_uri = (settings.GRAB_HOST + dashboard_uri +
-                         qs + '#' + parsed_url.fragment)
+        dashboard_uri = (settings.GRAB_HOST + dashboard_uri + qs + '#' +
+                         parsed_url.fragment)
         base_template = 'bookmarks/email_base.html'
 
     with NamedTemporaryFile(suffix='.png') as graph_file:
-        graph = attach_image(
-            msg,
-            search_bookmark.dashboard_url(),
-            graph_file.name,
-            '#results .tab-pane.active'
-        )
+        graph = attach_image(msg,
+                             search_bookmark.dashboard_url(), graph_file.name,
+                             '#results .tab-pane.active')
         unsubscribe_link = settings.GRAB_HOST + reverse(
-            'bookmark-login',
-            kwargs={'key': search_bookmark.user.profile.key})
-        html = html_email.render(
-            context={
-                'preview': preview,
-                'base_template': base_template,
-                'bookmark': search_bookmark,
-                'domain': settings.GRAB_HOST,
-                'graph': graph,
-                'dashboard_uri': mark_safe(dashboard_uri),
-                'unsubscribe_link': unsubscribe_link
+            'bookmark-login', kwargs={
+                'key': search_bookmark.user.profile.key
             })
+        html = html_email.render(context={
+            'preview': preview,
+            'base_template': base_template,
+            'bookmark': search_bookmark,
+            'domain': settings.GRAB_HOST,
+            'graph': graph,
+            'dashboard_uri': mark_safe(dashboard_uri),
+            'unsubscribe_link': unsubscribe_link
+        })
         if not preview:
             html = Premailer(
                 html, cssutils_logging_level=logging.ERROR).transform()

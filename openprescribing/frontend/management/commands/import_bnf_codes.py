@@ -29,22 +29,13 @@ class Command(BaseCommand):
                 # Add to sections list.
                 c_id = row['BNF Chapter Code']
                 if c_id not in sections:
-                    sections[c_id] = {
-                        'id': c_id,
-                        'name': row['BNF Chapter']
-                    }
+                    sections[c_id] = {'id': c_id, 'name': row['BNF Chapter']}
                 s_id = row['BNF Section Code']
                 if s_id not in sections:
-                    sections[s_id] = {
-                        'id': s_id,
-                        'name': row['BNF Section']
-                    }
+                    sections[s_id] = {'id': s_id, 'name': row['BNF Section']}
                 p_id = row['BNF Paragraph Code']
                 if p_id not in sections:
-                    sections[p_id] = {
-                        'id': p_id,
-                        'name': row['BNF Paragraph']
-                    }
+                    sections[p_id] = {'id': p_id, 'name': row['BNF Paragraph']}
 
                 product_name = row['BNF Product'].strip()
                 product_code = row['BNF Product Code'].strip()
@@ -54,8 +45,8 @@ class Command(BaseCommand):
                         p.name = product_name
                         p.save()
                     except ObjectDoesNotExist:
-                        p = Product.objects.create(bnf_code=product_code,
-                                                   name=product_name)
+                        p = Product.objects.create(
+                            bnf_code=product_code, name=product_name)
 
                 pres_name = row['BNF Presentation'].strip()
                 pres_code = row['BNF Presentation Code'].strip()
@@ -65,8 +56,8 @@ class Command(BaseCommand):
                         p.name = pres_name
                         p.save()
                     except ObjectDoesNotExist:
-                        p = Presentation.objects.create(bnf_code=pres_code,
-                                                        name=pres_name)
+                        p = Presentation.objects.create(
+                            bnf_code=pres_code, name=pres_name)
 
             for s in sections:
                 id = sections[s]['id'].strip()
@@ -86,11 +77,12 @@ class Command(BaseCommand):
                         sec.bnf_para = bnf_para
                         sec.save()
                     except ObjectDoesNotExist:
-                        sec = Section.objects.create(bnf_id=id,
-                                                     name=name,
-                                                     bnf_chapter=bnf_chapter,
-                                                     bnf_section=bnf_section,
-                                                     bnf_para=bnf_para)
+                        sec = Section.objects.create(
+                            bnf_id=id,
+                            name=name,
+                            bnf_chapter=bnf_chapter,
+                            bnf_section=bnf_section,
+                            bnf_para=bnf_para)
 
     def convert_bnf_id_section(self, id):
         if id == '':

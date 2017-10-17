@@ -45,11 +45,8 @@ class BookmarkList(ListView):
             msg = "Unsubscribed from %s alert" % count
             if count > 1:
                 msg += "s"
-            messages.success(
-                request,
-                msg)
-        return redirect(
-            reverse('bookmark-list'))
+            messages.success(request, msg)
+        return redirect(reverse('bookmark-list'))
 
     def _search_bookmarks(self):
         return SearchBookmark.objects.filter(
@@ -63,9 +60,7 @@ class BookmarkList(ListView):
         search_bookmarks = self._search_bookmarks()
         org_bookmarks = self._org_bookmarks()
         form = BookmarkListForm(
-            org_bookmarks=org_bookmarks,
-            search_bookmarks=search_bookmarks
-        )
+            org_bookmarks=org_bookmarks, search_bookmarks=search_bookmarks)
         count = search_bookmarks.count() + org_bookmarks.count()
         single_bookmark = None
         if count == 1:
@@ -108,9 +103,7 @@ def preview_bookmark(request, practice=None, pct=None, url=None, name=None):
         user.profile = Profile()
         if pct or practice:
             context = bookmark_utils.InterestingMeasureFinder(
-                practice=practice,
-                pct=pct
-            ).context_for_org_email()
+                practice=practice, pct=pct).context_for_org_email()
             bookmark = OrgBookmark(practice=practice, pct=pct, user=user)
             msg = bookmark_utils.make_org_email(
                 bookmark, context, preview=True)

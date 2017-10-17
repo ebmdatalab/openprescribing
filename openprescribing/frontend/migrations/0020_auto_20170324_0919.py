@@ -17,17 +17,29 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='presentation',
             name='replaced_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.Presentation'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='frontend.Presentation'),
         ),
         migrations.AlterField(
             model_name='prescription',
             name='pct',
-            field=models.ForeignKey(db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.PCT'),
+            field=models.ForeignKey(
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='frontend.PCT'),
         ),
         migrations.AlterField(
             model_name='prescription',
             name='practice',
-            field=models.ForeignKey(db_constraint=False, null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.Practice'),
+            field=models.ForeignKey(
+                db_constraint=False,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='frontend.Practice'),
         ),
         migrations.AlterField(
             model_name='searchbookmark',

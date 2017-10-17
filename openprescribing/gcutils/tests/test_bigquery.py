@@ -70,10 +70,8 @@ class BQClientTest(TestCase):
 
         # Test TableExporter.export_to_storage and
         # TableExporter.download_from_storage_and_unzip
-        t1_exporter = TableExporter(
-            t1,
-            'test_bq_client/test_table-{}'.format(self.n)
-        )
+        t1_exporter = TableExporter(t1, 'test_bq_client/test_table-{}'.format(
+            self.n))
         t1_exporter.export_to_storage()
 
         with tempfile.NamedTemporaryFile(mode='r+') as f:
@@ -85,33 +83,34 @@ class BQClientTest(TestCase):
         self.assertEqual(data, [map(str, row) for row in [headers] + rows])
 
         # Test Table.insert_rows_from_storage
-        self.upload_to_storage(
-            'gcutils/tests/test_table.csv',
-            'test_bq_client/test_table-{}.csv'.format(self.n)
-        )
+        self.upload_to_storage('gcutils/tests/test_table.csv',
+                               'test_bq_client/test_table-{}.csv'.format(
+                                   self.n))
 
         t2.insert_rows_from_storage(
-            'gs://ebmdatalab/test_bq_client/test_table-{}.csv'.format(self.n)
-        )
+            'gs://ebmdatalab/test_bq_client/test_table-{}.csv'.format(self.n))
 
         self.assertEqual(sorted(t2.get_rows()), rows)
 
         # Test Client.get_or_create_storage_backed_table
         self.upload_to_storage(
             'gcutils/tests/test_table_headers.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
-        )
+            'test_bq_client/test_table_headers-{}.csv'.format(self.n))
 
         schema = [
-            {'name': 'a', 'type': 'integer'},
-            {'name': 'b', 'type': 'string'},
+            {
+                'name': 'a',
+                'type': 'integer'
+            },
+            {
+                'name': 'b',
+                'type': 'string'
+            },
         ]
 
         t3 = client.get_or_create_storage_backed_table(
-            't3',
-            schema,
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
-        )
+            't3', schema, 'test_bq_client/test_table_headers-{}.csv'.format(
+                self.n))
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
 
@@ -119,8 +118,7 @@ class BQClientTest(TestCase):
 
         self.upload_to_storage(
             'gcutils/tests/test_table_headers_2.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
-        )
+            'test_bq_client/test_table_headers-{}.csv'.format(self.n))
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
 
@@ -141,6 +139,7 @@ class BQClientTest(TestCase):
 
         def transformer(row):
             return [ord(row[0][0]), row[1]]
+
         t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])

@@ -36,10 +36,7 @@ class Command(BaseCommand):
         month = self._date_from_filename(filename)
         self.process_practices(filename, month)
         ImportLog.objects.create(
-            current_at=month,
-            filename=filename,
-            category='patient_list_size'
-        )
+            current_at=month, filename=filename, category='patient_list_size')
 
     def process_practices(self, filename, month):
         df = pd.read_csv(filename)
@@ -68,16 +65,13 @@ class Command(BaseCommand):
                 for age_group, quintiles in age_groups.items():
                     val = 0
                     for quintile in quintiles:
-                        val += int(group[
-                            (group.SEX == gender.upper()) &
-                            (group.AGE_GROUP_5 == quintile)
-                        ].NUMBER_OF_PATIENTS)
+                        val += int(group[(group.SEX == gender.upper())
+                                         & (group.AGE_GROUP_5 == quintile)]
+                                   .NUMBER_OF_PATIENTS)
                         data["%s_%s" % (gender, age_group)] = val
             try:
                 prac_list = PracticeStatistics.objects.get(
-                    practice=code,
-                    date=month
-                )
+                    practice=code, date=month)
                 for k, v in data:
                     setattr(prac_list, k, v)
                 prac_list.pct = practice.ccg  # Reset CCG to current membership

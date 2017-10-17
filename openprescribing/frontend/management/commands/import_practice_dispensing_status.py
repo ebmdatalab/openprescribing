@@ -57,14 +57,12 @@ class Command(BaseCommand):
 
             p = None
             try:
-                p = Practice.objects.get(name=name,
-                                         postcode=postcode)
+                p = Practice.objects.get(name=name, postcode=postcode)
                 name_and_postcode_matches += 1
             except Practice.DoesNotExist:
                 # No match on name and postcode. Try other strategies.
                 try:
-                    p = Practice.objects.get(address1=name,
-                                             postcode=postcode)
+                    p = Practice.objects.get(address1=name, postcode=postcode)
                     address1_and_postcode_matches += 1
                 except Practice.DoesNotExist:
                     ps = Practice.objects.filter(postcode=postcode)
@@ -92,8 +90,8 @@ class Command(BaseCommand):
                 multiple_matches_found += 1
 
             if p:
-                pds, created = PID.objects.get_or_create(practice=p,
-                                                         date=options['date'])
+                pds, created = PID.objects.get_or_create(
+                    practice=p, date=options['date'])
 
         # print useful_rows, 'rows'
         # print address1_and_postcode_matches, 'address1_and_postcode_matches'

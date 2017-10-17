@@ -50,8 +50,8 @@ def _get_org_from_code(q, is_exact, org_type):
 
 def _get_practices_like_code(q):
     if q:
-        practices = Practice.objects.filter(Q(code__istartswith=q) |
-                                            Q(name__icontains=q))
+        practices = Practice.objects.filter(
+            Q(code__istartswith=q) | Q(name__icontains=q))
     else:
         practices = Practice.objects.all()
     results = []

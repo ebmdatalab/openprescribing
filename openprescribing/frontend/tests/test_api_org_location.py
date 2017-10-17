@@ -10,10 +10,9 @@ from frontend.models import PCT
 
 def setUpModule():
     fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
+    management.call_command('loaddata', fix_dir + 'ccgs.json', verbosity=0)
+    management.call_command(
+        'loaddata', fix_dir + 'practices.json', verbosity=0)
 
 
 def tearDownModule():
@@ -58,8 +57,8 @@ class TestAPIOrgLocationViews(TestCase):
     @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"],
                      "Skipping this test on Travis CI.")
     def test_api_view_org_location_practice_by_code(self):
-        url = ('%s/org_location?org_type=practice&q=03Q&format=json'
-               % self.api_prefix)
+        url = ('%s/org_location?org_type=practice&q=03Q&format=json' %
+               self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)

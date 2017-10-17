@@ -32,8 +32,8 @@ class AssetBuildingTestRunner(DiscoverRunner):
 
         # Before we load any func tests, ensure we've got assets built
         npm_cmd = "mkdir -p ../../static/js && npm run build"
-        if ('SKIP_NPM_BUILD' not in os.environ and
-           os.environ.get('TEST_SUITE', '') != 'nonfunctional'):
+        if ('SKIP_NPM_BUILD' not in os.environ
+                and os.environ.get('TEST_SUITE', '') != 'nonfunctional'):
             subprocess.check_call(
                 npm_cmd, shell=True, cwd=settings.SITE_ROOT + '/media/js')
         if not os.environ.get('BROWSER'):

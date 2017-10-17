@@ -32,10 +32,8 @@ class TestAnymailReceiver(TestCase):
             event_type='test_event',
             recipient='p@q.com',
             tags=['monthly_update'],
-            message_id='foo'
-        )
-        mock_logger.warn.assert_any_call(
-            "Could not find recipient p@q.com")
+            message_id='foo')
+        mock_logger.warn.assert_any_call("Could not find recipient p@q.com")
         mock_sender.assert_called_once_with(event, None)
 
     @patch('frontend.signals.handlers.send_ga_event')
@@ -45,8 +43,7 @@ class TestAnymailReceiver(TestCase):
             event_type='delivered',
             recipient=User.objects.first().email,
             tags=['monthly_update'],
-            message_id='foo'
-        )
+            message_id='foo')
         self.assertEqual(User.objects.first().profile.emails_received, 1)
 
     @patch('frontend.signals.handlers.send_ga_event')
@@ -56,8 +53,7 @@ class TestAnymailReceiver(TestCase):
             event_type='opened',
             recipient=User.objects.first().email,
             tags=['monthly_update'],
-            message_id='foo'
-        )
+            message_id='foo')
         self.assertEqual(User.objects.first().profile.emails_opened, 1)
 
     @patch('frontend.signals.handlers.send_ga_event')
@@ -67,8 +63,7 @@ class TestAnymailReceiver(TestCase):
             event_type='clicked',
             recipient=User.objects.first().email,
             tags=['monthly_update'],
-            message_id='foo'
-        )
+            message_id='foo')
         self.assertEqual(User.objects.first().profile.emails_clicked, 1)
 
     @patch('frontend.signals.handlers.FuturesSession')
@@ -78,15 +73,16 @@ class TestAnymailReceiver(TestCase):
             event_type='clicked',
             recipient=User.objects.first().email,
             tags=['monthly_update'],
-            message_id='foo'
-        )
-        expected = {'uid': ANY,
-                    'cm': 'email',
-                    'ea': 'clicked',
-                    'ec': 'email',
-                    't': 'event',
-                    'v': 1,
-                    'tid': ANY}
+            message_id='foo')
+        expected = {
+            'uid': ANY,
+            'cm': 'email',
+            'ea': 'clicked',
+            'ec': 'email',
+            't': 'event',
+            'v': 1,
+            'tid': ANY
+        }
         mock_session.return_value.post.assert_called_once_with(
             ANY, data=expected)
 
@@ -104,23 +100,23 @@ class TestAnymailReceiver(TestCase):
             recipient=User.objects.first().email,
             tags=['monthly_update'],
             esp_event=metadata,
-            message_id='foo'
-
-        )
-        expected = {'uid': ANY,
-                    'cm': 'email',
-                    'ea': 'frobbed',
-                    'ec': 'email',
-                    't': 'event',
-                    'v': 1,
-                    'tid': ANY,
-                    'ua': 'tofu',
-                    'dt': 'tempeh',
-                    'cn': 'aquafaba',
-                    'cs': None,
-                    'cc': 'seitan',
-                    'el': 'seitan',
-                    'dp': 'seitan/frobbed'}
+            message_id='foo')
+        expected = {
+            'uid': ANY,
+            'cm': 'email',
+            'ea': 'frobbed',
+            'ec': 'email',
+            't': 'event',
+            'v': 1,
+            'tid': ANY,
+            'ua': 'tofu',
+            'dt': 'tempeh',
+            'cn': 'aquafaba',
+            'cs': None,
+            'cc': 'seitan',
+            'el': 'seitan',
+            'dp': 'seitan/frobbed'
+        }
         mock_session.return_value.post.assert_called_once_with(
             ANY, data=expected)
 
@@ -138,9 +134,7 @@ class TestAnymailReceiver(TestCase):
             recipient=User.objects.first().email,
             tags=['monthly_update'],
             esp_event=metadata,
-            message_id='foo'
-
-        )
+            message_id='foo')
         log = MailLog.objects.first()
         self.assertEqual(log.tags, ['monthly_update'])
         self.assertEqual(log.message_id, 'foo')

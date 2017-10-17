@@ -23,10 +23,8 @@ class Command(BaseCommand):
         prefix_base = 'prescribing/prescribing_backups/'
 
         for blob in bucket.list_blobs(prefix=prefix_base):
-            match = re.search(
-                '{}/(\d{4}_\d{2})-'.format(prefix_base),
-                blob.name
-            )
+            match = re.search('{}/(\d{4}_\d{2})-'.format(prefix_base),
+                              blob.name)
             year_and_months.add(match.groups()[0])
 
         if latest_year_and_month in year_and_months:

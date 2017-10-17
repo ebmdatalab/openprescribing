@@ -141,8 +141,8 @@ class DMDProduct(models.Model):
 
     @property
     def amps(self):
-        return DMDProduct.objects.filter(
-            vpid=self.dmdid).filter(concept_class=2)
+        return DMDProduct.objects.filter(vpid=self.dmdid).filter(
+            concept_class=2)
 
     @property
     def vmp(self):

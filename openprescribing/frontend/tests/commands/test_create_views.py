@@ -32,47 +32,41 @@ class CommandsTestCase(SimpleTestCase):
         if 'SKIP_BQ_LOAD' not in os.environ:
             # Create local test data from fixtures, then upload this to a
             # test project in bigquery
-            call_command('loaddata',
-                         'frontend/tests/fixtures/ccgs.json',
-                         verbosity=0)
-            call_command('loaddata',
-                         'frontend/tests/fixtures/practices.json',
-                         verbosity=0)
-            call_command('loaddata',
-                         'frontend/tests/fixtures/practice_listsizes.json',
-                         verbosity=0)
+            call_command(
+                'loaddata', 'frontend/tests/fixtures/ccgs.json', verbosity=0)
+            call_command(
+                'loaddata',
+                'frontend/tests/fixtures/practices.json',
+                verbosity=0)
+            call_command(
+                'loaddata',
+                'frontend/tests/fixtures/practice_listsizes.json',
+                verbosity=0)
             prescribing_fixture_path = os.path.join(
                 'frontend', 'tests', 'fixtures', 'commands',
-                'prescribing_bigquery_views_fixture.csv'
-            )
+                'prescribing_bigquery_views_fixture.csv')
 
             client = Client('test_hscic')
 
             for table_name in [
                     'normalised_prescribing_standard',
-                    'normalised_prescribing_legacy']:
-                table = client.get_or_create_table(
-                    table_name,
-                    PRESCRIBING_SCHEMA
-                )
+                    'normalised_prescribing_legacy'
+            ]:
+                table = client.get_or_create_table(table_name,
+                                                   PRESCRIBING_SCHEMA)
                 table.insert_rows_from_csv(prescribing_fixture_path)
 
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             columns = [field.name for field in CCG_SCHEMA]
             table.insert_rows_from_pg(PCT, columns, ccgs_transform)
 
-            table = client.get_or_create_table(
-                'practice_statistics',
-                PRACTICE_STATISTICS_SCHEMA
-            )
+            table = client.get_or_create_table('practice_statistics',
+                                               PRACTICE_STATISTICS_SCHEMA)
             columns = [field.name for field in PRACTICE_STATISTICS_SCHEMA]
             columns[0] = 'date'
             columns[-1] = 'practice_id'
-            table.insert_rows_from_pg(
-                PracticeStatistics,
-                columns,
-                statistics_transform
-            )
+            table.insert_rows_from_pg(PracticeStatistics, columns,
+                                      statistics_transform)
 
             client = storage.Client(project='ebmdatalab')
             bucket = client.get_bucket('ebmdatalab')
@@ -82,8 +76,8 @@ class CommandsTestCase(SimpleTestCase):
         ImportLog.objects.create(
             category='prescribing', current_at='2015-10-01')
         # Create view tables and indexes
-        with open(
-                'frontend/management/commands/replace_matviews.sql', 'r') as f:
+        with open('frontend/management/commands/replace_matviews.sql',
+                  'r') as f:
             with connection.cursor() as c:
                 c.execute(f.read())
 

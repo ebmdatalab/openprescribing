@@ -6,7 +6,6 @@ from dmd.models import DMDProduct
 
 
 class CommandsTestCase(TestCase):
-
     def test_models(self):
         test_source_directory = 'dmd/tests/fixtures/commands/'
         args = ['--source_directory', test_source_directory]
@@ -17,14 +16,13 @@ class CommandsTestCase(TestCase):
         amp = DMDProduct.objects.get(concept_class=2)
         self.assertEqual([str(x) for x in vmp.amps], [str(amp)])
         self.assertEqual(str(amp.vmp), str(vmp))
-        self.assertEqual(
-            amp.prescribability.desc, 'Valid as a prescribable product')
-        self.assertEqual(
-            amp.vmp_non_availability.desc, 'Actual Products Available')
-        self.assertEqual(
-            amp.controlled_drug_category.desc, 'No Controlled Drug Status')
-        self.assertEqual(
-            vmp.tariff_category.desc, 'Part VIIIA Category A')
+        self.assertEqual(amp.prescribability.desc,
+                         'Valid as a prescribable product')
+        self.assertEqual(amp.vmp_non_availability.desc,
+                         'Actual Products Available')
+        self.assertEqual(amp.controlled_drug_category.desc,
+                         'No Controlled Drug Status')
+        self.assertEqual(vmp.tariff_category.desc, 'Part VIIIA Category A')
 
     def test_import_dmd(self):
         test_source_directory = 'dmd/tests/fixtures/commands/'
@@ -41,8 +39,8 @@ class CommandsTestCase(TestCase):
         self.assertEqual(vmp.product_type, 1)
         self.assertEqual(amp.vpid, 318248001)
         self.assertEqual(amp.bnf_code, '0206020T0AAAGAG')
-        self.assertEqual(
-            amp.full_name, 'Verapamil 160mg tablets (A A H Pharmaceuticals Ltd)')
+        self.assertEqual(amp.full_name,
+                         'Verapamil 160mg tablets (A A H Pharmaceuticals Ltd)')
         self.assertEqual(amp.product_type, 3)
 
         # A random selection of other tables for which we don't have

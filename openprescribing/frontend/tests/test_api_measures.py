@@ -28,16 +28,17 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(response.status_code, 200)
         return json.loads(response.content)
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_measure_global(self, mdata):
         url = '/api/1.0/measure/?measure=cerazette&format=json'
         data = self._get_json(url)
         self.assertEqual(data['measures'][0]['name'],
                          'Cerazette vs. Desogestrel')
         self.assertEqual(data['measures'][0]['description'][:10], 'Total quan')
-        self.assertEqual(data['measures'][0][
-                         'why_it_matters'][:10], 'This is th')
+        self.assertEqual(data['measures'][0]['why_it_matters'][:10],
+                         'This is th')
         self.assertEqual(data['measures'][0]['is_cost_based'], True)
         self.assertEqual(data['measures'][0]['is_percentage'], True)
         self.assertEqual(data['measures'][0]['low_is_good'], True)
@@ -52,18 +53,19 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['percentiles']['ccg']['10'], '0.0793')
         self.assertEqual("%.4f" % d['percentiles']['ccg']['50'], '0.1176')
         self.assertEqual("%.4f" % d['percentiles']['ccg']['90'], '0.4823')
-        self.assertEqual("%.2f" % d['cost_savings'][
-                         'practice']['10'], '70149.77')
-        self.assertEqual("%.2f" % d['cost_savings'][
-                         'practice']['50'], '59029.41')
-        self.assertEqual("%.2f" % d['cost_savings'][
-                         'practice']['90'], '162.00')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['10'],
+                         '70149.77')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['50'],
+                         '59029.41')
+        self.assertEqual("%.2f" % d['cost_savings']['practice']['90'],
+                         '162.00')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['10'], '64174.56')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['50'], '58658.82')
         self.assertEqual("%.2f" % d['cost_savings']['ccg']['90'], '11731.76')
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_all_measures_global(self, mdata):
         url = '/api/1.0/measure/?format=json'
         data = self._get_json(url)
@@ -74,8 +76,9 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_all_measures_global_with_tags(self, mdata):
         url = '/api/1.0/measure/?format=json&tags=XXX'
         data = self._get_json(url)
@@ -87,8 +90,9 @@ class TestAPIMeasureViews(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data['measures']), 1)
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_measure_by_all_ccgs(self, mdata):
         url = '/api/1.0/measure/?format=json'
         data = self._get_json(url)
@@ -99,41 +103,46 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_measure_numerators_by_ccg(self, mdata):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'
         data = self._get_json(url)
-        self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'02Q',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
+        self.assertEqual(data, [{
+            u'total_items': 1,
+            u'bnf_code': u'0205010F0AAAAAA',
+            u'presentation_name': u'Thing 2',
+            u'numerator': 100.0,
+            u'entity': u'02Q',
+            u'cost': 1.0,
+            u'quantity': 100.0
+        }])
 
-    @patch('api.views_measures._get_measure_data',
-           return_value=_get_test_measure())
+    @patch(
+        'api.views_measures._get_measure_data',
+        return_value=_get_test_measure())
     def test_api_measure_numerators_by_practice(self, mdata):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=N84014&format=json'
         data = self._get_json(url)
-        self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'N84014',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
+        self.assertEqual(data, [{
+            u'total_items': 1,
+            u'bnf_code': u'0205010F0AAAAAA',
+            u'presentation_name': u'Thing 2',
+            u'numerator': 100.0,
+            u'entity': u'N84014',
+            u'cost': 1.0,
+            u'quantity': 100.0
+        }])
 
     def test_api_measure_numerators_bnf_name_in_condition(self):
         testmeasure = _get_test_measure()
         testmeasure["numerator_where"] = ["bnf_name like 'ZZZ%'"]
-        with patch('api.views_measures._get_measure_data',
-                   return_value=testmeasure):
+        with patch(
+                'api.views_measures._get_measure_data',
+                return_value=testmeasure):
             url = '/api/1.0/measure_numerators_by_org/'
             url += '?measure=cerazette&org=02Q&format=json'
             data = self._get_json(url)
@@ -142,8 +151,9 @@ class TestAPIMeasureViews(TestCase):
     def test_api_measure_numerators_unusable_table(self):
         testmeasure = _get_test_measure()
         testmeasure["numerator_from"] = "some_nonstandard_table"
-        with patch('api.views_measures._get_measure_data',
-                   return_value=testmeasure):
+        with patch(
+                'api.views_measures._get_measure_data',
+                return_value=testmeasure):
             url = '/api/1.0/measure_numerators_by_org/'
             url += '?measure=cerazette&org=02Q&format=json'
             data = self._get_json(url)
@@ -151,8 +161,9 @@ class TestAPIMeasureViews(TestCase):
         testmeasure["numerator_from"] = (
             "[ebmdatalab:hscic.normalised_prescribing_standard] p "
             "LEFT JOIN [ebmdatalab:hscic.presentation]")
-        with patch('api.views_measures._get_measure_data',
-                   return_value=testmeasure):
+        with patch(
+                'api.views_measures._get_measure_data',
+                return_value=testmeasure):
             url = '/api/1.0/measure_numerators_by_org/'
             url += '?measure=cerazette&org=02Q&format=json'
             data = self._get_json(url)

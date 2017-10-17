@@ -6,7 +6,6 @@ from common import utils
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
         parser.add_argument('--db_name')
         parser.add_argument('--db_user')
@@ -30,8 +29,8 @@ class Command(BaseCommand):
         else:
             db_pass = utils.get_env_setting('DB_PASS')
         db_host = utils.get_env_setting('DB_HOST')
-        self.conn = psycopg2.connect(database=db_name, user=db_user,
-                                     password=db_pass, host=db_host)
+        self.conn = psycopg2.connect(
+            database=db_name, user=db_user, password=db_pass, host=db_host)
         cursor = self.conn.cursor()
 
         self.create_foreign_keys(cursor)
@@ -46,13 +45,23 @@ class Command(BaseCommand):
         prefix = 'ALTER TABLE frontend_prescription '
         prefix += 'ADD CONSTRAINT frontend_prescription'
         suffix = ' ON DELETE CASCADE'
-        indexes = [
-            {'fk': 'sha_id', 'table': 'frontend_sha', 'pk': 'code'},
-            {'fk': 'pct_id', 'table': 'frontend_pct', 'pk': 'code'},
-            {'fk': 'chemical_id', 'table': 'frontend_chemical',
-             'pk': 'bnf_code'},
-            {'fk': 'practice_id', 'table': 'frontend_practice', 'pk': 'code'}
-        ]
+        indexes = [{
+            'fk': 'sha_id',
+            'table': 'frontend_sha',
+            'pk': 'code'
+        }, {
+            'fk': 'pct_id',
+            'table': 'frontend_pct',
+            'pk': 'code'
+        }, {
+            'fk': 'chemical_id',
+            'table': 'frontend_chemical',
+            'pk': 'bnf_code'
+        }, {
+            'fk': 'practice_id',
+            'table': 'frontend_practice',
+            'pk': 'code'
+        }]
         for index in indexes:
             cmd = '%s_%s_fkey ' % (prefix, index['fk'])
             cmd += 'FOREIGN KEY (%s) ' % index['fk']

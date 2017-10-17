@@ -96,7 +96,8 @@ class CommandsTestCase(TestCase):
         call_command('cleanup_unverified_alerts')
         User.objects.get(username=user.username)  # should not fail
 
-    def _makeUser(self, has_bookmarks=True,
+    def _makeUser(self,
+                  has_bookmarks=True,
                   date_joined=None,
                   is_superuser=None,
                   verified=None):

@@ -60,26 +60,27 @@ class Client(object):
         gcs_uri = 'gs://{}/{}'.format(self.project_name, gcs_path)
 
         resource = {
-            'tableReference': {'tableId': table_name},
+            'tableReference': {
+                'tableId': table_name
+            },
             'externalDataConfiguration': {
-                'csvOptions': {'skipLeadingRows': '1'},
+                'csvOptions': {
+                    'skipLeadingRows': '1'
+                },
                 'sourceFormat': 'CSV',
                 'sourceUris': [gcs_uri],
-                'schema': {'fields': schema}
+                'schema': {
+                    'fields': schema
+                }
             }
         }
 
         path = '/projects/{}/datasets/{}/tables'.format(
-            self.project_name,
-            self.dataset_name
-        )
+            self.project_name, self.dataset_name)
 
         try:
             self.gcbq_client._connection.api_request(
-                method='POST',
-                path=path,
-                data=resource
-            )
+                method='POST', path=path, data=resource)
         except Conflict:
             pass
 
@@ -123,19 +124,13 @@ class Table(object):
 
     @property
     def full_qualified_name(self):
-        return '{}.{}.{}'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
+        return '{}.{}.{}'.format(self.project_name, self.dataset_name,
+                                 self.name)
 
     @property
     def legacy_full_qualified_name(self):
-        return '[{}:{}.{}]'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
+        return '[{}:{}.{}]'.format(self.project_name, self.dataset_name,
+                                   self.name)
 
     def get_rows(self):
         self.gcbq_table.reload()
@@ -160,9 +155,7 @@ class Table(object):
         }
 
         job = self.gcbq_client.run_async_query(
-            options.pop('job_name', gen_job_name()),
-            sql
-        )
+            options.pop('job_name', gen_job_name()), sql)
         set_options(job, options, default_options)
 
         job.begin()
@@ -197,9 +190,7 @@ class Table(object):
         }
 
         job = self.gcbq_client.load_table_from_storage(
-            gen_job_name(),
-            self.gcbq_table, gcs_uri
-        )
+            gen_job_name(), self.gcbq_table, gcs_uri)
 
         set_options(job, options, default_options)
 

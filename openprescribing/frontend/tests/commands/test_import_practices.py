@@ -14,15 +14,12 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-
     def test_import_practices_from_epraccur(self):
 
         args = []
         epraccur = 'frontend/tests/fixtures/commands/'
         epraccur += 'epraccur_sample.csv'
-        opts = {
-            'epraccur': epraccur
-        }
+        opts = {'epraccur': epraccur}
         call_command('import_practices', *args, **opts)
 
         # Test import from epraccur.
@@ -51,9 +48,7 @@ class CommandsTestCase(TestCase):
 
         args = []
         hscic = 'frontend/tests/fixtures/commands/hscic_practices.csv'
-        opts = {
-            'hscic_address': hscic
-        }
+        opts = {'hscic_address': hscic}
         call_command('import_practices', *args, **opts)
 
         p = Practice.objects.get(code='A81001')

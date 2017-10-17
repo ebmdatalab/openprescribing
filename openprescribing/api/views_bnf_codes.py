@@ -21,9 +21,7 @@ def _convert_querysets(querysets):
     results = []
     for queryset in querysets:
         for qu_item in queryset:
-            item = {
-                'type': qu_item.type
-            }
+            item = {'type': qu_item.type}
             if item['type'] == 0:
                 item['id'] = qu_item.number_str
                 item['name'] = qu_item.name

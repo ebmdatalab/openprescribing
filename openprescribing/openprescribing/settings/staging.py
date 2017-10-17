@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from .base import *
 from common import utils
 
-
 # DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False  # Not so safe to set to True as staging is not behind a password
@@ -17,7 +16,6 @@ TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 ALLOWED_HOSTS = ['staging.openprescribing.net']
 # END HOST CONFIGURATION
 
-
 # DATABASE CONFIGURATION
 DATABASES = {
     'default': {
@@ -29,7 +27,6 @@ DATABASES = {
     }
 }
 # END DATABASE CONFIGURATION
-
 
 # CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -67,10 +64,9 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename':
-            "%s/logs/mail-signals.log" % INSTALL_ROOT,
+            'filename': "%s/logs/mail-signals.log" % INSTALL_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
-            }
+        }
     },
     'loggers': {
         'django': {

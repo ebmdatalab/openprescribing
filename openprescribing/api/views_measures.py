@@ -19,9 +19,8 @@ class MissingParameter(APIException):
 def _get_measure_data(measure_id):
     fpath = os.path.dirname(__file__)
     fname = os.path.join(
-        fpath,
-        ("../frontend/management/commands/measure_definitions/"
-         "%s.json") % measure_id)
+        fpath, ("../frontend/management/commands/measure_definitions/"
+                "%s.json") % measure_id)
     return json.load(open(fname, 'r'))
 
 
@@ -36,8 +35,8 @@ def _numerator_can_be_queried(measuredata):
     moment..
 
     """
-    table_there = ('hscic.normalised_prescribing_standard'
-                   in measuredata['numerator_from'])
+    table_there = ('hscic.normalised_prescribing_standard' in measuredata[
+        'numerator_from'])
     join_not_there = 'JOIN' not in measuredata['numerator_from']
     return table_there and join_not_there
 
@@ -97,9 +96,7 @@ def measure_global(request, format=None):
                 'numerator_can_be_queried': numerator_can_be_queried,
                 'data': [d_copy]
             }
-    d = {
-        'measures': [rolled[k] for k in rolled]
-    }
+    d = {'measures': [rolled[k] for k in rolled]}
     return Response(d)
 
 
@@ -118,14 +115,10 @@ def measure_numerators_by_org(request, format=None):
         # are different from those in bigquery (for which the measure
         # defitions are defined), we have to rename them (e.g. `items` ->
         # `total_items`)
-        numerator_selector = " ".join(
-            get_columns_for_select(m, 'numerator')).replace(
-                'items', 'total_items')
-        numerator_where = " ".join(
-            m['numerator_where']).replace(
-                'bnf_code', 'presentation_code').replace(
-                    'bnf_name', 'pn.name'
-                )
+        numerator_selector = " ".join(get_columns_for_select(
+            m, 'numerator')).replace('items', 'total_items')
+        numerator_where = " ".join(m['numerator_where']).replace(
+            'bnf_code', 'presentation_code').replace('bnf_name', 'pn.name')
         # There is redundancy in the column names, so we can support
         # various flavours of `WHERE` clause from the measure
         # definitions
@@ -150,14 +143,9 @@ def measure_numerators_by_org(request, format=None):
                  'GROUP BY '
                  '  %s, presentation_code, pn.name '
                  'ORDER BY numerator DESC '
-                 'LIMIT 50') % (
-                     org_selector,
-                     numerator_selector,
-                     org_selector,
-                     org, this_month.strftime('%Y-%m-%d'),
-                     numerator_where,
-                     org_selector
-                 )
+                 'LIMIT 50') % (org_selector, numerator_selector, org_selector,
+                                org, this_month.strftime('%Y-%m-%d'),
+                                numerator_where, org_selector)
         data = utils.execute_query(query, [])
     else:
         data = []
@@ -232,9 +220,7 @@ def measure_by_ccg(request, format=None):
                 'data': [d_copy]
             }
 
-    d = {
-        'measures': [rolled[k] for k in rolled]
-    }
+    d = {'measures': [rolled[k] for k in rolled]}
     return Response(d)
 
 
@@ -305,7 +291,5 @@ def measure_by_practice(request, format=None):
                 'data': [d_copy]
             }
 
-    d = {
-        'measures': [rolled[k] for k in rolled]
-    }
+    d = {'measures': [rolled[k] for k in rolled]}
     return Response(d)

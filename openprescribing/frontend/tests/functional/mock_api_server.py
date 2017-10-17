@@ -6,7 +6,6 @@ from threading import Thread
 import urlparse
 import os
 
-
 FIXTURES_BASE = 'frontend/tests/fixtures/functional/'
 logger = logging.getLogger(__name__)
 
@@ -23,6 +22,7 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
     under test, via some kind of IPC
 
     """
+
     def log_message(self, format, *args):
         logger.info(format % args)
 
@@ -104,8 +104,7 @@ class MockApiServer(object):
         self.port = port
 
     def start(self):
-        mock_server = HTTPServer(
-            ('0.0.0.0', self.port), MockApiRequestHandler)
+        mock_server = HTTPServer(('0.0.0.0', self.port), MockApiRequestHandler)
         self.mock_server_thread = Thread(target=mock_server.serve_forever)
         self.mock_server_thread.setDaemon(True)
         self.mock_server_thread.start()

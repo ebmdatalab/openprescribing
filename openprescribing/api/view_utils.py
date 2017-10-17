@@ -14,6 +14,7 @@ def db_timeout(timeout):
     timeouts
 
     """
+
     def timeout_decorator(func):
         @wraps(func)
         def func_wrapper(*args, **kwargs):
@@ -21,7 +22,9 @@ def db_timeout(timeout):
             cursor = connection.cursor()
             cursor.execute("set statement_timeout to %s; commit;" % timeout)
             return func(*args, **kwargs)
+
         return func_wrapper
+
     return timeout_decorator
 
 
@@ -36,8 +39,7 @@ def param_to_list(str):
 def dictfetchall(cursor):
     desc = cursor.description
     return [
-        dict(zip([col[0] for col in desc], row))
-        for row in cursor.fetchall()
+        dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()
     ]
 
 

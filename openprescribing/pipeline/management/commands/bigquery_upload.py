@@ -35,29 +35,20 @@ class Command(BaseCommand):
 
         table = client.get_table('presentation')
         columns = [field.name for field in schemas.PRESENTATION_SCHEMA]
-        table.insert_rows_from_pg(
-            models.Presentation,
-            columns,
-            schemas.presentation_transform
-        )
+        table.insert_rows_from_pg(models.Presentation, columns,
+                                  schemas.presentation_transform)
 
         table = client.get_table('practice_statistics')
         columns = [field.name for field in schemas.PRACTICE_STATISTICS_SCHEMA]
         columns[0] = 'date'
         columns[1] = 'practice_id'
-        table.insert_rows_from_pg(
-            models.PracticeStatistics,
-            columns,
-            schemas.statistics_transform
-        )
+        table.insert_rows_from_pg(models.PracticeStatistics, columns,
+                                  schemas.statistics_transform)
 
         table = client.get_table('ccgs')
         columns = [field.name for field in schemas.CCG_SCHEMA]
-        table.insert_rows_from_pg(
-            models.PCT,
-            columns,
-            schemas.statistics_transform
-        )
+        table.insert_rows_from_pg(models.PCT, columns,
+                                  schemas.statistics_transform)
 
 
 class BigQueryUploader(CloudHandler):
@@ -65,8 +56,7 @@ class BigQueryUploader(CloudHandler):
         """Update `bnf` table from cloud-stored CSV
         """
         dataset = self.list_raw_datasets(
-            'ebmdatalab', prefix='hscic/bnf_codes',
-            name_regex=r'\.csv')[-1]
+            'ebmdatalab', prefix='hscic/bnf_codes', name_regex=r'\.csv')[-1]
         uri = "gs://ebmdatalab/%s" % dataset
         print("Loading data from %s..." % uri)
         self.load(uri, table_name="bnf", schema='bnf.json')

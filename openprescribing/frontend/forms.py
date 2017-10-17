@@ -5,8 +5,7 @@ from frontend.models import PCT, Practice
 
 
 def _name_with_url(bookmark):
-    html = ('<a href="%s">%s</a>' %
-            (bookmark.dashboard_url(), bookmark.name))
+    html = ('<a href="%s">%s</a>' % (bookmark.dashboard_url(), bookmark.name))
     return mark_safe(html)
 
 
@@ -15,8 +14,7 @@ class BookmarkListForm(forms.Form):
         label="Alerts about organisations",
         widget=forms.CheckboxSelectMultiple())
     search_bookmarks = forms.MultipleChoiceField(
-        label="Alerts about searches",
-        widget=forms.CheckboxSelectMultiple())
+        label="Alerts about searches", widget=forms.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
         """Populate choices with those passed in, and remove fields with no
@@ -27,13 +25,14 @@ class BookmarkListForm(forms.Form):
         search_bookmarks = kwargs.pop('search_bookmarks', [])
         super(BookmarkListForm, self).__init__(*args, **kwargs)
         if org_bookmarks:
-            self.fields['org_bookmarks'].choices = [
-                (x.id, _name_with_url(x)) for x in org_bookmarks]
+            self.fields['org_bookmarks'].choices = [(x.id, _name_with_url(x))
+                                                    for x in org_bookmarks]
         else:
             del self.fields['org_bookmarks']
         if search_bookmarks:
             self.fields['search_bookmarks'].choices = [
-                (x.id, _name_with_url(x)) for x in search_bookmarks]
+                (x.id, _name_with_url(x)) for x in search_bookmarks
+            ]
         else:
             del self.fields['search_bookmarks']
 
@@ -45,19 +44,12 @@ class SearchBookmarkForm(forms.Form):
             'required': "This can't be blank!",
             'invalid': 'Please enter a valid email address'
         },
-        widget=forms.TextInput(
-            attrs={
-                'placeholder': 'Email address',
-                'size': '35'})
-    )
-    url = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=True
-    )
-    name = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=True
-    )
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email address',
+            'size': '35'
+        }))
+    url = forms.CharField(widget=forms.HiddenInput(), required=True)
+    name = forms.CharField(widget=forms.HiddenInput(), required=True)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -75,19 +67,12 @@ class OrgBookmarkForm(forms.Form):
             'required': "This can't be blank!",
             'invalid': 'Please enter a valid email address'
         },
-        widget=forms.TextInput(
-            attrs={
-                'placeholder': 'Email address',
-                'size': '35'})
-    )
-    pct = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=False
-    )
-    practice = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=False
-    )
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email address',
+            'size': '35'
+        }))
+    pct = forms.CharField(widget=forms.HiddenInput(), required=False)
+    practice = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def clean(self):
         """Turn entity ids into Practice or PCT instances

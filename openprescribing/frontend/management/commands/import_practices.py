@@ -47,9 +47,7 @@ class Command(BaseCommand):
         count = 0
         for row in entries:
             row = [r.strip() for r in row]
-            practice, created = Practice.objects.get_or_create(
-                code=row[0]
-            )
+            practice, created = Practice.objects.get_or_create(code=row[0])
 
             practice.name = row[1]
             practice.address1 = row[4]
@@ -94,9 +92,7 @@ class Command(BaseCommand):
         practices = csv.reader(open(filename, 'rU'))
         for row in practices:
             row = [i.strip() for i in row]
-            p, created = Practice.objects.get_or_create(
-                code=row[1]
-            )
+            p, created = Practice.objects.get_or_create(code=row[1])
             if created:
                 p.name = row[2]
                 p.address1 = row[3]

@@ -25,10 +25,8 @@ class Source(object):
     def __init__(self, name, attrs):
         self.name = name
         self.title = attrs['title']
-        self.data_dir = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR,
-            attrs.get('data_dir', name)
-        )
+        self.data_dir = os.path.join(settings.PIPELINE_DATA_BASEDIR,
+                                     attrs.get('data_dir', name))
 
         self.publisher = attrs.get('publisher')
         self.publication_schedule = attrs.get('publication_schedule')
@@ -80,8 +78,7 @@ class Task(object):
 
     def resolve_dependencies(self, task_collection):
         self.dependencies = [
-            task_collection[name]
-            for name in self.dependency_names
+            task_collection[name] for name in self.dependency_names
         ]
 
     def filename_pattern(self):
@@ -117,9 +114,7 @@ class Task(object):
             if path_matches_pattern(record['imported_file'], pattern)
         ]
         sorted_records = sorted(
-            matched_records,
-            key=lambda record: record['imported_at']
-        )
+            matched_records, key=lambda record: record['imported_at'])
         return [record['imported_file'] for record in sorted_records]
 
     def input_paths(self):
@@ -127,8 +122,7 @@ class Task(object):
         paths = glob.glob("%s/*/*" % self.source.data_dir)
         return sorted(
             path for path in paths
-            if path_matches_pattern(path, self.filename_pattern())
-        )
+            if path_matches_pattern(path, self.filename_pattern()))
 
     def set_last_imported_path(self, path):
         '''Set the path of the most recently imported data for this source.'''
@@ -145,8 +139,7 @@ class Task(object):
         imported.'''
         imported_paths = [record for record in self.imported_paths()]
         return [
-            path for path in self.input_paths()
-            if path not in imported_paths
+            path for path in self.input_paths() if path not in imported_paths
         ]
 
 
@@ -305,8 +298,8 @@ class TaskCollection(object):
             return bool(self._tasks)
 
     def by_type(self, task_type):
-        return TaskCollection(list(self), ordered=self._ordered,
-                              task_type=task_type)
+        return TaskCollection(
+            list(self), ordered=self._ordered, task_type=task_type)
 
     def ordered(self):
         return TaskCollection(list(self), ordered=True, task_type=self._type)
@@ -382,10 +375,10 @@ def call_command(*args):
 
 def run_task(task, year, month, **kwargs):
     if TaskLog.objects.filter(
-        year=year,
-        month=month,
-        task_name=task.name,
-        status=TaskLog.SUCCESSFUL,
+            year=year,
+            month=month,
+            task_name=task.name,
+            status=TaskLog.SUCCESSFUL,
     ).exists():
         # This task has already been run successfully
         return

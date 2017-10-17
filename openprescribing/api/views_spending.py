@@ -23,7 +23,6 @@ from frontend.models import Presentation
 import view_utils as utils
 from view_utils import db_timeout
 
-
 CODE_LENGTH_ERROR = (
     'Error: BNF Codes must all be the same length if written in the same '
     'search box. For example, you cannot search for Cerazette_Tab 75mcg '
@@ -56,8 +55,8 @@ def _build_conditions_and_patterns(code, focus):
     extra_codes = GenericCodeMapping.objects.filter(
         Q(from_code=code) | Q(to_code=code))
     # flatten and uniquify the list of codes
-    extra_codes = Set(np.array(
-        [[x.from_code, x.to_code] for x in extra_codes]).flatten())
+    extra_codes = Set(
+        np.array([[x.from_code, x.to_code] for x in extra_codes]).flatten())
     patterns = ["%s____%s" % (code[:9], code[13:15])]
     for extra_code in extra_codes:
         if extra_code.endswith('%'):
@@ -100,16 +99,12 @@ def bubble(request, format=None):
         "frontend_presentation.bnf_code "
         "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
         "WHERE processing_date = %s "
-        "AND setting = 4 " +
-        conditions +
-        ") "
-    )
+        "AND setting = 4 " + conditions + ") ")
     binned_ppus_sql = rounded_ppus_cte_sql + (
         ", binned_ppus AS (SELECT presentation_code, presentation_name, ppu, "
         "SUM(quantity) AS quantity "
         "FROM rounded_ppus "
-        "GROUP BY presentation_code, presentation_name, ppu) "
-    )
+        "GROUP BY presentation_code, presentation_name, ppu) ")
     if trim:
         # Skip items where PPU is outside <trim> percentile (where
         # <trim> is out of 100)
@@ -126,8 +121,7 @@ def bubble(request, format=None):
             " NTILE(%s) OVER (ORDER BY ppu) AS ntiled "
             " FROM binned_ppus "
             " ORDER BY mean_ppu, presentation_name) ranked "
-            "WHERE ntiled <= %s" % (out_of, trim)
-        )
+            "WHERE ntiled <= %s" % (out_of, trim))
         print ordered_ppus_sql
     else:
 
@@ -135,11 +129,9 @@ def bubble(request, format=None):
             "SELECT *, "
             "AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu "
             "FROM binned_ppus "
-            "ORDER BY mean_ppu, presentation_name"
-        )
+            "ORDER BY mean_ppu, presentation_name")
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
-        "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
-    )
+        "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus ")
     params = [date] + patterns
     with connection.cursor() as cursor:
         cursor.execute(ordered_ppus_sql, params)
@@ -152,19 +144,18 @@ def bubble(request, format=None):
                 is_generic = False
                 if result.presentation_code[9:11] == 'AA':
                     is_generic = True
-                categories.append(
-                    {
-                        'name': result.presentation_name,
-                        'is_generic': is_generic
-                    }
-                )
+                categories.append({
+                    'name': result.presentation_name,
+                    'is_generic': is_generic
+                })
 
             series.append({
                 'x': pos,
                 'y': result.ppu,
                 'z': result.quantity,
                 'mean_ppu': result.mean_ppu,
-                'name': result.presentation_name})
+                'name': result.presentation_name
+            })
         if highlight:
             params.append(highlight)
             if len(highlight) == 3:
@@ -173,8 +164,11 @@ def bubble(request, format=None):
                 mean_ppu_for_entity_sql += "WHERE practice_id = %s "
         cursor.execute(mean_ppu_for_entity_sql, params)
         plotline = cursor.fetchone()[0]
-        return Response(
-            {'plotline': plotline, 'series': series, 'categories': categories})
+        return Response({
+            'plotline': plotline,
+            'series': series,
+            'categories': categories
+        })
 
 
 @api_view(['GET'])
@@ -211,8 +205,8 @@ def price_per_unit(request, format=None):
             # Practice focus
             query['practice'] = entity_code
     savings = []
-    for x in PPUSaving.objects.filter(
-            **query).prefetch_related('presentation', 'practice'):
+    for x in PPUSaving.objects.filter(**query).prefetch_related(
+            'presentation', 'practice'):
         # Get all products in one hit. They will all be generic.
         #
         d = model_to_dict(x)
@@ -228,13 +222,17 @@ def price_per_unit(request, format=None):
     # DMDProduct schema makes this difficult to do using Django ORM)
     if savings:
         codes_with_metadata = DMDProduct.objects.filter(
-            bnf_code__in=[d['presentation'] for d in savings], concept_class=1).only(
-                'bnf_code', 'name', 'is_non_bioequivalent').all()
+            bnf_code__in=[d['presentation']
+                          for d in savings], concept_class=1).only(
+                              'bnf_code', 'name',
+                              'is_non_bioequivalent').all()
         combined = pd.DataFrame(savings).set_index('presentation')
         combined['presentation'] = combined.index
-        metadata = pd.DataFrame([
-            {'bnf_code': x.bnf_code, 'name': x.name, 'flag_bioequivalence': x.is_non_bioequivalent}
-            for x in codes_with_metadata]).set_index('bnf_code')
+        metadata = pd.DataFrame([{
+            'bnf_code': x.bnf_code,
+            'name': x.name,
+            'flag_bioequivalence': x.is_non_bioequivalent
+        } for x in codes_with_metadata]).set_index('bnf_code')
         # We want all the fields in combined, but where there's a
         # match, overwritten with the values in metadata
         combined = metadata.combine_first(combined)
@@ -283,8 +281,8 @@ def spending_by_ccg(request, format=None):
 
     if not spending_type or spending_type == 'bnf-section' \
        or spending_type == 'chemical':
-        query = _get_query_for_chemicals_or_sections_by_ccg(codes, orgs,
-                                                            spending_type)
+        query = _get_query_for_chemicals_or_sections_by_ccg(
+            codes, orgs, spending_type)
     else:
         query = _get_query_for_presentations_by_ccg(codes, orgs)
 
@@ -324,10 +322,8 @@ def spending_by_practice(request, format=None):
         # So for these queries, expand the CCG ID to a list of practice IDs.
         expanded_orgs = utils.get_practice_ids_from_org(orgs)
         if codes:
-            query = _get_chemicals_or_sections_by_practice(codes,
-                                                           expanded_orgs,
-                                                           spending_type,
-                                                           date)
+            query = _get_chemicals_or_sections_by_practice(
+                codes, expanded_orgs, spending_type, date)
             org_for_param = expanded_orgs
         else:
             query = _get_total_spending_by_practice(expanded_orgs, date)
@@ -335,8 +331,8 @@ def spending_by_practice(request, format=None):
     else:
         query = _get_presentations_by_practice(codes, orgs, date)
         org_for_param = orgs
-    data = utils.execute_query(
-        query, [codes, org_for_param, [date] if date else []])
+    data = utils.execute_query(query,
+                               [codes, org_for_param, [date] if date else []])
     return Response(data)
 
 
@@ -479,8 +475,7 @@ def _get_total_spending_by_practice(orgs, date):
     return query
 
 
-def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
-                                           date):
+def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type, date):
     query = 'SELECT pr.practice_id AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "

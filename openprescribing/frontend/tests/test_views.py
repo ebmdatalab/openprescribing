@@ -14,8 +14,10 @@ from allauth.account.models import EmailAddress
 
 
 class TestAlertViews(TransactionTestCase):
-    fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'prescriptions', 'measures']
+    fixtures = [
+        'chemicals', 'sections', 'ccgs', 'practices', 'prescriptions',
+        'measures'
+    ]
 
     def _post_org_signup(self, entity_id, email='foo@baz.com'):
         form_data = {'email': email}
@@ -25,15 +27,13 @@ class TestAlertViews(TransactionTestCase):
         else:
             url = "/practice/%s/" % entity_id
             form_data['practice'] = entity_id
-        return self.client.post(
-            url, form_data, follow=True)
+        return self.client.post(url, form_data, follow=True)
 
     def _post_search_signup(self, url, name, email='foo@baz.com'):
         form_data = {'email': email}
         form_data['url'] = url
         form_data['name'] = name
-        return self.client.post(
-            '/analyse/', form_data, follow=True)
+        return self.client.post('/analyse/', form_data, follow=True)
 
     def _create_user_and_login(self, email, is_superuser=False):
         from allauth.utils import get_user_model
@@ -43,23 +43,20 @@ class TestAlertViews(TransactionTestCase):
         if is_superuser:
             user.is_superuser = True
         user.save()
-        EmailAddress.objects.create(user=user,
-                                    email=email,
-                                    primary=True,
-                                    verified=True)
-        self.client.force_login(
-            user, 'django.contrib.auth.backends.ModelBackend')
+        EmailAddress.objects.create(
+            user=user, email=email, primary=True, verified=True)
+        self.client.force_login(user,
+                                'django.contrib.auth.backends.ModelBackend')
         return user
 
     def test_search_email_invalid(self):
         response = self._post_search_signup('stuff', 'mysearch', email='boo')
-        self.assertContains(
-            response, "Please enter a valid email address")
+        self.assertContains(response, "Please enter a valid email address")
 
     def test_search_email_sent(self):
         response = self._post_search_signup('stuff', 'mysearch')
-        self.assertContains(
-            response, "Check your email and click the confirmation link")
+        self.assertContains(response,
+                            "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about mysearch", mail.outbox[0].body)
 
@@ -95,15 +92,14 @@ class TestAlertViews(TransactionTestCase):
 
     def test_ccg_email_invalid(self):
         response = self._post_org_signup('03V', email='boo')
-        self.assertContains(
-            response, "Please enter a valid email address")
+        self.assertContains(response, "Please enter a valid email address")
 
     def test_ccg_email_sent(self):
         email = 'a@a.com'
         response = self._post_org_signup('03V', email=email)
         self.assertTrue(response.context['user'].is_anonymous())
-        self.assertContains(
-            response, "Check your email and click the confirmation link")
+        self.assertContains(response,
+                            "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
@@ -159,20 +155,18 @@ class TestAlertViews(TransactionTestCase):
                                mail.outbox[0].body, re.DOTALL).groups()[0]
         response = self.client.get(confirm_url, follow=True)
         self.assertEqual(response.context['user'].email, 'f@frog.com')
-        self.assertContains(
-            response, "subscribed to monthly alerts about "
-            "<em>prescribing in NHS Corby")
+        self.assertContains(response, "subscribed to monthly alerts about "
+                            "<em>prescribing in NHS Corby")
         self.assertTrue(response.context['user'].is_active)
 
     def test_practice_email_invalid(self):
         response = self._post_org_signup('P87629', email='boo')
-        self.assertContains(
-            response, "Please enter a valid email address")
+        self.assertContains(response, "Please enter a valid email address")
 
     def test_practice_email_sent(self):
         response = self._post_org_signup('P87629')
-        self.assertContains(
-            response, "Check your email and click the confirmation link")
+        self.assertContains(response,
+                            "Check your email and click the confirmation link")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
 
@@ -188,15 +182,16 @@ class TestAlertViews(TransactionTestCase):
         confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
                                mail.outbox[0].body, re.DOTALL).groups()[0]
         response = self.client.get(confirm_url, follow=True)
-        self.assertContains(
-            response, "subscribed to monthly alerts about "
-            "<em>prescribing in 1/ST Andrews")
+        self.assertContains(response, "subscribed to monthly alerts about "
+                            "<em>prescribing in 1/ST Andrews")
         self.assertTrue(response.context['user'].is_active)
 
 
 class TestFrontendViews(TransactionTestCase):
-    fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'prescriptions', 'measures', 'importlog']
+    fixtures = [
+        'chemicals', 'sections', 'ccgs', 'practices', 'prescriptions',
+        'measures', 'importlog'
+    ]
 
     def test_call_view_homepage(self):
         response = self.client.get('')
@@ -209,7 +204,7 @@ class TestFrontendViews(TransactionTestCase):
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
             self.assertIn('openprescribing.min.js', mainjs)
-        with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
+        with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1', )):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
@@ -250,8 +245,8 @@ class TestFrontendViews(TransactionTestCase):
         title = doc('h1')
         self.assertEqual(title.text(), '2.2: Diuretics')
         lead = doc('.lead')
-        self.assertEqual(
-            lead.text(), 'Part of chapter 2 Cardiovascular System')
+        self.assertEqual(lead.text(),
+                         'Part of chapter 2 Cardiovascular System')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 1)
 
@@ -261,8 +256,8 @@ class TestFrontendViews(TransactionTestCase):
         self.assertTemplateUsed(response, 'bnf_section.html')
         doc = pq(response.content)
         title = doc('h1')
-        self.assertEqual(
-            title.text(), '2.2.1: Thiazides And Related Diuretics')
+        self.assertEqual(title.text(),
+                         '2.2.1: Thiazides And Related Diuretics')
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
@@ -295,8 +290,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertEqual(
             lead.text(),
             ('Part of chapter 2 Cardiovascular System , section 2.2 '
-             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
-        )
+             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics'))
 
     def test_call_view_ccg_all(self):
         response = self.client.get('/ccg/')
@@ -376,8 +370,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
         doc = pq(response.content)
         title = doc('h1')
-        t = ('Cerazette vs. Desogestrel by GP practices '
-             'in NHS Corby')
+        t = ('Cerazette vs. Desogestrel by GP practices ' 'in NHS Corby')
         self.assertEqual(title.text(), t)
 
     def test_call_view_practice_redirect(self):
@@ -395,8 +388,10 @@ class TestFrontendViews(TransactionTestCase):
 
 
 class TestPPUViews(TransactionTestCase):
-    fixtures = ['ccgs', 'importlog', 'dmdproducts',
-                'practices', 'prescriptions', 'presentations']
+    fixtures = [
+        'ccgs', 'importlog', 'dmdproducts', 'practices', 'prescriptions',
+        'presentations'
+    ]
 
     def test_practice_price_per_unit(self):
         response = self.client.get('/practice/P87629/price_per_unit/')

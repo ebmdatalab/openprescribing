@@ -49,23 +49,12 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
 
-
 logger = logging.getLogger(__name__)
 
-
-PRIMARY_KEYS = {
-    'AMP': 'APID',
-    'AMPP': 'APPID',
-    'VMP': 'VPID',
-    'VMPP': 'VPPID'
-}
+PRIMARY_KEYS = {'AMP': 'APID', 'AMPP': 'APPID', 'VMP': 'VPID', 'VMPP': 'VPPID'}
 
 EXTRA_INDEXES = [
-    'parallel_import',
-    'lic_authcd',
-    'pres_statcd',
-    'discdt',
-    'nurse_f'
+    'parallel_import', 'lic_authcd', 'pres_statcd', 'discdt', 'nurse_f'
 ]
 
 PG_TYPE_MAP = {
@@ -87,8 +76,8 @@ def create_table(info):
             row_sql = '"%s" %s' % (name, coltype)
             if name == PRIMARY_KEYS.get(info['table_name'], ''):
                 row_sql += " PRIMARY KEY"
-            elif any([name in x
-                      for x in PRIMARY_KEYS.values() + EXTRA_INDEXES]):
+            elif any(
+                [name in x for x in PRIMARY_KEYS.values() + EXTRA_INDEXES]):
                 indexes.append(name)
             cols.append(row_sql)
         sql += ', '.join(cols)
@@ -124,7 +113,8 @@ def get_table_info(source_directory, schema_names):
         # based on parsing the XSD files.
         if 'gtin' in schema_name:
             all_tables['dmd_gtin'] = {
-                'table_name': 'dmd_gtin',
+                'table_name':
+                'dmd_gtin',
                 'columns': (
                     ('appid', 'bigint'),
                     ('startdt', 'date'),
@@ -177,8 +167,8 @@ def get_table_info(source_directory, schema_names):
             for column in columns:
                 col_name = column.attrib['name']
                 col_type = column.attrib['type']
-                current_table_def['columns'].append(
-                    (col_name, PG_TYPE_MAP[col_type]))
+                current_table_def['columns'].append((col_name,
+                                                     PG_TYPE_MAP[col_type]))
 
             # Now, if it aleady exists having been described elsewhere,
             table = current_table_def['table_name']
@@ -203,8 +193,9 @@ def create_all_tables(source_directory):
 def create_dmd_product():
     with connection.cursor() as cursor:
         fpath = os.path.dirname(__file__)
-        for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath),
-                        key=lambda x: int(re.findall(r'\d+', x)[0])):
+        for f in sorted(
+                glob.glob("%s/dmd_sql/*sql" % fpath),
+                key=lambda x: int(re.findall(r'\d+', x)[0])):
             logging.info("Post-processing", f)
             with open(f, "rb") as sql:
                 sql = sql.read()
@@ -221,9 +212,8 @@ def add_bnf_codes(source_directory):
 
     """
     from openpyxl import load_workbook
-    wb = load_workbook(
-        filename=os.path.join(
-            source_directory, "Converted_DRUG_SNOMED_BNF.xlsx"))
+    wb = load_workbook(filename=os.path.join(source_directory,
+                                             "Converted_DRUG_SNOMED_BNF.xlsx"))
     rows = wb.active.rows
     with connection.cursor() as cursor:
         for row in rows[1:]:  # skip header
@@ -233,8 +223,8 @@ def add_bnf_codes(source_directory):
             cursor.execute(sql.lower(), [bnf_code, snomed_code])
             rowcount = cursor.rowcount
             if not rowcount:
-                logging.warn(
-                    "When adding BNF codes, could not find %s", snomed_code)
+                logging.warn("When adding BNF codes, could not find %s",
+                             snomed_code)
 
 
 def process_gtin(cursor, f):
@@ -249,12 +239,8 @@ def process_gtin(cursor, f):
         if end_date is not None:
             end_date = end_date.text
         gtin = row.find('GTINDATA/GTIN').text
-        row_data = [
-            ('appid', appid),
-            ('startdt', start_date),
-            ('enddt', end_date),
-            ('gtin', gtin)
-        ]
+        row_data = [('appid', appid), ('startdt', start_date),
+                    ('enddt', end_date), ('gtin', gtin)]
         insert_row(cursor, table_info, row_data)
 
 
@@ -291,8 +277,8 @@ def extract_test(source_directory):
                     for i, row in enumerate(rows):
                         if i > 0:
                             row.getparent().remove(row)
-                outfile.write(etree.tostring(
-                    root, encoding='utf8', method='xml'))
+                outfile.write(
+                    etree.tostring(root, encoding='utf8', method='xml'))
 
 
 def process_datafiles(source_directory):

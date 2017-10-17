@@ -40,9 +40,7 @@ from frontend.models import SearchBookmark
 ##################################################
 def all_bnf(request):
     sections = Section.objects.filter(is_current=True)
-    context = {
-        'sections': sections
-    }
+    context = {'sections': sections}
     return render(request, 'all_bnf.html', context)
 
 
@@ -61,14 +59,11 @@ def bnf_section(request, section_id):
     chemicals = None
     subsections = Section.objects.filter(
         bnf_id__startswith=section_id,
-        is_current=True
-    ).extra(
-        where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
+        is_current=True).extra(where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
     if not subsections:
         chemicals = Chemical.objects.filter(
             bnf_code__startswith=section_id,
-            is_current=True
-        ).order_by('chem_name')
+            is_current=True).order_by('chem_name')
     context = {
         'section': section,
         'bnf_chapter': bnf_chapter,
@@ -84,13 +79,10 @@ def bnf_section(request, section_id):
 # CHEMICALS
 ##################################################
 
+
 def all_chemicals(request):
-    chemicals = Chemical.objects.filter(
-        is_current=True
-    ).order_by('bnf_code')
-    context = {
-        'chemicals': chemicals
-    }
+    chemicals = Chemical.objects.filter(is_current=True).order_by('bnf_code')
+    context = {'chemicals': chemicals}
     return render(request, 'all_chemicals.html', context)
 
 
@@ -148,11 +140,10 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 # GP PRACTICES
 ##################################################
 
+
 def all_practices(request):
     practices = Practice.objects.filter(setting=4).order_by('name')
-    context = {
-        'practices': practices
-    }
+    context = {'practices': practices}
     return render(request, 'all_practices.html', context)
 
 
@@ -182,12 +173,11 @@ def practice_price_per_unit(request, code):
 # CCGs
 ##################################################
 
+
 def all_ccgs(request):
     ccgs = PCT.objects.filter(
         close_date__isnull=True, org_type="CCG").order_by('name')
-    context = {
-        'ccgs': ccgs
-    }
+    context = {'ccgs': ccgs}
     return render(request, 'all_ccgs.html', context)
 
 
@@ -209,19 +199,16 @@ def ccg_price_per_unit(request, code):
 # These replace old CCG and practice dashboards.
 ##################################################
 
+
 def all_measures(request):
     measures = Measure.objects.all().order_by('name')
-    context = {
-        'measures': measures
-    }
+    context = {'measures': measures}
     return render(request, 'all_measures.html', context)
 
 
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
-    context = {
-        'measure': measure
-    }
+    context = {'measure': measure}
     return render(request, 'measure_for_all_ccgs.html', context)
 
 
@@ -242,25 +229,22 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'pct')
+        form = _handleCreateBookmark(request, OrgBookmark, OrgBookmarkForm,
+                                     'pct')
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
-        form = OrgBookmarkForm(
-            initial={'pct': requested_ccg.pk,
-                     'email': getattr(request.user, 'email', '')})
+        form = OrgBookmarkForm(initial={
+            'pct': requested_ccg.pk,
+            'email': getattr(request.user, 'email', '')
+        })
     if request.user.is_authenticated():
         signed_up_for_alert = request.user.orgbookmark_set.filter(
             pct=requested_ccg)
     else:
         signed_up_for_alert = False
-    practices = Practice.objects.filter(
-        ccg=requested_ccg).filter(
-            setting=4).order_by('name')
+    practices = Practice.objects.filter(ccg=requested_ccg).filter(
+        setting=4).order_by('name')
     alert_preview_action = reverse(
         'preview-ccg-bookmark', args=[requested_ccg.code])
     context = {
@@ -278,10 +262,12 @@ def measure_for_one_ccg(request, measure, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
-        'ccg': ccg,
-        'measure': measure,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
+        'ccg':
+        ccg,
+        'measure':
+        measure,
+        'current_at':
+        ImportLog.objects.latest_in_category('prescribing').current_at
     }
     return render(request, 'measure_for_one_ccg.html', context)
 
@@ -290,10 +276,12 @@ def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
-        'practice': practice,
-        'measure': measure,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
+        'practice':
+        practice,
+        'measure':
+        measure,
+        'current_at':
+        ImportLog.objects.latest_in_category('prescribing').current_at
     }
     return render(request, 'measure_for_one_practice.html', context)
 
@@ -320,49 +308,39 @@ def last_bookmark(request):
                 "to any monthly alerts!")
         return redirect(next_url)
     else:
-        messages.success(
-            request, "Thanks, you're now subscribed to monthly alerts!")
+        messages.success(request,
+                         "Thanks, you're now subscribed to monthly alerts!")
         return redirect('home')
 
 
 def analyse(request):
     if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            SearchBookmark,
-            SearchBookmarkForm,
-            'url', 'name'
-        )
+        form = _handleCreateBookmark(request, SearchBookmark,
+                                     SearchBookmarkForm, 'url', 'name')
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
         # Note that the (hidden) URL field is filled via javascript on
         # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(
-            initial={'email': getattr(request.user, 'email', '')})
+        form = SearchBookmarkForm(initial={
+            'email': getattr(request.user, 'email', '')
+        })
     alert_preview_action = reverse('preview-analyse-bookmark')
-    context = {
-        'alert_preview_action': alert_preview_action,
-        'form': form
-    }
+    context = {'alert_preview_action': alert_preview_action, 'form': form}
     return render(request, 'analyse.html', context)
 
 
-def _handleCreateBookmark(request, subject_class,
-                          subject_form_class,
+def _handleCreateBookmark(request, subject_class, subject_form_class,
                           *subject_field_ids):
     form = subject_form_class(request.POST)
     if form.is_valid():
         email = form.cleaned_data['email']
         try:
-            user = User.objects.create_user(
-                username=email, email=email)
+            user = User.objects.create_user(username=email, email=email)
         except IntegrityError:
             user = User.objects.get(username=email)
         user = authenticate(key=user.profile.key)
-        kwargs = {
-            'user': user
-        }
+        kwargs = {'user': user}
         for field in subject_field_ids:
             kwargs[field] = form.cleaned_data[field]
         # An unverified account can only create unapproved bookmarks.
@@ -387,9 +365,10 @@ def _handleCreateBookmark(request, subject_class,
             request.user = AnonymousUser()
             for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
                 if k in request.session:
-                    del(request.session[k])
+                    del (request.session[k])
         return perform_login(
-            request, user,
+            request,
+            user,
             app_settings.EmailVerificationMethod.MANDATORY,
             signup=True)
     return form
@@ -398,20 +377,17 @@ def _handleCreateBookmark(request, subject_class,
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)
     if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'practice')
+        form = _handleCreateBookmark(request, OrgBookmark, OrgBookmarkForm,
+                                     'practice')
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
-        form = OrgBookmarkForm(
-            initial={'practice': p.pk,
-                     'email': getattr(request.user, 'email', '')})
+        form = OrgBookmarkForm(initial={
+            'practice': p.pk,
+            'email': getattr(request.user, 'email', '')
+        })
     if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            practice=p)
+        signed_up_for_alert = request.user.orgbookmark_set.filter(practice=p)
     else:
         signed_up_for_alert = False
     alert_preview_action = reverse('preview-practice-bookmark', args=[p.code])
@@ -437,12 +413,8 @@ def gdoc_view(request, doc_id):
     content = '<style>' + ''.join(
         [html.tostring(child)
          for child in tree.head.xpath('//style')]) + '</style>'
-    content += ''.join(
-        [html.tostring(child)
-         for child in tree.body])
-    context = {
-        'content': content
-    }
+    content += ''.join([html.tostring(child) for child in tree.body])
+    context = {'content': content}
     return render(request, 'gdoc.html', context)
 
 
@@ -456,8 +428,8 @@ def custom_500(request):
         context['reason'] = ("The database took too long to respond.  If you "
                              "were running an analysis with multiple codes, "
                              "try again with fewer.")
-    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1 or
-       request.is_ajax()):
+    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1
+            or request.is_ajax()):
         return HttpResponse(context['reason'], status=500)
     else:
         return render(request, '500.html', context, status=500)
