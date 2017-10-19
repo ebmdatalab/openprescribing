@@ -19,6 +19,14 @@
         "type": "manual_fetch",
         "source_id": "patient_list_weightings"
     },
+    "fetch_dmd": {
+        "type": "manual_fetch",
+        "source_id": "dmd"
+    },
+    "fetch_dmd_snomed": {
+        "type": "manual_fetch",
+        "source_id": "dmd_snomed"
+    },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
@@ -160,6 +168,22 @@
             "import_hscic_practices",
             "import_practice_details",
             "import_patient_list_weightings"
+        ]
+    },
+    "import_dmd": {
+        "type": "import",
+        "source_id": "dmd",
+        "command": "import_dmd --zip_path download.zip",
+        "dependencies": [
+            "fetch_dmd"
+        ]
+    },
+    "import_dmd_snomed": {
+        "type": "import",
+        "source_id": "dmd_snomed",
+        "command": "import_dmd_snomed --filename Converted_DRUG_SNOMED_BNF.xlsx",
+        "dependencies": [
+            "fetch_dmd"
         ]
     },
     "upload_to_bigquery": {

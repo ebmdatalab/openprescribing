@@ -34,16 +34,6 @@ class Command(BaseCommand):
                 format(latest_year_and_month)
             return
 
-        year_and_months = sorted(year_and_months)
-
-        num_to_keep = 5
-
-        if len(year_and_months) > num_to_keep:
-            for year_and_month in year_and_months[:-num_to_keep]:
-                prefix = '{}/{}'.format(prefix_base, year_and_month)
-                for blob in bucket.list_blobs(prefix=prefix):
-                    blob.delete()
-
         storage_prefix = '{}/{}-'.format(prefix_base, latest_year_and_month)
         exporter = TableExporter(table, storage_prefix)
         exporter.export_to_storage()

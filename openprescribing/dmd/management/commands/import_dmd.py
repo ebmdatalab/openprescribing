@@ -44,11 +44,10 @@ import logging
 import glob
 import os
 import re
+import zipfile
 
 from django.core.management.base import BaseCommand
-from django.db import connection
-from django.db import transaction
-
+from django.db import connection, transaction
 
 logger = logging.getLogger(__name__)
 
@@ -211,32 +210,6 @@ def create_dmd_product():
                 cursor.execute(sql)
 
 
-def add_bnf_codes(source_directory):
-    """Parse BNF->dm+d mapping supplied by NHSBSA and update tables
-    accordingly.
-
-    This mapping should be updated monthly. At present we have to
-    request it by email from NHSBSA, but they are planning to publish
-    it automatically some time during 2017.
-
-    """
-    from openpyxl import load_workbook
-    wb = load_workbook(
-        filename=os.path.join(
-            source_directory, "Converted_DRUG_SNOMED_BNF.xlsx"))
-    rows = wb.active.rows
-    with connection.cursor() as cursor:
-        for row in rows[1:]:  # skip header
-            bnf_code = row[0].value
-            snomed_code = row[4].value
-            sql = "UPDATE dmd_product SET BNF_CODE = %s WHERE DMDID = %s "
-            cursor.execute(sql.lower(), [bnf_code, snomed_code])
-            rowcount = cursor.rowcount
-            if not rowcount:
-                logging.warn(
-                    "When adding BNF codes, could not find %s", snomed_code)
-
-
 def process_gtin(cursor, f):
     doc = etree.parse(f)
     root = doc.getroot()
@@ -328,7 +301,7 @@ class Command(BaseCommand):
             'https://isd.digital.nhs.uk/trud3.')
 
     def add_arguments(self, parser):
-        parser.add_argument('--source_directory', required=True)
+        parser.add_argument('--zip_path', required=True)
         parser.add_argument(
             '--extract_test',
             help=("Write test fixtures to source_directory, based on the "
@@ -338,12 +311,15 @@ class Command(BaseCommand):
         '''
         Import dm+d dataset.
         '''
+        dir_path = os.path.dirname(options['zip_path'])
+
+        with zipfile.ZipFile(options['zip_path']) as zf:
+            zf.extractall(dir_path)
+
         if options['extract_test']:
-            extract_test(options['source_directory'])
+            extract_test(dir_path)
         else:
             with transaction.atomic():
-                process_datafiles(options['source_directory'])
+                process_datafiles(dir_path)
             with transaction.atomic():
                 create_dmd_product()
-            with transaction.atomic():
-                add_bnf_codes(options['source_directory'])

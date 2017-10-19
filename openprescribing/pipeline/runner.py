@@ -94,6 +94,7 @@ class Task(object):
             'chem_file',
             'hscic_address',
             'month_from_prescribing_filename',
+            'zip_path',
         ]
 
         cmd_parts = shlex.split(self.command.encode('unicode-escape'))
