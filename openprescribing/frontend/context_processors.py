@@ -32,4 +32,5 @@ def google_tracking_id(request):
         logger.warn("No GOOGLE_TRACKING_ID set")
     return {
         'GOOGLE_TRACKING_ID': tracking_id,
-        'GOOGLE_OPTIMIZE_CONTAINER_ID': container_id}
+        'GOOGLE_OPTIMIZE_CONTAINER_ID': container_id
+    }

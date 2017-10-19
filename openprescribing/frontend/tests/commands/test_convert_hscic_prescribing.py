@@ -14,7 +14,6 @@ from django.core.management.base import CommandError
 
 
 class CommandsTestCase(TestCase):
-
     @patch('frontend.management.commands.convert_hscic_prescribing.Command'
            '.aggregate_nhs_digital_data')
     def test_convert_detailed_hscic_prescribing_call(self, method):
@@ -58,6 +57,7 @@ class AggregateTestCase(TestCase):
     size.
 
     """
+
     def setUp(self):
         # upload a file to GCS
         # test that the file we get back is correct

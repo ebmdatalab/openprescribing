@@ -37,8 +37,7 @@ def log_email_event(event):
         reject_reason=event.reject_reason,
         message_id=event.message_id,
         event_type=event.event_type,
-        timestamp=event.timestamp
-    )
+        timestamp=event.timestamp)
 
 
 def send_ga_event(event, user):
@@ -57,15 +56,12 @@ def send_ga_event(event, user):
         payload['dt'] = event.esp_event.get('subject', [None])[0]
         payload['cn'] = event.esp_event.get('campaign_name', None)
         payload['cs'] = event.esp_event.get('campaign_source', None)
-        payload['cc'] = payload['el'] = event.esp_event.get(
-            'email_id', None)
-        payload['dp'] = "%s/%s" % (
-            payload['cc'], event.event_type)
+        payload['cc'] = payload['el'] = event.esp_event.get('email_id', None)
+        payload['dp'] = "%s/%s" % (payload['cc'], event.event_type)
     else:
         logger.warn("No ESP event found for event: %s" % event.__dict__)
     logger.info("Sending mail event data Analytics: %s" % payload)
-    session.post(
-        'https://www.google-analytics.com/collect', data=payload)
+    session.post('https://www.google-analytics.com/collect', data=payload)
 
 
 @receiver(tracking)
@@ -74,8 +70,8 @@ def handle_anymail_webhook(sender, event, esp_name, **kwargs):
     user = get_user_by_email(event.recipient)
     send_ga_event(event, user)
     if event.tags and 'monthly_update' in event.tags:
-        logger.debug("Handling webhook from %s: %s" % (
-            esp_name, event.__dict__))
+        logger.debug("Handling webhook from %s: %s" % (esp_name,
+                                                       event.__dict__))
         if user:
             if event.event_type == 'delivered':
                 user.profile.emails_received += 1

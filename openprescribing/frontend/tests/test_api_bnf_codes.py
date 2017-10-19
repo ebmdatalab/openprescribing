@@ -88,8 +88,8 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]['is_generic'], False)
 
     def test_inactive_chemical(self):
-        url = ('%s/bnf_code?q=0204ZZZZZ&exact=true&format=json' %
-               self.api_prefix)
+        url = (
+            '%s/bnf_code?q=0204ZZZZZ&exact=true&format=json' % self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
@@ -127,8 +127,7 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]['type'], 'BNF section')
 
     def test_inactive_section(self):
-        url = ('%s/bnf_code?q=5.99&exact=true&format=json' %
-               self.api_prefix)
+        url = ('%s/bnf_code?q=5.99&exact=true&format=json' % self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
@@ -160,8 +159,8 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(len(content), 0)
 
     def test_inactive_presentation(self):
-        url = ('%s/bnf_code?q=non-current+product&format=json' %
-               self.api_prefix)
+        url = (
+            '%s/bnf_code?q=non-current+product&format=json' % self.api_prefix)
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)

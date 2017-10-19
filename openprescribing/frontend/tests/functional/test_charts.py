@@ -16,9 +16,9 @@ class MapTest(SeleniumTestCase):
 
         # In the default month (Sept) there is one "maximum" value
         self.assertEqual(
-            len(self.browser.find_elements_by_xpath(
-                "//*[@fill='#67001f' and name()='path']")),
-            1)
+            len(
+                self.browser.find_elements_by_xpath(
+                    "//*[@fill='#67001f' and name()='path']")), 1)
         self.assertEqual(
             self.find_by_xpath("//p[@class='chart-sub-title']").text,
             "in Sep '16")
@@ -36,9 +36,9 @@ class MapTest(SeleniumTestCase):
 
         # Check the values for Gravesend have changed as expected
         self.assertEqual(
-            len(self.browser.find_elements_by_xpath(
-                "//*[@fill='#67001f' and name()='path']")),
-            2)
+            len(
+                self.browser.find_elements_by_xpath(
+                    "//*[@fill='#67001f' and name()='path']")), 2)
         self.assertEqual(
             self.find_by_xpath("//p[@class='chart-sub-title']").text,
             "in Aug '13")
@@ -48,19 +48,16 @@ class SmallListTest(SeleniumTestCase):
     # These tests run against a MockAPIServer started by the
     # custom_runner
     def test_nothing_hidden_by_default(self):
-        self.browser.get(
-            self.live_server_url +
-            ('/analyse/#org=practice&orgIds=X&numIds=0212000AA'
-             '&denom=total_list_size&selectedTab=summary'))
-        warning = self.find_by_xpath(
-            "//div[contains(@class, 'toggle')]/a")
+        self.browser.get(self.live_server_url +
+                         ('/analyse/#org=practice&orgIds=X&numIds=0212000AA'
+                          '&denom=total_list_size&selectedTab=summary'))
+        warning = self.find_by_xpath("//div[contains(@class, 'toggle')]/a")
         self.assertIn('Remove', warning.text)
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertIn('GREEN', xlabels.text)
         warning.click()
-        warning = self.find_by_xpath(
-            "//div[contains(@class, 'toggle')]/a")
+        warning = self.find_by_xpath("//div[contains(@class, 'toggle')]/a")
         self.assertIn('Show', warning.text)
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")

@@ -8,20 +8,13 @@ PRESCRIBING_DATE = '2040-03-01'
 
 
 def setUpModule():
-    Practice.objects.create(code='N84014',
-                            name='AINSDALE VILLAGE SURGERY')
-    Practice.objects.create(code='P84034',
-                            name='BARLOW MEDICAL CENTRE')
-    Practice.objects.create(code='Y02229',
-                            name='ADDACTION NUNEATON')
+    Practice.objects.create(code='N84014', name='AINSDALE VILLAGE SURGERY')
+    Practice.objects.create(code='P84034', name='BARLOW MEDICAL CENTRE')
+    Practice.objects.create(code='Y02229', name='ADDACTION NUNEATON')
     ImportLog.objects.create(
-        current_at='2039-12-01',
-        category='patient_list_size'
-    )
+        current_at='2039-12-01', category='patient_list_size')
     ImportLog.objects.create(
-        current_at=PRESCRIBING_DATE,
-        category='prescribing'
-    )
+        current_at=PRESCRIBING_DATE, category='prescribing')
 
 
 def tearDownModule():
@@ -38,17 +31,15 @@ class CommandsTestCase(TestCase):
 
         self.assertEqual(len(list_sizes), 2)
 
-        p = PracticeStatistics.objects.get(practice_id='N84014',
-                                           date=last_list_size_date)
+        p = PracticeStatistics.objects.get(
+            practice_id='N84014', date=last_list_size_date)
         self.assertEqual(p.total_list_size, 40)
         self.assertEqual(p.astro_pu_cost, 199.419458446917)
         self.assertEqual(p.astro_pu_items, 780.191218783541)
         self.assertEqual('%.3f' % p.star_pu['oral_antibacterials_item'],
                          '27.135')
-        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'],
-                         '13.050')
-        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'],
-                         '887.100')
+        self.assertEqual('%.3f' % p.star_pu['cox-2_inhibitors_cost'], '13.050')
+        self.assertEqual('%.3f' % p.star_pu['antidepressants_adq'], '887.100')
         for k in p.star_pu:
             self.assertNotEqual(p.star_pu[k], 0)
             self.assertNotEqual(p.star_pu[k], None)

@@ -74,7 +74,8 @@ Specifically, you should:
         month = kwargs['month']
 
         year_and_month = datetime.date(year, month, 1).strftime('%Y_%m')
-        dir_path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'dmd', year_and_month)
+        dir_path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'dmd',
+                                year_and_month)
         zip_path = os.path.join(dir_path, 'download.zip')
 
         if os.path.exists(dir_path):
@@ -86,10 +87,11 @@ Specifically, you should:
         session = requests.Session()
         session.cookies['JSESSIONID'] = jsessionid
 
-
         base_url = 'https://isd.digital.nhs.uk/'
 
-        rsp = session.get(base_url + 'trud3/user/authenticated/group/0/pack/6/subpack/24/releases')
+        rsp = session.get(
+            base_url +
+            'trud3/user/authenticated/group/0/pack/6/subpack/24/releases')
 
         tree = html.fromstring(rsp.content)
 
@@ -111,7 +113,7 @@ Specifically, you should:
         href = div.find_class('download-release')[0].attrib['href']
 
         rsp = session.get(base_url, stream=True)
-        
+
         with open(zip_path, 'wb') as f:
             for block in rsp.iter_content(32 * 1024):
                 f.write(block)
@@ -122,7 +124,4 @@ Specifically, you should:
 
 def extract_date(div):
     return datetime.datetime.strptime(
-        div.find('p').text.strip().splitlines()[1].strip(),
-        '%A, %d %B %Y'
-    )
-
+        div.find('p').text.strip().splitlines()[1].strip(), '%A, %d %B %Y')

@@ -43,9 +43,9 @@ def deltawords(num, arg):
 
 @register.filter
 def roundpound(num):
-    order = 10 ** math.floor(math.log10(num))
+    order = 10**math.floor(math.log10(num))
     if order > 0:
-        return intcomma(int(round(num/order) * order))
+        return intcomma(int(round(num / order) * order))
     else:
         return str(int(round(num)))
 
@@ -54,7 +54,7 @@ def roundpound(num):
 def url_toggle(request, field):
     dict_ = request.GET.copy()
     if field in dict_:
-        del(dict_[field])
+        del (dict_[field])
     else:
         dict_[field] = 1
     return dict_.urlencode()

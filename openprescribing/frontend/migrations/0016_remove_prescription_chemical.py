@@ -12,9 +12,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='SHA',
-        ),
+        migrations.DeleteModel(name='SHA', ),
         migrations.RemoveField(
             model_name='prescription',
             name='sha',

@@ -14,7 +14,6 @@ from frontend.models import User
 
 
 class ValidationTestCase(TestCase):
-
     def test_isalphanumeric(self):
         chemical = Chemical(bnf_code='0+9', chem_name='Test')
         with self.assertRaises(ValidationError):
@@ -29,11 +28,9 @@ class ValidationTestCase(TestCase):
 
 
 class SectionTestCase(TestCase):
-
     def setUp(self):
-        Section.objects.create(bnf_id='09',
-                               name='Nutrition And Blood',
-                               bnf_chapter=9)
+        Section.objects.create(
+            bnf_id='09', name='Nutrition And Blood', bnf_chapter=9)
 
     def tearDown(self):
         pass
@@ -57,15 +54,15 @@ class SectionTestCase(TestCase):
 
 
 class PracticeTestCase(TestCase):
-
     def setUp(self):
-        Practice.objects.create(code='G82650',
-                                name='MOCKETTS WOOD SURGERY',
-                                address1="THE MOCKETT'S WOOD SURG.",
-                                address2='HOPEVILLE AVE ST PETERSY',
-                                address3='BROADSTAIRS',
-                                address4='KENT',
-                                postcode='CT10 2TR')
+        Practice.objects.create(
+            code='G82650',
+            name='MOCKETTS WOOD SURGERY',
+            address1="THE MOCKETT'S WOOD SURG.",
+            address2='HOPEVILLE AVE ST PETERSY',
+            address3='BROADSTAIRS',
+            address4='KENT',
+            postcode='CT10 2TR')
 
     def tearDown(self):
         pass
@@ -121,20 +118,16 @@ class SearchBookmarkTestCase(TestCase):
     def test_name_is_truncated(self):
         very_long_name = 'l' * 2000
         SearchBookmark.objects.create(
-            name=very_long_name,
-            user=User.objects.first(),
-            url='foo'
-        )
+            name=very_long_name, user=User.objects.first(), url='foo')
         self.assertEqual(len(SearchBookmark.objects.first().name), 200)
 
 
 class MailLogTestCase(TestCase):
     def test_metadata_nests_correctly(self):
         MailLog.objects.create(
-            recipient='me',
-            event_type='accepted',
-            metadata={'thing': ['foo']}
-        )
+            recipient='me', event_type='accepted', metadata={
+                'thing': ['foo']
+            })
         self.assertEqual(MailLog.objects.first().metadata['thing'][0], 'foo')
 
     def test_no_constraint_on_message_id(self):
@@ -142,18 +135,13 @@ class MailLogTestCase(TestCase):
             recipient='me',
             event_type='accepted',
             metadata={'thing': ['foo']},
-            message_id='123'
-        )
+            message_id='123')
         self.assertEqual(MailLog.objects.first().message_id, '123')
 
 
 class PCTTestCase(TestCase):
     def test_name_titlecase(self):
-        PCT.objects.create(
-            code='asd',
-            org_type='CCG',
-            name='NHS BACON CCG'
-        )
+        PCT.objects.create(code='asd', org_type='CCG', name='NHS BACON CCG')
         self.assertEqual(PCT.objects.first().cased_name, 'NHS Bacon CCG')
 
 

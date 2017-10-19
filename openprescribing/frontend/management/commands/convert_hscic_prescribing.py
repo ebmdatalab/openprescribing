@@ -57,8 +57,7 @@ class Command(BaseCommand):
         # Grab date from file path
         try:
             date = datetime.datetime.strptime(
-                uri.split("/")[-2] + "_01", "%Y_%m_%d"
-            ).strftime('%Y_%m_%d')
+                uri.split("/")[-2] + "_01", "%Y_%m_%d").strftime('%Y_%m_%d')
         except ValueError as e:
             message = ('The file path must have a YYYY_MM '
                        'date component in the containing directory: ')
@@ -101,8 +100,8 @@ class Command(BaseCommand):
         results = client.query(sql)
         assert query.rows[0][0] == 0
 
-    def append_aggregated_data_to_prescribing_table(
-            self, raw_data_table_name, date):
+    def append_aggregated_data_to_prescribing_table(self, raw_data_table_name,
+                                                    date):
         self.assert_latest_data_not_already_uploaded(date)
 
         client = Client(settings.BQ_HSCIC_DATASET)
@@ -127,13 +126,9 @@ class Command(BaseCommand):
            practice, sha
         """ % (date.replace('_', '-'), raw_data_table_name)
         table.insert_rows_from_query(
-            sql,
-            legacy=True,
-            write_disposition='WRITE_APPEND'
-        )
+            sql, legacy=True, write_disposition='WRITE_APPEND')
 
-    def write_aggregated_data_to_temp_table(
-            self, raw_data_table_name, date):
+    def write_aggregated_data_to_temp_table(self, raw_data_table_name, date):
         sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
@@ -168,26 +163,76 @@ def get_or_create_raw_data_table(gcs_path):
 
     """
     schema = [
-        {"name": "Regional_Office_Name", "type": "string"},
-        {"name": "Regional_Office_Code", "type": "string"},
-        {"name": "Area_Team_Name", "type": "string"},
-        {"name": "Area_Team_Code", "type": "string", "mode": "required"},
-        {"name": "PCO_Name", "type": "string"},
-        {"name": "PCO_Code", "type": "string"},
-        {"name": "Practice_Name", "type": "string"},
-        {"name": "Practice_Code", "type": "string", "mode": "required"},
-        {"name": "BNF_Code", "type": "string", "mode": "required"},
-        {"name": "BNF_Description", "type": "string", "mode": "required"},
-        {"name": "Items", "type": "integer", "mode": "required"},
-        {"name": "Quantity", "type": "integer", "mode": "required"},
-        {"name": "ADQ_Usage", "type": "float"},
-        {"name": "NIC", "type": "float", "mode": "required"},
-        {"name": "Actual_Cost", "type": "float", "mode": "required"},
+        {
+            "name": "Regional_Office_Name",
+            "type": "string"
+        },
+        {
+            "name": "Regional_Office_Code",
+            "type": "string"
+        },
+        {
+            "name": "Area_Team_Name",
+            "type": "string"
+        },
+        {
+            "name": "Area_Team_Code",
+            "type": "string",
+            "mode": "required"
+        },
+        {
+            "name": "PCO_Name",
+            "type": "string"
+        },
+        {
+            "name": "PCO_Code",
+            "type": "string"
+        },
+        {
+            "name": "Practice_Name",
+            "type": "string"
+        },
+        {
+            "name": "Practice_Code",
+            "type": "string",
+            "mode": "required"
+        },
+        {
+            "name": "BNF_Code",
+            "type": "string",
+            "mode": "required"
+        },
+        {
+            "name": "BNF_Description",
+            "type": "string",
+            "mode": "required"
+        },
+        {
+            "name": "Items",
+            "type": "integer",
+            "mode": "required"
+        },
+        {
+            "name": "Quantity",
+            "type": "integer",
+            "mode": "required"
+        },
+        {
+            "name": "ADQ_Usage",
+            "type": "float"
+        },
+        {
+            "name": "NIC",
+            "type": "float",
+            "mode": "required"
+        },
+        {
+            "name": "Actual_Cost",
+            "type": "float",
+            "mode": "required"
+        },
     ]
     client = Client(TEMP_DATASET)
-    table = client.get_or_create_storage_backed_table(
-        TEMP_SOURCE_NAME,
-        schema,
-        gcs_path
-    )
+    table = client.get_or_create_storage_backed_table(TEMP_SOURCE_NAME, schema,
+                                                      gcs_path)
     return table

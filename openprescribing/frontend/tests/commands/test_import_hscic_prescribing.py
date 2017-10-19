@@ -17,7 +17,6 @@ from frontend.models import PracticeStatistics
 from frontend.models import Prescription
 from frontend.models import Section
 
-
 # Number of bytes to send/receive in each request.
 CHUNKSIZE = 2 * 1024 * 1024
 
@@ -34,18 +33,15 @@ class UnitTests(unittest.TestCase):
         cmd.create_partition()
         mock_execute = mock_cursor.return_value.__enter__.return_value.execute
         execute_args = mock_execute.call_args[0][0]
-        self.assertIn(
-            "processing_date >= DATE '2011-12-01'", execute_args)
-        self.assertIn(
-            "processing_date < DATE '2012-01-01'", execute_args)
+        self.assertIn("processing_date >= DATE '2011-12-01'", execute_args)
+        self.assertIn("processing_date < DATE '2012-01-01'", execute_args)
 
     def test_date_from_filename(self):
         cmd = Command()
         old_style = cmd._date_from_filename(
             'something/T201304PDPI+BNFT_formatted.CSV')
         self.assertEqual(old_style, datetime.date(2013, 4, 1))
-        new_style = cmd._date_from_filename(
-            'something/2013_04/formatted.CSV')
+        new_style = cmd._date_from_filename('something/2013_04/formatted.CSV')
         self.assertEqual(new_style, datetime.date(2013, 4, 1))
 
 
@@ -53,6 +49,7 @@ class ImportTestCase(TestCase):
     """Tests we can import data from a local flat file
 
     """
+
     def setUp(self):
         self.chemical = Chemical.objects.create(
             bnf_code='0401020K0', chem_name='test')
@@ -90,12 +87,9 @@ class ImportTestCase(TestCase):
 
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'T201304PDPI+BNFT_formatted.CSV'
-        self.new_opts = {
-            'filename': test_file
-        }
+        self.new_opts = {'filename': test_file}
         db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        self.env = patch.dict(
-            'os.environ', {'DB_NAME': db_name})
+        self.env = patch.dict('os.environ', {'DB_NAME': db_name})
         with self.env:
             call_command('import_hscic_prescribing', **self.new_opts)
 
@@ -108,10 +102,12 @@ class ImportTestCase(TestCase):
     def test_inserts_fail(self):
         with self.assertRaises(InternalError):
             Prescription.objects.create(
-                pct=self.pct, practice=self.practice,
+                pct=self.pct,
+                practice=self.practice,
                 presentation_code='0000',
                 total_items=4,
-                actual_cost=4, quantity=4,
+                actual_cost=4,
+                quantity=4,
                 processing_date='2013-04-01')
 
     def test_import_creates_missing_entities(self):

@@ -19,7 +19,6 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-
     def test_import_qof_prevalence(self):
         args = []
         fixture_dir = 'frontend/tests/fixtures/commands/'

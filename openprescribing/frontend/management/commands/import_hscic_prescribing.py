@@ -23,7 +23,6 @@ from frontend.models import Section
 
 from gcutils.bigquery import Client
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -35,9 +34,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--filename',
-            help=(
-                'A path to a properly converted file on the filesystem'
-            ))
+            help=('A path to a properly converted file on the filesystem'))
         parser.add_argument(
             '--date', help="Specify date rather than infer it from filename")
         parser.add_argument(
@@ -47,8 +44,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--reimport-all',
             action='store_true',
-            help='Download all data from bigquery and make new set of tables'
-        )
+            help='Download all data from bigquery and make new set of tables')
 
     def handle(self, *args, **options):
         if options['reimport_all']:
@@ -56,8 +52,8 @@ class Command(BaseCommand):
         else:
             fname = options['filename']
             if options['date']:
-                self.date = datetime.datetime.strptime(
-                    options['date'], '%Y-%m-%d').date()
+                self.date = datetime.datetime.strptime(options['date'],
+                                                       '%Y-%m-%d').date()
             else:
                 self.date = self._date_from_filename(fname)
             if not options['skip_orgs']:
@@ -107,11 +103,8 @@ class Command(BaseCommand):
         # prescribing for it in the current month, and if there has,
         # mark it as current
         logger.info("Updating `is_current` on various classifications...")
-        classes = [
-            (Section, 'bnf_id'),
-            (Chemical, 'bnf_code'),
-            (Product, 'bnf_code')
-        ]
+        classes = [(Section, 'bnf_id'), (Chemical, 'bnf_code'), (Product,
+                                                                 'bnf_code')]
         with transaction.atomic():
             for model, field_name in classes:
                 for obj in model.objects.filter(is_current=False):
@@ -160,28 +153,24 @@ class Command(BaseCommand):
             next_year = date.year + 1
         else:
             next_year = date.year
-        constraint_to = "%s-%s-%s" % (
-            next_year, str(next_month).zfill(2), "01")
-        sql = sql % (
-            self._partition_name(),
-            constraint_from,
-            constraint_to
-        )
+        constraint_to = "%s-%s-%s" % (next_year, str(next_month).zfill(2),
+                                      "01")
+        sql = sql % (self._partition_name(), constraint_from, constraint_to)
         with connection.cursor() as cursor:
             cursor.execute(sql)
         logger.info("Created partition %s" % self._partition_name())
 
     def drop_oldest_month(self):
-        five_years_ago = datetime.date(
-            self.date.year - 5, self.date.month, self.date.day)
+        five_years_ago = datetime.date(self.date.year - 5, self.date.month,
+                                       self.date.day)
         self.drop_partition(five_years_ago)
         PracticeStatistics.objects.filter(date__lte=five_years_ago).delete()
 
     def _partition_name(self, date=None):
         if not date:
             date = self.date
-        return "frontend_prescription_%s%s" % (
-            date.year, str(date.month).zfill(2))
+        return "frontend_prescription_%s%s" % (date.year,
+                                               str(date.month).zfill(2))
 
     def add_parent_trigger(self):
         """A trigger to prevent accidental adding of data to the parent table
@@ -230,15 +219,14 @@ class Command(BaseCommand):
              "cnstrt_%s__pct_code "
              "FOREIGN KEY (pct_id) REFERENCES frontend_pct(code) "
              "DEFERRABLE INITIALLY DEFERRED"),
-            ]
+        ]
         partition_name = self._partition_name()
         with connection.cursor() as cursor:
             for index_sql in indexes:
-                cursor.execute(index_sql % (
-                    partition_name, partition_name))
+                cursor.execute(index_sql % (partition_name, partition_name))
             for constraint_sql in constraints:
-                cursor.execute(constraint_sql % (
-                    partition_name, partition_name))
+                cursor.execute(constraint_sql % (partition_name,
+                                                 partition_name))
 
     def drop_partition(self, date=None):
         logger.info('Dropping partition %s' % self._partition_name(date=date))
@@ -260,8 +248,7 @@ class Command(BaseCommand):
             ImportLog.objects.create(
                 current_at=self.date,
                 filename=filename,
-                category='prescribing'
-            )
+                category='prescribing')
 
     def _date_from_filename(self, filename):
         new_style = re.match(r'.*/([0-9]{4}_[0-9]{2})/', filename)

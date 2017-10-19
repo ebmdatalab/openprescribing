@@ -10,7 +10,6 @@ import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
 """Practice and CCG metadata, keyed by code.
 
 Similar data, pertaining to specific points in time, is also found in
@@ -44,8 +43,7 @@ class Command(BaseCommand):
 
     def fetch_ccg_details(self):
         self.fetch_and_extract_zipped_csv(
-            "https://digital.nhs.uk/media/354/eccg/zip/eccg1",
-            "eccg.csv",
+            "https://digital.nhs.uk/media/354/eccg/zip/eccg1", "eccg.csv",
             os.path.join(settings.PIPELINE_DATA_BASEDIR, "ccg_details"))
 
     def fetch_practice_details(self):
@@ -57,8 +55,7 @@ class Command(BaseCommand):
     def fetch_org_postcodes(self):
         url = "https://digital.nhs.uk/media/636/Gridall/zip/gridall"
         self.fetch_and_extract_zipped_csv(
-            url,
-            'gridall.csv',
+            url, 'gridall.csv',
             os.path.join(settings.PIPELINE_DATA_BASEDIR, "nhs_postcode_file"))
 
     def fetch_and_extract_zipped_csv(self, url, expected_filename, dest):

@@ -4,11 +4,7 @@ from rest_framework.exceptions import APIException
 from django.db.utils import ProgrammingError
 import view_utils as utils
 
-STATS_COLUMN_WHITELIST = (
-    'total_list_size',
-    'astro_pu_items',
-    'astro_pu_cost'
-)
+STATS_COLUMN_WHITELIST = ('total_list_size', 'astro_pu_items', 'astro_pu_cost')
 
 
 class KeysNotValid(APIException):

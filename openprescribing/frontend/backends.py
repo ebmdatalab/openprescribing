@@ -9,6 +9,7 @@ class SecretKeyBackend(object):
     Wired in using the `AUTHENTICATION_BACKENDS` setting.
 
     """
+
     def authenticate(self, key=None):
         try:
             profile = Profile.objects.get(key=key)

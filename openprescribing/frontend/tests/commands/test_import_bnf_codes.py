@@ -6,12 +6,9 @@ from frontend.models import Section, Product, Presentation
 
 
 class CommandsTestCase(TestCase):
-
     def test_import_bnf_codes(self):
         args = []
-        opts = {
-            'filename': 'frontend/tests/fixtures/commands/bnf_codes.csv'
-        }
+        opts = {'filename': 'frontend/tests/fixtures/commands/bnf_codes.csv'}
         call_command('import_bnf_codes', *args, **opts)
 
         r = Product.objects.get(bnf_code='0101010D0AA')

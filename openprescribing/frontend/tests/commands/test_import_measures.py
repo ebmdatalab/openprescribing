@@ -20,24 +20,22 @@ from frontend.models import Practice
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
-        return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+        return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
     else:
         return a == b
 
 
 def test_measures():
     fpath = settings.INSTALL_ROOT
-    fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/'
-                'cerazette_measure.json'))
+    fname = os.path.join(fpath, ('openprescribing/frontend/tests/fixtures/'
+                                 'cerazette_measure.json'))
     json_data = json.load(open(fname))
-    return {
-        'cerazette': json_data
-    }
+    return {'cerazette': json_data}
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch(
+    'frontend.management.commands.import_measures.parse_measures',
+    new=MagicMock(return_value=test_measures()))
 class ArgumentTestCase(TestCase):
     def test_months_parsed_from_hscic_filename(self):
         opts = [
@@ -53,70 +51,71 @@ class ArgumentTestCase(TestCase):
         self.assertEqual(result['end_date'], '2016-03-01')
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch(
+    'frontend.management.commands.import_measures.parse_measures',
+    new=MagicMock(return_value=test_measures()))
 class UnitTests(TestCase):
     """Unit tests with mocked bigquery. Many of the functional
     tests could be moved hree.
 
     """
+
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
         g = GlobalCalculation('cerazette')
         with patch.object(g, 'get_rows_as_dicts') as patched_calc:
-            patched_calc.return_value = [
-                {
-                    'ccg_cost_savings_10': 1785,
-                    'ccg_cost_savings_20': 1420,
-                    'ccg_cost_savings_30': 1055,
-                    'ccg_cost_savings_40': 690,
-                    'ccg_cost_savings_50': 325,
-                    'ccg_cost_savings_60': 260,
-                    'ccg_cost_savings_70': 195,
-                    'ccg_cost_savings_80': 130,
-                    'ccg_cost_savings_90': 65,
-                    'ccg_month': '2015-10-01',
-                    'global_ccg_10th': 0.01,
-                    'global_ccg_20th': 0.02,
-                    'global_ccg_30th': 0.04,
-                    'global_ccg_40th': 0.05,
-                    'global_ccg_50th': 0.06,
-                    'global_ccg_60th': 0.07,
-                    'global_ccg_70th': 0.08,
-                    'global_ccg_80th': 0.09,
-                    'global_ccg_90th': 0.10,
-                    'global_cost_per_denom': 0.1,
-                    'global_cost_per_num': 0.7,
-                    'global_denom_cost': 6100,
-                    'global_denom_items': 395,
-                    'global_denom_quantity': 39500,
-                    'global_denominator': 39500,
-                    'global_month': '2015-10-01',
-                    'global_num_cost': 2500,
-                    'global_num_items': 35,
-                    'global_num_quantity': 3500,
-                    'global_numerator': 3500,
-                    'global_practice_10th': 0.01,
-                    'global_practice_20th': 0.02,
-                    'global_practice_30th': 0.04,
-                    'global_practice_40th': 0.05,
-                    'global_practice_50th': 0.06,
-                    'global_practice_60th': 0.07,
-                    'global_practice_70th': 0.08,
-                    'global_practice_80th': 0.09,
-                    'global_practice_90th': 0.10,
-                    'practice_cost_savings_10': 1785,
-                    'practice_cost_savings_20': 1420,
-                    'practice_cost_savings_30': 1055,
-                    'practice_cost_savings_40': 690,
-                    'practice_cost_savings_50': 325,
-                    'practice_cost_savings_60': 2606,
-                    'practice_cost_savings_70': 1957,
-                    'practice_cost_savings_80': 1303,
-                    'practice_cost_savings_90': 65,
-                    'practice_month': '2015-10-01',
-                }]
+            patched_calc.return_value = [{
+                'ccg_cost_savings_10': 1785,
+                'ccg_cost_savings_20': 1420,
+                'ccg_cost_savings_30': 1055,
+                'ccg_cost_savings_40': 690,
+                'ccg_cost_savings_50': 325,
+                'ccg_cost_savings_60': 260,
+                'ccg_cost_savings_70': 195,
+                'ccg_cost_savings_80': 130,
+                'ccg_cost_savings_90': 65,
+                'ccg_month': '2015-10-01',
+                'global_ccg_10th': 0.01,
+                'global_ccg_20th': 0.02,
+                'global_ccg_30th': 0.04,
+                'global_ccg_40th': 0.05,
+                'global_ccg_50th': 0.06,
+                'global_ccg_60th': 0.07,
+                'global_ccg_70th': 0.08,
+                'global_ccg_80th': 0.09,
+                'global_ccg_90th': 0.10,
+                'global_cost_per_denom': 0.1,
+                'global_cost_per_num': 0.7,
+                'global_denom_cost': 6100,
+                'global_denom_items': 395,
+                'global_denom_quantity': 39500,
+                'global_denominator': 39500,
+                'global_month': '2015-10-01',
+                'global_num_cost': 2500,
+                'global_num_items': 35,
+                'global_num_quantity': 3500,
+                'global_numerator': 3500,
+                'global_practice_10th': 0.01,
+                'global_practice_20th': 0.02,
+                'global_practice_30th': 0.04,
+                'global_practice_40th': 0.05,
+                'global_practice_50th': 0.06,
+                'global_practice_60th': 0.07,
+                'global_practice_70th': 0.08,
+                'global_practice_80th': 0.09,
+                'global_practice_90th': 0.10,
+                'practice_cost_savings_10': 1785,
+                'practice_cost_savings_20': 1420,
+                'practice_cost_savings_30': 1055,
+                'practice_cost_savings_40': 690,
+                'practice_cost_savings_50': 325,
+                'practice_cost_savings_60': 2606,
+                'practice_cost_savings_70': 1957,
+                'practice_cost_savings_80': 1303,
+                'practice_cost_savings_90': 65,
+                'practice_month': '2015-10-01',
+            }]
             g.write_global_centiles_to_database()
             mg = MeasureGlobal.objects.get(
                 measure_id='cerazette', month='2015-10-01')
@@ -133,30 +132,30 @@ class UnitTests(TestCase):
         p = PracticeCalculation('cerazette')
         with patch.object(p, 'get_rows_as_dicts') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
-            patched_calc.return_value = [
-                {'calc_value': 0,
-                 'cost_savings_10': 9,
-                 'cost_savings_20': 8,
-                 'cost_savings_30': 7,
-                 'cost_savings_40': 6,
-                 'cost_savings_50': 5,
-                 'cost_savings_60': 4,
-                 'cost_savings_70': 3,
-                 'cost_savings_80': 2,
-                 'cost_savings_90': 1,
-                 'denom_cost': 20,
-                 'denom_items': 30,
-                 'denom_quantity': 40,
-                 'denominator': 50,
-                 'month': '2015-10-01',
-                 'num_cost': 60,
-                 'num_items': 70,
-                 'num_quantity': 80,
-                 'numerator': 90,
-                 'pct_id': '03T',
-                 'percentile': 000,
-                 'practice_id': 'C83019'}
-            ]
+            patched_calc.return_value = [{
+                'calc_value': 0,
+                'cost_savings_10': 9,
+                'cost_savings_20': 8,
+                'cost_savings_30': 7,
+                'cost_savings_40': 6,
+                'cost_savings_50': 5,
+                'cost_savings_60': 4,
+                'cost_savings_70': 3,
+                'cost_savings_80': 2,
+                'cost_savings_90': 1,
+                'denom_cost': 20,
+                'denom_items': 30,
+                'denom_quantity': 40,
+                'denominator': 50,
+                'month': '2015-10-01',
+                'num_cost': 60,
+                'num_items': 70,
+                'num_quantity': 80,
+                'numerator': 90,
+                'pct_id': '03T',
+                'percentile': 000,
+                'practice_id': 'C83019'
+            }]
             p.write_practice_ratios_to_database()
             mv = MeasureValue.objects.get(
                 month='2015-10-01',
@@ -169,8 +168,9 @@ class UnitTests(TestCase):
     def test_reconstructor_not_called_when_measures_specified(self, conn):
         from frontend.management.commands.import_measures \
             import conditional_constraint_and_index_reconstructor
-        with conditional_constraint_and_index_reconstructor(
-                {'measure': 'thingy'}):
+        with conditional_constraint_and_index_reconstructor({
+                'measure': 'thingy'
+        }):
             pass
         execute = conn.cursor.return_value.__enter__.return_value.execute
         execute.assert_not_called()
@@ -189,8 +189,9 @@ class UnitTests(TestCase):
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.env = patch.dict(
-            'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
+        cls.env = patch.dict('os.environ', {
+            'DB_NAME': 'test_' + os.environ['DB_NAME']
+        })
         with cls.env:
             cls._createData()
 
@@ -204,9 +205,10 @@ class BigqueryFunctionalTests(TestCase):
             'test_mode': True,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+        with patch(
+                'frontend.management.commands.import_measures'
+                '.parse_measures',
+                new=MagicMock(return_value=test_measures())):
             call_command('import_measures', *args, **opts)
 
         m = Measure.objects.get(id='cerazette')
@@ -446,46 +448,69 @@ class BigqueryFunctionalTests(TestCase):
     def _createData(cls):
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
         lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
-                                        open_date='2013-04-01',
-                                        close_date='2015-01-01')
-        Chemical.objects.create(bnf_code='0703021Q0',
-                                chem_name='Desogestrel')
-        Chemical.objects.create(bnf_code='0408010A0',
-                                chem_name='Levetiracetam')
-        Practice.objects.create(code='C84001', ccg=bassetlaw,
-                                name='LARWOOD SURGERY', setting=4)
-        Practice.objects.create(code='C84024', ccg=bassetlaw,
-                                name='NEWGATE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='B82005', ccg=bassetlaw,
-                                name='PRIORY MEDICAL GROUP', setting=4,
-                                open_date='2015-01-01')
-        Practice.objects.create(code='B82010', ccg=bassetlaw,
-                                name='RIPON SPA SURGERY', setting=4)
-        Practice.objects.create(code='A85017', ccg=bassetlaw,
-                                name='BEWICK ROAD SURGERY', setting=4)
-        Practice.objects.create(code='A86030', ccg=bassetlaw,
-                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='C83051', ccg=lincs_west,
-                                name='ABBEY MEDICAL PRACTICE', setting=4)
-        Practice.objects.create(code='C83019', ccg=lincs_east,
-                                name='BEACON MEDICAL PRACTICE', setting=4)
+        lincs_east = PCT.objects.create(
+            code='03T',
+            org_type='CCG',
+            open_date='2013-04-01',
+            close_date='2015-01-01')
+        Chemical.objects.create(bnf_code='0703021Q0', chem_name='Desogestrel')
+        Chemical.objects.create(
+            bnf_code='0408010A0', chem_name='Levetiracetam')
+        Practice.objects.create(
+            code='C84001', ccg=bassetlaw, name='LARWOOD SURGERY', setting=4)
+        Practice.objects.create(
+            code='C84024',
+            ccg=bassetlaw,
+            name='NEWGATE MEDICAL GROUP',
+            setting=4)
+        Practice.objects.create(
+            code='B82005',
+            ccg=bassetlaw,
+            name='PRIORY MEDICAL GROUP',
+            setting=4,
+            open_date='2015-01-01')
+        Practice.objects.create(
+            code='B82010', ccg=bassetlaw, name='RIPON SPA SURGERY', setting=4)
+        Practice.objects.create(
+            code='A85017',
+            ccg=bassetlaw,
+            name='BEWICK ROAD SURGERY',
+            setting=4)
+        Practice.objects.create(
+            code='A86030',
+            ccg=bassetlaw,
+            name='BETTS AVENUE MEDICAL GROUP',
+            setting=4)
+        Practice.objects.create(
+            code='C83051',
+            ccg=lincs_west,
+            name='ABBEY MEDICAL PRACTICE',
+            setting=4)
+        Practice.objects.create(
+            code='C83019',
+            ccg=lincs_east,
+            name='BEACON MEDICAL PRACTICE',
+            setting=4)
         # Ensure we only include open practices in our calculations.
-        Practice.objects.create(code='B82008', ccg=bassetlaw,
-                                name='NORTH SURGERY', setting=4,
-                                open_date='2010-04-01',
-                                close_date='2012-01-01')
+        Practice.objects.create(
+            code='B82008',
+            ccg=bassetlaw,
+            name='NORTH SURGERY',
+            setting=4,
+            open_date='2010-04-01',
+            close_date='2012-01-01')
         # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                                setting=1)
+        Practice.objects.create(
+            code='Y00581',
+            ccg=bassetlaw,
+            name='BASSETLAW DRUG & ALCOHOL SERVICE',
+            setting=1)
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
             prescribing_fixture_path = os.path.join(
                 'frontend', 'tests', 'fixtures', 'commands',
-                'prescribing_bigquery_fixture.csv'
-            )
+                'prescribing_bigquery_fixture.csv')
             client = Client('measures')
             table = client.get_table(settings.BQ_PRESCRIBING_TABLE_NAME)
             table.insert_rows_from_csv(prescribing_fixture_path)
@@ -498,9 +523,10 @@ class BigqueryFunctionalTests(TestCase):
             'test_mode': True,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+        with patch(
+                'frontend.management.commands.import_measures'
+                '.parse_measures',
+                new=MagicMock(return_value=test_measures())):
             call_command('import_measures', *args, **opts)
 
     def _walk(self, mv, data):
@@ -538,8 +564,7 @@ class BigqueryFunctionalTests(TestCase):
     def _assertExpectedMeasureValue(self, measure, month, expected):
         for entity_id, data in expected.items():
             if entity_id == '_global_':
-                mv = MeasureGlobal.objects.get(
-                    measure=measure, month=month)
+                mv = MeasureGlobal.objects.get(measure=measure, month=month)
             elif len(entity_id) == 3:
                 ccg = PCT.objects.get(code=entity_id)
                 mv = MeasureValue.objects.get(
@@ -553,10 +578,9 @@ class BigqueryFunctionalTests(TestCase):
                 if isinstance(expected, Number):
                     self.assert_(
                         isclose(actual, expected),
-                        "got %s for %s, expected ~ %s" % (
-                            actual, identifier, expected))
+                        "got %s for %s, expected ~ %s" % (actual, identifier,
+                                                          expected))
                 else:
-                    self.assert_(
-                        actual == expected,
-                        "got %s for %s, expected %s" % (
-                            actual, identifier, expected))
+                    self.assert_(actual == expected,
+                                 "got %s for %s, expected %s" %
+                                 (actual, identifier, expected))

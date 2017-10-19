@@ -12,5 +12,4 @@ class Migration(migrations.Migration):
         ('frontend', '0028_prescription_net_cost'),
     ]
 
-    operations = [
-    ]
+    operations = []

@@ -25,8 +25,10 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     def use_xvfb(cls):
         if not os.environ.get('SHOW_BROWSER', False):
             return subprocess.call(
-                "type xvfb-run", shell=True,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+                "type xvfb-run",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE) == 0
         else:
             return False
 
@@ -55,7 +57,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                 'executable': ('https://raw.githubusercontent.com/'
                                'ebmdatalab/openprescribing/'
                                'master/scripts/setup_ie_8.bat'),
-                'background': 'false'
+                'background':
+                'false'
             }
             username = os.environ["SAUCE_USERNAME"]
             access_key = os.environ["SAUCE_ACCESS_KEY"]
@@ -102,8 +105,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             wait = 5
         try:
             element = WebDriverWait(self.browser, wait).until(
-                waiter((By.XPATH, locator))
-            )
+                waiter((By.XPATH, locator)))
             return element
         except TimeoutException:
             raise AssertionError("Expected to find element %s" % locator)

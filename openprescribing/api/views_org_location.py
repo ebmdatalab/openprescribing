@@ -18,11 +18,23 @@ def org_location(request, format=None):
         if org_codes:
             results = results.filter(code__in=org_codes)
         geo_field = 'boundary'
-        fields = ('name', 'code', 'ons_code', 'org_type', 'boundary', )
+        fields = (
+            'name',
+            'code',
+            'ons_code',
+            'org_type',
+            'boundary',
+        )
     else:
         results = Practice.objects.filter(code__in=org_codes)
         geo_field = 'location'
-        fields = ('name', 'code', 'setting', 'is_dispensing', 'location', )
-    return HttpResponse(serialize('geojson', results,
-                                  geometry_field=geo_field, fields=fields),
-                        content_type='application/json')
+        fields = (
+            'name',
+            'code',
+            'setting',
+            'is_dispensing',
+            'location',
+        )
+    return HttpResponse(
+        serialize('geojson', results, geometry_field=geo_field, fields=fields),
+        content_type='application/json')

@@ -19,12 +19,14 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('127.0.0.1', )
 ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
-        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
+    "MAILGUN_API_KEY":
+    "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_SENDER_DOMAIN":
+    "staging.openprescribing.net",
+    "WEBHOOK_AUTHORIZATION":
+    "%s" % utils.get_env_setting('MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
@@ -68,8 +70,8 @@ BQ_PRACTICE_TABLE_PREFIX = 'test_' + BQ_PRACTICE_TABLE_PREFIX
 BQ_PRESCRIBING_TABLE_NAME = 'test_' + BQ_PRESCRIBING_TABLE_NAME
 BQ_PRESCRIBING_TABLE_NAME_STANDARD = 'test_' + BQ_PRESCRIBING_TABLE_NAME
 BQ_PRACTICES_TABLE_NAME = 'test_' + BQ_PRACTICES_TABLE_NAME
-BQ_FULL_PRACTICES_TABLE_NAME = "[%s:measures.%s]" % (
-    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
+BQ_FULL_PRACTICES_TABLE_NAME = "[%s:measures.%s]" % (BQ_PROJECT,
+                                                     BQ_PRACTICES_TABLE_NAME)
 
 # BigQuery datasets and tables
 # The plan is to get rid of the stuff above
@@ -83,16 +85,13 @@ GRAB_HOST = "http://localhost"
 GOOGLE_TRACKING_ID = 'UA-62480003-2'
 
 # Base directory for pipeline metadata
-PIPELINE_METADATA_DIR = os.path.join(
-    SITE_ROOT, 'pipeline', 'test-data', 'metadata'
-)
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'test-data',
+                                     'metadata')
 
 # Base directory for pipeline data
-PIPELINE_DATA_BASEDIR = os.path.join(
-    SITE_ROOT, 'pipeline', 'test-data', 'data'
-)
+PIPELINE_DATA_BASEDIR = os.path.join(SITE_ROOT, 'pipeline', 'test-data',
+                                     'data')
 
 # Path to import log for pipeline data
-PIPELINE_IMPORT_LOG_PATH = os.path.join(
-    SITE_ROOT, 'pipeline', 'test-data', 'log.json'
-)
+PIPELINE_IMPORT_LOG_PATH = os.path.join(SITE_ROOT, 'pipeline', 'test-data',
+                                        'log.json')

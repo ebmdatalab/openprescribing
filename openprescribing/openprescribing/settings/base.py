@@ -23,23 +23,18 @@ SITE_ID = 1
 path.append(DJANGO_ROOT)
 # END PATH CONFIGURATION
 
-
 # DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
 # END DEBUG CONFIGURATION
 
-
 # MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = (
-    ('EBM Data Lab', 'tech@ebmdatalab.net'),
-)
+ADMINS = (('EBM Data Lab', 'tech@ebmdatalab.net'), )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # END MANAGER CONFIGURATION
-
 
 # GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
@@ -61,7 +56,6 @@ USE_L10N = True
 USE_TZ = True
 # END GENERAL CONFIGURATION
 
-
 # MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
 MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
@@ -69,7 +63,6 @@ MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
 # END MEDIA CONFIGURATION
-
 
 # STATIC FILE CONFIGURATION
 
@@ -90,9 +83,7 @@ STATIC_URL = '/static/'
 # `collectstatic` command -- for static files
 # See:
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = (
-    normpath(join(SITE_ROOT, 'static')),
-)
+STATICFILES_DIRS = (normpath(join(SITE_ROOT, 'static')), )
 
 # See:
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -101,7 +92,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 # END STATIC FILE CONFIGURATION
-
 
 # SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
@@ -114,15 +104,11 @@ SECRET_KEY = utils.get_env_setting('SECRET_KEY')
 ALLOWED_HOSTS = []
 # END SITE CONFIGURATION
 
-
 # FIXTURE CONFIGURATION
 # See:
 # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
-FIXTURE_DIRS = (
-    normpath(join(SITE_ROOT, 'frontend', 'tests', 'fixtures')),
-)
+FIXTURE_DIRS = (normpath(join(SITE_ROOT, 'frontend', 'tests', 'fixtures')), )
 # END FIXTURE CONFIGURATION
-
 
 # TEMPLATE CONFIGURATION
 TEMPLATES = [
@@ -148,12 +134,12 @@ TEMPLATES = [
                 'frontend.context_processors.api_host',
                 'frontend.context_processors.debug'
             ],
-            'debug': DEBUG
+            'debug':
+            DEBUG
         },
     },
 ]
 # END TEMPLATE CONFIGURATION
-
 
 # MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
@@ -170,12 +156,10 @@ MIDDLEWARE_CLASSES = (
 )
 # END MIDDLEWARE CONFIGURATION
 
-
 # URL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
 ROOT_URLCONF = '%s.urls' % SITE_NAME
 # END URL CONFIGURATION
-
 
 # APP CONFIGURATION
 DJANGO_APPS = (
@@ -218,7 +202,6 @@ CONTRIB_APPS = (
 INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 # END APP CONFIGURATION
 
-
 # LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
 # A sample logging configuration. The only tangible logging
@@ -247,7 +230,6 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
-
     },
     'loggers': {
         'django.request': {
@@ -259,16 +241,13 @@ LOGGING = {
 }
 # END LOGGING CONFIGURATION
 
-
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
     # custom backend to support logging in via a hash
-    'frontend.backends.SecretKeyBackend'
-)
-
+    'frontend.backends.SecretKeyBackend')
 
 # WSGI CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
@@ -278,7 +257,6 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 TEST_RUNNER = 'frontend.tests.custom_runner.AssetBuildingTestRunner'
 
 CONN_MAX_AGE = 1200
-
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
@@ -292,9 +270,7 @@ REST_FRAMEWORK = {
 
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_METHODS = (
-    'GET'
-)
+CORS_ALLOW_METHODS = ('GET')
 SUPPORT_EMAIL = 'feedback@openprescribing.net'
 DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
 SWAGGER_SETTINGS = {
@@ -332,19 +308,21 @@ BQ_PRESCRIBING_TABLE_NAME_STANDARD = "normalised_prescribing_standard"
 # The name of the table containing practice information (names,
 # addresses etc)
 BQ_PRACTICES_TABLE_NAME = "practices"
-BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
-    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
+BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (BQ_PROJECT,
+                                                  BQ_PRACTICES_TABLE_NAME)
 # Dataset for prescribing data
 BQ_HSCIC_DATASET = 'hscic'
 
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
-        utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
-        utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
+    "MAILGUN_API_KEY":
+    "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_SENDER_DOMAIN":
+    "staging.openprescribing.net",
+    "WEBHOOK_AUTHORIZATION":
+    "%s:%s" % (utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
+               utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
 }
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email

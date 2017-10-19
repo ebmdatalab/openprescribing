@@ -17,7 +17,6 @@ from frontend.management.commands.send_monthly_alerts import Command
 from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
 from frontend.tests.test_bookmark_utils import _makeContext
 
-
 CMD_NAME = 'send_monthly_alerts'
 
 
@@ -69,8 +68,7 @@ class GetBookmarksTestCase(TestCase):
         bookmarks = Command().get_org_bookmarks(
             recipient_email=None,
             recipient_email_file=None,
-            skip_email_file=None
-        )
+            skip_email_file=None)
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 2)
         self.assertTrue(active)
@@ -81,8 +79,7 @@ class GetBookmarksTestCase(TestCase):
             ccg='03V',
             practice='P87629',
             recipient_email_file=None,
-            skip_email_file=None
-        )
+            skip_email_file=None)
         self.assertEqual(len(bookmarks), 1)
         self.assertEqual(bookmarks[0].user.email, 's@s.com')
         self.assertTrue(bookmarks[0].user.profile.key)
@@ -96,8 +93,7 @@ class GetBookmarksTestCase(TestCase):
         bookmarks = Command().get_org_bookmarks(
             skip_email_file=skip_file,
             recipient_email=None,
-            recipient_email_file=None
-        )
+            recipient_email_file=None)
         self.assertEqual(len(bookmarks), 0)
 
     def test_get_search_bookmarks_without_options(self):
@@ -109,8 +105,7 @@ class GetBookmarksTestCase(TestCase):
 
     def test_get_search_bookmarks_with_options(self):
         bookmarks = Command().get_search_bookmarks(
-            recipient_email='s@s.com',
-            url='frob', search_name='baz')
+            recipient_email='s@s.com', url='frob', search_name='baz')
         self.assertEqual(len(bookmarks), 1)
         self.assertEqual(bookmarks[0].user.email, 's@s.com')
         self.assertTrue(bookmarks[0].user.profile.key)
@@ -176,9 +171,8 @@ class OrgEmailTestCase(TestCase):
         test_context = _makeContext()
         call_mocked_command_with_defaults(test_context, finder)
         message = mail.outbox[-1]
-        self.assertIn(
-            message.extra_headers['list-unsubscribe'],
-            '<http://localhost/bookmarks/dummykey>')
+        self.assertIn(message.extra_headers['list-unsubscribe'],
+                      '<http://localhost/bookmarks/dummykey>')
 
     def test_email_body_text(self, attach_image, finder):
         test_context = _makeContext()
@@ -189,32 +183,33 @@ class OrgEmailTestCase(TestCase):
     def test_email_body_has_ga_tracking(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[
-                {'measure': measure,
-                 'from': 99.92,
-                 'to': 0.12}]),
+            _makeContext(declines=[{
+                'measure': measure,
+                'from': 99.92,
+                'to': 0.12
+            }]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(
-            html, '<a href=".*&utm_content=.*#cerazette".*>')
+        self.assertRegexpMatches(html,
+                                 '<a href=".*&utm_content=.*#cerazette".*>')
 
     def test_email_body_declines(self, attach_image, finder):
         attach_image.return_value = 'unique-image-id'
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(declines=[
-                {'measure': measure,
-                 'from': 99.92,
-                 'to': 0.12}]),
+            _makeContext(declines=[{
+                'measure': measure,
+                'from': 99.92,
+                'to': 0.12
+            }]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("this practice slipped", html)
-        self.assertRegexpMatches(
-            html, 'slipped massively on '
-            '<a href=".*/practice/P87629/.*#cerazette".*>'
-            'Cerazette vs. Desogestrel</a>')
+        self.assertRegexpMatches(html, 'slipped massively on '
+                                 '<a href=".*/practice/P87629/.*#cerazette".*>'
+                                 'Cerazette vs. Desogestrel</a>')
         self.assertIn('<span class="worse"', html)
         self.assertIn('<img src="cid:unique-image-id', html)
         self.assertNotIn("Your best prescribing areas", html)
@@ -224,41 +219,50 @@ class OrgEmailTestCase(TestCase):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                {'measure': measure,
-                 'from': 99.92,
-                 'to': 0.12},
-                {'measure': measure,
-                 'from': 30,
-                 'to': 10},
+                {
+                    'measure': measure,
+                    'from': 99.92,
+                    'to': 0.12
+                },
+                {
+                    'measure': measure,
+                    'from': 30,
+                    'to': 10
+                },
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(
-            html, 'It also slipped considerably')
+        self.assertRegexpMatches(html, 'It also slipped considerably')
 
     def test_email_body_three_declines(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
             _makeContext(declines=[
-                {'measure': measure,
-                 'from': 99.92,
-                 'to': 0.12},
-                {'measure': measure,
-                 'from': 30,
-                 'to': 10},
-                {'measure': measure,
-                 'from': 20,
-                 'to': 10},
+                {
+                    'measure': measure,
+                    'from': 99.92,
+                    'to': 0.12
+                },
+                {
+                    'measure': measure,
+                    'from': 30,
+                    'to': 10
+                },
+                {
+                    'measure': measure,
+                    'from': 20,
+                    'to': 10
+                },
             ]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(
-            html, 'It also slipped:')
-        self.assertRegexpMatches(
-            html, re.compile('<ul.*<li>considerably on.*'
-                             '<li>moderately on.*</ul>', re.DOTALL))
+        self.assertRegexpMatches(html, 'It also slipped:')
+        self.assertRegexpMatches(html,
+                                 re.compile('<ul.*<li>considerably on.*'
+                                            '<li>moderately on.*</ul>',
+                                            re.DOTALL))
 
     def test_email_body_worst(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -269,10 +273,10 @@ class OrgEmailTestCase(TestCase):
         html = message[0]
         self.assertIn("We've found", html)
         self.assertRegexpMatches(
-            html, re.compile(
-                'the worst 10% on.*<a href=".*/practice/P87629'
-                '/.*#cerazette".*>'
-                "Cerazette vs. Desogestrel</a>", re.DOTALL))
+            html,
+            re.compile('the worst 10% on.*<a href=".*/practice/P87629'
+                       '/.*#cerazette".*>'
+                       "Cerazette vs. Desogestrel</a>", re.DOTALL))
         self.assertIn('<img src="cid:unique-image-id', html)
 
     def test_email_body_three_worst(self, attach_image, finder):
@@ -281,24 +285,21 @@ class OrgEmailTestCase(TestCase):
             _makeContext(worst=[measure, measure, measure]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(
-            html, 'It was also in the worst 10% on:')
-        self.assertRegexpMatches(
-            html, re.compile('<ul.*<li>.*Desogestrel.*'
-                             '<li>.*Desogestrel.*</ul>', re.DOTALL))
+        self.assertRegexpMatches(html, 'It was also in the worst 10% on:')
+        self.assertRegexpMatches(html,
+                                 re.compile('<ul.*<li>.*Desogestrel.*'
+                                            '<li>.*Desogestrel.*</ul>',
+                                            re.DOTALL))
 
     def test_email_body_two_savings(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(possible_savings=[
-                (measure, 9.9), (measure, 1.12)]),
+            _makeContext(possible_savings=[(measure, 9.9), (measure, 1.12)]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "These add up to around <b>£10</b> of "
-            "potential savings".decode('utf-8'),
-            html)
+        self.assertIn("These add up to around <b>£10</b> of "
+                      "potential savings".decode('utf-8'), html)
         self.assertRegexpMatches(
             html, '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
             '/.*#cerazette".*>'
@@ -310,9 +311,8 @@ class OrgEmailTestCase(TestCase):
             _makeContext(possible_savings=[(measure, 9.9)]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "if it had prescribed in line with the average practice",
-            html)
+        self.assertIn("if it had prescribed in line with the average practice",
+                      html)
         self.assertRegexpMatches(
             html, 'it could have saved about <b>£10</b> on '
             '<a href=".*/practice/P87629/.*#cerazette".*>'
@@ -324,34 +324,26 @@ class OrgEmailTestCase(TestCase):
             _makeContext(achieved_savings=[(measure, 9.9)]), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "this practice saved around <b>£10".decode('utf-8'),
-            html)
+        self.assertIn("this practice saved around <b>£10".decode('utf-8'),
+                      html)
 
-    def test_email_body_two_achieved_savings(
-            self, attach_image, finder):
+    def test_email_body_two_achieved_savings(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
         call_mocked_command_with_defaults(
-            _makeContext(
-                achieved_savings=[(measure, 9.9), (measure, 12.0)]),
+            _makeContext(achieved_savings=[(measure, 9.9), (measure, 12.0)]),
             finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "<li>\n<b>£10</b> on".decode('utf-8'),
-            html)
-        self.assertIn(
-            "<li>\n<b>£10</b> on".decode('utf-8'),
-            html)
+        self.assertIn("<li>\n<b>£10</b> on".decode('utf-8'), html)
+        self.assertIn("<li>\n<b>£10</b> on".decode('utf-8'), html)
 
     def test_email_body_total_savings(self, attach_image, finder):
         call_mocked_command_with_defaults(
             _makeContext(possible_top_savings_total=9000.1), finder)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "it could save around <b>£9,000</b>".decode('utf-8'),
-            html)
+        self.assertIn("it could save around <b>£9,000</b>".decode('utf-8'),
+                      html)
 
 
 @patch('frontend.views.bookmark_utils.attach_image')
@@ -360,8 +352,7 @@ class SearchEmailTestCase(TestCase):
 
     def setUp(self):
         ImportLog.objects.create(
-            category='prescribing',
-            current_at=datetime.datetime.today())
+            category='prescribing', current_at=datetime.datetime.today())
 
     def test_all_recipients(self, attach_image):
         call_command(CMD_NAME)
@@ -370,38 +361,41 @@ class SearchEmailTestCase(TestCase):
         self.assertEqual(len(mail_queue), 3)
 
     def test_email_recipient(self, attach_image):
-        opts = {'recipient_email': 's@s.com',
-                'url': 'something',
-                'search_name': 'some name'}
+        opts = {
+            'recipient_email': 's@s.com',
+            'url': 'something',
+            'search_name': 'some name'
+        }
         call_command(CMD_NAME, **opts)
         self.assertEqual(EmailMessage.objects.count(), 1)
         email_message = EmailMessage.objects.first()
         self.assertEqual(email_message.send_count, 1)
         mail_queue = mail.outbox[-1]
-        self.assertEqual(
-            mail_queue.to, email_message.to)
-        self.assertEqual(
-            mail_queue.to, [opts['recipient_email']])
-        self.assertEqual(
-            mail_queue.extra_headers['message-id'], email_message.message_id)
+        self.assertEqual(mail_queue.to, email_message.to)
+        self.assertEqual(mail_queue.to, [opts['recipient_email']])
+        self.assertEqual(mail_queue.extra_headers['message-id'],
+                         email_message.message_id)
 
     def test_email_headers(self, attach_image):
-        opts = {'recipient_email': 's@s.com',
-                'url': 'something',
-                'search_name': 'some name'}
+        opts = {
+            'recipient_email': 's@s.com',
+            'url': 'something',
+            'search_name': 'some name'
+        }
         call_command(CMD_NAME, **opts)
         email_message = EmailMessage.objects.first()
         mail_queue = mail.outbox[-1]
-        self.assertEqual(
-            mail_queue.extra_headers['message-id'], email_message.message_id)
-        self.assertEqual(
-            mail_queue.extra_headers['list-unsubscribe'],
-            '<http://localhost/bookmarks/dummykey>')
+        self.assertEqual(mail_queue.extra_headers['message-id'],
+                         email_message.message_id)
+        self.assertEqual(mail_queue.extra_headers['list-unsubscribe'],
+                         '<http://localhost/bookmarks/dummykey>')
 
     def test_email_body(self, attach_image):
-        opts = {'recipient_email': 's@s.com',
-                'url': 'something',
-                'search_name': 'some name'}
+        opts = {
+            'recipient_email': 's@s.com',
+            'url': 'something',
+            'search_name': 'some name'
+        }
         call_command(CMD_NAME, **opts)
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
@@ -414,9 +408,11 @@ class SearchEmailTestCase(TestCase):
             html, '<a href="http://localhost/analyse/.*#%s' % 'something')
 
     def test_email_body_text(self, attach_image):
-        opts = {'recipient_email': 's@s.com',
-                'url': 'something',
-                'search_name': 'some name'}
+        opts = {
+            'recipient_email': 's@s.com',
+            'url': 'something',
+            'search_name': 'some name'
+        }
         call_command(CMD_NAME, **opts)
         text = mail.outbox[-1].body
         self.assertIn("**Hello!**", text)
@@ -431,9 +427,11 @@ def call_mocked_command(context, mock_finder, **opts):
 
 
 def call_mocked_command_with_defaults(context, mock_finder, **opts):
-    default_opts = {'recipient_email': 's@s.com',
-                    'ccg': '03V',
-                    'practice': 'P87629'}
+    default_opts = {
+        'recipient_email': 's@s.com',
+        'ccg': '03V',
+        'practice': 'P87629'
+    }
     for k, v in opts.items():
         default_opts[k] = v
     call_mocked_command(context, mock_finder, **default_opts)

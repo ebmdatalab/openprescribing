@@ -10,8 +10,6 @@ import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand
-
-
 """The HSCIC data is the source of prescribing data.
 """
 
@@ -63,13 +61,13 @@ class Command(BaseCommand):
     def get_zipped_version(self, year, month, target_path):
         target_file = "%s/%s_%s_hscic.zip" % (target_path, year, month)
         month_name = calendar.month_name[month]
-        poss_month_names = [month_name, month_name.lower(),
-                            month_name[:3], month_name[:3].lower()]
+        poss_month_names = [
+            month_name,
+            month_name.lower(), month_name[:3], month_name[:3].lower()
+        ]
         for possibility in poss_month_names:
-            path = "%s_%s_%s" % (year, str(month).zfill(2),
-                                 month_name)
-            name = "%s_%s_%s" % (year, str(month).zfill(2),
-                                 possibility)
+            path = "%s_%s_%s" % (year, str(month).zfill(2), month_name)
+            name = "%s_%s_%s" % (year, str(month).zfill(2), possibility)
             url = "%s/%s.exe" % (path, name)
             try:
                 self.wget_and_return(url, target_file)
@@ -91,8 +89,8 @@ class Command(BaseCommand):
         '''
         individual_files = ['PDPI+BNFT', 'ADDR+BNFT', 'CHEM+SUBS']
         month_filled = str(month).zfill(2)
-        date_part = "%s_%s_%s" % (
-            year, month_filled, calendar.month_name[month])
+        date_part = "%s_%s_%s" % (year, month_filled,
+                                  calendar.month_name[month])
         for f in individual_files:
             for date_part_with_case in [date_part, date_part.lower()]:
                 basename = "T%s%s%s" % (year, month_filled, f)
@@ -131,11 +129,13 @@ class Command(BaseCommand):
 
     def sample_date_range(self):
         most_recent_date = self.most_recent_date()
-        return [[parse(d).year, parse(d).month] for d in [
-            "2011/%s" % most_recent_date.month,
-            "%s/%s" % (most_recent_date.year - 1, most_recent_date.month),
-            "%s/%s" % (most_recent_date.year, most_recent_date.month)]
-        ]
+        return [[parse(d).year, parse(d).month]
+                for d in [
+                    "2011/%s" % most_recent_date.month,
+                    "%s/%s" % (most_recent_date.year - 1,
+                               most_recent_date.month),
+                    "%s/%s" % (most_recent_date.year, most_recent_date.month)
+                ]]
 
     def most_recent_date(self):
         url = ('http://content.digital.nhs.uk'
@@ -159,10 +159,8 @@ class Command(BaseCommand):
 
     def extension_to_uppercase(self, path, suffix):
         for name in glob.glob("%s/*.%s" % (path, suffix.lower())):
-            os.rename(
-                name,
-                "%s.%s" % (name[:-(len(suffix)+1)], suffix.upper())
-            )
+            os.rename(name, "%s.%s" % (name[:-(len(suffix) + 1)],
+                                       suffix.upper()))
 
     def mkdir_p(self, path):
         try:

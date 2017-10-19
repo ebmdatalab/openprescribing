@@ -40,60 +40,39 @@ class PipelineTests(TestCase):
 
         # Set up dummy log data
         log_data = {
-            'source_a': [
-                {
-                    'imported_file': build_path(
-                        'source_a',
-                        '2017_01',
-                        'source_a.csv'
-                    ),
-                    'imported_at': '2017-01-01T12:00:00'
-                },
-                {
-                    'imported_file': build_path(
-                        'source_a',
-                        '2017_02',
-                        'source_a.csv'
-                    ),
-                    'imported_at': '2017-02-01T12:00:00'
-                }
-            ],
-            'source_b': [
-                {
-                    'imported_file': build_path(
-                        'source_b',
-                        '2017_01',
-                        'source_b_1701.csv'
-                    ),
-                    'imported_at': '2017-01-01T12:00:00'
-                },
-                {
-                    'imported_file': build_path(
-                        'source_b',
-                        '2017_02',
-                        'source_b_1702.csv'
-                    ),
-                    'imported_at': '2017-02-01T12:00:00'
-                }
-            ],
-            'source_c': [
-                {
-                    'imported_file': build_path(
-                        'source_c',
-                        '2017_01',
-                        'source_c2.csv'
-                    ),
-                    'imported_at': '2017-01-01T12:00:00'
-                },
-                {
-                    'imported_file': build_path(
-                        'source_c',
-                        '2017_02',
-                        'source_c2.csv'
-                    ),
-                    'imported_at': '2017-02-01T12:00:00'
-                }
-            ]
+            'source_a': [{
+                'imported_file':
+                build_path('source_a', '2017_01', 'source_a.csv'),
+                'imported_at':
+                '2017-01-01T12:00:00'
+            }, {
+                'imported_file':
+                build_path('source_a', '2017_02', 'source_a.csv'),
+                'imported_at':
+                '2017-02-01T12:00:00'
+            }],
+            'source_b': [{
+                'imported_file':
+                build_path('source_b', '2017_01', 'source_b_1701.csv'),
+                'imported_at':
+                '2017-01-01T12:00:00'
+            }, {
+                'imported_file':
+                build_path('source_b', '2017_02', 'source_b_1702.csv'),
+                'imported_at':
+                '2017-02-01T12:00:00'
+            }],
+            'source_c': [{
+                'imported_file':
+                build_path('source_c', '2017_01', 'source_c2.csv'),
+                'imported_at':
+                '2017-01-01T12:00:00'
+            }, {
+                'imported_file':
+                build_path('source_c', '2017_02', 'source_c2.csv'),
+                'imported_at':
+                '2017-02-01T12:00:00'
+            }]
         }
 
         with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
@@ -127,15 +106,17 @@ class PipelineTests(TestCase):
             for task in tasks.by_type('auto_fetch'):
                 task.run(2017, 7)
 
-            with mock.patch('pipeline.runner.Task.unimported_paths',
-                            return_value=['/some/path']):
+            with mock.patch(
+                    'pipeline.runner.Task.unimported_paths',
+                    return_value=['/some/path']):
                 for task in tasks.by_type('convert'):
-                        task.run(2017, 7)
+                    task.run(2017, 7)
 
-            with mock.patch('pipeline.runner.Task.unimported_paths',
-                            return_value=['/some/path']):
+            with mock.patch(
+                    'pipeline.runner.Task.unimported_paths',
+                    return_value=['/some/path']):
                 for task in tasks.by_type('import'):
-                        task.run(2017, 7)
+                    task.run(2017, 7)
 
             for task in tasks.by_type('post_process'):
                 task.run(2017, 7, last_imported='2017_01')
@@ -196,14 +177,12 @@ class PipelineTests(TestCase):
         source_a = self.tasks['fetch_source_a'].source
         self.assertEqual(
             [task.name for task in source_a.tasks_that_use_raw_source_data()],
-            ['convert_source_a']
-        )
+            ['convert_source_a'])
 
         source_c = self.tasks['fetch_source_c'].source
         self.assertEqual(
             [task.name for task in source_c.tasks_that_use_raw_source_data()],
-            ['import_source_c1', 'import_source_c2']
-        )
+            ['import_source_c1', 'import_source_c2'])
 
     def test_filename_pattern(self):
         task = self.tasks['convert_source_a']
@@ -257,11 +236,8 @@ class PipelineTests(TestCase):
     def test_input_paths(self):
         task = self.tasks['import_source_b']
         expected_output = [
-            build_path(
-                'source_b',
-                '2017_{}'.format(month),
-                'source_b_17{}.csv'.format(month)
-            )
+            build_path('source_b', '2017_{}'.format(month),
+                       'source_b_17{}.csv'.format(month))
             for month in ['01', '02', '03']
         ]
         self.assertEqual(task.input_paths(), expected_output)
@@ -283,8 +259,7 @@ You should save it at:
 The last imported data can be found at:
     {data_basedir}/source_a/2017_02/source_a.csv
 '''.strip().format(
-            data_basedir=settings.PIPELINE_DATA_BASEDIR,
-        )
+            data_basedir=settings.PIPELINE_DATA_BASEDIR, )
         output = task.manual_fetch_instructions()
         self.assertEqual(output, expected_output)
 
@@ -298,8 +273,7 @@ The last imported data can be found at:
     <never imported>
     {data_basedir}/source_c/2017_02/source_c2.csv
 '''.strip().format(
-            data_basedir=settings.PIPELINE_DATA_BASEDIR,
-        )
+            data_basedir=settings.PIPELINE_DATA_BASEDIR, )
         output = task.manual_fetch_instructions()
         self.assertEqual(output, expected_output)
 
@@ -382,9 +356,7 @@ The last imported data can be found at:
             cc.assert_not_called()
 
         logs = TaskLog.objects.filter(
-            year=2017, month=7,
-            task_name='fetch_source_b'
-        )
+            year=2017, month=7, task_name='fetch_source_b')
         self.assertEqual(1, logs.count())
 
     def test_run_task_after_failure(self):
@@ -398,16 +370,10 @@ The last imported data can be found at:
             run_task(task, 2017, 7)
 
         logs = TaskLog.objects.filter(
-            year=2017, month=7,
-            task_name='fetch_source_b'
-        )
+            year=2017, month=7, task_name='fetch_source_b')
         self.assertEqual(2, logs.count())
 
 
 def build_path(source_id, year_and_month, filename):
-    return os.path.join(
-        settings.PIPELINE_DATA_BASEDIR,
-        source_id,
-        year_and_month,
-        filename
-    )
+    return os.path.join(settings.PIPELINE_DATA_BASEDIR, source_id,
+                        year_and_month, filename)

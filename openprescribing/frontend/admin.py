@@ -60,11 +60,11 @@ class SearchBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
-    readonly_fields = ('dashboard_link',)
+    readonly_fields = ('dashboard_link', )
 
     def dashboard_link(self, obj):
-        return format_html(
-            '<a href="{}">view in site</a>', obj.dashboard_url())
+        return format_html('<a href="{}">view in site</a>',
+                           obj.dashboard_url())
 
 
 @admin.register(OrgBookmark)
@@ -72,11 +72,11 @@ class OrgBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
-    readonly_fields = ('dashboard_link',)
+    readonly_fields = ('dashboard_link', )
 
     def dashboard_link(self, obj):
-        return format_html(
-            '<a href="{}">view in site</a>', obj.dashboard_url())
+        return format_html('<a href="{}">view in site</a>',
+                           obj.dashboard_url())
 
 
 class EmailMessageInline(admin.TabularInline):
@@ -87,8 +87,7 @@ class EmailMessageInline(admin.TabularInline):
 class UserWithProfile(UserAdmin):
     list_display = (UserAdmin.list_display[0], ) + (
         'is_staff', 'emails_received', 'emails_opened', 'emails_clicked',
-        'orgbookmarks', 'searchbookmarks'
-    )
+        'orgbookmarks', 'searchbookmarks')
     list_filter = (UserVerifiedFilter, )
     inlines = [
         EmailMessageInline,
@@ -102,36 +101,41 @@ class UserWithProfile(UserAdmin):
 
     def orgbookmarks(self, obj):
         return obj.orgbookmark_set.count()
+
     orgbookmarks.short_description = 'Orgs bookmarked'
     orgbookmarks.admin_order_field = 'orgbookmark_count'
 
     def searchbookmarks(self, obj):
         return obj.searchbookmark_set.count()
+
     searchbookmarks.short_description = 'Searches bookmarked'
     searchbookmarks.admin_order_field = 'searchbookmark_count'
 
     def emails_received(self, obj):
         return obj.profile.emails_received
+
     emails_received.short_description = 'Emails received'
     emails_received.admin_order_field = 'profile__emails_received'
 
     def emails_opened(self, obj):
         return obj.profile.emails_opened
+
     emails_opened.short_description = 'Emails opened'
     emails_opened.admin_order_field = 'profile__emails_opened'
 
     def emails_clicked(self, obj):
         return obj.profile.emails_clicked
+
     emails_clicked.short_description = 'Links clicked'
     emails_clicked.admin_order_field = 'profile__emails_clicked'
 
 
 class MailLogInline(admin.TabularInline):
     model = MailLog
-    fields = readonly_fields = (
-        'timestamp', 'event_type', 'message_id', 'recipient', 'tags',
-        'reject_reason', 'metadata_prettyprinted')
-    search_fields = ('recipient',)
+    fields = readonly_fields = ('timestamp', 'event_type', 'message_id',
+                                'recipient', 'tags', 'reject_reason',
+                                'metadata_prettyprinted')
+    search_fields = ('recipient', )
 
     def metadata_prettyprinted(self, obj):
         return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))
@@ -159,10 +163,9 @@ class TagsFilter(admin.SimpleListFilter):
         """
         tags = model_admin.model.objects.order_by().values('tags').distinct()
         with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT UNNEST(tags) AS tag "
-                "FROM frontend_maillog "
-                "GROUP BY tag")
+            cursor.execute("SELECT UNNEST(tags) AS tag "
+                           "FROM frontend_maillog "
+                           "GROUP BY tag")
             tags = cursor.fetchall()
             return ((t[0], t[0]) for t in tags)
 
@@ -181,14 +184,18 @@ class TagsFilter(admin.SimpleListFilter):
 @admin.register(EmailMessage)
 class EmailMessageAdmin(admin.ModelAdmin):
     list_display = ('to', 'subject', 'tags_str', 'created_at', 'send_count')
-    list_filter = (
-        TagsFilter, 'subject')
+    list_filter = (TagsFilter, 'subject')
     readonly_fields = fields = (
-        'message_id', 'to', 'subject', 'tags_str', 'created_at', 'send_count',
-        'user', 'message_html',)
-    inlines = [
-        MailLogInline
-    ]
+        'message_id',
+        'to',
+        'subject',
+        'tags_str',
+        'created_at',
+        'send_count',
+        'user',
+        'message_html',
+    )
+    inlines = [MailLogInline]
     date_hierarchy = 'created_at'
 
     def message_html(self, obj):
@@ -210,15 +217,13 @@ class EmailMessageAdmin(admin.ModelAdmin):
 @admin.register(MailLog)
 class MailLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
-    list_display = (
-        'timestamp', 'event_type', 'subject_from_metadata',
-        'recipient', 'tags_str')
-    list_filter = (
-        TagsFilter, 'event_type')
-    readonly_fields = fields = (
-        'timestamp', 'event_type', 'subject_from_metadata', 'recipient',
-        'tags_str', 'reject_reason', 'raw_message_id',
-        'metadata_prettyprinted')
+    list_display = ('timestamp', 'event_type', 'subject_from_metadata',
+                    'recipient', 'tags_str')
+    list_filter = (TagsFilter, 'event_type')
+    readonly_fields = fields = ('timestamp', 'event_type',
+                                'subject_from_metadata', 'recipient',
+                                'tags_str', 'reject_reason', 'raw_message_id',
+                                'metadata_prettyprinted')
 
     def metadata_prettyprinted(self, obj):
         return mark_safe("<pre>%s</pre>" % json.dumps(obj.metadata, indent=2))

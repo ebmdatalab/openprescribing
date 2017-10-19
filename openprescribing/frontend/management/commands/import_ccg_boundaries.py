@@ -67,8 +67,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--filename',
-            help='Should point to a filename like `CCG_BSC_Apr2015.TAB`'
-        )
+            help='Should point to a filename like `CCG_BSC_Apr2015.TAB`')
 
     def handle(self, *args, **options):
 
@@ -76,10 +75,7 @@ class Command(BaseCommand):
             print 'Please supply a KML filename'
             sys.exit
 
-        layer_mapping = {
-            'code': 'CCGcode',
-            'boundary': 'Unknown'
-        }
-        lm = LayerMapping(PCT, options['filename'],
-                          layer_mapping, transform=True)
+        layer_mapping = {'code': 'CCGcode', 'boundary': 'Unknown'}
+        lm = LayerMapping(
+            PCT, options['filename'], layer_mapping, transform=True)
         lm.save(strict=True)

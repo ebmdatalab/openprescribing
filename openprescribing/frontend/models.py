@@ -61,18 +61,14 @@ class PCT(models.Model):
     '''
     PCTs or CCGs (depending on date).
     '''
-    PCT_ORG_TYPES = (
-        ('CCG', 'CCG'),
-        ('PCT', 'PCT'),
-        ('H', 'Hub'),
-        ('Unknown', 'Unknown')
-    )
-    code = models.CharField(max_length=3, primary_key=True,
-                            help_text='Primary care trust code')
+    PCT_ORG_TYPES = (('CCG', 'CCG'), ('PCT', 'PCT'), ('H', 'Hub'), ('Unknown',
+                                                                    'Unknown'))
+    code = models.CharField(
+        max_length=3, primary_key=True, help_text='Primary care trust code')
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
-    org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
-                                default='Unknown')
+    org_type = models.CharField(
+        max_length=9, choices=PCT_ORG_TYPES, default='Unknown')
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
@@ -94,42 +90,30 @@ class Practice(models.Model):
     GP practices. HSCIC practice status is from:
     http://systems.hscic.gov.uk/data/ods/datadownloads/gppractice/index_html
     '''
-    PRESCRIBING_SETTINGS = (
-        (-1, 'Unknown'),
-        (0, 'Other'),
-        (1, 'WIC Practice'),
-        (2, 'OOH Practice'),
-        (3, 'WIC + OOH Practice'),
-        (4, 'GP Practice'),
-        (8, 'Public Health Service'),
-        (9, 'Community Health Service'),
-        (10, 'Hospital Service'),
-        (11, 'Optometry Service'),
-        (12, 'Urgent & Emergency Care'),
-        (13, 'Hospice'),
-        (14, 'Care Home / Nursing Home'),
-        (15, 'Border Force'),
-        (16, 'Young Offender Institution'),
-        (17, 'Secure Training Centre'),
-        (18, "Secure Children's Home"),
-        (19, "Immigration Removal Centre"),
-        (20, "Court"),
-        (21, "Police Custody"),
-        (22, "Sexual Assault Referral Centre (SARC)"),
-        (24, "Other - Justice Estate"),
-        (25, "Prison")
-    )
-    STATUS_SETTINGS = (
-        ('U', 'Unknown'),
-        ('A', 'Active'),
-        ('B', 'Retired'),
-        ('C', 'Closed'),
-        ('D', 'Dormant'),
-        ('P', 'Proposed')
-    )
+    PRESCRIBING_SETTINGS = ((-1, 'Unknown'), (0, 'Other'), (1, 'WIC Practice'),
+                            (2, 'OOH Practice'), (3, 'WIC + OOH Practice'),
+                            (4, 'GP Practice'), (8, 'Public Health Service'),
+                            (9,
+                             'Community Health Service'), (10,
+                                                           'Hospital Service'),
+                            (11,
+                             'Optometry Service'), (12,
+                                                    'Urgent & Emergency Care'),
+                            (13, 'Hospice'), (14, 'Care Home / Nursing Home'),
+                            (15,
+                             'Border Force'), (16,
+                                               'Young Offender Institution'),
+                            (17, 'Secure Training Centre'),
+                            (18, "Secure Children's Home"),
+                            (19, "Immigration Removal Centre"), (20, "Court"),
+                            (21, "Police Custody"),
+                            (22, "Sexual Assault Referral Centre (SARC)"),
+                            (24, "Other - Justice Estate"), (25, "Prison"))
+    STATUS_SETTINGS = (('U', 'Unknown'), ('A', 'Active'), ('B', 'Retired'),
+                       ('C', 'Closed'), ('D', 'Dormant'), ('P', 'Proposed'))
     ccg = models.ForeignKey(PCT, null=True, blank=True)
-    code = models.CharField(max_length=6, primary_key=True,
-                            help_text='Practice code')
+    code = models.CharField(
+        max_length=6, primary_key=True, help_text='Practice code')
     name = models.CharField(max_length=200)
     address1 = models.CharField(max_length=200, null=True, blank=True)
     address2 = models.CharField(max_length=200, null=True, blank=True)
@@ -138,16 +122,14 @@ class Practice(models.Model):
     address5 = models.CharField(max_length=200, null=True, blank=True)
     postcode = models.CharField(max_length=9, null=True, blank=True)
     location = models.PointField(null=True, blank=True)
-    setting = models.IntegerField(choices=PRESCRIBING_SETTINGS,
-                                  default=-1)
+    setting = models.IntegerField(choices=PRESCRIBING_SETTINGS, default=-1)
     objects = models.GeoManager()
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     join_provider_date = models.DateField(null=True, blank=True)
     leave_provider_date = models.DateField(null=True, blank=True)
-    status_code = models.CharField(max_length=1,
-                                   choices=STATUS_SETTINGS,
-                                   null=True, blank=True)
+    status_code = models.CharField(
+        max_length=1, choices=STATUS_SETTINGS, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -257,8 +239,8 @@ class Chemical(models.Model):
     GP prescribing chemical substances (aka chemicals)
     TODO: Add 'date added' field, populate from data file.
     '''
-    bnf_code = models.CharField(max_length=9, primary_key=True,
-                                validators=[isAlphaNumeric])
+    bnf_code = models.CharField(
+        max_length=9, primary_key=True, validators=[isAlphaNumeric])
     chem_name = models.CharField(max_length=200)
     is_current = models.BooleanField(default=True)
 
@@ -267,22 +249,23 @@ class Chemical(models.Model):
 
     def bnf_section(self):
         code = self.bnf_code
-        section = Section.objects.get(bnf_chapter=int(code[:2]),
-                                      bnf_section=int(code[2:4]),
-                                      bnf_para=None)
+        section = Section.objects.get(
+            bnf_chapter=int(code[:2]),
+            bnf_section=int(code[2:4]),
+            bnf_para=None)
         return "%s: %s" % (section.number_str, section.name)
 
     class Meta:
         app_label = 'frontend'
-        unique_together = (('bnf_code', 'chem_name'),)
+        unique_together = (('bnf_code', 'chem_name'), )
 
 
 class Product(models.Model):
     '''
     GP prescribing products. Import from BNF codes file from BSA.
     '''
-    bnf_code = models.CharField(max_length=11, primary_key=True,
-                                validators=[isAlphaNumeric])
+    bnf_code = models.CharField(
+        max_length=11, primary_key=True, validators=[isAlphaNumeric])
     name = models.CharField(max_length=200)
     is_generic = models.BooleanField()
     is_current = models.BooleanField(default=True)
@@ -311,8 +294,8 @@ class Presentation(models.Model):
     `replaced_by` field has a value.
 
     '''
-    bnf_code = models.CharField(max_length=15, primary_key=True,
-                                validators=[isAlphaNumeric])
+    bnf_code = models.CharField(
+        max_length=15, primary_key=True, validators=[isAlphaNumeric])
     name = models.CharField(max_length=200)
     is_generic = models.NullBooleanField(default=None)
     active_quantity = models.FloatField(null=True, blank=True)
@@ -397,8 +380,8 @@ class Prescription(models.Model):
     '''
     pct = models.ForeignKey(PCT, db_constraint=False, null=True)
     practice = models.ForeignKey(Practice, db_constraint=False, null=True)
-    presentation_code = models.CharField(max_length=15,
-                                         validators=[isAlphaNumeric])
+    presentation_code = models.CharField(
+        max_length=15, validators=[isAlphaNumeric])
     total_items = models.IntegerField()
     # XXX change this post-deploy; in fact we should not allow blanks
     net_cost = models.FloatField(blank=True, null=True)
@@ -467,7 +450,7 @@ class MeasureValue(models.Model):
 
     class Meta:
         app_label = 'frontend'
-        unique_together = (('measure', 'pct', 'practice', 'month'),)
+        unique_together = (('measure', 'pct', 'practice', 'month'), )
 
 
 class MeasureGlobal(models.Model):
@@ -515,7 +498,7 @@ class MeasureGlobal(models.Model):
 
     class Meta:
         app_label = 'frontend'
-        unique_together = (('measure', 'month'),)
+        unique_together = (('measure', 'month'), )
 
 
 class TruncatingCharField(models.CharField):
@@ -570,12 +553,15 @@ class OrgBookmark(models.Model):
         """
         if self.practice is None:
             return reverse(
-                'measures_for_one_ccg',
-                kwargs={'ccg_code': self.pct.code})
+                'measures_for_one_ccg', kwargs={
+                    'ccg_code': self.pct.code
+                })
         else:
             return reverse(
                 'measures_for_one_practice',
-                kwargs={'code': self.practice.code})
+                kwargs={
+                    'code': self.practice.code
+                })
 
     @property
     def name(self):
@@ -627,9 +613,7 @@ def _makeKey():
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    key = models.CharField(max_length=32,
-                           default=_makeKey,
-                           unique=True)
+    key = models.CharField(max_length=32, default=_makeKey, unique=True)
     emails_received = models.IntegerField(default=0)
     emails_opened = models.IntegerField(default=0)
     emails_clicked = models.IntegerField(default=0)
@@ -646,31 +630,25 @@ class EmailMessageManager(models.Manager):
         user = User.objects.filter(email=msg.to[0])
         user = user and user[0] or None
         if 'message-id' not in msg.extra_headers:
-            raise StandardError(
-                "Messages stored as frontend.EmailMessage"
-                "must have a message-id header")
+            raise StandardError("Messages stored as frontend.EmailMessage"
+                                "must have a message-id header")
         m = self.create(
             message_id=msg.extra_headers['message-id'],
             to=msg.to,
             subject=msg.subject,
             tags=msg.tags,
             user=user,
-            message=msg
-        )
+            message=msg)
         return m
 
 
 class EmailMessage(models.Model):
     message_id = models.CharField(max_length=998, primary_key=True)
     pickled_message = models.BinaryField()
-    to = ArrayField(
-        models.CharField(max_length=254, db_index=True)
-    )
+    to = ArrayField(models.CharField(max_length=254, db_index=True))
     subject = models.CharField(max_length=200)
     tags = ArrayField(
-        models.CharField(max_length=100, db_index=True),
-        null=True
-    )
+        models.CharField(max_length=100, db_index=True), null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(User, null=True, blank=True)
     send_count = models.SmallIntegerField(default=0)
@@ -694,22 +672,17 @@ class EmailMessage(models.Model):
 
 
 class MailLog(models.Model):
-    EVENT_TYPE_CHOICES = [
-        (value, value)
-        for name, value in vars(EventType).iteritems()
-        if not name.startswith('_')]
+    EVENT_TYPE_CHOICES = [(value, value)
+                          for name, value in vars(EventType).iteritems()
+                          if not name.startswith('_')]
     # delievered, accepted (by mailgun), error, warn
     metadata = JSONField(null=True, blank=True)
     recipient = models.CharField(max_length=254, db_index=True)
     tags = ArrayField(
-        models.CharField(max_length=100, db_index=True),
-        null=True
-    )
+        models.CharField(max_length=100, db_index=True), null=True)
     reject_reason = models.CharField(max_length=15, null=True, blank=True)
     event_type = models.CharField(
-        max_length=15,
-        choices=EVENT_TYPE_CHOICES,
-        db_index=True)
+        max_length=15, choices=EVENT_TYPE_CHOICES, db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
     message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
 
@@ -718,12 +691,10 @@ class MailLog(models.Model):
         if 'subject' in self.metadata:
             subject = self.metadata['subject']
         elif 'message-headers' in self.metadata:
-                headers = json.loads(self.metadata['message-headers'])
-                subject_header = next(
-                    (h for h in headers if h[0] == 'Subject'),
-                    ['', 'n/a']
-                )
-                subject = subject_header[1]
+            headers = json.loads(self.metadata['message-headers'])
+            subject_header = next((h for h in headers
+                                   if h[0] == 'Subject'), ['', 'n/a'])
+            subject = subject_header[1]
         else:
             # likely to be "clicked" event
             try:
@@ -744,10 +715,13 @@ class GenericCodeMapping(models.Model):
     should be treated as a stem against which to search for generics.
 
     """
-    from_code = models.CharField(max_length=15, primary_key=True,
-                                 validators=[isAlphaNumeric], db_index=True)
-    to_code = models.CharField(max_length=15,
-                               validators=[isAlphaNumeric], db_index=True)
+    from_code = models.CharField(
+        max_length=15,
+        primary_key=True,
+        validators=[isAlphaNumeric],
+        db_index=True)
+    to_code = models.CharField(
+        max_length=15, validators=[isAlphaNumeric], db_index=True)
 
 
 class PPUSaving(models.Model):

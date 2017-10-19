@@ -46,8 +46,8 @@ class CloudHandler(object):
     def __init__(self):
         super(CloudHandler, self).__init__()
         credentials = GoogleCredentials.get_application_default()
-        self.bigquery = discovery.build('bigquery', 'v2',
-                                        credentials=credentials)
+        self.bigquery = discovery.build(
+            'bigquery', 'v2', credentials=credentials)
         self.cloud = discovery.build('storage', 'v1', credentials=credentials)
 
     def handle_progressless_iter(self, error, progressless_iters):
@@ -58,16 +58,18 @@ class CloudHandler(object):
         sleeptime = random.random() * (2**progressless_iters)
         print(
             'Caught exception (%s). Sleeping for %s seconds before retry #%d' %
-             (str(error), sleeptime, progressless_iters)
-        )
+            (str(error), sleeptime, progressless_iters))
         time.sleep(sleeptime)
 
     def print_with_carriage_return(self, s):
         sys.stdout.write('\r' + s)
         sys.stdout.flush()
 
-    def _load_payload(
-            self, uri, table_id=None, mode=None, schema='prescribing.json'):
+    def _load_payload(self,
+                      uri,
+                      table_id=None,
+                      mode=None,
+                      schema='prescribing.json'):
         if mode == 'replace':
             mode = 'WRITE_TRUNCATE'
         elif mode == 'append':
@@ -140,22 +142,18 @@ class CloudHandler(object):
                 sys.stdout.write(".")
                 sys.stdout.flush()
             response = self.bigquery.jobs().get(
-                projectId='ebmdatalab',
-                jobId=job_id).execute()
+                projectId='ebmdatalab', jobId=job_id).execute()
             counter += 1
             if response['status']['state'] == 'DONE':
                 if 'errors' in response['status']:
-                    raise StandardError(
-                        json.dumps(response, indent=2))
+                    raise StandardError(json.dumps(response, indent=2))
                 else:
                     print "DONE!"
                     return
 
     def query_and_save(self, query, dest_table='', mode=''):
         assert dest_table and mode
-        payload = self._query_payload(query,
-                                      table_id=dest_table,
-                                      mode=mode)
+        payload = self._query_payload(query, table_id=dest_table, mode=mode)
         self._run_and_wait(payload)
 
     def load(self,
@@ -177,8 +175,7 @@ class CloudHandler(object):
         """
         dataset_ids = []
         response = self.cloud.objects().list(
-            bucket=bucket,
-            prefix=prefix).execute()
+            bucket=bucket, prefix=prefix).execute()
         page_token = response.get('nextPageToken', None)
         if 'items' in response:
             dataset_ids += response["items"]
@@ -194,10 +191,8 @@ class CloudHandler(object):
             if name_regex:
                 dataset_ids = filter(
                     lambda x: re.findall(name_regex, x['name']), dataset_ids)
-            dataset_ids = sorted(
-                dataset_ids, key=lambda x: x['timeCreated'])
-            dataset_ids = map(
-                lambda x: x['name'], dataset_ids)
+            dataset_ids = sorted(dataset_ids, key=lambda x: x['timeCreated'])
+            dataset_ids = map(lambda x: x['name'], dataset_ids)
             return dataset_ids
         else:
             return []
@@ -206,27 +201,20 @@ class CloudHandler(object):
         page_token = None
         table_ids = []
         response = self.bigquery.tables().list(
-            projectId='ebmdatalab',
-            datasetId='hscic',
-            maxResults=1
-        ).execute()
+            projectId='ebmdatalab', datasetId='hscic', maxResults=1).execute()
         page_token = response.get('nextPageToken', None)
         table_ids.append(
-            map(lambda x: x['tableReference']['tableId'], response['tables'])
-        )
+            map(lambda x: x['tableReference']['tableId'], response['tables']))
         while page_token:
             response = self.bigquery.tables().list(
                 projectId='ebmdatalab',
                 datasetId='hscic',
                 pageToken=page_token,
-                maxResults=1
-            ).execute()
+                maxResults=1).execute()
             if 'tables' not in response:
                 break
-            table_ids += (
-                map(lambda x: x['tableReference']['tableId'],
-                    response['tables'])
-            )
+            table_ids += (map(lambda x: x['tableReference']['tableId'],
+                              response['tables']))
             page_token = response.get('nextPageToken', None)
         return table_ids
 
@@ -256,9 +244,8 @@ class CloudHandler(object):
         media = MediaFileUpload(filename, chunksize=CHUNKSIZE, resumable=True)
         if not media.mimetype():
             media = MediaFileUpload(filename, DEFAULT_MIMETYPE, resumable=True)
-        request = self.cloud.objects().insert(bucket=bucket_name,
-                                              name=object_name,
-                                              media_body=media)
+        request = self.cloud.objects().insert(
+            bucket=bucket_name, name=object_name, media_body=media)
         print 'Uploading file: %s to bucket: %s object: %s ' % (filename,
                                                                 bucket_name,
                                                                 object_name)

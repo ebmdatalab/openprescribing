@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 
 def nhs_abbreviations(word, **kwargs):
     if len(word) == 2 and word.lower() not in [
-            'at', 'of', 'in', 'on', 'to', 'is', 'me', 'by', 'dr', 'st']:
+            'at', 'of', 'in', 'on', 'to', 'is', 'me', 'by', 'dr', 'st'
+    ]:
         return word.upper()
     elif word.lower() in ['dr', 'st']:
         return word.title()
@@ -27,8 +28,8 @@ def nhs_abbreviations(word, **kwargs):
         return word.upper()
     elif '&' in word:
         return word.upper()
-    elif ((word.lower() not in ['ptnrs', 'by', 'ccgs']) and
-          (not re.match(r'.*[aeiou]{1}', word.lower()))):
+    elif ((word.lower() not in ['ptnrs', 'by', 'ccgs'])
+          and (not re.match(r'.*[aeiou]{1}', word.lower()))):
         return word.upper()
 
 
@@ -45,9 +46,10 @@ def get_columns_for_select(measure, num_or_denom=None):
     if cols[-1].strip()[-1] != ',':
         cols[-1] += ", "
     if measure['is_cost_based']:
-        cols += ["SUM(items) AS items, ",
-                 "SUM(actual_cost) AS cost, ",
-                 "SUM(quantity) AS quantity "]
+        cols += [
+            "SUM(items) AS items, ", "SUM(actual_cost) AS cost, ",
+            "SUM(quantity) AS quantity "
+        ]
     # Deal with possible inconsistencies in measure definition
     # trailing commas
     if cols[-1].strip()[-1] == ',':
@@ -111,20 +113,18 @@ def constraint_and_index_reconstructor(table_name):
         constraints = {}
 
         # Build lists of current constraints and indexes
-        cursor.execute(
-            "SELECT conname, pg_get_constraintdef(c.oid) "
-            "FROM pg_constraint c "
-            "JOIN pg_namespace n "
-            "ON n.oid = c.connamespace "
-            "WHERE contype IN ('f', 'p','c','u') "
-            "AND conrelid = '%s'::regclass "
-            "ORDER BY contype;" % table_name)
+        cursor.execute("SELECT conname, pg_get_constraintdef(c.oid) "
+                       "FROM pg_constraint c "
+                       "JOIN pg_namespace n "
+                       "ON n.oid = c.connamespace "
+                       "WHERE contype IN ('f', 'p','c','u') "
+                       "AND conrelid = '%s'::regclass "
+                       "ORDER BY contype;" % table_name)
         for name, definition in cursor.fetchall():
             constraints[name] = definition
-        cursor.execute(
-            "SELECT indexname, indexdef "
-            "FROM pg_indexes "
-            "WHERE tablename = '%s';" % table_name)
+        cursor.execute("SELECT indexname, indexdef "
+                       "FROM pg_indexes "
+                       "WHERE tablename = '%s';" % table_name)
         for name, definition in cursor.fetchall():
             if name not in constraints.keys():
                 # UNIQUE constraints actuall create indexes, so
@@ -133,9 +133,8 @@ def constraint_and_index_reconstructor(table_name):
 
         # drop foreign key constraints
         for name in constraints.keys():
-            cursor.execute(
-                "ALTER TABLE %s DROP CONSTRAINT %s"
-                % (table_name, name))
+            cursor.execute("ALTER TABLE %s DROP CONSTRAINT %s" % (table_name,
+                                                                  name))
 
         # drop indexes
         logger.info("Dropping indexes")

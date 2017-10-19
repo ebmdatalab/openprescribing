@@ -26,8 +26,8 @@ class TestBookmarkViews(TransactionTestCase):
     def test_list_bookmarks_logged_in(self):
         url = self._get_bookmark_url_for_user()
         response = self.client.get(url, follow=True)
-        self.assertContains(
-            response, "You are currently subscribed to 3 monthly alerts")
+        self.assertContains(response,
+                            "You are currently subscribed to 3 monthly alerts")
 
     def test_list_bookmarks_invalid_key(self):
         url = reverse('bookmark-login', kwargs={'key': 'broken'})
@@ -43,9 +43,7 @@ class TestBookmarkViews(TransactionTestCase):
             data = {'org_bookmarks': [OrgBookmark.objects.first().pk]}
             response = self.client.post(
                 reverse('bookmark-list'), data, follow=True)
-            self.assertContains(
-                response,
-                "Unsubscribed from 1 alert")
+            self.assertContains(response, "Unsubscribed from 1 alert")
         self.assertEqual(OrgBookmark.objects.count(), 0)
 
     def test_unsubscribe_all_at_once(self):
@@ -55,9 +53,7 @@ class TestBookmarkViews(TransactionTestCase):
         data = {'unsuball': 1}
         response = self.client.post(
             reverse('bookmark-list'), data, follow=True)
-        self.assertContains(
-            response,
-            "Unsubscribed from 3 alerts")
+        self.assertContains(response, "Unsubscribed from 3 alerts")
         # There's one org bookmark which is unapproved, so they don't
         # see it in their list, and it doesn't get deleted.
         self.assertEqual(OrgBookmark.objects.count(), 1)
@@ -69,41 +65,46 @@ class TestBookmarkViews(TransactionTestCase):
         from test_bookmark_utils import _makeContext
         from django.conf import settings
         context = _makeContext(
-            declines=[{'measure': Measure(id='foo'), 'from': 30, 'to': 10}],
+            declines=[{
+                'measure': Measure(id='foo'),
+                'from': 30,
+                'to': 10
+            }],
             interesting=[Measure(id='bar')],
-            most_changing_interesting=[
-                {
-                    'measure': Measure(id='baz'),
-                    'from': 30,
-                    'to': 10
-                }],
+            most_changing_interesting=[{
+                'measure': Measure(id='baz'),
+                'from': 30,
+                'to': 10
+            }],
         )
         test_img_path = (settings.SITE_ROOT + '/frontend/tests/fixtures/'
                          'alert-email-image.png')
 
         finder.return_value.context_for_org_email.return_value = context
         tmpfile.return_value.__enter__.return_value.name = test_img_path
-        url = reverse('preview-ccg-bookmark',
-                      kwargs={'code': PCT.objects.first().pk})
+        url = reverse(
+            'preview-ccg-bookmark', kwargs={
+                'code': PCT.objects.first().pk
+            })
         response = self.client.post(url)
-        self.assertContains(
-            response, "this CCG")
+        self.assertContains(response, "this CCG")
         self.assertContains(
             response, "we found that this CCG was in the top or bottom 10%")
         with open(test_img_path, 'rb') as expected:
-            self.assertContains(
-                response, base64.b64encode(expected.read()))
+            self.assertContains(response, base64.b64encode(expected.read()))
 
     @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
     def test_preview_practice_bookmark(self, finder):
         from test_bookmark_utils import _makeContext
         context = _makeContext()
         finder.return_value.context_for_org_email.return_value = context
-        url = reverse('preview-practice-bookmark',
-                      kwargs={'code': Practice.objects.first().pk})
+        url = reverse(
+            'preview-practice-bookmark',
+            kwargs={
+                'code': Practice.objects.first().pk
+            })
         response = self.client.post(url)
-        self.assertContains(
-            response, "about this practice")
+        self.assertContains(response, "about this practice")
 
     @patch('frontend.views.bookmark_utils.subprocess')
     def test_preview_analysis_bookmark(self, subprocess):
@@ -111,11 +112,13 @@ class TestBookmarkViews(TransactionTestCase):
         url = reverse('preview-analyse-bookmark')
         self.client.force_login(User.objects.get(username='admin-user'))
         response = self.client.post(url, {'url': bookmark.url, 'name': 'foo'})
-        self.assertContains(
-            response, "your monthly update")
+        self.assertContains(response, "your monthly update")
 
     def test_preview_practice_bookmark_with_get_is_not_error(self):
-        url = reverse('preview-practice-bookmark',
-                      kwargs={'code': Practice.objects.first().pk})
+        url = reverse(
+            'preview-practice-bookmark',
+            kwargs={
+                'code': Practice.objects.first().pk
+            })
         response = self.client.get(url)
         self.assertEquals(response.status_code, 200)

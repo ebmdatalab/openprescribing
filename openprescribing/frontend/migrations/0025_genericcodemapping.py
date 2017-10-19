@@ -16,8 +16,26 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GenericCodeMapping',
             fields=[
-                ('from_code', models.CharField(db_index=True, max_length=15, primary_key=True, serialize=False, validators=[django.core.validators.RegexValidator(b'^[\\w]*$', code=b'Invalid name', message=b'name must be alphanumeric')])),
-                ('to_code', models.CharField(db_index=True, max_length=15, validators=[django.core.validators.RegexValidator(b'^[\\w]*$', code=b'Invalid name', message=b'name must be alphanumeric')])),
+                ('from_code', models.CharField(
+                    db_index=True,
+                    max_length=15,
+                    primary_key=True,
+                    serialize=False,
+                    validators=[
+                        django.core.validators.RegexValidator(
+                            b'^[\\w]*$',
+                            code=b'Invalid name',
+                            message=b'name must be alphanumeric')
+                    ])),
+                ('to_code', models.CharField(
+                    db_index=True,
+                    max_length=15,
+                    validators=[
+                        django.core.validators.RegexValidator(
+                            b'^[\\w]*$',
+                            code=b'Invalid name',
+                            message=b'name must be alphanumeric')
+                    ])),
             ],
         ),
     ]

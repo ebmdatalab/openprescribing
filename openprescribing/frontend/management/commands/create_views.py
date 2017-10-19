@@ -13,7 +13,6 @@ from common import utils
 from gcutils.bigquery import Client, TableExporter
 from frontend.models import ImportLog
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -29,6 +28,7 @@ class Command(BaseCommand):
     frontend/management/commands/replace_matviews.sql (also used by the tests).
 
     """
+
     def add_arguments(self, parser):
         parser.add_argument(
             '--view', help='view to update (default is to update all)')
@@ -41,13 +41,8 @@ class Command(BaseCommand):
             self.IS_VERBOSE = True
         self.dataset_name = options.get('dataset', 'hscic')
 
-        base_path = os.path.join(
-            settings.SITE_ROOT,
-            'frontend',
-            'management',
-            'commands',
-            'views_sql'
-        )
+        base_path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+                                 'commands', 'views_sql')
 
         if options['view'] is not None:
             path = os.path.join(base_path), options['view'] + '.sql'
@@ -134,8 +129,8 @@ def query_and_export(dataset_name, table_name, sql):
         table = client.get_table(table_name)
 
         storage_prefix = '{}/views/{}-'.format(dataset_name, table_name)
-        logger.info("Generating view %s and saving to %s" % (
-            table_name, storage_prefix))
+        logger.info("Generating view %s and saving to %s" % (table_name,
+                                                             storage_prefix))
 
         logger.info("Running SQL for %s: %s" % (table_name, sql))
         table.insert_rows_from_query(sql)

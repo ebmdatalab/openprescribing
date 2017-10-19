@@ -4,8 +4,7 @@ from frontend.models import PCT
 
 
 def setUpModule():
-    call_command('loaddata', 'frontend/tests/fixtures/ccgs.json',
-                 verbosity=0)
+    call_command('loaddata', 'frontend/tests/fixtures/ccgs.json', verbosity=0)
 
 
 def tearDownModule():
@@ -13,7 +12,6 @@ def tearDownModule():
 
 
 class CommandsTestCase(TestCase):
-
     def test_import_ccg_boundaries(self):
         args = []
         opts = {

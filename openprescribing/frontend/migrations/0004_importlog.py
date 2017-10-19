@@ -25,7 +25,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ImportLog',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('imported_at', models.DateTimeField(auto_now_add=True)),
                 ('current_at', models.DateField(db_index=True)),
                 ('filename', models.CharField(max_length=200)),

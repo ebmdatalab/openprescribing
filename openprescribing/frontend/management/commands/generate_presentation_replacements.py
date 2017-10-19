@@ -111,9 +111,7 @@ from frontend.models import Section
 
 from gcutils.bigquery import Client, TableExporter, build_schema
 
-
 logger = logging.getLogger(__name__)
-
 
 BNF_MAP_SCHEMA = build_schema(
     ('former_bnf_code', 'STRING'),
@@ -149,14 +147,13 @@ def create_code_mapping(filenames):
 
                 if len(prev_code) <= 7:  # section, subsection, paragraph
                     Section.objects.filter(
-                        bnf_id__startswith=prev_code).update(
-                            is_current=False)
+                        bnf_id__startswith=prev_code).update(is_current=False)
                 elif len(prev_code) == 9:
-                    Chemical.objects.filter(
-                        bnf_code=prev_code).update(is_current=False)
+                    Chemical.objects.filter(bnf_code=prev_code).update(
+                        is_current=False)
                 elif len(prev_code) == 11:
-                    Product.objects.filter(
-                        bnf_code=prev_code).update(is_current=False)
+                    Product.objects.filter(bnf_code=prev_code).update(
+                        is_current=False)
                 matches = Presentation.objects.filter(
                     bnf_code__startswith=next_code)
                 for row in matches:
@@ -248,21 +245,11 @@ def cleanup_empty_classes():
 
     """
     classes = [
-        ('section_code',
-         Section,
-         'bnf_id'),
-        ('para_code',
-         Section,
-         'bnf_id'),
-        ('chemical_code',
-         Chemical,
-         'bnf_code'),
-        ('product_code',
-         Product,
-         'bnf_code'),
-        ('presentation_code',
-         Presentation,
-         'bnf_code'),
+        ('section_code', Section, 'bnf_id'),
+        ('para_code', Section, 'bnf_id'),
+        ('chemical_code', Chemical, 'bnf_code'),
+        ('product_code', Product, 'bnf_code'),
+        ('presentation_code', Presentation, 'bnf_code'),
     ]
     for class_column, model, bnf_field in classes:
         csv_path = get_csv_of_empty_classes_for_level(class_column)
@@ -286,8 +273,8 @@ def cleanup_empty_classes():
                         #   their section;
                         #
                         #  * We don't currently import appliances and similar
-                        logger.warn("Couldn't find %s(pk=%s)" % (
-                            model.__name__, code))
+                        logger.warn("Couldn't find %s(pk=%s)" %
+                                    (model.__name__, code))
 
 
 def update_existing_prescribing():
@@ -318,12 +305,9 @@ def update_existing_prescribing():
             with transaction.atomic():
                 for p in Presentation.objects.filter(
                         replaced_by__isnull=False):
-                    cursor.execute(
-                        update_sql % (
-                            table_name,
-                            p.current_version.bnf_code,
-                            p.bnf_code)
-                    )
+                    cursor.execute(update_sql %
+                                   (table_name, p.current_version.bnf_code,
+                                    p.bnf_code))
 
 
 def create_bigquery_views():
@@ -363,33 +347,20 @@ def create_bigquery_views():
     client = Client(settings.BQ_HSCIC_DATASET)
 
     try:
-        client.create_table_with_view(
-            'normalised_prescribing_standard',
-            sql,
-            False
-        )
+        client.create_table_with_view('normalised_prescribing_standard', sql,
+                                      False)
     except Conflict:
         pass
 
-    sql = sql.replace(
-        'ebmdatalab.hscic.prescribing',
-        '[ebmdatalab:hscic.prescribing]'
-    )
-    sql = sql.replace(
-        'ebmdatalab.hscic.bnf_map',
-        '[ebmdatalab:hscic.bnf_map]'
-    )
-    sql = sql.replace(
-        'ebmdatalab.hscic.practices',
-        '[ebmdatalab:hscic.practices]'
-    )
+    sql = sql.replace('ebmdatalab.hscic.prescribing',
+                      '[ebmdatalab:hscic.prescribing]')
+    sql = sql.replace('ebmdatalab.hscic.bnf_map', '[ebmdatalab:hscic.bnf_map]')
+    sql = sql.replace('ebmdatalab.hscic.practices',
+                      '[ebmdatalab:hscic.practices]')
 
     try:
         client.create_table_with_view(
-            'normalised_prescribing_legacy',
-            sql,
-            legacy=True
-        )
+            'normalised_prescribing_legacy', sql, legacy=True)
     except Conflict:
         pass
 
@@ -403,19 +374,16 @@ class Command(BaseCommand):
             'filenames',
             nargs='*',
             help='This argument only exists for tests. Normally the command '
-            'is expected to work on the contents of `presentation_commands/`'
-        )
+            'is expected to work on the contents of `presentation_commands/`')
 
     def handle(self, *args, **options):
         if options['filenames']:
             filenames = reversed(sorted(options['filenames']))
         else:
             filenames = reversed(
-                sorted(glob.glob(
-                    'frontend/management/commands/'
-                    'presentation_replacements/*.txt')
-                )
-            )
+                sorted(
+                    glob.glob('frontend/management/commands/'
+                              'presentation_replacements/*.txt')))
         create_code_mapping(filenames)
         create_bigquery_table()
         create_bigquery_views()

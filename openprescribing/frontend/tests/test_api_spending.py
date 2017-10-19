@@ -17,12 +17,9 @@ def _create_prescribing_tables():
             table_name = "frontend_prescription_%s%s" % (
                 current.year, str(current.month).zfill(2))
             cursor.execute(cmd % (table_name, table_name))
-            current = datetime.date(
-                current.year + (current.month / 12),
-                ((current.month % 12) + 1),
-                1)
-    ImportLog.objects.create(
-        current_at=current, category='prescribing')
+            current = datetime.date(current.year + (current.month / 12),
+                                    ((current.month % 12) + 1), 1)
+    ImportLog.objects.create(current_at=current, category='prescribing')
 
 
 class TestAPISpendingViews(ApiTestBase):
@@ -405,6 +402,7 @@ class TestAPISpendingViews(ApiTestBase):
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
+
     def test_simple(self):
         url = '/price_per_unit?format=json'
         url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
@@ -475,17 +473,21 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(
-            data,
-            {'series': [
-                {'y': 0.09, 'x': 1, 'z': 32.0,
-                 'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.09}],
-             'categories': [
-                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
-             'plotline': 0.08875}
-        )
-
+        self.assertEqual(data, {
+            'series': [{
+                'y': 0.09,
+                'x': 1,
+                'z': 32.0,
+                'name': 'Chlortalidone_Tab 50mg',
+                'mean_ppu': 0.09
+            }],
+            'categories': [{
+                'is_generic': True,
+                'name': 'Chlortalidone_Tab 50mg'
+            }],
+            'plotline':
+            0.08875
+        })
 
     def test_no_focus(self):
         url = '/bubble?format=json'
@@ -494,19 +496,27 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(
-            data,
-            {'series': [
-                {'y': 0.09, 'x': 1, 'z': 32.0,
-                 'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095},
-                {'y': 0.1, 'x': 1, 'z': 128.0,
-                 'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095}],
-             'categories': [
-                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
-             'plotline': 0.08875}
-        )
+        self.assertEqual(data, {
+            'series': [{
+                'y': 0.09,
+                'x': 1,
+                'z': 32.0,
+                'name': 'Chlortalidone_Tab 50mg',
+                'mean_ppu': 0.095
+            }, {
+                'y': 0.1,
+                'x': 1,
+                'z': 128.0,
+                'name': 'Chlortalidone_Tab 50mg',
+                'mean_ppu': 0.095
+            }],
+            'categories': [{
+                'is_generic': True,
+                'name': 'Chlortalidone_Tab 50mg'
+            }],
+            'plotline':
+            0.08875
+        })
 
     def test_trim(self):
         url = '/bubble?format=json'
@@ -515,16 +525,22 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
         url = self.api_prefix + url
         response = self.client.get(url, follow=True)
         data = json.loads(response.content)
-        self.assertEqual(
-            data,
-            {'series': [
-                {'y': 0.09, 'x': 1, 'z': 32.0,
-                 'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095}],
-             'categories': [
-                 {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
-             'plotline': 0.08875}
-        )
+        self.assertEqual(data, {
+            'series': [{
+                'y': 0.09,
+                'x': 1,
+                'z': 32.0,
+                'name': 'Chlortalidone_Tab 50mg',
+                'mean_ppu': 0.095
+            }],
+            'categories': [{
+                'is_generic': True,
+                'name': 'Chlortalidone_Tab 50mg'
+            }],
+            'plotline':
+            0.08875
+        })
+
 
 class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']

@@ -7,32 +7,21 @@ When the keys in the JSON change, replace
 
 """
 
-
-keys = ['analgesics_cost',
-        'antidepressants_adq',
-        'antidepressants_cost',
-        'antiepileptic_drugs_cost',
-        'antiplatelet_drugs_cost',
-        'benzodiazepine_caps_and_tabs_cost',
-        'bisphosphonates_and_other_drugs_cost',
-        'bronchodilators_cost',
-        'calcium-channel_blockers_cost',
-        'cox-2_inhibitors_cost',
-        'drugs_acting_on_benzodiazepine_receptors_cost',
-        'drugs_affecting_the_renin_angiotensin_system_cost',
-        'drugs_for_dementia_cost',
-        'drugs_used_in_parkinsonism_and_related_disorders_cost',
-        'hypnotics_adq',
-        'inhaled_corticosteroids_cost',
-        'laxatives_cost',
-        'lipid-regulating_drugs_cost',
-        'omega-3_fatty_acid_compounds_adq',
-        'oral_antibacterials_cost',
-        'oral_antibacterials_item',
-        'oral_nsaids_cost',
-        'proton_pump_inhibitors_cost',
-        'statins_cost',
-        'ulcer_healing_drugs_cost']
+keys = [
+    'analgesics_cost', 'antidepressants_adq', 'antidepressants_cost',
+    'antiepileptic_drugs_cost', 'antiplatelet_drugs_cost',
+    'benzodiazepine_caps_and_tabs_cost',
+    'bisphosphonates_and_other_drugs_cost', 'bronchodilators_cost',
+    'calcium-channel_blockers_cost', 'cox-2_inhibitors_cost',
+    'drugs_acting_on_benzodiazepine_receptors_cost',
+    'drugs_affecting_the_renin_angiotensin_system_cost',
+    'drugs_for_dementia_cost',
+    'drugs_used_in_parkinsonism_and_related_disorders_cost', 'hypnotics_adq',
+    'inhaled_corticosteroids_cost', 'laxatives_cost',
+    'lipid-regulating_drugs_cost', 'omega-3_fatty_acid_compounds_adq',
+    'oral_antibacterials_cost', 'oral_antibacterials_item', 'oral_nsaids_cost',
+    'proton_pump_inhibitors_cost', 'statins_cost', 'ulcer_healing_drugs_cost'
+]
 
 keys_with_hyphens = {}
 for orig in keys:
@@ -74,11 +63,8 @@ select_starpu = []
 for key in keys:
     safe_key = key.replace('-', '_')
     temporary_function_sig.append("%s FLOAT64" % safe_key)
-    temporary_function_obj.append("obj['%s'] = %s" % (
-        key, safe_key))
+    temporary_function_obj.append("obj['%s'] = %s" % (key, safe_key))
     select_starpu.append("SUM(CAST(JSON_EXTRACT_SCALAR(star_pu,"
-                         "'$.%s') AS FLOAT64))" % (
-                             key))
+                         "'$.%s') AS FLOAT64))" % (key))
 print sql % (",".join(temporary_function_sig),
-             ";".join(temporary_function_obj),
-             ",".join(select_starpu))
+             ";".join(temporary_function_obj), ",".join(select_starpu))

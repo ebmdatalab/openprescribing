@@ -1,34 +1,17 @@
 from gcutils.bigquery import build_schema
 
-
 DMD_SCHEMA = build_schema(
-    ('dmdid', 'STRING'),
-    ('bnf_code', 'STRING'),
-    ('vpid', 'STRING'),
-    ('display_name', 'STRING'),
-    ('ema', 'STRING'),
-    ('pres_statcd', 'STRING'),
-    ('avail_restrictcd', 'STRING'),
-    ('product_type', 'STRING'),
-    ('non_availcd', 'STRING'),
-    ('concept_class', 'STRING'),
-    ('nurse_f', 'STRING'),
-    ('dent_f', 'STRING'),
-    ('prod_order_no', 'STRING'),
-    ('sched_1', 'STRING'),
-    ('sched_2', 'STRING'),
-    ('padm', 'STRING'),
-    ('fp10_mda', 'STRING'),
-    ('acbs', 'STRING'),
-    ('assort_flav', 'STRING'),
-    ('catcd', 'STRING'),
-    ('tariff_category', 'STRING'),
-    ('flag_imported', 'STRING'),
-    ('flag_broken_bulk', 'STRING'),
+    ('dmdid', 'STRING'), ('bnf_code', 'STRING'), ('vpid', 'STRING'),
+    ('display_name', 'STRING'), ('ema', 'STRING'), ('pres_statcd', 'STRING'),
+    ('avail_restrictcd', 'STRING'), ('product_type', 'STRING'),
+    ('non_availcd', 'STRING'), ('concept_class', 'STRING'),
+    ('nurse_f', 'STRING'), ('dent_f', 'STRING'), ('prod_order_no', 'STRING'),
+    ('sched_1', 'STRING'), ('sched_2', 'STRING'), ('padm', 'STRING'),
+    ('fp10_mda', 'STRING'), ('acbs', 'STRING'), ('assort_flav', 'STRING'),
+    ('catcd', 'STRING'), ('tariff_category', 'STRING'),
+    ('flag_imported', 'STRING'), ('flag_broken_bulk', 'STRING'),
     ('flag_non_bioequivalence', 'STRING'),
-    ('flag_special_containers', 'BOOLEAN')
-
-)
+    ('flag_special_containers', 'BOOLEAN'))
 
 CCG_SCHEMA = build_schema(
     ('code', 'STRING'),
@@ -84,32 +67,18 @@ PRACTICE_SCHEMA = build_schema(
 )
 
 PRACTICE_STATISTICS_SCHEMA = build_schema(
-    ('month', 'TIMESTAMP'),
-    ('male_0_4', 'INTEGER'),
-    ('female_0_4', 'INTEGER'),
-    ('male_5_14', 'INTEGER'),
-    ('male_15_24', 'INTEGER'),
-    ('male_25_34', 'INTEGER'),
-    ('male_35_44', 'INTEGER'),
-    ('male_45_54', 'INTEGER'),
-    ('male_55_64', 'INTEGER'),
-    ('male_65_74', 'INTEGER'),
-    ('male_75_plus', 'INTEGER'),
-    ('female_5_14', 'INTEGER'),
-    ('female_15_24', 'INTEGER'),
-    ('female_25_34', 'INTEGER'),
-    ('female_35_44', 'INTEGER'),
-    ('female_45_54', 'INTEGER'),
-    ('female_55_64', 'INTEGER'),
-    ('female_65_74', 'INTEGER'),
-    ('female_75_plus', 'INTEGER'),
-    ('total_list_size', 'INTEGER'),
-    ('astro_pu_cost', 'FLOAT'),
-    ('astro_pu_items', 'FLOAT'),
-    ('star_pu', 'STRING'),
-    ('pct_id', 'STRING'),
-    ('practice', 'STRING')
-)
+    ('month', 'TIMESTAMP'), ('male_0_4', 'INTEGER'), ('female_0_4', 'INTEGER'),
+    ('male_5_14', 'INTEGER'), ('male_15_24', 'INTEGER'),
+    ('male_25_34', 'INTEGER'), ('male_35_44', 'INTEGER'),
+    ('male_45_54', 'INTEGER'), ('male_55_64', 'INTEGER'),
+    ('male_65_74', 'INTEGER'), ('male_75_plus', 'INTEGER'),
+    ('female_5_14', 'INTEGER'), ('female_15_24', 'INTEGER'),
+    ('female_25_34', 'INTEGER'), ('female_35_44', 'INTEGER'),
+    ('female_45_54', 'INTEGER'), ('female_55_64', 'INTEGER'),
+    ('female_65_74', 'INTEGER'), ('female_75_plus', 'INTEGER'),
+    ('total_list_size', 'INTEGER'), ('astro_pu_cost', 'FLOAT'),
+    ('astro_pu_items', 'FLOAT'), ('star_pu', 'STRING'), ('pct_id', 'STRING'),
+    ('practice', 'STRING'))
 
 
 def statistics_transform(row):

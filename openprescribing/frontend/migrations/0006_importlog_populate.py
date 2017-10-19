@@ -19,8 +19,7 @@ def seed_log(apps, schema_editor):
                 ImportLog.objects.get_or_create(
                     category='prescribing',
                     filename='dummy-initial-value',
-                    current_at=date
-                )
+                    current_at=date)
 
 
 class Migration(migrations.Migration):

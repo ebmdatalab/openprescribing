@@ -27,17 +27,18 @@ class SmokeTestHandler(CloudHandler):
 
         path = os.path.join(settings.PIPELINE_METADATA_DIR, 'smoketests')
         for sql_file in glob.glob(os.path.join(path, '*.sql')):
-            test_name = os.path.splitext(
-                os.path.basename(sql_file))[0]
+            test_name = os.path.splitext(os.path.basename(sql_file))[0]
             with open(sql_file, 'rb') as f:
-                query = f.read().replace(
-                    '{{ date_condition }}', date_condition)
+                query = f.read().replace('{{ date_condition }}',
+                                         date_condition)
                 print(query)
                 response = self.bigquery.jobs().query(
                     projectId='ebmdatalab',
-                    body={'useLegacySql': False,
-                          'timeoutMs': 20000,
-                          'query': query}).execute()
+                    body={
+                        'useLegacySql': False,
+                        'timeoutMs': 20000,
+                        'query': query
+                    }).execute()
                 quantity = []
                 cost = []
                 items = []
@@ -48,7 +49,5 @@ class SmokeTestHandler(CloudHandler):
                 print("Updating test expectations for %s" % test_name)
                 json_path = os.path.join(path, '%s.json' % test_name)
                 with open(json_path, 'wb') as f:
-                    obj = {'cost': cost,
-                           'items': items,
-                           'quantity': quantity}
+                    obj = {'cost': cost, 'items': items, 'quantity': quantity}
                     json.dump(obj, f, indent=2)

@@ -40,7 +40,7 @@ def gbq_sql_to_dataframe(sql):
         return df
     except:
         for n, line in enumerate(sql.split("\n")):
-            print "%s: %s" % (n+1, line)
+            print "%s: %s" % (n + 1, line)
         raise
 
 
@@ -94,11 +94,10 @@ def make_merged_table_for_month(month):
       FROM
         ebmdatalab.hscic.%s
       WHERE month = TIMESTAMP('%s')
-    """ % (' '.join(
-        ["WHEN '%s' THEN '%s'" % (when_code, then_code)
-         for (when_code, then_code) in cases]),
-           prescribing_table,
-           month)
+    """ % (' '.join([
+        "WHEN '%s' THEN '%s'" % (when_code, then_code)
+        for (when_code, then_code) in cases
+    ]), prescribing_table, month)
     target_table_name = (
         'prescribing_with_merged_codes_%s' % month.strftime('%Y_%m'))
 
@@ -117,8 +116,7 @@ def get_savings(group_by, month, limit, min_saving=0):
 
     """
     prescribing_table = "ebmdatalab.hscic.%s" % (
-        make_merged_table_for_month(month)
-    )
+        make_merged_table_for_month(month))
     restricting_condition = (
         "AND LENGTH(RTRIM(p.bnf_code)) >= 15 "
         "AND p.bnf_code NOT LIKE '0302000C0____BE' "  # issue #10
@@ -153,10 +151,8 @@ def get_savings(group_by, month, limit, min_saving=0):
     elif group_by == 'practice':
         select = ('savings.presentations.practice AS practice,'
                   'savings.presentations.pct AS pct,')
-        inner_select = ('presentations.pct, '
-                        'presentations.practice,')
-        group_by = ('presentations.practice, '
-                    'presentations.pct,')
+        inner_select = ('presentations.pct, ' 'presentations.practice,')
+        group_by = ('presentations.practice, ' 'presentations.pct,')
     elif group_by == 'product':
         select = ''
         inner_select = ''
@@ -173,36 +169,30 @@ def get_savings(group_by, month, limit, min_saving=0):
     # Execute SQL
     with open("%s/ppu_sql/savings_for_decile.sql" % fpath, "r") as f:
         sql = f.read()
-        substitutions = (
-            ('{{ restricting_condition }}', restricting_condition),
-            ('{{ limit }}', limit),
-            ('{{ month }}', month.strftime('%Y-%m-%d')),
-            ('{{ group_by }}', group_by),
-            ('{{ order_by }}', order_by),
-            ('{{ select }}', select),
-            ('{{ prescribing_table }}', prescribing_table),
-            ('{{ cost_field }}', 'net_cost'),
-            ('{{ inner_select }}', inner_select),
-            ('{{ min_saving }}', min_saving)
-        )
+        substitutions = (('{{ restricting_condition }}',
+                          restricting_condition), ('{{ limit }}', limit),
+                         ('{{ month }}', month.strftime('%Y-%m-%d')),
+                         ('{{ group_by }}',
+                          group_by), ('{{ order_by }}',
+                                      order_by), ('{{ select }}', select),
+                         ('{{ prescribing_table }}',
+                          prescribing_table), ('{{ cost_field }}', 'net_cost'),
+                         ('{{ inner_select }}',
+                          inner_select), ('{{ min_saving }}', min_saving))
         for key, value in substitutions:
             sql = sql.replace(key, str(value))
         # Format results in a DataFrame
         df = gbq_sql_to_dataframe(sql)
         # Rename null values in category, so we can group by it
         df.loc[df['category'].isnull(), 'category'] = 'NP8'
-        df = df.set_index(
-            'generic_presentation')
+        df = df.set_index('generic_presentation')
         df.index.name = 'bnf_code'
         # Add in substitutions column
         subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index('Code')
         subs = subs[subs['Really equivalent?'] == 'Y'].copy()
         subs['formulation_swap'] = (
-            subs['Formulation'] +
-            ' / ' +
-            subs['Alternative formulation'])
-        df = df.join(
-            subs[['formulation_swap']], how='left')
+            subs['Formulation'] + ' / ' + subs['Alternative formulation'])
+        df = df.join(subs[['formulation_swap']], how='left')
         # Convert nans to Nones
         df = df.where((pd.notnull(df)), None)
         return df
@@ -213,20 +203,18 @@ class Command(BaseCommand):
     help = 'Imports cost savings for a month'
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--month',
-            type=valid_date)
-        parser.add_argument(
-            '--min-practice-saving',
-            type=int, default=50)
+        parser.add_argument('--month', type=valid_date)
+        parser.add_argument('--min-practice-saving', type=int, default=50)
         parser.add_argument(
             '--min-ccg-saving',
             help="Disregard savings under this amount",
-            type=int, default=1000)
+            type=int,
+            default=1000)
         parser.add_argument(
             '--limit',
             help="Maximum number of savings to return",
-            type=int, default=0)
+            type=int,
+            default=0)
 
     def handle(self, *args, **options):
         '''
@@ -237,8 +225,7 @@ class Command(BaseCommand):
         if not options['month']:
             last_prescribing = ImportLog.objects.latest_in_category(
                 'prescribing').current_at
-            last_ppu = ImportLog.objects.latest_in_category(
-                'ppu').current_at
+            last_ppu = ImportLog.objects.latest_in_category('ppu').current_at
             options['month'] = last_prescribing
             if options['month'] <= last_ppu:
                 raise argparse.ArgumentTypeError("Couldn't infer date")
@@ -251,8 +238,7 @@ class Command(BaseCommand):
                 vpid=10000000000,
                 name='Glucose Blood Testing Reagents',
                 concept_class=1,
-                product_type=1
-            )
+                product_type=1)
             Presentation.objects.get_or_create(
                 bnf_code='0601060D0AAA0A0',
                 name='Glucose Blood Testing Reagents',
@@ -269,12 +255,11 @@ class Command(BaseCommand):
                 name='Urine Testing Reagents',
                 is_generic=True)
             PPUSaving.objects.filter(date=options['month']).delete()
-            for entity_type, min_saving in [
-                    ('pct', options['min_ccg_saving']),
-                    ('practice', options['min_practice_saving'])]:
-                result = get_savings(
-                    entity_type, options['month'],
-                    options['limit'], min_saving)
+            for entity_type, min_saving in [('pct', options['min_ccg_saving']),
+                                            ('practice',
+                                             options['min_practice_saving'])]:
+                result = get_savings(entity_type, options['month'],
+                                     options['limit'], min_saving)
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
@@ -287,9 +272,6 @@ class Command(BaseCommand):
                             possible_savings=d['possible_savings'],
                             formulation_swap=d['formulation_swap'] or None,
                             pct_id=d.get('pct', None),
-                            practice_id=d.get('practice', None)
-                        )
+                            practice_id=d.get('practice', None))
             ImportLog.objects.create(
-                category='ppu',
-                filename='n/a',
-                current_at=options['month'])
+                category='ppu', filename='n/a', current_at=options['month'])

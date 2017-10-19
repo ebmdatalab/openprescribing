@@ -95,8 +95,7 @@ Specifically, you should:
                 rsp.iter_content(32 * 1024),
                 total=total_size,
                 unit='B',
-                unit_scale=True
-            )
+                unit_scale=True)
             for block in tqdm_iterator:
                 f.write(block)
 

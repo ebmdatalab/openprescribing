@@ -50,9 +50,7 @@ class Command(BaseCommand):
                 print 'ERROR in BNF code format:', bnf_code
                 print 'In file:', filename
                 sys.exit()
-            c, created = Chemical.objects.get_or_create(
-                bnf_code=bnf_code
-            )
+            c, created = Chemical.objects.get_or_create(bnf_code=bnf_code)
             c.chem_name = row['NAME']
             c.save()
             lines += 1
@@ -69,15 +67,14 @@ class Command(BaseCommand):
         '''
         if self.IS_VERBOSE:
             print 'Importing missing chemicals'
-        missing_chemicals = ['0410000AA', '0410000AB', '0410000A0',
-                             '0410000D0', '0410000P0', '0410000H0',
-                             '0410000M0', '0410000N0', '0410000Q0',
-                             '0410000AC', '0410000L0', '0311010A0']
+        missing_chemicals = [
+            '0410000AA', '0410000AB', '0410000A0', '0410000D0', '0410000P0',
+            '0410000H0', '0410000M0', '0410000N0', '0410000Q0', '0410000AC',
+            '0410000L0', '0311010A0'
+        ]
         for chem_id in missing_chemicals:
             try:
                 chem = Chemical.objects.get(bnf_code=chem_id)
             except Chemical.DoesNotExist:
                 chem, created = Chemical.objects.get_or_create(
-                    bnf_code=chem_id,
-                    chem_name='Unknown'
-                )
+                    bnf_code=chem_id, chem_name='Unknown')

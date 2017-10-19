@@ -15,7 +15,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--substitutions-csv',
             help='Path to CSV detailing Tab/Cap substitutions etc',
-            type=str, required=True)
+            type=str,
+            required=True)
 
     def handle(self, *args, **options):
         """Handle code substitutions.
@@ -46,12 +47,10 @@ class Command(BaseCommand):
             seen.add(code_to_merge)
         for to_code, from_code in cases:
             GenericCodeMapping.objects.create(
-                from_code=from_code,
-                to_code=to_code)
+                from_code=from_code, to_code=to_code)
         for special_case in ['0601060U0', '0601060D0']:
             for from_code in Presentation.objects.filter(
                     bnf_code__startswith=special_case).values_list(
                         'bnf_code', flat=True):
                 GenericCodeMapping.objects.create(
-                    from_code=from_code,
-                    to_code=special_case + '%')
+                    from_code=from_code, to_code=special_case + '%')

@@ -21,6 +21,7 @@ class Command(BaseCommand):
            --settings=openprescribing.settings.templateoverride
 
     """
+
     def add_arguments(self, parser):
         parser.add_argument('--email_contains')
 
