@@ -1,21 +1,11 @@
-import csv
 import datetime
-import glob
 import logging
-import time
 
-from google.cloud import storage
-from google.cloud import bigquery
-from google.cloud.exceptions import NotFound
-from google.cloud.bigquery.table import Table
-from google.cloud.bigquery.dataset import Dataset
-
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from ebmdatalab.bigquery import copy_table_to_gcs
-from ebmdatalab.bigquery import download_from_gcs
-from ebmdatalab.bigquery import wait_for_job
+from gcutils.bigquery import Client, TableExporter
 
 logger = logging.getLogger(__name__)
 
@@ -48,52 +38,34 @@ class Command(BaseCommand):
         parser.add_argument('--filename')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
-            self.IS_VERBOSE = True
+        self.IS_VERBOSE = (options['verbosity'] > 1)
 
         if 'is_test' in options:
             self.IS_TEST = True
         else:
             self.IS_TEST = False
 
-        if options['filename']:
-            filenames = [options['filename']]
-        else:
-            filenames = glob.glob('./data/raw_data/T*PDPI+BNFT.*')
-        converted_filenames = []
-        for f in filenames:
-            if self.IS_VERBOSE:
-                print "--------- Converting %s -----------" % f
-            filename_for_output = self.create_filename_for_output_file(f)
+        filename = options['filename']
 
-            if f.endswith('Detailed_Prescribing_Information.csv'):
-                f = f.split('/prescribing/')[1]
-                uri = 'gs://ebmdatalab/hscic/prescribing/' + f
-                # Grab date from file path
-                try:
-                    date = datetime.datetime.strptime(
-                        uri.split("/")[-2] + "_01", "%Y_%m_%d"
-                    ).strftime('%Y_%m_%d')
-                except ValueError as e:
-                    message = ('The file path must have a YYYY_MM '
-                               'date component in the containing directory: ')
-                    message += e.message
-                    raise CommandError(message)
-                converted_filenames.append(
-                    self.aggregate_nhs_digital_data(
-                        uri, filename_for_output, date))
-            else:
-                reader = csv.reader(open(f, 'rU'))
-                next(reader)
-                writer = csv.writer(open(filename_for_output, 'wb'))
-                for row in reader:
-                    if len(row) == 1:
-                        continue
-                    data = self.format_row_for_sql_copy(row)
-                    writer.writerow(data)
-                converted_filenames.append(filename_for_output)
-        return ", ".join(converted_filenames)
+        if self.IS_VERBOSE:
+            print "--------- Converting %s -----------" % filename
+
+        filename_for_output = self.create_filename_for_output_file(filename)
+
+        filename = filename.split('/prescribing/')[1]
+        uri = 'gs://ebmdatalab/hscic/prescribing/' + filename
+        # Grab date from file path
+        try:
+            date = datetime.datetime.strptime(
+                uri.split("/")[-2] + "_01", "%Y_%m_%d"
+            ).strftime('%Y_%m_%d')
+        except ValueError as e:
+            message = ('The file path must have a YYYY_MM '
+                       'date component in the containing directory: ')
+            message += e.message
+            raise CommandError(message)
+
+        self.aggregate_nhs_digital_data(uri, filename_for_output, date)
 
     def create_filename_for_output_file(self, filename):
         if self.IS_TEST:
@@ -101,64 +73,42 @@ class Command(BaseCommand):
         else:
             return filename[:-4] + '_formatted.CSV'
 
-    def format_row_for_sql_copy(self, row):
-        '''
-        Transform the data into the format needed for COPY.
-        '''
-        row = [r.strip() for r in row]
-        net_cost = float(row[6])
-        actual_cost = float(row[7])
-        quantity = int(row[8])
-        month = row[9]
-        formatted_date = '%s-%s-01' % (month[:4], month[4:])
-        output = [row[1], row[2], row[3],
-                  int(row[5]), float(row[6]), actual_cost,
-                  quantity, formatted_date]
-        return output
-
     def aggregate_nhs_digital_data(self, uri, local_path, date):
         """Given a GCS URI for "detailed" prescribing data, run a query to
         aggregate it into the format we use internally, and download
         the resulting data to a `*_formatted.CSV` file, ready for
         importing.
-
-        Returns the path to the formatted file.
-
         """
-        # First, check we can access something at the given URI
-        client = storage.client.Client(project='ebmdatalab')
-        bucket = client.get_bucket('ebmdatalab')
-        path = uri.split('ebmdatalab/')[-1]
-        if bucket.get_blob(path) is None:
-            # This conversion requires that the file referenced at
-            # options['file_name'] has been uploaded as a blob to
-            # Google Cloud Services at gs://ebmdatalab/<file_name>
-            raise NotFound(path)
-
         # Create table at raw_nhs_digital_data
-        table_ref = create_temporary_data_source(uri)
+        gcs_path = uri.split('ebmdatalab/')[1]
+        raw_data_table = get_or_create_raw_data_table(gcs_path)
+
         self.append_aggregated_data_to_prescribing_table(
-            table_ref, date)
+            raw_data_table.legacy_full_qualified_name, date)
         temp_table = self.write_aggregated_data_to_temp_table(
-            table_ref, date)
-        converted_uri = uri[:-4] + '_formatted-*.csv.gz'
-        copy_table_to_gcs(temp_table, converted_uri)
-        return download_from_gcs(converted_uri, local_path)
+            raw_data_table.legacy_full_qualified_name, date)
+
+        exporter = TableExporter(temp_table, gcs_path + '_formatted-')
+        exporter.export_to_storage(print_header=False)
+        with open(local_path, 'w') as f:
+            exporter.download_from_storage_and_unzip(f)
 
     def assert_latest_data_not_already_uploaded(self, date):
-        client = bigquery.client.Client(project='ebmdatalab')
+        client = Client(settings.BQ_HSCIC_DATASET)
         sql = """SELECT COUNT(*)
         FROM [ebmdatalab:hscic.prescribing]
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
-        query = client.run_sync_query(sql)
-        query.run()
+        results = client.query(sql)
         assert query.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
-            self, source_table_ref, date):
+            self, raw_data_table_name, date):
         self.assert_latest_data_not_already_uploaded(date)
-        client = bigquery.client.Client(project='ebmdatalab')
-        query = """
+
+        client = Client(settings.BQ_HSCIC_DATASET)
+        table = client.get_table('prescribing')
+
+        sql = """
          SELECT
           Area_Team_Code AS sha,
           LEFT(PCO_Code, 3) AS pct,
@@ -175,22 +125,16 @@ class Command(BaseCommand):
          GROUP BY
            bnf_code, bnf_name, pct,
            practice, sha
-        """ % (date.replace('_', '-'), source_table_ref)
-        dataset = client.dataset('hscic')
-        table = dataset.table(
-            name='prescribing')
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_APPEND'
-        job.allow_large_results = True
-        wait_for_job(job)
-        return table
+        """ % (date.replace('_', '-'), raw_data_table_name)
+        table.insert_rows_from_query(
+            sql,
+            legacy=True,
+            write_disposition='WRITE_APPEND'
+        )
 
     def write_aggregated_data_to_temp_table(
-            self, source_table_ref, date):
-        query = """
+            self, raw_data_table_name, date):
+        sql = """
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
@@ -204,22 +148,15 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
-        """ % (date, source_table_ref)
-        client = bigquery.client.Client(project='ebmdatalab')
-        dataset = client.dataset(TEMP_DATASET)
-        table = dataset.table(
-            name='formatted_prescribing_%s' % date)
-        job = client.run_async_query("create_%s_%s" % (
-            table.name, int(time.time())), query)
-        job.destination = table
-        job.use_query_cache = False
-        job.write_disposition = 'WRITE_TRUNCATE'
-        job.allow_large_results = True
-        wait_for_job(job)
+        """ % (date, raw_data_table_name)
+
+        client = Client(TEMP_DATASET)
+        table = client.get_table('formatted_prescribing_%s' % date)
+        table.insert_rows_from_query(sql, legacy=True)
         return table
 
 
-def create_temporary_data_source(source_uri):
+def get_or_create_raw_data_table(gcs_path):
     """Create a temporary data source so BigQuery can query the CSV in
     Google Cloud Storage.
 
@@ -247,31 +184,10 @@ def create_temporary_data_source(source_uri):
         {"name": "NIC", "type": "float", "mode": "required"},
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
-    resource = {
-        "tableReference": {
-            "tableId": TEMP_SOURCE_NAME
-        },
-        "externalDataConfiguration": {
-            "csvOptions": {
-                "skipLeadingRows": "1"
-            },
-            "sourceFormat": "CSV",
-            "sourceUris": [
-                source_uri
-            ],
-            "schema": {"fields": schema}
-        }
-    }
-    client = bigquery.client.Client(project='ebmdatalab')
-    # delete the table if it exists
-    dataset = Dataset("tmp_eu", client)
-    table = Table.from_api_repr(resource, dataset)
-    try:
-        table.delete()
-    except NotFound:
-        pass
-    # Now create it
-    path = "/projects/ebmdatalab/datasets/%s/tables" % TEMP_DATASET
-    client._connection.api_request(
-        method='POST', path=path, data=resource)
-    return "[ebmdatalab:%s.%s]" % (TEMP_DATASET, TEMP_SOURCE_NAME)
+    client = Client(TEMP_DATASET)
+    table = client.get_or_create_storage_backed_table(
+        TEMP_SOURCE_NAME,
+        schema,
+        gcs_path
+    )
+    return table

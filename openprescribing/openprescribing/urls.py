@@ -16,6 +16,11 @@ urlpatterns = [
         name="about"),
     url(r'^faq/$', TemplateView.as_view(template_name='faq.html'),
         name="faq"),
+    url(r'^long_term_trends/$', TemplateView.as_view(template_name='long_term_trends.html'),
+        name="long_term_trends"),
+    url(r'^pca/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='long_term_trends')),
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),

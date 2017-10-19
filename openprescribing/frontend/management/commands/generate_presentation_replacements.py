@@ -94,16 +94,14 @@ import glob
 import logging
 import re
 import tempfile
-import time
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 from django.db import connection
 from django.db import transaction
 
 from google.cloud.bigquery import SchemaField
-from google.cloud import bigquery
-from google.cloud.bigquery.dataset import Dataset
 from google.cloud.exceptions import Conflict
 
 from frontend.models import Chemical
@@ -111,19 +109,16 @@ from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
-from ebmdatalab.bigquery import load_data_from_file
-from ebmdatalab.bigquery import copy_table_to_gcs
-from ebmdatalab.bigquery import download_from_gcs
-from ebmdatalab.bigquery import wait_for_job
+from gcutils.bigquery import Client, TableExporter, build_schema
 
 
 logger = logging.getLogger(__name__)
 
 
-BNF_MAP_SCHEMA = [
-    SchemaField('former_bnf_code', 'STRING'),
-    SchemaField('current_bnf_code', 'STRING'),
-]
+BNF_MAP_SCHEMA = build_schema(
+    ('former_bnf_code', 'STRING'),
+    ('current_bnf_code', 'STRING'),
+)
 
 
 def create_code_mapping(filenames):
@@ -183,19 +178,15 @@ def create_bigquery_table():
     incarnation
 
     """
-    dataset_name = 'hscic'
-    bq_table_name = 'bnf_map'
     # output a row for each presentation and its ultimate replacement
     with tempfile.NamedTemporaryFile(mode='r+b') as csv_file:
         writer = csv.writer(csv_file)
         for p in Presentation.objects.filter(replaced_by__isnull=False):
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
         csv_file.seek(0)
-        load_data_from_file(
-            dataset_name, bq_table_name,
-            csv_file.name,
-            BNF_MAP_SCHEMA
-        )
+        client = Client('hscic')
+        table = Client.get_or_create_table('bnf_map', BNF_MAP_SCHEMA)
+        table.insert_rows_from_csv(csv_file.name)
 
 
 def write_zero_prescribing_codes_table(level):
@@ -205,6 +196,7 @@ def write_zero_prescribing_codes_table(level):
     Returns a bigquery Table.
 
     """
+    logger.info("Scanning %s to see if it has zero prescribing" % level)
     sql = """
     SELECT
       bnf.%s
@@ -222,19 +214,9 @@ def write_zero_prescribing_codes_table(level):
     HAVING
       COUNT(prescribing.bnf_code) = 0
     """ % (level, level)
-    client = bigquery.client.Client(project='ebmdatalab')
-    dataset = client.dataset('tmp_eu')
-    table = dataset.table(
-        name="unused_codes_%s" % level)
-    job = client.run_async_query("create_%s_%s" % (
-        table.name, int(time.time())), sql)
-    job.destination = table
-    job.use_query_cache = False
-    job.use_legacy_sql = False
-    job.write_disposition = 'WRITE_TRUNCATE'
-    job.allow_large_results = True
-    logger.info("Scanning %s to see if it has zero prescribing" % level)
-    wait_for_job(job)
+    client = Client('tmp_eu')
+    table = client.get_table('unused_codes_%s' % level)
+    table.insert_rows_from_query(sql)
     return table
 
 
@@ -246,13 +228,17 @@ def get_csv_of_empty_classes_for_level(level):
 
     """
     temp_table = write_zero_prescribing_codes_table(level)
-    converted_uri = "gs://ebmdatalab/tmp/%s.csv.gz" % temp_table.name
-    logger.info("Copying %s to %s" % (temp_table.name, converted_uri))
-    copy_table_to_gcs(temp_table, converted_uri)
-    local_path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
-    logger.info("Downloading %s to %s" % (converted_uri, local_path))
-    csv_path = download_from_gcs(converted_uri, local_path)
-    return csv_path
+    storage_prefix = 'tmp/{}'.format(temp_table.name)
+    exporter = TableExporter(temp_table, storage_prefix)
+
+    logger.info("Copying %s to %s" % (temp_table.name, storage_prefix))
+    exporter.export_to_storage()
+
+    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+    logger.info("Downloading %s to %s" % (storage_prefix, path))
+    with open(path, 'w') as f:
+        exporter.download_from_storage_and_unzip(f)
+    return path
 
 
 def cleanup_empty_classes():
@@ -373,31 +359,37 @@ def create_bigquery_views():
       ebmdatalab.hscic.practices  AS practices
     ON practices.code = prescribing.practice
     """
-    client = bigquery.client.Client(project='ebmdatalab')
-    dataset = Dataset("hscic", client)
-    table = dataset.table('normalised_prescribing_standard')
-    table.view_query = sql
-    table.view_use_legacy_sql = False
+
+    client = Client(settings.BQ_HSCIC_DATASET)
+
     try:
-        table.create()
+        client.create_table_with_view(
+            'normalised_prescribing_standard',
+            sql,
+            False
+        )
     except Conflict:
         pass
-    table = dataset.table('normalised_prescribing_legacy')
+
     sql = sql.replace(
         'ebmdatalab.hscic.prescribing',
-        '[ebmdatalab:hscic.prescribing]')
+        '[ebmdatalab:hscic.prescribing]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.bnf_map',
-        '[ebmdatalab:hscic.bnf_map]',
-        )
+        '[ebmdatalab:hscic.bnf_map]'
+    )
     sql = sql.replace(
         'ebmdatalab.hscic.practices',
-        '[ebmdatalab:hscic.practices]',
-        )
-    table.view_query = sql
-    table.view_use_legacy_sql = True
+        '[ebmdatalab:hscic.practices]'
+    )
+
     try:
-        table.create()
+        client.create_table_with_view(
+            'normalised_prescribing_legacy',
+            sql,
+            legacy=True
+        )
     except Conflict:
         pass
 
