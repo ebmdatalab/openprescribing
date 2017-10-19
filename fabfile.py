@@ -266,6 +266,8 @@ def clear_cloudflare(purge_all=False):
 
 @task
 def deploy(environment, force_build=False, branch='master'):
+    if 'CF_API_KEY' not in os.environ:
+        abort("Expected variables (e.g. `CF_API_KEY`) not found in environment")
     if environment not in environments:
         abort("Specified environment must be one of %s" %
               ",".join(environments.keys()))
