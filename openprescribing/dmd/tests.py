@@ -1,3 +1,5 @@
+from mock import patch
+
 from django.db import connection
 from django.core.management import call_command
 from django.test import TestCase
@@ -8,10 +10,10 @@ from dmd.models import DMDProduct
 class CommandsTestCase(TestCase):
 
     def test_models(self):
-        test_source_directory = 'dmd/tests/fixtures/commands/'
-        args = ['--source_directory', test_source_directory]
-        opts = {}
-        call_command('import_dmd', *args, **opts)
+        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        with patch('zipfile.ZipFile'):
+            call_command('import_dmd', '--zip_path', path)
+
         self.assertEqual(DMDProduct.objects.count(), 2)
         vmp = DMDProduct.objects.get(concept_class=1)
         amp = DMDProduct.objects.get(concept_class=2)
@@ -27,10 +29,9 @@ class CommandsTestCase(TestCase):
             vmp.tariff_category.desc, 'Part VIIIA Category A')
 
     def test_import_dmd(self):
-        test_source_directory = 'dmd/tests/fixtures/commands/'
-        args = ['--source_directory', test_source_directory]
-        opts = {}
-        call_command('import_dmd', *args, **opts)
+        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        with patch('zipfile.ZipFile'):
+            call_command('import_dmd', '--zip_path', path)
 
         # DMDProduct
         self.assertEqual(DMDProduct.objects.count(), 2)
@@ -40,7 +41,6 @@ class CommandsTestCase(TestCase):
         self.assertEqual(vmp.vpid, 318248001)
         self.assertEqual(vmp.product_type, 1)
         self.assertEqual(amp.vpid, 318248001)
-        self.assertEqual(amp.bnf_code, '0206020T0AAAGAG')
         self.assertEqual(
             amp.full_name, 'Verapamil 160mg tablets (A A H Pharmaceuticals Ltd)')
         self.assertEqual(amp.product_type, 3)
@@ -70,3 +70,14 @@ class CommandsTestCase(TestCase):
             cursor.execute('SELECT strnt_nmrtr_val FROM dmd_vpi')
             row = cursor.fetchone()
             self.assertEqual(row[0], 160)
+
+    def test_import_dmd_snomed(self):
+        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        with patch('zipfile.ZipFile'):
+            call_command('import_dmd', '--zip_path', path)
+
+        path = 'dmd/tests/fixtures/commands/Converted_DRUG_SNOMED_BNF.xlsx'
+        call_command('import_dmd_snomed', '--filename', path)
+
+        amp = DMDProduct.objects.get(concept_class=2)
+        self.assertEqual(amp.bnf_code, '0206020T0AAAGAG')
