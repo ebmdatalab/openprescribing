@@ -1,6 +1,3 @@
-import json
-import os
-
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -93,7 +90,6 @@ def measure_numerators_by_org(request, format=None):
         # are different from those in bigquery (for which the measure
         # defitions are defined), we have to rename them (e.g. `items` ->
         # `total_items`)
-        # this method assumes arrays, but on the model we store as straight strings
         numerator_selector = m.columns_for_select('numerator').replace(
             'items', 'total_items')
         numerator_where = m.numerator_where.replace(

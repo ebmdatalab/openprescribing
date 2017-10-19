@@ -419,7 +419,8 @@ class Measure(models.Model):
     why_it_matters = models.TextField(null=True, blank=True)
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
-    tags_focus = ArrayField(models.CharField(max_length=30), null=True, blank=True)
+    tags_focus = ArrayField(
+        models.CharField(max_length=30), null=True, blank=True)
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
@@ -470,7 +471,6 @@ class Measure(models.Model):
                     "SUM(actual_cost) AS cost, "
                     "SUM(quantity) AS quantity ")
         return val
-
 
     class Meta:
         app_label = 'frontend'

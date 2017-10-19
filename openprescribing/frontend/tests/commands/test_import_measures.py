@@ -61,6 +61,7 @@ class UnitTests(TestCase):
 
     """
     fixtures = ['measures']
+
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation

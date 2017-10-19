@@ -696,7 +696,7 @@ describe('Measures', function() {
             parentOrg: '99P',
             orgType: 'practice',
             rollUpBy: 'measure_id'
-          }
+          };
           var numMonths = 6; // required but not relevant to test
           var d = {
             id: 'keppra',
@@ -709,7 +709,6 @@ describe('Measures', function() {
       });
       describe('input from measure_for_all_ccgs', function() {
         it('should return expected URL', function() {
-          // XXX is `d` the correct input data?
           var options = {
             orgType: 'CCG',
             measure: 'keppra',
