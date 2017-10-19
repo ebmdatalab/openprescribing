@@ -610,6 +610,125 @@ describe('Measures', function() {
   });
 
   describe('#_getChartTitleEtc', function() {
+    describe('tagsFocus defined', function() {
+      it('should return expected URL for CCG', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: '99P',
+          orgName: 'Devon',
+          orgType: 'CCG',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+      });
+      it('should return expected URL for practice', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: 'P111111',
+          orgName: 'Dr GP Surgery',
+          orgType: 'practice',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+      });
+    });
+    describe('oneEntityUrl output', function() {
+      describe('input from measures_for_one_ccg', function() {
+        it('should return expected URL', function() {
+          var numMonths = 6; // required but not relevant to test
+          var options = {
+            orgId: '99P',
+            orgName: 'Devon',
+            orgType: 'CCG',
+            rollUpBy: 'measure_id'
+          };
+          var d = {
+            id: 'keppra',
+            name: 'Keppra',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/ccg/99P/');
+        });
+      });
+      describe('input from measure_for_practices_in_ccg', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgId: '99P',
+            orgName: 'Devon',
+            orgType: 'practice',
+            measure: 'keppra',
+            isCostBasedMeasure: true,
+            lowIsGood: true,
+            numerator: 'items of X',
+            denominator: 'items of Y',
+            rollUpBy: 'org_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: 'P11111',
+            name: 'Dr GP Surgery',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/practice/P11111/');
+        });
+      });
+      describe('input from measures_for_one_practice', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgId: 'P11111',
+            orgName: 'Dr GP Surgery',
+            parentOrg: '99P',
+            orgType: 'practice',
+            rollUpBy: 'measure_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: 'keppra',
+            name: 'Keppra',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/practice/P11111/');
+        });
+      });
+      describe('input from measure_for_all_ccgs', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgType: 'CCG',
+            measure: 'keppra',
+            isCostBasedMeasure: true,
+            lowIsGood: true,
+            numerator: 'items of X',
+            denominator: 'items of Y',
+            rollUpBy: 'org_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: '99P',
+            name: 'Devon',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/ccg/99P/');
+        });
+      });
+    });
     it('should get explanation for cost-based measures', function() {
       var d = {
         id: 'ace',

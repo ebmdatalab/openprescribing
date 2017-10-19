@@ -47,6 +47,10 @@ numerator in this measure is composed of the following presentations:</p>
   </tbody>
 </table>
 
+<a class="btn btn-primary" href="{% url 'measure_numerators_by_org' %}?org={{ practice.code }}&measure={{ measure.id }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+
+<hr>
+
 <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
 
 {% include '_measures_panel.html' with entity_type='practice' %}

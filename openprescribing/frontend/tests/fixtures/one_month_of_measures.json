@@ -274,10 +274,17 @@
       "description": "Total quantity of Cerazette (0703021Q0BB), as a proportion of total quantity of desogestrel (0703021Q0).",
       "why_it_matters": "This is the NHS Business Service Authority's top cost-saver from   generic switching. Cerazette and desogestrel are both exactly  the same drug, the same molecule, but Cerazette is an expensive  branded package, and desogestrel is a cheap generic package.",
       "numerator_short": "Cerazette quantity",
-      "denominator_short": "Desogestrel quantity",
+      "numerator_columns": "SUM(quantity) AS numerator, ",
+      "numerator_from": "hscic.normalised_prescribing_standard",
+      "numerator_where": "(bnf_code LIKE '0205%')",
+      "denominator_columns": "SUM(quantity) AS denominator",
+      "denominator_from": "doesnt matter",
+      "denominator_where": "(bnf_code LIKE '02%')",
+      "denominator_short": "Desogestreiml quantity",
       "tags": [
         "core"
       ],
+      "tags_focus": ["baz", "foo"],
       "start_date": null,
       "end_date": null,
       "url": null,

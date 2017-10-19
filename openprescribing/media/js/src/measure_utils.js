@@ -256,6 +256,7 @@ var utils = {
         series = _.findWhere(globalData, {id: d.id});
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
+          d.tagsFocus = series.tags_focus;
           d.numeratorCanBeQueried = series.numerator_can_be_queried;
         }
         d.globalCentiles = {};
@@ -264,8 +265,11 @@ var utils = {
             true, series.is_percentage, options, i);
         });
       } else {
+        // sometimes, the measure metadata is defined in javascript
+        // expressions within the django template.
         d.globalCentiles = globalCentiles;
         d.lowIsGood = options.lowIsGood;
+        d.tagsFocus = options.tagsFocus;
         series = _.findWhere(globalData, {id: options.measure});
         if (typeof series !== 'undefined') {
           d.numeratorCanBeQueried = series.numerator_can_be_queried;
@@ -307,7 +311,8 @@ var utils = {
     var measureUrl;
     var oneEntityUrl;
     var measureId;
-
+    var tagsFocusUrl;
+    var measureForAllPracticesUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -315,6 +320,7 @@ var utils = {
       chartTitleUrl = '/ccg/';
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
+      measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = '/measure/' + d.id;
       measureId = d.id;
     } else {
@@ -324,6 +330,7 @@ var utils = {
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
         '/' + d.id;
       measureId = options.measure;
+      measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }
     var orgId;
     if (options.rollUpBy == 'org_id') {
@@ -333,10 +340,11 @@ var utils = {
     }
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
+      tagsFocusUrl = '/practice/' + orgId + '/?tags=' + d.tagsFocus;
     } else {
       oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
+      tagsFocusUrl = '/ccg/' + orgId + '/?tags=' + d.tagsFocus;
     }
-    console.log(oneEntityUrl);
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
@@ -371,9 +379,13 @@ var utils = {
     }
     return {
       measureUrl: measureUrl,
+      isCCG: options.orgType == 'CCG',
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
+      tagsFocus: d.tagsFocus,
+      tagsFocusUrl: tagsFocusUrl,
+      measureForAllPracticesUrl: measureForAllPracticesUrl,
       chartExplanation: chartExplanation
     };
   },

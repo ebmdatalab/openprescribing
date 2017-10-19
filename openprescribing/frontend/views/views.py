@@ -210,7 +210,11 @@ def ccg_price_per_unit(request, code):
 ##################################################
 
 def all_measures(request):
-    measures = Measure.objects.all().order_by('name')
+    tags = request.GET.get('tags', '')
+    query = {}
+    if tags:
+        query['tags__overlap'] = tags.split(',')
+    measures = Measure.objects.filter(**query).order_by('name')
     context = {
         'measures': measures
     }
