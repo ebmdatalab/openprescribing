@@ -6,7 +6,6 @@ from frontend.models import Product
 from frontend.models import Section
 
 from mock import patch
-from mock import MagicMock
 
 
 @patch('frontend.management.commands.generate_presentation_replacements'

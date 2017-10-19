@@ -99,7 +99,7 @@ class Command(BaseCommand):
         FROM [ebmdatalab:hscic.prescribing]
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
         results = client.query(sql)
-        assert query.rows[0][0] == 0
+        assert results.rows[0][0] == 0
 
     def append_aggregated_data_to_prescribing_table(
             self, raw_data_table_name, date):

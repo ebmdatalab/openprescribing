@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from dmd.models import DMDProduct
 from frontend.models import Chemical
 from frontend.models import EmailMessage
 from frontend.models import MailLog

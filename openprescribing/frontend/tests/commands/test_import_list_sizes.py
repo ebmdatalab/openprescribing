@@ -1,8 +1,6 @@
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 from frontend.models import Practice, PracticeStatistics, ImportLog
-from frontend.management.commands.import_list_sizes import Command
 
 PRESCRIBING_DATE = '2040-03-01'
 

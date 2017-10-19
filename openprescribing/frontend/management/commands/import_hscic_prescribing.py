@@ -2,11 +2,9 @@ import csv
 import datetime
 import logging
 import re
-import subprocess
 import tempfile
 
 from dateutil.relativedelta import relativedelta
-from google.cloud.bigquery.dataset import Dataset
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -21,7 +19,7 @@ from frontend.models import Prescription
 from frontend.models import Product
 from frontend.models import Section
 
-from gcutils.bigquery import Client
+from gcutils.bigquery import Client, TableExporter
 
 
 logger = logging.getLogger(__name__)
@@ -130,7 +128,6 @@ class Command(BaseCommand):
         rows = csv.reader(open(filename, 'rU'))
         pct_codes = set()
         practices = set()
-        i = 0
         for row in rows:
             pct_codes.add(row[0])
             practices.add(row[1])

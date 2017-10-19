@@ -1,5 +1,3 @@
-import os
-import unittest
 import datetime
 from django.core.management import call_command
 from django.test import TestCase
@@ -23,7 +21,6 @@ class CommandsTestCase(TestCase):
         opts = {
             'ccg': 'frontend/tests/fixtures/commands/eccg.csv'
         }
-        data_dir = 'data/org_codes'
         call_command('import_org_names', *args, **opts)
 
         ccgs = PCT.objects.filter(org_type='CCG')

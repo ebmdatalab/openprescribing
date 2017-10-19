@@ -1,7 +1,5 @@
-import csv
 import psycopg2
-from django.core.management.base import BaseCommand, CommandError
-from frontend.models import Section
+from django.core.management.base import BaseCommand
 from common import utils
 
 
