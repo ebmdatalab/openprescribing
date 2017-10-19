@@ -79,7 +79,6 @@ class Command(BaseCommand):
                     measure, start_date=start_date, end_date=end_date,
                     verbose=verbose, under_test=options['test_mode']
                 )
-                measure = global_calculation.create_or_update_measure()
                 if options['definitions_only']:
                     continue
 
@@ -701,7 +700,7 @@ class CCGCalculation(MeasureCalculation):
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
         from_table = PracticeCalculation(
-            self.measure.id, under_test=self.under_test).full_table_name()
+            self.measure, under_test=self.under_test).full_table_name()
 
         context = {
             'denominator_aliases': denominator_aliases,

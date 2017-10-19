@@ -64,7 +64,8 @@ class UnitTests(TestCase):
     def test_write_global_centiles_to_database(self):
         from frontend.management.commands.import_measures \
             import GlobalCalculation
-        g = GlobalCalculation('cerazette')
+        measure = Measure.objects.get(pk='cerazette')
+        g = GlobalCalculation(measure)
         with patch.object(g, 'get_rows_as_dicts') as patched_calc:
             patched_calc.return_value = [
                 {
@@ -130,7 +131,8 @@ class UnitTests(TestCase):
             import PracticeCalculation
         Practice.objects.create(code='C83019')
         PCT.objects.create(code='03T')
-        p = PracticeCalculation('cerazette')
+        measure = Measure.objects.get(pk='cerazette')
+        p = PracticeCalculation(measure)
         with patch.object(p, 'get_rows_as_dicts') as patched_calc:
             # What we'd expect the practice ratios BQ table to return
             patched_calc.return_value = [
