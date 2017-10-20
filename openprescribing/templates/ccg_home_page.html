@@ -12,9 +12,9 @@
 
 {% block content %}
 
-<h1>CCG: {{ ccg.name }}</h1>
 <div class="row" id="intro">
   <div class="col-md-6">
+    <h1>{{ ccg.cased_name }}</h1>
     <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
     <ul class="list-unstyled" id="practices">
     {% for p in practices %}
@@ -24,6 +24,9 @@
       </li>
     {% endfor %}
     </ul>
+  </div>
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
   </div>
 </div>
 
@@ -85,9 +88,11 @@
 
 {% include '_get_in_touch.html' %}
 <script>
+  var maxZoom = 6;
   var measureData = {
   'orgType': 'CCG',
   'rollUpBy': 'measure_id',
+  'orgId': '{{ ccg.code }}',
   specificMeasures: [
   {
   'measure': '{{ measure.id }}',

@@ -5,10 +5,10 @@ import view_utils as utils
 from django.http import HttpResponse
 from django.core.serializers import serialize
 
-
 @api_view(['GET'])
 def org_location(request, format=None):
     org_type = request.GET.get('org_type', '')
+    centroids = request.GET.get('centroids', '')
     org_codes = utils.param_to_list(request.GET.get('q', ''))
     if org_type == 'practice':
         org_codes = utils.get_practice_ids_from_org(org_codes)
@@ -17,8 +17,13 @@ def org_location(request, format=None):
                              .filter(org_type='CCG')
         if org_codes:
             results = results.filter(code__in=org_codes)
-        geo_field = 'boundary'
-        fields = ('name', 'code', 'ons_code', 'org_type', 'boundary', )
+        if centroids:
+            fields = ('name', 'code', 'ons_code', 'org_type', 'centroid', )
+            geo_field = 'centroid'
+        else:
+            fields = ('name', 'code', 'ons_code', 'org_type', 'boundary', )
+            geo_field = 'boundary'
+
     else:
         results = Practice.objects.filter(code__in=org_codes)
         geo_field = 'location'
