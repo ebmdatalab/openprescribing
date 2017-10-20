@@ -356,7 +356,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
-LOGIN_REDIRECT_URL = "last-bookmark"
+LOGIN_REDIRECT_URL = "finalise-signup"
 LOGIN_URL = "home"
 
 # Easy bootstrap styling of Django forms
@@ -364,3 +364,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "https://openprescribing.net"
+
+# Newsletter signup
+MAILCHIMP_LIST_ID = 'b2b7873a73'
