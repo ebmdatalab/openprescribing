@@ -2,8 +2,8 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Prescribing measures for {{ ccg.name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %}Prescribing measures for {{ practice.name }}{% endblock %}
+{% block active_class %}practice{% endblock %}
 {% block container_class %}landing-page{% endblock %}
 
 {% block extra_css %}
@@ -14,16 +14,14 @@
 
 <div class="row" id="intro">
   <div class="col-md-6">
-    <h1>{{ ccg.cased_name }}</h1>
-    <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
-    <ul class="list-unstyled" id="practices">
-    {% for p in practices %}
-      <li class="hidden">
-        <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }})
-      </li>
-    {% endfor %}
-    </ul>
+    <h1>{{ practice.cased_name }}</h1>
+    <p>Address: {{ practice.address_pretty }}</p>
+    {% if practice.ccg %}
+    <p>Part of CCG:
+      <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a>
+    </p>
+    {% endif %}
+
   </div>
   <div class="col-md-6" id="map-container">
     <div id="map-measure"></div>
@@ -35,10 +33,10 @@
 <div class="row" >
   <div class="col-md-6">
     <h3>Savings on individual presentations</h3>
-    <p>This tool automatically identifies the drugs with the biggest cost savings opportunities for each individual practice, or CCG, every month; and then helps them choose cheaper options.</p>
+    <p>This tool automatically identifies the drugs with the biggest cost savings opportunities for each individual practice, every month; and then helps them choose cheaper options.</p>
     <div class="col-md-4 ppu-on-landing-page">&pound;{{ possible_savings|floatformat:"0"|intcomma }}</div>
-    <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this CCG could have saved
-      this month through prescription switches. <a href="{% url 'ccg_price_per_unit' ccg.code %}">Read more...</a></div>
+    <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this practice could have saved
+      this month through prescription switches. <a href="{% url 'practice_price_per_unit' practice.code %}">Read more...</a></div>
   </div>
   <hr class="visible-sm">
   <div class="col-md-6">
@@ -51,14 +49,14 @@
 <div class="row" id="measures">
   <div class="col-md-6">
     <h3>Measures</h3>
-    <p>We have {{ measures_count }} different measures which you can use to compare performance across all of NHS England. For example, the measure shows the measure on which this CCG is furthest from the median.  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all {{ measures_count }} measures...</a></p>
+    <p>We have {{ measures_count }} different measures which you can use to compare performance across all of NHS England. For example, the measure shows the measure on which this practice is furthest from the median.  <a href="{% url 'measures_for_one_practice' practice.code %}">View all {{ measures_count }} measures...</a></p>
     <div class="charts" id="top-measure-container" class="row">
     </div>
   </div>
   <hr class="visible-sm">
   <div class="col-md-6">
     <h3>NHS low priority measures</h3>
-    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">NHS England have recently published a list of 19 items which should not routinely prescribed in primary care. This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines).  <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
+    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">NHS England have recently published a list of 19 items which should not routinely prescribed in primary care. This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines).  <a href="{% url 'measures_for_one_practice' practice.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
     <div class="charts" id="lpzomnibus-container" class="row">
     </div>
   </div>
@@ -90,21 +88,21 @@
 <script>
   var maxZoom = 6;
   var measureData = {
-  'orgType': 'CCG',
+  'orgType': 'practice',
   'rollUpBy': 'measure_id',
-  'orgId': '{{ ccg.code }}',
+  'orgId': '{{ practice.code }}',
   specificMeasures: [
   {
   'measure': '{{ measure.id }}',
   'chartContainerId': '#top-measure-container',
-  'orgId': '{{ ccg.code }}',
-  'orgName': '{{ ccg.name }}',
+  'orgId': '{{ practice.code }}',
+  'orgName': '{{ practice.name }}',
   },
   {
   'measure': 'lpzomnibus',
   'chartContainerId': '#lpzomnibus-container',
-  'orgId': '{{ ccg.code }}',
-  'orgName': '{{ ccg.name }}',
+  'orgId': '{{ practice.code }}',
+  'orgName': '{{ practice.name }}',
   },
 
   ]

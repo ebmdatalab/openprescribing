@@ -34,6 +34,7 @@ from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
+from frontend.models import MeasureValue
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
@@ -246,8 +247,12 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
 def ccg_home_page(request, ccg_code):
-    measure = get_object_or_404(Measure, id='keppra')
     ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = MeasureValue.objects.filter(
+        pct=ccg,
+        practice__isnull=True,
+        measure__tags__contains=['core']).order_by(
+            '-percentile').first().measure
     request.session['came_from'] = request.path
     if request.method == 'POST':
         form = _handleCreateBookmark(
@@ -269,17 +274,13 @@ def ccg_home_page(request, ccg_code):
     alert_preview_action = reverse(
         'preview-ccg-bookmark', args=[ccg.code])
     practices = Practice.objects.filter(
-        ccg=ccg).filter(
-            setting=4).order_by('name')
+        ccg=ccg).filter(setting=4).order_by('name')
     date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = PPUSaving.objects.filter(
         date=date,
         pct=ccg,
         practice__isnull=True,
-
         ).aggregate(Sum('possible_savings'))['possible_savings__sum']
-    # find an interesting measure which isn't NHS Low Priority
-    # XXX some of these aren't used
     measures_count = Measure.objects.count()
     context = {
         'measure': measure,
@@ -287,16 +288,56 @@ def ccg_home_page(request, ccg_code):
         'ccg': ccg,
         'possible_savings': total_possible_savings,
         'practices': practices,
-        'entity': ccg,
-        'highlight': ccg.code,
-        'highlight_name': ccg.cased_name,
         'date': date,
-        'alert_preview_action': alert_preview_action,
         'form': form,
         'signed_up_for_alert': signed_up_for_alert,
-        'by_ccg': True
     }
     return render(request, 'ccg_home_page.html', context)
+
+
+def practice_home_page(request, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    measure = MeasureValue.objects.filter(
+        practice=practice,
+        measure__tags__contains=['core']).order_by(
+            '-percentile').first().measure
+    request.session['came_from'] = request.path
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            OrgBookmark,
+            OrgBookmarkForm,
+            'practice')
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = OrgBookmarkForm(
+            initial={'practice': practice.pk,
+                     'email': getattr(request.user, 'email', '')})
+    if request.user.is_authenticated():
+        signed_up_for_alert = request.user.orgbookmark_set.filter(
+            practice=practice)
+    else:
+        signed_up_for_alert = False
+    alert_preview_action = reverse(
+        'preview-practice-bookmark', args=[practice.code])
+    date = _specified_or_last_date(request, 'ppu')
+    total_possible_savings = PPUSaving.objects.filter(
+        date=date,
+        practice=practice,
+        ).aggregate(Sum('possible_savings'))['possible_savings__sum']
+    measures_count = Measure.objects.count()
+    context = {
+        'measure': measure,
+        'measures_count': measures_count,
+        'practice': practice,
+        'possible_savings': total_possible_savings,
+        'date': date,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert,
+    }
+    return render(request, 'practice_home_page.html', context)
+
 
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
