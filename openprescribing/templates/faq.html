@@ -38,6 +38,13 @@
 <p><a href="#measurechose">How are the measures chosen?</a></p>
 <p><a href="#gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</a></p>
 
+<h2>Long term trends</h2>
+<p><a href="#howdifferent">How is this different to the data on the rest of the site?</a></p>
+<p><a href="#hownormalised">How was the data normalised?</a></p>
+<p><a href="#howshare">How can I share the view I created?</a></p>
+<p><a href="#trendsdownload">Can I download the data?</a></p>
+<p><a href="#trendsupdated">When will it be updated?</a></p>
+
 <h2>Disclaimer</h2>
 <p><a href="#Disclaimer">Disclaimer</a></p>
 
@@ -138,7 +145,7 @@
 
 <h2 id="longtermtrends"><a name="longtermtrends"></a>Long term trends</h2>
 
-<h3>How is this different to the data on the rest of the site?</h3>
+<h3 id="howdifferent">How is this different to the data on the rest of the site?</h3>
 
 <p>This tool uses Prescription Cost Analysis (PCA) data back to 1998, which includes all items dispensed in the community (or personally administered by doctors) in England, whereas the data used elsewhere on the site shows what was prescribed. This means that, in this dataset:</p>
 <ul>
@@ -151,17 +158,17 @@
   This data cannot be split down to individual months or practices.
 </p>
 
-<h3>How was the data normalised?</h3>
+<h3 id="hownormalised">How was the data normalised?</h3>
 
 <p>All figures are shown per 1000 population (adjusted for England's mid-year population size each year) and costs are corrected for inflation (using consumer price index), both obtained from the ONS.
   We also normalised the data by drug name and classification, where possible, such that drugs moving around Chapters, or changing name, do not disrupt the trends. We did this by mapping all drug names to their current position in the BNF. Drug names not matched exactly to a currently available item were assigned appropriate classifications via approximate matching, ensuring that drugs were not inappropriately moved across categories, e.g. those with multiple uses. Some chemicals which are no longer available will not have been assigned an up-to-date chemical code, but will have a chemical name (as supplied in the original dataset) and a product name (derived from the drug name). Efforts were concentrated on Chapters 1-6 and 10 so other Chapters may have more inconsistencies, particularly Chapters 9 (Nutrition) and 13 (Skin). The details are explained further in our paper, currently under review with BMJ Open, and in the code can be found <a href="https://gist.github.com/HelenCEBM/192307b3c671a391f5ad6b44a3676880">here</a>.</p>
 
-<h3>How can I share the view I created?</h3>
+<h3 id="howshare">How can I share the view I created?</h3>
 
 <p>Scroll to the bottom right, then:</p>
 
 <ul>
-  <li>To share the dashboard as a link for someone else to access, or to save for later, select <strong>Share</strong>. If you have made changes then "Current View" will be selected. Copy the link:
+  <li>To share the dashboard as a link for someone else to access, or to save for later, select <strong>Share</strong>. If you have made changes then "Current View" will be selected. Copy the link:<br>
 
     <img src="/static/img/tableau_share.png" alt="Tableau share menu"/>
 
@@ -169,11 +176,11 @@
   <li>To share the view as an image or PDF, select <strong>Download</strong> and select your preferred option.</li>
 </ul>
 
-<h3>Can I download the data?</h3>
+<h3 id="trendsdownload">Can I download the data?</h3>
 
 <p>You can download the entire dataset, either the compiled original data or our normalised data, from <a href="https://figshare.com/articles/NHS_prescription_cost_analysis_data_1998-2016/5447194">FigShare</a>.</p>
 
-<h3>When will it be updated?</h3>
+<h3 id="trendsupdated">When will it be updated?</h3>
 
 <p>The annual data is released in March each year; however, ONS figures for population size are not available until June.</p>
 
