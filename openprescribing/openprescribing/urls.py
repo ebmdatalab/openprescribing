@@ -29,6 +29,9 @@ urlpatterns = [
     url(r'^how-to-use/$',
         TemplateView.as_view(template_name='how-to-use.html'),
         name="how-to-use"),
+    url(r'^alert_example/$',
+        TemplateView.as_view(template_name='alert_example.html'),
+        name="alert_example"),
 
     # User-facing pages.
     url(r'^analyse/$', frontend_views.analyse,

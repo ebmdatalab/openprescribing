@@ -248,11 +248,12 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    measure = MeasureValue.objects.filter(
-        pct=ccg,
-        practice__isnull=True,
-        measure__tags__contains=['core']).order_by(
-            '-percentile').first().measure
+    # measure = MeasureValue.objects.filter(
+    #     pct=ccg,
+    #     practice__isnull=True,
+    #     measure__tags__contains=['core']).order_by(
+    #         '-percentile').first().measure
+    measure = Measure.objects.first()
     request.session['came_from'] = request.path
     if request.method == 'POST':
         form = _handleCreateBookmark(

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}FAQs{% endblock %}
+{% block active_class %}more{% endblock %}
+
+{% block content %}
+
+<h1>Example monthly alert email</h1>
+
+<img src="/static/img/alert-example.png" >
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}
