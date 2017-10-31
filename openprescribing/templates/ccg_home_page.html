@@ -35,7 +35,7 @@
 <div class="row" >
   <div class="col-md-6">
     <h3>Savings on individual presentations</h3>
-    <p>This tool automatically identifies the drugs with the biggest cost savings opportunities for each individual practice, or CCG, every month; and then helps them choose cheaper options.</p>
+    <p>Identifies the biggest cost saving opportunities and shows cheaper options, based on what others have prescribed.</p>
     <div class="col-md-4 ppu-on-landing-page">&pound;{{ possible_savings|floatformat:"0"|intcomma }}</div>
     <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this CCG could have saved
       this month through prescription switches. <a href="{% url 'ccg_price_per_unit' ccg.code %}">Read more...</a></div>
@@ -51,14 +51,14 @@
 <div class="row" id="measures">
   <div class="col-md-6">
     <h3>Measures</h3>
-    <p>We have {{ measures_count }} different measures which you can use to compare performance across all of NHS England. For example, the measure shows the measure on which this CCG is furthest from the median.  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all {{ measures_count }} measures...</a></p>
+    <p>{{ measures_count }} standard measures compare performance across England. This graph shows the most extreme for this CCG.  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all {{ measures_count }} measures...</a></p>
     <div class="charts" id="top-measure-container" class="row">
     </div>
   </div>
   <hr class="visible-sm">
   <div class="col-md-6">
     <h3>NHS low priority measures</h3>
-    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">NHS England have recently published a list of 19 items which should not routinely prescribed in primary care. This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines).  <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
+    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">Measures for low-value items that NHS England suggest should not routinely prescribed in primary care. This graph is the overall position for this CCG (excluding herbal medicines).  <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
     <div class="charts" id="lpzomnibus-container" class="row">
     </div>
   </div>
