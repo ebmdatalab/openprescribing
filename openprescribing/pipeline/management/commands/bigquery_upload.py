@@ -44,7 +44,7 @@ class Command(BaseCommand):
         table = client.get_table('practice_statistics')
         columns = [field.name for field in schemas.PRACTICE_STATISTICS_SCHEMA]
         columns[0] = 'date'
-        columns[1] = 'practice_id'
+        columns[-1] = 'practice_id'
         table.insert_rows_from_pg(
             models.PracticeStatistics,
             columns,
