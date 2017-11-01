@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing measures for {{ practice.name }}{% endblock %}
+{% block active_class %}practice{% endblock %}
+{% block container_class %}landing-page{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="row" id="intro">
+  <div class="col-md-6">
+    <h1>{{ practice.cased_name }}</h1>
+    <p>Address: {{ practice.address_pretty }}</p>
+    {% if practice.ccg %}
+    <p>Part of CCG:
+      <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a>
+    </p>
+    {% endif %}
+
+  </div>
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+  </div>
+</div>
+
+<hr/>
+
+<div class="row" >
+  <div class="col-md-6">
+    <h3>Savings on individual presentations</h3>
+    <p>This tool automatically identifies the drugs with the biggest cost savings opportunities for each individual practice, every month; and then helps them choose cheaper options.</p>
+    <div class="col-md-4 ppu-on-landing-page">&pound;{{ possible_savings|floatformat:"0"|intcomma }}</div>
+    <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this practice could have saved
+      this month through prescription switches. <a href="{% url 'practice_price_per_unit' practice.code %}">Read more...</a></div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <h3>Sign up for alerts or updates</h3>
+    {% include '_alert_signup_form.html' %}
+    </form>
+  </div>
+</div>
+<hr>
+<div class="row" id="measures">
+  <div class="col-md-6">
+    <h3>Measures</h3>
+    <p>We have {{ measures_count }} different measures which you can use to compare performance across all of NHS England. For example, the measure shows the measure on which this practice is furthest from the median.  <a href="{% url 'measures_for_one_practice' practice.code %}">View all {{ measures_count }} measures...</a></p>
+    <div class="charts" id="top-measure-container" class="row">
+    </div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <h3>NHS low priority measures</h3>
+    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">NHS England have recently published a list of 19 items which should not routinely prescribed in primary care. This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines).  <a href="{% url 'measures_for_one_practice' practice.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
+    <div class="charts" id="lpzomnibus-container" class="row">
+    </div>
+  </div>
+</div>
+
+
+<hr/>
+
+{% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+  {{ costSavings }}
+</script>
+<script id="measure-panel" type="text/x-handlebars-template">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+      </div>
+      <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
+        <div class="chart">
+          <div class="status"></div>
+        </div>
+      </div>
+      <div class="explanation">{{{ chartExplanation }}}</div>
+    </div>
+</script>
+{% endverbatim %}
+
+{% include '_get_in_touch.html' %}
+<script>
+  var maxZoom = 6;
+  var measureData = {
+  'orgType': 'practice',
+  'rollUpBy': 'measure_id',
+  'orgId': '{{ practice.code }}',
+  specificMeasures: [
+  {
+  'measure': '{{ measure.id }}',
+  'chartContainerId': '#top-measure-container',
+  'orgId': '{{ practice.code }}',
+  'orgName': '{{ practice.name }}',
+  },
+  {
+  'measure': 'lpzomnibus',
+  'chartContainerId': '#lpzomnibus-container',
+  'orgId': '{{ practice.code }}',
+  'orgName': '{{ practice.name }}',
+  },
+
+  ]
+  };
+</script>
+{% conditional_js 'measures' %}
+
+{% endblock %}

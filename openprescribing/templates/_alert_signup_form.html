@@ -6,17 +6,22 @@
    {% if alert_type == 'analyse' %}
      <input type="hidden" name="url" value="">
      <input type="hidden" name="name" value="">
-     We offer a service which emails you an update of this chart once a month. Subscribe by entering your email address below.
-   {% else %}
-     We offer a service which emails you about unusual or interesting prescribing at this {{entity_type}} once a month. Subscribe by entering your email address below.
-   {% endif %}
-   You can <input type="submit" class="btn-link" value="preview"></input> the email first.
+
+     Get monthly alert emails with the latest version of this chart.
+     You can also sign up for our monthly newsletter.
+     {% else %}
+     Get our monthly newsletter, and also monthly alerts highlighting where you are an 
+      outlier, or have suddenly changed (<a href="{% url 'alert_example' %}">example</a>).  You can also sign up for our
+      monthly newsletter.
+
+     {% endif %}
+   <!-- You can <input type="submit" class="btn-link" value="preview"></input> the email first.-->
   </form>
   <form method="post" class="form form-inline">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {{ form | crispy }}
-    <input class="btn btn-primary" type="submit" value="Subscribe">
+    <input class="btn btn-primary" type="submit" value="Sign up">
 
   </form>
 </p>

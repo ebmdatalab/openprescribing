@@ -11,8 +11,10 @@ if (!window.console) {
 }
 
 var queryForm = require('./src/form');
+var homeForm = require('./src/home');
 
 $(document).ready(function() {
+  homeForm.setUp();
   queryForm.setUp();
   $('.doorbell-show').click(function(e) {
     if (typeof doorbell !== 'undefined') {

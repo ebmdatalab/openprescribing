@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing measures for {{ ccg.name }}{% endblock %}
+{% block active_class %}ccg{% endblock %}
+{% block container_class %}landing-page{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="row" id="intro">
+  <div class="col-md-6">
+    <h1>{{ ccg.cased_name }}</h1>
+    <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
+    <ul class="list-unstyled" id="practices">
+    {% for p in practices %}
+      <li class="hidden">
+        <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
+        ({{ p.get_setting_display }})
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+  </div>
+</div>
+
+<hr/>
+
+<div class="row" >
+  <div class="col-md-6">
+    <h3>Savings on individual presentations</h3>
+    <p>Identifies the biggest cost saving opportunities and shows cheaper options, based on what others have prescribed.</p>
+    <div class="col-md-4 ppu-on-landing-page">&pound;{{ possible_savings|floatformat:"0"|intcomma }}</div>
+    <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this CCG could have saved
+      this month through prescription switches. <a href="{% url 'ccg_price_per_unit' ccg.code %}">Read more...</a></div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <h3>Sign up for alerts or updates</h3>
+    {% include '_alert_signup_form.html' %}
+    </form>
+  </div>
+</div>
+<hr>
+<div class="row" id="measures">
+  <div class="col-md-6">
+    <h3>Measures</h3>
+    <p>{{ measures_count }} standard measures compare performance across England. This graph shows the most extreme for this CCG.  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all {{ measures_count }} measures...</a></p>
+    <div class="charts" id="top-measure-container" class="row">
+    </div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <h3>NHS low priority measures</h3>
+    <p><img src="/static/img/bang.jpg" style="float: left; padding-right: 20px;">Measures for low-value items that NHS England suggest should not routinely prescribed in primary care. This graph is the overall position for this CCG (excluding herbal medicines).  <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
+    <div class="charts" id="lpzomnibus-container" class="row">
+    </div>
+  </div>
+</div>
+
+
+<hr/>
+
+{% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+  {{ costSavings }}
+</script>
+<script id="measure-panel" type="text/x-handlebars-template">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+      </div>
+      <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
+        <div class="chart">
+          <div class="status"></div>
+        </div>
+      </div>
+      <div class="explanation">{{{ chartExplanation }}}</div>
+    </div>
+</script>
+{% endverbatim %}
+
+{% include '_get_in_touch.html' %}
+<script>
+  var maxZoom = 6;
+  var measureData = {
+  'orgType': 'CCG',
+  'rollUpBy': 'measure_id',
+  'orgId': '{{ ccg.code }}',
+  specificMeasures: [
+  {
+  'measure': '{{ measure.id }}',
+  'chartContainerId': '#top-measure-container',
+  'orgId': '{{ ccg.code }}',
+  'orgName': '{{ ccg.name }}',
+  },
+  {
+  'measure': 'lpzomnibus',
+  'chartContainerId': '#lpzomnibus-container',
+  'orgId': '{{ ccg.code }}',
+  'orgName': '{{ ccg.name }}',
+  },
+
+  ]
+  };
+</script>
+{% conditional_js 'measures' %}
+
+{% endblock %}

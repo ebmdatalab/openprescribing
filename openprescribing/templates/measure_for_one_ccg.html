@@ -54,7 +54,8 @@ numerator is composed of the following presentations:</p>
 
 <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
 
-{% include '_measures_panel.html' with entity_type='CCG' %}
+{% include '_measures_heading.html' with entity_type='CCG' %}
+{% include '_measures_panel.html' %}
 
 <p>
   <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all measures for {{ ccg.name }}</a>

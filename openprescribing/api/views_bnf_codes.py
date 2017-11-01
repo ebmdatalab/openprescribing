@@ -1,8 +1,14 @@
+import os
+
+from django.conf import settings
+from django.db import connection
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.db.models import Q
-import view_utils as utils
+
+from common.utils import dictfetchall
 from frontend.models import Chemical, Section, Product, Presentation
+import view_utils as utils
 
 
 @api_view(['GET'])
@@ -14,6 +20,19 @@ def bnf_codes(request, format=None):
 
     querysets = _get_matching_products(codes, is_exact)
     data = _convert_querysets(querysets)
+    return Response(data)
+
+
+@api_view(['GET'])
+def bnf_code_search(request, format=None):
+    query = request.query_params.get('q', '')
+    data = []
+    if query:
+        with open(os.path.join(settings.SITE_ROOT, 'api', 'bnf_search.sql')) as f:
+            sql = f.read()
+            with connection.cursor() as cursor:
+                cursor.execute(sql, ['%' + query + '%'])
+                data = dictfetchall(cursor)
     return Response(data)
 
 
