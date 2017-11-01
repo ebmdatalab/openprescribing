@@ -267,7 +267,7 @@ class TableExporter(object):
             blob.delete()
 
 
-def wait_for_job(job, timeout_s=60):
+def wait_for_job(job, timeout_s=3600):
     t0 = time.time()
 
     # Would like to use `while not job.done():` but cannot until we upgrade
@@ -278,7 +278,11 @@ def wait_for_job(job, timeout_s=60):
             break
 
         if time.time() - t0 > timeout_s:
-            raise TimeoutError
+            msg = 'Timeout waiting for job {} after {} second'.format(
+                job.name, timeout_s
+            )
+            raise TimeoutError(msg)
+
         time.sleep(1)
 
     if job.errors is not None:
