@@ -56,7 +56,7 @@ class Command(BaseCommand):
         table.insert_rows_from_pg(
             models.PCT,
             columns,
-            schemas.statistics_transform
+            schemas.ccgs_transform
         )
 
 
