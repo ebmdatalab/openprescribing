@@ -285,7 +285,10 @@ def ccg_home_page(request, ccg_code):
     context = {
         'measure': measure,
         'measures_count': measures_count,
-        'ccg': ccg,
+        'entity': ccg,
+        'entity_type': 'CCG',
+        'entity_price_per_unit_url': 'ccg_price_per_unit',
+        'measures_for_one_entity_url': 'measures_for_one_ccg',
         'possible_savings': total_possible_savings,
         'practices': practices,
         'date': date,
@@ -330,7 +333,10 @@ def practice_home_page(request, practice_code):
     context = {
         'measure': measure,
         'measures_count': measures_count,
-        'practice': practice,
+        'entity': practice,
+        'entity_type': 'practice',
+        'entity_price_per_unit_url': 'practice_price_per_unit',
+        'measures_for_one_entity_url': 'measures_for_one_practice',
         'possible_savings': total_possible_savings,
         'date': date,
         'form': form,
