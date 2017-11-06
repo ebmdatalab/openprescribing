@@ -17,7 +17,7 @@ class MissingParameter(APIException):
 @api_view(['GET'])
 def measure_global(request, format=None):
     measure = request.query_params.get('measure', None)
-    tags = request.query_params.getlist('tags', None)
+    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
     qs = MeasureGlobal.objects.select_related('measure')
     if measure:
         qs = qs.filter(measure_id=measure)
@@ -146,7 +146,7 @@ def measure_numerators_by_org(request, format=None):
 def measure_by_ccg(request, format=None):
     measure = request.query_params.get('measure', None)
     orgs = utils.param_to_list(request.query_params.get('org', []))
-    tags = request.query_params.get('tags', None)
+    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
     params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
@@ -173,10 +173,9 @@ def measure_by_ccg(request, format=None):
     if measure:
         query += "AND mv.measure_id=%s "
         params.append(measure)
-    if tags:
-        for tag in tags.split(','):
-            query += "AND %s = ANY(ms.tags) "
-            params.append(tag)
+    for tag in tags:
+        query += "AND %s = ANY(ms.tags) "
+        params.append(tag)
     query += "ORDER BY mv.pct_id, measure_id, date"
     data = utils.execute_query(query, [params])
     rolled = {}
@@ -222,7 +221,7 @@ def measure_by_practice(request, format=None):
     orgs = utils.param_to_list(request.query_params.get('org', []))
     if not orgs:
         raise MissingParameter
-    tags = request.query_params.get('tags', None)
+    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
     params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
@@ -246,10 +245,9 @@ def measure_by_practice(request, format=None):
     if measure:
         query += "AND mv.measure_id=%s "
         params.append(measure)
-    if tags:
-        for tag in tags.split(','):
-            query += "AND %s = ANY(ms.tags) "
-            params.append(tag)
+    for tag in tags:
+        query += "AND %s = ANY(ms.tags) "
+        params.append(tag)
     query += "ORDER BY mv.practice_id, measure_id, date"
     data = utils.execute_query(query, [params])
     rolled = {}
