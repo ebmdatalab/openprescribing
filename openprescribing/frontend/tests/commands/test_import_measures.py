@@ -11,7 +11,8 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.management.commands.import_measures import Command, parse_measures
+from frontend.management.commands.import_measures import Command
+from frontend.management.commands.import_measures import parse_measures
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
