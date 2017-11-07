@@ -1,0 +1,37 @@
+{
+  "name": "Prescribing of pregabalin (total mg)",
+  "title": [
+    "pregabalin mg per 1000 patients"
+  ],
+  "description": [
+    "Prescribing of pregabalin (total mg) per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
+    "Also its costs have reduced recently, its use is rising increasingly rapidly in the NHS. ",
+    "There are also <a href='https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>concerns about the potential for abuse</a>. ",
+    "This measure shows the total amount in miligrams of pregabalin prescribed.  ",
+    "There is an additional measure showing numbers of prescriptions on our measures page."
+  ],
+  "numerator_short": "Total pregabalin prescribed (in miligrams)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": ["core"],
+  "numerator_columns": [
+    "SUM(lyrica_mg) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:measures.pregabalin_total_mg] ",
+  "numerator_where": [
+    "1 = 1"
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
