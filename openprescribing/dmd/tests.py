@@ -131,3 +131,39 @@ class CommandsTestCase(TestCase):
         self.assertEqual(cons3.pack_size, '28')
         self.assertEqual(cons3.price_concession_pence, 525)
         self.assertEqual(cons3.vmpp, None)
+
+    def test_reconcile_ncso_concessions(self):
+        vmpp = DMDVmpp.objects.create(
+            vppid=8049011000001108,
+            nm='Duloxetine 40mg gastro-resistant capsules 56 capsule',
+        )
+
+        DMDVmpp.objects.create(
+            vppid=9039011000001105,
+            nm='Duloxetine 60mg gastro-resistant capsules 28 capsule',
+        )
+
+        DMDVmpp.objects.create(
+            vppid=9039111000001106,
+            nm='Duloxetine 60mg gastro-resistant capsules 84 capsule',
+        )
+
+        DMDVmpp.objects.create(
+            vppid=940711000001101,
+            nm='Carbamazepine 200mg tablets 84 tablet',
+        )
+
+        concession = NCSOConcession.objects.create(
+            year_and_month='2017_01',
+            drug='Duloxetine 40mg capsules',
+            pack_size='56',
+            price_concession_pence=600,
+            vmpp_id=None,
+        )
+
+        with patch('openprescribing.utils.get_input') as get_input:
+            get_input.side_effect = ['dulox', '1', 'y']
+            call_command('reconcile_ncso_concessions')
+
+        concession.refresh_from_db()
+        self.assertEqual(concession.vmpp, vmpp)

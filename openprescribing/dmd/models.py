@@ -167,6 +167,9 @@ class DMDVmpp(models.Model):
     class Meta:
         db_table = 'dmd_vmpp'
 
+    def __str__(self):
+        return self.nm
+
 
 class NCSOConcession(models.Model):
     vmpp = models.ForeignKey(DMDVmpp, null=True)
@@ -174,3 +177,9 @@ class NCSOConcession(models.Model):
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_concession_pence = models.IntegerField()
+
+    class Manager(models.Manager):
+        def unreconciled(self):
+            return self.filter(vmpp__isnull=True)
+
+    objects = Manager()
