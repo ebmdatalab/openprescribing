@@ -93,7 +93,7 @@
 {% conditional_js 'bubble' %}
 <script>
  {% if by_presentation %}
-   var bubble_data_url = '{{ API_HOST }}/api/1.0/bubble/?format=json&bnf_code={{ bnf_code }}&highlight={{ highlight }}&date={{ date|date:"Y-m-d" }}&trim={{request.GET.trim}}';
+   var bubble_data_url = '{{ bubble_data_url|safe }}';
    var highlight_name = '{{ highlight_name }}';
    var generic_name = '{{ name }}';
  {% endif %}
