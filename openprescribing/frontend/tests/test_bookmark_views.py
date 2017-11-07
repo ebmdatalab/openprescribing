@@ -46,7 +46,7 @@ class TestBookmarkViews(TransactionTestCase):
             self.assertContains(
                 response,
                 "Unsubscribed from 1 alert")
-        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self.assertEqual(OrgBookmark.objects.count(), 1)
 
     def test_unsubscribe_all_at_once(self):
         # First, log in
@@ -60,7 +60,7 @@ class TestBookmarkViews(TransactionTestCase):
             "Unsubscribed from 3 alerts")
         # There's one org bookmark which is unapproved, so they don't
         # see it in their list, and it doesn't get deleted.
-        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self.assertEqual(OrgBookmark.objects.count(), 2)
 
     @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
     @patch('frontend.views.bookmark_utils.subprocess')

@@ -65,8 +65,12 @@ class ValidateOptionsTestCase(unittest.TestCase):
 class GetBookmarksTestCase(TestCase):
     fixtures = ['bookmark_alerts']
 
+    def setUp(self):
+        self.now_month = "2014-11-01"
+
     def test_get_org_bookmarks_without_options(self):
         bookmarks = Command().get_org_bookmarks(
+            self.now_month,
             recipient_email=None,
             recipient_email_file=None,
             skip_email_file=None
@@ -77,6 +81,7 @@ class GetBookmarksTestCase(TestCase):
 
     def test_get_org_bookmarks_with_test_options(self):
         bookmarks = Command().get_org_bookmarks(
+            self.now_month,
             recipient_email='s@s.com',
             ccg='03V',
             practice='P87629',
@@ -94,6 +99,7 @@ class GetBookmarksTestCase(TestCase):
         skip_file = ('frontend/tests/fixtures/commands/'
                      'skip_alerts_recipients.txt')
         bookmarks = Command().get_org_bookmarks(
+            self.now_month,
             skip_email_file=skip_file,
             recipient_email=None,
             recipient_email_file=None
@@ -101,7 +107,9 @@ class GetBookmarksTestCase(TestCase):
         self.assertEqual(len(bookmarks), 0)
 
     def test_get_search_bookmarks_without_options(self):
-        bookmarks = Command().get_search_bookmarks(recipient_email=None)
+        bookmarks = Command().get_search_bookmarks(
+            self.now_month,
+            recipient_email=None)
         active = all([x.user.is_active for x in bookmarks])
         self.assertEqual(len(bookmarks), 1)
         self.assertEqual(bookmarks[0].url, 'foo')
@@ -109,6 +117,7 @@ class GetBookmarksTestCase(TestCase):
 
     def test_get_search_bookmarks_with_options(self):
         bookmarks = Command().get_search_bookmarks(
+            self.now_month,
             recipient_email='s@s.com',
             url='frob', search_name='baz')
         self.assertEqual(len(bookmarks), 1)
@@ -121,44 +130,47 @@ class GetBookmarksTestCase(TestCase):
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
 @patch('frontend.views.bookmark_utils.attach_image')
 class FailingEmailTestCase(TestCase):
-    fixtures = ['bookmark_alerts', 'measures']
+    fixtures = ['bookmark_alerts', 'measures', 'importlog']
 
     def test_successful_sends(self, attach_image, finder):
         attach_image.side_effect = [StandardError, None, None]
         test_context = _makeContext(worst=[MagicMock()])
+        self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
             call_mocked_command(test_context, finder, max_errors=4)
-        self.assertEqual(EmailMessage.objects.count(), 2)
+        self.assertEqual(EmailMessage.objects.count(), 3)
         self.assertEqual(len(mail.outbox), 2)
 
     def test_max_errors(self, attach_image, finder):
         attach_image.side_effect = [StandardError, None, None]
         test_context = _makeContext(worst=[MagicMock()])
-        self.assertEqual(EmailMessage.objects.count(), 0)
+        self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
             call_mocked_command(test_context, finder, max_errors=0)
-        self.assertEqual(EmailMessage.objects.count(), 0)
+        self.assertEqual(EmailMessage.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 0)
 
 
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
 @patch('frontend.views.bookmark_utils.attach_image')
 class OrgEmailTestCase(TestCase):
-    fixtures = ['bookmark_alerts', 'measures']
+    fixtures = ['bookmark_alerts', 'measures', 'importlog']
 
     def test_email_recipient(self, attach_image, finder):
         test_context = _makeContext()
+        self.assertEqual(EmailMessage.objects.count(), 1)  # a text fixture
         call_mocked_command_with_defaults(test_context, finder)
-        self.assertEqual(EmailMessage.objects.count(), 1)
+        self.assertEqual(EmailMessage.objects.count(), 2)
         self.assertEqual(len(mail.outbox), 1)
-        email_message = EmailMessage.objects.first()
+        email_message = EmailMessage.objects.last()
         self.assertEqual(mail.outbox[-1].to, email_message.to)
         self.assertEqual(mail.outbox[-1].to, ['s@s.com'])
 
     def test_email_all_recipients(self, attach_image, finder):
         test_context = _makeContext()
+        self.assertEqual(EmailMessage.objects.count(), 1)
         call_mocked_command(test_context, finder)
-        self.assertEqual(EmailMessage.objects.count(), 3)
+        self.assertEqual(EmailMessage.objects.count(), 4)
         self.assertEqual(len(mail.outbox), 3)
 
     def test_email_body_no_data(self, attach_image, finder):
@@ -356,26 +368,31 @@ class OrgEmailTestCase(TestCase):
 
 @patch('frontend.views.bookmark_utils.attach_image')
 class SearchEmailTestCase(TestCase):
-    fixtures = ['bookmark_alerts', 'measures']
-
-    def setUp(self):
-        ImportLog.objects.create(
-            category='prescribing',
-            current_at=datetime.datetime.today())
+    fixtures = ['bookmark_alerts', 'measures', 'importlog']
 
     def test_all_recipients(self, attach_image):
+        self.assertEqual(EmailMessage.objects.count(), 1)
         call_command(CMD_NAME)
         mail_queue = mail.outbox
-        self.assertEqual(EmailMessage.objects.count(), 3)
+        self.assertEqual(EmailMessage.objects.count(), 4)
+        self.assertEqual(len(mail_queue), 3)
+
+    def test_all_recipients_idempotent(self, attach_image):
+        self.assertEqual(EmailMessage.objects.count(), 1)
+        call_command(CMD_NAME)
+        call_command(CMD_NAME)
+        mail_queue = mail.outbox
+        self.assertEqual(EmailMessage.objects.count(), 4)
         self.assertEqual(len(mail_queue), 3)
 
     def test_email_recipient(self, attach_image):
         opts = {'recipient_email': 's@s.com',
                 'url': 'something',
                 'search_name': 'some name'}
+        self.assertEqual(EmailMessage.objects.count(), 1)  # a fixture
         call_command(CMD_NAME, **opts)
-        self.assertEqual(EmailMessage.objects.count(), 1)
-        email_message = EmailMessage.objects.first()
+        self.assertEqual(EmailMessage.objects.count(), 2)
+        email_message = EmailMessage.objects.last()
         self.assertEqual(email_message.send_count, 1)
         mail_queue = mail.outbox[-1]
         self.assertEqual(
@@ -390,7 +407,7 @@ class SearchEmailTestCase(TestCase):
                 'url': 'something',
                 'search_name': 'some name'}
         call_command(CMD_NAME, **opts)
-        email_message = EmailMessage.objects.first()
+        email_message = EmailMessage.objects.last()
         mail_queue = mail.outbox[-1]
         self.assertEqual(
             mail_queue.extra_headers['message-id'], email_message.message_id)

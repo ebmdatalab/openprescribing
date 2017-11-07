@@ -615,7 +615,7 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
-def make_org_email(org_bookmark, stats, preview=False):
+def make_org_email(org_bookmark, stats, preview=False, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
     if preview:
@@ -680,11 +680,11 @@ def make_org_email(org_bookmark, stats, preview=False):
             msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "measures"]
+        msg.tags = ["monthly_update", "measures", tag]
         return msg
 
 
-def make_search_email(search_bookmark, preview=False):
+def make_search_email(search_bookmark, preview=False, tag=None):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
@@ -729,7 +729,7 @@ def make_search_email(search_bookmark, preview=False):
             msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "analyse"]
+        msg.tags = ["monthly_update", "analyse", tag]
         return msg
 
 
