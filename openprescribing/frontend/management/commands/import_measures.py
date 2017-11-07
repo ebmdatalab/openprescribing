@@ -173,6 +173,7 @@ def parse_measures():
     measures = OrderedDict()
     fpath = os.path.dirname(__file__)
     files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
+    assert files == sorted(files)
     for fname in files:
         measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
         if measure_id in measures:
