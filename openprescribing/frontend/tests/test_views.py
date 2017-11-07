@@ -1,4 +1,5 @@
 import re
+from urlparse import parse_qs, urlparse
 
 from pyquery import PyQuery as pq
 
@@ -434,3 +435,12 @@ class TestPPUViews(TransactionTestCase):
                          '1/ST Andrews Medical Practice')
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
+        bubble_data_url = response.context['bubble_data_url']
+        parsed_url = urlparse(bubble_data_url)
+        q = parse_qs(parsed_url.query)
+        self.assertEqual(q, {
+            'format': ['json'],
+            'bnf_code': ['0202010F0AAAAAA'],
+            'highlight': ['P87629'],
+            'date': ['2014-11-01'],
+        })

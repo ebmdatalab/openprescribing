@@ -1,5 +1,7 @@
 from lxml import html
 import requests
+from urllib import urlencode
+from urlparse import urlparse, urlunparse
 import sys
 
 from django.conf import settings
@@ -130,6 +132,30 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
         entity = get_object_or_404(Practice, code=entity_code)
+
+    query = {
+        'format': 'json',
+        'bnf_code': presentation.bnf_code,
+        'highlight': entity.code,
+        'date': date.strftime('%Y-%m-%d'),
+    }
+
+    if 'trim' in request.GET:
+        query['trim'] = request.GET['trim']
+
+    querystring = urlencode(query)
+
+    parsed_url = urlparse(settings.API_HOST)
+
+    bubble_data_url = urlunparse((
+        parsed_url.scheme,   # scheme
+        parsed_url.netloc,   # host
+        '/api/1.0/bubble/',  # path
+        '',                  # params
+        querystring,         # query
+        '',                  # fragment
+    ))
+
     context = {
         'entity': entity,
         'highlight': entity.code,
@@ -139,7 +165,8 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         'presentation': presentation,
         'product': product,
         'date': date,
-        'by_presentation': True
+        'by_presentation': True,
+        'bubble_data_url': bubble_data_url,
     }
     return render(request, 'price_per_unit.html', context)
 
