@@ -8,6 +8,7 @@ most of the logic now lives in SQL which is harder to read and test
 clearly.
 """
 
+from collections import OrderedDict
 from contextlib import contextmanager
 import csv
 import datetime
@@ -169,7 +170,7 @@ def create_omnibus_lp_view():
 def parse_measures():
     """Deserialise JSON measures definition into dict
     """
-    measures = {}
+    measures = OrderedDict()
     fpath = os.path.dirname(__file__)
     files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
     for fname in files:

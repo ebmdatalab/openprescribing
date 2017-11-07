@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.management.commands.import_measures import Command
+from frontend.management.commands.import_measures import Command, parse_measures
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
@@ -563,3 +563,12 @@ class BigqueryFunctionalTests(TestCase):
                         actual == expected,
                         "got %s for %s, expected %s" % (
                             actual, identifier, expected))
+
+
+class TestParseMeasures(TestCase):
+    def test_parse_measures(self):
+        measures = parse_measures()
+        lpzomnibus_ix = list(measures).index('lpzomnibus')
+        lptrimipramine_ix = list(measures).index('lptrimipramine')
+
+        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
