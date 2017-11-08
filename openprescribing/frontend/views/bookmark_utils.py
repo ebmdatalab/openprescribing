@@ -237,7 +237,9 @@ class InterestingMeasureFinder(object):
         assert best_or_worst in ['best', 'worst']
         worst = []
         measure_filter = {
-            'month__gte': self.months_ago(period)}
+            'month__gte': self.months_ago(period),
+            'measure__tags__contains': ['core']
+        }
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -295,7 +297,8 @@ class InterestingMeasureFinder(object):
         window_multiplier = 1.5
         window_plus = int(round(window * window_multiplier))
         measure_filter = {
-            'month__gte': self.months_ago(window_plus)
+            'month__gte': self.months_ago(window_plus),
+            'measure__tags__contains': ['core']
         }
         if self.practice:
             measure_filter['practice'] = self.practice
@@ -371,7 +374,8 @@ class InterestingMeasureFinder(object):
         achieved_savings = []
         total_savings = 0
         measure_filter = {
-            'month__gte': self.months_ago(period)}
+            'month__gte': self.months_ago(period),
+            'measure__tags__contains': ['core']}
         if self.practice:
             measure_filter['practice'] = self.practice
         else:

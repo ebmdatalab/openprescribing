@@ -168,42 +168,16 @@ class TestCUSUM(unittest.TestCase):
 
 
 class TestBookmarkUtilsPerforming(TestCase):
-    fixtures = ['bookmark_alerts', 'measures']
+    fixtures = ['bookmark_alerts', 'measurevalues_with_performance']
 
     def setUp(self):
+        # XXX these should be moved to a fixture
         self.measure_id = 'cerazette'
         self.measure = Measure.objects.get(pk=self.measure_id)
-        self.measure.low_is_good = True
-        self.measure.save()
+        self.exotic_measure = Measure.objects.get(pk='exotic')
         pct = PCT.objects.get(pk='03V')
         practice_with_high_percentiles = Practice.objects.get(pk='P87629')
         practice_with_low_percentiles = Practice.objects.get(pk='P87630')
-        ImportLog.objects.create(
-            category='prescribing',
-            current_at=datetime.today())
-        for i in range(3):
-            month = datetime.today() + relativedelta(months=i)
-            MeasureValue.objects.create(
-                measure=self.measure,
-                practice=None,
-                pct=pct,
-                percentile=95,
-                month=month
-            )
-            MeasureValue.objects.create(
-                measure=self.measure,
-                practice=practice_with_high_percentiles,
-                pct=pct,
-                percentile=95,
-                month=month
-            )
-            MeasureValue.objects.create(
-                measure=self.measure,
-                practice=practice_with_low_percentiles,
-                pct=pct,
-                percentile=5,
-                month=month
-            )
         self.pct = pct
         self.high_percentile_practice = practice_with_high_percentiles
         self.low_percentile_practice = practice_with_low_percentiles
@@ -215,6 +189,7 @@ class TestBookmarkUtilsPerforming(TestCase):
             pct=self.pct)
         worst_measures = finder.worst_performing_in_period(3)
         self.assertIn(self.measure, worst_measures)
+        self.assertNotIn(self.exotic_measure, worst_measures)
 
     def test_miss_where_not_enough_global_data(self):
         finder = bookmark_utils.InterestingMeasureFinder(
