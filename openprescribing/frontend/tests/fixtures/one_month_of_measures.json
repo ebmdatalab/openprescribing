@@ -294,6 +294,34 @@
     }
   },
   {
+    "model": "frontend.measure",
+    "pk": "cerazette2",
+    "fields": {
+      "name": "Another Cerazette vs. Desogestrel",
+      "title": "",
+      "description": "",
+      "why_it_matters": "",
+      "numerator_short": "",
+      "numerator_columns": "",
+      "numerator_from": "",
+      "numerator_where": "",
+      "denominator_columns": "",
+      "denominator_from": "",
+      "denominator_where": "",
+      "denominator_short": "",
+      "tags": [
+        "core"
+      ],
+      "tags_focus": ["baz", "foo"],
+      "start_date": null,
+      "end_date": null,
+      "url": null,
+      "is_percentage": true,
+      "is_cost_based": true,
+      "low_is_good": true
+    }
+  },
+  {
     "model": "frontend.measurevalue",
     "pk": 1,
     "fields": {
@@ -391,6 +419,37 @@
     "pk": 4,
     "fields": {
       "measure": "cerazette",
+      "pct": "02Q",
+      "practice": "B82010",
+      "month": "2015-09-01",
+      "numerator": 0,
+      "denominator": 0,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": null,
+      "cost_savings": {
+        "10": 0,
+        "20": 0,
+        "30": 0,
+        "50": 0,
+        "40": 0,
+        "60": 0,
+        "70": 0,
+        "90": 0,
+        "80": 0
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 13,
+    "fields": {
+      "measure": "cerazette2",
       "pct": "02Q",
       "practice": "B82010",
       "month": "2015-09-01",

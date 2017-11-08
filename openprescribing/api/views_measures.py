@@ -14,13 +14,19 @@ class MissingParameter(APIException):
     default_detail = 'You are missing a required parameter.'
 
 
+class InvalidMultiParameter(APIException):
+    status_code = 400
+    default_detail = ('You can specify one org and many measures, '
+                      'or one measure and many orgs, but not many of both')
+
+
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measure = request.query_params.get('measure', None)
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    measures = utils.param_to_list(request.query_params.get('measure', None)
+    tags = utils.param_to_list(request.query_params.get('tags', None)
     qs = MeasureGlobal.objects.select_related('measure')
-    if measure:
-        qs = qs.filter(measure_id=measure)
+    if measures:
+        qs = qs.filter(measure_id__in=measures)
     if tags:
         qs = qs.filter(measure__tags__overlap=tags)
     qs = qs.order_by('measure_id', 'month')
@@ -62,7 +68,6 @@ def measure_global(request, format=None):
     d = {
         'measures': [rolled[k] for k in rolled]
     }
-
     return Response(d)
 
 
@@ -144,9 +149,11 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measure = request.query_params.get('measure', None)
+    measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
     params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
@@ -170,9 +177,14 @@ def measure_by_ccg(request, format=None):
                 query += ' OR '
         query += ") AND "
     query += 'mv.practice_id IS NULL '
-    if measure:
-        query += "AND mv.measure_id=%s "
-        params.append(measure)
+    if measures:
+        query += 'AND ('
+        for i, measure in enumerate(measures, 1):
+            query += "mv.measure_id=%s "
+            params.append(measure)
+            if i != len(measures):
+                query += ' OR '
+        query += ') '
     for tag in tags:
         query += "AND %s = ANY(ms.tags) "
         params.append(tag)
@@ -217,11 +229,13 @@ def measure_by_ccg(request, format=None):
 
 @api_view(['GET'])
 def measure_by_practice(request, format=None):
-    measure = request.query_params.get('measure', None)
+    measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))
     if not orgs:
         raise MissingParameter
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
     params = []
     query = 'SELECT mv.month AS date, mv.numerator, mv.denominator, '
     query += 'mv.calc_value, mv.percentile, mv.cost_savings, '
@@ -233,18 +247,26 @@ def measure_by_practice(request, format=None):
     query += "FROM frontend_measurevalue mv "
     query += "JOIN frontend_practice pc ON mv.practice_id=pc.code "
     query += "JOIN frontend_measure ms ON mv.measure_id=ms.id "
-    query += "WHERE "
-    for i, org in enumerate(orgs):
-        if len(org) == 3:
-            query += "mv.pct_id=%s "
-        else:
-            query += "mv.practice_id=%s "
-        if (i != len(orgs) - 1):
-            query += ' OR '
-        params.append(org)
-    if measure:
-        query += "AND mv.measure_id=%s "
-        params.append(measure)
+    query += "WHERE 1 = 1 "
+    if orgs:
+        query += 'AND ('
+        for i, org in enumerate(orgs):
+            if len(org) == 3:
+                query += "mv.pct_id=%s "
+            else:
+                query += "mv.practice_id=%s "
+            if (i != len(orgs) - 1):
+                query += ' OR '
+            params.append(org)
+        query += ') '
+    if measures:
+        query += 'AND ('
+        for i, measure in enumerate(measures, 1):
+            query += "mv.measure_id=%s "
+            params.append(measure)
+            if i != len(measures):
+                query += ' OR '
+        query += ') '
     for tag in tags:
         query += "AND %s = ANY(ms.tags) "
         params.append(tag)

@@ -10,20 +10,41 @@ var utils = {
     panelUrl += options.orgType.toLowerCase() + '/?format=json';
     var urls = {
       panelMeasuresUrl: panelUrl,
-      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json'
+      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json',
     };
-    if (options.orgId) {
-      urls.panelMeasuresUrl += '&org=' + options.orgId;
-    }
-    if (options.tags) {
-      urls.panelMeasuresUrl += '&tags=' + options.tags;
-      urls.globalMeasuresUrl += '&tags=' + options.tags;
-    }
-    if (options.measure) {
-      urls.panelMeasuresUrl += '&measure=' + options.measure;
-      urls.globalMeasuresUrl += '&measure=' + options.measure;
-    }
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'orgId', 'org');
+    urls.panelMeasuresUrl +=  this._getOneOrMore(options, 'tags', 'tags');
+    urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
+    urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     return urls;
+  },
+
+  _getOneOrMore: function(options, optionName, paramName) {
+    /* Returns the value of `optionName` from `options`, encoded as a
+     * query string parameter matching `paramName`.
+
+     If there is an array of `specificMeasures` defined, does the same
+     thing, but joins together values defined in each item of the
+     array with commas.
+    */
+    var result;
+    if (typeof options.specificMeasures !== 'undefined') {
+      var valArray = [];
+      _.each(options.specificMeasures, function(m) {
+        if (m[optionName] && $.inArray(m[optionName], valArray) == -1) {
+          valArray.push(m[optionName]);
+        }
+      });
+      result = valArray.join(',');
+    } else {
+      result = options[optionName];
+    }
+    if (result && result != '') {
+      return '&' + paramName + '=' + result;
+    } else {
+      return '';
+    }
   },
 
   getCentilesAndYAxisExtent: function(globalData, options, centiles) {

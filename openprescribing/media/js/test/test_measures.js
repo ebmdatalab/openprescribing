@@ -36,6 +36,58 @@ describe('Measures', function() {
       expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&measure=ace');
       expect(urls.globalMeasuresUrl).to.equal('/api/1.0/measure/?format=json&measure=ace');
     });
+
+    describe('specificMeasures', function() {
+      it('should get the URL for a measure', function() {
+        var options = {
+          orgType: 'CCG',
+          specificMeasures: [
+            {
+              orgId: null,
+              measure: 'ace'
+            },
+          ],
+        };
+        var urls = mu.getDataUrls(options);
+        expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&measure=ace');
+        expect(urls.globalMeasuresUrl).to.equal('/api/1.0/measure/?format=json&measure=ace');
+      });
+      it('should not repeat orgs', function() {
+        var options = {
+          orgType: 'CCG',
+          specificMeasures: [
+            {
+              orgId: 'XXX',
+              measure: 'ace'
+            },
+            {
+              orgId: 'XXX',
+              measure: 'ace2'
+            },
+          ],
+        };
+        var urls = mu.getDataUrls(options);
+        expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&org=XXX&measure=ace,ace2');
+      });
+      it('should get the URL for more than one measure', function() {
+        var options = {
+          orgType: 'CCG',
+          specificMeasures: [
+            {
+              orgId: null,
+              measure: 'ace'
+            },
+            {
+              orgId: null,
+              measure: 'keppra'
+            },
+          ],
+        };
+        var urls = mu.getDataUrls(options);
+        expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&measure=ace,keppra');
+        expect(urls.globalMeasuresUrl).to.equal('/api/1.0/measure/?format=json&measure=ace,keppra');
+      });
+    });
   });
 
   describe('#getCentilesAndYAxisExtent', function() {
