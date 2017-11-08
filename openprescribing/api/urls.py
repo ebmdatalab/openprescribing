@@ -31,7 +31,6 @@ urlpatterns = [
         name='price_per_unit_api'),
     url(r'^org_details/$', views_org_details.org_details),
     url(r'^bnf_code/$', views_bnf_codes.bnf_codes),
-    url(r'^bnf_search/$', views_bnf_codes.bnf_code_search),
     url(r'^org_code/$', views_org_codes.org_codes),
     url(r'^org_location/$', views_org_location.org_location),
     url(r'^docs/', include('rest_framework_swagger.urls')),

@@ -39,29 +39,6 @@ class TestAPIBNFCodeViews(ApiTestBase):
             url, {}, follow=True, HTTP_ACCEPT='application/json')
         self.assertNotJson(response.content)
 
-    def test_api_view_bnf_search(self):
-        url = '%s/bnf_search?q=beta&format=json' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(content[0]['unique_name'], 'Beta-Adrenoceptor Blocking Drugs')
-        self.assertEqual(content[0]['level'], 'section')
-
-        url = '%s/bnf_search?q=lor&format=json' % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(content[0]['unique_name'], 'Chloroth')
-        self.assertEqual(content[0]['product_name'], 'Chloroth')
-        self.assertEqual(content[0]['level'], 'product')
-        self.assertEqual(content[0]['chemical_name'], 'Chlorothiazide')
-        self.assertEqual(content[0]['para_name'], 'Thiazides And Related Diuretics')
-        self.assertEqual(content[0]['section_name'], 'Diuretics')
-        self.assertEqual(content[0]['chapter_name'], 'Cardiovascular System')
-        self.assertEqual(content[1]['unique_name'], 'Chlortalidone')
-        self.assertEqual(content[1]['level'], 'chemical')
-
-
     def test_api_view_bnf_chemical(self):
         url = '%s/bnf_code?q=lor&format=json' % self.api_prefix
         response = self.client.get(url, follow=True)
