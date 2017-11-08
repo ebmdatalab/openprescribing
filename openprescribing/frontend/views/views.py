@@ -1,7 +1,9 @@
 from lxml import html
-import requests
+from requests.exceptions import HTTPError
 from urllib import urlencode
 from urlparse import urlparse, urlunparse
+import hashlib
+import requests
 import sys
 
 from django.conf import settings
@@ -14,6 +16,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.db.models import Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -26,17 +29,22 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
 from common.utils import valid_date
+from common.utils import get_env_setting
+
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
+from frontend.models import MeasureValue
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
+from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
 
 from mailchimp3 import MailChimp
+
 
 ##################################################
 # BNF SECTIONS
@@ -271,8 +279,19 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
 
-def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+def ccg_home_page(request, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    # find the core measurevalue that is most outlierish
+    extreme_measurevalue = MeasureValue.objects.filter(
+        pct=ccg,
+        practice__isnull=True,
+        measure__tags__contains=['core']).order_by(
+            '-percentile').first()
+    if extreme_measurevalue:
+        extreme_measure = extreme_measurevalue.measure
+    else:
+        extreme_measure = None
+    request.session['came_from'] = request.path
     if request.method == 'POST':
         form = _handleCreateBookmark(
             request,
@@ -283,25 +302,97 @@ def measures_for_one_ccg(request, ccg_code):
             return form
     else:
         form = OrgBookmarkForm(
-            initial={'pct': requested_ccg.pk,
+            initial={'pct': ccg.pk,
                      'email': getattr(request.user, 'email', '')})
     if request.user.is_authenticated():
         signed_up_for_alert = request.user.orgbookmark_set.filter(
-            pct=requested_ccg)
+            pct=ccg)
     else:
         signed_up_for_alert = False
     practices = Practice.objects.filter(
+        ccg=ccg).filter(setting=4).order_by('name')
+    date = _specified_or_last_date(request, 'ppu')
+    total_possible_savings = PPUSaving.objects.filter(
+        date=date,
+        pct=ccg,
+        practice__isnull=True).aggregate(
+            Sum('possible_savings'))['possible_savings__sum']
+    measures_count = Measure.objects.count()
+    context = {
+        'measure': extreme_measure,
+        'measures_count': measures_count,
+        'entity': ccg,
+        'entity_type': 'CCG',
+        'entity_price_per_unit_url': 'ccg_price_per_unit',
+        'measures_for_one_entity_url': 'measures_for_one_ccg',
+        'possible_savings': total_possible_savings,
+        'practices': practices,
+        'date': date,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert,
+    }
+    return render(request, 'entity_home_page.html', context)
+
+
+def practice_home_page(request, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    # find the core measurevalue that is most outlierish
+    extreme_measurevalue = MeasureValue.objects.filter(
+        practice=practice,
+        measure__tags__contains=['core']).order_by(
+            '-percentile').first()
+    if extreme_measurevalue:
+        extreme_measure = extreme_measurevalue.measure
+    else:
+        extreme_measure = None
+    request.session['came_from'] = request.path
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            OrgBookmark,
+            OrgBookmarkForm,
+            'practice')
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = OrgBookmarkForm(
+            initial={'practice': practice.pk,
+                     'email': getattr(request.user, 'email', '')})
+    if request.user.is_authenticated():
+        signed_up_for_alert = request.user.orgbookmark_set.filter(
+            practice=practice)
+    else:
+        signed_up_for_alert = False
+    date = _specified_or_last_date(request, 'ppu')
+    total_possible_savings = PPUSaving.objects.filter(
+        date=date,
+        practice=practice).aggregate(
+            Sum('possible_savings'))['possible_savings__sum']
+    measures_count = Measure.objects.count()
+    context = {
+        'measure': extreme_measure,
+        'measures_count': measures_count,
+        'entity': practice,
+        'entity_type': 'practice',
+        'entity_price_per_unit_url': 'practice_price_per_unit',
+        'measures_for_one_entity_url': 'measures_for_one_practice',
+        'possible_savings': total_possible_savings,
+        'date': date,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert,
+    }
+    return render(request, 'entity_home_page.html', context)
+
+
+def measures_for_one_ccg(request, ccg_code):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
-    alert_preview_action = reverse(
-        'preview-ccg-bookmark', args=[requested_ccg.code])
     context = {
-        'alert_preview_action': alert_preview_action,
         'ccg': requested_ccg,
         'practices': practices,
         'page_id': ccg_code,
-        'form': form,
-        'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
@@ -411,7 +502,9 @@ def analyse(request):
     return render(request, 'analyse.html', context)
 
 
-def mailchimp_subscribe(request, email, first_name, last_name, organisation, job_title):
+def mailchimp_subscribe(
+        request, email, first_name, last_name,
+        organisation, job_title):
     del(request.session['newsletter_email'])
     email_hash = hashlib.md5(email).hexdigest()
     data = {
@@ -473,7 +566,8 @@ def _handleCreateBookmark(request, subject_class,
             # alerts without having to reconfirm by email.
             emailaddress = EmailAddress.objects.filter(user=user)
             if user == request.user:
-                kwargs['approved'] = emailaddress.filter(verified=True).exists()
+                kwargs['approved'] = emailaddress.filter(
+                    verified=True).exists()
             else:
                 kwargs['approved'] = False
                 emailaddress.update(verified=False)

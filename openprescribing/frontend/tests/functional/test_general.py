@@ -7,6 +7,8 @@ from selenium_base import SeleniumTestCase
 
 
 class GeneralFrontendTest(SeleniumTestCase):
+    # These tests run against a MockAPIServer started by the
+    # custom_runner
     fixtures = ['functional_test_data']
 
     def test_menu_dropdown_on_doc_page(self):
@@ -27,6 +29,7 @@ class GeneralFrontendTest(SeleniumTestCase):
 
     def test_menu_dropdown(self):
         for url in ['/ccg/03Q/',
+                    '/ccg/03Q/measures/',
                     '/practice/P87629/',
                     '/measure/cerazette/',
                     '/chemical/0202010D0/',
@@ -93,11 +96,11 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.find_by_xpath('//ul[@id="select2-orgIds-results"]//li')
 
     def test_ccg_measures_sorting(self):
-        url = self.live_server_url + '/ccg/02Q/'
+        url = self.live_server_url + '/ccg/02Q/measures/'
         self.browser.get(url)
         # The default should be sorting by percentile, then id
         self.assertEqual(self.find_by_xpath(
-            "//div[@id='charts']/div[1]").get_attribute("id"),
+            "//div[@id='charts']/div[2]").get_attribute("id"),
                          'measure_cerazette')
 
         # Now click to sort by potential savings
@@ -113,7 +116,7 @@ class GeneralFrontendTest(SeleniumTestCase):
                          'measure_keppra')
 
     def test_ccg_measures_tags(self):
-        url = self.live_server_url + '/ccg/02Q/?tags=foobar'
+        url = self.live_server_url + '/ccg/02Q/measures/?tags=foobar'
         self.browser.get(url)
         # nothing is tagged foobar, so should return the text expected
         # when no measures are shown
@@ -123,7 +126,7 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//p[contains(text(), 'prescribed on any')]"))
 
     def test_ccg_measures_explore_link(self):
-        url = self.live_server_url + '/ccg/02Q/'
+        url = self.live_server_url + '/ccg/02Q/measures/'
         self.browser.get(url)
         measure = self.find_by_xpath(
             "//div[@id='measure_keppra']")

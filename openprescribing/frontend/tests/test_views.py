@@ -1,4 +1,5 @@
 from mock import patch
+import datetime
 import re
 from urlparse import parse_qs, urlparse
 
@@ -152,6 +153,7 @@ class TestAlertViews(TransactionTestCase):
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
 
+
     @patch('frontend.views.views.mailchimp_subscribe')
     def test_ccg_bookmark_newsletter(self, mailchimp):
         email = 'a@a.com'
@@ -270,6 +272,30 @@ class TestAlertViews(TransactionTestCase):
         self.assertTrue(response.context['user'].is_active)
 
 
+class TestFrontendHomepageViews(TransactionTestCase):
+    fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog']
+
+    def test_call_view_ccg_homepage(self):
+        response = self.client.get('/ccg/02Q/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entity_home_page.html')
+        self.assertEqual(response.context['measure'].id, 'cerazette')
+        self.assertEqual(response.context['measures_count'], 1)
+        self.assertEqual(response.context['entity'].code, '02Q')
+        self.assertEqual(response.context['entity_type'], 'CCG')
+        self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
+
+    def test_call_view_practice_homepage(self):
+        response = self.client.get('/practice/C84001/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entity_home_page.html')
+        self.assertEqual(response.context['measure'].id, 'cerazette')
+        self.assertEqual(response.context['measures_count'], 1)
+        self.assertEqual(response.context['entity'].code, 'C84001')
+        self.assertEqual(response.context['entity_type'], 'practice')
+        self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
+
+
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
                 'practices', 'prescriptions', 'measures', 'importlog']
@@ -384,16 +410,6 @@ class TestFrontendViews(TransactionTestCase):
         ccgs = doc('a.ccg')
         self.assertEqual(len(ccgs), 2)
 
-    def test_call_view_ccg_section(self):
-        response = self.client.get('/ccg/03V/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
-        doc = pq(response.content)
-        title = doc('h1')
-        self.assertEqual(title.text(), 'CCG: NHS Corby')
-        practices = doc('#practices li')
-        self.assertEqual(len(practices), 1)
-
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
         self.assertEqual(response.status_code, 200)
@@ -412,10 +428,10 @@ class TestFrontendViews(TransactionTestCase):
     def test_call_view_practice_section(self):
         response = self.client.get('/practice/P87629/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measures_for_one_practice.html')
+        self.assertTemplateUsed(response, 'entity_home_page.html')
         doc = pq(response.content)
         title = doc('h1')
-        self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(title.text(), '1/ST Andrews Medical Practice')
         lead = doc('#intro p:first')
         self.assertEqual(
             lead.text(),
@@ -429,7 +445,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertTemplateUsed(response, 'measure_for_one_practice.html')
 
     def test_call_view_measure_ccg(self):
-        response = self.client.get('/ccg/03V/')
+        response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
         doc = pq(response.content)
@@ -439,12 +455,12 @@ class TestFrontendViews(TransactionTestCase):
         self.assertEqual(len(practices), 1)
 
     def test_call_view_measure_practice(self):
-        response = self.client.get('/practice/P87629/')
+        response = self.client.get('/practice/P87629/measures/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measures_for_one_practice.html')
         doc = pq(response.content)
         title = doc('h1')
-        self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(title.text(), '1/ST Andrews Medical Practice')
 
     def test_call_view_measure_practices_in_ccg(self):
         response = self.client.get('/ccg/03V/cerazette/')
@@ -455,14 +471,6 @@ class TestFrontendViews(TransactionTestCase):
         t = ('Cerazette vs. Desogestrel by GP practices '
              'in NHS Corby')
         self.assertEqual(title.text(), t)
-
-    def test_call_view_practice_redirect(self):
-        response = self.client.get('/practice/P87629/measures/')
-        self.assertEqual(response.status_code, 301)
-
-    def test_call_view_ccg_redirect(self):
-        response = self.client.get('/ccg/03V/measures/')
-        self.assertEqual(response.status_code, 301)
 
     def test_all_measures(self):
         response = self.client.get('/measure/')

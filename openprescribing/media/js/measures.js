@@ -68,9 +68,9 @@
 
           var html = '';
           _.each(chartData, function(d) {
-            html += panelTemplate(d);
+            html = panelTemplate(d);
+            $(d.chartContainerId).append(html);
           });
-          $(_this.el.charts).html(html);
           _.each(chartData, function(d, i) {
             if (i < _this.graphsToRenderInitially) {
               var chOptions = mu.getGraphOptions(d,
@@ -80,7 +80,7 @@
               }
             }
           });
-
+          $('.loading-wrapper').hide();
           // On long pages, render remaining graphs only after scroll,
           // to stop the page choking on first load.
           $(window).scroll(function() {

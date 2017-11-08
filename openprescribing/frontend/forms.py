@@ -37,6 +37,7 @@ class BookmarkListForm(forms.Form):
         else:
             del self.fields['search_bookmarks']
 
+
 OPTIONS = (
     ('newsletter', ' Newsletter'),
     ('alerts', ' Monthly alerts'),
@@ -101,7 +102,6 @@ class OrgBookmarkForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         choices=OPTIONS,
         label='')
-
 
     def clean(self):
         """Turn entity ids into Practice or PCT instances

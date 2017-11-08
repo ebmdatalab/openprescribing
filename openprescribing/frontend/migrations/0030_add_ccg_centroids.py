@@ -15,7 +15,7 @@ def set_centroids_without_args(*args):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('frontend', '0029_merge'),
+        ('frontend', '0031_auto_20171004_1330'),
     ]
 
     operations = [

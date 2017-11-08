@@ -13,7 +13,7 @@ var utils = {
       globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json',
     };
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'orgId', 'org');
-    urls.panelMeasuresUrl +=  this._getOneOrMore(options, 'tags', 'tags');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
@@ -29,7 +29,9 @@ var utils = {
      array with commas.
     */
     var result;
-    if (typeof options.specificMeasures !== 'undefined') {
+    if (typeof options.specificMeasures === 'undefined') {
+      result = options[optionName];
+    } else {
       var valArray = [];
       _.each(options.specificMeasures, function(m) {
         if (m[optionName] && $.inArray(m[optionName], valArray) == -1) {
@@ -37,14 +39,11 @@ var utils = {
         }
       });
       result = valArray.join(',');
-    } else {
-      result = options[optionName];
     }
-    if (result && result != '') {
+    if (result && result !== '') {
       return '&' + paramName + '=' + result;
-    } else {
-      return '';
     }
+    return '';
   },
 
   getCentilesAndYAxisExtent: function(globalData, options, centiles) {
@@ -92,6 +91,14 @@ var utils = {
       panelData = _this._getSavingAndPercentilePerItem(panelData,
                                                        numMonths);
     }
+    _.each(panelData, function(d) {
+      if (options.specificMeasures) {
+        d.chartContainerId = _.findWhere(
+          options.specificMeasures, {measure: d.id}).chartContainerId;
+      } else {
+        d.chartContainerId = '#charts';
+      }
+    });
     return panelData;
   },
 
@@ -339,7 +346,13 @@ var utils = {
       // measure-by-all-practices-in-CCG page.
       chartTitle = d.name;
       chartTitleUrl = '/ccg/';
-      chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
+      if (options.specificMeasures) {
+        var thisMeasure = _.findWhere(
+          options.specificMeasures, {measure: d.id});
+        chartTitleUrl += thisMeasure.parentOrg || thisMeasure.orgId;
+      } else {
+        chartTitleUrl += options.parentOrg || options.orgId;
+      }
       chartTitleUrl += '/' + d.id;
       measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = '/measure/' + d.id;

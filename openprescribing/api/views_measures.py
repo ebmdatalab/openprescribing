@@ -22,8 +22,8 @@ class InvalidMultiParameter(APIException):
 
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measures = utils.param_to_list(request.query_params.get('measure', None)
-    tags = utils.param_to_list(request.query_params.get('tags', None)
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    tags = utils.param_to_list(request.query_params.get('tags', None))
     qs = MeasureGlobal.objects.select_related('measure')
     if measures:
         qs = qs.filter(measure_id__in=measures)
@@ -90,8 +90,7 @@ def measure_numerators_by_org(request, format=None):
             'items', 'total_items')
         numerator_where = m.numerator_where.replace(
             'bnf_code', 'presentation_code').replace(
-                'bnf_name', 'pn.name'
-            )
+                'bnf_name', 'pn.name')
         # There is redundancy in the column names, so we can support
         # various flavours of `WHERE` clause from the measure
         # definitions
@@ -135,8 +134,7 @@ def measure_numerators_by_org(request, format=None):
                      org_selector,
                      org, this_month.strftime('%Y-%m-%d'),
                      numerator_where,
-                     org_selector
-                 )
+                     org_selector)
         data = utils.execute_query(query, [])
     else:
         data = []

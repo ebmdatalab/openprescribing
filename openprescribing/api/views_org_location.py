@@ -4,6 +4,7 @@ import view_utils as utils
 from django.http import HttpResponse
 from django.core.serializers import serialize
 
+
 @api_view(['GET'])
 def org_location(request, format=None):
     org_type = request.GET.get('org_type', '')
