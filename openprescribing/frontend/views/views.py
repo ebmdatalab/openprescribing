@@ -36,6 +36,7 @@ from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
 
+from mailchimp3 import MailChimp
 
 ##################################################
 # BNF SECTIONS
@@ -329,31 +330,62 @@ def measure_for_one_practice(request, measure, practice_code):
     return render(request, 'measure_for_one_practice.html', context)
 
 
-def last_bookmark(request):
+def finalise_signup(request):
     """Redirect the logged in user to the CCG they last bookmarked, or if
     they're not logged in, just go straight to the homepage -- both
     with a message.
 
+    If there is a newsletter_email key, first redirect them to a page
+    where we can capture more metadata about the user.
+
     """
-    if request.user.is_authenticated():
-        try:
-            last_bookmark = request.user.profile.most_recent_bookmark()
-            next_url = last_bookmark.dashboard_url()
-            messages.success(
-                request,
-                mark_safe("Thanks, you're now subscribed to monthly "
-                          "alerts about <em>%s</em>!" % last_bookmark.topic()))
-        except AttributeError:
-            next_url = 'home'
-            messages.success(
-                request,
-                "Your account is activated, but you are not subscribed "
-                "to any monthly alerts!")
-        return redirect(next_url)
+    if 'newsletter_email' in request.POST:
+        # Prompt the user for their metadata
+        return render(request, 'newsletter_signup.html')
     else:
-        messages.success(
-            request, "Thanks, you're now subscribed to monthly alerts!")
-        return redirect('home')
+        next_url = None
+        if request.method == 'POST':
+            if 'newsletter_email' in request.session:
+                # They've signed up to the newsletter
+                mailchimp_subscribe(
+                    request,
+                    request.POST['email'], request.POST['first_name'],
+                    request.POST['last_name'], request.POST['organisation'],
+                    request.POST['job_title']
+                )
+                messages.success(
+                    request,
+                    'You have successfully signed up for the newsletter.')
+        if 'alerts_requested' in request.session:
+            # Their first alert bookmark signup
+            messages.success(
+                request, "Thanks, you're now subscribed to monthly alerts.")
+        if request.user.is_authenticated():
+            # The user is signing up to at least the second bookmark
+            # in this session.
+            try:
+                last_bookmark = request.user.profile.most_recent_bookmark()
+                next_url = last_bookmark.dashboard_url()
+                messages.success(
+                    request,
+                    mark_safe("You're now subscribed to monthly "
+                              "alerts about <em>%s</em>." %
+                              last_bookmark.topic()))
+            except AttributeError:
+                # We've reached a strange place where they activated
+                # an account but didn't subcribe. I'm not sure if/how
+                # we would ever get to this bit?
+                next_url = 'home'
+                messages.success(
+                    request,
+                    "Your account is activated, but you are not subscribed "
+                    "to any monthly alerts!")
+            return redirect(next_url)
+        else:
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect(request.session.get('came_from', 'home'))
 
 
 def analyse(request):
@@ -379,50 +411,96 @@ def analyse(request):
     return render(request, 'analyse.html', context)
 
 
+def mailchimp_subscribe(request, email, first_name, last_name, organisation, job_title):
+    del(request.session['newsletter_email'])
+    email_hash = hashlib.md5(email).hexdigest()
+    data = {
+        'email_address': email,
+        'status': 'subscribed',
+        'merge_fields': {
+            'FNAME': first_name,
+            'LNAME': last_name,
+            'MMERGE3': organisation,
+            'MMERGE4': job_title
+        }
+    }
+    client = MailChimp(
+        get_env_setting('MAILCHIMP_USER'),
+        get_env_setting('MAILCHIMP_API_KEY'))
+    try:
+        client.lists.members.get(
+            list_id=settings.MAILCHIMP_LIST_ID,
+            subscriber_hash=email_hash)
+    except HTTPError:
+        try:
+            client.lists.members.create(
+                list_id=settings.MAILCHIMP_LIST_ID, data=data)
+        except HTTPError:
+            # things like blacklisted emails, etc
+            pass
+
+
 def _handleCreateBookmark(request, subject_class,
                           subject_form_class,
                           *subject_field_ids):
     form = subject_form_class(request.POST)
     if form.is_valid():
         email = form.cleaned_data['email']
-        try:
-            user = User.objects.create_user(
-                username=email, email=email)
-        except IntegrityError:
-            user = User.objects.get(username=email)
-        user = authenticate(key=user.profile.key)
-        kwargs = {
-            'user': user
-        }
-        for field in subject_field_ids:
-            kwargs[field] = form.cleaned_data[field]
-        # An unverified account can only create unapproved bookmarks.
-        # When an account is verified, all its bookmarks are
-        # approved. Whenever someone tries to add a bookmark for
-        # someone else's email address (or they're not logged in),
-        # that email address is marked as unverified again.  In this
-        # way we can allow people who remain logged in to add several
-        # alerts without having to reconfirm by email.
-        emailaddress = EmailAddress.objects.filter(user=user)
-        if user == request.user:
-            kwargs['approved'] = emailaddress.filter(verified=True).exists()
+        if 'newsletter' in form.cleaned_data['newsletters']:
+            # add a session variable. Then handle it in the next page,
+            # which is either the verification page, or a dedicated
+            # "tell us a bit more" page.
+            request.session['newsletter_email'] = email
+        if 'alerts' in form.cleaned_data['newsletters']:
+            request.session['alerts_requested'] = 1
+            try:
+                user = User.objects.create_user(
+                    username=email, email=email)
+            except IntegrityError:
+                user = User.objects.get(username=email)
+            user = authenticate(key=user.profile.key)
+            kwargs = {
+                'user': user
+            }
+            for field in subject_field_ids:
+                kwargs[field] = form.cleaned_data[field]
+            # An unverified account can only create unapproved bookmarks.
+            # When an account is verified, all its bookmarks are
+            # approved. Whenever someone tries to add a bookmark for
+            # someone else's email address (or they're not logged in),
+            # that email address is marked as unverified again.  In this
+            # way we can allow people who remain logged in to add several
+            # alerts without having to reconfirm by email.
+            emailaddress = EmailAddress.objects.filter(user=user)
+            if user == request.user:
+                kwargs['approved'] = emailaddress.filter(verified=True).exists()
+            else:
+                kwargs['approved'] = False
+                emailaddress.update(verified=False)
+            subject_class.objects.get_or_create(**kwargs)
+            if hasattr(request, 'user'):
+                # Log the user out. We don't use Django's built-in logout
+                # mechanism because that clears the entire session, too,
+                # and we want to know if someone's logged in previously in
+                # this session.
+                request.user = AnonymousUser()
+                for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
+                    if k in request.session:
+                        del(request.session[k])
+            # Users that are not verified are redirected by
+            # django-allauth to the template at
+            # `templates/account/verification_sent.html` (and are sent
+            # a verification email).  Users who are already verified
+            # are redirected to LOGIN_REDIRECT_URL.
+
+            # this means we want to add "who are you" to
+            # verification_sent and also to its own page.
+            return perform_login(
+                request, user,
+                app_settings.EmailVerificationMethod.MANDATORY,
+                signup=True)
         else:
-            kwargs['approved'] = False
-            emailaddress.update(verified=False)
-        subject_class.objects.get_or_create(**kwargs)
-        if hasattr(request, 'user'):
-            # Log the user out. We don't use Django's built-in logout
-            # mechanism because that clears the entire session, too,
-            # and we want to know if someone's logged in previously in
-            # this session.
-            request.user = AnonymousUser()
-            for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-                if k in request.session:
-                    del(request.session[k])
-        return perform_login(
-            request, user,
-            app_settings.EmailVerificationMethod.MANDATORY,
-            signup=True)
+            return redirect('newsletter-signup')
     return form
 
 

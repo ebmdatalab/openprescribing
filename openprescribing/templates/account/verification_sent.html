@@ -11,7 +11,17 @@
  <h3>We've already sent you an email with a confirmation link. Please check your email to confirm all the alerts you've signed up for today.</h3>
  {% else %}
  <h3>Check your email and click the confirmation link.</h3>
+ {% endif %}
+
+{% if request.session.newsletter_email %}
+ {% include '_newsletter_signup_form.html' %}
+ {% else %}
+ <form action="{% url 'finalise-signup' %}" method="post">
+   {% csrf_token %}
+   <button type="submit" class="btn btn-default">Continue</button>
+ </form>
 {% endif %}
-<button type="button" class="btn btn-primary" onclick="window.history.go(-1); return false;">Back to previous page</button>
+
+
 
 {% endblock %}

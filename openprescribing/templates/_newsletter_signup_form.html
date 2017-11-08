@@ -1,0 +1,22 @@
+<p>For our newsletter, optionally tell us a little more about yourself:</p>
+<form action="{% url 'finalise-signup' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="email" value="{{ request.session.newsletter_email }}">
+  <div class="form-group">
+    <label for="first_name">First name</label>
+    <input type="text" class="form-control" id="first_name" name="first_name">
+  </div>
+  <div class="form-group">
+    <label for="last_name">Last name</label>
+    <input type="text" class="form-control" id="last_name" name="last_name">
+  </div>
+  <div class="form-group">
+    <label for="organisation">Organisation</label>
+    <input type="text" class="form-control" id="organisation" name="organisation">
+  </div>
+  <div class="form-group">
+    <label for="job_title">Job title</label>
+    <input type="text" class="form-control" id="job_title" name="job_title">
+  </div>
+  <button type="submit" class="btn btn-default">Continue</button>
+</form>

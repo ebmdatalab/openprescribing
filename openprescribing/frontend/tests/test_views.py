@@ -1,3 +1,4 @@
+from mock import patch
 import re
 from urlparse import parse_qs, urlparse
 
@@ -16,10 +17,19 @@ from allauth.account.models import EmailAddress
 
 class TestAlertViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures', 'importlog']
 
-    def _post_org_signup(self, entity_id, email='foo@baz.com'):
-        form_data = {'email': email}
+    def _post_org_signup(self, entity_id, email='foo@baz.com',
+                         alert=True, newsletter=False):
+        form_data = {
+            'email': email,
+        }
+        newsletter_types = []
+        if newsletter:
+            newsletter_types.append('newsletter')
+        if alert:
+            newsletter_types.append('alerts')
+        form_data['newsletters'] = newsletter_types
         if len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
             form_data['pct'] = entity_id
@@ -29,8 +39,15 @@ class TestAlertViews(TransactionTestCase):
         return self.client.post(
             url, form_data, follow=True)
 
-    def _post_search_signup(self, url, name, email='foo@baz.com'):
+    def _post_search_signup(self, url, name, email='foo@baz.com',
+                            alert=True, newsletter=False):
         form_data = {'email': email}
+        newsletter_types = []
+        if newsletter:
+            newsletter_types.append('newsletter')
+        if alert:
+            newsletter_types.append('alerts')
+        form_data['newsletters'] = newsletter_types
         form_data['url'] = url
         form_data['name'] = name
         return self.client.post(
@@ -81,6 +98,30 @@ class TestAlertViews(TransactionTestCase):
         # But it's  not approved (until they log in)
         self.assertFalse(bookmark.approved)
 
+    @patch('frontend.views.views.mailchimp_subscribe')
+    def test_search_bookmark_newsletter(self, mailchimp):
+        email = 'a@a.com'
+        response = self._post_search_signup('stuff', '%7Emysearch', email=email, newsletter=True)
+        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+        self.assertContains(
+            response, "optionally tell us a little more")
+        # finish the signup
+        session = self.client.session
+        session['newsletter_email'] = 1
+        session.save()
+        response = self.client.post('/finalise_signup/', {
+            'email': 'foo@baz.com',
+            'first_name': '',
+            'last_name': '',
+            'job_title': '',
+            'organisation': ''}, follow=True)
+        mailchimp.assert_called()
+        self.assertContains(
+            response,
+            "You have successfully signed up for the newsletter")
+
     def test_search_follow_email_link(self):
         self._post_search_signup('stuff', 'mysearch')
         confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
@@ -105,9 +146,36 @@ class TestAlertViews(TransactionTestCase):
         self.assertTrue(response.context['user'].is_anonymous())
         self.assertContains(
             response, "Check your email and click the confirmation link")
+        self.assertNotContains(
+            response, "optionally tell us a little more")  # newsletter signup
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
+
+    @patch('frontend.views.views.mailchimp_subscribe')
+    def test_ccg_bookmark_newsletter(self, mailchimp):
+        email = 'a@a.com'
+        response = self._post_org_signup('03V', email=email, newsletter=True)
+        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+        self.assertContains(
+            response, "optionally tell us a little more")
+        # finish the signup
+        session = self.client.session
+        session['newsletter_email'] = 1
+        session.save()
+        response = self.client.post('/finalise_signup/', {
+            'email': 'foo@baz.com',
+            'first_name': '',
+            'last_name': '',
+            'job_title': '',
+            'organisation': ''}, follow=True)
+        mailchimp.assert_called()
+        self.assertContains(
+            response,
+            "You have successfully signed up for the newsletter")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
 
     def test_ccg_bookmark_added_when_already_logged_in(self):
         email = 'a@a.com'
@@ -115,7 +183,7 @@ class TestAlertViews(TransactionTestCase):
         response = self._post_org_signup('03V', email=email)
         self.assertEqual(response.context['user'].email, email)
         self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
-        self.assertContains(response, "Thanks, you're now subscribed")
+        self.assertContains(response, "You're now subscribed")
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         self.assertTrue(OrgBookmark.objects.last().approved)
@@ -150,6 +218,13 @@ class TestAlertViews(TransactionTestCase):
     def test_ccg_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
         self._post_org_signup('03V')
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, '03V')
+
+    def test_ccg_newsletter_signup(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup('03V', newsletter=False)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, '03V')
