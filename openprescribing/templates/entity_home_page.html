@@ -46,7 +46,7 @@
       <h3>Standard measures</h3>
       <div class="row">
         <div class="col-md-12">
-          <p>{{ measures_count }} standard measures compare performance across England. This graph shows the most extreme for this {{ entity_type }}.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
+          <p class="measure-description">Our {{ measures_count }} standard measures compare performance across England. This graph shows the most extreme for this {{ entity_type }}.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
         </div>
         <div class="col-md-12">
           <div class="charts" id="top-measure-container" class="row">
@@ -61,7 +61,7 @@
       <h3>NHS low priority measures</h3>
       <div class="row">
         <div class="col-md-12">
-          <p>Measures for low-value items that NHS England suggest should not routinely prescribed in primary care. This graph is the overall position for this {{ entity_type }} (excluding herbal medicines).  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
+          <p class="measure-description">Measures for low-value items that NHS England suggest should not routinely prescribed in primary care. This graph is the overall position for this {{ entity_type }} (excluding herbal medicines).  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
         </div>
         <div class="col-md-12">
           <div class="charts" id="lpzomnibus-container" class="row">
