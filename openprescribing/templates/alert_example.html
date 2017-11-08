@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}FAQs{% endblock %}
+{% block active_class %}more{% endblock %}
+
+{% block content %}
+
+<h1>Example monthly alert email</h1>
+<p>Each month, when the latest prescribing data is released (i.e. with
+a lag of 6 - 8 weeks), we will send you a customised email
+highlighting measures where the specified CCG or practice is an
+outlier.  They look something like this:
+</p>
+
+<img src="/static/img/alert-example.png" >
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}
