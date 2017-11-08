@@ -38,7 +38,8 @@
       var selectedMeasure = window.location.hash;
       _this.allGraphsRendered = false;
       _this.graphsToRenderInitially = 24;
-      var options = measureData; // defined in handlebars templates
+      var options = measureData; // defined in <script> block within django templates
+      options.maxZoom = typeof maxZoom !== 'undefined' ? maxZoom : 12;
       if (!options.rollUpBy) {
         options.rollUpBy = (options.measure) ? 'org_id' : 'measure_id';
       }
@@ -133,18 +134,24 @@
 
     setUpMap: function(options) {
       var _this = this;
+      var url;
       if ($('#' + _this.el.mapPanel).length) {
-        var map = L.mapbox.map(_this.el.mapPanel,
-          'mapbox.streets').setView([52.905, -1.79], 6);
+        var map = L.mapbox.map(
+          _this.el.mapPanel,
+          'mapbox.streets', {zoomControl: false}).setView([52.905, -1.79], 6);
         map.scrollWheelZoom.disable();
-        var url = config.apiHost + '/api/1.0/org_location/?org_type=' +
-          options.orgType.toLowerCase();
+        if (options.orgType.toLowerCase() == 'ccg') {
+          url = config.apiHost + '/api/1.0/org_location/?centroids=1&org_type=ccg';
+        } else {
+          url = config.apiHost + '/api/1.0/org_location/?centroids=1&org_type=practice';
+        }
+
         url += '&q=' + options.orgId;
         var layer = L.mapbox.featureLayer()
-        .loadURL(url)
-        .on('ready', function() {
+            .loadURL(url)
+            .on('ready', function() {
           if (layer.getBounds().isValid()) {
-            map.fitBounds(layer.getBounds(), {maxZoom: 12});
+            map.fitBounds(layer.getBounds(), {maxZoom: options.maxZoom});
             layer.setStyle({fillColor: '#ff00ff',
               fillOpacity: 0.2,
               weight: 0.5,
