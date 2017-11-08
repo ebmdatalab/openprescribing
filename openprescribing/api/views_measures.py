@@ -44,7 +44,7 @@ def _numerator_can_be_queried(measuredata):
 
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measures = request.query_params.get('measure', "").split(',')
+    measures = utils.param_to_list(request.query_params.get('measure', None)
     tags = request.query_params.get('tags', None)
     params = []
     query = 'SELECT mg.month AS date, mg.numerator,  '
@@ -171,7 +171,7 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measures = request.query_params.get('measure', '').split(',')
+    measures = utils.param_to_list(request.query_params.get('measure', None)
     orgs = utils.param_to_list(request.query_params.get('org', []))
     tags = request.query_params.get('tags', None)
     params = []
