@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
+from frontend.bq_schemas import PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
@@ -490,7 +491,10 @@ class BigqueryFunctionalTests(TestCase):
                 'prescribing_bigquery_fixture.csv'
             )
             client = Client('measures')
-            table = client.get_table(settings.BQ_PRESCRIBING_TABLE_NAME)
+            table = client.get_or_create_table(
+                settings.BQ_PRESCRIBING_TABLE_NAME,
+                PRESCRIBING_SCHEMA
+            )
             table.insert_rows_from_csv(prescribing_fixture_path)
         month = '2015-09-01'
         measure_id = 'cerazette'
