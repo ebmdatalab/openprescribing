@@ -3,25 +3,82 @@
 
 {% block title %}Home{% endblock %}
 {% block active_class %}home{% endblock %}
-{% block container_class %}home{% endblock %}
 
 {% block content %}
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
-<center>
+
 <h1>Explore England's prescribing data</h1>
 
-<div class="row">
-  <div class="col md-8">
-<form>
-  <h3>Search for a practice or CCG:</h3>
 
+<div class="row">
+
+<div class="col-md-9">
+  <p>Every month, the NHS in England publishes <a href="http://content.digital.nhs.uk/gpprescribingdata">anonymised data</a> about the drugs prescribed by GPs. But the raw data files are large and unwieldy, with more than 700 million rows. We're making it easier for GPs, managers and everyone to explore - supporting safer, more efficient prescribing.</p>
+
+  <p class="alert alert-info">Got a tricky query for the data? We can provide custom extracts, we know the data well, and we’re keen to collaborate with academics and clinicians. <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">Get in touch</a> to find out more.</p>
+
+  <p>How to cite: If you use our data or graphs, please cite as <em>OpenPrescribing.net, EBM DataLab, University of Oxford, 2017</em> so that others can find us and use our tools.</p>
+
+<h2>Explore the data</h2>
+
+
+<div class="row">
+
+<div class="col-lg-12 col-md-12 col-sm-12">
+<h3>Look at your GP practice or CCG</h3>
+<p>We've identified standard <a href="https://openprescribing.net/measure/">prescribing measures</a>, and created dashboards for every GP practice and Clinical Commissioning Group in the country.</p>
+<form>
 <div class="bigdrop">
 <select style="width: 100%" id="homeOrg">
 </select>
 </div>
-  </div>
-  </div>
-</center>
+</form>
+</div>
+
+
+</div>
+
+<div class="row">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<h3>Run your own analyses</h3>
+<p>If you have a burning question about the prescribing data, use our flexible query form to get the data you need, quickly and easily.</p>
+<a href="{% url 'analyse' %}" class="btn btn-lg btn-info">Start analysing &raquo;</a>
+</div>
+
+<div class="col-lg-6 col-md-6 col-sm-6">
+<h3>Spot national trends</h3>
+<p>See how national prescribing trends have changed since 2010, for any drug or <a href="https://en.wikipedia.org/wiki/British_National_Formulary">BNF section</a> that interests you.</p>
+<a href="{% url 'all_chemicals' %}" class="btn btn-lg btn-info">Find a drug &raquo;</a>
+</div>
+</div>
+
+<!--[if !IE 8]><!-->
+<h2>Find out more</h2>
+
+<p>Ben Goldacre explains what the site does and why we built it.</p>
+
+<div class="embed-responsive embed-responsive-16by9" style="border: 1px solid #ccc">
+  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/U-hvuEfUUOM"></iframe>
+</div>
+
+<hr/>
+<!--<![endif]-->
+
+<p>Read more <a href="{% url 'about' %}">about the site</a> and see our <a href="{% url 'faq' %}">FAQs</a>. In particular, note our <a href="{% url 'faq' %}#cite">guidelines for using this data</a>.</p>
+
+</div>
+
+<div class="col-md-3">
+  {% include '_mailchimp_signup.html' %}
+</div>
+
+<hr/>
+
+
+<hr />
+
+
 {% endblock %}
 
 {% block extra_js %}
