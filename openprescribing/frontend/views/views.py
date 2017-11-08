@@ -295,7 +295,7 @@ def ccg_home_page(request, ccg_code):
         'form': form,
         'signed_up_for_alert': signed_up_for_alert,
     }
-    return render(request, 'ccg_home_page.html', context)
+    return render(request, 'entity_home_page.html', context)
 
 
 def practice_home_page(request, practice_code):
@@ -342,7 +342,7 @@ def practice_home_page(request, practice_code):
         'form': form,
         'signed_up_for_alert': signed_up_for_alert,
     }
-    return render(request, 'practice_home_page.html', context)
+    return render(request, 'entity_home_page.html', context)
 
 
 def measures_for_one_ccg(request, ccg_code):
