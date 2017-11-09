@@ -22,6 +22,7 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
+  "tags": ["core"],
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
   ],

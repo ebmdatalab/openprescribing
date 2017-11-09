@@ -2,7 +2,11 @@
 -r test.txt
 django-debug-toolbar
 django-debug-toolbar-template-timings
-when-changed
+django-dotenv
 django-extensions
-werkzeug
+fabric==1.13.1
 flake8
+graphviz
+pip-tools
+werkzeug
+when-changed

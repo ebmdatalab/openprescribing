@@ -1,0 +1,19 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript">
+  $('#numerator_breakdown').DataTable(
+    {
+      "ajax": {
+        "url": "{{ API_HOST }}/api/1.0/measure_numerators_by_org/?org={% if ccg %}{{ ccg.code }}{% else %}{{ practice.code }}{% endif %}&measure={{ measure.id }}&format=json",
+        "dataSrc": ""
+      },
+      "order": [[1, "desc"]],
+      "columns": [
+        {"data": "presentation_name"},
+        {"data": "total_items",  "className": "text-right", render: $.fn.dataTable.render.number(',')},
+        {"data": "quantity", "className": "text-right", render: $.fn.dataTable.render.number(',')},
+        {"data": "cost", "className": "text-right", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+      ]
+    }
+  );
+</script>

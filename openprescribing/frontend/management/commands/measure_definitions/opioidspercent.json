@@ -20,12 +20,13 @@
     "the <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware/structured-approach-to-prescribing/dose-equivalents-and-changing-opioids'> ",
     "tables available </a> from the Faculty of Pain Medicine, Royal College of Anaesthetists."
   ],
-  "numerator_short": "High dose opiate items",
-  "denominator_short": "All opiate items",
+  "numerator_short": "High dose opioid items",
+  "denominator_short": "All opioid items",
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
+  "tags": ["core"],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],

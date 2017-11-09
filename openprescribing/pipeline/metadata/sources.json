@@ -22,9 +22,9 @@
     "ccg_boundaries": {
         "title": "Boundaries of CCGs in mapinfo format",
         "publisher": "NHS England",
-        "publication_schedule": "irregular (less than yealy)",
-        "index_url": "http://www.england.nhs.uk/resources/ccg-maps/",
-        "notes": "Currently using version as of 2015",
+        "publication_schedule": "irregular (less than yearly)",
+        "index_url": "http://geoportal.statistics.gov.uk/datasets/clinical-commissioning-groups-april-2017-super-generalised-clipped-boundaries-in-england-v4",
+        "notes": "Currently using version as of April 2017. If a new version of this file is found by the pipeline, the importer for this will fail without custom intervention; see the comments in the file (`import_ccg_boundaries`) for more info and carry out these steps before continuing.",
         "core_data": true
     },
     "ccg_details": {
@@ -43,6 +43,23 @@
         "publication_schedule": "quarterly",
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/report/viewReportList.do?reportMenuItemId=211",
         "requires_captcha": true
+    },
+    "dmd": {
+      "title": "Dictionary of medicines and devices (dm+d)" ,
+      "description": "The dm+d is a dictionary of descriptions and codes which represent medicines and devices in use across the NHS.",
+      "publisher": "NHS Business Services Authority",
+      "publication_schedule": "weekly",
+      "index_url": "https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/dictionary-medicines-and-devices-dmd",
+      "requires_captcha": true,
+      "notes": "Run `./manage.py fetch_dmd {year} {month}` and follow the instructions."
+    },
+    "dmd_snomed": {
+      "title": "Mapping of SNOMED to BNF codes",
+      "description": "This mapping is supplied privately via email (web version promised repeatedly). ",
+      "publisher": "NHS Business Services Authority",
+      "publication_schedule": "approximately monthly, or when they get back to us",
+      "index_url": "",
+      "notes": "Current contact is Margaret Dockey; the file to ask for is the BNF/SNOMED mapping. Seb has email threads that can be followed up"
     },
     "nhs_payments_to_general_practice": {
         "title": "Summary of annual payments by NHS to GPs",
@@ -105,7 +122,7 @@
         "publication_schedule": "middle of each month",
         "publication_lag": "60 days",
         "index_url": "https://apps.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=124",
-        "notes": "Run `./manage.py fetch_prescribing_data --help` for more instructions",
+        "notes": "Run `./manage.py fetch_prescribing_data {year} {month}` and follow the instructions.",
         "core_data": true
     },
     "prescribing_metadata": {

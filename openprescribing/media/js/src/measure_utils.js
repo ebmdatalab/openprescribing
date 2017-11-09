@@ -15,6 +15,10 @@ var utils = {
     if (options.orgId) {
       urls.panelMeasuresUrl += '&org=' + options.orgId;
     }
+    if (options.tags) {
+      urls.panelMeasuresUrl += '&tags=' + options.tags;
+      urls.globalMeasuresUrl += '&tags=' + options.tags;
+    }
     if (options.measure) {
       urls.panelMeasuresUrl += '&measure=' + options.measure;
       urls.globalMeasuresUrl += '&measure=' + options.measure;
@@ -242,15 +246,18 @@ var utils = {
     */
     var _this = this;
     var newData = [];
+    var series;
     _.each(data, function(d) {
-      d.data = _this._addHighchartsXAndY(d.data, false,
-        d.isPercentage, options, null);
+      d.data = _this._addHighchartsXAndY(
+        d.data, false, d.isPercentage, options, null);
       if (options.rollUpBy === 'measure_id') {
         // If each chart is a different measure, get the
         // centiles for that measure, and if lowIsGood
-        var series = _.findWhere(globalData, {id: d.id});
+        series = _.findWhere(globalData, {id: d.id});
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
+          d.tagsFocus = series.tags_focus;
+          d.numeratorCanBeQueried = series.numerator_can_be_queried;
         }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
@@ -258,8 +265,15 @@ var utils = {
             true, series.is_percentage, options, i);
         });
       } else {
+        // sometimes, the measure metadata is defined in javascript
+        // expressions within the django template.
         d.globalCentiles = globalCentiles;
         d.lowIsGood = options.lowIsGood;
+        d.tagsFocus = options.tagsFocus;
+        series = _.findWhere(globalData, {id: options.measure});
+        if (typeof series !== 'undefined') {
+          d.numeratorCanBeQueried = series.numerator_can_be_queried;
+        }
       }
       d.chartId = d.id;
       _.extend(d, _this._getChartTitleEtc(d, options, numMonths));
@@ -293,8 +307,12 @@ var utils = {
   _getChartTitleEtc: function(d, options, numMonths) {
     var chartTitle;
     var chartTitleUrl;
-    var chartExplanation;
+    var chartExplanation = '';
     var measureUrl;
+    var oneEntityUrl;
+    var measureId;
+    var tagsFocusUrl;
+    var measureForAllPracticesUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
@@ -302,31 +320,44 @@ var utils = {
       chartTitleUrl = '/ccg/';
       chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
       chartTitleUrl += '/' + d.id;
+      measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = '/measure/' + d.id;
+      measureId = d.id;
     } else {
       // We want organisation charts to link to the appropriate
       // organisation page.
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
         '/' + d.id;
+      measureId = options.measure;
+      measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
+    }
+    var orgId;
+    if (options.rollUpBy == 'org_id') {
+      orgId = d.id;
+    } else {
+      orgId = options.orgId;
+    }
+    if (options.orgType == 'practice') {
+      oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
+      tagsFocusUrl = '/practice/' + orgId + '/?tags=' + d.tagsFocus;
+    } else {
+      oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
+      tagsFocusUrl = '/ccg/' + orgId + '/?tags=' + d.tagsFocus;
+    }
+    if (window.location.pathname === oneEntityUrl) {
+      oneEntityUrl = null;
     }
     if (d.meanPercentile === null) {
       chartExplanation = 'No data available.';
     } else {
-      var p = humanize.numberFormat(d.meanPercentile, 0);
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
             'higher, or lower, is better. Nonetheless it is interesting to ' +
             'know if a ' + options.orgType + ' is a long way from average ' +
-            'prescribing behaviour. In this case, it ');
-      } else {
-        chartExplanation = 'This ' + options.orgType;
+            'prescribing behaviour. ');
       }
-      chartExplanation += ' was at the ' +
-        humanize.ordinal(p) +
-        ' percentile on average across the ' +
-        'past ' + numMonths + ' months. ';
       if (d.isCostBased || options.isCostBasedMeasure) {
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
@@ -348,8 +379,13 @@ var utils = {
     }
     return {
       measureUrl: measureUrl,
+      isCCG: options.orgType == 'CCG',
       chartTitle: chartTitle,
+      oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
+      tagsFocus: d.tagsFocus,
+      tagsFocusUrl: tagsFocusUrl,
+      measureForAllPracticesUrl: measureForAllPracticesUrl,
       chartExplanation: chartExplanation
     };
   },
@@ -404,7 +440,7 @@ var utils = {
     var ymin;
     isPercentageMeasure = (d.isPercentage || isPercentageMeasure);
     chOptions.chart.renderTo = d.chartId;
-    chOptions.chart.height = 200;
+    chOptions.chart.height = 250;
     chOptions.legend.enabled = false;
     if (options.rollUpBy === 'org_id') {
       ymax = _.max([localMax.y, options.globalYMax.y]);

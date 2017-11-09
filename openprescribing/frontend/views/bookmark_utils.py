@@ -237,7 +237,9 @@ class InterestingMeasureFinder(object):
         assert best_or_worst in ['best', 'worst']
         worst = []
         measure_filter = {
-            'month__gte': self.months_ago(period)}
+            'month__gte': self.months_ago(period),
+            'measure__tags__contains': ['core']
+        }
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -295,7 +297,8 @@ class InterestingMeasureFinder(object):
         window_multiplier = 1.5
         window_plus = int(round(window * window_multiplier))
         measure_filter = {
-            'month__gte': self.months_ago(window_plus)
+            'month__gte': self.months_ago(window_plus),
+            'measure__tags__contains': ['core']
         }
         if self.practice:
             measure_filter['practice'] = self.practice
@@ -371,7 +374,8 @@ class InterestingMeasureFinder(object):
         achieved_savings = []
         total_savings = 0
         measure_filter = {
-            'month__gte': self.months_ago(period)}
+            'month__gte': self.months_ago(period),
+            'measure__tags__contains': ['core']}
         if self.practice:
             measure_filter['practice'] = self.practice
         else:
@@ -613,7 +617,7 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
-def make_org_email(org_bookmark, stats, preview=False):
+def make_org_email(org_bookmark, stats, preview=False, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
     if preview:
@@ -678,11 +682,11 @@ def make_org_email(org_bookmark, stats, preview=False):
             msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "measures"]
+        msg.tags = ["monthly_update", "measures", tag]
         return msg
 
 
-def make_search_email(search_bookmark, preview=False):
+def make_search_email(search_bookmark, preview=False, tag=None):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
@@ -727,7 +731,7 @@ def make_search_email(search_bookmark, preview=False):
             msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "analyse"]
+        msg.tags = ["monthly_update", "analyse", tag]
         return msg
 
 

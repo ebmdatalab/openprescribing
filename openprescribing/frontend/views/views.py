@@ -1,5 +1,7 @@
 from lxml import html
 import requests
+from urllib import urlencode
+from urlparse import urlparse, urlunparse
 import sys
 
 from django.conf import settings
@@ -130,6 +132,30 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
         entity = get_object_or_404(Practice, code=entity_code)
+
+    query = {
+        'format': 'json',
+        'bnf_code': presentation.bnf_code,
+        'highlight': entity.code,
+        'date': date.strftime('%Y-%m-%d'),
+    }
+
+    if 'trim' in request.GET:
+        query['trim'] = request.GET['trim']
+
+    querystring = urlencode(query)
+
+    parsed_url = urlparse(settings.API_HOST)
+
+    bubble_data_url = urlunparse((
+        parsed_url.scheme,   # scheme
+        parsed_url.netloc,   # host
+        '/api/1.0/bubble/',  # path
+        '',                  # params
+        querystring,         # query
+        '',                  # fragment
+    ))
+
     context = {
         'entity': entity,
         'highlight': entity.code,
@@ -139,7 +165,8 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         'presentation': presentation,
         'product': product,
         'date': date,
-        'by_presentation': True
+        'by_presentation': True,
+        'bubble_data_url': bubble_data_url,
     }
     return render(request, 'price_per_unit.html', context)
 
@@ -183,7 +210,8 @@ def practice_price_per_unit(request, code):
 ##################################################
 
 def all_ccgs(request):
-    ccgs = PCT.objects.filter(org_type="CCG").order_by('name')
+    ccgs = PCT.objects.filter(
+        close_date__isnull=True, org_type="CCG").order_by('name')
     context = {
         'ccgs': ccgs
     }
@@ -209,7 +237,11 @@ def ccg_price_per_unit(request, code):
 ##################################################
 
 def all_measures(request):
-    measures = Measure.objects.all().order_by('name')
+    tags = request.GET.get('tags', '')
+    query = {}
+    if tags:
+        query['tags__overlap'] = tags.split(',')
+    measures = Measure.objects.filter(**query).order_by('name')
     context = {
         'measures': measures
     }
@@ -271,6 +303,30 @@ def measures_for_one_ccg(request, ccg_code):
         'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_ccg.html', context)
+
+
+def measure_for_one_ccg(request, measure, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'ccg': ccg,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_ccg.html', context)
+
+
+def measure_for_one_practice(request, measure, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'practice': practice,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_practice.html', context)
 
 
 def last_bookmark(request):

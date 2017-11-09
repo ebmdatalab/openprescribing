@@ -1,5 +1,4 @@
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from frontend.models import PCT, Practice
 import view_utils as utils
 from django.http import HttpResponse

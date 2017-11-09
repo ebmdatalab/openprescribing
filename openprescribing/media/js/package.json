@@ -5,7 +5,7 @@
   "author": "Anna Powell-Smith",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --require test/setup.js",
     "watch-index": "watchify index.js -t envify -o ../../static/js/openprescribing.js --debug --verbose",
     "watch-config": "watchify src/config.js --standalone config -t envify -o ../../static/js/config.js --debug --verbose",
     "watch-bars": "watchify bar-charts.js -t envify -o ../../static/js/bar-chart.js --debug --verbose",
@@ -69,7 +69,7 @@
     "browserify": "^9.0.8",
     "browserify-shim": "~3.2.0",
     "chai": "^2.3.0",
-    "jsdom": "^3.1.2",
+    "jsdom": "^11.2.0",
     "eslint": "latest",
     "eslint-config-google": "latest",
     "less": "^2.5.1",

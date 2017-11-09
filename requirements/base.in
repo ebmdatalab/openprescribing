@@ -1,0 +1,38 @@
+# This file lists all the packages that openprescribing depends on directly.
+# See instructions at the top of base.txt for how to generate a full list of
+# pinned requirements.
+
+# Note that most of the pinned version numbers here are not essential (they
+# were taken from the versions running in production at the point that this
+# file was created) and many of the `==`s could probably be safely replaced
+# with `>=`s.  If there are new or upgraded dependencies which make dependency
+# resolution impossible, loosening the requirements here should be the first
+# thing we try.
+
+django-allauth==0.25.2
+django-anymail==0.6.1
+django-cors-headers==1.1.0
+django-crispy-forms==1.6.1
+django-rest-swagger==0.3.5
+django==1.9.1
+djangorestframework-csv==1.4.1
+djangorestframework==3.3.2
+google-api-python-client==1.6.2
+google-cloud-bigquery==0.26.0
+google-cloud-storage==1.3.2
+html2text==2016.9.19
+lxml==3.6.4
+networkx==1.11
+numpy==1.13.1
+openpyxl==2.3.3
+pandas-gbq==0.1.6
+pandas==0.20.2
+premailer==3.0.1
+psycopg2==2.5.4
+python-dateutil==2.6.1
+pytz==2016.7
+requests-futures==0.9.7
+requests[security]==2.18.4
+titlecase==0.8.2
+tqdm==4.14.0
+xlrd==1.0.0

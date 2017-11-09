@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Long Term Trends{% endblock %}
+{% block active_class %}trends{% endblock %}
+
+{% block content %}
+
+
+<h1>Long term trends</h1>
+
+<p>
+This is an interactive tool for exploring the national Prescribing Cost Analysis (PCA) data. It shows annual data, going back to 1998, on all drugs <strong>dispensed</strong> in the community in England (note this makes it slightly different to the monthly dataset used elsewhere on OpenPrescribing). We have ensured that most drugs have a consistent classification over time, based on their <strong>current</strong> position in the latest BNF dictionary, so that time trends are not disrupted by drugs being reclassified, for example moving between Chapters. All figures are adjusted for England's population size and costs are corrected for inflation.
+</p>
+
+<p>You can view a video walkthrough of using the tool <a href="#walkthrough">at the bottom of this page</a>. For further information, see <a href="/faq/#longtermtrends">the FAQ</a>.
+
+<p>Our paper describing this tool and the normalisation of the data is currently under review at BMJ Open.</p>
+
+<div class='tableauPlaceholder' id='viz1507036021896' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Pr&#47;PrescribingTrendsfnalforOP&#47;TRENDSDETAIL&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='2' /> <param name='site_root' value='' /><param name='name' value='PrescribingTrendsfnalforOP&#47;TRENDSDETAIL' /><param name='tabs' value='yes' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Pr&#47;PrescribingTrendsfnalforOP&#47;TRENDSDETAIL&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1507036021896');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='1120px';vizElement.style.height='1243px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+
+<h3><a name="walkthrough"></a>Video walkthrough</h3>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SY-reyEpWnM" frameborder="0" allowfullscreen></iframe>
+
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}

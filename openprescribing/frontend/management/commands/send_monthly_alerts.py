@@ -7,7 +7,9 @@ import traceback
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+from django.db.models import Q
 from frontend.models import EmailMessage
+from frontend.models import ImportLog
 from frontend.models import OrgBookmark
 from frontend.models import Profile
 from frontend.models import SearchBookmark
@@ -62,7 +64,14 @@ class Command(BaseCommand):
             help='Max number of permitted errors before aborting the batch',
             default=3)
 
-    def get_org_bookmarks(self, **options):
+    def get_org_bookmarks(self, now_month, **options):
+        """Get approved OrgBookmarks for active users who have not been sent a
+        message tagged with `now_month`
+
+        """
+        query = (
+            Q(approved=True, user__is_active=True) &
+            ~Q(user__emailmessage__tags__contains=['measures', now_month]))
         if options['recipient_email'] and (
                 options['ccg'] or options['practice']):
             dummy_user = User(email=options['recipient_email'], id='dummyid')
@@ -80,15 +89,11 @@ class Command(BaseCommand):
                     recipients = [x.strip() for x in f]
             else:
                 recipients = [options['recipient_email']]
-            bookmarks = OrgBookmark.objects.filter(
-                approved=True,
-                user__is_active=True,
-                user__email__in=recipients)
+            query = query & Q(user__email__in=recipients)
+            bookmarks = OrgBookmark.objects.filter(query)
             logger.info("Found %s matching org bookmarks" % bookmarks.count())
         else:
-            bookmarks = OrgBookmark.objects.filter(
-                approved=True,
-                user__is_active=True)
+            bookmarks = OrgBookmark.objects.filter(query)
             if options['skip_email_file']:
                 with open(options['skip_email_file'], 'r') as f:
                     skip = [x.strip() for x in f]
@@ -96,7 +101,10 @@ class Command(BaseCommand):
             logger.info("Found %s matching org bookmarks" % bookmarks.count())
         return bookmarks
 
-    def get_search_bookmarks(self, **options):
+    def get_search_bookmarks(self, now_month, **options):
+        query = (
+            Q(approved=True, user__is_active=True) &
+            ~Q(user__emailmessage__tags__contains=['analyse', now_month]))
         if options['recipient_email'] and options['url']:
             dummy_user = User(email=options['recipient_email'], id='dummyid')
             dummy_user.profile = Profile(key='dummykey')
@@ -107,16 +115,12 @@ class Command(BaseCommand):
             )]
             logger.info("Created a single test search bookmark")
         elif not options['recipient_email']:
-            bookmarks = SearchBookmark.objects.filter(
-                approved=True,
-                user__is_active=True)
+            bookmarks = SearchBookmark.objects.filter(query)
             logger.info(
                 "Found %s matching search bookmarks" % bookmarks.count())
         else:
-            bookmarks = SearchBookmark.objects.filter(
-                approved=True,
-                user__is_active=True,
-                user__email=options['recipient_email'])
+            query = query & Q(user__email=options['recipient_email'])
+            bookmarks = SearchBookmark.objects.filter(query)
             logger.info(
                 "Found %s matching search bookmarks" % bookmarks.count())
         return bookmarks
@@ -134,26 +138,28 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.validate_options(**options)
+        now_month = ImportLog.objects.latest_in_category(
+            'prescribing').current_at.strftime('%Y-%m-%d').lower()
         with EmailRetrier(options['max_errors']) as email_retrier:
-            for org_bookmark in self.get_org_bookmarks(**options):
+            for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 def callback():
                     stats = bookmark_utils.InterestingMeasureFinder(
                         practice=org_bookmark.practice or options['practice'],
                         pct=org_bookmark.pct or options['ccg']
                     ).context_for_org_email()
-
                     msg = bookmark_utils.make_org_email(
-                        org_bookmark, stats)
+                        org_bookmark, stats, tag=now_month)
                     msg = EmailMessage.objects.create_from_message(msg)
                     msg.send()
                     logger.info("Sent org bookmark alert to %s about %s" % (
                         msg.to, org_bookmark.id))
                 email_retrier.try_email(callback)
-            for search_bookmark in self.get_search_bookmarks(**options):
+            for search_bookmark in self.get_search_bookmarks(
+                    now_month, **options):
                 def callback():
                     recipient_id = search_bookmark.user.id
                     msg = bookmark_utils.make_search_email(
-                        search_bookmark)
+                        search_bookmark, tag=now_month)
                     msg = EmailMessage.objects.create_from_message(msg)
                     msg.send()
                     logger.info("Sent search bookmark alert to %s about %s" % (

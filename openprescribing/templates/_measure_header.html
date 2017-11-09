@@ -1,0 +1,38 @@
+<p><strong>Why it matters</strong>: {{ measure.why_it_matters|safe }}</p>
+
+<p><strong>Description</strong>: {% autoescape off %} {{ measure.description }} {% endautoescape %}
+
+</p>
+
+{% if measure.is_cost_based %}
+<p><strong>Performance</strong>: <span id="perfsummary">Loading...</span></p>
+{% endif %}
+
+
+{% if ccg and measure.tags_focus %}
+<p><strong>Explore</strong>:
+  <ul>
+    {% if measure.tags_focus %}
+    <li>
+      This is a compound measure.
+      {% if ccg %}
+        <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags={{measure.tags_focus|join:','}}">Break it down into its constituent measures.</a>
+      {% else %}
+        <a href="{% url 'all_measures' %}?tags={{measure.tags_focus|join:','}}">Break it down into its constituent measures.</a>
+      {% endif %}
+    </li>
+    {% endif %}
+    {% if ccg and measure.numerator_can_be_queried %}
+    <li>
+      <a href="{% url 'measure_for_one_ccg' measure.id ccg.code %}">Break the overall score down into individual presentations</a>
+    </li>
+    <li>
+      <a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all CCGs in England on this measure</a>
+    </li>
+    <li>
+      See <a href="{% url 'measures_for_one_ccg' ccg.code %}">how this CCG is doing on other standard measures</a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</p>

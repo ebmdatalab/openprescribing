@@ -1,5 +1,6 @@
 import cPickle
 import json
+import re
 import uuid
 
 from django.contrib.gis.db import models
@@ -417,10 +418,18 @@ class Measure(models.Model):
     description = models.TextField()
     why_it_matters = models.TextField(null=True, blank=True)
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
-
+    tags = ArrayField(models.CharField(max_length=30), blank=True)
+    tags_focus = ArrayField(
+        models.CharField(max_length=30), null=True, blank=True)
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    numerator_from = models.TextField()
+    numerator_where = models.TextField()
+    numerator_columns = models.TextField()
+    denominator_from = models.TextField()
+    denominator_where = models.TextField()
+    denominator_columns = models.TextField()
     url = models.URLField(null=True, blank=True)
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
@@ -428,6 +437,40 @@ class Measure(models.Model):
 
     def __str__(self):
         return self.name
+
+    def numerator_can_be_queried(self):
+        """Is it possible for the numerators for a given measure to be
+        rewritten such that they can query the prescriptions table
+        directly?
+
+        For now, this means we query the main prescriptions table
+        only; an additional consequence is that we can't support
+        drilling down on JOINed data (specifically, this currently
+        means ktt9_uti_antibiotics)
+
+        """
+        table_there = ('hscic.normalised_prescribing_standard'
+                       in self.numerator_from)
+        join_not_there = 'JOIN' not in self.numerator_from
+        return table_there and join_not_there
+
+    def columns_for_select(self, num_or_denom=None):
+        """Parse measures definition for SELECT columns; add
+        cost-savings-related columns when necessary.
+
+        """
+        assert num_or_denom in ['numerator', 'denominator']
+        fieldname = "%s_columns" % num_or_denom
+        val = getattr(self, fieldname)
+        # Deal with possible inconsistencies in measure definition
+        # trailing commas
+        if val.strip()[-1] == ',':
+            val = re.sub(r',\s*$', '', val) + ' '
+        if self.is_cost_based:
+            val += (", SUM(items) AS items, "
+                    "SUM(actual_cost) AS cost, "
+                    "SUM(quantity) AS quantity ")
+        return val
 
     class Meta:
         app_label = 'frontend'

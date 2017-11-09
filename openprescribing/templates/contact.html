@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Contact us{% endblock %}
+{% block active_class %}more{% endblock %}
+
+{% block content %}
+
+<h2>Get in touch</h2>
+
+<p>We welcome all feedback: please contact us at <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">{{ SUPPORT_EMAIL }}</a>.</p>
+
+{% include '_mailchimp_signup.html' %}
+
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}

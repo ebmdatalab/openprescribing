@@ -1,5 +1,4 @@
 from django.conf.urls import url, include
-from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 import views_bnf_codes
 import views_spending
@@ -22,6 +21,9 @@ urlpatterns = [
         name='measure'),
     url(r'^measure_by_ccg/$', views_measures.measure_by_ccg,
         name='measure_by_ccg'),
+    url(r'^measure_numerators_by_org/$',
+        views_measures.measure_numerators_by_org,
+        name='measure_numerators_by_org'),
     url(r'^measure_by_practice/$', views_measures.measure_by_practice,
         name='measure_by_practice'),
     url(r'^price_per_unit/$', views_spending.price_per_unit,

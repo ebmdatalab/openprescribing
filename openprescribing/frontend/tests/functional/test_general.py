@@ -93,7 +93,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         self.find_by_xpath('//ul[@id="select2-orgIds-results"]//li')
 
     def test_ccg_measures_sorting(self):
-        url = self.live_server_url + '/ccg/02Q/measures/'
+        url = self.live_server_url + '/ccg/02Q/'
         self.browser.get(url)
         # The default should be sorting by percentile, then id
         self.assertEqual(self.find_by_xpath(
@@ -112,6 +112,16 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//div[@id='charts']/div[1]").get_attribute("id"),
                          'measure_keppra')
 
+    def test_ccg_measures_tags(self):
+        url = self.live_server_url + '/ccg/02Q/?tags=foobar'
+        self.browser.get(url)
+        # nothing is tagged foobar, so should return the text expected
+        # when no measures are shown
+        import time
+        time.sleep(1)
+        self.assertTrue(self.find_by_xpath(
+            "//p[contains(text(), 'prescribed on any')]"))
+
     def test_ccg_measures_explore_link(self):
         url = self.live_server_url + '/ccg/02Q/'
         self.browser.get(url)
@@ -119,14 +129,16 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//div[@id='measure_keppra']")
         self.assertIn(
             '/measure/keppra',
-            measure.find_element_by_link_text(
-                "compare performance with other CCGs").get_attribute('href'),
-            )
+            measure.find_element_by_partial_link_text(
+                "Compare all CCGs"
+            ).get_attribute('href'),
+        )
         self.assertIn(
             '/ccg/02Q/keppra',
-            measure.find_element_by_link_text(
-                "show all practices in this CCG").get_attribute('href'),
-            )
+            measure.find_element_by_partial_link_text(
+                "Split the measure"
+            ).get_attribute('href'),
+        )
 
 
 if __name__ == '__main__':

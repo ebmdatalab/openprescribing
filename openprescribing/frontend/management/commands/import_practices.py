@@ -1,6 +1,6 @@
 import csv
 import glob
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from frontend.models import Practice, PCT
 
 

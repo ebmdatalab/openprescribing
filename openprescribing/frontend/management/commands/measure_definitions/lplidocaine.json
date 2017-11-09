@@ -1,0 +1,35 @@
+{
+  "name": "NHS England Low Priority Treatment - lidocaine plasters",
+  "title": [
+    "lidocaine plasters cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of lidocaine plasters per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Lidocaine plasters as licensed for treatment of post herpetic neuralgia, which is a complication of shingles. ",
+    "However there is limited evidence to the benefit, and they are ",
+    "<a href='https://www.nice.org.uk/guidance/cg173/chapter/1-Recommendations'>not included in the recommendations for neuralgia in NICE guidance</a>. "
+  ],
+  "numerator_short": "Lidocaine plasters cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_where": [
+    "(bnf_code LIKE '1502010J0%EL')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

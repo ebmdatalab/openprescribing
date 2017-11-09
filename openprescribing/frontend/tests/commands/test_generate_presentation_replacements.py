@@ -6,13 +6,12 @@ from frontend.models import Product
 from frontend.models import Section
 
 from mock import patch
-from mock import MagicMock
 
 
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.cleanup_empty_classes')
 @patch('frontend.management.commands.generate_presentation_replacements'
-       '.load_data_from_file')
+       '.create_bigquery_table')
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.create_bigquery_views')
 class CommandsTestCase(TestCase):
@@ -108,21 +107,3 @@ class CommandsTestCase(TestCase):
             Product.objects.get(pk='44444444444').is_current, False)
         self.assertEqual(
             Product.objects.get(pk='33333333333').is_current, True)
-
-    @patch('frontend.management.commands.generate_presentation_replacements'
-           '.csv')
-    def test_bigquery_csv(
-            self,
-            mock_csv,
-            mock_create_view,
-            mock_loader,
-            mock_empty_class_csv_getter):
-        call_command(
-            'generate_presentation_replacements', *self.args, **self.opts)
-        mock_loader.assert_called()
-        writerow = mock_csv.writer.return_value.writerow
-        writerow.assert_any_call(['LLLLLLLLLLLLLLL', 'LLLLLLLLLLLLLLL'])
-        writerow.assert_any_call(['000999999999999', '999999999999999'])
-        writerow.assert_any_call(['MMMMMMMMMMMMMMM', 'MMMMMMMMMMMMMMM'])
-        writerow.assert_any_call(['YYYYYYYYYYYYYYY', 'ZZZZZZZZZZZZZZZ'])
-        writerow.assert_any_call(['777777777777777', '999999999999999'])

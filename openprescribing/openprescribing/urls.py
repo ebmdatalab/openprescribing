@@ -16,11 +16,16 @@ urlpatterns = [
         name="about"),
     url(r'^faq/$', TemplateView.as_view(template_name='faq.html'),
         name="faq"),
+    url(r'^long_term_trends/$', TemplateView.as_view(template_name='long_term_trends.html'),
+        name="long_term_trends"),
+    url(r'^pca/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='long_term_trends')),
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
-    url(r'^caution/$', TemplateView.as_view(template_name='caution.html'),
-        name="caution"),
+    url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
+        name="contact"),
     url(r'^how-to-use/$',
         TemplateView.as_view(template_name='how-to-use.html'),
         name="how-to-use"),
@@ -47,16 +52,19 @@ urlpatterns = [
         '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation_practice'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='measures_for_one_practice'),
-        name='practice'),
     url(r'^measure/$',
         frontend_views.all_measures,
         name='all_measures'),
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_all_ccgs,
         name='measure_for_all_ccgs'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_ccg,
+        name='measure_for_one_ccg'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
+        'practice/(?P<practice_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_practice,
+        name='measure_for_one_practice'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measures_for_one_ccg,
@@ -114,4 +122,12 @@ urlpatterns = [
 
     # anymail webhooks
     url(r'^anymail/', include('anymail.urls')),
+
+    # old page redirects
+    url(r'^caution/$', RedirectView.as_view(
+        pattern_name='faq', permanent=True)),
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+        RedirectView.as_view(
+            permanent=True, pattern_name='measures_for_one_practice'),
+        name='practice'),
 ]

@@ -1,0 +1,35 @@
+{
+  "name": "NHS England Low Priority Treatment - All Low Priority Treatments",
+  "title": [
+    "All low priority treatments"
+  ],
+  "description": [
+    "An aggregation of prescribing on all low priority treatments as defined by NHS England"
+  ],
+  "why_it_matters": [
+    "NHS England have recently published a <a href='https://www.england.nhs.uk/wp-content/uploads/2017/07/Items-not-routinely-prescribed-in-primary-care.pdf'>number of areas which should not be routinely prescribed in primary care</a>.",
+    "This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines). "
+  ],
+  "numerator_short": "cost (£)",
+  "denominator_short": "per 1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["core"],
+  "tags_focus": ["lowpriority"],
+  "numerator_columns": [
+    "SUM(numerator) AS numerator, "
+  ],
+  "numerator_from": "[ebmdatalab:measures.practice_data_all_low_priority] ",
+  "numerator_where": [
+    "1 = 1 "
+  ],
+  "denominator_columns": [
+    "SUM(denominator)/18 AS denominator, "
+  ],
+  "denominator_from": "[ebmdatalab:measures.practice_data_all_low_priority] ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

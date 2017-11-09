@@ -1,0 +1,418 @@
+[
+  {
+    "model": "frontend.measure",
+    "pk": "exotic",
+    "fields": {
+      "name": "Exotic measure",
+      "title": "Exotic measure",
+      "description": "",
+      "why_it_matters": "",
+      "numerator_short": "",
+      "tags": ["exotic"],
+      "denominator_short": "",
+      "start_date": "2001-01-01",
+      "end_date": "2001-01-01",
+      "url": "",
+      "is_percentage": true,
+      "is_cost_based": true,
+      "low_is_good": true
+    }
+  },
+  {
+    "model": "frontend.measure",
+    "pk": "cerazette",
+    "fields": {
+      "name": "Cerazette vs. Desogestrel",
+      "title": "cerazette",
+      "description": "",
+      "why_it_matters": "",
+      "numerator_short": "",
+      "tags": ["core"],
+      "denominator_short": "",
+      "start_date": "2001-01-01",
+      "end_date": "2001-01-01",
+      "url": "",
+      "is_percentage": true,
+      "is_cost_based": true,
+      "low_is_good": true
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 847,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": null,
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 848,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 849,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 850,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": null,
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 851,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 852,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2017-11-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 853,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": null,
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 854,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 855,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 856,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": null,
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 857,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 858,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2017-12-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 859,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": null,
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 860,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 861,
+    "fields": {
+      "measure": "cerazette",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 862,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": null,
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 863,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87629",
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 95,
+      "cost_savings": null
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "pk": 864,
+    "fields": {
+      "measure": "exotic",
+      "pct": "03V",
+      "practice": "P87630",
+      "month": "2018-01-08",
+      "numerator": null,
+      "denominator": null,
+      "calc_value": null,
+      "num_items": null,
+      "denom_items": null,
+      "num_cost": null,
+      "denom_cost": null,
+      "num_quantity": null,
+      "denom_quantity": null,
+      "percentile": 5,
+      "cost_savings": null
+    }
+  }
+]

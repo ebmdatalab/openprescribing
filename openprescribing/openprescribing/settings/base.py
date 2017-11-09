@@ -200,6 +200,7 @@ LOCAL_APPS = (
     'frontend',
     'dmd',
     'pipeline',
+    'gcutils',
 )
 
 CONTRIB_APPS = (
@@ -333,6 +334,8 @@ BQ_PRESCRIBING_TABLE_NAME_STANDARD = "normalised_prescribing_standard"
 BQ_PRACTICES_TABLE_NAME = "practices"
 BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
     BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
+# Dataset for prescribing data
+BQ_HSCIC_DATASET = 'hscic'
 
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"

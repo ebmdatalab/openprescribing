@@ -774,6 +774,7 @@
     "start_date": "2001-01-01",
     "end_date": "2001-01-01",
     "url": null,
+    "tags": ["core"],
     "is_percentage": true,
     "is_cost_based": true,
     "low_is_good": true
@@ -794,7 +795,8 @@
     "url": null,
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true
+    "low_is_good": true,
+    "tags": ["core"]
   }
 },
 {

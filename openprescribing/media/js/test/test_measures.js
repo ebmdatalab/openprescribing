@@ -477,7 +477,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. In this case, it  was at the 80th percentile on average across the past 6 months. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -505,9 +505,18 @@ describe('Measures', function() {
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].measureUrl).to.be.undefined;
       expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      var str = 'This CCG was at the 80th percentile ';
-      str += 'on average across the past 6 months. ';
-      expect(result[0].chartExplanation).to.equal(str);
+    });
+
+    it('copies selected properties from the global data', function() {
+      var data = [{id: 'ace', data: []}],
+      globalData = [{id: 'ace', low_is_good: true, numerator_can_be_queried: true}],
+      globalCentiles = [],
+      centiles = [],
+      options = {rollUpBy: 'measure_id'};
+      var result = mu.addChartAttributes(data, globalData, globalCentiles,
+        centiles, options, 6);
+      expect(result[0].lowIsGood).to.be.true;
+      expect(result[0].numeratorCanBeQueried).to.be.true;
     });
 
     it('sets the expected title, URL, and descriptions for one-CCG measure charts', function() {
@@ -535,8 +544,7 @@ describe('Measures', function() {
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
       expect(result[0].measureUrl).to.equal('/measure/ace');
-      str = 'This CCG was at the 80th percentile on average across the ';
-      str += 'past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this CCG would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -566,8 +574,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile on average across ';
-      str += 'the past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
@@ -603,6 +610,125 @@ describe('Measures', function() {
   });
 
   describe('#_getChartTitleEtc', function() {
+    describe('tagsFocus defined', function() {
+      it('should return expected URL for CCG', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: '99P',
+          orgName: 'Devon',
+          orgType: 'CCG',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+      });
+      it('should return expected URL for practice', function() {
+        var numMonths = 6; // required but not relevant to test
+        var options = {
+          orgId: 'P111111',
+          orgName: 'Dr GP Surgery',
+          orgType: 'practice',
+          rollUpBy: 'measure_id'
+        };
+        var d = {
+          id: 'keppra',
+          name: 'Keppra',
+          tagsFocus: 'foo,bar',
+          data: []
+        };
+        var result = mu._getChartTitleEtc(d, options, numMonths);
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+      });
+    });
+    describe('oneEntityUrl output', function() {
+      describe('input from measures_for_one_ccg', function() {
+        it('should return expected URL', function() {
+          var numMonths = 6; // required but not relevant to test
+          var options = {
+            orgId: '99P',
+            orgName: 'Devon',
+            orgType: 'CCG',
+            rollUpBy: 'measure_id'
+          };
+          var d = {
+            id: 'keppra',
+            name: 'Keppra',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/ccg/99P/');
+        });
+      });
+      describe('input from measure_for_practices_in_ccg', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgId: '99P',
+            orgName: 'Devon',
+            orgType: 'practice',
+            measure: 'keppra',
+            isCostBasedMeasure: true,
+            lowIsGood: true,
+            numerator: 'items of X',
+            denominator: 'items of Y',
+            rollUpBy: 'org_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: 'P11111',
+            name: 'Dr GP Surgery',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/practice/P11111/');
+        });
+      });
+      describe('input from measures_for_one_practice', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgId: 'P11111',
+            orgName: 'Dr GP Surgery',
+            parentOrg: '99P',
+            orgType: 'practice',
+            rollUpBy: 'measure_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: 'keppra',
+            name: 'Keppra',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/practice/P11111/');
+        });
+      });
+      describe('input from measure_for_all_ccgs', function() {
+        it('should return expected URL', function() {
+          var options = {
+            orgType: 'CCG',
+            measure: 'keppra',
+            isCostBasedMeasure: true,
+            lowIsGood: true,
+            numerator: 'items of X',
+            denominator: 'items of Y',
+            rollUpBy: 'org_id'
+          };
+          var numMonths = 6; // required but not relevant to test
+          var d = {
+            id: '99P',
+            name: 'Devon',
+            data: []
+          };
+          var result = mu._getChartTitleEtc(d, options, numMonths);
+          expect(result.oneEntityUrl).to.equal('/measure/keppra/ccg/99P/');
+        });
+      });
+    });
     it('should get explanation for cost-based measures', function() {
       var d = {
         id: 'ace',
@@ -622,8 +748,7 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile on average across ';
-      str += 'the past 6 months. If it had prescribed in line ';
+      str = 'If it had prescribed in line ';
       str += 'with the median, this practice would have spent £10.00 less ';
       str += 'over the past 6 months. If it had prescribed in line with ';
       str += 'the best 10%, it would have spent £30.00 less. ';
@@ -648,9 +773,6 @@ describe('Measures', function() {
       var result = mu._getChartTitleEtc(d, options, 6);
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
-      str = 'This practice was at the 80th percentile ';
-      str += 'on average across the past 6 months. ';
-      expect(result.chartExplanation).to.equal(str);
     });
   });
 

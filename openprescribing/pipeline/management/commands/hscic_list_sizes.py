@@ -1,86 +1,66 @@
 import requests
 from lxml import html
-import re
-from dateutil.parser import parse
+import datetime
 import subprocess
-import urlparse
 import os
 
 from django.conf import settings
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError
 
-
-"""The HSCIC data is the source of prescribing data.
-"""
-
-PREFIX = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'patient_list_size')
+from openprescribing.utils import mkdir_p
 
 
 class Command(BaseCommand):
-    args = ''
-    help = ('Fetches all HSCIC data and rewrites filenames to be consistent.'
-            'With no arguments, fetches data for every month since Aug 2010')
+    help = '''
+    Fetches HSCIC list size data for given year and month.  Does nothing if
+    data already downloaded.  Raises exception if data not found.
+    '''
+
+    def add_arguments(self, parser):
+        parser.add_argument('year', type=int)
+        parser.add_argument('month', type=int)
 
     def handle(self, *args, **kwargs):
         self.verbose = (kwargs['verbosity'] > 1)
 
-        date, source_url = self.most_recent_data()
+        date = datetime.date(kwargs['year'], kwargs['month'], 1)
+        datestamp = date.strftime('%Y_%m')
+
+        url = date.strftime('http://digital.nhs.uk/pubs/numpatgp%b%y').lower()
+
+        rsp = requests.get(url)
+
+        if rsp.status_code != 200:
+            raise CommandError('Could not find any data for %s' % datestamp)
+
+        filename = date.strftime('gp-reg-pat-prac-quin-age-%b-%y').lower()
+        tree = html.fromstring(rsp.content)
+        source_url = tree.xpath(
+            "//a[contains(@href, '{}')]/@href".format(filename))[0]
+
+        target_dir = os.path.join(
+            settings.PIPELINE_DATA_BASEDIR,
+            'patient_list_size',
+            datestamp,
+        )
+
+        target_file = os.path.join(target_dir, 'patient_list_size_new.csv')
+
+        mkdir_p(target_dir)
+
         if self.verbose:
-            print "Getting data for %s-%s" % (date.year, date.month)
-        self.get_data(date, source_url)
+            print 'Getting data for {}'.format(datestamp)
+
+        self.curl_and_return(source_url, target_file)
+
         if self.verbose:
             print "Done"
 
-    def get_data(self, date, source_url):
-        target_path = "%s/%s_%s" % (
-            PREFIX, date.year, str(date.month).zfill(2))
-        self.mkdir_p(target_path)
-        target_file = "%s/patient_list_size_new.csv" % target_path
-        try:
-            self.wget_and_return(source_url, target_file)
-        except subprocess.CalledProcessError:
-            print "Couldn't get url %s" % source_url
-
-    def wget_and_return(self, url, target_file):
+    def curl_and_return(self, url, target_file):
         '''
-        Call wget, raise exception on error
-        Does not overwrite existing files.
+        Call curl, raise exception on error
         '''
-        wget_command = 'wget -c -O %s' % target_file
-        cmd = '%s %s' % (wget_command, url)
+        cmd = 'curl {} -o {}'.format(url, target_file)
         if self.verbose:
             print 'Runing %s' % cmd
         subprocess.check_call(cmd.split())
-
-    def most_recent_data(self):
-        url = ('http://content.digital.nhs.uk'
-               '/article/2021/Website-Search?'
-               'q=Numbers+of+Patients+Registered+at+a+GP+Practice'
-               '&go=Go&area=both')
-        page = requests.get(url)
-        tree = html.fromstring(page.content)
-        first_link_text = tree.xpath(
-            '//li[contains(@class, "HSCICProducts")]//a/text()')[0]
-        first_link_href = tree.xpath(
-            '//li[contains(@class, "HSCICProducts")]//a/@href')[0]
-        most_recent_date = re.search(r" - (.*)$", first_link_text).groups()[0]
-        o = urlparse.urlparse(first_link_href)
-        q = urlparse.parse_qs(o.query)
-        page = requests.get(
-            "http://content.digital.nhs.uk/article/2021/Website-Search"
-            "?productid=%s" % q['productid'][0])
-        tree = html.fromstring(page.content)
-        first_link = tree.xpath(
-            "//a[contains(@href, 'gp-reg-pat-prac-quin-age')]/@href")[0]
-        return (parse(most_recent_date),
-                "http://content.digital.nhs.uk/%s" % first_link)
-
-    def mkdir_p(self, path):
-        try:
-            os.makedirs(path)
-        except OSError as exc:  # Python >2.5
-            import errno
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else:
-                raise

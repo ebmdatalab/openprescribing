@@ -1,4 +1,5 @@
 import re
+from urlparse import parse_qs, urlparse
 
 from pyquery import PyQuery as pq
 
@@ -196,7 +197,7 @@ class TestAlertViews(TransactionTestCase):
 
 class TestFrontendViews(TransactionTestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
-                'practices', 'prescriptions', 'measures']
+                'practices', 'prescriptions', 'measures', 'importlog']
 
     def test_call_view_homepage(self):
         response = self.client.get('')
@@ -318,6 +319,11 @@ class TestFrontendViews(TransactionTestCase):
         practices = doc('#practices li')
         self.assertEqual(len(practices), 1)
 
+    def test_call_single_measure_for_ccg(self):
+        response = self.client.get('/measure/cerazette/ccg/03V/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_one_ccg.html')
+
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
         self.assertEqual(response.status_code, 200)
@@ -335,12 +341,17 @@ class TestFrontendViews(TransactionTestCase):
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), '1/ST ANDREWS MEDICAL PRACTICE')
-        lead = doc('.lead:first')
+        lead = doc('#intro p:first')
         self.assertEqual(
             lead.text(),
             ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '
              'ECCLES, MANCHESTER, M30 0NU'))
         lead = doc('.lead:last')
+
+    def test_call_single_measure_for_practice(self):
+        response = self.client.get('/measure/cerazette/practice/P87629/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_one_practice.html')
 
     def test_call_view_measure_ccg(self):
         response = self.client.get('/ccg/03V/')
@@ -377,6 +388,15 @@ class TestFrontendViews(TransactionTestCase):
     def test_call_view_ccg_redirect(self):
         response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 301)
+
+    def test_all_measures(self):
+        response = self.client.get('/measure/')
+        self.assertContains(response, 'Cerazette')
+
+    def test_all_measures_with_tag_filter(self):
+        response = self.client.get('/measure/?tags=frob')
+        self.assertNotContains(response, 'Cerazette')
+        self.assertContains(response, 'This list is filtered')
 
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
@@ -415,3 +435,12 @@ class TestPPUViews(TransactionTestCase):
                          '1/ST Andrews Medical Practice')
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
+        bubble_data_url = response.context['bubble_data_url']
+        parsed_url = urlparse(bubble_data_url)
+        q = parse_qs(parsed_url.query)
+        self.assertEqual(q, {
+            'format': ['json'],
+            'bnf_code': ['0202010F0AAAAAA'],
+            'highlight': ['P87629'],
+            'date': ['2014-11-01'],
+        })

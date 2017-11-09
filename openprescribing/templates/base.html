@@ -106,15 +106,16 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
               <ul class="dropdown-menu">
                 <li><a href="{% url 'all_bnf' %}">Trends for BNF sections</a></li>
                 <li><a href="{% url 'all_chemicals' %}">Trends for chemicals</a></li>
+                <li><a href="{% url 'long_term_trends' %}">Long term trends analysis</a></li>
               </ul>
             </li>
             <li class="dropdown active_more">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li class="active_howtouse"><a href="{% url 'how-to-use' %}">How to use</a></li>
+                <li class="active_contact"><a href="{% url 'contact' %}">Stay in touch</a></li>
                 <li class="active_faq"><a href="{% url 'faq' %}">FAQ</a></li>
                 <li class="active_api"><a href="{% url 'api' %}">For coders</a></li>
-                <li class="active_caution"><a href="{% url 'caution' %}">Caution!</a></li>
                 <li class="active_about"><a href="{% url 'about' %}">About</a></li>
               </ul>
             </li>

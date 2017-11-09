@@ -10,3 +10,11 @@ def mkdir_p(path):
             pass
         else:
             raise
+
+
+def find_files(path):
+    paths = []
+    for dirpath, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            paths.append(os.path.join(dirpath, filename))
+    return paths
