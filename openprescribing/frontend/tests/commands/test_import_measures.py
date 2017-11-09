@@ -13,6 +13,7 @@ from django.test import TestCase
 
 from frontend.bq_schemas import PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
+from frontend.management.commands.import_measures import parse_measures
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
@@ -567,3 +568,17 @@ class BigqueryFunctionalTests(TestCase):
                         actual == expected,
                         "got %s for %s, expected %s" % (
                             actual, identifier, expected))
+
+
+class TestParseMeasures(TestCase):
+    def test_parse_measures(self):
+        measures = parse_measures()
+        print('-' * 80)
+        print('test_parse_measures')
+        print('list(measures)')
+        print(list(measures))
+        print('-' * 80)
+        lpzomnibus_ix = list(measures).index('lpzomnibus')
+        lptrimipramine_ix = list(measures).index('lptrimipramine')
+
+        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
