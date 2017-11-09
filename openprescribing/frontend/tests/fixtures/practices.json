@@ -12,7 +12,8 @@
       "address4": null,
       "postcode": "M30 0NU",
       "location": "POINT (0.0 52.0)",
-      "setting": 4
+      "setting": 4,
+      "status_code": "A"
     }
   },
   {
@@ -28,7 +29,8 @@
       "address4": "MERSEYSIDE",
       "postcode": "PR8 3LB",
       "location": "POINT (1.0 51.5)",
-      "setting": 4
+      "setting": 4,
+      "status_code": "A"
     }
   },
   {
@@ -44,7 +46,8 @@
       "address4": "CORBY NORTHAMPTONSHIRE",
       "postcode": "NN18 0QP",
       "location": "POINT (1.5 51.5)",
-      "setting": -1
+      "setting": -1,
+      "status_code": "A"
     }
   }
 ]
