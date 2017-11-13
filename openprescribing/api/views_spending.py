@@ -128,7 +128,6 @@ def bubble(request, format=None):
             " ORDER BY mean_ppu, presentation_name) ranked "
             "WHERE ntiled <= %s" % (out_of, trim)
         )
-        print ordered_ppus_sql
     else:
 
         ordered_ppus_sql = binned_ppus_sql + (
