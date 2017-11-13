@@ -66,7 +66,7 @@ class TestAPIOrgViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
-        self.assertEqual(len(content), 3)
+        self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['code'], 'P87629')
         self.assertEqual(content[0]['name'], '1/ST ANDREWS MEDICAL PRACTICE')
 

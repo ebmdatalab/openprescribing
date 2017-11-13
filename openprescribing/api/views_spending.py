@@ -128,14 +128,13 @@ def bubble(request, format=None):
             " ORDER BY mean_ppu, presentation_name) ranked "
             "WHERE ntiled <= %s" % (out_of, trim)
         )
-        print ordered_ppus_sql
     else:
 
         ordered_ppus_sql = binned_ppus_sql + (
             "SELECT *, "
             "AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu "
             "FROM binned_ppus "
-            "ORDER BY mean_ppu, presentation_name"
+            "ORDER BY mean_ppu, presentation_name, ppu"
         )
     mean_ppu_for_entity_sql = rounded_ppus_cte_sql + (
         "SELECT SUM(net_cost)/SUM(quantity) FROM rounded_ppus "
