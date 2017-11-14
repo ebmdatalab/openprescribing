@@ -28,7 +28,7 @@ class Command(BaseCommand):
             self.stdout.write('')
 
             candidates = DMDVmpp.objects.filter(nm__icontains=q).order_by('nm')
-            
+
             num_candidates = candidates.count()
 
             if num_candidates == 0:
@@ -37,13 +37,15 @@ class Command(BaseCommand):
             elif num_candidates == 1:
                 self.stdout.write('Found 1 matching VMPP')
             else:
-                self.stdout.write('Found {} matching VMPPs'.format(num_candidates))
+                self.stdout.write(
+                    'Found {} matching VMPPs'.format(num_candidates))
 
             for ix, candidate in enumerate(candidates):
                 self.stdout.write('{:>3}. {}'.format(ix + 1, candidate.nm))
 
             self.stdout.write('')
-            self.stdout.write('Enter number of matching VMPP, or 0 to search again:')
+            self.stdout.write(
+                'Enter number of matching VMPP, or 0 to search again:')
 
             candidate_ix = self.get_candidate_ix(num_candidates)
 
