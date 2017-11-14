@@ -144,8 +144,8 @@ class TestAPIMeasureViews(TestCase):
 
         m = Measure.objects.first()
         m.numerator_from = (
-            "[ebmdatalab:hscic.normalised_prescribing_standard] p "
-            "LEFT JOIN [ebmdatalab:hscic.presentation]")
+            "hscic.normalised_prescribing_standard p "
+            "LEFT JOIN hscic.presentation")
         m.save()
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'

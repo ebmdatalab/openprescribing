@@ -96,7 +96,7 @@ class Command(BaseCommand):
     def assert_latest_data_not_already_uploaded(self, date):
         client = Client(settings.BQ_HSCIC_DATASET)
         sql = """SELECT COUNT(*)
-        FROM [ebmdatalab:hscic.prescribing]
+        FROM hscic.prescribing
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
         results = client.query(sql)
         assert results.rows[0][0] == 0
