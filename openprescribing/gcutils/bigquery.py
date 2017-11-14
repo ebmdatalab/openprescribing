@@ -86,6 +86,8 @@ class Client(object):
         return self.get_table(table_name)
 
     def create_table_with_view(self, table_name, sql, legacy):
+        assert '{project}' in sql
+        sql = sql.format(project=self.project_name)
         table = self.dataset.table(table_name)
         table.view_query = sql
         table.view_use_legacy_sql = legacy
@@ -120,22 +122,6 @@ class Table(object):
     @property
     def qualified_name(self):
         return '{}.{}'.format(self.dataset_name, self.name)
-
-    @property
-    def full_qualified_name(self):
-        return '{}.{}.{}'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
-
-    @property
-    def legacy_full_qualified_name(self):
-        return '[{}:{}.{}]'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
 
     def get_rows(self):
         self.gcbq_table.reload()
