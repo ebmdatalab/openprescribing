@@ -6,6 +6,7 @@ import fnmatch
 import glob
 import json
 import os
+import random
 import re
 import shlex
 import textwrap
@@ -16,6 +17,7 @@ from django.conf import settings
 from django.core.management import call_command as django_call_command
 
 from gcutils.storage import Client as StorageClient
+from openprescribing.slack import notify_slack
 from openprescribing.utils import find_files
 
 from .models import TaskLog
@@ -431,3 +433,19 @@ def run_all(year, month):
 
     for task in tasks.by_type('post_process').ordered():
         run_task(task, year, month, last_imported=last_imported)
+
+    activity = random.choice([
+        'Put the kettle on',
+        'Have a glass of wine',
+        'Get up and stretch',
+    ])
+
+    msg = '''
+Importing data for {}_{} complete!'
+
+You should now:
+* Commit the changes to the smoke tests
+* Run the NCSO manual reconciliation
+* {}
+    '''.strip().format(year, month, activity)
+    notify_slack(msg)
