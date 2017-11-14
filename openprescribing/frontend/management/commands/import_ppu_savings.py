@@ -71,7 +71,7 @@ def make_merged_table_for_month(month):
         net_cost,
         quantity
       FROM
-        ebmdatalab.hscic.%s
+        hscic.%s
       WHERE month = TIMESTAMP('%s')
     """ % (' '.join(
         ["WHEN '%s' THEN '%s'" % (when_code, then_code)
@@ -95,7 +95,7 @@ def get_savings(group_by, month, limit, min_saving=0):
     https://github.com/ebmdatalab/price-per-dose/issues
 
     """
-    prescribing_table = "ebmdatalab.hscic.%s" % (
+    prescribing_table = "hscic.%s" % (
         make_merged_table_for_month(month)
     )
     restricting_condition = (
