@@ -102,7 +102,8 @@ class TestAlertViews(TransactionTestCase):
     @patch('frontend.views.views.mailchimp_subscribe')
     def test_search_bookmark_newsletter(self, mailchimp):
         email = 'a@a.com'
-        response = self._post_search_signup('stuff', '%7Emysearch', email=email, newsletter=True)
+        response = self._post_search_signup(
+            'stuff', '%7Emysearch', email=email, newsletter=True)
         self.assertTrue(response.context['user'].is_anonymous())
         self.assertContains(
             response, "Check your email and click the confirmation link")
@@ -152,7 +153,6 @@ class TestAlertViews(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
-
 
     @patch('frontend.views.views.mailchimp_subscribe')
     def test_ccg_bookmark_newsletter(self, mailchimp):
@@ -280,7 +280,7 @@ class TestFrontendHomepageViews(TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entity_home_page.html')
         self.assertEqual(response.context['measure'].id, 'cerazette')
-        self.assertEqual(response.context['measures_count'], 1)
+        self.assertEqual(response.context['measures_count'], 2)
         self.assertEqual(response.context['entity'].code, '02Q')
         self.assertEqual(response.context['entity_type'], 'CCG')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
@@ -290,7 +290,7 @@ class TestFrontendHomepageViews(TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entity_home_page.html')
         self.assertEqual(response.context['measure'].id, 'cerazette')
-        self.assertEqual(response.context['measures_count'], 1)
+        self.assertEqual(response.context['measures_count'], 2)
         self.assertEqual(response.context['entity'].code, 'C84001')
         self.assertEqual(response.context['entity_type'], 'practice')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))

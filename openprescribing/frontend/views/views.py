@@ -279,6 +279,39 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
 
+def _alerts_form(request, entity, entity_type):
+    """Build a form for newsletter/alert signups, and handle user login
+    for POSTs to that form.
+
+    Because logins involve redirects, instead of returning a form, we
+    sometimes return a redirect, which has to be handled differently
+    in the calling code.
+
+    Returns a triple of (form, already_signed_up, should_redirect)
+
+    """
+    assert entity_type in ['pct', 'practice']
+    if request.method == 'POST':
+        form = _handleCreateBookmark(
+            request,
+            OrgBookmark,
+            OrgBookmarkForm,
+            entity_type)
+        if isinstance(form, HttpResponseRedirect):
+            return (form, None, True)
+    else:
+        form = OrgBookmarkForm(
+            initial={entity_type: entity.pk,
+                     'email': getattr(request.user, 'email', '')})
+    if request.user.is_authenticated():
+        query = {entity_type: entity}
+        signed_up_for_alert = request.user.orgbookmark_set.filter(
+            **query)
+    else:
+        signed_up_for_alert = False
+    return (form, signed_up_for_alert, None)
+
+
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     # find the core measurevalue that is most outlierish
@@ -292,23 +325,10 @@ def ccg_home_page(request, ccg_code):
     else:
         extreme_measure = None
     request.session['came_from'] = request.path
-    if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'pct')
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        form = OrgBookmarkForm(
-            initial={'pct': ccg.pk,
-                     'email': getattr(request.user, 'email', '')})
-    if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            pct=ccg)
-    else:
-        signed_up_for_alert = False
+    form, signed_up_for_alert, should_redirect = _alerts_form(
+        request, ccg, 'pct')
+    if should_redirect:
+        return form
     practices = Practice.objects.filter(
         ccg=ccg).filter(setting=4).order_by('name')
     date = _specified_or_last_date(request, 'ppu')
@@ -346,23 +366,10 @@ def practice_home_page(request, practice_code):
     else:
         extreme_measure = None
     request.session['came_from'] = request.path
-    if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'practice')
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        form = OrgBookmarkForm(
-            initial={'practice': practice.pk,
-                     'email': getattr(request.user, 'email', '')})
-    if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            practice=practice)
-    else:
-        signed_up_for_alert = False
+    form, signed_up_for_alert, should_redirect = _alerts_form(
+        request, practice, 'practice')
+    if should_redirect:
+        return form
     date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = PPUSaving.objects.filter(
         date=date,
@@ -389,10 +396,16 @@ def measures_for_one_ccg(request, ccg_code):
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
+    form, signed_up_for_alert, should_redirect = _alerts_form(
+        request, requested_ccg, 'pct')
+    if should_redirect:
+        return form
     context = {
         'ccg': requested_ccg,
         'practices': practices,
         'page_id': ccg_code,
+        'form': form,
+        'signed_up_for_alert': signed_up_for_alert
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
@@ -449,6 +462,7 @@ def finalise_signup(request):
                     'You have successfully signed up for the newsletter.')
         if 'alerts_requested' in request.session:
             # Their first alert bookmark signup
+            del(request.session['alerts_requested'])
             messages.success(
                 request, "Thanks, you're now subscribed to monthly alerts.")
         if request.user.is_authenticated():
@@ -586,9 +600,6 @@ def _handleCreateBookmark(request, subject_class,
             # `templates/account/verification_sent.html` (and are sent
             # a verification email).  Users who are already verified
             # are redirected to LOGIN_REDIRECT_URL.
-
-            # this means we want to add "who are you" to
-            # verification_sent and also to its own page.
             return perform_login(
                 request, user,
                 app_settings.EmailVerificationMethod.MANDATORY,
@@ -600,24 +611,11 @@ def _handleCreateBookmark(request, subject_class,
 
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)
-    if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'practice')
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        form = OrgBookmarkForm(
-            initial={'practice': p.pk,
-                     'email': getattr(request.user, 'email', '')})
-    if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            practice=p)
-    else:
-        signed_up_for_alert = False
     alert_preview_action = reverse('preview-practice-bookmark', args=[p.code])
+    form, signed_up_for_alert, should_redirect = _alerts_form(
+        request, p, 'practice')
+    if should_redirect:
+        return form
     context = {
         'practice': p,
         'alert_preview_action': alert_preview_action,
