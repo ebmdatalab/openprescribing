@@ -80,7 +80,7 @@ class Command(BaseCommand):
                    'bnf_code AS presentation_code, items AS total_items, '
                    'net_cost, actual_cost, quantity, '
                    'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
-                   'FROM ebmdatalab.hscic.normalised_prescribing_standard '
+                   'FROM hscic.normalised_prescribing_standard '
                    "WHERE month = '%s'" % date_str)
             table_name = "prescribing_%s" % date_str.replace('-', '_')
             table = client.get_or_create_table(table_name)

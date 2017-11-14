@@ -200,9 +200,9 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      ebmdatalab.hscic.normalised_prescribing AS prescribing
+      hscic.normalised_prescribing AS prescribing
     RIGHT JOIN
-      ebmdatalab.hscic.bnf bnf
+      hscic.bnf bnf
     ON
       prescribing.normalised_bnf_code = bnf.presentation_code
     WHERE (
