@@ -408,6 +408,9 @@ def run_task(task, year, month, **kwargs):
         # since we want to log that the task didn't complete.
         import traceback
         task_log.mark_failed(formatted_tb=traceback.format_exc())
+        msg = 'Importing data for {}_{} has failed when running {}.'.format(
+            year, month, task.name)
+        notify_slack(msg)
         raise
 
 
