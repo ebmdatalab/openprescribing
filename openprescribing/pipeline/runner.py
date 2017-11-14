@@ -451,5 +451,7 @@ You should now:
 * Commit the changes to the smoke tests
 * Run the NCSO manual reconciliation
 * {}
+
+(Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
     '''.strip().format(year, month, activity)
     notify_slack(msg)
