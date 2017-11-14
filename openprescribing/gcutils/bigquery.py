@@ -8,13 +8,15 @@ from google.cloud import bigquery as gcbq
 from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict
 
+import pandas as pd
+
 from django.conf import settings
 
 from gcutils.table_dumper import TableDumper
 
 
 class Client(object):
-    def __init__(self, dataset_name):
+    def __init__(self, dataset_name=None):
         self.project_name = settings.BQ_PROJECT
         self.dataset_name = dataset_name
 
@@ -22,7 +24,11 @@ class Client(object):
         # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
         # containing the credentials to access Google Cloud Services.
         self.gcbq_client = gcbq.Client(project=self.project_name)
-        self.dataset = self.gcbq_client.dataset(dataset_name)
+
+        if dataset_name is not None:
+            self.dataset = self.gcbq_client.dataset(dataset_name)
+        else:
+            self.dataset = None
 
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
@@ -109,6 +115,14 @@ class Client(object):
         wait_for_job(query.job)
 
         return query
+
+    def query_into_dataframe(self, sql, legacy=False):
+        kwargs = {
+            'project_id': self.project_name,
+            'verbose': False,
+            'dialect': 'legacy' if legacy else 'standard',
+        }
+        return pd.read_gbq(sql, **kwargs)
 
 
 class Table(object):

@@ -67,6 +67,12 @@ class BQClientTest(TestCase):
 
         self.assertEqual(sorted(results.rows), rows[2:])
 
+        # Test Client.query_into_dataframe
+        sql = 'SELECT * FROM {} WHERE a > 2'.format(t1.qualified_name)
+        df = client.query_into_dataframe(sql)
+
+        self.assertEqual(df.values.tolist(), [list(rows[2])])
+
         # Test TableExporter.export_to_storage and
         # TableExporter.download_from_storage_and_unzip
         t1_exporter = TableExporter(
