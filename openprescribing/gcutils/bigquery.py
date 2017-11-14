@@ -284,7 +284,10 @@ class JobError(StandardError):
 
 
 def convert_legacy_table_names(sql):
-    return re.sub(r'\[(.+?):(.+?)\.(.+?)\]', r'\1.\2.\3', sql)
+    pattern = r'\[(.+?):(.+?)\.(.+?)\]'
+    match = re.match(pattern, sql)
+    assert match is None, 'Found fully-qualified table name in {}'.format(sql)
+    return re.sub(pattern, r'\1.\2.\3', sql)
 
 
 def set_options(thing, options, default_options=None):
