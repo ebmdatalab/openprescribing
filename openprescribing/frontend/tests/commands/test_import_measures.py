@@ -491,6 +491,9 @@ class BigqueryFunctionalTests(TestCase):
                 'frontend', 'tests', 'fixtures', 'commands',
                 'prescribing_bigquery_fixture.csv'
             )
+            # TODO Make this a table with a view (see
+            # generate_presentation_replacements), and put it in the correct
+            # dataset ('hscic', not 'measures').
             client = Client('measures')
             table = client.get_or_create_table(
                 settings.BQ_PRESCRIBING_TABLE_NAME,

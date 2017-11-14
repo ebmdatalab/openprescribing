@@ -385,6 +385,8 @@ class MeasureCalculation(object):
         sql = sql.format(**ctx)
 
         if self.under_test:
+            # TODO remove under_test stuff
+            assert '[ebmdatalab:hscic.normalised_prescribing_standard]' not in sql
             sql = sql.replace(
                 "[ebmdatalab:hscic.normalised_prescribing_standard]",
                 "[ebmdatalab:measures.%s]" %

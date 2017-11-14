@@ -4,7 +4,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpcoprox
+  measures.practice_data_lpcoprox
 
 UNION ALL
 SELECT
@@ -13,7 +13,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpdosulepin
+  measures.practice_data_lpdosulepin
 
 UNION ALL
 SELECT
@@ -22,7 +22,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpdoxazosin
+  measures.practice_data_lpdoxazosin
 
 UNION ALL
 SELECT
@@ -31,7 +31,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpfentanylir
+  measures.practice_data_lpfentanylir
 
 UNION ALL
 SELECT
@@ -40,7 +40,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpglucosamine
+  measures.practice_data_lpglucosamine
 
 UNION ALL
 SELECT
@@ -49,7 +49,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lphomeopathy
+  measures.practice_data_lphomeopathy
 
 UNION ALL
 SELECT
@@ -58,7 +58,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lplidocaine
+  measures.practice_data_lplidocaine
 
 UNION ALL
 SELECT
@@ -67,7 +67,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpliothyronine
+  measures.practice_data_lpliothyronine
 
 UNION ALL
 SELECT
@@ -76,7 +76,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lplutein
+  measures.practice_data_lplutein
 
 UNION ALL
 SELECT
@@ -85,7 +85,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpomega3
+  measures.practice_data_lpomega3
 
 UNION ALL
 SELECT
@@ -94,7 +94,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpomnibus
+  measures.practice_data_lpomnibus
 
 UNION ALL
 SELECT
@@ -103,7 +103,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpoxycodone
+  measures.practice_data_lpoxycodone
 
 UNION ALL
 SELECT
@@ -112,7 +112,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lpperindopril
+  measures.practice_data_lpperindopril
 
 UNION ALL
 SELECT
@@ -121,7 +121,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lprubefacients
+  measures.practice_data_lprubefacients
 
 UNION ALL
 SELECT
@@ -130,7 +130,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lptadalafil
+  measures.practice_data_lptadalafil
 
 UNION ALL
 SELECT
@@ -139,7 +139,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lptramadolpara
+  measures.practice_data_lptramadolpara
 
 UNION ALL
 SELECT
@@ -148,7 +148,7 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lptravelvacs
+  measures.practice_data_lptravelvacs
 
 UNION ALL
 SELECT
@@ -157,4 +157,4 @@ SELECT
   numerator,
   denominator
 FROM
-  ebmdatalab.measures.practice_data_lptrimipramine
+  measures.practice_data_lptrimipramine

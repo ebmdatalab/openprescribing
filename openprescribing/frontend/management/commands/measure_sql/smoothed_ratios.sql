@@ -50,7 +50,7 @@ FROM (
         (num.practice=denom.practice
           AND num.month=denom.month)) ratios
       INNER JOIN
-        ebmdatalab.hscic.practices
+        hscic.practices
       ON practices.setting = 4 AND practices.code=ratios.practice_id AND (practices.open_date < FORMAT_TIMESTAMP('%Y-%m-%d', ratios.month) OR practices.open_date IS NULL) AND (practices.close_date > FORMAT_TIMESTAMP('%Y-%m-%d', ratios.month) or practices.close_date IS NULL)
       )
       --- WHERE window_size = 3

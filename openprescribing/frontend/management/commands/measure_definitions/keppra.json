@@ -27,7 +27,7 @@
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_from": "hscic.normalised_prescribing_standard ",
   "numerator_where": [
     "(bnf_code LIKE '0408010A0BB%AC' OR bnf_code LIKE '0408010A0BB%AA' OR bnf_code LIKE '0408010A0BB%AB' ",
     "OR bnf_code LIKE '0408010A0BB%AI')"
@@ -35,7 +35,7 @@
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "denominator_from": "hscic.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code LIKE '0408010A0%AC' OR bnf_code LIKE '0408010A0%AA' OR bnf_code LIKE '0408010A0%AB' ",
     "OR bnf_code LIKE '0408010A0%AI')"
