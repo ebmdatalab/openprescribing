@@ -444,6 +444,7 @@ def run_all(year, month):
 Importing data for {}_{} complete!'
 
 You should now:
+* Tweet about it
 * Commit the changes to the smoke tests
 * Run the NCSO manual reconciliation
 * {}
