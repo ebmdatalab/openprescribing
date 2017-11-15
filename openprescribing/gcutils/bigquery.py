@@ -127,7 +127,7 @@ class Client(object):
         try:
             return pd.read_gbq(sql, **kwargs)
         except:
-            for n, line in enumerate(sql.splitlines())
+            for n, line in enumerate(sql.splitlines()):
                 print(n + 1, line)
             raise
 
