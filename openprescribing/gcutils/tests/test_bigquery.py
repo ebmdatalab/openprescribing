@@ -46,6 +46,7 @@ class BQClientTest(TestCase):
         ]
 
         t1 = client.get_or_create_table('t1', schema)
+        t1_qname = t1.qualified_name
 
         # Test Table.insert_rows_from_csv
         t1.insert_rows_from_csv('gcutils/tests/test_table.csv')
@@ -55,19 +56,19 @@ class BQClientTest(TestCase):
         # Test Table.insert_rows_from_query
         t2 = client.get_table('t2')
 
-        sql = 'SELECT * FROM {} WHERE a > 1'.format(t1.qualified_name)
+        sql = 'SELECT * FROM {} WHERE a > 1'.format(t1_qname)
         t2.insert_rows_from_query(sql)
 
         self.assertEqual(sorted(t2.get_rows()), rows[1:])
 
         # Test Client.query
-        sql = 'SELECT * FROM {} WHERE a > 2'.format(t1.qualified_name)
+        sql = 'SELECT * FROM {} WHERE a > 2'.format(t1_qname)
         results = client.query(sql)
 
         self.assertEqual(sorted(results.rows), rows[2:])
 
         # Test Client.query_into_dataframe
-        sql = 'SELECT * FROM {} WHERE a > 2'.format(t1.qualified_name)
+        sql = 'SELECT * FROM {} WHERE a > 2'.format(t1_qname)
         df = client.query_into_dataframe(sql)
 
         self.assertEqual(df.values.tolist(), [list(rows[2])])
@@ -131,7 +132,7 @@ class BQClientTest(TestCase):
         self.assertEqual(sorted(results.rows), rows + [(4, u'damson')])
 
         # Test Client.create_table_with_view
-        sql = 'SELECT * FROM {{project}}.{} WHERE a > 1'.format(t1.qualified_name)
+        sql = 'SELECT * FROM {{project}}.{} WHERE a > 1'.format(t1_qname)
 
         t4 = client.create_table_with_view('t4', sql, False)
 
