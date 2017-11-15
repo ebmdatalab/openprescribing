@@ -13,7 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('last_imported')
 
     def handle(self, *args, **kwargs):
-        last_imported = kwargs['last_imported'])
+        last_imported = kwargs['last_imported']
         prescribing_date = "-".join(last_imported.split('_')) + '-01'
         date_condition = ('month > TIMESTAMP(DATE_SUB(DATE "%s", '
                           'INTERVAL 5 YEAR))' % prescribing_date)
