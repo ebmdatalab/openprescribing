@@ -93,6 +93,9 @@ var utils = {
     }
     _.each(panelData, function(d) {
       if (options.specificMeasures) {
+        // These are any measures that have been defined to appear at
+        // specific locations in the DOM - from embedded javascript in
+        // templates
         d.chartContainerId = _.findWhere(
           options.specificMeasures, {measure: d.id}).chartContainerId;
       } else {
