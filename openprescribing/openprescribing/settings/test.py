@@ -60,6 +60,9 @@ LOGGING = {
         },
     },
 }
+
+BQ_PROJECT = 'ebmdatalabtest'
+
 # Prefix table names with `test_` to prevent namespace clashes in
 # BigQuery
 BQ_CCG_TABLE_PREFIX = 'test_' + BQ_CCG_TABLE_PREFIX
