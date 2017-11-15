@@ -5,13 +5,13 @@ import time
 import uuid
 
 from google.cloud import bigquery as gcbq
-from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict
 
 import pandas as pd
 
 from django.conf import settings
 
+from gcutils.storage import Client as StorageClient
 from gcutils.table_dumper import TableDumper
 
 
@@ -58,7 +58,7 @@ class Client(object):
         return table
 
     def get_or_create_storage_backed_table(self, table_name, schema, gcs_path):
-        gcs_client = gcs.client.Client(project=self.project_name)
+        gcs_client = StorageClient()
         bucket = gcs_client.bucket(self.project_name)
         if bucket.get_blob(gcs_path) is None:
             raise RuntimeError('Could not find blob at {}'.format(gcs_path))
@@ -212,7 +212,7 @@ class TableExporter(object):
     def __init__(self, table, storage_prefix):
         self.table = table
         self.storage_prefix = storage_prefix
-        storage_client = gcs.Client(project=table.project_name)
+        storage_client = StorageClient()
         self.bucket = storage_client.bucket(table.project_name)
 
     def export_to_storage(self, **options):

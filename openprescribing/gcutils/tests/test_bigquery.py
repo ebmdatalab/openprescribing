@@ -2,11 +2,10 @@ import csv
 import random
 import tempfile
 
-from google.cloud import storage
-
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema
+from gcutils.storage import Client as StorageClient
 
 from frontend.models import PCT
 
@@ -25,7 +24,7 @@ class BQClientTest(TestCase):
         client = Client(self.dataset_name)
         client.delete_dataset()
 
-        client = storage.client.Client(project='ebmdatalab')
+        client = StorageClient()
         bucket = client.bucket('ebmdatalab')
         for storage_path in self.storage_paths:
             blob = bucket.blob(storage_path)
@@ -151,7 +150,7 @@ class BQClientTest(TestCase):
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
 
     def upload_to_storage(self, local_path, storage_path):
-        client = storage.client.Client(project='ebmdatalab')
+        client = StorageClient()
         bucket = client.bucket('ebmdatalab')
         blob = bucket.blob(storage_path)
         with open(local_path) as f:
