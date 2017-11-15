@@ -206,7 +206,6 @@ class BigqueryFunctionalTests(TestCase):
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
@@ -506,7 +505,6 @@ class BigqueryFunctionalTests(TestCase):
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'

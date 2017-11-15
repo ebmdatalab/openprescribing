@@ -70,15 +70,14 @@ class Command(BaseCommand):
                 measure = create_or_update_measure(measure_id)
                 measure_start = datetime.datetime.now()
                 global_calculation = GlobalCalculation(
-                    measure, verbose=verbose,
-                    under_test=options['test_mode'])
+                    measure, verbose=verbose)
                 practice_calculation = PracticeCalculation(
                     measure, start_date=start_date, end_date=end_date,
-                    verbose=verbose, under_test=options['test_mode']
+                    verbose=verbose
                 )
                 ccg_calculation = CCGCalculation(
                     measure, start_date=start_date, end_date=end_date,
-                    verbose=verbose, under_test=options['test_mode']
+                    verbose=verbose
                 )
                 if options['definitions_only']:
                     continue
@@ -320,14 +319,12 @@ class MeasureCalculation(object):
     logic common to both Practice- and CCG-level calculations.
 
     """
-    def __init__(self, measure, start_date=None, end_date=None,
-                 verbose=False, under_test=False):
+    def __init__(self, measure, start_date=None, end_date=None, verbose=False):
         self.verbose = verbose
         self.fpath = os.path.dirname(__file__)
         self.measure = measure
         self.start_date = start_date
         self.end_date = end_date
-        self.under_test = under_test
 
     def table_name(self):
         """Name of table to which we write ratios data.
@@ -383,15 +380,6 @@ class MeasureCalculation(object):
             sql = f.read()
 
         sql = sql.format(**ctx)
-
-        if self.under_test:
-            # TODO remove under_test stuff
-            assert '[ebmdatalab:hscic.normalised_prescribing_standard]' not in sql
-            sql = sql.replace(
-                "[ebmdatalab:hscic.normalised_prescribing_standard]",
-                "[ebmdatalab:measures.%s]" %
-                settings.BQ_PRESCRIBING_TABLE_NAME)
-
         self.get_table(table_name).insert_rows_from_query(sql, legacy=legacy)
 
     def get_rows_as_dicts(self, table_name):
@@ -703,8 +691,7 @@ class CCGCalculation(MeasureCalculation):
                 col, col)
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-        from_table = PracticeCalculation(
-            self.measure, under_test=self.under_test).full_table_name()
+        from_table = PracticeCalculation(self.measure).full_table_name()
 
         context = {
             'denominator_aliases': denominator_aliases,
