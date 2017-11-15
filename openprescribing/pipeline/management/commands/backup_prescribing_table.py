@@ -3,9 +3,8 @@ import re
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from google.cloud import storage as gcs
-
 from gcutils.bigquery import Client, TableExporter
+from gcutils.storage import Client as StorageClient
 
 
 class Command(BaseCommand):
@@ -16,7 +15,7 @@ class Command(BaseCommand):
         latest_year_and_month = latest_date.strftime('%Y_%m')
         table = client.get_table('prescribing')
 
-        storage_client = gcs.Client(project=table.project_name)
+        storage_client = StorageClient()
         bucket = storage_client.bucket(table.project_name)
         year_and_months = set()
 

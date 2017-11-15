@@ -3,11 +3,10 @@ from __future__ import print_function
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
-from gcutils.bigquery import Client
+from gcutils.bigquery import Client as BQClient
+from gcutils.storage import Client as StorageClient
 from frontend import models
 from frontend import bq_schemas as schemas
-
-from ...cloud_utils import CloudHandler
 
 
 class Command(BaseCommand):
@@ -25,9 +24,9 @@ class Command(BaseCommand):
                 .format(latest_practice_statistic_date, latest_prescription_date)
             raise CommandError(msg)
 
-        BigQueryUploader().update_bnf_table()
+        update_bnf_table()
 
-        client = Client('hscic')
+        client = BQClient('hscic')
 
         table = client.get_table('practices')
         columns = [field.name for field in schemas.PRACTICE_SCHEMA]
@@ -60,13 +59,16 @@ class Command(BaseCommand):
         )
 
 
-class BigQueryUploader(CloudHandler):
-    def update_bnf_table(self):
-        """Update `bnf` table from cloud-stored CSV
-        """
-        dataset = self.list_raw_datasets(
-            'ebmdatalab', prefix='hscic/bnf_codes',
-            name_regex=r'\.csv')[-1]
-        uri = "gs://ebmdatalab/%s" % dataset
-        print("Loading data from %s..." % uri)
-        self.load(uri, table_name="bnf", schema='bnf.json')
+def update_bnf_table():
+    """Update `bnf` table from cloud-stored CSV
+    """
+    storage_client = StorageClient()
+    bucket = storage_client.get_bucket('ebmdatalab')
+    blobs = bucket.list_blobs(prefix='hscic/bnf_codes/')
+    blobs = sorted(blobs, key=lambda blob: blob.name, reverse=True)
+    blob = blobs[0]
+    gcs_uri = 'gs://ebmdatalab/{}'.format(blob.name)
+
+    bq_client = BQClient('hscic')
+    table = bq_client.get_table('bnf')
+    table.insert_rows_from_storage(gcs_uri, skip_leading_rows=True)

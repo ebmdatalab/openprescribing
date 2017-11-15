@@ -11,7 +11,7 @@ from frontend.models import ImportLog, PCT, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
                                  PRESCRIBING_SCHEMA)
 from frontend.bq_schemas import ccgs_transform, statistics_transform
-from google.cloud import storage
+from gcutils.storage import Client as StorageClient
 
 
 def _mockFile(name):
@@ -70,7 +70,7 @@ class CommandsTestCase(SimpleTestCase):
                 statistics_transform
             )
 
-            client = storage.Client(project='ebmdatalab')
+            client = StorageClient()
             bucket = client.get_bucket('ebmdatalab')
             for blob in bucket.list_blobs(prefix='test_hscic/views/vw__'):
                 blob.delete()
@@ -90,7 +90,7 @@ class CommandsTestCase(SimpleTestCase):
 
     def test_existing_files_deleted(self):
         # Create a dataset fragment which should end up being deleted
-        client = storage.Client(project='ebmdatalab')
+        client = StorageClient()
         bucket = client.get_bucket('ebmdatalab')
         blob_name = ('test_hscic/views/vw__presentation_summary_by_ccg'
                      '-000000009999.csv.gz')
@@ -101,7 +101,7 @@ class CommandsTestCase(SimpleTestCase):
         call_command('create_views', dataset='test_hscic')
 
         # Check the bucket is no longer there
-        client = storage.Client(project='ebmdatalab')
+        client = StorageClient()
         bucket = client.get_bucket('ebmdatalab')
         prefix, suffix = blob_name.split('-')
         for blob in bucket.list_blobs(prefix=prefix):

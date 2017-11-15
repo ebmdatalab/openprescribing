@@ -1,7 +1,6 @@
 import csv
 import tempfile
 
-from google.cloud import storage
 from mock import MagicMock
 from mock import patch
 
@@ -10,6 +9,8 @@ from django.test import TestCase
 
 from frontend.management.commands.convert_hscic_prescribing import Command
 from django.core.management.base import CommandError
+
+from gcutils.storage import Client as StorageClient
 
 
 class CommandsTestCase(TestCase):
@@ -64,9 +65,9 @@ class AggregateTestCase(TestCase):
         test_file += 'Detailed_Prescribing_Information.csv'
         bucket_name = 'ebmdatalab'
         object_name = 'test_hscic/prescribing/sample.csv'
-        client = storage.client.Client(project='ebmdatalab')
+        client = StorageClient()
         bucket = client.get_bucket(bucket_name)
-        blob = storage.Blob(object_name, bucket)
+        blob = bucket.blob(object_name)
 
         with open(test_file, 'rb') as my_file:
             blob.upload_from_file(my_file)

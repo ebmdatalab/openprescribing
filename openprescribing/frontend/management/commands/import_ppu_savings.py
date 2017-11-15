@@ -23,27 +23,6 @@ SUBSTITUTIONS_SPREADSHEET = (
     '&output=csv')
 
 
-def gbq_sql_to_dataframe(sql):
-    """Return results of BigQuery SQL as a DataFrame.
-
-    If there's an error, prints the SQL with line numbers before
-    re-raising.
-
-    """
-    try:
-        df = pd.io.gbq.read_gbq(
-            sql,
-            project_id="ebmdatalab",
-            verbose=False,
-            dialect='legacy',
-            private_key=os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
-        return df
-    except:
-        for n, line in enumerate(sql.split("\n")):
-            print "%s: %s" % (n+1, line)
-        raise
-
-
 def make_merged_table_for_month(month):
     """Create a new BigQuery table that includes code substitutions, off
     which our savings can be computed.
@@ -92,7 +71,7 @@ def make_merged_table_for_month(month):
         net_cost,
         quantity
       FROM
-        ebmdatalab.hscic.%s
+        hscic.%s
       WHERE month = TIMESTAMP('%s')
     """ % (' '.join(
         ["WHEN '%s' THEN '%s'" % (when_code, then_code)
@@ -116,7 +95,7 @@ def get_savings(group_by, month, limit, min_saving=0):
     https://github.com/ebmdatalab/price-per-dose/issues
 
     """
-    prescribing_table = "ebmdatalab.hscic.%s" % (
+    prescribing_table = "hscic.%s" % (
         make_merged_table_for_month(month)
     )
     restricting_condition = (
@@ -173,39 +152,41 @@ def get_savings(group_by, month, limit, min_saving=0):
     # Execute SQL
     with open("%s/ppu_sql/savings_for_decile.sql" % fpath, "r") as f:
         sql = f.read()
-        substitutions = (
-            ('{{ restricting_condition }}', restricting_condition),
-            ('{{ limit }}', limit),
-            ('{{ month }}', month.strftime('%Y-%m-%d')),
-            ('{{ group_by }}', group_by),
-            ('{{ order_by }}', order_by),
-            ('{{ select }}', select),
-            ('{{ prescribing_table }}', prescribing_table),
-            ('{{ cost_field }}', 'net_cost'),
-            ('{{ inner_select }}', inner_select),
-            ('{{ min_saving }}', min_saving)
-        )
-        for key, value in substitutions:
-            sql = sql.replace(key, str(value))
-        # Format results in a DataFrame
-        df = gbq_sql_to_dataframe(sql)
-        # Rename null values in category, so we can group by it
-        df.loc[df['category'].isnull(), 'category'] = 'NP8'
-        df = df.set_index(
-            'generic_presentation')
-        df.index.name = 'bnf_code'
-        # Add in substitutions column
-        subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index('Code')
-        subs = subs[subs['Really equivalent?'] == 'Y'].copy()
-        subs['formulation_swap'] = (
-            subs['Formulation'] +
-            ' / ' +
-            subs['Alternative formulation'])
-        df = df.join(
-            subs[['formulation_swap']], how='left')
-        # Convert nans to Nones
-        df = df.where((pd.notnull(df)), None)
-        return df
+
+    substitutions = (
+        ('{{ restricting_condition }}', restricting_condition),
+        ('{{ limit }}', limit),
+        ('{{ month }}', month.strftime('%Y-%m-%d')),
+        ('{{ group_by }}', group_by),
+        ('{{ order_by }}', order_by),
+        ('{{ select }}', select),
+        ('{{ prescribing_table }}', prescribing_table),
+        ('{{ cost_field }}', 'net_cost'),
+        ('{{ inner_select }}', inner_select),
+        ('{{ min_saving }}', min_saving)
+    )
+    for key, value in substitutions:
+        sql = sql.replace(key, str(value))
+    # Format results in a DataFrame
+    client = Client()
+    df = client.query_into_dataframe(sql, legacy=True)
+    # Rename null values in category, so we can group by it
+    df.loc[df['category'].isnull(), 'category'] = 'NP8'
+    df = df.set_index(
+        'generic_presentation')
+    df.index.name = 'bnf_code'
+    # Add in substitutions column
+    subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index('Code')
+    subs = subs[subs['Really equivalent?'] == 'Y'].copy()
+    subs['formulation_swap'] = (
+        subs['Formulation'] +
+        ' / ' +
+        subs['Alternative formulation'])
+    df = df.join(
+        subs[['formulation_swap']], how='left')
+    # Convert nans to Nones
+    df = df.where((pd.notnull(df)), None)
+    return df
 
 
 class Command(BaseCommand):

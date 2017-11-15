@@ -200,9 +200,9 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      ebmdatalab.hscic.normalised_prescribing AS prescribing
+      hscic.normalised_prescribing AS prescribing
     RIGHT JOIN
-      ebmdatalab.hscic.bnf bnf
+      hscic.bnf bnf
     ON
       prescribing.normalised_bnf_code = bnf.presentation_code
     WHERE (
@@ -349,13 +349,13 @@ def create_bigquery_views():
       prescribing.quantity AS quantity,
       prescribing.month AS month
     FROM
-      ebmdatalab.hscic.prescribing AS prescribing
+      {project}.hscic.prescribing AS prescribing
     LEFT JOIN
-      ebmdatalab.hscic.bnf_map AS bnf_map
+      {project}.hscic.bnf_map AS bnf_map
     ON
       bnf_map.former_bnf_code = prescribing.bnf_code
     INNER JOIN
-      ebmdatalab.hscic.practices  AS practices
+      {project}.hscic.practices  AS practices
     ON practices.code = prescribing.practice
     """
 
@@ -370,18 +370,7 @@ def create_bigquery_views():
     except Conflict:
         pass
 
-    sql = sql.replace(
-        'ebmdatalab.hscic.prescribing',
-        '[ebmdatalab:hscic.prescribing]'
-    )
-    sql = sql.replace(
-        'ebmdatalab.hscic.bnf_map',
-        '[ebmdatalab:hscic.bnf_map]'
-    )
-    sql = sql.replace(
-        'ebmdatalab.hscic.practices',
-        '[ebmdatalab:hscic.practices]'
-    )
+    sql = sql.replace('{project}.', '{project}:')
 
     try:
         client.create_table_with_view(

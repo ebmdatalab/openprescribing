@@ -84,9 +84,9 @@ class Command(BaseCommand):
         raw_data_table = get_or_create_raw_data_table(gcs_path)
 
         self.append_aggregated_data_to_prescribing_table(
-            raw_data_table.legacy_full_qualified_name, date)
+            raw_data_table.qualified_name, date)
         temp_table = self.write_aggregated_data_to_temp_table(
-            raw_data_table.legacy_full_qualified_name, date)
+            raw_data_table.qualified_name, date)
 
         exporter = TableExporter(temp_table, gcs_path + '_formatted-')
         exporter.export_to_storage(print_header=False)
@@ -96,7 +96,7 @@ class Command(BaseCommand):
     def assert_latest_data_not_already_uploaded(self, date):
         client = Client(settings.BQ_HSCIC_DATASET)
         sql = """SELECT COUNT(*)
-        FROM [ebmdatalab:hscic.prescribing]
+        FROM hscic.prescribing
         WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
         results = client.query(sql)
         assert results.rows[0][0] == 0

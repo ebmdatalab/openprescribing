@@ -20,14 +20,14 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_from": "hscic.normalised_prescribing_standard ",
   "numerator_where": [
     "(bnf_code LIKE '0704050R0%AC' OR bnf_code LIKE '0704050R0%AD') "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],
-  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_from": "hscic.practice_statistics ",
   "denominator_where": [
     "1 = 1"
   ]

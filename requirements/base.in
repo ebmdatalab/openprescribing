@@ -25,7 +25,7 @@ lxml==3.6.4
 networkx==1.11
 numpy==1.13.1
 openpyxl==2.3.3
-pandas-gbq==0.1.6
+pandas-gbq==0.2.0
 pandas==0.20.2
 premailer==3.0.1
 psycopg2==2.5.4

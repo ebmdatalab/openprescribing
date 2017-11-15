@@ -206,7 +206,6 @@ class BigqueryFunctionalTests(TestCase):
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
@@ -491,6 +490,9 @@ class BigqueryFunctionalTests(TestCase):
                 'frontend', 'tests', 'fixtures', 'commands',
                 'prescribing_bigquery_fixture.csv'
             )
+            # TODO Make this a table with a view (see
+            # generate_presentation_replacements), and put it in the correct
+            # dataset ('hscic', not 'measures').
             client = Client('measures')
             table = client.get_or_create_table(
                 settings.BQ_PRESCRIBING_TABLE_NAME,
@@ -503,7 +505,6 @@ class BigqueryFunctionalTests(TestCase):
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 import subprocess
 import tempfile
@@ -5,16 +7,18 @@ import time
 import uuid
 
 from google.cloud import bigquery as gcbq
-from google.cloud import storage as gcs
 from google.cloud.exceptions import Conflict
+
+import pandas as pd
 
 from django.conf import settings
 
+from gcutils.storage import Client as StorageClient
 from gcutils.table_dumper import TableDumper
 
 
 class Client(object):
-    def __init__(self, dataset_name):
+    def __init__(self, dataset_name=None):
         self.project_name = settings.BQ_PROJECT
         self.dataset_name = dataset_name
 
@@ -22,7 +26,11 @@ class Client(object):
         # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
         # containing the credentials to access Google Cloud Services.
         self.gcbq_client = gcbq.Client(project=self.project_name)
-        self.dataset = self.gcbq_client.dataset(dataset_name)
+
+        if dataset_name is not None:
+            self.dataset = self.gcbq_client.dataset(dataset_name)
+        else:
+            self.dataset = None
 
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
@@ -52,7 +60,7 @@ class Client(object):
         return table
 
     def get_or_create_storage_backed_table(self, table_name, schema, gcs_path):
-        gcs_client = gcs.client.Client(project=self.project_name)
+        gcs_client = StorageClient()
         bucket = gcs_client.bucket(self.project_name)
         if bucket.get_blob(gcs_path) is None:
             raise RuntimeError('Could not find blob at {}'.format(gcs_path))
@@ -86,6 +94,8 @@ class Client(object):
         return self.get_table(table_name)
 
     def create_table_with_view(self, table_name, sql, legacy):
+        assert '{project}' in sql
+        sql = sql.format(project=self.project_name)
         table = self.dataset.table(table_name)
         table.view_query = sql
         table.view_use_legacy_sql = legacy
@@ -108,6 +118,19 @@ class Client(object):
 
         return query
 
+    def query_into_dataframe(self, sql, legacy=False):
+        kwargs = {
+            'project_id': self.project_name,
+            'verbose': False,
+            'dialect': 'legacy' if legacy else 'standard',
+        }
+        try:
+            return pd.read_gbq(sql, **kwargs)
+        except:
+            for n, line in enumerate(sql.splitlines()):
+                print(n + 1, line)
+            raise
+
 
 class Table(object):
     def __init__(self, gcbq_table, project_name):
@@ -120,22 +143,6 @@ class Table(object):
     @property
     def qualified_name(self):
         return '{}.{}'.format(self.dataset_name, self.name)
-
-    @property
-    def full_qualified_name(self):
-        return '{}.{}.{}'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
-
-    @property
-    def legacy_full_qualified_name(self):
-        return '[{}:{}.{}]'.format(
-            self.project_name,
-            self.dataset_name,
-            self.name
-        )
 
     def get_rows(self):
         self.gcbq_table.reload()
@@ -212,7 +219,7 @@ class TableExporter(object):
     def __init__(self, table, storage_prefix):
         self.table = table
         self.storage_prefix = storage_prefix
-        storage_client = gcs.Client(project=table.project_name)
+        storage_client = StorageClient()
         self.bucket = storage_client.bucket(table.project_name)
 
     def export_to_storage(self, **options):
@@ -298,7 +305,10 @@ class JobError(StandardError):
 
 
 def convert_legacy_table_names(sql):
-    return re.sub(r'\[(.+?):(.+?)\.(.+?)\]', r'\1.\2.\3', sql)
+    pattern = r'\[(.+?):(.+?)\.(.+?)\]'
+    match = re.match(pattern, sql)
+    assert match is None, 'Found fully-qualified table name in {}'.format(sql)
+    return re.sub(pattern, r'\1.\2.\3', sql)
 
 
 def set_options(thing, options, default_options=None):
@@ -328,6 +338,12 @@ def row_to_dict(row, field_names):
             value = None
         dict_row[field_name] = value
     return dict_row
+
+
+def results_to_dicts(results):
+    field_names = [field.name for field in results.schema]
+    for row in results.rows:
+        yield row_to_dict(row, field_names)
 
 
 def build_schema(*fields):

@@ -8,7 +8,7 @@ SELECT
   {numerator_aliases}
 FROM
   {from_table}
-JOIN ebmdatalab.hscic.ccgs AS ccgs
+JOIN hscic.ccgs AS ccgs
 ON (ccgs.code = pct_id AND ccgs.org_type = 'CCG')
 GROUP BY
   pct_id,

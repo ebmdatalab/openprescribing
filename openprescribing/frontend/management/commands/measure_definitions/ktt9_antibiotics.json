@@ -21,14 +21,14 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+  "numerator_from": "hscic.normalised_prescribing_standard ",
   "numerator_where": [
     "(bnf_code LIKE '0501%%')  "
   ],
   "denominator_columns": [
     "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator "
   ],
-  "denominator_from": "[ebmdatalab:hscic.practice_statistics] ",
+  "denominator_from": "hscic.practice_statistics ",
   "denominator_where": [
     " 1 = 1 "
   ]

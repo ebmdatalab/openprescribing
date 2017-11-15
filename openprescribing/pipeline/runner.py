@@ -15,9 +15,9 @@ import networkx as nx
 from django.conf import settings
 from django.core.management import call_command as django_call_command
 
+from gcutils.storage import Client as StorageClient
 from openprescribing.utils import find_files
 
-from .cloud_utils import CloudHandler
 from .models import TaskLog
 
 
@@ -348,28 +348,28 @@ def dump_import_records(records):
         json.dump(records, f, indent=2, separators=(',', ': '))
 
 
-class BigQueryUploader(CloudHandler):
-    def __init__(self, tasks):
-        super(BigQueryUploader, self).__init__()
-        self.tasks = tasks
+def upload_all_to_storage(tasks):
+    for task in tasks.by_type('convert'):
+        upload_task_input_files(task)
+    for task in tasks.by_type('import'):
+        upload_task_input_files(task)
 
-    def upload_all_to_storage(self):
-        for task in self.tasks.by_type('convert'):
-            self.upload_task_input_files(task)
-        for task in self.tasks.by_type('import'):
-            self.upload_task_input_files(task)
 
-    def upload_task_input_files(self, task):
-        bucket = 'ebmdatalab'
-        for path in task.input_paths():
-            assert path[0] == '/'
-            assert settings.PIPELINE_DATA_BASEDIR[-1] == '/'
-            name = 'hscic' + path.replace(settings.PIPELINE_DATA_BASEDIR, '/')
-            if self.dataset_exists(bucket, name):
-                print("Skipping %s, already uploaded" % name)
-                continue
-            print("Uploading %s to %s" % (path, name))
-            self.upload(path, bucket, name)
+def upload_task_input_files(task):
+    storage_client = StorageClient()
+    bucket = storage_client.get_bucket('ebmdatalab')
+
+    for path in task.input_paths():
+        assert path[0] == '/'
+        assert settings.PIPELINE_DATA_BASEDIR[-1] == '/'
+        name = 'hscic' + path.replace(settings.PIPELINE_DATA_BASEDIR, '/')
+        blob = bucket.blob(name)
+        if blob.exists():
+            print("Skipping %s, already uploaded" % name)
+            continue
+        print("Uploading %s to %s" % (path, name))
+        with open(path) as f:
+            blob.upload_from_file(f)
 
 
 def path_matches_pattern(path, pattern):
@@ -418,7 +418,7 @@ def run_all(year, month):
     for task in tasks.by_type('auto_fetch'):
         run_task(task, year, month)
 
-    BigQueryUploader(tasks).upload_all_to_storage()
+    upload_all_to_storage(tasks)
 
     for task in tasks.by_type('convert').ordered():
         run_task(task, year, month)

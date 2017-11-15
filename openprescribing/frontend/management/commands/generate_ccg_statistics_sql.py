@@ -58,8 +58,8 @@ SELECT
   SUM(astro_pu_cost) AS astro_pu_cost,
   jsonify_starpu(%s) AS star_pu
 FROM
-  ebmdatalab.hscic.practice_statistics AS statistics
-JOIN ebmdatalab.hscic.ccgs ccgs
+  hscic.practice_statistics AS statistics
+JOIN hscic.ccgs ccgs
 ON (statistics.pct_id = ccgs.code AND ccgs.org_type = 'CCG')
 WHERE month >= TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
 GROUP BY
