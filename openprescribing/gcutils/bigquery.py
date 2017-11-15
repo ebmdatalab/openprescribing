@@ -333,5 +333,11 @@ def row_to_dict(row, field_names):
     return dict_row
 
 
+def results_to_dicts(results):
+    field_names = [field.name for field in results.schema]
+    for row in results.rows:
+        yield row_to_dict(row, field_names)
+
+
 def build_schema(*fields):
     return [gcbq.SchemaField(*field) for field in fields]
