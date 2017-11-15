@@ -1,3 +1,5 @@
+from dateutil.relativedelta import relativedelta
+
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -75,11 +77,12 @@ def measure_numerators_by_org(request, format=None):
     else:
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
+    three_months_ago = (this_month - relativedelta(months=1)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_can_be_queried():
         # Awkwardly, because the column names in the prescriptions table
         # are different from those in bigquery (for which the measure
-        # defitions are defined), we have to rename them (e.g. `items` ->
+        # definitions are defined), we have to rename them (e.g. `items` ->
         # `total_items`)
         numerator_selector = m.columns_for_select('numerator').replace(
             'items', 'total_items')
@@ -87,9 +90,10 @@ def measure_numerators_by_org(request, format=None):
             'bnf_code', 'presentation_code').replace(
                 'bnf_name', 'pn.name'
             )
-        # There is redundancy in the column names, so we can support
-        # various flavours of `WHERE` clause from the measure
-        # definitions
+        # The redundancy in the following column names is so we can
+        # support various flavours of `WHERE` clause from the measure
+        # definitions that may use a subset of any of these column
+        # names
         query = ('WITH nice_names AS ( '
                  'SELECT '
                  '  bnf_code, '
@@ -119,7 +123,7 @@ def measure_numerators_by_org(request, format=None):
                  'WHERE '
                  "  %s = '%s' "
                  '  AND '
-                 "  processing_date = '%s' "
+                 "  processing_date >= '%s' "
                  '  AND (%s) '
                  'GROUP BY '
                  '  %s, presentation_code, nice_names.name, pn.name '
@@ -128,7 +132,7 @@ def measure_numerators_by_org(request, format=None):
                      org_selector,
                      numerator_selector,
                      org_selector,
-                     org, this_month.strftime('%Y-%m-%d'),
+                     org, three_months_ago,
                      numerator_where,
                      org_selector
                  )

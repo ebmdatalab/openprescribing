@@ -13,8 +13,8 @@
 
 <h1>{{ practice.name }}: {{ measure.name }}</h2>
 
-<p>In the month for which we have the most recent data ({{ current_at|date:"M Y" }}), the
-numerator in this measure is composed of the following presentations:</p>
+<p>In the quarter ending {{ current_at|date:"M Y" }}, the
+numerator in this measure was composed of the following presentations:</p>
 
 <table id="numerator_breakdown" class="table">
   <thead>

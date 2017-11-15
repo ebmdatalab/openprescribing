@@ -20,7 +20,7 @@ def _get_test_measure():
 
 
 class TestAPIMeasureViews(TestCase):
-    fixtures = ['one_month_of_measures', '']
+    fixtures = ['one_month_of_measures']
     api_prefix = '/api/1.0'
 
     def _get_json(self, url):
@@ -114,6 +114,25 @@ class TestAPIMeasureViews(TestCase):
     def test_api_measure_numerators_by_practice(self):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=N84014&format=json'
+        data = self._get_json(url)
+        self.assertEqual(data, [
+            {u'total_items': 1,
+             u'bnf_code': u'0205010F0AAAAAA',
+             u'presentation_name': u'Thing 2',
+             u'numerator': 100.0,
+             u'entity': u'N84014',
+             u'cost': 1.0,
+             u'quantity': 100.0}])
+
+    def test_api_measure_numerators_by_practice_3_month_window(self):
+        url = '/api/1.0/measure_numerators_by_org/'
+        url += '?measure=cerazette&org=N84014&format=json'
+        from frontend.models import ImportLog
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2015-10-01',  # a month after the fixture measure data
+            filename='foo'
+        )
         data = self._get_json(url)
         self.assertEqual(data, [
             {u'total_items': 1,
