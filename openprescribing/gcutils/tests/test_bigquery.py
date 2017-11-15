@@ -15,11 +15,10 @@ class BQClientTest(TestCase):
     def setUp(self):
         self.n = random.randrange(10000)
         self.dataset_name = 'bq_test_{:04d}'.format(self.n)
+        self.storage_prefix = 'test_bq_client/{}-'.format(self.dataset_name)
 
         client = Client(self.dataset_name)
         client.create_dataset()
-
-        self.storage_paths = set()
 
     def tearDown(self):
         client = Client(self.dataset_name)
@@ -27,8 +26,7 @@ class BQClientTest(TestCase):
 
         client = storage.client.Client(project='ebmdatalab')
         bucket = client.bucket('ebmdatalab')
-        for storage_path in self.storage_paths:
-            blob = bucket.blob(storage_path)
+        for blob in bucket.list_blobs(prefix=self.storage_prefix):
             blob.delete()
 
     def test_the_lot(self):
@@ -69,10 +67,7 @@ class BQClientTest(TestCase):
 
         # Test TableExporter.export_to_storage and
         # TableExporter.download_from_storage_and_unzip
-        t1_exporter = TableExporter(
-            t1,
-            'test_bq_client/test_table-{}'.format(self.n)
-        )
+        t1_exporter = TableExporter(t1, self.storage_prefix + 'test_table-')
         t1_exporter.export_to_storage()
 
         with tempfile.NamedTemporaryFile(mode='r+') as f:
@@ -84,21 +79,20 @@ class BQClientTest(TestCase):
         self.assertEqual(data, [map(str, row) for row in [headers] + rows])
 
         # Test Table.insert_rows_from_storage
-        self.upload_to_storage(
-            'gcutils/tests/test_table.csv',
-            'test_bq_client/test_table-{}.csv'.format(self.n)
-        )
+        storage_path = self.storage_prefix + 'test_table.csv'
+        self.upload_to_storage('gcutils/tests/test_table.csv', storage_path)
 
         t2.insert_rows_from_storage(
-            'gs://ebmdatalab/test_bq_client/test_table-{}.csv'.format(self.n)
+            'gs://ebmdatalab/{}'.format(storage_path)
         )
 
         self.assertEqual(sorted(t2.get_rows()), rows)
 
         # Test Client.get_or_create_storage_backed_table
+        storage_path = self.storage_prefix + 'test_table_headers.csv'
         self.upload_to_storage(
             'gcutils/tests/test_table_headers.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
+            storage_path
         )
 
         schema = [
@@ -109,7 +103,7 @@ class BQClientTest(TestCase):
         t3 = client.get_or_create_storage_backed_table(
             't3',
             schema,
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
+            storage_path
         )
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
@@ -118,7 +112,7 @@ class BQClientTest(TestCase):
 
         self.upload_to_storage(
             'gcutils/tests/test_table_headers_2.csv',
-            'test_bq_client/test_table_headers-{}.csv'.format(self.n)
+            storage_path
         )
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
@@ -150,4 +144,3 @@ class BQClientTest(TestCase):
         blob = bucket.blob(storage_path)
         with open(local_path) as f:
             blob.upload_from_file(f)
-        self.storage_paths.add(storage_path)
