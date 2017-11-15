@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 import subprocess
 import tempfile
@@ -122,7 +124,12 @@ class Client(object):
             'verbose': False,
             'dialect': 'legacy' if legacy else 'standard',
         }
-        return pd.read_gbq(sql, **kwargs)
+        try:
+            return pd.read_gbq(sql, **kwargs)
+        except:
+            for n, line in enumerate(sql.splitlines())
+                print(n + 1, line)
+            raise
 
 
 class Table(object):
