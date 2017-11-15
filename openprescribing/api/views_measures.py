@@ -77,7 +77,8 @@ def measure_numerators_by_org(request, format=None):
     else:
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
-    three_months_ago = (this_month - relativedelta(months=1)).strftime('%Y-%m-01')
+    three_months_ago = (
+        this_month - relativedelta(months=1)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_can_be_queried():
         # Awkwardly, because the column names in the prescriptions table
@@ -89,7 +90,7 @@ def measure_numerators_by_org(request, format=None):
         numerator_where = m.numerator_where.replace(
             'bnf_code', 'presentation_code').replace(
                 'bnf_name', 'pn.name'
-            )
+        )
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
@@ -135,7 +136,7 @@ def measure_numerators_by_org(request, format=None):
                      org, three_months_ago,
                      numerator_where,
                      org_selector
-                 )
+                )
         data = utils.execute_query(query, [])
     else:
         data = []
