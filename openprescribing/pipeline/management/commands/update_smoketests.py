@@ -32,10 +32,10 @@ class Command(BaseCommand):
             cost = []
             items = []
 
-            for row in results_to_dicts(results)
-                quantity.append(r['quantity'])
-                cost.append(r['actual_cost'])
-                items.append(r['items'])
+            for row in results_to_dicts(results):
+                quantity.append(row['quantity'])
+                cost.append(row['actual_cost'])
+                items.append(row['items'])
 
             print("Updating test expectations for %s" % test_name)
             json_path = os.path.join(path, '%s.json' % test_name)
