@@ -131,15 +131,14 @@ var queryForm = {
   },
 
   checkIfChartCanBeRendered: function(options) {
-    var hasNumerator, hasDenominator, hasOrgIds;
+    var hasNumerator, hasOrgIds;
     hasNumerator = ((options.num === 'all') || (options.numIds.length > 0));
-    hasDenominator = ((options.denom !== '') && (options.denomIds.length > 0));
     if (options.denom !== 'chemical') {
       hasDenominator = true;
     }
     hasOrgIds = ((options.org === 'all') || (options.org === 'CCG') ||
                      (options.orgIds.length > 0));
-    return hasNumerator && hasDenominator && hasOrgIds;
+    return hasNumerator && hasOrgIds;
   },
 
   checkIfButtonShouldBeEnabled: function(options) {
