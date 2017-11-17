@@ -30,14 +30,14 @@ var queryForm = {
     results: '#results',
     oldBrowserWarning: '#old-browser'
   },
-
+  // These are default values for the analyse form:
   globalOptions: {
     data: {},
     org: 'CCG',
     orgIds: [],
     num: 'chemical',
     numIds: [],
-    denom: 'chemical',
+    denom: 'nothing',
     denomIds: [],
     highlightedPoints: [],
     reUpdate: false,
@@ -131,15 +131,12 @@ var queryForm = {
   },
 
   checkIfChartCanBeRendered: function(options) {
-    var hasNumerator, hasDenominator, hasOrgIds;
+    var hasNumerator;
+    var hasOrgIds;
     hasNumerator = ((options.num === 'all') || (options.numIds.length > 0));
-    hasDenominator = ((options.denom !== '') && (options.denomIds.length > 0));
-    if (options.denom !== 'chemical') {
-      hasDenominator = true;
-    }
     hasOrgIds = ((options.org === 'all') || (options.org === 'CCG') ||
                      (options.orgIds.length > 0));
-    return hasNumerator && hasDenominator && hasOrgIds;
+    return hasNumerator && hasOrgIds;
   },
 
   checkIfButtonShouldBeEnabled: function(options) {
@@ -149,14 +146,20 @@ var queryForm = {
   },
 
   initialiseGlobalOptionsFromHash: function(is_load) {
-        // console.log('initialiseGlobalOptionsFromHash');
+    // console.log('initialiseGlobalOptionsFromHash');
     var params = hashHelper.getHashParams();
     for (var k in params) {
-            // Handle old URL parameters.
+      // Handle old URL parameters.
       if ((k === 'denom') && (params[k] === 'star_pu_oral_antibac_items')) {
         params[k] = 'star_pu.oral_antibacterials_item';
       }
       this.globalOptions[k] = params[k];
+    }
+    if (this.globalOptions.denomIds !== [] &&
+        this.globalOptions.denom == 'nothing') {
+      // the default for the dropdown is 'nothing', but we should
+      // override that if a denominator has been specified in the URL
+      this.globalOptions.denom = 'chemical';
     }
   },
 

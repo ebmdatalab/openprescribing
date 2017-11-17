@@ -210,7 +210,9 @@ var utils = {
       d.id = ('row_id' in d) ? d.row_id : null;
       if ((d[ratio_item_x] !== null) && (d[ratio_item_x] > 0)) {
         d.ratio_items = d.y_items / d[ratio_item_x];
-        d.ratio_items = d.ratio_items * 1000;
+        if (x_val_key !== 'nothing') {
+          d.ratio_items = d.ratio_items * 1000;
+        }
       } else if (d[ratio_item_x] === 0) {
         d.ratio_items = null;
       }

@@ -16,11 +16,13 @@ var formatters = {
                                                     options.denom,
                                                     f.friendlyDenominator);
     f.chartTitle = this.constructChartTitle(options.activeOption,
+                                            options.denom,
                                                 f.friendlyNumerator,
                                                 f.friendlyDenominator,
                                                 f.friendlyOrgs);
     f.chartSubTitle = this.constructChartSubTitle(options.activeMonth);
     f.yAxisTitle = this.constructYAxisTitle(options.activeOption,
+                                            options.denom,
                                             f.friendlyNumerator,
                                             f.fullDenominator);
     f.filename = this.constructFilename(options.activeOption,
@@ -93,17 +95,21 @@ var formatters = {
     if (denom === 'chemical') {
       str = (activeOption === 'items') ? '1,000 items for ' : '£1,000 spend on ';
       str += denomStr;
+    } else if (denom == 'nothing') {
+      str = '';
     } else {
       str = ' 1,000 ' + denomStr;
     }
     return str;
   },
 
-  constructChartTitle: function(activeOption, numStr, denomStr, orgStr) {
+  constructChartTitle: function(activeOption, denom, numStr, denomStr, orgStr) {
     var chartTitle = (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     chartTitle += numStr;
     chartTitle += (chartTitle.length > 40) ? '<br/>' : '';
-    chartTitle += ' vs ' + denomStr + '<br/>';
+    if (denom !== 'nothing') {
+      chartTitle += ' vs ' + denomStr + '<br/>';
+    }
     chartTitle += ' by ' + orgStr;
     return chartTitle;
   },
@@ -115,10 +121,12 @@ var formatters = {
     return subTitle;
   },
 
-  constructYAxisTitle: function(activeOption, friendlyNumerator, fullDenominator) {
+  constructYAxisTitle: function(activeOption, denom, friendlyNumerator, fullDenominator) {
     var axisTitle = (activeOption == 'items') ? 'Items for ' : 'Spend on ';
-    axisTitle += friendlyNumerator + '<br/>';
-    axisTitle += ' per ' + fullDenominator;
+    axisTitle += friendlyNumerator;
+    if (denom !== 'nothing') {
+      axisTitle += '<br/> per ' + fullDenominator;
+    }
     return axisTitle;
   },
 
@@ -148,24 +156,26 @@ var formatters = {
     tt += ' in ' + date + ': ';
     tt += (force_items || options.activeOption === 'items') ? '' : '£';
     tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_y, numDecimals) : original_y;
-    tt += '<br/>';
 
-    p = options.friendly.partialDenominator.charAt(0).toUpperCase();
-    p += options.friendly.partialDenominator.substring(1);
-    tt += p + ' in ' + date + ': ';
-    if (options.activeOption !== 'items') {
-      tt += (!force_items && options.denom === 'chemical') ? '£' : '';
-    }
-    tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
-    tt += '<br/>';
+    if (options.denom !== 'nothing') {
+      tt += '<br/>';
 
-    tt += options.friendly.yAxisTitle.replace('<br/>', "") + ': ';
-    tt += (force_items || options.activeOption === 'items') ? '' : '£';
-    tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
-        // The line chart tooltips will only ever show items, regardless
-        // of what global items have been set elsewhere.
-    if (force_items) {
-      tt = tt.replace(/Spend on/g, 'Items for');
+      p = options.friendly.partialDenominator.charAt(0).toUpperCase();
+      p += options.friendly.partialDenominator.substring(1);
+      tt += p + ' in ' + date + ': ';
+      if (options.activeOption !== 'items') {
+        tt += (!force_items && options.denom === 'chemical') ? '£' : '';
+      }
+      tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
+      tt += '<br/>';
+      tt += options.friendly.yAxisTitle.replace('<br/>', "") + ': ';
+      tt += (force_items || options.activeOption === 'items') ? '' : '£';
+      tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
+      // The line chart tooltips will only ever show items, regardless
+      // of what global items have been set elsewhere.
+      if (force_items) {
+        tt = tt.replace(/Spend on/g, 'Items for');
+      }
     }
     return tt;
   },
