@@ -14,25 +14,22 @@ TEMP_SOURCE_NAME = 'raw_nhs_digital_data'
 
 
 class Command(BaseCommand):
-    """There are two kinds of source we use to generate data.
+    """Processes manually-fetched detailed prescribing information CSV.
 
+    * Appends prescribing information to the hscic.prescribing table in BQ
+    * Downloads a converted CSV file for importing into relevant partition of
+      frontend_partition table in Postgres by import_hscic_prescribing task
 
-    The legacy source (the code paths for which, once the new source
-    has successfully been imported a few times, can be removed) is
-    published erratically; the new "detailed" data source is published
-    regularly, each month, so we now prefer that.
+    The source CSV file contains "figures on the number of prescription items
+    that are dispensed each month and information relating to costs for English
+    practices".
 
-    The "detailed" source format has one iine for each presentation
-    *and pack size*, so prescriptions of 28 paracetamol will be on a
-    separate line from prescriptions of 100 paracetamol.
+    The source CSV file has one line for each presentation and pack size, (so
+    prescriptions of 28 paracetamol will be on a separate line from
+    prescriptions of 100 paracetamol).
 
-    The destination format has one line for paracetamol of any pack
-    size.
-
+    The converted CSV file has one line for paracetamol of any pack size.
     """
-    args = ''
-    help = 'Converts HSCIC data files into the format needed for our SQL COPY '
-    help += 'statement. We use COPY because it is much faster than INSERT.'
 
     def add_arguments(self, parser):
         parser.add_argument('--filename')
