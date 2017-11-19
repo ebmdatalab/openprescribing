@@ -36,13 +36,7 @@ class Command(BaseCommand):
         parser.add_argument('--filename')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = (options['verbosity'] > 1)
-
         path = options['filename']
-
-        if self.IS_VERBOSE:
-            print "--------- Converting %s -----------" % path
-
         converted_path = '{}_formatted.CSV'.format(os.path.splitext(path)[0])
         head, filename = os.path.split(path)
         _, year_and_month = os.path.split(head)
