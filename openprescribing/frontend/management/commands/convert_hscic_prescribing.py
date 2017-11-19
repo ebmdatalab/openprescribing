@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -37,38 +38,28 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.IS_VERBOSE = (options['verbosity'] > 1)
 
-        if 'is_test' in options:
-            self.IS_TEST = True
-        else:
-            self.IS_TEST = False
-
-        filename = options['filename']
+        path = options['filename']
 
         if self.IS_VERBOSE:
-            print "--------- Converting %s -----------" % filename
+            print "--------- Converting %s -----------" % path
 
-        filename_for_output = self.create_filename_for_output_file(filename)
+        converted_path = '{}_formatted.CSV'.format(os.path.splitext(path)[0])
+        head, filename = os.path.split(path)
+        _, year_and_month = os.path.split(head)
 
-        filename = filename.split('/prescribing/')[1]
-        uri = 'gs://ebmdatalab/hscic/prescribing/' + filename
-        # Grab date from file path
+        date = year_and_month + '_01'
         try:
-            date = datetime.datetime.strptime(
-                uri.split("/")[-2] + "_01", "%Y_%m_%d"
-            ).strftime('%Y_%m_%d')
+            datetime.datetime.strptime(date, '%Y_%m_%d')
         except ValueError as e:
             message = ('The file path must have a YYYY_MM '
                        'date component in the containing directory: ')
-            message += e.message
+            message += path
             raise CommandError(message)
 
-        self.aggregate_nhs_digital_data(uri, filename_for_output, date)
+        gcs_uri = 'gs://ebmdatalab/hscic/prescribing/{}/{}'. \
+            format(year_and_month, filename)
 
-    def create_filename_for_output_file(self, filename):
-        if self.IS_TEST:
-            return filename[:-4] + '_test.CSV'
-        else:
-            return filename[:-4] + '_formatted.CSV'
+        self.aggregate_nhs_digital_data(gcs_uri, converted_path, date)
 
     def aggregate_nhs_digital_data(self, uri, local_path, date):
         """Given a GCS URI for "detailed" prescribing data, run a query to

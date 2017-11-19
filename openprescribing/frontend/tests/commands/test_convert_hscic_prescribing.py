@@ -76,7 +76,6 @@ class AggregateTestCase(TestCase):
     def test_data_is_aggregated(self):
         target = tempfile.NamedTemporaryFile(mode='r+')
         cmd = Command()
-        cmd.is_test = True
         cmd.aggregate_nhs_digital_data(
             self.gcs_uri, target.name, date='2016_01_01')
         target.seek(0)
