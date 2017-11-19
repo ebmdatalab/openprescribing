@@ -94,7 +94,7 @@ class BQClientTest(TestCase):
 
         self.assertEqual(sorted(t2.get_rows()), rows)
 
-        # Test Client.get_or_create_storage_backed_table
+        # Test Client.create_storage_backed_table
         storage_path = self.storage_prefix + 'test_table_headers.csv'
         self.upload_to_storage(
             'gcutils/tests/test_table_headers.csv',
@@ -106,7 +106,7 @@ class BQClientTest(TestCase):
             {'name': 'b', 'type': 'string'},
         ]
 
-        t3 = client.get_or_create_storage_backed_table(
+        t3 = client.create_storage_backed_table(
             't3',
             schema,
             storage_path

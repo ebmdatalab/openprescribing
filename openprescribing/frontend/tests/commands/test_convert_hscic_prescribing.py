@@ -10,6 +10,7 @@ from django.test import TestCase
 from frontend.management.commands.convert_hscic_prescribing import Command
 from django.core.management.base import CommandError
 
+from gcutils.bigquery import Client as BQClient, NotFound
 from gcutils.storage import Client as StorageClient
 
 
@@ -83,3 +84,10 @@ class AggregateTestCase(TestCase):
         dr_chan = next(
             x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
         self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows
+
+    def tearDown(self):
+        table = BQClient('tmp_eu').get_table('temp_raw_nhs_digital_data_2016_01')
+        try:
+            table.gcbq_table.delete()
+        except NotFound:
+            pass

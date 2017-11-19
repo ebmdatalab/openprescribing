@@ -66,7 +66,9 @@ class Command(BaseCommand):
         the resulting data to a `*_formatted.CSV` file, ready for
         importing.
         """
-        raw_data_table = get_or_create_raw_data_table(gcs_path)
+        year_and_month = datetime.datetime.strptime(date, '%Y_%m_%d').strftime('%Y_%m')
+        table_name = '{}_{}'.format(TEMP_SOURCE_NAME, year_and_month)
+        raw_data_table = create_raw_data_table(table_name, gcs_path)
 
         self.assert_latest_data_not_already_uploaded(date)
 
@@ -141,7 +143,7 @@ class Command(BaseCommand):
         return table
 
 
-def get_or_create_raw_data_table(gcs_path):
+def create_raw_data_table(table_name, gcs_path):
     """Create a temporary data source so BigQuery can query the CSV in
     Google Cloud Storage.
 
@@ -170,8 +172,8 @@ def get_or_create_raw_data_table(gcs_path):
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
     client = Client(TEMP_DATASET)
-    table = client.get_or_create_storage_backed_table(
-        TEMP_SOURCE_NAME,
+    table = client.create_storage_backed_table(
+        table_name,
         schema,
         gcs_path
     )

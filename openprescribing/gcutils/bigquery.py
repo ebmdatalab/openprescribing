@@ -7,7 +7,7 @@ import time
 import uuid
 
 from google.cloud import bigquery as gcbq
-from google.cloud.exceptions import Conflict
+from google.cloud.exceptions import Conflict, NotFound
 
 import pandas as pd
 
@@ -59,7 +59,7 @@ class Client(object):
             table = self.get_table(table_name)
         return table
 
-    def get_or_create_storage_backed_table(self, table_name, schema, gcs_path):
+    def create_storage_backed_table(self, table_name, schema, gcs_path):
         gcs_client = StorageClient()
         bucket = gcs_client.bucket(self.project_name)
         if bucket.get_blob(gcs_path) is None:
@@ -82,14 +82,11 @@ class Client(object):
             self.dataset_name
         )
 
-        try:
-            self.gcbq_client._connection.api_request(
-                method='POST',
-                path=path,
-                data=resource
-            )
-        except Conflict:
-            pass
+        self.gcbq_client._connection.api_request(
+            method='POST',
+            path=path,
+            data=resource
+        )
 
         return self.get_table(table_name)
 
