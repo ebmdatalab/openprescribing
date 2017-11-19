@@ -18,6 +18,9 @@ class Command(BaseCommand):
     * Downloads a converted CSV file for importing into relevant partition of
       frontend_partition table in Postgres by import_hscic_prescribing task
 
+    We assume that the source CSV file has been uploaded to Cloud Storage, at
+    hscic/prescribing/{year_and_month}/{filename}.csv.
+
     The source CSV file contains "figures on the number of prescription items
     that are dispensed each month and information relating to costs for English
     practices".

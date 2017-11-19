@@ -1,5 +1,5 @@
 import csv
-import tempfile
+import os
 
 from mock import patch
 
@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.management.commands.convert_hscic_prescribing import Command
 from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client as BQClient, NotFound
@@ -58,21 +57,27 @@ class AggregateTestCase(TestCase):
     def test_data_is_aggregated(self):
         # upload a file to GCS
         # test that the file we get back is correct
-        test_file = 'frontend/tests/fixtures/commands/'
-        test_file += 'Detailed_Prescribing_Information.csv'
-        object_path = 'test_hscic/prescribing/sample.csv'
+        raw_data_path = 'frontend/tests/fixtures/commands/' +\
+            'convert_hscic_prescribing/2016_01/' +\
+            'Detailed_Prescribing_Information.csv'
+        converted_data_path = 'frontend/tests/fixtures/commands/' +\
+            'convert_hscic_prescribing/2016_01/' +\
+            'Detailed_Prescribing_Information_formatted.CSV'
+        gcs_path = 'hscic/prescribing/2016_01/' +\
+            'Detailed_Prescribing_Information.csv'
+
         client = StorageClient()
         bucket = client.get_bucket('ebmdatalab')
-        blob = bucket.blob(object_path)
+        blob = bucket.blob(gcs_path)
 
-        with open(test_file, 'rb') as my_file:
-            blob.upload_from_file(my_file)
+        with open(raw_data_path) as f:
+            blob.upload_from_file(f)
 
-        target = tempfile.NamedTemporaryFile(mode='r+')
-        cmd = Command()
-        cmd.aggregate_nhs_digital_data(object_path, target.name, date='2016_01_01')
-        target.seek(0)
-        rows = list(csv.reader(open(target.name, 'rU')))
+        call_command('convert_hscic_prescribing', filename=raw_data_path)
+
+        with open(converted_data_path) as f:
+            rows = list(csv.reader(f))
+
         # there are 11 rows in the input file; 2 are for the same
         # practice/presentation and should be collapsed, and 1 is for
         # an UNKNONWN SURGERY (see issue #349)
@@ -91,3 +96,10 @@ class AggregateTestCase(TestCase):
 
         table = BQClient(settings.BQ_HSCIC_DATASET).get_table('prescribing')
         table.delete_all_rows()
+
+        try:
+            os.remove('frontend/tests/fixtures/commands/' +
+                      'convert_hscic_prescribing/2016_01/' +
+                      'Detailed_Prescribing_Information_formatted.CSV')
+        except OSError:
+            pass
