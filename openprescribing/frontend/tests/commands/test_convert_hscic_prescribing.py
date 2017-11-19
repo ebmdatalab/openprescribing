@@ -1,9 +1,9 @@
 import csv
 import tempfile
 
-from mock import MagicMock
 from mock import patch
 
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -45,8 +45,6 @@ class CommandsTestCase(TestCase):
 
 @patch('frontend.management.commands.convert_hscic_prescribing'
        '.TEMP_SOURCE_NAME', 'temp_raw_nhs_digital_data')
-@patch('frontend.management.commands.convert_hscic_prescribing'
-       '.Command.assert_latest_data_not_already_uploaded', MagicMock())
 class AggregateTestCase(TestCase):
     """Test that data in the "detailed" format is correctly aggregated to
     the level we currently use in the website.
@@ -91,3 +89,6 @@ class AggregateTestCase(TestCase):
             table.gcbq_table.delete()
         except NotFound:
             pass
+
+        table = BQClient(settings.BQ_HSCIC_DATASET).get_table('prescribing')
+        table.delete_all_rows()
