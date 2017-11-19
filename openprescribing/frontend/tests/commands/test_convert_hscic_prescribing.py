@@ -1,8 +1,6 @@
 import csv
 import os
 
-from mock import patch
-
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
@@ -14,9 +12,7 @@ from gcutils.storage import Client as StorageClient
 
 
 class CommandsTestCase(TestCase):
-    @patch('frontend.management.commands.convert_hscic_prescribing.Command'
-           '.aggregate_nhs_digital_data')
-    def test_convert_detailed_hscic_prescribing_has_date(self, method):
+    def test_convert_detailed_hscic_prescribing_has_date(self):
         opts = {
             'filename': ('/home/hello/openprescribing-data/data/prescribing'
                          '/Detailed_Prescribing_Information.csv')
