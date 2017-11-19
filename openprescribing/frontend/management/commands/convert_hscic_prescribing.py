@@ -56,11 +56,11 @@ class Command(BaseCommand):
             message += path
             raise CommandError(message)
 
-        table_name = 'raw_nhs_digital_data_{}'.format(year_and_month)
+        self.assert_latest_data_not_already_uploaded(date)
+
+        table_name = 'raw_prescribing_data_{}'.format(year_and_month)
         gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
         raw_data_table = create_raw_data_table(table_name, gcs_path)
-
-        self.assert_latest_data_not_already_uploaded(date)
 
         self.append_aggregated_data_to_prescribing_table(
             raw_data_table.qualified_name, date)
