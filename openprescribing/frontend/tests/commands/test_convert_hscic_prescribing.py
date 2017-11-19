@@ -25,7 +25,7 @@ class CommandsTestCase(TestCase):
         }
         call_command('convert_hscic_prescribing', **opts)
         method.assert_called_with(
-            ('gs://ebmdatalab/hscic/prescribing/2017_03/'
+            ('hscic/prescribing/2017_03/'
              'Detailed_Prescribing_Information.csv'),
             ('/home/hello/openprescribing-data/data/prescribing'
              '/2017_03/Detailed_Prescribing_Information_formatted.CSV'),
@@ -58,26 +58,22 @@ class AggregateTestCase(TestCase):
     size.
 
     """
-    def setUp(self):
+    def test_data_is_aggregated(self):
         # upload a file to GCS
         # test that the file we get back is correct
         test_file = 'frontend/tests/fixtures/commands/'
         test_file += 'Detailed_Prescribing_Information.csv'
-        bucket_name = 'ebmdatalab'
-        object_name = 'test_hscic/prescribing/sample.csv'
+        object_path = 'test_hscic/prescribing/sample.csv'
         client = StorageClient()
-        bucket = client.get_bucket(bucket_name)
-        blob = bucket.blob(object_name)
+        bucket = client.get_bucket('ebmdatalab')
+        blob = bucket.blob(object_path)
 
         with open(test_file, 'rb') as my_file:
             blob.upload_from_file(my_file)
-        self.gcs_uri = "gs://ebmdatalab/%s" % object_name
 
-    def test_data_is_aggregated(self):
         target = tempfile.NamedTemporaryFile(mode='r+')
         cmd = Command()
-        cmd.aggregate_nhs_digital_data(
-            self.gcs_uri, target.name, date='2016_01_01')
+        cmd.aggregate_nhs_digital_data(object_path, target.name, date='2016_01_01')
         target.seek(0)
         rows = list(csv.reader(open(target.name, 'rU')))
         # there are 11 rows in the input file; 2 are for the same

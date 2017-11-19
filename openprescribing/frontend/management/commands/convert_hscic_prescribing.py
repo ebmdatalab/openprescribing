@@ -56,20 +56,19 @@ class Command(BaseCommand):
             message += path
             raise CommandError(message)
 
-        gcs_uri = 'gs://ebmdatalab/hscic/prescribing/{}/{}'. \
-            format(year_and_month, filename)
+        gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
 
-        self.aggregate_nhs_digital_data(gcs_uri, converted_path, date)
+        self.aggregate_nhs_digital_data(gcs_path, converted_path, date)
 
-    def aggregate_nhs_digital_data(self, uri, local_path, date):
+    def aggregate_nhs_digital_data(self, gcs_path, local_path, date):
         """Given a GCS URI for "detailed" prescribing data, run a query to
         aggregate it into the format we use internally, and download
         the resulting data to a `*_formatted.CSV` file, ready for
         importing.
         """
-        # Create table at raw_nhs_digital_data
-        gcs_path = uri.split('ebmdatalab/')[1]
         raw_data_table = get_or_create_raw_data_table(gcs_path)
+
+        self.assert_latest_data_not_already_uploaded(date)
 
         self.append_aggregated_data_to_prescribing_table(
             raw_data_table.qualified_name, date)
@@ -91,8 +90,6 @@ class Command(BaseCommand):
 
     def append_aggregated_data_to_prescribing_table(
             self, raw_data_table_name, date):
-        self.assert_latest_data_not_already_uploaded(date)
-
         client = Client(settings.BQ_HSCIC_DATASET)
         table = client.get_table('prescribing')
 
