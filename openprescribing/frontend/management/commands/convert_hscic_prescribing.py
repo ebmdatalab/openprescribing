@@ -56,18 +56,8 @@ class Command(BaseCommand):
             message += path
             raise CommandError(message)
 
-        gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
-
-        self.aggregate_nhs_digital_data(gcs_path, converted_path, date)
-
-    def aggregate_nhs_digital_data(self, gcs_path, local_path, date):
-        """Given a GCS URI for "detailed" prescribing data, run a query to
-        aggregate it into the format we use internally, and download
-        the resulting data to a `*_formatted.CSV` file, ready for
-        importing.
-        """
-        year_and_month = datetime.datetime.strptime(date, '%Y_%m_%d').strftime('%Y_%m')
         table_name = 'raw_nhs_digital_data_{}'.format(year_and_month)
+        gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
         raw_data_table = create_raw_data_table(table_name, gcs_path)
 
         self.assert_latest_data_not_already_uploaded(date)
@@ -79,7 +69,7 @@ class Command(BaseCommand):
 
         exporter = TableExporter(temp_table, gcs_path + '_formatted-')
         exporter.export_to_storage(print_header=False)
-        with open(local_path, 'w') as f:
+        with open(converted_path, 'w') as f:
             exporter.download_from_storage_and_unzip(f)
 
     def assert_latest_data_not_already_uploaded(self, date):
