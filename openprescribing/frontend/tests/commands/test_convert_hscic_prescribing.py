@@ -11,17 +11,7 @@ from gcutils.bigquery import Client as BQClient, NotFound
 from gcutils.storage import Client as StorageClient
 
 
-class CommandsTestCase(TestCase):
-    def test_convert_detailed_hscic_prescribing_has_date(self):
-        opts = {
-            'filename': ('/home/hello/openprescribing-data/data/prescribing'
-                         '/Detailed_Prescribing_Information.csv')
-        }
-        with self.assertRaises(CommandError):
-            call_command('convert_hscic_prescribing', **opts)
-
-
-class AggregateTestCase(TestCase):
+class ConvertHscicPrescribingTests(TestCase):
     """Test that data in the "detailed" format is correctly aggregated to
     the level we currently use in the website.
 
@@ -64,6 +54,13 @@ class AggregateTestCase(TestCase):
         dr_chan = next(
             x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
         self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows
+
+    def test_filename_has_date(self):
+        with self.assertRaises(CommandError):
+            call_command(
+                'convert_hscic_prescribing',
+                filename='Detailed_Prescribing_Information.csv'
+            )
 
     def tearDown(self):
         table_name = 'raw_nhs_digital_data_2016_01'
