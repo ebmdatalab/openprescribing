@@ -14,23 +14,6 @@ from gcutils.storage import Client as StorageClient
 
 
 class CommandsTestCase(TestCase):
-
-    @patch('frontend.management.commands.convert_hscic_prescribing.Command'
-           '.aggregate_nhs_digital_data')
-    def test_convert_detailed_hscic_prescribing_call(self, method):
-        method.return_value = 'filename.csv'
-        opts = {
-            'filename': ('/home/hello/openprescribing-data/data/prescribing'
-                         '/2017_03/Detailed_Prescribing_Information.csv')
-        }
-        call_command('convert_hscic_prescribing', **opts)
-        method.assert_called_with(
-            ('hscic/prescribing/2017_03/'
-             'Detailed_Prescribing_Information.csv'),
-            ('/home/hello/openprescribing-data/data/prescribing'
-             '/2017_03/Detailed_Prescribing_Information_formatted.CSV'),
-            '2017_03_01')
-
     @patch('frontend.management.commands.convert_hscic_prescribing.Command'
            '.aggregate_nhs_digital_data')
     def test_convert_detailed_hscic_prescribing_has_date(self, method):
