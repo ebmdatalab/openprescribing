@@ -7,7 +7,7 @@ from django.test import TestCase
 
 from django.core.management.base import CommandError
 
-from gcutils.bigquery import Client as BQClient, NotFound
+from gcutils.bigquery import Client as BQClient, NotFound, results_to_dicts
 from gcutils.storage import Client as StorageClient
 
 
@@ -24,8 +24,10 @@ class ConvertHscicPrescribingTests(TestCase):
 
     """
     def test_data_is_aggregated(self):
-        # upload a file to GCS
-        # test that the file we get back is correct
+        # there are 11 rows in the input file; 2 are for the same
+        # practice/presentation and should be collapsed, and 1 is for
+        # an UNKNONWN SURGERY (see issue #349)
+
         raw_data_path = 'frontend/tests/fixtures/commands/' +\
             'convert_hscic_prescribing/2016_01/' +\
             'Detailed_Prescribing_Information.csv'
@@ -44,16 +46,27 @@ class ConvertHscicPrescribingTests(TestCase):
 
         call_command('convert_hscic_prescribing', filename=raw_data_path)
 
+        # Test that data added to prescribing table
+        client = BQClient()
+        sql = '''SELECT *
+        FROM {dataset}.prescribing
+        WHERE month = TIMESTAMP('2016-01-01')'''.format(
+            dataset=settings.BQ_HSCIC_DATASET,
+        )
+        rows = list(results_to_dicts(client.query(sql)))
+        self.assertEqual(len(rows), 9)
+        for row in rows:
+            if row['practice'] == 'P92042' and row['bnf_code'] == '0202010B0AAABAB':
+                self.assertEqual(row['quantity'], 1288)
+
+        # Test that downloaded data is correct
         with open(converted_data_path) as f:
             rows = list(csv.reader(f))
 
-        # there are 11 rows in the input file; 2 are for the same
-        # practice/presentation and should be collapsed, and 1 is for
-        # an UNKNONWN SURGERY (see issue #349)
         self.assertEqual(len(rows), 9)
-        dr_chan = next(
-            x for x in rows if x[1] == 'P92042' and x[2] == '0202010B0AAABAB')
-        self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows
+        for row in rows:
+            if row[1] == 'P92042' and row[2] == '0202010B0AAABAB':
+                self.assertEqual(row[6], '1288')
 
     def test_filename_has_date(self):
         with self.assertRaises(CommandError):
