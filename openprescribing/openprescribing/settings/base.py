@@ -337,6 +337,9 @@ BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
 # Dataset for prescribing data
 BQ_HSCIC_DATASET = 'hscic'
 
+# Temporary dataset
+BQ_TMP_DATASET = 'tmp_eu'
+
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {

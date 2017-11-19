@@ -43,8 +43,6 @@ class CommandsTestCase(TestCase):
             call_command('convert_hscic_prescribing', **opts)
 
 
-@patch('frontend.management.commands.convert_hscic_prescribing'
-       '.TEMP_SOURCE_NAME', 'temp_raw_nhs_digital_data')
 class AggregateTestCase(TestCase):
     """Test that data in the "detailed" format is correctly aggregated to
     the level we currently use in the website.
@@ -84,7 +82,8 @@ class AggregateTestCase(TestCase):
         self.assertEqual(int(dr_chan[6]), 1288)  # combination of two rows
 
     def tearDown(self):
-        table = BQClient('tmp_eu').get_table('temp_raw_nhs_digital_data_2016_01')
+        table_name = 'raw_nhs_digital_data_2016_01'
+        table = BQClient(settings.BQ_TMP_DATASET).get_table(table_name)
         try:
             table.gcbq_table.delete()
         except NotFound:

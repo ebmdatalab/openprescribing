@@ -10,9 +10,6 @@ from gcutils.bigquery import Client, TableExporter
 
 logger = logging.getLogger(__name__)
 
-TEMP_DATASET = 'tmp_eu'
-TEMP_SOURCE_NAME = 'raw_nhs_digital_data'
-
 
 class Command(BaseCommand):
     """Processes manually-fetched detailed prescribing information CSV.
@@ -67,7 +64,7 @@ class Command(BaseCommand):
         importing.
         """
         year_and_month = datetime.datetime.strptime(date, '%Y_%m_%d').strftime('%Y_%m')
-        table_name = '{}_{}'.format(TEMP_SOURCE_NAME, year_and_month)
+        table_name = 'raw_nhs_digital_data_{}'.format(year_and_month)
         raw_data_table = create_raw_data_table(table_name, gcs_path)
 
         self.assert_latest_data_not_already_uploaded(date)
@@ -140,7 +137,7 @@ class Command(BaseCommand):
            presentation_code, pct_id, practice_code
         """ % (date, raw_data_table_name)
 
-        client = Client(TEMP_DATASET)
+        client = Client(settings.BQ_TMP_DATASET)
         table = client.get_table('formatted_prescribing_%s' % date)
         table.insert_rows_from_query(sql, legacy=True)
         return table
@@ -174,7 +171,7 @@ def create_raw_data_table(table_name, gcs_path):
         {"name": "NIC", "type": "float", "mode": "required"},
         {"name": "Actual_Cost", "type": "float", "mode": "required"},
     ]
-    client = Client(TEMP_DATASET)
+    client = Client(settings.BQ_TMP_DATASET)
     table = client.create_storage_backed_table(
         table_name,
         schema,
