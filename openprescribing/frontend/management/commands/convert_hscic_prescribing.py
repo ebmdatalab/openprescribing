@@ -41,6 +41,10 @@ class Command(BaseCommand):
         head, filename = os.path.split(path)
         _, year_and_month = os.path.split(head)
 
+        logger.info('path: %s', path)
+        logger.info('converted_path: %s', converted_path)
+        logger.info('year_and_month: %s', year_and_month)
+
         date = year_and_month + '_01'
         try:
             datetime.datetime.strptime(date, '%Y_%m_%d')
@@ -66,6 +70,10 @@ class Command(BaseCommand):
         # Create BQ table backed backed by uploaded source CSV file
         raw_data_table_name = 'raw_prescribing_data_{}'.format(year_and_month)
         gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
+
+        logger.info('raw_data_table_name: %s', raw_data_table_name)
+        logger.info('gcs_path: %s', gcs_path)
+
         schema = [
             {'name': 'Regional_Office_Name', 'type': 'string'},
             {'name': 'Regional_Office_Code', 'type': 'string'},
@@ -109,6 +117,8 @@ class Command(BaseCommand):
            practice, sha
         ''' % (date.replace('_', '-'), raw_data_table.qualified_name)
 
+        logger.info('sql: %s', sql)
+
         prescribing_table = hscic_dataset_client.get_table('prescribing')
         prescribing_table.insert_rows_from_query(
             sql,
@@ -134,6 +144,10 @@ class Command(BaseCommand):
         ''' % (date, raw_data_table.qualified_name)
 
         formatted_data_table_name = 'formatted_prescribing_%s' % year_and_month
+
+        logger.info('sql: %s', sql)
+        logger.info('formatted_data_table_name: %s', formatted_data_table_name)
+
         formatted_data_table = tmp_dataset_client.get_table(formatted_data_table_name)
         formatted_data_table.insert_rows_from_query(sql, legacy=True)
 
