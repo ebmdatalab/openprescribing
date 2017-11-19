@@ -144,6 +144,11 @@ class BQClientTest(TestCase):
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
 
+        # Test Table.delete_all_rows
+        t1.delete_all_rows()
+
+        self.assertEqual(list(t1.get_rows()), [])
+
     def upload_to_storage(self, local_path, storage_path):
         client = StorageClient()
         bucket = client.bucket('ebmdatalab')

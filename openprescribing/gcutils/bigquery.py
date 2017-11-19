@@ -211,6 +211,21 @@ class Table(object):
 
         wait_for_job(job)
 
+    def delete_all_rows(self, **options):
+        sql = 'DELETE FROM {} WHERE true'.format(self.qualified_name)
+
+        default_options = {
+            'use_legacy_sql': False,
+        }
+
+        job = self.gcbq_client.run_async_query(gen_job_name(), sql)
+
+        set_options(job, options, default_options)
+
+        job.begin()
+
+        wait_for_job(job)
+
 
 class TableExporter(object):
     def __init__(self, table, storage_prefix):
