@@ -369,3 +369,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "https://openprescribing.net"
+
+# For sending messages to Slack
+SLACK_GENERAL_POST_KEY = utils.get_env_setting(
+    'SLACK_GENERAL_POST_KEY',
+    default=''
+)

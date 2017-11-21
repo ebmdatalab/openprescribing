@@ -152,3 +152,34 @@ class DMDProduct(models.Model):
             dmdid=self.vpid, concept_class=1).exclude(vpid=self.dmdid)
         assert len(vmp) < 2, "An AMP should only ever have one VMP"
         return vmp[0]
+
+
+class DMDVmpp(models.Model):
+    vppid = models.BigIntegerField(primary_key=True)
+    invalid = models.BigIntegerField(blank=True, null=True)
+    nm = models.TextField(blank=True, null=True)
+    abbrevnm = models.TextField(blank=True, null=True)
+    vpid = models.BigIntegerField(blank=True, null=True)
+    qtyval = models.FloatField(blank=True, null=True)
+    qty_uomcd = models.BigIntegerField(blank=True, null=True)
+    combpackcd = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'dmd_vmpp'
+
+    def __str__(self):
+        return self.nm
+
+
+class NCSOConcession(models.Model):
+    vmpp = models.ForeignKey(DMDVmpp, null=True)
+    year_and_month = models.CharField(max_length=7)
+    drug = models.CharField(max_length=400)
+    pack_size = models.CharField(max_length=40)
+    price_concession_pence = models.IntegerField()
+
+    class Manager(models.Manager):
+        def unreconciled(self):
+            return self.filter(vmpp__isnull=True)
+
+    objects = Manager()
