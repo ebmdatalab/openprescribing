@@ -71,4 +71,4 @@ def update_bnf_table():
 
     bq_client = BQClient('hscic')
     table = bq_client.get_table('bnf')
-    table.insert_rows_from_storage(gcs_uri, skip_leading_rows=True)
+    table.insert_rows_from_storage(gcs_uri, skip_leading_rows=1)
