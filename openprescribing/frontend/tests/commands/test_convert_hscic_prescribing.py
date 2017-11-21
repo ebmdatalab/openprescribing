@@ -56,7 +56,8 @@ class ConvertHscicPrescribingTests(TestCase):
         rows = list(results_to_dicts(client.query(sql)))
         self.assertEqual(len(rows), 9)
         for row in rows:
-            if row['practice'] == 'P92042' and row['bnf_code'] == '0202010B0AAABAB':
+            if row['practice'] == 'P92042' and \
+                    row['bnf_code'] == '0202010B0AAABAB':
                 self.assertEqual(row['quantity'], 1288)
 
         # Test that downloaded data is correct

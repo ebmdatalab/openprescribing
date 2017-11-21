@@ -48,7 +48,7 @@ class Command(BaseCommand):
         date = year_and_month + '_01'
         try:
             datetime.datetime.strptime(date, '%Y_%m_%d')
-        except ValueError as e:
+        except ValueError:
             message = ('The file path must have a YYYY_MM '
                        'date component in the containing directory: ')
             message += path
@@ -143,16 +143,16 @@ class Command(BaseCommand):
            presentation_code, pct_id, practice_code
         ''' % (date, raw_data_table.qualified_name)
 
-        formatted_data_table_name = 'formatted_prescribing_%s' % year_and_month
+        fmtd_data_table_name = 'formatted_prescribing_%s' % year_and_month
 
         logger.info('sql: %s', sql)
-        logger.info('formatted_data_table_name: %s', formatted_data_table_name)
+        logger.info('fmtd_data_table_name: %s', fmtd_data_table_name)
 
-        formatted_data_table = tmp_dataset_client.get_table(formatted_data_table_name)
-        formatted_data_table.insert_rows_from_query(sql, legacy=True)
+        fmtd_data_table = tmp_dataset_client.get_table(fmtd_data_table_name)
+        fmtd_data_table.insert_rows_from_query(sql, legacy=True)
 
         # Export new table to storage, and download
-        exporter = TableExporter(formatted_data_table, gcs_path + '_formatted-')
+        exporter = TableExporter(fmtd_data_table, gcs_path + '_formatted-')
         exporter.export_to_storage(print_header=False)
 
         with open(converted_path, 'w') as f:
