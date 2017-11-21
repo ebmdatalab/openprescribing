@@ -94,7 +94,7 @@ class BQClientTest(TestCase):
 
         self.assertEqual(sorted(t2.get_rows()), rows)
 
-        # Test Client.get_or_create_storage_backed_table
+        # Test Client.create_storage_backed_table
         storage_path = self.storage_prefix + 'test_table_headers.csv'
         self.upload_to_storage(
             'gcutils/tests/test_table_headers.csv',
@@ -106,7 +106,7 @@ class BQClientTest(TestCase):
             {'name': 'b', 'type': 'string'},
         ]
 
-        t3 = client.get_or_create_storage_backed_table(
+        t3 = client.create_storage_backed_table(
             't3',
             schema,
             storage_path
@@ -143,6 +143,11 @@ class BQClientTest(TestCase):
         t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
+
+        # Test Table.delete_all_rows
+        t1.delete_all_rows()
+
+        self.assertEqual(list(t1.get_rows()), [])
 
     def upload_to_storage(self, local_path, storage_path):
         client = StorageClient()

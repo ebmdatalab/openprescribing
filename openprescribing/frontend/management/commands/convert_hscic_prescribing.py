@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -9,106 +10,95 @@ from gcutils.bigquery import Client, TableExporter
 
 logger = logging.getLogger(__name__)
 
-TEMP_DATASET = 'tmp_eu'
-TEMP_SOURCE_NAME = 'raw_nhs_digital_data'
-
 
 class Command(BaseCommand):
-    """There are two kinds of source we use to generate data.
+    """Processes manually-fetched detailed prescribing information CSV.
 
+    * Appends prescribing information to the hscic.prescribing table in BQ
+    * Downloads a converted CSV file for importing into relevant partition of
+      frontend_partition table in Postgres by import_hscic_prescribing task
 
-    The legacy source (the code paths for which, once the new source
-    has successfully been imported a few times, can be removed) is
-    published erratically; the new "detailed" data source is published
-    regularly, each month, so we now prefer that.
+    We assume that the source CSV file has been uploaded to Cloud Storage, at
+    hscic/prescribing/{year_and_month}/{filename}.csv.
 
-    The "detailed" source format has one iine for each presentation
-    *and pack size*, so prescriptions of 28 paracetamol will be on a
-    separate line from prescriptions of 100 paracetamol.
+    The source CSV file contains "figures on the number of prescription items
+    that are dispensed each month and information relating to costs for English
+    practices".
 
-    The destination format has one line for paracetamol of any pack
-    size.
+    The source CSV file has one line for each presentation and pack size, (so
+    prescriptions of 28 paracetamol will be on a separate line from
+    prescriptions of 100 paracetamol).
 
+    The converted CSV file has one line for paracetamol of any pack size.
     """
-    args = ''
-    help = 'Converts HSCIC data files into the format needed for our SQL COPY '
-    help += 'statement. We use COPY because it is much faster than INSERT.'
 
     def add_arguments(self, parser):
         parser.add_argument('--filename')
 
     def handle(self, *args, **options):
-        self.IS_VERBOSE = (options['verbosity'] > 1)
+        path = options['filename']
+        converted_path = '{}_formatted.CSV'.format(os.path.splitext(path)[0])
+        head, filename = os.path.split(path)
+        _, year_and_month = os.path.split(head)
 
-        if 'is_test' in options:
-            self.IS_TEST = True
-        else:
-            self.IS_TEST = False
+        logger.info('path: %s', path)
+        logger.info('converted_path: %s', converted_path)
+        logger.info('year_and_month: %s', year_and_month)
 
-        filename = options['filename']
-
-        if self.IS_VERBOSE:
-            print "--------- Converting %s -----------" % filename
-
-        filename_for_output = self.create_filename_for_output_file(filename)
-
-        filename = filename.split('/prescribing/')[1]
-        uri = 'gs://ebmdatalab/hscic/prescribing/' + filename
-        # Grab date from file path
+        date = year_and_month + '_01'
         try:
-            date = datetime.datetime.strptime(
-                uri.split("/")[-2] + "_01", "%Y_%m_%d"
-            ).strftime('%Y_%m_%d')
-        except ValueError as e:
+            datetime.datetime.strptime(date, '%Y_%m_%d')
+        except ValueError:
             message = ('The file path must have a YYYY_MM '
                        'date component in the containing directory: ')
-            message += e.message
+            message += path
             raise CommandError(message)
 
-        self.aggregate_nhs_digital_data(uri, filename_for_output, date)
+        hscic_dataset_client = Client(settings.BQ_HSCIC_DATASET)
+        tmp_dataset_client = Client(settings.BQ_TMP_DATASET)
 
-    def create_filename_for_output_file(self, filename):
-        if self.IS_TEST:
-            return filename[:-4] + '_test.CSV'
-        else:
-            return filename[:-4] + '_formatted.CSV'
-
-    def aggregate_nhs_digital_data(self, uri, local_path, date):
-        """Given a GCS URI for "detailed" prescribing data, run a query to
-        aggregate it into the format we use internally, and download
-        the resulting data to a `*_formatted.CSV` file, ready for
-        importing.
-        """
-        # Create table at raw_nhs_digital_data
-        gcs_path = uri.split('ebmdatalab/')[1]
-        raw_data_table = get_or_create_raw_data_table(gcs_path)
-
-        self.append_aggregated_data_to_prescribing_table(
-            raw_data_table.qualified_name, date)
-        temp_table = self.write_aggregated_data_to_temp_table(
-            raw_data_table.qualified_name, date)
-
-        exporter = TableExporter(temp_table, gcs_path + '_formatted-')
-        exporter.export_to_storage(print_header=False)
-        with open(local_path, 'w') as f:
-            exporter.download_from_storage_and_unzip(f)
-
-    def assert_latest_data_not_already_uploaded(self, date):
-        client = Client(settings.BQ_HSCIC_DATASET)
-        sql = """SELECT COUNT(*)
-        FROM hscic.prescribing
-        WHERE month = TIMESTAMP('%s')""" % date.replace('_', '-')
-        results = client.query(sql)
+        # Check that we haven't already processed data for this month
+        sql = '''SELECT COUNT(*)
+        FROM {dataset}.prescribing
+        WHERE month = TIMESTAMP('{date}')'''.format(
+            dataset=hscic_dataset_client.dataset_name,
+            date=date.replace('_', '-'),
+        )
+        results = hscic_dataset_client.query(sql)
         assert results.rows[0][0] == 0
 
-    def append_aggregated_data_to_prescribing_table(
-            self, raw_data_table_name, date):
-        self.assert_latest_data_not_already_uploaded(date)
+        # Create BQ table backed backed by uploaded source CSV file
+        raw_data_table_name = 'raw_prescribing_data_{}'.format(year_and_month)
+        gcs_path = 'hscic/prescribing/{}/{}'.format(year_and_month, filename)
 
-        client = Client(settings.BQ_HSCIC_DATASET)
-        table = client.get_table('prescribing')
+        logger.info('raw_data_table_name: %s', raw_data_table_name)
+        logger.info('gcs_path: %s', gcs_path)
 
-        sql = """
+        schema = [
+            {'name': 'Regional_Office_Name', 'type': 'string'},
+            {'name': 'Regional_Office_Code', 'type': 'string'},
+            {'name': 'Area_Team_Name', 'type': 'string'},
+            {'name': 'Area_Team_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'PCO_Name', 'type': 'string'},
+            {'name': 'PCO_Code', 'type': 'string'},
+            {'name': 'Practice_Name', 'type': 'string'},
+            {'name': 'Practice_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'BNF_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'BNF_Description', 'type': 'string', 'mode': 'required'},
+            {'name': 'Items', 'type': 'integer', 'mode': 'required'},
+            {'name': 'Quantity', 'type': 'integer', 'mode': 'required'},
+            {'name': 'ADQ_Usage', 'type': 'float'},
+            {'name': 'NIC', 'type': 'float', 'mode': 'required'},
+            {'name': 'Actual_Cost', 'type': 'float', 'mode': 'required'},
+        ]
+        raw_data_table = tmp_dataset_client.create_storage_backed_table(
+            raw_data_table_name,
+            schema,
+            gcs_path
+        )
+
+        # Append aggregated data to prescribing table
+        sql = '''
          SELECT
           Area_Team_Code AS sha,
           LEFT(PCO_Code, 3) AS pct,
@@ -125,16 +115,19 @@ class Command(BaseCommand):
          GROUP BY
            bnf_code, bnf_name, pct,
            practice, sha
-        """ % (date.replace('_', '-'), raw_data_table_name)
-        table.insert_rows_from_query(
+        ''' % (date.replace('_', '-'), raw_data_table.qualified_name)
+
+        logger.info('sql: %s', sql)
+
+        prescribing_table = hscic_dataset_client.get_table('prescribing')
+        prescribing_table.insert_rows_from_query(
             sql,
             legacy=True,
             write_disposition='WRITE_APPEND'
         )
 
-    def write_aggregated_data_to_temp_table(
-            self, raw_data_table_name, date):
-        sql = """
+        # Write aggregated data to new table, for download
+        sql = '''
          SELECT
           LEFT(PCO_Code, 3) AS pct_id,
           Practice_Code AS practice_code,
@@ -148,46 +141,19 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
-        """ % (date, raw_data_table_name)
+        ''' % (date, raw_data_table.qualified_name)
 
-        client = Client(TEMP_DATASET)
-        table = client.get_table('formatted_prescribing_%s' % date)
-        table.insert_rows_from_query(sql, legacy=True)
-        return table
+        fmtd_data_table_name = 'formatted_prescribing_%s' % year_and_month
 
+        logger.info('sql: %s', sql)
+        logger.info('fmtd_data_table_name: %s', fmtd_data_table_name)
 
-def get_or_create_raw_data_table(gcs_path):
-    """Create a temporary data source so BigQuery can query the CSV in
-    Google Cloud Storage.
+        fmtd_data_table = tmp_dataset_client.get_table(fmtd_data_table_name)
+        fmtd_data_table.insert_rows_from_query(sql, legacy=True)
 
-    Nothing like this is currently implemented in the
-    google-cloud-python library.
+        # Export new table to storage, and download
+        exporter = TableExporter(fmtd_data_table, gcs_path + '_formatted-')
+        exporter.export_to_storage(print_header=False)
 
-    Returns a table reference suitable for using in a BigQuery SQL
-    query (legacy format).
-
-    """
-    schema = [
-        {"name": "Regional_Office_Name", "type": "string"},
-        {"name": "Regional_Office_Code", "type": "string"},
-        {"name": "Area_Team_Name", "type": "string"},
-        {"name": "Area_Team_Code", "type": "string", "mode": "required"},
-        {"name": "PCO_Name", "type": "string"},
-        {"name": "PCO_Code", "type": "string"},
-        {"name": "Practice_Name", "type": "string"},
-        {"name": "Practice_Code", "type": "string", "mode": "required"},
-        {"name": "BNF_Code", "type": "string", "mode": "required"},
-        {"name": "BNF_Description", "type": "string", "mode": "required"},
-        {"name": "Items", "type": "integer", "mode": "required"},
-        {"name": "Quantity", "type": "integer", "mode": "required"},
-        {"name": "ADQ_Usage", "type": "float"},
-        {"name": "NIC", "type": "float", "mode": "required"},
-        {"name": "Actual_Cost", "type": "float", "mode": "required"},
-    ]
-    client = Client(TEMP_DATASET)
-    table = client.get_or_create_storage_backed_table(
-        TEMP_SOURCE_NAME,
-        schema,
-        gcs_path
-    )
-    return table
+        with open(converted_path, 'w') as f:
+            exporter.download_from_storage_and_unzip(f)
