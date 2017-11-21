@@ -155,8 +155,9 @@ var queryForm = {
       }
       this.globalOptions[k] = params[k];
     }
-    if (this.globalOptions.denomIds !== [] &&
-        this.globalOptions.denom == 'nothing') {
+    if (this.globalOptions.denom == 'nothing' &&
+        (typeof this.globalOptions.denomIds !== 'undefined' && this.globalOptions.denomIds.length > 0)
+       ) {
       // the default for the dropdown is 'nothing', but we should
       // override that if a denominator has been specified in the URL
       this.globalOptions.denom = 'chemical';
