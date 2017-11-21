@@ -12,7 +12,8 @@ describe('BarChart', function () {
               { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'x_actual_cost': 13, 'id': '03V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
             ];
             var indexedData = barChart._indexDataByMonthAndRatio(combinedData, ['03Q']);
-            var costs = indexedData['2014-03-01'].ratio_actual_cost;
+
+            var costs = indexedData.barData['2014-03-01'].ratio_actual_cost;
             expect(costs.length).to.equal(2);
             expect(costs[1].id).to.equal('03Q');
             expect(costs[1].y).to.equal(12);
@@ -29,9 +30,11 @@ describe('BarChart', function () {
               { 'ratio_actual_cost': 9, 'y_actual_cost': 179, 'x_actual_cost': 13, 'id': '03V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
             ];
             var indexedData = barChart._indexDataByMonthAndRatio(combinedData, ['03Q']);
-            var costs = indexedData['2014-03-01'].ratio_actual_cost;
+            var costs = indexedData.barData['2014-03-01'].ratio_actual_cost;
             expect(costs[1].color).to.equal('rgba(255, 64, 129, .8)');
             expect(costs[0].color).to.equal('rgba(119, 152, 191, .5)');
+            expect(indexedData.maxRatioItems).to.equal(0);
+            expect(indexedData.maxRatioActualCost).to.equal(15);
         });
 
         it('should sort the series by ratio_items ascending', function () {
@@ -42,10 +45,12 @@ describe('BarChart', function () {
               { 'ratio_items': 9, 'y_actual_cost': 179, 'x_actual_cost': 13, 'id': 'O3V', 'name': 'NHS Vale of York', 'date': '2014-04-01'}
             ];
             var indexedData = barChart._indexDataByMonthAndRatio(combinedData, []);
-            var items = indexedData['2014-03-01'].ratio_items;
+            var items = indexedData.barData['2014-03-01'].ratio_items;
             expect(items.length).to.equal(2);
             expect(items[0].id).to.equal('O3V');
             expect(items[0].y).to.equal(10);
+            expect(indexedData.maxRatioItems).to.equal(15);
+            expect(indexedData.maxRatioActualCost).to.equal(0);
         });
 
     });

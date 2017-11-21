@@ -105,6 +105,12 @@
     min-height: 70px;
     position: relative;
 
+    #play-slider {
+      color: #999;
+      float: left;
+      cursor: pointer;
+      display: none;
+    }
     #items-spending-toggle {
       position: absolute;
       top: 10px;
@@ -116,7 +122,8 @@
       position: absolute;
       width: 100%;
       left: 0px;
-      padding-right: 170px;
+      margin-left: 35px;
+      padding-right: 205px;
 
       #chart-date-slider {
         .noUi-pips {
@@ -140,7 +147,7 @@
     }
     @media (max-width: 1000px) {
       #slider-wrapper {
-        padding-right: 0;
+        padding-right: 35px;
       }
       #items-spending-toggle {
         top: 70px;

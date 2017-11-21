@@ -33,8 +33,11 @@ var barChart = {
       }
     };
     var activeOrgs = _.pluck(globalOptions.orgIds, 'id');
-    this.barData = this._indexDataByMonthAndRatio(globalOptions.data.combinedData,
-                                                  activeOrgs);
+    var convertedData = this._indexDataByMonthAndRatio(
+      globalOptions.data.combinedData, activeOrgs);
+    this.barData = convertedData.barData;
+    globalOptions.maxRatioActualCost = convertedData.maxRatioActualCost;
+    globalOptions.maxRatioItems = convertedData.maxRatioItems;
     // Ensure we always show ticks for any active (selected) orgs:
     barOptions.xAxis.tickPositioner = function() {
       var calculated = this.tickPositions;
@@ -53,12 +56,17 @@ var barChart = {
     var activeMonth = globalOptions.activeMonth;
     var ratio = globalOptions.chartValues.ratio;
     var dataForMonth = this.barData[activeMonth][ratio];
-    // barOptions.xAxis.labels.step = (barData.length > 120) ? 3 : 1;
+    // Fix the y Axis
+    if (ratio === "ratio_actual_cost") {
+      barOptions.yAxis.max = globalOptions.maxRatioActualCost;
+    } else {
+      barOptions.yAxis.max = globalOptions.maxRatioItems;
+    }
     barOptions.series = utils.createChartSeries(dataForMonth);
     return new Highcharts.Chart(barOptions);
   },
 
-  update: function(chart, month, ratio, title, formatter) {
+  update: function(chart, month, ratio, title, formatter, playing, yAxisMax) {
     var newYAxisOptions = {
       title: {
         text: title
@@ -67,12 +75,16 @@ var barChart = {
         formatter: formatter
       }
     };
+    if (playing) {
+      chart.animation = false;
+    }
     chart.yAxis[0].update(newYAxisOptions, false);
     if (month in this.barData) {
       chart.series[0].setData(this.barData[month][ratio], false);
     } else {
       chart.series[0].setData([], false);
     }
+    chart.yAxis[0].setExtremes(null, yAxisMax);
     try {
       chart.redraw();
     } catch (err) {
@@ -104,17 +116,28 @@ var barChart = {
         };
       }
     });
+    var maxRatioItems = 0;
+    var maxRatioActualCost = 0;
     for (var month in newData) {
       _.each(newData[month].ratio_items, function(d) {
         d.y = d.ratio_items;
+        if (d.y > maxRatioItems) {
+          maxRatioItems = d.y;
+        }
       });
       _.each(newData[month].ratio_actual_cost, function(d) {
         d.y = d.ratio_actual_cost;
+        if (d.y > maxRatioActualCost) {
+          maxRatioActualCost = d.y;
+        }
       });
       newData[month].ratio_items = _.sortBy(newData[month].ratio_items, 'y');
       newData[month].ratio_actual_cost = _.sortBy(newData[month].ratio_actual_cost, 'y');
     }
-    return newData;
+    return {
+      barData: newData,
+      maxRatioItems: maxRatioItems,
+      maxRatioActualCost: maxRatioActualCost};
   }
 };
 

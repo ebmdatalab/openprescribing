@@ -74,11 +74,11 @@ class GeneralFrontendTest(SeleniumTestCase):
     def test_drug_name_typeahead(self):
         self.browser.get(self.live_server_url + '/analyse/')
         el = self.find_by_xpath(
-            '//div[@id="denomIds-wrapper"]'
+            '//div[@id="numIds-wrapper"]'
             '//input[@class="select2-search__field"]')
         el.send_keys("chl")
         # This should succeed; if not, the JSON dropdown-filling has not:
-        self.find_by_xpath('//ul[@id="select2-denomIds-results"]//li')
+        self.find_by_xpath('//ul[@id="select2-numIds-results"]//li')
 
     def test_practice_name_typeahead(self):
         self.browser.get(self.live_server_url + '/analyse/')
