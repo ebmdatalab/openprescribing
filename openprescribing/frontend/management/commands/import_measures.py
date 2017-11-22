@@ -155,15 +155,17 @@ def create_omnibus_lp_view():
     fpath = os.path.dirname(__file__)
     sql_path = os.path.join(fpath, "./measure_sql/lpomnibusview.sql")
     with open(sql_path, "r") as sql_file:
-        client = gbigquery.client.Client(project='ebmdatalab')
-        dataset = Dataset("measures", client)
-        table = dataset.table('practice_data_all_low_priority')
-        table.view_query = sql_file.read()
-        table.view_use_legacy_sql = False
-        try:
-            table.create()
-        except Conflict:
-            pass
+        sql = sql_file.read()
+
+    client = Client("measures")
+    try:
+        client.create_table_with_view(
+            'practice_data_all_low_priority',
+            sql,
+            False
+        )
+    except Conflict:
+        pass
 
 
 def parse_measures():
