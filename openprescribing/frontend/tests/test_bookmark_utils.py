@@ -22,6 +22,7 @@ from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.templatetags.template_extras import deltawords
 from frontend.views import bookmark_utils
 
 
@@ -90,14 +91,15 @@ def each_cusum_test(test_cases):
     It validates as follows:
 
     One test in the input file is a comment, followed by input data,
-    followed by expected outputs (`d` or `u`), followed by a blank
-    line.
+    followed by expected outputs (`d` or `u`), followed by a word
+    indicating the size of the change (per `deltawords` template tag),
+    followed by a blank line.
 
     Input data and expected outputs should be left aligned in columns
     of width 4.
 
     """
-    for i in range(0, len(test_cases), 4):
+    for i in range(0, len(test_cases), 5):
         # Validate each row first
         alignment_header = '*'.join(['...'] * 12)
         comment_msg = "At line %s: %s does not start with #" % (
@@ -119,7 +121,9 @@ def each_cusum_test(test_cases):
         data = [round(int(x)/100.0, 2) if x.strip() else None
                 for x in re.findall('(   |\d+ {0,2}) ?', test_cases[i+1])]
         expected = test_cases[i+2].rstrip()
-        yield {'name': test_name, 'data': data, 'expected': expected}
+        deltawords = test_cases[i+3].rstrip()
+        yield {'name': test_name, 'data': data,
+               'expected': expected, 'deltawords': deltawords}
 
 
 def extract_percentiles_for_alerts(result):
@@ -128,10 +132,10 @@ def extract_percentiles_for_alerts(result):
     combined = []
     assert len(neg) == len(pos)
     for i, val in enumerate(neg):
-        if val:
+        if val is not None:
             assert not pos[i]
             combined.append('d')
-        elif pos[i]:
+        elif pos[i] is not None:
             combined.append('u')
         else:
             combined.append(' ')
@@ -155,9 +159,11 @@ class TestCUSUM(unittest.TestCase):
                 'alert_test_cases.txt', 'rb') as expected:
             test_cases = expected.readlines()
         for test in each_cusum_test(test_cases):
-            new_result = bookmark_utils.CUSUM(
-                test['data'], window_size=3, sensitivity=5).work()
-            new_result_formatted = extract_percentiles_for_alerts(new_result)
+            cusum = bookmark_utils.CUSUM(
+                test['data'], window_size=3, sensitivity=5)
+            cusum.work()
+            new_result_formatted = extract_percentiles_for_alerts(
+                cusum.as_dict())
             error_message = "In test '%s':\n" % test['name']
             error_message += "   Input values: %s\n" % test['data']
             error_message += "Expected alerts: %s\n" % test['expected']
@@ -165,6 +171,12 @@ class TestCUSUM(unittest.TestCase):
                 new_result_formatted,
                 test['expected'],
                 error_message + "            Got: %s" % new_result_formatted)
+            info = cusum.get_last_alert_info()
+            if info:
+                change = deltawords(info['to'] * 100.0, info['from'] * 100.0)
+                self.assertEqual(test['deltawords'], change)
+            else:
+                self.assertEqual(test['deltawords'], 'not at all')
 
 
 class TestBookmarkUtilsPerforming(TestCase):
@@ -228,10 +240,12 @@ class TestLastAlertFinding(SimpleTestCase):
     def test_no_alert_when_alert_not_most_recent(self):
         cusum = bookmark_utils.CUSUM(['a', 'b'])
         cusum.alert_indices = [0]
+        cusum.target_means = ['b']
         self.assertIsNone(cusum.get_last_alert_info(), None)
 
     def test_alert_parsed_when_only_alert(self):
-        cusum = bookmark_utils.CUSUM(['a', 'b', 'c'])
+        cusum = bookmark_utils.CUSUM(['c', 'c', 'c'])
+        cusum.target_means = ['b', 'b', 'b']
         cusum.alert_indices = [2]
         self.assertDictEqual(
             cusum.get_last_alert_info(),
@@ -241,8 +255,9 @@ class TestLastAlertFinding(SimpleTestCase):
         )
 
     def test_period_parsed(self):
-        cusum = bookmark_utils.CUSUM(['a', 'b', 'c'])
+        cusum = bookmark_utils.CUSUM(['c', 'c', 'c'])
         cusum.alert_indices = [1, 2]
+        cusum.target_means = ['a', 'a', 'a']
         self.assertDictEqual(
             cusum.get_last_alert_info(),
             {'from': 'a',
@@ -251,8 +266,9 @@ class TestLastAlertFinding(SimpleTestCase):
         )
 
     def test_alert_parsed_when_more_than_one_alert(self):
-        cusum = bookmark_utils.CUSUM(['1', '2', 'a', 'b'])
+        cusum = bookmark_utils.CUSUM(['1', '2', '3', 'b'])
         cusum.alert_indices = [1, 3]
+        cusum.target_means = ['a', 'a', 'a', 'a']
         self.assertDictEqual(
             cusum.get_last_alert_info(),
             {'from': 'a',
