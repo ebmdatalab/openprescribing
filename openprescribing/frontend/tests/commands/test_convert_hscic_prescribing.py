@@ -10,6 +10,8 @@ from django.core.management.base import CommandError
 from gcutils.bigquery import Client as BQClient, NotFound, results_to_dicts
 from gcutils.storage import Client as StorageClient
 
+from frontend.bq_schemas import PRESCRIBING_SCHEMA
+
 
 class ConvertHscicPrescribingTests(TestCase):
     """Test that data in the "detailed" format is correctly aggregated to
@@ -75,6 +77,10 @@ class ConvertHscicPrescribingTests(TestCase):
                 'convert_hscic_prescribing',
                 filename='Detailed_Prescribing_Information.csv'
             )
+
+    def setUp(self):
+        client = BQClient(settings.BQ_HSCIC_DATASET)
+        table = client.get_or_create_table('prescribing', PRESCRIBING_SCHEMA)
 
     def tearDown(self):
         table_name = 'raw_prescribing_data_2016_01'

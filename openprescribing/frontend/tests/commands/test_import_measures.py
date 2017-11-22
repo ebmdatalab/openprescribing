@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.bq_schemas import PRESCRIBING_SCHEMA
+from frontend.bq_schemas import PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
 from frontend.models import Measure
@@ -486,8 +486,11 @@ class BigqueryFunctionalTests(TestCase):
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
+            fixtures_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands')
+
             prescribing_fixture_path = os.path.join(
-                'frontend', 'tests', 'fixtures', 'commands',
+                fixtures_path,
                 'prescribing_bigquery_fixture.csv'
             )
             # TODO Make this a table with a view (see
@@ -499,6 +502,18 @@ class BigqueryFunctionalTests(TestCase):
                 PRESCRIBING_SCHEMA
             )
             table.insert_rows_from_csv(prescribing_fixture_path)
+
+            practices_fixture_path = os.path.join(
+                fixtures_path,
+                'practices.csv'
+            )
+            table = client.get_or_create_table(
+                settings.BQ_PRACTICES_TABLE_NAME,
+                PRACTICE_SCHEMA
+            )
+            columns = [field.name for field in PRACTICE_SCHEMA]
+            table.insert_rows_from_csv(practices_fixture_path)
+
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
@@ -574,11 +589,6 @@ class BigqueryFunctionalTests(TestCase):
 class TestParseMeasures(TestCase):
     def test_parse_measures(self):
         measures = parse_measures()
-        print('-' * 80)
-        print('test_parse_measures')
-        print('list(measures)')
-        print(list(measures))
-        print('-' * 80)
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
 
