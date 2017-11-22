@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         num_missing_months = 0
         filename_fragment = {
-            'addresses': 'ADDR+NNFT',
+            'addresses': 'ADDR+BNFT',
             'chemicals': 'CHEM+SUBS',
         }[kwargs['dataset']]
 
