@@ -53,10 +53,10 @@ logger = logging.getLogger(__name__)
 
 
 PRIMARY_KEYS = {
-    'AMP': 'APID',
-    'AMPP': 'APPID',
-    'VMP': 'VPID',
-    'VMPP': 'VPPID'
+    'dmd_AMP': 'APID',
+    'dmd_AMPP': 'APPID',
+    'dmd_VMP': 'VPID',
+    'dmd_VMPP': 'VPPID'
 }
 
 EXTRA_INDEXES = [
