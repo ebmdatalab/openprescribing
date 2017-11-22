@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.bq_schemas import PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
+from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
 from frontend.models import Measure
@@ -513,6 +513,14 @@ class BigqueryFunctionalTests(TestCase):
             )
             columns = [field.name for field in PRACTICE_SCHEMA]
             table.insert_rows_from_csv(practices_fixture_path)
+
+            ccgs_fixture_path = os.path.join(
+                fixtures_path,
+                'ccgs.csv'
+            )
+            client = Client('hscic')
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
+            table.insert_rows_from_csv(ccgs_fixture_path)
 
         month = '2015-09-01'
         measure_id = 'cerazette'
