@@ -574,11 +574,6 @@ class BigqueryFunctionalTests(TestCase):
 class TestParseMeasures(TestCase):
     def test_parse_measures(self):
         measures = parse_measures()
-        print('-' * 80)
-        print('test_parse_measures')
-        print('list(measures)')
-        print(list(measures))
-        print('-' * 80)
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
 
