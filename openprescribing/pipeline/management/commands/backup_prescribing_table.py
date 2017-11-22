@@ -16,7 +16,7 @@ class Command(BaseCommand):
         table = client.get_table('prescribing')
 
         storage_client = StorageClient()
-        bucket = storage_client.bucket(table.project_name)
+        bucket = storage_client.bucket()
         year_and_months = set()
 
         prefix_base = 'prescribing/prescribing_backups/'

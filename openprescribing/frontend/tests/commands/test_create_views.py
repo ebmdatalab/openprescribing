@@ -71,7 +71,7 @@ class CommandsTestCase(SimpleTestCase):
             )
 
             client = StorageClient()
-            bucket = client.get_bucket('ebmdatalab')
+            bucket = client.get_bucket()
             for blob in bucket.list_blobs(prefix='test_hscic/views/vw__'):
                 blob.delete()
 
@@ -91,7 +91,7 @@ class CommandsTestCase(SimpleTestCase):
     def test_existing_files_deleted(self):
         # Create a dataset fragment which should end up being deleted
         client = StorageClient()
-        bucket = client.get_bucket('ebmdatalab')
+        bucket = client.get_bucket()
         blob_name = ('test_hscic/views/vw__presentation_summary_by_ccg'
                      '-000000009999.csv.gz')
         blob = bucket.blob(blob_name)
@@ -102,7 +102,7 @@ class CommandsTestCase(SimpleTestCase):
 
         # Check the bucket is no longer there
         client = StorageClient()
-        bucket = client.get_bucket('ebmdatalab')
+        bucket = client.get_bucket()
         prefix, suffix = blob_name.split('-')
         for blob in bucket.list_blobs(prefix=prefix):
             self.assertNotIn(suffix, blob.path)

@@ -40,7 +40,7 @@ class ConvertHscicPrescribingTests(TestCase):
             'Detailed_Prescribing_Information.csv'
 
         client = StorageClient()
-        bucket = client.get_bucket('ebmdatalab')
+        bucket = client.get_bucket()
         blob = bucket.blob(gcs_path)
 
         with open(raw_data_path) as f:
