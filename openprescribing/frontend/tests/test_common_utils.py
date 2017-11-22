@@ -1,8 +1,6 @@
 from django.test import SimpleTestCase
 from django.test import TestCase
 
-from frontend.models import Measure
-
 
 class GetEnvSettingTests(SimpleTestCase):
     def test_falsey_default(self):
@@ -62,22 +60,48 @@ class TitleCaseTests(SimpleTestCase):
             self.assertEquals(nhs_titlecase(words), expected)
 
 
+def _cluster_count(cursor):
+    cursor.execute("""
+        SELECT
+          count(*)
+        FROM
+          pg_index AS idx
+        JOIN
+          pg_class AS i
+        ON
+          i.oid = idx.indexrelid
+        WHERE
+          idx.indisclustered
+          AND idx.indrelid::regclass = 'tofu'::regclass;
+    """)
+    return cursor.fetchone()[0]
+
+
 class FunctionalTests(TestCase):
-    fixtures = ['measures']
+    fixtures = ['ccgs']
 
     def test_reconstructor_does_work(self):
         from django.db import connection
         from common.utils import constraint_and_index_reconstructor
-        start_count = Measure.objects.count()
+
         with connection.cursor() as cursor:
-            cursor.execute("SELECT COUNT(*) FROM pg_indexes")
-            old_count = cursor.fetchone()[0]
-            with constraint_and_index_reconstructor('frontend_measurevalue'):
-                Measure.objects.all().delete()
-                cursor.execute("SELECT COUNT(*) FROM pg_indexes")
-                new_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM pg_indexes")
-            after_count = cursor.fetchone()[0]
-        self.assertLess(Measure.objects.count(), start_count)
-        self.assertLess(new_count, old_count)
-        self.assertEqual(old_count, after_count)
+            # Set up a table
+            cursor.execute("CREATE TABLE firmness (id integer PRIMARY KEY)")
+            cursor.execute("""
+                CREATE TABLE tofu (
+                  id integer PRIMARY KEY,
+                  brand varchar,
+                  firmness_id integer REFERENCES firmness (id))
+            """)
+            cursor.execute("CLUSTER tofu USING tofu_pkey")
+            cursor.execute("CREATE INDEX ON tofu (brand)")
+            with constraint_and_index_reconstructor('tofu'):
+                cursor.execute(
+                    "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
+                )
+                self.assertEqual(cursor.fetchone()[0], 0)
+            cursor.execute(
+                "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
+            )
+            self.assertEqual(cursor.fetchone()[0], 2)
+            self.assertEqual(_cluster_count(cursor), 1)
