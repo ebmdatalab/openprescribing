@@ -141,6 +141,8 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
+         ORDER BY
+           presentation_code, pct_id, practice_code
         ''' % (date, raw_data_table.qualified_name)
 
         fmtd_data_table_name = 'formatted_prescribing_%s' % year_and_month
