@@ -8,6 +8,7 @@ from django.test import TestCase
 import pandas as pd
 from mock import patch
 
+from frontend.bq_schemas import PRACTICE_SCHEMA, PRESCRIBING_SCHEMA, TARIFF_SCHEMA
 from frontend.management.commands import import_ppu_savings
 from frontend.models import PPUSaving
 
@@ -18,14 +19,34 @@ class BigqueryFunctionalTests(TestCase):
         fixtures_base_path = os.path.join(
             'frontend', 'tests', 'fixtures', 'commands',
         )
+
+        client = Client('hscic')
+
         prescribing_fixture_path = os.path.join(
             fixtures_base_path,
             'prescribing_bigquery_fixture.csv'
         )
-        client = Client('hscic')
-        table = client.get_table(
-            settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD)
+        table = client.get_or_create_table(
+            settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD,
+            PRESCRIBING_SCHEMA
+        )
         table.insert_rows_from_csv(prescribing_fixture_path)
+
+        practices_fixture_path = os.path.join(
+            fixtures_base_path,
+            'practices.csv'
+        )
+        table = client.get_or_create_table(
+            'practices',
+            PRACTICE_SCHEMA
+        )
+        columns = [field.name for field in PRACTICE_SCHEMA]
+        table.insert_rows_from_csv(practices_fixture_path)
+
+        tariff_path = os.path.join(fixtures_base_path, 'tariff_fixture.csv')
+        table = client.get_or_create_table('tariff', TARIFF_SCHEMA)
+        table.insert_rows_from_csv(tariff_path)
+
         month = date(2015, 9, 1)
         dummy_substitutions = pd.read_csv(
             os.path.join(fixtures_base_path, 'ppu_substitutions.csv'))
