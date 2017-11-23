@@ -8,7 +8,7 @@ from django.test import TestCase
 import pandas as pd
 from mock import patch
 
-from frontend.bq_schemas import PRACTICE_SCHEMA, PRESCRIBING_SCHEMA, TARIFF_SCHEMA
+from frontend import bq_schemas
 from frontend.management.commands import import_ppu_savings
 from frontend.models import PPUSaving
 
@@ -28,7 +28,7 @@ class BigqueryFunctionalTests(TestCase):
         )
         table = client.get_or_create_table(
             settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD,
-            PRESCRIBING_SCHEMA
+            bq_schemas.PRESCRIBING_SCHEMA
         )
         table.insert_rows_from_csv(prescribing_fixture_path)
 
@@ -38,14 +38,21 @@ class BigqueryFunctionalTests(TestCase):
         )
         table = client.get_or_create_table(
             'practices',
-            PRACTICE_SCHEMA
+            bq_schemas.PRACTICE_SCHEMA
         )
-        columns = [field.name for field in PRACTICE_SCHEMA]
+        columns = [field.name for field in bq_schemas.PRACTICE_SCHEMA]
         table.insert_rows_from_csv(practices_fixture_path)
 
         tariff_path = os.path.join(fixtures_base_path, 'tariff_fixture.csv')
-        table = client.get_or_create_table('tariff', TARIFF_SCHEMA)
+        table = client.get_or_create_table('tariff', bq_schemas.TARIFF_SCHEMA)
         table.insert_rows_from_csv(tariff_path)
+
+        bnf_path = os.path.join(
+            fixtures_base_path,
+            'bnf_codes_for_ppu_savings.csv'
+        )
+        table = client.get_or_create_table('bnf', bq_schemas.BNF_SCHEMA)
+        table.insert_rows_from_csv(bnf_path)
 
         month = date(2015, 9, 1)
         dummy_substitutions = pd.read_csv(
