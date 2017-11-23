@@ -363,18 +363,8 @@ class MeasureCalculation(object):
         return settings.BQ_FULL_PRACTICES_TABLE_NAME
 
     def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
-        """Send query to BigQuery, wait, and return response object when the
-        job has completed.
-
-        Because the current specification format for a measure allows
-        selecting the FROM table via free-text, and we want to support
-        functional testing against real measure definitions, we have
-        following hack to replace the table being queried with a test
-        table name.
-
-        A better thing to do would be to construct measure definitions
-        specifically for testing.
-
+        """Interpolate values from ctx into SQL identified by query_id, and
+        insert results into given table.
         """
         query_path = os.path.join(self.fpath, 'measure_sql', query_id + '.sql')
 
