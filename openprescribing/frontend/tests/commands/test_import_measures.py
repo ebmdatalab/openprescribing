@@ -498,7 +498,7 @@ class BigqueryFunctionalTests(TestCase):
             # dataset ('hscic', not 'measures').
             client = Client('measures')
             table = client.get_or_create_table(
-                settings.BQ_PRESCRIBING_TABLE_NAME,
+                'normalised_prescribing_legacy',
                 PRESCRIBING_SCHEMA
             )
             table.insert_rows_from_csv(prescribing_fixture_path)
@@ -507,10 +507,7 @@ class BigqueryFunctionalTests(TestCase):
                 fixtures_path,
                 'practices.csv'
             )
-            table = client.get_or_create_table(
-                settings.BQ_PRACTICES_TABLE_NAME,
-                PRACTICE_SCHEMA
-            )
+            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
             columns = [field.name for field in PRACTICE_SCHEMA]
             table.insert_rows_from_csv(practices_fixture_path)
 

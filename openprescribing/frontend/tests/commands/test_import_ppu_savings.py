@@ -27,7 +27,7 @@ class BigqueryFunctionalTests(TestCase):
             'prescribing_bigquery_fixture.csv'
         )
         table = client.get_or_create_table(
-            settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD,
+            'normalised_prescribing_standard',
             bq_schemas.PRESCRIBING_SCHEMA
         )
         table.insert_rows_from_csv(prescribing_fixture_path)
