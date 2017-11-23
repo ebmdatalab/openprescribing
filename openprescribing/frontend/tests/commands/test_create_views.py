@@ -42,7 +42,7 @@ class CommandsTestCase(SimpleTestCase):
                 'prescribing_bigquery_views_fixture.csv'
             )
 
-            client = Client('test_hscic')
+            client = Client('hscic')
 
             for table_name in [
                     'normalised_prescribing_standard',
@@ -72,7 +72,7 @@ class CommandsTestCase(SimpleTestCase):
 
             client = StorageClient()
             bucket = client.get_bucket()
-            for blob in bucket.list_blobs(prefix='test_hscic/views/vw__'):
+            for blob in bucket.list_blobs(prefix='hscic/views/vw__'):
                 blob.delete()
 
         ImportLog.objects.create(
@@ -92,13 +92,13 @@ class CommandsTestCase(SimpleTestCase):
         # Create a dataset fragment which should end up being deleted
         client = StorageClient()
         bucket = client.get_bucket()
-        blob_name = ('test_hscic/views/vw__presentation_summary_by_ccg'
+        blob_name = ('hscic/views/vw__presentation_summary_by_ccg'
                      '-000000009999.csv.gz')
         blob = bucket.blob(blob_name)
         blob.upload_from_string("test", content_type="application/gzip")
 
         # Run import command
-        call_command('create_views', dataset='test_hscic')
+        call_command('create_views')
 
         # Check the bucket is no longer there
         client = StorageClient()
@@ -108,7 +108,7 @@ class CommandsTestCase(SimpleTestCase):
             self.assertNotIn(suffix, blob.path)
 
     def test_import_create_views(self):
-        call_command('create_views', dataset='test_hscic')
+        call_command('create_views')
         with connection.cursor() as c:
             cmd = 'SELECT * FROM vw__practice_summary '
             cmd += 'ORDER BY processing_date, practice_id'
