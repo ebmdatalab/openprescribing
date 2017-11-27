@@ -32,6 +32,7 @@ var analyseChart = {
     loadingEl: $('.loading-wrapper'),
     loadingMessage: $('#chart-loading p'),
     slider: $("#chart-date-slider"),
+    playslider: $("#play-slider"),
     submitButton: $('#update'),
     tabs: $('#tabs li'),
     tabChart: $('#chart-tab'),
@@ -171,7 +172,6 @@ var analyseChart = {
       } else {
         this.addDataDownload();
       }
-
       // For now, don't render the map and line chart in older browsers -
       // they are just too slow.
       // This could be fixed by adding more pauses in the data calculations,
@@ -183,7 +183,6 @@ var analyseChart = {
                                                         _this.globalOptions);
         map.setup(_this.globalOptions);
       }
-
       // TODO: Text for tabs. Tidy this up.
       var summaryTab = '';
       var numOrgs = this.globalOptions.orgIds.length;
@@ -413,25 +412,52 @@ var analyseChart = {
   },
 
   updateCharts: function() {
-    // console.log('updateCharts', this.globalOptions.activeOption, this.globalOptions.activeMonth);
+    var yAxisMax;
     var _this = this;
     _this.globalOptions.chartValues = utils.setChartValues(_this.globalOptions);
     _this.globalOptions.friendly = formatters.getFriendlyNamesForChart(_this.globalOptions);
     $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
     $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
+    if (_this.globalOptions.chartValues.ratio === "ratio_actual_cost") {
+      yAxisMax = _this.globalOptions.maxRatioActualCost;
+    } else {
+      yAxisMax = _this.globalOptions.maxRatioItems;
+    }
+    console.log("ratio: " + _this.globalOptions.chartValues.ratio);
+    console.log(_this.globalOptions);
     barChart.update(_this.globalOptions.barChart,
                     _this.globalOptions.activeMonth,
                     _this.globalOptions.chartValues.ratio,
                     _this.globalOptions.friendly.yAxisTitle,
-                    _this.globalOptions.friendly.yAxisFormatter);
+                    _this.globalOptions.friendly.yAxisFormatter,
+                    _this.globalOptions.playing,
+                    yAxisMax
+                   );
     if (!_this.isOldIe) {
       map.updateMap(_this.globalOptions.activeOption, _this.globalOptions);
     }
   },
 
   setUpSlider: function() {
-    var sliderMax = this.globalOptions.allMonths.length - 1;
     var _this = this;
+    var sliderMax = this.globalOptions.allMonths.length - 1;
+    _this.el.playslider.on('click', function(e) {
+      _this.globalOptions.playing = true;
+      var _that = _this;
+      var increment = function(now, fx) {
+        $("#chart-date-slider").val(now);
+        _that.onChange(true);
+      };
+      var complete = function() {
+        _this.globalOptions.playing = false;
+      };
+      $({n: 0}).animate({n: sliderMax}, {
+        duration: sliderMax * 400,
+        step: increment,
+        complete: complete,
+      });
+    });
+
     if (this.el.slider.val()) {
       this.el.slider.noUiSlider({
         range: {
@@ -488,14 +514,16 @@ var analyseChart = {
     }
   },
 
-  onChange: function() {
+  onChange: function(suppressAnalytics) {
     var _this = this;
-    ga('send', {
-      'hitType': 'event',
-      'eventCategory': 'time_slider',
-      'eventAction': 'slide',
-      'eventLabel': _this.hash
-    });
+    if (!suppressAnalytics) {
+      ga('send', {
+        'hitType': 'event',
+        'eventCategory': 'time_slider',
+        'eventAction': 'slide',
+        'eventLabel': _this.hash
+      });
+    }
     var monthIndex = parseInt(this.el.slider.val());
     this.globalOptions.activeMonth = this.globalOptions.allMonths[monthIndex];
     this.updateCharts();

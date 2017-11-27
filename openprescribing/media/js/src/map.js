@@ -64,6 +64,7 @@ var analyseMap = {
       _this.addLayerEvents();
       _this.updateMap('items',
                       options);
+      $('#play-slider').show();
     }
 
     function joinFeaturesWithData(currentJson, data) {
@@ -139,9 +140,17 @@ var analyseMap = {
 
   updateMap: function(ratio, options) {
     var _this = this;
+    var minMax;
     ratio = 'ratio_' + ratio;
     var month = options.activeMonth.replace(/\//g, '-');
-    var minMax = (month in _this.minMaxByDate) ? _this.minMaxByDate[month][ratio] : null;
+    if (options.playing) {
+      // For animation-over-time, keep the min/max values constant
+      var allMinMax = _.pluck(_.values(_this.minMaxByDate), ratio);
+      minMax = [_.min(_.map(allMinMax, function(x) {return x[0];})),
+                _.max(_.map(allMinMax, function(x) {return x[1];}))];
+    } else {
+      minMax = (month in _this.minMaxByDate) ? _this.minMaxByDate[month][ratio] : null;
+    }
     _this.map.legendControl.removeLegend(_this.legendHtml);
     _this.legendHtml = _this.getLegend(minMax, options);
     _this.map.legendControl.addLegend(_this.legendHtml);

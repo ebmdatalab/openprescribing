@@ -73,6 +73,7 @@ var baseOptions = {
     useUTC: false
   },
   chart: {
+    animation: true,
     type: 'scatter',
     zoomType: 'xy',
     plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
@@ -117,7 +118,9 @@ var baseOptions = {
     min: 0,
     gridLineWidth: 0,
     tickWidth: 1,
-    lineWidth: 1
+    lineWidth: 1,
+    endOnTick: false
+
   },
   legend: {
     layout: 'vertical',
