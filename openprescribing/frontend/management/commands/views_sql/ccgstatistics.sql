@@ -25,3 +25,5 @@ GROUP BY
   month,
   pct_id,
   name
+ORDER BY
+  pct_id

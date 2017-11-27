@@ -10,3 +10,5 @@ WHERE month > TIMESTAMP(DATE_SUB(DATE "{{this_month}}", INTERVAL 5 YEAR))
 GROUP BY
   processing_date,
   practice_id
+ORDER BY
+  practice_id, month
