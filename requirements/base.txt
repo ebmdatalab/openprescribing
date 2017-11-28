@@ -5,6 +5,8 @@
 #    pip-compile --output-file requirements/base.txt requirements/base.in
 #
 asn1crypto==0.23.0        # via cryptography
+backports.csv==1.0.5
+beautifulsoup4==4.6.0
 cachetools==2.0.1         # via google-auth
 certifi==2017.7.27.1      # via requests
 cffi==1.11.1              # via cryptography

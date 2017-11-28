@@ -9,6 +9,8 @@
 # resolution impossible, loosening the requirements here should be the first
 # thing we try.
 
+backports.csv
+beautifulsoup4
 django-allauth==0.25.2
 django-anymail==0.6.1
 django-cors-headers==1.1.0

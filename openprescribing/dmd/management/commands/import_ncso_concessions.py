@@ -1,7 +1,9 @@
 # coding=utf8
 
+import io
 import re
-import csv
+
+from backports import csv
 
 from django.core.management import BaseCommand
 
@@ -10,7 +12,7 @@ from dmd.models import NCSOConcession, DMDVmpp
 
 def convert_ncso_name(name):
     # Some NCSO records have non-breaking spaces
-    name = name.replace('\xa0', '')
+    name = name.replace(u'\xa0', '')
 
     # Some NCSO records have multiple spaces
     name = re.sub(' +', ' ', name)
@@ -57,12 +59,13 @@ class Command(BaseCommand):
 
         vmpps = DMDVmpp.objects.values('nm', 'vppid')
 
-        with open(filename) as f:
+        with io.open(filename, encoding='utf8') as f:
             fieldnames = ['drug', 'pack_size', 'price_concession']
             reader = csv.DictReader(f, fieldnames=fieldnames)
 
             for record in reader:
-                match = re.match('£(\d+)\.(\d\d)', record['price_concession'])
+                print(record)
+                match = re.match(u'£(\d+)\.(\d\d)', record['price_concession'])
                 price_concession_pence = 100 * int(match.groups()[0]) \
                     + int(match.groups()[1])
 
@@ -73,7 +76,7 @@ class Command(BaseCommand):
                     price_concession_pence=price_concession_pence
                 )
 
-                ncso_name_raw = '{} {}'.format(
+                ncso_name_raw = u'{} {}'.format(
                     record['drug'],
                     record['pack_size']
                 )
