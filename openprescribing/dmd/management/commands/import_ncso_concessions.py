@@ -69,6 +69,13 @@ class Command(BaseCommand):
                 price_concession_pence = 100 * int(match.groups()[0]) \
                     + int(match.groups()[1])
 
+                if NCSOConcession.objects.filter(
+                    year_and_month=year_and_month,
+                    drug=record['drug'],
+                    pack_size=record['pack_size'],
+                ).exists():
+                    continue
+
                 concession = NCSOConcession(
                     year_and_month=year_and_month,
                     drug=record['drug'],
@@ -105,6 +112,6 @@ class Command(BaseCommand):
                     if previous_concession is not None:
                         concession.vmpp_id = previous_concession.vmpp_id
                     else:
-                        print('No match found for {}'.format(ncso_name_raw))
+                        print(u'No match found for {}'.format(ncso_name_raw))
 
                 concession.save()
