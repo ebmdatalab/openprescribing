@@ -88,56 +88,66 @@ def measure_numerators_by_org(request, format=None):
         numerator_selector = m.columns_for_select('numerator').replace(
             'items', 'total_items')
         numerator_where = m.numerator_where.replace(
-            'bnf_code', 'presentation_code').replace(
-                'bnf_name', 'pn.name'
+            'bnf_code', 'presentation_code'
+        ).replace(
+            'bnf_name', 'pn.name'
+        ).replace(
+            # This is required because the SQL contains %(var)s, which is used
+            # for parameter interpolation
+            '%', '%%'
         )
+
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
         # names
-        query = ('WITH nice_names AS ( '
-                 'SELECT '
-                 '  bnf_code, '
-                 '  MAX(name) AS name '
-                 'FROM '
-                 '  dmd_product '
-                 'GROUP BY '
-                 '  bnf_code '
-                 'HAVING '
-                 '  COUNT(*) = 1) '
-                 'SELECT '
-                 '  %s AS entity, '
-                 '  presentation_code AS bnf_code, '
-                 '  COALESCE(nice_names.name, pn.name) AS presentation_name, '
-                 "  SUM(total_items) AS total_items, "
-                 "  SUM(actual_cost) AS cost, "
-                 "  SUM(quantity) AS quantity, "
-                 '  %s '
-                 'FROM '
-                 '  frontend_prescription p '
-                 'LEFT JOIN '
-                 '  nice_names '
-                 'ON p.presentation_code = nice_names.bnf_code '
-                 'INNER JOIN '
-                 '  frontend_presentation pn '
-                 'ON p.presentation_code = pn.bnf_code '
-                 'WHERE '
-                 "  %s = '%s' "
-                 '  AND '
-                 "  processing_date >= '%s' "
-                 '  AND (%s) '
-                 'GROUP BY '
-                 '  %s, presentation_code, nice_names.name, pn.name '
-                 'ORDER BY numerator DESC '
-                 'LIMIT 50') % (
-                     org_selector,
-                     numerator_selector,
-                     org_selector,
-                     org, three_months_ago,
-                     numerator_where,
-                     org_selector
-                )
-        data = utils.execute_query(query, [])
+        query = '''
+            WITH nice_names AS (
+            SELECT
+              bnf_code,
+              MAX(name) AS name
+            FROM
+              dmd_product
+            GROUP BY
+              bnf_code
+            HAVING
+              COUNT(*) = 1)
+            SELECT
+              {org_selector} AS entity,
+              presentation_code AS bnf_code,
+              COALESCE(nice_names.name, pn.name) AS presentation_name,
+              SUM(total_items) AS total_items,
+              SUM(actual_cost) AS cost,
+              SUM(quantity) AS quantity,
+              {numerator_selector}
+            FROM
+              frontend_prescription p
+            LEFT JOIN
+              nice_names
+            ON p.presentation_code = nice_names.bnf_code
+            INNER JOIN
+              frontend_presentation pn
+            ON p.presentation_code = pn.bnf_code
+            WHERE
+              {org_selector} = %(org)s
+              AND
+              processing_date >= %(three_months_ago)s
+              AND ({numerator_where})
+            GROUP BY
+              {org_selector}, presentation_code, nice_names.name, pn.name
+            ORDER BY numerator DESC
+            LIMIT 50
+        '''.format(
+             org_selector=org_selector,
+             numerator_selector=numerator_selector,
+             three_months_ago=three_months_ago,
+             numerator_where=numerator_where,
+        )
+        params = {
+            'org': org,
+            'three_months_ago': three_months_ago,
+        }
+        data = utils.execute_query(query, params)
     else:
         data = []
     response = Response(data)

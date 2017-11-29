@@ -43,7 +43,9 @@ def dictfetchall(cursor):
 
 def execute_query(query, params):
     cursor = connection.cursor()
-    if params:
+    if isinstance(params, dict):
+        cursor.execute(query, params)
+    elif params:
         cursor.execute(query, tuple(itertools.chain.from_iterable(params)))
     else:
         cursor.execute(query)
