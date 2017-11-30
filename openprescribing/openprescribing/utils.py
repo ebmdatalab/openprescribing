@@ -20,5 +20,5 @@ def find_files(path):
     return paths
 
 
-def get_input(self):
+def get_input():
     return raw_input('> ')

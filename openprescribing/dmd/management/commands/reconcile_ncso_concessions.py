@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def handle_concession(self, concession):
         self.stdout.write('~' * 10)
         self.stdout.write('Unreconciled concession:')
-        self.stdout.write('   drug: {}'.format(concession.drug))
+        self.stdout.write(u'   drug: {}'.format(concession.drug))
         self.stdout.write('   pack size: {}'.format(concession.pack_size))
 
         while True:
@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
             candidate_ix = self.get_candidate_ix(num_candidates)
 
-            if ix == 0:
+            if candidate_ix == 0:
                 continue
 
             candidate = candidates[candidate_ix - 1]

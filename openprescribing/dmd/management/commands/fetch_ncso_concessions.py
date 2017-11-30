@@ -1,7 +1,8 @@
 import calendar
-import csv
+import io
 import os
 
+from backports import csv
 import bs4
 import requests
 
@@ -54,9 +55,12 @@ class Command(BaseCommand):
             # Drop header row
             records = records[1:]
 
-            file_name = 'ncso_concessions_{}.csv'.format(year_and_month)
+            path = os.path.join(
+                dir_path,
+                'ncso_concessions_{}.csv'.format(year_and_month)
+            )
 
-            with open(os.path.join(dir_path, file_name, 'w')) as f:
+            with io.open(path, 'w', encoding='utf8') as f:
                 writer = csv.writer(f)
                 for record in records:
                     writer.writerow(record)
