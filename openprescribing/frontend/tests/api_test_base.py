@@ -11,7 +11,7 @@ class ApiTestBase(TransactionTestCase):
 
     """
     fixtures = ['ccgs', 'practices', 'practice_listsizes', 'products',
-                'presentations', 'sections', 'prescriptions', 'chemicals']
+                'presentations', 'sections', 'prescriptions', 'chemicals', 'tariff']
     api_prefix = '/api/1.0'
 
     def setUp(self):

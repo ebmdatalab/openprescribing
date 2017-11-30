@@ -89,6 +89,10 @@ urlpatterns = [
     url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
     url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
         name='bnf_section'),
+    url(r'^tariff/$', frontend_views.tariff,
+        name='tariff_index'),
+    url(r'^tariff/(?P<code>[A-Z\d]+)/$', frontend_views.tariff,
+        name='tariff'),
     url(r'^api/1.0/', include('api.urls')),
 
     url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',

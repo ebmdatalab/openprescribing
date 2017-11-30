@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Tariff thing{% endblock %}
+{% block active_class %}tariff{% endblock %}
+
+{% block content %}
+
+<h3>Tariff and Concession prices
+  {% if presentation %}
+  for
+  {{ presentation.product_name }}
+  {% endif %}
+</h3>
+
+<div id="no-data">
+  <p>
+    Start typing to search for tariff data about a particular generic presentation:
+  </p>
+</div>
+
+{% if presentation %}
+  <input class="form-control" id="search" placeholder="Search for another presentation" />
+{% else %}
+  <input class="form-control" id="search" placeholder="Search for a presentation" />
+{% endif %}
+<button id="showall" class="btn">Show all</button>
+
+
+<ul class="list-unstyled" id="all-results">
+
+</ul>
+
+
+
+<div id="tariff" style="clear: both; display: none">
+
+
+<div id="chart" class="chart">
+<div class="status"></div>
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'config' %}
+<script>
+  var filename = config.apiHost + "{% url 'tariff' %}?format=json&code={{ bnf_code }}";
+  var presentationName = "{{ presentation.product_name }}";
+
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for p in products %}
+allItems.push({
+  name: '{{ p.name }}',
+  url: "{% url 'tariff' p.bnf_code %}"
+  });
+{% endfor %}
+</script>
+
+{% conditional_js 'list-filter' %}
+{% conditional_js 'tariff-charts' %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}

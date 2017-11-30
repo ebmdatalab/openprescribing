@@ -25,6 +25,24 @@ def _create_prescribing_tables():
         current_at=current, category='prescribing')
 
 
+class TestAPISpendingViewsTariff(ApiTestBase):
+    def test_tariff_hit(self):
+        url = '/tariff?format=csv&code=ABCD'
+        rows = self._rows_from_api(url)
+        self.assertEqual(rows, [
+            {'date': '2010-03-01',
+             'concession': '',
+             'product': 'ABCD',
+             'price': '9.00',
+             'vmpp': 'Bar tablets 84 tablet'}
+        ])
+
+    def test_tariff_miss(self):
+        url = '/tariff?format=csv&code=ABCDE'
+        rows = self._rows_from_api(url)
+        self.assertEqual(rows, [])
+
+
 class TestAPISpendingViews(ApiTestBase):
     def test_codes_are_rejected_if_not_same_length(self):
         url = '%s/spending' % self.api_prefix
@@ -405,6 +423,7 @@ class TestAPISpendingViews(ApiTestBase):
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
+
     def test_simple(self):
         url = '/price_per_unit?format=json'
         url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
@@ -486,7 +505,6 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
              'plotline': 0.08875}
         )
 
-
     def test_no_focus(self):
         url = '/bubble?format=json'
         url += '&bnf_code=0202010F0AAAAAA&date=2014-09-01'
@@ -525,6 +543,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
              'plotline': 0.08875}
         )
+
 
 class TestAPISpendingViewsPPUWithGenericMapping(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog', 'genericcodemapping']

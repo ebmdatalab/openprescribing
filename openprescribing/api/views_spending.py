@@ -10,12 +10,14 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import namedtuplefetchall
 from dmd.models import DMDProduct
+from dmd.models import TariffPrice
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -266,6 +268,34 @@ def total_spending(request, format=None):
 
     data = utils.execute_query(query, [codes])
     return Response(data)
+
+
+class ConcessionField(serializers.RelatedField):
+    def to_representation(self, value):
+        if value:
+            return value.price_concession_pence / 100
+        else:
+            return None
+
+
+class TariffSerializer(serializers.ModelSerializer):
+    vmpp = serializers.StringRelatedField()
+    product = serializers.SlugRelatedField(
+        read_only=True, slug_field='bnf_code')
+    concession = ConcessionField(read_only=True)
+
+    class Meta:
+        model = TariffPrice
+        fields = ('date', 'price', 'vmpp', 'product', 'concession')
+
+
+@api_view(['GET'])
+def tariff(request, format=None):
+    code = request.query_params.get('code', '')
+    prices = TariffPrice.objects.select_related(
+        'product', 'vmpp').filter(product__bnf_code=code)
+    serializer = TariffSerializer(prices, many=True)
+    return Response(serializer.data)
 
 
 @db_timeout(58000)

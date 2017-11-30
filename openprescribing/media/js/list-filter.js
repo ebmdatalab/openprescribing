@@ -20,7 +20,11 @@ var listFilter = {
       $.each(r, function() {
         var html = '<li class="result-item">';
         html += '<a href="' + this.url + '">';
-        html += this.name + '</a> (' + this.code + ')</li>';
+        html += this.name + '</a> ';
+        if (this.code) {
+          html += '(' + this.code + ')';
+        }
+        html += '</li>';
         allHtml += html;
       });
       $resultsList.html(allHtml);
@@ -52,6 +56,9 @@ var listFilter = {
       delay(function() {
         search();
       }, 300);
+    });
+    $('#showall').on('click', function() {
+      search();
     });
     createFuse();
   }

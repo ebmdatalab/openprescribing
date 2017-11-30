@@ -26,6 +26,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
 from common.utils import valid_date
+from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
@@ -475,6 +476,21 @@ def gdoc_view(request, doc_id):
         'content': content
     }
     return render(request, 'gdoc.html', context)
+
+
+def tariff(request, code=None):
+    products = DMDProduct.objects.filter(tariffprice__isnull=False).distinct().order_by('name')
+    if code:
+        presentation = Presentation.objects.get(pk=code)
+    else:
+        presentation = None
+    context = {
+        'bnf_code': code,
+        'presentation': presentation,
+        'products': products
+    }
+    return render(request, 'tariff.html', context)
+
 
 
 ##################################################
