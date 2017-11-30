@@ -271,7 +271,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
 
 
 def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    requested_ccg = get_object_or_404(PCT, code=ccg_code.upper())
     if request.method == 'POST':
         form = _handleCreateBookmark(
             request,

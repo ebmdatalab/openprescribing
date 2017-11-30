@@ -130,4 +130,11 @@ urlpatterns = [
         RedirectView.as_view(
             permanent=True, pattern_name='measures_for_one_practice'),
         name='practice'),
+
+    # Temporary, for tracking letter mailouts. Should change to
+    # redirect post March 2018
+    url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',
+        frontend_views.measures_for_one_ccg,
+        name='measures_for_one_ccg'),
+
 ]
