@@ -48,7 +48,7 @@
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-  var filename = config.apiHost + "{% url 'tariff' %}?format=json&code={{ bnf_code }}";
+  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&code={{ bnf_code }}";
   var presentationName = "{{ presentation.product_name }}";
 
 var inputSearch = '#search',
