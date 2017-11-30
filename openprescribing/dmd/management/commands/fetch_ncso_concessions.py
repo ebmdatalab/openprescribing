@@ -55,7 +55,7 @@ class Command(BaseCommand):
             # Drop header row
             records = records[1:]
 
-            path =  os.path.join(
+            path = os.path.join(
                 dir_path,
                 'ncso_concessions_{}.csv'.format(year_and_month)
             )
