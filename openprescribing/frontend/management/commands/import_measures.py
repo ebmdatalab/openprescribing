@@ -97,8 +97,8 @@ class Command(BaseCommand):
                 if practice_rows_created and ccg_rows_created:
                     if measure.is_cost_based:
                         global_calculation.calculate_global_cost_savings(
-                            practice_calculation.full_table_name(),
-                            ccg_calculation.full_table_name())
+                            practice_calculation.qualified_table_name(),
+                            ccg_calculation.qualified_table_name())
                     global_calculation.write_global_centiles_to_database()
                 else:
                     raise CommandError(
@@ -337,44 +337,21 @@ class MeasureCalculation(object):
         """Name of table to which we write overall summary data
 
         """
-        return "%s_%s" % (settings.BQ_GLOBALS_TABLE_PREFIX, self.measure.id)
+        return "global_data_%s" % self.measure.id
 
-    def full_table_name(self):
-        """Fully qualified table name as used in bigquery SELECT
-        (legacy SQL dialect)
+    def qualified_table_name(self):
+        """Qualified table name as used in bigquery SELECT
         """
-        return "[%s:%s.%s]" % (settings.BQ_PROJECT,
-                               settings.BQ_MEASURES_DATASET,
-                               self.table_name())
+        return "measures.%s" % self.table_name()
 
     def full_globals_table_name(self):
-        """Fully qualified table name as used in bigquery SELECT
-        (legacy SQL dialect)
+        """Qualified table name as used in bigquery SELECT
         """
-        return "[%s:%s.%s]" % (
-            settings.BQ_PROJECT,
-            settings.BQ_MEASURES_DATASET,
-            self.globals_table_name())
-
-    def full_practices_table_name(self):
-        """Fully qualified name for practices table
-
-        """
-        return settings.BQ_FULL_PRACTICES_TABLE_NAME
+        return "measures.%s" % self.globals_table_name()
 
     def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
-        """Send query to BigQuery, wait, and return response object when the
-        job has completed.
-
-        Because the current specification format for a measure allows
-        selecting the FROM table via free-text, and we want to support
-        functional testing against real measure definitions, we have
-        following hack to replace the table being queried with a test
-        table name.
-
-        A better thing to do would be to construct measure definitions
-        specifically for testing.
-
+        """Interpolate values from ctx into SQL identified by query_id, and
+        insert results into given table.
         """
         query_path = os.path.join(self.fpath, 'measure_sql', query_id + '.sql')
 
@@ -392,14 +369,14 @@ class MeasureCalculation(object):
         return self.get_table(table_name).get_rows_as_dicts()
 
     def get_table(self, table_name):
-        client = Client(settings.BQ_MEASURES_DATASET)
+        client = Client('measures')
         return client.get_table(table_name)
 
     def add_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
         context = {
-            'from_table': self.full_table_name(),
+            'from_table': self.qualified_table_name(),
             'target_table': self.table_name(),
             'value_var': 'calc_value',
         }
@@ -419,7 +396,7 @@ class MeasureCalculation(object):
 
     def _query_and_write_global_centiles(self, query_id, extra_select_sql):
         context = {
-            'from_table': self.full_table_name(),
+            'from_table': self.qualified_table_name(),
             'extra_select_sql': extra_select_sql,
             'value_var': 'calc_value',
             'global_centiles_table': self.full_globals_table_name(),
@@ -540,7 +517,7 @@ class PracticeCalculation(MeasureCalculation):
         """The name of the bigquery working table for practices
 
         """
-        return "%s_%s" % (settings.BQ_PRACTICE_TABLE_PREFIX, self.measure.id)
+        return "practice_data_%s" % self.measure.id
 
     def calculate_practice_ratios(self):
         """Given a measure defition, construct a BigQuery query which computes
@@ -572,7 +549,7 @@ class PracticeCalculation(MeasureCalculation):
             'denominator_aliases': denominator_aliases,
             'aliased_denominators': aliased_denominators,
             'aliased_numerators': aliased_numerators,
-            'practices_from': self.full_practices_table_name(),
+            'practices_from': 'hscic.practices',
             'start_date': self.start_date,
             'end_date': self.end_date
 
@@ -612,7 +589,7 @@ class PracticeCalculation(MeasureCalculation):
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
         context = {
-            'local_table': self.full_table_name(),
+            'local_table': self.qualified_table_name(),
             'global_table': self.full_globals_table_name(),
             'unit': 'practice'
         }
@@ -680,7 +657,7 @@ class CCGCalculation(MeasureCalculation):
         """The name of the bigquery working table for CCGs
 
         """
-        return "%s_%s" % (settings.BQ_CCG_TABLE_PREFIX, self.measure.id)
+        return "ccg_data_%s" % self.measure.id
 
     def calculate_ccg_ratios(self):
         """Sums all the fields in the per-practice table, grouped by
@@ -693,7 +670,7 @@ class CCGCalculation(MeasureCalculation):
                 col, col)
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-        from_table = PracticeCalculation(self.measure).full_table_name()
+        from_table = PracticeCalculation(self.measure).qualified_table_name()
 
         context = {
             'denominator_aliases': denominator_aliases,
@@ -730,7 +707,7 @@ class CCGCalculation(MeasureCalculation):
     def calculate_cost_savings_for_ccgs(self):
         """Appends cost savings column to the CCG ratios table"""
         context = {
-            'local_table': self.full_table_name(),
+            'local_table': self.qualified_table_name(),
             'global_table': self.full_globals_table_name(),
             'unit': 'ccg'
         }
