@@ -27,11 +27,6 @@ class Command(BaseCommand):
                 counter = 0
                 for row in csv.DictReader(f):
                     month = datetime.strptime(row['Month'], '%d/%m/%Y')
-                    if int(row['VMPP']) not in [
-                            1166611000001103, 1313311000001106,
-                            1098611000001105, 1003011000001107,
-                            1144611000001100, 1191111000001100]:
-                        continue
                     counter += 1
                     if 'Category A' in row['DT Cat']:
                         tariff_category = 1
