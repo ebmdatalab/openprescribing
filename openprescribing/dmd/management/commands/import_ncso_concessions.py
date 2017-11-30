@@ -64,7 +64,6 @@ class Command(BaseCommand):
             reader = csv.DictReader(f, fieldnames=fieldnames)
 
             for record in reader:
-                print(record)
                 match = re.match(u'£(\d+)\.(\d\d)', record['price_concession'])
                 price_concession_pence = 100 * int(match.groups()[0]) \
                     + int(match.groups()[1])
