@@ -107,7 +107,6 @@ var tariffChart = {
     initialiseChartOptions: function(chartOptions, data) {
       var _this = this;
       var options = chartOptions.baseOptions;
-      options.chart.showCrosshair = false;
       options.chart.marginTop = 40;
       options.plotOptions = {
         series: {
