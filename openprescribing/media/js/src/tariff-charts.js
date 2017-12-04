@@ -46,10 +46,19 @@ var tariffChart = {
     for (var vmpp in byVmpp) {
       var isConcessionSeries = vmpp.indexOf('concession') > -1;
       if (byVmpp.hasOwnProperty(vmpp)) {
+        var markerSize = 0;
         var zIndex = 1 - _.max(_.pluck(byVmpp[vmpp], 'y'));
         if (isConcessionSeries && !hasConcession[vmpp]) {
           continue;
         } else {
+          // Normally, we don't show markers as they are quite ugly on
+          // an area chart. However, if a series is only one item
+          // long, you can't see it unless there is a marker.
+          if (_.filter(byVmpp[vmpp], function(d) {
+            return d.y !== null;
+          }).length < 2) {
+            markerSize = 3;
+          }
           // Zone calculations: line styles based on Category
           zones = [];
           var lastCat = null;
@@ -86,6 +95,7 @@ var tariffChart = {
           });
           newData.push({
             name: vmpp,
+            marker: { radius: markerSize },
             data: byVmpp[vmpp],
             zones: zones,
             zoneAxis: 'x',
