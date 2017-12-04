@@ -483,14 +483,21 @@ def tariff(request, code=None):
         tariffprice__isnull=False,
         bnf_code__isnull=False
     ).distinct().order_by('name')
+    codes = []
     if code:
-        presentation = Presentation.objects.get(pk=code)
+        codes = [code]
+    if 'additional_codes' in request.GET:
+        codes.extend(request.GET.getlist('additional_codes'))
+    if codes:
+        presentations = Presentation.objects.filter(bnf_code__in=codes)
     else:
-        presentation = None
+        presentations = []
     context = {
-        'bnf_code': code,
-        'presentation': presentation,
-        'products': products
+        'bnf_codes': codes,
+        'presentations': presentations,
+        'products': products,
+        'chart_title': 'Tariff prices for ' + ', '.join(
+            [x.product_name for x in presentations])
     }
     return render(request, 'tariff.html', context)
 

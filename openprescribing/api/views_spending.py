@@ -292,9 +292,9 @@ class TariffSerializer(serializers.ModelSerializer):
 
 @api_view(['GET'])
 def tariff(request, format=None):
-    code = request.query_params.get('code', '')
+    codes = utils.param_to_list(request.query_params.get('code', []))
     prices = TariffPrice.objects.select_related(
-        'product', 'vmpp').filter(product__bnf_code=code)
+        'product', 'vmpp').filter(product__bnf_code__in=codes).order_by('date')
     serializer = TariffSerializer(prices, many=True)
     return Response(serializer.data)
 

@@ -2,17 +2,20 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Tariff thing{% endblock %}
+{% block title %}Drug tariff for {{ chart_title }}{% endblock %}
 {% block active_class %}tariff{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/select2.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 
-<h3>Tariff and Concession prices
-  {% if presentation %}
-  for
-  {{ presentation.product_name }}
-  {% endif %}
-</h3>
+{% if presentations %}
+<h3>{{ chart_title }}</h3>
+{% else %}
+<h3>Tariff and Concession prices</h3>
+{% endif %}
 
 <div id="no-data">
   <p>
@@ -20,24 +23,26 @@
   </p>
 </div>
 
-{% if presentation %}
-  <input class="form-control" id="search" placeholder="Search for another presentation" />
-{% else %}
-  <input class="form-control" id="search" placeholder="Search for a presentation" />
-{% endif %}
-<button id="showall" class="btn">Show all</button>
-
-
-<ul class="list-unstyled" id="all-results">
-
-</ul>
-
+<form>
+  <div class="form-group">
+    <select class="tariff-selector form-control"
+            id="additional_codes"
+            name="additional_codes"
+            style="display: none; width: 100%"
+            multiple="multiple">
+        {% for p in products %}
+        <option value="{{ p.bnf_code }}" {% if p.bnf_code in bnf_codes %}selected{% endif %}>{{ p.name }}</option>
+        {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Update chart</button>
+</form>
 
 
 <div id="tariff" style="clear: both; display: none">
 
 
-<div id="chart" class="chart">
+<div id="chart" class="chart" style="height: 600px">
 <div class="status"></div>
 </div>
 </div>
@@ -48,21 +53,10 @@
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&code={{ bnf_code }}";
-  var presentationName = "{{ presentation.product_name }}";
-
-var inputSearch = '#search',
-  resultsList = '#all-results',
-  allItems = [];
-{% for p in products %}
-allItems.push({
-  name: '{{ p.name }}',
-  url: "{% url 'tariff' p.bnf_code %}"
-  });
-{% endfor %}
+  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&code={{ bnf_codes|join:',' }}";
+  var chartTitle = "{{ chart_title }}";
 </script>
 
-{% conditional_js 'list-filter' %}
 {% conditional_js 'tariff-charts' %}
 {% conditional_js 'openprescribing' %}
 {% endblock %}
