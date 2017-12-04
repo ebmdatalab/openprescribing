@@ -19,7 +19,7 @@ var tariffChart = {
       if (!(d.vmpp in byVmpp)) {
         byVmpp[d.vmpp] = [];
       }
-      byVmpp[d.vmpp].push({x: date, y: parseFloat(d.price)});
+      byVmpp[d.vmpp].push({x: date, y: parseFloat(d.price_pence)/100});
       if (d.concession) {
         hasConcession = true;
       }

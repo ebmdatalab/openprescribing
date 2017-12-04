@@ -199,7 +199,7 @@ class TariffPrice(models.Model):
     # 3: Category C
     # 11: Category M
     tariff_category = models.ForeignKey(TariffCategory)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    price_pence = models.IntegerField()
 
     @property
     def concession(self):
