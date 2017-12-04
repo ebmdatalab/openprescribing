@@ -486,8 +486,8 @@ def tariff(request, code=None):
     codes = []
     if code:
         codes = [code]
-    if 'additional_codes' in request.GET:
-        codes.extend(request.GET.getlist('additional_codes'))
+    if 'codes' in request.GET:
+        codes.extend(request.GET.getlist('codes'))
     if codes:
         presentations = Presentation.objects.filter(bnf_code__in=codes)
     else:

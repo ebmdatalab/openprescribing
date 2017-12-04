@@ -26,8 +26,8 @@
 <form>
   <div class="form-group">
     <select class="tariff-selector form-control"
-            id="additional_codes"
-            name="additional_codes"
+            id="codes"
+            name="codes"
             style="display: none; width: 100%"
             multiple="multiple">
         {% for p in products %}
@@ -53,7 +53,7 @@
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&code={{ bnf_codes|join:',' }}";
+  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&codes={{ bnf_codes|join:',' }}";
   var chartTitle = "{{ chart_title }}";
 </script>
 

@@ -27,13 +27,14 @@ def _create_prescribing_tables():
 
 class TestAPISpendingViewsTariff(ApiTestBase):
     def test_tariff_hit(self):
-        url = '/tariff?format=csv&code=ABCD'
+        url = '/tariff?format=csv&codes=ABCD'
         rows = self._rows_from_api(url)
         self.assertEqual(rows, [
             {'date': '2010-03-01',
              'concession': '',
              'product': 'ABCD',
-             'price': '9.00',
+             'price_pence': '900',
+             'tariff_category': 'Part VIIIA Category A',
              'vmpp': 'Bar tablets 84 tablet'}
         ])
 

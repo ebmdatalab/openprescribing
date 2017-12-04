@@ -406,7 +406,7 @@ class TestFrontendViews(TransactionTestCase):
     def test_tariff(self):
         response = self.client.get('/tariff/ABCD/')
         self.assertContains(response, 'Tariff')
-        self.assertContains(response, 'code=ABCD')
+        self.assertContains(response, 'codes=ABCD')
 
 
 class TestPPUViews(TransactionTestCase):

@@ -15,7 +15,7 @@
       "vmpp": 5120711000001104,
       "product": 34747811000001108,
       "tariff_category": 3,
-      "price": "9.00"
+      "price_pence": "900"
     }
   },
   {
@@ -26,7 +26,7 @@
       "vmpp": 994511000001109,
       "product": 34747811000001109,
       "tariff_category": 3,
-      "price": "24.00"
+      "price_pence": "2400"
     }
   },
   {
@@ -37,7 +37,7 @@
       "vmpp": 994511000001109,
       "product": 34747811000001109,
       "tariff_category": 3,
-      "price": "11.00"
+      "price_pence": "1100"
     }
   },
   {

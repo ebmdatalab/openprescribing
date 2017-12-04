@@ -10,7 +10,7 @@ var chartOptions = require('./highcharts-options');
 var tariffChart = {
 
   initialiseData: function(data) {
-    // add nulls
+    // Reshape data to a format that's easy to pass to Highcharts
     var byVmpp = {};
     var hasConcession = {};
     _.each(data, function(d) {
@@ -24,6 +24,7 @@ var tariffChart = {
         y: parseFloat(d.price_pence)/100,
         tariff_category: d.tariff_category,
       });
+      // Store price concession as a separate series
       var concessionKey = d.vmpp + ' (price concession)';
       if (d.concession) {
         hasConcession[concessionKey] = true;
@@ -35,6 +36,11 @@ var tariffChart = {
         x: date,
         y: d.concession ? parseFloat(d.concession) : d.concession});
     });
+    // Decorate each series with extra Highcharts properties that are
+    // computed based on all the values in that series; specifically,
+    // a z-index which places series with highest values at the front,
+    // and a "zoning" that allows us to indicate the Drug Tariff
+    // Category of each presentation over time.
     var newData = [];
     var categoriesShown = [];
     for (var vmpp in byVmpp) {
@@ -44,6 +50,7 @@ var tariffChart = {
         if (isConcessionSeries && !hasConcession[vmpp]) {
           continue;
         } else {
+          // Zone calculations: line styles based on Category
           zones = [];
           var lastCat = null;
           var cat = null;
@@ -77,7 +84,6 @@ var tariffChart = {
             }
             lastCat = cat;
           });
-          console.log(zones);
           newData.push({
             name: vmpp,
             data: byVmpp[vmpp],
@@ -87,7 +93,8 @@ var tariffChart = {
         }
       }
     }
-
+    // These dummy series are used to add dashed-line labels to the
+    // legend
     _.each(_.uniq(categoriesShown), function(category) {
       newData.push({name: category, data: [], color: '#fff'});
     });
@@ -112,6 +119,8 @@ var tariffChart = {
     options.chart.spacingTop = 20;
     options.chart.type = 'area';
     options.title.text = chartTitle;
+    // The following is a hack to show labels for the line-styling
+    // which indicates DT Category (see dummary series above)
     options.legend = {
       useHTML: true,
       floating: false,
@@ -120,6 +129,9 @@ var tariffChart = {
       itemMarginTop: 4,
       itemMarginBottom: 4,
       labelFormatter: function() {
+        // The values for `stroke-dasharray` are taken from inspecting
+        // the generated SVG here:
+        // http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/
         var str = '<div><div style="width:30px;display:inline-block;padding:3px 2px 3px 2px;margin-right: 4px;text-align:center;color:#FFF;background-color:' + this.color + '">';
         if (this.name == 'Category A') {
           str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" stroke-width="2" stroke-dasharray="none" /></svg>';
@@ -143,7 +155,7 @@ var tariffChart = {
         return str;
       },
     };
-
+    // A legend is redudant when there is only one series shown
     if (data.length > 1) {
       options.legend.enabled = true;
     } else {
