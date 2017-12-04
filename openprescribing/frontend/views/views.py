@@ -479,7 +479,10 @@ def gdoc_view(request, doc_id):
 
 
 def tariff(request, code=None):
-    products = DMDProduct.objects.filter(tariffprice__isnull=False).distinct().order_by('name')
+    products = DMDProduct.objects.filter(
+        tariffprice__isnull=False,
+        bnf_code__isnull=False
+    ).distinct().order_by('name')
     if code:
         presentation = Presentation.objects.get(pk=code)
     else:
