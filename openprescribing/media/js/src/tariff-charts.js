@@ -34,7 +34,7 @@ var tariffChart = {
       }
       byVmpp[concessionKey].push({
         x: date,
-        y: d.concession ? parseFloat(d.concession) : d.concession});
+        y: d.concession ? parseFloat(d.concession)/100: d.concession});
     });
     // Decorate each series with extra Highcharts properties that are
     // computed based on all the values in that series; specifically,

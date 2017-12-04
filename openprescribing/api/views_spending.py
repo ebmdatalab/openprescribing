@@ -273,7 +273,7 @@ def total_spending(request, format=None):
 class ConcessionField(serializers.RelatedField):
     def to_representation(self, value):
         if value:
-            return value.price_concession_pence / 100
+            return value.price_concession_pence
         else:
             return None
 
