@@ -19,7 +19,11 @@ var tariffChart = {
       if (!(d.vmpp in byVmpp)) {
         byVmpp[d.vmpp] = [];
       }
-      byVmpp[d.vmpp].push({x: date, y: parseFloat(d.price_pence)/100});
+      byVmpp[d.vmpp].push({
+        x: date,
+        y: parseFloat(d.price_pence)/100,
+        tariff_category: d.tariff_category,
+      });
       if (d.concession) {
         hasConcession = true;
       }
@@ -33,13 +37,41 @@ var tariffChart = {
     });
     var newData = [];
     for (var vmpp in byVmpp) {
-      var isConcessionSeries = vmpp.indexOf('concession') > -1
+      var isConcessionSeries = vmpp.indexOf('concession') > -1;
       if (byVmpp.hasOwnProperty(vmpp)) {
         var zIndex = 1 - _.max(_.pluck(byVmpp[vmpp], 'y'));
         if (isConcessionSeries && !hasConcession) {
           continue;
         } else {
-          newData.push({name: vmpp, data: byVmpp[vmpp], zIndex: zIndex});
+          zones = [];
+          var lastCat = null;
+          var cat = null;
+          var dashStyle;
+          _.each(byVmpp[vmpp], function(d) {
+            if (cat !== lastCat) {
+              switch (d.tariff_category) {
+                case 'Part VIIIA Category A':
+                dashStyle = 'line';
+                break;
+                case 'Part VIIIA Category C':
+                dashStyle = 'dot';
+                break;
+                case 'Part VIIIA Category M':
+                dashStyle = 'dash';
+                break;
+              }
+              zones.push(
+                {value: d.x, dashStyle: dashStyle}
+              );
+            }
+            cat = d.tariff_category;
+          });
+          newData.push({
+            name: vmpp,
+            data: byVmpp[vmpp],
+            zones: zones,
+            zoneAxis: 'x',
+            zIndex: zIndex});
         }
       }
     }
@@ -61,11 +93,31 @@ var tariffChart = {
       var options = chartOptions.baseOptions;
       options.chart.showCrosshair = false;
       options.chart.marginTop = 40;
-      options.plotOptions = {series: {marker: {radius: 2}, fillOpacity: 0.7, connectNulls: false, pointPadding: 0, groupPadding: 0}};
+      options.plotOptions = {
+        series: {
+          marker: {
+            radius: 0
+          },
+          fillOpacity: 0.4,
+          connectNulls: false,
+          pointPadding: 0,
+          groupPadding: 0
+        }
+      };
       options.chart.spacingTop = 20;
       options.chart.type = 'area';
       options.title.text = presentationName;
-      options.tooltip = {valuePrefix: '£'};
+      options.tooltip = {
+        pointFormatter: function() {
+          var str = '<span style="color:' + this.color + '">\u25CF</span> ';
+          str += this.series.name + ': <b>£' + this.y.toFixed(2);
+          if (this.tariff_category) {
+            str += ' (' + this.tariff_category + ') ';
+          }
+          str += '</b><br/>';
+          return str;
+        }
+      }
 
       if (data.length > 1) {
         options.legend.enabled = true;

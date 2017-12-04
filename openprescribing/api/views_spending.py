@@ -282,11 +282,12 @@ class TariffSerializer(serializers.ModelSerializer):
     vmpp = serializers.StringRelatedField()
     product = serializers.SlugRelatedField(
         read_only=True, slug_field='bnf_code')
+    tariff_category = serializers.StringRelatedField()
     concession = ConcessionField(read_only=True)
 
     class Meta:
         model = TariffPrice
-        fields = ('date', 'price_pence', 'vmpp', 'product', 'concession')
+        fields = ('date', 'price_pence', 'vmpp', 'product', 'concession', 'tariff_category')
 
 
 @api_view(['GET'])
