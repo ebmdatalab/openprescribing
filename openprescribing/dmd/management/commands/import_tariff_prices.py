@@ -51,7 +51,7 @@ class Command(BaseCommand):
                             product=product,
                             vmpp_id=row['VMPP'],
                             tariff_category_id=tariff_category,
-                            price_pence=int(row['DT Price'])
+                            price_pence=int(row['DT Price']))
                     except IntegrityError:
                         print "xxx Dupe vpid", row
                     except:
