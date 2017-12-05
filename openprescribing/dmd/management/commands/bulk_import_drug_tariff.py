@@ -1,14 +1,24 @@
+"""Bulk importer for manually-prepared tariff CSV.
+
+
+This probably won't be used again following initial data load, so
+could be deleted after that.
+
+"""
 import csv
+import logging
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.db.utils import IntegrityError
 
 from dmd.models import TariffPrice
 from dmd.models import DMDVmpp
 from dmd.models import DMDProduct
 from frontend.models import ImportLog
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -40,22 +50,19 @@ class Command(BaseCommand):
                         vpid = DMDVmpp.objects.get(pk=row['VMPP']).vpid
                         product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
                     except DMDVmpp.DoesNotExist:
-                        print "xxx Skipped", row
+                        logger.error(
+                            "Could not find VMPP with id %s", row['VMPP'], exc_info=True)
                         continue
                     except DMDProduct.DoesNotExist:
-                        print "xxx Skipped product", row
+                        logger.error(
+                            "Could not find DMDProduct with vpid %s", vpid, exc_info=True)
                         continue
-                    try:
-                        TariffPrice.objects.get_or_create(
-                            date=month,
-                            product=product,
-                            vmpp_id=row['VMPP'],
-                            tariff_category_id=tariff_category,
-                            price_pence=int(row['DT Price']))
-                    except IntegrityError:
-                        print "xxx Dupe vpid", row
-                    except:
-                        print "xxx", row
+                    TariffPrice.objects.get_or_create(
+                        date=month,
+                        product=product,
+                        vmpp_id=row['VMPP'],
+                        tariff_category_id=tariff_category,
+                        price_pence=int(row['DT Price']))
                 ImportLog.objects.create(
                     category='tariff',
                     filename=options['csv'],

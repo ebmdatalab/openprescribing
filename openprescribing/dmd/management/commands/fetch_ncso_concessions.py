@@ -1,5 +1,6 @@
 import calendar
-import csv
+from backports import csv
+import io
 import os
 
 import bs4
@@ -55,8 +56,8 @@ class Command(BaseCommand):
             records = records[1:]
 
             file_name = 'ncso_concessions_{}.csv'.format(year_and_month)
-
-            with open(os.path.join(dir_path, file_name, 'w')) as f:
+            with io.open(os.path.join(
+                    dir_path, file_name, 'w', encoding='utf8')) as f:
                 writer = csv.writer(f)
                 for record in records:
                     writer.writerow(record)
