@@ -61,7 +61,7 @@ class Client(object):
 
     def create_storage_backed_table(self, table_name, schema, gcs_path):
         gcs_client = StorageClient()
-        bucket = gcs_client.bucket(self.project_name)
+        bucket = gcs_client.bucket()
         if bucket.get_blob(gcs_path) is None:
             raise RuntimeError('Could not find blob at {}'.format(gcs_path))
 
@@ -195,10 +195,12 @@ class Table(object):
             f.seek(0)
             self.insert_rows_from_csv(f.name)
 
-    def insert_rows_from_storage(self, gcs_uri, **options):
+    def insert_rows_from_storage(self, gcs_path, **options):
         default_options = {
             'write_disposition': 'WRITE_TRUNCATE',
         }
+
+        gcs_uri = 'gs://{}/{}'.format(self.project_name, gcs_path)
 
         job = self.gcbq_client.load_table_from_storage(
             gen_job_name(),
@@ -232,7 +234,7 @@ class TableExporter(object):
         self.table = table
         self.storage_prefix = storage_prefix
         storage_client = StorageClient()
-        self.bucket = storage_client.bucket(table.project_name)
+        self.bucket = storage_client.bucket()
 
     def export_to_storage(self, **options):
         default_options = {

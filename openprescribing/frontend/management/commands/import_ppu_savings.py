@@ -57,7 +57,7 @@ def make_merged_table_for_month(month):
             cases.append((code_to_merge, source_code))
         seen.add(source_code)
         seen.add(code_to_merge)
-    prescribing_table = settings.BQ_PRESCRIBING_TABLE_NAME_STANDARD
+    prescribing_table = 'normalised_prescribing_standard'
     sql = """
       SELECT
         practice,
@@ -81,7 +81,7 @@ def make_merged_table_for_month(month):
     target_table_name = (
         'prescribing_with_merged_codes_%s' % month.strftime('%Y_%m'))
 
-    client = Client(settings.BQ_HSCIC_DATASET)
+    client = Client('hscic')
     table = client.get_table(target_table_name)
     table.insert_rows_from_query(sql)
     return target_table_name

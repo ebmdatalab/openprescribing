@@ -359,7 +359,7 @@ def upload_all_to_storage(tasks):
 
 def upload_task_input_files(task):
     storage_client = StorageClient()
-    bucket = storage_client.get_bucket('ebmdatalab')
+    bucket = storage_client.get_bucket()
 
     for path in task.input_paths():
         assert path[0] == '/'

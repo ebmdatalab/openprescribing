@@ -359,7 +359,7 @@ def create_bigquery_views():
     ON practices.code = prescribing.practice
     """
 
-    client = Client(settings.BQ_HSCIC_DATASET)
+    client = Client('hscic')
 
     try:
         client.create_table_with_view(

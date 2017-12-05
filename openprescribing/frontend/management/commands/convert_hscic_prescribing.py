@@ -54,8 +54,8 @@ class Command(BaseCommand):
             message += path
             raise CommandError(message)
 
-        hscic_dataset_client = Client(settings.BQ_HSCIC_DATASET)
-        tmp_dataset_client = Client(settings.BQ_TMP_DATASET)
+        hscic_dataset_client = Client('hscic')
+        tmp_dataset_client = Client('tmp_eu')
 
         # Check that we haven't already processed data for this month
         sql = '''SELECT COUNT(*)

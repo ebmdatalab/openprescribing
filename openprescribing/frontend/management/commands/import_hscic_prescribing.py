@@ -16,6 +16,7 @@ from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import PracticeStatistics
 from frontend.models import Prescription
+from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
@@ -108,7 +109,8 @@ class Command(BaseCommand):
         classes = [
             (Section, 'bnf_id'),
             (Chemical, 'bnf_code'),
-            (Product, 'bnf_code')
+            (Product, 'bnf_code'),
+            (Presentation, 'bnf_code'),
         ]
         with transaction.atomic():
             for model, field_name in classes:

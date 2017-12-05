@@ -146,5 +146,12 @@
             "2014": "http://www.hscic.gov.uk/catalogue/PUB15751/qof-1314-CSVfilesCQRSdata.zip"
         },
         "research": true
+    },
+    "ncso_concessions": {
+      "title": "NCSO Concessions",
+      "publisher": "Pharmaceutical Services Negotiating Committee",
+      "publication_schedule": "monthly",
+      "publication_lag": "1 month",
+      "index_url": "http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/"
     }
 }

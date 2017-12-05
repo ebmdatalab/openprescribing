@@ -63,12 +63,11 @@ def update_bnf_table():
     """Update `bnf` table from cloud-stored CSV
     """
     storage_client = StorageClient()
-    bucket = storage_client.get_bucket('ebmdatalab')
+    bucket = storage_client.get_bucket()
     blobs = bucket.list_blobs(prefix='hscic/bnf_codes/')
     blobs = sorted(blobs, key=lambda blob: blob.name, reverse=True)
     blob = blobs[0]
-    gcs_uri = 'gs://ebmdatalab/{}'.format(blob.name)
 
     bq_client = BQClient('hscic')
     table = bq_client.get_table('bnf')
-    table.insert_rows_from_storage(gcs_uri, skip_leading_rows=1)
+    table.insert_rows_from_storage(blob.name, skip_leading_rows=1)
