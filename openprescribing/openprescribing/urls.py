@@ -135,6 +135,6 @@ urlpatterns = [
     # redirect post March 2018
     url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',
         frontend_views.measures_for_one_ccg,
-        name='measures_for_one_ccg'),
+        name='measures_for_one_ccg_tracking'),
 
 ]
