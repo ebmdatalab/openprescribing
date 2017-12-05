@@ -15,13 +15,13 @@ var tariffChart = {
     var hasConcession = {};
     _.each(data, function(d) {
       var dates = d.date.split('-');
-      var date = Date.UTC(dates[0], dates[1]-1, dates[2]);
+      var date = Date.UTC(dates[0], dates[1] - 1, dates[2]);
       if (!(d.vmpp in byVmpp)) {
         byVmpp[d.vmpp] = [];
       }
       byVmpp[d.vmpp].push({
         x: date,
-        y: parseFloat(d.price_pence)/100,
+        y: parseFloat(d.price_pence) / 100,
         tariff_category: d.tariff_category,
       });
       // Store price concession as a separate series
@@ -34,7 +34,7 @@ var tariffChart = {
       }
       byVmpp[concessionKey].push({
         x: date,
-        y: d.concession ? parseFloat(d.concession)/100: d.concession});
+        y: d.concession ? parseFloat(d.concession) / 100: d.concession});
     });
     // Decorate each series with extra Highcharts properties that are
     // computed based on all the values in that series; specifically,
@@ -60,7 +60,7 @@ var tariffChart = {
             markerSize = 3;
           }
           // Zone calculations: line styles based on Category
-          zones = [];
+          var zones = [];
           var lastCat = null;
           var cat = null;
           var dashStyle;
@@ -85,6 +85,8 @@ var tariffChart = {
                 categoriesShown.push('Category M');
                 dashStyle = 'dash';
                 break;
+              default:
+                // do nothing
               }
               // starting from 'value', thereafter...
               zones.push(
@@ -95,7 +97,7 @@ var tariffChart = {
           });
           newData.push({
             name: vmpp,
-            marker: { radius: markerSize },
+            marker: {radius: markerSize},
             data: byVmpp[vmpp],
             zones: zones,
             zoneAxis: 'x',
@@ -112,7 +114,6 @@ var tariffChart = {
   },
 
   initialiseChartOptions: function(chartOptions, data) {
-    var _this = this;
     var options = chartOptions.baseOptions;
     options.chart.marginTop = 40;
     options.plotOptions = {
@@ -142,13 +143,18 @@ var tariffChart = {
         // The values for `stroke-dasharray` are taken from inspecting
         // the generated SVG here:
         // http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/
-        var str = '<div><div style="width:30px;display:inline-block;padding:3px 2px 3px 2px;margin-right: 4px;text-align:center;color:#FFF;background-color:' + this.color + '">';
-        if (this.name == 'Category A') {
-          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" stroke-width="2" stroke-dasharray="none" /></svg>';
-        } else if (this.name == 'Category C') {
-          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" stroke-width="2" stroke-dasharray="2,6" /></svg>';
-        } else if (this.name == 'Category M') {
-          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" stroke-width="2" stroke-dasharray="8,6" /></svg>';
+        var str = '<div><div style="width:30px;display:inline-block;';
+        str += 'padding:3px 2px 3px 2px;margin-right: 4px;text-align:center;';
+        str += 'color:#FFF;background-color:' + this.color + '">';
+        if (this.name === 'Category A') {
+          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" ';
+          str += 'stroke-width="2" stroke-dasharray="none" /></svg>';
+        } else if (this.name === 'Category C') {
+          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" ';
+          str += 'stroke-width="2" stroke-dasharray="2,6" /></svg>';
+        } else if (this.name === 'Category M') {
+          str += '<svg width="30" height="5"><path d="M0 0 H30" stroke="black" ';
+          str += 'stroke-width="2" stroke-dasharray="8,6" /></svg>';
         }
         str += '</div>';
         return str + this.name;

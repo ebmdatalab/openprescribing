@@ -502,7 +502,6 @@ def tariff(request, code=None):
     return render(request, 'tariff.html', context)
 
 
-
 ##################################################
 # Custom HTTP errors
 ##################################################

@@ -48,14 +48,17 @@ class Command(BaseCommand):
                         raise
                     try:
                         vpid = DMDVmpp.objects.get(pk=row['VMPP']).vpid
-                        product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
+                        product = DMDProduct.objects.get(
+                            vpid=vpid, concept_class=1)
                     except DMDVmpp.DoesNotExist:
                         logger.error(
-                            "Could not find VMPP with id %s", row['VMPP'], exc_info=True)
+                            "Could not find VMPP with id %s",
+                            row['VMPP'], exc_info=True)
                         continue
                     except DMDProduct.DoesNotExist:
                         logger.error(
-                            "Could not find DMDProduct with vpid %s", vpid, exc_info=True)
+                            "Could not find DMDProduct with vpid %s",
+                            vpid, exc_info=True)
                         continue
                     TariffPrice.objects.get_or_create(
                         date=month,

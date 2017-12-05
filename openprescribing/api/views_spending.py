@@ -287,7 +287,8 @@ class TariffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TariffPrice
-        fields = ('date', 'price_pence', 'vmpp', 'product', 'concession', 'tariff_category')
+        fields = ('date', 'price_pence', 'vmpp', 'product',
+                  'concession', 'tariff_category')
 
 
 @api_view(['GET'])
