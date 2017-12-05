@@ -314,6 +314,16 @@ Or for staging:
 
     fab deploy:staging,force_build=true,branch=deployment
 
+# Development
+
+Various hooks can be run before committing.  Pre-commit hooks are managed by https://github.com/pre-commit/pre-commit-hooks.
+
+To install the hooks, run once:
+
+    pre-commit install
+
+Details of the hooks are in .pre-commit-config.yaml
+
 # Philosophy
 
 This project follows design practices from [Two Scoops of Django](http://twoscoopspress.org/products/two-scoops-of-django-1-6).

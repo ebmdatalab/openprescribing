@@ -1,0 +1,4 @@
+-   repo: git://github.com/pre-commit/mirrors-yapf
+    sha: v0.20.0
+    hooks:
+    -   id: yapf
