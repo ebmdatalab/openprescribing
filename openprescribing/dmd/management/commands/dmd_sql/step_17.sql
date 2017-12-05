@@ -1,2 +1,2 @@
-DROP TABLE dmd_product;
-ALTER TABLE dmd_product_temp RENAME TO dmd_product;
+DELETE FROM dmd_product;
+SELECT * INTO dmd_product FROM dmd_product_temp;
