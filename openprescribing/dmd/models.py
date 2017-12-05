@@ -85,7 +85,7 @@ class DMDProduct(models.Model):
     '''
     dmdid = models.BigIntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
-    vpid = models.BigIntegerField(unique=True, db_index=True)
+    vpid = models.BigIntegerField(db_index=True)
     name = models.CharField(max_length=400)
     full_name = models.TextField(null=True)
     # requiring additional monitoring in accordance with the European
