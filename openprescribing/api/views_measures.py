@@ -163,42 +163,45 @@ def measure_by_ccg(request, format=None):
     measure_id = request.query_params.get('measure', None)
     org_ids = utils.param_to_list(request.query_params.get('org', []))
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
-    data = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
+
     rolled = {}
-    for d in data:
-        id = d['measure_id']
-        d_copy = {
-            'date': d['date'],
-            'numerator': d['numerator'],
-            'denominator': d['denominator'],
-            'calc_value': d['calc_value'],
-            'percentile': d['percentile'],
-            'cost_savings': d['cost_savings'],
-            'pct_id': d['pct_id'],
-            'pct_name': d['pct_name']
+    measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
+
+    for measure_value in measure_values:
+        measure = measure_value.measure
+        measure_id = measure.id
+        measure_value_data = {
+            'date': measure_value.month,
+            'numerator': measure_value.numerator,
+            'denominator': measure_value.denominator,
+            'calc_value': measure_value.calc_value,
+            'percentile': measure_value.percentile,
+            'cost_savings': measure_value.cost_savings,
+            'pct_id': measure_value.pct_id,
+            'pct_name': measure_value.pct.name,
         }
-        if id in rolled:
-            rolled[id]['data'].append(d_copy)
+        if measure_id in rolled:
+            rolled[measure_id]['data'].append(measure_value_data)
         else:
-            rolled[id] = {
-                'id': id,
-                'name': d['name'],
-                'title': d['title'],
-                'description': d['description'],
-                'why_it_matters': d['why_it_matters'],
-                'numerator_short': d['numerator_short'],
-                'denominator_short': d['denominator_short'],
-                'url': d['url'],
-                'is_cost_based': d['is_cost_based'],
-                'is_percentage': d['is_percentage'],
-                'low_is_good': d['low_is_good'],
-                'data': [d_copy]
+            rolled[measure_id] = {
+                'id': measure_id,
+                'name': measure.name,
+                'title': measure.title,
+                'description': measure.description,
+                'why_it_matters': measure.why_it_matters,
+                'numerator_short': measure.numerator_short,
+                'denominator_short': measure.denominator_short,
+                'url': measure.url,
+                'is_cost_based': measure.is_cost_based,
+                'is_percentage': measure.is_percentage,
+                'low_is_good': measure.low_is_good,
+                'data': [measure_value_data],
             }
 
-    d = {
-        'measures': [rolled[k] for k in rolled]
+    rsp_data = {
+        'measures': rolled.values()
     }
-    return Response(d)
+    return Response(rsp_data)
 
 
 @api_view(['GET'])
@@ -208,39 +211,43 @@ def measure_by_practice(request, format=None):
     if not org_ids:
         raise MissingParameter
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
-    data = MeasureValue.objects.by_practice(org_ids, measure_id, tags)
+
     rolled = {}
-    for d in data:
-        id = d['measure_id']
-        d_copy = {
-            'date': d['date'],
-            'numerator': d['numerator'],
-            'denominator': d['denominator'],
-            'calc_value': d['calc_value'],
-            'percentile': d['percentile'],
-            'cost_savings': d['cost_savings'],
-            'practice_id': d['practice_id'],
-            'practice_name': d['practice_name']
+    measure_values = MeasureValue.objects.by_practice(org_ids, measure_id, tags)
+
+    for measure_value in measure_values:
+        measure = measure_value.measure
+        measure_id = measure.id
+        measure_value_data = {
+            'date': measure_value.month,
+            'numerator': measure_value.numerator,
+            'denominator': measure_value.denominator,
+            'calc_value': measure_value.calc_value,
+            'percentile': measure_value.percentile,
+            'cost_savings': measure_value.cost_savings,
+            'practice_id': measure_value.practice_id,
+            'practice_id': measure_value.practice.name,
         }
-        if id in rolled:
-            rolled[id]['data'].append(d_copy)
+
+        if measure_id in rolled:
+            rolled[measure_id]['data'].append(measure_value_data)
         else:
-            rolled[id] = {
-                'id': id,
-                'name': d['name'],
-                'title': d['title'],
-                'description': d['description'],
-                'why_it_matters': d['why_it_matters'],
-                'numerator_short': d['numerator_short'],
-                'denominator_short': d['denominator_short'],
-                'url': d['url'],
-                'is_cost_based': d['is_cost_based'],
-                'is_percentage': d['is_percentage'],
-                'low_is_good': d['low_is_good'],
-                'data': [d_copy]
+            rolled[measure_id] = {
+                'id': measure_id,
+                'name': measure.name,
+                'title': measure.title,
+                'description': measure.description,
+                'why_it_matters': measure.why_it_matters,
+                'numerator_short': measure.numerator_short,
+                'denominator_short': measure.denominator_short,
+                'url': measure.url,
+                'is_cost_based': measure.is_cost_based,
+                'is_percentage': measure.is_percentage,
+                'low_is_good': measure.low_is_good,
+                'data': [measure_value_data],
             }
 
-    d = {
-        'measures': [rolled[k] for k in rolled]
+    rsp_data = {
+        'measures': rolled.values()
     }
-    return Response(d)
+    return Response(rsp_data)

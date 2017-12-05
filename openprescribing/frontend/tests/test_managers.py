@@ -6,9 +6,9 @@ from frontend.models import MeasureValue
 class MeasureValueManagerTests(TestCase):
     fixtures = ['one_month_of_measures']
 
-    # def test_by_ccg_with_no_org(self):
-    #     mvs = MeasureValue.objects.by_ccg([])
-    #     self.assertEqual(len(mvs), 2)
+    def test_by_ccg_with_no_org(self):
+        mvs = MeasureValue.objects.by_ccg([])
+        self.assertEqual(len(mvs), 2)
 
     def test_by_ccg_with_org(self):
         mvs = MeasureValue.objects.by_ccg(['04D'])
@@ -36,9 +36,9 @@ class MeasureValueManagerTests(TestCase):
         mvs = MeasureValue.objects.by_ccg([], tags=['core', 'lowpriority'])
         self.assertEqual(len(mvs), 0)
 
-    # def test_by_practice_with_no_org(self):
-    #     mvs = MeasureValue.objects.by_practice([])
-    #     self.assertEqual(len(mvs), 12)
+    def test_by_practice_with_no_org(self):
+        mvs = MeasureValue.objects.by_practice([])
+        self.assertEqual(len(mvs), 9)
 
     def test_by_practice_with_pct_org(self):
         mvs = MeasureValue.objects.by_practice(['04D'])
