@@ -299,7 +299,11 @@ def tariff(request, format=None):
     if codes:
         prices = prices.filter(product__bnf_code__in=codes)
     serializer = TariffSerializer(prices, many=True)
-    return Response(serializer.data)
+    response = Response(serializer.data)
+    if request.accepted_renderer.format == 'csv':
+        filename = "tariff.csv"
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 @db_timeout(58000)
