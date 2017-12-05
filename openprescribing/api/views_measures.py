@@ -167,39 +167,8 @@ def measure_by_ccg(request, format=None):
     rolled = {}
     measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
 
-    for measure_value in measure_values:
-        measure = measure_value.measure
-        measure_id = measure.id
-        measure_value_data = {
-            'date': measure_value.month,
-            'numerator': measure_value.numerator,
-            'denominator': measure_value.denominator,
-            'calc_value': measure_value.calc_value,
-            'percentile': measure_value.percentile,
-            'cost_savings': measure_value.cost_savings,
-            'pct_id': measure_value.pct_id,
-            'pct_name': measure_value.pct.name,
-        }
-        if measure_id in rolled:
-            rolled[measure_id]['data'].append(measure_value_data)
-        else:
-            rolled[measure_id] = {
-                'id': measure_id,
-                'name': measure.name,
-                'title': measure.title,
-                'description': measure.description,
-                'why_it_matters': measure.why_it_matters,
-                'numerator_short': measure.numerator_short,
-                'denominator_short': measure.denominator_short,
-                'url': measure.url,
-                'is_cost_based': measure.is_cost_based,
-                'is_percentage': measure.is_percentage,
-                'low_is_good': measure.low_is_good,
-                'data': [measure_value_data],
-            }
-
     rsp_data = {
-        'measures': rolled.values()
+        'measures': _roll_up_measure_values(measure_values, 'ccg')
     }
     return Response(rsp_data)
 
@@ -212,8 +181,16 @@ def measure_by_practice(request, format=None):
         raise MissingParameter
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
 
-    rolled = {}
     measure_values = MeasureValue.objects.by_practice(org_ids, measure_id, tags)
+
+    rsp_data = {
+        'measures': _roll_up_measure_values(measure_values, 'practice')
+    }
+    return Response(rsp_data)
+
+
+def _roll_up_measure_values(measure_values, practice_or_ccg):
+    rolled = {}
 
     for measure_value in measure_values:
         measure = measure_value.measure
@@ -225,9 +202,20 @@ def measure_by_practice(request, format=None):
             'calc_value': measure_value.calc_value,
             'percentile': measure_value.percentile,
             'cost_savings': measure_value.cost_savings,
-            'practice_id': measure_value.practice_id,
-            'practice_id': measure_value.practice.name,
         }
+
+        if practice_or_ccg == 'practice':
+            measure_value_data.update({
+                'practice_id': measure_value.practice_id,
+                'practice_name': measure_value.practice.name,
+            })
+        elif practice_or_ccg == 'ccg':
+            measure_value_data.update({
+                'ccg_id': measure_value.pct_id,
+                'ccg_name': measure_value.pct.name,
+            })
+        else:
+            assert False
 
         if measure_id in rolled:
             rolled[measure_id]['data'].append(measure_value_data)
@@ -247,7 +235,4 @@ def measure_by_practice(request, format=None):
                 'data': [measure_value_data],
             }
 
-    rsp_data = {
-        'measures': rolled.values()
-    }
-    return Response(rsp_data)
+    return rolled.values()
