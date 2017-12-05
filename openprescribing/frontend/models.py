@@ -13,6 +13,7 @@ from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
 from dmd.models import DMDProduct
+from frontend.managers import MeasureValueManager
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
 
@@ -511,6 +512,8 @@ class MeasureValue(models.Model):
     class Meta:
         app_label = 'frontend'
         unique_together = (('measure', 'pct', 'practice', 'month'),)
+
+    objects = MeasureValueManager()
 
 
 class MeasureGlobal(models.Model):
