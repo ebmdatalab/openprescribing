@@ -1,6 +1,7 @@
 from __future__ import print_function
 
-import re
+from collections import defaultdict
+import string
 import subprocess
 import tempfile
 import time
@@ -17,25 +18,41 @@ from gcutils.storage import Client as StorageClient
 from gcutils.table_dumper import TableDumper
 
 
+DATASETS = {
+    'hscic': settings.BQ_HSCIC_DATASET,
+    'measures': settings.BQ_MEASURES_DATASET,
+    'tmp_eu': settings.BQ_TMP_EU_DATASET,
+}
+
+
+try:
+    DATASETS['test'] = settings.BQ_TEST_DATASET
+except AttributeError:
+    pass
+
+
 class Client(object):
-    def __init__(self, dataset_name=None):
+    def __init__(self, dataset_key=None):
         self.project_name = settings.BQ_PROJECT
-        self.dataset_name = dataset_name
 
         # gcbq expects an environment variable called
         # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
         # containing the credentials to access Google Cloud Services.
         self.gcbq_client = gcbq.Client(project=self.project_name)
 
-        if dataset_name is not None:
-            self.dataset = self.gcbq_client.dataset(dataset_name)
-        else:
+        if dataset_key is None:
+            self.dataset_name = None
             self.dataset = None
+        else:
+            self.dataset_name = DATASETS[dataset_key]
+            self.dataset = self.gcbq_client.dataset(self.dataset_name)
 
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
 
     def create_dataset(self):
+        self.dataset.location = settings.BQ_LOCATION
+        self.dataset.default_table_expiration_ms = settings.BQ_DEFAULT_TABLE_EXPIRATION_MS
         self.dataset.create()
 
     def delete_dataset(self):
@@ -45,7 +62,14 @@ class Client(object):
 
     def create_table(self, table_name, schema):
         table = self.dataset.table(table_name, schema)
-        table.create()
+
+        try:
+            table.create()
+        except NotFound as e:
+            assert 'Not found: Dataset' in str(e)
+            self.create_dataset()
+            table.create()
+
         return Table(table, self.project_name)
 
     def get_table(self, table_name):
@@ -82,24 +106,39 @@ class Client(object):
             self.dataset_name
         )
 
-        self.gcbq_client._connection.api_request(
-            method='POST',
-            path=path,
-            data=resource
-        )
+        try:
+            self.gcbq_client._connection.api_request(
+                method='POST',
+                path=path,
+                data=resource
+            )
+        except NotFound as e:
+            assert 'Not found: Dataset' in str(e)
+            self.create_dataset()
+            self.gcbq_client._connection.api_request(
+                method='POST',
+                path=path,
+                data=resource
+            )
 
         return self.get_table(table_name)
 
     def create_table_with_view(self, table_name, sql, legacy):
         assert '{project}' in sql
-        sql = sql.format(project=self.project_name)
+        sql = interpolate_sql(sql, project=self.project_name)
         table = self.dataset.table(table_name)
         table.view_query = sql
         table.view_use_legacy_sql = legacy
-        table.create()
+        try:
+            table.create()
+        except NotFound as e:
+            assert 'Not found: Dataset' in str(e)
+            self.create_dataset()
+            table.create()
         return Table(table, self.project_name)
 
     def query(self, sql, legacy=False, **options):
+        sql = interpolate_sql(sql)
         query = self.gcbq_client.run_sync_query(sql)
         set_options(query, options)
         query.use_legacy_sql = legacy
@@ -113,6 +152,7 @@ class Client(object):
         return query
 
     def query_into_dataframe(self, sql, legacy=False):
+        sql = interpolate_sql(sql)
         kwargs = {
             'project_id': self.project_name,
             'verbose': False,
@@ -149,7 +189,9 @@ class Table(object):
         for row in self.get_rows():
             yield row_to_dict(row, field_names)
 
-    def insert_rows_from_query(self, sql, legacy=False, **options):
+    def insert_rows_from_query(self, sql, substitutions=None, legacy=False, **options):
+        substitutions = substitutions or {}
+        sql = interpolate_sql(sql, **substitutions)
         default_options = {
             'use_legacy_sql': legacy,
             'allow_large_results': True,
@@ -349,3 +391,33 @@ def results_to_dicts(results):
 
 def build_schema(*fields):
     return [gcbq.SchemaField(*field) for field in fields]
+
+
+class SafeDict(dict):
+    def __missing__(self, key):
+        return '{' + key + '}'
+
+
+def interpolate_sql(sql, **substitutions):
+    '''Interpolates substitutions (plus datasets) into given SQL.
+
+    Many of our SQL queries contain template variables, because the names of
+    certain tables or fields are generated at runtime, and because each test
+    run uses different dataset names.  This function replaces template
+    variables with the corresponding values in substitutions, or with the
+    dataset name.
+
+    >>> interpolate_sql('SELECT {col} from {hscic}.table', col='c')
+    'SELECT c from hscic_12345.table'
+
+    Since the values of some substitutions (esp. those from import_measures)
+    themselves contain template variables, we do the interpolation twice.
+
+    Use of the SafeDict allows us to do interpolation when the SQL contains
+    things in curly braces that shoudn't be interpolated (for instance, JS
+    functions defined in SQL).
+    '''
+    substitutions.update(DATASETS)
+    sql = string.Formatter().vformat(sql, (), SafeDict(**substitutions))
+    sql = string.Formatter().vformat(sql, (), SafeDict(**substitutions))
+    return sql

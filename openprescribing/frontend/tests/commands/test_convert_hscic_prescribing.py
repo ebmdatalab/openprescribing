@@ -51,7 +51,7 @@ class ConvertHscicPrescribingTests(TestCase):
         # Test that data added to prescribing table
         client = BQClient()
         sql = '''SELECT *
-        FROM hscic.prescribing
+        FROM {hscic}.prescribing
         WHERE month = TIMESTAMP('2016-01-01')'''
 
         rows = list(results_to_dicts(client.query(sql)))

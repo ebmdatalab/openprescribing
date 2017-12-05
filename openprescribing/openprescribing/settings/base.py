@@ -313,10 +313,17 @@ GDOC_DOCS = {
 
 API_HOST = utils.get_env_setting('API_HOST', default='')
 
-# BigQuery settings (used for measure calculations)
-
-# The BigQuery project name
+# BigQuery project name
 BQ_PROJECT = 'ebmdatalab'
+
+# BigQuery dataset names
+BQ_HSCIC_DATASET = 'hscic'
+BQ_MEASURES_DATASET = 'measures'
+BQ_TMP_EU_DATASET = 'tmp_eu'
+
+# Other BQ settings
+BQ_DEFAULT_TABLE_EXPIRATION_MS = None
+BQ_LOCATION = 'EU'
 
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"

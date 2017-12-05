@@ -1,7 +1,7 @@
 import csv
-import random
 import tempfile
 
+from django.conf import settings
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema
@@ -12,15 +12,12 @@ from frontend.models import PCT
 
 class BQClientTest(TestCase):
     def setUp(self):
-        self.n = random.randrange(10000)
-        self.dataset_name = 'bq_test_{:04d}'.format(self.n)
-        self.storage_prefix = 'test_bq_client/{}-'.format(self.dataset_name)
-
-        client = Client(self.dataset_name)
+        client = Client('test')
+        self.storage_prefix = 'test_bq_client/{}-'.format(client.dataset_name)
         client.create_dataset()
 
     def tearDown(self):
-        client = Client(self.dataset_name)
+        client = Client('test')
         client.delete_dataset()
 
         client = StorageClient()
@@ -29,7 +26,7 @@ class BQClientTest(TestCase):
             blob.delete()
 
     def test_the_lot(self):
-        client = Client(self.dataset_name)
+        client = Client('test')
 
         schema = build_schema(
             ('a', 'INTEGER'),

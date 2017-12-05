@@ -11,7 +11,7 @@ def _get_test_measure():
     return {
         "is_cost_based": True,
         "numerator_columns": ["SUM(quantity) AS numerator, "],
-        "numerator_from": "hscic.normalised_prescribing_standard",
+        "numerator_from": "{hscic}.normalised_prescribing_standard",
         "numerator_where": ["(bnf_code LIKE '0205%')"],
         "denominator_columns": ["SUM(quantity) AS denominator"],
         "denominator_from": "",
@@ -163,8 +163,8 @@ class TestAPIMeasureViews(TestCase):
 
         m = Measure.objects.first()
         m.numerator_from = (
-            "hscic.normalised_prescribing_standard p "
-            "LEFT JOIN hscic.presentation")
+            "{hscic}.normalised_prescribing_standard p "
+            "LEFT JOIN {hscic}.presentation")
         m.save()
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'

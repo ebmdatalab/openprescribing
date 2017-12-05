@@ -79,10 +79,9 @@ class Command(BaseCommand):
 
             with open(path) as f:
                 sql = f.read()
-            # We can't use new-style formatting as some of the SQL has braces
-            # in.
-            sql = sql.replace('{{this_month}}', prescribing_date)
-            args = [table.name, sql]
+
+            substitutions = {'this_month': prescribing_date}
+            args = [table.name, sql, substitutions]
             pool.apply_async(query_and_export, args)
 
         pool.close()
@@ -124,7 +123,7 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(table_name, sql):
+def query_and_export(table_name, sql, substitutions):
     try:
         client = Client('hscic')
         table = client.get_table(table_name)
@@ -134,7 +133,7 @@ def query_and_export(table_name, sql):
             table_name, storage_prefix))
 
         logger.info("Running SQL for %s: %s" % (table_name, sql))
-        table.insert_rows_from_query(sql)
+        table.insert_rows_from_query(sql, substitutions=substitutions)
 
         exporter = TableExporter(table, storage_prefix)
 

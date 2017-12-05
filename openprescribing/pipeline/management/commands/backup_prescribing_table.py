@@ -10,7 +10,7 @@ from gcutils.storage import Client as StorageClient
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         client = Client('hscic')
-        sql = 'SELECT max(month) FROM hscic.prescribing'
+        sql = 'SELECT max(month) FROM {hscic}.prescribing'
         latest_date = client.query(sql).rows[0][0]
         latest_year_and_month = latest_date.strftime('%Y_%m')
         table = client.get_table('prescribing')
