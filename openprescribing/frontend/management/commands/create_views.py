@@ -39,7 +39,6 @@ class Command(BaseCommand):
         self.IS_VERBOSE = False
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
-        self.dataset_name = options.get('dataset', 'hscic')
 
         base_path = os.path.join(
             settings.SITE_ROOT,
@@ -65,7 +64,7 @@ class Command(BaseCommand):
             print os.path.basename(view).replace('.sql', '')
 
     def fill_views(self):
-        client = Client(self.dataset_name)
+        client = Client('hscic')
 
         pool = Pool(processes=len(self.view_paths))
         tables = []
@@ -78,15 +77,12 @@ class Command(BaseCommand):
             table = client.get_table(table_name)
             tables.append(table)
 
-            # We do a string replacement here as we don't know how many
-            # times a dataset substitution token (i.e. `{{dataset}}') will
-            # appear in each SQL template. And we can't use new-style
-            # formatting as some of the SQL has braces in.
             with open(path) as f:
                 sql = f.read()
-            sql = sql.replace('{{dataset}}', self.dataset_name)
+            # We can't use new-style formatting as some of the SQL has braces
+            # in.
             sql = sql.replace('{{this_month}}', prescribing_date)
-            args = [self.dataset_name, table.name, sql]
+            args = [table.name, sql]
             pool.apply_async(query_and_export, args)
 
         pool.close()
@@ -97,7 +93,7 @@ class Command(BaseCommand):
             self.log("-------------")
 
     def download_and_import(self, table):
-        storage_prefix = '{}/views/{}-'.format(self.dataset_name, table.name)
+        storage_prefix = 'hscic/views/{}-'.format(table.name)
         exporter = TableExporter(table, storage_prefix)
 
         with tempfile.NamedTemporaryFile(mode='r+') as f:
@@ -128,12 +124,12 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(dataset_name, table_name, sql):
+def query_and_export(table_name, sql):
     try:
-        client = Client(dataset_name)
+        client = Client('hscic')
         table = client.get_table(table_name)
 
-        storage_prefix = '{}/views/{}-'.format(dataset_name, table_name)
+        storage_prefix = 'hscic/views/{}-'.format(table_name)
         logger.info("Generating view %s and saving to %s" % (
             table_name, storage_prefix))
 

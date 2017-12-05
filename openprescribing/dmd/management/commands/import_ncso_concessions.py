@@ -1,7 +1,9 @@
 # coding=utf8
 
+import io
 import re
-import csv
+
+from backports import csv
 
 from django.core.management import BaseCommand
 
@@ -10,7 +12,7 @@ from dmd.models import NCSOConcession, DMDVmpp
 
 def convert_ncso_name(name):
     # Some NCSO records have non-breaking spaces
-    name = name.replace('\xa0', '')
+    name = name.replace(u'\xa0', '')
 
     # Some NCSO records have multiple spaces
     name = re.sub(' +', ' ', name)
@@ -57,14 +59,21 @@ class Command(BaseCommand):
 
         vmpps = DMDVmpp.objects.values('nm', 'vppid')
 
-        with open(filename) as f:
+        with io.open(filename, encoding='utf8') as f:
             fieldnames = ['drug', 'pack_size', 'price_concession']
             reader = csv.DictReader(f, fieldnames=fieldnames)
 
             for record in reader:
-                match = re.match('£(\d+)\.(\d\d)', record['price_concession'])
+                match = re.match(u'£(\d+)\.(\d\d)', record['price_concession'])
                 price_concession_pence = 100 * int(match.groups()[0]) \
                     + int(match.groups()[1])
+
+                if NCSOConcession.objects.filter(
+                    year_and_month=year_and_month,
+                    drug=record['drug'],
+                    pack_size=record['pack_size'],
+                ).exists():
+                    continue
 
                 concession = NCSOConcession(
                     year_and_month=year_and_month,
@@ -73,7 +82,7 @@ class Command(BaseCommand):
                     price_concession_pence=price_concession_pence
                 )
 
-                ncso_name_raw = '{} {}'.format(
+                ncso_name_raw = u'{} {}'.format(
                     record['drug'],
                     record['pack_size']
                 )
@@ -102,6 +111,6 @@ class Command(BaseCommand):
                     if previous_concession is not None:
                         concession.vmpp_id = previous_concession.vmpp_id
                     else:
-                        print('No match found for {}'.format(ncso_name_raw))
+                        print(u'No match found for {}'.format(ncso_name_raw))
 
                 concession.save()

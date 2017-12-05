@@ -24,7 +24,7 @@ class BQClientTest(TestCase):
         client.delete_dataset()
 
         client = StorageClient()
-        bucket = client.bucket('ebmdatalab')
+        bucket = client.bucket()
         for blob in bucket.list_blobs(prefix=self.storage_prefix):
             blob.delete()
 
@@ -88,9 +88,7 @@ class BQClientTest(TestCase):
         storage_path = self.storage_prefix + 'test_table.csv'
         self.upload_to_storage('gcutils/tests/test_table.csv', storage_path)
 
-        t2.insert_rows_from_storage(
-            'gs://ebmdatalab/{}'.format(storage_path)
-        )
+        t2.insert_rows_from_storage(storage_path)
 
         self.assertEqual(sorted(t2.get_rows()), rows)
 
@@ -151,7 +149,7 @@ class BQClientTest(TestCase):
 
     def upload_to_storage(self, local_path, storage_path):
         client = StorageClient()
-        bucket = client.bucket('ebmdatalab')
+        bucket = client.bucket()
         blob = bucket.blob(storage_path)
         with open(local_path) as f:
             blob.upload_from_file(f)

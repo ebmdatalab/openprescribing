@@ -70,7 +70,7 @@ Specifically, you should:
 
         url = base_url + 'requestSelectedDownload.do'
         params = {
-            'bnfVersion': '68',
+            'bnfVersion': version,
             'filePath': '',
             'dataView': '260',
             'format': '',

@@ -111,6 +111,30 @@ PRACTICE_STATISTICS_SCHEMA = build_schema(
     ('practice', 'STRING')
 )
 
+TARIFF_SCHEMA = build_schema(
+    ('bnf_name', 'STRING'),
+    ('bnf_code', 'STRING'),
+    ('category', 'STRING'),
+    ('date', 'DATE'),
+)
+
+BNF_SCHEMA = build_schema(
+  ('chapter', 'STRING'),
+  ('chapter_code', 'STRING'),
+  ('section', 'STRING'),
+  ('section_code', 'STRING'),
+  ('para', 'STRING'),
+  ('para_code', 'STRING'),
+  ('subpara', 'STRING'),
+  ('subpara_code', 'STRING'),
+  ('chemical', 'STRING'),
+  ('chemical_code', 'STRING'),
+  ('product', 'STRING'),
+  ('product_code', 'STRING'),
+  ('presentation', 'STRING'),
+  ('presentation_code', 'STRING'),
+)
+
 
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it

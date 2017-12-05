@@ -23,9 +23,9 @@
   "low_is_good": true,
   "tags": ["core"],
   "numerator_columns": "SUM(quantity) AS numerator, ",
-  "numerator_from": "measures.test_normalised_prescribing_legacy ",
+  "numerator_from": "measures.normalised_prescribing_legacy ",
   "numerator_where": "(bnf_code LIKE '0703021Q0BB%%')  ",
   "denominator_columns": "SUM(quantity) AS denominator, ",
-  "denominator_from": "measures.test_normalised_prescribing_legacy ",
+  "denominator_from": "measures.normalised_prescribing_legacy ",
   "denominator_where": "(bnf_code LIKE '0703021Q0%%')  "
 }
