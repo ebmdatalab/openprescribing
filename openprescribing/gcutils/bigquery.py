@@ -100,9 +100,6 @@ class Client(object):
         return Table(table, self.project_name)
 
     def query(self, sql, legacy=False, **options):
-        if not legacy:
-            sql = convert_legacy_table_names(sql)
-
         query = self.gcbq_client.run_sync_query(sql)
         set_options(query, options)
         query.use_legacy_sql = legacy
@@ -153,9 +150,6 @@ class Table(object):
             yield row_to_dict(row, field_names)
 
     def insert_rows_from_query(self, sql, legacy=False, **options):
-        if not legacy:
-            sql = convert_legacy_table_names(sql)
-
         default_options = {
             'use_legacy_sql': legacy,
             'allow_large_results': True,
@@ -316,13 +310,6 @@ class TimeoutError(StandardError):
 
 class JobError(StandardError):
     pass
-
-
-def convert_legacy_table_names(sql):
-    pattern = r'\[(.+?):(.+?)\.(.+?)\]'
-    match = re.match(pattern, sql)
-    assert match is None, 'Found fully-qualified table name in {}'.format(sql)
-    return re.sub(pattern, r'\1.\2.\3', sql)
 
 
 def set_options(thing, options, default_options=None):
