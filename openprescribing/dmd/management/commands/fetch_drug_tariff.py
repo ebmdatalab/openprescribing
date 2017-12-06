@@ -40,9 +40,14 @@ class Command(BaseCommand):
         month_names = [x.lower() for x in calendar.month_name]
 
         for a in doc.findAll('a', class_='excel', title=re.compile('VIIIA')):
+            # a.attrs['href'] typically has a filename part like
+            # Part%20VIIIA%20September%202017.xlsx
+            #
+            # We split that into ['Part', 'VIIIA', 'September', '2017']
             words = re.split(
                 r'[ -]+',
-                urllib.unquote(os.path.splitext(os.path.basename(a.attrs['href']))[0]))
+                urllib.unquote(os.path.splitext(
+                    os.path.basename(a.attrs['href']))[0]))
             month_name, year = words[-2:]
             if len(year) == 2:
                 year = "20" + year
@@ -63,8 +68,8 @@ class Command(BaseCommand):
             mkdir_p(dir_path)
             xls_url = urljoin(index, a.attrs['href'])
             xls_file = StringIO(requests.get(xls_url).content)
-            xls = pd.read_excel(xls_file, skiprows=2).dropna()
             # drop rows with nulls
+            df = pd.read_excel(xls_file, skiprows=2).dropna()
             expected_cols = [
                 'medicine',
                 'pack size',
@@ -72,9 +77,9 @@ class Command(BaseCommand):
                 'vmpp snomed code',
                 'drug tariff category',
                 'basic price']
-            xls.columns = [x.lower() for x in xls.columns]
-            assert [x for x in xls.columns] == expected_cols, \
-                "%s doesn't match %s" % (xls.columns, expected_cols)
+            df.columns = [x.lower() for x in df.columns]
+            assert [x for x in df.columns] == expected_cols, \
+                "%s doesn't match %s" % (df.columns, expected_cols)
 
             file_name = 'drug_tariff_{}.csv'.format(year_and_month)
 
@@ -85,7 +90,7 @@ class Command(BaseCommand):
             ) as f:
                 writer = csv.writer(f)
                 writer.writerow(FIELDNAMES)
-                for record in xls.iterrows():
+                for record in df.iterrows():
                     d = record[1]
                     writer.writerow([
                         d['medicine'],

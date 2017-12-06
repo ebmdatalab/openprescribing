@@ -29,9 +29,7 @@ class Command(BaseCommand):
         parser.add_argument('--csv')
 
     def handle(self, *args, **options):
-        '''
-        '''
-        with open(options['csv'], 'r') as f:
+        with open(options['csv']) as f:
             with transaction.atomic():
                 month = None
                 counter = 0

@@ -51,21 +51,21 @@ class Command(BaseCommand):
         year_and_month = match.groups()[0]
         date = datetime.strptime(year_and_month + "_01", "%Y_%m_%d")
         with io.open(filename, encoding='utf8') as f:
-            reader = csv.DictReader(f)
-            with transaction.atomic():
-                for d in reader:
-                    vmpp = d['vmpp']
-                    product_id = get_product_id(d['vmpp'])
-                    dt_cat = get_tariff_cat_id(d['tariff_category'])
-                    price_pence = d['price_pence']
-                    TariffPrice.objects.get_or_create(
-                        date=date,
-                        vmpp_id=vmpp,
-                        product_id=product_id,
-                        tariff_category_id=dt_cat,
-                        price_pence=price_pence
-                    )
-                ImportLog.objects.create(
-                    category='tariff',
-                    filename=kwargs['filename'],
-                    current_at=date)
+            rows = list(csv.DictReader(f))
+        with transaction.atomic():
+            for d in rows:
+                vmpp = d['vmpp']
+                product_id = get_product_id(d['vmpp'])
+                dt_cat = get_tariff_cat_id(d['tariff_category'])
+                price_pence = d['price_pence']
+                TariffPrice.objects.get_or_create(
+                    date=date,
+                    vmpp_id=vmpp,
+                    product_id=product_id,
+                    tariff_category_id=dt_cat,
+                    price_pence=price_pence
+                )
+            ImportLog.objects.create(
+                category='tariff',
+                filename=kwargs['filename'],
+                current_at=date)

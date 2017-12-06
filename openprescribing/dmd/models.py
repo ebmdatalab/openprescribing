@@ -164,9 +164,6 @@ class DMDVmpp(models.Model):
     qty_uomcd = models.BigIntegerField(blank=True, null=True)
     combpackcd = models.BigIntegerField(blank=True, null=True)
 
-    @property
-    def products(self):
-        return DMDProduct.objects.filter(vpid=self.vpid)
 
     class Meta:
         db_table = 'dmd_vmpp'

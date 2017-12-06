@@ -82,7 +82,7 @@ var tariffChart = {
     // Given complete data series, return an array of strings
     // indicating any DT Categories that have been used in any of the
     // series. We use this array to decide which extra legend items to
-    // display (e.g. to indicate that a dotted line means "Categoriy
+    // display (e.g. to indicate that a dotted line means "Category
     // C")
     var _this = this;
     if (_this.anySeriesHasDashStyle(data, 'line')) {
