@@ -52,7 +52,8 @@ class Client(object):
 
     def create_dataset(self):
         self.dataset.location = settings.BQ_LOCATION
-        self.dataset.default_table_expiration_ms = settings.BQ_DEFAULT_TABLE_EXPIRATION_MS
+        self.dataset.default_table_expiration_ms =\
+            settings.BQ_DEFAULT_TABLE_EXPIRATION_MS
         self.dataset.create()
 
     def delete_dataset(self):
@@ -189,7 +190,8 @@ class Table(object):
         for row in self.get_rows():
             yield row_to_dict(row, field_names)
 
-    def insert_rows_from_query(self, sql, substitutions=None, legacy=False, **options):
+    def insert_rows_from_query(self, sql, substitutions=None, legacy=False,
+                               **options):
         substitutions = substitutions or {}
         sql = interpolate_sql(sql, **substitutions)
         default_options = {
