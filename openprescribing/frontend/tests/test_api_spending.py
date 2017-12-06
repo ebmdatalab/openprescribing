@@ -39,9 +39,14 @@ class TestAPISpendingViewsTariff(ApiTestBase):
         ])
 
     def test_tariff_miss(self):
-        url = '/tariff?format=csv&code=ABCDE'
+        url = '/tariff?format=csv&codes=ABCDE'
         rows = self._rows_from_api(url)
         self.assertEqual(rows, [])
+
+    def test_tariff_all(self):
+        url = '/tariff?format=csv'
+        rows = self._rows_from_api(url)
+        self.assertEqual(len(rows), 3)
 
 
 class TestAPISpendingViews(ApiTestBase):
