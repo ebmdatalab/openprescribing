@@ -85,8 +85,8 @@ class DMDProduct(models.Model):
     '''
     dmdid = models.BigIntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
-    vpid = models.BigIntegerField(unique=True, db_index=True)
-    name = models.CharField(max_length=40)
+    vpid = models.BigIntegerField(db_index=True)
+    name = models.CharField(max_length=400)
     full_name = models.TextField(null=True)
     # requiring additional monitoring in accordance with the European
     # Medicines Agency Additional Monitoring Scheme
@@ -164,6 +164,10 @@ class DMDVmpp(models.Model):
     qty_uomcd = models.BigIntegerField(blank=True, null=True)
     combpackcd = models.BigIntegerField(blank=True, null=True)
 
+    @property
+    def products(self):
+        return DMDProduct.objects.filter(vpid=self.vpid)
+
     class Meta:
         db_table = 'dmd_vmpp'
 
@@ -183,3 +187,28 @@ class NCSOConcession(models.Model):
             return self.filter(vmpp__isnull=True)
 
     objects = Manager()
+
+
+class TariffPrice(models.Model):
+    """Price
+    """
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey(DMDVmpp)
+    product = models.ForeignKey(DMDProduct)
+    # 1: Category A
+    # 3: Category C
+    # 11: Category M
+    tariff_category = models.ForeignKey(TariffCategory)
+    price_pence = models.IntegerField()
+
+    @property
+    def concession(self):
+        try:
+            concession = NCSOConcession.objects.get(
+                year_and_month=self.date.strftime('%Y_%m'), vmpp=self.vmpp)
+        except NCSOConcession.DoesNotExist:
+            concession = None
+        return concession
+
+    class Meta:
+        unique_together = ('date', 'vmpp',)
