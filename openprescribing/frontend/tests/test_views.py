@@ -403,6 +403,11 @@ class TestFrontendViews(TransactionTestCase):
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
 
+    def test_tariff(self):
+        response = self.client.get('/tariff/ABCD/')
+        self.assertContains(response, 'Tariff')
+        self.assertContains(response, 'codes=ABCD')
+
 
 class TestPPUViews(TransactionTestCase):
     fixtures = ['ccgs', 'importlog', 'dmdproducts',
