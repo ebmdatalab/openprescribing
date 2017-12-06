@@ -181,7 +181,8 @@ def measure_by_practice(request, format=None):
         raise MissingParameter
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
 
-    measure_values = MeasureValue.objects.by_practice(org_ids, measure_id, tags)
+    measure_values = MeasureValue.objects.by_practice(org_ids, measure_id,
+                                                      tags)
 
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'practice')

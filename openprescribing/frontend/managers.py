@@ -22,7 +22,7 @@ class MeasureValueManager(models.Manager):
 
         if tags:
             qs = qs.filter(measure__tags__contains=tags)
-        
+
         return qs
 
     def by_practice(self, org_ids, measure_id=None, tags=None):

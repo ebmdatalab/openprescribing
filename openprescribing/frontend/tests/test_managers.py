@@ -53,19 +53,23 @@ class MeasureValueManagerTests(TestCase):
         self.assertEqual(len(mvs), 8)
 
     def test_by_practice_with_measure(self):
-        mvs = MeasureValue.objects.by_practice(['C83051'], measure_id='cerazette')
+        mvs = MeasureValue.objects.by_practice(
+            ['C83051'], measure_id='cerazette')
         self.assertEqual(len(mvs), 1)
 
-        mvs = MeasureValue.objects.by_practice(['C83051'], measure_id='bananas')
+        mvs = MeasureValue.objects.by_practice(
+            ['C83051'], measure_id='bananas')
         self.assertEqual(len(mvs), 0)
 
     def test_by_practice_with_tag(self):
         mvs = MeasureValue.objects.by_practice(['C83051'], tags=['core'])
         self.assertEqual(len(mvs), 1)
 
-        mvs = MeasureValue.objects.by_practice(['C83051'], tags=['lowpriority'])
+        mvs = MeasureValue.objects.by_practice(
+            ['C83051'], tags=['lowpriority'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_practice_with_tags(self):
-        mvs = MeasureValue.objects.by_practice(['C83051'], tags=['core', 'lowpriority'])
+        mvs = MeasureValue.objects.by_practice(
+            ['C83051'], tags=['core', 'lowpriority'])
         self.assertEqual(len(mvs), 0)
