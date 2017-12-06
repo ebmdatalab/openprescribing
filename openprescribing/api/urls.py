@@ -13,6 +13,8 @@ urlpatterns = [
         name='total_spending'),
     url(r'^bubble/$', views_spending.bubble,
         name='bubble'),
+    url(r'^tariff/$', views_spending.tariff,
+        name='tariff_api'),
     url(r'^spending_by_ccg/$', views_spending.spending_by_ccg,
         name='spending_by_ccg'),
     url(r'^spending_by_practice/$', views_spending.spending_by_practice,

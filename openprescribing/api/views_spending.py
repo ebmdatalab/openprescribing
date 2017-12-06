@@ -10,12 +10,14 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import namedtuplefetchall
 from dmd.models import DMDProduct
+from dmd.models import TariffPrice
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -266,6 +268,42 @@ def total_spending(request, format=None):
 
     data = utils.execute_query(query, [codes])
     return Response(data)
+
+
+class ConcessionField(serializers.RelatedField):
+    def to_representation(self, value):
+        if value:
+            return value.price_concession_pence
+        else:
+            return None
+
+
+class TariffSerializer(serializers.ModelSerializer):
+    vmpp = serializers.StringRelatedField()
+    product = serializers.SlugRelatedField(
+        read_only=True, slug_field='bnf_code')
+    tariff_category = serializers.StringRelatedField()
+    concession = ConcessionField(read_only=True)
+
+    class Meta:
+        model = TariffPrice
+        fields = ('date', 'price_pence', 'vmpp', 'product',
+                  'concession', 'tariff_category')
+
+
+@api_view(['GET'])
+def tariff(request, format=None):
+    codes = utils.param_to_list(request.query_params.get('codes', []))
+    prices = TariffPrice.objects.select_related(
+        'product', 'vmpp').order_by('date')
+    if codes:
+        prices = prices.filter(product__bnf_code__in=codes)
+    serializer = TariffSerializer(prices, many=True)
+    response = Response(serializer.data)
+    if request.accepted_renderer.format == 'csv':
+        filename = "tariff.csv"
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 @db_timeout(58000)
