@@ -87,9 +87,11 @@ var tariffChart = {
     var _this = this;
     if (_this.anySeriesHasDashStyle(data, 'line')) {
       data.push({name: 'Category A', data: [], color: '#fff'});
-    } else if (_this.anySeriesHasDashStyle(data, 'dot')) {
+    }
+    if (_this.anySeriesHasDashStyle(data, 'dot')) {
       data.push({name: 'Category C', data: [], color: '#fff'});
-    } else if (_this.anySeriesHasDashStyle(data, 'dash')) {
+    }
+    if (_this.anySeriesHasDashStyle(data, 'dash')) {
       data.push({name: 'Category M', data: [], color: '#fff'});
     }
     return data;
