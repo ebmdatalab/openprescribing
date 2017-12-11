@@ -3,10 +3,10 @@
   global.$ = global.jQuery;
   require('bootstrap');
   var _ = require('underscore');
-  var mu = require('./src/measure_utils');
-  var config = require('./src/config');
+  var mu = require('./measure_utils');
+  var config = require('./config');
   var Highcharts = require('Highcharts');
-  var chartOptions = require('./src/highcharts-options');
+  var chartOptions = require('./highcharts-options');
   var L = require('mapbox.js');
   var Handlebars = require('handlebars');
   Highcharts.setOptions({

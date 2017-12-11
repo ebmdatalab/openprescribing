@@ -5,7 +5,7 @@ require('Highcharts');
 require('Highcharts-export');
 var _ = require('underscore');
 
-var chartOptions = require('./src/highcharts-options');
+var chartOptions = require('./highcharts-options');
 
 var barChart = {
 

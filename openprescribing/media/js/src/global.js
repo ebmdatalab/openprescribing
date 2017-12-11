@@ -1,5 +1,6 @@
 global.jQuery = require('jquery');
 global.$ = global.jQuery;
+require('bootstrap');
 
 if (!window.console) {
   var noOp = function(){};
@@ -10,10 +11,7 @@ if (!window.console) {
   };
 }
 
-var queryForm = require('./src/form');
-
 $(document).ready(function() {
-  queryForm.setUp();
   $('.doorbell-show').click(function(e) {
     if (typeof doorbell !== 'undefined') {
       e.preventDefault();
