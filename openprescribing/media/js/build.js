@@ -32,30 +32,44 @@ if (inProduction) {
   b.transform('uglifyify');
 }
 
-// Plugins
-b.plugin('watchify');
-b.plugin('factor-bundle', { outputs: bundles }); // extracts common code to own file
+// Plugins:
+// * `factor-bundle` extracts common code to own file
+// * `watchify` observes and re-builds files on changes
+b.plugin('factor-bundle', { outputs: bundles }); //
 if (!inProduction) {
-  // Set up watchify event
+  b.plugin('watchify');
   b.on('update', bundle);
 }
-bundle();
 
 function bundle(ids) {
   if (ids === undefined) {
-    // The first time we bundle
+    // The first time we bundle (i.e. not via watchify)
     console.log(`Updating ${files}`);
   } else {
     console.log(`Updating ${ids}`);
   }
-  b.bundle().on('error', function (e) {throw e;}).pipe(fs.createWriteStream(`${deployDir}/common.js`));
+  b.bundle().on(
+    'error', function (e) {
+      throw e;
+    }).pipe(
+      fs.createWriteStream(`${deployDir}/common.js`)
+    ).on(
+      'finish', minify
+    );
+}
+
+function minify() {
   if (inProduction) {
-    // Minifiy it all
+    modules.push('common');
     for (let m of modules) {
+      console.log(`Minifiying ${deployDir}/${m}.js`)
       code = fs.readFileSync(`${deployDir}/${m}.js`, 'utf8');
-      var result = UglifyJS.minify(code);
+      var result = UglifyJS.minify(code, {ie8: true});
       if (result.error) throw result.error;
       fs.writeFileSync(`${deployDir}/${m}.min.js`, result.code);
     }
+    console.log('Minification complete')
   }
 }
+
+bundle();
