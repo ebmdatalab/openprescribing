@@ -21,8 +21,7 @@ let files = modules.map(x => `./src/${x}.js`)
 let bundles = modules.map(x => `${deployDir}/${x}.js`)
 
 // Not caching is a condition of watchify
-let b = browserify({
-  entries: files,
+let b = browserify(files, {
   cache: {},
   packageCache: {}
 });
