@@ -395,13 +395,14 @@ def build_schema(*fields):
     return [gcbq.SchemaField(*field) for field in fields]
 
 
-class SafeDict(dict):
+class InterpolationDict(dict):
     def __missing__(self, key):
         return '{' + key + '}'
 
 
 def interpolate_sql(sql, **substitutions):
-    '''Interpolates substitutions (plus datasets) into given SQL.
+    '''Interpolates substitutions (plus datasets defined in DATASETS) into
+    given SQL.
 
     Many of our SQL queries contain template variables, because the names of
     certain tables or fields are generated at runtime, and because each test
@@ -415,11 +416,12 @@ def interpolate_sql(sql, **substitutions):
     Since the values of some substitutions (esp. those from import_measures)
     themselves contain template variables, we do the interpolation twice.
 
-    Use of the SafeDict allows us to do interpolation when the SQL contains
-    things in curly braces that shoudn't be interpolated (for instance, JS
-    functions defined in SQL).
+    Use of the InterpolationDict allows us to do interpolation when the SQL
+    contains things in curly braces that shoudn't be interpolated (for
+    instance, JS functions defined in SQL).
     '''
     substitutions.update(DATASETS)
-    sql = string.Formatter().vformat(sql, (), SafeDict(**substitutions))
-    sql = string.Formatter().vformat(sql, (), SafeDict(**substitutions))
+    substitutions = InterpolationDict(**substitutions)
+    sql = string.Formatter().vformat(sql, (), substitutions)
+    sql = string.Formatter().vformat(sql, (), substitutions)
     return sql
