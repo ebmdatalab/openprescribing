@@ -255,6 +255,10 @@ def clear_cloudflare():
              json.dumps(result, indent=2))
 
 
+def setup_cron():
+    run('cp %s/deploy/crontab-%s /etc/cron.d/' % (env.path, env.app))
+
+
 @task
 def deploy(environment, force_build=False, branch='master'):
     if 'CF_API_KEY' not in os.environ:
@@ -278,4 +282,5 @@ def deploy(environment, force_build=False, branch='master'):
         run_migrations()
         graceful_reload()
         clear_cloudflare()
+        setup_cron()
         log_deploy()
