@@ -1,5 +1,6 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+var domready = require('domready');
+
 require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
@@ -7,7 +8,7 @@ require('Highcharts-more');
 var chroma = require('chroma-js');
 var _ = require('underscore');
 
-jQuery(document).ready(function() {
+domready(function() {
   if (typeof bubble_data_url !== 'undefined') {
     var highchartsOptions = {
       chart: {

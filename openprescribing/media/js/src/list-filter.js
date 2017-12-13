@@ -1,7 +1,8 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+
 require('bootstrap');
-var Fuse = require('./vendor/fuse');
+var Fuse = require('../vendor/fuse');
+var domready = require("domready");
 
 var listFilter = {
 
@@ -9,7 +10,6 @@ var listFilter = {
     var fuse;
     var $inputSearch = $(inputSearch);
     var $resultsList = $(resultsList);
-
     $inputSearch.val('');
 
     function search() {
@@ -57,4 +57,7 @@ var listFilter = {
   }
 };
 
-listFilter.setUp();
+module.exports = listFilter;
+domready(function() {
+  listFilter.setUp();
+});

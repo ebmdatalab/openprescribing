@@ -10,14 +10,16 @@
     "watch-js": "nodejs build.js",
     "build-css": "lessc ../css/index.less > ../../static/css/index.css",
     "build-config": "browserify src/config.js --standalone config -t envify | uglifyjs > ../../static/js/config.min.js",
-    "build": "npm run build-config | npm run build-js | npm run build-css",
+    "build-clipboardjs": "cp node_modules/clipboard/dist/clipboard.min.js ../../static/js/",
+    "build": "npm run build-config | npm run build-js | npm run build-css | npm run build-clipboardjs",
     "lint": "eslint src/*.js",
     "watch-config": "watchify src/config.js --standalone config -t envify -o ../../static/js/config.js --debug --verbose",
     "watch-css": "when-changed ../css/ 'npm run build-css'",
-    "watch": "npm run watch-config | npm run watch-css | npm run watch-js"
+    "watch": "npm run build-clipboardjs | npm run watch-config | npm run watch-css | npm run watch-js"
   },
   "browser": {
     "select2": "./vendor/select2.full.min.js",
+    "jquery": "./node_modules/jquery/dist/jquery.js",
     "noUiSlider": "./vendor/jquery.nouislider.all.js",
     "Highcharts": "./vendor/highcharts.js",
     "Highcharts-export": "./vendor/highcharts-export.js",
@@ -29,6 +31,7 @@
     ]
   },
   "browserify-shim": {
+    "jquery": "$",
     "Highcharts": {
       "exports": "Highcharts"
     }
@@ -48,6 +51,7 @@
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
     "cookies-js": "1.2.3",
+    "domready": "^1.0.8",
     "downloadjs": "^1.4.7",
     "factor-bundle": "^2.5.0",
     "handlebars": "4.0.5",

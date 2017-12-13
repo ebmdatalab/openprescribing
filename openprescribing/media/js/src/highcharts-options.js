@@ -1,6 +1,5 @@
 var Highcharts = require('Highcharts');
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 
 var backgroundGradient = {
   linearGradient: [0, 0, 500, 500],

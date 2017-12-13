@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var lineChart = require('../src/line-chart');
+var lineChart = require('../src/analyse-line-chart');
 
 describe('LineChart', function () {
     describe('#getDataForLineChart', function () {

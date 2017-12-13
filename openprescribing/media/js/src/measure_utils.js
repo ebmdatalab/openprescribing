@@ -1,5 +1,4 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');

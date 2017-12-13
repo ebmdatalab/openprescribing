@@ -1,6 +1,6 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
-require('bootstrap');
+var $ = require('jquery');
+var domready = require('domready');
+var bootstrap = require('bootstrap');
 
 if (!window.console) {
   var noOp = function(){};
@@ -10,8 +10,7 @@ if (!window.console) {
     error: noOp
   };
 }
-
-$(document).ready(function() {
+domready(function() {
   $('.doorbell-show').click(function(e) {
     if (typeof doorbell !== 'undefined') {
       e.preventDefault();

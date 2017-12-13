@@ -1,13 +1,12 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
-require('bootstrap');
-require('select2');
+var $ = require('jquery');
 var _ = require('underscore');
-
+var domready = require("domready");
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
-var analyseChart = require('./chart');
+var analyseChart = require('./analyse-chart');
 var config = require('./config');
+var bootstrap = require('bootstrap');
+var select2 = require('select2');
 
 var queryForm = {
 
@@ -364,13 +363,13 @@ var queryForm = {
         cache: true
       }
     };
-    var optionsNum = jQuery.extend(true, {}, select2Options);
+    var optionsNum = $.extend(true, {}, select2Options);
     optionsNum.placeholder += ', e.g. Cerazette';
-    var optionsDenom = jQuery.extend(true, {}, select2Options);
+    var optionsDenom = $.extend(true, {}, select2Options);
     optionsDenom.placeholder += ', e.g. 7.3.2';
     $(this.el.numeratorIds).select2(optionsNum);
     $(this.el.denominatorIds).select2(optionsDenom);
-    var optionsOrg = jQuery.extend(true, {}, select2Options);
+    var optionsOrg = $.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
       if (_this.globalOptions.org == 'CCG') {
         return config.apiHost + "/api/1.0/org_code?org_type=CCG&format=json";
@@ -383,5 +382,9 @@ var queryForm = {
   }
 
 };
+
+domready(function() {
+  queryForm.setUp();
+});
 
 module.exports = queryForm;

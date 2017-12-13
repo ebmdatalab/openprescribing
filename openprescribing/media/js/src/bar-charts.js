@@ -1,9 +1,9 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
-require('bootstrap');
-require('Highcharts');
+var $ = require('jquery');
+
+var Highcharts = require('Highcharts');
 require('Highcharts-export');
 var _ = require('underscore');
+var domready = require("domready");
 
 var chartOptions = require('./highcharts-options');
 
@@ -127,12 +127,6 @@ var barChart = {
     }
 };
 
-$(document).ready(function() {
+domready(function() {
   barChart.setUp();
-  $('.doorbell-show').click(function(e) {
-    if (typeof doorbell !== 'undefined') {
-      e.preventDefault();
-      doorbell.show();
-    }
-  });
 });

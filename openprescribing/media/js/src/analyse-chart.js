@@ -1,5 +1,4 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
@@ -17,9 +16,9 @@ var chartOptions = require('./highcharts-options');
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
-var map = require('./map');
-var barChart = require('./bar-chart');
-var lineChart = require('./line-chart');
+var map = require('./analyse-map');
+var barChart = require('./analyse-bar-chart');
+var lineChart = require('./analyse-line-chart');
 var analyseChart = {
 
   el: {

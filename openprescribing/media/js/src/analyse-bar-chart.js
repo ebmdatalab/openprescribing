@@ -1,6 +1,6 @@
 var _ = require('underscore');
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
 

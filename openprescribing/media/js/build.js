@@ -9,6 +9,8 @@ let inProduction = process.argv[2] == 'production' ? true : false
 //let envify = require('envify')
 let modules = [
   'global',
+  'list-filter',
+  'analyse-form',
   'bubble',
   'bar-charts',
   'tariff-charts',
