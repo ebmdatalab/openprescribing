@@ -107,14 +107,14 @@ class CommandsTestCase(TestCase):
         )
 
         NCSOConcession.objects.create(
-            year_and_month='2017_10',
+            date='2017-10-1',
             drug='Amiloride 5mg tablets',
             pack_size='28',
             price_concession_pence=925,
             vmpp_id=vmpp1.vppid,
         )
         NCSOConcession.objects.create(
-            year_and_month='2017_10',
+            date='2017-10-1',
             drug='Anastrozole 1mg tablets',
             pack_size='28',
             price_concession_pence=1335,
@@ -150,14 +150,14 @@ class CommandsTestCase(TestCase):
 
         self.assertEqual(NCSOConcession.objects.count(), 4)
 
-        for year_and_month, drug, pack_size, pcp, vmpp in [
-            ['2017_10', 'Amiloride 5mg tablets', '28', 925, vmpp1],
-            ['2017_10', 'Anastrozole 1mg tablets', '28', 1445, vmpp2],
-            ['2017_11', 'Amiloride 5mg tablets', '28', 925, vmpp1],
-            ['2017_11', 'Amlodipine 5mg tablets', '28', 375, None],
+        for date, drug, pack_size, pcp, vmpp in [
+            ['2017-10-01', 'Amiloride 5mg tablets', '28', 925, vmpp1],
+            ['2017-10-01', 'Anastrozole 1mg tablets', '28', 1445, vmpp2],
+            ['2017-11-01', 'Amiloride 5mg tablets', '28', 925, vmpp1],
+            ['2017-11-01', 'Amlodipine 5mg tablets', '28', 375, None],
         ]:
             concession = NCSOConcession.objects.get(
-                year_and_month=year_and_month,
+                date=date,
                 drug=drug
             )
             self.assertEqual(concession.pack_size, pack_size)
@@ -186,7 +186,7 @@ class CommandsTestCase(TestCase):
         )
 
         concession = NCSOConcession.objects.create(
-            year_and_month='2017_01',
+            date='2017-01-01',
             drug='Duloxetine 40mg capsules',
             pack_size='56',
             price_concession_pence=600,
