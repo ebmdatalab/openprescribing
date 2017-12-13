@@ -49,7 +49,7 @@ function bundle(ids) {
   } else {
     console.log(`Updating ${ids}`);
   }
-  b.bundle().pipe(fs.createWriteStream(`${deployDir}/common.js`));
+  b.bundle().on('error', function (e) {throw e;}).pipe(fs.createWriteStream(`${deployDir}/common.js`));
   if (inProduction) {
     // Minifiy it all
     for (let m of modules) {
