@@ -71,13 +71,13 @@
     "browserify": "^9.0.8",
     "browserify-shim": "~3.2.0",
     "chai": "^2.3.0",
-    "jsdom": "^11.2.0",
-    "eslint": "latest",
+    "envify": "^3.4.1",
+    "eslint": "^4.13.1",
     "eslint-config-google": "latest",
+    "jsdom": "^11.2.0",
     "less": "^2.5.1",
     "mocha": "^2.2.5",
     "uglifyjs": "^2.4.10",
-    "watchify": "^3.2.1",
-    "envify": "^3.4.1"
+    "watchify": "^3.2.1"
   }
 }
