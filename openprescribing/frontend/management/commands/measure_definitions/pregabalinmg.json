@@ -23,14 +23,14 @@
   "numerator_columns": [
     "SUM(lyrica_mg) AS numerator, "
   ],
-  "numerator_from": "measures.pregabalin_total_mg ",
+  "numerator_from": "{measures}.pregabalin_total_mg ",
   "numerator_where": [
     "1 = 1"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],
-  "denominator_from": "hscic.practice_statistics ",
+  "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
     "1 = 1"
   ]

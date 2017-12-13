@@ -21,14 +21,14 @@
   "numerator_columns": [
     "SUM(numerator) AS numerator, "
   ],
-  "numerator_from": "measures.practice_data_all_low_priority ",
+  "numerator_from": "{measures}.practice_data_all_low_priority ",
   "numerator_where": [
     "1 = 1 "
   ],
   "denominator_columns": [
     "SUM(denominator)/18 AS denominator, "
   ],
-  "denominator_from": "measures.practice_data_all_low_priority ",
+  "denominator_from": "{measures}.practice_data_all_low_priority ",
   "denominator_where": [
     "1 = 1"
   ]

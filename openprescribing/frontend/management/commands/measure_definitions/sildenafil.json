@@ -22,7 +22,7 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "hscic.normalised_prescribing_standard ",
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "((bnf_code LIKE '070405%')",
     "AND (bnf_code not like '0704050Z0AAAAAA%' and bnf_code not like '0704050Z0AAABAB%' and bnf_code not like '0704050Z0AAACAC%'))"
@@ -30,7 +30,7 @@
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "hscic.normalised_prescribing_standard ",
+  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code LIKE '070405%')"
   ]

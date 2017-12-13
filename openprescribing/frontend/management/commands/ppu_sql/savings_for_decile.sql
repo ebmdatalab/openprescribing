@@ -53,9 +53,9 @@ FROM (
           quantity
         FROM
           {{ prescribing_table }} AS p
-        LEFT JOIN hscic.tariff t
+        LEFT JOIN {hscic}.tariff t
           ON p.bnf_code = t.bnf_code
-        LEFT JOIN hscic.practices practices
+        LEFT JOIN {hscic}.practices practices
           ON p.practice = practices.code
         WHERE
           practices.setting = 4 AND
@@ -84,7 +84,7 @@ FROM (
             AVG({{ cost_field }}/quantity) AS price_per_unit
           FROM
             {{ prescribing_table }} AS p
-          LEFT JOIN hscic.practices practices
+          LEFT JOIN {hscic}.practices practices
             ON p.practice = practices.code
           WHERE
             practices.setting = 4 AND
@@ -114,7 +114,7 @@ FROM (
 LEFT JOIN
   (SELECT
     *
-  FROM hscic.bnf, (
+  FROM {hscic}.bnf, (
     SELECT
       'Glucose Blood Testing Reagents' AS presentation,
       'Glucose Blood Testing Reagents' AS chemical,

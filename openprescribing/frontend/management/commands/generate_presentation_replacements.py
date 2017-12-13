@@ -200,9 +200,9 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      hscic.normalised_prescribing AS prescribing
+      {hscic}.normalised_prescribing AS prescribing
     RIGHT JOIN
-      hscic.bnf bnf
+      {hscic}.bnf bnf
     ON
       prescribing.normalised_bnf_code = bnf.presentation_code
     WHERE (
@@ -349,13 +349,13 @@ def create_bigquery_views():
       prescribing.quantity AS quantity,
       prescribing.month AS month
     FROM
-      {project}.hscic.prescribing AS prescribing
+      {project}.{hscic}.prescribing AS prescribing
     LEFT JOIN
-      {project}.hscic.bnf_map AS bnf_map
+      {project}.{hscic}.bnf_map AS bnf_map
     ON
       bnf_map.former_bnf_code = prescribing.bnf_code
     INNER JOIN
-      {project}.hscic.practices  AS practices
+      {project}.{hscic}.practices  AS practices
     ON practices.code = prescribing.practice
     """
 

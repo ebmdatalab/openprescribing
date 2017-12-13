@@ -450,8 +450,7 @@ class Measure(models.Model):
         means ktt9_uti_antibiotics)
 
         """
-        table_there = ('hscic.normalised_prescribing_standard'
-                       in self.numerator_from)
+        table_there = 'normalised_prescribing_standard' in self.numerator_from
         join_not_there = 'JOIN' not in self.numerator_from
         return table_there and join_not_there
 

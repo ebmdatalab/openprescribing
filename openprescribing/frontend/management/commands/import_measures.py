@@ -342,12 +342,12 @@ class MeasureCalculation(object):
     def qualified_table_name(self):
         """Qualified table name as used in bigquery SELECT
         """
-        return "measures.%s" % self.table_name()
+        return "{measures}.%s" % self.table_name()
 
-    def full_globals_table_name(self):
+    def qualified_global_table_name(self):
         """Qualified table name as used in bigquery SELECT
         """
-        return "measures.%s" % self.globals_table_name()
+        return "{measures}.%s" % self.globals_table_name()
 
     def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
         """Interpolate values from ctx into SQL identified by query_id, and
@@ -358,8 +358,11 @@ class MeasureCalculation(object):
         with open(query_path) as f:
             sql = f.read()
 
-        sql = sql.format(**ctx)
-        self.get_table(table_name).insert_rows_from_query(sql, legacy=legacy)
+        self.get_table(table_name).insert_rows_from_query(
+            sql,
+            substitutions=ctx,
+            legacy=legacy
+        )
 
     def get_rows_as_dicts(self, table_name):
         """Iterate over the specified bigquery table, returning a dict for
@@ -399,7 +402,7 @@ class MeasureCalculation(object):
             'from_table': self.qualified_table_name(),
             'extra_select_sql': extra_select_sql,
             'value_var': 'calc_value',
-            'global_centiles_table': self.full_globals_table_name(),
+            'global_centiles_table': self.qualified_global_table_name(),
         }
 
         # We have to use legacy SQL because there' no
@@ -438,7 +441,7 @@ class GlobalCalculation(MeasureCalculation):
         context = {
             'practice_table': practice_table_name,
             'ccg_table': ccg_table_name,
-            'global_table': self.full_globals_table_name()
+            'global_table': self.qualified_global_table_name()
         }
 
         self.insert_rows_from_query(
@@ -549,7 +552,7 @@ class PracticeCalculation(MeasureCalculation):
             'denominator_aliases': denominator_aliases,
             'aliased_denominators': aliased_denominators,
             'aliased_numerators': aliased_numerators,
-            'practices_from': 'hscic.practices',
+            'practices_from': '{hscic}.practices',
             'start_date': self.start_date,
             'end_date': self.end_date
 
@@ -590,7 +593,7 @@ class PracticeCalculation(MeasureCalculation):
         """Append cost savings column to the Practice working table"""
         context = {
             'local_table': self.qualified_table_name(),
-            'global_table': self.full_globals_table_name(),
+            'global_table': self.qualified_global_table_name(),
             'unit': 'practice'
         }
         self.insert_rows_from_query('cost_savings', self.table_name(), context)
@@ -708,7 +711,7 @@ class CCGCalculation(MeasureCalculation):
         """Appends cost savings column to the CCG ratios table"""
         context = {
             'local_table': self.qualified_table_name(),
-            'global_table': self.full_globals_table_name(),
+            'global_table': self.qualified_global_table_name(),
             'unit': 'ccg'
         }
         self.insert_rows_from_query('cost_savings', self.table_name(), context)
