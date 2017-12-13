@@ -209,12 +209,12 @@ class TestFrontendViews(TransactionTestCase):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.min.js', mainjs)
+            self.assertIn('global.min.js', mainjs)
         with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.js', mainjs)
+            self.assertIn('global.js', mainjs)
 
     def test_call_view_analyse(self):
         response = self.client.get('/analyse/')
