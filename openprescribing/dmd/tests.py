@@ -1,6 +1,5 @@
 # coding=utf8
 
-from contextlib import nested
 import os
 from mock import call, patch
 
@@ -133,11 +132,9 @@ class CommandsTestCase(TestCase):
             current_doc = bs4.BeautifulSoup(f.read(), 'html.parser')
 
         patch_path = 'dmd.management.commands.fetch_and_import_ncso_concessions'
-        with nested(
-            patch(patch_path + '.Command.download_archive'),
-            patch(patch_path + '.Command.download_current'),
-            patch(patch_path + '.logger.info'),
-        ) as (download_archive, download_current, info):
+        with patch(patch_path + '.Command.download_archive') as download_archive,\
+                patch(patch_path + '.Command.download_current') as download_current,\
+                patch(patch_path + '.logger.info') as info:
             download_archive.return_value = archive_doc
             download_current.return_value = current_doc
 
