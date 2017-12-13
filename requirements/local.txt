@@ -8,5 +8,7 @@ fabric==1.13.1
 flake8
 graphviz
 pip-tools
+pre-commit
 werkzeug
 when-changed
+yapf
