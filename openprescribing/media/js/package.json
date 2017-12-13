@@ -44,6 +44,9 @@
       "jquery": true,
       "browser": true,
       "mocha": true
+    },
+    "rules": {
+      "no-var": 0
     }
   },
   "dependencies": {
