@@ -82,7 +82,7 @@ class Command(BaseCommand):
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
             self.import_record(year_and_month, drug, pack_size,
-                          price_concession_pence)
+                               price_concession_pence)
 
     def import_record(self, year_and_month, drug, pack_size,
                       price_concession_pence):
@@ -94,7 +94,8 @@ class Command(BaseCommand):
         )
 
         if created:
-            logger.info('Created new NCSOConcession for %s %s', drug, pack_size)
+            logger.info('Created new NCSOConcession for %s %s',
+                        drug, pack_size)
             concession.price_concession_pence = price_concession_pence
             matching_vmpp_id = self.get_matching_vmpp_id(concession)
             if matching_vmpp_id is not None:
