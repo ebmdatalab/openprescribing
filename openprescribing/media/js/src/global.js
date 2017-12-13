@@ -3,11 +3,11 @@ var domready = require('domready');
 var bootstrap = require('bootstrap');
 
 if (!window.console) {
-  var noOp = function(){};
+  var noOp = function() {};
   console = {
     log: noOp,
     warn: noOp,
-    error: noOp
+    error: noOp,
   };
 }
 domready(function() {

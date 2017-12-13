@@ -2,7 +2,7 @@ var $ = require('jquery');
 
 require('bootstrap');
 var Fuse = require('../vendor/fuse');
-var domready = require("domready");
+var domready = require('domready');
 
 var listFilter = {
 
@@ -35,7 +35,7 @@ var listFilter = {
         location: 0,
         distance: 1000,
         maxPatternLength: 32,
-        keys: ["name", "code"]
+        keys: ['name', 'code'],
       };
       fuse = new Fuse(allItems, options);
     }
@@ -54,7 +54,7 @@ var listFilter = {
       }, 300);
     });
     createFuse();
-  }
+  },
 };
 
 module.exports = listFilter;

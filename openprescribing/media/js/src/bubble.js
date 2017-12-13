@@ -14,44 +14,44 @@ domready(function() {
       chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zoomType: 'xy',
       },
 
       legend: {
-        enabled: false
+        enabled: false,
       },
 
       title: {
-        text: 'Price-per-unit cost of <br>' + generic_name
+        text: 'Price-per-unit cost of <br>' + generic_name,
       },
       subtitle: {
-        text: null
+        text: null,
       },
       plotOptions: {
         bubble: {
-          minSize: 3
-        }
+          minSize: 3,
+        },
       },
       xAxis: {
         type: 'category',
         gridLineWidth: 1,
         title: {
-          text: null
+          text: null,
         },
         labels: {
           style: {
-            textOverflow: 'none'
-          }
-        }
+            textOverflow: 'none',
+          },
+        },
       },
 
       yAxis: {
         gridLineWidth: 1,
         title: {
-          text: 'PPU'
+          text: 'PPU',
         },
         labels: {
-          format: '£{value}'
+          format: '£{value}',
         },
         plotLines: [{
           color: 'black',
@@ -61,24 +61,24 @@ domready(function() {
           label: {
             y: 15,
             style: {
-              fontStyle: 'italic'
+              fontStyle: 'italic',
             },
-            text: 'Mean PPU for ' + highlight_name
+            text: 'Mean PPU for ' + highlight_name,
           },
-          zIndex: 3
-        }]
+          zIndex: 3,
+        }],
       },
       tooltip: {
         useHTML: true,
         headerFormat: '',
         pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.y:,.2f}',
-        followPointer: true
+        followPointer: true,
       },
 
       series: [{
         data: [
-        ]
-      }]
+        ],
+      }],
 
     };
     /** Sets color on each presentation on a green-red scale according
@@ -86,7 +86,7 @@ domready(function() {
     function setGenericColours(data) {
       var scale = chroma.scale(['green', 'yellow', 'red']);
       var means = _.map(data.series, function(d) {
-        return d.mean_ppu
+        return d.mean_ppu;
       });
       var maxPPU = _.max(means);
       var minPPU = _.min(means);
@@ -100,7 +100,7 @@ domready(function() {
      */
     function labelGenericInSeries(data) {
       var generic_index = _.findIndex(data.categories, function(x) {
-        return x.is_generic
+        return x.is_generic;
       });
       if (generic_index > -1) {
         var generic_name = data.categories[generic_index].name;

@@ -6,9 +6,9 @@ var lineChart = {
   setUp: function(lineOptions, globalOptions) {
     lineOptions.title.text = globalOptions.friendly.chartTitle;
     lineOptions.yAxis.title = {
-      text: globalOptions.friendly.yAxisTitle
+      text: globalOptions.friendly.yAxisTitle,
     };
-    if (lineOptions.yAxis.title.text.indexOf("<br/>") > -1) {
+    if (lineOptions.yAxis.title.text.indexOf('<br/>') > -1) {
       lineOptions.yAxis.title.margin = 35;
     }
     lineOptions.tooltip = {
@@ -23,7 +23,7 @@ var lineChart = {
                 // Dynamic updates to the chart are too slow.
         return formatters.constructTooltip(globalOptions, series_name,
                     month, original_y, original_x, y, true);
-      }
+      },
     };
     lineOptions.series = this.getDataForLineChart(
       globalOptions.data.combinedData,
@@ -43,7 +43,7 @@ var lineChart = {
         dataForOrganisation[d.id] = {
           id: d.id,
           name: d.name,
-          data: []
+          data: [],
         };
       }
       var dataPoint = {};
@@ -78,7 +78,7 @@ var lineChart = {
       series.push(s);
     }
     return series;
-  }
+  },
 };
 
 module.exports = lineChart;

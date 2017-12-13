@@ -8,7 +8,7 @@ var L = require('mapbox.js');
 var Handlebars = require('handlebars');
 var config = require('./config');
 Highcharts.setOptions({
-  global: {useUTC: false}
+  global: {useUTC: false},
 });
 L.mapbox.accessToken = 'pk.eyJ1IjoiYW5uYXBvd2VsbHNta' +
   'XRoIiwiYSI6ImNzY1VpYkkifQ.LC_IcHpHfOvWOQCuo5t7Hw';
@@ -20,9 +20,9 @@ var measures = {
     mapPanel: 'map-measure',
     perfSummary: '#perfsummary',
     showAll: '#showall',
-    sortButtons: ".btn-group > .btn",
+    sortButtons: '.btn-group > .btn',
     summaryTemplate: '#summary-panel',
-    panelTemplate: "#measure-panel"
+    panelTemplate: '#measure-panel',
   },
 
   setUp: function() {
@@ -103,7 +103,7 @@ var measures = {
         var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
         $(measureId).css('z-index', '99999');
         $('html, body').animate({
-          scrollTop: $(measureId).offset().top
+          scrollTop: $(measureId).offset().top,
         }, 1000);
         $('#overlay').on('click', function() {
           $('#overlay').stop().fadeOut(300);
@@ -112,10 +112,9 @@ var measures = {
       if (location.search.indexOf('sortBySavings') > -1) {
         $(_this.el.sortButtons).click();
       }
-
     })
       .fail(function(jqXHR, textStatus, error) {
-        console.log("Error " + error + " when making request " + jqXHR);
+        console.log('Error ' + error + ' when making request ' + jqXHR);
       });
   },
 
@@ -146,7 +145,7 @@ var measures = {
               layer.setStyle({fillColor: '#ff00ff',
                               fillOpacity: 0.2,
                               weight: 0.5,
-                              color: "#333",
+                              color: '#333',
                               radius: 10});
             } else {
               $('#map-container').html('');
@@ -166,7 +165,7 @@ var measures = {
       return $(b).data('costsaving') - $(a).data('costsaving');
     });
     $(_this.el.sortButtons).click(function() {
-      $(this).addClass("active").siblings().removeClass("active");
+      $(this).addClass('active').siblings().removeClass('active');
       if ($(this).data('orderby') === 'savings') {
         $(_this.el.charts).fadeOut(function() {
           $(_this.el.charts).html(chartsBySaving).fadeIn();
@@ -177,7 +176,7 @@ var measures = {
         });
       }
     });
-  }
+  },
 };
 
 domready(function() {

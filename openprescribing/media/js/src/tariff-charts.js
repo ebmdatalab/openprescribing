@@ -3,7 +3,7 @@ require('bootstrap');
 require('select2');
 require('Highcharts');
 require('Highcharts-export');
-var domready = require("domready");
+var domready = require('domready');
 var _ = require('underscore');
 
 var chartOptions = require('./highcharts-options');
@@ -230,7 +230,7 @@ var tariffChart = {
       options.legend.enabled = false;
     }
     options.yAxis.title = {
-      text: 'Price (£)'
+      text: 'Price (£)',
     };
     return options;
   },

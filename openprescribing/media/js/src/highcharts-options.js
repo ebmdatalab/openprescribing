@@ -5,8 +5,8 @@ var backgroundGradient = {
   linearGradient: [0, 0, 500, 500],
   stops: [
         [0, 'rgb(255, 255, 255)'],
-        [1, 'rgb(240, 240, 255)']
-  ]
+        [1, 'rgb(240, 240, 255)'],
+  ],
 };
 Highcharts.theme = {
   colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
@@ -19,39 +19,39 @@ Highcharts.theme = {
       'color': '#ccc',
       'offsetX': 1,
       'offsetY': 3,
-      'opacity': 0.6
+      'opacity': 0.6,
     },
     borderRadius: 6,
-    renderTo: 'chart'
+    renderTo: 'chart',
   },
   title: {
     style: {
       color: '#000',
-      font: "bold 16px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
-    }
+      font: 'bold 16px \'sofia-pro\', \'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif',
+    },
   },
   subtitle: {
     style: {
       color: '#666666',
-      font: "bold 12px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
-    }
+      font: 'bold 12px \'sofia-pro\', \'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif',
+    },
   },
   legend: {
     itemStyle: {
-      font: "9px 'sofia-pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-      color: 'black'
+      font: '9px \'sofia-pro\', \'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif',
+      color: 'black',
     },
-    itemHoverStyle:{
-      color: 'gray'
-    }
-  }
+    itemHoverStyle: {
+      color: 'gray',
+    },
+  },
 };
 Highcharts.setOptions(Highcharts.theme);
 Highcharts.setOptions({
   lang: {
     thousandsSep: ',',
-    numericSymbols: ["k", "m", "G", "T", "P", "E"]
-  }
+    numericSymbols: ['k', 'm', 'G', 'T', 'P', 'E'],
+  },
 });
 
 var baseOptions = {
@@ -60,22 +60,22 @@ var baseOptions = {
     var f = chart.renderer.label(
       'openprescribing.net', 0, 0, 'rect', 0, 0, false, false, 'watermark').css({
         color: '#DDD',
-        fontSize: '20px'
+        fontSize: '20px',
       }).add();
     var x = chart.chartWidth / 2 - f.width / 2;
     var y = chart.chartHeight / 4;
     f.attr({
-      transform: 'translate(' + x + ', ' + y + ')'
+      transform: 'translate(' + x + ', ' + y + ')',
     });
   },
   global: {
-    useUTC: false
+    useUTC: false,
   },
   chart: {
     animation: true,
     type: 'scatter',
     zoomType: 'xy',
-    plotBackgroundColor: "rgba(10,0,0,0)", // dummy color, to create an element
+    plotBackgroundColor: 'rgba(10,0,0,0)', // dummy color, to create an element
     showCrosshair: true,
     events: {
       redraw: function() {
@@ -86,39 +86,39 @@ var baseOptions = {
         // change cursor to crosshair to indicate zoom is possible
         if (this.plotBackground && this.userOptions.chart.showCrosshair) {
           this.plotBackground.toFront().css({ // move on top to get all events
-            cursor: 'crosshair'
+            cursor: 'crosshair',
           });
         }
-      }
+      },
     },
     style: {
-      fontFamily: "'sofia-pro', 'Helvetica Neue', 'Arial', sans-serif"
-    }
+      fontFamily: '\'sofia-pro\', \'Helvetica Neue\', \'Arial\', sans-serif',
+    },
   },
   credits: {
     enabled: false,
   },
   title: {
-    text: null
+    text: null,
   },
   xAxis: {
     title: {
       enabled: true,
-      text: 'Month'
+      text: 'Month',
     },
     type: 'datetime',
     dateTimeLabelFormats: {
-      month: '%b \'%y'
+      month: '%b \'%y',
     },
     gridLineWidth: 0,
-    minorGridLineWidth: 0
+    minorGridLineWidth: 0,
   },
   yAxis: {
     min: 0,
     gridLineWidth: 0,
     tickWidth: 1,
     lineWidth: 1,
-    endOnTick: false
+    endOnTick: false,
 
   },
   legend: {
@@ -129,11 +129,11 @@ var baseOptions = {
     y: 70,
     floating: true,
     backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-    borderWidth: 1
+    borderWidth: 1,
   },
   plotOptions: {
     column: {
-      borderRadius: 2
+      borderRadius: 2,
     },
     scatter: {
       allowPointSelect: true,
@@ -144,19 +144,19 @@ var baseOptions = {
             lineColor: 'rgba(240, 173, 78, 0.3)',
             lineWidth: 3,
             radius: 5,
-            fillColor: 'rgba(240, 173, 78, 0.7)'
+            fillColor: 'rgba(240, 173, 78, 0.7)',
           },
           select: {
             enabled: true,
             lineColor: 'rgba(217, 83, 79, 0.3)',
             lineWidth: 3,
             radius: 7,
-            fillColor: 'rgba(217, 83, 79, 0.7)'
-          }
-        }
-      }
-    }
-  }
+            fillColor: 'rgba(217, 83, 79, 0.7)',
+          },
+        },
+      },
+    },
+  },
 };
 
 var barOptions = $.extend(true, {}, baseOptions);
@@ -171,7 +171,7 @@ barOptions.chart.events.load = function() {
   if (this.plotBackground) {
     this.plotBackground.css({
       zIndex: 2,
-      cursor: 'crosshair'
+      cursor: 'crosshair',
     });
   }
 };
@@ -185,8 +185,8 @@ barOptions.xAxis.labels = {
   },
   rotation: -90,
   style: {
-    fontSize: '8px'
-  }
+    fontSize: '8px',
+  },
 };
 
 var lineOptions = $.extend(true, {}, baseOptions);
@@ -199,16 +199,16 @@ lineOptions.plotOptions = {
       states: {
         hover: {
           radiusPlus: 1,
-          lineWidthPlus: 1
-        }
-      }
+          lineWidthPlus: 1,
+        },
+      },
     },
     states: {
       hover: {
-        lineWidthPlus: 2
-      }
-    }
-  }
+        lineWidthPlus: 2,
+      },
+    },
+  },
 };
 
 var scatterOptions = $.extend(true, {}, baseOptions);
@@ -216,9 +216,8 @@ var chartOptions = {
   baseOptions: $.extend(true, {}, baseOptions),
   barOptions: barOptions,
   lineOptions: lineOptions,
-  scatterOptions: scatterOptions
+  scatterOptions: scatterOptions,
 };
-
 
 
 var dashOptions = $.extend(true, {}, baseOptions);
@@ -237,27 +236,27 @@ dashOptions.legend.borderRadius = 3;
 dashOptions.yAxis.title = {
   offset: 50,
   style: {
-    fontSize: 9
-  }
+    fontSize: 9,
+  },
 };
 dashOptions.yAxis.tickLength = 5;
 dashOptions.yAxis.labels = {
   x: -10,
   y: 3,
   style: {
-    fontSize: 9
-  }
+    fontSize: 9,
+  },
 };
 dashOptions.xAxis.title.style = {
-  fontSize: 9
+  fontSize: 9,
 };
 dashOptions.xAxis.tickLength = 5;
 dashOptions.xAxis.labels = {
   y: 15,
   align: 'center',
   style: {
-    fontSize: 9
-  }
+    fontSize: 9,
+  },
 };
 
 var scatterOptions = $.extend(true, {}, baseOptions);
@@ -266,6 +265,6 @@ var chartOptions = {
   barOptions: barOptions,
   lineOptions: lineOptions,
   dashOptions: dashOptions,
-  scatterOptions: scatterOptions
+  scatterOptions: scatterOptions,
 };
 module.exports = chartOptions;

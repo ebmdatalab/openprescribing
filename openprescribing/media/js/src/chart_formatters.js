@@ -40,7 +40,9 @@ var formatters = {
       var is_practices = (org == 'practice') ? true : false;
       if (orgIds.length > 0) {
         str = this._getStringForIds(orgIds, is_practices);
-        if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
+        if (_.any(_.map(orgIds, function(d) {
+ return d.id.length > 3;
+}))) {
           str += ' <br/>and other ' + org + 's';
           str += (org === 'practice') ? ' in CCG' : '';
         }
@@ -56,7 +58,7 @@ var formatters = {
     if (numIds.length > 0) {
       str += this._getStringForIds(numIds, false);
     } else {
-      str += "all prescribing";
+      str += 'all prescribing';
     }
     return str;
   },
@@ -67,13 +69,13 @@ var formatters = {
       str = 'patients on list';
     } else if (denom === 'astro_pu_cost') {
       str = 'ASTRO-PUs';
-    } else if (denom === "star_pu.oral_antibacterials_item") {
+    } else if (denom === 'star_pu.oral_antibacterials_item') {
       str = 'STAR-PUs for oral antibiotics';
     } else {
       if (denomIds.length > 0) {
         str = this._getStringForIds(denomIds, false);
       } else {
-        str = "all prescribing";
+        str = 'all prescribing';
       }
     }
     return str;
@@ -149,7 +151,7 @@ var formatters = {
       date = (options.org == 'practice') ? ' since August 2010' : ' since April 2013';
     }
     tt += (series_name !== 'Series 1') ?
-                '<b>' + series_name + "</b><br/>" : '';
+                '<b>' + series_name + '</b><br/>' : '';
 
     tt += (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     tt += options.friendly.friendlyNumerator;
@@ -168,7 +170,7 @@ var formatters = {
       }
       tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
       tt += '<br/>';
-      tt += options.friendly.yAxisTitle.replace('<br/>', "") + ': ';
+      tt += options.friendly.yAxisTitle.replace('<br/>', '') + ': ';
       tt += (force_items || options.activeOption === 'items') ? '' : '£';
       tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
       // The line chart tooltips will only ever show items, regardless
@@ -205,6 +207,6 @@ var formatters = {
     });
     str = humanize.truncatechars(str, maxLength);
     return str;
-  }
+  },
 };
 module.exports = formatters;

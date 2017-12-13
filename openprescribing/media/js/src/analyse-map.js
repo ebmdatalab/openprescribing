@@ -38,12 +38,12 @@ var analyseMap = {
       pointToLayer: function(feature, latlng) {
         return L.circleMarker(latlng, {
           radius: 8,
-          color: "#000",
+          color: '#000',
           weight: 1,
           opacity: 1,
-          fillOpacity: 0.97
+          fillOpacity: 0.97,
         });
-      }
+      },
     })
             .loadURL(boundsUrl)
             .addTo(_this.map)
@@ -58,7 +58,7 @@ var analyseMap = {
       if ('_northEast' in _this.orgLayer.getBounds()) {
         _this.map.fitBounds(_this.orgLayer.getBounds(), {
           minZoom: 7,
-          paddingBottomRight: [$(_this.legendContainer).width(), 0]
+          paddingBottomRight: [$(_this.legendContainer).width(), 0],
         });
       }
       _this.addLayerEvents();
@@ -146,8 +146,12 @@ var analyseMap = {
     if (options.playing) {
       // For animation-over-time, keep the min/max values constant
       var allMinMax = _.pluck(_.values(_this.minMaxByDate), ratio);
-      minMax = [_.min(_.map(allMinMax, function(x) {return x[0];})),
-                _.max(_.map(allMinMax, function(x) {return x[1];}))];
+      minMax = [_.min(_.map(allMinMax, function(x) {
+return x[0];
+})),
+                _.max(_.map(allMinMax, function(x) {
+return x[1];
+}))];
     } else {
       minMax = (month in _this.minMaxByDate) ? _this.minMaxByDate[month][ratio] : null;
     }
@@ -172,7 +176,7 @@ var analyseMap = {
       radius: 8,
       weight: 2,
       opacity: 0.3,
-      fillColor: this.getColour(maxVal, val)
+      fillColor: this.getColour(maxVal, val),
     };
     if (_.contains(activeNames, name)) {
       style.weight = 3;
@@ -187,7 +191,7 @@ var analyseMap = {
       _this.map.invalidateSize();
       _this.map.fitBounds(_this.orgLayer.getBounds(), {
         minZoom: 7,
-        paddingBottomRight: [$(_this.legendContainer).width(), 0]
+        paddingBottomRight: [$(_this.legendContainer).width(), 0],
       });
     } else {
       _this.map.invalidateSize();
@@ -231,7 +235,7 @@ var analyseMap = {
     legend += '</div>';
     legend += 'by ' + options.friendly.friendlyOrgs;
     return legend;
-  }
+  },
 
     // hasKnownLocations: function(boundaries) {
     //     var has_locations = false;
