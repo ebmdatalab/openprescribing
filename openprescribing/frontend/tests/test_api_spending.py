@@ -38,6 +38,30 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'vmpp': 'Bar tablets 84 tablet'}
         ])
 
+    def test_tariff_hits(self):
+        url = '/tariff?format=csv&codes=ABCD,EFGH'
+        rows = self._rows_from_api(url)
+        self.assertItemsEqual(rows, [
+            {'date': '2010-03-01',
+             'concession': '',
+             'product': 'ABCD',
+             'price_pence': '900',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Bar tablets 84 tablet'},
+            {'date': '2010-03-01',
+             'concession': '',
+             'product': 'EFGH',
+             'price_pence': '2400',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet'},
+            {'date': '2010-04-01',
+             'concession': '',
+             'product': 'EFGH',
+             'price_pence': '1100',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet'},
+        ])
+
     def test_tariff_miss(self):
         url = '/tariff?format=csv&codes=ABCDE'
         rows = self._rows_from_api(url)

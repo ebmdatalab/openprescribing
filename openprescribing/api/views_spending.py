@@ -10,14 +10,12 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
-from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import namedtuplefetchall
 from dmd.models import DMDProduct
-from dmd.models import TariffPrice
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -270,36 +268,43 @@ def total_spending(request, format=None):
     return Response(data)
 
 
-class ConcessionField(serializers.RelatedField):
-    def to_representation(self, value):
-        if value:
-            return value.price_concession_pence
-        else:
-            return None
-
-
-class TariffSerializer(serializers.ModelSerializer):
-    vmpp = serializers.StringRelatedField()
-    product = serializers.SlugRelatedField(
-        read_only=True, slug_field='bnf_code')
-    tariff_category = serializers.StringRelatedField()
-    concession = ConcessionField(read_only=True)
-
-    class Meta:
-        model = TariffPrice
-        fields = ('date', 'price_pence', 'vmpp', 'product',
-                  'concession', 'tariff_category')
-
-
 @api_view(['GET'])
 def tariff(request, format=None):
+    # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
+    # ORM.
     codes = utils.param_to_list(request.query_params.get('codes', []))
-    prices = TariffPrice.objects.select_related(
-        'product', 'vmpp').order_by('date')
+
+    query = '''
+    SELECT dmd_tariffprice.date AS date,
+           dmd_tariffprice.price_pence AS price_pence,
+           dmd_vmpp.nm AS vmpp,
+           dmd_product.bnf_code AS product,
+           dmd_ncsoconcession.price_concession_pence AS concession,
+           dmd_lookup_dt_payment_category.desc AS tariff_category
+    FROM dmd_tariffprice
+        INNER JOIN dmd_lookup_dt_payment_category
+            ON dmd_tariffprice.tariff_category_id = dmd_lookup_dt_payment_category.cd
+        INNER JOIN dmd_product
+            ON dmd_tariffprice.product_id = dmd_product.dmdid
+        INNER JOIN dmd_vmpp
+            ON dmd_tariffprice.vmpp_id = dmd_vmpp.vppid
+        LEFT OUTER JOIN dmd_ncsoconcession
+            ON (dmd_tariffprice.date = dmd_ncsoconcession.date
+                AND dmd_tariffprice.vmpp_id = dmd_ncsoconcession.vmpp_id)
+    '''
+
     if codes:
-        prices = prices.filter(product__bnf_code__in=codes)
-    serializer = TariffSerializer(prices, many=True)
-    response = Response(serializer.data)
+        query += ' WHERE dmd_product.bnf_code IN ('
+        query += ','.join('%s' for _ in range(len(codes)))
+        query += ')'
+        params = [codes]
+    else:
+        params = None
+
+    query += ' ORDER BY date'
+
+    data = utils.execute_query(query, params)
+    response = Response(data)
     if request.accepted_renderer.format == 'csv':
         filename = "tariff.csv"
         response['content-disposition'] = "attachment; filename=%s" % filename
