@@ -230,7 +230,7 @@ def price_per_unit(request, format=None):
     if savings:
         codes_with_metadata = DMDProduct.objects.filter(
             bnf_code__in=[d['presentation'] for d in savings], concept_class=1).only(
-                'bnf_code', 'name', 'is_non_bioequivalent').all()
+                'bnf_code', 'name', 'is_non_bioequivalent').distinct('bnf_code').all()
         combined = pd.DataFrame(savings).set_index('presentation')
         combined['presentation'] = combined.index
         metadata = pd.DataFrame([
