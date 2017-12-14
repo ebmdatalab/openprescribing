@@ -212,8 +212,8 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
             })
         elif practice_or_ccg == 'ccg':
             measure_value_data.update({
-                'ccg_id': measure_value.pct_id,
-                'ccg_name': measure_value.pct.name,
+                'pct_id': measure_value.pct_id,
+                'pct_name': measure_value.pct.name,
             })
         else:
             assert False
