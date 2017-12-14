@@ -1,0 +1,4 @@
+# min hour day/month month day/week
+
+* 02 * * * hello /webapps/openprescribing/deploy/fetch_and_import_ncso_concessions
+* 03 * * * hello /webapps/openprescribing/deploy/fetch_drug_tariff
