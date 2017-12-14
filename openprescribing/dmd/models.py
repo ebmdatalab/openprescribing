@@ -174,7 +174,7 @@ class DMDVmpp(models.Model):
 
 class NCSOConcession(models.Model):
     vmpp = models.ForeignKey(DMDVmpp, null=True)
-    year_and_month = models.CharField(max_length=7)
+    date = models.DateField(db_index=True)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_concession_pence = models.IntegerField()
@@ -202,7 +202,7 @@ class TariffPrice(models.Model):
     def concession(self):
         try:
             concession = NCSOConcession.objects.get(
-                year_and_month=self.date.strftime('%Y_%m'), vmpp=self.vmpp)
+                date=self.date, vmpp=self.vmpp)
         except NCSOConcession.DoesNotExist:
             concession = None
         return concession

@@ -1,6 +1,7 @@
 # coding=utf8
 
 import calendar
+import datetime
 import logging
 import re
 
@@ -61,9 +62,9 @@ class Command(BaseCommand):
         month_names = list(calendar.month_name)
         month = month_names.index(month_name)
 
-        year_and_month = '{}_{:02d}'.format(year, month)
+        date = datetime.date(int(year), month, 1)
 
-        if year_and_month < '2014_08':
+        if date < datetime.date(2014, 8, 1):
             return
 
         table = heading.find_next('table')
@@ -81,13 +82,11 @@ class Command(BaseCommand):
             match = re.match(u'£(\d+)\.(\d\d)', record[2])
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
-            self.import_record(year_and_month, drug, pack_size,
-                               price_concession_pence)
+            self.import_record(date, drug, pack_size, price_concession_pence)
 
-    def import_record(self, year_and_month, drug, pack_size,
-                      price_concession_pence):
+    def import_record(self, date, drug, pack_size, price_concession_pence):
         concession, created = NCSOConcession.objects.get_or_create(
-            year_and_month=year_and_month,
+            date=date,
             drug=drug,
             pack_size=pack_size,
             defaults={'price_concession_pence': price_concession_pence}
@@ -126,7 +125,7 @@ class Command(BaseCommand):
             drug=concession.drug,
             pack_size=concession.pack_size,
         ).exclude(
-            year_and_month=concession.year_and_month
+            date=concession.date
         ).first()
 
         if previous_concession is not None:
