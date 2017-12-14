@@ -451,6 +451,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 5,
             "possible_savings": 100.0
         }
+        self.assertEqual(len(data), 1)
         self.assertEqual(data[0], expected)
 
 
