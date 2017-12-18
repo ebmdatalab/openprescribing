@@ -5,7 +5,7 @@ services:
     env_file: .env-test
   test:
     image: ebmdatalab/openprescribing-test:latest
-    command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make --debug=v test'
+    command: /bin/bash -c './scripts/docker_setup.sh test && echo "cd op" && cd openprescribing && echo "making" && echo `which make` && make --debug=v'
     env_file: .env-test
     environment:
       - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
