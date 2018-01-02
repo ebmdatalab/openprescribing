@@ -97,3 +97,5 @@ PIPELINE_DATA_BASEDIR = os.path.join(
 PIPELINE_IMPORT_LOG_PATH = os.path.join(
     SITE_ROOT, 'pipeline', 'test-data', 'log.json'
 )
+
+SLACK_SENDING_ACTIVE = False

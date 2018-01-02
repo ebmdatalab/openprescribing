@@ -360,3 +360,4 @@ SLACK_GENERAL_POST_KEY = utils.get_env_setting(
     'SLACK_GENERAL_POST_KEY',
     default=''
 )
+SLACK_SENDING_ACTIVE = True
