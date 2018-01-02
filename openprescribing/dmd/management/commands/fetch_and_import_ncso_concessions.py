@@ -11,6 +11,7 @@ import requests
 from django.core.management import BaseCommand
 
 from dmd.models import NCSOConcession, DMDVmpp
+from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__file__)
 
@@ -31,6 +32,15 @@ class Command(BaseCommand):
         logger.info('New and unmatched: %s', self.counter['new-and-unmatched'])
         logger.info('Changed: %s', self.counter['changed'])
         logger.info('Unchanged: %s', self.counter['unchanged'])
+
+        msg = '\n'.join([
+            'Imported NCSO concessions',
+            'New and matched: %s' % self.counter['new-and-matched'],
+            'New and unmatched: %s' % self.counter['new-and-unmatched'],
+            'Changed: %s' % self.counter['changed'],
+            'Unchanged: %s' % self.counter['unchanged'],
+        ])
+        notify_slack(msg)
 
     def import_from_archive(self):
         logger.info('import_from_archive')
