@@ -256,7 +256,7 @@ def clear_cloudflare():
 
 
 def setup_cron():
-    run('cp %s/deploy/crontab-%s /etc/cron.d/' % (env.path, env.app))
+    sudo('cp %s/deploy/crontab-%s /etc/cron.d/' % (env.path, env.app))
 
 
 @task
