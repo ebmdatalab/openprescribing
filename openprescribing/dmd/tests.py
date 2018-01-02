@@ -94,12 +94,12 @@ class CommandsTestCase(TestCase):
         #   * Amiloride (new-and-matched)
         #   * Amlodipine (new-and-unmatched)
         #  2017_10 (archive)
-        #   * Amiloride (changed)
-        #   * Anastrozole (unchanged)
+        #   * Amiloride (unchanged)
+        #   * Anastrozole (changed)
 
         vmpp1 = DMDVmpp.objects.create(
-            vppid=1092811000001107,
-            nm='Amiloride 5mg tablets 100 tablet',
+            vppid=1191111000001100,
+            nm='Amiloride 5mg tablets 28 tablet',
         )
         vmpp2 = DMDVmpp.objects.create(
             vppid=975211000001100,
