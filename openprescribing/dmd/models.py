@@ -179,6 +179,9 @@ class NCSOConcession(models.Model):
     pack_size = models.CharField(max_length=40)
     price_concession_pence = models.IntegerField()
 
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
     class Manager(models.Manager):
         def unreconciled(self):
             return self.filter(vmpp__isnull=True)

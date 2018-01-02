@@ -79,7 +79,8 @@ class Command(BaseCommand):
 
         for record in records[1:]:
             drug, pack_size, price_concession = record
-            match = re.match(u'£(\d+)\.(\d\d)', record[2])
+            drug = drug.replace('(new)', '').strip()
+            match = re.match(u'£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
             self.import_record(date, drug, pack_size, price_concession_pence)
@@ -151,9 +152,6 @@ class Command(BaseCommand):
 
         # Some NCSO records have multiple spaces
         name = re.sub(' +', ' ', name)
-
-        # Some NCSO records are "(new)"
-        name = name.replace(' (new)', '')
 
         # dm+d uses "microgram" or "micrograms", usually with these rules
         name = name.replace('mcg ', 'microgram ')
