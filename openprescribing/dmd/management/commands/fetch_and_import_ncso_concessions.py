@@ -79,7 +79,7 @@ class Command(BaseCommand):
 
         for record in records[1:]:
             drug, pack_size, price_concession = record
-            drug = drug.replace(' (new)', '')
+            drug = drug.replace('(new)', '').strip()
             match = re.match(u'£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
