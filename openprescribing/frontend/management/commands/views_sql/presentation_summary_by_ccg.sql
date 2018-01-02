@@ -13,5 +13,3 @@ GROUP BY
   processing_date,
   pct_id,
   presentation_code
-ORDER BY
-  presentation_code, pct_id
