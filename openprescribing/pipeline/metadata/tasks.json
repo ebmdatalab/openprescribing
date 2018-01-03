@@ -184,9 +184,10 @@
         ]
     },
     "import_dmd_snomed": {
-        "type": "import",
+        "#comment": "This is a post_process task because it must always run, even if there's no new data to import",
+        "type": "post_process",
         "source_id": "dmd_snomed",
-        "command": "import_dmd_snomed --filename Converted_DRUG_SNOMED_BNF.xlsx",
+        "command": "import_dmd_snomed",
         "dependencies": [
             "fetch_dmd"
         ]
