@@ -67,7 +67,8 @@ class Client(object):
         try:
             table.create()
         except NotFound as e:
-            assert 'Not found: Dataset' in str(e)
+            if 'Not found: Dataset' not in str(e):
+                raise
             self.create_dataset()
             table.create()
 
@@ -114,7 +115,8 @@ class Client(object):
                 data=resource
             )
         except NotFound as e:
-            assert 'Not found: Dataset' in str(e)
+            if 'Not found: Dataset' not in str(e):
+                raise
             self.create_dataset()
             self.gcbq_client._connection.api_request(
                 method='POST',
@@ -133,7 +135,8 @@ class Client(object):
         try:
             table.create()
         except NotFound as e:
-            assert 'Not found: Dataset' in str(e)
+            if 'Not found: Dataset' not in str(e):
+                raise
             self.create_dataset()
             table.create()
         return Table(table, self.project_name)
