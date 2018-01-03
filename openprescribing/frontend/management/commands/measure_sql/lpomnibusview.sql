@@ -94,15 +94,6 @@ SELECT
   numerator,
   denominator
 FROM
-  {project}.{measures}.practice_data_lpomnibus
-
-UNION ALL
-SELECT
-  TIMESTAMP(month) AS month,
-  practice_id AS practice,
-  numerator,
-  denominator
-FROM
   {project}.{measures}.practice_data_lpoxycodone
 
 UNION ALL
