@@ -79,7 +79,7 @@ class Command(BaseCommand):
 
         table = heading.find_next('table')
         trs = table.find_all('tr')
-        records = [[td.text for td in tr.find_all('td')] for tr in trs]
+        records = [[td.text.strip() for td in tr.find_all('td')] for tr in trs]
 
         # Make sure the first row contains expected headers.
         # Unfortunately, the header names are not consistent.
