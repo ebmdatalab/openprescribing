@@ -7,6 +7,7 @@ from django.test import TestCase
 from gcutils.bigquery import Client, TableExporter, build_schema
 from gcutils.storage import Client as StorageClient
 
+from dmd.models import DMDProduct, DMDVmpp, NCSOConcession, TariffPrice
 from frontend.models import PCT
 
 
@@ -150,3 +151,60 @@ class BQClientTest(TestCase):
         blob = bucket.blob(storage_path)
         with open(local_path) as f:
             blob.upload_from_file(f)
+
+    def test_upload_model(self):
+        client = Client('dmd')
+
+        DMDProduct.objects.create(
+            dmdid=327368008,
+            bnf_code='0803042A0AAABAB',
+            vpid=327368008,
+            name='Bicalutamide 150mg tablets',
+        )
+
+        DMDVmpp.objects.create(
+            vppid=1206011000001108,
+            nm='Bicalutamide 150mg tablets 28 tablet',
+            vpid=327368008,
+        )
+
+        NCSOConcession.objects.create(
+            drug='Bicalutamide 150mg tablets',
+            pack_size=28,
+            price_concession_pence=499,
+            vmpp_id=1206011000001108,
+            date='2017-11-01',
+         )
+
+        TariffPrice.objects.create(
+            vmpp_id=1206011000001108,
+            product_id=327368008,
+            price_pence=422,
+            tariff_category_id=11,
+            date='2017-11-01',
+        )
+
+        client.upload_model(DMDProduct)
+        client.upload_model(DMDVmpp)
+        client.upload_model(NCSOConcession)
+        client.upload_model(TariffPrice)
+
+        table = client.get_table('product')
+        rows = list(table.get_rows_as_dicts())
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['name'], 'Bicalutamide 150mg tablets')
+
+        table = client.get_table('vmpp')
+        rows = list(table.get_rows_as_dicts())
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['nm'], 'Bicalutamide 150mg tablets 28 tablet')
+
+        table = client.get_table('ncsoconcession')
+        rows = list(table.get_rows_as_dicts())
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['drug'], 'Bicalutamide 150mg tablets')
+
+        table = client.get_table('tariffprice')
+        rows = list(table.get_rows_as_dicts())
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['price_pence'], 422)

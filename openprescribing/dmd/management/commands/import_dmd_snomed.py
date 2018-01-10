@@ -6,6 +6,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 
+from dmd.models import DMDProduct
+from gcutils.bigquery import Client
+
 
 class Command(BaseCommand):
     help = ('Parse BNF->dm+d mapping supplied by NHSBSA and update tables'
@@ -37,3 +40,5 @@ class Command(BaseCommand):
                     if not rowcount:
                         logging.warn(
                             "When adding BNF codes, could not find %s", snomed_code)
+
+        Client('dmd').upload_model(DMDProduct)

@@ -11,6 +11,7 @@ import requests
 from django.core.management import BaseCommand
 
 from dmd.models import NCSOConcession, DMDVmpp
+from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack
 
 logger = logging.getLogger(__file__)
@@ -32,6 +33,8 @@ class Command(BaseCommand):
         logger.info('New and unmatched: %s', self.counter['new-and-unmatched'])
         logger.info('Changed: %s', self.counter['changed'])
         logger.info('Unchanged: %s', self.counter['unchanged'])
+
+        Client('dmd').upload_model(NCSOConcession)
 
         msg = '\n'.join([
             'Imported NCSO concessions',

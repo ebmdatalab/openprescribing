@@ -10,8 +10,9 @@ from django.db import transaction
 
 from dmd.models import DMDProduct
 from dmd.models import DMDVmpp
-from frontend.models import ImportLog
 from dmd.models import TariffPrice
+from frontend.models import ImportLog
+from gcutils.bigquery import Client
 
 
 logger = logging.getLogger(__name__)
@@ -69,3 +70,5 @@ class Command(BaseCommand):
                 category='tariff',
                 filename=kwargs['filename'],
                 current_at=date)
+
+        Client('dmd').upload_model(TariffPrice)
