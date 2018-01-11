@@ -12,5 +12,3 @@ GROUP BY
   processing_date,
   practice_id,
   chemical_id
-ORDER BY
-  chemical_id, practice_id

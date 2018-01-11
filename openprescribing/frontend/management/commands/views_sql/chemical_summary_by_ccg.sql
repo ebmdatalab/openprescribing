@@ -12,5 +12,3 @@ GROUP BY
   processing_date,
   pct_id,
   chemical_id
-ORDER BY
-  chemical_id, pct_id
