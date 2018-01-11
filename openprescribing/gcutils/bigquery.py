@@ -13,6 +13,8 @@ from google.cloud.exceptions import Conflict, NotFound
 import pandas as pd
 
 from django.conf import settings
+from django.db.models import fields as model_fields
+from django.db.models.fields import related as related_fields
 
 from gcutils.storage import Client as StorageClient
 from gcutils.table_dumper import TableDumper
@@ -22,6 +24,7 @@ DATASETS = {
     'hscic': settings.BQ_HSCIC_DATASET,
     'measures': settings.BQ_MEASURES_DATASET,
     'tmp_eu': settings.BQ_TMP_EU_DATASET,
+    'dmd': settings.BQ_DMD_DATASET,
 }
 
 
@@ -39,6 +42,8 @@ class Client(object):
         # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
         # containing the credentials to access Google Cloud Services.
         self.gcbq_client = gcbq.Client(project=self.project_name)
+
+        self.dataset_key = dataset_key
 
         if dataset_key is None:
             self.dataset_name = None
@@ -168,6 +173,32 @@ class Client(object):
             for n, line in enumerate(sql.splitlines()):
                 print(n + 1, line)
             raise
+
+    def upload_model(self, model, table_name=None):
+        if table_name is None:
+            table_name = model._meta.db_table
+            if self.dataset_key == 'dmd':
+                assert table_name.startswith('dmd_')
+                table_name = table_name[4:]
+        schema = build_schema_from_model(model)
+        table = self.get_or_create_table(table_name, schema)
+        columns = [
+            f.db_column or f.attname
+            for f in model._meta.fields
+            if not f.auto_created
+        ]
+        timestamp_ixs = [
+            ix
+            for ix, field in enumerate(schema)
+            if field.field_type == 'TIMESTAMP'
+        ]
+
+        def transformer(record):
+            for ix in timestamp_ixs:
+                record[ix] = record[ix] + ' 00:00:00'
+            return record
+
+        table.insert_rows_from_pg(model, columns, transformer)
 
 
 class Table(object):
@@ -396,6 +427,27 @@ def results_to_dicts(results):
 
 def build_schema(*fields):
     return [gcbq.SchemaField(*field) for field in fields]
+
+
+def build_schema_from_model(model):
+    field_mappings = {
+        model_fields.BigIntegerField: 'INTEGER',
+        model_fields.CharField: 'STRING',
+        model_fields.DateField: 'TIMESTAMP',
+        model_fields.FloatField: 'FLOAT',
+        model_fields.IntegerField: 'INTEGER',
+        model_fields.NullBooleanField: 'BOOLEAN',
+        model_fields.TextField: 'STRING',
+        related_fields.ForeignKey: 'INTEGER',
+    }
+
+    fields = [
+        (f.name, field_mappings[type(f)])
+        for f in model._meta.fields
+        if not f.auto_created
+    ]
+
+    return build_schema(*fields)
 
 
 class InterpolationDict(dict):

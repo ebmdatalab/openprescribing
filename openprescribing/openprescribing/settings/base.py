@@ -320,6 +320,7 @@ BQ_PROJECT = 'ebmdatalab'
 BQ_HSCIC_DATASET = 'hscic'
 BQ_MEASURES_DATASET = 'measures'
 BQ_TMP_EU_DATASET = 'tmp_eu'
+BQ_DMD_DATASET = 'dmd'
 
 # Other BQ settings
 BQ_DEFAULT_TABLE_EXPIRATION_MS = None
