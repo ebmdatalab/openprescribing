@@ -414,14 +414,15 @@ def run_task(task, year, month, **kwargs):
         raise
 
 
-def run_all(year, month):
+def run_all(year, month, under_test=False):
     tasks = load_tasks()
 
-    for task in tasks.by_type('manual_fetch'):
-        run_task(task, year, month)
+    if not under_test:
+        for task in tasks.by_type('manual_fetch'):
+            run_task(task, year, month)
 
-    for task in tasks.by_type('auto_fetch'):
-        run_task(task, year, month)
+        for task in tasks.by_type('auto_fetch'):
+            run_task(task, year, month)
 
     upload_all_to_storage(tasks)
 
@@ -435,6 +436,8 @@ def run_all(year, month):
     last_imported = re.findall(r'/(\d{4}_\d{2})/', prescribing_path)[0]
 
     for task in tasks.by_type('post_process').ordered():
+        if under_test and 'smoketest' in task.name or 'dmd' in task.name:
+            continue
         run_task(task, year, month, last_imported=last_imported)
 
     activity = random.choice([
@@ -453,4 +456,6 @@ You should now:
 
 (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
     '''.strip().format(year, month, activity)
-    notify_slack(msg)
+
+    if not under_test:
+        notify_slack(msg)
