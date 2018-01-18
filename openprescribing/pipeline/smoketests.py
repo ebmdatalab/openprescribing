@@ -46,10 +46,25 @@ class SmokeTestBase(unittest.TestCase):
             expected = json.load(f)
 
         for i, row in enumerate(all_rows):
+            # Expected values come from querying BQ and so values for `items`
+            # and `quantity` are integers, and value for `actual_cost` is a
+            # string representing a number with at most two decimial places.
+            # Actual values come from a CSV file and so need to be converted to
+            # the correct type for comparison.
+
+            self.assertAlmostEqual(
+                float(row['actual_cost']),
+                float(expected['cost'][i]),
+                places=2
+            )
             self.assertEqual(
-                '%.2f' % float(row['actual_cost']), expected['cost'][i])
-            self.assertEqual(row['items'], expected['items'][i])
-            self.assertEqual(row['quantity'], expected['quantity'][i])
+                int(row['items']),
+                expected['items'][i]
+            )
+            self.assertEqual(
+                int(row['quantity']),
+                expected['quantity'][i]
+            )
 
 
 class TestSmokeTestSpendingByEveryone(SmokeTestBase):
