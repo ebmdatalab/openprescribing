@@ -21,7 +21,8 @@ e2e_path = os.path.join(settings.SITE_ROOT, 'pipeline', 'e2e-test-data')
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        if os.environ['DJANGO_SETTINGS_MODULE'] != 'openprescribing.settings.test':
+        if os.environ['DJANGO_SETTINGS_MODULE'] != \
+                'openprescribing.settings.test':
             raise CommandError('Command must run with test settings')
 
         with override_settings(
@@ -73,7 +74,7 @@ def run_end_to_end():
         os.path.join(e2e_path, 'data-1'),
         os.path.join(e2e_path, 'data'),
     )
-    
+
     runner.run_all(2017, 9, under_test=True)
 
     # We expect one MeasureGlobal per measure per month
@@ -87,22 +88,22 @@ def run_end_to_end():
 
     # We expect one chemical summary per CCG per month
     assert_raw_count_equal(2, 'vw__chemical_summary_by_ccg',
-        "chemical_id = '1001030C0'")
+                           "chemical_id = '1001030C0'")
 
     # We expect one chemical summary per practice per month
     assert_raw_count_equal(4, 'vw__chemical_summary_by_practice',
-        "chemical_id = '1001030C0'")
+                           "chemical_id = '1001030C0'")
 
     # We expect one summary per practice per month
     assert_raw_count_equal(4, 'vw__practice_summary')
 
     # We expect one presentation summary per month
     assert_raw_count_equal(1, 'vw__presentation_summary',
-        "presentation_code = '1001030C0AAAAAA'")
+                           "presentation_code = '1001030C0AAAAAA'")
 
     # We expect one presentation summary per CCG per month
     assert_raw_count_equal(2, 'vw__presentation_summary_by_ccg',
-        "presentation_code = '1001030C0AAAAAA'")
+                           "presentation_code = '1001030C0AAAAAA'")
 
     copy_tree(
         os.path.join(e2e_path, 'data-2'),
@@ -122,22 +123,22 @@ def run_end_to_end():
 
     # We expect one chemical summary per CCG per month
     assert_raw_count_equal(4, 'vw__chemical_summary_by_ccg',
-        "chemical_id = '1001030C0'")
+                           "chemical_id = '1001030C0'")
 
     # We expect one chemical summary per practice per month
     assert_raw_count_equal(8, 'vw__chemical_summary_by_practice',
-        "chemical_id = '1001030C0'")
+                           "chemical_id = '1001030C0'")
 
     # We expect one summary per practice per month
     assert_raw_count_equal(8, 'vw__practice_summary')
 
     # We expect one presentation summary per month
     assert_raw_count_equal(2, 'vw__presentation_summary',
-        "presentation_code = '1001030C0AAAAAA'")
+                           "presentation_code = '1001030C0AAAAAA'")
 
     # We expect one presentation summary per CCG per month
     assert_raw_count_equal(4, 'vw__presentation_summary_by_ccg',
-        "presentation_code = '1001030C0AAAAAA'")
+                           "presentation_code = '1001030C0AAAAAA'")
 
 
 def assert_count_equal(expected, model):

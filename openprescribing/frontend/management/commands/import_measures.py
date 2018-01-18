@@ -59,7 +59,8 @@ class Command(BaseCommand):
         verbose = options['verbosity'] > 1
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
-                if measure_id == 'lpzomnibus' and not options['definitions_only']:
+                if measure_id == 'lpzomnibus' \
+                        and not options['definitions_only']:
                     # Generalise this special case if we ever come
                     # across it again (viz: a measure that depends on
                     # a view existing; hence the `z` in the name to
@@ -67,7 +68,8 @@ class Command(BaseCommand):
                     # which it depends)
                     create_omnibus_lp_view()
 
-                if measure_id == 'pregabalinmg' and not options['definitions_only']:
+                if measure_id == 'pregabalinmg' \
+                        and not options['definitions_only']:
                     create_pregabalin_total_mg_view()
 
                 logger.info('Updating measure: %s' % measure_id)
