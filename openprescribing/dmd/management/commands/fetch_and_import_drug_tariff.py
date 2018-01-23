@@ -17,6 +17,7 @@ from openpyxl import load_workbook
 from django.core.management import BaseCommand
 from django.db import transaction
 
+from gcutils.bigquery import Client
 from dmd.models import DMDProduct, DMDVmpp, TariffPrice
 from frontend.models import ImportLog
 from openprescribing.slack import notify_slack
@@ -66,9 +67,13 @@ class Command(BaseCommand):
             import_month(xls_file, date)
             imported_months.append((year, month))
 
-        for year, month in imported_months:
-            msg = 'Imported Drug Tariff for %s_%s' % (year, month)
-            notify_slack(msg)
+        if imported_months:
+            client = Client('dmd')
+            client.upload_model(TariffPrice)
+
+            for year, month in imported_months:
+                msg = 'Imported Drug Tariff for %s_%s' % (year, month)
+                notify_slack(msg)
         else:
             msg = 'Found no new tariff data to import'
             notify_slack(msg)
