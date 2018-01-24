@@ -230,9 +230,9 @@
             "upload_to_bigquery"
         ]
     },
-    "backup_prescribing": {
+    "backup_bq_tables": {
         "type": "post_process",
-        "command": "backup_prescribing_table",
+        "command": "backup_bq_tables",
         "dependencies": [
             "convert_hscic_prescribing"
         ]
