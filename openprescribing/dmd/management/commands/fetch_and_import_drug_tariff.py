@@ -12,11 +12,12 @@ import urllib
 
 import bs4
 import calendar
-import pandas as pd
+from openpyxl import load_workbook
 
 from django.core.management import BaseCommand
 from django.db import transaction
 
+from gcutils.bigquery import Client
 from dmd.models import DMDProduct, DMDVmpp, TariffPrice
 from frontend.models import ImportLog
 from openprescribing.slack import notify_slack
@@ -35,6 +36,8 @@ class Command(BaseCommand):
         doc = bs4.BeautifulSoup(rsp.content, 'html.parser')
 
         month_names = [x.lower() for x in calendar.month_name]
+
+        imported_months = []
 
         for a in doc.findAll('a', class_='excel', title=re.compile('VIIIA')):
             # a.attrs['href'] typically has a filename part like
@@ -62,28 +65,42 @@ class Command(BaseCommand):
             xls_file = StringIO(requests.get(xls_url).content)
 
             import_month(xls_file, date)
-            msg = 'Imported Drug Tariff for %s_%s' % (year, month)
+            imported_months.append((year, month))
+
+        if imported_months:
+            client = Client('dmd')
+            client.upload_model(TariffPrice)
+
+            for year, month in imported_months:
+                msg = 'Imported Drug Tariff for %s_%s' % (year, month)
+                notify_slack(msg)
+        else:
+            msg = 'Found no new tariff data to import'
             notify_slack(msg)
 
 
 def import_month(xls_file, date):
-    # drop rows with nulls
-    df = pd.read_excel(xls_file, skiprows=2)
-    df = df.dropna()
-    expected_cols = [
+    wb = load_workbook(xls_file)
+    rows = wb.active.rows
+
+    headers = [(c.value or '?').lower() for c in rows[2]]
+    assert headers == [
         'medicine',
         'pack size',
-        'unnamed: 2',
+        '?',
         'vmpp snomed code',
         'drug tariff category',
-        'basic price']
-    df.columns = [x.lower() for x in df.columns]
-    assert [x for x in df.columns] == expected_cols, \
-        "%s doesn't match %s" % (df.columns, expected_cols)
+        'basic price'
+    ]
 
     with transaction.atomic():
-        for record in df.iterrows():
-            d = record[1]
+        for row in rows[3:]:
+            values = [c.value for c in row]
+            if all(v is None for v in values):
+                continue
+
+            d = dict(zip(headers, values))
+
             TariffPrice.objects.get_or_create(
                 date=date,
                 vmpp_id=d['vmpp snomed code'],
@@ -94,8 +111,9 @@ def import_month(xls_file, date):
 
         ImportLog.objects.create(
             category='tariff',
-            filename=kwargs['filename'],
-            current_at=date)
+            current_at=date,
+            filename='none',
+        )
 
 
 def get_tariff_cat_id(cat):
@@ -110,6 +128,16 @@ def get_tariff_cat_id(cat):
 
 
 def get_product_id(vmpp):
-    vpid = DMDVmpp.objects.get(pk=vmpp).vpid
-    product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
+    try:
+        vpid = DMDVmpp.objects.get(pk=vmpp).vpid
+    except DMDVmpp.DoesNotExist:
+        logger.exception("Could not find VMPP with id %s", vmpp)
+        raise
+
+    try:
+        product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
+    except DMDProduct.DoesNotExist:
+        logger.exception("Could not find DMD product with VPID %s", vpid)
+        raise
+
     return product.pk
