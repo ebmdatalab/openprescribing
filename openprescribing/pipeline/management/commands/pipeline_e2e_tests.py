@@ -13,6 +13,7 @@ from gcutils.bigquery import Client as BQClient, DATASETS
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureValue, MeasureGlobal
+from openprescribing.slack import notify_slack
 from pipeline import runner
 
 
@@ -22,18 +23,19 @@ e2e_path = os.path.join(settings.SITE_ROOT, 'pipeline', 'e2e-test-data')
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         if os.environ['DJANGO_SETTINGS_MODULE'] != \
-                'openprescribing.settings.test':
-            raise CommandError('Command must run with test settings')
+                'openprescribing.settings.e2etest':
+            raise CommandError('Command must run with e2etest settings')
 
-        with override_settings(
-            PIPELINE_METADATA_DIR=os.path.join(
-                settings.SITE_ROOT,
-                'pipeline',
-                'metadata'),
-            PIPELINE_DATA_BASEDIR=os.path.join(e2e_path, 'data', ''),
-            PIPELINE_IMPORT_LOG_PATH=os.path.join(e2e_path, 'log.json'),
-        ):
+        try:
             run_end_to_end()
+        except:
+            import traceback
+            msg = 'End-to-end test failed:\n\n'
+            msg += traceback.format_exc()
+            notify_slack(msg)
+            raise
+
+        notify_slack('Pipeline tests ran to completion')
 
 
 def run_end_to_end():

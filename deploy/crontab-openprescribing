@@ -1,4 +1,5 @@
 # min hour day/month month day/week
 
+00 01 * * * hello /webapps/openprescribing/deploy/run_pipeline_e2e_tests.sh
 00 02 * * * hello /webapps/openprescribing/deploy/fetch_and_import_ncso_concessions.sh
 00 03 * * * hello /webapps/openprescribing/deploy/fetch_drug_tariff.sh
