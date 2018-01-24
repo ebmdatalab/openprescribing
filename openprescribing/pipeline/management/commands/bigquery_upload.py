@@ -50,6 +50,43 @@ class Command(BaseCommand):
             schemas.statistics_transform
         )
 
+        sql = 'SELECT MAX(month) FROM {hscic}.practice_statistics_all_years'
+        results = client.query(sql)
+        last_uploaded_practice_statistics_date = results.rows[0][0].date()
+
+        table = client.get_table('practice_statistics_all_years')
+        sql = '''SELECT
+                    month,
+                    pct_id,
+                    practice,
+                    male_0_4,
+                    female_0_4,
+                    male_5_14,
+                    female_5_14,
+                    male_15_24,
+                    female_15_24,
+                    male_25_34,
+                    female_25_34,
+                    male_35_44,
+                    female_35_44,
+                    male_45_54,
+                    female_45_54,
+                    male_55_64,
+                    female_55_64,
+                    male_65_74,
+                    female_65_74,
+                    male_75_plus,
+                    female_75_plus,
+                    total_list_size
+        FROM {hscic}.practice_statistics
+        WHERE month > TIMESTAMP('{date}')'''
+        substitutions = {'date': last_uploaded_practice_statistics_date}
+        table.insert_rows_from_query(
+            sql,
+            write_disposition='WRITE_APPEND',
+            substitutions=substitutions
+        )
+
         table = client.get_table('ccgs')
         columns = [field.name for field in schemas.CCG_SCHEMA]
         table.insert_rows_from_pg(
