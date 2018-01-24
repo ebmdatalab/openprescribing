@@ -200,11 +200,11 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      {hscic}.normalised_prescribing AS prescribing
+      {hscic}.normalised_prescribing_standard AS prescribing
     RIGHT JOIN
       {hscic}.bnf bnf
     ON
-      prescribing.normalised_bnf_code = bnf.presentation_code
+      prescribing.bnf_code = bnf.presentation_code
     WHERE (
         bnf.presentation_code NOT LIKE '2%%'  -- appliances, etc
     )

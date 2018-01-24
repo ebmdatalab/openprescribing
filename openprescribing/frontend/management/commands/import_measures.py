@@ -59,13 +59,19 @@ class Command(BaseCommand):
         verbose = options['verbosity'] > 1
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
-                if measure_id == 'lpzomnibus':
+                if measure_id == 'lpzomnibus' \
+                        and not options['definitions_only']:
                     # Generalise this special case if we ever come
                     # across it again (viz: a measure that depends on
                     # a view existing; hence the `z` in the name to
                     # ensure it is created after the other measures on
                     # which it depends)
                     create_omnibus_lp_view()
+
+                if measure_id == 'pregabalinmg' \
+                        and not options['definitions_only']:
+                    create_pregabalin_total_mg_view()
+
                 logger.info('Updating measure: %s' % measure_id)
                 measure = create_or_update_measure(measure_id)
                 measure_start = datetime.datetime.now()
@@ -161,6 +167,23 @@ def create_omnibus_lp_view():
     try:
         client.create_table_with_view(
             'practice_data_all_low_priority',
+            sql,
+            False
+        )
+    except Conflict:
+        pass
+
+
+def create_pregabalin_total_mg_view():
+    fpath = os.path.dirname(__file__)
+    sql_path = os.path.join(fpath, "./measure_sql/pregabalin_total_mg.sql")
+    with open(sql_path, "r") as sql_file:
+        sql = sql_file.read()
+
+    client = Client("measures")
+    try:
+        client.create_table_with_view(
+            'pregabalin_total_mg',
             sql,
             False
         )

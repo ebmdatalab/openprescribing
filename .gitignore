@@ -7,6 +7,8 @@ openprescribing/assets
 analysis/
 docs/
 cache-warming/
+openprescribing/pipeline/e2e-test-data/data
+openprescribing/pipeline/e2e-test-data/log.json
 
 # System files
 *.py[co]

@@ -7,7 +7,7 @@ import tempfile
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from gcutils.bigquery import Client, TableExporter
+from gcutils.bigquery import Client, TableExporter, NotFound
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,11 @@ class Command(BaseCommand):
             dataset=hscic_dataset_client.dataset_name,
             date=date.replace('_', '-'),
         )
-        results = hscic_dataset_client.query(sql)
-        assert results.rows[0][0] == 0
+        try:
+            results = hscic_dataset_client.query(sql)
+            assert results.rows[0][0] == 0
+        except NotFound:
+            pass
 
         # Create BQ table backed backed by uploaded source CSV file
         raw_data_table_name = 'raw_prescribing_data_{}'.format(year_and_month)

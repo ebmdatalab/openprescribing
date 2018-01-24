@@ -218,11 +218,12 @@ class Command(BaseCommand):
         if not options['month']:
             last_prescribing = ImportLog.objects.latest_in_category(
                 'prescribing').current_at
-            last_ppu = ImportLog.objects.latest_in_category(
-                'ppu').current_at
             options['month'] = last_prescribing
-            if options['month'] <= last_ppu:
-                raise argparse.ArgumentTypeError("Couldn't infer date")
+
+            log = ImportLog.objects.latest_in_category('ppu')
+            if log is not None:
+                if options['month'] <= log.current_at:
+                    raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
             # Create custom DMD Products for our overrides, if they
             # don't exist.

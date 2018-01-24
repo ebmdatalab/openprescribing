@@ -414,14 +414,15 @@ def run_task(task, year, month, **kwargs):
         raise
 
 
-def run_all(year, month):
+def run_all(year, month, under_test=False):
     tasks = load_tasks()
 
-    for task in tasks.by_type('manual_fetch'):
-        run_task(task, year, month)
+    if not under_test:
+        for task in tasks.by_type('manual_fetch'):
+            run_task(task, year, month)
 
-    for task in tasks.by_type('auto_fetch'):
-        run_task(task, year, month)
+        for task in tasks.by_type('auto_fetch'):
+            run_task(task, year, month)
 
     upload_all_to_storage(tasks)
 
@@ -453,4 +454,6 @@ You should now:
 
 (Details: https://github.com/ebmdatalab/openprescribing/wiki/Importing-data)
     '''.strip().format(year, month, activity)
-    notify_slack(msg)
+
+    if not under_test:
+        notify_slack(msg)
