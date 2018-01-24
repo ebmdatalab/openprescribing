@@ -59,25 +59,25 @@
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
     "cookies-js": "1.2.3",
+    "downloadjs": "^1.4.7",
     "handlebars": "4.0.5",
     "humanize": "^0.0.9",
-    "jquery": "^1.11.3",
+    "jquery": "^3.3.1",
     "mapbox.js": "^2.2.1",
     "moment": "^2.10.3",
     "underscore": "^1.8.3",
-    "downloadjs": "^1.4.7"
+    "watchify": "^3.9.0"
   },
   "devDependencies": {
-    "browserify": "^9.0.8",
-    "browserify-shim": "~3.2.0",
+    "browserify": "~15.2.0",
+    "browserify-shim": "~3.8.14",
     "chai": "^2.3.0",
-    "jsdom": "^11.2.0",
+    "envify": "^4.1.0",
     "eslint": "latest",
     "eslint-config-google": "latest",
+    "jsdom": "^11.6.0",
     "less": "^2.5.1",
     "mocha": "^2.2.5",
-    "uglifyjs": "^2.4.10",
-    "watchify": "^3.2.1",
-    "envify": "^3.4.1"
+    "uglifyjs": "^2.4.10"
   }
 }
