@@ -72,6 +72,7 @@ BQ_NONCE = random.randrange(10000)
 BQ_HSCIC_DATASET = '{}_{:04d}'.format(BQ_HSCIC_DATASET, BQ_NONCE)
 BQ_MEASURES_DATASET = '{}_{:04d}'.format(BQ_MEASURES_DATASET, BQ_NONCE)
 BQ_TMP_EU_DATASET = '{}_{:04d}'.format(BQ_TMP_EU_DATASET, BQ_NONCE)
+BQ_DMD_DATASET = '{}_{:04d}'.format(BQ_DMD_DATASET, BQ_NONCE)
 BQ_TEST_DATASET = 'test_{:04d}'.format(BQ_NONCE)
 
 # Other BQ settings
