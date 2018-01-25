@@ -11,6 +11,8 @@ DATABASES = {
     }
 }
 
+PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+
 PIPELINE_DATA_BASEDIR = os.path.join(
     SITE_ROOT, 'pipeline', 'e2e-test-data', 'data', '')
 
