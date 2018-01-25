@@ -76,7 +76,7 @@ BQ_DMD_DATASET = '{}_{:04d}'.format(BQ_DMD_DATASET, BQ_NONCE)
 BQ_TEST_DATASET = 'test_{:04d}'.format(BQ_NONCE)
 
 # Other BQ settings
-BQ_DEFAULT_TABLE_EXPIRATION_MS = 60 * 60 * 1000
+BQ_DEFAULT_TABLE_EXPIRATION_MS = 3 * 60 * 60 * 1000  # 3 hours
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://localhost"
