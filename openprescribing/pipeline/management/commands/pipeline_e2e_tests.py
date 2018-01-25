@@ -68,7 +68,9 @@ def run_end_to_end():
 
     call_command('generate_presentation_replacements')
 
-    with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
+    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+                        'commands', 'replace_matviews.sql')
+    with open(path) as f:
         with connection.cursor() as c:
             c.execute(f.read())
 
