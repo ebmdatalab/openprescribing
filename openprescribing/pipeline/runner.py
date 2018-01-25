@@ -436,6 +436,10 @@ def run_all(year, month, under_test=False):
     last_imported = re.findall(r'/(\d{4}_\d{2})/', prescribing_path)[0]
 
     for task in tasks.by_type('post_process').ordered():
+        if under_test and 'smoketest' in task.name:
+            # Smoketests run against live site, so we should skip when running
+            # under test
+            continue
         run_task(task, year, month, last_imported=last_imported)
 
     activity = random.choice([
