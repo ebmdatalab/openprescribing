@@ -43,7 +43,7 @@ def run_end_to_end():
 
     num_measures = 56
 
-    shutil.rmtree(settings.PIPELINE_DATA_BASEDIR)
+    shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
     with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
         f.write('{}')
