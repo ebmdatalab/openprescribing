@@ -95,6 +95,14 @@ class Command(BaseCommand):
             schemas.ccgs_transform
         )
 
+        table = client.get_table('ppu_savings')
+        columns = [field.name for field in PPU_SAVING_SCHEMA]
+        table.insert_rows_from_pg(
+            PPUSaving,
+            columns,
+            ppu_savings_transform
+        )
+
 
 def update_bnf_table():
     """Update `bnf` table from cloud-stored CSV

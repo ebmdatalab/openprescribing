@@ -135,6 +135,18 @@ BNF_SCHEMA = build_schema(
   ('presentation_code', 'STRING'),
 )
 
+PPU_SAVING_SCHEMA = build_schema(
+    ('date', 'TIMESTAMP'),
+    ('bnf_code', 'STRING'),
+    ('lowest_decile', 'FLOAT'),
+    ('quantity', 'INTEGER'),
+    ('price_per_unit', 'FLOAT'),
+    ('possible_savings', 'FLOAT'),
+    ('formulation_swap', 'STRING'),
+    ('pct_id', 'STRING'),
+    ('practice_id', 'STRING'),
+)
+
 
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it
@@ -162,4 +174,10 @@ def ccgs_transform(row):
         row[4] = "%s 00:00:00" % row[4]
     if row[5]:
         row[5] = "%s 00:00:00" % row[5]
+    return row
+
+
+def ppu_savings_transform(row):
+    if row[0]:
+        row[0] = "%s 00:00:00" % row[0]
     return row
