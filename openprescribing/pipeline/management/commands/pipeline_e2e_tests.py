@@ -61,6 +61,10 @@ def run_end_to_end():
         'practice_statistics',
         schemas.PRACTICE_STATISTICS_SCHEMA
     )
+    client.create_table(
+        'practice_statistics_all_years',
+        schemas.PRACTICE_STATISTICS_SCHEMA
+    )
     client.create_table('practices', schemas.PRACTICE_SCHEMA)
     client.create_table('prescribing', schemas.PRESCRIBING_SCHEMA)
     client.create_table('presentation', schemas.PRESENTATION_SCHEMA)
