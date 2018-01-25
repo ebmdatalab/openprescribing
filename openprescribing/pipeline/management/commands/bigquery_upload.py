@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+from datetime import date
+
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
@@ -52,7 +54,10 @@ class Command(BaseCommand):
 
         sql = 'SELECT MAX(month) FROM {hscic}.practice_statistics_all_years'
         results = client.query(sql)
-        last_uploaded_practice_statistics_date = results.rows[0][0].date()
+        if results.rows[0][0] is None:
+            last_uploaded_practice_statistics_date = date(1900, 1, 1)
+        else:
+            last_uploaded_practice_statistics_date = results.rows[0][0].date()
 
         table = client.get_table('practice_statistics_all_years')
         sql = '''SELECT
