@@ -239,9 +239,14 @@ var tariffChart = {
     $('.tariff-selector').select2(
       {placeholder: 'Start typing a presentation name'}
     );
+
+    if (bnfCodes == '') {
+      return;
+    }
+
     $.ajax({
       type: 'GET',
-      url: filename,
+      url: baseUrl + '?format=json&codes=' + bnfCodes,
       error: function() {
         $('.status').html('<p>Sorry, something went wrong.</p>');
       },

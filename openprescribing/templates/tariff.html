@@ -54,7 +54,8 @@
 {% block extra_js %}
 {% conditional_js 'config' %}
 <script>
-  var filename = config.apiHost + "{% url 'tariff_api' %}?format=json&codes={{ bnf_codes|join:',' }}";
+  var bnfCodes = "{{ bnf_codes|join:',' }}";
+  var baseUrl = config.apiHost + "{% url 'tariff_api' %}";
   var chartTitle = "{{ chart_title }}";
 </script>
 
