@@ -189,7 +189,8 @@
         "source_id": "dmd_snomed",
         "command": "import_dmd_snomed",
         "dependencies": [
-            "fetch_dmd"
+            "import_dmd",
+            "fetch_dmd_snomed"
         ]
     },
     "upload_to_bigquery": {

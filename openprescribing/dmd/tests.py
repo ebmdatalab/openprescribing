@@ -82,7 +82,7 @@ class CommandsTestCase(TestCase):
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        path = 'dmd/tests/fixtures/commands/Converted_DRUG_SNOMED_BNF.xlsx'
+        path = 'dmd/tests/fixtures/commands/January 2018 Snomed mapping - BNF 05-12-2017.xlsx'
         call_command('import_dmd_snomed', '--filename', path)
 
         amp = DMDProduct.objects.get(concept_class=2)

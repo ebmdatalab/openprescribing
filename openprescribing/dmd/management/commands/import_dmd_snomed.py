@@ -29,11 +29,16 @@ class Command(BaseCommand):
 
         wb = load_workbook(filename=filename)
         rows = wb.active.rows
+
+        headers = rows[0]
+        assert headers[0].value.lower() == 'bnf code'
+        assert headers[2].value.lower() == 'snomed code'
+
         with transaction.atomic():
             with connection.cursor() as cursor:
                 for row in rows[1:]:  # skip header
                     bnf_code = row[0].value
-                    snomed_code = row[4].value
+                    snomed_code = row[2].value
                     sql = "UPDATE dmd_product SET BNF_CODE = %s WHERE DMDID = %s "
                     cursor.execute(sql.lower(), [bnf_code, snomed_code])
                     rowcount = cursor.rowcount
