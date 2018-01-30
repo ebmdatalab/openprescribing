@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from datetime import date
+import datetime
 
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
@@ -25,6 +25,8 @@ class Command(BaseCommand):
                 'while latest Prescription object has processing_date {}'\
                 .format(latest_practice_statistic_date, latest_prescription_date)
             raise CommandError(msg)
+
+        date = latest_prescription_date
 
         update_bnf_table()
 
@@ -55,7 +57,7 @@ class Command(BaseCommand):
         sql = 'SELECT MAX(month) FROM {hscic}.practice_statistics_all_years'
         results = client.query(sql)
         if results.rows[0][0] is None:
-            last_uploaded_practice_statistics_date = date(1900, 1, 1)
+            last_uploaded_practice_statistics_date = datetime.date(1900, 1, 1)
         else:
             last_uploaded_practice_statistics_date = results.rows[0][0].date()
 
@@ -106,6 +108,15 @@ class Command(BaseCommand):
             PPUSaving,
             columns,
             ppu_savings_transform
+        )
+
+        table = client.get_table('prescribing_' + date.strftime('%Y_%m'))
+        sql = '''SELECT * FROM {hscic}.prescribing
+        WHERE month = TIMESTAMP('{date}')'''
+        substitutions = {'date': date}
+        table.insert_rows_from_query(
+            sql,
+            substitutions=substitutions
         )
 
 
