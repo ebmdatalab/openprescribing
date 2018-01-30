@@ -98,6 +98,15 @@ class Command(BaseCommand):
                 + int(match.groups()[1])
             self.import_record(date, drug, pack_size, price_concession_pence)
 
+        if NCSOConcession.objects.filter(date=date).count() >= len(records):
+            # If there are more records in the database than we have imported,
+            # then there was previously a record in the source that is no
+            # longer present.  I have seen this once, with a record whose
+            # spelling was corrected.  If we see this frequently, we should
+            # automate dealing with it; for now we can deal with it manually.
+            msg = 'NCSO concession(s) removed from source for {}'.format(date)
+            notify_slack(msg)
+
     def import_record(self, date, drug, pack_size, price_concession_pence):
         concession, created = NCSOConcession.objects.get_or_create(
             date=date,
