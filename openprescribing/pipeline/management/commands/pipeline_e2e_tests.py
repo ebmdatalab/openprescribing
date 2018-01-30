@@ -43,7 +43,7 @@ def run_end_to_end():
 
     num_measures = 56
 
-    shutil.rmtree(settings.PIPELINE_DATA_BASEDIR)
+    shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
     with open(settings.PIPELINE_IMPORT_LOG_PATH, 'w') as f:
         f.write('{}')
@@ -62,6 +62,10 @@ def run_end_to_end():
         'practice_statistics',
         schemas.PRACTICE_STATISTICS_SCHEMA
     )
+    client.create_table(
+        'practice_statistics_all_years',
+        schemas.PRACTICE_STATISTICS_SCHEMA
+    )
     client.create_table('practices', schemas.PRACTICE_SCHEMA)
     client.create_table('prescribing', schemas.PRESCRIBING_SCHEMA)
     client.create_table('presentation', schemas.PRESENTATION_SCHEMA)
@@ -69,7 +73,9 @@ def run_end_to_end():
 
     call_command('generate_presentation_replacements')
 
-    with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
+    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+                        'commands', 'replace_matviews.sql')
+    with open(path) as f:
         with connection.cursor() as c:
             c.execute(f.read())
 
