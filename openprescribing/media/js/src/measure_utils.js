@@ -467,7 +467,7 @@ var utils = {
     chOptions.tooltip = {
       formatter: function() {
         var num = humanize.numberFormat(this.point.numerator, 0);
-        var denom = humanize.numberFormat(this.point.denominator, 0);
+        var denom;
         var percentile = humanize.numberFormat(this.point.percentile, 0);
         var str = '';
         str += '<b>' + this.series.name;
@@ -476,7 +476,15 @@ var utils = {
         if (!this.series.options.isNationalSeries) {
           str += d.numeratorShort + ': ' + num;
           str += '<br/>';
-          str += d.denominatorShort + ': ' + denom;
+          if (d.denominatorShort == '1000 patients') {
+            // Treat measures which are per 1000 patients a bit differently.
+            // See https://github.com/ebmdatalab/openprescribing/issues/436.
+            denom = humanize.numberFormat(1000 * this.point.denominator, 0);
+            str += 'Patients: ' + denom;
+          } else {
+            denom = humanize.numberFormat(this.point.denominator, 0);
+            str += d.denominatorShort + ': ' + denom;
+          }
           str += '<br/>';
         }
         str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
