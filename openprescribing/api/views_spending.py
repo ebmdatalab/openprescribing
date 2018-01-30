@@ -273,9 +273,6 @@ def tariff(request, format=None):
     # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
     # ORM.
     codes = utils.param_to_list(request.query_params.get('codes', []))
-    
-    if not codes:
-        return Response(err, status=400)
 
     query = '''
     SELECT dmd_tariffprice.date AS date,
