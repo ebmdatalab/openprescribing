@@ -13,7 +13,8 @@
     "This measure describes the total Oral Morphine Equivalence (OME) all ALL opioid prescribing (excluding prescribing for addiction) ",
     "including low-dose opioids in drugs such as co-codamol and co-dydramol.  This measure is experimental and should be used ",
     "with caution, as OME conversions vary in different reference sources.  A list of the dose conversions and references used ",
-    "can be found <a href='https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing>here</a>."
+    "can be found <a href='https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing'>here</a>.  ",
+    "Our paper on this measure will be available shortly."
   ],
   "numerator_short": "Total opioids prescribed (in oral morphine equivalent miligrams)",
   "denominator_short": "1000 patients",
