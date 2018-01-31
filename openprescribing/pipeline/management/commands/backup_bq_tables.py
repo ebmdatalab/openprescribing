@@ -12,7 +12,7 @@ class Command(BaseCommand):
         self.backup_table('prescribing')
         self.backup_table('practice_statistics')
 
-    def backup_table(table_name):
+    def backup_table(self, table_name):
         client = Client('hscic')
         sql = 'SELECT max(month) FROM {hscic}.%s' % table_name
         latest_date = client.query(sql).rows[0][0]
