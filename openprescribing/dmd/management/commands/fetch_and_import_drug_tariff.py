@@ -39,7 +39,8 @@ class Command(BaseCommand):
 
         imported_months = []
 
-        for a in doc.findAll('a', class_='excel', title=re.compile('VIIIA')):
+        for a in doc.findAll('a', class_='excel',
+                             href=re.compile('Part%20VIIIA')):
             # a.attrs['href'] typically has a filename part like
             # Part%20VIIIA%20September%202017.xlsx
             #
