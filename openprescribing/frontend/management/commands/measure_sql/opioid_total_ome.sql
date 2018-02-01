@@ -4,7 +4,7 @@ SELECT
   pct,
   SUM(quantity*dose_per_unit*ome_multiplier) AS total_ome
 FROM
-  {project}.hscic.normalised_prescribing_standard AS presc
+  {project}.{hscic}.normalised_prescribing_standard AS presc
 JOIN
   ebmdatalab.richard.opioid_measure as opioid
 ON
