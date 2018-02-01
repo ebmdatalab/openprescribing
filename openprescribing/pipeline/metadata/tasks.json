@@ -210,12 +210,18 @@
         "command": "import_measures --definitions_only",
         "dependencies": []
     },
+    "create_bq_measure_views": {
+        "type": "post_process",
+        "command": "create_bq_measure_views",
+        "dependencies": []
+    },
     "import_measures": {
         "type": "post_process",
         "command": "import_measures",
         "dependencies": [
             "upload_to_bigquery",
-            "import_measure_definitions"
+            "import_measure_definitions",
+            "create_bq_measure_views"
         ]
     },
     "refresh_views": {
