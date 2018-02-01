@@ -19,14 +19,10 @@ import os
 import re
 import tempfile
 
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db import transaction
-from google.cloud import bigquery as gbigquery
-from google.cloud.bigquery.dataset import Dataset
-from google.cloud.exceptions import Conflict
 
 from gcutils.bigquery import Client
 
@@ -59,19 +55,6 @@ class Command(BaseCommand):
         verbose = options['verbosity'] > 1
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
-                if measure_id == 'lpzomnibus' \
-                        and not options['definitions_only']:
-                    # Generalise this special case if we ever come
-                    # across it again (viz: a measure that depends on
-                    # a view existing; hence the `z` in the name to
-                    # ensure it is created after the other measures on
-                    # which it depends)
-                    create_omnibus_lp_view()
-
-                if measure_id == 'pregabalinmg' \
-                        and not options['definitions_only']:
-                    create_pregabalin_total_mg_view()
-
                 logger.info('Updating measure: %s' % measure_id)
                 measure = create_or_update_measure(measure_id)
                 measure_start = datetime.datetime.now()
@@ -155,40 +138,6 @@ class Command(BaseCommand):
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
         datetime.datetime.strptime(options['end_date'], "%Y-%m-%d")
         return options
-
-
-def create_omnibus_lp_view():
-    fpath = os.path.dirname(__file__)
-    sql_path = os.path.join(fpath, "./measure_sql/lpomnibusview.sql")
-    with open(sql_path, "r") as sql_file:
-        sql = sql_file.read()
-
-    client = Client("measures")
-    try:
-        client.create_table_with_view(
-            'practice_data_all_low_priority',
-            sql,
-            False
-        )
-    except Conflict:
-        pass
-
-
-def create_pregabalin_total_mg_view():
-    fpath = os.path.dirname(__file__)
-    sql_path = os.path.join(fpath, "./measure_sql/pregabalin_total_mg.sql")
-    with open(sql_path, "r") as sql_file:
-        sql = sql_file.read()
-
-    client = Client("measures")
-    try:
-        client.create_table_with_view(
-            'pregabalin_total_mg',
-            sql,
-            False
-        )
-    except Conflict:
-        pass
 
 
 def parse_measures():
