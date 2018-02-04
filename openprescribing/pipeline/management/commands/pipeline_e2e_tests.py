@@ -41,7 +41,7 @@ class Command(BaseCommand):
 def run_end_to_end():
     print('BQ_NONCE: {}'.format(settings.BQ_NONCE))
 
-    num_measures = 56
+    num_measures = 57
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
