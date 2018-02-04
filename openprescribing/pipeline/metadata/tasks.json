@@ -242,7 +242,7 @@
         "type": "post_process",
         "command": "backup_bq_tables",
         "dependencies": [
-            "convert_hscic_prescribing"
+            "upload_to_bigquery"
         ]
     },
     "update_smoketests": {
