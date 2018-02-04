@@ -9,7 +9,7 @@ from django.test import override_settings
 from django.core.management import call_command
 from django.db import connection
 
-from gcutils.bigquery import Client as BQClient, DATASETS
+from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureValue, MeasureGlobal
@@ -70,6 +70,16 @@ def run_end_to_end():
     client.create_table('prescribing', schemas.PRESCRIBING_SCHEMA)
     client.create_table('presentation', schemas.PRESENTATION_SCHEMA)
     client.create_table('tariff', schemas.TARIFF_SCHEMA)
+
+    client = BQClient('measures')
+    empty_schema = build_schema()
+    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+                        'commands', 'measure_definitions', '*.json')
+    for path in glob.glob(path):
+        measure_id = os.path.splitext(os.path.basename(path))[0]
+        client.create_table('practice_data_' + measure_id, empty_schema)
+        client.create_table('ccg_data_' + measure_id, empty_schema)
+        client.create_table('global_data_' + measure_id, empty_schema)
 
     call_command('generate_presentation_replacements')
 
