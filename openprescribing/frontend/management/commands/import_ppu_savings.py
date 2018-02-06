@@ -87,7 +87,7 @@ def make_merged_table_for_month(month):
     return target_table_name
 
 
-def get_savings(group_by, month, limit, min_saving=0):
+def get_savings(group_by, month, min_saving=0):
     """Execute SQL to calculate savings in BigQuery, and return as a
     DataFrame.
 
@@ -141,11 +141,6 @@ def get_savings(group_by, month, limit, min_saving=0):
         inner_select = ''
         group_by = ''
 
-    if limit:
-        limit = "LIMIT %s" % limit
-    else:
-        limit = ''
-
     order_by = "ORDER BY possible_savings DESC"
     fpath = os.path.dirname(__file__)
 
@@ -155,7 +150,6 @@ def get_savings(group_by, month, limit, min_saving=0):
 
     substitutions = (
         ('{{ restricting_condition }}', restricting_condition),
-        ('{{ limit }}', limit),
         ('{{ month }}', month.strftime('%Y-%m-%d')),
         ('{{ group_by }}', group_by),
         ('{{ order_by }}', order_by),
@@ -204,10 +198,6 @@ class Command(BaseCommand):
             '--min-ccg-saving',
             help="Disregard savings under this amount",
             type=int, default=1000)
-        parser.add_argument(
-            '--limit',
-            help="Maximum number of savings to return",
-            type=int, default=0)
 
     def handle(self, *args, **options):
         '''
@@ -256,7 +246,7 @@ class Command(BaseCommand):
                     ('practice', options['min_practice_saving'])]:
                 result = get_savings(
                     entity_type, options['month'],
-                    options['limit'], min_saving)
+                    min_saving)
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
