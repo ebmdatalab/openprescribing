@@ -73,14 +73,24 @@ def run_end_to_end():
     client.create_table('tariff', schemas.TARIFF_SCHEMA)
 
     client = BQClient('measures')
-    empty_schema = build_schema()
+    # This is enough of a schema to allow the practice_data_all_low_priority
+    # table to be created, since it references these fields.  Once populated by
+    # import_measures, the tables in the measures dataset will have several
+    # more fields.  But we don't need to specify exactly what they are, as BQ
+    # will work it out when the data is inserted with insert_rows_from_query.
+    measures_schema = build_schema(
+        ('month', 'DATE'),
+        ('practice_id', 'STRING'),
+        ('numerator', 'INTEGER'),
+        ('denominator', 'INTEGER'),
+    )
     path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
                         'commands', 'measure_definitions', '*.json')
     for path in glob.glob(path):
         measure_id = os.path.splitext(os.path.basename(path))[0]
-        client.create_table('practice_data_' + measure_id, empty_schema)
-        client.create_table('ccg_data_' + measure_id, empty_schema)
-        client.create_table('global_data_' + measure_id, empty_schema)
+        client.create_table('practice_data_' + measure_id, measures_schema)
+        client.create_table('ccg_data_' + measure_id, measures_schema)
+        client.create_table('global_data_' + measure_id, measures_schema)
 
     call_command('generate_presentation_replacements')
 

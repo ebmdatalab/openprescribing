@@ -103,11 +103,11 @@ class Command(BaseCommand):
         )
 
         table = client.get_table('ppu_savings')
-        columns = [field.name for field in PPU_SAVING_SCHEMA]
+        columns = [field.name for field in schemas.PPU_SAVING_SCHEMA]
         table.insert_rows_from_pg(
-            PPUSaving,
+            models.PPUSaving,
             columns,
-            ppu_savings_transform
+            schemas.ppu_savings_transform
         )
 
         table = client.get_table('prescribing_' + date.strftime('%Y_%m'))
