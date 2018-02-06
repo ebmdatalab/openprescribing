@@ -108,7 +108,7 @@ FROM (
     generic_presentation,
     deciles.lowest_decile,
     {{ group_by }}
-    {{ order_by }}
+    ORDER BY possible_savings DESC
 ) savings
 LEFT JOIN
   (SELECT

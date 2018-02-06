@@ -141,7 +141,6 @@ def get_savings(entity_type, month):
     else:
         assert False
 
-    order_by = "ORDER BY possible_savings DESC"
     fpath = os.path.dirname(__file__)
 
     # Execute SQL
@@ -152,7 +151,6 @@ def get_savings(entity_type, month):
         ('{{ restricting_condition }}', restricting_condition),
         ('{{ month }}', month.strftime('%Y-%m-%d')),
         ('{{ group_by }}', group_by),
-        ('{{ order_by }}', order_by),
         ('{{ select }}', select),
         ('{{ prescribing_table }}', prescribing_table),
         ('{{ inner_select }}', inner_select),
