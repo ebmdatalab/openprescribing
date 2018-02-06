@@ -182,9 +182,9 @@ def price_per_unit(request, format=None):
     CCGs
 
     """
-    entity_code = request.query_params.get('entity_code', None)
+    entity_code = request.query_params.get('entity_code')
     date = request.query_params.get('date')
-    bnf_code = request.query_params.get('bnf_code', None)
+    bnf_code = request.query_params.get('bnf_code')
     if not date:
         raise NotValid("You must supply a date")
     if not (entity_code or bnf_code):
