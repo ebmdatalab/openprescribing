@@ -30,8 +30,8 @@ FROM (
       MAX(presentations.category) AS category,
       deciles.lowest_decile,
       SUM(presentations.quantity) AS quantity,
-      SUM(presentations.{{ cost_field }})/SUM(presentations.quantity) AS price_per_unit,
-      GREATEST((SUM(presentations.{{ cost_field }}) - (SUM(presentations.quantity) * deciles.lowest_decile)), 0) AS possible_savings -- the "diode"
+      SUM(presentations.net_cost)/SUM(presentations.quantity) AS price_per_unit,
+      GREATEST((SUM(presentations.net_cost) - (SUM(presentations.quantity) * deciles.lowest_decile)), 0) AS possible_savings -- the "diode"
     FROM (
       SELECT
         *
@@ -49,7 +49,7 @@ FROM (
                 OR SUBSTR(p.bnf_code, 1, 9) == '0601060U0' OR SUBSTR(p.bnf_code, 1, 9) == '0601060D0'), -- unless they're one of our two exceptions -- see issue #1
             CONCAT(SUBSTR(p.bnf_code, 1, 9), 'AA', SUBSTR(p.bnf_code, 14, 2), SUBSTR(p.bnf_code, 14, 2)),
             NULL) AS generic_presentation,
-          {{ cost_field }},
+          net_cost,
           quantity
         FROM
           {{ prescribing_table }} AS p
@@ -81,7 +81,7 @@ FROM (
                   OR SUBSTR(bnf_code, 1, 9) == '0601060U0' OR SUBSTR(bnf_code, 1, 9) == '0601060D0'), -- unless they're one of our two exceptions -- see issue #1
               CONCAT(SUBSTR(bnf_code, 1, 9), 'AA', SUBSTR(bnf_code, 14, 2), SUBSTR(bnf_code, 14, 2)),
               NULL) AS generic_presentation,
-            AVG({{ cost_field }}/quantity) AS price_per_unit
+            AVG(net_cost/quantity) AS price_per_unit
           FROM
             {{ prescribing_table }} AS p
           LEFT JOIN {hscic}.practices practices

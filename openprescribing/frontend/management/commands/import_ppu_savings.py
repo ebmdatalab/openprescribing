@@ -155,7 +155,6 @@ def get_savings(group_by, month, min_saving):
         ('{{ order_by }}', order_by),
         ('{{ select }}', select),
         ('{{ prescribing_table }}', prescribing_table),
-        ('{{ cost_field }}', 'net_cost'),
         ('{{ inner_select }}', inner_select),
         ('{{ min_saving }}', min_saving)
     )
