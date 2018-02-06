@@ -61,10 +61,79 @@
   }
 },
 {
+  "model": "dmd.dmdproduct",
+  "pk": 29767511000001103,
+  "fields": {
+    "bnf_code": "1304000D0AACDCD",
+    "vpid": 29767511000001103,
+    "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+    "full_name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+    "concept_class": 1,
+    "product_type": 1,
+    "ema": false,
+    "prescribability": 1,
+    "availability_restrictions": 6,
+    "vmp_non_availability": null,
+    "is_in_nurse_formulary": false,
+    "is_in_dentist_formulary": false,
+    "product_order_no": null,
+    "is_blacklisted": false,
+    "is_schedule_2": false,
+    "can_have_personal_administration_fee": false,
+    "is_fp10": false,
+    "is_borderline_substance": false,
+    "has_assorted_flavours": false,
+    "controlled_drug_category": 0,
+    "tariff_category": null,
+    "is_imported": false,
+    "is_broken_bulk": false,
+    "is_non_bioequivalent": false,
+    "is_special_container": false
+  }
+},
+{
+  "model": "dmd.dmdproduct",
+  "pk": 29766011000001108,
+  "fields": {
+    "bnf_code": "1304000D0AACDCD",
+    "vpid": 29767511000001103,
+    "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+    "full_name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin (Special Order)",
+    "concept_class": 2,
+    "product_type": 3,
+    "ema": false,
+    "prescribability": 1,
+    "availability_restrictions": 6,
+    "vmp_non_availability": 0,
+    "is_in_nurse_formulary": false,
+    "is_in_dentist_formulary": false,
+    "product_order_no": null,
+    "is_blacklisted": false,
+    "is_schedule_2": false,
+    "can_have_personal_administration_fee": false,
+    "is_fp10": false,
+    "is_borderline_substance": false,
+    "has_assorted_flavours": false,
+    "controlled_drug_category": 0,
+    "tariff_category": null,
+    "is_imported": false,
+    "is_broken_bulk": false,
+    "is_non_bioequivalent": false,
+    "is_special_container": false
+  }
+},
+{
   "model": "dmd.availabilityrestriction",
   "pk": 1,
   "fields": {
     "desc": "None"
+  }
+},
+{
+  "model": "dmd.availabilityrestriction",
+  "pk": 6,
+  "fields": {
+    "desc": "Special"
   }
 },
 {

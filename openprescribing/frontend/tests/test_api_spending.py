@@ -454,12 +454,161 @@ class TestAPISpendingViews(ApiTestBase):
 class TestAPISpendingViewsPPUTable(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
 
-    def test_simple(self):
-        url = '/price_per_unit?format=json'
-        url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
+    def _get(self, **data):
+        data['format'] = 'json'
+        url = self.api_prefix + '/price_per_unit/'
+        rsp = self.client.get(url, data, follow=True)
+        return json.loads(rsp.content)
+
+    def test_bnf_code(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        expected = [{
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 1,
+            "possible_savings": 100.0
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 2,
+            "possible_savings": 100.0
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "N84014",
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": "Ainsdale Village Surgery",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 5,
+            "possible_savings": 100.0
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 6,
+            "possible_savings": 100.0
+        }]
+        self.assertEqual(len(data), 4)
+        self.assertEqual(data, expected)
+
+    def test_bnf_code_no_data_for_month(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_bnf_code(self):
+        data = self._get(bnf_code='XYZ', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_entity_code_practice(self):
+        data = self._get(entity_code='P87629', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        expected = [{
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 1,
+            "possible_savings": 100.0
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "1304000D0AACDCD",
+            "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 3,
+            "possible_savings": 100.0
+        }]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data, expected)
+
+    def test_entity_code_practice_no_data_for_month(self):
+        data = self._get(entity_code='P87629', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_practice(self):
+        data = self._get(entity_code='P00000', date='2014-11-01')
+        self.assertEqual(data, [])
+
+    def test_entity_code_ccg(self):
+        data = self._get(entity_code='03V', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        expected = [{
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 2,
+            "possible_savings": 100.0
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "1304000D0AACDCD",
+            "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 4,
+            "possible_savings": 100.0
+        }]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data, expected)
+
+    def test_entity_code_ccg_and_bnf_code(self):
+        data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA', date='2014-11-01')
         expected = {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
@@ -468,15 +617,23 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
-            "pct": None,
+            "pct": "03V",
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 5,
+            "id": 1,
             "possible_savings": 100.0
         }
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0], expected)
+
+    def test_entity_code_ccg_no_data_for_month(self):
+        data = self._get(entity_code='03V', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_ccg(self):
+        data = self._get(entity_code='000', date='2014-11-01')
+        self.assertEqual(data, [])
 
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):

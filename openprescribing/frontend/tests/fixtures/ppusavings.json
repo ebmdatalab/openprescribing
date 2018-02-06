@@ -3,14 +3,111 @@
   "pk": 1,
   "fields": {
     "lowest_decile": 0.1,
-    "pct_id": null,
+    "pct_id": "03V",
     "formulation_swap": null,
     "price_per_unit": 0.2,
     "presentation_id": "0202010F0AAAAAA",
     "practice_id": "P87629",
     "possible_savings": 100.0,
-    "id": 5,
     "quantity": 1,
     "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 2,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03V",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "0202010F0AAAAAA",
+    "practice_id": null,
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 3,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03V",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "1304000D0AACDCD",
+    "practice_id": "P87629",
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 4,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03V",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "1304000D0AACDCD",
+    "practice_id": null,
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 5,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03Q",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "0202010F0AAAAAA",
+    "practice_id": "N84014",
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 6,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03Q",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "0202010F0AAAAAA",
+    "practice_id": null,
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-11-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 7,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03V",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "1304000D0AACDCD",
+    "practice_id": "P87629",
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-10-01"
+  }
+}, {
+  "model": "frontend.ppusaving",
+  "pk": 8,
+  "fields": {
+    "lowest_decile": 0.1,
+    "pct_id": "03V",
+    "formulation_swap": null,
+    "price_per_unit": 0.2,
+    "presentation_id": "1304000D0AACDCD",
+    "practice_id": null,
+    "possible_savings": 100.0,
+    "quantity": 1,
+    "date": "2014-10-01"
   }
 }]
