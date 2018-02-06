@@ -98,6 +98,8 @@ def get_savings(entity_type, month):
     prescribing_table = "{hscic}.%s" % (
         make_merged_table_for_month(month)
     )
+
+    # This is interpolated into the SQL template as it is used multiple times.
     restricting_condition = (
         "AND LENGTH(RTRIM(p.bnf_code)) >= 15 "
         "AND p.bnf_code NOT LIKE '0302000C0____BE' "  # issue #10
