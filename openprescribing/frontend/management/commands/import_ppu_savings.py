@@ -87,7 +87,7 @@ def make_merged_table_for_month(month):
     return target_table_name
 
 
-def get_savings(group_by, month, min_saving):
+def get_savings(entity_type, month):
     """Execute SQL to calculate savings in BigQuery, and return as a
     DataFrame.
 
@@ -125,21 +125,21 @@ def get_savings(group_by, month, min_saving):
 
     # Generate variable SQL based on if we're interested in CCG or
     # practice-level data
-    if group_by == 'pct':
+    if entity_type == 'pct':
         select = 'savings.presentations.pct AS pct,'
         inner_select = 'presentations.pct, '
         group_by = 'presentations.pct, '
-    elif group_by == 'practice':
+        min_saving = 1000
+    elif entity_type == 'practice':
         select = ('savings.presentations.practice AS practice,'
                   'savings.presentations.pct AS pct,')
         inner_select = ('presentations.pct, '
                         'presentations.practice,')
         group_by = ('presentations.practice, '
                     'presentations.pct,')
-    elif group_by == 'product':
-        select = ''
-        inner_select = ''
-        group_by = ''
+        min_saving = 50
+    else:
+        assert False
 
     order_by = "ORDER BY possible_savings DESC"
     fpath = os.path.dirname(__file__)
@@ -233,10 +233,8 @@ class Command(BaseCommand):
                 name='Urine Testing Reagents',
                 is_generic=True)
             PPUSaving.objects.filter(date=options['month']).delete()
-            for entity_type, min_saving in [
-                    ('pct', 1000),
-                    ('practice', 50)]:
-                result = get_savings(entity_type, options['month'], min_saving)
+            for entity_type in ['pct', 'practice']:
+                result = get_savings(entity_type, options['month'])
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
