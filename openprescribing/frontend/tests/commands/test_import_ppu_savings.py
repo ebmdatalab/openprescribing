@@ -60,11 +60,7 @@ class BigqueryFunctionalTests(TestCase):
         with patch(
                 'frontend.management.commands.import_ppu_savings.pd.read_csv',
                 return_value=dummy_substitutions):
-            import_ppu_savings.Command().handle(
-                month=month,
-                min_ccg_saving=0,
-                min_practice_saving=0,
-            )
+            import_ppu_savings.Command().handle(month=month)
 
     def test_savings_created_correctly(self):
         ccg_saving = PPUSaving.objects.get(

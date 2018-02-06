@@ -87,7 +87,7 @@ def make_merged_table_for_month(month):
     return target_table_name
 
 
-def get_savings(group_by, month, min_saving=0):
+def get_savings(group_by, month, min_saving):
     """Execute SQL to calculate savings in BigQuery, and return as a
     DataFrame.
 
@@ -191,13 +191,6 @@ class Command(BaseCommand):
         parser.add_argument(
             '--month',
             type=valid_date)
-        parser.add_argument(
-            '--min-practice-saving',
-            type=int, default=50)
-        parser.add_argument(
-            '--min-ccg-saving',
-            help="Disregard savings under this amount",
-            type=int, default=1000)
 
     def handle(self, *args, **options):
         '''
@@ -242,11 +235,9 @@ class Command(BaseCommand):
                 is_generic=True)
             PPUSaving.objects.filter(date=options['month']).delete()
             for entity_type, min_saving in [
-                    ('pct', options['min_ccg_saving']),
-                    ('practice', options['min_practice_saving'])]:
-                result = get_savings(
-                    entity_type, options['month'],
-                    min_saving)
+                    ('pct', 1000),
+                    ('practice', 50)]:
+                result = get_savings(entity_type, options['month'], min_saving)
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
