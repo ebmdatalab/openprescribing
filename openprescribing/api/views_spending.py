@@ -209,6 +209,8 @@ def price_per_unit(request, format=None):
             practice_level = True
         filename += "-%s" % entity_code
 
+    # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
+    # DMDProduct.
     sql = '''
     SELECT DISTINCT
         {ppusavings_table}.id AS id,
