@@ -572,7 +572,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
 
     def test_invalid_entity_code_practice(self):
         data = self._get(entity_code='P00000', date='2014-11-01')
-        self.assertEqual(data, [])
+        self.assertEqual(data, {'detail': 'Not found.'})
 
     def test_entity_code_ccg(self):
         data = self._get(entity_code='03V', date='2014-11-01')
@@ -586,6 +586,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
+            "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
             "id": 2,
@@ -599,6 +600,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
+            "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
             "id": 4,
@@ -633,7 +635,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
 
     def test_invalid_entity_code_ccg(self):
         data = self._get(entity_code='000', date='2014-11-01')
-        self.assertEqual(data, [])
+        self.assertEqual(data, {'detail': 'Not found.'})
 
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):
