@@ -141,6 +141,8 @@ def get_savings(entity_type, month):
                     'presentations.pct,')
         min_saving = 50
     else:
+        # 7d21f9c6 (#769) removed 'product'` as a possible entity_type.  We may
+        # want to revisit this.
         assert False
 
     fpath = os.path.dirname(__file__)
