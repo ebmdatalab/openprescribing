@@ -353,7 +353,6 @@ class MeasureCalculation(object):
         context = {
             'from_table': self.qualified_table_name(),
             'target_table': self.table_name(),
-            'value_var': 'calc_value',
         }
 
         return self.insert_rows_from_query(
@@ -373,7 +372,6 @@ class MeasureCalculation(object):
         context = {
             'from_table': self.qualified_table_name(),
             'extra_select_sql': extra_select_sql,
-            'value_var': 'calc_value',
             'global_centiles_table': self.qualified_global_table_name(),
         }
 
@@ -524,7 +522,6 @@ class PracticeCalculation(MeasureCalculation):
             'denominator_aliases': denominator_aliases,
             'aliased_denominators': aliased_denominators,
             'aliased_numerators': aliased_numerators,
-            'practices_from': '{hscic}.practices',
             'start_date': self.start_date,
             'end_date': self.end_date
 

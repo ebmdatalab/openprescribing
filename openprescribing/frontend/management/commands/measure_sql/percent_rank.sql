@@ -2,7 +2,7 @@ SELECT * FROM
   (
   SELECT
     *,
-    PERCENT_RANK() OVER (PARTITION BY month ORDER BY {value_var}) AS percentile
+    PERCENT_RANK() OVER (PARTITION BY month ORDER BY calc_value) AS percentile
   FROM
     {from_table}
   WHERE
