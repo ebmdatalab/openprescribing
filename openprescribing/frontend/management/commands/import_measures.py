@@ -85,9 +85,7 @@ class Command(BaseCommand):
                 ccg_rows_created = ccg_calculation.calculate()
                 if practice_rows_created and ccg_rows_created:
                     if measure.is_cost_based:
-                        global_calculation.calculate_global_cost_savings(
-                            practice_calculation.qualified_table_name(),
-                            ccg_calculation.qualified_table_name())
+                        global_calculation.calculate_global_cost_savings()
                     global_calculation.write_global_centiles_to_database()
                 else:
                     raise CommandError(
@@ -326,6 +324,7 @@ class MeasureCalculation(object):
         insert results into given table.
         """
         query_path = os.path.join(self.fpath, 'measure_sql', query_id + '.sql')
+        ctx['measure_id'] = self.measure.id
 
         with open(query_path) as f:
             sql = f.read()
@@ -370,23 +369,15 @@ class MeasureCalculation(object):
 
 
 class GlobalCalculation(MeasureCalculation):
-    def calculate_global_cost_savings(
-            self, practice_table_name, ccg_table_name):
-        """Execute a bigquery SQL statement to sum cost savings at practice
-        and CCG levels.
+    def calculate_global_cost_savings(self):
+        """Sum cost savings at practice and CCG levels.
 
         Reads from the existing global table and writes back to it again.
         """
-        context = {
-            'practice_table': practice_table_name,
-            'ccg_table': ccg_table_name,
-            'global_table': self.qualified_global_table_name()
-        }
-
         self.insert_rows_from_query(
             'global_cost_savings',
             self.globals_table_name(),
-            context,
+            {},
             legacy=True
         )
 
