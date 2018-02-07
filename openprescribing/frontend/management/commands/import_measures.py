@@ -309,16 +309,6 @@ class MeasureCalculation(object):
         """
         return "global_data_%s" % self.measure.id
 
-    def qualified_table_name(self):
-        """Qualified table name as used in bigquery SELECT
-        """
-        return "{measures}.%s" % self.table_name()
-
-    def qualified_global_table_name(self):
-        """Qualified table name as used in bigquery SELECT
-        """
-        return "{measures}.%s" % self.globals_table_name()
-
     def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
         """Interpolate values from ctx into SQL identified by query_id, and
         insert results into given table.
