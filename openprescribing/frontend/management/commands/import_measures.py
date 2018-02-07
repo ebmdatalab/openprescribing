@@ -367,22 +367,6 @@ class MeasureCalculation(object):
         else:
             logger.info(message)
 
-    def _query_and_write_global_centiles(self, query_id, extra_select_sql):
-        context = {
-            'from_table': self.qualified_table_name(),
-            'extra_select_sql': extra_select_sql,
-            'global_centiles_table': self.qualified_global_table_name(),
-        }
-
-        # We have to use legacy SQL because there' no
-        # PERCENTILE_CONT equivalent in the standard SQL
-        self.insert_rows_from_query(
-            query_id,
-            self.globals_table_name(),
-            context,
-            legacy=True
-        )
-
     def _get_col_aliases(self, num_or_denom=None):
         """Return column names referred to in measure definitions for both
         numerator or denominator.
@@ -552,9 +536,19 @@ class PracticeCalculation(MeasureCalculation):
                 "- SUM(num_quantity)) AS cost_per_denom,"
                 "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
 
-        self._query_and_write_global_centiles(
+        context = {
+            'from_table': self.qualified_table_name(),
+            'extra_select_sql': extra_select_sql,
+            'global_centiles_table': self.qualified_global_table_name(),
+        }
+
+        # We have to use legacy SQL because there' no
+        # PERCENTILE_CONT equivalent in the standard SQL
+        self.insert_rows_from_query(
             'global_deciles_practices',
-            extra_select_sql
+            self.globals_table_name(),
+            context,
+            legacy=True
         )
 
     def calculate_cost_savings_for_practices(self):
@@ -670,9 +664,19 @@ class CCGCalculation(MeasureCalculation):
                 ", practice_deciles.cost_per_denom AS cost_per_denom"
                 ", practice_deciles.cost_per_num AS cost_per_num")
 
-        self._query_and_write_global_centiles(
+        context = {
+            'from_table': self.qualified_table_name(),
+            'extra_select_sql': extra_select_sql,
+            'global_centiles_table': self.qualified_global_table_name(),
+        }
+
+        # We have to use legacy SQL because there' no
+        # PERCENTILE_CONT equivalent in the standard SQL
+        self.insert_rows_from_query(
             'global_deciles_ccgs',
-            extra_select_sql
+            self.globals_table_name(),
+            context,
+            legacy=True
         )
 
     def calculate_cost_savings_for_ccgs(self):
