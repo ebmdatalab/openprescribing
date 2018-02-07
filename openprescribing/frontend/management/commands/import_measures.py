@@ -538,14 +538,10 @@ class PracticeCalculation(MeasureCalculation):
 
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
-        context = {
-            'local_table': self.qualified_table_name(),
-            'global_table': self.qualified_global_table_name(),
-        }
         self.insert_rows_from_query(
             'practice_cost_savings',
             self.table_name(),
-            context
+            {}
         )
 
     def write_practice_ratios_to_database(self):
@@ -677,14 +673,10 @@ class CCGCalculation(MeasureCalculation):
 
     def calculate_cost_savings_for_ccgs(self):
         """Appends cost savings column to the CCG ratios table"""
-        context = {
-            'local_table': self.qualified_table_name(),
-            'global_table': self.qualified_global_table_name(),
-        }
         self.insert_rows_from_query(
             'ccg_cost_savings',
             self.table_name(),
-            context
+            {}
         )
 
     def write_ccg_ratios_to_database(self):

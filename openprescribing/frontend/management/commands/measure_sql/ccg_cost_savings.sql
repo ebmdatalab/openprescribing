@@ -55,8 +55,8 @@ SELECT
      ) AS cost_savings_90,
   local.*
 FROM
-  {local_table} AS local
+  {measures}.ccg_data_{measure_id} AS local
 LEFT JOIN
-  {global_table} global
+  {measures}.global_data_{measure_id} global
 ON
   (global.month = local.month)
