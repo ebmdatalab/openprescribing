@@ -352,7 +352,6 @@ class MeasureCalculation(object):
         """
         context = {
             'from_table': self.qualified_table_name(),
-            'target_table': self.table_name(),
         }
 
         return self.insert_rows_from_query(
