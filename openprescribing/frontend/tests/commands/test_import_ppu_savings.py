@@ -60,16 +60,19 @@ class BigqueryFunctionalTests(TestCase):
         with patch(
                 'frontend.management.commands.import_ppu_savings.pd.read_csv',
                 return_value=dummy_substitutions):
-            import_ppu_savings.Command().handle(
-                month=month,
-                min_ccg_saving=0,
-                min_practice_saving=0,
-                limit=1
-            )
+            import_ppu_savings.Command().handle(month=month)
 
     def test_savings_created_correctly(self):
-        ccg_saving = PPUSaving.objects.get(practice_id__isnull=True)
-        practice_saving = PPUSaving.objects.get(practice_id__isnull=False)
+        ccg_saving = PPUSaving.objects.get(
+            presentation_id='0408010A0AAAAAA',
+            pct_id='02Q',
+            practice_id__isnull=True
+        )
+        practice_saving = PPUSaving.objects.get(
+            presentation_id='0408010A0AAAAAA',
+            pct_id='02Q',
+            practice_id__isnull=False
+        )
         for saving in [ccg_saving, practice_saving]:
             # There's only one saving, so they should be identical
             # apart from the practice_id
