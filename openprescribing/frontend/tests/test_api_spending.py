@@ -474,7 +474,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 1,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": True,
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
@@ -488,7 +489,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 2,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": True,
         }, {
             "lowest_decile": 0.1,
             "presentation": "1304000D0AACDCD",
@@ -502,7 +504,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 3,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": False,
         }, {
             "lowest_decile": 0.1,
             "presentation": "1304000D0AACDCD",
@@ -516,7 +519,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 4,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": False,
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
@@ -530,7 +534,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 5,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": True,
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
@@ -544,7 +549,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "date": "2014-11-01",
             "quantity": 1,
             "id": 6,
-            "possible_savings": 100.0
+            "possible_savings": 100.0,
+            "price_concession": True,
         }]
 
         return [r for r in expected if r['id'] in ids]
@@ -552,7 +558,6 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
     def test_bnf_code(self):
         data = self._get(bnf_code='0202010F0AAAAAA', date='2014-11-01')
         data.sort(key=lambda r: r['id'])
-        self.assertEqual(len(data), 4)
         self.assertEqual(data, self._expected_results([1, 2, 5, 6]))
 
     def test_bnf_code_no_data_for_month(self):
@@ -566,7 +571,6 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
     def test_entity_code_practice(self):
         data = self._get(entity_code='P87629', date='2014-11-01')
         data.sort(key=lambda r: r['id'])
-        self.assertEqual(len(data), 2)
         self.assertEqual(data, self._expected_results([1, 3]))
 
     def test_entity_code_practice_no_data_for_month(self):
@@ -580,12 +584,10 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
     def test_entity_code_ccg(self):
         data = self._get(entity_code='03V', date='2014-11-01')
         data.sort(key=lambda r: r['id'])
-        self.assertEqual(len(data), 2)
         self.assertEqual(data, self._expected_results([2, 4]))
 
     def test_entity_code_ccg_and_bnf_code(self):
         data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA', date='2014-11-01')
-        self.assertEqual(len(data), 1)
         self.assertEqual(data, self._expected_results([1]))
 
     def test_entity_code_ccg_no_data_for_month(self):

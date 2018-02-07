@@ -163,5 +163,24 @@
   "fields": {
     "desc": "Part VIIIA Category A"
   }
+},
+{
+  "model": "dmd.dmdvmpp",
+  "pk": 982511000001103,
+  "fields": {
+    "vpid": 318248001,
+    "nm": "Verapamil 160mg tablets 56 tablet"
+  }
+},
+{
+  "model": "dmd.ncsoconcession",
+  "pk": 1,
+  "fields": {
+    "vmpp": 982511000001103,
+    "date": "2014-11-01",
+    "drug": "Verapamil 160mg tablets",
+    "pack_size": "56",
+    "price_concession_pence": 650
+  }
 }
 ]

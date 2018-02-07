@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
 from common.utils import namedtuplefetchall, nhs_titlecase
-from dmd.models import DMDProduct
+from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
@@ -225,6 +225,7 @@ def price_per_unit(request, format=None):
         {ppusavings_table}.bnf_code AS presentation,
         {practice_table}.name AS practice_name,
         {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
+        {ncsoconcession_table}.id IS NOT NULL as price_concession,
         COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
     FROM {ppusavings_table}
     LEFT OUTER JOIN {presentation_table}
@@ -233,6 +234,10 @@ def price_per_unit(request, format=None):
         ON {ppusavings_table}.practice_id = {practice_table}.code
     LEFT OUTER JOIN {dmdproduct_table}
         ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
+    LEFT OUTER JOIN {dmdvmpp_table}
+        ON {dmdproduct_table}.vpid = {dmdvmpp_table}.vpid
+    LEFT OUTER JOIN {ncsoconcession_table}
+        ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
     WHERE
         {ppusavings_table}.date = %(date)s
         AND {dmdproduct_table}.concept_class = 1'''
@@ -261,6 +266,8 @@ def price_per_unit(request, format=None):
         practice_table=Practice._meta.db_table,
         presentation_table=Presentation._meta.db_table,
         dmdproduct_table=DMDProduct._meta.db_table,
+        dmdvmpp_table=DMDVmpp._meta.db_table,
+        ncsoconcession_table=NCSOConcession._meta.db_table,
     )
 
     with connection.cursor() as cursor:
