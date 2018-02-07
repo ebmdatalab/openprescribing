@@ -556,9 +556,12 @@ class PracticeCalculation(MeasureCalculation):
         context = {
             'local_table': self.qualified_table_name(),
             'global_table': self.qualified_global_table_name(),
-            'unit': 'practice'
         }
-        self.insert_rows_from_query('cost_savings', self.table_name(), context)
+        self.insert_rows_from_query(
+            'practice_cost_savings',
+            self.table_name(),
+            context
+        )
 
     def write_practice_ratios_to_database(self):
         """Copy the bigquery ratios data to the local postgres database.
@@ -684,9 +687,12 @@ class CCGCalculation(MeasureCalculation):
         context = {
             'local_table': self.qualified_table_name(),
             'global_table': self.qualified_global_table_name(),
-            'unit': 'ccg'
         }
-        self.insert_rows_from_query('cost_savings', self.table_name(), context)
+        self.insert_rows_from_query(
+            'ccg_cost_savings',
+            self.table_name(),
+            context
+        )
 
     def write_ccg_ratios_to_database(self):
         """Create measure values for CCG ratios (these are distinguished from
