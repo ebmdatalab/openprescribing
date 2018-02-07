@@ -496,14 +496,10 @@ class PracticeCalculation(MeasureCalculation):
     def add_practice_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
-        context = {
-            'from_table': self.qualified_table_name(),
-        }
-
         return self.insert_rows_from_query(
             'practice_percent_rank',
             self.table_name(),
-            context,
+            {},
             legacy=True
         )
 
@@ -641,14 +637,10 @@ class CCGCalculation(MeasureCalculation):
     def add_ccg_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
-        context = {
-            'from_table': self.qualified_table_name(),
-        }
-
         return self.insert_rows_from_query(
             'ccg_percent_rank',
             self.table_name(),
-            context,
+            {},
             legacy=True
         )
 
