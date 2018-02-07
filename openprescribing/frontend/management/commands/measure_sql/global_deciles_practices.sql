@@ -24,10 +24,10 @@ FROM (
     PERCENTILE_CONT(0.7) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_70th,
     PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_80th,
     PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_90th
-  FROM {from_table}
+  FROM {measures}.practice_data_{measure_id}
   WHERE calc_value IS NOT NULL AND NOT IS_NAN(calc_value)) a,
   (SELECT
     *,
-  FROM {from_table}
+  FROM {measures}.practice_data_{measure_id}
   WHERE calc_value IS NULL OR IS_NAN(calc_value)) b
   GROUP BY month

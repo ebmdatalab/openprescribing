@@ -524,9 +524,7 @@ class PracticeCalculation(MeasureCalculation):
                 "SUM(num_cost) / SUM(num_quantity) as cost_per_num")
 
         context = {
-            'from_table': self.qualified_table_name(),
             'extra_select_sql': extra_select_sql,
-            'global_centiles_table': self.qualified_global_table_name(),
         }
 
         # We have to use legacy SQL because there' no
@@ -665,9 +663,7 @@ class CCGCalculation(MeasureCalculation):
                 ", practice_deciles.cost_per_num AS cost_per_num")
 
         context = {
-            'from_table': self.qualified_table_name(),
             'extra_select_sql': extra_select_sql,
-            'global_centiles_table': self.qualified_global_table_name(),
         }
 
         # We have to use legacy SQL because there' no

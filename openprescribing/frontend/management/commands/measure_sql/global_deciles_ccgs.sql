@@ -24,7 +24,7 @@ SELECT
   ccg_deciles.ccg_80th as ccg_80th,
   ccg_deciles.ccg_90th as ccg_90th
   {extra_select_sql}
-FROM {global_centiles_table} AS practice_deciles
+FROM {measures}.global_data_{measure_id} AS practice_deciles
 LEFT JOIN (
 SELECT
   month,
@@ -49,7 +49,7 @@ FROM (
     PERCENTILE_CONT(0.7) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_70th,
     PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_80th,
     PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY calc_value ASC) AS p_90th
-  FROM {from_table}
+  FROM {measures}.ccg_data_{measure_id}
   WHERE calc_value IS NOT NULL AND NOT IS_NAN(calc_value))
   GROUP BY month) ccg_deciles
 ON practice_deciles.month = ccg_deciles.month
