@@ -347,20 +347,6 @@ class MeasureCalculation(object):
         client = Client('measures')
         return client.get_table(table_name)
 
-    def add_percent_rank(self):
-        """Add a percentile rank to the ratios table
-        """
-        context = {
-            'from_table': self.qualified_table_name(),
-        }
-
-        return self.insert_rows_from_query(
-            'percent_rank',
-            self.table_name(),
-            context,
-            legacy=True
-        )
-
     def log(self, message):
         if self.verbose:
             logger.warning(message)
@@ -459,7 +445,7 @@ class PracticeCalculation(MeasureCalculation):
         self.log("Calculating practice ratios")
         self.calculate_practice_ratios()
         self.log("Adding percent rank to practices")
-        self.add_percent_rank()
+        self.add_practice_percent_rank()
         self.log("Calculating global centiles for practices")
         self.calculate_global_centiles_for_practices()
         if self.measure.is_cost_based:
@@ -514,6 +500,20 @@ class PracticeCalculation(MeasureCalculation):
             'practice_ratios',
             self.table_name(),
             context
+        )
+
+    def add_practice_percent_rank(self):
+        """Add a percentile rank to the ratios table
+        """
+        context = {
+            'from_table': self.qualified_table_name(),
+        }
+
+        return self.insert_rows_from_query(
+            'practice_percent_rank',
+            self.table_name(),
+            context,
+            legacy=True
         )
 
     def calculate_global_centiles_for_practices(self):
@@ -611,7 +611,7 @@ class CCGCalculation(MeasureCalculation):
         self.log("Calculating CCG ratios")
         self.calculate_ccg_ratios()
         self.log("Adding rank to CCG ratios")
-        self.add_percent_rank()
+        self.add_ccg_percent_rank()
         self.log("Calculating global CCG centiles")
         self.calculate_global_centiles_for_ccgs()
         if self.measure.is_cost_based:
@@ -646,6 +646,20 @@ class CCGCalculation(MeasureCalculation):
             'from_table': from_table
         }
         self.insert_rows_from_query('ccg_ratios', self.table_name(), context)
+
+    def add_ccg_percent_rank(self):
+        """Add a percentile rank to the ratios table
+        """
+        context = {
+            'from_table': self.qualified_table_name(),
+        }
+
+        return self.insert_rows_from_query(
+            'ccg_percent_rank',
+            self.table_name(),
+            context,
+            legacy=True
+        )
 
     def calculate_global_centiles_for_ccgs(self):
         """Adds CCG centiles to the already-existing CCG centiles table
