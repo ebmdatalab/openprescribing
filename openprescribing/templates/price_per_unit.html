@@ -138,7 +138,11 @@
     // When viewing at CCG level, drill down to practices
     var first_column = 'presentation';
     var first_column_render = function(data, type, full, meta) {
-      return ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+      var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+      if (full['price_concession'] ) {
+        rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'
+      }
+      return rendered;
     }
   {% else %}
     // When viewing at Practice level, group up to CCG
