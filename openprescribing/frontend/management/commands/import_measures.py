@@ -619,12 +619,10 @@ class CCGCalculation(MeasureCalculation):
                 col, col)
         for col in self._get_col_aliases('numerator'):
             numerator_aliases += ", SUM(num_%s) AS num_%s" % (col, col)
-        from_table = PracticeCalculation(self.measure).qualified_table_name()
 
         context = {
             'denominator_aliases': denominator_aliases,
             'numerator_aliases': numerator_aliases,
-            'from_table': from_table
         }
         self.insert_rows_from_query('ccg_ratios', self.table_name(), context)
 
