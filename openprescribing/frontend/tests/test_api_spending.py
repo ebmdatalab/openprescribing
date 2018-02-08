@@ -493,8 +493,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "price_concession": True,
         }, {
             "lowest_decile": 0.1,
-            "presentation": "1304000D0AACDCD",
-            "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": "P87629",
@@ -508,8 +508,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "price_concession": False,
         }, {
             "lowest_decile": 0.1,
-            "presentation": "1304000D0AACDCD",
-            "name": "Betamethasone dipropionate 0.05% ointment 50% in White soft paraffin",
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": None,

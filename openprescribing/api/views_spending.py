@@ -238,6 +238,7 @@ def price_per_unit(request, format=None):
         ON {dmdproduct_table}.vpid = {dmdvmpp_table}.vpid
     LEFT OUTER JOIN {ncsoconcession_table}
         ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
+        AND {ppusavings_table}.date = {ncsoconcession_table}.date
     WHERE
         {ppusavings_table}.date = %(date)s
         AND {dmdproduct_table}.concept_class = 1'''
