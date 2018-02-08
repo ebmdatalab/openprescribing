@@ -298,11 +298,6 @@ class MeasureCalculation(object):
         self.start_date = start_date
         self.end_date = end_date
 
-    def table_name(self):
-        """Name of table to which we write ratios data.
-        """
-        raise NotImplementedError("Must be implemented in sublcass")
-
     def globals_table_name(self):
         """Name of table to which we write overall summary data
 
@@ -436,7 +431,7 @@ class PracticeCalculation(MeasureCalculation):
         number_rows_written = self.write_practice_ratios_to_database()
         return number_rows_written
 
-    def table_name(self):
+    def practice_table_name(self):
         """The name of the bigquery working table for practices
 
         """
@@ -479,16 +474,16 @@ class PracticeCalculation(MeasureCalculation):
 
         self.insert_rows_from_query(
             'practice_ratios',
-            self.table_name(),
+            self.practice_table_name(),
             context
         )
 
     def add_practice_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
-        return self.insert_rows_from_query(
+        self.insert_rows_from_query(
             'practice_percent_rank',
-            self.table_name(),
+            self.practice_table_name(),
             {},
             legacy=True
         )
@@ -530,7 +525,7 @@ class PracticeCalculation(MeasureCalculation):
         """Append cost savings column to the Practice working table"""
         self.insert_rows_from_query(
             'practice_cost_savings',
-            self.table_name(),
+            self.practice_table_name(),
             {}
         )
 
@@ -554,7 +549,7 @@ class PracticeCalculation(MeasureCalculation):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         c = 0
         # Write the data we want to load into a file
-        for datum in self.get_rows_as_dicts(self.table_name()):
+        for datum in self.get_rows_as_dicts(self.practice_table_name()):
             datum['measure_id'] = self.measure.id
             if self.measure.is_cost_based:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
@@ -592,7 +587,7 @@ class CCGCalculation(MeasureCalculation):
         number_rows_written = self.write_ccg_ratios_to_database()
         return number_rows_written
 
-    def table_name(self):
+    def ccg_table_name(self):
         """The name of the bigquery working table for CCGs
 
         """
@@ -614,14 +609,14 @@ class CCGCalculation(MeasureCalculation):
             'denominator_aliases': denominator_aliases,
             'numerator_aliases': numerator_aliases,
         }
-        self.insert_rows_from_query('ccg_ratios', self.table_name(), context)
+        self.insert_rows_from_query('ccg_ratios', self.ccg_table_name(), context)
 
     def add_ccg_percent_rank(self):
         """Add a percentile rank to the ratios table
         """
-        return self.insert_rows_from_query(
+        self.insert_rows_from_query(
             'ccg_percent_rank',
-            self.table_name(),
+            self.ccg_table_name(),
             {},
             legacy=True
         )
@@ -663,7 +658,7 @@ class CCGCalculation(MeasureCalculation):
         """Appends cost savings column to the CCG ratios table"""
         self.insert_rows_from_query(
             'ccg_cost_savings',
-            self.table_name(),
+            self.ccg_table_name(),
             {}
         )
 
@@ -676,7 +671,7 @@ class CCGCalculation(MeasureCalculation):
         """
         with transaction.atomic():
             c = 0
-            for datum in self.get_rows_as_dicts(self.table_name()):
+            for datum in self.get_rows_as_dicts(self.ccg_table_name()):
                 datum['measure_id'] = self.measure.id
                 if self.measure.is_cost_based:
                     datum['cost_savings'] = convertSavingsToDict(datum)
