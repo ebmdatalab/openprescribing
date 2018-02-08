@@ -96,7 +96,6 @@ class Command(BaseCommand):
         parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
-        parser.add_argument('--test_mode', action='store_true')
         parser.add_argument('--definitions_only', action='store_true')
 
     def parse_options(self, options):
