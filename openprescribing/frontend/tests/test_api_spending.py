@@ -587,7 +587,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         self.assertEqual(data, self._expected_results([2, 4]))
 
     def test_entity_code_ccg_and_bnf_code(self):
-        data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA', date='2014-11-01')
+        data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA',
+                         date='2014-11-01')
         self.assertEqual(data, self._expected_results([1]))
 
     def test_entity_code_ccg_no_data_for_month(self):
