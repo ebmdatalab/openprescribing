@@ -184,6 +184,9 @@
         ]
       }
     );
+    $('#price_per_pill').on('draw.dt', function() {
+      $('#price_per_pill .info-link').popover();
+    });
   });
 </script>
 {% endblock %}
