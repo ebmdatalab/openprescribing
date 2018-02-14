@@ -121,67 +121,69 @@
 
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
 <script type="text/javascript">
-  $('.doorbell-show').click(function(e) {
-    if (typeof doorbell !== 'undefined') {
-      e.preventDefault();
-      doorbell.show();
-    }
-  });
-  {% if by_presentation %}
-    // When viewing at Presentation level, link back to practice-level
-    var first_column = 'practice_name';
-    var first_column_render = function(data, type, full, meta) {
-      return ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
-      return link;
-    }
-  {% elif by_ccg %}
-    // When viewing at CCG level, drill down to practices
-    var first_column = 'presentation';
-    var first_column_render = function(data, type, full, meta) {
-      var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
-      if (full['price_concession'] ) {
-        rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'
+  $(function() {
+    $('.doorbell-show').click(function(e) {
+      if (typeof doorbell !== 'undefined') {
+        e.preventDefault();
+        doorbell.show();
       }
-      return rendered;
-    }
-  {% else %}
-    // When viewing at Practice level, group up to CCG
-    var first_column = 'name';
-    var first_column_render = function(data, type, full, meta) {
-      return '<a href="/practice/'+full['practice']+'/'+full['presentation']+'/price_per_unit/?date='+ full['date']+ '">'+data+'</a>';
-    }
-  {% endif %}
-    var pagination_text = "Showing page _PAGE_ of _PAGES_";
-  {% if by_presentation and not entity.ccg %}
-    pagination_text += ".  Where a practice is missing, no saving opportunities over £50 where identified for this product.";
-  {% endif %}
-  $('#price_per_pill').DataTable(
-    {
-      "dom": '<"top"f>rt<"bottom"lip><"clear">',
-      "language": {"info" : pagination_text},
-      "ajax": {
-        "url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json",
-        "dataSrc": function(data) {
-          var total = data.reduce(function(memo, item) {
-            return memo + item.possible_savings;
-          }, 0);
-          $('#total-savings').text(Math.round(total / 100) * 100);
-          return data;
-
+    });
+    {% if by_presentation %}
+      // When viewing at Presentation level, link back to practice-level
+      var first_column = 'practice_name';
+      var first_column_render = function(data, type, full, meta) {
+        return ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
+        return link;
+      }
+    {% elif by_ccg %}
+      // When viewing at CCG level, drill down to practices
+      var first_column = 'presentation';
+      var first_column_render = function(data, type, full, meta) {
+        var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+        if (full['price_concession'] ) {
+          rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'
         }
-       },
-      "order": [[1, "desc"]],
-      "columns": [
-        {"data": first_column,
-         "render": first_column_render
-        },
-        {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-        {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-        {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-        {"data": "quantity", render: $.fn.dataTable.render.number(',')},
-        {"data": "formulation_swap", "defaultContent": "-"},
-      ]
-    }
-  );
+        return rendered;
+      }
+    {% else %}
+      // When viewing at Practice level, group up to CCG
+      var first_column = 'name';
+      var first_column_render = function(data, type, full, meta) {
+        return '<a href="/practice/'+full['practice']+'/'+full['presentation']+'/price_per_unit/?date='+ full['date']+ '">'+data+'</a>';
+      }
+    {% endif %}
+      var pagination_text = "Showing page _PAGE_ of _PAGES_";
+    {% if by_presentation and not entity.ccg %}
+      pagination_text += ".  Where a practice is missing, no saving opportunities over £50 where identified for this product.";
+    {% endif %}
+    $('#price_per_pill').DataTable(
+      {
+        "dom": '<"top"f>rt<"bottom"lip><"clear">',
+        "language": {"info" : pagination_text},
+        "ajax": {
+          "url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json",
+          "dataSrc": function(data) {
+            var total = data.reduce(function(memo, item) {
+              return memo + item.possible_savings;
+            }, 0);
+            $('#total-savings').text(Math.round(total / 100) * 100);
+            return data;
+
+          }
+         },
+        "order": [[1, "desc"]],
+        "columns": [
+          {"data": first_column,
+           "render": first_column_render
+          },
+          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+          {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+          {"data": "quantity", render: $.fn.dataTable.render.number(',')},
+          {"data": "formulation_swap", "defaultContent": "-"},
+        ]
+      }
+    );
+  });
 </script>
 {% endblock %}
