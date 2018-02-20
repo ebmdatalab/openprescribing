@@ -11,7 +11,7 @@
     "This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines). "
   ],
   "numerator_short": "cost (£)",
-  "denominator_short": "per 1000 patients",
+  "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
