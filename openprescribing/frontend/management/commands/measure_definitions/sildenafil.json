@@ -16,7 +16,7 @@
   "denominator_short": "Drugs for erectile dysfunction items",
   "url": null,
   "is_percentage": true,
-  "is_cost_based": true,
+  "is_cost_based": false,
   "low_is_good": true,
   "tags": ["core"],
   "numerator_columns": [
