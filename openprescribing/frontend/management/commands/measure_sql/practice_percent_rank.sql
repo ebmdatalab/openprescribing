@@ -2,9 +2,9 @@ SELECT * FROM
   (
   SELECT
     *,
-    PERCENT_RANK() OVER (PARTITION BY month ORDER BY {value_var}) AS percentile
+    PERCENT_RANK() OVER (PARTITION BY month ORDER BY calc_value) AS percentile
   FROM
-    {from_table}
+    {measures}.practice_data_{measure_id}
   WHERE
     calc_value IS NOT NULL AND NOT IS_NAN(calc_value)) a,
   (
@@ -12,6 +12,6 @@ SELECT * FROM
     *,
     NULL AS percentile
   FROM
-    {from_table}
+    {measures}.practice_data_{measure_id}
   WHERE
     calc_value IS NULL OR IS_NAN(calc_value)) b

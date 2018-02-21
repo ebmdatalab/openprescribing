@@ -70,7 +70,7 @@ FROM (
           SELECT prescribing.month AS month,
                  practices.code AS practice_id,
                  ccg_id
-            FROM {practices_from} AS practices
+            FROM {hscic}.practices AS practices
             CROSS JOIN (
               SELECT month
               FROM {denominator_from}
