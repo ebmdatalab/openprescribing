@@ -466,6 +466,9 @@ var utils = {
     }
     chOptions.tooltip = {
       formatter: function() {
+        if (this.series.options.isNationalSeries) {
+          return false;
+        }
         var num = humanize.numberFormat(this.point.numerator, 0);
         var denom;
         var percentile = humanize.numberFormat(this.point.percentile, 0);
@@ -473,26 +476,22 @@ var utils = {
         str += '<b>' + this.series.name;
         str += ' in ' + humanize.date('M Y', new Date(this.x));
         str += '</b><br/>';
-        if (!this.series.options.isNationalSeries) {
-          str += d.numeratorShort + ': ' + num;
-          str += '<br/>';
-          if (d.denominatorShort == '1000 patients') {
-            // Treat measures which are per 1000 patients a bit differently.
-            // See https://github.com/ebmdatalab/openprescribing/issues/436.
-            denom = humanize.numberFormat(1000 * this.point.denominator, 0);
-            str += 'Patients: ' + denom;
-          } else {
-            denom = humanize.numberFormat(this.point.denominator, 0);
-            str += d.denominatorShort + ': ' + denom;
-          }
-          str += '<br/>';
+        str += d.numeratorShort + ': ' + num;
+        str += '<br/>';
+        if (d.denominatorShort == '1000 patients') {
+          // Treat measures which are per 1000 patients a bit differently.
+          // See https://github.com/ebmdatalab/openprescribing/issues/436.
+          denom = humanize.numberFormat(1000 * this.point.denominator, 0);
+          str += 'Patients: ' + denom;
+        } else {
+          denom = humanize.numberFormat(this.point.denominator, 0);
+          str += d.denominatorShort + ': ' + denom;
         }
+        str += '<br/>';
         str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
         str += (isPercentageMeasure) ? '%' : '';
-        if (!this.series.options.isNationalSeries) {
-          str += ' (' + humanize.ordinal(percentile);
-          str += ' percentile)';
-        }
+        str += ' (' + humanize.ordinal(percentile);
+        str += ' percentile)';
         return str;
       }
     };
