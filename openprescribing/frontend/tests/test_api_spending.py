@@ -454,13 +454,14 @@ class TestAPISpendingViews(ApiTestBase):
 class TestAPISpendingViewsPPUTable(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
 
-    def test_simple(self):
-        url = '/price_per_unit?format=json'
-        url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        expected = {
+    def _get(self, **data):
+        data['format'] = 'json'
+        url = self.api_prefix + '/price_per_unit/'
+        rsp = self.client.get(url, data, follow=True)
+        return json.loads(rsp.content)
+
+    def _expected_results(self, ids):
+        expected = [{
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
             "name": "Verapamil 160mg tablets",
@@ -468,15 +469,135 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
-            "pct": None,
+            "pct": "03V",
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
+            "id": 1,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 2,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 3,
+            "possible_savings": 100.0,
+            "price_concession": False,
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 4,
+            "possible_savings": 100.0,
+            "price_concession": False,
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "N84014",
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": "Ainsdale Village Surgery",
+            "date": "2014-11-01",
+            "quantity": 1,
             "id": 5,
-            "possible_savings": 100.0
-        }
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0], expected)
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": "Verapamil 160mg tablets",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "id": 6,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }]
+
+        return [r for r in expected if r['id'] in ids]
+
+    def test_bnf_code(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([1, 2, 5, 6]))
+
+    def test_bnf_code_no_data_for_month(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_bnf_code(self):
+        data = self._get(bnf_code='XYZ', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_entity_code_practice(self):
+        data = self._get(entity_code='P87629', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([1, 3]))
+
+    def test_entity_code_practice_no_data_for_month(self):
+        data = self._get(entity_code='P87629', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_practice(self):
+        data = self._get(entity_code='P00000', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_entity_code_ccg(self):
+        data = self._get(entity_code='03V', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([2, 4]))
+
+    def test_entity_code_ccg_and_bnf_code(self):
+        data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA',
+                         date='2014-11-01')
+        self.assertEqual(data, self._expected_results([1]))
+
+    def test_entity_code_ccg_no_data_for_month(self):
+        data = self._get(entity_code='03V', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_ccg(self):
+        data = self._get(entity_code='000', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
 
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):

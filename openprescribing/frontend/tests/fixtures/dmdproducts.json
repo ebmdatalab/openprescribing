@@ -61,10 +61,79 @@
   }
 },
 {
+  "model": "dmd.dmdproduct",
+  "pk": 7967011000001109,
+  "fields": {
+    "bnf_code": "0906050P0AAAFAF",
+    "vpid": 7967011000001109,
+    "name": "Vitamin E 400unit capsules",
+    "full_name": "Vitamin E 400unit capsules",
+    "concept_class": 1,
+    "product_type": 1,
+    "ema": false,
+    "prescribability": 1,
+    "availability_restrictions": 1,
+    "vmp_non_availability": null,
+    "is_in_nurse_formulary": false,
+    "is_in_dentist_formulary": false,
+    "product_order_no": null,
+    "is_blacklisted": false,
+    "is_schedule_2": false,
+    "can_have_personal_administration_fee": false,
+    "is_fp10": false,
+    "is_borderline_substance": false,
+    "has_assorted_flavours": false,
+    "controlled_drug_category": 0,
+    "tariff_category": null,
+    "is_imported": false,
+    "is_broken_bulk": false,
+    "is_non_bioequivalent": false,
+    "is_special_container": false
+  }
+},
+{
+  "model": "dmd.dmdproduct",
+  "pk": 7950211000001109,
+  "fields": {
+    "bnf_code": "090605000BBGGA0",
+    "vpid": 7967011000001109,
+    "name": "Solgar Natural Vitamin E 400unit capsules",
+    "full_name": "Solgar Natural Vitamin E 400unit capsules (Solgar Vitamin and Herb)",
+    "concept_class": 2,
+    "product_type": 2,
+    "ema": null,
+    "prescribability": 1,
+    "availability_restrictions": 1,
+    "vmp_non_availability": 0,
+    "is_in_nurse_formulary": false,
+    "is_in_dentist_formulary": false,
+    "product_order_no": null,
+    "is_blacklisted": false,
+    "is_schedule_2": false,
+    "can_have_personal_administration_fee": false,
+    "is_fp10": false,
+    "is_borderline_substance": false,
+    "has_assorted_flavours": false,
+    "controlled_drug_category": 0,
+    "tariff_category": null,
+    "is_imported": false,
+    "is_broken_bulk": true,
+    "is_non_bioequivalent": false,
+    "is_special_container": false
+  }
+},
+{
   "model": "dmd.availabilityrestriction",
   "pk": 1,
   "fields": {
     "desc": "None"
+  }
+},
+{
+  "model": "dmd.availabilityrestriction",
+  "pk": 6,
+  "fields": {
+    "desc": "Special"
   }
 },
 {
@@ -93,6 +162,44 @@
   "pk": 1,
   "fields": {
     "desc": "Part VIIIA Category A"
+  }
+},
+{
+  "model": "dmd.dmdvmpp",
+  "pk": 982511000001103,
+  "fields": {
+    "vpid": 318248001,
+    "nm": "Verapamil 160mg tablets 56 tablet"
+  }
+},
+{
+  "model": "dmd.dmdvmpp",
+  "pk": 7917811000001102,
+  "fields": {
+    "vpid": 7967011000001109,
+    "nm": "Vitamin E 400unit capsules 30 capsule"
+  }
+},
+{
+  "model": "dmd.ncsoconcession",
+  "pk": 1,
+  "fields": {
+    "vmpp": 982511000001103,
+    "date": "2014-11-01",
+    "drug": "Verapamil 160mg tablets",
+    "pack_size": "56",
+    "price_concession_pence": 650
+  }
+},
+{
+  "model": "dmd.ncsoconcession",
+  "pk": 2,
+  "fields": {
+    "vmpp": 7917811000001102,
+    "date": "2014-11-02",
+    "drug": "Vitamin E 400unit capsules",
+    "pack_size": "30",
+    "price_concession_pence": 560
   }
 }
 ]
