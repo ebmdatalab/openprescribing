@@ -32,7 +32,7 @@
   "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
     "(p.bnf_code like'0501130R0%AG' OR p.bnf_code like '0501130R0%AA' OR p.bnf_code like '0501130R0%AD' ",
-    "OR p.bnf_code='0501015P0%AB' OR p.bnf_code='0501080W0%AE') "
+    "OR p.bnf_code like '0501015P0%AB' OR p.bnf_code like '0501080W0%AE') "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
@@ -40,6 +40,6 @@
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code like '0501130R0%AG' OR bnf_code like '0501130R0%AA' OR bnf_code like '0501130R0%AD' ",
-    "OR bnf_code like '0501015P0%AB' OR bnf_code='0501080W0%AE')  "
+    "OR bnf_code like '0501015P0%AB' OR bnf_code like '0501080W0%AE')  "
   ]
 }
