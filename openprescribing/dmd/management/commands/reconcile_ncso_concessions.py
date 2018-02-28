@@ -4,6 +4,7 @@ from django.core.management import BaseCommand
 
 from openprescribing.utils import get_input
 from dmd.models import NCSOConcession, DMDVmpp
+from gcutils.bigquery import Client
 
 
 class Command(BaseCommand):
@@ -14,6 +15,8 @@ class Command(BaseCommand):
         self.stdout.write('There are {} unreconciled concessions'.format(num))
         for concession in unreconciled_concessions:
             self.handle_concession(concession)
+
+        Client('dmd').upload_model(NCSOConcession)
 
     def handle_concession(self, concession):
         self.stdout.write('~' * 10)
