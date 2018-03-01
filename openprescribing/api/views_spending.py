@@ -212,7 +212,11 @@ def price_per_unit(request, format=None):
     # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
     # DMDProduct.
     sql = '''
-    SELECT DISTINCT
+    SELECT DISTINCT ON (
+            {dmdproduct_table}.bnf_code,
+            {ppusavings_table}.pct_id,
+            {ppusavings_table}.practice_id
+        )
         {ppusavings_table}.id AS id,
         {ppusavings_table}.date AS date,
         {ppusavings_table}.lowest_decile AS lowest_decile,

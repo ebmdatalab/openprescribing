@@ -461,10 +461,20 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         return json.loads(rsp.content)
 
     def _expected_results(self, ids):
+        # This is something of a hack; because of the SELECT DISTINCT, we
+        # expect some queries to return one of two rows, but we don't know
+        # which will be returned, and nor do we care.
+        class Verapamil:
+            def __eq__(self, other):
+                return other in [
+                    "Verapamil 160mg tablets",
+                    "Verapamil 160mg tablets (dupe)",
+                ]
+
         expected = [{
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": "P87629",
@@ -479,7 +489,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": None,
@@ -524,7 +534,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": "N84014",
@@ -539,7 +549,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": None,
