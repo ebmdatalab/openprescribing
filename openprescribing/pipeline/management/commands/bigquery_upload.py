@@ -80,14 +80,6 @@ class Command(BaseCommand):
             schemas.ccgs_transform
         )
 
-        table = client.get_table('ppu_savings')
-        columns = [field.name for field in schemas.PPU_SAVING_SCHEMA]
-        table.insert_rows_from_pg(
-            models.PPUSaving,
-            columns,
-            schemas.ppu_savings_transform
-        )
-
         table = client.get_table('prescribing_' + date.strftime('%Y_%m'))
         sql = '''SELECT * FROM {hscic}.prescribing
         WHERE month = TIMESTAMP('{date}')'''
