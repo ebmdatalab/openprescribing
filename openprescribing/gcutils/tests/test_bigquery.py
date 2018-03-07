@@ -14,7 +14,7 @@ from frontend.models import PCT
 class BQClientTest(TestCase):
     def setUp(self):
         client = Client('test')
-        self.storage_prefix = 'test_bq_client/{}-'.format(client.dataset_name)
+        self.storage_prefix = 'test_bq_client/{}-'.format(client.dataset_id)
         client.create_dataset()
 
     def tearDown(self):
