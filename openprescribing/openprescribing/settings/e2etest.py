@@ -20,3 +20,5 @@ PIPELINE_IMPORT_LOG_PATH=os.path.join(
     SITE_ROOT, 'pipeline', 'e2e-test-data', 'log.json')
 
 SLACK_SENDING_ACTIVE = True
+
+BQ_DEFAULT_TABLE_EXPIRATION_MS = 24 * 60 * 60 * 1000  # 24 hours
