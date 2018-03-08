@@ -461,25 +461,36 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         return json.loads(rsp.content)
 
     def _expected_results(self, ids):
+        # This is something of a hack; because of the SELECT DISTINCT, we
+        # expect some queries to return one of two rows, but we don't know
+        # which will be returned, and nor do we care.
+        class Verapamil:
+            def __eq__(self, other):
+                return other in [
+                    "Verapamil 160mg tablets",
+                    "Verapamil 160mg tablets (dupe)",
+                ]
+
         expected = [{
-            "lowest_decile": 0.1,
-            "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
-            "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
-            "practice": "P87629",
-            "formulation_swap": None,
-            "pct": "03V",
-            "practice_name": "1/ST Andrews Medical Practice",
-            "date": "2014-11-01",
-            "quantity": 1,
             "id": 1,
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": Verapamil(),
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
             "possible_savings": 100.0,
             "price_concession": True,
         }, {
+            "id": 2,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": None,
@@ -488,10 +499,10 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 2,
             "possible_savings": 100.0,
             "price_concession": True,
         }, {
+            "id": 3,
             "lowest_decile": 0.1,
             "presentation": "0906050P0AAAFAF",
             "name": "Vitamin E 400unit capsules",
@@ -503,10 +514,10 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 3,
             "possible_savings": 100.0,
             "price_concession": False,
         }, {
+            "id": 4,
             "lowest_decile": 0.1,
             "presentation": "0906050P0AAAFAF",
             "name": "Vitamin E 400unit capsules",
@@ -518,13 +529,13 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 4,
             "possible_savings": 100.0,
             "price_concession": False,
         }, {
+            "id": 5,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": "N84014",
@@ -533,13 +544,13 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice_name": "Ainsdale Village Surgery",
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 5,
             "possible_savings": 100.0,
             "price_concession": True,
         }, {
+            "id": 6,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": None,
@@ -548,7 +559,6 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
-            "id": 6,
             "possible_savings": 100.0,
             "price_concession": True,
         }]

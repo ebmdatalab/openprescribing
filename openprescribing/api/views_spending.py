@@ -212,7 +212,11 @@ def price_per_unit(request, format=None):
     # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
     # DMDProduct.
     sql = '''
-    SELECT DISTINCT
+    SELECT DISTINCT ON (
+            {dmdproduct_table}.bnf_code,
+            {ppusavings_table}.pct_id,
+            {ppusavings_table}.practice_id
+        )
         {ppusavings_table}.id AS id,
         {ppusavings_table}.date AS date,
         {ppusavings_table}.lowest_decile AS lowest_decile,
@@ -225,7 +229,7 @@ def price_per_unit(request, format=None):
         {ppusavings_table}.bnf_code AS presentation,
         {practice_table}.name AS practice_name,
         {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
-        {ncsoconcession_table}.id IS NOT NULL as price_concession,
+        subquery.price_concession IS NOT NULL as price_concession,
         COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
     FROM {ppusavings_table}
     LEFT OUTER JOIN {presentation_table}
@@ -234,11 +238,12 @@ def price_per_unit(request, format=None):
         ON {ppusavings_table}.practice_id = {practice_table}.code
     LEFT OUTER JOIN {dmdproduct_table}
         ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
-    LEFT OUTER JOIN {dmdvmpp_table}
-        ON {dmdproduct_table}.vpid = {dmdvmpp_table}.vpid
-    LEFT OUTER JOIN {ncsoconcession_table}
-        ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
-        AND {ppusavings_table}.date = {ncsoconcession_table}.date
+    LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
+                     FROM {dmdvmpp_table}
+                     INNER JOIN {ncsoconcession_table}
+                         ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
+                     WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
+        ON {dmdproduct_table}.vpid = subquery.vpid
     WHERE
         {ppusavings_table}.date = %(date)s
         AND {dmdproduct_table}.concept_class = 1'''
