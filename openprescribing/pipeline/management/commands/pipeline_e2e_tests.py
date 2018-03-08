@@ -5,7 +5,6 @@ import shutil
 
 from django.core.management import BaseCommand, CommandError
 from django.conf import settings
-from django.test import override_settings
 
 from django.core.management import call_command
 from django.db import connection
@@ -31,12 +30,13 @@ class Command(BaseCommand):
             run_end_to_end()
         except:
             import traceback
-            msg = 'End-to-end test failed:\n\n'
+            msg = 'End-to-end test failed (seed: %s)\n\n' % settings.BQ_NONCE
             msg += traceback.format_exc()
             notify_slack(msg)
             raise
 
-        notify_slack('Pipeline tests ran to completion')
+        msg = 'Pipeline tests ran to completion (seed: %s)' % settings.BQ_NONCE
+        notify_slack(msg)
 
 
 def run_end_to_end():
