@@ -95,6 +95,10 @@ class Client(object):
 
         return Table(table_ref, self)
 
+    def delete_table(self, table_id):
+        table_ref = self.dataset.table(table_id)
+        self.gcbq_client.delete_table(table_ref)
+
     def get_table(self, table_id):
         table_ref = self.dataset.table(table_id)
         return Table(table_ref, self)
@@ -300,6 +304,8 @@ class Table(object):
         self.run_job('load_table_from_uri', args, options, default_options)
 
     def export_to_storage(self, storage_prefix, **options):
+        self.get_gcbq_table()
+
         default_options = {
             'compression': 'GZIP',
         }
@@ -325,12 +331,15 @@ class Table(object):
 
 class Results(object):
     def __init__(self, gcbq_row_iterator):
-        self.gcbq_row_iterator = gcbq_row_iterator
+        self._rows = list(gcbq_row_iterator)
 
     @property
     def rows(self):
-        for row in self.gcbq_row_iterator:
-            yield row.values()
+        return [row.values() for row in self._rows]
+
+    @property
+    def rows_as_dicts(self):
+        return [dict(row) for row in self._rows]
 
 
 class TableExporter(object):
@@ -387,9 +396,7 @@ def row_to_dict(row, field_names):
 
 
 def results_to_dicts(results):
-    field_names = [field.name for field in results.schema]
-    for row in results.rows:
-        yield row_to_dict(row, field_names)
+    return results.rows_as_dicts
 
 
 def build_schema(*fields):
