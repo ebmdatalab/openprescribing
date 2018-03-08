@@ -1,6 +1,6 @@
 # min hour day/month month day/week
 
-00 01 * * * hello /webapps/openprescribing/deploy/run_pipeline_e2e_tests.sh
+00 01 * * * hello /webapps/openprescribing/deploy/run_pipeline_e2e_tests.sh >$(mktemp -t e2e-$(date +%Y-%m-%d)-XXXX.log)
 00 02 * * * hello /webapps/openprescribing/deploy/fetch_and_import_ncso_concessions.sh
 00 03 * * * hello /webapps/openprescribing/deploy/fetch_drug_tariff.sh
 00 04 * * * hello /webapps/openprescribing/deploy/clean_up_bq_test_data.sh
