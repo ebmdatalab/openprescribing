@@ -13,7 +13,16 @@
   </p>
 {% else %}
   <h2>Prescribing measures</h2>
-  <p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+  <p>
+    We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
+    These are indicative only, and should be approached with caution.
+    {% if entity_type == 'practice' %}
+    Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
+    {% else %}
+    Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
+    {% endif %}
+    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
+  </p>
 {% endif %}
 
   <div class="row">
