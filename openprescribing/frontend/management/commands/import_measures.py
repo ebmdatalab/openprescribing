@@ -516,8 +516,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'global_deciles_ccgs',
             self.globals_table_name,
-            context,
-            legacy=True
+            context
         )
 
     def calculate_cost_savings_for_ccgs(self):
