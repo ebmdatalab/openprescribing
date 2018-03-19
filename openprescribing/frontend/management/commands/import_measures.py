@@ -484,8 +484,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'ccg_percent_rank',
             self.ccg_table_name,
-            {},
-            legacy=True
+            {}
         )
 
     def calculate_global_centiles_for_ccgs(self):
