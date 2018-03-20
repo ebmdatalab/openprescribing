@@ -1,0 +1,47 @@
+{
+  "name": "Prescribing of tamoxifen",
+  "title": [
+    "Prescribing of tamoxifen"
+  ],
+  "description": [
+    "Number of Average Daily Quantities (ADQs) for tamoxifen (20mg/day) ",
+    "per 1000 female population aged 35-74."
+  ],
+  "why_it_matters": [
+    "Alongside its use as a cancer treatment, in 2013 ",
+    "<a href='https://www.nice.org.uk/guidance/cg164'>NICE recommended</a> ",
+    "that tamoxifen should also be prescribed for chemoprevention of breast cancer ",
+    "for women at increased risk. ",
+   "Improving the use of preventative therapies was also reiterated in England's ",
+    "<a href='https://www.cancerresearchuk.org/sites/default/files/achieving_world-class_cancer_outcomes_-_a_strategy_for_england_2015-2020.pdf'>Cancer Strategy</a> ",
+    "for 2015-2020. ",
+    "This measure accompanies our paper investigating the national response to these guidelines, ",
+    "published in the British Journal of Cancer."
+  ],
+  "numerator_short": "Tamoxifen ADQs",
+  "denominator_short": "1000 female patients aged 35-74",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": ["core"],
+  "numerator_columns": [
+    "SUM(quantity/ CASE WHEN bnf_name LIKE '%Oral%' THEN 10 ",
+    "WHEN bnf_name LIKE '%Liq%' THEN 10 ",
+    "WHEN RTRIM(bnf_name) LIKE '%10mg' THEN 2 ",
+    "WHEN RTRIM(bnf_name) LIKE '%40mg' THEN 0.5 ",
+    "ELSE 1 END) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(SUBSTR(bnf_code,1,9) = '0803041S0')  "
+  ],
+  "denominator_columns": [
+    "(max(female_35_44) + max(female_45_54) + max(female_55_64) + max(female_65_74)) ",
+    "/ 1000.0) AS denominator "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    " max(female_35_44) > 10 "
+  ]
+}
