@@ -31,8 +31,8 @@ class Command(BaseCommand):
         rows = wb.active.rows
 
         headers = rows[0]
-        assert headers[0].value.lower() == 'bnf code'
-        assert headers[2].value.lower() == 'snomed code'
+        assert 'bnf code' in headers[0].value.lower()
+        assert 'snomed code' in headers[2].value.lower()
 
         with transaction.atomic():
             with connection.cursor() as cursor:
