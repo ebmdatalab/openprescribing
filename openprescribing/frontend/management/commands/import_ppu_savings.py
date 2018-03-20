@@ -15,6 +15,7 @@ from dmd.models import DMDProduct
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
+from frontend.bq_schemas import PPU_SAVING_SCHEMA, ppu_savings_transform
 
 SUBSTITUTIONS_SPREADSHEET = (
     'https://docs.google.com/spreadsheets/d/e/'
@@ -255,3 +256,12 @@ class Command(BaseCommand):
                 category='ppu',
                 filename='n/a',
                 current_at=options['month'])
+
+        client = Client('hscic')
+        table = client.get_or_create_table('ppu_savings', PPU_SAVING_SCHEMA)
+        columns = [field.name for field in PPU_SAVING_SCHEMA]
+        table.insert_rows_from_pg(
+            PPUSaving,
+            columns,
+            ppu_savings_transform
+        )
