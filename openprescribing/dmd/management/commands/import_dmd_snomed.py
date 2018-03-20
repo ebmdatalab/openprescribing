@@ -38,7 +38,11 @@ class Command(BaseCommand):
             with connection.cursor() as cursor:
                 for row in rows[1:]:  # skip header
                     bnf_code = row[0].value
+                    if bnf_code[0] == "'":
+                        bnf_code = bnf_code[1:]
                     snomed_code = row[2].value
+                    if snomed_code[0] == "'":
+                        snomed_code = snomed_code[1:]
                     sql = "UPDATE dmd_product SET BNF_CODE = %s WHERE DMDID = %s "
                     cursor.execute(sql.lower(), [bnf_code, snomed_code])
                     rowcount = cursor.rowcount
