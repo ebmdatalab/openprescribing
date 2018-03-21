@@ -1,0 +1,186 @@
+---
+- name: Update Apt Cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install system packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - ca-certificates
+    - nodejs
+    - binutils
+    - libproj-dev
+    - gdal-bin
+    - libgeoip1
+    - libgeos-c1
+    - git-core
+    - vim
+    - sudo
+    - screen
+    - supervisor
+    - libpq-dev
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - python-gdal
+    - emacs
+    - nginx
+    - build-essential
+    - libssl-dev
+    - libffi-dev
+    - unattended-upgrades
+    - libblas-dev
+    - liblapack-dev
+    - libatlas-base-dev
+    - gfortran
+    - libxml2-dev
+    - libxslt1-dev
+    - npm
+    - git
+    - virtualenvwrapper
+    - libfontconfig1  # for phantomjs
+    - libfontconfig1-dev
+    - firefox-esr
+    - xvfb
+
+- name: Add postgres apt key
+  become: yes
+  apt_key:
+    url: http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc
+
+- name: ensure postgres apt repository exists
+  become: yes
+  apt_repository:
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main'
+    update_cache: yes
+
+- name: Install database packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - postgresql-9.5-postgis-2.2
+    - libpq-dev # Required for Ansible to interact with postgres
+    - python-psycopg2 # Required for Ansible to interact with postgres
+
+- name: Add user to www-data
+  become: yes
+  user:
+    name: "{{ USER }}"
+    groups: www-data
+
+- name: Install virtualenv
+  become: yes
+  pip:
+    name: virtualenv
+
+- name: Allow password authentication for local socket users and allow connections other than localhost
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: /etc/postgresql/9.5/main/{{ item }}
+    force: yes
+  with_items:
+    - pg_hba.conf
+    - postgresql.conf
+  notify:
+      - Restart Postgres
+
+- name: Ensure postgres running
+  become: yes
+  service: name=postgresql state=started
+
+- name: Allow password authentication for local socket users
+  become: yes
+  copy: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf force=yes
+  notify:
+      - Restart Postgres
+
+- name: Create Database
+  become: yes
+  # PostgreSQL will only allow users to login from the postgres account by default
+  become_user: postgres
+  postgresql_db: name={{ db_name }}
+
+- name: Add postgis extension
+  become: yes
+  become_user: postgres
+  postgresql_ext: name=postgis db={{ db_name }}
+
+- name: Create User
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    state: present
+    role_attr_flags: SUPERUSER,CREATEDB
+
+- name: Give user permission for log folder
+  become: yes
+  file:
+    path: "{{ log_path }}"
+    state: directory
+    mode: 0777
+    owner: "{{ USER }}"
+    recurse: yes
+    group: "{{ USER }}"
+
+- name: Install nvm
+  shell: >
+    wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | sh
+
+- name: Install node and set version
+  shell: >
+    /bin/bash -c "source ~/.nvm/nvm.sh && nvm install node"
+
+# use wget as ansible's get_url has some issues with ssl n OSX
+# https://github.com/ansible/ansible/issues/33417
+- name: Get phantomjs
+  become: yes
+  shell: >
+    wget -q -O phantomjs-2.1.1-linux-x86_64.tar.bz2
+    https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+  args:
+    chdir: /usr/local/share
+
+- name: Extract phantomjs
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: /usr/local/share/phantomjs-2.1.1-linux-x86_64.tar.bz2
+    dest: /usr/local/share
+
+- name: Symlink phantomjs
+  become: yes
+  file:
+    state: link
+    src: /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs
+    path: /usr/local/bin/phantomjs
+
+- name: Get geckodriver
+  become: yes
+  shell: >
+    wget -q -O geckodriver-v0.16.1-linux64.tar.gz
+    https://github.com/mozilla/geckodriver/releases/download/v0.16.1/geckodriver-v0.16.1-linux64.tar.gz
+  args:
+    chdir: /usr/local/share
+
+- name: Extract geckodriver
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: /usr/local/share/geckodriver-v0.16.1-linux64.tar.gz
+    dest: /usr/local/share
+
+- name: Symlink geckodriver
+  become: yes
+  file:
+    state: link
+    src: /usr/local/share/geckodriver
+    path: /usr/local/bin/geckodriver
