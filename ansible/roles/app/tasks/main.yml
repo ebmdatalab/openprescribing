@@ -1,0 +1,102 @@
+---
+- name: Setup Virtualenv and upgrade setuptools and pip
+  pip:
+    name: "{{ item }}"
+    state: latest
+    virtualenv: "{{ virtualenv_path }}"
+  with_items:
+    - setuptools
+    - pip
+
+- name: install virtualenvwrapper
+  pip:
+    name: virtualenvwrapper
+
+- name: Create the .virtualenvs directory
+  become: yes
+  file:
+    state: directory
+    path: "{{ HOME }}/.virtualenvs"
+    owner: "{{ USER }}"
+    group: "{{ USER }}"
+
+- name: Connect virtualenvwrapper
+  file:
+    state: link
+    src: "{{ virtualenv_path }}"
+    path: "{{ HOME }}/.virtualenvs/openprescribing"
+    owner: "{{ USER }}"
+    group: "{{ USER }}"
+
+- name: Ensure cd to dir after workon
+  lineinfile:
+    dest: "{{ HOME }}/.virtualenvs/postactivate"
+    line: "cd {{ project_root_path }}"
+    create: yes
+
+- name: Install requirements
+  pip:
+    virtualenv: "{{ virtualenv_path }}"
+    requirements: "{{ requirements_path }}/local.txt"
+    extra_args: --process-dependency-links
+
+- name: Install jshint and less
+  become: yes
+  npm:
+    name: "{{ item }}"
+    path: "{{ project_root_path }}/media/js"
+    global: yes
+  with_items:
+    - jshint
+    - less
+
+- name: Install browserify with version range (for browserify-shim)
+  become: yes
+  npm:
+    name: browserify
+    path: "{{ project_root_path }}/media/js"
+    global: yes
+    version: '>= 2.3.0 <4'
+
+- name: Install packages based on package.json
+  npm:
+    path: "{{ project_root_path }}/media/js"
+
+- name: Install ipdb (pinned for python 2.7)
+  pip:
+    name: ipdb
+    virtualenv: "{{ virtualenv_path }}"
+    version: 0.10.2
+
+- name: Make manage.py executable
+  file:
+    path: "{{ project_root_path }}/manage.py"
+    mode: 0777
+
+# Configure environment vars --------------------------------------------------
+- name: Install envdir globally
+  become: yes
+  pip: name=envdir
+
+- name: Create envdir
+  file: path={{ project_root_path }}/envdir state=directory
+
+- name: Add envdirs to envdir
+  copy:
+    dest: "{{ project_root_path }}/envdir/{{ item.name }}"
+    content: "{{ item.content }}"
+  with_items: "{{ envvars }}"
+
+- name: Add envshell shortcut
+  lineinfile:
+    dest: "{{ HOME }}/.bashrc"
+    line: alias envsh="envshell {{ project_root_path }}/envdir"
+    mode: 0644
+    create: yes
+
+- name: Django migrate
+  become: yes
+  become_user: "{{ USER }}"
+  shell: ". {{ virtualenv_path }}/bin/activate && envdir envdir ./manage.py migrate"
+  args:
+    chdir: "{{ project_root_path }}"
