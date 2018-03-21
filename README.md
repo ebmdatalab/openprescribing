@@ -16,14 +16,17 @@ using docker.
 
 Install `docker` and `docker-compose` per
 [the instructions](https://docs.docker.com/compose/install/) (you need
-at least Compose 1.6.0+ and Docker Engine of version 1.10.0+.)
+at least Compose 1.9.0+ and Docker Engine of version 1.12.0+.)
 
 In the project root, run
 
     docker-compose run test
 
-This will pull down the relevant images, and run the tests.  In our CI
-system, we also run checks against the production environment, which
+This will pull down the relevant images, and run the tests.  In order for all
+tests to run successfully, you will also need to decrypt the credentials file
+openprescribing/google-credentials.json.
+
+In our CI system, we also run checks against the production environment, which
 you can reproduce with
 
     docker-compose run test-production
