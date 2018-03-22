@@ -38,10 +38,10 @@
   ],
   "denominator_columns": [
     "(max(female_35_44) + max(female_45_54) + max(female_55_64) + max(female_65_74)) ",
-    "/ 1000.0) AS denominator "
+    "/ 1000.0 AS denominator "
   ],
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
-    " max(female_35_44) > 10 "
+    " female_35_44 > 10 "
   ]
 }
