@@ -31,14 +31,18 @@ class Command(BaseCommand):
         rows = wb.active.rows
 
         headers = rows[0]
-        assert headers[0].value.lower() == 'bnf code'
-        assert headers[2].value.lower() == 'snomed code'
+        assert 'bnf code' in headers[0].value.lower()
+        assert 'snomed code' in headers[2].value.lower()
 
         with transaction.atomic():
             with connection.cursor() as cursor:
                 for row in rows[1:]:  # skip header
                     bnf_code = row[0].value
+                    if bnf_code[0] == "'":
+                        bnf_code = bnf_code[1:]
                     snomed_code = row[2].value
+                    if snomed_code[0] == "'":
+                        snomed_code = snomed_code[1:]
                     sql = "UPDATE dmd_product SET BNF_CODE = %s WHERE DMDID = %s "
                     cursor.execute(sql.lower(), [bnf_code, snomed_code])
                     rowcount = cursor.rowcount
