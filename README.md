@@ -90,6 +90,10 @@ Install library dependencies (current as of Debian Jessie):
 
     sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
 
+Ensure pip and setuptools are up to date:
+
+    pip install -U pip setuptools
+
 Install Python dependencies in development:
 
     pip install -r requirements/local.txt --process-dependency-links
@@ -98,12 +102,13 @@ Or in production:
 
     pip install -r requirements.txt --process-dependency-links
 
-And then install JavaScript dependencies. You'll need a version of
-nodejs greater than v0.10.11:
+And then install JavaScript dependencies. Make sure you have the latest version
+of nodejs:
 
     cd openprescribing/media/js
     npm install -g browserify
     npm install -g jshint
+    npm install -g less
     npm install
 
 To generate monthly alert emails (and run the tests for those) you'll
@@ -112,7 +117,7 @@ it from [here](http://phantomjs.org/download.html).
 
 ### Create database and env variables
 
-Set up a Postgres 9.4 database (required for `jsonb` type), with
+Set up a Postgres 9.5 database (required for `jsonb` type), with
 PostGIS extensions, and create a superuser for the database.
 
     createuser -s <myuser>
