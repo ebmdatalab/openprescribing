@@ -59,13 +59,13 @@
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
     "cookies-js": "1.2.3",
+    "downloadjs": "^1.4.7",
     "handlebars": "4.0.5",
     "humanize": "^0.0.9",
     "jquery": "^1.11.3",
     "mapbox.js": "^2.2.1",
     "moment": "^2.10.3",
-    "underscore": "^1.8.3",
-    "downloadjs": "^1.4.7"
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
@@ -76,7 +76,7 @@
     "eslint-config-google": "latest",
     "less": "^2.5.1",
     "mocha": "^2.2.5",
-    "uglifyjs": "^2.4.10",
+    "uglify-js": "^3.3.16",
     "watchify": "^3.2.1",
     "envify": "^3.4.1"
   }
