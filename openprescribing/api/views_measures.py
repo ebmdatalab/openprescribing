@@ -79,7 +79,7 @@ def measure_numerators_by_org(request, format=None):
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
-        this_month - relativedelta(months=1)).strftime('%Y-%m-01')
+        this_month - relativedelta(months=2)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_can_be_queried():
         # Awkwardly, because the column names in the prescriptions table
