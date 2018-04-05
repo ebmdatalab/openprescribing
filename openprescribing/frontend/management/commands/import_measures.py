@@ -559,8 +559,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'global_cost_savings',
             self.globals_table_name,
-            {},
-            legacy=True
+            {}
         )
 
     def write_global_centiles_to_database(self):
