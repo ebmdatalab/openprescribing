@@ -1,11 +1,8 @@
 from __future__ import print_function
 
-from collections import defaultdict
 import string
 import subprocess
 import tempfile
-import time
-import uuid
 
 from google.cloud import bigquery as gcbq
 from google.cloud.exceptions import Conflict, NotFound
@@ -36,21 +33,39 @@ except AttributeError:
 
 class Client(object):
     def __init__(self, dataset_key=None):
-        self.project_name = settings.BQ_PROJECT
+        self.project = settings.BQ_PROJECT
 
         # gcbq expects an environment variable called
         # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
         # containing the credentials to access Google Cloud Services.
-        self.gcbq_client = gcbq.Client(project=self.project_name)
+        self.gcbq_client = gcbq.Client(project=self.project)
 
         self.dataset_key = dataset_key
 
         if dataset_key is None:
-            self.dataset_name = None
+            self.dataset_id = None
             self.dataset = None
         else:
-            self.dataset_name = DATASETS[dataset_key]
-            self.dataset = self.gcbq_client.dataset(self.dataset_name)
+            self.dataset_id = DATASETS[dataset_key]
+            dataset_ref = self.gcbq_client.dataset(self.dataset_id)
+            self.dataset = gcbq.Dataset(dataset_ref)
+
+    def run_job(self, method_name, args, config_opts, config_default_opts):
+        job_config = {
+            'extract_table': gcbq.ExtractJobConfig,
+            'load_table_from_file': gcbq.LoadJobConfig,
+            'load_table_from_uri': gcbq.LoadJobConfig,
+            'query': gcbq.QueryJobConfig,
+        }[method_name]()
+
+        for k, v in config_default_opts.items():
+            setattr(job_config, k, v)
+        for k, v in config_opts.items():
+            setattr(job_config, k, v)
+
+        method = getattr(self.gcbq_client, method_name)
+        job = method(*args, job_config=job_config)
+        return job.result()
 
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
@@ -59,47 +74,52 @@ class Client(object):
         self.dataset.location = settings.BQ_LOCATION
         self.dataset.default_table_expiration_ms =\
             settings.BQ_DEFAULT_TABLE_EXPIRATION_MS
-        self.dataset.create()
+        self.gcbq_client.create_dataset(self.dataset)
 
     def delete_dataset(self):
-        for table in self.dataset.list_tables():
-            table.delete()
-        self.dataset.delete()
+        for table_list_item in self.gcbq_client.list_tables(self.dataset):
+            self.gcbq_client.delete_table(table_list_item.reference)
+        self.gcbq_client.delete_dataset(self.dataset)
 
-    def create_table(self, table_name, schema):
-        table = self.dataset.table(table_name, schema)
+    def create_table(self, table_id, schema):
+        table_ref = self.dataset.table(table_id)
+        table = gcbq.Table(table_ref, schema=schema)
 
         try:
-            table.create()
+            self.gcbq_client.create_table(table)
         except NotFound as e:
             if 'Not found: Dataset' not in str(e):
                 raise
             self.create_dataset()
-            table.create()
+            self.gcbq_client.create_table(table)
 
-        return Table(table, self.project_name)
+        return Table(table_ref, self)
 
-    def get_table(self, table_name):
-        table = self.dataset.table(table_name)
-        return Table(table, self.project_name)
+    def delete_table(self, table_id):
+        table_ref = self.dataset.table(table_id)
+        self.gcbq_client.delete_table(table_ref)
 
-    def get_or_create_table(self, table_name, schema):
+    def get_table(self, table_id):
+        table_ref = self.dataset.table(table_id)
+        return Table(table_ref, self)
+
+    def get_or_create_table(self, table_id, schema):
         try:
-            table = self.create_table(table_name, schema)
+            table = self.create_table(table_id, schema)
         except Conflict:
-            table = self.get_table(table_name)
+            table = self.get_table(table_id)
         return table
 
-    def create_storage_backed_table(self, table_name, schema, gcs_path):
+    def create_storage_backed_table(self, table_id, schema, gcs_path):
         gcs_client = StorageClient()
         bucket = gcs_client.bucket()
         if bucket.get_blob(gcs_path) is None:
             raise RuntimeError('Could not find blob at {}'.format(gcs_path))
 
-        gcs_uri = 'gs://{}/{}'.format(self.project_name, gcs_path)
+        gcs_uri = 'gs://{}/{}'.format(self.project, gcs_path)
 
         resource = {
-            'tableReference': {'tableId': table_name},
+            'tableReference': {'tableId': table_id},
             'externalDataConfiguration': {
                 'csvOptions': {'skipLeadingRows': '1'},
                 'sourceFormat': 'CSV',
@@ -109,8 +129,8 @@ class Client(object):
         }
 
         path = '/projects/{}/datasets/{}/tables'.format(
-            self.project_name,
-            self.dataset_name
+            self.project,
+            self.dataset_id
         )
 
         try:
@@ -129,41 +149,38 @@ class Client(object):
                 data=resource
             )
 
-        return self.get_table(table_name)
+        return self.get_table(table_id)
 
-    def create_table_with_view(self, table_name, sql, legacy):
+    def create_table_with_view(self, table_id, sql, legacy):
         assert '{project}' in sql
-        sql = interpolate_sql(sql, project=self.project_name)
-        table = self.dataset.table(table_name)
+        sql = interpolate_sql(sql, project=self.project)
+        table_ref = self.dataset.table(table_id)
+        table = gcbq.Table(table_ref)
         table.view_query = sql
         table.view_use_legacy_sql = legacy
+
         try:
-            table.create()
+            self.gcbq_client.create_table(table)
         except NotFound as e:
             if 'Not found: Dataset' not in str(e):
                 raise
             self.create_dataset()
-            table.create()
-        return Table(table, self.project_name)
+            self.gcbq_client.create_table(table)
+
+        return Table(table_ref, self)
 
     def query(self, sql, legacy=False, **options):
-        sql = interpolate_sql(sql)
-        query = self.gcbq_client.run_sync_query(sql)
-        set_options(query, options)
-        query.use_legacy_sql = legacy
-
-        query.run()
-
-        # The call to .run() might return before results are actually ready.
-        # See https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query#timeoutMs
-        wait_for_job(query.job)
-
-        return query
+        default_options = {
+            'use_legacy_sql': legacy,
+        }
+        args = [interpolate_sql(sql)]
+        iterator = self.run_job('query', args, options, default_options)
+        return Results(iterator)
 
     def query_into_dataframe(self, sql, legacy=False):
         sql = interpolate_sql(sql)
         kwargs = {
-            'project_id': self.project_name,
+            'project_id': self.project,
             'verbose': False,
             'dialect': 'legacy' if legacy else 'standard',
         }
@@ -174,14 +191,14 @@ class Client(object):
                 print(n + 1, line)
             raise
 
-    def upload_model(self, model, table_name=None):
-        if table_name is None:
-            table_name = model._meta.db_table
+    def upload_model(self, model, table_id=None):
+        if table_id is None:
+            table_id = model._meta.db_table
             if self.dataset_key == 'dmd':
-                assert table_name.startswith('dmd_')
-                table_name = table_name[4:]
+                assert table_id.startswith('dmd_')
+                table_id = table_id[4:]
         schema = build_schema_from_model(model)
-        table = self.get_or_create_table(table_name, schema)
+        table = self.get_or_create_table(table_id, schema)
         columns = [
             f.db_column or f.attname
             for f in model._meta.fields
@@ -202,23 +219,41 @@ class Client(object):
 
 
 class Table(object):
-    def __init__(self, gcbq_table, project_name):
-        self.gcbq_table = gcbq_table
-        self.gcbq_client = gcbq_table._dataset._client
-        self.project_name = project_name
-        self.name = gcbq_table.name
-        self.dataset_name = gcbq_table._dataset.name
+    def __init__(self, gcbq_table_ref, client):
+        self.gcbq_table_ref = gcbq_table_ref
+        self.client = client
+
+        self.gcbq_client = client.gcbq_client
+        try:
+            self.get_gcbq_table()
+        except NotFound:
+            self.gcbq_table = None
+
+        self.table_id = gcbq_table_ref.table_id
+        self.dataset_id = gcbq_table_ref.dataset_id
+        self.project = gcbq_table_ref.project
 
     @property
     def qualified_name(self):
-        return '{}.{}'.format(self.dataset_name, self.name)
+        return '{}.{}'.format(self.dataset_id, self.table_id)
+
+    def run_job(self, *args):
+        return self.client.run_job(*args)
+
+    def get_gcbq_table(self):
+        self.gcbq_table = self.gcbq_client.get_table(self.gcbq_table_ref)
 
     def get_rows(self):
-        self.gcbq_table.reload()
-        return self.gcbq_table.fetch_data()
+        if self.gcbq_table is None:
+            self.get_gcbq_table()
+
+        for row in self.gcbq_client.list_rows(self.gcbq_table):
+            yield row.values()
 
     def get_rows_as_dicts(self):
-        self.gcbq_table.reload()
+        if self.gcbq_table is None:
+            self.get_gcbq_table()
+
         field_names = [field.name for field in self.gcbq_table.schema]
 
         for row in self.get_rows():
@@ -226,24 +261,18 @@ class Table(object):
 
     def insert_rows_from_query(self, sql, substitutions=None, legacy=False,
                                **options):
-        substitutions = substitutions or {}
-        sql = interpolate_sql(sql, **substitutions)
         default_options = {
             'use_legacy_sql': legacy,
             'allow_large_results': True,
             'write_disposition': 'WRITE_TRUNCATE',
-            'destination': self.gcbq_table,
+            'destination': self.gcbq_table_ref,
         }
 
-        job = self.gcbq_client.run_async_query(
-            options.pop('job_name', gen_job_name()),
-            sql
-        )
-        set_options(job, options, default_options)
+        substitutions = substitutions or {}
+        sql = interpolate_sql(sql, **substitutions)
 
-        job.begin()
-
-        wait_for_job(job)
+        args = [sql]
+        self.run_job('query', args, options, default_options)
 
     def insert_rows_from_csv(self, csv_path, **options):
         default_options = {
@@ -251,13 +280,10 @@ class Table(object):
             'write_disposition': 'WRITE_TRUNCATE',
         }
 
-        merge_options(options, default_options)
-
         with open(csv_path, 'rb') as f:
-            # This starts a job, so we don't need to call job.begin()
-            job = self.gcbq_table.upload_from_file(f, **options)
-
-        wait_for_job(job)
+            args = [f, self.gcbq_table_ref]
+            self.run_job('load_table_from_file', args, options,
+                         default_options)
 
     def insert_rows_from_pg(self, model, columns, transformer=None):
         table_dumper = TableDumper(model, columns, transformer)
@@ -265,40 +291,55 @@ class Table(object):
         with tempfile.NamedTemporaryFile() as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
-            self.insert_rows_from_csv(f.name)
+            self.insert_rows_from_csv(f.name, foo='bar')
 
     def insert_rows_from_storage(self, gcs_path, **options):
         default_options = {
             'write_disposition': 'WRITE_TRUNCATE',
         }
 
-        gcs_uri = 'gs://{}/{}'.format(self.project_name, gcs_path)
+        gcs_uri = 'gs://{}/{}'.format(self.project, gcs_path)
 
-        job = self.gcbq_client.load_table_from_storage(
-            gen_job_name(),
-            self.gcbq_table, gcs_uri
+        args = [gcs_uri, self.gcbq_table_ref]
+        self.run_job('load_table_from_uri', args, options, default_options)
+
+    def export_to_storage(self, storage_prefix, **options):
+        self.get_gcbq_table()
+
+        default_options = {
+            'compression': 'GZIP',
+        }
+
+        destination_uri = 'gs://{}/{}*.csv.gz'.format(
+            self.project,
+            storage_prefix,
         )
 
-        set_options(job, options, default_options)
-
-        job.begin()
-
-        wait_for_job(job)
+        args = [self.gcbq_table, destination_uri]
+        self.run_job('extract_table', args, options, default_options)
 
     def delete_all_rows(self, **options):
-        sql = 'DELETE FROM {} WHERE true'.format(self.qualified_name)
-
         default_options = {
             'use_legacy_sql': False,
         }
 
-        job = self.gcbq_client.run_async_query(gen_job_name(), sql)
+        sql = 'DELETE FROM {} WHERE true'.format(self.qualified_name)
 
-        set_options(job, options, default_options)
+        args = [sql]
+        self.run_job('query', args, options, default_options)
 
-        job.begin()
 
-        wait_for_job(job)
+class Results(object):
+    def __init__(self, gcbq_row_iterator):
+        self._rows = list(gcbq_row_iterator)
+
+    @property
+    def rows(self):
+        return [row.values() for row in self._rows]
+
+    @property
+    def rows_as_dicts(self):
+        return [dict(row) for row in self._rows]
 
 
 class TableExporter(object):
@@ -309,26 +350,7 @@ class TableExporter(object):
         self.bucket = storage_client.bucket()
 
     def export_to_storage(self, **options):
-        default_options = {
-            'compression': 'GZIP',
-        }
-
-        destination_uri = 'gs://{}/{}*.csv.gz'.format(
-            self.table.project_name,
-            self.storage_prefix,
-        )
-
-        job = self.table.gcbq_client.extract_table_to_storage(
-            options.pop('job_name', gen_job_name()),
-            self.table.gcbq_table,
-            destination_uri,
-        )
-
-        set_options(job, options, default_options)
-
-        job.begin()
-
-        wait_for_job(job)
+        self.table.export_to_storage(self.storage_prefix, **options)
 
     def storage_blobs(self):
         for blob in self.bucket.list_blobs(prefix=self.storage_prefix):
@@ -360,52 +382,6 @@ class TableExporter(object):
             blob.delete()
 
 
-def wait_for_job(job, timeout_s=3600):
-    t0 = time.time()
-
-    # Would like to use `while not job.done():` but cannot until we upgrade
-    # version of g.c.bq.
-    while True:
-        job.reload()
-        if job.state == 'DONE':
-            break
-
-        if time.time() - t0 > timeout_s:
-            msg = 'Timeout waiting for job {} after {} second'.format(
-                job.name, timeout_s
-            )
-            raise TimeoutError(msg)
-
-        time.sleep(1)
-
-    if job.errors is not None:
-        raise JobError(job.errors)
-
-
-class TimeoutError(StandardError):
-    pass
-
-
-class JobError(StandardError):
-    pass
-
-
-def set_options(thing, options, default_options=None):
-    if default_options is not None:
-        merge_options(options, default_options)
-    for k, v in options.items():
-        setattr(thing, k, v)
-
-
-def merge_options(options, default_options):
-    for k, v in default_options.items():
-        options.setdefault(k, v)
-
-
-def gen_job_name():
-    return uuid.uuid4().hex
-
-
 def row_to_dict(row, field_names):
     """Convert a row from bigquery into a dictionary, and convert NaN to
     None
@@ -420,9 +396,7 @@ def row_to_dict(row, field_names):
 
 
 def results_to_dicts(results):
-    field_names = [field.name for field in results.schema]
-    for row in results.rows:
-        yield row_to_dict(row, field_names)
+    return results.rows_as_dicts
 
 
 def build_schema(*fields):

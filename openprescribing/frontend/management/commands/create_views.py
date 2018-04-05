@@ -82,7 +82,7 @@ class Command(BaseCommand):
                 sql = f.read()
 
             substitutions = {'this_month': prescribing_date}
-            args = [table.name, sql, substitutions]
+            args = [table.table_id, sql, substitutions]
             pool.apply_async(query_and_export, args)
 
         pool.close()
@@ -99,7 +99,8 @@ class Command(BaseCommand):
         because we hit resource limits when we try to do so.  See #698 and #711
         for discussion.
         '''
-        storage_prefix = 'hscic/views/{}-'.format(table.name)
+        table_id = table.table_id
+        storage_prefix = 'hscic/views/{}-'.format(table_id)
         exporter = TableExporter(table, storage_prefix)
 
         raw_file = tempfile.NamedTemporaryFile()
@@ -107,26 +108,26 @@ class Command(BaseCommand):
         sorted_file = tempfile.NamedTemporaryFile()
         sorted_path = sorted_file.name
 
-        self.log('Downloading {} to {}'.format(table.name, raw_path))
+        self.log('Downloading {} to {}'.format(table_id, raw_path))
         exporter.download_from_storage_and_unzip(raw_file)
 
-        self.log('Sorting {} to {}'.format(table.name, sorted_path))
+        self.log('Sorting {} to {}'.format(table_id, sorted_path))
         cmd = 'head -1 {} > {}'.format(raw_path, sorted_path)
         subprocess.check_call(cmd, shell=True)
 
         field_names = sorted_file.readline().strip().split(',')
 
-        cmd = generate_sort_cmd(table.name, field_names, raw_path, sorted_path)
+        cmd = generate_sort_cmd(table_id, field_names, raw_path, sorted_path)
         subprocess.check_call(cmd, shell=True)
 
         copy_sql = "COPY {}({}) FROM STDIN WITH (FORMAT CSV)".format(
-            table.name, ','.join(field_names))
+            table_id, ','.join(field_names))
 
         with connection.cursor() as cursor:
-            with utils.constraint_and_index_reconstructor(table.name):
-                self.log("Deleting from table %s..." % table.name)
-                cursor.execute("DELETE FROM %s" % table.name)
-                self.log("Copying CSV to %s..." % table.name)
+            with utils.constraint_and_index_reconstructor(table_id):
+                self.log("Deleting from table %s..." % table_id)
+                cursor.execute("DELETE FROM %s" % table_id)
+                self.log("Copying CSV to %s..." % table_id)
                 cursor.copy_expert(copy_sql, sorted_file)
 
         raw_file.close()

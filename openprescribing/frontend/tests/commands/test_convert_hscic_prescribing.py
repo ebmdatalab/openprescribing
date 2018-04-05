@@ -83,9 +83,8 @@ class ConvertHscicPrescribingTests(TestCase):
 
     def tearDown(self):
         table_name = 'raw_prescribing_data_2016_01'
-        table = BQClient('tmp_eu').get_table(table_name)
         try:
-            table.gcbq_table.delete()
+            BQClient('tmp_eu').delete_table(table_name)
         except NotFound:
             pass
 
