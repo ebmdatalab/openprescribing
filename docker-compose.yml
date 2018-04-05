@@ -54,11 +54,9 @@ services:
 
   db-dev:
     image: mdillon/postgis:latest
-    env_file: environment
   dev:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh local &&  cd openprescribing && /bin/bash -l'
-    env_file: environment
     ports:
       - "8000:8000"
     volumes:
