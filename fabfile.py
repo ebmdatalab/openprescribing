@@ -7,7 +7,10 @@ from datetime import datetime
 import json
 import os
 
+import dotenv
 import requests
+
+dotenv.read_dotenv('environment')
 
 
 env.hosts = ['web2.openprescribing.net']

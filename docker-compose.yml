@@ -2,11 +2,11 @@ version: '2'
 services:
   db-test:
     image: mdillon/postgis:latest
-    env_file: .env-test
+    env_file: environment-test
   test:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
-    env_file: .env-test
+    env_file: environment-test
     environment:
       - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
       - TRAVIS=${TRAVIS}
@@ -31,7 +31,7 @@ services:
   test-production:
     image: ebmdatalab/openprescribing-base:latest
     command: /bin/bash -c './scripts/docker_setup.sh production && cd openprescribing && python manage.py check --deploy --settings openprescribing.settings.production'
-    env_file: .env-test
+    env_file: environment-test
     environment:
       - TRAVIS=${TRAVIS}
       - TEST_SUITE=${TEST_SUITE}
@@ -54,11 +54,11 @@ services:
 
   db-dev:
     image: mdillon/postgis:latest
-    env_file: .env-dev
+    env_file: environment
   dev:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh local &&  cd openprescribing && /bin/bash -l'
-    env_file: .env-dev
+    env_file: environment
     ports:
       - "8000:8000"
     volumes:

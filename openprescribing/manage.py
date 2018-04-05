@@ -2,7 +2,11 @@
 import os
 import sys
 
+import dotenv
+
 if __name__ == "__main__":
+    dotenv.read_dotenv('../environment')
+
     if 'DJANGO_SETTINGS_MODULE' not in os.environ:
         if sys.argv[1] in ['test', 'pipeline_e2e_tests']:
             settings = 'test'
