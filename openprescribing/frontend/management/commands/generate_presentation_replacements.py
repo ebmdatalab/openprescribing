@@ -227,13 +227,13 @@ def get_csv_of_empty_classes_for_level(level):
 
     """
     temp_table = write_zero_prescribing_codes_table(level)
-    storage_prefix = 'tmp/{}'.format(temp_table.name)
+    storage_prefix = 'tmp/{}'.format(temp_table.table_id)
     exporter = TableExporter(temp_table, storage_prefix)
 
-    logger.info("Copying %s to %s" % (temp_table.name, storage_prefix))
+    logger.info("Copying %s to %s" % (temp_table.table_id, storage_prefix))
     exporter.export_to_storage()
 
-    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.table_id)
     logger.info("Downloading %s to %s" % (storage_prefix, path))
     with open(path, 'w') as f:
         exporter.download_from_storage_and_unzip(f)
