@@ -1,0 +1,202 @@
+- label: analyse
+  view_fn: frontend_views.analyse
+  pattern: r'^analyse/$'
+  example_urls:
+    - https://openprescribing.net/analyse/
+    - https://openprescribing.net/analyse/#org=CCG&numIds=0703021Q0BB&denom=nothing
+    - https://openprescribing.net/analyse/#org=CCG&numIds=0703021Q0BB&denom=star_pu.oral_antibacterials_item
+    - https://openprescribing.net/analyse/#org=CCG&numIds=0703021Q0BB&denom=total_list_size
+    - https://openprescribing.net/analyse/#org=CCG&numIds=0703021Q0BB&denomIds=0703021Q0
+    - https://openprescribing.net/analyse/#org=CCG&orgIds=11M&numIds=0703021Q0BB&denom=nothing
+    - https://openprescribing.net/analyse/#org=CCG&orgIds=11M&numIds=0703021Q0BB&denom=star_pu.oral_antibacterials_item
+    - https://openprescribing.net/analyse/#org=CCG&orgIds=11M&numIds=0703021Q0BB&denom=total_list_size
+    - https://openprescribing.net/analyse/#org=CCG&orgIds=11M&numIds=0703021Q0BB&denomIds=0703021Q0
+    - https://openprescribing.net/analyse/#org=practice&orgIds=11M&numIds=0703021Q0BB&denom=nothing
+    - https://openprescribing.net/analyse/#org=practice&orgIds=11M&numIds=0703021Q0BB&denom=star_pu.oral_antibacterials_item
+    - https://openprescribing.net/analyse/#org=practice&orgIds=11M&numIds=0703021Q0BB&denom=total_list_size
+    - https://openprescribing.net/analyse/#org=practice&orgIds=11M&numIds=0703021Q0BB&denomIds=0703021Q0
+    - https://openprescribing.net/analyse/#org=practice&orgIds=L84613&numIds=0703021Q0BB&denom=nothing
+    - https://openprescribing.net/analyse/#org=practice&orgIds=L84613&numIds=0703021Q0BB&denom=star_pu.oral_antibacterials_item
+    - https://openprescribing.net/analyse/#org=practice&orgIds=L84613&numIds=0703021Q0BB&denom=total_list_size
+    - https://openprescribing.net/analyse/#org=practice&orgIds=L84613&numIds=0703021Q0BB&denomIds=0703021Q0
+  dependencies:
+    - api_endpoints.bnf_codes
+    - api_endpoints.org_codes
+    - api_endpoints.org_details
+    - api_endpoints.org_location
+    - api_endpoints.spending_by_ccg
+    - api_endpoints.spending_by_practice
+
+- label: all_chemicals
+  view_fn: frontend_views.all_chemicals
+  pattern: r'^chemical/$'
+  example_url: https://openprescribing.net/chemical/
+  dependencies:
+    - tables.Chemical
+
+- label: chemical
+  view_fn: frontend_views.chemical
+  pattern: r'^chemical/(?P<bnf_code>[A-Z\d]+)/$'
+  example_url: https://openprescribing.net/chemical/0101010C0/
+  dependencies:
+    - tables.Chemical
+    - tables.Section
+    - api_endpoints.total_spending
+
+- label: all_practices
+  view_fn: frontend_views.all_practices
+  pattern: r'^practice/$'
+  example_url: https://openprescribing.net/practice/
+  dependencies:
+    - tables.Practice
+
+- label: measures_for_one_practice
+  view_fn: frontend_views.measures_for_one_practice
+  pattern: r'^practice/(?P<code>[A-Z\d]+)/$'
+  example_url: https://openprescribing.net/practice/B83620/
+  dependencies:
+    - tables.Practice
+    - api_endpoints.measure
+    - api_endpoints.measure_by_practice
+    - api_endpoints.org_location
+
+- label: practice_price_per_unit
+  view_fn: frontend_views.practice_price_per_unit
+  pattern: r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$'
+  example_url: https://openprescribing.net/practice/B83620/price_per_unit/
+  dependencies:
+    - tables.Practice
+    - api_endpoints.price_per_unit
+
+- label: price_per_unit_by_presentation_practice
+  view_fn: frontend_views.price_per_unit_by_presentation
+  pattern: r'^practice/(?P<entity_code>[A-Z\d]+)/(?P<bnf_code>[A-Z\d]+)/price_per_unit/$'
+  example_url: https://openprescribing.net/practice/B83620/0407010F0AAAAAA/price_per_unit/?date=2018-01-01
+  dependencies:
+    - tables.Presentation
+    - tables.DMDProduct
+    - tables.Practice
+    - api_endpoints.bubble
+    - api_endpoints.price_per_unit
+
+- label: all_measures
+  view_fn: frontend_views.all_measures
+  pattern: r'^measure/$'
+  example_url: https://openprescribing.net/measure/
+  dependencies:
+    - tables.Measure
+
+- label: measure_for_all_ccgs
+  view_fn: frontend_views.measure_for_all_ccgs
+  pattern: r'^measure/(?P<measure>[A-Za-z\d_]+)/$'
+  example_url: https://openprescribing.net/measure/ktt9_cephalosporins/
+  dependencies:
+    - tables.Measure
+    - api_endpoints.measure
+    - api_endpoints.measure_by_ccg
+
+- label: measure_for_one_ccg
+  view_fn: frontend_views.measure_for_one_ccg
+  pattern: r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$'
+  example_url: https://openprescribing.net/measure/ktt9_cephalosporins/ccg/02N/
+  dependencies:
+    - tables.Measure
+    - tables.PCT
+    - api_endpoints.measure
+    - api_endpoints.measure_by_ccg
+    - api_endpoints.measure_numerators_by_org
+
+- label: measure_for_one_practice
+  view_fn: frontend_views.measure_for_one_practice
+  example_url: https://openprescribing.net/measure/ktt9_cephalosporins/practice/B83620/
+  pattern: r'^measure/(?P<measure>[A-Za-z\d_]+)/practice/(?P<practice_code>[A-Z\d]+)/$'
+  dependencies:
+    - tables.Measure
+    - tables.PCT
+    - api_endpoints.measure
+    - api_endpoints.measure_by_practice
+    - api_endpoints.measure_numerators_by_org
+
+- label: all_ccgs
+  view_fn: frontend_views.all_ccgs
+  pattern: r'^ccg/$'
+  example_url: https://openprescribing.net/ccg/
+  dependencies:
+    - tables.PCT
+
+- label: measures_for_one_ccg
+  view_fn: frontend_views.measures_for_one_ccg
+  pattern: r'^ccg/(?P<ccg_code>[A-Z\d]+)/$'
+  example_url: https://openprescribing.net/ccg/02N/
+  dependencies:
+    - tables.PCT
+    - tables.Practice
+    - api_endpoints.measure
+    - api_endpoints.measure_by_ccg
+    - api_endpoints.org_location
+
+- label: ccg_price_per_unit
+  view_fn: frontend_views.ccg_price_per_unit
+  pattern: r'^ccg/(?P<code>[A-Z\d]+)/price_per_unit/$'
+  example_url: https://openprescribing.net/ccg/02N/price_per_unit/
+  dependencies:
+    - tables.PCT
+    - api_endpoints.price_per_unit
+
+- label: price_per_unit_by_presentation
+  view_fn: frontend_views.price_per_unit_by_presentation
+  pattern: r'^ccg/(?P<entity_code>[A-Z\d]+)/(?P<bnf_code>[A-Z\d]+)/price_per_unit/$'
+  example_url: https://openprescribing.net/ccg/02N/0407010F0AAAAAA/price_per_unit/?date=2018-01-01
+  dependencies:
+    - tables.Presentation
+    - tables.DMDProduct
+    - tables.PCT
+    - api_endpoints.bubble
+    - api_endpoints.price_per_unit
+
+- label: measure_for_practices_in_ccg
+  view_fn: frontend_views.measure_for_practices_in_ccg
+  pattern: r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$'
+  example_url: https://openprescribing.net/ccg/02N/ktt9_cephalosporins/
+  dependencies:
+    - tables.PCT
+    - tables.Measure
+    - tables.Practice
+    - api_endpoints.measure
+    - api_endpoints.measure_by_practice
+
+- label: bnf_section
+  view_fn: frontend_views.bnf_section
+  pattern: r'^bnf/(?P<section_id>[\d]+)/$'
+  example_url: https://openprescribing.net/bnf/01/
+  dependencies:
+    - tables.Section
+    - tables.Chemical
+    - api_endpoints.total_spending
+
+- label: all_bnf
+  view_fn: frontend_views.all_bnf
+  pattern: r'^bnf/$'
+  example_url: https://openprescribing.net/bnf/
+  dependencies:
+    - tables.Section
+
+- label: tariff_index
+  view_fn: frontend_views.tariff
+  pattern: r'^tariff/$'
+  example_urls:
+    - https://openprescribing.net/tariff/
+    - https://openprescribing.net/tariff/?codes=0202030C0AAACAC
+  dependencies:
+    - tables.DMDProduct
+    - tables.Presentation
+    - api_endpoints.tariff
+
+- label: tariff
+  view_fn: frontend_views.tariff
+  pattern: r'^tariff/(?P<code>[A-Z\d]+)/$'
+  example_url: https://openprescribing.net/tariff/0202030C0AAACAC/
+  dependencies:
+    - tables.DMDProduct
+    - tables.Presentation
+    - api_endpoints.tariff
