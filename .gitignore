@@ -1,3 +1,5 @@
+environment
+google-credentials.json
 openprescribing/data/raw_data
 openprescribing/media/js/archive
 openprescribing/media/js/node_modules

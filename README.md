@@ -124,19 +124,15 @@ PostGIS extensions, and create a superuser for the database.
     createdb -O <myuser> <dbname>
     psql -d <dbname> -c "CREATE EXTENSION postgis;"
 
-Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
+Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
 
 Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
-
-You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
 
     http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
 
 Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
-
-Finally set a `SECRET_KEY` environment variable (make this an SSID).
 
 ## Production notes
 
