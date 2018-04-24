@@ -10,7 +10,9 @@
   ],
   "why_it_matters": [
     "The main drugs used to treat erectile dysfunction are probably equally effective <a href='https://cks.nice.org.uk/erectile-dysfunction'>(CKS 2014)</a>.",
-    "Currently sildenafil is significantly cheaper than other drugs, and therefore should probably be considered as the first-line agent."
+    "Sildenafil has been significantly cheaper than other drugs, and therefore should probably be considered as the first-line agent.",
+    "From April 2018 generic tadalafil 10mg and 20mg tablets have also reduced in price considerably, and therefore have been considered ",
+    "as low-cost from this point onwards."
   ],
   "numerator_short": "Drugs for erectile dysfunction excl generic sildenafil tablets items",
   "denominator_short": "Drugs for erectile dysfunction items",
@@ -24,8 +26,11 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "((bnf_code LIKE '070405%')",
-    "AND (bnf_code not like '0704050Z0AAAAAA%' and bnf_code not like '0704050Z0AAABAB%' and bnf_code not like '0704050Z0AAACAC%'))"
+  "bnf_code LIKE '070405%' ",
+  "AND (((bnf_code NOT LIKE '0704050Z0AAAAAA%' AND bnf_code NOT LIKE '0704050Z0AAABAB%' AND bnf_code NOT LIKE '0704050Z0AAACAC%') ",
+  "AND month <'2017-04-01 00:00:00') ",
+  "OR ((bnf_code NOT LIKE '0704050Z0AAAAAA%' AND bnf_code NOT LIKE '0704050Z0AAABAB%' AND bnf_code NOT LIKE '0704050Z0AAACAC%' ",
+  "AND bnf_code NOT LIKE '0704050R0AAAAAA%' AND bnf_code NOT LIKE '0704050R0AAABAB%') AND month >='2017-04-01 00:00:00'))"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
