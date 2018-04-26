@@ -24,7 +24,7 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
-  "tags": ["core"],
+  "tags": ["paper"],
   "numerator_columns": [
     "SUM(quantity/ CASE WHEN bnf_name LIKE '%Oral%' THEN 10 ",
     "WHEN bnf_name LIKE '%Liq%' THEN 10 ",
