@@ -28,11 +28,46 @@ ccg AS (
     SUM(IF(cost_savings_90 > 0, cost_savings_90, 0)) AS ccg_cost_savings_90
   FROM
     {measures}.ccg_data_{measure_id} GROUP BY month
+),
+
+global AS (
+  SELECT
+    month AS global_month,
+    cost_per_denom AS global_cost_per_denom,
+    cost_per_num AS global_cost_per_num,
+    denom_cost AS global_denom_cost,
+    denom_items AS global_denom_items,
+    denom_quantity AS global_denom_quantity,
+    denominator AS global_denominator,
+    num_cost AS global_num_cost,
+    num_items AS global_num_items,
+    num_quantity AS global_num_quantity,
+    numerator AS global_numerator,
+    ccg_10th AS global_ccg_10th,
+    ccg_20th AS global_ccg_20th,
+    ccg_30th AS global_ccg_30th,
+    ccg_40th AS global_ccg_40th,
+    ccg_50th AS global_ccg_50th,
+    ccg_60th AS global_ccg_60th,
+    ccg_70th AS global_ccg_70th,
+    ccg_80th AS global_ccg_80th,
+    ccg_90th AS global_ccg_90th,
+    practice_10th AS global_practice_10th,
+    practice_20th AS global_practice_20th,
+    practice_30th AS global_practice_30th,
+    practice_40th AS global_practice_40th,
+    practice_50th AS global_practice_50th,
+    practice_60th AS global_practice_60th,
+    practice_70th AS global_practice_70th,
+    practice_80th AS global_practice_80th,
+    practice_90th AS global_practice_90th
+  FROM
+    {measures}.global_data_{measure_id}
 )
 
 SELECT *
 FROM practice
 INNER JOIN ccg
   ON practice_month = ccg_month
-INNER JOIN {measures}.global_data_{measure_id} AS global
-  ON practice_month = global.month
+INNER JOIN global
+  ON practice_month = global_month
