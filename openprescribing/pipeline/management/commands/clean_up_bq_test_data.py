@@ -13,7 +13,8 @@ class Command(BaseCommand):
 
         gcbq_client = Client().gcbq_client
 
-        for dataset in gcbq_client.list_datasets():
-            tables = list(dataset.list_tables())
+        for dataset_list_item in gcbq_client.list_datasets():
+            dataset_ref = dataset_list_item.reference
+            tables = list(gcbq_client.list_tables(dataset_ref))
             if len(tables) == 0:
-                dataset.delete()
+                gcbq_client.delete_dataset(dataset_ref)
