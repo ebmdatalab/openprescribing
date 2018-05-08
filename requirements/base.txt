@@ -16,7 +16,7 @@ cssselect==1.0.1          # via premailer
 cssutils==1.0.2           # via premailer
 decorator==4.1.2          # via networkx
 django-allauth==0.25.2
-django-anymail==0.6.1
+django-anymail[mailgun]==2.2
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-dotenv==1.4.2
