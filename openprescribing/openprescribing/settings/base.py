@@ -288,9 +288,9 @@ BQ_LOCATION = 'EU'
 # Use django-anymail through mailgun for sending emails
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_API_KEY": utils.get_env_setting('MAILGUN_API_KEY'),
     "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
+    "WEBHOOK_SECRET": "%s:%s" % (
         utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
         utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
 }
