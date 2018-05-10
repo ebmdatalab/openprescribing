@@ -1,3 +1,4 @@
+from datetime import date
 import os
 
 from django.core.management import call_command
@@ -5,9 +6,9 @@ from django.db import connection
 from django.test import SimpleTestCase
 
 from gcutils.bigquery import Client
-from frontend.models import ImportLog, PCT, PracticeStatistics
+from frontend.models import ImportLog, PCT, Practice, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
-                                 PRESCRIBING_SCHEMA)
+                                 PRACTICE_SCHEMA, PRESCRIBING_SCHEMA)
 from frontend.bq_schemas import ccgs_transform, statistics_transform
 from frontend.management.commands import create_views
 from gcutils.storage import Client as StorageClient
@@ -18,6 +19,8 @@ class CommandsTestCase(SimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
+        # If you set SKIP_BQ_LOAD, you will also want to set BQ_NONCE to reuse
+        # the BQ tables that have already been set up.
         if 'SKIP_BQ_LOAD' not in os.environ:
             # Create local test data from fixtures, then upload this to a
             # test project in bigquery
@@ -49,6 +52,10 @@ class CommandsTestCase(SimpleTestCase):
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             columns = [field.name for field in CCG_SCHEMA]
             table.insert_rows_from_pg(PCT, columns, ccgs_transform)
+
+            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
+            columns = [field.name for field in PRACTICE_SCHEMA]
+            table.insert_rows_from_pg(Practice, columns)
 
             table = client.get_or_create_table(
                 'practice_statistics',
@@ -156,14 +163,56 @@ class CommandsTestCase(SimpleTestCase):
             self.assertEqual(results[0][4], 84000)
             self.assertEqual(results[0][5], 111000)
 
-            cmd = 'SELECT * FROM vw__ccgstatistics '
-            cmd += 'ORDER BY date, pct_id'
+            cmd = 'SELECT * FROM vw__ccgstatistics ORDER BY date, pct_id'
             c.execute(cmd)
-            results = c.fetchall()
-            self.assertEqual(len(results), 3)
-            self.assertEqual(results[0][1], '03Q')
-            self.assertEqual(results[0][5], 489.7)
-            self.assertEqual(results[0][6]['oral_antibacterials_item'], 10)
+            col_names = [col[0] for col in c.description]
+            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+
+            self.assertEqual(len(results), 4)
+
+            # For 03Q and 2015_01, we expect the calculation to include values
+            # for N84014 and B82018, but not K83622, as it moved to 03V after
+            # 2015_01.
+            row = results[0]
+            expected = {
+                    'date': date(2015, 1, 1),
+                    'pct_id': '03Q',
+                    'name': 'NHS Vale of York',
+                    'total_list_size': 612,  # 288 + 324
+                    'astro_pu_items': 502.2,  # 231.1 + 271.1
+                    'astro_pu_cost': 342.2,  # 161.1 + 181.1
+                    'star_pu.oral_antibacterials_item': 50.2,  # 23.1 + 27.1
+            }
+            self.assert_dicts_equal(expected, results[0])
+
+            # For 03V and 2015_01, we expect the calculation to include values
+            # for P87629 and K83059, and also K83622 even though it was in 03Q
+            # for 2015_01.
+            expected = {
+                    'date': date(2015, 1, 1),
+                    'pct_id': '03V',
+                    'name': 'NHS Corby',
+                    'total_list_size': 648,  # 180 + 216 + 252
+                    'astro_pu_items': 453.3,  # 111.1 + 151.1 + 191.1
+                    'astro_pu_cost': 363.3,  # 101.1 + 121.1 + 141.1
+                    'star_pu.oral_antibacterials_item': 45.3,  # 11.1 + 15.1 + 19.1
+            }
+            self.assert_dicts_equal(expected, results[1])
+
+    def assert_dicts_equal(self, expected, actual):
+        for key, exp_value in expected.items():
+            value = actual
+            for fragment in key.split('.'):
+                value = value[fragment]
+
+            msg = 'Unexpected value for {} (expected {}, got {})'.format(
+                key, exp_value, value
+            )
+
+            if isinstance(value, float):
+                self.assertAlmostEqual(value, exp_value, msg=msg)
+            else:
+                self.assertEqual(value, exp_value, msg)
 
     def test_generate_sort_cmd(self):
         cmd = create_views.generate_sort_cmd(

@@ -61,7 +61,7 @@ CREATE TEMPORARY FUNCTION
 
 SELECT
   month AS date,
-  pct_id,
+  practices.ccg_id AS pct_id,
   ccgs.name AS name,
   SUM(total_list_size) AS total_list_size,
   SUM(astro_pu_items) AS astro_pu_items,
@@ -93,12 +93,13 @@ SELECT
     SUM(CAST(JSON_EXTRACT_SCALAR(star_pu, '$.statins_cost') AS FLOAT64)),
     SUM(CAST(JSON_EXTRACT_SCALAR(star_pu, '$.ulcer_healing_drugs_cost') AS FLOAT64))
   ) AS star_pu
-FROM
-  {hscic}.practice_statistics AS statistics
-JOIN {hscic}.ccgs ccgs
-ON (statistics.pct_id = ccgs.code AND ccgs.org_type = 'CCG')
+FROM {hscic}.practice_statistics
+INNER JOIN {hscic}.practices
+  ON practice_statistics.practice = practices.code
+INNER JOIN {hscic}.ccgs ccgs
+  ON practices.ccg_id = ccgs.code AND ccgs.org_type = 'CCG'
 WHERE month > TIMESTAMP(DATE_SUB(DATE "{this_month}", INTERVAL 5 YEAR))
 GROUP BY
   month,
-  pct_id,
+  practices.ccg_id,
   name
