@@ -21,12 +21,6 @@ CACHES = {
     }
 }
 INTERNAL_IPS = ('127.0.0.1',)
-ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
-        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
