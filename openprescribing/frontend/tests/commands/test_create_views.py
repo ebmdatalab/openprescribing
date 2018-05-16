@@ -109,159 +109,165 @@ class CommandsTestCase(SimpleTestCase):
 
     def test_import_create_views(self):
         call_command('create_views')
-        with connection.cursor() as c:
-            # ~~~~~
-            # vw__presentation_summary
-            # ~~~~~
 
-            cmd = 'SELECT * FROM vw__practice_summary '
-            cmd += 'ORDER BY processing_date, practice_id'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        # ~~~~~
+        # vw__presentation_summary
+        # ~~~~~
+        results = self.query_view(
+            'vw__practice_summary',
+            ['processing_date', 'practice_id']
+        )
 
-            self.assertEqual(len(results), 10)  # 2 months * 5 practices
+        self.assertEqual(len(results), 10)  # 2 months * 5 practices
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'practice_id': 'B82018',
-                    'items': 21,  # 5 + 7 + 9
-            }
-            self.assert_dicts_equal(expected, results[0])
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'practice_id': 'B82018',
+                'items': 21,  # 5 + 7 + 9
+        }
+        self.assert_dicts_equal(expected, results[0])
 
-            # ~~~~~
-            # vw__presentation_summary
-            # ~~~~~
+        # ~~~~~
+        # vw__presentation_summary
+        # ~~~~~
 
-            cmd = 'SELECT * FROM vw__presentation_summary '
-            cmd += 'ORDER BY processing_date, presentation_code'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        results = self.query_view(
+            'vw__presentation_summary',
+            ['processing_date', 'presentation_code']
+        )
 
-            self.assertEqual(len(results), 6)  # 2 months * 3 presentations
+        self.assertEqual(len(results), 6)  # 2 months * 3 presentations
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'presentation_code': '0703021P0AAAAAA',
-                    'items': 15,  # 1 + 2 + 3 + 4 + 5
-            }
-            self.assert_dicts_equal(expected, results[0])
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'presentation_code': '0703021P0AAAAAA',
+                'items': 15,  # 1 + 2 + 3 + 4 + 5
+        }
+        self.assert_dicts_equal(expected, results[0])
 
-            # ~~~~~
-            # vw__presentation_summary_by_ccg
-            # ~~~~~
+        # ~~~~~
+        # vw__presentation_summary_by_ccg
+        # ~~~~~
 
-            cmd = 'SELECT * FROM vw__presentation_summary_by_ccg '
-            cmd += 'ORDER BY processing_date, presentation_code, pct_id'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        results = self.query_view(
+            'vw__presentation_summary_by_ccg',
+            ['processing_date', 'presentation_code', 'pct_id']
+        )
 
-            self.assertEqual(len(results), 12)  # 2 months * 3 presentations * 2 CCGs
+        self.assertEqual(len(results), 12)  # 2 months * 3 presentations * 2 CCGs
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'pct_id': '03Q',
-                    'presentation_code': '0703021P0AAAAAA',
-                    'items': 9,  # 4 + 5
-            }
-            self.assert_dicts_equal(expected, results[0])
+        # For 03Q and 2015_01, we expect the calculation to include values
+        # for N84014 and B82018, but not K83622, as it moved to 03V after
+        # 2015_01.
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'pct_id': '03Q',
+                'presentation_code': '0703021P0AAAAAA',
+                'items': 9,  # 4 + 5
+        }
+        self.assert_dicts_equal(expected, results[0])
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'pct_id': '03V',
-                    'presentation_code': '0703021P0AAAAAA',
-                    'items': 6,  # 1 + 2 + 3
-            }
-            self.assert_dicts_equal(expected, results[1])
+        # For 03V and 2015_01, we expect the calculation to include values
+        # for P87629 and K83059, and also K83622 even though it was in 03Q
+        # for 2015_01.
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'pct_id': '03V',
+                'presentation_code': '0703021P0AAAAAA',
+                'items': 6,  # 1 + 2 + 3
+        }
+        self.assert_dicts_equal(expected, results[1])
 
-            # ~~~~~
-            # vw__chemical_summary_by_ccg
-            # ~~~~~
+        # ~~~~~
+        # vw__chemical_summary_by_ccg
+        # ~~~~~
 
-            cmd = 'SELECT * FROM vw__chemical_summary_by_ccg '
-            cmd += 'ORDER BY processing_date, chemical_id, pct_id'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        results = self.query_view(
+            'vw__chemical_summary_by_ccg',
+            ['processing_date', 'chemical_id', 'pct_id']
+        )
 
-            self.assertEqual(len(results), 8)  # 2 months * 2 chemicals * 2 CCGs
+        self.assertEqual(len(results), 8)  # 2 months * 2 chemicals * 2 CCGs
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'pct_id': '03Q',
-                    'chemical_id': '0703021Q0',
-                    'items': 30,  # 6 + 8 + 7 + 9
-            }
-            self.assert_dicts_equal(expected, results[2])
+        # For 03Q and 2015_01, we expect the calculation to include values
+        # for N84014 and B82018, but not K83622, as it moved to 03V after
+        # 2015_01.
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'pct_id': '03Q',
+                'chemical_id': '0703021Q0',
+                'items': 30,  # 6 + 8 + 7 + 9
+        }
+        self.assert_dicts_equal(expected, results[2])
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'pct_id': '03V',
-                    'chemical_id': '0703021Q0',
-                    'items': 30,  # 3 + 5 + 4 + 6 + 5 + 7
-            }
-            self.assert_dicts_equal(expected, results[3])
+        # For 03V and 2015_01, we expect the calculation to include values
+        # for P87629 and K83059, and also K83622 even though it was in 03Q
+        # for 2015_01.
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'pct_id': '03V',
+                'chemical_id': '0703021Q0',
+                'items': 30,  # 3 + 5 + 4 + 6 + 5 + 7
+        }
+        self.assert_dicts_equal(expected, results[3])
 
-            # ~~~~~
-            # vw__chemical_summary_by_practice
-            # ~~~~~
+        # ~~~~~
+        # vw__chemical_summary_by_practice
+        # ~~~~~
 
-            cmd = 'SELECT * FROM vw__chemical_summary_by_practice '
-            cmd += 'ORDER BY processing_date, practice_id'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        results = self.query_view(
+            'vw__chemical_summary_by_practice',
+            ['processing_date', 'practice_id']
+        )
 
-            self.assertEqual(len(results), 20)  # 2 months * 2 chemicals * 5 practices
+        self.assertEqual(len(results), 20)  # 2 months * 2 chemicals * 5 practices
 
-            expected = {
-                    'processing_date': date(2015, 1, 1),
-                    'practice_id': 'B82018',
-                    'chemical_id': '0703021Q0',
-                    'items': 16,
-            }
-            self.assert_dicts_equal(expected, results[1])
+        expected = {
+                'processing_date': date(2015, 1, 1),
+                'practice_id': 'B82018',
+                'chemical_id': '0703021Q0',
+                'items': 16,
+        }
+        self.assert_dicts_equal(expected, results[1])
 
-            # ~~~~~
-            # vw__ccgstatistics
-            # ~~~~~
+        # ~~~~~
+        # vw__ccgstatistics
+        # ~~~~~
 
-            cmd = 'SELECT * FROM vw__ccgstatistics ORDER BY date, pct_id'
-            c.execute(cmd)
-            col_names = [col[0] for col in c.description]
-            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+        results = self.query_view(
+            'vw__ccgstatistics',
+            ['date', 'pct_id']
+        )
 
-            self.assertEqual(len(results), 4)  # 2 months * 2 CCGs
+        self.assertEqual(len(results), 4)  # 2 months * 2 CCGs
 
-            # For 03Q and 2015_01, we expect the calculation to include values
-            # for N84014 and B82018, but not K83622, as it moved to 03V after
-            # 2015_01.
-            expected = {
-                    'date': date(2015, 1, 1),
-                    'pct_id': '03Q',
-                    'name': 'NHS Vale of York',
-                    'total_list_size': 612,  # 288 + 324
-                    'astro_pu_items': 502.2,  # 231.1 + 271.1
-                    'astro_pu_cost': 342.2,  # 161.1 + 181.1
-                    'star_pu.oral_antibacterials_item': 50.2,  # 23.1 + 27.1
-            }
-            self.assert_dicts_equal(expected, results[0])
+        # For 03Q and 2015_01, we expect the calculation to include values
+        # for N84014 and B82018, but not K83622, as it moved to 03V after
+        # 2015_01.
+        expected = {
+                'date': date(2015, 1, 1),
+                'pct_id': '03Q',
+                'name': 'NHS Vale of York',
+                'total_list_size': 612,  # 288 + 324
+                'astro_pu_items': 502.2,  # 231.1 + 271.1
+                'astro_pu_cost': 342.2,  # 161.1 + 181.1
+                'star_pu.oral_antibacterials_item': 50.2,  # 23.1 + 27.1
+        }
+        self.assert_dicts_equal(expected, results[0])
 
-            # For 03V and 2015_01, we expect the calculation to include values
-            # for P87629 and K83059, and also K83622 even though it was in 03Q
-            # for 2015_01.
-            expected = {
-                    'date': date(2015, 1, 1),
-                    'pct_id': '03V',
-                    'name': 'NHS Corby',
-                    'total_list_size': 648,  # 180 + 216 + 252
-                    'astro_pu_items': 453.3,  # 111.1 + 151.1 + 191.1
-                    'astro_pu_cost': 363.3,  # 101.1 + 121.1 + 141.1
-                    'star_pu.oral_antibacterials_item': 45.3,  # 11.1 + 15.1 + 19.1
-            }
-            self.assert_dicts_equal(expected, results[1])
+        # For 03V and 2015_01, we expect the calculation to include values
+        # for P87629 and K83059, and also K83622 even though it was in 03Q
+        # for 2015_01.
+        expected = {
+                'date': date(2015, 1, 1),
+                'pct_id': '03V',
+                'name': 'NHS Corby',
+                'total_list_size': 648,  # 180 + 216 + 252
+                'astro_pu_items': 453.3,  # 111.1 + 151.1 + 191.1
+                'astro_pu_cost': 363.3,  # 101.1 + 121.1 + 141.1
+                'star_pu.oral_antibacterials_item': 45.3,  # 11.1 + 15.1 + 19.1
+        }
+        self.assert_dicts_equal(expected, results[1])
 
     def assert_dicts_equal(self, expected, actual):
         for key, exp_value in expected.items():
@@ -293,3 +299,14 @@ class CommandsTestCase(SimpleTestCase):
             )
 
         self.assertEqual(cmd, exp_cmd)
+
+    def query_view(self, table, order_fields):
+        order_fields = ', '.join(order_fields)
+        sql = '''SELECT * FROM {} ORDER BY {}'''.format(table, order_fields)
+
+        with connection.cursor() as c:
+            c.execute(sql)
+            col_names = [col[0] for col in c.description]
+            results = [dict(zip(col_names, row)) for row in c.fetchall()]
+
+        return results
