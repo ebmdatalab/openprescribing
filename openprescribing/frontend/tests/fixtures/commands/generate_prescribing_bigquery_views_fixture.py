@@ -25,7 +25,7 @@ for ix, (practice, ccg) in enumerate(practices):
         quantity = 112 * items
         net_cost = 2.96 * items
         actual_cost = net_cost / 1.06
-        
+
         writer.writerow([
             'Q51',
             ccg,
@@ -51,7 +51,7 @@ for ix, (practice, ccg) in enumerate(practices):
         quantity = 112 * items
         net_cost = 2.96 * items
         actual_cost = net_cost / 1.06
-        
+
         writer.writerow([
             'Q51',
             ccg,

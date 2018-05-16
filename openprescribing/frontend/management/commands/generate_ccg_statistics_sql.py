@@ -82,9 +82,10 @@ GROUP BY
         zipped_keys = zip(keys, safe_keys)
 
         ctx = Context({
-            'keys': keys,
-            'safe_keys': safe_keys,
-            'zipped_keys': zipped_keys,
-        },
-        autoescape=False)
+                'keys': keys,
+                'safe_keys': safe_keys,
+                'zipped_keys': zipped_keys,
+            },
+            autoescape=False
+        )
         print template.render(ctx)

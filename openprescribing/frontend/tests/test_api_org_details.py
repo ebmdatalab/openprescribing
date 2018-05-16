@@ -53,6 +53,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         rows = list(csv.DictReader(response.content.splitlines()))
+
     def test_api_view_org_details_all_ccgs_with_unpermitted_key(self):
         url = self.api_prefix
         url += ('/org_details?format=csv&org_type=ccg&keys=borg')
