@@ -33,21 +33,18 @@ class CommandsTestCase(SimpleTestCase):
             call_command('loaddata',
                          'frontend/tests/fixtures/practice_listsizes.json',
                          verbosity=0)
+
+            client = Client('hscic')
+
+            table = client.get_or_create_table(
+                'prescribing',
+                PRESCRIBING_SCHEMA
+            )
             prescribing_fixture_path = os.path.join(
                 'frontend', 'tests', 'fixtures', 'commands',
                 'prescribing_bigquery_views_fixture.csv'
             )
-
-            client = Client('hscic')
-
-            for table_name in [
-                    'normalised_prescribing_standard',
-                    'normalised_prescribing_legacy']:
-                table = client.get_or_create_table(
-                    table_name,
-                    PRESCRIBING_SCHEMA
-                )
-                table.insert_rows_from_csv(prescribing_fixture_path)
+            table.insert_rows_from_csv(prescribing_fixture_path)
 
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             columns = [field.name for field in CCG_SCHEMA]
@@ -70,6 +67,31 @@ class CommandsTestCase(SimpleTestCase):
                 statistics_transform
             )
 
+            sql = """
+            SELECT
+              prescribing.sha AS sha,
+              practices.ccg_id AS pct,
+              prescribing.practice AS practice,
+              prescribing.bnf_code AS bnf_code,
+              prescribing.bnf_name AS bnf_name,
+              prescribing.items AS items,
+              prescribing.net_cost AS net_cost,
+              prescribing.actual_cost AS actual_cost,
+              prescribing.quantity AS quantity,
+              prescribing.month AS month
+            FROM
+              {project}.{hscic}.prescribing AS prescribing
+            INNER JOIN
+              {project}.{hscic}.practices  AS practices
+            ON practices.code = prescribing.practice
+            """
+
+            client.create_table_with_view(
+                'normalised_prescribing_standard',
+                sql,
+                False
+            )
+
             client = StorageClient()
             bucket = client.get_bucket()
             for blob in bucket.list_blobs(prefix='hscic/views/vw__'):
@@ -77,9 +99,9 @@ class CommandsTestCase(SimpleTestCase):
 
         ImportLog.objects.create(
             category='prescribing', current_at='2015-10-01')
+
         # Create view tables and indexes
-        with open(
-                'frontend/management/commands/replace_matviews.sql', 'r') as f:
+        with open('frontend/management/commands/replace_matviews.sql') as f:
             with connection.cursor() as c:
                 c.execute(f.read())
 
@@ -107,7 +129,7 @@ class CommandsTestCase(SimpleTestCase):
         for blob in bucket.list_blobs(prefix=prefix):
             self.assertNotIn(suffix, blob.path)
 
-    def test_import_create_views(self):
+    def test_create_views(self):
         call_command('create_views')
 
         # ~~~~~
