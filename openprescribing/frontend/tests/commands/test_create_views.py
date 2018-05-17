@@ -130,11 +130,17 @@ class CommandsTestCase(SimpleTestCase):
             self.assertNotIn(suffix, blob.path)
 
     def test_create_views(self):
+        # This test checks that the database rows created by the command are as
+        # expected.  Most of the commands involve GROUPing and SUMming.  It may
+        # be helpful to look at generate_prescribing_bigquery_views_fixture.py
+        # to understand the numbers.
+
         call_command('create_views')
 
         # ~~~~~
         # vw__presentation_summary
         # ~~~~~
+
         results = self.query_view(
             'vw__practice_summary',
             ['processing_date', 'practice_id']
