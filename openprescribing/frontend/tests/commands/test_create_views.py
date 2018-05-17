@@ -19,8 +19,6 @@ class CommandsTestCase(SimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        # If you set SKIP_BQ_LOAD, you will also want to set BQ_NONCE to reuse
-        # the BQ tables that have already been set up.
         if 'SKIP_BQ_LOAD' not in os.environ:
             # Create local test data from fixtures, then upload this to a
             # test project in bigquery
@@ -96,6 +94,8 @@ class CommandsTestCase(SimpleTestCase):
             bucket = client.get_bucket()
             for blob in bucket.list_blobs(prefix='hscic/views/vw__'):
                 blob.delete()
+        else:
+            assert 'BQ_NONCE' in os.environ, 'Set BQ_NONCE to reuse BQ data'
 
         ImportLog.objects.create(
             category='prescribing', current_at='2015-10-01')
