@@ -1,6 +1,8 @@
 from datetime import date
 import os
 
+from google.cloud.exceptions import Conflict
+
 from django.core.management import call_command
 from django.db import connection
 from django.test import SimpleTestCase
@@ -83,6 +85,11 @@ class CommandsTestCase(SimpleTestCase):
               {project}.{hscic}.practices  AS practices
             ON practices.code = prescribing.practice
             """
+
+            try:
+                client.delete_table('normalised_prescribing_standard')
+            except Conflict:
+                pass
 
             client.create_table_with_view(
                 'normalised_prescribing_standard',
