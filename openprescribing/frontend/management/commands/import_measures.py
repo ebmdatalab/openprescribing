@@ -361,16 +361,15 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'practice_percent_rank',
             self.practice_table_name,
-            {},
-            legacy=True
+            {}
         )
 
     def calculate_global_centiles_for_practices(self):
         """Compute overall sums and centiles for each practice."""
         extra_fields = []
-        # Add prefixes to the select columns so we can reference the
-        # joined tables (bigquery legacy SQL flattens columns names
-        # from subqueries using table alias + underscore)
+        # Add prefixes to the select columns so we can reference the joined
+        # tables (bigquery flattens columns names from subqueries using table
+        # alias + underscore)
         for col in self._get_col_aliases('numerator'):
             extra_fields.append("num_" + col)
         for col in self._get_col_aliases('denominator'):
@@ -389,13 +388,10 @@ class MeasureCalculation(object):
             'extra_select_sql': extra_select_sql,
         }
 
-        # We have to use legacy SQL because there' no
-        # PERCENTILE_CONT equivalent in the standard SQL
         self.insert_rows_from_query(
             'global_deciles_practices',
             self.globals_table_name,
-            context,
-            legacy=True
+            context
         )
 
     def calculate_cost_savings_for_practices(self):
@@ -486,8 +482,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'ccg_percent_rank',
             self.ccg_table_name,
-            {},
-            legacy=True
+            {}
         )
 
     def calculate_global_centiles_for_ccgs(self):
@@ -495,9 +490,9 @@ class MeasureCalculation(object):
 
         """
         extra_fields = []
-        # Add prefixes to the select columns so we can reference the
-        # joined tables (bigquery legacy SQL flattens columns names
-        # from subqueries using table alias + underscore)
+        # Add prefixes to the select columns so we can reference the joined
+        # tables (bigquery flattens columns names from subqueries using table
+        # alias + underscore)
         for col in self._get_col_aliases('numerator'):
             extra_fields.append("num_" + col)
         for col in self._get_col_aliases('denominator'):
@@ -514,13 +509,10 @@ class MeasureCalculation(object):
             'extra_select_sql': extra_select_sql,
         }
 
-        # We have to use legacy SQL because there' no
-        # PERCENTILE_CONT equivalent in the standard SQL
         self.insert_rows_from_query(
             'global_deciles_ccgs',
             self.globals_table_name,
-            context,
-            legacy=True
+            context
         )
 
     def calculate_cost_savings_for_ccgs(self):
@@ -563,8 +555,7 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'global_cost_savings',
             self.globals_table_name,
-            {},
-            legacy=True
+            {}
         )
 
     def write_global_centiles_to_database(self):
@@ -612,7 +603,7 @@ class MeasureCalculation(object):
             count += 1
         self.log("Created %s measureglobals" % count)
 
-    def insert_rows_from_query(self, query_id, table_name, ctx, legacy=False):
+    def insert_rows_from_query(self, query_id, table_name, ctx):
         """Interpolate values from ctx into SQL identified by query_id, and
         insert results into given table.
         """
@@ -625,7 +616,6 @@ class MeasureCalculation(object):
         self.get_table(table_name).insert_rows_from_query(
             sql,
             substitutions=ctx,
-            legacy=legacy
         )
 
     def get_rows_as_dicts(self, table_name):
