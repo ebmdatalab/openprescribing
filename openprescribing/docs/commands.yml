@@ -1,0 +1,80 @@
+# This is not finished...
+
+- label: backup_bq_tables
+  dependencies:
+  - bq_tables.hscic_prescribing
+  - bq_tables.hscic_practice_statistics
+- label: bigquery_upload
+  dependencies:
+  - bq_tables.hscic_prescribing
+  - storage_files.hscic_bnf_codes
+  - tables.Practice
+  - tables.Presentation
+  - tables.PracticeStatistics
+  - tables.PCT
+- label: bulk_import_drug_tariff
+  dependencies:
+- label: calculate_star_pu_weights
+  dependencies:
+- label: convert_hscic_prescribing
+  dependencies:
+- label: create_bq_measure_views
+  dependencies:
+- label: create_views
+  dependencies:
+- label: fetch_and_import_drug_tariff
+  dependencies:
+- label: fetch_bnf_codes
+  dependencies:
+  - sources.nhsbsa_bnf_codes
+- label: fetch_prescribing_data
+  dependencies:
+  - sources.nhsbsa_prescribing
+- label: fetch_prescribing_metadata
+  dependencies:
+  - sources.hscic_addr_bnft
+  - sources.hscic_chem_subs
+- label: generate_presentation_replacements
+  dependencies:
+- label: geocode_practices
+  dependencies:
+- label: hscic_list_sizes
+  dependencies:
+  - sources.hscic_list_sizes
+- label: import_adqs
+  dependencies:
+- label: import_bnf_codes
+  dependencies:
+- label: import_ccg_boundaries
+  dependencies:
+- label: import_dmd
+  dependencies:
+- label: import_dmd_snomed
+  dependencies:
+- label: import_generic_mappings
+  dependencies:
+- label: import_hscic_chemicals
+  dependencies:
+- label: import_hscic_prescribing
+  dependencies:
+- label: import_list_sizes
+  dependencies:
+- label: import_measures
+  dependencies:
+- label: import_ncso_concessions
+  dependencies:
+- label: import_org_names
+  dependencies:
+- label: import_ppu_savings
+  dependencies:
+- label: import_practice_dispensing_status
+  dependencies:
+- label: import_practices
+  dependencies:
+- label: import_qof_prevalence
+  dependencies:
+- label: org_codes
+  dependencies:
+  - sources.eccg
+  - sources.epracur
+  - sources.gridall

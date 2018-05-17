@@ -1,0 +1,91 @@
+- label: AvailabilityRestriction
+  dependencies:
+  - commands.import_dmd
+- label: Chemical
+  dependencies:
+  - commands.generate_presentation_replacements
+  - commands.import_hscic_chemicals
+  - commands.import_hscic_prescribing
+- label: ControlledDrugCategory
+  dependencies:
+  - commands.import_dmd
+- label: DMDProduct
+  dependencies:
+  - commands.import_dmd
+- label: DMDVmpp
+  dependencies:
+  - commands.import_dmd
+- label: GenericCodeMapping
+  dependencies:
+  - commands.import_generic_mappings
+- label: ImportLog
+  dependencies:
+  - commands.bulk_import_drug_tariff
+  - commands.fetch_and_import_drug_tariff
+  - commands.import_hscic_prescribing
+  - commands.import_list_sizes
+  - commands.import_ppu_savings
+- label: Measure
+  dependencies:
+  - commands.import_measures
+- label: MeasureGlobal
+  dependencies:
+  - commands.import_measures
+- label: MeasureValue
+  dependencies:
+  - commands.import_measures
+- label: NCSOConcession
+  dependencies:
+  - commands.import_ncso_concessions
+- label: PCT
+  dependencies:
+  - commands.import_hscic_prescribing
+  - commands.import_org_names
+  - commands.import_practices
+- label: PPUSaving
+  dependencies:
+  - commands.import_ppu_savings
+- label: Practice
+  dependencies:
+  - commands.import_practices
+  - commands.import_hscic_prescribing
+- label: PracticeIsDispensing
+  dependencies:
+  - commands.import_practice_dispensing_status
+- label: PracticeStatistics
+  dependencies:
+  - commands.import_list_sizes
+- label: Prescribability
+  dependencies:
+  - commands.import_dmd
+- label: Prescription
+  dependencies:
+  - commands.import_hscic_prescribing
+- label: Presentation
+  dependencies:
+  - commands.generate_presentation_replacements
+  - commands.import_bnf_codes
+  - commands.import_hscic_prescribing
+  - commands.import_ppu_savings
+- label: Product
+  dependencies:
+  - commands.generate_presentation_replacements
+  - commands.import_bnf_codes
+  - commands.import_hscic_prescribing
+- label: QOFPrevalence
+  dependencies:
+  - commands.import_qof_prevalence
+- label: Section
+  dependencies:
+  - commands.generate_presentation_replacements
+  - commands.import_bnf_codes
+  - commands.import_hscic_prescribing
+- label: TariffCategory
+  dependencies:
+  - commands.import_dmd
+- label: TariffPrice
+  dependencies:
+  - commands.import_tariff
+- label: VMPNonAvailability
+  dependencies:
+  - commands.import_dmd
