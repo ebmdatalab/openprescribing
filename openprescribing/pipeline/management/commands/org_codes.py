@@ -1,12 +1,8 @@
 from StringIO import StringIO
 import requests
 from zipfile import ZipFile
-import shutil
-import tempfile
-import filecmp
 import datetime
 import os
-import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -36,56 +32,29 @@ class Command(BaseCommand):
         self.verbose = (kwargs['verbosity'] > 1)
 
         if kwargs['practice']:
-            self.fetch_practice_details()
+            self.fetch_and_extract_zipped_csv('epraccur', 'practice_details')
         if kwargs['ccg']:
-            self.fetch_ccg_details()
+            self.fetch_and_extract_zipped_csv('eccg', 'ccg_details')
         if kwargs['postcode']:
-            self.fetch_org_postcodes()
+            self.fetch_and_extract_zipped_csv('gridall', 'nhs_postcode_file')
 
-    def fetch_ccg_details(self):
-        self.fetch_and_extract_zipped_csv(
-            "https://digital.nhs.uk/media/354/eccg/zip/eccg1",
-            "eccg.csv",
-            os.path.join(settings.PIPELINE_DATA_BASEDIR, "ccg_details"))
-
-    def fetch_practice_details(self):
-        self.fetch_and_extract_zipped_csv(
-            "https://digital.nhs.uk/media/372/epraccur/zip/epraccur",
-            "epraccur.csv",
-            os.path.join(settings.PIPELINE_DATA_BASEDIR, "practice_details"))
-
-    def fetch_org_postcodes(self):
-        url = "https://digital.nhs.uk/media/636/Gridall/zip/gridall"
-        self.fetch_and_extract_zipped_csv(
-            url,
-            'gridall.csv',
-            os.path.join(settings.PIPELINE_DATA_BASEDIR, "nhs_postcode_file"))
-
-    def fetch_and_extract_zipped_csv(self, url, expected_filename, dest):
+    def fetch_and_extract_zipped_csv(self, base_filename, dest_dirname):
         """Grab a zipfile from a url, and extract a CSV.
-
-        Save it to a datestamped folder if it's different from the
-        latest previously-known data
-
         """
-        t = tempfile.mkdtemp()[1]
-        f = StringIO()
-        f.write(requests.get(url).content)
-        f.flush()
-        zipfile = ZipFile(f)
-        zipfile.extract(expected_filename, t)
-        extracted_file_path = "%s/%s" % (t, expected_filename)
-        most_recent = self.most_recent_file(dest)
-        changed = not filecmp.cmp(
-            most_recent, extracted_file_path, shallow=True)
-        if changed:
-            new_folder = datetime.datetime.today().strftime("%Y_%m")
-            new_path = "%s/%s/" % (dest, new_folder)
-            os.makedirs(new_path)
-            if self.verbose:
-                print "%s has changed; creating new copy" % most_recent
-            shutil.copy(extracted_file_path, new_path)
-        shutil.rmtree(t)
 
-    def most_recent_file(self, path):
-        return sorted(glob.glob("%s/*/*" % path))[-1]
+        zip_filename = base_filename + '.zip'
+        url = 'https://files.digital.nhs.uk/assets/ods/current/' + zip_filename
+
+        buf = StringIO()
+        buf.write(requests.get(url).content)
+        buf.flush()
+        zipfile = ZipFile(buf)
+
+        dest_dir = os.path.join(
+            settings.PIPELINE_DATA_BASEDIR,
+            dest_dirname,
+            datetime.datetime.today().strftime('%Y_%m'),
+        )
+
+        csv_filename = base_filename + '.csv'
+        zipfile.extract(csv_filename, dest_dir)

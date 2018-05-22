@@ -26,7 +26,7 @@ class Command(BaseCommand):
         date = datetime.date(kwargs['year'], kwargs['month'], 1)
         datestamp = date.strftime('%Y_%m')
 
-        url = date.strftime('http://digital.nhs.uk/pubs/numpatgp%b%y').lower()
+        url = date.strftime('https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice/%B-%Y').lower()
 
         rsp = requests.get(url)
 
