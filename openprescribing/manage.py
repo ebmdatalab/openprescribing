@@ -5,7 +5,15 @@ import sys
 import dotenv
 
 if __name__ == "__main__":
-    dotenv.read_dotenv('../environment')
+    # We can't do read_dotenv('../environment') because that assumes that when
+    # manage.py we are in its current directory, which isn't the case for cron
+    # jobs.
+    env_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        '..', 'environment'
+    )
+
+    dotenv.read_dotenv(env_path)
 
     if 'DJANGO_SETTINGS_MODULE' not in os.environ:
         if sys.argv[1] in ['test', 'pipeline_e2e_tests']:
