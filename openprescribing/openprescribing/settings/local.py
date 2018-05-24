@@ -21,8 +21,6 @@ ALLOWED_HOSTS = ['localhost', 'openprescribing.net', 'openprescriptions.net']
 
 # EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # END EMAIL CONFIGURATION
 
