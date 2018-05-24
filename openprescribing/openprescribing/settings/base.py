@@ -286,7 +286,7 @@ BQ_DEFAULT_TABLE_EXPIRATION_MS = None
 BQ_LOCATION = 'EU'
 
 # Use django-anymail through mailgun for sending emails
-EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL = {
     "MAILGUN_API_KEY": utils.get_env_setting('MAILGUN_API_KEY'),
     "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
