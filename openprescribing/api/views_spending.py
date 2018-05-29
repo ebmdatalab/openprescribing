@@ -385,7 +385,7 @@ def spending_by_ccg(request, format=None):
 def spending_by_practice(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    org_ids = utils.param_to_list(request.query_params.get('org', []))
     date = request.query_params.get('date', None)
 
     spending_type = utils.get_spending_type(codes)
@@ -395,33 +395,38 @@ def spending_by_practice(request, format=None):
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
 
-    if not date and not orgs:
+    if not date and not org_ids:
         err = 'Error: You must supply either '
         err += 'a list of practice IDs or a date parameter, e.g. '
         err += 'date=2015-04-01'
         return Response(err, status=400)
 
-    org_for_param = None
-    if not spending_type or spending_type == 'bnf-section' \
-       or spending_type == 'chemical':
-        # We can do presentation queries indexed by PCT ID, which is faster.
-        # We have yet to update the *_by_practice matviews with PCT ID.
-        # So for these queries, expand the CCG ID to a list of practice IDs.
-        expanded_orgs = utils.get_practice_ids_from_org(orgs)
-        if codes:
-            query = _get_chemicals_or_sections_by_practice(codes,
-                                                           expanded_orgs,
-                                                           spending_type,
-                                                           date)
-            org_for_param = expanded_orgs
-        else:
-            query = _get_total_spending_by_practice(expanded_orgs, date)
-            org_for_param = expanded_orgs
+    params = [codes]
+
+    if spending_type in ['product', 'presentation']:
+        query = _get_presentations_by_practice(codes, org_ids, date)
+        params.append(org_ids)
+
+    elif spending_type in ['bnf-section', 'chemical']:
+        practice_ids = utils.get_practice_ids_from_org(org_ids)
+        query = _get_chemicals_or_sections_by_practice(codes,
+                                                       practice_ids,
+                                                       spending_type,
+                                                       date)
+        params.append(practice_ids)
+
     else:
-        query = _get_presentations_by_practice(codes, orgs, date)
-        org_for_param = orgs
-    data = utils.execute_query(
-        query, [codes, org_for_param, [date] if date else []])
+        assert spending_type is None
+        assert codes == []
+
+        practice_ids = utils.get_practice_ids_from_org(org_ids)
+        query = _get_total_spending_by_practice(practice_ids, date)
+        params.append(practice_ids)
+
+    if date:
+        params.append([date])
+
+    data = utils.execute_query(query, params)
     return Response(data)
 
 
@@ -532,7 +537,7 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
     return query
 
 
-def _get_total_spending_by_practice(orgs, date):
+def _get_total_spending_by_practice(practice_ids, date):
     query = 'SELECT pr.practice_id AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
@@ -543,28 +548,24 @@ def _get_total_spending_by_practice(orgs, date):
     query += 'pr.quantity AS quantity '
     query += "FROM vw__practice_summary pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    if orgs or date:
+    if practice_ids or date:
         query += "WHERE "
     if date:
         query += "pr.processing_date=%s "
-    if orgs:
+    if practice_ids:
         if date:
             query += "AND "
         query += "("
-        for i, org in enumerate(orgs):
+        for i, practice_id in enumerate(practice_ids):
             query += "pr.practice_id=%s "
-            # if len(org) == 3:
-            #     query += "pr.pct_id=%s "
-            # else:
-            #     query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
+            if (i != len(practice_ids) - 1):
                 query += ' OR '
         query += ") "
     query += "ORDER BY date, pr.practice_id "
     return query
 
 
-def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
+def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
                                            date):
     query = 'SELECT pc.code AS row_id, '
     query += "pc.name AS row_name, "
@@ -592,18 +593,14 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
                 if (i != len(codes) - 1):
                     query += ' OR '
         query += ") "
-    if orgs:
+    if practice_ids:
         if has_preceding:
             query += " AND ("
         else:
             query += " WHERE ("
-        for i, org in enumerate(orgs):
+        for i, practice_id in enumerate(practice_ids):
             query += "pr.practice_id=%s "
-            # if len(org) == 3:
-            #     query += "pr.pct_id=%s "
-            # else:
-            #     query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
+            if (i != len(practice_ids) - 1):
                 query += ' OR '
         query += ") "
         has_preceding = True
@@ -618,7 +615,7 @@ def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
     return query
 
 
-def _get_presentations_by_practice(codes, orgs, date):
+def _get_presentations_by_practice(codes, org_ids, date):
     query = 'SELECT pc.code AS row_id, '
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
@@ -634,14 +631,14 @@ def _get_presentations_by_practice(codes, orgs, date):
         query += "pr.presentation_code LIKE %s "
         if (i != len(codes) - 1):
             query += ' OR '
-    if orgs:
+    if org_ids:
         query += ") AND ("
-        for i, c in enumerate(orgs):
+        for i, c in enumerate(org_ids):
             if len(c) == 3:
                 query += "pr.pct_id=%s "
             else:
                 query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
+            if (i != len(org_ids) - 1):
                 query += ' OR '
     if date:
         query += "AND pr.processing_date=%s "
