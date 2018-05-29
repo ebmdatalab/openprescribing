@@ -144,7 +144,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
-                'frontend.context_processors.google_user_id',
                 'frontend.context_processors.api_host',
                 'frontend.context_processors.debug'
             ],

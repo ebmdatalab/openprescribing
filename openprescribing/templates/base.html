@@ -34,9 +34,6 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
       var params = {};
       params = setParamsFromQueryString(params, ['expId', 'expVar']);
-      {% if GOOGLE_USER_ID %}
-        params['userId'] = '{{ GOOGLE_USER_ID }}';
-      {% endif %}
       ga('create', '{{ GOOGLE_TRACKING_ID }}', 'auto', params);
       {% if GOOGLE_OPTIMIZE_CONTAINER_ID %}
         ga('require', '{{ GOOGLE_OPTIMIZE_CONTAINER_ID }}');
