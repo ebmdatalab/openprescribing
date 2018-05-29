@@ -317,7 +317,7 @@ class TestFrontendViews(TransactionTestCase):
         title = doc('h1')
         self.assertEqual(title.text(), 'CCG: NHS Corby')
         practices = doc('#practices li')
-        self.assertEqual(len(practices), 1)
+        self.assertEqual(len(practices), 2)
 
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
@@ -361,7 +361,7 @@ class TestFrontendViews(TransactionTestCase):
         title = doc('h1')
         self.assertEqual(title.text(), 'CCG: NHS Corby')
         practices = doc('#practices li')
-        self.assertEqual(len(practices), 1)
+        self.assertEqual(len(practices), 2)
 
     def test_call_view_measure_practice(self):
         response = self.client.get('/practice/P87629/')
