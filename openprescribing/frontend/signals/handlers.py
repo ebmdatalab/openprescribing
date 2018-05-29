@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from common.utils import google_user_id
 from frontend.models import MailLog
 from frontend.models import Profile
 
@@ -46,7 +45,6 @@ def send_ga_event(event, user):
     payload = {
         'v': 1,
         'tid': settings.GOOGLE_TRACKING_ID,
-        'uid': google_user_id(user),
         't': 'event',
         'ec': 'email',
         'ea': event.event_type,

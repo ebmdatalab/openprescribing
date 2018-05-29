@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
+    url(r'^privacy/$', TemplateView.as_view(template_name='privacy.html'),
+        name="privacy"),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
         name="contact"),
     url(r'^how-to-use/$',

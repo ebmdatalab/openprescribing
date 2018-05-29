@@ -34,9 +34,6 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
       var params = {};
       params = setParamsFromQueryString(params, ['expId', 'expVar']);
-      {% if GOOGLE_USER_ID %}
-        params['userId'] = '{{ GOOGLE_USER_ID }}';
-      {% endif %}
       ga('create', '{{ GOOGLE_TRACKING_ID }}', 'auto', params);
       {% if GOOGLE_OPTIMIZE_CONTAINER_ID %}
         ga('require', '{{ GOOGLE_OPTIMIZE_CONTAINER_ID }}');
@@ -107,6 +104,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
                 <li class="active_faq"><a href="{% url 'faq' %}">FAQ</a></li>
                 <li class="active_api"><a href="{% url 'api' %}">For coders</a></li>
                 <li class="active_about"><a href="{% url 'about' %}">About</a></li>
+                <li class="active_privacy"><a href="{% url 'privacy' %}">Privacy Policy</a></li>
               </ul>
             </li>
 

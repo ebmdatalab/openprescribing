@@ -4,11 +4,9 @@ from datetime import datetime
 from os import environ
 from titlecase import titlecase
 import argparse
-import hashlib
 import html2text
 import logging
 import re
-import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
@@ -158,16 +156,6 @@ def constraint_and_index_reconstructor(table_name):
             cursor.execute("CLUSTER %s USING %s" % (table_name, cluster))
             cursor.execute("ANALYZE %s" % table_name)
             logger.info("CLUSTERED %s" % table_name)
-
-
-def google_user_id(user):
-    if user:
-        h = hashlib.md5()
-        h.update(str(user.id))
-        client_id = str(uuid.UUID(h.hexdigest()))
-    else:
-        client_id = None
-    return client_id
 
 
 def valid_date(s):
