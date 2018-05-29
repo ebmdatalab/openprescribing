@@ -1,6 +1,6 @@
 env:
   global:
-    DOCKER_COMPOSE_VERSION: 1.7.1
+    DOCKER_COMPOSE_VERSION: 1.9.0
   matrix:
     - TEST_SUITE=nonfunctional
     - TEST_SUITE=functional BROWSER="firefox:latest:Windows 2012"
