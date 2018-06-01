@@ -145,8 +145,9 @@ class CommandsTestCase(TestCase):
                 call('New and unmatched: %s', 1),
                 call('Changed: %s', 1),
                 call('Unchanged: %s', 1),
+                call('Unmatched: %s', 1),
             ]
-            self.assertEqual(info.call_args_list[-4:], expected_logging_calls)
+            self.assertEqual(info.call_args_list[-5:], expected_logging_calls)
 
         self.assertEqual(NCSOConcession.objects.count(), 4)
 
