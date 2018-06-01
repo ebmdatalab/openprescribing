@@ -29,10 +29,13 @@ class Command(BaseCommand):
         self.import_from_archive()
         self.import_from_current()
 
+        num_unmatched = NCSOConcession.objects.filter(vmpp__isnull=True).count()
+
         logger.info('New and matched: %s', self.counter['new-and-matched'])
         logger.info('New and unmatched: %s', self.counter['new-and-unmatched'])
         logger.info('Changed: %s', self.counter['changed'])
         logger.info('Unchanged: %s', self.counter['unchanged'])
+        logger.info('Unmatched: %s', num_unmatched)
 
         Client('dmd').upload_model(NCSOConcession)
 
@@ -42,6 +45,7 @@ class Command(BaseCommand):
             'New and unmatched: %s' % self.counter['new-and-unmatched'],
             'Changed: %s' % self.counter['changed'],
             'Unchanged: %s' % self.counter['unchanged'],
+            'Unmatched: %s' % num_unmatched,
         ])
         notify_slack(msg)
 
