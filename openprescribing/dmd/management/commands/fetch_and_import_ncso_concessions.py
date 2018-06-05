@@ -54,7 +54,14 @@ class Command(BaseCommand):
 
         doc = self.download_archive()
         for h2 in doc.find_all('h2', class_='trigger'):
-            self.import_from_html(h2)
+            table = h2.find_next('table')
+            date = self.date_from_heading(h2)
+
+            num_records = self.import_from_table(table, date)
+
+            if num_records < NCSOConcession.objects.filter(date=date).count():
+                msg = 'NCSO concession(s) removed from source for {}'.format(date)
+                notify_slack(msg)
 
     def download_archive(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/'
@@ -65,28 +72,49 @@ class Command(BaseCommand):
         logger.info('import_from_current')
 
         doc = self.download_current()
+
         h1s = doc.find_all('h1', string=re.compile('\w+ \d{4}'))
         assert len(h1s) == 1
-        self.import_from_html(h1s[0])
+
+        date = self.date_from_heading(h1s[0])
+
+        num_records = 0
+
+        for table in doc.find_all('table'):
+            num_records += self.import_from_table(table, date)
+
+        if num_records < NCSOConcession.objects.filter(date=date).count():
+            msg = 'NCSO concession(s) removed from source for {}'.format(date)
+            notify_slack(msg)
 
     def download_current(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/'
         rsp = requests.get(url)
         return bs4.BeautifulSoup(rsp.content, 'html.parser')
 
-    def import_from_html(self, heading):
+    def date_from_heading(self, heading):
         month_name, year = heading.text.strip().split()
         month_names = list(calendar.month_name)
         month = month_names.index(month_name)
+        return datetime.date(int(year), month, 1)
 
-        date = datetime.date(int(year), month, 1)
-
+    def import_from_table(self, table, date):
         if date < datetime.date(2014, 8, 1):
-            return
+            # Data older than August 2018 is in a different format and we don't
+            # need it at the moment.
+            return 0
 
-        table = heading.find_next('table')
         trs = table.find_all('tr')
         records = [[td.text.strip() for td in tr.find_all('td')] for tr in trs]
+
+        if len(records[0]) != 3:
+            # Some tables on a page don't actually list concessions, but
+            # there's no obvious way of selecting just the tables with
+            # concessions. We can ignore tables that don't have three columns.
+            # Non-concession tables with three columns will obviously slip
+            # through the net here, but will presumably trigger the asserts
+            # below, and we can cross that bridge when the time comes.
+            return 0
 
         # Make sure the first row contains expected headers.
         # Unfortunately, the header names are not consistent.
@@ -102,14 +130,7 @@ class Command(BaseCommand):
                 + int(match.groups()[1])
             self.import_record(date, drug, pack_size, price_concession_pence)
 
-        if NCSOConcession.objects.filter(date=date).count() >= len(records):
-            # If there are more records in the database than we have imported,
-            # then there was previously a record in the source that is no
-            # longer present.  I have seen this once, with a record whose
-            # spelling was corrected.  If we see this frequently, we should
-            # automate dealing with it; for now we can deal with it manually.
-            msg = 'NCSO concession(s) removed from source for {}'.format(date)
-            notify_slack(msg)
+        return len(records) - 1
 
     def import_record(self, date, drug, pack_size, price_concession_pence):
         concession, created = NCSOConcession.objects.get_or_create(
