@@ -619,20 +619,21 @@ def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
 
 
 def _get_presentations_by_practice(codes, org_ids, date):
-    query = 'SELECT pc.code AS row_id, '
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += "pr.processing_date AS date, "
-    query += 'SUM(pr.actual_cost) AS actual_cost, '
-    query += 'SUM(pr.total_items) AS items, '
-    query += 'CAST(SUM(pr.quantity) AS bigint) AS quantity '
-    query += "FROM frontend_prescription pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    query += "WHERE ("
-    query += "%s"
-    query += ") GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
+    query = '''
+    SELECT pc.code AS row_id,
+    pc.name AS row_name,
+    pc.setting AS setting,
+    pc.ccg_id AS ccg,
+    pr.processing_date AS date,
+    SUM(pr.actual_cost) AS actual_cost,
+    SUM(pr.total_items) AS items,
+    CAST(SUM(pr.quantity) AS bigint) AS quantity
+    FROM frontend_prescription pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE (%s)
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
 
     where_clauses = []
 
