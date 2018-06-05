@@ -392,6 +392,7 @@ def spending_by_practice(request, format=None):
     if spending_type is False:
         err = 'Error: Codes must all be the same length'
         return Response(err, status=400)
+
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
 
@@ -404,10 +405,12 @@ def spending_by_practice(request, format=None):
     params = [codes]
 
     if spending_type in ['product', 'presentation']:
+        assert len(codes) > 0
         query = _get_presentations_by_practice(codes, org_ids, date)
         params.append(org_ids)
 
     elif spending_type in ['bnf-section', 'chemical']:
+        assert len(codes) > 0
         practice_ids = utils.get_practice_ids_from_org(org_ids)
         query = _get_chemicals_or_sections_by_practice(codes,
                                                        practice_ids,
@@ -417,7 +420,7 @@ def spending_by_practice(request, format=None):
 
     else:
         assert spending_type is None
-        assert codes == []
+        assert len(codes) == 0
 
         practice_ids = utils.get_practice_ids_from_org(org_ids)
         query = _get_total_spending_by_practice(practice_ids, date)
