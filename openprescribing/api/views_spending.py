@@ -570,7 +570,8 @@ def _get_total_spending_by_practice(practice_ids, date):
 
 def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
                                            date):
-    query = 'SELECT pc.code AS row_id, '
+    query = '''
+    SELECT pc.code AS row_id,
     query += "pc.name AS row_name, "
     query += "pc.setting AS setting, "
     query += "pc.ccg_id AS ccg, "
@@ -580,6 +581,9 @@ def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
     query += 'SUM(pr.quantity) AS quantity '
     query += "FROM vw__chemical_summary_by_practice pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
+    query += "GROUP BY pc.code, pc.name, date "
+    query += "ORDER BY date, pc.code"
+
     has_preceding = False
     if spending_type:
         has_preceding = True
@@ -613,21 +617,21 @@ def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
         else:
             query += " WHERE ("
         query += "pr.processing_date=%s) "
-    query += "GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
+
     return query
 
 
 def _get_presentations_by_practice(codes, org_ids, date):
     query = '''
-    SELECT pc.code AS row_id,
-    pc.name AS row_name,
-    pc.setting AS setting,
-    pc.ccg_id AS ccg,
-    pr.processing_date AS date,
-    SUM(pr.actual_cost) AS actual_cost,
-    SUM(pr.total_items) AS items,
-    CAST(SUM(pr.quantity) AS bigint) AS quantity
+    SELECT
+        pc.code AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        SUM(pr.actual_cost) AS actual_cost,
+        SUM(pr.total_items) AS items,
+        CAST(SUM(pr.quantity) AS bigint) AS quantity
     FROM frontend_prescription pr
     JOIN frontend_practice pc ON pr.practice_id=pc.code
     WHERE %s
