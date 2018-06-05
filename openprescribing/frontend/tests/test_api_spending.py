@@ -1,3 +1,4 @@
+import csv
 import datetime
 import json
 
@@ -284,19 +285,30 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['items'], '95')
         self.assertEqual(rows[-1]['quantity'], '5142')
 
+
+class TestSpendingByPractice(ApiTestBase):
     ########################################
     # Total spending by practice.
     ########################################
+    def _get(self, params):
+        params['format'] = 'csv'
+        url = '/api/1.0/spending_by_practice/'
+        return self.client.get(url, params)
+
+    def _get_rows(self, params):
+        rsp = self._get(params)
+        return list(csv.DictReader(rsp.content.splitlines()))
+
     def test_spending_by_all_practices_on_product_without_date(self):
-        url = '%s/spending_by_practice' % self.api_prefix
-        url += '?format=csv&code=0204000I0BC'
-        response = self.client.get(url, follow=True)
+        response = self._get({'code': '0204000I0BC'})
         self.assertEqual(response.status_code, 400)
 
     def test_total_spending_by_practice(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&date=2014-11-01'
-        rows = self._rows_from_api(url)
+        params = {
+            'date': '2014-11-01'
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -308,9 +320,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '2543')
 
     def test_spending_by_practice_on_chemical(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0204000I0&date=2014-11-01'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0204000I0',
+            'date': '2014-11-01'
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['row_name'], 'DR KHALID & PARTNERS')
@@ -322,9 +337,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '1154')
 
     def test_spending_by_all_practices_on_chemical_with_date(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0202010F0&date=2014-09-01'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010F0',
+            'date': '2014-09-01',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['actual_cost'], '11.99')
@@ -336,8 +354,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['quantity'], '32')
 
     def test_spending_by_one_practice(self):
-        url = '/spending_by_practice?format=csv&org=P87629'
-        rows = self._rows_from_api(url)
+        params = {
+            'org': 'P87629',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -347,9 +368,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['quantity'], '2599')
 
     def test_spending_by_one_practice_on_chemical(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0202010B0&org=P87629'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0',
+            'org': 'P87629',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -361,9 +385,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['quantity'], '1399')
 
     def test_spending_by_practice_on_multiple_chemicals(self):
-        url = '/spending_by_practice?format=csv'
-        url += '&code=0202010B0,0204000I0&org=P87629,K83059'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0,0204000I0',
+            'org': 'P87629,K83059',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -373,9 +400,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[2]['quantity'], '24')
 
     def test_spending_by_all_practices_on_product(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0202010B0AA&date=2014-11-01'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0AA',
+            'date': '2014-11-01',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -387,9 +417,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['quantity'], '1399')
 
     def test_spending_by_all_practices_on_presentation(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0202010B0AAABAB&date=2014-11-01'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0AAABAB',
+            'date': '2014-11-01',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['row_id'], 'K83059')
         self.assertEqual(rows[0]['actual_cost'], '12.13')
@@ -401,9 +434,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['quantity'], '1399')
 
     def test_spending_by_practice_on_presentation(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0204000I0BCAAAB&org=03V'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0204000I0BCAAAB',
+            'org': '03V',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[1]['row_id'], 'P87629')
         self.assertEqual(rows[1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -415,9 +451,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[1]['quantity'], '1200')
 
     def test_spending_by_practice_on_multiple_presentations(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0204000I0BCAAAB,0202010B0AAABAB&org=03V'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0204000I0BCAAAB,0202010B0AAABAB',
+            'org': '03V',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], 'P87629')
         self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -427,9 +466,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[2]['quantity'], '2599')
 
     def test_spending_by_practice_on_section(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=2&org=03V'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '2',
+            'org': '03V',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
@@ -439,9 +481,12 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['quantity'], '2599')
 
     def test_spending_by_practice_on_multiple_sections(self):
-        url = '/spending_by_practice'
-        url += '?format=csv&code=0202,0204&org=03Q'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202,0204',
+            'org': '03Q',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
