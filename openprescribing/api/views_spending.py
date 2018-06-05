@@ -627,21 +627,30 @@ def _get_presentations_by_practice(codes, org_ids, date):
     query += "FROM frontend_prescription pr "
     query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
     query += "WHERE ("
-    for i, c in enumerate(codes):
-        query += "pr.presentation_code LIKE %s "
-        if (i != len(codes) - 1):
-            query += ' OR '
-    if org_ids:
-        query += ") AND ("
-        for i, c in enumerate(org_ids):
-            if len(c) == 3:
-                query += "pr.pct_id=%s "
-            else:
-                query += "pr.practice_id=%s "
-            if (i != len(org_ids) - 1):
-                query += ' OR '
-    if date:
-        query += "AND pr.processing_date=%s "
+    query += "%s"
     query += ") GROUP BY pc.code, pc.name, date "
     query += "ORDER BY date, pc.code"
-    return query
+
+    where_clauses = []
+
+    code_subclauses = [
+        'pr.presentation_code LIKE %s'
+        for _ in range(len(codes))
+    ]
+    codes_clause = ' OR '.join(code_subclauses)
+    where_clauses.append(codes_clause)
+
+    if org_ids:
+        org_subclauses = []
+        for org_id in org_ids:
+            if len(org_id) == 3:
+                org_subclauses.append('pr.pct_id = %s')
+            else:
+                org_subclauses.append('pr.practice_id = %s')
+        where_clauses.append(' OR '.join(org_subclauses))
+
+    if date:
+        where_clauses.append('pr.processing_date = %s')
+
+    where_condition = '(' + ') AND ('.join(where_clauses) + ')'
+    return query % where_condition
