@@ -630,31 +630,55 @@ def _get_presentations_by_practice(codes, org_ids, date):
     CAST(SUM(pr.quantity) AS bigint) AS quantity
     FROM frontend_prescription pr
     JOIN frontend_practice pc ON pr.practice_id=pc.code
-    WHERE (%s)
+    WHERE %s
     GROUP BY pc.code, pc.name, date
     ORDER BY date, pc.code
     '''
-
-    where_clauses = []
 
     code_subclauses = [
         'pr.presentation_code LIKE %s'
         for _ in range(len(codes))
     ]
-    codes_clause = ' OR '.join(code_subclauses)
-    where_clauses.append(codes_clause)
 
+    org_subclauses = []
     if org_ids:
-        org_subclauses = []
         for org_id in org_ids:
             if len(org_id) == 3:
                 org_subclauses.append('pr.pct_id = %s')
             else:
                 org_subclauses.append('pr.practice_id = %s')
-        where_clauses.append(' OR '.join(org_subclauses))
 
     if date:
-        where_clauses.append('pr.processing_date = %s')
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
 
-    where_condition = '(' + ') AND ('.join(where_clauses) + ')'
+    where_condition = _build_where_condition([
+        code_subclauses,
+        org_subclauses,
+        date_clause,
+    ])
+
     return query % where_condition
+
+
+def _build_where_condition(clauses):
+    fragments = []
+
+    for clause in clauses:
+        if clause is None:
+            continue
+        elif isinstance(clause, str):
+            fragments.append(clause)
+        elif isinstance(clause, list):
+            if len(clause) == 0:
+                continue
+            elif len(clause) == 1:
+                fragments.append(clause[0])
+            else:
+                fragment = '(' + ' OR '.join(clause) + ')'
+                fragments.append(fragment)
+        else:
+            assert False, 'Unexpected clause: {}'.format(clause)
+
+    return ' AND '.join(fragments)
