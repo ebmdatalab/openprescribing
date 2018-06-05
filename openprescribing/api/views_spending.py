@@ -541,84 +541,95 @@ def _get_query_for_presentations_by_ccg(codes, orgs):
 
 
 def _get_total_spending_by_practice(practice_ids, date):
-    query = 'SELECT pr.practice_id AS row_id, '
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += 'pr.processing_date AS date, '
-    query += 'pr.cost AS actual_cost, '
-    query += 'pr.items AS items, '
-    query += 'pr.quantity AS quantity '
-    query += "FROM vw__practice_summary pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    if practice_ids or date:
-        query += "WHERE "
-    if date:
-        query += "pr.processing_date=%s "
+    query = '''
+    SELECT
+        pr.practice_id AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        pr.cost AS actual_cost,
+        pr.items AS items,
+        pr.quantity AS quantity
+    FROM vw__practice_summary pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE %s
+    ORDER BY date, pr.practice_id
+    '''
+
     if practice_ids:
-        if date:
-            query += "AND "
-        query += "("
-        for i, practice_id in enumerate(practice_ids):
-            query += "pr.practice_id=%s "
-            if (i != len(practice_ids) - 1):
-                query += ' OR '
-        query += ") "
-    query += "ORDER BY date, pr.practice_id "
-    return query
+        practice_clauses = [
+            'pr.practice_id = %s'
+            for _ in range(len(practice_ids))
+        ]
+    else:
+        practice_clauses = None
+
+    if date:
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
+
+    where_condition = _build_where_condition([
+        practice_clauses,
+        date_clause,
+    ])
+
+    return query % where_condition
 
 
 def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
                                            date):
     query = '''
-    SELECT pc.code AS row_id,
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += "pr.processing_date AS date, "
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.items) AS items, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__chemical_summary_by_practice pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    query += "GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
+    SELECT
+        pc.code AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.items) AS items,
+        SUM(pr.quantity) AS quantity
+    FROM vw__chemical_summary_by_practice pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
 
-    has_preceding = False
-    if spending_type:
-        has_preceding = True
-        query += " WHERE ("
-        if spending_type == 'bnf-section':
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id LIKE %s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-            codes = [c + '%' for c in codes]
-        else:
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id=%s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-        query += ") "
+    if spending_type == 'bnf-section':
+        chemical_clauses = [
+            'pr.chemical_id LIKE %s'
+            for _ in range(len(codes))
+        ]
+    elif spending_type == 'chemical':
+        chemical_clauses = [
+            'pr.chemical_id = %s'
+            for _ in range(len(codes))
+        ]
+    else:
+        assert False
+
     if practice_ids:
-        if has_preceding:
-            query += " AND ("
-        else:
-            query += " WHERE ("
-        for i, practice_id in enumerate(practice_ids):
-            query += "pr.practice_id=%s "
-            if (i != len(practice_ids) - 1):
-                query += ' OR '
-        query += ") "
-        has_preceding = True
-    if date:
-        if has_preceding:
-            query += " AND ("
-        else:
-            query += " WHERE ("
-        query += "pr.processing_date=%s) "
+        practice_clauses = [
+            'pr.practice_id = %s'
+            for _ in range(len(practice_ids))
+        ]
+    else:
+        practice_clauses = None
 
-    return query
+    if date:
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
+
+    where_condition = _build_where_condition([
+        chemical_clauses,
+        practice_clauses,
+        date_clause,
+    ])
+
+    return query % where_condition
 
 
 def _get_presentations_by_practice(codes, org_ids, date):
