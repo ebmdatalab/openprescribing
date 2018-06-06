@@ -153,11 +153,20 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[17]['items'], '40')
         self.assertEqual(rows[17]['quantity'], '1209')
 
-    ########################################
-    # Total spending by CCG.
-    ########################################
+
+class TestSpendingByCCG(ApiTestBase):
+    def _get(self, params):
+        params['format'] = 'csv'
+        url = '/api/1.0/spending_by_ccg/'
+        return self.client.get(url, params)
+
+    def _get_rows(self, params):
+        rsp = self._get(params)
+        return list(csv.DictReader(rsp.content.splitlines()))
+
     def test_total_spending_by_ccg(self):
-        rows = self._rows_from_api('/spending_by_ccg?format=csv')
+        rows = self._get_rows({})
+
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
         self.assertEqual(rows[6]['row_name'], 'NHS Corby')
@@ -167,6 +176,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[6]['quantity'], '1241')
 
     def test_total_spending_by_one_ccg(self):
+        params = {
+            'org': '03V',
+        }
+        rows = self._get_rows(params)
+
         rows = self._rows_from_api('/spending_by_ccg?format=csv&org=03V')
         self.assertEqual(len(rows), 5)
         self.assertEqual(rows[-2]['row_id'], '03V')
@@ -177,6 +191,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-2]['quantity'], '1241')
 
     def test_total_spending_by_multiple_ccgs(self):
+        params = {
+            'org': '03V,03Q',
+        }
+        rows = self._get_rows(params)
+
         rows = self._rows_from_api('/spending_by_ccg?format=csv&org=03V,03Q')
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[6]['row_id'], '03V')
@@ -187,6 +206,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[6]['quantity'], '1241')
 
     def test_spending_by_all_ccgs_on_chemical(self):
+        params = {
+            'code': '0202010B0',
+        }
+        rows = self._get_rows(params)
+
         rows = self._rows_from_api(
             '/spending_by_ccg?format=csv&code=0202010B0')
         self.assertEqual(len(rows), 6)
@@ -204,9 +228,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[5]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_chemicals(self):
-        url = '/spending_by_ccg'
-        url += '?format=csv&code=0202010B0,0202010F0'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0,0202010F0',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -222,9 +248,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-3]['quantity'], '1241')
 
     def test_spending_by_all_ccgs_on_product(self):
-        url = '/spending_by_ccg'
-        url += '?format=csv&code=0204000I0BC'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0204000I0BC',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
@@ -234,9 +262,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '2350')
 
     def test_spending_by_all_ccgs_on_presentation(self):
-        url = '/spending_by_ccg'
-        url += '?format=csv&code=0202010B0AAABAB'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010B0AAABAB',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[2]['row_id'], '03V')
         self.assertEqual(rows[2]['row_name'], 'NHS Corby')
@@ -246,9 +276,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[2]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_presentations(self):
-        url = '/spending_by_ccg'
-        url += '?format=csv&code=0202010F0AAAAAA,0202010B0AAACAC'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '0202010F0AAAAAA,0202010B0AAACAC',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 7)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -258,8 +290,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '56')
 
     def test_spending_by_all_ccgs_on_bnf_section(self):
-        url = '/spending_by_ccg?format=csv&code=2.2.1'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '2.2.1',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[0]['row_id'], '03Q')
         self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
@@ -275,8 +310,11 @@ class TestAPISpendingViews(ApiTestBase):
         self.assertEqual(rows[-1]['quantity'], '2788')
 
     def test_spending_by_all_ccgs_on_multiple_bnf_sections(self):
-        url = '/spending_by_ccg?format=csv&code=2.2,2.4'
-        rows = self._rows_from_api(url)
+        params = {
+            'code': '2.2,2.4',
+        }
+        rows = self._get_rows(params)
+
         self.assertEqual(len(rows), 9)
         self.assertEqual(rows[-1]['row_id'], '03V')
         self.assertEqual(rows[-1]['row_name'], 'NHS Corby')
@@ -287,9 +325,6 @@ class TestAPISpendingViews(ApiTestBase):
 
 
 class TestSpendingByPractice(ApiTestBase):
-    ########################################
-    # Total spending by practice.
-    ########################################
     def _get(self, params):
         params['format'] = 'csv'
         url = '/api/1.0/spending_by_practice/'

@@ -359,24 +359,23 @@ def tariff(request, format=None):
 def spending_by_ccg(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    pct_ids = utils.param_to_list(request.query_params.get('org', []))
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
         err = CODE_LENGTH_ERROR
         return Response(err, status=400)
 
-    if not spending_type or spending_type == 'bnf-section' \
-       or spending_type == 'chemical':
-        query = _get_query_for_chemicals_or_sections_by_ccg(codes, orgs,
-                                                            spending_type)
+    if spending_type in ['product', 'presentation']:
+        query = _get_query_for_presentations_by_ccg(codes, pct_ids)
     else:
-        query = _get_query_for_presentations_by_ccg(codes, orgs)
+        query = _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids,
+                                                            spending_type)
 
     if spending_type == 'bnf-section' or spending_type == 'product':
         codes = [c + '%' for c in codes]
 
-    data = utils.execute_query(query, [codes, orgs])
+    data = utils.execute_query(query, [codes, pct_ids])
     return Response(data)
 
 
@@ -478,66 +477,87 @@ def _get_query_for_total_spending(codes):
     return query % condition
 
 
-def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
-    query = 'SELECT pc.code as row_id, '
-    query += "pc.name as row_name, "
-    query += 'pr.processing_date as date, '
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.items) AS items, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__chemical_summary_by_ccg pr "
-    query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
-    query += "AND pc.org_type='CCG' "
-    if spending_type:
-        query += " WHERE ("
-        if spending_type == 'bnf-section':
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id LIKE %s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-            codes = [c + '%' for c in codes]
-        else:
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id=%s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-        query += ") "
-    if orgs:
-        query += "AND ("
-        for i, org in enumerate(orgs):
-            query += "pr.pct_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-        query += ") "
-    query += "GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code "
-    return query
+def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
+    query = '''
+    SELECT pc.code as row_id,
+        pc.name as row_name,
+        pr.processing_date as date,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.items) AS items,
+        SUM(pr.quantity) AS quantity
+    FROM vw__chemical_summary_by_ccg pr
+    JOIN frontend_pct pc ON pr.pct_id=pc.code
+    AND pc.org_type='CCG'
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    if spending_type == 'bnf-section':
+        chemical_clauses = [
+            'pr.chemical_id LIKE %s'
+            for _ in range(len(codes))
+        ]
+    elif spending_type == 'chemical':
+        chemical_clauses = [
+            'pr.chemical_id = %s'
+            for _ in range(len(codes))
+        ]
+    else:
+        chemical_clauses = None
+
+    if pct_ids:
+        pct_clauses = [
+            'pr.pct_id = %s'
+            for _ in range(len(pct_ids))
+        ]
+    else:
+        pct_clauses = None
+
+    where_condition = _build_where_condition([
+        chemical_clauses,
+        pct_clauses,
+    ])
+
+    return query % where_condition
 
 
-def _get_query_for_presentations_by_ccg(codes, orgs):
-    query = 'SELECT pc.code as row_id, '
-    query += "pc.name as row_name, "
-    query += 'pr.processing_date as date, '
-    query += "SUM(pr.items) AS items, "
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__presentation_summary_by_ccg pr "
-    query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
-    query += "AND pc.org_type='CCG' "
-    query += " WHERE ("
-    for i, c in enumerate(codes):
-        query += "pr.presentation_code LIKE %s "
-        if (i != len(codes) - 1):
-            query += ' OR '
-    if orgs:
-        query += ") AND ("
-        for i, org in enumerate(orgs):
-            query += "pr.pct_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-    query += ") GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
-    return query
+def _get_query_for_presentations_by_ccg(codes, pct_ids):
+    query = '''
+    SELECT
+        pc.code as row_id,
+        pc.name as row_name,
+        pr.processing_date as date,
+        SUM(pr.items) AS items,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.quantity) AS quantity
+    FROM vw__presentation_summary_by_ccg pr
+    JOIN frontend_pct pc ON pr.pct_id=pc.code
+    AND pc.org_type='CCG'
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    code_clauses = [
+        'pr.presentation_code LIKE %s'
+        for _ in range(len(codes))
+    ]
+
+    if pct_ids:
+        pct_clauses = [
+            'pr.pct_id = %s'
+            for _ in range(len(pct_ids))
+        ]
+    else:
+        pct_clauses = None
+
+    where_condition = _build_where_condition([
+        code_clauses,
+        pct_clauses,
+    ])
+
+    return query % where_condition
 
 
 def _get_total_spending_by_practice(practice_ids, date):
@@ -696,4 +716,7 @@ def _build_where_condition(clauses):
         else:
             assert False, 'Unexpected clause: {}'.format(clause)
 
-    return ' AND '.join(fragments)
+    if not fragments:
+        return '1 = 1'
+    else:
+        return ' AND '.join(fragments)
