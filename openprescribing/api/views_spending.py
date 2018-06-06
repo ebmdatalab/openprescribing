@@ -435,46 +435,48 @@ def spending_by_practice(request, format=None):
 def _get_query_for_total_spending(codes):
     # The CTE at the start ensures we return rows for every month in
     # the last five years, even if that's zeros
-    query = """WITH all_dates AS (
-                 SELECT
-                   MAX(current_at)::date - (d.date||'month')::interval AS date
-                 FROM
-                   generate_series(0,
-                     59) AS d(date),
-                   frontend_importlog
-                 WHERE
-                   category = 'prescribing'
-                 GROUP BY
-                   category,
-                   d.date
-                 ORDER BY
-                   date)
-               SELECT
-                 COALESCE(SUM(cost), 0) AS actual_cost,
-                 COALESCE(SUM(items), 0) AS items,
-                 COALESCE(SUM(quantity), 0) AS quantity,
-                 all_dates.date::date AS date
-               FROM (
-                 SELECT *
-                 FROM
-                   vw__presentation_summary
-                 %s
-               ) pr
-               RIGHT OUTER JOIN all_dates
-               ON all_dates.date = pr.processing_date
-               GROUP BY date
-               ORDER BY date;"""
-    if codes:
-        condition = " WHERE ("
-        for i, c in enumerate(codes):
-            condition += "presentation_code LIKE %s "
-            if (i != len(codes) - 1):
-                condition += ' OR '
-        condition += ") "
-    else:
-        condition = ""
+    query = """
+    WITH all_dates AS (
+        SELECT
+            MAX(current_at)::date - (d.date||'month')::interval AS date
+        FROM
+            generate_series(0, 59) AS d(date),
+            frontend_importlog
+        WHERE
+            category = 'prescribing'
+        GROUP BY
+            category,
+            d.date
+        ORDER BY
+            date
+    )
+    SELECT
+        COALESCE(SUM(cost), 0) AS actual_cost,
+        COALESCE(SUM(items), 0) AS items,
+        COALESCE(SUM(quantity), 0) AS quantity,
+        all_dates.date::date AS date
+    FROM (
+        SELECT *
+        FROM
+        vw__presentation_summary
+        WHERE %s
+    ) pr
+    RIGHT OUTER JOIN all_dates
+    ON all_dates.date = pr.processing_date
+    GROUP BY date
+    ORDER BY date;"""
 
-    return query % condition
+    if codes:
+        code_clauses = [
+            'presentation_code LIKE %s'
+            for _ in range(len(codes))
+        ]
+    else:
+        code_clauses = None
+
+    where_condition = _build_where_condition([code_clauses])
+
+    return query % where_condition
 
 
 def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
