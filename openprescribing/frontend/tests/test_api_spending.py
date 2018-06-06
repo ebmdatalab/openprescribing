@@ -402,6 +402,21 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[-1]['items'], '55')
         self.assertEqual(rows[-1]['quantity'], '2599')
 
+    def test_spending_by_two_practices_with_date(self):
+        params = {
+            'org': 'P87629,K83059',
+            'date': '2014-11-01',
+        }
+        rows = self._get_rows(params)
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[1]['row_id'], 'P87629')
+        self.assertEqual(rows[1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(rows[1]['date'], '2014-11-01')
+        self.assertEqual(rows[1]['actual_cost'], '64.26')
+        self.assertEqual(rows[1]['items'], '55')
+        self.assertEqual(rows[1]['quantity'], '2599')
+
     def test_spending_by_one_practice_on_chemical(self):
         params = {
             'code': '0202010B0',
@@ -499,22 +514,6 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[2]['actual_cost'], '64.26')
         self.assertEqual(rows[2]['items'], '55')
         self.assertEqual(rows[2]['quantity'], '2599')
-
-    def test_spending_by_practice_on_multiple_presentations_with_multiple_orgs_and_date(self):
-        params = {
-            'code': '0204000I0BCAAAB,0202010B0AAABAB',
-            'org': 'P87629,K83059',
-            'date': '2014-11-01',
-        }
-        rows = self._get_rows(params)
-
-        self.assertEqual(len(rows), 2)
-        self.assertEqual(rows[1]['row_id'], 'P87629')
-        self.assertEqual(rows[1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
-        self.assertEqual(rows[1]['date'], '2014-11-01')
-        self.assertEqual(rows[1]['actual_cost'], '64.26')
-        self.assertEqual(rows[1]['items'], '55')
-        self.assertEqual(rows[1]['quantity'], '2599')
 
     def test_spending_by_practice_on_section(self):
         params = {
