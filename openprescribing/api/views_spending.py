@@ -670,18 +670,18 @@ def _get_presentations_by_practice(codes, org_ids, date):
     ORDER BY date, pc.code
     '''
 
-    code_subclauses = [
+    code_clauses = [
         'pr.presentation_code LIKE %s'
         for _ in range(len(codes))
     ]
 
-    org_subclauses = []
+    org_clauses = []
     if org_ids:
         for org_id in org_ids:
             if len(org_id) == 3:
-                org_subclauses.append('pr.pct_id = %s')
+                org_clauses.append('pr.pct_id = %s')
             else:
-                org_subclauses.append('pr.practice_id = %s')
+                org_clauses.append('pr.practice_id = %s')
 
     if date:
         date_clause = 'pr.processing_date = %s'
@@ -689,8 +689,8 @@ def _get_presentations_by_practice(codes, org_ids, date):
         date_clause = None
 
     where_condition = _build_where_condition([
-        code_subclauses,
-        org_subclauses,
+        code_clauses,
+        org_clauses,
         date_clause,
     ])
 
