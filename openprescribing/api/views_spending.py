@@ -467,10 +467,7 @@ def _get_query_for_total_spending(codes):
     ORDER BY date;"""
 
     if codes:
-        code_clauses = [
-            'presentation_code LIKE %s'
-            for _ in range(len(codes))
-        ]
+        code_clauses = ['presentation_code LIKE %s'] * len(codes)
     else:
         code_clauses = None
 
@@ -496,23 +493,14 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
     '''
 
     if spending_type == 'bnf-section':
-        chemical_clauses = [
-            'pr.chemical_id LIKE %s'
-            for _ in range(len(codes))
-        ]
+        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
     elif spending_type == 'chemical':
-        chemical_clauses = [
-            'pr.chemical_id = %s'
-            for _ in range(len(codes))
-        ]
+        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
     else:
         chemical_clauses = None
 
     if pct_ids:
-        pct_clauses = [
-            'pr.pct_id = %s'
-            for _ in range(len(pct_ids))
-        ]
+        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
     else:
         pct_clauses = None
 
@@ -541,16 +529,10 @@ def _get_query_for_presentations_by_ccg(codes, pct_ids):
     ORDER BY date, pc.code
     '''
 
-    code_clauses = [
-        'pr.presentation_code LIKE %s'
-        for _ in range(len(codes))
-    ]
+    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
 
     if pct_ids:
-        pct_clauses = [
-            'pr.pct_id = %s'
-            for _ in range(len(pct_ids))
-        ]
+        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
     else:
         pct_clauses = None
 
@@ -580,10 +562,7 @@ def _get_total_spending_by_practice(practice_ids, date):
     '''
 
     if practice_ids:
-        practice_clauses = [
-            'pr.practice_id = %s'
-            for _ in range(len(practice_ids))
-        ]
+        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
     else:
         practice_clauses = None
 
@@ -620,23 +599,14 @@ def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
     '''
 
     if spending_type == 'bnf-section':
-        chemical_clauses = [
-            'pr.chemical_id LIKE %s'
-            for _ in range(len(codes))
-        ]
+        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
     elif spending_type == 'chemical':
-        chemical_clauses = [
-            'pr.chemical_id = %s'
-            for _ in range(len(codes))
-        ]
+        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
     else:
         assert False
 
     if practice_ids:
-        practice_clauses = [
-            'pr.practice_id = %s'
-            for _ in range(len(practice_ids))
-        ]
+        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
     else:
         practice_clauses = None
 
@@ -672,10 +642,7 @@ def _get_presentations_by_practice(codes, org_ids, date):
     ORDER BY date, pc.code
     '''
 
-    code_clauses = [
-        'pr.presentation_code LIKE %s'
-        for _ in range(len(codes))
-    ]
+    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
 
     org_clauses = []
     if org_ids:
