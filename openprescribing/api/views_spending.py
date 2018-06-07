@@ -21,7 +21,7 @@ from frontend.models import PPUSaving
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
 import view_utils as utils
-from view_utils import db_timeout
+from view_utils import db_timeout, BnfHierarchy
 
 
 CODE_LENGTH_ERROR = (
@@ -304,7 +304,7 @@ def total_spending(request, format=None):
 
     query = _get_query_for_total_spending(codes)
 
-    if spending_type != 'presentation':
+    if spending_type != BnfHierarchy.presentation:
         codes = [c + '%' for c in codes]
 
     data = utils.execute_query(query, [codes])
@@ -366,13 +366,13 @@ def spending_by_ccg(request, format=None):
         err = CODE_LENGTH_ERROR
         return Response(err, status=400)
 
-    if spending_type in ['product', 'presentation']:
+    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
         query = _get_query_for_presentations_by_ccg(codes, pct_ids)
     else:
         query = _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids,
                                                             spending_type)
 
-    if spending_type == 'bnf-section' or spending_type == 'product':
+    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
         codes = [c + '%' for c in codes]
 
     data = utils.execute_query(query, [codes, pct_ids])
@@ -392,7 +392,7 @@ def spending_by_practice(request, format=None):
         err = 'Error: Codes must all be the same length'
         return Response(err, status=400)
 
-    if spending_type == 'bnf-section' or spending_type == 'product':
+    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
         codes = [c + '%' for c in codes]
 
     if not date and not org_ids:
@@ -403,12 +403,12 @@ def spending_by_practice(request, format=None):
 
     params = [codes]
 
-    if spending_type in ['product', 'presentation']:
+    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
         assert len(codes) > 0
         query = _get_presentations_by_practice(codes, org_ids, date)
         params.append(org_ids)
 
-    elif spending_type in ['bnf-section', 'chemical']:
+    elif spending_type in [BnfHierarchy.section, BnfHierarchy.chemical]:
         assert len(codes) > 0
         practice_ids = utils.get_practice_ids_from_org(org_ids)
         query = _get_chemicals_or_sections_by_practice(codes,
@@ -492,9 +492,9 @@ def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
     ORDER BY date, pc.code
     '''
 
-    if spending_type == 'bnf-section':
+    if spending_type == BnfHierarchy.section:
         chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
-    elif spending_type == 'chemical':
+    elif spending_type == BnfHierarchy.chemical:
         chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
     else:
         chemical_clauses = None
@@ -598,9 +598,9 @@ def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
     ORDER BY date, pc.code
     '''
 
-    if spending_type == 'bnf-section':
+    if spending_type == BnfHierarchy.section:
         chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
-    elif spending_type == 'chemical':
+    elif spending_type == BnfHierarchy.chemical:
         chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
     else:
         assert False

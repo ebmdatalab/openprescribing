@@ -3,6 +3,8 @@ from django.db import connection
 from django.shortcuts import get_object_or_404
 from functools import wraps
 
+from enum import Enum
+
 
 def db_timeout(timeout):
     """A decorator that applies a timeout to the current database
@@ -85,6 +87,9 @@ def get_bnf_codes_from_number_str(codes):
     return converted
 
 
+BnfHierarchy = Enum('BnfHierarchy', 'section chemical product presentation')
+
+
 def get_spending_type(codes):
     # Codes must all be of the same length.
     if not codes:
@@ -94,10 +99,10 @@ def get_spending_type(codes):
         if len(c) != code_len:
             return False
     if code_len < 9:
-        return 'bnf-section'
+        return BnfHierarchy.section
     elif code_len == 9:
-        return 'chemical'
+        return BnfHierarchy.chemical
     elif code_len > 9 and code_len <= 11:
-        return 'product'
+        return BnfHierarchy.product
     elif code_len > 11:
-        return 'presentation'
+        return BnfHierarchy.presentation
