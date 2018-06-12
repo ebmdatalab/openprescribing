@@ -2,6 +2,7 @@ from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env, shell_env
 from fabric.context_managers import cd
+from fabric.contrib.files import exists
 
 from datetime import datetime
 import json
@@ -259,7 +260,9 @@ def clear_cloudflare():
 
 
 def setup_cron():
-    sudo('cp %s/deploy/crontab-%s /etc/cron.d/' % (env.path, env.app))
+    crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
+    if exists(crontab_path):
+        sudo('cp %s /etc/cron.d/' % crontab_path)
 
 
 @task
