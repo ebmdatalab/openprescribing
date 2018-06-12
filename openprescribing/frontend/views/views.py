@@ -1,3 +1,4 @@
+import functools
 from lxml import html
 import requests
 from urllib import urlencode
@@ -36,6 +37,21 @@ from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
+
+
+class BadRequestError(Exception):
+    pass
+
+
+def handle_bad_request(view_function):
+    @functools.wraps(view_function)
+    def wrapper(request, *args, **kwargs):
+        try:
+            return view_function(request, *args, **kwargs)
+        except BadRequestError as e:
+            context = {'error_code': 400, 'reason': unicode(e)}
+            return render(request, '500.html', context, status=400)
+    return wrapper
 
 
 ##################################################
@@ -121,6 +137,7 @@ def chemical(request, bnf_code):
 ##################################################
 # Price per unit
 ##################################################
+@handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
@@ -183,12 +200,16 @@ def all_practices(request):
 def _specified_or_last_date(request, category):
     date = request.GET.get('date', None)
     if date:
-        date = parse_date(date)
+        try:
+            date = parse_date(date)
+        except ValueError:
+            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
+@handle_bad_request
 def practice_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     practice = get_object_or_404(Practice, code=code)
@@ -215,6 +236,7 @@ def all_ccgs(request):
     return render(request, 'all_ccgs.html', context)
 
 
+@handle_bad_request
 def ccg_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     ccg = get_object_or_404(PCT, code=code)

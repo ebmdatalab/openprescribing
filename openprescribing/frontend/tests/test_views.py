@@ -425,6 +425,10 @@ class TestPPUViews(TransactionTestCase):
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
 
+    def test_ccg_price_per_unit_returns_400_on_invalid_date(self):
+        response = self.client.get('/ccg/03V/price_per_unit/', {'date': 'not-a-date'})
+        self.assertEqual(response.status_code, 400)
+
     def test_price_per_unit_histogram_with_ccg(self):
         response = self.client.get('/ccg/03V/0202010F0AAAAAA/price_per_unit/')
         self.assertEqual(response.status_code, 200)
