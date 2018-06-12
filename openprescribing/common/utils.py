@@ -158,11 +158,15 @@ def constraint_and_index_reconstructor(table_name):
             logger.info("CLUSTERED %s" % table_name)
 
 
+def parse_date(s):
+    return datetime.strptime(s, "%Y-%m-%d")
+
+
 def valid_date(s):
     """Validate ISO-formatted dates. For use in argparse arguments.
     """
     try:
-        return datetime.strptime(s, "%Y-%m-%d")
+        return parse_date(s)
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
         raise argparse.ArgumentTypeError(msg)

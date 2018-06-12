@@ -25,7 +25,7 @@ from allauth.account import app_settings
 from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
-from common.utils import valid_date
+from common.utils import parse_date
 from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
@@ -122,11 +122,7 @@ def chemical(request, bnf_code):
 # Price per unit
 ##################################################
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = request.GET.get('date', None)
-    if date:
-        date = valid_date(date)
-    else:
-        date = ImportLog.objects.latest_in_category('ppu').current_at
+    date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     product = presentation.dmd_product
     if len(entity_code) == 3:
@@ -187,7 +183,7 @@ def all_practices(request):
 def _specified_or_last_date(request, category):
     date = request.GET.get('date', None)
     if date:
-        date = valid_date(date)
+        date = parse_date(date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
