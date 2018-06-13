@@ -21,7 +21,7 @@ from frontend.models import PPUSaving
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
 import view_utils as utils
-from view_utils import db_timeout
+from view_utils import db_timeout, BnfHierarchy
 
 
 CODE_LENGTH_ERROR = (
@@ -304,7 +304,7 @@ def total_spending(request, format=None):
 
     query = _get_query_for_total_spending(codes)
 
-    if spending_type != 'presentation':
+    if spending_type != BnfHierarchy.presentation:
         codes = [c + '%' for c in codes]
 
     data = utils.execute_query(query, [codes])
@@ -359,24 +359,23 @@ def tariff(request, format=None):
 def spending_by_ccg(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    pct_ids = utils.param_to_list(request.query_params.get('org', []))
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
         err = CODE_LENGTH_ERROR
         return Response(err, status=400)
 
-    if not spending_type or spending_type == 'bnf-section' \
-       or spending_type == 'chemical':
-        query = _get_query_for_chemicals_or_sections_by_ccg(codes, orgs,
-                                                            spending_type)
+    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
+        query = _get_query_for_presentations_by_ccg(codes, pct_ids)
     else:
-        query = _get_query_for_presentations_by_ccg(codes, orgs)
+        query = _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids,
+                                                            spending_type)
 
-    if spending_type == 'bnf-section' or spending_type == 'product':
+    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
         codes = [c + '%' for c in codes]
 
-    data = utils.execute_query(query, [codes, orgs])
+    data = utils.execute_query(query, [codes, pct_ids])
     return Response(data)
 
 
@@ -385,266 +384,308 @@ def spending_by_ccg(request, format=None):
 def spending_by_practice(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    org_ids = utils.param_to_list(request.query_params.get('org', []))
     date = request.query_params.get('date', None)
 
     spending_type = utils.get_spending_type(codes)
     if spending_type is False:
         err = 'Error: Codes must all be the same length'
         return Response(err, status=400)
-    if spending_type == 'bnf-section' or spending_type == 'product':
+
+    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
         codes = [c + '%' for c in codes]
 
-    if not date and not orgs:
+    if not date and not org_ids:
         err = 'Error: You must supply either '
         err += 'a list of practice IDs or a date parameter, e.g. '
         err += 'date=2015-04-01'
         return Response(err, status=400)
 
-    org_for_param = None
-    if not spending_type or spending_type == 'bnf-section' \
-       or spending_type == 'chemical':
-        # We can do presentation queries indexed by PCT ID, which is faster.
-        # We have yet to update the *_by_practice matviews with PCT ID.
-        # So for these queries, expand the CCG ID to a list of practice IDs.
-        expanded_orgs = utils.get_practice_ids_from_org(orgs)
-        if codes:
-            query = _get_chemicals_or_sections_by_practice(codes,
-                                                           expanded_orgs,
-                                                           spending_type,
-                                                           date)
-            org_for_param = expanded_orgs
-        else:
-            query = _get_total_spending_by_practice(expanded_orgs, date)
-            org_for_param = expanded_orgs
+    params = [codes]
+
+    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
+        assert len(codes) > 0
+        query = _get_presentations_by_practice(codes, org_ids, date)
+        params.append(org_ids)
+
+    elif spending_type in [BnfHierarchy.section, BnfHierarchy.chemical]:
+        assert len(codes) > 0
+        practice_ids = utils.get_practice_ids_from_org(org_ids)
+        query = _get_chemicals_or_sections_by_practice(codes,
+                                                       practice_ids,
+                                                       spending_type,
+                                                       date)
+        params.append(practice_ids)
+
     else:
-        query = _get_presentations_by_practice(codes, orgs, date)
-        org_for_param = orgs
-    data = utils.execute_query(
-        query, [codes, org_for_param, [date] if date else []])
+        assert spending_type is None
+        assert len(codes) == 0
+
+        practice_ids = utils.get_practice_ids_from_org(org_ids)
+        query = _get_total_spending_by_practice(practice_ids, date)
+        params.append(practice_ids)
+
+    if date:
+        params.append([date])
+
+    data = utils.execute_query(query, params)
     return Response(data)
 
 
 def _get_query_for_total_spending(codes):
     # The CTE at the start ensures we return rows for every month in
     # the last five years, even if that's zeros
-    query = """WITH all_dates AS (
-                 SELECT
-                   MAX(current_at)::date - (d.date||'month')::interval AS date
-                 FROM
-                   generate_series(0,
-                     59) AS d(date),
-                   frontend_importlog
-                 WHERE
-                   category = 'prescribing'
-                 GROUP BY
-                   category,
-                   d.date
-                 ORDER BY
-                   date)
-               SELECT
-                 COALESCE(SUM(cost), 0) AS actual_cost,
-                 COALESCE(SUM(items), 0) AS items,
-                 COALESCE(SUM(quantity), 0) AS quantity,
-                 all_dates.date::date AS date
-               FROM (
-                 SELECT *
-                 FROM
-                   vw__presentation_summary
-                 %s
-               ) pr
-               RIGHT OUTER JOIN all_dates
-               ON all_dates.date = pr.processing_date
-               GROUP BY date
-               ORDER BY date;"""
+    query = """
+    WITH all_dates AS (
+        SELECT
+            MAX(current_at)::date - (d.date||'month')::interval AS date
+        FROM
+            generate_series(0, 59) AS d(date),
+            frontend_importlog
+        WHERE
+            category = 'prescribing'
+        GROUP BY
+            category,
+            d.date
+        ORDER BY
+            date
+    )
+    SELECT
+        COALESCE(SUM(cost), 0) AS actual_cost,
+        COALESCE(SUM(items), 0) AS items,
+        COALESCE(SUM(quantity), 0) AS quantity,
+        all_dates.date::date AS date
+    FROM (
+        SELECT *
+        FROM
+        vw__presentation_summary
+        WHERE %s
+    ) pr
+    RIGHT OUTER JOIN all_dates
+    ON all_dates.date = pr.processing_date
+    GROUP BY date
+    ORDER BY date;"""
+
     if codes:
-        condition = " WHERE ("
-        for i, c in enumerate(codes):
-            condition += "presentation_code LIKE %s "
-            if (i != len(codes) - 1):
-                condition += ' OR '
-        condition += ") "
+        code_clauses = ['presentation_code LIKE %s'] * len(codes)
     else:
-        condition = ""
+        code_clauses = None
 
-    return query % condition
+    where_condition = _build_where_condition([code_clauses])
 
-
-def _get_query_for_chemicals_or_sections_by_ccg(codes, orgs, spending_type):
-    query = 'SELECT pc.code as row_id, '
-    query += "pc.name as row_name, "
-    query += 'pr.processing_date as date, '
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.items) AS items, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__chemical_summary_by_ccg pr "
-    query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
-    query += "AND pc.org_type='CCG' "
-    if spending_type:
-        query += " WHERE ("
-        if spending_type == 'bnf-section':
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id LIKE %s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-            codes = [c + '%' for c in codes]
-        else:
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id=%s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-        query += ") "
-    if orgs:
-        query += "AND ("
-        for i, org in enumerate(orgs):
-            query += "pr.pct_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-        query += ") "
-    query += "GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code "
-    return query
+    return query % where_condition
 
 
-def _get_query_for_presentations_by_ccg(codes, orgs):
-    query = 'SELECT pc.code as row_id, '
-    query += "pc.name as row_name, "
-    query += 'pr.processing_date as date, '
-    query += "SUM(pr.items) AS items, "
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__presentation_summary_by_ccg pr "
-    query += "JOIN frontend_pct pc ON pr.pct_id=pc.code "
-    query += "AND pc.org_type='CCG' "
-    query += " WHERE ("
-    for i, c in enumerate(codes):
-        query += "pr.presentation_code LIKE %s "
-        if (i != len(codes) - 1):
-            query += ' OR '
-    if orgs:
-        query += ") AND ("
-        for i, org in enumerate(orgs):
-            query += "pr.pct_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-    query += ") GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
-    return query
+def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
+    query = '''
+    SELECT pc.code as row_id,
+        pc.name as row_name,
+        pr.processing_date as date,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.items) AS items,
+        SUM(pr.quantity) AS quantity
+    FROM vw__chemical_summary_by_ccg pr
+    JOIN frontend_pct pc ON pr.pct_id=pc.code
+    AND pc.org_type='CCG'
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    if spending_type == BnfHierarchy.section:
+        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
+    elif spending_type == BnfHierarchy.chemical:
+        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
+    else:
+        chemical_clauses = None
+
+    if pct_ids:
+        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
+    else:
+        pct_clauses = None
+
+    where_condition = _build_where_condition([
+        chemical_clauses,
+        pct_clauses,
+    ])
+
+    return query % where_condition
 
 
-def _get_total_spending_by_practice(orgs, date):
-    query = 'SELECT pr.practice_id AS row_id, '
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += 'pr.processing_date AS date, '
-    query += 'pr.cost AS actual_cost, '
-    query += 'pr.items AS items, '
-    query += 'pr.quantity AS quantity '
-    query += "FROM vw__practice_summary pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    if orgs or date:
-        query += "WHERE "
+def _get_query_for_presentations_by_ccg(codes, pct_ids):
+    query = '''
+    SELECT
+        pc.code as row_id,
+        pc.name as row_name,
+        pr.processing_date as date,
+        SUM(pr.items) AS items,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.quantity) AS quantity
+    FROM vw__presentation_summary_by_ccg pr
+    JOIN frontend_pct pc ON pr.pct_id=pc.code
+    AND pc.org_type='CCG'
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
+
+    if pct_ids:
+        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
+    else:
+        pct_clauses = None
+
+    where_condition = _build_where_condition([
+        code_clauses,
+        pct_clauses,
+    ])
+
+    return query % where_condition
+
+
+def _get_total_spending_by_practice(practice_ids, date):
+    query = '''
+    SELECT
+        pr.practice_id AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        pr.cost AS actual_cost,
+        pr.items AS items,
+        pr.quantity AS quantity
+    FROM vw__practice_summary pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE %s
+    ORDER BY date, pr.practice_id
+    '''
+
+    if practice_ids:
+        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
+    else:
+        practice_clauses = None
+
     if date:
-        query += "pr.processing_date=%s "
-    if orgs:
-        if date:
-            query += "AND "
-        query += "("
-        for i, org in enumerate(orgs):
-            query += "pr.practice_id=%s "
-            # if len(org) == 3:
-            #     query += "pr.pct_id=%s "
-            # else:
-            #     query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-        query += ") "
-    query += "ORDER BY date, pr.practice_id "
-    return query
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
+
+    where_condition = _build_where_condition([
+        practice_clauses,
+        date_clause,
+    ])
+
+    return query % where_condition
 
 
-def _get_chemicals_or_sections_by_practice(codes, orgs, spending_type,
+def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
                                            date):
-    query = 'SELECT pc.code AS row_id, '
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += "pr.processing_date AS date, "
-    query += 'SUM(pr.cost) AS actual_cost, '
-    query += 'SUM(pr.items) AS items, '
-    query += 'SUM(pr.quantity) AS quantity '
-    query += "FROM vw__chemical_summary_by_practice pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    has_preceding = False
-    if spending_type:
-        has_preceding = True
-        query += " WHERE ("
-        if spending_type == 'bnf-section':
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id LIKE %s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-            codes = [c + '%' for c in codes]
-        else:
-            for i, c in enumerate(codes):
-                query += "pr.chemical_id=%s "
-                if (i != len(codes) - 1):
-                    query += ' OR '
-        query += ") "
-    if orgs:
-        if has_preceding:
-            query += " AND ("
-        else:
-            query += " WHERE ("
-        for i, org in enumerate(orgs):
-            query += "pr.practice_id=%s "
-            # if len(org) == 3:
-            #     query += "pr.pct_id=%s "
-            # else:
-            #     query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
-        query += ") "
-        has_preceding = True
+    query = '''
+    SELECT
+        pc.code AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        SUM(pr.cost) AS actual_cost,
+        SUM(pr.items) AS items,
+        SUM(pr.quantity) AS quantity
+    FROM vw__chemical_summary_by_practice pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    if spending_type == BnfHierarchy.section:
+        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
+    elif spending_type == BnfHierarchy.chemical:
+        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
+    else:
+        assert False
+
+    if practice_ids:
+        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
+    else:
+        practice_clauses = None
+
     if date:
-        if has_preceding:
-            query += " AND ("
-        else:
-            query += " WHERE ("
-        query += "pr.processing_date=%s) "
-    query += "GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
-    return query
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
+
+    where_condition = _build_where_condition([
+        chemical_clauses,
+        practice_clauses,
+        date_clause,
+    ])
+
+    return query % where_condition
 
 
-def _get_presentations_by_practice(codes, orgs, date):
-    query = 'SELECT pc.code AS row_id, '
-    query += "pc.name AS row_name, "
-    query += "pc.setting AS setting, "
-    query += "pc.ccg_id AS ccg, "
-    query += "pr.processing_date AS date, "
-    query += 'SUM(pr.actual_cost) AS actual_cost, '
-    query += 'SUM(pr.total_items) AS items, '
-    query += 'CAST(SUM(pr.quantity) AS bigint) AS quantity '
-    query += "FROM frontend_prescription pr "
-    query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-    query += "WHERE ("
-    for i, c in enumerate(codes):
-        query += "pr.presentation_code LIKE %s "
-        if (i != len(codes) - 1):
-            query += ' OR '
-    if orgs:
-        query += ") AND ("
-        for i, c in enumerate(orgs):
-            if len(c) == 3:
-                query += "pr.pct_id=%s "
+def _get_presentations_by_practice(codes, org_ids, date):
+    query = '''
+    SELECT
+        pc.code AS row_id,
+        pc.name AS row_name,
+        pc.setting AS setting,
+        pc.ccg_id AS ccg,
+        pr.processing_date AS date,
+        SUM(pr.actual_cost) AS actual_cost,
+        SUM(pr.total_items) AS items,
+        CAST(SUM(pr.quantity) AS bigint) AS quantity
+    FROM frontend_prescription pr
+    JOIN frontend_practice pc ON pr.practice_id=pc.code
+    WHERE %s
+    GROUP BY pc.code, pc.name, date
+    ORDER BY date, pc.code
+    '''
+
+    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
+
+    org_clauses = []
+    if org_ids:
+        for org_id in org_ids:
+            if len(org_id) == 3:
+                org_clauses.append('pr.pct_id = %s')
             else:
-                query += "pr.practice_id=%s "
-            if (i != len(orgs) - 1):
-                query += ' OR '
+                org_clauses.append('pr.practice_id = %s')
+
     if date:
-        query += "AND pr.processing_date=%s "
-    query += ") GROUP BY pc.code, pc.name, date "
-    query += "ORDER BY date, pc.code"
-    return query
+        date_clause = 'pr.processing_date = %s'
+    else:
+        date_clause = None
+
+    where_condition = _build_where_condition([
+        code_clauses,
+        org_clauses,
+        date_clause,
+    ])
+
+    return query % where_condition
+
+
+def _build_where_condition(clauses):
+    fragments = []
+
+    for clause in clauses:
+        if clause is None:
+            continue
+        elif isinstance(clause, str):
+            fragments.append(clause)
+        elif isinstance(clause, list):
+            if len(clause) == 0:
+                continue
+            elif len(clause) == 1:
+                fragments.append(clause[0])
+            else:
+                fragment = '(' + ' OR '.join(clause) + ')'
+                fragments.append(fragment)
+        else:
+            assert False, 'Unexpected clause: {}'.format(clause)
+
+    if not fragments:
+        return '1 = 1'
+    else:
+        return ' AND '.join(fragments)

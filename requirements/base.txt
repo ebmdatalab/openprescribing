@@ -24,6 +24,7 @@ django-rest-swagger==0.3.5
 django==1.9.1
 djangorestframework-csv==1.4.1
 djangorestframework==3.7.3
+enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
 futures==3.2.0            # via google-api-core, requests-futures
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
