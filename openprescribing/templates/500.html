@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% load template_extras %}
 
-{% block title %}About{% endblock %}
+{% block title %}Error{% endblock %}
 {% block active_class %}more{% endblock %}
 
 {% block content %}
 
-<h2>Error code 500</h2>
+<h2>Error code {{ error_code|default:"500" }}</h2>
 
-Sorry, there's a problem with your request.
+<p>Sorry, there's a problem with your request.</p>
 
-{{ reason }}
+{% if reason %}
+  <p class="well">{{ reason }}<p>
+{% endif %}
 
 <p>If you continue to have problems, please contact us at <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">{{ SUPPORT_EMAIL }}</a>.</p>
 
