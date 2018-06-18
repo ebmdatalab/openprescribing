@@ -1,0 +1,34 @@
+{
+  "name": "Anxiolytics and Hypnotics: Average Daily Quantity per patient",
+  "title": [
+    "Anxiolytics and Hypnotics: Average Daily Quantity per item per 1000 patients"
+  ],
+  "description": [
+    "Number of average daily quantities (ADQs) per 1000 patients"
+  ],
+  "why_it_matters": [
+    "<tbc when i've seen the data"
+  ],
+  "numerator_short": "Anxiolytics and Hypnotics ADQ",
+  "denominator_short": "1000 Patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": ["core"],
+  "numerator_columns": [
+    "SUM(p.quantity * r.percent_of_adq) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
+  "numerator_where": [
+    "(p.bnf_code like'0401%') "
+
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
