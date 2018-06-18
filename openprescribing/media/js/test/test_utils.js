@@ -248,6 +248,7 @@ describe('Utils', function () {
       };
       var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
       expect(combinedData[0].y_actual_cost).to.equal(480);
+      expect(combinedData[0].ratio_actual_cost).to.equal(480);
     });
     it('should exclude rows with non-standard settings', function () {
       var xData = [

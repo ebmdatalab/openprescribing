@@ -13,7 +13,7 @@ FROM (
     SUM(IF(cost_savings_80 > 0, cost_savings_80, 0)) AS cost_savings_80,
     SUM(IF(cost_savings_90 > 0, cost_savings_90, 0)) AS cost_savings_90
   FROM
-    {practice_table} GROUP BY month) AS practice,
+    {measures}.practice_data_{measure_id} GROUP BY month) AS practice,
   JOIN (
   SELECT
     month,
@@ -27,7 +27,7 @@ FROM (
     SUM(IF(cost_savings_80 > 0, cost_savings_80, 0)) AS cost_savings_80,
     SUM(IF(cost_savings_90 > 0, cost_savings_90, 0)) AS cost_savings_90
   FROM
-    {ccg_table} GROUP BY month) ccg
+    {measures}.ccg_data_{measure_id} GROUP BY month) ccg
   ON practice.month = ccg.month
-  JOIN (SELECT * from {global_table}) global
+  JOIN (SELECT * from {measures}.global_data_{measure_id}) global
   ON global.month = ccg.month

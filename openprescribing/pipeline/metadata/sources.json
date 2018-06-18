@@ -55,11 +55,11 @@
     },
     "dmd_snomed": {
       "title": "Mapping of SNOMED to BNF codes",
-      "description": "This mapping is supplied privately via email (web version promised repeatedly). ",
+      "description": "A spreadsheet mapping SNOMED to BNF codes",
       "publisher": "NHS Business Services Authority",
-      "publication_schedule": "approximately monthly, or when they get back to us",
-      "index_url": "",
-      "notes": "Current contact is Margaret Dockey; the file to ask for is the BNF/SNOMED mapping. Seb has email threads that can be followed up"
+      "publication_schedule": "every month or two",
+      "index_url": "https://www.nhsbsa.nhs.uk/prescription-data/understanding-our-data/bnf-snomed-mapping",
+      "notes": "This can be replaced with an automatic fetcher once we have multiple months of data and are sure of the HTML structure of the index page"
     },
     "nhs_payments_to_general_practice": {
         "title": "Summary of annual payments by NHS to GPs",
@@ -146,12 +146,5 @@
             "2014": "http://www.hscic.gov.uk/catalogue/PUB15751/qof-1314-CSVfilesCQRSdata.zip"
         },
         "research": true
-    },
-    "ncso_concessions": {
-      "title": "NCSO Concessions",
-      "publisher": "Pharmaceutical Services Negotiating Committee",
-      "publication_schedule": "monthly",
-      "publication_lag": "1 month",
-      "index_url": "http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/"
     }
 }

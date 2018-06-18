@@ -90,6 +90,10 @@ Install library dependencies (current as of Debian Jessie):
 
     sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
 
+Ensure pip and setuptools are up to date:
+
+    pip install -U pip setuptools
+
 Install Python dependencies in development:
 
     pip install -r requirements/local.txt --process-dependency-links
@@ -98,12 +102,13 @@ Or in production:
 
     pip install -r requirements.txt --process-dependency-links
 
-And then install JavaScript dependencies. You'll need a version of
-nodejs greater than v0.10.11:
+And then install JavaScript dependencies. Make sure you have the latest version
+of nodejs:
 
     cd openprescribing/media/js
     npm install -g browserify
     npm install -g jshint
+    npm install -g less
     npm install
 
 To generate monthly alert emails (and run the tests for those) you'll
@@ -112,26 +117,22 @@ it from [here](http://phantomjs.org/download.html).
 
 ### Create database and env variables
 
-Set up a Postgres 9.4 database (required for `jsonb` type), with
+Set up a Postgres 9.5 database (required for `jsonb` type), with
 PostGIS extensions, and create a superuser for the database.
 
     createuser -s <myuser>
     createdb -O <myuser> <dbname>
     psql -d <dbname> -c "CREATE EXTENSION postgis;"
 
-Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
+Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
 
 Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
-
-You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
 
     http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
 
 Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
-
-Finally set a `SECRET_KEY` environment variable (make this an SSID).
 
 ## Production notes
 
@@ -314,6 +315,16 @@ If the fabfile detects no undeployed changes, it will refuse to run. You can for
 Or for staging:
 
     fab deploy:staging,force_build=true,branch=deployment
+
+# Development
+
+Various hooks can be run before committing.  Pre-commit hooks are managed by https://github.com/pre-commit/pre-commit-hooks.
+
+To install the hooks, run once:
+
+    pre-commit install
+
+Details of the hooks are in .pre-commit-config.yaml
 
 # Philosophy
 

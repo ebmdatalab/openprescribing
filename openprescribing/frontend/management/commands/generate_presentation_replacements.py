@@ -200,11 +200,11 @@ def write_zero_prescribing_codes_table(level):
     SELECT
       bnf.%s
     FROM
-      hscic.normalised_prescribing AS prescribing
+      {hscic}.normalised_prescribing_standard AS prescribing
     RIGHT JOIN
-      hscic.bnf bnf
+      {hscic}.bnf bnf
     ON
-      prescribing.normalised_bnf_code = bnf.presentation_code
+      prescribing.bnf_code = bnf.presentation_code
     WHERE (
         bnf.presentation_code NOT LIKE '2%%'  -- appliances, etc
     )
@@ -227,13 +227,13 @@ def get_csv_of_empty_classes_for_level(level):
 
     """
     temp_table = write_zero_prescribing_codes_table(level)
-    storage_prefix = 'tmp/{}'.format(temp_table.name)
+    storage_prefix = 'tmp/{}'.format(temp_table.table_id)
     exporter = TableExporter(temp_table, storage_prefix)
 
-    logger.info("Copying %s to %s" % (temp_table.name, storage_prefix))
+    logger.info("Copying %s to %s" % (temp_table.table_id, storage_prefix))
     exporter.export_to_storage()
 
-    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.name)
+    path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.table_id)
     logger.info("Downloading %s to %s" % (storage_prefix, path))
     with open(path, 'w') as f:
         exporter.download_from_storage_and_unzip(f)
@@ -349,13 +349,13 @@ def create_bigquery_views():
       prescribing.quantity AS quantity,
       prescribing.month AS month
     FROM
-      {project}.hscic.prescribing AS prescribing
+      {project}.{hscic}.prescribing AS prescribing
     LEFT JOIN
-      {project}.hscic.bnf_map AS bnf_map
+      {project}.{hscic}.bnf_map AS bnf_map
     ON
       bnf_map.former_bnf_code = prescribing.bnf_code
     INNER JOIN
-      {project}.hscic.practices  AS practices
+      {project}.{hscic}.practices  AS practices
     ON practices.code = prescribing.practice
     """
 

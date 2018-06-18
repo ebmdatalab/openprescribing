@@ -38,6 +38,30 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'vmpp': 'Bar tablets 84 tablet'}
         ])
 
+    def test_tariff_hits(self):
+        url = '/tariff?format=csv&codes=ABCD,EFGH'
+        rows = self._rows_from_api(url)
+        self.assertItemsEqual(rows, [
+            {'date': '2010-03-01',
+             'concession': '',
+             'product': 'ABCD',
+             'price_pence': '900',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Bar tablets 84 tablet'},
+            {'date': '2010-03-01',
+             'concession': '',
+             'product': 'EFGH',
+             'price_pence': '2400',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet'},
+            {'date': '2010-04-01',
+             'concession': '',
+             'product': 'EFGH',
+             'price_pence': '1100',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet'},
+        ])
+
     def test_tariff_miss(self):
         url = '/tariff?format=csv&codes=ABCDE'
         rows = self._rows_from_api(url)
@@ -430,28 +454,160 @@ class TestAPISpendingViews(ApiTestBase):
 class TestAPISpendingViewsPPUTable(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
 
-    def test_simple(self):
-        url = '/price_per_unit?format=json'
-        url += '&bnf_code=0202010F0AAAAAA&date=2014-11-01'
-        url = self.api_prefix + url
-        response = self.client.get(url, follow=True)
-        data = json.loads(response.content)
-        expected = {
+    def _get(self, **data):
+        data['format'] = 'json'
+        url = self.api_prefix + '/price_per_unit/'
+        rsp = self.client.get(url, data, follow=True)
+        return json.loads(rsp.content)
+
+    def _expected_results(self, ids):
+        # This is something of a hack; because of the SELECT DISTINCT, we
+        # expect some queries to return one of two rows, but we don't know
+        # which will be returned, and nor do we care.
+        class Verapamil:
+            def __eq__(self, other):
+                return other in [
+                    "Verapamil 160mg tablets",
+                    "Verapamil 160mg tablets (dupe)",
+                ]
+
+        expected = [{
+            "id": 1,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": "Verapamil 160mg tablets",
+            "name": Verapamil(),
             "price_per_unit": 0.2,
             "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
-            "pct": None,
+            "pct": "03V",
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "id": 2,
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": Verapamil(),
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "id": 3,
+            "lowest_decile": 0.1,
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "P87629",
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": "1/ST Andrews Medical Practice",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": False,
+        }, {
+            "id": 4,
+            "lowest_decile": 0.1,
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03V",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": False,
+        }, {
             "id": 5,
-            "possible_savings": 100.0
-        }
-        self.assertEqual(data[0], expected)
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": Verapamil(),
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": "N84014",
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": "Ainsdale Village Surgery",
+            "date": "2014-11-01",
+            "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }, {
+            "id": 6,
+            "lowest_decile": 0.1,
+            "presentation": "0202010F0AAAAAA",
+            "name": Verapamil(),
+            "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
+            "practice": None,
+            "formulation_swap": None,
+            "pct": "03Q",
+            "practice_name": None,
+            "date": "2014-11-01",
+            "quantity": 1,
+            "possible_savings": 100.0,
+            "price_concession": True,
+        }]
+
+        return [r for r in expected if r['id'] in ids]
+
+    def test_bnf_code(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([1, 2, 5, 6]))
+
+    def test_bnf_code_no_data_for_month(self):
+        data = self._get(bnf_code='0202010F0AAAAAA', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_bnf_code(self):
+        data = self._get(bnf_code='XYZ', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_entity_code_practice(self):
+        data = self._get(entity_code='P87629', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([1, 3]))
+
+    def test_entity_code_practice_no_data_for_month(self):
+        data = self._get(entity_code='P87629', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_practice(self):
+        data = self._get(entity_code='P00000', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_entity_code_ccg(self):
+        data = self._get(entity_code='03V', date='2014-11-01')
+        data.sort(key=lambda r: r['id'])
+        self.assertEqual(data, self._expected_results([2, 4]))
+
+    def test_entity_code_ccg_and_bnf_code(self):
+        data = self._get(entity_code='03V', bnf_code='0202010F0AAAAAA',
+                         date='2014-11-01')
+        self.assertEqual(data, self._expected_results([1]))
+
+    def test_entity_code_ccg_no_data_for_month(self):
+        data = self._get(entity_code='03V', date='2014-12-01')
+        self.assertEqual(len(data), 0)
+
+    def test_invalid_entity_code_ccg(self):
+        data = self._get(entity_code='000', date='2014-11-01')
+        self.assertEqual(data, {'detail': 'Not found.'})
 
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):

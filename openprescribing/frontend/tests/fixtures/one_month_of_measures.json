@@ -4,7 +4,7 @@
     "pk": "02Q",
     "fields": {
       "ons_code": null,
-      "name": null,
+      "name": "NHS BASSETLAW CCG",
       "org_type": "CCG",
       "boundary": null,
       "open_date": null,
@@ -18,7 +18,7 @@
     "pk": "03T",
     "fields": {
       "ons_code": null,
-      "name": null,
+      "name": "NHS LINCOLNSHIRE EAST CCG",
       "org_type": "CCG",
       "boundary": null,
       "open_date": "2013-04-01",
@@ -32,7 +32,7 @@
     "pk": "04D",
     "fields": {
       "ons_code": null,
-      "name": null,
+      "name": "NHS LINCOLNSHIRE WEST CCG",
       "org_type": "CCG",
       "boundary": null,
       "open_date": null,
@@ -275,7 +275,7 @@
       "why_it_matters": "This is the NHS Business Service Authority's top cost-saver from   generic switching. Cerazette and desogestrel are both exactly  the same drug, the same molecule, but Cerazette is an expensive  branded package, and desogestrel is a cheap generic package.",
       "numerator_short": "Cerazette quantity",
       "numerator_columns": "SUM(quantity) AS numerator, ",
-      "numerator_from": "hscic.normalised_prescribing_standard",
+      "numerator_from": "{hscic}.normalised_prescribing_standard",
       "numerator_where": "(bnf_code LIKE '0205%')",
       "denominator_columns": "SUM(quantity) AS denominator",
       "denominator_from": "doesnt matter",

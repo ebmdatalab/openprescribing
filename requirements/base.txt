@@ -19,39 +19,39 @@ django-allauth==0.25.2
 django-anymail==0.6.1
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
+django-dotenv==1.4.2
 django-rest-swagger==0.3.5
 django==1.9.1
 djangorestframework-csv==1.4.1
 djangorestframework==3.7.3
 et-xmlfile==1.0.1         # via openpyxl
-futures==3.1.1            # via requests-futures, tenacity
+futures==3.2.0            # via google-api-core, requests-futures
+google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.6.2
-google-auth-httplib2==0.0.2  # via pandas-gbq
-google-auth-oauthlib==0.1.1  # via pandas-gbq
-google-auth==1.1.1        # via google-auth-httplib2, google-auth-oauthlib, google-cloud-bigquery, google-cloud-core, google-cloud-storage, pandas-gbq
-google-cloud-bigquery==0.26.0
-google-cloud-core==0.26.0  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.3.2
-google-resumable-media==0.2.3  # via google-cloud-bigquery, google-cloud-storage
-googleapis-common-protos==1.5.3  # via google-cloud-core
+google-auth-oauthlib==0.2.0  # via pandas-gbq
+google-auth==1.4.1        # via google-api-core, google-auth-oauthlib, google-cloud-bigquery, google-cloud-storage, pandas-gbq
+google-cloud-bigquery==0.30.0
+google-cloud-core==0.28.0  # via google-cloud-bigquery, google-cloud-storage
+google-cloud-storage==1.7.0
+google-resumable-media==0.3.1  # via google-cloud-bigquery, google-cloud-storage
+googleapis-common-protos==1.5.3  # via google-api-core
 html2text==2016.9.19
-httplib2==0.10.3          # via google-api-python-client, oauth2client, pandas-gbq
+httplib2==0.10.3          # via google-api-python-client, oauth2client
 idna==2.6                 # via cryptography, requests
 jdcal==1.3                # via openpyxl
 lxml==3.6.4
-monotonic==1.3            # via tenacity
 networkx==1.11
 numpy==1.13.1
 oauth2client==4.1.2       # via google-api-python-client
 oauthlib==2.0.4           # via requests-oauthlib
 openpyxl==2.3.3
-pandas-gbq==0.2.0
+pandas-gbq==0.3.1
 pandas==0.20.2
 premailer==3.0.1
-protobuf==3.4.0           # via google-cloud-core, googleapis-common-protos
+protobuf==3.4.0           # via google-api-core, googleapis-common-protos
 psycopg2==2.5.4
-pyasn1-modules==0.1.4     # via google-auth, google-auth-httplib2, oauth2client
-pyasn1==0.3.7             # via google-auth, google-auth-httplib2, oauth2client, pyasn1-modules, rsa
+pyasn1-modules==0.2.1     # via google-auth, oauth2client
+pyasn1==0.4.2             # via oauth2client, pyasn1-modules, rsa
 pycparser==2.18           # via cffi
 pyopenssl==17.3.0         # via requests
 python-dateutil==2.6.1
@@ -61,9 +61,8 @@ pyyaml==3.12              # via django-rest-swagger
 requests-futures==0.9.7
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.18.4
-rsa==3.4.2                # via google-auth, google-auth-httplib2, oauth2client
-six==1.11.0               # via cryptography, django-anymail, djangorestframework-csv, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-core, google-resumable-media, oauth2client, protobuf, pyopenssl, python-dateutil, tenacity
-tenacity==4.4.0           # via google-cloud-core
+rsa==3.4.2                # via google-auth, oauth2client
+six==1.11.0               # via cryptography, django-anymail, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, oauth2client, protobuf, pyopenssl, python-dateutil
 titlecase==0.8.2
 tqdm==4.14.0
 uritemplate==3.0.0        # via google-api-python-client

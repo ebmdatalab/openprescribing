@@ -13,6 +13,7 @@ from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
 from dmd.models import DMDProduct
+from frontend.managers import MeasureValueManager
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
 
@@ -449,8 +450,7 @@ class Measure(models.Model):
         means ktt9_uti_antibiotics)
 
         """
-        table_there = ('hscic.normalised_prescribing_standard'
-                       in self.numerator_from)
+        table_there = 'normalised_prescribing_standard' in self.numerator_from
         join_not_there = 'JOIN' not in self.numerator_from
         return table_there and join_not_there
 
@@ -511,6 +511,8 @@ class MeasureValue(models.Model):
     class Meta:
         app_label = 'frontend'
         unique_together = (('measure', 'pct', 'practice', 'month'),)
+
+    objects = MeasureValueManager()
 
 
 class MeasureGlobal(models.Model):

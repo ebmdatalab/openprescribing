@@ -7,14 +7,13 @@ from django.conf import settings
 
 def notify_slack(message):
     """Posts the message to #general
+
+    See https://my.slack.com/services/new/incoming-webhook/
     """
-    # Set the webhook_url to the one provided by Slack when you create
-    # the webhook at
-    # https://my.slack.com/services/new/incoming-webhook/
-    webhook_url = settings.SLACK_GENERAL_POST_KEY
-    if not webhook_url:
+    if not settings.SLACK_SENDING_ACTIVE:
         return
 
+    webhook_url = settings.SLACK_GENERAL_POST_KEY
     slack_data = {'text': message}
 
     response = requests.post(webhook_url, json=slack_data)

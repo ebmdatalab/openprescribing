@@ -1,7 +1,5 @@
 import os
 
-from mock import MagicMock
-
 from django.core.management import call_command
 from django.db import connection
 from django.test import SimpleTestCase
@@ -11,13 +9,8 @@ from frontend.models import ImportLog, PCT, PracticeStatistics
 from frontend.bq_schemas import (CCG_SCHEMA, PRACTICE_STATISTICS_SCHEMA,
                                  PRESCRIBING_SCHEMA)
 from frontend.bq_schemas import ccgs_transform, statistics_transform
+from frontend.management.commands import create_views
 from gcutils.storage import Client as StorageClient
-
-
-def _mockFile(name):
-    mock = MagicMock(spec=file, name=name)
-    mock.configure_mock(name='frontend/tests/fixtures/commands/' + name)
-    return mock
 
 
 class CommandsTestCase(SimpleTestCase):
@@ -171,3 +164,19 @@ class CommandsTestCase(SimpleTestCase):
             self.assertEqual(results[0][1], '03Q')
             self.assertEqual(results[0][5], 489.7)
             self.assertEqual(results[0][6]['oral_antibacterials_item'], 10)
+
+    def test_generate_sort_cmd(self):
+        cmd = create_views.generate_sort_cmd(
+            'vw__chemical_summary_by_ccg',
+            ['processing_date', 'pct_id', 'chemical_id', 'items', 'cost', 'quantity'],
+            '/tmp/vw__chemical_summary_by_ccg-2018-01-01-raw.csv',
+            '/tmp/vw__chemical_summary_by_ccg-2018-01-01-sorted.csv',
+        )
+        exp_cmd = 'tail -n +2 {} | ionice -c 2 nice -n 10 sort {} -t, >> {}'.\
+            format(
+                '/tmp/vw__chemical_summary_by_ccg-2018-01-01-raw.csv',
+                '-k3,3 -k2,2',
+                '/tmp/vw__chemical_summary_by_ccg-2018-01-01-sorted.csv',
+            )
+
+        self.assertEqual(cmd, exp_cmd)

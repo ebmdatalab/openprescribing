@@ -780,7 +780,9 @@ describe('Measures', function() {
 
     it('sets correct Highcharts options for % measures', function() {
       var d = {
-        data: [{x: 0, y: 60}, {x: 10, y: 0}]
+        data: [{x: 0, y: 60}, {x: 10, y: 0}],
+        numeratorShort: 'foo',
+        denominatorShort: 'bar'
       },
       options = {
         rollUpBy: 'org_id',
@@ -809,7 +811,25 @@ describe('Measures', function() {
         }
       };
       var tooltip = result.tooltip.formatter.call(point);
-      var str = '<b>Foo in Jan 2015</b><br/>Measure: 0.333%';
+      expect(tooltip).to.equal(false);
+
+      var point = {
+        x: '2015-01-01',
+        point: {
+          numerator: 10,
+          denominator: 30,
+          percentile: 60,
+          y: 0.3333333
+        },
+        series: {
+          name: 'Foo',
+          options: {
+            isNationalSeries: false
+          }
+        }
+      };
+      var tooltip = result.tooltip.formatter.call(point);
+      var str = '<b>Foo in Jan 2015</b><br/>foo: 10<br/>bar: 30<br/>Measure: 0.333% (60th percentile)';
       expect(tooltip).to.equal(str);
     });
 

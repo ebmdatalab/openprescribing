@@ -78,3 +78,24 @@ exclude_paths:
  - "openprescribing/frontend/migrations/*"
  - "openprescribing/openprescribing/settings/*"
  - "openprescribing/frontend/management/commands/grab_chart.js"
+checks:
+  argument-count:
+    enabled: false
+  complex-logic:
+    enabled: false
+  file-lines:
+    enabled: false
+  method-complexity:
+    enabled: false
+  method-count:
+    enabled: false
+  method-lines:
+    enabled: false
+  nested-control-flow:
+    enabled: false
+  return-statements:
+    enabled: false
+  similar-code:
+    enabled: false
+  identical-code:
+    enabled: false

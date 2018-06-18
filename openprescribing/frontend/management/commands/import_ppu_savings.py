@@ -15,6 +15,7 @@ from dmd.models import DMDProduct
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
+from frontend.bq_schemas import PPU_SAVING_SCHEMA, ppu_savings_transform
 
 SUBSTITUTIONS_SPREADSHEET = (
     'https://docs.google.com/spreadsheets/d/e/'
@@ -71,7 +72,7 @@ def make_merged_table_for_month(month):
         net_cost,
         quantity
       FROM
-        hscic.%s
+        {hscic}.%s
       WHERE month = TIMESTAMP('%s')
     """ % (' '.join(
         ["WHEN '%s' THEN '%s'" % (when_code, then_code)
@@ -87,7 +88,7 @@ def make_merged_table_for_month(month):
     return target_table_name
 
 
-def get_savings(group_by, month, limit, min_saving=0):
+def get_savings(entity_type, month):
     """Execute SQL to calculate savings in BigQuery, and return as a
     DataFrame.
 
@@ -95,9 +96,11 @@ def get_savings(group_by, month, limit, min_saving=0):
     https://github.com/ebmdatalab/price-per-dose/issues
 
     """
-    prescribing_table = "hscic.%s" % (
+    prescribing_table = "{hscic}.%s" % (
         make_merged_table_for_month(month)
     )
+
+    # This is interpolated into the SQL template as it is used multiple times.
     restricting_condition = (
         "AND LENGTH(RTRIM(p.bnf_code)) >= 15 "
         "AND p.bnf_code NOT LIKE '0302000C0____BE' "  # issue #10
@@ -125,28 +128,24 @@ def get_savings(group_by, month, limit, min_saving=0):
 
     # Generate variable SQL based on if we're interested in CCG or
     # practice-level data
-    if group_by == 'pct':
+    if entity_type == 'pct':
         select = 'savings.presentations.pct AS pct,'
         inner_select = 'presentations.pct, '
         group_by = 'presentations.pct, '
-    elif group_by == 'practice':
+        min_saving = 1000
+    elif entity_type == 'practice':
         select = ('savings.presentations.practice AS practice,'
                   'savings.presentations.pct AS pct,')
         inner_select = ('presentations.pct, '
                         'presentations.practice,')
         group_by = ('presentations.practice, '
                     'presentations.pct,')
-    elif group_by == 'product':
-        select = ''
-        inner_select = ''
-        group_by = ''
-
-    if limit:
-        limit = "LIMIT %s" % limit
+        min_saving = 50
     else:
-        limit = ''
+        # 7d21f9c6 (#769) removed 'product'` as a possible entity_type.  We may
+        # want to revisit this.
+        assert False
 
-    order_by = "ORDER BY possible_savings DESC"
     fpath = os.path.dirname(__file__)
 
     # Execute SQL
@@ -155,13 +154,10 @@ def get_savings(group_by, month, limit, min_saving=0):
 
     substitutions = (
         ('{{ restricting_condition }}', restricting_condition),
-        ('{{ limit }}', limit),
         ('{{ month }}', month.strftime('%Y-%m-%d')),
         ('{{ group_by }}', group_by),
-        ('{{ order_by }}', order_by),
         ('{{ select }}', select),
         ('{{ prescribing_table }}', prescribing_table),
-        ('{{ cost_field }}', 'net_cost'),
         ('{{ inner_select }}', inner_select),
         ('{{ min_saving }}', min_saving)
     )
@@ -197,17 +193,6 @@ class Command(BaseCommand):
         parser.add_argument(
             '--month',
             type=valid_date)
-        parser.add_argument(
-            '--min-practice-saving',
-            type=int, default=50)
-        parser.add_argument(
-            '--min-ccg-saving',
-            help="Disregard savings under this amount",
-            type=int, default=1000)
-        parser.add_argument(
-            '--limit',
-            help="Maximum number of savings to return",
-            type=int, default=0)
 
     def handle(self, *args, **options):
         '''
@@ -218,11 +203,12 @@ class Command(BaseCommand):
         if not options['month']:
             last_prescribing = ImportLog.objects.latest_in_category(
                 'prescribing').current_at
-            last_ppu = ImportLog.objects.latest_in_category(
-                'ppu').current_at
             options['month'] = last_prescribing
-            if options['month'] <= last_ppu:
-                raise argparse.ArgumentTypeError("Couldn't infer date")
+
+            log = ImportLog.objects.latest_in_category('ppu')
+            if log is not None:
+                if options['month'] <= log.current_at:
+                    raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
             # Create custom DMD Products for our overrides, if they
             # don't exist.
@@ -250,12 +236,8 @@ class Command(BaseCommand):
                 name='Urine Testing Reagents',
                 is_generic=True)
             PPUSaving.objects.filter(date=options['month']).delete()
-            for entity_type, min_saving in [
-                    ('pct', options['min_ccg_saving']),
-                    ('practice', options['min_practice_saving'])]:
-                result = get_savings(
-                    entity_type, options['month'],
-                    options['limit'], min_saving)
+            for entity_type in ['pct', 'practice']:
+                result = get_savings(entity_type, options['month'])
                 for row in result.itertuples():
                     d = row._asdict()
                     if d['price_per_unit']:
@@ -274,3 +256,12 @@ class Command(BaseCommand):
                 category='ppu',
                 filename='n/a',
                 current_at=options['month'])
+
+        client = Client('hscic')
+        table = client.get_or_create_table('ppu_savings', PPU_SAVING_SCHEMA)
+        columns = [field.name for field in PPU_SAVING_SCHEMA]
+        table.insert_rows_from_pg(
+            PPUSaving,
+            columns,
+            ppu_savings_transform
+        )

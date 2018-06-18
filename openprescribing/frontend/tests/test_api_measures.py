@@ -11,7 +11,7 @@ def _get_test_measure():
     return {
         "is_cost_based": True,
         "numerator_columns": ["SUM(quantity) AS numerator, "],
-        "numerator_from": "hscic.normalised_prescribing_standard",
+        "numerator_from": "{hscic}.normalised_prescribing_standard",
         "numerator_where": ["(bnf_code LIKE '0205%')"],
         "denominator_columns": ["SUM(quantity) AS denominator"],
         "denominator_from": "",
@@ -163,8 +163,8 @@ class TestAPIMeasureViews(TestCase):
 
         m = Measure.objects.first()
         m.numerator_from = (
-            "hscic.normalised_prescribing_standard p "
-            "LEFT JOIN hscic.presentation")
+            "{hscic}.normalised_prescribing_standard p "
+            "LEFT JOIN {hscic}.presentation")
         m.save()
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'
@@ -185,6 +185,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['10'], '63588.51')
         self.assertEqual("%.2f" % d['cost_savings']['50'], '58658.82')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '11731.76')
+        self.assertEqual(d['pct_id'], '02Q')
+        self.assertEqual(d['pct_name'], 'NHS BASSETLAW CCG')
 
     def test_api_measure_by_ccg_excludes_closed(self):
         url = '/api/1.0/measure_by_ccg/'
@@ -221,6 +223,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['10'], '485.58')
         self.assertEqual("%.2f" % d['cost_savings']['50'], '-264.71')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '-7218.00')
+        self.assertEqual(d['practice_id'], 'C84001')
+        self.assertEqual(d['practice_name'], 'LARWOOD SURGERY')
 
         # Practice with only Cerazette prescribing.
         url = '/api/1.0/measure_by_practice/'

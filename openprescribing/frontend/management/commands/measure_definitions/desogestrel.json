@@ -24,14 +24,14 @@
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
-  "numerator_from": "hscic.normalised_prescribing_standard ",
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "(bnf_code LIKE '0703021Q0B%')  "
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
-  "denominator_from": "hscic.normalised_prescribing_standard ",
+  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code LIKE '0703021Q0%')  "
   ]

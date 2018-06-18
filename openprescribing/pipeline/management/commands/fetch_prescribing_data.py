@@ -63,7 +63,7 @@ Specifically, you should:
     * Copy the value of the JSESSIONID cookie
       * In Chrome, this can be found in the Application tab of Developer Tools
     * Paste this value below:
-            ''').strip()
+            '''.strip())
 
             jsessionid = raw_input()
         else:

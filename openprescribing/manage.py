@@ -2,10 +2,18 @@
 import os
 import sys
 
+import dotenv
+
 if __name__ == "__main__":
-    settings = 'test' if 'test' in sys.argv else 'local'
-    os.environ["DJANGO_SETTINGS_MODULE"] = (
-        "openprescribing.settings.%s" % settings)
+    dotenv.read_dotenv('../environment')
+
+    if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+        if sys.argv[1] in ['test', 'pipeline_e2e_tests']:
+            settings = 'test'
+        else:
+            settings = 'local'
+        os.environ["DJANGO_SETTINGS_MODULE"] = (
+            "openprescribing.settings.%s" % settings)
 
     from django.core.management import execute_from_command_line
 

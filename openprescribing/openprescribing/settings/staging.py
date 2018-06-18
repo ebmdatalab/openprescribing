@@ -22,7 +22,7 @@ ALLOWED_HOSTS = ['staging.openprescribing.net']
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': utils.get_env_setting('DB_NAME', ''),
+        'NAME': utils.get_env_setting('STAGING_DB_NAME', ''),
         'USER': utils.get_env_setting('DB_USER', ''),
         'PASSWORD': utils.get_env_setting('DB_PASS', ''),
         'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1')

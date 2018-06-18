@@ -548,8 +548,8 @@ def getIntroText(stats, org_type):
                         possible_savings > 1 and 's' or ''))
         msg += ('Note that there can sometimes be good reasons why one %s is '
                 'an outlier, and you should interpret the data thoughtfully: '
-                'these are <a href="/faq/#measureinterpret">measures, not '
-                'indicators</a>.' % org_type)
+                'these are <a href="https://openprescribing.net/faq/#measureinterpret">'
+                'measures, not indicators</a>.' % org_type)
     else:
         msg = ("We've no new information about this %s this month! "
                "Its performance is not an outlier on any "

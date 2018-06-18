@@ -44,6 +44,3 @@ class Command(BaseCommand):
                        'items': items,
                        'quantity': quantity}
                 json.dump(obj, f, indent=2)
-
-        print('You should now commit the updated smoketest files')
-        raw_input('Press enter to continue')

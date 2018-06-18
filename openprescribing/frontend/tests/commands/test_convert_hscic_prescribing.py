@@ -51,7 +51,7 @@ class ConvertHscicPrescribingTests(TestCase):
         # Test that data added to prescribing table
         client = BQClient()
         sql = '''SELECT *
-        FROM hscic.prescribing
+        FROM {hscic}.prescribing
         WHERE month = TIMESTAMP('2016-01-01')'''
 
         rows = list(results_to_dicts(client.query(sql)))
@@ -83,9 +83,8 @@ class ConvertHscicPrescribingTests(TestCase):
 
     def tearDown(self):
         table_name = 'raw_prescribing_data_2016_01'
-        table = BQClient('tmp_eu').get_table(table_name)
         try:
-            table.gcbq_table.delete()
+            BQClient('tmp_eu').delete_table(table_name)
         except NotFound:
             pass
 

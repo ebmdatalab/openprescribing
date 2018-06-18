@@ -2,6 +2,7 @@ from multiprocessing.pool import Pool
 import glob
 import logging
 import os
+import subprocess
 import tempfile
 import traceback
 
@@ -79,10 +80,9 @@ class Command(BaseCommand):
 
             with open(path) as f:
                 sql = f.read()
-            # We can't use new-style formatting as some of the SQL has braces
-            # in.
-            sql = sql.replace('{{this_month}}', prescribing_date)
-            args = [table.name, sql]
+
+            substitutions = {'this_month': prescribing_date}
+            args = [table.table_id, sql, substitutions]
             pool.apply_async(query_and_export, args)
 
         pool.close()
@@ -93,29 +93,45 @@ class Command(BaseCommand):
             self.log("-------------")
 
     def download_and_import(self, table):
-        storage_prefix = 'hscic/views/{}-'.format(table.name)
+        '''Download table from storage and import into local database.
+
+        We sort the downloaded file with `sort` rather than in BigQuery,
+        because we hit resource limits when we try to do so.  See #698 and #711
+        for discussion.
+        '''
+        table_id = table.table_id
+        storage_prefix = 'hscic/views/{}-'.format(table_id)
         exporter = TableExporter(table, storage_prefix)
 
-        with tempfile.NamedTemporaryFile(mode='r+') as f:
-            exporter.download_from_storage_and_unzip(f)
-            f.seek(0)
+        raw_file = tempfile.NamedTemporaryFile()
+        raw_path = raw_file.name
+        sorted_file = tempfile.NamedTemporaryFile()
+        sorted_path = sorted_file.name
 
-            field_names = f.readline()
-            copy_sql = "COPY {}({}) FROM STDIN WITH (FORMAT CSV)".format(
-                table.name, field_names)
+        self.log('Downloading {} to {}'.format(table_id, raw_path))
+        exporter.download_from_storage_and_unzip(raw_file)
 
-            with connection.cursor() as cursor:
-                with utils.constraint_and_index_reconstructor(table.name):
-                    self.log("Deleting from table %s..." % table.name)
-                    cursor.execute("DELETE FROM %s" % table.name)
+        self.log('Sorting {} to {}'.format(table_id, sorted_path))
+        cmd = 'head -1 {} > {}'.format(raw_path, sorted_path)
+        subprocess.check_call(cmd, shell=True)
 
-                    self.log("Copying CSV to %s..." % table.name)
-                    try:
-                        cursor.copy_expert(copy_sql, f)
-                    except Exception:
-                        import shutil
-                        shutil.copyfile(f.name, "/tmp/error")
-                        raise
+        field_names = sorted_file.readline().strip().split(',')
+
+        cmd = generate_sort_cmd(table_id, field_names, raw_path, sorted_path)
+        subprocess.check_call(cmd, shell=True)
+
+        copy_sql = "COPY {}({}) FROM STDIN WITH (FORMAT CSV)".format(
+            table_id, ','.join(field_names))
+
+        with connection.cursor() as cursor:
+            with utils.constraint_and_index_reconstructor(table_id):
+                self.log("Deleting from table %s..." % table_id)
+                cursor.execute("DELETE FROM %s" % table_id)
+                self.log("Copying CSV to %s..." % table_id)
+                cursor.copy_expert(copy_sql, sorted_file)
+
+        raw_file.close()
+        sorted_file.close()
 
     def log(self, message):
         if self.IS_VERBOSE:
@@ -124,7 +140,7 @@ class Command(BaseCommand):
             logger.info(message)
 
 
-def query_and_export(table_name, sql):
+def query_and_export(table_name, sql, substitutions):
     try:
         client = Client('hscic')
         table = client.get_table(table_name)
@@ -134,7 +150,7 @@ def query_and_export(table_name, sql):
             table_name, storage_prefix))
 
         logger.info("Running SQL for %s: %s" % (table_name, sql))
-        table.insert_rows_from_query(sql)
+        table.insert_rows_from_query(sql, substitutions=substitutions)
 
         exporter = TableExporter(table, storage_prefix)
 
@@ -151,3 +167,19 @@ def query_and_export(table_name, sql):
         # traceback)
         logger.error(traceback.format_exc())
         raise
+
+
+def generate_sort_cmd(table_name, field_names, raw_path, sorted_path):
+    sort_keys = {
+        'vw__ccgstatistics': ['pct_id'],
+        'vw__chemical_summary_by_ccg': ['chemical_id', 'pct_id'],
+        'vw__chemical_summary_by_practice': ['chemical_id', 'practice_id'],
+        'vw__practice_summary': ['practice_id', 'processing_date'],
+        'vw__presentation_summary': ['presentation_code', 'processing_date'],
+        'vw__presentation_summary_by_ccg': ['presentation_code', 'pct_id'],
+    }[table_name]
+    sort_key_ixs = [field_names.index(k) + 1 for k in sort_keys]
+    sort_opts = ' '.join('-k{},{}'.format(ix, ix) for ix in sort_key_ixs)
+    # This won't work on OSX since no ionice is available.
+    return 'tail -n +2 {} | ionice -c 2 nice -n 10 sort {} -t, >> {}'.format(
+        raw_path, sort_opts, sorted_path)

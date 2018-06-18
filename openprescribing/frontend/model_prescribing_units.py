@@ -1,4 +1,6 @@
 import json
+import os
+from django.conf import settings
 
 
 def set_units(practice):
@@ -65,7 +67,8 @@ def set_units(practice):
     practice.astro_pu_items = astro_pu_items
 
     star_pus = {}
-    with open("frontend/star_pu_weights.json") as json_file:
+    path = os.path.join(settings.SITE_ROOT, 'frontend', 'star_pu_weights.json')
+    with open(path) as json_file:
         weights = json.load(json_file)
         for star_pu_name in weights:
             w = weights[star_pu_name]

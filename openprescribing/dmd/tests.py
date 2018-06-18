@@ -1,9 +1,13 @@
 # coding=utf8
 
-from mock import patch
+import os
+from mock import call, patch
 
-from django.db import connection
+import bs4
+
+from django.conf import settings
 from django.core.management import call_command
+from django.db import connection
 from django.test import TestCase
 
 from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
@@ -78,59 +82,87 @@ class CommandsTestCase(TestCase):
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        path = 'dmd/tests/fixtures/commands/Converted_DRUG_SNOMED_BNF.xlsx'
+        path = 'dmd/tests/fixtures/commands/January 2018 Snomed mapping - BNF 05-12-2017.xlsx'
         call_command('import_dmd_snomed', '--filename', path)
 
         amp = DMDProduct.objects.get(concept_class=2)
         self.assertEqual(amp.bnf_code, '0206020T0AAAGAG')
 
-    def test_import_ncso_concessions(self):
+    def test_fetch_and_import_ncso_concessions(self):
+        # We "download" the following concessions:
+        #  2017_11 (current)
+        #   * Amiloride (new-and-matched)
+        #   * Amlodipine (new-and-unmatched)
+        #  2017_10 (archive)
+        #   * Amiloride (unchanged)
+        #   * Anastrozole (changed)
+
         vmpp1 = DMDVmpp.objects.create(
-            vppid=1092811000001107,
-            nm='Amiloride 5mg tablets 100 tablet',
+            vppid=1191111000001100,
+            nm='Amiloride 5mg tablets 28 tablet',
         )
         vmpp2 = DMDVmpp.objects.create(
-            vppid=8049011000001108,
-            nm='Duloxetine 40mg gastro-resistant capsules 56 capsule',
+            vppid=975211000001100,
+            nm='Anastrozole 1mg tablets 28 tablet',
         )
 
         NCSOConcession.objects.create(
-            year_and_month='2017_01',
-            drug='Duloxetine 40mg capsules',
-            pack_size='56',
-            price_concession_pence=600,
+            date='2017-10-1',
+            drug='Amiloride 5mg tablets',
+            pack_size='28',
+            price_concession_pence=925,
+            vmpp_id=vmpp1.vppid,
+        )
+        NCSOConcession.objects.create(
+            date='2017-10-1',
+            drug='Anastrozole 1mg tablets',
+            pack_size='28',
+            price_concession_pence=1335,
             vmpp_id=vmpp2.vppid,
         )
 
-        path = 'dmd/tests/fixtures/commands/ncso_concessions_2017_02.csv'
-        call_command('import_ncso_concessions', '--filename', path)
+        self.assertEqual(NCSOConcession.objects.count(), 2)
 
-        cons1 = NCSOConcession.objects.get(
-            year_and_month='2017_02',
-            drug='Amiloride 5mg tablets'
-        )
+        base_path = os.path.join(settings.SITE_ROOT, 'dmd', 'tests', 'pages')
 
-        cons2 = NCSOConcession.objects.get(
-            year_and_month='2017_02',
-            drug='Duloxetine 40mg gastro-resistant capsules'
-        )
+        with open(os.path.join(base_path, 'ncso-archive.html')) as f:
+            archive_doc = bs4.BeautifulSoup(f.read(), 'html.parser')
 
-        cons3 = NCSOConcession.objects.get(
-            year_and_month='2017_02',
-            drug='Vitamin B Co Strong tablets'
-        )
+        with open(os.path.join(base_path, 'ncso-current.html')) as f:
+            current_doc = bs4.BeautifulSoup(f.read(), 'html.parser')
 
-        self.assertEqual(cons1.pack_size, '100')
-        self.assertEqual(cons1.price_concession_pence, 925)
-        self.assertEqual(cons1.vmpp, vmpp1)
+        patch_path = 'dmd.management.commands.fetch_and_import_ncso_concessions'
+        with patch(patch_path + '.Command.download_archive') as download_archive,\
+                patch(patch_path + '.Command.download_current') as download_current,\
+                patch(patch_path + '.logger.info') as info:
+            download_archive.return_value = archive_doc
+            download_current.return_value = current_doc
 
-        self.assertEqual(cons2.pack_size, '56')
-        self.assertEqual(cons2.price_concession_pence, 725)
-        self.assertEqual(cons2.vmpp, vmpp2)
+            call_command('fetch_and_import_ncso_concessions')
 
-        self.assertEqual(cons3.pack_size, '28')
-        self.assertEqual(cons3.price_concession_pence, 525)
-        self.assertEqual(cons3.vmpp, None)
+            expected_logging_calls = [
+                call('New and matched: %s', 1),
+                call('New and unmatched: %s', 1),
+                call('Changed: %s', 1),
+                call('Unchanged: %s', 1),
+            ]
+            self.assertEqual(info.call_args_list[-4:], expected_logging_calls)
+
+        self.assertEqual(NCSOConcession.objects.count(), 4)
+
+        for date, drug, pack_size, pcp, vmpp in [
+            ['2017-10-01', 'Amiloride 5mg tablets', '28', 925, vmpp1],
+            ['2017-10-01', 'Anastrozole 1mg tablets', '28', 1445, vmpp2],
+            ['2017-11-01', 'Amiloride 5mg tablets', '28', 925, vmpp1],
+            ['2017-11-01', 'Amlodipine 5mg tablets', '28', 375, None],
+        ]:
+            concession = NCSOConcession.objects.get(
+                date=date,
+                drug=drug
+            )
+            self.assertEqual(concession.pack_size, pack_size)
+            self.assertEqual(concession.price_concession_pence, pcp)
+            self.assertEqual(concession.vmpp, vmpp)
 
     def test_reconcile_ncso_concessions(self):
         vmpp = DMDVmpp.objects.create(
@@ -154,7 +186,7 @@ class CommandsTestCase(TestCase):
         )
 
         concession = NCSOConcession.objects.create(
-            year_and_month='2017_01',
+            date='2017-01-01',
             drug='Duloxetine 40mg capsules',
             pack_size='56',
             price_concession_pence=600,

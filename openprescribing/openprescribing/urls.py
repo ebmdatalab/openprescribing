@@ -135,6 +135,10 @@ urlpatterns = [
             permanent=True, pattern_name='measures_for_one_practice'),
         name='practice'),
 
+    # Wrong URL got published
+    url(r'^measures/$', RedirectView.as_view(
+        pattern_name='all_measures', permanent=True)),
+
     # Temporary, for tracking letter mailouts. Should change to
     # redirect post March 2018
     url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',

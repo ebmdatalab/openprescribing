@@ -1,12 +1,13 @@
 import datetime
 import logging
 import os
+import subprocess
+import tempfile
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from gcutils.bigquery import Client, TableExporter
+from gcutils.bigquery import Client, TableExporter, NotFound
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +38,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         path = options['filename']
-        converted_path = '{}_formatted.CSV'.format(os.path.splitext(path)[0])
         head, filename = os.path.split(path)
+        converted_path = '{}_formatted.CSV'.format(os.path.splitext(path)[0])
         _, year_and_month = os.path.split(head)
 
         logger.info('path: %s', path)
@@ -61,11 +62,14 @@ class Command(BaseCommand):
         sql = '''SELECT COUNT(*)
         FROM {dataset}.prescribing
         WHERE month = TIMESTAMP('{date}')'''.format(
-            dataset=hscic_dataset_client.dataset_name,
+            dataset=hscic_dataset_client.dataset_id,
             date=date.replace('_', '-'),
         )
-        results = hscic_dataset_client.query(sql)
-        assert results.rows[0][0] == 0
+        try:
+            results = hscic_dataset_client.query(sql)
+            assert results.rows[0][0] == 0
+        except NotFound:
+            pass
 
         # Create BQ table backed backed by uploaded source CSV file
         raw_data_table_name = 'raw_prescribing_data_{}'.format(year_and_month)
@@ -141,8 +145,6 @@ class Command(BaseCommand):
          WHERE Practice_Code NOT LIKE '%%998'  -- see issue #349
          GROUP BY
            presentation_code, pct_id, practice_code
-         ORDER BY
-           presentation_code, pct_id, practice_code
         ''' % (date, raw_data_table.qualified_name)
 
         fmtd_data_table_name = 'formatted_prescribing_%s' % year_and_month
@@ -157,5 +159,15 @@ class Command(BaseCommand):
         exporter = TableExporter(fmtd_data_table, gcs_path + '_formatted-')
         exporter.export_to_storage(print_header=False)
 
-        with open(converted_path, 'w') as f:
+        with tempfile.NamedTemporaryFile(dir=head) as f:
             exporter.download_from_storage_and_unzip(f)
+
+            # Sort the output.
+            #
+            # Why? Because this is equivalent to CLUSTERing the table on
+            # loading, but less resource-intensive than doing it in
+            # Postgres. And the table is too big to sort within BigQuery.
+            subprocess.call(
+                "ionice -c 2 nice -n 10 sort -k3,3 -k1,1 -k2,2 -t, %s > %s" % (
+                    f.name, converted_path),
+                shell=True)

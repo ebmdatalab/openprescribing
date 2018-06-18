@@ -218,7 +218,9 @@ var utils = {
       }
       if ((d[ratio_actual_cost_x] !== null) && (d[ratio_actual_cost_x] > 0)) {
         d.ratio_actual_cost = d.y_actual_cost / d[ratio_actual_cost_x];
-        d.ratio_actual_cost = d.ratio_actual_cost * 1000;
+        if (x_val_key !== 'nothing') {
+          d.ratio_actual_cost = d.ratio_actual_cost * 1000;
+        }
       } else if (d[ratio_actual_cost_x] === 0) {
         d.ratio_actual_cost = null;
       }

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import random
 
 from .base import *
 
@@ -61,7 +62,21 @@ LOGGING = {
     },
 }
 
+# BigQuery project name
 BQ_PROJECT = 'ebmdatalabtest'
+
+# Nonce to ensure test runs do not clash
+BQ_NONCE = random.randrange(10000)
+
+# BigQuery dataset names
+BQ_HSCIC_DATASET = '{}_{:04d}'.format(BQ_HSCIC_DATASET, BQ_NONCE)
+BQ_MEASURES_DATASET = '{}_{:04d}'.format(BQ_MEASURES_DATASET, BQ_NONCE)
+BQ_TMP_EU_DATASET = '{}_{:04d}'.format(BQ_TMP_EU_DATASET, BQ_NONCE)
+BQ_DMD_DATASET = '{}_{:04d}'.format(BQ_DMD_DATASET, BQ_NONCE)
+BQ_TEST_DATASET = 'test_{:04d}'.format(BQ_NONCE)
+
+# Other BQ settings
+BQ_DEFAULT_TABLE_EXPIRATION_MS = 3 * 60 * 60 * 1000  # 3 hours
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://localhost"
@@ -83,3 +98,5 @@ PIPELINE_DATA_BASEDIR = os.path.join(
 PIPELINE_IMPORT_LOG_PATH = os.path.join(
     SITE_ROOT, 'pipeline', 'test-data', 'log.json'
 )
+
+SLACK_SENDING_ACTIVE = False

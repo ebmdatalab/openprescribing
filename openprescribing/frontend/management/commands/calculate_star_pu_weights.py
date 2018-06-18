@@ -1,6 +1,8 @@
 import json
+import os
 import openpyxl as op
 import re
+from django.conf import settings
 from django.core.management.base import BaseCommand
 import sys
 
@@ -35,7 +37,10 @@ class Command(BaseCommand):
             m = m.replace(' based STAR PU', '').replace('  ', ' ').strip()
             m = m.replace(' ', '_').replace('&', 'and').lower()
             weights[m] = self.parse_weight(sheet, cell_range)
-        with open('frontend/star_pu_weights.json', 'w') as outfile:
+
+        path = os.path.join(settings.SITE_ROOT, 'frontend',
+                            'star_pu_weights.json')
+        with open(path, 'w') as outfile:
             json.dump(weights, outfile, sort_keys=True, indent=4)
 
     def get_sect_cells(self, first_cell):

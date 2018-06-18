@@ -1,7 +1,6 @@
 import itertools
 from django.db import connection
 from django.shortcuts import get_object_or_404
-from frontend.models import Practice, Section
 from functools import wraps
 
 
@@ -43,7 +42,9 @@ def dictfetchall(cursor):
 
 def execute_query(query, params):
     cursor = connection.cursor()
-    if params:
+    if isinstance(params, dict):
+        cursor.execute(query, params)
+    elif params:
         cursor.execute(query, tuple(itertools.chain.from_iterable(params)))
     else:
         cursor.execute(query)
@@ -54,6 +55,7 @@ def execute_query(query, params):
 
 def get_practice_ids_from_org(org_codes):
     # Convert CCG codes to lists of practices.
+    from frontend.models import Practice
     practices = []
     for i, org in enumerate(org_codes):
         if len(org) == 3:
@@ -67,6 +69,7 @@ def get_practice_ids_from_org(org_codes):
 
 def get_bnf_codes_from_number_str(codes):
     # Convert BNF strings (3.4, 3) to BNF codes (0304, 03).
+    from frontend.models import Section
     converted = []
     for code in codes:
         if '.' in code:

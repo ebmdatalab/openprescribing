@@ -16,13 +16,13 @@
   "denominator_short": "Drugs for erectile dysfunction items",
   "url": null,
   "is_percentage": true,
-  "is_cost_based": true,
+  "is_cost_based": false,
   "low_is_good": true,
   "tags": ["core"],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "hscic.normalised_prescribing_standard ",
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "((bnf_code LIKE '070405%')",
     "AND (bnf_code not like '0704050Z0AAAAAA%' and bnf_code not like '0704050Z0AAABAB%' and bnf_code not like '0704050Z0AAACAC%'))"
@@ -30,7 +30,7 @@
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "hscic.normalised_prescribing_standard ",
+  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code LIKE '070405%')"
   ]

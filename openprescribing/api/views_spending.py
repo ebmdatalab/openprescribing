@@ -3,25 +3,23 @@ import datetime
 import re
 
 import numpy as np
-import pandas as pd
 
 from django.db import connection
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
-from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
-from common.utils import namedtuplefetchall
-from dmd.models import DMDProduct
-from dmd.models import TariffPrice
+from common.utils import namedtuplefetchall, nhs_titlecase
+from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
+from frontend.models import Practice, PCT
 import view_utils as utils
 from view_utils import db_timeout
 
@@ -184,66 +182,109 @@ def price_per_unit(request, format=None):
     CCGs
 
     """
-    entity_code = request.query_params.get('entity_code', None)
+    entity_code = request.query_params.get('entity_code')
     date = request.query_params.get('date')
-    bnf_code = request.query_params.get('bnf_code', None)
+    bnf_code = request.query_params.get('bnf_code')
     if not date:
         raise NotValid("You must supply a date")
     if not (entity_code or bnf_code):
         raise NotValid("You must supply a value for entity_code or bnf_code")
 
-    query = {'date': date}
+    params = {'date': date}
     filename = date
+
+    practice_level = False
+
     if bnf_code:
-        presentation = get_object_or_404(Presentation, pk=bnf_code)
-        query['presentation'] = presentation
+        params['bnf_code'] = bnf_code
+        get_object_or_404(Presentation, pk=bnf_code)
         filename += "-%s" % bnf_code
+
     if entity_code:
-        filename += "-%s" % entity_code
+        params['entity_code'] = entity_code
         if len(entity_code) == 3:
-            # CCG focus
-            query['pct'] = entity_code
-            if bnf_code:
-                # All-practices-for-code-for-one-ccg
-                query['practice__isnull'] = False
-            else:
-                query['practice__isnull'] = True
+            get_object_or_404(PCT, pk=entity_code)
         else:
-            # Practice focus
-            query['practice'] = entity_code
-    savings = []
-    for x in PPUSaving.objects.filter(
-            **query).prefetch_related('presentation', 'practice'):
-        # Get all products in one hit. They will all be generic.
-        #
-        d = model_to_dict(x)
-        try:
-            d['name'] = x.presentation.name
-        except Presentation.DoesNotExist:
-            d['name'] = x.presentation_id
-        if x.practice:
-            d['practice_name'] = x.practice.cased_name
-        savings.append(d)
-    # Inelegantly lookup DMDProduct metadata for all matched items.
-    # We do it this way to avoid N+1 lookup problems (the current
-    # DMDProduct schema makes this difficult to do using Django ORM)
-    if savings:
-        codes_with_metadata = DMDProduct.objects.filter(
-            bnf_code__in=[d['presentation'] for d in savings], concept_class=1).only(
-                'bnf_code', 'name', 'is_non_bioequivalent').all()
-        combined = pd.DataFrame(savings).set_index('presentation')
-        combined['presentation'] = combined.index
-        metadata = pd.DataFrame([
-            {'bnf_code': x.bnf_code, 'name': x.name, 'flag_bioequivalence': x.is_non_bioequivalent}
-            for x in codes_with_metadata]).set_index('bnf_code')
-        # We want all the fields in combined, but where there's a
-        # match, overwritten with the values in metadata
-        combined = metadata.combine_first(combined)
-        # Drop items where we had matching metadata but no savings values
-        combined = combined[combined['possible_savings'].notnull()]
-        # Turn nans to Nones and convert to dictionaries
-        savings = combined.where(combined.notnull(), None).to_dict('records')
-    response = Response(savings)
+            get_object_or_404(Practice, pk=entity_code)
+            practice_level = True
+        filename += "-%s" % entity_code
+
+    # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
+    # DMDProduct.
+    sql = '''
+    SELECT DISTINCT ON (
+            {dmdproduct_table}.bnf_code,
+            {ppusavings_table}.pct_id,
+            {ppusavings_table}.practice_id
+        )
+        {ppusavings_table}.id AS id,
+        {ppusavings_table}.date AS date,
+        {ppusavings_table}.lowest_decile AS lowest_decile,
+        {ppusavings_table}.quantity AS quantity,
+        {ppusavings_table}.price_per_unit AS price_per_unit,
+        {ppusavings_table}.possible_savings AS possible_savings,
+        {ppusavings_table}.formulation_swap AS formulation_swap,
+        {ppusavings_table}.pct_id AS pct,
+        {ppusavings_table}.practice_id AS practice,
+        {ppusavings_table}.bnf_code AS presentation,
+        {practice_table}.name AS practice_name,
+        {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
+        subquery.price_concession IS NOT NULL as price_concession,
+        COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
+    FROM {ppusavings_table}
+    LEFT OUTER JOIN {presentation_table}
+        ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
+    LEFT OUTER JOIN {practice_table}
+        ON {ppusavings_table}.practice_id = {practice_table}.code
+    LEFT OUTER JOIN {dmdproduct_table}
+        ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
+    LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
+                     FROM {dmdvmpp_table}
+                     INNER JOIN {ncsoconcession_table}
+                         ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
+                     WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
+        ON {dmdproduct_table}.vpid = subquery.vpid
+    WHERE
+        {ppusavings_table}.date = %(date)s
+        AND {dmdproduct_table}.concept_class = 1'''
+
+    if bnf_code:
+        sql += '''
+        AND {ppusavings_table}.bnf_code = %(bnf_code)s'''
+
+    if entity_code:
+        if practice_level:
+            sql += '''
+        AND {ppusavings_table}.practice_id = %(entity_code)s'''
+        else:
+            sql += '''
+        AND {ppusavings_table}.pct_id = %(entity_code)s'''
+
+            if bnf_code:
+                sql += '''
+        AND {ppusavings_table}.practice_id IS NOT NULL'''
+            else:
+                sql += '''
+        AND {ppusavings_table}.practice_id IS NULL'''
+
+    sql = sql.format(
+        ppusavings_table=PPUSaving._meta.db_table,
+        practice_table=Practice._meta.db_table,
+        presentation_table=Presentation._meta.db_table,
+        dmdproduct_table=DMDProduct._meta.db_table,
+        dmdvmpp_table=DMDVmpp._meta.db_table,
+        ncsoconcession_table=NCSOConcession._meta.db_table,
+    )
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        results = utils.dictfetchall(cursor)
+
+    for result in results:
+        if result['practice_name'] is not None:
+            result['practice_name'] = nhs_titlecase(result['practice_name'])
+
+    response = Response(results)
     if request.accepted_renderer.format == 'csv':
         filename = "%s-ppd.csv" % (filename)
         response['content-disposition'] = "attachment; filename=%s" % filename
@@ -270,36 +311,43 @@ def total_spending(request, format=None):
     return Response(data)
 
 
-class ConcessionField(serializers.RelatedField):
-    def to_representation(self, value):
-        if value:
-            return value.price_concession_pence
-        else:
-            return None
-
-
-class TariffSerializer(serializers.ModelSerializer):
-    vmpp = serializers.StringRelatedField()
-    product = serializers.SlugRelatedField(
-        read_only=True, slug_field='bnf_code')
-    tariff_category = serializers.StringRelatedField()
-    concession = ConcessionField(read_only=True)
-
-    class Meta:
-        model = TariffPrice
-        fields = ('date', 'price_pence', 'vmpp', 'product',
-                  'concession', 'tariff_category')
-
-
 @api_view(['GET'])
 def tariff(request, format=None):
+    # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
+    # ORM.
     codes = utils.param_to_list(request.query_params.get('codes', []))
-    prices = TariffPrice.objects.select_related(
-        'product', 'vmpp').order_by('date')
+
+    query = '''
+    SELECT dmd_tariffprice.date AS date,
+           dmd_tariffprice.price_pence AS price_pence,
+           dmd_vmpp.nm AS vmpp,
+           dmd_product.bnf_code AS product,
+           dmd_ncsoconcession.price_concession_pence AS concession,
+           dmd_lookup_dt_payment_category.desc AS tariff_category
+    FROM dmd_tariffprice
+        INNER JOIN dmd_lookup_dt_payment_category
+            ON dmd_tariffprice.tariff_category_id = dmd_lookup_dt_payment_category.cd
+        INNER JOIN dmd_product
+            ON dmd_tariffprice.product_id = dmd_product.dmdid
+        INNER JOIN dmd_vmpp
+            ON dmd_tariffprice.vmpp_id = dmd_vmpp.vppid
+        LEFT OUTER JOIN dmd_ncsoconcession
+            ON (dmd_tariffprice.date = dmd_ncsoconcession.date
+                AND dmd_tariffprice.vmpp_id = dmd_ncsoconcession.vmpp_id)
+    '''
+
     if codes:
-        prices = prices.filter(product__bnf_code__in=codes)
-    serializer = TariffSerializer(prices, many=True)
-    response = Response(serializer.data)
+        query += ' WHERE dmd_product.bnf_code IN ('
+        query += ','.join('%s' for _ in range(len(codes)))
+        query += ')'
+        params = [codes]
+    else:
+        params = None
+
+    query += ' ORDER BY date'
+
+    data = utils.execute_query(query, params)
+    response = Response(data)
     if request.accepted_renderer.format == 'csv':
         filename = "tariff.csv"
         response['content-disposition'] = "attachment; filename=%s" % filename
