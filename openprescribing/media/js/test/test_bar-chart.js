@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var barChart = require('../src/bar-chart');
+var barChart = require('../src/analyse-bar-chart');
 
 
 describe('BarChart', function () {

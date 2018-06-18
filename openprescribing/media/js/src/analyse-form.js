@@ -1,13 +1,12 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
-require('bootstrap');
-require('select2');
+var $ = require('jquery');
 var _ = require('underscore');
-
+var domready = require('domready');
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
-var analyseChart = require('./chart');
+var analyseChart = require('./analyse-chart');
 var config = require('./config');
+var bootstrap = require('bootstrap');
+var select2 = require('select2');
 
 var queryForm = {
 
@@ -28,7 +27,7 @@ var queryForm = {
     update: '#update',
     chart: '#chart',
     results: '#results',
-    oldBrowserWarning: '#old-browser'
+    oldBrowserWarning: '#old-browser',
   },
   // These are default values for the analyse form:
   globalOptions: {
@@ -41,7 +40,7 @@ var queryForm = {
     denomIds: [],
     highlightedPoints: [],
     reUpdate: false,
-    selectedTab: 'summary' // One of 'summary', 'chart', 'map'
+    selectedTab: 'summary', // One of 'summary', 'chart', 'map'
   },
 
   setUp: function() {
@@ -90,13 +89,13 @@ var queryForm = {
       // IDs to empty - e.g. if we change org type from CCGs to practices,
       // we want to empty the list of orgs.
       if (_this.globalOptions.orgIds.length === 0) {
-        $(_this.el.orgIds).val("").trigger("change");
+        $(_this.el.orgIds).val('').trigger('change');
       }
       if (_this.globalOptions.numIds.length === 0) {
-        $(_this.el.numeratorIds).val("").trigger("change");
+        $(_this.el.numeratorIds).val('').trigger('change');
       }
       if (_this.globalOptions.denomIds.length === 0) {
-        $(_this.el.denominatorIds).val("").trigger("change");
+        $(_this.el.denominatorIds).val('').trigger('change');
       }
     }
 
@@ -141,7 +140,7 @@ var queryForm = {
 
   checkIfButtonShouldBeEnabled: function(options) {
     var btnEnabled = this.checkIfChartCanBeRendered(options);
-    $(this.el.update).prop("disabled", !btnEnabled);
+    $(this.el.update).prop('disabled', !btnEnabled);
     return btnEnabled;
   },
 
@@ -171,14 +170,14 @@ var queryForm = {
       content: function() {
         return $(_this.el.numHelpText).html();
       },
-      title: 'Add BNF sections or drugs'
+      title: 'Add BNF sections or drugs',
     });
     $(_this.el.denominatorHelp).popover({
       html: true,
       content: function() {
         return $(_this.el.denomHelpText).html();
       },
-      title: 'Add BNF sections, drugs or prescribing comparators'
+      title: 'Add BNF sections, drugs or prescribing comparators',
     });
   },
 
@@ -208,8 +207,8 @@ var queryForm = {
         _this.globalOptions[optionId] = [];
         _.each(selectedData, function(d) {
           var item = {
-            'id' : d.id,
-            'ccg': d.ccg
+            'id': d.id,
+            'ccg': d.ccg,
           };
           item.name = d.name || d.text;
           item.text = item.name;
@@ -254,7 +253,7 @@ var queryForm = {
         type: 'GET',
         url: url,
         dataType: 'json',
-        context: this
+        context: this,
       });
     } else {
       return $.when([], this);
@@ -276,7 +275,7 @@ var queryForm = {
         type: 'GET',
         url: url,
         dataType: 'json',
-        context: context
+        context: context,
       });
     } else {
       return $.when([], context);
@@ -300,7 +299,7 @@ var queryForm = {
         type: 'GET',
         url: url,
         dataType: 'json',
-        context: context
+        context: context,
       });
     } else {
       return $.when([], context);
@@ -313,12 +312,14 @@ var queryForm = {
     $(this.el.numerator).val(this.globalOptions.num);
     $(this.el.denominator).val(this.globalOptions.denom);
     $('.form-select.not-searchable').select2({
-      minimumResultsForSearch: Infinity
+      minimumResultsForSearch: Infinity,
     });
     var select2Options = {
-      placeholder: "add names or codes",
+      placeholder: 'add names or codes',
             // allowClear: true,
-      escapeMarkup: function(markup) { return markup; },
+      escapeMarkup: function(markup) {
+ return markup;
+},
       minimumInputLength: 3,
       templateResult: function(result) {
         if (result.loading) return result.text;
@@ -343,12 +344,12 @@ var queryForm = {
         return str;
       },
       ajax: {
-        url: config.apiHost + "/api/1.0/bnf_code/?format=json",
+        url: config.apiHost + '/api/1.0/bnf_code/?format=json',
         delay: 50,
         data: function(params) {
           return {
             q: params.term,
-            page: params.page
+            page: params.page,
 
           };
         },
@@ -357,31 +358,35 @@ var queryForm = {
           return {
             results: data,
             pagination: {
-              more: (params.page * 30) < data.total_count
-            }
+              more: (params.page * 30) < data.total_count,
+            },
           };
         },
-        cache: true
-      }
+        cache: true,
+      },
     };
-    var optionsNum = jQuery.extend(true, {}, select2Options);
+    var optionsNum = $.extend(true, {}, select2Options);
     optionsNum.placeholder += ', e.g. Cerazette';
-    var optionsDenom = jQuery.extend(true, {}, select2Options);
+    var optionsDenom = $.extend(true, {}, select2Options);
     optionsDenom.placeholder += ', e.g. 7.3.2';
     $(this.el.numeratorIds).select2(optionsNum);
     $(this.el.denominatorIds).select2(optionsDenom);
-    var optionsOrg = jQuery.extend(true, {}, select2Options);
+    var optionsOrg = $.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
       if (_this.globalOptions.org == 'CCG') {
-        return config.apiHost + "/api/1.0/org_code/?org_type=CCG&format=json";
+        return config.apiHost + '/api/1.0/org_code?org_type=CCG&format=json';
       } else {
-        return config.apiHost + "/api/1.0/org_code/?org_type=CCG,practice&format=json";
+        return config.apiHost + '/api/1.0/org_code?org_type=CCG,practice&format=json';
       }
     };
     $(this.el.orgIds).select2(optionsOrg);
     _this.globalOptions.selectOrgOptions = optionsOrg;
-  }
+  },
 
 };
+
+domready(function() {
+  queryForm.setUp();
+});
 
 module.exports = queryForm;

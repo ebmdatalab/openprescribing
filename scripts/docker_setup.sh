@@ -12,4 +12,5 @@ else
 fi
 mkdir logs
 cd openprescribing/media/js
+npm cache clean
 npm install -s

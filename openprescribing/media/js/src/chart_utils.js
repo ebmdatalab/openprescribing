@@ -78,8 +78,8 @@ var utils = {
       });
     }
     return {
-      'denominatorUrl': denominatorUrl.replace("?&", "?"),
-      'numeratorUrl': numeratorUrl.replace("?&", "?")
+      'denominatorUrl': denominatorUrl.replace('?&', '?'),
+      'numeratorUrl': numeratorUrl.replace('?&', '?'),
     };
   },
 
@@ -155,7 +155,7 @@ var utils = {
 
   combineDatasets: function(xData, yData, x_val, x_val_key) {
     var xDataDict = _.reduce(xData, function(p, c) {
-      var key = c.row_id + "-" + c.date;
+      var key = c.row_id + '-' + c.date;
       p[key] = {
         row_id: c.row_id,
         row_name: c.row_name,
@@ -164,7 +164,7 @@ var utils = {
         x_actual_cost: +c.actual_cost || 0,
         x_items: +c.items || 0,
         y_actual_cost: 0,
-        y_items: 0
+        y_items: 0,
       };
       if (x_val.slice(0, 8) == 'star_pu.') {
         p[key][x_val_key] = +c['star_pu'][x_val.slice(8, x_val.length)];
@@ -174,7 +174,7 @@ var utils = {
       return p;
     }, {});
     xAndYDataDict = _.reduce(yData, function(p, c) {
-      var key = c.row_id + "-" + c.date;
+      var key = c.row_id + '-' + c.date;
       if (p[key]) {
         p[key].setting = c.setting;
         p[key].y_actual_cost = +c.actual_cost || 0;
@@ -188,7 +188,7 @@ var utils = {
           x_actual_cost: 0,
           x_items: 0,
           y_actual_cost: +c.actual_cost || 0,
-          y_items: +c.items || 0
+          y_items: +c.items || 0,
         };
         p[key][x_val_key] = 0;
       }
@@ -206,7 +206,7 @@ var utils = {
     var ratio_actual_cost_x = (isSpecialDenominator) ? x_val_key : 'x_actual_cost',
       ratio_item_x = (isSpecialDenominator) ? x_val_key : 'x_items';
     _.each(data, function(d, i) {
-      d.name = ('row_name' in d) ? d.row_name + " (" + d.row_id + ")" : null;
+      d.name = ('row_name' in d) ? d.row_name + ' (' + d.row_id + ')' : null;
       d.id = ('row_id' in d) ? d.row_id : null;
       if ((d[ratio_item_x] !== null) && (d[ratio_item_x] > 0)) {
         d.ratio_items = d.y_items / d[ratio_item_x];
@@ -244,7 +244,7 @@ var utils = {
     var chartSeries = [{
       turboThreshold: 25000,
       data: dataCopy,
-      color: 'rgba(119, 152, 191, .5)'
+      color: 'rgba(119, 152, 191, .5)',
     }];
     return chartSeries;
   },
@@ -280,10 +280,10 @@ var utils = {
       var startDate = moment(firstMonth);
       var endDate = moment(lastMonth);
       if (endDate.isBefore(startDate)) {
-        throw "End date must be greater than start date.";
+        throw 'End date must be greater than start date.';
       }
       while (startDate.isBefore(endDate) || startDate.isSame(endDate)) {
-        monthRange.push(startDate.format("YYYY-MM-01"));
+        monthRange.push(startDate.format('YYYY-MM-01'));
         startDate.add(1, 'month');
       }
     }
@@ -322,9 +322,9 @@ var utils = {
       y: 'y_' + y,
       x: x,
       x_val: x_val,
-      ratio: 'ratio_' + y
+      ratio: 'ratio_' + y,
     };
-  }
+  },
 };
 
 module.exports = utils;

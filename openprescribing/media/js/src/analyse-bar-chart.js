@@ -1,6 +1,6 @@
 var _ = require('underscore');
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
 
@@ -9,13 +9,13 @@ var barChart = {
   setUp: function(barOptions, globalOptions) {
         // console.log('setUpBarChart');
     barOptions.yAxis.title = {
-      text: globalOptions.friendly.yAxisTitle
+      text: globalOptions.friendly.yAxisTitle,
     };
-    if (barOptions.yAxis.title.text.indexOf("<br/>") > -1) {
+    if (barOptions.yAxis.title.text.indexOf('<br/>') > -1) {
       barOptions.yAxis.title.margin = 35;
     }
     barOptions.yAxis.labels = {
-      formatter: globalOptions.friendly.yAxisFormatter
+      formatter: globalOptions.friendly.yAxisFormatter,
     };
     var xAxisTitle = (globalOptions.org == 'practice') ? 'Practice' : 'CCG';
     barOptions.xAxis.title = {text: xAxisTitle};
@@ -30,7 +30,7 @@ var barChart = {
         var y = this.y;
         return formatters.constructTooltip(globalOptions, name,
                     month, original_y, original_x, y);
-      }
+      },
     };
     var activeOrgs = _.pluck(globalOptions.orgIds, 'id');
     var convertedData = this._indexDataByMonthAndRatio(
@@ -57,7 +57,7 @@ var barChart = {
     var ratio = globalOptions.chartValues.ratio;
     var dataForMonth = this.barData[activeMonth][ratio];
     // Fix the y Axis
-    if (ratio === "ratio_actual_cost") {
+    if (ratio === 'ratio_actual_cost') {
       barOptions.yAxis.max = globalOptions.maxRatioActualCost;
     } else {
       barOptions.yAxis.max = globalOptions.maxRatioItems;
@@ -69,11 +69,11 @@ var barChart = {
   update: function(chart, month, ratio, title, formatter, playing, yAxisMax) {
     var newYAxisOptions = {
       title: {
-        text: title
+        text: title,
       },
       labels: {
-        formatter: formatter
-      }
+        formatter: formatter,
+      },
     };
     if (playing) {
       chart.animation = false;
@@ -90,7 +90,6 @@ var barChart = {
     } catch (err) {
       chart.series[0].setData(this.barData[month][ratio], true);
     }
-
   },
 
   _indexDataByMonthAndRatio: function(combinedData, activeOrgs) {
@@ -112,7 +111,7 @@ var barChart = {
       } else {
         newData[d.date] = {
           ratio_items: [copy1],
-          ratio_actual_cost: [copy2]
+          ratio_actual_cost: [copy2],
         };
       }
     });
@@ -138,7 +137,7 @@ var barChart = {
       barData: newData,
       maxRatioItems: maxRatioItems,
       maxRatioActualCost: maxRatioActualCost};
-  }
+  },
 };
 
 module.exports = barChart;

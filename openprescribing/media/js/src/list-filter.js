@@ -1,7 +1,8 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+
 require('bootstrap');
-var Fuse = require('./vendor/fuse');
+var Fuse = require('../vendor/fuse');
+var domready = require('domready');
 
 var listFilter = {
 
@@ -9,7 +10,6 @@ var listFilter = {
     var fuse;
     var $inputSearch = $(inputSearch);
     var $resultsList = $(resultsList);
-
     $inputSearch.val('');
 
     function search() {
@@ -35,7 +35,7 @@ var listFilter = {
         location: 0,
         distance: 1000,
         maxPatternLength: 32,
-        keys: ["name", "code"]
+        keys: ['name', 'code'],
       };
       fuse = new Fuse(allItems, options);
     }
@@ -54,7 +54,10 @@ var listFilter = {
       }, 300);
     });
     createFuse();
-  }
+  },
 };
 
-listFilter.setUp();
+module.exports = listFilter;
+domready(function() {
+  listFilter.setUp();
+});

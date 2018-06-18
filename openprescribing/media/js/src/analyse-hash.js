@@ -13,11 +13,11 @@ var hashHelper = {
           } else if (s === 'false') {
             return false;
           } else {
-            return decodeURIComponent(s.replace(a, " "));
+            return decodeURIComponent(s.replace(a, ' '));
           }
         } else {
           return s.map(function(e) {
-            return decodeURIComponent(e.replace(a, " "));
+            return decodeURIComponent(e.replace(a, ' '));
           });
         }
       },
@@ -37,12 +37,12 @@ var hashHelper = {
         key = 'denomIds';
       }
       var val = e[2];
-      val = val.replace(/,\s*$/, "");
+      val = val.replace(/,\s*$/, '');
       if ((key === 'orgIds') || (key === 'numIds') || (key === 'denomIds')) {
         hashParams[d(key)] = $.map(val.split(','), function(v) {
           if (d(v) !== '') {
             return {
-              id: d(v)
+              id: d(v),
             };
           }
         });
@@ -76,10 +76,10 @@ var hashHelper = {
         }
       }
     }
-    hash = hash.replace(/&$/, "");
+    hash = hash.replace(/&$/, '');
     window.location.hash = hash;
     return hash;
-  }
+  },
 };
 
 module.exports = hashHelper;

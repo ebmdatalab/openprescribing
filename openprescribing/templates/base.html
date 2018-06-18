@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load template_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -154,6 +155,9 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
       </div>
     </footer>
 
+
+    {% conditional_js 'common' %}
+    {% conditional_js 'global' %}
 
     {% block extra_js %}{% endblock extra_js %}
 

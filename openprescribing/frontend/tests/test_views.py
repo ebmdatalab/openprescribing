@@ -209,12 +209,12 @@ class TestFrontendViews(TransactionTestCase):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.min.js', mainjs)
+            self.assertIn('global.min.js', mainjs)
         with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.js', mainjs)
+            self.assertIn('global.js', mainjs)
 
     def test_call_view_analyse(self):
         response = self.client.get('/analyse/')
@@ -267,7 +267,7 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics')
+            'Part of chapter 2 Cardiovascular System, section 2.2 Diuretics')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 0)
 
@@ -295,8 +295,8 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            ('Part of chapter 2 Cardiovascular System , section 2.2 '
-             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
+            ('Part of chapter 2 Cardiovascular System, section 2.2 '
+             'Diuretics, paragraph 2.2.1 Thiazides And Related Diuretics')
         )
 
     def test_call_view_ccg_all(self):
