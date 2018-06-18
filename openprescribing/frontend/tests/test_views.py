@@ -267,7 +267,7 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics')
+            'Part of chapter 2 Cardiovascular System, section 2.2 Diuretics')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 0)
 
@@ -295,8 +295,8 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            ('Part of chapter 2 Cardiovascular System , section 2.2 '
-             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
+            ('Part of chapter 2 Cardiovascular System, section 2.2 '
+             'Diuretics, paragraph 2.2.1 Thiazides And Related Diuretics')
         )
 
     def test_call_view_ccg_all(self):
