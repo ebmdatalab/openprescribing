@@ -10,11 +10,19 @@ var listFilter = {
     var fuse;
     var $inputSearch = $(inputSearch);
     var $resultsList = $(resultsList);
+    var minSearchLength = $inputSearch.data('min-search-length');
     $inputSearch.val('');
 
     function search() {
       var searchTerm = $inputSearch.val();
-      var r = (searchTerm === '') ? allItems : fuse.search(searchTerm);
+      var r;
+      if (minSearchLength && searchTerm.length < minSearchLength) {
+        r = [];
+      } else if (searchTerm === '') {
+        r = allItems;
+      } else {
+        r = fuse.search(searchTerm);
+      }
       $resultsList.empty();
       var allHtml = '';
       $.each(r, function() {
