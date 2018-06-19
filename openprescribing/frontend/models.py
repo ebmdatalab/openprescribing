@@ -421,7 +421,9 @@ class Measure(models.Model):
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
     tags_focus = ArrayField(
-        models.CharField(max_length=30), null=True, blank=True)
+        models.CharField(max_length=30), null=True, blank=True,
+        help_text=("Indicates that this measure is an aggregate made up of "
+                   "all measures with the listed tags"))
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
