@@ -26,7 +26,7 @@ var inputSearch = '#search',
 {% for p in practices %}
 var practice = {
     name: '{{ p.name }} ',
-    code: '{{ p.postcode }}',
+    code: '{{ p.postcode }}{{ p.inactive_status_suffix }}',
     url: "{% url 'measures_for_one_practice' p.code %}"
 };
 allItems.push(practice);

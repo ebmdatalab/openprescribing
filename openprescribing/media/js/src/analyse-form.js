@@ -306,6 +306,10 @@ var queryForm = {
     }
   },
 
+  inactiveStatusSuffix: function(obj) {
+    return obj.inactive_status ? ' - ' + obj.inactive_status : '';
+  },
+
   initialiseSelectElements: function() {
     var _this = this;
     $(this.el.org).val(this.globalOptions.org);
@@ -330,7 +334,7 @@ var queryForm = {
         }
         str += '</strong>: ';
         str += (result.text) ? result.text : result.name;
-        str += ' (' + result.id;
+        str += ' (' + result.id + _this.inactiveStatusSuffix(result);
         if ('section' in result) {
           str += ', in section ' + result.section;
         }
@@ -340,7 +344,7 @@ var queryForm = {
       templateSelection: function(result) {
         var str = '', section, name;
         str += (result.text) ? result.text : result.name;
-        str += (result.id) ? ' (' + result.id + ')' : '';
+        str += (result.id) ? ' (' + result.id + _this.inactiveStatusSuffix(result) + ')' : '';
         return str;
       },
       ajax: {

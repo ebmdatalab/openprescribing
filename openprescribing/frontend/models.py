@@ -158,6 +158,15 @@ class Practice(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    def has_inactive_status(self):
+        return self.status_code in ('B', 'C', 'D')
+
+    def inactive_status_suffix(self):
+        if self.has_inactive_status():
+            return ' - {}'.format(self.get_status_code_display())
+        else:
+            return ''
+
     def address_pretty(self):
         address = self.address1 + ', '
         if self.address2:

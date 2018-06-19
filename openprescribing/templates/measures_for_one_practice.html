@@ -51,6 +51,15 @@
   </div>
 {% endif %}
 
+{% if practice.has_inactive_status %}
+  <div class="alert alert-warning" role="alert">
+    Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
+    <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
+      What does this mean?
+    </a>
+  </div>
+{% endif %}
+
 {% include '_measures_panel.html' with entity_type='practice' %}
 
 <hr/>
