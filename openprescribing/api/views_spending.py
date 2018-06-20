@@ -648,9 +648,9 @@ def _get_presentations_by_practice(codes, org_ids, date):
     if org_ids:
         for org_id in org_ids:
             if len(org_id) == 3:
-                org_clauses.append('pr.pct_id = %s')
+                org_clauses.append('pc.ccg_id = %s')
             else:
-                org_clauses.append('pr.practice_id = %s')
+                org_clauses.append('pc.code = %s')
 
     if date:
         date_clause = 'pr.processing_date = %s'
