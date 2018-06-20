@@ -78,6 +78,7 @@ class ArgumentTestCase(TestCase):
         self.assertEqual(result['start_date'], '1998-01-01')
         self.assertEqual(result['end_date'], '1999-01-01')
 
+
 @patch('frontend.management.commands.import_measures.parse_measures',
        new=MagicMock(return_value=test_measures()))
 class UnitTests(TestCase):
