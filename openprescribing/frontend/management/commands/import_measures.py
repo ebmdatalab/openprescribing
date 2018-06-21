@@ -85,7 +85,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--month')
-        parser.add_argument('--month_from_prescribing_filename')
         parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
@@ -110,15 +109,6 @@ class Command(BaseCommand):
         if not options['start_date']:
             if 'month' in options and options['month']:
                 options['start_date'] = options['end_date'] = options['month']
-            elif 'month_from_prescribing_filename' in options \
-                 and options['month_from_prescribing_filename']:
-                filename = options['month_from_prescribing_filename']
-                date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
-                month = datetime.datetime.strptime(
-                    date_part + "_01", "%Y_%m_%d")
-
-                options['start_date'] = options['end_date'] = \
-                    month.strftime('%Y-%m-01')
             else:
                 l = ImportLog.objects.latest_in_category('prescribing')
                 options['start_date'] = "%s-%02d-%02d" % (

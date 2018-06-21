@@ -50,14 +50,6 @@ def parse_args(*opts_args):
 @patch('frontend.management.commands.import_measures.parse_measures',
        new=MagicMock(return_value=test_measures()))
 class ArgumentTestCase(TestCase):
-    def test_months_parsed_from_hscic_filename(self):
-        result = parse_args(
-            '--month_from_prescribing_filename',
-            'data/prescribing/2016_03/T201603PDPI BNFT_formatted.CSV'
-        )
-        self.assertEqual(result['start_date'], '2016-03-01')
-        self.assertEqual(result['end_date'], '2016-03-01')
-
     def test_start_and_end_dates(self):
         with self.assertRaises(CommandError):
             parse_args(
