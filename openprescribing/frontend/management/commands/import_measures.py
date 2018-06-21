@@ -85,7 +85,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--month')
-        parser.add_argument('--month_from_prescribing_filename')
         parser.add_argument('--start_date')
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
@@ -94,6 +93,9 @@ class Command(BaseCommand):
     def parse_options(self, options):
         """Parse command line options
         """
+        if bool(options['start_date']) != bool(options['end_date']):
+            raise CommandError(
+                '--start_date and --end_date must be given together')
         if 'measure' in options and options['measure']:
             if "," in options['measure']:
                 options['measure_ids'] = options['measure'].split(',')
@@ -102,22 +104,15 @@ class Command(BaseCommand):
         else:
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
-        options['months'] = []
-        if 'month' in options and options['month']:
-            options['start_date'] = options['end_date'] = options['month']
-        elif 'month_from_prescribing_filename' in options \
-             and options['month_from_prescribing_filename']:
-            filename = options['month_from_prescribing_filename']
-            date_part = re.findall(r'/(\d{4}_\d{2})/', filename)[0]
-            month = datetime.datetime.strptime(date_part + "_01", "%Y_%m_%d")
-
-            options['start_date'] = options['end_date'] = \
-                month.strftime('%Y-%m-01')
-        else:
-            l = ImportLog.objects.latest_in_category('prescribing')
-            options['start_date'] = "%s-%02d-%02d" % (
-                l.current_at.year - 5, l.current_at.month, l.current_at.day)
-            options['end_date'] = l.current_at.strftime('%Y-%m-%d')
+        if not options['start_date']:
+            if options['month']:
+                options['start_date'] = options['end_date'] = options['month']
+            else:
+                l = ImportLog.objects.latest_in_category('prescribing')
+                options['start_date'] = "%s-%02d-%02d" % (
+                    l.current_at.year - 5,
+                    l.current_at.month, l.current_at.day)
+                options['end_date'] = l.current_at.strftime('%Y-%m-%d')
         # validate the date format
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
         datetime.datetime.strptime(options['end_date'], "%Y-%m-%d")

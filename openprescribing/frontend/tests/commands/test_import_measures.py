@@ -9,6 +9,7 @@ from mock import MagicMock
 
 from django.conf import settings
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
@@ -38,21 +39,41 @@ def test_measures():
     }
 
 
+def parse_args(*opts_args):
+    """Duplicate what Django does to parse arguments.
+
+    See `django.core.management.__init__.call_command` for details
+
+    """
+    parser = argparse.ArgumentParser()
+    cmd = Command()
+    parser = cmd.create_parser("import_measures", "")
+    options = parser.parse_args(opts_args)
+    return cmd.parse_options(options.__dict__)
+
+
 @patch('frontend.management.commands.import_measures.parse_measures',
        new=MagicMock(return_value=test_measures()))
 class ArgumentTestCase(TestCase):
-    def test_months_parsed_from_hscic_filename(self):
-        opts = [
-            '--month_from_prescribing_filename',
-            'data/prescribing/2016_03/T201603PDPI BNFT_formatted.CSV'
-        ]
-        parser = argparse.ArgumentParser()
-        cmd = Command()
-        parser = cmd.create_parser("import_measures", "")
-        options = parser.parse_args(opts)
-        result = cmd.parse_options(options.__dict__)
-        self.assertEqual(result['start_date'], '2016-03-01')
-        self.assertEqual(result['end_date'], '2016-03-01')
+    def test_start_and_end_dates(self):
+        with self.assertRaises(CommandError):
+            parse_args(
+                '--start_date',
+                '1999-01-01'
+            )
+        with self.assertRaises(CommandError):
+            parse_args(
+                '--end_date',
+                '1999-01-01'
+            )
+        result = parse_args(
+            '--start_date',
+            '1998-01-01',
+            '--end_date',
+            '1999-01-01'
+        )
+        self.assertEqual(result['start_date'], '1998-01-01')
+        self.assertEqual(result['end_date'], '1999-01-01')
 
 
 @patch('frontend.management.commands.import_measures.parse_measures',
