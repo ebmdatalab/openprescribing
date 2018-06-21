@@ -158,7 +158,8 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
     {% conditional_js 'common' %}
     {% conditional_js 'global' %}
-
+    <!-- temporary for identifying any issues when migrating up a version -->
+    <script src="http://code.jquery.com/jquery-migrate-1.4.1.js"></script>
     {% block extra_js %}{% endblock extra_js %}
 
     <script type="text/javascript">
