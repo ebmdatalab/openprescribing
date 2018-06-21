@@ -93,9 +93,7 @@ class Command(BaseCommand):
     def parse_options(self, options):
         """Parse command line options
         """
-        if len([
-                x for x in (options['start_date'], options['end_date'])
-                if x is not None]) == 1:
+        if bool(options['start_date']) != bool(options['end_date']):
             raise CommandError(
                 '--start_date and --end_date must be given together')
         if 'measure' in options and options['measure']:
@@ -107,7 +105,7 @@ class Command(BaseCommand):
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
         if not options['start_date']:
-            if 'month' in options and options['month']:
+            if options['month']:
                 options['start_date'] = options['end_date'] = options['month']
             else:
                 l = ImportLog.objects.latest_in_category('prescribing')

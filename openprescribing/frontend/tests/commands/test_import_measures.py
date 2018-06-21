@@ -40,11 +40,16 @@ def test_measures():
 
 
 def parse_args(*opts_args):
-        parser = argparse.ArgumentParser()
-        cmd = Command()
-        parser = cmd.create_parser("import_measures", "")
-        options = parser.parse_args(opts_args)
-        return cmd.parse_options(options.__dict__)
+    """Duplicate what Django does to parse arguments.
+
+    See `django.core.management.__init__.call_command` for details
+
+    """
+    parser = argparse.ArgumentParser()
+    cmd = Command()
+    parser = cmd.create_parser("import_measures", "")
+    options = parser.parse_args(opts_args)
+    return cmd.parse_options(options.__dict__)
 
 
 @patch('frontend.management.commands.import_measures.parse_measures',
