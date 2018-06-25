@@ -2,7 +2,7 @@
 {% load template_extras %}
 {% load humanize %}
 
-{% block title %}Prescribing measures for {{ practice }}{% endblock %}
+{% block title %}Prescribing measures for {{ practice }}{{ practice.inactive_status_suffix }}{% endblock %}
 {% block active_class %}practice{% endblock %}
 
 {% block extra_css %}
