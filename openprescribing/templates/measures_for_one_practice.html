@@ -2,7 +2,7 @@
 {% load template_extras %}
 {% load humanize %}
 
-{% block title %}Prescribing measures for {{ practice }}{% endblock %}
+{% block title %}Prescribing measures for {{ practice }}{{ practice.inactive_status_suffix }}{% endblock %}
 {% block active_class %}practice{% endblock %}
 
 {% block extra_css %}
@@ -48,6 +48,17 @@
 {% if practice.setting != 4 %}
   <div class="alert alert-warning" role="alert">
     <strong>Warning!</strong> {{ practice.name }} is not a standard GP practice, so may have very low numbers for some of these dashboards. Don't be surprised if some of the graphs look strange.
+  </div>
+{% endif %}
+
+{% if practice.is_inactive %}
+  <div class="alert alert-warning" role="alert">
+    Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
+    {% if practice.status_code == practice.STATUS_DORMANT %}
+      <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
+        What does this mean?
+      </a>
+    {% endif %}
   </div>
 {% endif %}
 

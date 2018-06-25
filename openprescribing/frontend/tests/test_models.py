@@ -84,6 +84,12 @@ class PracticeTestCase(TestCase):
         practice = Practice.objects.get(code='G82650')
         self.assertEqual(practice.cased_name, 'Mocketts Wood Surgery')
 
+    def test_inactive_status_suffix(self):
+        practice = Practice.objects.get(code='G82650')
+        self.assertEqual(practice.inactive_status_suffix(), '')
+        practice.status_code = 'D'
+        self.assertEqual(practice.inactive_status_suffix(), ' - Dormant')
+
 
 class TestMessage(object):
     to = ['foo']
