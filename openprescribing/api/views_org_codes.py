@@ -65,14 +65,11 @@ def _get_practices_like_code(q):
             'setting': p.setting,
             'setting_name': None,
             'type': 'Practice',
-            'ccg': None,
-            'inactive_status': None
+            'ccg': None
         }
         data['setting_name'] = p.get_setting_display()
         if p.ccg:
             data['ccg'] = p.ccg.code
-        if p.has_inactive_status():
-            data['inactive_status'] = p.get_status_code_display()
         results.append(data)
     return results
 
