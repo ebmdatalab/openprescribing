@@ -54,9 +54,11 @@
 {% if practice.is_inactive %}
   <div class="alert alert-warning" role="alert">
     Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
-    <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
-      What does this mean?
-    </a>
+    {% if practice.status_code == practice.STATUS_DORMANT %}
+      <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
+        What does this mean?
+      </a>
+    {% endif %}
   </div>
 {% endif %}
 

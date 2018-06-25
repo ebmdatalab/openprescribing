@@ -121,12 +121,17 @@ class Practice(models.Model):
         (24, "Other - Justice Estate"),
         (25, "Prison")
     )
+
+    STATUS_RETIRED = 'B'
+    STATUS_CLOSED = 'C'
+    STATUS_DORMANT = 'D'
+
     STATUS_SETTINGS = (
         ('U', 'Unknown'),
         ('A', 'Active'),
-        ('B', 'Retired'),
-        ('C', 'Closed'),
-        ('D', 'Dormant'),
+        (STATUS_RETIRED, 'Retired'),
+        (STATUS_CLOSED, 'Closed'),
+        (STATUS_DORMANT, 'Dormant'),
         ('P', 'Proposed')
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True)
@@ -159,7 +164,9 @@ class Practice(models.Model):
         return nhs_titlecase(self.name)
 
     def is_inactive(self):
-        return self.status_code in ('B', 'C', 'D')
+        return self.status_code in (
+            self.STATUS_RETIRED, self.STATUS_DORMANT, self.STATUS_CLOSED
+        )
 
     def inactive_status_suffix(self):
         if self.is_inactive():
