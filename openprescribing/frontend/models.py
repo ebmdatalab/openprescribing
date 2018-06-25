@@ -158,11 +158,11 @@ class Practice(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
-    def has_inactive_status(self):
+    def is_inactive(self):
         return self.status_code in ('B', 'C', 'D')
 
     def inactive_status_suffix(self):
-        if self.has_inactive_status():
+        if self.is_inactive():
             return ' - {}'.format(self.get_status_code_display())
         else:
             return ''
