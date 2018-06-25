@@ -30,6 +30,6 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '00401%')"
+    "(bnf_code like '0401%')"
   ]
 }
