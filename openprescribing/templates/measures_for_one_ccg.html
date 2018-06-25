@@ -34,7 +34,7 @@
         {% endif %}
         >
         <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }})
+        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
       </li>
     {% endfor %}
     </ul>
@@ -49,13 +49,13 @@
 </div>
 
 <hr/>
-
 {% include '_measures_panel.html' with entity_type='CCG' %}
 
 <hr/>
-
 {% include '_get_in_touch.html' %}
+{% endblock %}
 
+{% block extra_js %}
 <script>
  var measureData = {
     'tags': '{{ request.GET.tags|default:"core" }}',
@@ -65,5 +65,4 @@
 };
 </script>
 {% conditional_js 'measures' %}
-
 {% endblock %}

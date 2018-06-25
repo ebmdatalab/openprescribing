@@ -63,6 +63,10 @@ numerator in this measure was composed of the following presentations:</p>
 
 {% include '_get_in_touch.html' %}
 
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
 var measureData = {
     'orgId': '{{ practice.code }}',
@@ -72,10 +76,6 @@ var measureData = {
     'orgType': 'practice'
 };
 </script>
-
-{% endblock %}
-
-{% block extra_js %}
 {% conditional_js 'measures' %}
 {% include '_measure_breakdown_table.html' %}
 {% endblock %}

@@ -121,12 +121,17 @@ class Practice(models.Model):
         (24, "Other - Justice Estate"),
         (25, "Prison")
     )
+
+    STATUS_RETIRED = 'B'
+    STATUS_CLOSED = 'C'
+    STATUS_DORMANT = 'D'
+
     STATUS_SETTINGS = (
         ('U', 'Unknown'),
         ('A', 'Active'),
-        ('B', 'Retired'),
-        ('C', 'Closed'),
-        ('D', 'Dormant'),
+        (STATUS_RETIRED, 'Retired'),
+        (STATUS_CLOSED, 'Closed'),
+        (STATUS_DORMANT, 'Dormant'),
         ('P', 'Proposed')
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True)
@@ -157,6 +162,17 @@ class Practice(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    def is_inactive(self):
+        return self.status_code in (
+            self.STATUS_RETIRED, self.STATUS_DORMANT, self.STATUS_CLOSED
+        )
+
+    def inactive_status_suffix(self):
+        if self.is_inactive():
+            return ' - {}'.format(self.get_status_code_display())
+        else:
+            return ''
 
     def address_pretty(self):
         address = self.address1 + ', '
@@ -421,7 +437,9 @@ class Measure(models.Model):
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
     tags_focus = ArrayField(
-        models.CharField(max_length=30), null=True, blank=True)
+        models.CharField(max_length=30), null=True, blank=True,
+        help_text=("Indicates that this measure is an aggregate made up of "
+                   "all measures with the listed tags"))
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

@@ -1,5 +1,4 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 require('bootstrap');
 require('Highcharts');
 require('Highcharts-export');
@@ -10,16 +9,16 @@ var noUiSlider = require('noUiSlider');
 var _ = require('underscore');
 
 Highcharts.setOptions({
-  global: {useUTC: false}
+  global: {useUTC: false},
 });
 
 var chartOptions = require('./highcharts-options');
 var hashHelper = require('./analyse-hash');
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
-var map = require('./map');
-var barChart = require('./bar-chart');
-var lineChart = require('./line-chart');
+var map = require('./analyse-map');
+var barChart = require('./analyse-bar-chart');
+var lineChart = require('./analyse-line-chart');
 var analyseChart = {
 
   el: {
@@ -31,8 +30,8 @@ var analyseChart = {
     highlightNotFound: $('#itemNotFound'),
     loadingEl: $('.loading-wrapper'),
     loadingMessage: $('#chart-loading p'),
-    slider: $("#chart-date-slider"),
-    playslider: $("#play-slider"),
+    slider: $('#chart-date-slider'),
+    playslider: $('#play-slider'),
     submitButton: $('#update'),
     tabs: $('#tabs li'),
     tabChart: $('#chart-tab'),
@@ -43,7 +42,7 @@ var analyseChart = {
     subtitle: '.chart-sub-title',
     rowCount: ('#data-rows-count'),
     alertForm: ('#alert-form'),
-    outliersToggle: ('.outliers-toggle')
+    outliersToggle: ('.outliers-toggle'),
   },
 
   renderChart: function(globalOptions) {
@@ -72,7 +71,7 @@ var analyseChart = {
       errorHtml += '<p class="alert alert-danger">Sorry, something went wrong.</p>';
       errorHtml += '<p>This is what we know: ' + status + ': ' + error + '</p>';
     } else {
-      errorHtml = "<p class='alert alert-danger'>" + status + "</p>";
+      errorHtml = '<p class=\'alert alert-danger\'>' + status + '</p>';
     }
     this.el.errorMessage.html(errorHtml);
     this.el.errorContainer.show();
@@ -100,8 +99,8 @@ var analyseChart = {
     })
       .fail(function(status, error) {
         var msg = (_.has(status, 'responseText')) ? status.responseText :
-            "Sorry, something went wrong.";
-        _this.showErrorMessage(msg.replace(/"/g, ""), null);
+            'Sorry, something went wrong.';
+        _this.showErrorMessage(msg.replace(/"/g, ''), null);
       });
   },
 
@@ -160,7 +159,7 @@ var analyseChart = {
       'hitType': 'event',
       'eventCategory': 'search_button',
       'eventAction': 'click',
-      'eventLabel': _this.hash
+      'eventLabel': _this.hash,
     });
     if (this.globalOptions.data.combinedData.length > 0) {
       this.el.loadingEl.hide();
@@ -168,7 +167,7 @@ var analyseChart = {
       this.globalOptions.barChart = barChart.setUp(chartOptions.barOptions,
                                                    this.globalOptions);
       if (this.isOldIe) {
-        $('#data-link').replaceWith("<div class='alert alert-danger'>Sorry, you must use a newer web browser to make use of this feature</strong>").show();
+        $('#data-link').replaceWith('<div class=\'alert alert-danger\'>Sorry, you must use a newer web browser to make use of this feature</strong>').show();
       } else {
         this.addDataDownload();
       }
@@ -206,7 +205,7 @@ var analyseChart = {
       this.setUpAlertSubscription();
     } else {
       this.showErrorMessage(
-        "No data found for this query. Please try again.", null);
+        'No data found for this query. Please try again.', null);
     }
   },
 
@@ -294,7 +293,7 @@ var analyseChart = {
       csvHeader.push('x_items');
       csvHeader.push('x_actual_cost');
     }
-    csvRows = [csvHeader.join(",")];
+    csvRows = [csvHeader.join(',')];
     _.each(this.globalOptions.data.combinedData, function(d) {
       var str = '';
       _.each(csvHeader, function(i, count) {
@@ -305,7 +304,7 @@ var analyseChart = {
       });
       csvRows.push(str);
     });
-    encodedUri = "data:text/csv," + encodeURIComponent(csvRows.join("\n"));
+    encodedUri = 'data:text/csv,' + encodeURIComponent(csvRows.join('\n'));
     filename = this.globalOptions.friendly.filename + '.csv';
     $('#data-link').on('click', function(e) {
       e.preventDefault();
@@ -313,7 +312,7 @@ var analyseChart = {
         'hitType': 'event',
         'eventCategory': 'data_link',
         'eventAction': 'click',
-        'eventLabel': _this.hash
+        'eventLabel': _this.hash,
       });
       downloadjs(encodedUri, filename, 'text/csv');
     });
@@ -321,7 +320,7 @@ var analyseChart = {
     $('#data-link').show();
   },
 
-  setUpSaveUrl: function () {
+  setUpSaveUrl: function() {
     // Set the input box URL, and make it selected on click
     $('#save-url-text')
       .val(window.location.href)
@@ -399,13 +398,12 @@ var analyseChart = {
         'hitType': 'event',
         'eventCategory': 'items_spending_toggle',
         'eventAction': 'click',
-        'eventLabel': _this.hash
+        'eventLabel': _this.hash,
       });
       $('#items-spending-toggle .btn').removeClass('btn-info').addClass('btn-default');
       $(this).addClass('btn-info').removeClass('btn-default');
       _this.globalOptions.activeOption = $(this).data('type');
       _this.updateCharts();
-
     });
     // select the correct view tab
     $('a[data-toggle="tab"][href="#'+this.globalOptions.selectedTab+'-panel"]').tab('show');
@@ -418,12 +416,12 @@ var analyseChart = {
     _this.globalOptions.friendly = formatters.getFriendlyNamesForChart(_this.globalOptions);
     $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
     $(_this.el.subtitle).html(_this.globalOptions.friendly.chartSubTitle);
-    if (_this.globalOptions.chartValues.ratio === "ratio_actual_cost") {
+    if (_this.globalOptions.chartValues.ratio === 'ratio_actual_cost') {
       yAxisMax = _this.globalOptions.maxRatioActualCost;
     } else {
       yAxisMax = _this.globalOptions.maxRatioItems;
     }
-    console.log("ratio: " + _this.globalOptions.chartValues.ratio);
+    console.log('ratio: ' + _this.globalOptions.chartValues.ratio);
     console.log(_this.globalOptions);
     barChart.update(_this.globalOptions.barChart,
                     _this.globalOptions.activeMonth,
@@ -445,7 +443,7 @@ var analyseChart = {
       _this.globalOptions.playing = true;
       var _that = _this;
       var increment = function(now, fx) {
-        $("#chart-date-slider").val(now);
+        $('#chart-date-slider').val(now);
         _that.onChange(true);
       };
       var complete = function() {
@@ -462,8 +460,8 @@ var analyseChart = {
       this.el.slider.noUiSlider({
         range: {
           min: 0,
-          max: sliderMax
-        }
+          max: sliderMax,
+        },
       }, true);
       this.el.slider.val(sliderMax);
       this.el.slider.noUiSlider_pips({
@@ -479,8 +477,8 @@ var analyseChart = {
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
-          }
-        }
+          },
+        },
       });
     } else {
       this.el.slider.noUiSlider({
@@ -488,12 +486,12 @@ var analyseChart = {
         start: [sliderMax],
         range: {
           min: 0,
-          max: sliderMax
-        }
+          max: sliderMax,
+        },
       }).on({
         change: function() {
           _this.onChange($(this).val());
-        }
+        },
       });
       this.el.slider.noUiSlider_pips({
         mode: 'count',
@@ -508,8 +506,8 @@ var analyseChart = {
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
-          }
-        }
+          },
+        },
       });
     }
   },
@@ -521,13 +519,13 @@ var analyseChart = {
         'hitType': 'event',
         'eventCategory': 'time_slider',
         'eventAction': 'slide',
-        'eventLabel': _this.hash
+        'eventLabel': _this.hash,
       });
     }
     var monthIndex = parseInt(this.el.slider.val());
     this.globalOptions.activeMonth = this.globalOptions.allMonths[monthIndex];
     this.updateCharts();
-  }
+  },
 
 };
 module.exports = analyseChart;

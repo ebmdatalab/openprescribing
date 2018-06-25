@@ -181,7 +181,7 @@ If required, you can run individual Django tests as follows:
     python manage.py test frontend.tests.test_api_views
 
 We support IE8 and above. We have a free account for testing across
-multiple browsers, thanks to [BrowserStack](www.browserstack.com). 
+multiple browsers, thanks to [BrowserStack](www.browserstack.com).
 
 ![image](https://user-images.githubusercontent.com/211271/29110431-887941d2-7cde-11e7-8c2f-199d85c5a3b5.png)
 
@@ -258,7 +258,8 @@ Follow the documentation there to import data.
 
 Source JavaScript is in `/media`, compiled JavaScript is in `/static`.
 
-During development, run the `watch` task to see changes appear in the compiled JavaScript.
+During development, run the `watch` task to see changes appear in the
+compiled JavaScript and CSS.
 
     cd openprescribing/media/js
     npm run watch
@@ -271,13 +272,13 @@ And run tests with:
 
     npm run test
 
-Before deploying, run the build task to generate minified JavaScript:
+This build task generates production-ready minified JavaScript, CSS
+etc, and is executed as part of the fabric deploy process:
 
     npm run build
 
-Similarly, you can build the compiled CSS from the source LESS with:
-
-    npm run build-css
+If you add new javascript source files, update the `modules` array at
+`media/js/build.js`.
 
 # Deployment
 

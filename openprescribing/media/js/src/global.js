@@ -1,19 +1,16 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
+var domready = require('domready');
+var bootstrap = require('bootstrap');
 
 if (!window.console) {
-  var noOp = function(){};
+  var noOp = function() {};
   console = {
     log: noOp,
     warn: noOp,
-    error: noOp
+    error: noOp,
   };
 }
-
-var queryForm = require('./src/form');
-
-$(document).ready(function() {
-  queryForm.setUp();
+domready(function() {
   $('.doorbell-show').click(function(e) {
     if (typeof doorbell !== 'undefined') {
       e.preventDefault();

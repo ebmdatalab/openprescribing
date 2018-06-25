@@ -1,11 +1,11 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
-require('bootstrap');
-require('Highcharts');
+var $ = require('jquery');
+
+var Highcharts = require('Highcharts');
 require('Highcharts-export');
 var _ = require('underscore');
+var domready = require('domready');
 
-var chartOptions = require('./src/highcharts-options');
+var chartOptions = require('./highcharts-options');
 
 var barChart = {
 
@@ -50,13 +50,13 @@ var barChart = {
         options.chart.type = 'column';
         options.legend.enabled = false;
         options.yAxis.title = {
-            text: _this.getYAxisTitle(graphType)
+            text: _this.getYAxisTitle(graphType),
         };
         options.yAxis.labels = {
             formatter: function() {
                 var str = (_this.graphType == 'actual_cost') ? '£' : '';
                 return str + this.axis.defaultLabelFormatter.call(this);
-            }
+            },
         };
         options.title.text = _this.getChartTitle(graphType);
         options.tooltip = {
@@ -69,7 +69,7 @@ var barChart = {
                 str += ' in ' + Highcharts.dateFormat('%b \'%y',
                                       new Date(this.x));
                 return str;
-            }
+            },
         };
         return options;
     },
@@ -79,13 +79,13 @@ var barChart = {
         _this.graphType = graphType;
         var newYAxisOptions = {
             title: {
-                text: _this.getYAxisTitle(graphType)
-            }
+                text: _this.getYAxisTitle(graphType),
+            },
         };
         chart.yAxis[0].update(newYAxisOptions, false);
         var newData = _this.getYValueOfData(data, graphType);
         chart.series[0].setData(newData, false);
-        chart.setTitle({ text: _this.getChartTitle(graphType)}, false);
+        chart.setTitle({text: _this.getChartTitle(graphType)}, false);
         chart.redraw();
     },
 
@@ -93,7 +93,7 @@ var barChart = {
         var _this = this;
         _this.graphType = 'items';
         $.ajax({
-          type: "GET",
+          type: 'GET',
           url: filename,
           error: function() {
             $('.status').html('<p>Sorry, something went wrong.</p>');
@@ -107,7 +107,7 @@ var barChart = {
                 $('#trends').show();
                 chartOptions.series = [{
                     'name': _this.graphType,
-                    'data': data
+                    'data': data,
                 }];
                 var chart = new Highcharts.Chart(chartOptions);
                 // Bind events.
@@ -122,17 +122,11 @@ var barChart = {
                 $('#trends, #download-data').hide();
                 $('#no-data').show();
             }
-          }
+          },
         });
-    }
+    },
 };
 
-$(document).ready(function() {
+domready(function() {
   barChart.setUp();
-  $('.doorbell-show').click(function(e) {
-    if (typeof doorbell !== 'undefined') {
-      e.preventDefault();
-      doorbell.show();
-    }
-  });
 });

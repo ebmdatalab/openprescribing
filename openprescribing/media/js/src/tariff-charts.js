@@ -1,8 +1,9 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 require('bootstrap');
+require('select2');
 require('Highcharts');
 require('Highcharts-export');
+var domready = require('domready');
 var _ = require('underscore');
 
 var chartOptions = require('./highcharts-options');
@@ -229,7 +230,7 @@ var tariffChart = {
       options.legend.enabled = false;
     }
     options.yAxis.title = {
-      text: 'Price (£)'
+      text: 'Price (£)',
     };
     return options;
   },
@@ -267,6 +268,6 @@ var tariffChart = {
   },
 };
 
-$(document).ready(function() {
+domready(function() {
   tariffChart.setUp();
 });
