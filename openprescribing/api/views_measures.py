@@ -208,7 +208,10 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
         if practice_or_ccg == 'practice':
             measure_value_data.update({
                 'practice_id': measure_value.practice_id,
-                'practice_name': measure_value.practice.name,
+                'practice_name': u'{}{}'.format(
+                    measure_value.practice.name,
+                    measure_value.practice.inactive_status_suffix()
+                ),
             })
         elif practice_or_ccg == 'ccg':
             measure_value_data.update({
