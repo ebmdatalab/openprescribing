@@ -22,7 +22,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
-    "(p.bnf_code like'0401%') "
+    "(p.bnf_code like '0401%') "
 
   ],
   "denominator_columns": [
