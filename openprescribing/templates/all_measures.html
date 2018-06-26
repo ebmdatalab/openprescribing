@@ -20,7 +20,7 @@
 <ul>
 {% for measure in measures %}
 <li>
-<a href="/measure/{{ measure.id }}">
+<a href="{% url 'measure_for_all_ccgs' measure.id %}">
 {{ measure }}
 </a>
 </li>
