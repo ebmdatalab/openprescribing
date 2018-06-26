@@ -164,7 +164,6 @@ def measure_by_ccg(request, format=None):
     org_ids = utils.param_to_list(request.query_params.get('org', []))
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
 
-    rolled = {}
     measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
 
     rsp_data = {
