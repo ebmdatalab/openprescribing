@@ -1,8 +1,8 @@
 {% load crispy_forms_tags %}
 {% if not signed_up_for_alert %}
-<p>
-  <form method="post" action="{{ alert_preview_action }}">
-   {% csrf_token %}
+<form method="post" action="{{ alert_preview_action }}">
+ {% csrf_token %}
+ <p>
    {% if alert_type == 'analyse' %}
      <input type="hidden" name="url" value="">
      <input type="hidden" name="name" value="">
@@ -11,13 +11,14 @@
      We offer a service which emails you about unusual or interesting prescribing at this {{entity_type}} once a month. Subscribe by entering your email address below.
    {% endif %}
    You can <input type="submit" class="btn-link" value="preview"></input> the email first.
-  </form>
-  <form method="post" class="form form-inline">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form | crispy }}
-    <input class="btn btn-primary" type="submit" value="Subscribe">
-
-  </form>
-</p>
+ </p>
+</form>
+<form method="post" class="form form-inline">
+  {% csrf_token %}
+  <p>
+  {{ form.non_field_errors }}
+  {{ form | crispy }}
+  <input class="btn btn-primary" type="submit" value="Subscribe">
+  </p>
+</form>
 {% endif %}
