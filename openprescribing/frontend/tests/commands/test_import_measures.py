@@ -110,10 +110,120 @@ class UnitTests(TestCase):
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.env = patch.dict(
-            'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
-        with cls.env:
-            cls._createData()
+        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+                                        open_date='2013-04-01',
+                                        close_date='2015-01-01')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                chem_name='Desogestrel')
+        Chemical.objects.create(bnf_code='0408010A0',
+                                chem_name='Levetiracetam')
+        Practice.objects.create(code='C84001', ccg=bassetlaw,
+                                name='LARWOOD SURGERY', setting=4)
+        Practice.objects.create(code='C84024', ccg=bassetlaw,
+                                name='NEWGATE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='B82005', ccg=bassetlaw,
+                                name='PRIORY MEDICAL GROUP', setting=4,
+                                open_date='2015-01-01')
+        Practice.objects.create(code='B82010', ccg=bassetlaw,
+                                name='RIPON SPA SURGERY', setting=4)
+        Practice.objects.create(code='A85017', ccg=bassetlaw,
+                                name='BEWICK ROAD SURGERY', setting=4)
+        Practice.objects.create(code='A86030', ccg=bassetlaw,
+                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='C83051', ccg=lincs_west,
+                                name='ABBEY MEDICAL PRACTICE', setting=4)
+        Practice.objects.create(code='C83019', ccg=lincs_east,
+                                name='BEACON MEDICAL PRACTICE', setting=4)
+        # Ensure we only include open practices in our calculations.
+        Practice.objects.create(code='B82008', ccg=bassetlaw,
+                                name='NORTH SURGERY', setting=4,
+                                open_date='2010-04-01',
+                                close_date='2012-01-01')
+        # Ensure we only include standard practices in our calculations.
+        Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                                setting=1)
+
+        measure = Measure.objects.create(
+            id='cerazette',
+            name='Cerazette vs. Desogestrel',
+            title='Prescribing of...',
+            tags=['core'],
+        )
+
+        # We expect this MeasureValue to be deleted because it is older than
+        # five years.
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2000-01-01',
+        )
+
+        # We expect this MeasureValue to be unchanged
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-08-01',
+        )
+
+        # We expect this MeasureValue to be updated
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-09-01',
+        )
+
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2018-04-01',
+            filename='/tmp/prescribing.csv',
+        )
+
+        if 'SKIP_BQ_LOAD' not in os.environ:
+            fixtures_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands')
+
+            prescribing_fixture_path = os.path.join(
+                fixtures_path,
+                'prescribing_bigquery_fixture.csv'
+            )
+            # TODO Make this a table with a view (see
+            # generate_presentation_replacements), and put it in the correct
+            # dataset ('hscic', not 'measures').
+            client = Client('measures')
+            table = client.get_or_create_table(
+                'normalised_prescribing_legacy',
+                PRESCRIBING_SCHEMA
+            )
+            table.insert_rows_from_csv(prescribing_fixture_path)
+
+            practices_fixture_path = os.path.join(
+                fixtures_path,
+                'practices.csv'
+            )
+            client = Client('hscic')
+            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
+            columns = [field.name for field in PRACTICE_SCHEMA]
+            table.insert_rows_from_csv(practices_fixture_path)
+
+            ccgs_fixture_path = os.path.join(
+                fixtures_path,
+                'ccgs.csv'
+            )
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
+            table.insert_rows_from_csv(ccgs_fixture_path)
+
+        opts = {
+            'month': '2015-09-01',
+            'measure': 'cerazette',
+            'v': 3
+        }
+        with patch('frontend.management.commands.import_measures'
+                   '.parse_measures',
+                   new=MagicMock(return_value=test_measures())):
+            call_command('import_measures', **opts)
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
         month = '2015-10-01'
@@ -381,123 +491,6 @@ class BigqueryFunctionalTests(TestCase):
             }
         }
         self._assertExpectedMeasureValue(measure, month, expected)
-
-    @classmethod
-    def _createData(cls):
-        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
-                                        open_date='2013-04-01',
-                                        close_date='2015-01-01')
-        Chemical.objects.create(bnf_code='0703021Q0',
-                                chem_name='Desogestrel')
-        Chemical.objects.create(bnf_code='0408010A0',
-                                chem_name='Levetiracetam')
-        Practice.objects.create(code='C84001', ccg=bassetlaw,
-                                name='LARWOOD SURGERY', setting=4)
-        Practice.objects.create(code='C84024', ccg=bassetlaw,
-                                name='NEWGATE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='B82005', ccg=bassetlaw,
-                                name='PRIORY MEDICAL GROUP', setting=4,
-                                open_date='2015-01-01')
-        Practice.objects.create(code='B82010', ccg=bassetlaw,
-                                name='RIPON SPA SURGERY', setting=4)
-        Practice.objects.create(code='A85017', ccg=bassetlaw,
-                                name='BEWICK ROAD SURGERY', setting=4)
-        Practice.objects.create(code='A86030', ccg=bassetlaw,
-                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='C83051', ccg=lincs_west,
-                                name='ABBEY MEDICAL PRACTICE', setting=4)
-        Practice.objects.create(code='C83019', ccg=lincs_east,
-                                name='BEACON MEDICAL PRACTICE', setting=4)
-        # Ensure we only include open practices in our calculations.
-        Practice.objects.create(code='B82008', ccg=bassetlaw,
-                                name='NORTH SURGERY', setting=4,
-                                open_date='2010-04-01',
-                                close_date='2012-01-01')
-        # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                                setting=1)
-
-        measure = Measure.objects.create(
-            id='cerazette',
-            name='Cerazette vs. Desogestrel',
-            title='Prescribing of...',
-            tags=['core'],
-        )
-
-        # We expect this MeasureValue to be deleted because it is older than
-        # five years.
-        MeasureValue.objects.create(
-            measure=measure,
-            pct_id='02Q',
-            month='2000-01-01',
-        )
-
-        # We expect this MeasureValue to be unchanged
-        MeasureValue.objects.create(
-            measure=measure,
-            pct_id='02Q',
-            month='2015-08-01',
-        )
-
-        # We expect this MeasureValue to be updated
-        MeasureValue.objects.create(
-            measure=measure,
-            pct_id='02Q',
-            month='2015-09-01',
-        )
-
-        ImportLog.objects.create(
-            category='prescribing',
-            current_at='2018-04-01',
-            filename='/tmp/prescribing.csv',
-        )
-
-        if 'SKIP_BQ_LOAD' not in os.environ:
-            fixtures_path = os.path.join(
-                'frontend', 'tests', 'fixtures', 'commands')
-
-            prescribing_fixture_path = os.path.join(
-                fixtures_path,
-                'prescribing_bigquery_fixture.csv'
-            )
-            # TODO Make this a table with a view (see
-            # generate_presentation_replacements), and put it in the correct
-            # dataset ('hscic', not 'measures').
-            client = Client('measures')
-            table = client.get_or_create_table(
-                'normalised_prescribing_legacy',
-                PRESCRIBING_SCHEMA
-            )
-            table.insert_rows_from_csv(prescribing_fixture_path)
-
-            practices_fixture_path = os.path.join(
-                fixtures_path,
-                'practices.csv'
-            )
-            client = Client('hscic')
-            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
-            columns = [field.name for field in PRACTICE_SCHEMA]
-            table.insert_rows_from_csv(practices_fixture_path)
-
-            ccgs_fixture_path = os.path.join(
-                fixtures_path,
-                'ccgs.csv'
-            )
-            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
-            table.insert_rows_from_csv(ccgs_fixture_path)
-
-        opts = {
-            'month': '2015-09-01',
-            'measure': 'cerazette',
-            'v': 3
-        }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
-            call_command('import_measures', **opts)
 
     def _walk(self, mv, data):
         for k, v in data.items():
