@@ -19,6 +19,8 @@ import os
 import re
 import tempfile
 
+from dateutil.relativedelta import relativedelta
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
@@ -65,6 +67,14 @@ class Command(BaseCommand):
                 )
                 if options['definitions_only']:
                     continue
+
+                # Delete any existing measures data older than five years ago.
+                l = ImportLog.objects.latest_in_category('prescribing')
+                five_years_ago = l.current_at - relativedelta(years=5)
+                MeasureValue.objects.filter(month__lte=five_years_ago)\
+                                    .filter(measure=measure).delete()
+                MeasureGlobal.objects.filter(month__lte=five_years_ago)\
+                                     .filter(measure=measure).delete()
 
                 # Delete any existing measures data relating to the
                 # current month(s)

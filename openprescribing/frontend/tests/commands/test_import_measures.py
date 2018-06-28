@@ -15,6 +15,7 @@ from django.test import TestCase
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
@@ -142,12 +143,32 @@ class BigqueryFunctionalTests(TestCase):
         mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
         self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
-    def test_measure_is_created(self):
+    def test_measure_is_updated(self):
         m = Measure.objects.get(id='cerazette')
         self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
         self.assertEqual(m.description[:10], 'Total quan')
         self.assertEqual(m.why_it_matters[:10], 'This is th')
         self.assertEqual(m.low_is_good, True)
+
+    def test_old_measure_value_deleted(self):
+        self.assertEqual(
+            MeasureValue.objects.filter(
+                measure='cerazette',
+                pct='02Q',
+                month='2000-01-01',
+            ).count(),
+            0
+        )
+
+    def test_not_so_old_measure_value_not_deleted(self):
+        self.assertEqual(
+            MeasureValue.objects.filter(
+                measure='cerazette',
+                pct='02Q',
+                month='2015-08-01',
+            ).count(),
+            1
+        )
 
     def test_practice_general(self):
         month = '2015-09-01'
@@ -400,6 +421,41 @@ class BigqueryFunctionalTests(TestCase):
                                 setting=1)
 
         args = []
+        measure = Measure.objects.create(
+            id='cerazette',
+            name='Cerazette vs. Desogestrel',
+            title='Prescribing of...',
+            tags=['core'],
+        )
+
+        # We expect this MeasureValue to be deleted because it is older than
+        # five years.
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2000-01-01',
+        )
+
+        # We expect this MeasureValue to be unchanged
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-08-01',
+        )
+
+        # We expect this MeasureValue to be updated
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-09-01',
+        )
+
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2018-04-01',
+            filename='/tmp/prescribing.csv',
+        )
+
         if 'SKIP_BQ_LOAD' not in os.environ:
             fixtures_path = os.path.join(
                 'frontend', 'tests', 'fixtures', 'commands')
