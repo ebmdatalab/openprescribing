@@ -119,9 +119,8 @@ class Command(BaseCommand):
                 options['start_date'] = options['end_date'] = options['month']
             else:
                 l = ImportLog.objects.latest_in_category('prescribing')
-                options['start_date'] = "%s-%02d-%02d" % (
-                    l.current_at.year - 5,
-                    l.current_at.month, l.current_at.day)
+                start_date = l.current_at - relativedelta(years=5)
+                options['start_date'] = start_date.strftime('%Y-%m-%d')
                 options['end_date'] = l.current_at.strftime('%Y-%m-%d')
         # validate the date format
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
