@@ -332,7 +332,7 @@ class BigqueryFunctionalTests(TestCase):
         }
         self._assertExpectedMeasureValue(measure, month, expected)
 
-    def test_import_measureglobal(self):  # failing
+    def test_import_measureglobal(self):
         month = '2015-09-01'
         measure = Measure.objects.get(id='cerazette')
         expected = {
@@ -420,7 +420,6 @@ class BigqueryFunctionalTests(TestCase):
                                 name='BASSETLAW DRUG & ALCOHOL SERVICE',
                                 setting=1)
 
-        args = []
         measure = Measure.objects.create(
             id='cerazette',
             name='Cerazette vs. Desogestrel',
@@ -490,18 +489,15 @@ class BigqueryFunctionalTests(TestCase):
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             table.insert_rows_from_csv(ccgs_fixture_path)
 
-        month = '2015-09-01'
-        measure_id = 'cerazette'
-        args = []
         opts = {
-            'month': month,
-            'measure': measure_id,
+            'month': '2015-09-01',
+            'measure': 'cerazette',
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
                    '.parse_measures',
                    new=MagicMock(return_value=test_measures())):
-            call_command('import_measures', *args, **opts)
+            call_command('import_measures', **opts)
 
     def _walk(self, mv, data):
         for k, v in data.items():
