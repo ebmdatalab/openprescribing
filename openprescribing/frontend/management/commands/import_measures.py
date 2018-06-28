@@ -106,14 +106,13 @@ class Command(BaseCommand):
         if bool(options['start_date']) != bool(options['end_date']):
             raise CommandError(
                 '--start_date and --end_date must be given together')
-        if 'measure' in options and options['measure']:
-            if "," in options['measure']:
-                options['measure_ids'] = options['measure'].split(',')
-            else:
-                options['measure_ids'] = [options['measure']]
+
+        if options['measure']:
+            options['measure_ids'] = options['measure'].split(',')
         else:
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
+
         if not options['start_date']:
             if options['month']:
                 options['start_date'] = options['end_date'] = options['month']
@@ -657,7 +656,7 @@ class MeasureCalculation(object):
 
 @contextmanager
 def conditional_constraint_and_index_reconstructor(options):
-    if 'measure' in options and options['measure']:
+    if options['measure']:
         # This is an optimisation that only makes sense when we're
         # updating the entire table.
         yield
