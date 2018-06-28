@@ -100,7 +100,7 @@ class UnitTests(TestCase):
     def test_reconstructor_called_when_no_measures_specified(self, conn):
         from frontend.management.commands.import_measures \
             import conditional_constraint_and_index_reconstructor
-        with conditional_constraint_and_index_reconstructor({}):
+        with conditional_constraint_and_index_reconstructor({'measure': None}):
             pass
         calls = conn.cursor.return_value.__enter__\
                     .return_value.execute.mock_calls
