@@ -133,16 +133,10 @@ def parse_measures():
     measures = OrderedDict()
     fpath = os.path.dirname(__file__)
     files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
-    files = sorted(files)
-    for fname in files:
+    for fname in sorted(files):
         measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-        if measure_id in measures:
-            raise CommandError(
-                "duplicate measure definition %s found!" % measure_id)
-        fname = os.path.join(fpath, fname)
-        json_data = open(fname).read()
-        d = json.loads(json_data)
-        measures[measure_id] = d
+        with open(os.path.join(fpath, fname)) as f:
+            measures[measure_id] = json.load(f)
     return measures
 
 
