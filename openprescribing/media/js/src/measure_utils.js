@@ -386,6 +386,7 @@ var utils = {
       tagsFocusUrl: tagsFocusUrl,
       measureForAllPracticesUrl: measureForAllPracticesUrl,
       chartExplanation: chartExplanation,
+      tags: d.tags,
     };
   },
 

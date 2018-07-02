@@ -1,16 +1,18 @@
 {% if not measure.id %}
 <!-- only show sorting and alert signups when showing more than one measure -->
 <div class="row" >
-  {% if request.GET.tags %}
-  <h2>Low Value Prescribing measures</h2>
-  <p class="alert alert-info">
-    This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding <a href="https://www.england.nhs.uk/2017/07/medicine-consultation/">by NHS England</a>; we welcome feedback.  These are indicative only, and should be approached with caution (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).<br>
-    {% if entity_type == 'practice' %}
-    <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.
-    {% else %}
-    <a href="{% url 'measures_for_one_ccg' ccg.code %}">View standard measures instead</a>.
-    {% endif %}
-  </p>
+  {% if tag_filter.show_message %}
+  <h2>Prescribing measures tagged <strong>{{ tag_filter.name }}</strong></h2>
+  <div class="alert alert-info">
+    {% if tag_filter.description %}<p>{{ tag_filter.description }}</p>{% endif %}
+    <p>
+      {% if entity_type == 'practice' %}
+      <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.
+      {% else %}
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}">View standard measures instead</a>.
+      {% endif %}
+    </p>
+  </div>
 {% else %}
   <h2>Prescribing measures</h2>
   <p>
@@ -106,6 +108,12 @@
                      <li><a href="{{ measureUrl }}">Compare all CCGs
                      in England on this measure</a></li>
                     </ul>
+                  </p>
+                  <p>
+                    <strong>Tagged as:</strong>
+                    {{# each tags as |tag index|}}
+                      <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
+                    {{/each}}
                   </p>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">

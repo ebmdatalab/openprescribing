@@ -8,10 +8,12 @@
 {% block content %}
 
 <h1>Prescribing measures</h1>
-{% if request.GET.tags %}
-<p class="alert alert-info">
-  This list is filtered to show only <em>NHS Low Priority</em> measures.  <a href="{% url 'all_measures' %}">Switch back to core measures.</a>
-</p>
+{% if tag_filter.show_message %}
+  <div class="alert alert-info">
+    <p>This list is filtered to show only measures tagged: <em>{{ tag_filter.name }}</em>.</p>
+    {% if tag_filter.description %}<p>{{ tag_filter.description }}</p>{% endif %}
+    <p><a href="{% url 'all_measures' %}">Show all measures.</a></p>
+  </div>
 {% endif %}
 </p>
 
