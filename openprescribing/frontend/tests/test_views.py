@@ -10,6 +10,7 @@ from django.test import TransactionTestCase
 from frontend.models import EmailMessage
 from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
+from frontend.views.views import BadRequestError, _get_measure_tag_filter
 
 from allauth.account.models import EmailAddress
 
@@ -394,7 +395,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertContains(response, 'Cerazette')
 
     def test_all_measures_with_tag_filter(self):
-        response = self.client.get('/measure/?tags=frob')
+        response = self.client.get('/measure/?tags=lowpriority')
         self.assertNotContains(response, 'Cerazette')
         self.assertContains(response, 'This list is filtered')
 
@@ -453,3 +454,18 @@ class TestPPUViews(TransactionTestCase):
             'highlight': ['P87629'],
             'date': ['2014-11-01'],
         })
+
+
+class TestGetMeasureTagFilter(TransactionTestCase):
+
+    def test_rejects_bad_tags(self):
+        with self.assertRaises(BadRequestError):
+            _get_measure_tag_filter({'tags': 'nosuchtag'})
+
+    def test_filters_on_core_tag_by_default(self):
+        tag_filter = _get_measure_tag_filter({})
+        self.assertEqual(tag_filter['tags'], ['core'])
+
+    def test_returns_tag_name(self):
+        tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
+        self.assertEqual(tag_filter['name'], 'Low Priority')
