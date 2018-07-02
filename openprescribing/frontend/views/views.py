@@ -267,8 +267,8 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
     except KeyError as e:
         raise BadRequestError(u'Unrecognised tag: {}'.format(e.args[0]))
     name = ','.join([tag['name'] for tag in tag_details])
-    descriptions = filter(None,[tag.get('description') for tag in tag_details])
-    description = mark_safe('<br><br>'.join(descriptions))
+    descriptions = [tag.get('description') for tag in tag_details]
+    description = mark_safe('<br><br>'.join(filter(None, descriptions)))
     return {
         'tags': tags,
         'name': name,
