@@ -71,14 +71,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-
-        if 'filename' not in options:
-            print 'Please supply a KML filename'
-            sys.exit
-
         layer_mapping = {
-            'code': 'CCGcode',
-            'boundary': 'Unknown'
+            'code': 'Lower_Laye',
+            'boundary': 'Unknown',
         }
         lm = LayerMapping(PCT, options['filename'],
                           layer_mapping, transform=True)
