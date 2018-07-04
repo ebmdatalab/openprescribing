@@ -19,6 +19,8 @@ import os
 import re
 import tempfile
 
+from dateutil.relativedelta import relativedelta
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
@@ -66,6 +68,14 @@ class Command(BaseCommand):
                 if options['definitions_only']:
                     continue
 
+                # Delete any existing measures data older than five years ago.
+                l = ImportLog.objects.latest_in_category('prescribing')
+                five_years_ago = l.current_at - relativedelta(years=5)
+                MeasureValue.objects.filter(month__lte=five_years_ago)\
+                                    .filter(measure=measure).delete()
+                MeasureGlobal.objects.filter(month__lte=five_years_ago)\
+                                     .filter(measure=measure).delete()
+
                 # Delete any existing measures data relating to the
                 # current month(s)
                 MeasureValue.objects.filter(month__gte=start_date)\
@@ -96,22 +106,20 @@ class Command(BaseCommand):
         if bool(options['start_date']) != bool(options['end_date']):
             raise CommandError(
                 '--start_date and --end_date must be given together')
-        if 'measure' in options and options['measure']:
-            if "," in options['measure']:
-                options['measure_ids'] = options['measure'].split(',')
-            else:
-                options['measure_ids'] = [options['measure']]
+
+        if options['measure']:
+            options['measure_ids'] = options['measure'].split(',')
         else:
             options['measure_ids'] = [
                 k for k, v in parse_measures().items() if 'skip' not in v]
+
         if not options['start_date']:
             if options['month']:
                 options['start_date'] = options['end_date'] = options['month']
             else:
                 l = ImportLog.objects.latest_in_category('prescribing')
-                options['start_date'] = "%s-%02d-%02d" % (
-                    l.current_at.year - 5,
-                    l.current_at.month, l.current_at.day)
+                start_date = l.current_at - relativedelta(years=5)
+                options['start_date'] = start_date.strftime('%Y-%m-%d')
                 options['end_date'] = l.current_at.strftime('%Y-%m-%d')
         # validate the date format
         datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
@@ -125,16 +133,10 @@ def parse_measures():
     measures = OrderedDict()
     fpath = os.path.dirname(__file__)
     files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
-    files = sorted(files)
-    for fname in files:
+    for fname in sorted(files):
         measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-        if measure_id in measures:
-            raise CommandError(
-                "duplicate measure definition %s found!" % measure_id)
-        fname = os.path.join(fpath, fname)
-        json_data = open(fname).read()
-        d = json.loads(json_data)
-        measures[measure_id] = d
+        with open(os.path.join(fpath, fname)) as f:
+            measures[measure_id] = json.load(f)
     return measures
 
 
@@ -648,7 +650,7 @@ class MeasureCalculation(object):
 
 @contextmanager
 def conditional_constraint_and_index_reconstructor(options):
-    if 'measure' in options and options['measure']:
+    if options['measure']:
         # This is an optimisation that only makes sense when we're
         # updating the entire table.
         yield
