@@ -399,6 +399,16 @@ class TestFrontendViews(TransactionTestCase):
         self.assertNotContains(response, 'Cerazette')
         self.assertContains(response, 'This list is filtered')
 
+    def test_all_measures_with_tag_filter_core(self):
+        response = self.client.get('/measure/?tags=core')
+        self.assertContains(response, 'Cerazette')
+        self.assertContains(response, 'This list is filtered')
+
+    def test_all_measures_without_tag_filter(self):
+        response = self.client.get('/measure/')
+        self.assertContains(response, 'Cerazette')
+        self.assertNotContains(response, 'This list is filtered')
+
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
@@ -465,6 +475,23 @@ class TestGetMeasureTagFilter(TransactionTestCase):
     def test_filters_on_core_tag_by_default(self):
         tag_filter = _get_measure_tag_filter({})
         self.assertEqual(tag_filter['tags'], ['core'])
+
+    def test_filters_on_no_tags_if_show_all_is_set(self):
+        tag_filter = _get_measure_tag_filter({}, show_all_by_default=True)
+        self.assertEqual(tag_filter['tags'], [])
+
+    def test_show_message_is_not_set_when_using_default_filtering(self):
+        tag_filter = _get_measure_tag_filter({})
+        self.assertEqual(tag_filter['show_message'], False)
+        tag_filter = _get_measure_tag_filter({'tags': 'core'})
+        self.assertEqual(tag_filter['show_message'], False)
+
+    def test_show_message_is_set_when_using_non_default_filtering(self):
+        tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
+        self.assertEqual(tag_filter['show_message'], True)
+        tag_filter = _get_measure_tag_filter(
+                {'tags': 'core'}, show_all_by_default=True)
+        self.assertEqual(tag_filter['show_message'], True)
 
     def test_returns_tag_name(self):
         tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
