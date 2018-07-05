@@ -12,5 +12,11 @@
       " we welcome feedback.  These are indicative only, and should be approached with caution ",
       "(<a href=\"/faq/#measureinterpret\">read more</a>)."
     ]
+  },
+  "paper": {
+    "name": "Mentioned in Papers",
+    "description": [
+      "The below measures have been referenced in papers published by the EBM DataLab team."
+    ]
   }
 }
