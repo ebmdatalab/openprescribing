@@ -481,7 +481,7 @@ var utils = {
           // Treat measures which are per 1000 patients a bit differently.
           // See https://github.com/ebmdatalab/openprescribing/issues/436.
           denom = humanize.numberFormat(1000 * this.point.denominator, 0);
-          str += 'Patients: ' + denom;
+          str += 'Registered Patients: ' + denom;
         } else {
           denom = humanize.numberFormat(this.point.denominator, 0);
           str += d.denominatorShort + ': ' + denom;
