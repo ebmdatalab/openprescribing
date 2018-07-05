@@ -23,6 +23,7 @@ var measures = {
     sortButtons: '.btn-group > .btn',
     summaryTemplate: '#summary-panel',
     panelTemplate: '#measure-panel',
+    noCostSavingWarning: '#no-cost-saving-warning'
   },
 
   setUp: function() {
@@ -164,6 +165,11 @@ var measures = {
     chartsBySaving.sort(function(a, b) {
       return $(b).data('costsaving') - $(a).data('costsaving');
     });
+    if (chartsBySaving.length === 0) {
+      chartsBySaving = chartsBySaving.add(
+        $(_this.el.noCostSavingWarning).clone().removeClass('hidden')
+      );
+    }
     $(_this.el.sortButtons).click(function() {
       $(this).addClass('active').siblings().removeClass('active');
       if ($(this).data('orderby') === 'savings') {
