@@ -16,7 +16,9 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["lowpriority"],
+  "tags": [
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -92,7 +94,6 @@
     "OR bnf_code LIKE '091200000BFSQEQ%' ",
     "OR bnf_code LIKE '091200000BEWBA0%' ",
     "OR bnf_code LIKE '091200000BFMYEC%') "
-
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

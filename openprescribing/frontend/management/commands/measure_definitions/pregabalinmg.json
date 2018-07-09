@@ -19,7 +19,9 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
-  "tags": ["core"],
+  "tags": [
+    "core"
+  ],
   "numerator_columns": [
     "SUM(lyrica_mg) AS numerator, "
   ],

@@ -19,13 +19,15 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "core"
+  ],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-        "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
+    "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
     "or bnf_code like '0212000C0%' or bnf_code like '0212000M0%' or bnf_code like '0212000X0%' ",
     "or bnf_code like '0212000Y0%') AND ",
     "(bnf_code not like '0212000Y0%AH' and bnf_code not like '0212000B0%AB' and bnf_code not like '0212000B0%AN' ",
