@@ -388,7 +388,8 @@ describe('Utils', function () {
                              "2010-08-01", "2010-09-01", "2010-10-01", "2010-11-01",
                              "2010-12-01", "2011-01-01", "2011-02-01"]);
     });
-    it('should start in Aug 2013 for CCGs', function () {       var options = {
+    it('should start in Aug 2013 for CCGs', function () {
+      var options = {
         org: 'CCG',
         data: {
           combinedData : [
@@ -398,7 +399,8 @@ describe('Utils', function () {
         }
       };
       var months = utils.getAllMonthsInData(options);
-      expect(months).to.eql(["2013-08-01", "2013-09-01"]);
+      expect(months).to.eql(["2013-04-01", "2013-05-01", "2013-06-01",
+                             "2013-07-01", "2013-08-01", "2013-09-01"]);
     });
   });
 
