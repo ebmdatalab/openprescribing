@@ -1,7 +1,19 @@
 {
+  "antimicrobial": {
+    "name": "Antimicrobial Stewardship",
+    "description": "These measures are useful for monitoring antibiotic prescribing to reduce the threat of antimicrobial resistance"
+  },
   "core": {
     "name": "Core",
     "description": null
+  },
+  "cost": {
+    "name": "Cost Saving",
+    "description": "Changes to prescribing in this area will result in cost savings"
+  },
+  "efficacy": {
+    "name": "Efficacy",
+    "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives"
   },
   "lowpriority": {
     "name": "Low Priority",
@@ -13,10 +25,22 @@
       "(<a href=\"/faq/#measureinterpret\">read more</a>)."
     ]
   },
+  "pain": {
+    "name": "Pain",
+    "description": "These measures are for treatments commonly used for treating pain"
+  },
   "paper": {
     "name": "Mentioned in Papers",
     "description": [
       "The below measures have been referenced in papers published by the EBM DataLab team."
     ]
+  },
+  "respiratory": {
+    "name": "Respiratory",
+    "description": "These measures are for treatments commonly used for treating respiratory conditions such as asthma and COPD"
+  },
+  "safety": {
+    "name": "Safety",
+    "description": "Changes in these measures may result in reduction of the risk of harm to patients"
   }
 }

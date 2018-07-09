@@ -18,7 +18,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
-    "lowpriority"
+    "lowpriority",
+    "safety"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "

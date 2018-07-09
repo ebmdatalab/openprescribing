@@ -16,6 +16,7 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
+    "efficacy",
     "lowpriority"
   ],
   "numerator_columns": [

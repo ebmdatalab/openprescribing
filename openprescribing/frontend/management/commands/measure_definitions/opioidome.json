@@ -23,7 +23,9 @@
   "is_cost_based": false,
   "low_is_good": null,
   "tags": [
-    "core"
+    "core",
+    "pain",
+    "safety"
   ],
   "numerator_columns": [
     "SUM(total_ome) AS numerator, "
