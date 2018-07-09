@@ -111,7 +111,7 @@
                   </p>
                   <p>
                     <strong>Tagged as:</strong>
-                    {{# each tags as |tag index|}}
+                    {{# each tagsForDisplay as |tag index|}}
                       <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
                     {{/each}}
                   </p>

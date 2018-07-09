@@ -387,6 +387,7 @@ var utils = {
       measureForAllPracticesUrl: measureForAllPracticesUrl,
       chartExplanation: chartExplanation,
       tags: d.tags,
+      tagsForDisplay: d.tags.filter(function(t) { return t.id !== 'core'; })
     };
   },
 
