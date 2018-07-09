@@ -114,6 +114,7 @@
                     {{# each tagsForDisplay as |tag index|}}
                       <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
                     {{/each}}
+                    {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
                   </p>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
