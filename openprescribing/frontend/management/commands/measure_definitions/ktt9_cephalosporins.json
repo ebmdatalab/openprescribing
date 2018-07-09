@@ -29,7 +29,8 @@
   "low_is_good": true,
   "tags": [
     "antimicrobial",
-    "core"
+    "core",
+    "infections"
   ],
   "numerator_columns": [
     "SUM(items) AS numerator, "

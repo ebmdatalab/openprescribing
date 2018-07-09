@@ -21,7 +21,8 @@
   "low_is_good": true,
   "tags": [
     "core",
-    "cost"
+    "cost",
+    "gastrointestinal"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "

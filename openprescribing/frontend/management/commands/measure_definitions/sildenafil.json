@@ -20,7 +20,9 @@
   "low_is_good": true,
   "tags": [
     "core",
-    "cost"
+    "cost",
+    "erectiledysfunction",
+    "reproductive"
   ],
   "numerator_columns": [
     "SUM(items) AS numerator, "

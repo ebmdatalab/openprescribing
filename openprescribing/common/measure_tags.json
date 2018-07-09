@@ -3,6 +3,14 @@
     "name": "Antimicrobial Stewardship",
     "description": "These measures are useful for monitoring antibiotic prescribing to reduce the threat of antimicrobial resistance"
   },
+  "cardiovascular": {
+    "name": "Cardiovascular system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the cardiovascular system"
+  },
+  "centralnervous": {
+    "name": "Central Nervous system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the central nervous system"
+  },
   "core": {
     "name": "Core",
     "description": null
@@ -11,9 +19,33 @@
     "name": "Cost Saving",
     "description": "Changes to prescribing in this area will result in cost savings"
   },
+  "diabetes": {
+    "name": "Diabetes",
+    "description": "These measures are for treatments commonly used for treating diabetes"
+  },
   "efficacy": {
     "name": "Efficacy",
     "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives"
+  },
+  "erectiledysfunction": {
+    "name": "Erectile dysfunction",
+    "description": "These measures are for treatments commonly used for treating erectile dysfunction"
+  },
+  "eye": {
+    "name": "Eye",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the eye"
+  },
+  "gastrointestinal": {
+    "name": "Gastrointestinal system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the gastrointestinal system"
+  },
+  "generic": {
+    "name": "Generic prescribing",
+    "description": "These measures relate to cost saving via generic prescribing"
+  },
+  "infections": {
+    "name": "Infections",
+    "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings"
   },
   "lowpriority": {
     "name": "Low Priority",
@@ -25,6 +57,14 @@
       "(<a href=\"/faq/#measureinterpret\">read more</a>)."
     ]
   },
+  "mentalhealth": {
+    "name": "Mental health",
+    "description": "These measures are for treatments commonly used for treating mental health conditions"
+  },
+  "opioids": {
+    "name": "Opioids",
+    "description": "These measures relate to the use of opioids"
+  },
   "pain": {
     "name": "Pain",
     "description": "These measures are for treatments commonly used for treating pain"
@@ -34,6 +74,10 @@
     "description": [
       "The below measures have been referenced in papers published by the EBM DataLab team."
     ]
+  },
+  "reproductive": {
+    "name": "Reproductive system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the reproductive system"
   },
   "respiratory": {
     "name": "Respiratory",

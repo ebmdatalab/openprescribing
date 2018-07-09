@@ -21,7 +21,9 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
+    "cardiovascular",
     "core",
+    "pain",
     "safety"
   ],
   "numerator_columns": [
