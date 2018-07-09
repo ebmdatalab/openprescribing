@@ -495,4 +495,4 @@ class TestGetMeasureTagFilter(TransactionTestCase):
 
     def test_returns_tag_name(self):
         tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
-        self.assertEqual(tag_filter['name'], 'Low Priority')
+        self.assertEqual(tag_filter['names'], ['Low Priority'])

@@ -1,10 +1,20 @@
+{% load template_extras %}
 {% if not measure.id %}
 <!-- only show sorting and alert signups when showing more than one measure -->
 <div class="row" >
   {% if tag_filter.show_message %}
-  <h2>Prescribing measures tagged <strong>{{ tag_filter.name }}</strong></h2>
+  <h2>Prescribing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h2>
   <div class="alert alert-info">
-    {% if tag_filter.description %}<p>{{ tag_filter.description }}</p>{% endif %}
+    {% if tag_filter.details|length == 1 %}
+      <p>{{ tag_filter.details.0.description|safe }}</p>
+    {% elif tag_filter.details|length > 1 %}
+      <dl>
+        {% for details in tag_filter.details %}
+          <dt>{{ details.name }}</dt>
+          <dd>{{ details.description|safe }}</dt>
+        {% endfor %}
+      </dl>
+    {% endif %}
     <p>
       {% if entity_type == 'practice' %}
       <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.

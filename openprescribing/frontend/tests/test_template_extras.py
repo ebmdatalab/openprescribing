@@ -25,3 +25,9 @@ class TestTemplateExtras(unittest.TestCase):
 
     def test_deltawords_negative(self):
         self.assertEqual(t.deltawords(29, 0), "considerably")
+
+    def test_fancy_join(self):
+        self.assertEqual(t.fancy_join(['a', 'b', 'c']), 'a, b and c')
+        self.assertEqual(t.fancy_join(['a', 'b']), 'a and b')
+        self.assertEqual(t.fancy_join(['a']), 'a')
+        self.assertEqual(t.fancy_join([]), '')
