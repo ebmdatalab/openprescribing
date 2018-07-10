@@ -5,6 +5,7 @@ from pyquery import PyQuery as pq
 
 from django.conf import settings
 from django.core import mail
+from django.http import QueryDict
 from django.test import TransactionTestCase
 
 from frontend.models import EmailMessage
@@ -470,29 +471,29 @@ class TestGetMeasureTagFilter(TransactionTestCase):
 
     def test_rejects_bad_tags(self):
         with self.assertRaises(BadRequestError):
-            _get_measure_tag_filter({'tags': 'nosuchtag'})
+            _get_measure_tag_filter(QueryDict('tags=nosuchtag'))
 
     def test_filters_on_core_tag_by_default(self):
-        tag_filter = _get_measure_tag_filter({})
+        tag_filter = _get_measure_tag_filter(QueryDict())
         self.assertEqual(tag_filter['tags'], ['core'])
 
     def test_filters_on_no_tags_if_show_all_is_set(self):
-        tag_filter = _get_measure_tag_filter({}, show_all_by_default=True)
+        tag_filter = _get_measure_tag_filter(QueryDict(), show_all_by_default=True)
         self.assertEqual(tag_filter['tags'], [])
 
     def test_show_message_is_not_set_when_using_default_filtering(self):
-        tag_filter = _get_measure_tag_filter({})
+        tag_filter = _get_measure_tag_filter(QueryDict())
         self.assertEqual(tag_filter['show_message'], False)
-        tag_filter = _get_measure_tag_filter({'tags': 'core'})
+        tag_filter = _get_measure_tag_filter(QueryDict('tags=core'))
         self.assertEqual(tag_filter['show_message'], False)
 
     def test_show_message_is_set_when_using_non_default_filtering(self):
-        tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
+        tag_filter = _get_measure_tag_filter(QueryDict('tags=lowpriority'))
         self.assertEqual(tag_filter['show_message'], True)
         tag_filter = _get_measure_tag_filter(
-                {'tags': 'core'}, show_all_by_default=True)
+                QueryDict('tags=core'), show_all_by_default=True)
         self.assertEqual(tag_filter['show_message'], True)
 
     def test_returns_tag_name(self):
-        tag_filter = _get_measure_tag_filter({'tags': 'lowpriority'})
+        tag_filter = _get_measure_tag_filter(QueryDict('tags=lowpriority'))
         self.assertEqual(tag_filter['names'], ['Low Priority'])
