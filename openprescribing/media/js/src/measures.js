@@ -7,7 +7,6 @@ var chartOptions = require('./highcharts-options');
 var L = require('mapbox.js');
 var Handlebars = require('handlebars');
 var config = require('./config');
-var select2 = require('select2');
 Highcharts.setOptions({
   global: {useUTC: false},
 });
@@ -122,14 +121,8 @@ var measures = {
   },
 
   setUpTagSelector: function() {
-    $('.js-tag-selector').each(function() {
-      var $select = $(this);
-      var $submit = $(this.form).find('.js-tag-selector-submit');
-      console.log($submit);
-      $submit.hide();
-      $select.select2().on('change', function() {
-        $submit.show();
-      });
+    $('.js-submit-on-change').on('change click', function() {
+      this.form.submit();
     });
   },
 

@@ -56,15 +56,13 @@
       </div>
       <form class="form" action="">
         <div class="form-group">
-          <label>Filter measures by:</label>
-          <select name="tags" class="form-control js-tag-selector" multiple>
+          <label>Show measures related to:</label>
+          <select name="tags" class="form-control js-submit-on-change">
+            <option value="">All Measures</option>
             {% for tag in tag_filter.all_tags %}
               <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
             {% endfor %}
           </select>
-        </div>
-        <div class="form-group js-tag-selector-submit">
-          <button type="submit" class="btn btn-primary">Apply filters</button>
         </div>
       </form>
     </div>
