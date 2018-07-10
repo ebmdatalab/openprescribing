@@ -1,7 +1,7 @@
 {
   "antimicrobial": {
     "name": "Antimicrobial Stewardship",
-    "description": "These measures are useful for monitoring antibiotic prescribing to reduce the threat of antimicrobial resistance"
+    "description": "Antimicrobial Stewardship is when an organisation promotes and monitors the correct use of antibiotics to ensure they remain effective in the future. The following measures are useful for monitoring antibiotic prescribing to support antimicrobial stewardship and reduce the threat of antimicrobial resistance."
   },
   "cardiovascular": {
     "name": "Cardiovascular system",
@@ -17,7 +17,7 @@
   },
   "cost": {
     "name": "Cost Saving",
-    "description": "Changes to prescribing in this area will result in cost savings"
+    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings"
   },
   "diabetes": {
     "name": "Diabetes",
@@ -41,7 +41,7 @@
   },
   "generic": {
     "name": "Generic prescribing",
-    "description": "These measures relate to cost saving via generic prescribing"
+    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that can be prescribed generically."
   },
   "infections": {
     "name": "Infections",
@@ -85,6 +85,6 @@
   },
   "safety": {
     "name": "Safety",
-    "description": "Changes in these measures may result in reduction of the risk of harm to patients"
+    "description": "Improving safety is about reducing risk and minimising mistakes. The World Health Organisation has launched its third patient safety challenge Medication Without Harm. Changes in the following measures may result in reduction of the risk of harm to patients and contribute to WHOs ambition in reducting medication related harm by 50% within 5 years."
   }
 }
