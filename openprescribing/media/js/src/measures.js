@@ -7,6 +7,7 @@ var chartOptions = require('./highcharts-options');
 var L = require('mapbox.js');
 var Handlebars = require('handlebars');
 var config = require('./config');
+var select2 = require('select2');
 Highcharts.setOptions({
   global: {useUTC: false},
 });
@@ -41,6 +42,7 @@ var measures = {
     if (!options.rollUpBy) {
       options.rollUpBy = (options.measure) ? 'org_id' : 'measure_id';
     }
+    _this.setUpTagSelector();
     _this.setUpShowPractices();
     _this.setUpMap(options);
 
@@ -117,6 +119,18 @@ var measures = {
       .fail(function(jqXHR, textStatus, error) {
         console.log('Error ' + error + ' when making request ' + jqXHR);
       });
+  },
+
+  setUpTagSelector: function() {
+    $('.js-tag-selector').each(function() {
+      var $select = $(this);
+      var $submit = $(this.form).find('.js-tag-selector-submit');
+      console.log($submit);
+      $submit.hide();
+      $select.select2().on('change', function() {
+        $submit.show();
+      });
+    });
   },
 
   setUpShowPractices: function() {

@@ -255,11 +255,13 @@ def ccg_price_per_unit(request, code):
 # These replace old CCG and practice dashboards.
 ##################################################
 
+CORE_TAG = 'core'
 
 def _get_measure_tag_filter(params, show_all_by_default=False):
-    tags = params.get('tags', '').split(',')
+    tags = params.getlist('tags')
+    tags = sum([tag.split(',') for tag in tags], [])
     tags = filter(None, tags)
-    default_tags = [] if show_all_by_default else ['core']
+    default_tags = [] if show_all_by_default else [CORE_TAG]
     if not tags:
         tags = default_tags
     try:
@@ -270,7 +272,12 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
         'tags': tags,
         'names': [tag['name'] for tag in tag_details],
         'details': [tag for tag in tag_details if tag['description']],
-        'show_message': (tags != default_tags)
+        'show_message': (tags != default_tags),
+        'all_tags': [
+            {'id': key, 'name': tag['name'], 'selected': (key in tags)}
+            for (key, tag) in sorted(MEASURE_TAGS.items())
+            if key != CORE_TAG
+        ]
     }
 
 
