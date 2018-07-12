@@ -17,19 +17,22 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["lowpriority"],
+  "tags": [
+    "cost",
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-   "(bnf_code LIKE '1404000G0%' ",
-   "OR bnf_code LIKE '1404000U0%' ",
-   "OR bnf_code LIKE '1404000AB%' ",
-   "OR bnf_code LIKE '1404000X0%' ",
-   "OR bnf_code LIKE '1404000AA%' ",
-   "OR bnf_code LIKE '1404000N0%' ",
-   "OR bnf_code LIKE '0802040X0%') "
+    "(bnf_code LIKE '1404000G0%' ",
+    "OR bnf_code LIKE '1404000U0%' ",
+    "OR bnf_code LIKE '1404000AB%' ",
+    "OR bnf_code LIKE '1404000X0%' ",
+    "OR bnf_code LIKE '1404000AA%' ",
+    "OR bnf_code LIKE '1404000N0%' ",
+    "OR bnf_code LIKE '0802040X0%') "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

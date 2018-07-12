@@ -17,4 +17,7 @@ domready(function() {
       doorbell.show();
     }
   });
+  $('.js-submit-on-change').on('change', function() {
+    this.form.submit();
+  });
 });

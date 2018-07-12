@@ -16,8 +16,14 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
-  "tags_focus": ["lowpriority"],
+  "tags": [
+    "core",
+    "cost",
+    "cost"
+  ],
+  "tags_focus": [
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(numerator) AS numerator, "
   ],

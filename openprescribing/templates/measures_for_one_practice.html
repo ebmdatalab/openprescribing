@@ -74,7 +74,7 @@
 {% block extra_js %}
 <script>
 var measureData = {
-    'tags': '{{ request.GET.tags|default:"core" }}',
+    'tags': '{{ tag_filter.tags|join:"," }}',
     'orgId': '{{ practice.code }}',
     'parentOrg': '{{ practice.ccg.code }}',
     'orgName': '{{ practice.name }}',

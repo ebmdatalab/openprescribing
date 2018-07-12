@@ -64,3 +64,14 @@ def url_toggle(request, field):
 @register.simple_tag
 def current_time(format_string):
     return timezone.now().strftime(format_string)
+
+
+@register.filter
+def fancy_join(lst, sep=', ', final_sep=' and '):
+    """
+    Join a list using a different separator for the final element
+    """
+    if len(lst) > 2:
+        head, tail = lst[:-1], lst[-1]
+        lst = [sep.join(head), tail]
+    return final_sep.join(lst)

@@ -8,6 +8,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
+from frontend.models import MEASURE_TAGS
 
 import view_utils as utils
 
@@ -60,6 +61,7 @@ def measure_global(request, format=None):
                 'low_is_good': measure.low_is_good,
                 'tags_focus': tags_focus,
                 'numerator_can_be_queried': measure.numerator_can_be_queried(),
+                'tags': _hydrate_tags(measure.tags),
                 'data': [d_copy]
             }
     d = {
@@ -164,7 +166,6 @@ def measure_by_ccg(request, format=None):
     org_ids = utils.param_to_list(request.query_params.get('org', []))
     tags = [x for x in request.query_params.get('tags', '').split(',') if x]
 
-    rolled = {}
     measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
 
     rsp_data = {
@@ -236,7 +237,15 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
                 'is_cost_based': measure.is_cost_based,
                 'is_percentage': measure.is_percentage,
                 'low_is_good': measure.low_is_good,
+                'tags': _hydrate_tags(measure.tags),
                 'data': [measure_value_data],
             }
 
     return rolled.values()
+
+
+def _hydrate_tags(tag_ids):
+    return [
+        {'id': tag_id, 'name': MEASURE_TAGS[tag_id]['name']}
+        for tag_id in tag_ids
+    ]

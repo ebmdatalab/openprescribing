@@ -25,7 +25,11 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections"
+  ],
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
   ],

@@ -1,5 +1,6 @@
 import cPickle
 import json
+import os.path
 import re
 import uuid
 
@@ -16,6 +17,19 @@ from dmd.models import DMDProduct
 from frontend.managers import MeasureValueManager
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
+
+
+def _load_measure_tags(filename):
+    with open(filename) as f:
+        tags = json.load(f)
+    for tag in tags.values():
+        if isinstance(tag.get('description'), list):
+            tag['description'] = ''.join(tag['description'])
+    return tags
+
+
+MEASURE_TAGS = _load_measure_tags(
+    os.path.join(os.path.dirname(__file__), '../common/measure_tags.json'))
 
 
 class Section(models.Model):
