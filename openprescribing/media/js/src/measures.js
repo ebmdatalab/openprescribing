@@ -41,7 +41,6 @@ var measures = {
     if (!options.rollUpBy) {
       options.rollUpBy = (options.measure) ? 'org_id' : 'measure_id';
     }
-    _this.setUpTagSelector();
     _this.setUpShowPractices();
     _this.setUpMap(options);
 
@@ -118,12 +117,6 @@ var measures = {
       .fail(function(jqXHR, textStatus, error) {
         console.log('Error ' + error + ' when making request ' + jqXHR);
       });
-  },
-
-  setUpTagSelector: function() {
-    $('.js-submit-on-change').on('change click', function() {
-      this.form.submit();
-    });
   },
 
   setUpShowPractices: function() {
