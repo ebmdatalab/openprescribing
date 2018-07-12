@@ -17,6 +17,7 @@
   "low_is_good": true,
   "tags": [
     "cardiovascular",
+    "cost",
     "lowpriority"
   ],
   "numerator_columns": [

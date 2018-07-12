@@ -22,7 +22,8 @@
   "tags": [
     "core",
     "cost",
-    "gastrointestinal"
+    "gastrointestinal",
+    "generic"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "

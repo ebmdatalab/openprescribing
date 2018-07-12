@@ -26,7 +26,8 @@
   "tags": [
     "centralnervous",
     "core",
-    "cost"
+    "cost",
+    "generic"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "

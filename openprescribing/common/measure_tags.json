@@ -28,7 +28,7 @@
     "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives"
   },
   "erectiledysfunction": {
-    "name": "Erectile dysfunction",
+    "name": "Erectile Dysfunction",
     "description": "These measures are for treatments commonly used for treating erectile dysfunction"
   },
   "eye": {
@@ -58,12 +58,12 @@
     ]
   },
   "mentalhealth": {
-    "name": "Mental health",
+    "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions"
   },
   "opioids": {
     "name": "Opioids",
-    "description": "These measures relate to the use of opioids"
+    "description": "These measures relate to the use of opioids. You may also like to use our Price Per Unit tool which identifies how you can make savings due to anomalies in the reimbursement system."
   },
   "pain": {
     "name": "Pain",
