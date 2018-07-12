@@ -12,7 +12,7 @@
     "description": "These measures are for treatments commonly used for treating conditions affecting the central nervous system"
   },
   "core": {
-    "name": "Core",
+    "name": "Standard",
     "description": null
   },
   "cost": {
