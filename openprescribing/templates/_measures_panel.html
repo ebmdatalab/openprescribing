@@ -58,7 +58,6 @@
         <div class="form-group">
           <label>Show measures categorised as:</label>
           <select name="tags" class="form-control js-submit-on-change">
-            <option value="">All Measures</option>
             {% for tag in tag_filter.all_tags %}
               <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
             {% endfor %}

@@ -259,6 +259,7 @@ CORE_TAG = 'core'
 
 def _get_measure_tag_filter(params, show_all_by_default=False):
     tags = params.getlist('tags')
+    # Support passing a single "tags" param with a comma separated list
     tags = sum([tag.split(',') for tag in tags], [])
     tags = filter(None, tags)
     default_tags = [] if show_all_by_default else [CORE_TAG]
@@ -275,10 +276,14 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
         'show_message': (tags != default_tags),
         'all_tags': [
             {'id': key, 'name': tag['name'], 'selected': (key in tags)}
-            for (key, tag) in sorted(MEASURE_TAGS.items())
-            if key != CORE_TAG
+            for (key, tag) in sorted(
+                MEASURE_TAGS.items(), key=_sort_core_tag_first)
         ]
     }
+
+
+def _sort_core_tag_first((tag_id, tag_details)):
+    return (0 if tag_id == CORE_TAG else 1, tag_details['name'])
 
 
 @handle_bad_request
