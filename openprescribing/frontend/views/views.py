@@ -274,16 +274,27 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
         'names': [tag['name'] for tag in tag_details],
         'details': [tag for tag in tag_details if tag['description']],
         'show_message': (tags != default_tags),
-        'all_tags': [
-            {'id': key, 'name': tag['name'], 'selected': (key in tags)}
-            for (key, tag) in sorted(
-                MEASURE_TAGS.items(), key=_sort_core_tag_first)
-        ]
+        'all_tags': _get_tags_select_options(tags, show_all_by_default)
     }
 
 
-def _sort_core_tag_first((tag_id, tag_details)):
-    return (0 if tag_id == CORE_TAG else 1, tag_details['name'])
+def _get_tags_select_options(selected_tags, show_all_by_default):
+    options = [
+        {'id': key, 'name': tag['name'], 'selected': (key in selected_tags)}
+        for (key, tag) in MEASURE_TAGS.items()
+    ]
+    options.sort(key=_sort_core_tag_first)
+    if show_all_by_default:
+        options.insert(0, {
+            'id': '',
+            'name': 'All Measures',
+            'selected': (len(selected_tags) == 0)
+        })
+    return options
+
+
+def _sort_core_tag_first(option):
+    return (0 if option['id'] == CORE_TAG else 1, option['name'])
 
 
 @handle_bad_request
