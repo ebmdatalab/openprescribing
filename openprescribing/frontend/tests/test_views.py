@@ -478,7 +478,8 @@ class TestGetMeasureTagFilter(TransactionTestCase):
         self.assertEqual(tag_filter['tags'], ['core'])
 
     def test_filters_on_no_tags_if_show_all_is_set(self):
-        tag_filter = _get_measure_tag_filter(QueryDict(), show_all_by_default=True)
+        tag_filter = _get_measure_tag_filter(
+                QueryDict(), show_all_by_default=True)
         self.assertEqual(tag_filter['tags'], [])
 
     def test_show_message_is_not_set_when_using_default_filtering(self):

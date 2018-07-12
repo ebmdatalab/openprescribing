@@ -257,6 +257,7 @@ def ccg_price_per_unit(request, code):
 
 CORE_TAG = 'core'
 
+
 def _get_measure_tag_filter(params, show_all_by_default=False):
     tags = params.getlist('tags')
     # Support passing a single "tags" param with a comma separated list
