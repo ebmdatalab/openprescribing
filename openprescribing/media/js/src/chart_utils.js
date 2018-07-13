@@ -269,13 +269,6 @@ var utils = {
     var monthRange = [];
     if (combinedData.length > 0) {
       var firstMonth = combinedData[0].date;
-      if (options.org === 'CCG') {
-        // CCGs were formed in Aug 2013. This special-casing can be
-        // removed after Aug 2018, as we only deal with 5 years of
-        // data.
-        var firstCCGDate = '2013-08-01';
-        firstMonth = firstMonth > firstCCGDate ? firstMonth : firstCCGDate;
-      }
       var lastMonth = combinedData[combinedData.length - 1].date;
       var startDate = moment(firstMonth);
       var endDate = moment(lastMonth);
