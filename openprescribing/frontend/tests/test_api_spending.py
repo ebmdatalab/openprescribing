@@ -36,7 +36,8 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'product': 'ABCD',
              'price_pence': '900',
              'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Bar tablets 84 tablet'}
+             'vmpp': 'Bar tablets 84 tablet',
+             'pack_size': ''}
         ])
 
     def test_tariff_hits(self):
@@ -48,19 +49,22 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'product': 'ABCD',
              'price_pence': '900',
              'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Bar tablets 84 tablet'},
+             'vmpp': 'Bar tablets 84 tablet',
+             'pack_size': ''},
             {'date': '2010-03-01',
              'concession': '',
              'product': 'EFGH',
              'price_pence': '2400',
              'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Foo tablets 84 tablet'},
+             'vmpp': 'Foo tablets 84 tablet',
+             'pack_size': ''},
             {'date': '2010-04-01',
              'concession': '',
              'product': 'EFGH',
              'price_pence': '1100',
              'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Foo tablets 84 tablet'},
+             'vmpp': 'Foo tablets 84 tablet',
+             'pack_size': ''},
         ])
 
     def test_tariff_miss(self):

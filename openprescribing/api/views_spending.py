@@ -322,7 +322,8 @@ def tariff(request, format=None):
            dmd_vmpp.nm AS vmpp,
            dmd_product.bnf_code AS product,
            dmd_ncsoconcession.price_concession_pence AS concession,
-           dmd_lookup_dt_payment_category.desc AS tariff_category
+           dmd_lookup_dt_payment_category.desc AS tariff_category,
+           dmd_ncsoconcession.pack_size AS pack_size
     FROM dmd_tariffprice
         INNER JOIN dmd_lookup_dt_payment_category
             ON dmd_tariffprice.tariff_category_id = dmd_lookup_dt_payment_category.cd
