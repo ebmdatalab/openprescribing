@@ -6,7 +6,6 @@ import numpy as np
 
 from django.db import connection
 from django.db.models import Q
-from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
