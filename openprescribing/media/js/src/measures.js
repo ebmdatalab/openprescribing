@@ -7,6 +7,7 @@ var chartOptions = require('./highcharts-options');
 var L = require('mapbox.js');
 var Handlebars = require('handlebars');
 var config = require('./config');
+var downloadjs = require('downloadjs');
 Highcharts.setOptions({
   global: {useUTC: false},
 });
@@ -63,12 +64,18 @@ var measures = {
       var perf = mu.getPerformanceSummary(chartData, options,
                                           NUM_MONTHS_FOR_RANKING);
       $(_this.el.perfSummary).html(summaryTemplate(perf));
-
       var html = '';
       _.each(chartData, function(d) {
         html += panelTemplate(d);
       });
-      $(_this.el.charts).html(html);
+      $(_this.el.charts)
+        .html(html)
+        .find('a[data-download-chart-id]')
+        .on('click', function() {
+          var chartId = $(this).data('download-chart-id');
+          _this.startDataDownload(chartData, chartId);
+          return false;
+        });
       _.each(chartData, function(d, i) {
         if (i < _this.graphsToRenderInitially) {
           var chOptions = mu.getGraphOptions(d,
@@ -183,6 +190,68 @@ var measures = {
       }
     });
   },
+
+  startDataDownload: function(allChartData, chartId) {
+    var chartData = this.getChartDataById(allChartData, chartId);
+    var dataTable = this.getChartDataAsTable(chartData);
+    var csvData = this.formatTableAsCSV(dataTable);
+    downloadjs(csvData, chartId+'_data.csv', 'text/csv');
+  },
+
+  getChartDataById: function(allChartData, chartId) {
+    for (var i = 0; i<allChartData.length; i++) {
+      if (allChartData[i].chartId === chartId) {
+        return allChartData[i];
+      }
+    }
+    throw 'No matching chartId: ' + chartId;
+  },
+
+  getChartDataAsTable: function(chartData) {
+    var headers = ['date', 'numerator', 'denominator', 'ratio', 'percentile', 'cost_savings'];
+    var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
+    var percentilesByDate = this.getPercentilesByDate(chartData, keyPercentiles);
+    var table = chartData.data.map(function(d) {
+      return [
+          d.date, d.numerator, d.denominator, d.calc_value, d.percentile, d.cost_savings
+        ]
+        .concat(percentilesByDate[d.date]);
+    });
+    table.unshift(headers);
+    return table;
+  },
+
+  getPercentilesByDate: function(chartData, keyPercentiles) {
+    var percentilesByDate = {};
+    _.each(keyPercentiles, function(percentile) {
+      _.each(chartData.globalCentiles[percentile], function(percentileData) {
+        var date = percentileData.date;
+        if ( ! percentilesByDate[date]) {
+          percentilesByDate[date] = [];
+        }
+        percentilesByDate[date].push(percentileData.y);
+      });
+    });
+    return percentilesByDate;
+  },
+
+  formatTableAsCSV: function(table) {
+    return table.map(this.formatRowAsCSV.bind(this)).join('\n');
+  },
+
+  formatRowAsCSV: function(row) {
+    return row.map(this.formatCellAsCSV.bind(this)).join(',');
+  },
+
+  formatCellAsCSV: function(cell) {
+    cell = cell ? cell.toString() : '';
+    if (cell.match(/[,"\r\n]/)) {
+      return '"' + cell.replace(/"/g, '""') + '"';
+    } else {
+      return cell;
+    }
+  }
 };
 
 domready(function() {
