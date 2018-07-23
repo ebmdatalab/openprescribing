@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var mu = require('./measure_utils');
+var utils = require('./chart_utils');
 var domready = require('domready');
 var Highcharts = require('Highcharts');
 var chartOptions = require('./highcharts-options');
@@ -28,6 +29,7 @@ var measures = {
 
   setUp: function() {
     var _this = this;
+    _this.isOldIe = utils.getIEVersion();
     var summaryTemplate =
         Handlebars.compile($(_this.el.summaryTemplate).html());
     var panelTemplate =
@@ -71,8 +73,12 @@ var measures = {
         .html(html)
         .find('a[data-download-chart-id]')
         .on('click', function() {
-          var chartId = $(this).data('download-chart-id');
-          mu.startDataDownload(chartData, chartId);
+          if ( ! _this.isOldIe) {
+            var chartId = $(this).data('download-chart-id');
+            mu.startDataDownload(chartData, chartId);
+          } else {
+            window.alert('Sorry, you must use a newer web browser to download data');
+          }
           return false;
         });
       _.each(chartData, function(d, i) {
