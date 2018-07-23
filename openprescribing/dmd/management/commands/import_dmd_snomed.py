@@ -72,6 +72,8 @@ class Command(BaseCommand):
 
                     if snomed_code[0] == "'":
                         snomed_code = snomed_code[1:]
+                        if not snomed_code:
+                            continue
 
                     dmdid = None
 
