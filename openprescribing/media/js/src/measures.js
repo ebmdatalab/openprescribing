@@ -73,13 +73,9 @@ var measures = {
         .html(html)
         .find('a[data-download-chart-id]')
         .on('click', function() {
-          if ( ! _this.isOldIe) {
-            var chartId = $(this).data('download-chart-id');
-            mu.startDataDownload(chartData, chartId);
-          } else {
-            window.alert('Sorry, you must use a newer web browser to download data');
-          }
-          return false;
+          return _this.handleDataDownloadClick(
+            chartData, $(this).data('download-chart-id')
+          );
         });
       _.each(chartData, function(d, i) {
         if (i < _this.graphsToRenderInitially) {
@@ -194,6 +190,22 @@ var measures = {
         });
       }
     });
+  },
+
+  handleDataDownloadClick: function(chartData, chartId) {
+    var browserSupported = ! this.isOldIe;
+    ga('send', {
+      'hitType': 'event',
+      'eventCategory': 'measure_data',
+      'eventAction': browserSupported ? 'download' : 'failed_download',
+      'eventLabel': chartId,
+    });
+    if (browserSupported) {
+      mu.startDataDownload(chartData, chartId);
+    } else {
+      window.alert('Sorry, you must use a newer web browser to download data');
+    }
+    return false;
   }
 
 };
