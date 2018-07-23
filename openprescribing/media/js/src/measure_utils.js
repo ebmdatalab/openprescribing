@@ -520,7 +520,7 @@ var utils = {
   getChartDataAsTable: function(chartData) {
     var headers = [
       'date', 'org_id', 'org_name', 'numerator', 'denominator',
-      'ratio', 'percentile', 'cost_savings'];
+      'ratio', 'percentile'];
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
@@ -529,7 +529,7 @@ var utils = {
     var table = chartData.data.map(function(d) {
       return [
           d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
-          d.calc_value, d.percentile, d.cost_savings
+          d.calc_value, d.percentile
         ]
         .concat(percentilesByDate[d.date]);
     });
