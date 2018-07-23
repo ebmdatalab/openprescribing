@@ -942,6 +942,7 @@ describe('Measures', function() {
       var result = mu.getChartDataAsTable({
         "chartId": "ktt9_uti_antibiotics",
         "chartTitle": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
+        "isCCG": true,
         "data": [
           {
             "denominator": 1744,
@@ -949,7 +950,9 @@ describe('Measures', function() {
             "percentile": 97.5961538461538,
             "calc_value": 6.66733562691132,
             "cost_savings": null,
-            "date": "2017-01-01"
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "date": "2017-01-01",
           },
           {
             "denominator": 1615,
@@ -957,6 +960,8 @@ describe('Measures', function() {
             "percentile": 97.5961538461538,
             "calc_value": 6.58916408668731,
             "cost_savings": null,
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
             "date": "2017-02-01"
           },
           {
@@ -965,6 +970,8 @@ describe('Measures', function() {
             "percentile": 98.0769230769231,
             "calc_value": 6.64265459202342,
             "cost_savings": null,
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
             "date": "2017-03-01"
           }
         ],
@@ -1098,19 +1105,23 @@ describe('Measures', function() {
         }
       });
       expect(result).to.deep.equal([
-        ['date', 'numerator', 'denominator', 'ratio', 'percentile', 'cost_savings',
+        ['date', 'org_id', 'org_name', 'numerator', 'denominator', 'ratio',
+          'percentile', 'cost_savings',
           '10th percentile', '20th percentile', '30th percentile', '40th percentile',
           '50th percentile', '60th percentile', '70th percentile', '80th percentile',
           '90th percentile'],
-        ['2017-01-01', 11627.8333333333, 1744, 6.66733562691132, 97.5961538461538, null,
+        ['2017-01-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG',
+          11627.8333333333, 1744, 6.66733562691132, 97.5961538461538, null,
           5.182546810483497, 5.4174508079030925, 5.518345114305625, 5.63159773123116,
           5.7430555555555545, 5.878912354447853, 5.964220413424124, 6.088481618366197,
           6.284994437637084],
-        ['2017-02-01', 10641.5, 1615, 6.58916408668731, 97.5961538461538, null,
+        ['2017-02-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG', 10641.5, 1615,
+          6.58916408668731, 97.5961538461538, null,
           5.214408749095638, 5.413822826078597, 5.575019921790236,
           5.670616327418811, 5.7453920649796935, 5.85411959737778,
           5.937731172383994, 6.160359753080579, 6.323238055692184],
-        ['2017-03-01', 12102.9166666667, 1822, 6.64265459202342, 98.0769230769231, null,
+        ['2017-03-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG',
+          12102.9166666667, 1822, 6.64265459202342, 98.0769230769231, null,
           5.248553447914695, 5.4361293677134706, 5.572179441817108,
           5.702130340910575, 5.7919745484400655, 5.880026704460748,
           5.9794797683156915, 6.119981581449648, 6.296265612219995]

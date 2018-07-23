@@ -518,13 +518,18 @@ var utils = {
   },
 
   getChartDataAsTable: function(chartData) {
-    var headers = ['date', 'numerator', 'denominator', 'ratio', 'percentile', 'cost_savings'];
+    var headers = [
+      'date', 'org_id', 'org_name', 'numerator', 'denominator',
+      'ratio', 'percentile', 'cost_savings'];
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
+    var orgIDColumn = (chartData.isCCG) ? 'pct_id' : 'practice_id';
+    var orgNameColumn = (chartData.isCCG) ? 'pct_name' : 'practice_name';
     var table = chartData.data.map(function(d) {
       return [
-          d.date, d.numerator, d.denominator, d.calc_value, d.percentile, d.cost_savings
+          d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
+          d.calc_value, d.percentile, d.cost_savings
         ]
         .concat(percentilesByDate[d.date]);
     });
