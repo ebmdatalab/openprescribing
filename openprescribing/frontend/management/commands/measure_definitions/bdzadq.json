@@ -34,7 +34,7 @@
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
+  "denominator_from": "{hscic}.normalised_prescribing_standard p ",
   "denominator_where": [
     "(",
     " p.bnf_code LIKE '0401%'",
