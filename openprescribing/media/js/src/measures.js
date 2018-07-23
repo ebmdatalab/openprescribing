@@ -195,7 +195,8 @@ var measures = {
     var chartData = this.getChartDataById(allChartData, chartId);
     var dataTable = this.getChartDataAsTable(chartData);
     var csvData = this.formatTableAsCSV(dataTable);
-    downloadjs(csvData, chartId+'_data.csv', 'text/csv');
+    var filename = this.sanitizeFilename(chartData.chartTitle) + '.csv';
+    downloadjs(csvData, filename, 'text/csv');
   },
 
   getChartDataById: function(allChartData, chartId) {
@@ -251,7 +252,12 @@ var measures = {
     } else {
       return cell;
     }
+  },
+
+  sanitizeFilename: function(name) {
+    return name.replace(/[^\w \-\.]/g, '');
   }
+
 };
 
 domready(function() {
