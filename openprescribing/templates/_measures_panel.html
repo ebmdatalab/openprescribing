@@ -144,8 +144,16 @@
                     {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
                   </p>
               </div>
-              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
+              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <div id="{{ chartId }}">
                   <div class="status"></div>
+                </div>
+                <p class="text-right" style="margin-top: 4px">
+                  <a href="#" data-download-chart-id="{{ chartId }}">
+                    Download data
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                  </a>
+                </p>
               </div>
           </div>
 

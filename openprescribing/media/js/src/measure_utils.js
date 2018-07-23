@@ -2,6 +2,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
+var downloadjs = require('downloadjs');
 var utils = {
 
   getDataUrls: function(options) {
@@ -498,6 +499,84 @@ var utils = {
     };
     return chOptions;
   },
+
+  startDataDownload: function(allChartData, chartId) {
+    var chartData = this.getChartDataById(allChartData, chartId);
+    var dataTable = this.getChartDataAsTable(chartData);
+    var csvData = this.formatTableAsCSV(dataTable);
+    var filename = this.sanitizeFilename(chartData.chartTitle) + '.csv';
+    downloadjs(csvData, filename, 'text/csv');
+  },
+
+  getChartDataById: function(allChartData, chartId) {
+    for (var i = 0; i<allChartData.length; i++) {
+      if (allChartData[i].chartId === chartId) {
+        return allChartData[i];
+      }
+    }
+    throw 'No matching chartId: ' + chartId;
+  },
+
+  getChartDataAsTable: function(chartData) {
+    var headers = [
+      'date', 'org_id', 'org_name', 'numerator', 'denominator',
+      'ratio', 'percentile', 'cost_savings'];
+    var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
+    var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
+    var orgIDColumn = (chartData.isCCG) ? 'pct_id' : 'practice_id';
+    var orgNameColumn = (chartData.isCCG) ? 'pct_name' : 'practice_name';
+    var table = chartData.data.map(function(d) {
+      return [
+          d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
+          d.calc_value, d.percentile, d.cost_savings
+        ]
+        .concat(percentilesByDate[d.date]);
+    });
+    table.unshift(headers);
+    return table;
+  },
+
+  groupPercentilesByDate: function(globalCentiles, keyPercentiles) {
+    var percentilesByDate = {};
+    _.each(keyPercentiles, function(percentile) {
+      _.each(globalCentiles[percentile], function(percentileData) {
+        var date = percentileData.date;
+        if ( ! percentilesByDate[date]) {
+          percentilesByDate[date] = [];
+        }
+        percentilesByDate[date].push(percentileData.y);
+      });
+    });
+    return percentilesByDate;
+  },
+
+  formatTableAsCSV: function(table) {
+    return table.map(this.formatRowAsCSV.bind(this)).join('\n');
+  },
+
+  formatRowAsCSV: function(row) {
+    return row.map(this.formatCellAsCSV.bind(this)).join(',');
+  },
+
+  formatCellAsCSV: function(cell) {
+    cell = cell ? cell.toString() : '';
+    if (cell.match(/[,"\r\n]/)) {
+      return '"' + cell.replace(/"/g, '""') + '"';
+    } else {
+      return cell;
+    }
+  },
+
+  sanitizeFilename: function(name) {
+    return name
+      // Remove any chars not on whitelist
+      .replace(/[^\w \-\.]/g, '')
+      // Replace runs of whitespace with single space
+      .replace(/\s+/g, ' ')
+      // Trim leading and trailing whitespace
+      .replace(/^\s+|\s+$/g, '');
+  }
 
 };
 
