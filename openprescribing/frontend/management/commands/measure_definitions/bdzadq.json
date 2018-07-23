@@ -22,23 +22,27 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.bdz_adq r  ON concat(substr(p.bnf_code,0,9),substr(p.bnf_code,-2)) = concat(substr(r.bnf_code,0,9),substr(r.bnf_code,-2)) ",
   "numerator_where": [
-    "(p.bnf_code like '0401%'",
-	" AND p.bnf_code not like '0401010AD%')",
-	" AND p.bnf_code NOT LIKE '0401010AC%'",
-	" AND p.bnf_code NOT LIKE '0401020K0%AD'",
-	" AND p.bnf_code NOT LIKE '0401020K0%AE'",
-	" AND p.bnf_code NOT LIKE '0401020K0%BQ')"
+    "(",
+    " p.bnf_code LIKE '0401%'",
+    " AND p.bnf_code NOT LIKE '0401010AD%'",
+    " AND p.bnf_code NOT LIKE '0401010AC%'",
+    " AND p.bnf_code NOT LIKE '0401020K0%AD'",
+    " AND p.bnf_code NOT LIKE '0401020K0%AE'",
+    " AND p.bnf_code NOT LIKE '0401020K0%BQ'",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '0401%'",
-	" AND p.bnf_code not like '0401010AD%')",
-	" AND p.bnf_code NOT LIKE '0401010AC%'",
-	" AND p.bnf_code NOT LIKE '0401020K0%AD'",
-	" AND p.bnf_code NOT LIKE '0401020K0%AE'",
-	" AND p.bnf_code NOT LIKE '0401020K0%BQ')"
+    "(",
+    " p.bnf_code LIKE '0401%'",
+    " AND p.bnf_code NOT LIKE '0401010AD%'",
+    " AND p.bnf_code NOT LIKE '0401010AC%'",
+    " AND p.bnf_code NOT LIKE '0401020K0%AD'",
+    " AND p.bnf_code NOT LIKE '0401020K0%AE'",
+    " AND p.bnf_code NOT LIKE '0401020K0%BQ'",
+    ")"
   ]
 }
