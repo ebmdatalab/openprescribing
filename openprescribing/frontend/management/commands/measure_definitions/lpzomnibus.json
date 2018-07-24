@@ -8,7 +8,7 @@
   ],
   "why_it_matters": [
     "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a>.",
-    "This is the combined cost per 1000 patients for 18 of the 19 measures (excluding herbal medicines). "
+    "This is the combined cost per 1000 patients for 17 of the 18 measures (excluding herbal medicines). "
   ],
   "numerator_short": "cost (£)",
   "denominator_short": "1000 patients",
@@ -31,7 +31,7 @@
     "1 = 1 "
   ],
   "denominator_columns": [
-    "SUM(denominator)/18 AS denominator, "
+    "SUM(denominator)/17 AS denominator, "
   ],
   "denominator_from": "{measures}.practice_data_all_low_priority ",
   "denominator_where": [
