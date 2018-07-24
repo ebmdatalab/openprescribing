@@ -49,15 +49,6 @@ SELECT
   numerator,
   denominator
 FROM
-  {project}.{measures}.practice_data_lpglutenfree
-
-UNION ALL
-SELECT
-  TIMESTAMP(month) AS month,
-  practice_id AS practice,
-  numerator,
-  denominator
-FROM
   {project}.{measures}.practice_data_lphomeopathy
 
 UNION ALL
