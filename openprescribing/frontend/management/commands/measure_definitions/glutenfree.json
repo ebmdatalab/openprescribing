@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment - gluten free products",
+  "name": "Prescribing of gluten free products",
   "title": [
     "Gluten-free products: cost per 1000 patients"
   ],
@@ -17,8 +17,8 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
-    "cost",
-    "lowpriority"
+    "core",
+    "cost"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
