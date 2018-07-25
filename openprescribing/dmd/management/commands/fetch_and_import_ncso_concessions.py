@@ -181,7 +181,7 @@ class Command(BaseCommand):
             return previous_concession.vmpp_id
 
         ncso_name_raw = u'{} {}'.format(concession.drug, concession.pack_size)
-        ncso_name = self.regularise_ncso_name(ncso_name_raw)
+        ncso_name = regularise_ncso_name(ncso_name_raw)
 
         for vmpp in self.vmpps:
             vpmm_name = re.sub(' */ *', '/', vmpp['nm'].lower())
@@ -193,41 +193,42 @@ class Command(BaseCommand):
         logger.info('No match found')
         return None
 
-    def regularise_ncso_name(self, name):
-        # Some NCSO records have non-breaking spaces
-        name = name.replace(u'\xa0', '')
 
-        # Some NCSO records have multiple spaces
-        name = re.sub(' +', ' ', name)
+def regularise_ncso_name(name):
+    # Some NCSO records have non-breaking spaces
+    name = name.replace(u'\xa0', '')
 
-        # dm+d uses "microgram" or "micrograms", usually with these rules
-        name = name.replace('mcg ', 'microgram ')
-        name = name.replace('mcg/', 'micrograms/')
+    # Some NCSO records have multiple spaces
+    name = re.sub(' +', ' ', name)
 
-        # dm+d uses "microgram" rather than "0.X.mg"
-        name = name.replace('0.5mg', '500microgram')
-        name = name.replace('0.25mg', '250microgram')
+    # dm+d uses "microgram" or "micrograms", usually with these rules
+    name = name.replace('mcg ', 'microgram ')
+    name = name.replace('mcg/', 'micrograms/')
 
-        # dm+d uses "square cm"
-        name = name.replace('sq cm', 'square cm')
+    # dm+d uses "microgram" rather than "0.X.mg"
+    name = name.replace('0.5mg', '500microgram')
+    name = name.replace('0.25mg', '250microgram')
 
-        # dm+d records measured in mg/ml have a space before the final "ml"
-        # eg: Abacavir 20mg/ml oral solution sugar free 240 ml
-        name = re.sub(r'(\d)ml$', r'\1 ml', name)
+    # dm+d uses "square cm"
+    name = name.replace('sq cm', 'square cm')
 
-        # dm+d records have "gram$" not "g$"
-        # eg: Estriol 0.01% cream 80 gram
-        name = re.sub(r'(\d)g$', r'\1 gram', name)
+    # dm+d records measured in mg/ml have a space before the final "ml"
+    # eg: Abacavir 20mg/ml oral solution sugar free 240 ml
+    name = re.sub(r'(\d)ml$', r'\1 ml', name)
 
-        # Misc. commont replacements
-        name = name.replace('Oral Susp SF', 'oral suspension sugar free')
-        name = name.replace('gastro- resistant', 'gastro-resistant')
-        name = name.replace('/ml', '/1ml')
+    # dm+d records have "gram$" not "g$"
+    # eg: Estriol 0.01% cream 80 gram
+    name = re.sub(r'(\d)g$', r'\1 gram', name)
 
-        # Lowercase
-        name = name.lower()
+    # Misc. commont replacements
+    name = name.replace('Oral Susp SF', 'oral suspension sugar free')
+    name = name.replace('gastro- resistant', 'gastro-resistant')
+    name = name.replace('/ml', '/1ml')
 
-        # Remove spaces around slashes
-        name = re.sub(' */ *', '/', name)
+    # Lowercase
+    name = name.lower()
 
-        return name
+    # Remove spaces around slashes
+    name = re.sub(' */ *', '/', name)
+
+    return name
