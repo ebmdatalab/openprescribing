@@ -12,23 +12,8 @@
       "address4": null,
       "postcode": "M30 0NU",
       "location": "POINT (0.0 52.0)",
-      "setting": 4
-    }
-  },
-  {
-    "model": "frontend.practice",
-    "pk": "N84014",
-    "fields": {
-      "code": "N84014",
-      "ccg": "03Q",
-      "name": "AINSDALE VILLAGE SURGERY",
-      "address1": "THE SURGERY",
-      "address2": "2 LEAMINGTON RD AINSDALE",
-      "address3": "SOUTHPORT",
-      "address4": "MERSEYSIDE",
-      "postcode": "PR8 3LB",
-      "location": "POINT (1.0 51.5)",
-      "setting": 4
+      "setting": 4,
+      "status_code": "A"
     }
   },
   {
@@ -44,7 +29,59 @@
       "address4": "CORBY NORTHAMPTONSHIRE",
       "postcode": "NN18 0QP",
       "location": "POINT (1.5 51.5)",
-      "setting": -1
+      "setting": -1,
+      "status_code": "A"
+    }
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "K83622",
+    "fields": {
+      "code": "K83622",
+      "ccg": "03V",
+      "name": "GREAT OAKLEY MEDICAL CENTRE",
+      "address1": "1 BARTH CLOSE",
+      "address2": "GREAT OAKLEY",
+      "address3": "CORBY",
+      "address4": "NORTHAMPTONSHIRE",
+      "postcode": "NN18 8LU",
+      "location": "0101000020E6100000DE75D8070715E7BFC2794044353C4A40",
+      "setting": 4,
+      "status_code": "A"
+    }
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "N84014",
+    "fields": {
+      "code": "N84014",
+      "ccg": "03Q",
+      "name": "AINSDALE VILLAGE SURGERY",
+      "address1": "THE SURGERY",
+      "address2": "2 LEAMINGTON RD AINSDALE",
+      "address3": "SOUTHPORT",
+      "address4": "MERSEYSIDE",
+      "postcode": "PR8 3LB",
+      "location": "POINT (1.0 51.5)",
+      "setting": 4,
+      "status_code": "A"
+    }
+  },
+  {
+    "model": "frontend.practice",
+    "pk": "B82018",
+    "fields": {
+      "code": "B82018",
+      "ccg": "03Q",
+      "name": "ESCRICK SURGERY",
+      "address1": "THE ESCRICK SURGERY",
+      "address2": "ESCRICK",
+      "address3": "YORK",
+      "address4": "NORTH YORKSHIRE",
+      "postcode": "YO19 6LE",
+      "location": "0101000020E6100000A55456C370C3F0BF0872D7B69FF04A40",
+      "setting": 4,
+      "status_code": "A"
     }
   }
 ]

@@ -1,4 +1,36 @@
 ---
+version: 2
+checks:
+  argument-count:
+    config:
+      threshold: 6
+  complex-logic:
+    config:
+      threshold: 4
+  file-lines:
+    config:
+      threshold: 450
+  method-complexity:
+    config:
+      threshold: 6
+  method-count:
+    config:
+      threshold: 20
+  method-lines:
+    config:
+      threshold: 60
+  nested-control-flow:
+    config:
+      threshold: 4
+  return-statements:
+    config:
+      threshold: 4
+  similar-code:
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+  identical-code:
+    config:
+      threshold: # language-specific defaults. an override will affect all languages
 engines:
   pep8:
     enabled: true
@@ -16,7 +48,9 @@ engines:
         javascript:
   eslint:
     enabled: true
-    channel: "eslint-2"
+    channel: "eslint-4"
+    config:
+      config: .eslintrc
   fixme:
     enabled: true
   radon:
@@ -44,3 +78,24 @@ exclude_paths:
  - "openprescribing/frontend/migrations/*"
  - "openprescribing/openprescribing/settings/*"
  - "openprescribing/frontend/management/commands/grab_chart.js"
+checks:
+  argument-count:
+    enabled: false
+  complex-logic:
+    enabled: false
+  file-lines:
+    enabled: false
+  method-complexity:
+    enabled: false
+  method-count:
+    enabled: false
+  method-lines:
+    enabled: false
+  nested-control-flow:
+    enabled: false
+  return-statements:
+    enabled: false
+  similar-code:
+    enabled: false
+  identical-code:
+    enabled: false

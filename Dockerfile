@@ -6,7 +6,7 @@ RUN mkdir /code
 WORKDIR /code
 ADD requirements /tmp/requirements/
 RUN pip install -r /tmp/requirements/production.txt && rm -rf /tmp/requirements
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && apt-get install -y  nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y  nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1v5 && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir /npm
 ADD openprescribing/media/js /npm/
 RUN ls -l /npm/

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Drug tariff for {{ chart_title }}{% endblock %}
+{% block active_class %}tariff{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/select2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+{% if presentations %}
+  <h3>{{ chart_title }}</h3>
+{% else %}
+  <h3>Tariff and Concession prices</h3>
+
+  <p>
+    The Drug Tariff is the "NHS primary care price list" for thousands of the
+    most commonly-prescribed drugs, and is updated monthly. Sometimes medicines
+    go out-of-stock, and a "price concession" is given so that pharmacists having
+    to buy more expensive versions are not out of pocket.
+  </p>
+  <p>
+    Our data goes back to March 2010. Drug Tariff data
+    (<a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff">source</a>)
+    is updated as the latest month is released (usually three days before it is
+    active). Price concession data
+    (<a href="http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/">source</a>)
+    is updated daily!
+  </p>
+  <p>
+    Search to view a medicine's Drug Tariff price and category, and whether it
+    has had a price concession.
+  </p>
+{% endif %}
+
+<div id="no-data">
+  <p>
+    Start typing to search for tariff data about a particular generic presentation:
+  </p>
+</div>
+
+<form>
+  <div class="form-group">
+    <select class="tariff-selector form-control"
+            id="codes"
+            name="codes"
+            style="display: none; width: 100%"
+            multiple="multiple">
+        {% for p in products %}
+        <option value="{{ p.bnf_code }}" {% if p.bnf_code in bnf_codes %}selected{% endif %}>{{ p.name }}</option>
+        {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Update chart</button>
+</form>
+
+
+<div id="tariff" style="clear: both; display: none">
+
+
+<div id="chart" class="chart" style="height: 600px">
+<div class="status"></div>
+</div>
+</div>
+<hr>
+<a href="{% url 'tariff_api' %}?format=csv">Download complete tariff data</a>
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'config' %}
+<script>
+  var bnfCodes = "{{ bnf_codes|join:',' }}";
+  var baseUrl = config.apiHost + "{% url 'tariff_api' %}";
+  var chartTitle = "{{ chart_title }}";
+</script>
+
+{% conditional_js 'tariff-charts' %}
+{% endblock %}

@@ -100,6 +100,11 @@ class CUSUM(object):
                 'alert_percentile_neg': self.neg_alerts}
 
     def get_last_alert_info(self):
+        """If the current (most recent) month includes an alert, work out when
+        that alert period started, and return numbers that approximate
+        to the size of the change across that period.
+
+        """
         if (any(self.alert_indices) and
            self.alert_indices[-1] == len(self.data) - 1):
             end_index = start_index = self.alert_indices[-1]
@@ -110,7 +115,7 @@ class CUSUM(object):
                     break
             duration = (end_index - start_index) + 1
             return {
-                'from': self.data[start_index-1],
+                'from': self.target_means[start_index-1],
                 'to': self.data[end_index],
                 'period': duration}
         else:
@@ -541,10 +546,10 @@ def getIntroText(stats, org_type):
                     "potential cost savings. " % (
                         apnumber(possible_savings),
                         possible_savings > 1 and 's' or ''))
-        msg += ('Note that there can sometimes be good reasons why one CCG is '
+        msg += ('Note that there can sometimes be good reasons why one %s is '
                 'an outlier, and you should interpret the data thoughtfully: '
-                'these are <a href="/faq/#measureinterpret">measures, not '
-                'indicators</a>.')
+                'these are <a href="https://openprescribing.net/faq/#measureinterpret">'
+                'measures, not indicators</a>.' % org_type)
     else:
         msg = ("We've no new information about this %s this month! "
                "Its performance is not an outlier on any "

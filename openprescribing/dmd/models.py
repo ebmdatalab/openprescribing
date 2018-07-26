@@ -85,8 +85,8 @@ class DMDProduct(models.Model):
     '''
     dmdid = models.BigIntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
-    vpid = models.BigIntegerField(unique=True, db_index=True)
-    name = models.CharField(max_length=40)
+    vpid = models.BigIntegerField(db_index=True)
+    name = models.CharField(max_length=400)
     full_name = models.TextField(null=True)
     # requiring additional monitoring in accordance with the European
     # Medicines Agency Additional Monitoring Scheme
@@ -152,3 +152,63 @@ class DMDProduct(models.Model):
             dmdid=self.vpid, concept_class=1).exclude(vpid=self.dmdid)
         assert len(vmp) < 2, "An AMP should only ever have one VMP"
         return vmp[0]
+
+
+class DMDVmpp(models.Model):
+    vppid = models.BigIntegerField(primary_key=True)
+    invalid = models.BigIntegerField(blank=True, null=True)
+    nm = models.TextField(blank=True, null=True)
+    abbrevnm = models.TextField(blank=True, null=True)
+    vpid = models.BigIntegerField(blank=True, null=True)
+    qtyval = models.FloatField(blank=True, null=True)
+    qty_uomcd = models.BigIntegerField(blank=True, null=True)
+    combpackcd = models.BigIntegerField(blank=True, null=True)
+
+
+    class Meta:
+        db_table = 'dmd_vmpp'
+
+    def __str__(self):
+        return self.nm
+
+
+class NCSOConcession(models.Model):
+    vmpp = models.ForeignKey(DMDVmpp, null=True)
+    date = models.DateField(db_index=True)
+    drug = models.CharField(max_length=400)
+    pack_size = models.CharField(max_length=40)
+    price_concession_pence = models.IntegerField()
+
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
+    class Manager(models.Manager):
+        def unreconciled(self):
+            return self.filter(vmpp__isnull=True)
+
+    objects = Manager()
+
+
+class TariffPrice(models.Model):
+    """Price
+    """
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey(DMDVmpp)
+    product = models.ForeignKey(DMDProduct)
+    # 1: Category A
+    # 3: Category C
+    # 11: Category M
+    tariff_category = models.ForeignKey(TariffCategory)
+    price_pence = models.IntegerField()
+
+    @property
+    def concession(self):
+        try:
+            concession = NCSOConcession.objects.get(
+                date=self.date, vmpp=self.vmpp)
+        except NCSOConcession.DoesNotExist:
+            concession = None
+        return concession
+
+    class Meta:
+        unique_together = ('date', 'vmpp',)

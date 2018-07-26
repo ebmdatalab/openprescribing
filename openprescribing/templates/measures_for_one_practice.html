@@ -59,7 +59,9 @@
 {% include '_get_in_touch.html' %}
 
 <small id="location">Practice locations based on <a href="http://systems.hscic.gov.uk/data/ods/datadownloads/onsdata">data from HSCIC/ONS</a>. Contains OS data © Crown copyright and database right 2016, Royal Mail data © Royal Mail copyright and database right 2016, National Statistics data © Crown copyright and database right 2016.</small>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 var measureData = {
     'tags': '{{ request.GET.tags|default:"core" }}',
@@ -70,5 +72,4 @@ var measureData = {
 };
 </script>
 {% conditional_js 'measures' %}
-
 {% endblock %}

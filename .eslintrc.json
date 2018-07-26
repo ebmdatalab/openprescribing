@@ -1,0 +1,13 @@
+{
+  "extends": "eslint-config-google",
+  "env": {
+    "node": true,
+    "commonjs": true,
+    "jquery": true,
+    "browser": true,
+    "mocha": true
+  },
+  "rules": {
+    "no-var": 0
+  }
+}

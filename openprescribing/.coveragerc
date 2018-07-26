@@ -1,0 +1,8 @@
+[run]
+branch = True
+omit = */tests/*,*/migrations/*
+source = .
+
+[report]
+show_missing = True
+

@@ -1,3 +1,4 @@
+import functools
 from lxml import html
 from requests.exceptions import HTTPError
 from urllib import urlencode
@@ -28,9 +29,9 @@ from allauth.account import app_settings
 from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
-from common.utils import valid_date
 from common.utils import get_env_setting
-
+from common.utils import parse_date
+from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
@@ -44,6 +45,21 @@ from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
 
 from mailchimp3 import MailChimp
+
+
+class BadRequestError(Exception):
+    pass
+
+
+def handle_bad_request(view_function):
+    @functools.wraps(view_function)
+    def wrapper(request, *args, **kwargs):
+        try:
+            return view_function(request, *args, **kwargs)
+        except BadRequestError as e:
+            context = {'error_code': 400, 'reason': unicode(e)}
+            return render(request, '500.html', context, status=400)
+    return wrapper
 
 
 ##################################################
@@ -129,12 +145,9 @@ def chemical(request, bnf_code):
 ##################################################
 # Price per unit
 ##################################################
+@handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = request.GET.get('date', None)
-    if date:
-        date = valid_date(date)
-    else:
-        date = ImportLog.objects.latest_in_category('ppu').current_at
+    date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     product = presentation.dmd_product
     if len(entity_code) == 3:
@@ -195,12 +208,16 @@ def all_practices(request):
 def _specified_or_last_date(request, category):
     date = request.GET.get('date', None)
     if date:
-        date = valid_date(date)
+        try:
+            date = parse_date(date)
+        except ValueError:
+            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
+@handle_bad_request
 def practice_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     practice = get_object_or_404(Practice, code=code)
@@ -227,6 +244,7 @@ def all_ccgs(request):
     return render(request, 'all_ccgs.html', context)
 
 
+@handle_bad_request
 def ccg_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     ccg = get_object_or_404(PCT, code=code)
@@ -645,6 +663,30 @@ def gdoc_view(request, doc_id):
         'content': content
     }
     return render(request, 'gdoc.html', context)
+
+
+def tariff(request, code=None):
+    products = DMDProduct.objects.filter(
+        tariffprice__isnull=False,
+        bnf_code__isnull=False
+    ).distinct().order_by('name')
+    codes = []
+    if code:
+        codes = [code]
+    if 'codes' in request.GET:
+        codes.extend(request.GET.getlist('codes'))
+    if codes:
+        presentations = Presentation.objects.filter(bnf_code__in=codes)
+    else:
+        presentations = []
+    context = {
+        'bnf_codes': codes,
+        'presentations': presentations,
+        'products': products,
+        'chart_title': 'Tariff prices for ' + ', '.join(
+            [x.product_name for x in presentations])
+    }
+    return render(request, 'tariff.html', context)
 
 
 ##################################################

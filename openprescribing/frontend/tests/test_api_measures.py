@@ -13,7 +13,7 @@ def _get_test_measure():
     return {
         "is_cost_based": True,
         "numerator_columns": ["SUM(quantity) AS numerator, "],
-        "numerator_from": "hscic.normalised_prescribing_standard",
+        "numerator_from": "{hscic}.normalised_prescribing_standard",
         "numerator_where": ["(bnf_code LIKE '0205%')"],
         "denominator_columns": ["SUM(quantity) AS denominator"],
         "denominator_from": "",
@@ -126,6 +126,25 @@ class TestAPIMeasureViews(TestCase):
              u'cost': 1.0,
              u'quantity': 100.0}])
 
+    def test_api_measure_numerators_by_practice_3_month_window(self):
+        url = '/api/1.0/measure_numerators_by_org/'
+        url += '?measure=cerazette&org=N84014&format=json'
+        from frontend.models import ImportLog
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2015-10-01',  # a month after the fixture measure data
+            filename='foo'
+        )
+        data = self._get_json(url)
+        self.assertEqual(data, [
+            {u'total_items': 1,
+             u'bnf_code': u'0205010F0AAAAAA',
+             u'presentation_name': u'Thing 2',
+             u'numerator': 100.0,
+             u'entity': u'N84014',
+             u'cost': 1.0,
+             u'quantity': 100.0}])
+
     def test_api_measure_numerators_bnf_name_in_condition(self):
         m = Measure.objects.first()
         m.numerator_where = "bnf_name like 'ZZZ%'"
@@ -146,8 +165,8 @@ class TestAPIMeasureViews(TestCase):
 
         m = Measure.objects.first()
         m.numerator_from = (
-            "[ebmdatalab:hscic.normalised_prescribing_standard] p "
-            "LEFT JOIN [ebmdatalab:hscic.presentation]")
+            "{hscic}.normalised_prescribing_standard p "
+            "LEFT JOIN {hscic}.presentation")
         m.save()
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'
@@ -168,6 +187,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['10'], '63588.51')
         self.assertEqual("%.2f" % d['cost_savings']['50'], '58658.82')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '11731.76')
+        self.assertEqual(d['pct_id'], '02Q')
+        self.assertEqual(d['pct_name'], 'NHS BASSETLAW CCG')
 
     def test_api_two_ccgs_one_measure(self):
         url = '/api/1.0/measure_by_ccg/'
@@ -223,6 +244,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d['cost_savings']['10'], '485.58')
         self.assertEqual("%.2f" % d['cost_savings']['50'], '-264.71')
         self.assertEqual("%.2f" % d['cost_savings']['90'], '-7218.00')
+        self.assertEqual(d['practice_id'], 'C84001')
+        self.assertEqual(d['practice_name'], 'LARWOOD SURGERY')
 
         # Practice with only Cerazette prescribing.
         url = '/api/1.0/measure_by_practice/'

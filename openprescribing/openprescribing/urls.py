@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
+    url(r'^privacy/$', TemplateView.as_view(template_name='privacy.html'),
+        name="privacy"),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
         name="contact"),
     url(r'^how-to-use/$',
@@ -98,6 +100,10 @@ urlpatterns = [
     url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
     url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
         name='bnf_section'),
+    url(r'^tariff/$', frontend_views.tariff,
+        name='tariff_index'),
+    url(r'^tariff/(?P<code>[A-Z\d]+)/$', frontend_views.tariff,
+        name='tariff'),
     url(r'^api/1.0/', include('api.urls')),
 
     url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',
@@ -138,4 +144,19 @@ urlpatterns = [
     # old page redirects
     url(r'^caution/$', RedirectView.as_view(
         pattern_name='faq', permanent=True)),
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+        RedirectView.as_view(
+            permanent=True, pattern_name='measures_for_one_practice'),
+        name='practice'),
+
+    # Wrong URL got published
+    url(r'^measures/$', RedirectView.as_view(
+        pattern_name='all_measures', permanent=True)),
+
+    # Temporary, for tracking letter mailouts. Should change to
+    # redirect post March 2018
+    url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',
+        frontend_views.measures_for_one_ccg,
+        name='measures_for_one_ccg_tracking'),
+
 ]

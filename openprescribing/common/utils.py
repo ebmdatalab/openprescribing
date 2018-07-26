@@ -4,11 +4,9 @@ from datetime import datetime
 from os import environ
 from titlecase import titlecase
 import argparse
-import hashlib
 import html2text
 import logging
 import re
-import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
@@ -85,8 +83,10 @@ def constraint_and_index_reconstructor(table_name):
         # Record index and constraint definitions
         indexes = {}
         constraints = {}
+        cluster = None
 
-        # Build lists of current constraints and indexes
+        # Build lists of current constraints and indexes, and any
+        # existing cluster
         cursor.execute(
             "SELECT conname, pg_get_constraintdef(c.oid) "
             "FROM pg_constraint c "
@@ -106,6 +106,22 @@ def constraint_and_index_reconstructor(table_name):
                 # UNIQUE constraints actuall create indexes, so
                 # we mustn't attempt to handle them twice
                 indexes[name] = definition
+        cursor.execute("""
+            SELECT
+              i.relname AS index_for_cluster
+            FROM
+              pg_index AS idx
+            JOIN
+              pg_class AS i
+            ON
+              i.oid = idx.indexrelid
+            WHERE
+              idx.indisclustered
+              AND idx.indrelid::regclass = '%s'::regclass;
+        """ % table_name)
+        row = cursor.fetchone()
+        if row:
+            cluster = row[0]
 
         # drop foreign key constraints
         for name in constraints.keys():
@@ -136,40 +152,21 @@ def constraint_and_index_reconstructor(table_name):
                    "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
             cursor.execute(cmd)
             logger.info("Recreated constraint %s" % name)
-        sql = """
-        SELECT
-          i.relname AS index_for_cluster
-        FROM
-          pg_index AS idx
-        JOIN
-          pg_class AS i
-        ON
-          i.oid = idx.indexrelid
-        WHERE
-          idx.indisclustered
-          AND idx.indrelid::regclass = '%s'::regclass;
-        """
-        cursor.execute(sql % table_name)
-        if cursor.fetchone():
-            cursor.execute("CLUSTER %s" % table_name)
+        if cluster:
+            cursor.execute("CLUSTER %s USING %s" % (table_name, cluster))
+            cursor.execute("ANALYZE %s" % table_name)
             logger.info("CLUSTERED %s" % table_name)
 
 
-def google_user_id(user):
-    if user:
-        h = hashlib.md5()
-        h.update(str(user.id))
-        client_id = str(uuid.UUID(h.hexdigest()))
-    else:
-        client_id = None
-    return client_id
+def parse_date(s):
+    return datetime.strptime(s, "%Y-%m-%d")
 
 
 def valid_date(s):
     """Validate ISO-formatted dates. For use in argparse arguments.
     """
     try:
-        return datetime.strptime(s, "%Y-%m-%d")
+        return parse_date(s)
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
         raise argparse.ArgumentTypeError(msg)

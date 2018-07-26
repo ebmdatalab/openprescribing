@@ -231,6 +231,25 @@ describe('Utils', function () {
       expect(combinedData[2]['star_pu.oral_antibacterials_item']).to.equal(0);
       expect(combinedData[2].ratio_items).to.equal(null);
     });
+    it('should not multiply Y by 1,000 for "nothing" denominator', function () {
+      var xData = [
+        { 'nothing': 1, 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
+      ];
+      var yData = [
+        { 'actual_cost': '480', 'items': '15', 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},
+      ];
+      var opts = {
+        chartValues: {
+          y: 'y_actual_cost',
+          x: 'nothing',
+          x_val: 'nothing',
+          ratio: 'nothing'
+        }
+      };
+      var combinedData = utils.combineXAndYDatasets(xData, yData, opts);
+      expect(combinedData[0].y_actual_cost).to.equal(480);
+      expect(combinedData[0].ratio_actual_cost).to.equal(480);
+    });
     it('should exclude rows with non-standard settings', function () {
       var xData = [
         { 'star_pu': {'oral_antibacterials_item': '12'}, 'row_id': 'O3Q', 'row_name': 'NHS Corby', 'date': '2014-03-01'},

@@ -41,5 +41,5 @@ Download CSV:
 var filename = config.apiHost + "{% url 'total_spending' %}?format=json&code={{ page_id }}";
 var pageType = 'chemical';
 </script>
-{% conditional_js 'bar-chart' %}
+{% conditional_js 'bar-charts' %}
 {% endblock %}

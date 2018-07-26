@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load template_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +35,6 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
       var params = {};
       params = setParamsFromQueryString(params, ['expId', 'expVar']);
-      {% if GOOGLE_USER_ID %}
-        params['userId'] = '{{ GOOGLE_USER_ID }}';
-      {% endif %}
       ga('create', '{{ GOOGLE_TRACKING_ID }}', 'auto', params);
       {% if GOOGLE_OPTIMIZE_CONTAINER_ID %}
         ga('require', '{{ GOOGLE_OPTIMIZE_CONTAINER_ID }}');
@@ -53,17 +51,6 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
     <title>{% block title %}{% endblock %} | OpenPrescribing</title>
     <script src="https://use.typekit.net/hkz3kmo.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
-
-    {% if not debug %}
-    <script>
-    (function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
-    c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
-    c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
-    _.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
-    (window,document,"script","522f5e54238d18034c0017fc");
-    </script>
-    {% endif %}
-
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc=" crossorigin="anonymous" />
     <link href="{% static 'css/index.css' %}?q=1234567" rel="stylesheet">
@@ -106,6 +93,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
               <ul class="dropdown-menu">
                 <li><a href="{% url 'all_bnf' %}">Trends for BNF sections</a></li>
                 <li><a href="{% url 'all_chemicals' %}">Trends for chemicals</a></li>
+                <li><a href="{% url 'tariff_index' %}">Trends for Drug Tariff and Concessions</a></li>
                 <li><a href="{% url 'long_term_trends' %}">Long term trends analysis</a></li>
               </ul>
             </li>
@@ -117,6 +105,8 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
                 <li class="active_faq"><a href="{% url 'faq' %}">FAQ</a></li>
                 <li class="active_api"><a href="{% url 'api' %}">For coders</a></li>
                 <li class="active_about"><a href="{% url 'about' %}">About</a></li>
+                <li><a href="https://ebmdatalab.net/category/openprescribing/">Blog <span class="glyphicon glyphicon-new-window small"></span></a></li>
+                <li class="active_privacy"><a href="{% url 'privacy' %}">Privacy Policy</a></li>
               </ul>
             </li>
 
@@ -165,6 +155,9 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
       </div>
     </footer>
 
+
+    {% conditional_js 'common' %}
+    {% conditional_js 'global' %}
 
     {% block extra_js %}{% endblock extra_js %}
 

@@ -2,12 +2,16 @@ from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env, shell_env
 from fabric.context_managers import cd
+from fabric.contrib.files import exists
 
 from datetime import datetime
 import json
 import os
 
+import dotenv
 import requests
+
+dotenv.read_dotenv('environment')
 
 
 env.hosts = ['web2.openprescribing.net']
@@ -234,23 +238,14 @@ def list_cloudflare_zones():
     print json.dumps(zones, indent=2)
 
 
-def clear_cloudflare(purge_all=False):
+def clear_cloudflare():
     url = 'https://api.cloudflare.com/client/v4/zones/%s'
     headers = {
         "Content-Type": "application/json",
         "X-Auth-Key": os.environ['CF_API_KEY'],
         "X-Auth-Email": os.environ['CF_API_EMAIL']
     }
-    if purge_all:
-        data = {'purge_everything': True}
-    else:
-        # XXX need to think about these. If we're looking at files
-        # that have changed since the deployment started, do we need
-        # to bother with files that have changed according to git?
-        changed_files_from_git = env.changed_files.copy()
-        data = {'files': purge_urls(changed_files_from_git,
-                                    find_changed_static_files())}
-
+    data = {'purge_everything': True}
     print "Purging from Cloudflare:"
     print data
     result = json.loads(
@@ -262,6 +257,12 @@ def clear_cloudflare(purge_all=False):
     else:
         warn("Cloudflare clearing failed: %s" %
              json.dumps(result, indent=2))
+
+
+def setup_cron():
+    crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
+    if exists(crontab_path):
+        sudo('cp %s /etc/cron.d/' % crontab_path)
 
 
 @task
@@ -286,5 +287,6 @@ def deploy(environment, force_build=False, branch='master'):
         deploy_static()
         run_migrations()
         graceful_reload()
-        clear_cloudflare(purge_all=True)
+        clear_cloudflare()
+        setup_cron()
         log_deploy()

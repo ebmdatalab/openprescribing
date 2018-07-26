@@ -1,0 +1,13 @@
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: v1.1.1
+    hooks:
+    -   id: check-case-conflict
+    -   id: check-json
+    -   id: debug-statements
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: git://github.com/pre-commit/mirrors-yapf
+    sha: v0.20.0
+    hooks:
+    -   id: yapf

@@ -56,7 +56,9 @@
 <hr/>
 
 {% include '_get_in_touch.html' %}
+{% endblock %}
 
+{% block extra_js %}
 <script>
  var measureData = {
     'tags': '{{ request.GET.tags|default:"core" }}',

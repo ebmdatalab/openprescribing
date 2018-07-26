@@ -7,7 +7,8 @@ import view_utils as utils
 STATS_COLUMN_WHITELIST = (
     'total_list_size',
     'astro_pu_items',
-    'astro_pu_cost'
+    'astro_pu_cost',
+    'nothing'
 )
 
 
@@ -25,7 +26,6 @@ def org_details(request, format=None):
     keys = utils.param_to_list(request.query_params.get('keys', []))
     orgs = utils.param_to_list(request.query_params.get('org', []))
     cols = []
-
     if org_type == 'practice':
         cols, query = _construct_cols(keys, True)
         query += " FROM frontend_practicestatistics pr "
@@ -108,7 +108,9 @@ def _query_and_cols_for(keys, json_builder_only=False):
     cols = []
     json_object_keys = []
     for k in keys:
-        if k.startswith('star_pu.'):
+        if k == 'nothing':
+            query += '1 as nothing, '
+        elif k.startswith('star_pu.'):
             star_pu_type = k[len('star_pu.'):]
             json_object_keys.append(star_pu_type)
             cols += [star_pu_type, star_pu_type]

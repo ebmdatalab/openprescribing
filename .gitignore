@@ -1,12 +1,16 @@
+environment
+google-credentials.json
 openprescribing/data/raw_data
 openprescribing/media/js/archive
 openprescribing/media/js/node_modules
 openprescribing/static/js/*js
 openprescribing/static/css/index.css
 openprescribing/assets
+openprescribing/docs/*.svg
 analysis/
-docs/
 cache-warming/
+openprescribing/pipeline/e2e-test-data/data
+openprescribing/pipeline/e2e-test-data/log.json
 
 # System files
 *.py[co]
@@ -32,3 +36,5 @@ tramp
 Thumbs.db
 Desktop.ini
 Icon?
+.coverage
+htmlcov

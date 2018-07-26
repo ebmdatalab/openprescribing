@@ -17,10 +17,10 @@
       "is_cost_based": true,
       "low_is_good": false,
       "numerator_columns": "SUM(quantity) AS numerator, ",
-      "numerator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+      "numerator_from": "{hscic}.normalised_prescribing_standard ",
       "numerator_where": "(bnf_code LIKE '0703021Q0BB%%')  ",
       "denominator_columns": "SUM(quantity) AS denominator, ",
-      "denominator_from": "[ebmdatalab:hscic.normalised_prescribing_standard] ",
+      "denominator_from": "{hscic}.normalised_prescribing_standard ",
       "denominator_where": "(bnf_code LIKE '0703021Q0%%')  "
     }
   }

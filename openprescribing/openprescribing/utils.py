@@ -18,3 +18,7 @@ def find_files(path):
         for filename in filenames:
             paths.append(os.path.join(dirpath, filename))
     return paths
+
+
+def get_input():
+    return raw_input('> ')

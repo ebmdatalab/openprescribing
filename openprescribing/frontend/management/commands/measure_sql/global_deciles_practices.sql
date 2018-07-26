@@ -15,19 +15,32 @@ SELECT
 FROM (
   SELECT
     *,
-    PERCENTILE_CONT(0.1) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_10th,
-    PERCENTILE_CONT(0.2) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_20th,
-    PERCENTILE_CONT(0.3) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_30th,
-    PERCENTILE_CONT(0.4) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_40th,
-    PERCENTILE_CONT(0.5) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_50th,
-    PERCENTILE_CONT(0.6) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_60th,
-    PERCENTILE_CONT(0.7) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_70th,
-    PERCENTILE_CONT(0.8) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_80th,
-    PERCENTILE_CONT(0.9) OVER (PARTITION BY month ORDER BY {value_var} ASC) AS p_90th
-  FROM {from_table}
-  WHERE {value_var} IS NOT NULL AND NOT IS_NAN({value_var})) a,
-  (SELECT
+    PERCENTILE_CONT(calc_value, 0.1) OVER (PARTITION BY month) AS p_10th,
+    PERCENTILE_CONT(calc_value, 0.2) OVER (PARTITION BY month) AS p_20th,
+    PERCENTILE_CONT(calc_value, 0.3) OVER (PARTITION BY month) AS p_30th,
+    PERCENTILE_CONT(calc_value, 0.4) OVER (PARTITION BY month) AS p_40th,
+    PERCENTILE_CONT(calc_value, 0.5) OVER (PARTITION BY month) AS p_50th,
+    PERCENTILE_CONT(calc_value, 0.6) OVER (PARTITION BY month) AS p_60th,
+    PERCENTILE_CONT(calc_value, 0.7) OVER (PARTITION BY month) AS p_70th,
+    PERCENTILE_CONT(calc_value, 0.8) OVER (PARTITION BY month) AS p_80th,
+    PERCENTILE_CONT(calc_value, 0.9) OVER (PARTITION BY month) AS p_90th
+  FROM {measures}.practice_data_{measure_id}
+  WHERE calc_value IS NOT NULL AND NOT IS_NAN(calc_value)
+
+  UNION ALL
+
+  SELECT
     *,
-  FROM {from_table}
-  WHERE {value_var} IS NULL OR IS_NAN({value_var})) b
-  GROUP BY month
+    NULL AS p_10th,
+    NULL AS p_20th,
+    NULL AS p_30th,
+    NULL AS p_40th,
+    NULL AS p_50th,
+    NULL AS p_60th,
+    NULL AS p_70th,
+    NULL AS p_80th,
+    NULL AS p_90th
+  FROM {measures}.practice_data_{measure_id}
+  WHERE calc_value IS NULL OR IS_NAN(calc_value)
+)
+GROUP BY month

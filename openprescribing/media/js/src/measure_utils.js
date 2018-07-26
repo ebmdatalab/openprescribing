@@ -1,5 +1,4 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
@@ -72,7 +71,7 @@ var utils = {
     return {
       globalCentiles: globalCentiles,
       globalYMax: globalYMax,
-      globalYMin: globalYMin
+      globalYMin: globalYMin,
     };
   },
 
@@ -142,7 +141,7 @@ var utils = {
           denominatorShort: data.denominator_short,
           data: [d],
           isCostBased: data.is_cost_based,
-          isPercentage: data.is_percentage
+          isPercentage: data.is_percentage,
         };
       }
     });
@@ -207,7 +206,7 @@ var utils = {
       potentialSavings50th: 0,
       potentialSavings10th: 0,
       orgId: options.orgId,
-      measureId: options.measure
+      measureId: options.measure,
     };
     if (orderedData.length) {
       _.each(orderedData, function(d) {
@@ -234,7 +233,7 @@ var utils = {
         if (options.rollUpBy === 'measure_id') {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practice " : "CCG ";
+            'practice ' : 'CCG ';
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
             humanize.numberFormat(perf.potentialSavings50th, 2) +
@@ -245,24 +244,24 @@ var utils = {
         } else {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practices " : "CCGs ";
+            'practices ' : 'CCGs ';
           perf.costSavings += 'had prescribed at the median ratio ' +
             'or better, then ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "this CCG " : "NHS England ";
+            'this CCG ' : 'NHS England ';
           perf.costSavings += 'would have spent £' +
             humanize.numberFormat(perf.potentialSavings50th, 2) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practices " : "CCGs ";
+            'practices ' : 'CCGs ';
           perf.costSavings += 'were already prescribing ' +
             'at this level or better, so we think it ought to be achievable.)';
         }
       }
     } else {
-      perf.performanceDescription = "This organisation hasn't " +
-        "prescribed on any of these measures.";
+      perf.performanceDescription = 'This organisation hasn\'t ' +
+        'prescribed on any of these measures.';
     }
     return perf;
   },
@@ -423,7 +422,7 @@ var utils = {
       tagsFocus: d.tagsFocus,
       tagsFocusUrl: tagsFocusUrl,
       measureForAllPracticesUrl: measureForAllPracticesUrl,
-      chartExplanation: chartExplanation
+      chartExplanation: chartExplanation,
     };
   },
 
@@ -438,8 +437,8 @@ var utils = {
         data: d.data,
         color: 'red',
         marker: {
-          radius: 2
-        }
+          radius: 2,
+        },
       }];
       _.each(_.keys(d.globalCentiles), function(k) {
         var e = {
@@ -450,8 +449,8 @@ var utils = {
           color: 'blue',
           lineWidth: 1,
           marker: {
-            enabled: false
-          }
+            enabled: false,
+          },
         };
         // Distinguish the median visually.
         if (k === '50') {
@@ -491,42 +490,49 @@ var utils = {
     var yAxisLabel = (isPercentageMeasure) ? '%' : 'Measure';
     chOptions.yAxis = {
       title: {
-        text: yAxisLabel
+        text: yAxisLabel,
       },
       max: ymax,
         // If ymin is zero, Highcharts will sometimes pick a negative value
         // because it prefers that formatting. Force zero as the lowest value.
-      min: _.max([0, ymin])
+      min: _.max([0, ymin]),
     };
     if (d.lowIsGood === false) {
       chOptions.yAxis.reversed = true;
     }
     chOptions.tooltip = {
       formatter: function() {
+        if (this.series.options.isNationalSeries) {
+          return false;
+        }
         var num = humanize.numberFormat(this.point.numerator, 0);
-        var denom = humanize.numberFormat(this.point.denominator, 0);
+        var denom;
         var percentile = humanize.numberFormat(this.point.percentile, 0);
         var str = '';
         str += '<b>' + this.series.name;
         str += ' in ' + humanize.date('M Y', new Date(this.x));
         str += '</b><br/>';
-        if (!this.series.options.isNationalSeries) {
-          str += d.numeratorShort + ': ' + num;
-          str += '<br/>';
+        str += d.numeratorShort + ': ' + num;
+        str += '<br/>';
+        if (d.denominatorShort == '1000 patients') {
+          // Treat measures which are per 1000 patients a bit differently.
+          // See https://github.com/ebmdatalab/openprescribing/issues/436.
+          denom = humanize.numberFormat(1000 * this.point.denominator, 0);
+          str += 'Patients: ' + denom;
+        } else {
+          denom = humanize.numberFormat(this.point.denominator, 0);
           str += d.denominatorShort + ': ' + denom;
-          str += '<br/>';
         }
+        str += '<br/>';
         str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
         str += (isPercentageMeasure) ? '%' : '';
-        if (!this.series.options.isNationalSeries) {
-          str += ' (' + humanize.ordinal(percentile);
-          str += ' percentile)';
-        }
+        str += ' (' + humanize.ordinal(percentile);
+        str += ' percentile)';
         return str;
-      }
+      },
     };
     return chOptions;
-  }
+  },
 
 };
 

@@ -16,11 +16,13 @@ var formatters = {
                                                     options.denom,
                                                     f.friendlyDenominator);
     f.chartTitle = this.constructChartTitle(options.activeOption,
+                                            options.denom,
                                                 f.friendlyNumerator,
                                                 f.friendlyDenominator,
                                                 f.friendlyOrgs);
     f.chartSubTitle = this.constructChartSubTitle(options.activeMonth);
     f.yAxisTitle = this.constructYAxisTitle(options.activeOption,
+                                            options.denom,
                                             f.friendlyNumerator,
                                             f.fullDenominator);
     f.filename = this.constructFilename(options.activeOption,
@@ -38,7 +40,9 @@ var formatters = {
       var is_practices = (org == 'practice') ? true : false;
       if (orgIds.length > 0) {
         str = this._getStringForIds(orgIds, is_practices);
-        if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
+        if (_.any(_.map(orgIds, function(d) {
+ return d.id.length > 3;
+}))) {
           str += ' <br/>and other ' + org + 's';
           str += (org === 'practice') ? ' in CCG' : '';
         }
@@ -54,7 +58,7 @@ var formatters = {
     if (numIds.length > 0) {
       str += this._getStringForIds(numIds, false);
     } else {
-      str += "all prescribing";
+      str += 'all prescribing';
     }
     return str;
   },
@@ -65,13 +69,13 @@ var formatters = {
       str = 'patients on list';
     } else if (denom === 'astro_pu_cost') {
       str = 'ASTRO-PUs';
-    } else if (denom === "star_pu.oral_antibacterials_item") {
+    } else if (denom === 'star_pu.oral_antibacterials_item') {
       str = 'STAR-PUs for oral antibiotics';
     } else {
       if (denomIds.length > 0) {
         str = this._getStringForIds(denomIds, false);
       } else {
-        str = "all prescribing";
+        str = 'all prescribing';
       }
     }
     return str;
@@ -93,17 +97,21 @@ var formatters = {
     if (denom === 'chemical') {
       str = (activeOption === 'items') ? '1,000 items for ' : '£1,000 spend on ';
       str += denomStr;
+    } else if (denom == 'nothing') {
+      str = '';
     } else {
       str = ' 1,000 ' + denomStr;
     }
     return str;
   },
 
-  constructChartTitle: function(activeOption, numStr, denomStr, orgStr) {
+  constructChartTitle: function(activeOption, denom, numStr, denomStr, orgStr) {
     var chartTitle = (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     chartTitle += numStr;
     chartTitle += (chartTitle.length > 40) ? '<br/>' : '';
-    chartTitle += ' vs ' + denomStr + '<br/>';
+    if (denom !== 'nothing') {
+      chartTitle += ' vs ' + denomStr + '<br/>';
+    }
     chartTitle += ' by ' + orgStr;
     return chartTitle;
   },
@@ -115,10 +123,12 @@ var formatters = {
     return subTitle;
   },
 
-  constructYAxisTitle: function(activeOption, friendlyNumerator, fullDenominator) {
+  constructYAxisTitle: function(activeOption, denom, friendlyNumerator, fullDenominator) {
     var axisTitle = (activeOption == 'items') ? 'Items for ' : 'Spend on ';
-    axisTitle += friendlyNumerator + '<br/>';
-    axisTitle += ' per ' + fullDenominator;
+    axisTitle += friendlyNumerator;
+    if (denom !== 'nothing') {
+      axisTitle += '<br/> per ' + fullDenominator;
+    }
     return axisTitle;
   },
 
@@ -141,31 +151,33 @@ var formatters = {
       date = (options.org == 'practice') ? ' since August 2010' : ' since April 2013';
     }
     tt += (series_name !== 'Series 1') ?
-                '<b>' + series_name + "</b><br/>" : '';
+                '<b>' + series_name + '</b><br/>' : '';
 
     tt += (activeOption == 'items') ? 'Items for ' : 'Spend on ';
     tt += options.friendly.friendlyNumerator;
     tt += ' in ' + date + ': ';
     tt += (force_items || options.activeOption === 'items') ? '' : '£';
     tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_y, numDecimals) : original_y;
-    tt += '<br/>';
 
-    p = options.friendly.partialDenominator.charAt(0).toUpperCase();
-    p += options.friendly.partialDenominator.substring(1);
-    tt += p + ' in ' + date + ': ';
-    if (options.activeOption !== 'items') {
-      tt += (!force_items && options.denom === 'chemical') ? '£' : '';
-    }
-    tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
-    tt += '<br/>';
+    if (options.denom !== 'nothing') {
+      tt += '<br/>';
 
-    tt += options.friendly.yAxisTitle.replace('<br/>', "") + ': ';
-    tt += (force_items || options.activeOption === 'items') ? '' : '£';
-    tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
-        // The line chart tooltips will only ever show items, regardless
-        // of what global items have been set elsewhere.
-    if (force_items) {
-      tt = tt.replace(/Spend on/g, 'Items for');
+      p = options.friendly.partialDenominator.charAt(0).toUpperCase();
+      p += options.friendly.partialDenominator.substring(1);
+      tt += p + ' in ' + date + ': ';
+      if (options.activeOption !== 'items') {
+        tt += (!force_items && options.denom === 'chemical') ? '£' : '';
+      }
+      tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(original_x, numDecimals) : original_x;
+      tt += '<br/>';
+      tt += options.friendly.yAxisTitle.replace('<br/>', '') + ': ';
+      tt += (force_items || options.activeOption === 'items') ? '' : '£';
+      tt += (typeof Highcharts !== 'undefined') ? Highcharts.numberFormat(ratio) : ratio;
+      // The line chart tooltips will only ever show items, regardless
+      // of what global items have been set elsewhere.
+      if (force_items) {
+        tt = tt.replace(/Spend on/g, 'Items for');
+      }
     }
     return tt;
   },
@@ -195,6 +207,6 @@ var formatters = {
     });
     str = humanize.truncatechars(str, maxLength);
     return str;
-  }
+  },
 };
 module.exports = formatters;

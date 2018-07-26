@@ -15,6 +15,7 @@ from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import PracticeStatistics
 from frontend.models import Prescription
+from frontend.models import Presentation
 from frontend.models import Section
 
 
@@ -63,6 +64,10 @@ class ImportTestCase(TestCase):
         p = Practice.objects.create(code='Y01957', name='test')
         Section.objects.create(bnf_id='0401', bnf_chapter=4, is_current=False)
         Section.objects.create(bnf_id='0909', bnf_chapter=9, is_current=False)
+        Presentation.objects.create(bnf_code='0401020K0AAAHAH',
+                                    is_current=False)
+        Presentation.objects.create(bnf_code='0401020K0AAAIAZ',
+                                    is_current=False)
         PracticeStatistics.objects.create(
             practice=p,
             date='2001-01-01',
@@ -140,3 +145,7 @@ class ImportTestCase(TestCase):
     def test_mark_as_current(self):
         self.assertFalse(Section.objects.get(bnf_id='0909').is_current)
         self.assertTrue(Section.objects.get(bnf_id='0401').is_current)
+        self.assertTrue(Presentation.objects.get(bnf_code='0401020K0AAAHAH').
+                        is_current)
+        self.assertFalse(Presentation.objects.get(bnf_code='0401020K0AAAIAZ').
+                         is_current)

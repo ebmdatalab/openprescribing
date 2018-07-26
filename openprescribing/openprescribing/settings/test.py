@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import random
 
 from .base import *
 
@@ -20,12 +21,6 @@ CACHES = {
     }
 }
 INTERNAL_IPS = ('127.0.0.1',)
-ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
-        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
@@ -60,21 +55,23 @@ LOGGING = {
         },
     },
 }
-# Prefix table names with `test_` to prevent namespace clashes in
-# BigQuery
-BQ_CCG_TABLE_PREFIX = 'test_' + BQ_CCG_TABLE_PREFIX
-BQ_GLOBALS_TABLE_PREFIX = 'test_' + BQ_GLOBALS_TABLE_PREFIX
-BQ_PRACTICE_TABLE_PREFIX = 'test_' + BQ_PRACTICE_TABLE_PREFIX
-BQ_PRESCRIBING_TABLE_NAME = 'test_' + BQ_PRESCRIBING_TABLE_NAME
-BQ_PRESCRIBING_TABLE_NAME_STANDARD = 'test_' + BQ_PRESCRIBING_TABLE_NAME
-BQ_PRACTICES_TABLE_NAME = 'test_' + BQ_PRACTICES_TABLE_NAME
-BQ_FULL_PRACTICES_TABLE_NAME = "[%s:measures.%s]" % (
-    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
 
-# BigQuery datasets and tables
-# The plan is to get rid of the stuff above
-BQ_HSCIC_DATASET = 'test_hscic'
-BQ_MEASURES_DATASET = 'test_measures'
+# BigQuery project name
+BQ_PROJECT = 'ebmdatalabtest'
+
+# Nonce to ensure test runs do not clash
+BQ_NONCE = int(utils.get_env_setting('BQ_NONCE', random.randrange(10000)))
+print 'BQ_NONCE:', BQ_NONCE
+
+# BigQuery dataset names
+BQ_HSCIC_DATASET = '{}_{:04d}'.format(BQ_HSCIC_DATASET, BQ_NONCE)
+BQ_MEASURES_DATASET = '{}_{:04d}'.format(BQ_MEASURES_DATASET, BQ_NONCE)
+BQ_TMP_EU_DATASET = '{}_{:04d}'.format(BQ_TMP_EU_DATASET, BQ_NONCE)
+BQ_DMD_DATASET = '{}_{:04d}'.format(BQ_DMD_DATASET, BQ_NONCE)
+BQ_TEST_DATASET = 'test_{:04d}'.format(BQ_NONCE)
+
+# Other BQ settings
+BQ_DEFAULT_TABLE_EXPIRATION_MS = 3 * 60 * 60 * 1000  # 3 hours
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://localhost"
@@ -96,3 +93,5 @@ PIPELINE_DATA_BASEDIR = os.path.join(
 PIPELINE_IMPORT_LOG_PATH = os.path.join(
     SITE_ROOT, 'pipeline', 'test-data', 'log.json'
 )
+
+SLACK_SENDING_ACTIVE = False

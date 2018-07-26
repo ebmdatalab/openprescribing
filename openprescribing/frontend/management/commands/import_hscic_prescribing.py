@@ -16,6 +16,7 @@ from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import PracticeStatistics
 from frontend.models import Prescription
+from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
 
@@ -80,7 +81,7 @@ class Command(BaseCommand):
                    'bnf_code AS presentation_code, items AS total_items, '
                    'net_cost, actual_cost, quantity, '
                    'FORMAT_TIMESTAMP("%%Y_%%m_%%d", month) AS processing_date '
-                   'FROM ebmdatalab.hscic.normalised_prescribing_standard '
+                   'FROM {hscic}.normalised_prescribing_standard '
                    "WHERE month = '%s'" % date_str)
             table_name = "prescribing_%s" % date_str.replace('-', '_')
             table = client.get_or_create_table(table_name)
@@ -108,7 +109,8 @@ class Command(BaseCommand):
         classes = [
             (Section, 'bnf_id'),
             (Chemical, 'bnf_code'),
-            (Product, 'bnf_code')
+            (Product, 'bnf_code'),
+            (Presentation, 'bnf_code'),
         ]
         with transaction.atomic():
             for model, field_name in classes:

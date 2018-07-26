@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Privacy Policy{% endblock %}
+{% block active_class %}more{% endblock %}
+
+{% block content %}
+
+<h2>Privacy Policy</h2>
+
+<p>The only personally identifiable data we manage are email addresses, and (where you supply them) names, job roles and institutions.</p>
+
+<p>If you have given us your email address, we use it to tell you about information we believe is relevant to your interests. Your email address is communicated to EBM DataLab for the purposes of sending you the email. We may use your data in combination with data about website visit behaviour to help inform our research about putting clinical information into practice, but this is never linked to individual information, only in aggregate.</p>
+
+<p>Usually we will have your email address because you have signed up to a service. Sometimes individuals in a particular role contact us to let us know they have now left this role, asking us to add their replacement to our services.</p>
+
+<p>We will keep your email for as long as our service is maintained unless you ask us to remove it before that.</p>
+
+<p>Every email we send contains a link allowing you to unsubscribe from our mailing list. When you unsubscribe, we delete your email address permanently from our records.</p>
+
+<p>The list of email addresses is only accessible to appropriate team members and we will not share identifiable information with any third parties.</p>
+
+<p>For the purposes of <a href="https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr">GDPR</a> our Data Controller is EBM DataLab and you can contact us at <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show">{{ SUPPORT_EMAIL }}</a></p>
+
+{% endblock %}
+
+{% block extra_js %}
+{% conditional_js 'openprescribing' %}
+{% endblock %}

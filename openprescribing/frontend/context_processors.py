@@ -2,17 +2,11 @@ import logging
 
 from django.conf import settings
 
-from common import utils
-
 logger = logging.getLogger(__name__)
 
 
 def support_email(request):
     return {'SUPPORT_EMAIL': settings.SUPPORT_EMAIL}
-
-
-def google_user_id(request):
-    return {'GOOGLE_USER_ID': utils.google_user_id(request.user)}
 
 
 def api_host(request):

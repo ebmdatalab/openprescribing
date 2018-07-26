@@ -49,14 +49,17 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 
+from dmd.models import DMDVmpp
+from gcutils.bigquery import Client
+
 logger = logging.getLogger(__name__)
 
 
 PRIMARY_KEYS = {
-    'AMP': 'APID',
-    'AMPP': 'APPID',
-    'VMP': 'VPID',
-    'VMPP': 'VPPID'
+    'dmd_AMP': 'APID',
+    'dmd_AMPP': 'APPID',
+    'dmd_VMP': 'VPID',
+    'dmd_VMPP': 'VPPID'
 }
 
 EXTRA_INDEXES = [
@@ -323,3 +326,5 @@ class Command(BaseCommand):
                 process_datafiles(dir_path)
             with transaction.atomic():
                 create_dmd_product()
+
+        Client('dmd').upload_model(DMDVmpp)

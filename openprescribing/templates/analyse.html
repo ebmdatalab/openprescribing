@@ -31,26 +31,8 @@
 <div id="analyse-options" class="invisible">
 
     <div class="form-row">
-        <div class="col left">See prescribing by:</div>
-        <div class="col middle">
-            <select style="width: 100%" id="org" class="form-select not-searchable">
-                <!-- <option value="all" selected>everyone</option> -->
-                <option value="CCG">a CCG or CCGs</option>
-                <option value="practice">a practice or practices</option>
-            </select>
-        </div>
-        <div class="col right">
-            <div id="orgIds-container" style="display: none">
-                <select style="width: 100%" id="orgIds" multiple="multiple">
-                </select>
-                <p class="help-block" id="org-help">Hint: add a CCG to see all its practices</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-row">
         <div class="col left">
-        <span class="help" id="numerator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">on:</span>
+        <span class="help" id="numerator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">See prescribing of:</span>
         <div class="hidden" id="numerator-help-text">You can add BNF sections, chemicals, products or product format.<br/>For example:
         <ul>
         <li><em>Atorvastatin</em> will show all prescribing on the chemical, across multiple products</li>
@@ -73,7 +55,6 @@
             </div>
         </div>
     </div>
-
     <div class="form-row">
         <div class="col left">
         <span class="help" id="denominator-help" data-toggle="popover" data-trigger="hover" data-placement="auto top">versus:</span>
@@ -82,7 +63,8 @@
         </div>
         <div class="col middle">
             <select style="width: 100%" id="denom" class="form-select not-searchable">
-                <option value="chemical" selected>drugs or BNF sections</option>
+                <option value="nothing" selected>nothing</option>
+                <option value="chemical">drugs or BNF sections</option>
                 <option value="total_list_size" selected>total list size</option>
                 <option value="star_pu.oral_antibacterials_item">STAR-PUs for antibiotics</option>
             </select>
@@ -93,6 +75,24 @@
             </div>
         </div>
     </div>
+    <div class="form-row">
+        <div class="col left">highlighting:</div>
+        <div class="col middle">
+            <select style="width: 100%" id="org" class="form-select not-searchable">
+                <!-- <option value="all" selected>everyone</option> -->
+                <option value="CCG">a CCG or CCGs</option>
+                <option value="practice">a practice or practices</option>
+            </select>
+        </div>
+        <div class="col right">
+            <div id="orgIds-container" style="display: none">
+                <select style="width: 100%" id="orgIds" multiple="multiple">
+                </select>
+                <p class="help-block" id="org-help">Hint: add a CCG to see all its practices</p>
+            </div>
+        </div>
+    </div>
+
     <p>
       <a href="/docs/analyse/">Tips on using this search</a>
     </p>
@@ -137,8 +137,9 @@
     <!-- Time slider and items toggle -->
     <div id="chart-options">
         <div id="chart-options-wrapper">
-            <div id="slider-wrapper"><div id="chart-date-slider"></div></div>
-            <div id="items-spending-toggle" class="btn-group btn-toggle" aria-label="Show spending or items on graph">
+          <div id="play-slider" alt="Animate time series" class="glyphicon glyphicon-play-circle"></div>
+          <div id="slider-wrapper"><div id="chart-date-slider"></div></div>
+          <div id="items-spending-toggle" class="btn-group btn-toggle" aria-label="Show spending or items on graph">
                 <button class="btn btn-default btn-sm" data-type="actual_cost">spending</button>
                 <button class="btn btn-info btn-sm" data-type="items">items</button>
             </div>
@@ -223,5 +224,6 @@
 <!--[if !IE 8]><!-->
   <script src="/static/js/clipboard.min.js?q=123456"></script>
 <!--<![endif]-->
-{% conditional_js 'openprescribing' %}
+{% conditional_js 'analyse-form' %}
+
 {% endblock %}

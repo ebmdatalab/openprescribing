@@ -310,12 +310,12 @@ class TestFrontendViews(TransactionTestCase):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.min.js', mainjs)
+            self.assertIn('global.min.js', mainjs)
         with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
             response = self.client.get('')
             doc = pq(response.content)
             mainjs = doc('script')[-2].attrib['src']
-            self.assertIn('openprescribing.js', mainjs)
+            self.assertIn('global.js', mainjs)
 
     def test_call_view_analyse(self):
         response = self.client.get('/analyse/')
@@ -368,7 +368,7 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            'Part of chapter 2 Cardiovascular System , section 2.2 Diuretics')
+            'Part of chapter 2 Cardiovascular System, section 2.2 Diuretics')
         subsections = doc('a.subsection')
         self.assertEqual(len(subsections), 0)
 
@@ -396,8 +396,8 @@ class TestFrontendViews(TransactionTestCase):
         lead = doc('.lead')
         self.assertEqual(
             lead.text(),
-            ('Part of chapter 2 Cardiovascular System , section 2.2 '
-             'Diuretics , paragraph 2.2.1 Thiazides And Related Diuretics')
+            ('Part of chapter 2 Cardiovascular System, section 2.2 '
+             'Diuretics, paragraph 2.2.1 Thiazides And Related Diuretics')
         )
 
     def test_call_view_ccg_all(self):
@@ -409,6 +409,16 @@ class TestFrontendViews(TransactionTestCase):
         self.assertEqual(title.text(), 'All CCGs')
         ccgs = doc('a.ccg')
         self.assertEqual(len(ccgs), 2)
+
+    def test_call_view_ccg_section(self):
+        response = self.client.get('/ccg/03V/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entity_home_page.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        self.assertEqual(title.text(), 'CCG: NHS Corby')
+        practices = doc('#practices li')
+        self.assertEqual(len(practices), 2)
 
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
@@ -452,7 +462,7 @@ class TestFrontendViews(TransactionTestCase):
         title = doc('h1')
         self.assertEqual(title.text(), 'CCG: NHS Corby')
         practices = doc('#practices li')
-        self.assertEqual(len(practices), 1)
+        self.assertEqual(len(practices), 2)
 
     def test_call_view_measure_practice(self):
         response = self.client.get('/practice/P87629/measures/')
@@ -486,6 +496,11 @@ class TestFrontendViews(TransactionTestCase):
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
 
+    def test_tariff(self):
+        response = self.client.get('/tariff/ABCD/')
+        self.assertContains(response, 'Tariff')
+        self.assertContains(response, 'bnfCodes = "ABCD"')
+
 
 class TestPPUViews(TransactionTestCase):
     fixtures = ['ccgs', 'importlog', 'dmdproducts',
@@ -502,6 +517,10 @@ class TestPPUViews(TransactionTestCase):
         self.assertEqual(response.context['entity'].code, '03V')
         self.assertEqual(response.context['date'].strftime('%Y-%m-%d'),
                          '2014-11-01')
+
+    def test_ccg_price_per_unit_returns_400_on_invalid_date(self):
+        response = self.client.get('/ccg/03V/price_per_unit/', {'date': 'not-a-date'})
+        self.assertEqual(response.status_code, 400)
 
     def test_price_per_unit_histogram_with_ccg(self):
         response = self.client.get('/ccg/03V/0202010F0AAAAAA/price_per_unit/')

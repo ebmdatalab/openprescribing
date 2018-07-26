@@ -144,7 +144,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
-                'frontend.context_processors.google_user_id',
                 'frontend.context_processors.api_host',
                 'frontend.context_processors.debug'
             ],
@@ -313,36 +312,25 @@ GDOC_DOCS = {
 
 API_HOST = utils.get_env_setting('API_HOST', default='')
 
-# BigQuery settings (used for measure calculations)
-
-# The BigQuery project name
+# BigQuery project name
 BQ_PROJECT = 'ebmdatalab'
-# The BigQuery dataset name
-BQ_MEASURES_DATASET = 'measures'
-# Prefix for practice-level table name (the measure id is appended)
-BQ_PRACTICE_TABLE_PREFIX = "practice_data"
-# Prefix for CCG-level table name
-BQ_CCG_TABLE_PREFIX = "ccg_data"
-# Prefix for global table name
-BQ_GLOBALS_TABLE_PREFIX = "global_data"
-# The name of the table containing core prescribing data
-BQ_PRESCRIBING_TABLE_NAME = "normalised_prescribing_legacy"
-# The name of the table containing core prescribing data
-BQ_PRESCRIBING_TABLE_NAME_STANDARD = "normalised_prescribing_standard"
-# The name of the table containing practice information (names,
-# addresses etc)
-BQ_PRACTICES_TABLE_NAME = "practices"
-BQ_FULL_PRACTICES_TABLE_NAME = "[%s:hscic.%s]" % (
-    BQ_PROJECT, BQ_PRACTICES_TABLE_NAME)
-# Dataset for prescribing data
+
+# BigQuery dataset names
 BQ_HSCIC_DATASET = 'hscic'
+BQ_MEASURES_DATASET = 'measures'
+BQ_TMP_EU_DATASET = 'tmp_eu'
+BQ_DMD_DATASET = 'dmd'
+
+# Other BQ settings
+BQ_DEFAULT_TABLE_EXPIRATION_MS = None
+BQ_LOCATION = 'EU'
 
 # Use django-anymail through mailgun for sending emails
-EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_API_KEY": utils.get_env_setting('MAILGUN_API_KEY'),
     "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
+    "WEBHOOK_SECRET": "%s:%s" % (
         utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
         utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
 }
@@ -366,6 +354,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "https://openprescribing.net"
+
+# For sending messages to Slack
+SLACK_GENERAL_POST_KEY = utils.get_env_setting(
+    'SLACK_GENERAL_POST_KEY',
+    default=''
+)
+SLACK_SENDING_ACTIVE = True
 
 # Newsletter signup
 MAILCHIMP_LIST_ID = 'b2b7873a73'

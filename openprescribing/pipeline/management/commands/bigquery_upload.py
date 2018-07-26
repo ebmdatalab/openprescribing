@@ -1,13 +1,14 @@
 from __future__ import print_function
 
+import datetime
+
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Max
 
-from gcutils.bigquery import Client
+from gcutils.bigquery import Client as BQClient
+from gcutils.storage import Client as StorageClient
 from frontend import models
 from frontend import bq_schemas as schemas
-
-from ...cloud_utils import CloudHandler
 
 
 class Command(BaseCommand):
@@ -25,9 +26,11 @@ class Command(BaseCommand):
                 .format(latest_practice_statistic_date, latest_prescription_date)
             raise CommandError(msg)
 
-        BigQueryUploader().update_bnf_table()
+        date = latest_prescription_date
 
-        client = Client('hscic')
+        update_bnf_table()
+
+        client = BQClient('hscic')
 
         table = client.get_table('practices')
         columns = [field.name for field in schemas.PRACTICE_SCHEMA]
@@ -51,6 +54,24 @@ class Command(BaseCommand):
             schemas.statistics_transform
         )
 
+        sql = 'SELECT MAX(month) FROM {hscic}.practice_statistics_all_years'
+        results = client.query(sql)
+        if results.rows[0][0] is None:
+            last_uploaded_practice_statistics_date = datetime.date(1900, 1, 1)
+        else:
+            last_uploaded_practice_statistics_date = results.rows[0][0].date()
+
+        table = client.get_table('practice_statistics_all_years')
+        sql = '''SELECT *
+        FROM {hscic}.practice_statistics
+        WHERE month > TIMESTAMP('{date}')'''
+        substitutions = {'date': last_uploaded_practice_statistics_date}
+        table.insert_rows_from_query(
+            sql,
+            write_disposition='WRITE_APPEND',
+            substitutions=substitutions
+        )
+
         table = client.get_table('ccgs')
         columns = [field.name for field in schemas.CCG_SCHEMA]
         table.insert_rows_from_pg(
@@ -59,14 +80,25 @@ class Command(BaseCommand):
             schemas.ccgs_transform
         )
 
+        table = client.get_table('prescribing_' + date.strftime('%Y_%m'))
+        sql = '''SELECT * FROM {hscic}.prescribing
+        WHERE month = TIMESTAMP('{date}')'''
+        substitutions = {'date': date}
+        table.insert_rows_from_query(
+            sql,
+            substitutions=substitutions
+        )
 
-class BigQueryUploader(CloudHandler):
-    def update_bnf_table(self):
-        """Update `bnf` table from cloud-stored CSV
-        """
-        dataset = self.list_raw_datasets(
-            'ebmdatalab', prefix='hscic/bnf_codes',
-            name_regex=r'\.csv')[-1]
-        uri = "gs://ebmdatalab/%s" % dataset
-        print("Loading data from %s..." % uri)
-        self.load(uri, table_name="bnf", schema='bnf.json')
+
+def update_bnf_table():
+    """Update `bnf` table from cloud-stored CSV
+    """
+    storage_client = StorageClient()
+    bucket = storage_client.get_bucket()
+    blobs = bucket.list_blobs(prefix='hscic/bnf_codes/')
+    blobs = sorted(blobs, key=lambda blob: blob.name, reverse=True)
+    blob = blobs[0]
+
+    bq_client = BQClient('hscic')
+    table = bq_client.get_table('bnf')
+    table.insert_rows_from_storage(blob.name, skip_leading_rows=1)

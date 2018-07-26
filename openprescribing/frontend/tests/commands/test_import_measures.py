@@ -11,8 +11,9 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from frontend.bq_schemas import PRESCRIBING_SCHEMA
+from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
+from frontend.management.commands.import_measures import parse_measures
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
@@ -63,112 +64,6 @@ class UnitTests(TestCase):
     """
     fixtures = ['measures']
 
-    def test_write_global_centiles_to_database(self):
-        from frontend.management.commands.import_measures \
-            import GlobalCalculation
-        measure = Measure.objects.get(pk='cerazette')
-        g = GlobalCalculation(measure)
-        with patch.object(g, 'get_rows_as_dicts') as patched_calc:
-            patched_calc.return_value = [
-                {
-                    'ccg_cost_savings_10': 1785,
-                    'ccg_cost_savings_20': 1420,
-                    'ccg_cost_savings_30': 1055,
-                    'ccg_cost_savings_40': 690,
-                    'ccg_cost_savings_50': 325,
-                    'ccg_cost_savings_60': 260,
-                    'ccg_cost_savings_70': 195,
-                    'ccg_cost_savings_80': 130,
-                    'ccg_cost_savings_90': 65,
-                    'ccg_month': '2015-10-01',
-                    'global_ccg_10th': 0.01,
-                    'global_ccg_20th': 0.02,
-                    'global_ccg_30th': 0.04,
-                    'global_ccg_40th': 0.05,
-                    'global_ccg_50th': 0.06,
-                    'global_ccg_60th': 0.07,
-                    'global_ccg_70th': 0.08,
-                    'global_ccg_80th': 0.09,
-                    'global_ccg_90th': 0.10,
-                    'global_cost_per_denom': 0.1,
-                    'global_cost_per_num': 0.7,
-                    'global_denom_cost': 6100,
-                    'global_denom_items': 395,
-                    'global_denom_quantity': 39500,
-                    'global_denominator': 39500,
-                    'global_month': '2015-10-01',
-                    'global_num_cost': 2500,
-                    'global_num_items': 35,
-                    'global_num_quantity': 3500,
-                    'global_numerator': 3500,
-                    'global_practice_10th': 0.01,
-                    'global_practice_20th': 0.02,
-                    'global_practice_30th': 0.04,
-                    'global_practice_40th': 0.05,
-                    'global_practice_50th': 0.06,
-                    'global_practice_60th': 0.07,
-                    'global_practice_70th': 0.08,
-                    'global_practice_80th': 0.09,
-                    'global_practice_90th': 0.10,
-                    'practice_cost_savings_10': 1785,
-                    'practice_cost_savings_20': 1420,
-                    'practice_cost_savings_30': 1055,
-                    'practice_cost_savings_40': 690,
-                    'practice_cost_savings_50': 325,
-                    'practice_cost_savings_60': 2606,
-                    'practice_cost_savings_70': 1957,
-                    'practice_cost_savings_80': 1303,
-                    'practice_cost_savings_90': 65,
-                    'practice_month': '2015-10-01',
-                }]
-            g.write_global_centiles_to_database()
-            mg = MeasureGlobal.objects.get(
-                measure_id='cerazette', month='2015-10-01')
-            self.assertEqual(mg.percentiles['ccg']['10'], 0.01)
-            self.assertEqual(mg.cost_savings['practice']['10'], 1785)
-            self.assertEqual(mg.num_cost, 2500)
-
-    def test_write_practice_ratios_to_database(self):
-        from frontend.management.commands.import_measures \
-            import PracticeCalculation
-        Practice.objects.create(code='C83019')
-        PCT.objects.create(code='03T')
-        measure = Measure.objects.get(pk='cerazette')
-        p = PracticeCalculation(measure)
-        with patch.object(p, 'get_rows_as_dicts') as patched_calc:
-            # What we'd expect the practice ratios BQ table to return
-            patched_calc.return_value = [
-                {'calc_value': 0,
-                 'cost_savings_10': 9,
-                 'cost_savings_20': 8,
-                 'cost_savings_30': 7,
-                 'cost_savings_40': 6,
-                 'cost_savings_50': 5,
-                 'cost_savings_60': 4,
-                 'cost_savings_70': 3,
-                 'cost_savings_80': 2,
-                 'cost_savings_90': 1,
-                 'denom_cost': 20,
-                 'denom_items': 30,
-                 'denom_quantity': 40,
-                 'denominator': 50,
-                 'month': '2015-10-01',
-                 'num_cost': 60,
-                 'num_items': 70,
-                 'num_quantity': 80,
-                 'numerator': 90,
-                 'pct_id': '03T',
-                 'percentile': 000,
-                 'practice_id': 'C83019'}
-            ]
-            p.write_practice_ratios_to_database()
-            mv = MeasureValue.objects.get(
-                month='2015-10-01',
-                measure_id='cerazette',
-                practice_id='C83019')
-            self.assertEqual(mv.num_cost, 60)
-            self.assertEqual(mv.cost_savings['10'], 9)
-
     @patch('django.db.connection')
     def test_reconstructor_not_called_when_measures_specified(self, conn):
         from frontend.management.commands.import_measures \
@@ -205,7 +100,6 @@ class BigqueryFunctionalTests(TestCase):
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
@@ -486,23 +380,45 @@ class BigqueryFunctionalTests(TestCase):
 
         args = []
         if 'SKIP_BQ_LOAD' not in os.environ:
+            fixtures_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands')
+
             prescribing_fixture_path = os.path.join(
-                'frontend', 'tests', 'fixtures', 'commands',
+                fixtures_path,
                 'prescribing_bigquery_fixture.csv'
             )
+            # TODO Make this a table with a view (see
+            # generate_presentation_replacements), and put it in the correct
+            # dataset ('hscic', not 'measures').
             client = Client('measures')
             table = client.get_or_create_table(
-                settings.BQ_PRESCRIBING_TABLE_NAME,
+                'normalised_prescribing_legacy',
                 PRESCRIBING_SCHEMA
             )
             table.insert_rows_from_csv(prescribing_fixture_path)
+
+            practices_fixture_path = os.path.join(
+                fixtures_path,
+                'practices.csv'
+            )
+            client = Client('hscic')
+            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
+            columns = [field.name for field in PRACTICE_SCHEMA]
+            table.insert_rows_from_csv(practices_fixture_path)
+
+            ccgs_fixture_path = os.path.join(
+                fixtures_path,
+                'ccgs.csv'
+            )
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
+            table.insert_rows_from_csv(ccgs_fixture_path)
+
         month = '2015-09-01'
         measure_id = 'cerazette'
         args = []
         opts = {
             'month': month,
             'measure': measure_id,
-            'test_mode': True,
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
@@ -567,3 +483,12 @@ class BigqueryFunctionalTests(TestCase):
                         actual == expected,
                         "got %s for %s, expected %s" % (
                             actual, identifier, expected))
+
+
+class TestParseMeasures(TestCase):
+    def test_parse_measures(self):
+        measures = parse_measures()
+        lpzomnibus_ix = list(measures).index('lpzomnibus')
+        lptrimipramine_ix = list(measures).index('lptrimipramine')
+
+        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)

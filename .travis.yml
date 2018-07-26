@@ -1,11 +1,20 @@
 env:
   global:
-    DOCKER_COMPOSE_VERSION: 1.7.1
+    DOCKER_COMPOSE_VERSION: 1.9.0
   matrix:
     - TEST_SUITE=nonfunctional
-    - TEST_SUITE=functional BROWSER="firefox:latest:Windows 2012"
-    - TEST_SUITE=functional BROWSER="safari:8.0:OS X 10.10"
     - TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
+matrix:
+  # The SauceLabs browser tests are very flaky such that we get frequent
+  # failures which disappear if the tests are re-run. At present, we're not
+  # touching the frontend code much at all and so these failures are just
+  # useless noise and promote the bad habit of ignoring CI results. As a
+  # quick improvement on this situation we now ignore failures in the browser
+  # tests when determining the overall test status, but we still run them so
+  # that the results can be checked manually if you're making frontend
+  # changes.
+  allow_failures:
+    - env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
 sudo: required
 language: python
 before_install:
