@@ -21,7 +21,11 @@
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "core",
+    "cost",
+    "pain"
+  ],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],

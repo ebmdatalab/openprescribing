@@ -6,7 +6,6 @@ import numpy as np
 
 from django.db import connection
 from django.db.models import Q
-from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -323,7 +322,8 @@ def tariff(request, format=None):
            dmd_vmpp.nm AS vmpp,
            dmd_product.bnf_code AS product,
            dmd_ncsoconcession.price_concession_pence AS concession,
-           dmd_lookup_dt_payment_category.desc AS tariff_category
+           dmd_lookup_dt_payment_category.desc AS tariff_category,
+           dmd_vmpp.qtyval AS pack_size
     FROM dmd_tariffprice
         INNER JOIN dmd_lookup_dt_payment_category
             ON dmd_tariffprice.tariff_category_id = dmd_lookup_dt_payment_category.cd

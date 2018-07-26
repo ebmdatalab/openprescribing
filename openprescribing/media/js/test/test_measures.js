@@ -988,4 +988,210 @@ describe('Measures', function() {
 
     });
   });
+
+  describe('#getChartDataAsTable', function() {
+    it('returns chart data in tabular form', function() {
+      var result = mu.getChartDataAsTable({
+        "chartId": "ktt9_uti_antibiotics",
+        "chartTitle": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
+        "isCCG": true,
+        "data": [
+          {
+            "denominator": 1744,
+            "numerator": 11627.8333333333,
+            "percentile": 97.5961538461538,
+            "calc_value": 6.66733562691132,
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "date": "2017-01-01",
+          },
+          {
+            "denominator": 1615,
+            "numerator": 10641.5,
+            "percentile": 97.5961538461538,
+            "calc_value": 6.58916408668731,
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "date": "2017-02-01"
+          },
+          {
+            "denominator": 1822,
+            "numerator": 12102.9166666667,
+            "percentile": 98.0769230769231,
+            "calc_value": 6.64265459202342,
+            "pct_id": "99E",
+            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "date": "2017-03-01"
+          }
+        ],
+        "globalCentiles": {
+          "10": [
+            {
+              "y": 5.182546810483497,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.214408749095638,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.248553447914695,
+              "date": "2017-03-01"
+            }
+          ],
+          "20": [
+            {
+              "y": 5.4174508079030925,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.413822826078597,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.4361293677134706,
+              "date": "2017-03-01"
+            }
+          ],
+          "30": [
+            {
+              "y": 5.518345114305625,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.575019921790236,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.572179441817108,
+              "date": "2017-03-01"
+            }
+          ],
+          "50": [
+            {
+              "y": 5.7430555555555545,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.7453920649796935,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.7919745484400655,
+              "date": "2017-03-01"
+            }
+          ],
+          "40": [
+            {
+              "y": 5.63159773123116,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.670616327418811,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.702130340910575,
+              "date": "2017-03-01"
+            }
+          ],
+          "60": [
+            {
+              "y": 5.878912354447853,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.85411959737778,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.880026704460748,
+              "date": "2017-03-01"
+            }
+          ],
+          "70": [
+            {
+              "y": 5.964220413424124,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 5.937731172383994,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 5.9794797683156915,
+              "date": "2017-03-01"
+            }
+          ],
+          "90": [
+            {
+              "y": 6.284994437637084,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 6.323238055692184,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 6.296265612219995,
+              "date": "2017-03-01"
+            }
+          ],
+          "80": [
+            {
+              "y": 6.088481618366197,
+              "date": "2017-01-01"
+            },
+            {
+              "y": 6.160359753080579,
+              "date": "2017-02-01"
+            },
+            {
+              "y": 6.119981581449648,
+              "date": "2017-03-01"
+            }
+          ]
+        }
+      });
+      expect(result).to.deep.equal([
+        ['date', 'org_id', 'org_name', 'numerator', 'denominator', 'ratio', 'percentile',
+          '10th percentile', '20th percentile', '30th percentile', '40th percentile',
+          '50th percentile', '60th percentile', '70th percentile', '80th percentile',
+          '90th percentile'],
+        ['2017-01-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG',
+          11627.8333333333, 1744, 6.66733562691132, 97.5961538461538,
+          5.182546810483497, 5.4174508079030925, 5.518345114305625, 5.63159773123116,
+          5.7430555555555545, 5.878912354447853, 5.964220413424124, 6.088481618366197,
+          6.284994437637084],
+        ['2017-02-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG', 10641.5, 1615,
+          6.58916408668731, 97.5961538461538,
+          5.214408749095638, 5.413822826078597, 5.575019921790236,
+          5.670616327418811, 5.7453920649796935, 5.85411959737778,
+          5.937731172383994, 6.160359753080579, 6.323238055692184],
+        ['2017-03-01', '99E', 'NHS BASILDON AND BRENTWOOD CCG',
+          12102.9166666667, 1822, 6.64265459202342, 98.0769230769231,
+          5.248553447914695, 5.4361293677134706, 5.572179441817108,
+          5.702130340910575, 5.7919745484400655, 5.880026704460748,
+          5.9794797683156915, 6.119981581449648, 6.296265612219995]
+      ]);
+    });
+  });
+
+  describe('#formatTableAsCSV', function() {
+    it('returns valid CSV', function() {
+      var result = mu.formatTableAsCSV([
+        ['one', 'two', 'three'],
+        [1, null, 'with, comma'],
+        [2, 'a', 'with " double quote'],
+      ]);
+      expect(result).to.equal('one,two,three\n1,,"with, comma"\n2,a,"with "" double quote"');
+    });
+  });
+
+  describe('#sanitizeFilename', function() {
+    it('removes special characters from string and collaposes multiple spaces', function() {
+      var result = mu.sanitizeFilename('Hello $" 123-456.test_str : ');
+      expect(result).to.equal('Hello 123-456.test_str');
+    });
+  });
 });

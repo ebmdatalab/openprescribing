@@ -38,6 +38,7 @@ from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
@@ -263,13 +264,58 @@ def ccg_price_per_unit(request, code):
 # These replace old CCG and practice dashboards.
 ##################################################
 
+CORE_TAG = 'core'
+
+
+def _get_measure_tag_filter(params, show_all_by_default=False):
+    tags = params.getlist('tags')
+    # Support passing a single "tags" param with a comma separated list
+    tags = sum([tag.split(',') for tag in tags], [])
+    tags = filter(None, tags)
+    default_tags = [] if show_all_by_default else [CORE_TAG]
+    if not tags:
+        tags = default_tags
+    try:
+        tag_details = [MEASURE_TAGS[tag] for tag in tags]
+    except KeyError as e:
+        raise BadRequestError(u'Unrecognised tag: {}'.format(e.args[0]))
+    return {
+        'tags': tags,
+        'names': [tag['name'] for tag in tag_details],
+        'details': [tag for tag in tag_details if tag['description']],
+        'show_message': (tags != default_tags),
+        'all_tags': _get_tags_select_options(tags, show_all_by_default)
+    }
+
+
+def _get_tags_select_options(selected_tags, show_all_by_default):
+    options = [
+        {'id': key, 'name': tag['name'], 'selected': (key in selected_tags)}
+        for (key, tag) in MEASURE_TAGS.items()
+    ]
+    options.sort(key=_sort_core_tag_first)
+    if show_all_by_default:
+        options.insert(0, {
+            'id': '',
+            'name': 'All Measures',
+            'selected': (len(selected_tags) == 0)
+        })
+    return options
+
+
+def _sort_core_tag_first(option):
+    return (0 if option['id'] == CORE_TAG else 1, option['name'])
+
+
+@handle_bad_request
 def all_measures(request):
-    tags = request.GET.get('tags', '')
+    tag_filter = _get_measure_tag_filter(request.GET, show_all_by_default=True)
     query = {}
-    if tags:
-        query['tags__overlap'] = tags.split(',')
+    if tag_filter['tags']:
+        query['tags__overlap'] = tag_filter['tags']
     measures = Measure.objects.filter(**query).order_by('name')
     context = {
+        'tag_filter': tag_filter,
         'measures': measures
     }
     return render(request, 'all_measures.html', context)
@@ -411,6 +457,7 @@ def practice_home_page(request, practice_code):
 
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    tag_filter = _get_measure_tag_filter(request.GET)
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
@@ -423,7 +470,8 @@ def measures_for_one_ccg(request, ccg_code):
         'practices': practices,
         'page_id': ccg_code,
         'form': form,
-        'signed_up_for_alert': signed_up_for_alert
+        'signed_up_for_alert': signed_up_for_alert,
+        'tag_filter': tag_filter
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
@@ -627,8 +675,10 @@ def _handleCreateBookmark(request, subject_class,
     return form
 
 
+@handle_bad_request
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)
+    tag_filter = _get_measure_tag_filter(request.GET)
     alert_preview_action = reverse('preview-practice-bookmark', args=[p.code])
     form, signed_up_for_alert, should_redirect = _alerts_form(
         request, p, 'practice')
@@ -639,7 +689,8 @@ def measures_for_one_practice(request, code):
         'alert_preview_action': alert_preview_action,
         'page_id': code,
         'form': form,
-        'signed_up_for_alert': signed_up_for_alert
+        'signed_up_for_alert': signed_up_for_alert,
+        'tag_filter': tag_filter
     }
     return render(request, 'measures_for_one_practice.html', context)
 

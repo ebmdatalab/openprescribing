@@ -3,6 +3,7 @@ import math
 from django import template
 from django.utils.safestring import mark_safe
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.utils import timezone
 
 register = template.Library()
 
@@ -58,3 +59,19 @@ def url_toggle(request, field):
     else:
         dict_[field] = 1
     return dict_.urlencode()
+
+
+@register.simple_tag
+def current_time(format_string):
+    return timezone.now().strftime(format_string)
+
+
+@register.filter
+def fancy_join(lst, sep=', ', final_sep=' and '):
+    """
+    Join a list using a different separator for the final element
+    """
+    if len(lst) > 2:
+        head, tail = lst[:-1], lst[-1]
+        lst = [sep.join(head), tail]
+    return final_sep.join(lst)

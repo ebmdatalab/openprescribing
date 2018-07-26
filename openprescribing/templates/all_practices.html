@@ -10,7 +10,7 @@
 
 <p>Search for a practice by name, and see how this practice compares with its peers across the NHS in England.</p>
 
-<input class="form-control" id="search" placeholder="Search by practice name or postcode" />
+<input class="form-control" id="search" placeholder="Search by practice name or postcode" data-min-search-length="3" />
 
 <ul class="list-unstyled" id="all-results">
 
@@ -26,7 +26,7 @@ var inputSearch = '#search',
 {% for p in practices %}
 var practice = {
     name: '{{ p.name }} ',
-    code: '{{ p.postcode }}',
+    code: '{{ p.postcode }}{{ p.inactive_status_suffix }}',
     url: "{% url 'practice_home_page' p.code %}"
 };
 allItems.push(practice);

@@ -1,12 +1,11 @@
 {% load crispy_forms_tags %}
 {% if not signed_up_for_alert %}
-<p>
-  <form method="post" action="{{ alert_preview_action }}">
-   {% csrf_token %}
+<form method="post" action="{{ alert_preview_action }}">
+ {% csrf_token %}
+ <p>
    {% if alert_type == 'analyse' %}
      <input type="hidden" name="url" value="">
      <input type="hidden" name="name" value="">
-
      Get monthly alert emails with the latest version of this chart.
      You can also sign up for our monthly newsletter.
      {% else %}
@@ -16,12 +15,12 @@
       newsletter.
      {% endif %}
   </form>
-  <form method="post" class="form form-inline">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form | crispy }}
-    <input class="btn btn-primary" type="submit" value="Sign up">
-
-  </form>
-</p>
+<form method="post" class="form form-inline">
+  {% csrf_token %}
+  <p>
+  {{ form.non_field_errors }}
+  {{ form | crispy }}
+  <input class="btn btn-primary" type="submit" value="Subscribe">
+  </p>
+</form>
 {% endif %}

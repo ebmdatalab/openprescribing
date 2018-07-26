@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var mu = require('./measure_utils');
+var utils = require('./chart_utils');
 var domready = require('domready');
 var Highcharts = require('Highcharts');
 var chartOptions = require('./highcharts-options');
@@ -23,10 +24,12 @@ var measures = {
     sortButtons: '.btn-group > .btn',
     summaryTemplate: '#summary-panel',
     panelTemplate: '#measure-panel',
+    noCostSavingWarning: '#no-cost-saving-warning'
   },
 
   setUp: function() {
     var _this = this;
+    _this.isOldIe = utils.getIEVersion();
     var summaryTemplate =
         Handlebars.compile($(_this.el.summaryTemplate).html());
     var panelTemplate =
@@ -62,12 +65,18 @@ var measures = {
       var perf = mu.getPerformanceSummary(chartData, options,
                                           NUM_MONTHS_FOR_RANKING);
       $(_this.el.perfSummary).html(summaryTemplate(perf));
-
       var html = '';
       _.each(chartData, function(d) {
         html += panelTemplate(d);
       });
-      $(_this.el.charts).html(html);
+      $(_this.el.charts)
+        .html(html)
+        .find('a[data-download-chart-id]')
+        .on('click', function() {
+          return _this.handleDataDownloadClick(
+            chartData, $(this).data('download-chart-id')
+          );
+        });
       _.each(chartData, function(d, i) {
         if (i < _this.graphsToRenderInitially) {
           var chOptions = mu.getGraphOptions(d,
@@ -164,6 +173,11 @@ var measures = {
     chartsBySaving.sort(function(a, b) {
       return $(b).data('costsaving') - $(a).data('costsaving');
     });
+    if (chartsBySaving.length === 0) {
+      chartsBySaving = chartsBySaving.add(
+        $(_this.el.noCostSavingWarning).clone().removeClass('hidden')
+      );
+    }
     $(_this.el.sortButtons).click(function() {
       $(this).addClass('active').siblings().removeClass('active');
       if ($(this).data('orderby') === 'savings') {
@@ -177,6 +191,23 @@ var measures = {
       }
     });
   },
+
+  handleDataDownloadClick: function(chartData, chartId) {
+    var browserSupported = ! this.isOldIe;
+    ga('send', {
+      'hitType': 'event',
+      'eventCategory': 'measure_data',
+      'eventAction': browserSupported ? 'download' : 'failed_download',
+      'eventLabel': chartId,
+    });
+    if (browserSupported) {
+      mu.startDataDownload(chartData, chartId);
+    } else {
+      window.alert('Sorry, you must use a newer web browser to download data');
+    }
+    return false;
+  }
+
 };
 
 domready(function() {

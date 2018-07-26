@@ -15,7 +15,12 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["lowpriority"],
+  "tags": [
+    "cost",
+    "efficacy",
+    "eye",
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -42,7 +47,6 @@
     "OR bnf_code LIKE '091200000BFLHA0%' ",
     "OR bnf_code LIKE '091200000BEJYA0%' ",
     "OR bnf_code LIKE '091200000BEXXA0%') "
-
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

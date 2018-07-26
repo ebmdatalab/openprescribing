@@ -19,7 +19,11 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "core",
+    "generic",
+    "safety"
+  ],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],

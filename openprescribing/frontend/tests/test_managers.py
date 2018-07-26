@@ -19,10 +19,10 @@ class MeasureValueManagerTests(TestCase):
         self.assertEqual(len(mvs), 2)
 
     def test_by_ccg_with_measure(self):
-        mvs = MeasureValue.objects.by_ccg([], measure_ids='cerazette')
+        mvs = MeasureValue.objects.by_ccg([], measure_ids=['cerazette'])
         self.assertEqual(len(mvs), 2)
 
-        mvs = MeasureValue.objects.by_ccg([], measure_ids='bananas')
+        mvs = MeasureValue.objects.by_ccg([], measure_ids=['bananas'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_ccg_with_tag(self):
@@ -54,11 +54,11 @@ class MeasureValueManagerTests(TestCase):
 
     def test_by_practice_with_measure(self):
         mvs = MeasureValue.objects.by_practice(
-            ['C83051'], measure_ids='cerazette')
+            ['C83051'], measure_ids=['cerazette'])
         self.assertEqual(len(mvs), 1)
 
         mvs = MeasureValue.objects.by_practice(
-            ['C83051'], measure_ids='bananas')
+            ['C83051'], measure_ids=['bananas'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_practice_with_tag(self):

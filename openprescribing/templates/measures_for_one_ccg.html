@@ -34,7 +34,7 @@
         {% endif %}
         >
         <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }})
+        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
       </li>
     {% endfor %}
     </ul>
@@ -61,7 +61,7 @@
 {% block extra_js %}
 <script>
  var measureData = {
-    'tags': '{{ request.GET.tags|default:"core" }}',
+    'tags': '{{ tag_filter.tags|join:"," }}',
     'orgId': '{{ ccg.code }}',
     'orgName': '{{ ccg.name }}',
     'orgType': 'CCG'

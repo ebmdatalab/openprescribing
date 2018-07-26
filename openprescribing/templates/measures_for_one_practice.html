@@ -2,7 +2,7 @@
 {% load template_extras %}
 {% load humanize %}
 
-{% block title %}Prescribing measures for {{ practice }}{% endblock %}
+{% block title %}Prescribing measures for {{ practice }}{{ practice.inactive_status_suffix }}{% endblock %}
 {% block active_class %}practice{% endblock %}
 
 {% block extra_css %}
@@ -51,6 +51,17 @@
   </div>
 {% endif %}
 
+{% if practice.is_inactive %}
+  <div class="alert alert-warning" role="alert">
+    Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
+    {% if practice.status_code == practice.STATUS_DORMANT %}
+      <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
+        What does this mean?
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
 {% include '_measures_heading.html' with entity_type='practice' %}
 {% include '_measures_panel.html' %}
 
@@ -64,7 +75,7 @@
 {% block extra_js %}
 <script>
 var measureData = {
-    'tags': '{{ request.GET.tags|default:"core" }}',
+    'tags': '{{ tag_filter.tags|join:"," }}',
     'orgId': '{{ practice.code }}',
     'parentOrg': '{{ practice.ccg.code }}',
     'orgName': '{{ practice.name }}',

@@ -17,7 +17,11 @@
   "is_percentage": true,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "antimicrobial",
+    "core",
+    "infections"
+  ],
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],

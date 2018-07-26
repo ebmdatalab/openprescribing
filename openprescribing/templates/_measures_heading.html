@@ -1,16 +1,29 @@
+{% load template_extras %}
+
 {% if not measure.id %}
 <!-- only show sorting and alert signups when showing more than one measure -->
 <div class="row" >
-  {% if request.GET.tags %}
-  <h2>Low Value Prescribing measures</h2>
-  <p class="alert alert-info">
-    This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding <a href="https://www.england.nhs.uk/2017/07/medicine-consultation/">by NHS England</a>; we welcome feedback.  These are indicative only, and should be approached with caution (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).<br>
-    {% if entity_type == 'practice' %}
-    <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.
-    {% else %}
-    <a href="{% url 'measures_for_one_ccg' ccg.code %}">View standard measures instead</a>.
+{% if tag_filter.show_message %}
+  <h2>Prescribing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h2>
+  <div class="alert alert-info">
+    {% if tag_filter.details|length == 1 %}
+      <p>{{ tag_filter.details.0.description|safe }}</p>
+    {% elif tag_filter.details|length > 1 %}
+      <dl>
+        {% for details in tag_filter.details %}
+          <dt>{{ details.name }}</dt>
+          <dd>{{ details.description|safe }}</dt>
+        {% endfor %}
+      </dl>
     {% endif %}
-  </p>
+    <p>
+      {% if entity_type == 'practice' %}
+      <a href="{% url 'measures_for_one_practice' practice.code %}">View all standard measures instead</a>.
+      {% else %}
+      <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all standard measures instead</a>.
+      {% endif %}
+    </p>
+  </div>
 {% else %}
   <h2>Prescribing measures</h2>
   <p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>

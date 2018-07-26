@@ -12,7 +12,7 @@
     "<a href='https://www.nice.org.uk/guidance/cg164'>NICE recommended</a> ",
     "that tamoxifen should also be prescribed for chemoprevention of breast cancer ",
     "for pre-menopausal women at increased risk. ",
-   "Improving the use of preventative therapies was also reiterated in England's ",
+    "Improving the use of preventative therapies was also reiterated in England's ",
     "<a href='https://www.cancerresearchuk.org/sites/default/files/achieving_world-class_cancer_outcomes_-_a_strategy_for_england_2015-2020.pdf'>Cancer Strategy</a> ",
     "for 2015-2020. ",
     "This measure accompanies our paper investigating the national response to these guidelines, published in the ",
@@ -24,7 +24,9 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
-  "tags": ["paper"],
+  "tags": [
+    "paper"
+  ],
   "numerator_columns": [
     "SUM(quantity/ CASE WHEN bnf_name LIKE '%Oral%' THEN 10 ",
     "WHEN bnf_name LIKE '%Liq%' THEN 10 ",
