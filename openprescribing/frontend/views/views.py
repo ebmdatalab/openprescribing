@@ -382,7 +382,9 @@ def ccg_home_page(request, ccg_code):
     extreme_measurevalue = MeasureValue.objects.filter(
         pct=ccg,
         practice__isnull=True,
-        measure__tags__contains=['core']).order_by(
+        measure__tags__contains=['core']).exclude(
+            measure_id='lpzomnibus'
+        ).order_by(
             '-percentile').first()
     if extreme_measurevalue:
         extreme_measure = extreme_measurevalue.measure
