@@ -514,6 +514,9 @@ class GenerateImageTestCase(unittest.TestCase):
                 raise
 
     def test_image_generated(self):
+        # Note that the expected image may differ depending on the
+        # server where this is run: phantomjs interacts with the
+        # display settings on a server which may vary from your own
         self.assertEqual(len(self.msg.attachments), 0)
         image = bookmark_utils.attach_image(
             self.msg, self.url, self.file_path, self.selector)
@@ -532,6 +535,9 @@ class GenerateImageTestCase(unittest.TestCase):
                 base64.b64encode(expected.read()))
 
     def test_small_image_generated_with_viewport_dimensions_specified(self):
+        # Note that the expected image may differ depending on the
+        # server where this is run: phantomjs interacts with the
+        # display settings on a server which may vary from your own
         bookmark_utils.attach_image(
             self.msg, self.url, self.file_path, self.selector, '100x100')
         with open(
