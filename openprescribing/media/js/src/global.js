@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var domready = require('domready');
 var bootstrap = require('bootstrap');
+var bigtext = require('bigtext');
 
 if (!window.console) {
   var noOp = function() {};
@@ -20,4 +21,5 @@ domready(function() {
   $('.js-submit-on-change').on('change', function() {
     this.form.submit();
   });
+  $('.bigtext').bigtext({resize: true});
 });

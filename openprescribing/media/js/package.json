@@ -20,6 +20,7 @@
   "browser": {
     "select2": "./vendor/select2.full.min.js",
     "jquery": "./node_modules/jquery/dist/jquery.js",
+    "bigtext": "./node_modules/bigtext/dist/bigtext.js",
     "noUiSlider": "./vendor/jquery.nouislider.all.js",
     "Highcharts": "./vendor/highcharts.js",
     "Highcharts-export": "./vendor/highcharts-export.js",
@@ -50,6 +51,7 @@
     }
   },
   "dependencies": {
+    "bigtext": "^1.0.1",
     "bootstrap": "^3.3.4",
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
