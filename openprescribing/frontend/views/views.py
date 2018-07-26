@@ -455,6 +455,7 @@ def practice_home_page(request, practice_code):
     return render(request, 'entity_home_page.html', context)
 
 
+@handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     tag_filter = _get_measure_tag_filter(request.GET)

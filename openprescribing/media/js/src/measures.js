@@ -67,10 +67,11 @@ var measures = {
       $(_this.el.perfSummary).html(summaryTemplate(perf));
       var html = '';
       _.each(chartData, function(d) {
-        html += panelTemplate(d);
+        html = panelTemplate(d);
+        $(d.chartContainerId).append(html);
+
       });
       $(_this.el.charts)
-        .html(html)
         .find('a[data-download-chart-id]')
         .on('click', function() {
           return _this.handleDataDownloadClick(
@@ -79,22 +80,22 @@ var measures = {
         });
       _.each(chartData, function(d, i) {
         if (i < _this.graphsToRenderInitially) {
-          var chOptions = mu.getGraphOptions(d,
-                                             options, d.is_percentage, chartOptions);
+          var chOptions = mu.getGraphOptions(
+            d, options, d.is_percentage, chartOptions);
           if (chOptions) {
             new Highcharts.Chart(chOptions);
           }
         }
       });
-
+      $('.loading-wrapper').hide();
       // On long pages, render remaining graphs only after scroll,
       // to stop the page choking on first load.
       $(window).scroll(function() {
         if (_this.allGraphsRendered === false) {
           _.each(chartData, function(d, i) {
             if (i >= _this.graphsToRenderInitially) {
-              var chOptions = mu.getGraphOptions(d,
-                                                 options, d.is_percentage, chartOptions);
+              var chOptions = mu.getGraphOptions(
+                d, options, d.is_percentage, chartOptions);
               if (chOptions) {
                 new Highcharts.Chart(chOptions);
               }

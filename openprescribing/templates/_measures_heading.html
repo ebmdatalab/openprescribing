@@ -26,7 +26,16 @@
   </div>
 {% else %}
   <h2>Prescribing measures</h2>
-  <p>We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England. These are indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+  <p>
+    We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
+    These are indicative only, and should be approached with caution.
+    {% if entity_type == 'practice' %}
+      Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
+    {% else %}
+      Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
+    {% endif %}
+    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
+  </p>
 {% endif %}
 
   <div class="row">
@@ -34,8 +43,8 @@
       {% include '_alert_signup_form.html' %}
     </div>
     <div class="col-md-6">
-      <div id="toggle">
-        <p>Sort prescribing measures by:</p>
+      <div class="form-group">
+        <label>Sort prescribing measures by:</label>
         <div class="btn-group" id="order">
           <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
             Potential for improvement
@@ -45,6 +54,17 @@
           </button>
         </div>
       </div>
+      <form class="form" action="">
+        <div class="form-group">
+          <span class="label label-warning pull-right">New!</span>
+          <label>Show measures categorised as:</label>
+          <select name="tags" class="form-control js-submit-on-change">
+            {% for tag in tag_filter.all_tags %}
+              <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
     </div>
   </div>
 </div>

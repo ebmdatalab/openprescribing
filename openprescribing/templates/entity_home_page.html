@@ -49,7 +49,7 @@
           <p class="measure-description">Our {{ measures_count }} standard measures compare performance across England. This graph shows the most extreme for this {{ entity_type }}.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
         </div>
         <div class="col-md-12">
-          <div class="charts" id="top-measure-container" class="row">
+          <div id="top-measure-container" class="row">
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@
           <p class="measure-description">Measures for low-value items that NHS England suggest should not routinely prescribed in primary care. This graph is the overall position for this {{ entity_type }} (excluding herbal medicines).  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View 18 NHS Low Priority measures...</a></p>
         </div>
         <div class="col-md-12">
-          <div class="charts" id="lpzomnibus-container" class="row">
+          <div id="lpzomnibus-container" class="row">
           </div>
         </div>
       </div>
@@ -115,6 +115,10 @@
 {% endverbatim %}
 
 {% include '_get_in_touch.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
   var maxZoom = 6;
   var measureData = {
@@ -139,5 +143,4 @@
   };
 </script>
 {% conditional_js 'measures' %}
-
 {% endblock %}
