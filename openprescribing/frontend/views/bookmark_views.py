@@ -88,42 +88,6 @@ def login_from_key(request, key):
     return redirect('bookmark-list')
 
 
-def preview_practice_bookmark(request, code):
-    return preview_bookmark(request, practice=Practice.objects.get(pk=code))
-
-
-def preview_ccg_bookmark(request, code):
-    return preview_bookmark(request, pct=PCT.objects.get(pk=code))
-
-
-def preview_analysis_bookmark(request):
-    url = request.POST['url']
-    name = unquote(request.POST['name'])
-    return preview_bookmark(request, url=url, name=name)
-
-
-def preview_bookmark(request, practice=None, pct=None, url=None, name=None):
-    if request.method == 'POST':
-        user = User(email='foo@foo.com')
-        user.profile = Profile()
-        if pct or practice:
-            context = bookmark_utils.InterestingMeasureFinder(
-                practice=practice,
-                pct=pct
-            ).context_for_org_email()
-            bookmark = OrgBookmark(practice=practice, pct=pct, user=user)
-            msg = bookmark_utils.make_org_email(
-                bookmark, context, preview=True)
-        else:
-            bookmark = SearchBookmark(url=url, user=user, name=name)
-            msg = bookmark_utils.make_search_email(bookmark, preview=True)
-        html = msg.alternatives[0][0]
-        images = msg.attachments
-        return HttpResponse(_convert_images_to_data_uris(html, images))
-    else:
-        return HttpResponse()
-
-
 def email_verification_sent(request):
     sent_in_session = request.session.get('sent_in_session', 0)
     request.session['sent_in_session'] = sent_in_session + 1

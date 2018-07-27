@@ -577,9 +577,7 @@ def analyse(request):
         # page load (see `alertForm` in `chart.js`)
         form = SearchBookmarkForm(
             initial={'email': getattr(request.user, 'email', '')})
-    alert_preview_action = reverse('preview-analyse-bookmark')
     context = {
-        'alert_preview_action': alert_preview_action,
         'form': form
     }
     return render(request, 'analyse.html', context)
@@ -682,14 +680,12 @@ def _handleCreateBookmark(request, subject_class,
 def measures_for_one_practice(request, code):
     p = get_object_or_404(Practice, code=code)
     tag_filter = _get_measure_tag_filter(request.GET)
-    alert_preview_action = reverse('preview-practice-bookmark', args=[p.code])
     form, signed_up_for_alert, should_redirect = _alerts_form(
         request, p, 'practice')
     if should_redirect:
         return form
     context = {
         'practice': p,
-        'alert_preview_action': alert_preview_action,
         'page_id': code,
         'form': form,
         'signed_up_for_alert': signed_up_for_alert,

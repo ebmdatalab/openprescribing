@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 {% if not signed_up_for_alert %}
-<form method="post" action="{{ alert_preview_action }}">
+<form method="post" class="form form-inline">
  {% csrf_token %}
  <p>
    {% if alert_type == 'analyse' %}
@@ -8,14 +8,11 @@
      <input type="hidden" name="name" value="">
      Get monthly alert emails with the latest version of this chart.
      You can also sign up for our monthly newsletter.
-     {% else %}
+   {% else %}
      Get monthly alerts highlighting where you are an outlier, or have
      suddenly changed (<a href="{% url 'alert_example' %}">example</a>).
      You can also sign up for our monthly newsletter.
-     {% endif %}
-  </form>
-<form method="post" class="form form-inline">
-  {% csrf_token %}
+   {% endif %}
   <p>
   {{ form.non_field_errors }}
   {{ form | crispy }}
