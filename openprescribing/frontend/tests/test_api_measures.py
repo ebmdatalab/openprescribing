@@ -74,7 +74,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
     def test_api_all_measures_global_with_tags(self):
-        url = '/api/1.0/measure/?format=json&tags=XXX'
+        url = '/api/1.0/measure/?format=json&tags=XYZ'
         data = self._get_json(url)
         self.assertEqual(len(data['measures']), 0)
 
@@ -84,7 +84,7 @@ class TestAPIMeasureViews(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data['measures']), 1)
 
-        url = '/api/1.0/measure/?format=json&tags=core,XXX'
+        url = '/api/1.0/measure/?format=json&tags=core,XYZ'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -205,7 +205,7 @@ class TestAPIMeasureViews(TestCase):
     def test_api_two_measures_two_ccgs(self):
         # This is invalid and should return an error
         url = '/api/1.0/measure_by_ccg/'
-        url += '?org=02Q,XXX&measure=cerazette,cerazette2&format=json'
+        url += '?org=02Q,XYZ&measure=cerazette,cerazette2&format=json'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
 

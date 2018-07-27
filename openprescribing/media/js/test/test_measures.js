@@ -57,17 +57,17 @@ describe('Measures', function() {
           orgType: 'CCG',
           specificMeasures: [
             {
-              orgId: 'XXX',
+              orgId: 'XYZ',
               measure: 'ace'
             },
             {
-              orgId: 'XXX',
+              orgId: 'XYZ',
               measure: 'ace2'
             },
           ],
         };
         var urls = mu.getDataUrls(options);
-        expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&org=XXX&measure=ace,ace2');
+        expect(urls.panelMeasuresUrl).to.equal('/api/1.0/measure_by_ccg/?format=json&org=XYZ&measure=ace,ace2');
       });
       it('should get the URL for more than one measure', function() {
         var options = {

@@ -69,7 +69,6 @@ var measures = {
       _.each(chartData, function(d) {
         html = panelTemplate(d);
         $(d.chartContainerId).append(html);
-
       });
       $(_this.el.charts)
         .find('a[data-download-chart-id]')
