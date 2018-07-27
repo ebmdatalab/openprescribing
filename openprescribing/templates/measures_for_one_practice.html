@@ -11,18 +11,6 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col-md-12">
-    <img src="/static/img/bang.jpg" style="float: left; margin: 10px">
-    <p>
-      Latest features from <strong>OpenPrescribing Labs</strong>:
-      <a href="{% url 'practice_price_per_unit' practice.code %}">a
-      tool to catch up to £400m of NHS savings</a> per month;
-      and <a href="{% url 'measures_for_one_practice' practice.code %}?tags=lowpriority">
-      measures for NHS England's list of low value prescription items</a></p>
-  </div>
-</div>
-
 <div class="row" id="intro">
   <div class="col-md-6">
     <h1>{{ practice.cased_name }}</h1>
