@@ -15,16 +15,28 @@ from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
 
 class CommandsTestCase(TestCase):
 
-    def test_models(self):
+    def test_import_dmd(self):
+        # dmd.zip doesn't exist!  The data to be imported is already unzipped
+        # in dmd/tests/fixtures/commands/.
         path = 'dmd/tests/fixtures/commands/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        self.assertEqual(DMDProduct.objects.count(), 2)
-        vmp = DMDProduct.objects.get(concept_class=1)
-        amp = DMDProduct.objects.get(concept_class=2)
-        self.assertEqual([str(x) for x in vmp.amps], [str(amp)])
-        self.assertEqual(str(amp.vmp), str(vmp))
+        self.assertEqual(DMDProduct.objects.count(), 6)
+
+        diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
+        self.assertEqual(diclofenac_prods.count(), 4)
+
+        vmp = diclofenac_prods.get(concept_class=1)
+        self.assertEqual(vmp.dmdid, vmp.vpid)
+        self.assertEqual(vmp.name, 'Diclofenac 2.32% gel')
+
+        amps = diclofenac_prods.filter(concept_class=2)
+        self.assertEqual(amps.count(), 3)
+
+        amp = amps.get(dmdid=22479611000001102)
+        self.assertEqual(amp.name, 'Voltarol 12 Hour Emulgel P 2.32% gel')
+
         self.assertEqual(
             amp.prescribability.desc, 'Valid as a prescribable product')
         self.assertEqual(
@@ -32,61 +44,70 @@ class CommandsTestCase(TestCase):
         self.assertEqual(
             amp.controlled_drug_category.desc, 'No Controlled Drug Status')
         self.assertEqual(
-            vmp.tariff_category.desc, 'Part VIIIA Category A')
-
-    def test_import_dmd(self):
-        path = 'dmd/tests/fixtures/commands/dmd.zip'
-        with patch('zipfile.ZipFile'):
-            call_command('import_dmd', '--zip_path', path)
-
-        # DMDProduct
-        self.assertEqual(DMDProduct.objects.count(), 2)
-        vmp = DMDProduct.objects.get(concept_class=1)
-        amp = DMDProduct.objects.get(concept_class=2)
-        self.assertEqual(vmp.full_name, 'Verapamil 160mg tablets')
-        self.assertEqual(vmp.vpid, 318248001)
-        self.assertEqual(vmp.product_type, 1)
-        self.assertEqual(amp.vpid, 318248001)
-        self.assertEqual(
-            amp.full_name, 'Verapamil 160mg tablets (A A H Pharmaceuticals Ltd)')
-        self.assertEqual(amp.product_type, 3)
+            vmp.tariff_category.desc, 'Part VIIIA Category C')
 
         # A random selection of other tables for which we don't have
         # models.  We don't actively use these (hence no models) but
         # they are sometimes handy for ad-hoc queries.  We consider a
         # random selection to suffice as we'd normally expect to see
         # errors early in the import process if there were problems.
-        with connection.cursor() as cursor:
-            cursor.execute('SELECT apid FROM dmd_ap_info')
-            row = cursor.fetchone()
-            self.assertEqual(row[0], 574811000001105)
 
-            cursor.execute('SELECT appid FROM dmd_gtin')
-            row = cursor.fetchone()
-            self.assertEqual(row[0], 1328111000001105)
+        # From v_vpm2_XXX.xml
+        self.assertQuery('isid', 'dmd_vpi', 'vpid', 22480211000001104,
+                         426714006)
 
-            cursor.execute('SELECT "desc" FROM dmd_lookup_legal_category')
-            row = cursor.fetchone()
-            self.assertEqual(row[0], 'GSL')
+        # From f_vmpp2_XXX.xml
+        self.assertQuery('pay_catcd', 'dmd_dtinfo', 'vppid', 22479411000001100,
+                         3)
 
-            cursor.execute('SELECT "desc" FROM dmd_lookup_supplier')
-            row = cursor.fetchone()
-            self.assertEqual(row[0], 'DDC Ltd')
+        # From f_amp2_XXX.xml
+        self.assertQuery('isid', 'dmd_ap_ing', 'apid', 22479611000001102,
+                         255859001)
 
-            cursor.execute('SELECT strnt_nmrtr_val FROM dmd_vpi')
-            row = cursor.fetchone()
-            self.assertEqual(row[0], 160)
+        # From f_ampp2_XXX.xml
+        self.assertQuery('price', 'dmd_price_info', 'appid', 22479711000001106,
+                         659)
+
+        # From f_vmpp2_XXX.xml
+        self.assertQuery('pay_catcd', 'dmd_dtinfo', 'vppid', 22479411000001100,
+                         3)
+
+        # From f_gtin2_XXX.xml
+        self.assertQuery('gtin', 'dmd_gtin', 'appid', 22479711000001106,
+                         '5051562030603')
+
+        # From f_ingredient2_XXX.xml
+        self.assertQuery('nm', 'dmd_ing', 'isid', 426714006,
+                         'Diclofenac diethylammonium')
+
+        # From f_lookup2_XXX.xml
+        self.assertQuery('"desc"', 'dmd_lookup_combination_pack_ind', 'cd', 1,
+                         'Combination pack')
+
+        # From f_vtm2_XXX.xml
+        self.assertQuery('nm', 'dmd_vtm', 'vtmid', 32889211000001103,
+                         'Diclofenac diethylammonium')
 
     def test_import_dmd_snomed(self):
         path = 'dmd/tests/fixtures/commands/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        path = 'dmd/tests/fixtures/commands/January 2018 Snomed mapping - BNF 05-12-2017.xlsx'
+        path = 'dmd/tests/fixtures/commands/june-2018-snomed-mapping.xlsx'
         call_command('import_dmd_snomed', '--filename', path)
 
-        amp = DMDProduct.objects.get(concept_class=2)
-        self.assertEqual(amp.bnf_code, '0206020T0AAAGAG')
+        diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
+
+        vmp = diclofenac_prods.get(concept_class=1)
+        self.assertEqual(vmp.bnf_code, '1003020U0AAAIAI')
+
+        amps = diclofenac_prods.filter(concept_class=2)
+
+        volterol_amp = amps.get(name__contains='Voltarol')
+        self.assertEqual(volterol_amp.bnf_code, '1003020U0BBADAI')
+
+        non_volterol_amp = amps.exclude(name__contains='Voltarol').first()
+        self.assertEqual(non_volterol_amp.bnf_code, '1003020U0AAAIAI')
 
     def test_fetch_and_import_ncso_concessions(self):
         # We "download" the following concessions:
@@ -200,3 +221,12 @@ class CommandsTestCase(TestCase):
 
         concession.refresh_from_db()
         self.assertEqual(concession.vmpp, vmpp)
+
+    def assertQuery(self, col, tbl, pk_col, pk_val, exp_val):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'SELECT {} FROM {} WHERE {} = %s'.format(col, tbl, pk_col),
+                [pk_val]
+            )
+            row = cursor.fetchone()
+            self.assertEqual(row[0], exp_val)
