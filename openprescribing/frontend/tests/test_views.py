@@ -331,7 +331,8 @@ class TestAlertViews(TestCase):
 
 
 class TestFrontendHomepageViews(TestCase):
-    fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog']
+    fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog',
+                'dmdproducts', 'ppusavings_entity_homepage']
 
     def test_call_view_ccg_homepage(self):
         response = self.client.get('/ccg/02Q/')
@@ -339,6 +340,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, 'entity_home_page.html')
         self.assertEqual(response.context['measure'].id, 'cerazette')
         self.assertEqual(response.context['measures_count'], 2)
+        self.assertEqual(response.context['possible_savings'], 200.0)
         self.assertEqual(response.context['entity'].code, '02Q')
         self.assertEqual(response.context['entity_type'], 'CCG')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
@@ -349,6 +351,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertTemplateUsed(response, 'entity_home_page.html')
         self.assertEqual(response.context['measure'].id, 'cerazette')
         self.assertEqual(response.context['measures_count'], 2)
+        self.assertEqual(response.context['possible_savings'], 200.0)
         self.assertEqual(response.context['entity'].code, 'C84001')
         self.assertEqual(response.context['entity_type'], 'practice')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
