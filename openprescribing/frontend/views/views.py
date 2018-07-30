@@ -15,9 +15,7 @@ from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.db import IntegrityError
-from django.db.models import Sum
+from django.db import connection
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -31,6 +29,8 @@ from allauth.account.utils import perform_login
 
 from common.utils import get_env_setting
 from common.utils import parse_date
+from api.view_utils import dictfetchall
+from common.utils import ppu_sql
 from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
@@ -343,6 +343,23 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
 
+def _total_savings(entity, date):
+    conditions = ' '
+    if isinstance(entity, PCT):
+        conditions += 'AND {ppusavings_table}.pct_id = %(entity_code)s '
+        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
+    elif isinstance(entity, Practice):
+        conditions += 'AND {ppusavings_table}.practice_id = %(entity_code)s '
+    sql = ppu_sql(conditions=conditions)
+    sql = ("SELECT SUM(possible_savings) "
+           "AS total_savings FROM ({}) all_savings").format(sql)
+    params = {'date': date, 'entity_code': entity.pk}
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        return dictfetchall(cursor)[0]['total_savings']
+
+
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     # find the core measurevalue that is most outlierish
@@ -366,11 +383,7 @@ def ccg_home_page(request, ccg_code):
         practices = Practice.objects.filter(
             ccg=ccg).filter(setting=4).order_by('name')
         date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = PPUSaving.objects.filter(
-            date=date,
-            pct=ccg,
-            practice__isnull=True).aggregate(
-                Sum('possible_savings'))['possible_savings__sum']
+        total_possible_savings = _total_savings(ccg, date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
@@ -406,10 +419,7 @@ def practice_home_page(request, practice_code):
         return form
     else:
         date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = PPUSaving.objects.filter(
-            date=date,
-            practice=practice).aggregate(
-                Sum('possible_savings'))['possible_savings__sum']
+        total_possible_savings = _total_savings(practice, date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
