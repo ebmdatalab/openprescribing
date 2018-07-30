@@ -3,7 +3,6 @@ import os
 
 from gcutils.bigquery import Client
 
-from django.conf import settings
 from django.test import TestCase
 import pandas as pd
 from mock import patch
@@ -76,7 +75,6 @@ class BigqueryFunctionalTests(TestCase):
             'practices',
             bq_schemas.PRACTICE_SCHEMA
         )
-        columns = [field.name for field in bq_schemas.PRACTICE_SCHEMA]
         table.insert_rows_from_csv(practices_fixture_path)
 
         tariff_path = os.path.join(fixtures_base_path, 'tariff_fixture.csv')

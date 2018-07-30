@@ -1,7 +1,6 @@
 import csv
 import tempfile
 
-from django.conf import settings
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema

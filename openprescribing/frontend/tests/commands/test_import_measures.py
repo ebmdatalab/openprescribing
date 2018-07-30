@@ -205,7 +205,6 @@ class BigqueryFunctionalTests(TestCase):
             )
             client = Client('hscic')
             table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
-            columns = [field.name for field in PRACTICE_SCHEMA]
             table.insert_rows_from_csv(practices_fixture_path)
 
             ccgs_fixture_path = os.path.join(
