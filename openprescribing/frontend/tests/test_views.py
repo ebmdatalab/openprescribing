@@ -8,7 +8,7 @@ from pyquery import PyQuery as pq
 from django.conf import settings
 from django.core import mail
 from django.http import QueryDict
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 from frontend.models import EmailMessage
 from frontend.models import OrgBookmark
@@ -18,7 +18,7 @@ from frontend.views.views import BadRequestError, _get_measure_tag_filter
 from allauth.account.models import EmailAddress
 
 
-class TestAlertViews(TransactionTestCase):
+class TestAlertViews(TestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
                 'practices', 'prescriptions', 'measures', 'importlog']
 
@@ -105,7 +105,7 @@ class TestAlertViews(TransactionTestCase):
     def test_search_bookmark_newsletter(self, mailchimp):
         email = 'a@a.com'
         response = self._post_search_signup(
-            'stuff', '%7Emysearch', email=email, newsletter=True)
+            'stuff', '%7Emysearch', email=email, alert=True, newsletter=True)
         self.assertTrue(response.context['user'].is_anonymous())
         self.assertContains(
             response, "Check your email and click the confirmation link")
@@ -154,9 +154,9 @@ class TestAlertViews(TransactionTestCase):
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
 
     @patch('frontend.views.views.mailchimp_subscribe')
-    def test_ccg_bookmark_newsletter(self, mailchimp):
+    def test_ccg_bookmark_with_newsletter(self, mailchimp):
         email = 'a@a.com'
-        response = self._post_org_signup('03V', email=email, newsletter=True)
+        response = self._post_org_signup('03V', email=email, alert=True, newsletter=True)
         self.assertTrue(response.context['user'].is_anonymous())
         self.assertContains(
             response, "Check your email and click the confirmation link")
@@ -268,7 +268,7 @@ class TestAlertViews(TransactionTestCase):
         self.assertTrue(response.context['user'].is_active)
 
 
-class TestFrontendHomepageViews(TransactionTestCase):
+class TestFrontendHomepageViews(TestCase):
     fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog']
 
     def test_call_view_ccg_homepage(self):
@@ -292,7 +292,7 @@ class TestFrontendHomepageViews(TransactionTestCase):
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
 
 
-class TestFrontendViews(TransactionTestCase):
+class TestFrontendViews(TestCase):
     fixtures = ['chemicals', 'sections', 'ccgs',
                 'practices', 'prescriptions', 'measures', 'importlog']
 
@@ -508,7 +508,7 @@ class TestFrontendViews(TransactionTestCase):
         self.assertContains(response, 'bnfCodes = "ABCD"')
 
 
-class TestPPUViews(TransactionTestCase):
+class TestPPUViews(TestCase):
     fixtures = ['ccgs', 'importlog', 'dmdproducts',
                 'practices', 'prescriptions', 'presentations']
 
@@ -554,7 +554,7 @@ class TestPPUViews(TransactionTestCase):
         })
 
 
-class TestGetMeasureTagFilter(TransactionTestCase):
+class TestGetMeasureTagFilter(TestCase):
 
     def test_rejects_bad_tags(self):
         with self.assertRaises(BadRequestError):
