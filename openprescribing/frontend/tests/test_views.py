@@ -156,7 +156,8 @@ class TestAlertViews(TestCase):
     @patch('frontend.views.views.mailchimp_subscribe')
     def test_ccg_bookmark_with_newsletter(self, mailchimp):
         email = 'a@a.com'
-        response = self._post_org_signup('03V', email=email, alert=True, newsletter=True)
+        response = self._post_org_signup(
+            '03V', email=email, alert=True, newsletter=True)
         self.assertTrue(response.context['user'].is_anonymous())
         self.assertContains(
             response, "Check your email and click the confirmation link")
@@ -197,7 +198,7 @@ class TestAlertViews(TestCase):
         self.assertEqual(OrgBookmark.objects.count(), 0)
 
     @patch('frontend.views.views.mailchimp_subscribe')
-    def test_ccg_bookmark_newsletter_with_alert_when_already_logged_in(self, mailchimp):
+    def test_ccg_bookmark_newsletter_alert_logged_in(self, mailchimp):
         email = 'a@a.com'
         self._create_user_and_login(email)
         response = self._post_org_signup(
@@ -206,7 +207,7 @@ class TestAlertViews(TestCase):
             response, "optionally tell us a little more")
 
     @patch('frontend.views.views.mailchimp_subscribe')
-    def test_ccg_bookmark_newsletter_without_alert_when_already_logged_in(self, mailchimp):
+    def test_ccg_bookmark_newsletter_no_alert_logged_in(self, mailchimp):
         email = 'a@a.com'
         self._create_user_and_login(email)
         response = self._post_org_signup(

@@ -443,7 +443,8 @@ def measures_for_one_ccg(request, ccg_code):
             'practices': practices,
             'page_id': ccg_code,
             'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(request, requested_ccg),
+            'signed_up_for_alert': _signed_up_for_alert(
+                request, requested_ccg),
             'tag_filter': tag_filter
         }
         return render(request, 'measures_for_one_ccg.html', context)
@@ -708,7 +709,8 @@ def _handle_bookmark_and_newsletter_post(
             request.session['alerts_requested'] = 1
             user = _authenticate_possibly_new_user(email)
             form_args = _make_bookmark_args(user, form, subject_field_ids)
-            form_args['approved'] = _unapprove_bookmarks_when_different_user(user, request)
+            form_args['approved'] = _unapprove_bookmarks_when_different_user(
+                user, request)
             subject_class.objects.get_or_create(**form_args)
             return _force_login_and_redirect(request, user)
         else:
