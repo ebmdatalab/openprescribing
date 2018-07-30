@@ -120,7 +120,7 @@ class GeneralFrontendTest(SeleniumTestCase):
         import time
         time.sleep(1)
         self.assertTrue(self.find_by_xpath(
-            "//p[contains(text(), 'prescribed on any')]"))
+            "//p[contains(text(), 'Unrecognised tag')]"))
 
     def test_ccg_measures_explore_link(self):
         url = self.live_server_url + '/ccg/02Q/'
