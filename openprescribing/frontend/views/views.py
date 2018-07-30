@@ -1,9 +1,10 @@
-import functools
 from lxml import html
 from requests.exceptions import HTTPError
 from urllib import urlencode
 from urlparse import urlparse, urlunparse
+import functools
 import hashlib
+import logging
 import requests
 import sys
 
@@ -46,6 +47,9 @@ from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
 
 from mailchimp3 import MailChimp
+
+
+logger = logging.getLogger(__name__)
 
 
 class BadRequestError(Exception):
@@ -501,15 +505,21 @@ def finalise_signup(request):
     next_url = None
     if 'newsletter_email' in request.session:
         if request.POST:
-            mailchimp_subscribe(
+            success = mailchimp_subscribe(
                 request,
                 request.POST['email'], request.POST['first_name'],
                 request.POST['last_name'], request.POST['organisation'],
                 request.POST['job_title']
             )
-            messages.success(
-                request,
-                'You have successfully signed up for the newsletter.')
+            if success:
+                messages.success(
+                    request,
+                    'You have successfully signed up for the newsletter.')
+            else:
+                messages.error(
+                    request,
+                    'There was a problem signing you up for the newsletter.')
+
         else:
             # Show the signup form
             return render(request, 'newsletter_signup.html')
@@ -558,6 +568,10 @@ def analyse(request):
 def mailchimp_subscribe(
         request, email, first_name, last_name,
         organisation, job_title):
+    """Subscribe `email` to newsletter.
+
+    Returns boolean indicating success
+    """
     del(request.session['newsletter_email'])
     email_hash = hashlib.md5(email).hexdigest()
     data = {
@@ -577,13 +591,16 @@ def mailchimp_subscribe(
         client.lists.members.get(
             list_id=settings.MAILCHIMP_LIST_ID,
             subscriber_hash=email_hash)
+        return True
     except HTTPError:
         try:
             client.lists.members.create(
                 list_id=settings.MAILCHIMP_LIST_ID, data=data)
+            return True
         except HTTPError:
             # things like blacklisted emails, etc
-            pass
+            logger.warn("Unable to subscribe %s to newsletter", email)
+            return False
 
 
 def _authenticate_possibly_new_user(email):
