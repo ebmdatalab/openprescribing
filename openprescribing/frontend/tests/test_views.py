@@ -273,6 +273,14 @@ class TestAlertViews(TestCase):
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, '03V')
 
+    def test_ccg_bookmark_already_signed_up_message(self):
+        email = 'a@a.com'
+        self._create_user_and_login(email)
+        response = self._post_org_signup(
+            '03V', email=email, alert=True, newsletter=False)
+        response = response.client.get('/ccg/03V/')
+        self.assertContains(response, "You're already signed up")
+
     def test_ccg_newsletter_signup(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
         self._post_org_signup('03V', newsletter=False)
