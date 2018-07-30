@@ -112,9 +112,6 @@ class TestAlertViews(TransactionTestCase):
         self.assertContains(
             response, "optionally tell us a little more")
         # finish the signup
-        session = self.client.session
-        session['newsletter_email'] = 1
-        session.save()
         response = self.client.post('/finalise_signup/', {
             'email': 'foo@baz.com',
             'first_name': '',
@@ -166,9 +163,6 @@ class TestAlertViews(TransactionTestCase):
         self.assertContains(
             response, "optionally tell us a little more")
         # finish the signup
-        session = self.client.session
-        session['newsletter_email'] = 1
-        session.save()
         response = self.client.post('/finalise_signup/', {
             'email': 'foo@baz.com',
             'first_name': '',
