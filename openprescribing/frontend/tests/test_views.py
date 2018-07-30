@@ -175,6 +175,59 @@ class TestAlertViews(TestCase):
             "You have successfully signed up for the newsletter")
         self.assertEqual(OrgBookmark.objects.count(), 1)
 
+    @patch('frontend.views.views.mailchimp_subscribe')
+    def test_ccg_bookmark_newsletter_without_alert(self, mailchimp):
+        email = 'a@a.com'
+        response = self._post_org_signup(
+            '03V', email=email, alert=False, newsletter=True)
+        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertContains(
+            response, "optionally tell us a little more")
+        # finish the signup
+        response = self.client.post('/finalise_signup/', {
+            'email': 'foo@baz.com',
+            'first_name': '',
+            'last_name': '',
+            'job_title': '',
+            'organisation': ''}, follow=True)
+        mailchimp.assert_called()
+        self.assertContains(
+            response,
+            "You have successfully signed up for the newsletter")
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+
+    @patch('frontend.views.views.mailchimp_subscribe')
+    def test_ccg_bookmark_newsletter_with_alert_when_already_logged_in(self, mailchimp):
+        email = 'a@a.com'
+        self._create_user_and_login(email)
+        response = self._post_org_signup(
+            '03V', email=email, alert=True, newsletter=True)
+        self.assertContains(
+            response, "optionally tell us a little more")
+
+    @patch('frontend.views.views.mailchimp_subscribe')
+    def test_ccg_bookmark_newsletter_without_alert_when_already_logged_in(self, mailchimp):
+        email = 'a@a.com'
+        self._create_user_and_login(email)
+        response = self._post_org_signup(
+            '03V', email=email, alert=True, newsletter=False)
+        self.assertFalse(response.context['user'].is_anonymous())
+        response = self._post_org_signup(
+            '03Q', email=email, alert=False, newsletter=True)
+        self.assertContains(
+            response, "optionally tell us a little more")
+        # finish the signup
+        response = self.client.post('/finalise_signup/', {
+            'email': email,
+            'first_name': '',
+            'last_name': '',
+            'job_title': '',
+            'organisation': ''}, follow=True)
+        mailchimp.assert_called()
+        self.assertContains(
+            response,
+            "You have successfully signed up for the newsletter")
+
     def test_ccg_bookmark_added_when_already_logged_in(self):
         email = 'a@a.com'
         self._create_user_and_login(email)
