@@ -207,7 +207,7 @@ def create_dmd_product():
         fpath = os.path.dirname(__file__)
         for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath),
                         key=lambda x: int(re.findall(r'\d+', x)[0])):
-            logging.info("Post-processing", f)
+            logger.info("Post-processing", f)
             with open(f, "rb") as sql:
                 sql = sql.read()
                 cursor.execute(sql)
@@ -276,7 +276,7 @@ def process_datafiles(source_directory):
     to_process = glob.glob("%s/*xml" % source_directory)
     with connection.cursor() as cursor:
         for f in to_process:
-            logging.info("Processing %s" % f)
+            logger.info("Processing %s" % f)
             if 'gtin' in f:
                 process_gtin(cursor, f)
             else:

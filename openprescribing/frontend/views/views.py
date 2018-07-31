@@ -815,7 +815,7 @@ def tariff(request, code=None):
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
     context = {}
-    if 'canceling statement due to statement timeout' in value.message:
+    if 'canceling statement due to statement timeout' in unicode(value):
         context['reason'] = ("The database took too long to respond.  If you "
                              "were running an analysis with multiple codes, "
                              "try again with fewer.")

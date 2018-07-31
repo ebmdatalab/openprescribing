@@ -1,13 +1,13 @@
 import csv
 import tempfile
 
-from django.conf import settings
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema
 from gcutils.storage import Client as StorageClient
 
-from dmd.models import DMDProduct, DMDVmpp, NCSOConcession, TariffPrice
+from dmd.models import (
+    DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory)
 from frontend.models import PCT
 
 
@@ -176,11 +176,13 @@ class BQClientTest(TestCase):
             date='2017-11-01',
          )
 
+        tariff_category = TariffCategory.objects.create(cd=11, desc='Foo')
+
         TariffPrice.objects.create(
             vmpp_id=1206011000001108,
             product_id=327368008,
             price_pence=422,
-            tariff_category_id=11,
+            tariff_category=tariff_category,
             date='2017-11-01',
         )
 

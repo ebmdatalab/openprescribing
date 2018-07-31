@@ -20,8 +20,7 @@ django-anymail[mailgun]==2.2
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-dotenv==1.4.2
-django-rest-swagger==0.3.5
-django==1.9.1
+django==1.10.8
 djangorestframework-csv==1.4.1
 djangorestframework==3.7.3
 enum34==1.1.6
@@ -59,7 +58,6 @@ pyopenssl==17.3.0         # via requests
 python-dateutil==2.6.1
 python-openid==2.2.5      # via django-allauth
 pytz==2016.7
-pyyaml==3.12              # via django-rest-swagger
 requests-futures==0.9.7
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.18.4

@@ -2,7 +2,6 @@
 
 import logging
 import sys
-import sets
 import traceback
 
 from django.core.management.base import BaseCommand
@@ -169,7 +168,7 @@ class Command(BaseCommand):
 
 class BatchedEmailErrors(Exception):
     def __init__(self, exceptions):
-        individual_messages = sets.Set()
+        individual_messages = set()
         for exception in exceptions:
             individual_messages.add(
                 "".join(traceback.format_exception_only(

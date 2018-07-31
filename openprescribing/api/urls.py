@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 import views_bnf_codes
 import views_spending
@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^bnf_code/$', views_bnf_codes.bnf_codes),
     url(r'^org_code/$', views_org_codes.org_codes),
     url(r'^org_location/$', views_org_location.org_location),
-    url(r'^docs/', include('rest_framework_swagger.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns,

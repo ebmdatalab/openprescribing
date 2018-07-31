@@ -1,4 +1,3 @@
-from sets import Set
 import pandas as pd
 
 from django.core.management.base import BaseCommand
@@ -32,7 +31,7 @@ class Command(BaseCommand):
 
         """
         cases = []
-        seen = Set()
+        seen = set()
         df = pd.read_csv(options['substitutions_csv'])
         df = df[df['Really equivalent?'] == 'Y']
         GenericCodeMapping.objects.all().delete()

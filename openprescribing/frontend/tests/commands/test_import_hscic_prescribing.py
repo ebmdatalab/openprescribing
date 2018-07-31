@@ -98,15 +98,10 @@ class ImportTestCase(TestCase):
         self.new_opts = {
             'filename': test_file
         }
-        db_name = 'test_' + utils.get_env_setting('DB_NAME')
-        self.env = patch.dict(
-            'os.environ', {'DB_NAME': db_name})
-        with self.env:
-            call_command('import_hscic_prescribing', **self.new_opts)
+        call_command('import_hscic_prescribing', **self.new_opts)
 
     def test_import_drops_existing(self):
-        with self.env:
-            call_command('import_hscic_prescribing', **self.new_opts)
+        call_command('import_hscic_prescribing', **self.new_opts)
         self.assertEqual(Prescription.objects.count(), 15)
         self.assertEqual(PracticeStatistics.objects.count(), 0)
 

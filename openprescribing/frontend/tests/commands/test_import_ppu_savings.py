@@ -3,19 +3,54 @@ import os
 
 from gcutils.bigquery import Client
 
-from django.conf import settings
 from django.test import TestCase
 import pandas as pd
 from mock import patch
 
 from frontend import bq_schemas
 from frontend.management.commands import import_ppu_savings
-from frontend.models import PPUSaving
+from frontend.models import PPUSaving, PCT, Practice, Chemical
 
 
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+                                        open_date='2013-04-01',
+                                        close_date='2015-01-01')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                chem_name='Desogestrel')
+        Chemical.objects.create(bnf_code='0408010A0',
+                                chem_name='Levetiracetam')
+        Practice.objects.create(code='C84001', ccg=bassetlaw,
+                                name='LARWOOD SURGERY', setting=4)
+        Practice.objects.create(code='C84024', ccg=bassetlaw,
+                                name='NEWGATE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='B82005', ccg=bassetlaw,
+                                name='PRIORY MEDICAL GROUP', setting=4,
+                                open_date='2015-01-01')
+        Practice.objects.create(code='B82010', ccg=bassetlaw,
+                                name='RIPON SPA SURGERY', setting=4)
+        Practice.objects.create(code='A85017', ccg=bassetlaw,
+                                name='BEWICK ROAD SURGERY', setting=4)
+        Practice.objects.create(code='A86030', ccg=bassetlaw,
+                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='C83051', ccg=lincs_west,
+                                name='ABBEY MEDICAL PRACTICE', setting=4)
+        Practice.objects.create(code='C83019', ccg=lincs_east,
+                                name='BEACON MEDICAL PRACTICE', setting=4)
+        # Ensure we only include open practices in our calculations.
+        Practice.objects.create(code='B82008', ccg=bassetlaw,
+                                name='NORTH SURGERY', setting=4,
+                                open_date='2010-04-01',
+                                close_date='2012-01-01')
+        # Ensure we only include standard practices in our calculations.
+        Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                                setting=1)
+
         fixtures_base_path = os.path.join(
             'frontend', 'tests', 'fixtures', 'commands',
         )
@@ -40,7 +75,6 @@ class BigqueryFunctionalTests(TestCase):
             'practices',
             bq_schemas.PRACTICE_SCHEMA
         )
-        columns = [field.name for field in bq_schemas.PRACTICE_SCHEMA]
         table.insert_rows_from_csv(practices_fixture_path)
 
         tariff_path = os.path.join(fixtures_base_path, 'tariff_fixture.csv')

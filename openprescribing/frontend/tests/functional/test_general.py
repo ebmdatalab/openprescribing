@@ -115,6 +115,16 @@ class GeneralFrontendTest(SeleniumTestCase):
             "//div[@id='charts']/div[1]").get_attribute("id"),
                          'measure_keppra')
 
+    def test_ccg_measures_tags(self):
+        url = self.live_server_url + '/ccg/02Q/?tags=foobar'
+        self.browser.get(url)
+        # nothing is tagged foobar, so should return the text expected
+        # when no measures are shown
+        import time
+        time.sleep(1)
+        self.assertTrue(self.find_by_xpath(
+            "//p[contains(text(), 'Unrecognised tag')]"))
+
     def test_ccg_measures_explore_link(self):
         url = self.live_server_url + '/ccg/02Q/measures/'
         self.browser.get(url)
