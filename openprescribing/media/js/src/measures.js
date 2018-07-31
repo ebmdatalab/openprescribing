@@ -67,10 +67,10 @@ var measures = {
       $(_this.el.perfSummary).html(summaryTemplate(perf));
       var html = '';
       _.each(chartData, function(d) {
-        html += panelTemplate(d);
+        html = panelTemplate(d);
+        $(d.chartContainerId).append(html);
       });
       $(_this.el.charts)
-        .html(html)
         .find('a[data-download-chart-id]')
         .on('click', function() {
           return _this.handleDataDownloadClick(
@@ -79,22 +79,22 @@ var measures = {
         });
       _.each(chartData, function(d, i) {
         if (i < _this.graphsToRenderInitially) {
-          var chOptions = mu.getGraphOptions(d,
-                                             options, d.is_percentage, chartOptions);
+          var chOptions = mu.getGraphOptions(
+            d, options, d.is_percentage, chartOptions);
           if (chOptions) {
             new Highcharts.Chart(chOptions);
           }
         }
       });
-
+      $('.loading-wrapper').hide();
       // On long pages, render remaining graphs only after scroll,
       // to stop the page choking on first load.
       $(window).scroll(function() {
         if (_this.allGraphsRendered === false) {
           _.each(chartData, function(d, i) {
             if (i >= _this.graphsToRenderInitially) {
-              var chOptions = mu.getGraphOptions(d,
-                                                 options, d.is_percentage, chartOptions);
+              var chOptions = mu.getGraphOptions(
+                d, options, d.is_percentage, chartOptions);
               if (chOptions) {
                 new Highcharts.Chart(chOptions);
               }
@@ -140,17 +140,23 @@ var measures = {
   setUpMap: function(options) {
     var _this = this;
     if ($('#' + _this.el.mapPanel).length) {
-      var map = L.mapbox.map(_this.el.mapPanel,
-                             'mapbox.streets').setView([52.905, -1.79], 6);
+      var map = L.mapbox.map(
+        _this.el.mapPanel,
+        'mapbox.streets',
+        {zoomControl: false}).setView([52.905, -1.79], 6);
       map.scrollWheelZoom.disable();
       var url = config.apiHost + '/api/1.0/org_location/?org_type=' +
           options.orgType.toLowerCase();
       url += '&q=' + options.orgId;
+      var maxZoom = 5;
+      if (options.orgType === 'practice') {
+        maxZoom = 12;
+      }
       var layer = L.mapbox.featureLayer()
           .loadURL(url)
           .on('ready', function() {
             if (layer.getBounds().isValid()) {
-              map.fitBounds(layer.getBounds(), {maxZoom: 12});
+              map.fitBounds(layer.getBounds(), {maxZoom: maxZoom});
               layer.setStyle({fillColor: '#ff00ff',
                               fillOpacity: 0.2,
                               weight: 0.5,

@@ -11,11 +11,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
-from common.utils import namedtuplefetchall, nhs_titlecase
-from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
+from common.utils import namedtuplefetchall
+from common.utils import nhs_titlecase
+from common.utils import ppu_sql
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
-from frontend.models import PPUSaving
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
 import view_utils as utils
@@ -207,72 +207,28 @@ def price_per_unit(request, format=None):
             practice_level = True
         filename += "-%s" % entity_code
 
-    # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
-    # DMDProduct.
-    sql = '''
-    SELECT DISTINCT ON (
-            {dmdproduct_table}.bnf_code,
-            {ppusavings_table}.pct_id,
-            {ppusavings_table}.practice_id
-        )
-        {ppusavings_table}.id AS id,
-        {ppusavings_table}.date AS date,
-        {ppusavings_table}.lowest_decile AS lowest_decile,
-        {ppusavings_table}.quantity AS quantity,
-        {ppusavings_table}.price_per_unit AS price_per_unit,
-        {ppusavings_table}.possible_savings AS possible_savings,
-        {ppusavings_table}.formulation_swap AS formulation_swap,
-        {ppusavings_table}.pct_id AS pct,
-        {ppusavings_table}.practice_id AS practice,
-        {ppusavings_table}.bnf_code AS presentation,
-        {practice_table}.name AS practice_name,
-        {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
-        subquery.price_concession IS NOT NULL as price_concession,
-        COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
-    FROM {ppusavings_table}
-    LEFT OUTER JOIN {presentation_table}
-        ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
-    LEFT OUTER JOIN {practice_table}
-        ON {ppusavings_table}.practice_id = {practice_table}.code
-    LEFT OUTER JOIN {dmdproduct_table}
-        ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
-    LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
-                     FROM {dmdvmpp_table}
-                     INNER JOIN {ncsoconcession_table}
-                         ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
-                     WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
-        ON {dmdproduct_table}.vpid = subquery.vpid
-    WHERE
-        {ppusavings_table}.date = %(date)s
-        AND {dmdproduct_table}.concept_class = 1'''
+    extra_conditions = ""
 
     if bnf_code:
-        sql += '''
+        extra_conditions += '''
         AND {ppusavings_table}.bnf_code = %(bnf_code)s'''
 
     if entity_code:
         if practice_level:
-            sql += '''
+            extra_conditions += '''
         AND {ppusavings_table}.practice_id = %(entity_code)s'''
         else:
-            sql += '''
+            extra_conditions += '''
         AND {ppusavings_table}.pct_id = %(entity_code)s'''
 
             if bnf_code:
-                sql += '''
+                extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NOT NULL'''
             else:
-                sql += '''
+                extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NULL'''
 
-    sql = sql.format(
-        ppusavings_table=PPUSaving._meta.db_table,
-        practice_table=Practice._meta.db_table,
-        presentation_table=Presentation._meta.db_table,
-        dmdproduct_table=DMDProduct._meta.db_table,
-        dmdvmpp_table=DMDVmpp._meta.db_table,
-        ncsoconcession_table=NCSOConcession._meta.db_table,
-    )
+    sql = ppu_sql(conditions=extra_conditions)
 
     with connection.cursor() as cursor:
         cursor.execute(sql, params)

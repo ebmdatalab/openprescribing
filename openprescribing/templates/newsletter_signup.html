@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}Home{% endblock %}
+{% block active_class %}home{% endblock %}
+{% block container_class %}home{% endblock %}
+
+
+{% block content %}
+{% include '_newsletter_signup_form.html' %}
+{% endblock %}

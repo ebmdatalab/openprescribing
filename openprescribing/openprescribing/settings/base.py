@@ -218,6 +218,47 @@ INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
 # END APP CONFIGURATION
 
 
+# LOGGING CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s %(levelname)s '
+                       '[%(name)s:%(lineno)s] %(module)s '
+                       '%(process)d %(thread)d %(message)s')
+        }
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        }
+    }
+}
+# END LOGGING CONFIGURATION
+
+
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -298,7 +339,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
-LOGIN_REDIRECT_URL = "last-bookmark"
+LOGIN_REDIRECT_URL = "finalise-signup"
 LOGIN_URL = "home"
 
 # Easy bootstrap styling of Django forms
@@ -313,3 +354,6 @@ SLACK_GENERAL_POST_KEY = utils.get_env_setting(
     default=''
 )
 SLACK_SENDING_ACTIVE = True
+
+# Newsletter signup
+MAILCHIMP_LIST_ID = 'b2b7873a73'

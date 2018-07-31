@@ -12,17 +12,7 @@
 {% block content %}
 
 <h1>CCG: {{ ccg.name }}</h1>
-<div class="row">
-  <div class="col-md-12">
-    <img src="/static/img/bang.jpg" style="float: left; margin-right: 10px">
-    <p>
-      Latest features from <strong>OpenPrescribing Labs</strong>:
-      <a href="{% url 'ccg_price_per_unit' ccg.code %}">a tool to
-        catch up to £400m of NHS savings</a> per month; and
-      <a href="{% url 'measures_for_one_ccg' ccg.code %}?tags=lowpriority">measures
-        for NHS England's list of low value prescription items</a></p>
-  </div>
-</div>
+
 <div class="row" id="intro">
   <div class="col-md-6">
     <p>Standard practices currently in this CCG:</p>
@@ -33,7 +23,7 @@
           class='hidden'
         {% endif %}
         >
-        <a href="{% url 'measures_for_one_practice' p.code %}">{{ p }}</a>
+        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
         ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
       </li>
     {% endfor %}
@@ -49,9 +39,12 @@
 </div>
 
 <hr/>
-{% include '_measures_panel.html' with entity_type='CCG' %}
+
+{% include '_measures_heading.html' with entity_type='CCG' %}
+{% include '_measures_panel.html' %}
 
 <hr/>
+
 {% include '_get_in_touch.html' %}
 {% endblock %}
 
@@ -65,4 +58,5 @@
 };
 </script>
 {% conditional_js 'measures' %}
+
 {% endblock %}

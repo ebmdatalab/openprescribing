@@ -7,11 +7,12 @@ DB_HOST=
 # Django's secret key.
 SECRET_KEY=secret_key
 
-# Username and password for accessing Mailgun.  Dummy values are fine for local
-# development and testing.
+# Dummy values are fine for local development and testing.
 MAILGUN_WEBHOOK_USER=mailgun_webhook_user
 MAILGUN_WEBHOOK_PASS=mailgun_webhook_pass
 MAILGUN_API_KEY=mailgun_api_key
+MAILCHIMP_USER=mailchimp_user
+MAILCHIMP_API_KEY=mailchimp_api_key
 
 # The path to a file containing your credentials for accessing Google Cloud
 # Platform services (eg BigQuery, Cloud Storage).

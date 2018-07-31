@@ -63,7 +63,7 @@ class TestAPIOrgLocationViews(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
-        self.assertEqual(len(content['features']), 1)
+        self.assertEqual(len(content['features']), 2)
         props = content['features'][0]['properties']
         self.assertEqual(props['name'], 'AINSDALE VILLAGE SURGERY')
         self.assertEqual(props['setting'], 4)

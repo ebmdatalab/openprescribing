@@ -18,13 +18,19 @@ class MissingParameter(APIException):
     default_detail = 'You are missing a required parameter.'
 
 
+class InvalidMultiParameter(APIException):
+    status_code = 400
+    default_detail = ('You can specify one org and many measures, '
+                      'or one measure and many orgs, but not many of both')
+
+
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measure = request.query_params.get('measure', None)
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    tags = utils.param_to_list(request.query_params.get('tags', None))
     qs = MeasureGlobal.objects.select_related('measure')
-    if measure:
-        qs = qs.filter(measure_id=measure)
+    if measures:
+        qs = qs.filter(measure_id__in=measures)
     if tags:
         qs = qs.filter(measure__tags__overlap=tags)
     qs = qs.order_by('measure_id', 'month')
@@ -162,11 +168,13 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measure_id = request.query_params.get('measure', None)
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
-
-    measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
+    rolled = {}
+    measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
 
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'ccg')
@@ -176,13 +184,15 @@ def measure_by_ccg(request, format=None):
 
 @api_view(['GET'])
 def measure_by_practice(request, format=None):
-    measure_id = request.query_params.get('measure', None)
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    if not org_ids:
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    if not orgs:
         raise MissingParameter
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
 
-    measure_values = MeasureValue.objects.by_practice(org_ids, measure_id,
+    measure_values = MeasureValue.objects.by_practice(orgs, measures,
                                                       tags)
 
     rsp_data = {
@@ -209,10 +219,7 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
         if practice_or_ccg == 'practice':
             measure_value_data.update({
                 'practice_id': measure_value.practice_id,
-                'practice_name': u'{}{}'.format(
-                    measure_value.practice.name,
-                    measure_value.practice.inactive_status_suffix()
-                ),
+                'practice_name': measure_value.practice.name,
             })
         elif practice_or_ccg == 'ccg':
             measure_value_data.update({

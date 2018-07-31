@@ -38,6 +38,12 @@ class BookmarkListForm(forms.Form):
             del self.fields['search_bookmarks']
 
 
+OPTIONS = (
+    ('newsletter', ' Newsletter'),
+    ('alerts', ' Monthly alerts'),
+)
+
+
 class SearchBookmarkForm(forms.Form):
     email = forms.EmailField(
         label="",
@@ -50,6 +56,10 @@ class SearchBookmarkForm(forms.Form):
                 'placeholder': 'Email address',
                 'size': '35'})
     )
+    newsletters = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=OPTIONS,
+        label='')
     url = forms.CharField(
         widget=forms.HiddenInput(),
         required=True
@@ -88,6 +98,10 @@ class OrgBookmarkForm(forms.Form):
         widget=forms.HiddenInput(),
         required=False
     )
+    newsletters = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=OPTIONS,
+        label='')
 
     def clean(self):
         """Turn entity ids into Practice or PCT instances
