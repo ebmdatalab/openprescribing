@@ -16,8 +16,7 @@ django-anymail[mailgun]==2.2
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-dotenv
-django-rest-swagger==0.3.5
-django==1.9.1
+django>=1.10,<1.11
 djangorestframework-csv==1.4.1
 djangorestframework>=3.3.2
 enum34

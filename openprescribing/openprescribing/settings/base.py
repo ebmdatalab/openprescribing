@@ -161,6 +161,7 @@ MIDDLEWARE_CLASSES = (
     # Default Django middleware.
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -190,7 +191,6 @@ DJANGO_APPS = (
     # Useful template tags:
     'django.contrib.humanize',
     'rest_framework',
-    'rest_framework_swagger',
     'corsheaders',
 )
 
@@ -255,13 +255,6 @@ CORS_ALLOW_METHODS = (
 )
 SUPPORT_EMAIL = 'feedback@openprescribing.net'
 DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
-SWAGGER_SETTINGS = {
-    'info': {
-        'contact': SUPPORT_EMAIL,
-        'description': 'description goes here',
-        'title': 'Title',
-    }
-}
 GDOC_DOCS = {
     'zooming': '1lz1uRfNOy2fQ-xSy_6BiLV_7Mgr-Z2V0-VWzo6HlCO0',
     'analyse': '1HqlJlUA86cnlyJpUxiQdGsM46Gsv9xyZkmhkTqjbwH0',

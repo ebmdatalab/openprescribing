@@ -25,7 +25,7 @@ services:
     extra_hosts:
       - saucehost:${SAUCE_HOST-127.0.0.1}
     ports:
-      - "6080:6080"
+      - "6080-6580:6080-6580"
       - "6060:6060"
     volumes:
       - .:/code
@@ -53,7 +53,7 @@ services:
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:
-      - "6080:6080"
+      - "6080-6580:6080-6580"
       - "6060:6060"
     volumes:
       - .:/code

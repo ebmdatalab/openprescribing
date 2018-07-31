@@ -1,4 +1,3 @@
-from sets import Set
 import datetime
 import re
 
@@ -55,7 +54,7 @@ def _build_conditions_and_patterns(code, focus):
     extra_codes = GenericCodeMapping.objects.filter(
         Q(from_code=code) | Q(to_code=code))
     # flatten and uniquify the list of codes
-    extra_codes = Set(np.array(
+    extra_codes = set(np.array(
         [[x.from_code, x.to_code] for x in extra_codes]).flatten())
     patterns = ["%s____%s" % (code[:9], code[13:15])]
     for extra_code in extra_codes:
