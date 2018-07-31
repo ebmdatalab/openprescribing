@@ -3,7 +3,7 @@
 {% load template_extras %}
 
 {% block title %}Prescribing measures for {{ entity.name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block active_class %}{{ entity_type|lower }}{% endblock %}
 {% block container_class %}landing-page{% endblock %}
 
 {% block extra_css %}
