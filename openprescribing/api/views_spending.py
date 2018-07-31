@@ -229,7 +229,7 @@ def price_per_unit(request, format=None):
                 extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NULL'''
 
-    sql = ppu_sql(extra_conditions=extra_conditions)
+    sql = ppu_sql(conditions=extra_conditions)
 
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
