@@ -366,27 +366,28 @@ def _total_savings(entity, date):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.filter(
-        pct=ccg,
-        practice__isnull=True,
-        measure__tags__contains=['core']).exclude(
-            measure_id='lpzomnibus'
-        ).order_by(
-            '-percentile').first()
-    if extreme_measurevalue:
-        extreme_measure = extreme_measurevalue.measure
-    else:
-        extreme_measure = None
     request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
     else:
+        # find the core measurevalue that is most outlierish
+        date = _specified_or_last_date(request, 'ppu')
+        extreme_measurevalue = MeasureValue.objects.filter(
+            pct=ccg,
+            practice__isnull=True,
+            month=date,
+            measure__tags__contains=['core']).exclude(
+                measure_id='lpzomnibus'
+            ).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
         practices = Practice.objects.filter(
             ccg=ccg).filter(setting=4).order_by('name')
-        date = _specified_or_last_date(request, 'ppu')
         total_possible_savings = _total_savings(ccg, date)
         measures_count = Measure.objects.count()
         context = {
@@ -407,22 +408,23 @@ def ccg_home_page(request, ccg_code):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.filter(
-        practice=practice,
-        measure__tags__contains=['core']).order_by(
-            '-percentile').first()
-    if extreme_measurevalue:
-        extreme_measure = extreme_measurevalue.measure
-    else:
-        extreme_measure = None
     request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
     else:
+        # find the core measurevalue that is most outlierish
         date = _specified_or_last_date(request, 'ppu')
+        extreme_measurevalue = MeasureValue.objects.filter(
+            practice=practice,
+            month=date,
+            measure__tags__contains=['core']).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
         total_possible_savings = _total_savings(practice, date)
         measures_count = Measure.objects.count()
         context = {
