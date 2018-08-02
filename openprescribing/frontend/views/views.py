@@ -373,11 +373,12 @@ def ccg_home_page(request, ccg_code):
         return form
     else:
         # find the core measurevalue that is most outlierish
-        date = _specified_or_last_date(request, 'ppu')
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
         extreme_measurevalue = MeasureValue.objects.filter(
             pct=ccg,
             practice__isnull=True,
-            month=date,
+            month=prescribing_date,
             measure__tags__contains=['core']).exclude(
                 measure_id='lpzomnibus'
             ).order_by(
@@ -386,9 +387,12 @@ def ccg_home_page(request, ccg_code):
             extreme_measure = extreme_measurevalue.measure
         else:
             extreme_measure = None
+
         practices = Practice.objects.filter(
             ccg=ccg).filter(setting=4).order_by('name')
-        total_possible_savings = _total_savings(ccg, date)
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(ccg, ppu_date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
@@ -399,7 +403,7 @@ def ccg_home_page(request, ccg_code):
             'measures_for_one_entity_url': 'measures_for_one_ccg',
             'possible_savings': total_possible_savings,
             'practices': practices,
-            'date': date,
+            'date': ppu_date,
             'form': form,
             'signed_up_for_alert': _signed_up_for_alert(request, ccg),
         }
@@ -415,17 +419,20 @@ def practice_home_page(request, practice_code):
         return form
     else:
         # find the core measurevalue that is most outlierish
-        date = _specified_or_last_date(request, 'ppu')
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
         extreme_measurevalue = MeasureValue.objects.filter(
             practice=practice,
-            month=date,
+            month=prescribing_date,
             measure__tags__contains=['core']).order_by(
                 '-percentile').first()
         if extreme_measurevalue:
             extreme_measure = extreme_measurevalue.measure
         else:
             extreme_measure = None
-        total_possible_savings = _total_savings(practice, date)
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(practice, ppu_date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
@@ -435,7 +442,7 @@ def practice_home_page(request, practice_code):
             'entity_price_per_unit_url': 'practice_price_per_unit',
             'measures_for_one_entity_url': 'measures_for_one_practice',
             'possible_savings': total_possible_savings,
-            'date': date,
+            'date': ppu_date,
             'form': form,
             'signed_up_for_alert': _signed_up_for_alert(request, practice),
         }
