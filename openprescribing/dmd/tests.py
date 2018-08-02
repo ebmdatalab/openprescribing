@@ -53,40 +53,58 @@ class CommandsTestCase(TestCase):
         # errors early in the import process if there were problems.
 
         # From v_vpm2_XXX.xml
-        self.assertQuery('isid', 'dmd_vpi', 'vpid', 22480211000001104,
-                         426714006)
+        self.assertQuery(
+            'SELECT isid FROM dmd_vpi WHERE vpid = 22480211000001104',
+            426714006
+        )
 
         # From f_vmpp2_XXX.xml
-        self.assertQuery('pay_catcd', 'dmd_dtinfo', 'vppid', 22479411000001100,
-                         3)
+        self.assertQuery(
+            'SELECT pay_catcd FROM dmd_dtinfo WHERE vppid = 22479411000001100',
+            3
+        )
 
         # From f_amp2_XXX.xml
-        self.assertQuery('isid', 'dmd_ap_ing', 'apid', 22479611000001102,
-                         255859001)
+        self.assertQuery(
+            'SELECT isid FROM dmd_ap_ing WHERE apid = 22479611000001102',
+             255859001
+        )
 
         # From f_ampp2_XXX.xml
-        self.assertQuery('price', 'dmd_price_info', 'appid', 22479711000001106,
-                         659)
+        self.assertQuery(
+            'SELECT price FROM dmd_price_info WHERE appid = 22479711000001106',
+            659
+        )
 
         # From f_vmpp2_XXX.xml
-        self.assertQuery('pay_catcd', 'dmd_dtinfo', 'vppid', 22479411000001100,
-                         3)
+        self.assertQuery(
+            'SELECT pay_catcd FROM dmd_dtinfo WHERE vppid = 22479411000001100',
+            3
+        )
 
         # From f_gtin2_XXX.xml
-        self.assertQuery('gtin', 'dmd_gtin', 'appid', 22479711000001106,
-                         '5051562030603')
+        self.assertQuery(
+            'SELECT gtin FROM dmd_gtin WHERE appid = 22479711000001106',
+            '5051562030603'
+        )
 
         # From f_ingredient2_XXX.xml
-        self.assertQuery('nm', 'dmd_ing', 'isid', 426714006,
-                         'Diclofenac diethylammonium')
+        self.assertQuery(
+            'SELECT nm FROM dmd_ing WHERE isid = 426714006',
+            'Diclofenac diethylammonium'
+        )
 
         # From f_lookup2_XXX.xml
-        self.assertQuery('"desc"', 'dmd_lookup_combination_pack_ind', 'cd', 1,
-                         'Combination pack')
+        self.assertQuery(
+            'SELECT "desc" FROM dmd_lookup_combination_pack_ind WHERE cd = 1',
+            'Combination pack'
+        )
 
         # From f_vtm2_XXX.xml
-        self.assertQuery('nm', 'dmd_vtm', 'vtmid', 32889211000001103,
-                         'Diclofenac diethylammonium')
+        self.assertQuery(
+            'SELECT nm FROM dmd_vtm WHERE vtmid = 32889211000001103',
+            'Diclofenac diethylammonium'
+        )
 
     def test_import_dmd_snomed(self):
         path = 'dmd/tests/fixtures/commands/dmd.zip'
@@ -222,11 +240,8 @@ class CommandsTestCase(TestCase):
         concession.refresh_from_db()
         self.assertEqual(concession.vmpp, vmpp)
 
-    def assertQuery(self, col, tbl, pk_col, pk_val, exp_val):
+    def assertQuery(self, sql, exp_value):
         with connection.cursor() as cursor:
-            cursor.execute(
-                'SELECT {} FROM {} WHERE {} = %s'.format(col, tbl, pk_col),
-                [pk_val]
-            )
+            cursor.execute(sql)
             row = cursor.fetchone()
-            self.assertEqual(row[0], exp_val)
+            self.assertEqual(row[0], exp_value)
