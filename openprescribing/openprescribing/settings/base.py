@@ -211,6 +211,7 @@ CONTRIB_APPS = (
     'allauth.socialaccount.providers.twitter',
     'anymail',
     'crispy_forms',
+    'raven.contrib.django.raven_compat',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -357,3 +358,7 @@ SLACK_SENDING_ACTIVE = True
 
 # Newsletter signup
 MAILCHIMP_LIST_ID = 'b2b7873a73'
+
+sentry_raven_dsn = utils.get_env_setting('SENTRY_RAVEN_DSN', default='')
+if sentry_raven_dsn:
+    RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
