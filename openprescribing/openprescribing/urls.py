@@ -35,6 +35,8 @@ urlpatterns = [
         TemplateView.as_view(template_name='alert_example.html'),
         name="alert_example"),
 
+    url(r'^500/$', frontend_views.error, name='error'),
+
     # User-facing pages.
     url(r'^analyse/$', frontend_views.analyse,
         name="analyse"),
@@ -150,5 +152,4 @@ urlpatterns = [
     url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg_tracking'),
-
 ]
