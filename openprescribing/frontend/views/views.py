@@ -826,3 +826,8 @@ def custom_500(request):
         return HttpResponse(context['reason'], status=500)
     else:
         return render(request, '500.html', context, status=500)
+
+
+# This view deliberately triggers an error
+def error(request):
+    raise RuntimeError('Oh no')
