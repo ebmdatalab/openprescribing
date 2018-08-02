@@ -366,28 +366,33 @@ def _total_savings(entity, date):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.filter(
-        pct=ccg,
-        practice__isnull=True,
-        measure__tags__contains=['core']).exclude(
-            measure_id='lpzomnibus'
-        ).order_by(
-            '-percentile').first()
-    if extreme_measurevalue:
-        extreme_measure = extreme_measurevalue.measure
-    else:
-        extreme_measure = None
     request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
     else:
+        # find the core measurevalue that is most outlierish
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+        extreme_measurevalue = MeasureValue.objects.filter(
+            pct=ccg,
+            practice__isnull=True,
+            month=prescribing_date,
+            measure__tags__contains=['core']).exclude(
+                measure_id='lpzomnibus'
+            ).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
+
         practices = Practice.objects.filter(
             ccg=ccg).filter(setting=4).order_by('name')
-        date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = _total_savings(ccg, date)
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(ccg, ppu_date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
@@ -398,7 +403,7 @@ def ccg_home_page(request, ccg_code):
             'measures_for_one_entity_url': 'measures_for_one_ccg',
             'possible_savings': total_possible_savings,
             'practices': practices,
-            'date': date,
+            'date': ppu_date,
             'form': form,
             'signed_up_for_alert': _signed_up_for_alert(request, ccg),
         }
@@ -407,23 +412,27 @@ def ccg_home_page(request, ccg_code):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.filter(
-        practice=practice,
-        measure__tags__contains=['core']).order_by(
-            '-percentile').first()
-    if extreme_measurevalue:
-        extreme_measure = extreme_measurevalue.measure
-    else:
-        extreme_measure = None
     request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
     else:
-        date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = _total_savings(practice, date)
+        # find the core measurevalue that is most outlierish
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+        extreme_measurevalue = MeasureValue.objects.filter(
+            practice=practice,
+            month=prescribing_date,
+            measure__tags__contains=['core']).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(practice, ppu_date)
         measures_count = Measure.objects.count()
         context = {
             'measure': extreme_measure,
@@ -433,7 +442,7 @@ def practice_home_page(request, practice_code):
             'entity_price_per_unit_url': 'practice_price_per_unit',
             'measures_for_one_entity_url': 'measures_for_one_practice',
             'possible_savings': total_possible_savings,
-            'date': date,
+            'date': ppu_date,
             'form': form,
             'signed_up_for_alert': _signed_up_for_alert(request, practice),
         }

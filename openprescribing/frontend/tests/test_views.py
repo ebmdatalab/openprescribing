@@ -13,6 +13,7 @@ from django.test import TestCase
 from frontend.models import EmailMessage
 from frontend.models import OrgBookmark
 from frontend.models import SearchBookmark
+from frontend.models import ImportLog
 from frontend.views.views import BadRequestError, _get_measure_tag_filter
 
 from allauth.account.models import EmailAddress
@@ -333,6 +334,12 @@ class TestAlertViews(TestCase):
 class TestFrontendHomepageViews(TestCase):
     fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog',
                 'dmdproducts', 'ppusavings_entity_homepage']
+
+    def setUp(self):
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2015-09-01'
+        )
 
     def test_call_view_ccg_homepage(self):
         response = self.client.get('/ccg/02Q/')
