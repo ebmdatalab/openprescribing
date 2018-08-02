@@ -5,7 +5,7 @@
 Definition Table
   Type NATIVE Charset "WindowsLatin1"
   Fields 2
-    CCGcode Char (6) Index 1 ;
+    Lower_Laye Char (6) Index 1 ;
     CCGname_short Char (40) ;
 ReadOnly
 begin_metadata
