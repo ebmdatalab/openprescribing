@@ -13,6 +13,11 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.conf import settings
 
 
+# Django 1.11 removes the ability to supply a port range for liveserver tests, so we replicate that here.
+# See: https://code.djangoproject.com/ticket/28212 and https://code.djangoproject.com/ticket/26011
+available_test_ports = iter(range(6080, 6580))
+
+
 def use_saucelabs():
     return os.environ.get('TRAVIS') or os.environ.get('USE_SAUCELABS')
 
@@ -21,6 +26,9 @@ def use_saucelabs():
     os.environ.get('TEST_SUITE') == 'nonfunctional',
     "nonfunctional tests specified in TEST_SUITE environment variable")
 class SeleniumTestCase(StaticLiveServerTestCase):
+
+    host = '0.0.0.0'
+
     @classmethod
     def use_xvfb(cls):
         if not os.environ.get('SHOW_BROWSER', False):
@@ -44,6 +52,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.port = next(available_test_ports)
         if use_saucelabs():
             browser, version, platform = os.environ['BROWSER'].split(":")
             caps = {'browserName': browser}
