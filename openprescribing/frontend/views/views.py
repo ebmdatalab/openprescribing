@@ -1,7 +1,11 @@
 from lxml import html
-import requests
+from requests.exceptions import HTTPError
 from urllib import urlencode
 from urlparse import urlparse, urlunparse
+import functools
+import hashlib
+import logging
+import requests
 import sys
 
 from django.conf import settings
@@ -12,8 +16,7 @@ from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.db import IntegrityError
+from django.db import connection
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -25,17 +28,43 @@ from allauth.account import app_settings
 from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 
-from common.utils import valid_date
+from common.utils import get_env_setting
+from common.utils import parse_date
+from api.view_utils import dictfetchall
+from common.utils import ppu_sql
 from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
+from frontend.models import MeasureValue
+from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
+from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
+
+from mailchimp3 import MailChimp
+
+
+logger = logging.getLogger(__name__)
+
+
+class BadRequestError(Exception):
+    pass
+
+
+def handle_bad_request(view_function):
+    @functools.wraps(view_function)
+    def wrapper(request, *args, **kwargs):
+        try:
+            return view_function(request, *args, **kwargs)
+        except BadRequestError as e:
+            context = {'error_code': 400, 'reason': unicode(e)}
+            return render(request, '500.html', context, status=400)
+    return wrapper
 
 
 ##################################################
@@ -121,12 +150,9 @@ def chemical(request, bnf_code):
 ##################################################
 # Price per unit
 ##################################################
+@handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = request.GET.get('date', None)
-    if date:
-        date = valid_date(date)
-    else:
-        date = ImportLog.objects.latest_in_category('ppu').current_at
+    date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     product = presentation.dmd_product
     if len(entity_code) == 3:
@@ -187,12 +213,16 @@ def all_practices(request):
 def _specified_or_last_date(request, category):
     date = request.GET.get('date', None)
     if date:
-        date = valid_date(date)
+        try:
+            date = parse_date(date)
+        except ValueError:
+            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
+@handle_bad_request
 def practice_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     practice = get_object_or_404(Practice, code=code)
@@ -219,6 +249,7 @@ def all_ccgs(request):
     return render(request, 'all_ccgs.html', context)
 
 
+@handle_bad_request
 def ccg_price_per_unit(request, code):
     date = _specified_or_last_date(request, 'ppu')
     ccg = get_object_or_404(PCT, code=code)
@@ -237,13 +268,58 @@ def ccg_price_per_unit(request, code):
 # These replace old CCG and practice dashboards.
 ##################################################
 
+CORE_TAG = 'core'
+
+
+def _get_measure_tag_filter(params, show_all_by_default=False):
+    tags = params.getlist('tags')
+    # Support passing a single "tags" param with a comma separated list
+    tags = sum([tag.split(',') for tag in tags], [])
+    tags = filter(None, tags)
+    default_tags = [] if show_all_by_default else [CORE_TAG]
+    if not tags:
+        tags = default_tags
+    try:
+        tag_details = [MEASURE_TAGS[tag] for tag in tags]
+    except KeyError as e:
+        raise BadRequestError(u'Unrecognised tag: {}'.format(e.args[0]))
+    return {
+        'tags': tags,
+        'names': [tag['name'] for tag in tag_details],
+        'details': [tag for tag in tag_details if tag['description']],
+        'show_message': (tags != default_tags),
+        'all_tags': _get_tags_select_options(tags, show_all_by_default)
+    }
+
+
+def _get_tags_select_options(selected_tags, show_all_by_default):
+    options = [
+        {'id': key, 'name': tag['name'], 'selected': (key in selected_tags)}
+        for (key, tag) in MEASURE_TAGS.items()
+    ]
+    options.sort(key=_sort_core_tag_first)
+    if show_all_by_default:
+        options.insert(0, {
+            'id': '',
+            'name': 'All Measures',
+            'selected': (len(selected_tags) == 0)
+        })
+    return options
+
+
+def _sort_core_tag_first(option):
+    return (0 if option['id'] == CORE_TAG else 1, option['name'])
+
+
+@handle_bad_request
 def all_measures(request):
-    tags = request.GET.get('tags', '')
+    tag_filter = _get_measure_tag_filter(request.GET, show_all_by_default=True)
     query = {}
-    if tags:
-        query['tags__overlap'] = tags.split(',')
+    if tag_filter['tags']:
+        query['tags__overlap'] = tag_filter['tags']
     measures = Measure.objects.filter(**query).order_by('name')
     context = {
+        'tag_filter': tag_filter,
         'measures': measures
     }
     return render(request, 'all_measures.html', context)
@@ -271,39 +347,130 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
 
+def _total_savings(entity, date):
+    conditions = ' '
+    if isinstance(entity, PCT):
+        conditions += 'AND {ppusavings_table}.pct_id = %(entity_code)s '
+        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
+    elif isinstance(entity, Practice):
+        conditions += 'AND {ppusavings_table}.practice_id = %(entity_code)s '
+    sql = ppu_sql(conditions=conditions)
+    sql = ("SELECT SUM(possible_savings) "
+           "AS total_savings FROM ({}) all_savings").format(sql)
+    params = {'date': date, 'entity_code': entity.pk}
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        return dictfetchall(cursor)[0]['total_savings']
+
+
+def ccg_home_page(request, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    request.session['came_from'] = request.path
+    form = _bookmark_and_newsletter_form(
+        request, ccg)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    else:
+        # find the core measurevalue that is most outlierish
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+        extreme_measurevalue = MeasureValue.objects.filter(
+            pct=ccg,
+            practice__isnull=True,
+            month=prescribing_date,
+            measure__tags__contains=['core']).exclude(
+                measure_id='lpzomnibus'
+            ).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
+
+        practices = Practice.objects.filter(
+            ccg=ccg).filter(setting=4).order_by('name')
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(ccg, ppu_date)
+        measures_count = Measure.objects.count()
+        context = {
+            'measure': extreme_measure,
+            'measures_count': measures_count,
+            'entity': ccg,
+            'entity_type': 'CCG',
+            'entity_price_per_unit_url': 'ccg_price_per_unit',
+            'measures_for_one_entity_url': 'measures_for_one_ccg',
+            'possible_savings': total_possible_savings,
+            'practices': practices,
+            'date': ppu_date,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(request, ccg),
+        }
+        return render(request, 'entity_home_page.html', context)
+
+
+def practice_home_page(request, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    request.session['came_from'] = request.path
+    form = _bookmark_and_newsletter_form(
+        request, practice)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    else:
+        # find the core measurevalue that is most outlierish
+        prescribing_date = ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+        extreme_measurevalue = MeasureValue.objects.filter(
+            practice=practice,
+            month=prescribing_date,
+            measure__tags__contains=['core']).order_by(
+                '-percentile').first()
+        if extreme_measurevalue:
+            extreme_measure = extreme_measurevalue.measure
+        else:
+            extreme_measure = None
+
+        ppu_date = _specified_or_last_date(request, 'ppu')
+        total_possible_savings = _total_savings(practice, ppu_date)
+        measures_count = Measure.objects.count()
+        context = {
+            'measure': extreme_measure,
+            'measures_count': measures_count,
+            'entity': practice,
+            'entity_type': 'practice',
+            'entity_price_per_unit_url': 'practice_price_per_unit',
+            'measures_for_one_entity_url': 'measures_for_one_practice',
+            'possible_savings': total_possible_savings,
+            'date': ppu_date,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(request, practice),
+        }
+        return render(request, 'entity_home_page.html', context)
+
+
+@handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code.upper())
-    if request.method == 'POST':
-        form = _handleCreateBookmark(
-            request,
-            OrgBookmark,
-            OrgBookmarkForm,
-            'pct')
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        form = OrgBookmarkForm(
-            initial={'pct': requested_ccg.pk,
-                     'email': getattr(request.user, 'email', '')})
-    if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            pct=requested_ccg)
-    else:
-        signed_up_for_alert = False
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    tag_filter = _get_measure_tag_filter(request.GET)
     practices = Practice.objects.filter(
         ccg=requested_ccg).filter(
             setting=4).order_by('name')
-    alert_preview_action = reverse(
-        'preview-ccg-bookmark', args=[requested_ccg.code])
-    context = {
-        'alert_preview_action': alert_preview_action,
-        'ccg': requested_ccg,
-        'practices': practices,
-        'page_id': ccg_code,
-        'form': form,
-        'signed_up_for_alert': signed_up_for_alert
-    }
-    return render(request, 'measures_for_one_ccg.html', context)
+    form = _bookmark_and_newsletter_form(
+        request, requested_ccg)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    else:
+        context = {
+            'ccg': requested_ccg,
+            'practices': practices,
+            'page_id': ccg_code,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(
+                request, requested_ccg),
+            'tag_filter': tag_filter
+        }
+        return render(request, 'measures_for_one_ccg.html', context)
 
 
 def measure_for_one_ccg(request, measure, ccg_code):
@@ -330,36 +497,68 @@ def measure_for_one_practice(request, measure, practice_code):
     return render(request, 'measure_for_one_practice.html', context)
 
 
-def last_bookmark(request):
-    """Redirect the logged in user to the CCG they last bookmarked, or if
+def finalise_signup(request):
+    """Handle mailchimp signups.
+
+    Then redirect the logged in user to the CCG they last bookmarked, or if
     they're not logged in, just go straight to the homepage -- both
     with a message.
 
+    This method should be configured as the LOGIN_REDIRECT_URL,
+    i.e. the view that is called following any successful login, which
+    in our case is always performed by _handle_bookmark_and_newsletter_post.
+
     """
-    if request.user.is_authenticated():
-        try:
-            last_bookmark = request.user.profile.most_recent_bookmark()
-            next_url = last_bookmark.dashboard_url()
-            messages.success(
+    # Users who are logged in are *REDIRECTED* here, which means the
+    # form is never shown.
+    next_url = None
+    if 'newsletter_email' in request.session:
+        if request.POST:
+            success = mailchimp_subscribe(
                 request,
-                mark_safe("Thanks, you're now subscribed to monthly "
-                          "alerts about <em>%s</em>!" % last_bookmark.topic()))
-        except AttributeError:
-            next_url = 'home'
+                request.POST['email'], request.POST['first_name'],
+                request.POST['last_name'], request.POST['organisation'],
+                request.POST['job_title']
+            )
+            if success:
+                messages.success(
+                    request,
+                    'You have successfully signed up for the newsletter.')
+            else:
+                messages.error(
+                    request,
+                    'There was a problem signing you up for the newsletter.')
+
+        else:
+            # Show the signup form
+            return render(request, 'newsletter_signup.html')
+    if not request.user.is_authenticated():
+        if 'alerts_requested' in request.session:
+            # Their first alert bookmark signup
+            del(request.session['alerts_requested'])
             messages.success(
-                request,
-                "Your account is activated, but you are not subscribed "
-                "to any monthly alerts!")
-        return redirect(next_url)
+                request, "Thanks, you're now subscribed to monthly alerts.")
+        if next_url:
+            return redirect(next_url)
+        else:
+            return redirect(request.session.get('came_from', 'home'))
     else:
+        # The user is signing up to at least the second bookmark
+        # in this session.
+        last_bookmark = request.user.profile.most_recent_bookmark()
+        next_url = last_bookmark.dashboard_url()
         messages.success(
-            request, "Thanks, you're now subscribed to monthly alerts!")
-        return redirect('home')
+            request,
+            mark_safe("You're now subscribed to monthly "
+                      "alerts about <em>%s</em>." %
+                      last_bookmark.topic()))
+        return redirect(next_url)
 
 
 def analyse(request):
     if request.method == 'POST':
-        form = _handleCreateBookmark(
+        # should this be the _bookmark_and_newsletter_form?
+        form = _handle_bookmark_and_newsletter_post(
             request,
             SearchBookmark,
             SearchBookmarkForm,
@@ -372,89 +571,206 @@ def analyse(request):
         # page load (see `alertForm` in `chart.js`)
         form = SearchBookmarkForm(
             initial={'email': getattr(request.user, 'email', '')})
-    alert_preview_action = reverse('preview-analyse-bookmark')
-    context = {
-        'alert_preview_action': alert_preview_action,
-        'form': form
-    }
-    return render(request, 'analyse.html', context)
+    return render(request, 'analyse.html', {'form': form})
 
 
-def _handleCreateBookmark(request, subject_class,
-                          subject_form_class,
-                          *subject_field_ids):
-    form = subject_form_class(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data['email']
-        try:
-            user = User.objects.create_user(
-                username=email, email=email)
-        except IntegrityError:
-            user = User.objects.get(username=email)
-        user = authenticate(key=user.profile.key)
-        kwargs = {
-            'user': user
+def mailchimp_subscribe(
+        request, email, first_name, last_name,
+        organisation, job_title):
+    """Subscribe `email` to newsletter.
+
+    Returns boolean indicating success
+    """
+    del(request.session['newsletter_email'])
+    email_hash = hashlib.md5(email).hexdigest()
+    data = {
+        'email_address': email,
+        'status': 'subscribed',
+        'merge_fields': {
+            'FNAME': first_name,
+            'LNAME': last_name,
+            'MMERGE3': organisation,
+            'MMERGE4': job_title
         }
-        for field in subject_field_ids:
-            kwargs[field] = form.cleaned_data[field]
-        # An unverified account can only create unapproved bookmarks.
-        # When an account is verified, all its bookmarks are
-        # approved. Whenever someone tries to add a bookmark for
-        # someone else's email address (or they're not logged in),
-        # that email address is marked as unverified again.  In this
-        # way we can allow people who remain logged in to add several
-        # alerts without having to reconfirm by email.
-        emailaddress = EmailAddress.objects.filter(user=user)
-        if user == request.user:
-            kwargs['approved'] = emailaddress.filter(verified=True).exists()
-        else:
-            kwargs['approved'] = False
-            emailaddress.update(verified=False)
-        subject_class.objects.get_or_create(**kwargs)
-        if hasattr(request, 'user'):
-            # Log the user out. We don't use Django's built-in logout
-            # mechanism because that clears the entire session, too,
-            # and we want to know if someone's logged in previously in
-            # this session.
-            request.user = AnonymousUser()
-            for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-                if k in request.session:
-                    del(request.session[k])
-        return perform_login(
-            request, user,
-            app_settings.EmailVerificationMethod.MANDATORY,
-            signup=True)
-    return form
+    }
+    client = MailChimp(
+        get_env_setting('MAILCHIMP_USER'),
+        get_env_setting('MAILCHIMP_API_KEY'))
+    try:
+        client.lists.members.get(
+            list_id=settings.MAILCHIMP_LIST_ID,
+            subscriber_hash=email_hash)
+        return True
+    except HTTPError:
+        try:
+            client.lists.members.create(
+                list_id=settings.MAILCHIMP_LIST_ID, data=data)
+            return True
+        except HTTPError:
+            # things like blacklisted emails, etc
+            logger.warn("Unable to subscribe %s to newsletter", email)
+            return False
 
 
-def measures_for_one_practice(request, code):
-    p = get_object_or_404(Practice, code=code)
+def _authenticate_possibly_new_user(email):
+    try:
+        user = User.objects.get(username=email)
+    except User.DoesNotExist:
+        user = User.objects.create_user(
+            username=email, email=email)
+    return authenticate(key=user.profile.key)
+
+
+def _unapprove_bookmarks_when_different_user(user, request):
+    # An unverified account can only create unapproved bookmarks.
+    # When an account is verified, all its bookmarks are
+    # approved. Whenever someone tries to add a bookmark for
+    # someone else's email address (or they're not logged in),
+    # that email address is marked as unverified again.  In this
+    # way we can allow people who remain logged in to add several
+    # alerts without having to reconfirm by email.
+    emailaddress = EmailAddress.objects.filter(user=user)
+    approved = False
+    if user == request.user:
+        approved = emailaddress.filter(
+            verified=True).exists()
+    else:
+        approved = False
+        emailaddress.update(verified=False)
+    return approved
+
+
+def _force_login_and_redirect(request, user):
+    """Force a new login.
+
+    This allows us to piggy-back on built-in redirect mechanisms,
+    deriving from both django's built-in auth system, and
+    django-allauth:
+
+      * Users that have never been verified are redirected to
+       `verification_sent.html` (thanks to django-allauth)
+
+      * Verified users are sent to `finalise_signup.html` (per
+        Django's LOGIN_REDIRECT_URL setting).
+
+    """
+    if hasattr(request, 'user'):
+        # Log the user out. We don't use Django's built-in logout
+        # mechanism because that clears the entire session, too,
+        # and we want to know if someone's logged in previously in
+        # this session.
+        request.user = AnonymousUser()
+        for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
+            if k in request.session:
+                del(request.session[k])
+    return perform_login(
+        request, user,
+        app_settings.EmailVerificationMethod.MANDATORY,
+        signup=True)
+
+
+def _make_bookmark_args(user, form, subject_field_ids):
+    """Construct a dict of cleaned keyword args suitable for creating a
+    new bookmark
+    """
+    form_args = {'user': user}
+    for field in subject_field_ids:
+        form_args[field] = form.cleaned_data[field]
+    return form_args
+
+
+def _entity_type_from_object(entity):
+    """Given either a PCT or Practice, return a string indicating its type
+    for use in bookmark query filters that reference pct/practice
+    foreign keys
+
+    """
+    if isinstance(entity, PCT):
+        return 'pct'
+    elif isinstance(entity, Practice):
+        return 'practice'
+    else:
+        raise RuntimeError("Entity must be Practice or PCT")
+
+
+def _signed_up_for_alert(request, entity):
+    if request.user.is_authenticated():
+        q = {_entity_type_from_object(entity): entity}
+        signed_up_for_alert = bool(
+            request.user.orgbookmark_set.filter(**q))
+    else:
+        signed_up_for_alert = False
+    return signed_up_for_alert
+
+
+def _bookmark_and_newsletter_form(request, entity):
+    """Build a form for newsletter/alert signups, and handle user login
+    for POSTs to that form.
+    """
+    entity_type = _entity_type_from_object(entity)
     if request.method == 'POST':
-        form = _handleCreateBookmark(
+        form = _handle_bookmark_and_newsletter_post(
             request,
             OrgBookmark,
             OrgBookmarkForm,
-            'practice')
-        if isinstance(form, HttpResponseRedirect):
-            return form
+            entity_type)
     else:
         form = OrgBookmarkForm(
-            initial={'practice': p.pk,
+            initial={entity_type: entity.pk,
                      'email': getattr(request.user, 'email', '')})
-    if request.user.is_authenticated():
-        signed_up_for_alert = request.user.orgbookmark_set.filter(
-            practice=p)
+    return form
+
+
+def _handle_bookmark_and_newsletter_post(
+        request, subject_class,
+        subject_form_class,
+        *subject_field_ids):
+    """Handle search/org bookmark and newsletter signup form:
+
+    * create a search or org bookmark
+    * annotate the user's session (because newsletter signup can be
+      multi-stage)
+    * redirect to confirmation and/or newsletter signup page.
+
+    """
+    form = subject_form_class(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        if 'newsletter' in form.cleaned_data['newsletters']:
+            # add a session variable. Then handle it in the next page,
+            # which is either the verification page, or a dedicated
+            # "tell us a bit more" page.
+            request.session['newsletter_email'] = email
+        if 'alerts' in form.cleaned_data['newsletters']:
+            request.session['alerts_requested'] = 1
+            user = _authenticate_possibly_new_user(email)
+            form_args = _make_bookmark_args(user, form, subject_field_ids)
+            form_args['approved'] = _unapprove_bookmarks_when_different_user(
+                user, request)
+            subject_class.objects.get_or_create(**form_args)
+            return _force_login_and_redirect(request, user)
+        else:
+            return redirect('newsletter-signup')
+    return form
+
+
+@handle_bad_request
+def measures_for_one_practice(request, code):
+    p = get_object_or_404(Practice, code=code)
+    tag_filter = _get_measure_tag_filter(request.GET)
+    form = _bookmark_and_newsletter_form(
+        request, p)
+    if isinstance(form, HttpResponseRedirect):
+        return form
     else:
-        signed_up_for_alert = False
-    alert_preview_action = reverse('preview-practice-bookmark', args=[p.code])
-    context = {
-        'practice': p,
-        'alert_preview_action': alert_preview_action,
-        'page_id': code,
-        'form': form,
-        'signed_up_for_alert': signed_up_for_alert
-    }
-    return render(request, 'measures_for_one_practice.html', context)
+        context = {
+            'practice': p,
+            'page_id': code,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(request, p),
+            'tag_filter': tag_filter
+        }
+        return render(request, 'measures_for_one_practice.html', context)
 
 
 def gdoc_view(request, doc_id):
@@ -508,7 +824,7 @@ def tariff(request, code=None):
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
     context = {}
-    if 'canceling statement due to statement timeout' in value.message:
+    if 'canceling statement due to statement timeout' in unicode(value):
         context['reason'] = ("The database took too long to respond.  If you "
                              "were running an analysis with multiple codes, "
                              "try again with fewer.")
@@ -517,3 +833,8 @@ def custom_500(request):
         return HttpResponse(context['reason'], status=500)
     else:
         return render(request, '500.html', context, status=500)
+
+
+# This view deliberately triggers an error
+def error(request):
+    raise RuntimeError('Oh no')

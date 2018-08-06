@@ -9,11 +9,13 @@ from mock import MagicMock
 
 from django.conf import settings
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
+from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
@@ -38,21 +40,41 @@ def test_measures():
     }
 
 
+def parse_args(*opts_args):
+    """Duplicate what Django does to parse arguments.
+
+    See `django.core.management.__init__.call_command` for details
+
+    """
+    parser = argparse.ArgumentParser()
+    cmd = Command()
+    parser = cmd.create_parser("import_measures", "")
+    options = parser.parse_args(opts_args)
+    return cmd.parse_options(options.__dict__)
+
+
 @patch('frontend.management.commands.import_measures.parse_measures',
        new=MagicMock(return_value=test_measures()))
 class ArgumentTestCase(TestCase):
-    def test_months_parsed_from_hscic_filename(self):
-        opts = [
-            '--month_from_prescribing_filename',
-            'data/prescribing/2016_03/T201603PDPI BNFT_formatted.CSV'
-        ]
-        parser = argparse.ArgumentParser()
-        cmd = Command()
-        parser = cmd.create_parser("import_measures", "")
-        options = parser.parse_args(opts)
-        result = cmd.parse_options(options.__dict__)
-        self.assertEqual(result['start_date'], '2016-03-01')
-        self.assertEqual(result['end_date'], '2016-03-01')
+    def test_start_and_end_dates(self):
+        with self.assertRaises(CommandError):
+            parse_args(
+                '--start_date',
+                '1999-01-01'
+            )
+        with self.assertRaises(CommandError):
+            parse_args(
+                '--end_date',
+                '1999-01-01'
+            )
+        result = parse_args(
+            '--start_date',
+            '1998-01-01',
+            '--end_date',
+            '1999-01-01'
+        )
+        self.assertEqual(result['start_date'], '1998-01-01')
+        self.assertEqual(result['end_date'], '1999-01-01')
 
 
 @patch('frontend.management.commands.import_measures.parse_measures',
@@ -78,7 +100,7 @@ class UnitTests(TestCase):
     def test_reconstructor_called_when_no_measures_specified(self, conn):
         from frontend.management.commands.import_measures \
             import conditional_constraint_and_index_reconstructor
-        with conditional_constraint_and_index_reconstructor({}):
+        with conditional_constraint_and_index_reconstructor({'measure': None}):
             pass
         calls = conn.cursor.return_value.__enter__\
                     .return_value.execute.mock_calls
@@ -88,10 +110,119 @@ class UnitTests(TestCase):
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.env = patch.dict(
-            'os.environ', {'DB_NAME': 'test_' + os.environ['DB_NAME']})
-        with cls.env:
-            cls._createData()
+        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
+        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
+                                        open_date='2013-04-01',
+                                        close_date='2015-01-01')
+        Chemical.objects.create(bnf_code='0703021Q0',
+                                chem_name='Desogestrel')
+        Chemical.objects.create(bnf_code='0408010A0',
+                                chem_name='Levetiracetam')
+        Practice.objects.create(code='C84001', ccg=bassetlaw,
+                                name='LARWOOD SURGERY', setting=4)
+        Practice.objects.create(code='C84024', ccg=bassetlaw,
+                                name='NEWGATE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='B82005', ccg=bassetlaw,
+                                name='PRIORY MEDICAL GROUP', setting=4,
+                                open_date='2015-01-01')
+        Practice.objects.create(code='B82010', ccg=bassetlaw,
+                                name='RIPON SPA SURGERY', setting=4)
+        Practice.objects.create(code='A85017', ccg=bassetlaw,
+                                name='BEWICK ROAD SURGERY', setting=4)
+        Practice.objects.create(code='A86030', ccg=bassetlaw,
+                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
+        Practice.objects.create(code='C83051', ccg=lincs_west,
+                                name='ABBEY MEDICAL PRACTICE', setting=4)
+        Practice.objects.create(code='C83019', ccg=lincs_east,
+                                name='BEACON MEDICAL PRACTICE', setting=4)
+        # Ensure we only include open practices in our calculations.
+        Practice.objects.create(code='B82008', ccg=bassetlaw,
+                                name='NORTH SURGERY', setting=4,
+                                open_date='2010-04-01',
+                                close_date='2012-01-01')
+        # Ensure we only include standard practices in our calculations.
+        Practice.objects.create(code='Y00581', ccg=bassetlaw,
+                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
+                                setting=1)
+
+        measure = Measure.objects.create(
+            id='cerazette',
+            name='Cerazette vs. Desogestrel',
+            title='Prescribing of...',
+            tags=['core'],
+        )
+
+        # We expect this MeasureValue to be deleted because it is older than
+        # five years.
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2000-01-01',
+        )
+
+        # We expect this MeasureValue to be unchanged
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-08-01',
+        )
+
+        # We expect this MeasureValue to be updated
+        MeasureValue.objects.create(
+            measure=measure,
+            pct_id='02Q',
+            month='2015-09-01',
+        )
+
+        ImportLog.objects.create(
+            category='prescribing',
+            current_at='2018-04-01',
+            filename='/tmp/prescribing.csv',
+        )
+
+        if 'SKIP_BQ_LOAD' not in os.environ:
+            fixtures_path = os.path.join(
+                'frontend', 'tests', 'fixtures', 'commands')
+
+            prescribing_fixture_path = os.path.join(
+                fixtures_path,
+                'prescribing_bigquery_fixture.csv'
+            )
+            # TODO Make this a table with a view (see
+            # generate_presentation_replacements), and put it in the correct
+            # dataset ('hscic', not 'measures').
+            client = Client('measures')
+            table = client.get_or_create_table(
+                'normalised_prescribing_legacy',
+                PRESCRIBING_SCHEMA
+            )
+            table.insert_rows_from_csv(prescribing_fixture_path)
+
+            practices_fixture_path = os.path.join(
+                fixtures_path,
+                'practices.csv'
+            )
+            client = Client('hscic')
+            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
+            table.insert_rows_from_csv(practices_fixture_path)
+
+            ccgs_fixture_path = os.path.join(
+                fixtures_path,
+                'ccgs.csv'
+            )
+            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
+            table.insert_rows_from_csv(ccgs_fixture_path)
+
+        opts = {
+            'month': '2015-09-01',
+            'measure': 'cerazette',
+            'v': 3
+        }
+        with patch('frontend.management.commands.import_measures'
+                   '.parse_measures',
+                   new=MagicMock(return_value=test_measures())):
+            call_command('import_measures', **opts)
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
         month = '2015-10-01'
@@ -121,12 +252,32 @@ class BigqueryFunctionalTests(TestCase):
         mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
         self.assertEqual("%.2f" % mv.cost_savings['50'], '-42.86')
 
-    def test_measure_is_created(self):
+    def test_measure_is_updated(self):
         m = Measure.objects.get(id='cerazette')
         self.assertEqual(m.name, 'Cerazette vs. Desogestrel')
         self.assertEqual(m.description[:10], 'Total quan')
         self.assertEqual(m.why_it_matters[:10], 'This is th')
         self.assertEqual(m.low_is_good, True)
+
+    def test_old_measure_value_deleted(self):
+        self.assertEqual(
+            MeasureValue.objects.filter(
+                measure='cerazette',
+                pct='02Q',
+                month='2000-01-01',
+            ).count(),
+            0
+        )
+
+    def test_not_so_old_measure_value_not_deleted(self):
+        self.assertEqual(
+            MeasureValue.objects.filter(
+                measure='cerazette',
+                pct='02Q',
+                month='2015-08-01',
+            ).count(),
+            1
+        )
 
     def test_practice_general(self):
         month = '2015-09-01'
@@ -290,7 +441,7 @@ class BigqueryFunctionalTests(TestCase):
         }
         self._assertExpectedMeasureValue(measure, month, expected)
 
-    def test_import_measureglobal(self):  # failing
+    def test_import_measureglobal(self):
         month = '2015-09-01'
         measure = Measure.objects.get(id='cerazette')
         expected = {
@@ -339,92 +490,6 @@ class BigqueryFunctionalTests(TestCase):
             }
         }
         self._assertExpectedMeasureValue(measure, month, expected)
-
-    @classmethod
-    def _createData(cls):
-        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
-        lincs_east = PCT.objects.create(code='03T', org_type='CCG',
-                                        open_date='2013-04-01',
-                                        close_date='2015-01-01')
-        Chemical.objects.create(bnf_code='0703021Q0',
-                                chem_name='Desogestrel')
-        Chemical.objects.create(bnf_code='0408010A0',
-                                chem_name='Levetiracetam')
-        Practice.objects.create(code='C84001', ccg=bassetlaw,
-                                name='LARWOOD SURGERY', setting=4)
-        Practice.objects.create(code='C84024', ccg=bassetlaw,
-                                name='NEWGATE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='B82005', ccg=bassetlaw,
-                                name='PRIORY MEDICAL GROUP', setting=4,
-                                open_date='2015-01-01')
-        Practice.objects.create(code='B82010', ccg=bassetlaw,
-                                name='RIPON SPA SURGERY', setting=4)
-        Practice.objects.create(code='A85017', ccg=bassetlaw,
-                                name='BEWICK ROAD SURGERY', setting=4)
-        Practice.objects.create(code='A86030', ccg=bassetlaw,
-                                name='BETTS AVENUE MEDICAL GROUP', setting=4)
-        Practice.objects.create(code='C83051', ccg=lincs_west,
-                                name='ABBEY MEDICAL PRACTICE', setting=4)
-        Practice.objects.create(code='C83019', ccg=lincs_east,
-                                name='BEACON MEDICAL PRACTICE', setting=4)
-        # Ensure we only include open practices in our calculations.
-        Practice.objects.create(code='B82008', ccg=bassetlaw,
-                                name='NORTH SURGERY', setting=4,
-                                open_date='2010-04-01',
-                                close_date='2012-01-01')
-        # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(code='Y00581', ccg=bassetlaw,
-                                name='BASSETLAW DRUG & ALCOHOL SERVICE',
-                                setting=1)
-
-        args = []
-        if 'SKIP_BQ_LOAD' not in os.environ:
-            fixtures_path = os.path.join(
-                'frontend', 'tests', 'fixtures', 'commands')
-
-            prescribing_fixture_path = os.path.join(
-                fixtures_path,
-                'prescribing_bigquery_fixture.csv'
-            )
-            # TODO Make this a table with a view (see
-            # generate_presentation_replacements), and put it in the correct
-            # dataset ('hscic', not 'measures').
-            client = Client('measures')
-            table = client.get_or_create_table(
-                'normalised_prescribing_legacy',
-                PRESCRIBING_SCHEMA
-            )
-            table.insert_rows_from_csv(prescribing_fixture_path)
-
-            practices_fixture_path = os.path.join(
-                fixtures_path,
-                'practices.csv'
-            )
-            client = Client('hscic')
-            table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
-            columns = [field.name for field in PRACTICE_SCHEMA]
-            table.insert_rows_from_csv(practices_fixture_path)
-
-            ccgs_fixture_path = os.path.join(
-                fixtures_path,
-                'ccgs.csv'
-            )
-            table = client.get_or_create_table('ccgs', CCG_SCHEMA)
-            table.insert_rows_from_csv(ccgs_fixture_path)
-
-        month = '2015-09-01'
-        measure_id = 'cerazette'
-        args = []
-        opts = {
-            'month': month,
-            'measure': measure_id,
-            'v': 3
-        }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
-            call_command('import_measures', *args, **opts)
 
     def _walk(self, mv, data):
         for k, v in data.items():

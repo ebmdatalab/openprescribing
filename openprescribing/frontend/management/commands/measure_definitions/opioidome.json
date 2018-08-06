@@ -7,7 +7,7 @@
     "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
   ],
   "why_it_matters": [
-     "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
+    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
     "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
     "and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
     "This measure describes the total Oral Morphine Equivalence (OME) in ALL opioid prescribing (excluding prescribing for addiction) ",
@@ -16,13 +16,18 @@
     "can be found <a href='https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing'>here</a>.  ",
     "Our paper on this measure will be available shortly."
   ],
-  "numerator_short": "Total opioids prescribed (in oral morphine equivalent milligrams)",
+  "numerator_short": "Total opioids prescribed (in OME mg)",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": null,
-  "tags": ["core"],
+  "tags": [
+    "core",
+    "opioids",
+    "pain",
+    "safety"
+  ],
   "numerator_columns": [
     "SUM(total_ome) AS numerator, "
   ],

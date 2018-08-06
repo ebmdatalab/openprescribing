@@ -3,6 +3,8 @@ import json
 
 from django.test import TestCase
 
+from rest_framework.exceptions import APIException
+
 from frontend.models import Measure
 from frontend.models import PCT
 
@@ -72,7 +74,7 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
     def test_api_all_measures_global_with_tags(self):
-        url = '/api/1.0/measure/?format=json&tags=XXX'
+        url = '/api/1.0/measure/?format=json&tags=XYZ'
         data = self._get_json(url)
         self.assertEqual(len(data['measures']), 0)
 
@@ -82,7 +84,7 @@ class TestAPIMeasureViews(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data['measures']), 1)
 
-        url = '/api/1.0/measure/?format=json&tags=core,XXX'
+        url = '/api/1.0/measure/?format=json&tags=core,XYZ'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -188,6 +190,25 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['pct_id'], '02Q')
         self.assertEqual(d['pct_name'], 'NHS BASSETLAW CCG')
 
+    def test_api_two_ccgs_one_measure(self):
+        url = '/api/1.0/measure_by_ccg/'
+        url += '?org=02Q,02Q&measure=cerazette&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures'][0]['data']), 1)
+
+    def test_api_two_measures_one_ccg(self):
+        url = '/api/1.0/measure_by_ccg/'
+        url += '?org=02Q&measure=cerazette,cerazette2&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures'][0]['data']), 1)
+
+    def test_api_two_measures_two_ccgs(self):
+        # This is invalid and should return an error
+        url = '/api/1.0/measure_by_ccg/'
+        url += '?org=02Q,XYZ&measure=cerazette,cerazette2&format=json'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 400)
+
     def test_api_measure_by_ccg_excludes_closed(self):
         url = '/api/1.0/measure_by_ccg/'
         url += '?org=02Q&measure=cerazette&format=json'
@@ -253,6 +274,7 @@ class TestAPIMeasureViews(TestCase):
         url = '/api/1.0/measure_by_practice/'
         url += '?org=B82010&measure=cerazette&format=json'
         data = self._get_json(url)
+        self.assertEqual(len(data['measures']), 1)
         self.assertEqual(len(data['measures'][0]['data']), 1)
         d = data['measures'][0]['data'][0]
         self.assertEqual(d['numerator'], 0)
@@ -260,6 +282,26 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['percentile'], None)
         self.assertEqual(d['calc_value'], None)
         self.assertEqual(d['cost_savings']['10'], 0.0)
+
+    def test_api_two_practices_one_measure(self):
+        # Regression test
+        url = '/api/1.0/measure_by_practice/'
+        url += '?org=B82010,B82010&measure=cerazette&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures']), 1)
+
+    def test_api_two_measures_one_practice(self):
+        url = '/api/1.0/measure_by_practice/'
+        url += '?org=B82010&measure=cerazette,cerazette2&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures']), 2)
+
+    def test_api_two_measures_two_practices(self):
+        # This is invalid and should return an error
+        url = '/api/1.0/measure_by_practice/'
+        url += '?org=B82010,C3P0&measure=cerazette,cerazette2&format=json'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 400)
 
     def test_api_all_measures_by_practice(self):
         url = '/api/1.0/measure_by_practice/'

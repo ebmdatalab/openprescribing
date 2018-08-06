@@ -21,12 +21,6 @@ CACHES = {
     }
 }
 INTERNAL_IPS = ('127.0.0.1',)
-ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
-    "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s" % utils.get_env_setting(
-        'MAILGUN_WEBHOOK_AUTH_STRING', 'example:foo'),
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
@@ -66,7 +60,8 @@ LOGGING = {
 BQ_PROJECT = 'ebmdatalabtest'
 
 # Nonce to ensure test runs do not clash
-BQ_NONCE = random.randrange(10000)
+BQ_NONCE = int(utils.get_env_setting('BQ_NONCE', random.randrange(10000)))
+print 'BQ_NONCE:', BQ_NONCE
 
 # BigQuery dataset names
 BQ_HSCIC_DATASET = '{}_{:04d}'.format(BQ_HSCIC_DATASET, BQ_NONCE)

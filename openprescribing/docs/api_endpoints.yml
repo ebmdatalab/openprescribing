@@ -1,0 +1,134 @@
+- label: total_spending
+  view_fn: views_spending.total_spending
+  path: ^spending/$
+  dependencies:
+    - tables.Section
+    - tables.vw__presentation_summary
+
+- label: bubble
+  view_fn: views_spending.bubble
+  path: ^bubble/$
+  dependencies:
+    - tables.GenericCodeMapping
+    - tables.Prescription
+    - tables.Presentation
+    - tables.Practice
+
+- label: tariff
+  view_fn: views_spending.tariff
+  path: ^tariff/$
+  dependencies:
+    - tables.DMDTariffPrice
+    - tables.DMDProduct
+    - tables.DMDVmpp
+    - tables.NCSOConcession
+    - tables.dmd_lookup_dt_payment_category
+
+- label: spending_by_ccg
+  view_fn: views_spending.spending_by_ccg
+  path: ^spending_by_ccg/$
+  example_url: https://openprescribing.net/api/1.0/spending_by_ccg/?format=json&code=0703021Q0BB
+  dependencies:
+    - tables.Section
+    - tables.vw__chemical_summary_by_ccg
+    - tables.vw__presentation_summary_by_ccg
+    - tables.PCT
+
+- label: spending_by_practice
+  view_fn: views_spending.spending_by_practice
+  path: ^spending_by_practice/$
+  example_urls:
+    - https://openprescribing.net/api/1.0/spending_by_practice/?format=json&code=0703021Q0BB&org=11M
+    - https://openprescribing.net/api/1.0/spending_by_practice/?format=json&code=0703021Q0BB&org=L84613
+  dependencies:
+    - tables.Section
+    - tables.Practice
+    - tables.Prescription
+    - tables.vw__chemical_summary_by_practice
+    - tables.vw__practice_summary
+
+- label: measure
+  view_fn: views_measures.measure_global
+  path: ^measure/$
+  dependencies:
+    - tables.MeasureGlobal
+
+- label: measure_by_ccg
+  view_fn: views_measures.measure_by_ccg
+  path: ^measure_by_ccg/$
+  dependencies:
+    - tables.MeasureValue
+
+- label: measure_numerators_by_org
+  view_fn: views_measures.measure_numerators_by_org
+  path: ^measure_numerators_by_org/$
+  dependencies:
+    - tables.Measure
+    - tables.DMDProduct
+    - tables.Prescription
+    - tables.Presentation
+
+- label: measure_by_practice
+  view_fn: views_measures.measure_by_practice
+  path: ^measure_by_practice/$
+  dependencies:
+    - tables.MeasureValue
+
+- label: price_per_unit
+  view_fn: views_spending.price_per_unit
+  path: ^price_per_unit/$
+  dependencies:
+    - tables.Presentation
+    - tables.Practice
+    - tables.PPUSaving
+    - tables.DMDProduct
+    - tables.DMDVmpp
+    - tables.NCSOConcession
+
+- label: org_details
+  view_fn: views_org_details.org_details
+  path: ^org_details/$
+  example_urls:
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=ccg&keys=nothing
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=ccg&keys=star_pu.oral_antibacterials_item
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=ccg&keys=total_list_size
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=practice&keys=nothing&org=11M
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=practice&keys=star_pu.oral_antibacterials_item&org=11M
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=practice&keys=star_pu.oral_antibacterials_item&org=L84613
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=practice&keys=total_list_size&org=11M
+    - https://openprescribing.net/api/1.0/org_details/?format=json&org_type=practice&keys=total_list_size&org=L84613
+  dependencies:
+    - tables.PracticeStatistics
+    - tables.Practice
+    - tables.vw__ccgstatistics
+
+- label: bnf_codes
+  view_fn: views_bnf_codes.bnf_codes
+  path: ^bnf_code/$
+  example_urls:
+    - https://openprescribing.net/api/1.0/bnf_code/?format=json&q=cer
+    - https://openprescribing.net/api/1.0/bnf_code/?format=json&exact=true&q=0703021Q0BB,
+  dependencies:
+    - tables.Chemical
+    - tables.Section
+    - tables.Product
+    - tables.Presentation
+
+- label: org_codes
+  view_fn: views_org_codes.org_codes
+  path: ^org_code/$
+  example_url: https://openprescribing.net/api/1.0/org_code/?org_type=CCG&format=json&q=glouc
+  dependencies:
+    - tables.PCT
+    - tables.Practice
+
+- label: org_location
+  view_fn: views_org_location.org_location
+  path: ^org_location/$
+  example_urls:
+    - https://openprescribing.net/api/1.0/org_location/?format=json&org_type=ccg
+    - https://openprescribing.net/api/1.0/org_location/?format=json&org_type=practice&q=11M,
+    - https://openprescribing.net/api/1.0/org_location/?format=json&org_type=practice&q=L84613,
+  dependencies:
+    - tables.PCT
+    - tables.Practice

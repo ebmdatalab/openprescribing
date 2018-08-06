@@ -24,11 +24,18 @@ urlpatterns = [
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
+    url(r'^privacy/$', TemplateView.as_view(template_name='privacy.html'),
+        name="privacy"),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
         name="contact"),
     url(r'^how-to-use/$',
         TemplateView.as_view(template_name='how-to-use.html'),
         name="how-to-use"),
+    url(r'^alert_example/$',
+        TemplateView.as_view(template_name='alert_example.html'),
+        name="alert_example"),
+
+    url(r'^500/$', frontend_views.error, name='error'),
 
     # User-facing pages.
     url(r'^analyse/$', frontend_views.analyse,
@@ -39,12 +46,9 @@ urlpatterns = [
         name='chemical'),
     url(r'^practice/$', frontend_views.all_practices,
         name='all_practices'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/$',
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/preview_bookmark/$',
-        bookmark_views.preview_practice_bookmark,
-        name='preview-practice-bookmark'),
     url(r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.practice_price_per_unit,
         name='practice_price_per_unit'),
@@ -67,11 +71,14 @@ urlpatterns = [
         name='measure_for_one_practice'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
+        frontend_views.ccg_home_page,
+        name='ccg_home_page'),
+    url(r'^practice/(?P<practice_code>[A-Z\d]+)/$',
+        frontend_views.practice_home_page,
+        name='practice_home_page'),
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
-    url(r'^ccg/(?P<code>[A-Z\d]+)/preview_bookmark/$',
-        bookmark_views.preview_ccg_bookmark,
-        name='preview-ccg-bookmark'),
     url(r'^ccg/(?P<code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.ccg_price_per_unit,
         name='ccg_price_per_unit'),
@@ -115,11 +122,12 @@ urlpatterns = [
     url(r'^bookmarks/$',
         bookmark_views.BookmarkList.as_view(),
         name='bookmark-list'),
-    url(r'^last_bookmark/$',
-        frontend_views.last_bookmark,
-        name='last-bookmark'),
-    url(r'^analyse/preview/$', bookmark_views.preview_analysis_bookmark,
-        name="preview-analyse-bookmark"),
+    url(r'^finalise_signup/$',
+        frontend_views.finalise_signup,
+        name='finalise-signup'),
+    url(r'^newsletter_signup/$',
+        TemplateView.as_view(template_name='newsletter_signup.html'),
+        name='newsletter-signup'),
     # Custom verification page, overrides allauth view
     url(r"^confirm-email/$", bookmark_views.email_verification_sent,
         name="account_email_verification_sent"),
@@ -135,10 +143,13 @@ urlpatterns = [
             permanent=True, pattern_name='measures_for_one_practice'),
         name='practice'),
 
+    # Wrong URL got published
+    url(r'^measures/$', RedirectView.as_view(
+        pattern_name='all_measures', permanent=True)),
+
     # Temporary, for tracking letter mailouts. Should change to
     # redirect post March 2018
     url(r'^(?P<ccg_code>[A-Za-z\d]{3})/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg_tracking'),
-
 ]

@@ -80,8 +80,7 @@ class TestAnymailReceiver(TestCase):
             tags=['monthly_update'],
             message_id='foo'
         )
-        expected = {'uid': ANY,
-                    'cm': 'email',
+        expected = {'cm': 'email',
                     'ea': 'clicked',
                     'ec': 'email',
                     't': 'event',
@@ -107,8 +106,7 @@ class TestAnymailReceiver(TestCase):
             message_id='foo'
 
         )
-        expected = {'uid': ANY,
-                    'cm': 'email',
+        expected = {'cm': 'email',
                     'ea': 'frobbed',
                     'ec': 'email',
                     't': 'event',

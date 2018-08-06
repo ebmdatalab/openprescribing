@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing measures for {{ entity.name }}{% endblock %}
+{% block active_class %}{{ entity_type|lower }}{% endblock %}
+{% block container_class %}landing-page{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="row" id="intro">
+  <div class="col-md-6">
+    <h1>{{ entity.cased_name }}</h1>
+    {% if entity_type == 'CCG' %}
+      <p>There are {{ practices.count }} practices currently in this {{ entity_type }}. <a id="showall" href="#">&raquo; show them...</a></p>
+      <ul class="list-unstyled" id="practices">
+      {% for p in practices %}
+        <li class="hidden">
+          <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
+          ({{ p.get_setting_display }})
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>Address: {{ entity.address_pretty }}</p>
+      {% if entity.ccg %}
+      <p>Part of CCG:
+        <a href="{% url 'ccg_home_page' entity.ccg.code %}">{{ entity.ccg.name }}</a>
+      </p>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="col-md-6" id="map-container">
+    <div class="center-block" id="map-measure"></div>
+  </div>
+</div>
+
+<hr/>
+<div class="row" id="measures">
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>Standard measures</h3>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="measure-description">Our {{ measures_count }} standard measures compare performance across England. This is the measure where {{ entity.cased_name }} has the greatest potential for improvement.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
+        </div>
+        <div class="col-md-12">
+          <div id="top-measure-container" class="row">
+            <div class="loading-wrapper loading">
+              <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>NHS low priority measures</h3>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="measure-description">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 17 measures...</a></p>
+        </div>
+        <div class="col-md-12">
+          <div id="lpzomnibus-container" class="row">
+            <div class="loading-wrapper loading">
+              <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row" >
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>Savings on individual presentations</h3>
+      <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
+      <div class="col-md-4 ppu-on-landing-page bigtext">
+        <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
+      </div>
+      <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type }} could have saved
+        this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></div>
+    </div>
+  </div>
+  <hr class="visible-sm">
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>Sign up for alerts or updates</h3>
+      {% include '_alert_signup_form.html' %}
+    </div>
+  </div>
+</div>
+
+<hr>
+
+{% verbatim %}
+<script id="summary-panel" type="text/x-handlebars-template">
+  {{ costSavings }}
+</script>
+<script id="measure-panel" type="text/x-handlebars-template">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+      </div>
+      <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
+        <div class="chart">
+          <div class="status"></div>
+        </div>
+      </div>
+      <div class="explanation">{{{ chartExplanation }}}</div>
+    </div>
+</script>
+{% endverbatim %}
+
+{% include '_get_in_touch.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var maxZoom = 6;
+  var measureData = {
+  'orgType': '{{ entity_type }}',
+  'rollUpBy': 'measure_id',
+  'orgId': '{{ entity.code }}',
+  specificMeasures: [
+  {
+  'measure': '{{ measure.id }}',
+  'chartContainerId': '#top-measure-container',
+  'orgId': '{{ entity.code }}',
+  'orgName': '{{ entity.name }}',
+  },
+  {
+  'measure': 'lpzomnibus',
+  'chartContainerId': '#lpzomnibus-container',
+  'orgId': '{{ entity.code }}',
+  'orgName': '{{ entity.name }}',
+  },
+
+  ]
+  };
+</script>
+{% conditional_js 'measures' %}
+{% endblock %}

@@ -144,7 +144,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
-                'frontend.context_processors.google_user_id',
                 'frontend.context_processors.api_host',
                 'frontend.context_processors.debug'
             ],
@@ -162,6 +161,7 @@ MIDDLEWARE_CLASSES = (
     # Default Django middleware.
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -191,7 +191,6 @@ DJANGO_APPS = (
     # Useful template tags:
     'django.contrib.humanize',
     'rest_framework',
-    'rest_framework_swagger',
     'corsheaders',
 )
 
@@ -212,6 +211,7 @@ CONTRIB_APPS = (
     'allauth.socialaccount.providers.twitter',
     'anymail',
     'crispy_forms',
+    'raven.contrib.django.raven_compat',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -297,13 +297,6 @@ CORS_ALLOW_METHODS = (
 )
 SUPPORT_EMAIL = 'feedback@openprescribing.net'
 DEFAULT_FROM_EMAIL = SUPPORT_EMAIL
-SWAGGER_SETTINGS = {
-    'info': {
-        'contact': SUPPORT_EMAIL,
-        'description': 'description goes here',
-        'title': 'Title',
-    }
-}
 GDOC_DOCS = {
     'zooming': '1lz1uRfNOy2fQ-xSy_6BiLV_7Mgr-Z2V0-VWzo6HlCO0',
     'analyse': '1HqlJlUA86cnlyJpUxiQdGsM46Gsv9xyZkmhkTqjbwH0',
@@ -327,11 +320,11 @@ BQ_DEFAULT_TABLE_EXPIRATION_MS = None
 BQ_LOCATION = 'EU'
 
 # Use django-anymail through mailgun for sending emails
-EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": "key-b503fcc6f1c029088f2b3f9b3faa303c",
+    "MAILGUN_API_KEY": utils.get_env_setting('MAILGUN_API_KEY'),
     "MAILGUN_SENDER_DOMAIN": "staging.openprescribing.net",
-    "WEBHOOK_AUTHORIZATION": "%s:%s" % (
+    "WEBHOOK_SECRET": "%s:%s" % (
         utils.get_env_setting('MAILGUN_WEBHOOK_USER'),
         utils.get_env_setting('MAILGUN_WEBHOOK_PASS'))
 }
@@ -347,7 +340,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
-LOGIN_REDIRECT_URL = "last-bookmark"
+LOGIN_REDIRECT_URL = "finalise-signup"
 LOGIN_URL = "home"
 
 # Easy bootstrap styling of Django forms
@@ -362,3 +355,10 @@ SLACK_GENERAL_POST_KEY = utils.get_env_setting(
     default=''
 )
 SLACK_SENDING_ACTIVE = True
+
+# Newsletter signup
+MAILCHIMP_LIST_ID = 'b2b7873a73'
+
+sentry_raven_dsn = utils.get_env_setting('SENTRY_RAVEN_DSN', default='')
+if sentry_raven_dsn:
+    RAVEN_CONFIG = {'dsn': sentry_raven_dsn}

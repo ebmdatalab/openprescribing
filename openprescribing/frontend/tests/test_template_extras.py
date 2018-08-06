@@ -1,3 +1,5 @@
+import datetime
+import mock
 import unittest
 
 from frontend.templatetags import template_extras as t
@@ -25,3 +27,14 @@ class TestTemplateExtras(unittest.TestCase):
 
     def test_deltawords_negative(self):
         self.assertEqual(t.deltawords(29, 0), "considerably")
+
+    @mock.patch('{.__name__}.timezone.now'.format(t))
+    def test_current_time(self, timezone_now):
+        timezone_now.return_value = datetime.date(2018, 1, 3)
+        self.assertEqual(t.current_time('%Y-%m-%d'), '2018-01-03')
+
+    def test_fancy_join(self):
+        self.assertEqual(t.fancy_join(['a', 'b', 'c']), 'a, b and c')
+        self.assertEqual(t.fancy_join(['a', 'b']), 'a and b')
+        self.assertEqual(t.fancy_join(['a']), 'a')
+        self.assertEqual(t.fancy_join([]), '')

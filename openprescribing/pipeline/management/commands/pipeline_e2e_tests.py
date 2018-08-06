@@ -42,7 +42,9 @@ class Command(BaseCommand):
 def run_end_to_end():
     print('BQ_NONCE: {}'.format(settings.BQ_NONCE))
 
-    num_measures = 57
+    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+                        'commands', 'measure_definitions')
+    num_measures = len(os.listdir(path))
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 

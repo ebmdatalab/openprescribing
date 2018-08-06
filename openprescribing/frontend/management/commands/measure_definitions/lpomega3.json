@@ -4,7 +4,7 @@
     "Omega-3 fatty acid compounds cost per 1000 patients"
   ],
   "description": [
-    "Cost of mega-3 fatty acid compounds per 1000 patients"
+    "Cost of omega-3 fatty acid compounds per 1000 patients"
   ],
   "why_it_matters": [
     "Omega-3 fatty acid compounds are licensed to treat elevated triglycerides, but evidence of benefit is weak. ",
@@ -16,7 +16,12 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["lowpriority"],
+  "tags": [
+    "cardiovascular",
+    "cost",
+    "efficacy",
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],

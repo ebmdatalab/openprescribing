@@ -53,7 +53,8 @@ numerator in this measure was composed of the following presentations:</p>
 
 <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
 
-{% include '_measures_panel.html' with entity_type='practice' %}
+{% include '_measures_heading.html' with entity_type='practice' %}
+{% include '_measures_panel.html' %}
 
 <p>
   <a href="{% url 'measures_for_one_practice' practice.code %}">View all measures for {{ practice.name }}</a>
@@ -63,6 +64,10 @@ numerator in this measure was composed of the following presentations:</p>
 
 {% include '_get_in_touch.html' %}
 
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
 var measureData = {
     'orgId': '{{ practice.code }}',
@@ -72,10 +77,6 @@ var measureData = {
     'orgType': 'practice'
 };
 </script>
-
-{% endblock %}
-
-{% block extra_js %}
 {% conditional_js 'measures' %}
 {% include '_measure_breakdown_table.html' %}
 {% endblock %}

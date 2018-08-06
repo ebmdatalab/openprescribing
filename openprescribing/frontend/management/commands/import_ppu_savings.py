@@ -1,4 +1,3 @@
-from sets import Set
 import argparse
 import os
 
@@ -47,7 +46,7 @@ def make_merged_table_for_month(month):
 
     """
     cases = []
-    seen = Set()
+    seen = set()
     df = pd.read_csv(SUBSTITUTIONS_SPREADSHEET)
     df = df[df['Really equivalent?'] == 'Y']
     for row in df.iterrows():

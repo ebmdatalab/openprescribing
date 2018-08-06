@@ -23,7 +23,12 @@
   "is_percentage": true,
   "is_cost_based": true,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "centralnervous",
+    "core",
+    "cost",
+    "generic"
+  ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],

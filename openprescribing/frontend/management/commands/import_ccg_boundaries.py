@@ -53,8 +53,16 @@ Here's what I did:
 
 import sys
 from django.core.management.base import BaseCommand
+from django.contrib.gis.db.models.functions import Centroid
 from django.contrib.gis.utils import LayerMapping
 from frontend.models import PCT
+
+
+def set_centroids():
+    for pct in PCT.objects.filter(boundary__isnull=False).annotate(
+            centroid_annotation=Centroid('boundary')):
+        pct.centroid = pct.centroid_annotation
+        pct.save()
 
 
 class Command(BaseCommand):
@@ -71,15 +79,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-
-        if 'filename' not in options:
-            print 'Please supply a KML filename'
-            sys.exit
-
         layer_mapping = {
-            'code': 'CCGcode',
-            'boundary': 'Unknown'
+            'code': 'Lower_Laye',
+            'boundary': 'Unknown',
         }
         lm = LayerMapping(PCT, options['filename'],
                           layer_mapping, transform=True)
         lm.save(strict=True)
+        set_centroids()

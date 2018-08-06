@@ -1,0 +1,25 @@
+# Connection details for a PostgreSQL database.
+DB_NAME=
+DB_USER=
+DB_PASS=
+DB_HOST=
+
+# Django's secret key.
+SECRET_KEY=secret_key
+
+# Dummy values are fine for local development and testing.
+MAILGUN_WEBHOOK_USER=mailgun_webhook_user
+MAILGUN_WEBHOOK_PASS=mailgun_webhook_pass
+MAILGUN_API_KEY=mailgun_api_key
+MAILCHIMP_USER=mailchimp_user
+MAILCHIMP_API_KEY=mailchimp_api_key
+
+# The path to a file containing your credentials for accessing Google Cloud
+# Platform services (eg BigQuery, Cloud Storage).
+GOOGLE_APPLICATION_CREDENTIALS=
+
+# We plan to remove the need to set these locally soon
+SLACK_GENERAL_POST_KEY=slack_general_post_key
+CF_API_KEY=cf_api_key
+CF_API_EMAIL=cf_api_email
+NEWRELIC_API_KEY=newrelic_api_key

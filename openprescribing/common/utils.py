@@ -4,14 +4,13 @@ from datetime import datetime
 from os import environ
 from titlecase import titlecase
 import argparse
-import hashlib
 import html2text
 import logging
 import re
-import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django import db
+
 
 logger = logging.getLogger(__name__)
 
@@ -160,21 +159,15 @@ def constraint_and_index_reconstructor(table_name):
             logger.info("CLUSTERED %s" % table_name)
 
 
-def google_user_id(user):
-    if user:
-        h = hashlib.md5()
-        h.update(str(user.id))
-        client_id = str(uuid.UUID(h.hexdigest()))
-    else:
-        client_id = None
-    return client_id
+def parse_date(s):
+    return datetime.strptime(s, "%Y-%m-%d")
 
 
 def valid_date(s):
     """Validate ISO-formatted dates. For use in argparse arguments.
     """
     try:
-        return datetime.strptime(s, "%Y-%m-%d")
+        return parse_date(s)
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
         raise argparse.ArgumentTypeError(msg)
@@ -185,3 +178,64 @@ def namedtuplefetchall(cursor):
     desc = cursor.description
     nt_result = namedtuple('Result', [col[0] for col in desc])
     return [nt_result(*row) for row in cursor.fetchall()]
+
+
+def ppu_sql(conditions=""):
+    # Model imports here because util module is used in Django's
+    # startup, before model registration is complete, leading to
+    # errors
+    from dmd.models import DMDProduct
+    from dmd.models import DMDVmpp
+    from dmd.models import NCSOConcession
+    from frontend.models import PPUSaving
+    from frontend.models import Presentation
+    from frontend.models import Practice
+
+    # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
+    # DMDProduct.
+    sql = '''
+    SELECT DISTINCT ON (
+            {dmdproduct_table}.bnf_code,
+            {ppusavings_table}.pct_id,
+            {ppusavings_table}.practice_id
+        )
+        {ppusavings_table}.id AS id,
+        {ppusavings_table}.date AS date,
+        {ppusavings_table}.lowest_decile AS lowest_decile,
+        {ppusavings_table}.quantity AS quantity,
+        {ppusavings_table}.price_per_unit AS price_per_unit,
+        {ppusavings_table}.possible_savings AS possible_savings,
+        {ppusavings_table}.formulation_swap AS formulation_swap,
+        {ppusavings_table}.pct_id AS pct,
+        {ppusavings_table}.practice_id AS practice,
+        {ppusavings_table}.bnf_code AS presentation,
+        {practice_table}.name AS practice_name,
+        {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
+        subquery.price_concession IS NOT NULL as price_concession,
+        COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
+    FROM {ppusavings_table}
+    LEFT OUTER JOIN {presentation_table}
+        ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
+    LEFT OUTER JOIN {practice_table}
+        ON {ppusavings_table}.practice_id = {practice_table}.code
+    LEFT OUTER JOIN {dmdproduct_table}
+        ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
+    LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
+                     FROM {dmdvmpp_table}
+                     INNER JOIN {ncsoconcession_table}
+                      ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
+                     WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
+        ON {dmdproduct_table}.vpid = subquery.vpid
+    WHERE
+        {ppusavings_table}.date = %(date)s
+        AND {dmdproduct_table}.concept_class = 1'''
+
+    sql += conditions
+    return sql.format(
+        ppusavings_table=PPUSaving._meta.db_table,
+        practice_table=Practice._meta.db_table,
+        presentation_table=Presentation._meta.db_table,
+        dmdproduct_table=DMDProduct._meta.db_table,
+        dmdvmpp_table=DMDVmpp._meta.db_table,
+        ncsoconcession_table=NCSOConcession._meta.db_table,
+    )

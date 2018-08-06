@@ -16,14 +16,17 @@ using docker.
 
 Install `docker` and `docker-compose` per
 [the instructions](https://docs.docker.com/compose/install/) (you need
-at least Compose 1.6.0+ and Docker Engine of version 1.10.0+.)
+at least Compose 1.9.0+ and Docker Engine of version 1.12.0+.)
 
 In the project root, run
 
     docker-compose run test
 
-This will pull down the relevant images, and run the tests.  In our CI
-system, we also run checks against the production environment, which
+This will pull down the relevant images, and run the tests.  In order for all
+tests to run successfully, you will also need to decrypt the credentials file
+openprescribing/google-credentials.json.
+
+In our CI system, we also run checks against the production environment, which
 you can reproduce with
 
     docker-compose run test-production
@@ -124,11 +127,9 @@ PostGIS extensions, and create a superuser for the database.
     createdb -O <myuser> <dbname>
     psql -d <dbname> -c "CREATE EXTENSION postgis;"
 
-Set the `DB_NAME`, `DB_USER`, and `DB_PASS` environment variables based on the database login you used above.
+Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
 
 Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
-
-You will need a `GMAIL_PASS` environment variable to send error emails in production. In development you will only need this to run tests, so you can set this to anything.
 
 You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
 
@@ -137,7 +138,6 @@ You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to p
 Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
 
 Finally set a `SECRET_KEY` environment variable (make this an SSID).
-
 
 ## On vagrant
 
@@ -149,7 +149,6 @@ If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en
     mkvirtualenv openprescribing
     cd openprescribing/ansible
     pip install -r vagrant_requirements.txt
-
 
 ### Provision the vagrant box
 This uses envdir for environment variables; to set your own variables, modify the settings in openprescribing/ansible/vars.yaml.
@@ -172,7 +171,6 @@ Start django:
 
    The application should then be accessible at ``http://127.0.0.1:3333/`` (using the vagrant-forwarded port)
    from a web browser on the host computer.
-
 
 ## Production notes
 
@@ -218,7 +216,7 @@ If required, you can run individual Django tests as follows:
     python manage.py test frontend.tests.test_api_views
 
 We support IE8 and above. We have a free account for testing across
-multiple browsers, thanks to [BrowserStack](www.browserstack.com). 
+multiple browsers, thanks to [BrowserStack](www.browserstack.com).
 
 ![image](https://user-images.githubusercontent.com/211271/29110431-887941d2-7cde-11e7-8c2f-199d85c5a3b5.png)
 
@@ -295,7 +293,8 @@ Follow the documentation there to import data.
 
 Source JavaScript is in `/media`, compiled JavaScript is in `/static`.
 
-During development, run the `watch` task to see changes appear in the compiled JavaScript.
+During development, run the `watch` task to see changes appear in the
+compiled JavaScript and CSS.
 
     cd openprescribing/media/js
     npm run watch
@@ -308,13 +307,13 @@ And run tests with:
 
     npm run test
 
-Before deploying, run the build task to generate minified JavaScript:
+This build task generates production-ready minified JavaScript, CSS
+etc, and is executed as part of the fabric deploy process:
 
     npm run build
 
-Similarly, you can build the compiled CSS from the source LESS with:
-
-    npm run build-css
+If you add new javascript source files, update the `modules` array at
+`media/js/build.js`.
 
 # Deployment
 

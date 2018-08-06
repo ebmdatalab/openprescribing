@@ -1,23 +1,27 @@
 {% load crispy_forms_tags %}
 {% if not signed_up_for_alert %}
-<p>
-  <form method="post" action="{{ alert_preview_action }}">
-   {% csrf_token %}
+<form method="post" class="form form-inline">
+ {% csrf_token %}
+ <p>
    {% if alert_type == 'analyse' %}
      <input type="hidden" name="url" value="">
      <input type="hidden" name="name" value="">
-     We offer a service which emails you an update of this chart once a month. Subscribe by entering your email address below.
+     Get monthly alert emails with the latest version of this chart.
+     You can also sign up for our monthly newsletter.
    {% else %}
-     We offer a service which emails you about unusual or interesting prescribing at this {{entity_type}} once a month. Subscribe by entering your email address below.
+     Get monthly alerts highlighting where you are an outlier, or have
+     suddenly changed (<a href="{% url 'alert_example' %}">example</a>).
+     You can also sign up for our monthly newsletter.
    {% endif %}
-   You can <input type="submit" class="btn-link" value="preview"></input> the email first.
-  </form>
-  <form method="post" class="form form-inline">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form | crispy }}
-    <input class="btn btn-primary" type="submit" value="Subscribe">
-
-  </form>
+  <p>
+  {{ form.non_field_errors }}
+  {{ form | crispy }}
+  <input class="btn btn-primary" type="submit" value="Subscribe">
+  </p>
+</form>
+{% else %}
+<p>
+  You're already signed up for alerts. You can
+  <a href="{% url 'bookmark-list' %}">change your subscriptions here</a>.
 </p>
 {% endif %}

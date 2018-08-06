@@ -1,8 +1,8 @@
-global.jQuery = require('jquery');
-global.$ = global.jQuery;
+var $ = require('jquery');
 var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
+var downloadjs = require('downloadjs');
 var utils = {
 
   getDataUrls: function(options) {
@@ -10,20 +10,40 @@ var utils = {
     panelUrl += options.orgType.toLowerCase() + '/?format=json';
     var urls = {
       panelMeasuresUrl: panelUrl,
-      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json'
+      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json',
     };
-    if (options.orgId) {
-      urls.panelMeasuresUrl += '&org=' + options.orgId;
-    }
-    if (options.tags) {
-      urls.panelMeasuresUrl += '&tags=' + options.tags;
-      urls.globalMeasuresUrl += '&tags=' + options.tags;
-    }
-    if (options.measure) {
-      urls.panelMeasuresUrl += '&measure=' + options.measure;
-      urls.globalMeasuresUrl += '&measure=' + options.measure;
-    }
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'orgId', 'org');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
+    urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
+    urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     return urls;
+  },
+
+  _getOneOrMore: function(options, optionName, paramName) {
+    /* Returns the value of `optionName` from `options`, encoded as a
+     * query string parameter matching `paramName`.
+
+     If there is an array of `specificMeasures` defined, does the same
+     thing, but joins together values defined in each item of the
+     array with commas.
+    */
+    var result;
+    if (typeof options.specificMeasures === 'undefined') {
+      result = options[optionName];
+    } else {
+      var valArray = [];
+      _.each(options.specificMeasures, function(m) {
+        if (m[optionName] && $.inArray(m[optionName], valArray) == -1) {
+          valArray.push(m[optionName]);
+        }
+      });
+      result = valArray.join(',');
+    }
+    if (result && result !== '') {
+      return '&' + paramName + '=' + result;
+    }
+    return '';
   },
 
   getCentilesAndYAxisExtent: function(globalData, options, centiles) {
@@ -52,7 +72,7 @@ var utils = {
     return {
       globalCentiles: globalCentiles,
       globalYMax: globalYMax,
-      globalYMin: globalYMin
+      globalYMin: globalYMin,
     };
   },
 
@@ -71,6 +91,17 @@ var utils = {
       panelData = _this._getSavingAndPercentilePerItem(panelData,
                                                        numMonths);
     }
+    _.each(panelData, function(d) {
+      if (options.specificMeasures) {
+        // These are any measures that have been defined to appear at
+        // specific locations in the DOM - from embedded javascript in
+        // templates
+        d.chartContainerId = _.findWhere(
+          options.specificMeasures, {measure: d.id}).chartContainerId;
+      } else {
+        d.chartContainerId = '#charts';
+      }
+    });
     return panelData;
   },
 
@@ -111,7 +142,7 @@ var utils = {
           denominatorShort: data.denominator_short,
           data: [d],
           isCostBased: data.is_cost_based,
-          isPercentage: data.is_percentage
+          isPercentage: data.is_percentage,
         };
       }
     });
@@ -176,7 +207,7 @@ var utils = {
       potentialSavings50th: 0,
       potentialSavings10th: 0,
       orgId: options.orgId,
-      measureId: options.measure
+      measureId: options.measure,
     };
     if (orderedData.length) {
       _.each(orderedData, function(d) {
@@ -203,7 +234,7 @@ var utils = {
         if (options.rollUpBy === 'measure_id') {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practice " : "CCG ";
+            'practice ' : 'CCG ';
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
             humanize.numberFormat(perf.potentialSavings50th, 2) +
@@ -214,24 +245,24 @@ var utils = {
         } else {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practices " : "CCGs ";
+            'practices ' : 'CCGs ';
           perf.costSavings += 'had prescribed at the median ratio ' +
             'or better, then ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "this CCG " : "NHS England ";
+            'this CCG ' : 'NHS England ';
           perf.costSavings += 'would have spent £' +
             humanize.numberFormat(perf.potentialSavings50th, 2) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of ';
           perf.costSavings += (options.orgType === 'practice') ?
-            "practices " : "CCGs ";
+            'practices ' : 'CCGs ';
           perf.costSavings += 'were already prescribing ' +
             'at this level or better, so we think it ought to be achievable.)';
         }
       }
     } else {
-      perf.performanceDescription = "This organisation hasn't " +
-        "prescribed on any of these measures.";
+      perf.performanceDescription = 'This organisation hasn\'t ' +
+        'prescribed on any of these measures.';
     }
     return perf;
   },
@@ -318,7 +349,13 @@ var utils = {
       // measure-by-all-practices-in-CCG page.
       chartTitle = d.name;
       chartTitleUrl = '/ccg/';
-      chartTitleUrl += (options.parentOrg) ? options.parentOrg : options.orgId;
+      if (options.specificMeasures) {
+        var thisMeasure = _.findWhere(
+          options.specificMeasures, {measure: d.id});
+        chartTitleUrl += thisMeasure.parentOrg || thisMeasure.orgId;
+      } else {
+        chartTitleUrl += options.parentOrg || options.orgId;
+      }
       chartTitleUrl += '/' + d.id;
       measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = '/measure/' + d.id;
@@ -386,7 +423,9 @@ var utils = {
       tagsFocus: d.tagsFocus,
       tagsFocusUrl: tagsFocusUrl,
       measureForAllPracticesUrl: measureForAllPracticesUrl,
-      chartExplanation: chartExplanation
+      chartExplanation: chartExplanation,
+      tags: d.tags,
+      tagsForDisplay: (d.tags || []).filter(function(t) { return t.id !== 'core'; })
     };
   },
 
@@ -401,8 +440,8 @@ var utils = {
         data: d.data,
         color: 'red',
         marker: {
-          radius: 2
-        }
+          radius: 2,
+        },
       }];
       _.each(_.keys(d.globalCentiles), function(k) {
         var e = {
@@ -413,8 +452,8 @@ var utils = {
           color: 'blue',
           lineWidth: 1,
           marker: {
-            enabled: false
-          }
+            enabled: false,
+          },
         };
         // Distinguish the median visually.
         if (k === '50') {
@@ -454,12 +493,12 @@ var utils = {
     var yAxisLabel = (isPercentageMeasure) ? '%' : 'Measure';
     chOptions.yAxis = {
       title: {
-        text: yAxisLabel
+        text: yAxisLabel,
       },
       max: ymax,
         // If ymin is zero, Highcharts will sometimes pick a negative value
         // because it prefers that formatting. Force zero as the lowest value.
-      min: _.max([0, ymin])
+      min: _.max([0, ymin]),
     };
     if (d.lowIsGood === false) {
       chOptions.yAxis.reversed = true;
@@ -482,7 +521,7 @@ var utils = {
           // Treat measures which are per 1000 patients a bit differently.
           // See https://github.com/ebmdatalab/openprescribing/issues/436.
           denom = humanize.numberFormat(1000 * this.point.denominator, 0);
-          str += 'Patients: ' + denom;
+          str += 'Registered Patients: ' + denom;
         } else {
           denom = humanize.numberFormat(this.point.denominator, 0);
           str += d.denominatorShort + ': ' + denom;
@@ -493,9 +532,87 @@ var utils = {
         str += ' (' + humanize.ordinal(percentile);
         str += ' percentile)';
         return str;
-      }
+      },
     };
     return chOptions;
+  },
+
+  startDataDownload: function(allChartData, chartId) {
+    var chartData = this.getChartDataById(allChartData, chartId);
+    var dataTable = this.getChartDataAsTable(chartData);
+    var csvData = this.formatTableAsCSV(dataTable);
+    var filename = this.sanitizeFilename(chartData.chartTitle) + '.csv';
+    downloadjs(csvData, filename, 'text/csv');
+  },
+
+  getChartDataById: function(allChartData, chartId) {
+    for (var i = 0; i<allChartData.length; i++) {
+      if (allChartData[i].chartId === chartId) {
+        return allChartData[i];
+      }
+    }
+    throw 'No matching chartId: ' + chartId;
+  },
+
+  getChartDataAsTable: function(chartData) {
+    var headers = [
+      'date', 'org_id', 'org_name', 'numerator', 'denominator',
+      'ratio', 'percentile'];
+    var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
+    var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
+    var orgIDColumn = (chartData.isCCG) ? 'pct_id' : 'practice_id';
+    var orgNameColumn = (chartData.isCCG) ? 'pct_name' : 'practice_name';
+    var table = chartData.data.map(function(d) {
+      return [
+          d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
+          d.calc_value, d.percentile
+        ]
+        .concat(percentilesByDate[d.date]);
+    });
+    table.unshift(headers);
+    return table;
+  },
+
+  groupPercentilesByDate: function(globalCentiles, keyPercentiles) {
+    var percentilesByDate = {};
+    _.each(keyPercentiles, function(percentile) {
+      _.each(globalCentiles[percentile], function(percentileData) {
+        var date = percentileData.date;
+        if ( ! percentilesByDate[date]) {
+          percentilesByDate[date] = [];
+        }
+        percentilesByDate[date].push(percentileData.y);
+      });
+    });
+    return percentilesByDate;
+  },
+
+  formatTableAsCSV: function(table) {
+    return table.map(this.formatRowAsCSV.bind(this)).join('\n');
+  },
+
+  formatRowAsCSV: function(row) {
+    return row.map(this.formatCellAsCSV.bind(this)).join(',');
+  },
+
+  formatCellAsCSV: function(cell) {
+    cell = cell ? cell.toString() : '';
+    if (cell.match(/[,"\r\n]/)) {
+      return '"' + cell.replace(/"/g, '""') + '"';
+    } else {
+      return cell;
+    }
+  },
+
+  sanitizeFilename: function(name) {
+    return name
+      // Remove any chars not on whitelist
+      .replace(/[^\w \-\.]/g, '')
+      // Replace runs of whitespace with single space
+      .replace(/\s+/g, ' ')
+      // Trim leading and trailing whitespace
+      .replace(/^\s+|\s+$/g, '');
   }
 
 };

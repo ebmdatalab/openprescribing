@@ -15,7 +15,11 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["lowpriority"],
+  "tags": [
+    "cardiovascular",
+    "cost",
+    "lowpriority"
+  ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],

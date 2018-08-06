@@ -16,7 +16,7 @@ class AssetBuildingTestRunner(DiscoverRunner):
       * Starting a mock API server
     """
     # We must run the test server on a port supported by Saucelabs
-    os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = "0.0.0.0:6080"
+    os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = "0.0.0.0:6080-6580"
 
     def build_suite(self, test_labels, extra_tests=None, **kwargs):
         if os.environ.get('TEST_SUITE', '') == 'functional' and \

@@ -70,11 +70,6 @@ LOGGING = {
         }
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
         'gunicorn': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -95,11 +90,6 @@ LOGGING = {
         'django': {
             'handlers': ['gunicorn'],
             'level': 'WARN',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
             'propagate': True,
         },
         'frontend': {

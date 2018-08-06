@@ -8,27 +8,45 @@
 {% block content %}
 
 <h1>Prescribing measures</h1>
-{% if request.GET.tags %}
-<p class="alert alert-info">
-  This list is filtered to show only <em>NHS Low Priority</em> measures.  <a href="{% url 'all_measures' %}">Switch back to core measures.</a>
-</p>
+{% if tag_filter.show_message %}
+  <div class="alert alert-info">
+    <p>This list is filtered to show only measures tagged: <em>{{ tag_filter.names|fancy_join }}</em>.</p>
+    {% if tag_filter.details|length == 1 %}
+      <p>{{ tag_filter.details.0.description|safe }}</p>
+    {% elif tag_filter.details|length > 1 %}
+      <dl>
+        {% for details in tag_filter.details %}
+          <dt>{{ details.name }}</dt>
+          <dd>{{ details.description|safe }}</dt>
+        {% endfor %}
+      </dl>
+    {% endif %}
+    <p><a href="{% url 'all_measures' %}">Show all measures.</a></p>
+  </div>
 {% endif %}
 </p>
+
+<form class="form" action="">
+  <div class="form-group">
+    <label>Show measures categorised as:</label>
+    <select name="tags" class="form-control js-submit-on-change">
+      {% for tag in tag_filter.all_tags %}
+        <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
 
 <p>See prescribing by all CCGs for:</p>
 
 <ul>
 {% for measure in measures %}
 <li>
-<a href="/measure/{{ measure.id }}">
+<a href="{% url 'measure_for_all_ccgs' measure.id %}">
 {{ measure }}
 </a>
 </li>
 {% endfor %}
 </ul>
 
-{% endblock %}
-
-{% block extra_js %}
-{% conditional_js 'openprescribing' %}
 {% endblock %}

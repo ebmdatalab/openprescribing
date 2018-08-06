@@ -25,13 +25,11 @@
     }
 }
 
-#toggle {
-   float: right;
-   clear: both;
-}
-
 #map-measure {
-   height: 150px;
+  height: 150px;
+  width: 150px;
+  -webkit-clip-path: circle(50% at 50% 50%);
+  clip-path: circle(50% at 50% 50%);
    small {
       font-size: 0.6px;
    }
@@ -44,6 +42,7 @@
 
   .loading-wrapper {
     display: block;
+    height: 386px;
 
     .loading {
       padding-bottom: 10px;
@@ -53,7 +52,6 @@
   .panel {
     white-space: nowrap;
     overflow: hidden;
-
     .panel-heading {
       font-size: 12px;
     }

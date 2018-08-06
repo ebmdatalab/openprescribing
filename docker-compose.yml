@@ -1,12 +1,12 @@
-version: '2'
+version: '2.1'
 services:
   db-test:
     image: mdillon/postgis:latest
-    env_file: .env-test
+    env_file: environment-docker
   test:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
-    env_file: .env-test
+    env_file: environment-docker
     environment:
       - DJANGO_SETTINGS_MODULE=openprescribing.settings.test
       - TRAVIS=${TRAVIS}
@@ -14,14 +14,18 @@ services:
       - TEST_SUITE=${TEST_SUITE}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+      - TRAVIS_BRANCH=${TRAVIS_BRANCH}
+      - TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+      - TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+      - COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
       - USE_SAUCELABS=${USE_SAUCELABS}
       - GOOGLE_APPLICATION_CREDENTIALS=/code/google-credentials.json
     extra_hosts:
-      - "saucehost:${SAUCE_HOST}"
+      - saucehost:${SAUCE_HOST-127.0.0.1}
     ports:
-      - "6080:6080"
+      - "6080-6580:6080-6580"
       - "6060:6060"
     volumes:
       - .:/code
@@ -31,13 +35,17 @@ services:
   test-production:
     image: ebmdatalab/openprescribing-base:latest
     command: /bin/bash -c './scripts/docker_setup.sh production && cd openprescribing && python manage.py check --deploy --settings openprescribing.settings.production'
-    env_file: .env-test
+    env_file: environment-docker
     environment:
       - TRAVIS=${TRAVIS}
       - TEST_SUITE=${TEST_SUITE}
       - BROWSER=${BROWSER}
       - TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
       - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+      - TRAVIS_BRANCH=${TRAVIS_BRANCH}
+      - TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+      - TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+      - COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}
       - SAUCE_USERNAME=${SAUCE_USERNAME}
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
       - USE_SAUCELABS=${USE_SAUCELABS}
@@ -45,7 +53,7 @@ services:
     extra_hosts:
       - "saucehost:${SAUCE_HOST}"
     ports:
-      - "6080:6080"
+      - "6080-6580:6080-6580"
       - "6060:6060"
     volumes:
       - .:/code
@@ -54,11 +62,11 @@ services:
 
   db-dev:
     image: mdillon/postgis:latest
-    env_file: .env-dev
+    env_file: environment-docker
   dev:
     image: ebmdatalab/openprescribing-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh local &&  cd openprescribing && /bin/bash -l'
-    env_file: .env-dev
+    env_file: environment-docker
     ports:
       - "8000:8000"
     volumes:

@@ -12,9 +12,28 @@
 {% block content %}
 
 {% if presentations %}
-<h3>{{ chart_title }}</h3>
+  <h3>{{ chart_title }}</h3>
 {% else %}
-<h3>Tariff and Concession prices</h3>
+  <h3>Tariff and Concession prices</h3>
+
+  <p>
+    The Drug Tariff is the "NHS primary care price list" for thousands of the
+    most commonly-prescribed drugs, and is updated monthly. Sometimes medicines
+    go out-of-stock, and a "price concession" is given so that pharmacists having
+    to buy more expensive versions are not out of pocket.
+  </p>
+  <p>
+    Our data goes back to March 2010. Drug Tariff data
+    (<a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff">source</a>)
+    is updated as the latest month is released (usually three days before it is
+    active). Price concession data
+    (<a href="http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/">source</a>)
+    is updated daily!
+  </p>
+  <p>
+    Search to view a medicine's Drug Tariff price and category, and whether it
+    has had a price concession.
+  </p>
 {% endif %}
 
 <div id="no-data">
@@ -60,5 +79,4 @@
 </script>
 
 {% conditional_js 'tariff-charts' %}
-{% conditional_js 'openprescribing' %}
 {% endblock %}

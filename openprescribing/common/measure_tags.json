@@ -1,0 +1,90 @@
+{
+  "antimicrobial": {
+    "name": "Antimicrobial Stewardship",
+    "description": "Antimicrobial Stewardship is when an organisation promotes and monitors the correct use of antibiotics to ensure they remain effective in the future. The following measures are useful for monitoring antibiotic prescribing to support antimicrobial stewardship and reduce the threat of antimicrobial resistance."
+  },
+  "cardiovascular": {
+    "name": "Cardiovascular system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the cardiovascular system"
+  },
+  "centralnervous": {
+    "name": "Central Nervous system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the central nervous system"
+  },
+  "core": {
+    "name": "Standard",
+    "description": null
+  },
+  "cost": {
+    "name": "Cost Saving",
+    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings"
+  },
+  "diabetes": {
+    "name": "Diabetes",
+    "description": "These measures are for treatments commonly used for treating diabetes"
+  },
+  "efficacy": {
+    "name": "Efficacy",
+    "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives"
+  },
+  "erectiledysfunction": {
+    "name": "Erectile Dysfunction",
+    "description": "These measures are for treatments commonly used for treating erectile dysfunction"
+  },
+  "eye": {
+    "name": "Eye",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the eye"
+  },
+  "gastrointestinal": {
+    "name": "Gastrointestinal system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the gastrointestinal system"
+  },
+  "generic": {
+    "name": "Generic prescribing",
+    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that can be prescribed generically."
+  },
+  "infections": {
+    "name": "Infections",
+    "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings"
+  },
+  "lowpriority": {
+    "name": "Low Priority",
+    "description": [
+      "This is an <strong>experimental</strong> list of products ",
+      "considered a low priority for NHS Funding ",
+      "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>;",
+      " we welcome feedback.  These are indicative only, and should be approached with caution ",
+      "(<a href=\"/faq/#measureinterpret\">read more</a>)."
+    ]
+  },
+  "mentalhealth": {
+    "name": "Mental Health",
+    "description": "These measures are for treatments commonly used for treating mental health conditions"
+  },
+  "opioids": {
+    "name": "Opioids",
+    "description": "These measures relate to the use of opioids. You may also like to use our Price Per Unit tool which identifies how you can make savings due to anomalies in the reimbursement system."
+  },
+  "pain": {
+    "name": "Pain",
+    "description": "These measures are for treatments commonly used for treating pain"
+  },
+  "paper": {
+    "name": "Mentioned in Papers",
+    "description": [
+      "The below measures have been referenced in papers published by the EBM DataLab team."
+    ]
+  },
+  "reproductive": {
+    "name": "Reproductive system",
+    "description": "These measures are for treatments commonly used for treating conditions affecting the reproductive system"
+  },
+  "respiratory": {
+    "name": "Respiratory",
+    "description": "These measures are for treatments commonly used for treating respiratory conditions such as asthma and COPD"
+  },
+  "safety": {
+    "name": "Safety",
+    "description": "Improving safety is about reducing risk and minimising mistakes. The World Health Organisation has launched its third patient safety challenge Medication Without Harm. Changes in the following measures may result in reduction of the risk of harm to patients and contribute to WHOs ambition in reducting medication related harm by 50% within 5 years."
+  }
+}

@@ -8,6 +8,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
+from frontend.models import MEASURE_TAGS
 
 import view_utils as utils
 
@@ -17,13 +18,19 @@ class MissingParameter(APIException):
     default_detail = 'You are missing a required parameter.'
 
 
+class InvalidMultiParameter(APIException):
+    status_code = 400
+    default_detail = ('You can specify one org and many measures, '
+                      'or one measure and many orgs, but not many of both')
+
+
 @api_view(['GET'])
 def measure_global(request, format=None):
-    measure = request.query_params.get('measure', None)
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    tags = utils.param_to_list(request.query_params.get('tags', None))
     qs = MeasureGlobal.objects.select_related('measure')
-    if measure:
-        qs = qs.filter(measure_id=measure)
+    if measures:
+        qs = qs.filter(measure_id__in=measures)
     if tags:
         qs = qs.filter(measure__tags__overlap=tags)
     qs = qs.order_by('measure_id', 'month')
@@ -60,6 +67,7 @@ def measure_global(request, format=None):
                 'low_is_good': measure.low_is_good,
                 'tags_focus': tags_focus,
                 'numerator_can_be_queried': measure.numerator_can_be_queried(),
+                'tags': _hydrate_tags(measure.tags),
                 'data': [d_copy]
             }
     d = {
@@ -79,7 +87,7 @@ def measure_numerators_by_org(request, format=None):
         org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
-        this_month - relativedelta(months=1)).strftime('%Y-%m-01')
+        this_month - relativedelta(months=2)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_can_be_queried():
         # Awkwardly, because the column names in the prescriptions table
@@ -160,12 +168,13 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measure_id = request.query_params.get('measure', None)
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
-
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
     rolled = {}
-    measure_values = MeasureValue.objects.by_ccg(org_ids, measure_id, tags)
+    measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
 
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'ccg')
@@ -175,13 +184,15 @@ def measure_by_ccg(request, format=None):
 
 @api_view(['GET'])
 def measure_by_practice(request, format=None):
-    measure_id = request.query_params.get('measure', None)
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    if not org_ids:
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    if not orgs:
         raise MissingParameter
-    tags = [x for x in request.query_params.get('tags', '').split(',') if x]
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
 
-    measure_values = MeasureValue.objects.by_practice(org_ids, measure_id,
+    measure_values = MeasureValue.objects.by_practice(orgs, measures,
                                                       tags)
 
     rsp_data = {
@@ -233,7 +244,15 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
                 'is_cost_based': measure.is_cost_based,
                 'is_percentage': measure.is_percentage,
                 'low_is_good': measure.low_is_good,
+                'tags': _hydrate_tags(measure.tags),
                 'data': [measure_value_data],
             }
 
     return rolled.values()
+
+
+def _hydrate_tags(tag_ids):
+    return [
+        {'id': tag_id, 'name': MEASURE_TAGS[tag_id]['name']}
+        for tag_id in tag_ids
+    ]

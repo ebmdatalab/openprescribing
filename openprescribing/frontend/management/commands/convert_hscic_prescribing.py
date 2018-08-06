@@ -62,7 +62,7 @@ class Command(BaseCommand):
         sql = '''SELECT COUNT(*)
         FROM {dataset}.prescribing
         WHERE month = TIMESTAMP('{date}')'''.format(
-            dataset=hscic_dataset_client.dataset_name,
+            dataset=hscic_dataset_client.dataset_id,
             date=date.replace('_', '-'),
         )
         try:

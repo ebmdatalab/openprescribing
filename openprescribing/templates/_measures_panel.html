@@ -1,51 +1,3 @@
-{% if not measure.id %}
-<!-- only show sorting and alert signups when showing more than one measure -->
-<div class="row" >
-  {% if request.GET.tags %}
-  <h2>Low Value Prescribing measures</h2>
-  <p class="alert alert-info">
-    This is an <strong>experimental</strong> list of products considered a low priority for NHS Funding <a href="https://www.england.nhs.uk/2017/07/medicine-consultation/">by NHS England</a>; we welcome feedback.  These are indicative only, and should be approached with caution (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).<br>
-    {% if entity_type == 'practice' %}
-    <a href="{% url 'measures_for_one_practice' practice.code %}">View standard measures instead</a>.
-    {% else %}
-    <a href="{% url 'measures_for_one_ccg' ccg.code %}">View standard measures instead</a>.
-    {% endif %}
-  </p>
-{% else %}
-  <h2>Prescribing measures</h2>
-  <p>
-    We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
-    These are indicative only, and should be approached with caution.
-    {% if entity_type == 'practice' %}
-    Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
-    {% else %}
-    Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
-    {% endif %}
-    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
-  </p>
-{% endif %}
-
-  <div class="row">
-    <div class="col-md-6">
-      {% include '_alert_signup_form.html' %}
-    </div>
-    <div class="col-md-6">
-      <div id="toggle">
-        <p>Sort prescribing measures by:</p>
-        <div class="btn-group" id="order">
-          <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
-            Potential for improvement
-          </button>
-          <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
-            Potential savings
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <p id="perfsummary">Loading...</p>
 
 <div id="measures">
@@ -107,9 +59,24 @@
                      in England on this measure</a></li>
                     </ul>
                   </p>
+                  <p>
+                    <strong>Tagged as:</strong>
+                    {{# each tagsForDisplay as |tag index|}}
+                      <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
+                    {{/each}}
+                    {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
+                  </p>
               </div>
-              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="{{ chartId }}">
+              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <div id="{{ chartId }}">
                   <div class="status"></div>
+                </div>
+                <p class="text-right" style="margin-top: 4px">
+                  <a href="#" data-download-chart-id="{{ chartId }}">
+                    Download data
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                  </a>
+                </p>
               </div>
           </div>
 
