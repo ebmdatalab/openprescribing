@@ -13,8 +13,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.conf import settings
 
 
-# Django 1.11 removes the ability to supply a port range for liveserver tests, so we replicate that here.
-# See: https://code.djangoproject.com/ticket/28212 and https://code.djangoproject.com/ticket/26011
+# Django 1.11 removes the ability to supply a port range for liveserver tests,
+# so we replicate that here.  See: https://code.djangoproject.com/ticket/28212
+# and https://code.djangoproject.com/ticket/26011
 available_test_ports = iter(range(6080, 6580))
 
 
