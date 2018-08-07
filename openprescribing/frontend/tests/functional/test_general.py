@@ -116,7 +116,7 @@ class GeneralFrontendTest(SeleniumTestCase):
                          'measure_keppra')
 
     def test_ccg_measures_tags(self):
-        url = self.live_server_url + '/ccg/02Q/?tags=foobar'
+        url = self.live_server_url + '/ccg/02Q/measures/?tags=foobar'
         self.browser.get(url)
         # nothing is tagged foobar, so should return the text expected
         # when no measures are shown
