@@ -170,6 +170,7 @@ class Practice(models.Model):
     status_code = models.CharField(max_length=1,
                                    choices=STATUS_SETTINGS,
                                    null=True, blank=True)
+    ccg_change_reason = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
