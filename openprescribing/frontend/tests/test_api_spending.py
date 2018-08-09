@@ -362,7 +362,7 @@ class TestSpendingByPractice(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode('utf8').splitlines()))
 
     def test_spending_by_all_practices_on_product_without_date(self):
         response = self._get({'code': '0204000I0BC'})
