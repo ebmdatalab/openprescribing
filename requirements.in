@@ -59,6 +59,4 @@ flake8
 graphviz
 pip-tools
 pre-commit
-werkzeug
 when-changed
-yapf
