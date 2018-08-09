@@ -7,7 +7,7 @@ def convert_get_param_to_list(param_string):
     params = []
     if param_string:
         params = param_string.split(',')
-        params = filter(None, params)
+        params = [_f for _f in params if _f]
     return params
 
 

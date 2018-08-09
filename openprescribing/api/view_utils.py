@@ -30,7 +30,7 @@ def param_to_list(str):
     params = []
     if str:
         params = str.split(',')
-        params = filter(None, params)
+        params = [_f for _f in params if _f]
     return params
 
 

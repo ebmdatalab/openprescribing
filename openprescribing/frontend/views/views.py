@@ -276,7 +276,7 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
     tags = params.getlist('tags')
     # Support passing a single "tags" param with a comma separated list
     tags = sum([tag.split(',') for tag in tags], [])
-    tags = filter(None, tags)
+    tags = [_f for _f in tags if _f]
     default_tags = [] if show_all_by_default else [CORE_TAG]
     if not tags:
         tags = default_tags
