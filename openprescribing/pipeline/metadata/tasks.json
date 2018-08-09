@@ -108,6 +108,13 @@
             "import_ccg_details"
         ]
     },
+    "handle_orphan_practices": {
+        "type": "post_process",
+        "command": "handle_orphan_practices",
+        "dependencies": [
+            "import_practice_details"
+        ]
+    },
     "import_nhs_postcode_file": {
         "type": "import",
         "source_id": "nhs_postcode_file",

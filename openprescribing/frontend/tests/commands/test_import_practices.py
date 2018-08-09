@@ -16,6 +16,11 @@ def tearDownModule():
 class CommandsTestCase(TestCase):
 
     def test_import_practices_from_epraccur(self):
+        Practice.objects.create(
+            code='A81044',
+            ccg_id='00M',
+            ccg_change_reason='Manually set'
+        )
 
         args = []
         epraccur = 'frontend/tests/fixtures/commands/'
@@ -41,7 +46,9 @@ class CommandsTestCase(TestCase):
         self.assertEqual(p.get_setting_display(), 'Prison')
 
         p = Practice.objects.get(code='A81044')
-        self.assertEqual(p.ccg.code, '00K')
+        # We're checking that the CCG code hasn't been updated, since
+        # ccg_change_reason is set.
+        self.assertEqual(p.ccg.code, '00M')
         self.assertEqual(p.get_setting_display(), 'GP Practice')
 
         p = Practice.objects.get(code='Y01063')
