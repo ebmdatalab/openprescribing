@@ -105,26 +105,26 @@ class TestAPIMeasureViews(TestCase):
         url += '?measure=cerazette&org=02Q&format=json'
         data = self._get_json(url)
         self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'02Q',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
+            {'total_items': 1,
+             'bnf_code': '0205010F0AAAAAA',
+             'presentation_name': 'Thing 2',
+             'numerator': 100.0,
+             'entity': '02Q',
+             'cost': 1.0,
+             'quantity': 100.0}])
 
     def test_api_measure_numerators_by_practice(self):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=N84014&format=json'
         data = self._get_json(url)
         self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'N84014',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
+            {'total_items': 1,
+             'bnf_code': '0205010F0AAAAAA',
+             'presentation_name': 'Thing 2',
+             'numerator': 100.0,
+             'entity': 'N84014',
+             'cost': 1.0,
+             'quantity': 100.0}])
 
     def test_api_measure_numerators_by_practice_3_month_window(self):
         url = '/api/1.0/measure_numerators_by_org/'
@@ -137,13 +137,13 @@ class TestAPIMeasureViews(TestCase):
         )
         data = self._get_json(url)
         self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'N84014',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
+            {'total_items': 1,
+             'bnf_code': '0205010F0AAAAAA',
+             'presentation_name': 'Thing 2',
+             'numerator': 100.0,
+             'entity': 'N84014',
+             'cost': 1.0,
+             'quantity': 100.0}])
 
     def test_api_measure_numerators_bnf_name_in_condition(self):
         m = Measure.objects.first()

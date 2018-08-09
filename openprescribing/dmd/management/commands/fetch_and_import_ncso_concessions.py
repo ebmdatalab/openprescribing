@@ -125,7 +125,7 @@ class Command(BaseCommand):
         for record in records[1:]:
             drug, pack_size, price_concession = record
             drug = drug.replace('(new)', '').strip()
-            match = re.match(u'£(\d+)\.(\d\d)', price_concession)
+            match = re.match('£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
             self.import_record(date, drug, pack_size, price_concession_pence)
@@ -180,7 +180,7 @@ class Command(BaseCommand):
             logger.info('Found previous matching concession')
             return previous_concession.vmpp_id
 
-        ncso_name_raw = u'{} {}'.format(concession.drug, concession.pack_size)
+        ncso_name_raw = '{} {}'.format(concession.drug, concession.pack_size)
         ncso_name = regularise_ncso_name(ncso_name_raw)
 
         for vmpp in self.vmpps:
@@ -196,7 +196,7 @@ class Command(BaseCommand):
 
 def regularise_ncso_name(name):
     # Some NCSO records have non-breaking spaces
-    name = name.replace(u'\xa0', '')
+    name = name.replace('\xa0', '')
 
     # Some NCSO records have multiple spaces
     name = re.sub(' +', ' ', name)

@@ -63,7 +63,7 @@ def handle_bad_request(view_function):
         try:
             return view_function(request, *args, **kwargs)
         except BadRequestError as e:
-            context = {'error_code': 400, 'reason': unicode(e)}
+            context = {'error_code': 400, 'reason': str(e)}
             return render(request, '500.html', context, status=400)
     return wrapper
 
@@ -217,7 +217,7 @@ def _specified_or_last_date(request, category):
         try:
             date = parse_date(date)
         except ValueError:
-            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
+            raise BadRequestError('Date not in valid YYYY-MM-DD format: %s' % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
@@ -283,7 +283,7 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
     try:
         tag_details = [MEASURE_TAGS[tag] for tag in tags]
     except KeyError as e:
-        raise BadRequestError(u'Unrecognised tag: {}'.format(e.args[0]))
+        raise BadRequestError('Unrecognised tag: {}'.format(e.args[0]))
     return {
         'tags': tags,
         'names': [tag['name'] for tag in tag_details],
@@ -818,7 +818,7 @@ def tariff(request, code=None):
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
     context = {}
-    if 'canceling statement due to statement timeout' in unicode(value):
+    if 'canceling statement due to statement timeout' in str(value):
         context['reason'] = ("The database took too long to respond.  If you "
                              "were running an analysis with multiple codes, "
                              "try again with fewer.")

@@ -81,8 +81,8 @@ def write_csv_response(cursor, filename):
     writer = csv.writer(response)
     cursor_copy = []
     for c in cursor:
-        c = [unicode(item).encode('utf8') for item in c]
+        c = [str(item).encode('utf8') for item in c]
         cursor_copy.append(c)
-    writer.writerow([unicode(i[0]).encode('utf8') for i in cursor.description])
+    writer.writerow([str(i[0]).encode('utf8') for i in cursor.description])
     writer.writerows(cursor_copy)
     return response

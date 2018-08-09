@@ -127,7 +127,7 @@ class BQClientTest(TestCase):
 
         results = client.query('SELECT * FROM {}'.format(t3.qualified_name))
 
-        self.assertEqual(sorted(results.rows), rows + [(4, u'damson')])
+        self.assertEqual(sorted(results.rows), rows + [(4, 'damson')])
 
         # Test Client.create_table_with_view
         sql = 'SELECT * FROM {{project}}.{} WHERE a > 1'.format(t1_qname)
