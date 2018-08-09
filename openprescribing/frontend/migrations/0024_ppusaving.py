@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('formulation_swap', models.TextField(blank=True, null=True)),
                 ('pct', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.PCT')),
                 ('practice', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='frontend.Practice')),
-                ('presentation', models.ForeignKey(db_column=b'bnf_code', on_delete=django.db.models.deletion.CASCADE, to='frontend.Presentation')),
+                ('presentation', models.ForeignKey(db_column='bnf_code', on_delete=django.db.models.deletion.CASCADE, to='frontend.Presentation')),
             ],
         ),
     ]
