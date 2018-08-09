@@ -250,7 +250,7 @@ class Table(object):
             self.get_gcbq_table()
 
         for row in self.gcbq_client.list_rows(self.gcbq_table):
-            yield list(row.values())
+            yield row.values()
 
     def get_rows_as_dicts(self):
         if self.gcbq_table is None:
@@ -352,7 +352,7 @@ class Results(object):
 
     @property
     def rows(self):
-        return [list(row.values()) for row in self._rows]
+        return [row.values() for row in self._rows]
 
     @property
     def rows_as_dicts(self):
