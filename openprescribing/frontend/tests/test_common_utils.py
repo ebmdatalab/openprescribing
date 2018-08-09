@@ -57,7 +57,7 @@ class TitleCaseTests(SimpleTestCase):
                 "C&RH Biggin Hill")
         ]
         for words, expected in tests:
-            self.assertEquals(nhs_titlecase(words), expected)
+            self.assertEqual(nhs_titlecase(words), expected)
 
 
 def _cluster_count(cursor):

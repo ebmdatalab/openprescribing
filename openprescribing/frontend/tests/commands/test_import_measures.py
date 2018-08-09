@@ -538,12 +538,12 @@ class BigqueryFunctionalTests(TestCase):
                     measure=measure, month=month, practice=p)
             for actual, expected, identifier in self._walk(mv, data):
                 if isinstance(expected, Number):
-                    self.assert_(
+                    self.assertTrue(
                         isclose(actual, expected),
                         "got %s for %s, expected ~ %s" % (
                             actual, identifier, expected))
                 else:
-                    self.assert_(
+                    self.assertTrue(
                         actual == expected,
                         "got %s for %s, expected %s" % (
                             actual, identifier, expected))
