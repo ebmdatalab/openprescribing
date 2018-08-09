@@ -88,7 +88,7 @@ class BQClientTest(TestCase):
             reader = csv.reader(f)
             data = [reader.next()] + sorted(reader)
 
-        self.assertEqual(data, [map(str, row) for row in [headers] + rows])
+        self.assertEqual(data, [list(map(str, row)) for row in [headers] + rows])
 
         # Test Table.insert_rows_from_storage
         storage_path = self.storage_prefix + 'test_table.csv'
