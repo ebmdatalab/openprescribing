@@ -170,7 +170,7 @@ class BQClientTest(TestCase):
         client = StorageClient()
         bucket = client.bucket()
         blob = bucket.blob(storage_path)
-        with open(local_path) as f:
+        with open(local_path, 'rb') as f:
             blob.upload_from_file(f)
 
     def test_upload_model(self):

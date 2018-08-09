@@ -19,7 +19,7 @@ class TableDumperTests(TestCase):
 
         dumper = TableDumper(PCT, ['code', 'name'], transformer)
 
-        with tempfile.TemporaryFile() as f:
+        with tempfile.TemporaryFile('w+t') as f:
             dumper.dump_to_file(f)
             f.seek(0)
             records = list(csv.reader(f))
@@ -29,7 +29,7 @@ class TableDumperTests(TestCase):
     def test_dump_to_file_without_transformer(self):
         dumper = TableDumper(PCT, ['code', 'name'])
 
-        with tempfile.TemporaryFile() as f:
+        with tempfile.TemporaryFile('w+t') as f:
             dumper.dump_to_file(f)
             f.seek(0)
             records = list(csv.reader(f))

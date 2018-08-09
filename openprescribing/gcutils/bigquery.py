@@ -290,7 +290,7 @@ class Table(object):
     def insert_rows_from_pg(self, model, columns, transformer=None):
         table_dumper = TableDumper(model, columns, transformer)
 
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile('w+t') as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
             self.insert_rows_from_csv(f.name, foo='bar')

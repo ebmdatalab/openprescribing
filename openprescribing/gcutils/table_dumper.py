@@ -1,4 +1,5 @@
 import csv
+import os
 import tempfile
 
 from django.db import connection
@@ -16,13 +17,20 @@ class TableDumper(object):
         sql = "COPY %s(%s) TO STDOUT (FORMAT CSV, NULL '')" % (
             table_name, ",".join(self.columns))
 
-        with tempfile.NamedTemporaryFile() as tmp_f:
+        # We open the temporary file twice, because copy_expert expects to be
+        # able to write bytes (the default for NamedTemporaryFile)...
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_f_b:
             with connection.cursor() as c:
-                c.copy_expert(sql, tmp_f)
-            tmp_f.seek(0)
+                c.copy_expert(sql, tmp_f_b)
+            tmp_f_b.seek(0)
 
-            reader = csv.reader(tmp_f)
+        # ...while csv.reader expects to be able to read text (the default for
+        # open).
+        with open(tmp_f_b.name) as tmp_f_t:
+            reader = csv.reader(tmp_f_t)
             writer = csv.writer(out_f)
 
             for row in reader:
                 writer.writerow(self.transfomer(row))
+
+        os.unlink(tmp_f_b.name)
