@@ -133,7 +133,7 @@ class FailingEmailTestCase(TestCase):
     fixtures = ['bookmark_alerts', 'measures', 'importlog']
 
     def test_successful_sends(self, attach_image, finder):
-        attach_image.side_effect = [StandardError, None, None]
+        attach_image.side_effect = [Exception, None, None]
         test_context = _makeContext(worst=[MagicMock()])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
@@ -142,7 +142,7 @@ class FailingEmailTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
     def test_max_errors(self, attach_image, finder):
-        attach_image.side_effect = [StandardError, None, None]
+        attach_image.side_effect = [Exception, None, None]
         test_context = _makeContext(worst=[MagicMock()])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):

@@ -116,7 +116,7 @@ class EmailMessageTestCase(TestCase):
     def test_message_id_assertion(self):
         msg = TestMessage()
         msg.extra_headers = {}
-        with self.assertRaises(StandardError):
+        with self.assertRaises(Exception):
             EmailMessage.objects.create_from_message(msg)
 
 
