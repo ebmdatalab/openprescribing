@@ -19,7 +19,7 @@ def _create_prescribing_tables():
                 current.year, str(current.month).zfill(2))
             cursor.execute(cmd % (table_name, table_name))
             current = datetime.date(
-                current.year + (current.month / 12),
+                current.year + (current.month // 12),
                 ((current.month % 12) + 1),
                 1)
     ImportLog.objects.create(
