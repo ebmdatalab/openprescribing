@@ -453,7 +453,7 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             self.send_response(requests.codes.ok)
             self.send_header('Content-Type', 'text/html')
             self.end_headers()
-            response_content = """
+            response_content = b"""
             <html>
              <head>
               <script src='/jquery.min.js'></script>
@@ -474,7 +474,7 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'text/javascript')
             self.end_headers()
             with open(settings.SITE_ROOT + '/media/js/'
-                      'node_modules/jquery/dist/jquery.min.js', 'r') as f:
+                      'node_modules/jquery/dist/jquery.min.js', 'rb') as f:
                 self.wfile.write(f.read())
                 return
 
