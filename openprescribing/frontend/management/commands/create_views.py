@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
     def list_views(self):
         for view in self.view_paths:
-            print os.path.basename(view).replace('.sql', '')
+            print(os.path.basename(view).replace('.sql', ''))
 
     def fill_views(self):
         client = Client('hscic')

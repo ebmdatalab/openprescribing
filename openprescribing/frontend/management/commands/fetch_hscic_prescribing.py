@@ -38,7 +38,7 @@ class Command(BaseCommand):
         num_files_expected = self.files_expected(START_YEAR, START_MONTH,
                                                  END_YEAR, END_MONTH)
         if num_files != num_files_expected:
-            print 'Fewer files returned than expected, only', num_files
+            print('Fewer files returned than expected, only', num_files)
 
     def call_wget_and_retry_if_needed(self, year, month, filename):
         '''
@@ -48,17 +48,17 @@ class Command(BaseCommand):
         '''
         return_code = self.wget_and_return(year, month, filename, 'CSV')
         if return_code:
-            print 'File for %s/%s not downloaded' % (year, month)
-            print 'Trying lowercase suffix...'
+            print('File for %s/%s not downloaded' % (year, month))
+            print('Trying lowercase suffix...')
             return_code = self.wget_and_return(year, month, filename, 'csv')
             if return_code:
-                print 'File for %s/%s not downloaded' % (year, month)
-                print 'Trying lowercase month name...'
+                print('File for %s/%s not downloaded' % (year, month))
+                print('Trying lowercase month name...')
                 return_code = self.wget_and_return(year, month, filename,
                                                    'csv', True)
                 if return_code:
-                    print 'Failed to download file for %s/%s!' % (year, month)
-                    print 'Filename that failed: ', filename
+                    print('Failed to download file for %s/%s!' % (year, month))
+                    print('Filename that failed: ', filename)
 
     def wget_and_return(self, year, month, filename, suffix, lowercase=False):
         '''

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
         if not options['filename']:
-            print 'Please supply a filename'
+            print('Please supply a filename')
             sys.exit()
         fname = options['filename']
         f = op.load_workbook(fname)

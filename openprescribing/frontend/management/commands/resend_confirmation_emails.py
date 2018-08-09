@@ -31,5 +31,5 @@ class Command(BaseCommand):
         request = RequestFactory().get('/')
         request.environ['SERVER_NAME'] = settings.ALLOWED_HOSTS[0]
         for user in users:
-            print "Resending to", user
+            print("Resending to", user)
             send_email_confirmation(request, user)

@@ -49,12 +49,12 @@ class Command(BaseCommand):
         mkdir_p(target_dir)
 
         if self.verbose:
-            print 'Getting data for {}'.format(datestamp)
+            print('Getting data for {}'.format(datestamp))
 
         self.curl_and_return(source_url, target_file)
 
         if self.verbose:
-            print "Done"
+            print("Done")
 
     def curl_and_return(self, url, target_file):
         '''
@@ -62,5 +62,5 @@ class Command(BaseCommand):
         '''
         cmd = 'curl {} -o {}'.format(url, target_file)
         if self.verbose:
-            print 'Runing %s' % cmd
+            print('Runing %s' % cmd)
         subprocess.check_call(cmd.split())

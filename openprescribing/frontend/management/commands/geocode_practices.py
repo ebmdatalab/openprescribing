@@ -18,7 +18,7 @@ class Command(BaseCommand):
         Import practice eastings and northings, from HSCIC data.
         '''
         if not options['filename']:
-            print 'Please supply a filename'
+            print('Please supply a filename')
         else:
             self.IS_VERBOSE = False
             if options['verbosity'] > 1:

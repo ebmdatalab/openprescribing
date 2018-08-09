@@ -88,4 +88,4 @@ GROUP BY
             },
             autoescape=False
         )
-        print template.render(ctx)
+        print(template.render(ctx))

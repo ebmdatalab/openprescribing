@@ -30,8 +30,8 @@ class Command(BaseCommand):
             year_and_months.add(match.groups()[0])
 
         if latest_year_and_month in year_and_months:
-            print '{} table already backed up for {}'. \
-                format(table_name, latest_year_and_month)
+            print('{} table already backed up for {}'. \
+                format(table_name, latest_year_and_month))
             return
 
         storage_prefix = '{}/{}/{}-'.format(

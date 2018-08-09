@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for f in self.filenames:
             if f not in options:
-                print 'Please supply a filename option: ', f
+                print('Please supply a filename option: ', f)
                 sys.exit
 
         ccgs = csv.reader(open(options['ccg'], 'rU'))

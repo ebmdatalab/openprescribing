@@ -52,7 +52,7 @@ class Command(BaseCommand):
             if address == addr_with_no_postcode:
                 postcode = 'BN25 1HH'
             if ' ' not in postcode or len(postcode) > 8:
-                print 'POSTCODE ISSUE', address
+                print('POSTCODE ISSUE', address)
 
             p = None
             try:

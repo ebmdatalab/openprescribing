@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     practice.ccg = ccg
                 except PCT.DoesNotExist:
                     if self.IS_VERBOSE:
-                        print 'ccg not found with code', pco_code
+                        print('ccg not found with code', pco_code)
 
             if row[15]:
                 practice.join_provider_date = self.parse_date(row[15])
@@ -86,11 +86,11 @@ class Command(BaseCommand):
                 count += 1
 
         if self.IS_VERBOSE:
-            print '%s Practice objects created from epraccur' % count
+            print('%s Practice objects created from epraccur' % count)
 
     def import_practices_from_hscic(self, filename):
         if self.IS_VERBOSE:
-            print 'Importing practices from %s' % filename
+            print('Importing practices from %s' % filename)
         count = 0
         practices = csv.reader(open(filename, 'rU'))
         for row in practices:
@@ -110,4 +110,4 @@ class Command(BaseCommand):
                     count += 1
 
         if self.IS_VERBOSE:
-            print '%s Practice objects created from HSCIC' % count
+            print('%s Practice objects created from HSCIC' % count)

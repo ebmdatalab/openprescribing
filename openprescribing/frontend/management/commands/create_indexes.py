@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
     def create_indexes(self, cursor):
         if self.IS_VERBOSE:
-            print 'Adding indexes...'
+            print('Adding indexes...')
         # Used for presentation-by-practice queries.
         cmd = 'CREATE INDEX frontend_prescription_by_practice_and_date ON '
         cmd += 'frontend_prescription(presentation_code varchar_pattern_ops, '
@@ -53,11 +53,11 @@ class Command(BaseCommand):
 
     def analyze_db(self, cursor):
         if self.IS_VERBOSE:
-            print 'Analyzing database...'
+            print('Analyzing database...')
         self._print_and_execute(cursor, 'ANALYZE VERBOSE')
 
     def _print_and_execute(self, cursor, cmd):
         if self.IS_VERBOSE:
-            print cmd
+            print(cmd)
         cursor.execute(cmd)
         self.conn.commit()

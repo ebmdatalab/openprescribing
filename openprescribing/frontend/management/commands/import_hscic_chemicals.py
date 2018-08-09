@@ -40,15 +40,15 @@ class Command(BaseCommand):
 
     def import_chemicals(self, filename):
         if self.IS_VERBOSE:
-            print 'Importing Chemicals from %s' % filename
+            print('Importing Chemicals from %s' % filename)
         lines = count = 0
         chemicals = csv.DictReader(open(filename, 'rU'))
         for row in chemicals:
             row = self._strip_dict(row)
             bnf_code = row['CHEM SUB']
             if '+' in bnf_code:
-                print 'ERROR in BNF code format:', bnf_code
-                print 'In file:', filename
+                print('ERROR in BNF code format:', bnf_code)
+                print('In file:', filename)
                 sys.exit()
             c, created = Chemical.objects.get_or_create(
                 bnf_code=bnf_code
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             lines += 1
             count += created
         if self.IS_VERBOSE:
-            print '%s lines read, %s Chemical objects created' % (lines, count)
+            print('%s lines read, %s Chemical objects created' % (lines, count))
 
     def import_missing_chemicals(self):
         '''
@@ -68,7 +68,7 @@ class Command(BaseCommand):
         This is a temporary fix until the HSCIC fix this problem.
         '''
         if self.IS_VERBOSE:
-            print 'Importing missing chemicals'
+            print('Importing missing chemicals')
         missing_chemicals = ['0410000AA', '0410000AB', '0410000A0',
                              '0410000D0', '0410000P0', '0410000H0',
                              '0410000M0', '0410000N0', '0410000Q0',
