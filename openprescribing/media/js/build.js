@@ -25,6 +25,8 @@ var bundles = modules.map((x) => `${deployDir}/${x}.js`);
 var b = browserify(files, {
   cache: {},
   packageCache: {},
+  // Enable sourcemaps when not in production mode
+  debug: ! inProduction
 });
 
 // Transforms
