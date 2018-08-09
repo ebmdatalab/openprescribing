@@ -90,7 +90,7 @@ class TestSpending(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode('utf8').splitlines()))
 
     def test_codes_are_rejected_if_not_same_length(self):
         params = {
@@ -192,7 +192,7 @@ class TestSpendingByCCG(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode('utf8').splitlines()))
 
     def test_total_spending_by_ccg(self):
         rows = self._get_rows({})
