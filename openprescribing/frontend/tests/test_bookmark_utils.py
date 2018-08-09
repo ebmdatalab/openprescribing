@@ -156,7 +156,7 @@ class TestCUSUM(unittest.TestCase):
         """
         with open(
                 settings.SITE_ROOT + '/frontend/tests/fixtures/'
-                'alert_test_cases.txt', 'rb') as expected:
+                'alert_test_cases.txt') as expected:
             test_cases = expected.readlines()
         for test in each_cusum_test(test_cases):
             cusum = bookmark_utils.CUSUM(
