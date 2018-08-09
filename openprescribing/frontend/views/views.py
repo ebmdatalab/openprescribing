@@ -777,10 +777,10 @@ def gdoc_view(request, doc_id):
     tree = html.fromstring(page.text)
 
     content = '<style>' + ''.join(
-        [html.tostring(child)
+        [html.tostring(child).decode('utf8')
          for child in tree.head.xpath('//style')]) + '</style>'
     content += ''.join(
-        [html.tostring(child)
+        [html.tostring(child).decode('utf8')
          for child in tree.body])
     context = {
         'content': content
