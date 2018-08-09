@@ -86,7 +86,7 @@ class BQClientTest(TestCase):
             t1_exporter.download_from_storage_and_unzip(f)
             f.seek(0)
             reader = csv.reader(f)
-            data = [reader.next()] + sorted(reader)
+            data = [next(reader)] + sorted(reader)
 
         self.assertEqual(data, [list(map(str, row)) for row in [headers] + rows])
 
