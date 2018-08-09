@@ -159,7 +159,7 @@ class ManualFetchTask(Task):
         instructions = self.manual_fetch_instructions()
         print(instructions)
         paths_before = find_files(self.source.data_dir)
-        raw_input('Press return when done, or to skip this step')
+        input('Press return when done, or to skip this step')
         paths_after = find_files(self.source.data_dir)
         new_paths = [path for path in paths_after if path not in paths_before]
         if new_paths:
@@ -168,7 +168,7 @@ class ManualFetchTask(Task):
                 print(' * {}'.format(path))
         else:
             print('No new files were found at {}'.format(self.source.data_dir))
-        raw_input('Press return to confirm, or Ctrl+C to cancel '
+        input('Press return to confirm, or Ctrl+C to cancel '
                   'and resolve any problems')
 
     def manual_fetch_instructions(self):
