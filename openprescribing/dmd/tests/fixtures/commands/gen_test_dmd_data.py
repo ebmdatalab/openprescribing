@@ -21,7 +21,7 @@
 #   vpids is a comma-separated list of IDs of VMPs
 
 
-from __future__ import print_function
+
 
 from glob import glob
 import os

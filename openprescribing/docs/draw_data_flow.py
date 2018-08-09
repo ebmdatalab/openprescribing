@@ -19,7 +19,7 @@ Output is produced in a file called openp-data-flow.svg.  (This could be made
 configurable.)
 '''
 
-from __future__ import print_function
+
 
 from collections import defaultdict
 import os

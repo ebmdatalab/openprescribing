@@ -1,5 +1,5 @@
 """Setting to temporarily override template path."""
-from __future__ import absolute_import
+
 from os.path import join, normpath
 from .production import *
 

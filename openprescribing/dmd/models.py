@@ -18,7 +18,7 @@ here. For some examples of the kinds of query that are possible, see:
 https://github.com/ebmdatalab/price-per-dose/blob/master/snomed-bnf-mapping.ipynb
 
 """
-from __future__ import unicode_literals
+
 
 from django.db import models
 

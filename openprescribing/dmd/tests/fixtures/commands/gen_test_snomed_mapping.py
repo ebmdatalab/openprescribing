@@ -13,7 +13,7 @@
 #   outp_path is the path of the new spreadsheet
 #   vpids is a comma-separated list of IDs of VMPs
 
-from __future__ import print_function
+
 
 import os
 import sys
