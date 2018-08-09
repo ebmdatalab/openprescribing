@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from frontend.models import PCT, Practice
-import view_utils as utils
+from . import view_utils as utils
 from django.http import HttpResponse
 from django.core.serializers import serialize
 

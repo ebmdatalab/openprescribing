@@ -10,7 +10,7 @@ from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
 from frontend.models import MEASURE_TAGS
 
-import view_utils as utils
+from . import view_utils as utils
 
 
 class MissingParameter(APIException):

@@ -11,5 +11,5 @@ class FrontendConfig(AppConfig):
     name = 'frontend'
 
     def ready(self):
-        import admin
+        from . import admin
         import frontend.signals.handlers

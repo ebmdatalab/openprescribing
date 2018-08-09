@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
-import view_utils as utils
+from . import view_utils as utils
 from frontend.models import Chemical, Section, Product, Presentation
 
 

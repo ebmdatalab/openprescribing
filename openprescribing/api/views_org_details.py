@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from django.db.utils import ProgrammingError
-import view_utils as utils
+from . import view_utils as utils
 
 STATS_COLUMN_WHITELIST = (
     'total_list_size',

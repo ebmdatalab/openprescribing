@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from selenium_base import SeleniumTestCase
+from .selenium_base import SeleniumTestCase
 
 
 class MapTest(SeleniumTestCase):

@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import view_utils as utils
+from . import view_utils as utils
 from django.db.models import Q
 from frontend.models import PCT, Practice
 

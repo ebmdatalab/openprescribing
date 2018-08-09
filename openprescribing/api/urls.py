@@ -1,11 +1,11 @@
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
-import views_bnf_codes
-import views_spending
-import views_org_codes
-import views_org_details
-import views_org_location
-import views_measures
+from . import views_bnf_codes
+from . import views_spending
+from . import views_org_codes
+from . import views_org_details
+from . import views_org_location
+from . import views_measures
 
 
 urlpatterns = [

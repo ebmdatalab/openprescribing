@@ -18,8 +18,8 @@ from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
-import view_utils as utils
-from view_utils import db_timeout, BnfHierarchy
+from . import view_utils as utils
+from .view_utils import db_timeout, BnfHierarchy
 
 
 CODE_LENGTH_ERROR = (
