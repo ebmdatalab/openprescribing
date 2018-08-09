@@ -301,7 +301,7 @@ class TaskCollection(object):
                 if self._type == task.task_type:
                     yield task
 
-    def __nonzero__(self):
+    def __bool__(self):
         if self._type:
             return any(task for task in self if task.task_type == self._type)
         else:
