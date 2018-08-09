@@ -99,7 +99,7 @@ class Task(object):
             'zip_path',
         ]
 
-        cmd_parts = shlex.split(self.command.encode('unicode-escape'))
+        cmd_parts = shlex.split(self.command)
         filename_idx = None
         for flag in filename_flags:
             try:
