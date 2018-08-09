@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterUniqueTogether(
             name='ncsoconcession',
-            unique_together=set([('date', 'vmpp')]),
+            unique_together={('date', 'vmpp')},
         ),
     ]

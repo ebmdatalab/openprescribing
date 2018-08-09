@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='tariffprice',
-            unique_together=set([('date', 'vmpp')]),
+            unique_together={('date', 'vmpp')},
         ),
         migrations.AlterField(
             model_name='dmdproduct',

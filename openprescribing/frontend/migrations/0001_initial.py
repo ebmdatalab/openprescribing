@@ -404,19 +404,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='chemical',
-            unique_together=set([('bnf_code', 'chem_name')]),
+            unique_together={('bnf_code', 'chem_name')},
         ),
         migrations.AlterUniqueTogether(
             name='practiceisdispensing',
-            unique_together=set([('practice', 'date')]),
+            unique_together={('practice', 'date')},
         ),
         migrations.AlterUniqueTogether(
             name='measurevalue',
-            unique_together=set(
-                [('measure', 'pct', 'practice', 'month')]),
+            unique_together={('measure', 'pct', 'practice', 'month')},
         ),
         migrations.AlterUniqueTogether(
             name='measureglobal',
-            unique_together=set([('measure', 'month')]),
+            unique_together={('measure', 'month')},
         ),
     ]
