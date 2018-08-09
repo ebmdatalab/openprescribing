@@ -44,7 +44,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
     def test_tariff_hits(self):
         url = '/tariff?format=csv&codes=ABCD,EFGH'
         rows = self._rows_from_api(url)
-        self.assertItemsEqual(rows, [
+        self.assertCountEqual(rows, [
             {'date': '2010-03-01',
              'concession': '',
              'product': 'ABCD',
