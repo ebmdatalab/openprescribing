@@ -195,8 +195,7 @@ class EmailRetrier(object):
             self.exceptions.append(sys.exc_info())
             logger.exception(e)
             if len(self.exceptions) > self.max_errors:
-                raise (BatchedEmailErrors(self.exceptions),
-                       None, self.exceptions[-1][2])
+                raise BatchedEmailErrors(self.exceptions)
 
     def __enter__(self):
         return self
@@ -204,6 +203,4 @@ class EmailRetrier(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.exceptions:
             exception = BatchedEmailErrors(self.exceptions)
-            raise (exception,
-                   None,
-                   self.exceptions[-1][2])
+            raise exception
