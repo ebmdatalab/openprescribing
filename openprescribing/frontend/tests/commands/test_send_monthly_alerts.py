@@ -309,12 +309,12 @@ class OrgEmailTestCase(TestCase):
         html = message[0]
         self.assertIn(
             "These add up to around <b>£10</b> of "
-            "potential savings".decode('utf-8'),
+            "potential savings",
             html)
         self.assertRegex(
             html, '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
             '/.*#cerazette".*>'
-            "Cerazette vs. Desogestrel</a>".decode('utf-8'))
+            "Cerazette vs. Desogestrel</a>")
 
     def test_email_body_one_saving(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -328,7 +328,7 @@ class OrgEmailTestCase(TestCase):
         self.assertRegex(
             html, 'it could have saved about <b>£10</b> on '
             '<a href=".*/practice/P87629/.*#cerazette".*>'
-            "Cerazette vs. Desogestrel</a>".decode('utf-8'))
+            "Cerazette vs. Desogestrel</a>")
 
     def test_email_body_achieved_saving(self, attach_image, finder):
         measure = Measure.objects.get(pk='cerazette')
@@ -337,7 +337,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn(
-            "this practice saved around <b>£10".decode('utf-8'),
+            "this practice saved around <b>£10",
             html)
 
     def test_email_body_two_achieved_savings(
@@ -350,10 +350,10 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn(
-            "<li>\n<b>£10</b> on".decode('utf-8'),
+            "<li>\n<b>£10</b> on",
             html)
         self.assertIn(
-            "<li>\n<b>£10</b> on".decode('utf-8'),
+            "<li>\n<b>£10</b> on",
             html)
 
     def test_email_body_total_savings(self, attach_image, finder):
@@ -362,7 +362,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn(
-            "it could save around <b>£9,000</b>".decode('utf-8'),
+            "it could save around <b>£9,000</b>",
             html)
 
 
