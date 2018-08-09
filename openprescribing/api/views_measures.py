@@ -248,7 +248,7 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
                 'data': [measure_value_data],
             }
 
-    return rolled.values()
+    return list(rolled.values())
 
 
 def _hydrate_tags(tag_ids):

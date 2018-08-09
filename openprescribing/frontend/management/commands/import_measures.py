@@ -571,7 +571,7 @@ class MeasureCalculation(object):
             # global_. There is probably a better way of contstructing
             # the query so this clean-up doesn't have to happen...
             new_d = {}
-            for attr, value in d.iteritems():
+            for attr, value in d.items():
                 new_d[attr.replace('global_', '')] = value
             d = new_d
 
@@ -594,7 +594,7 @@ class MeasureCalculation(object):
 
             # Set the rest of the data returned from bigquery directly
             # on the model
-            for attr, value in d.iteritems():
+            for attr, value in d.items():
                 setattr(mg, attr, value)
             mg.save()
             count += 1

@@ -87,7 +87,7 @@ def create_and_clear_table(info):
             if name == PRIMARY_KEYS.get(info['table_name'], ''):
                 row_sql += " PRIMARY KEY"
             elif any([name in x
-                      for x in PRIMARY_KEYS.values() + EXTRA_INDEXES]):
+                      for x in list(PRIMARY_KEYS.values()) + EXTRA_INDEXES]):
                 indexes.append(name)
             cols.append(row_sql)
         sql += ', '.join(cols)

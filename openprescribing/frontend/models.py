@@ -783,7 +783,7 @@ class EmailMessage(models.Model):
 class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
         (value, value)
-        for name, value in vars(EventType).iteritems()
+        for name, value in vars(EventType).items()
         if not name.startswith('_')]
     # delievered, accepted (by mailgun), error, warn
     metadata = JSONField(null=True, blank=True)
