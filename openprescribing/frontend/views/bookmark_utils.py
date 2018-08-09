@@ -5,7 +5,7 @@ import html.parser
 import logging
 import re
 import subprocess
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import urllib.parse
 
 from anymail.message import attach_inline_image_file
@@ -576,7 +576,7 @@ def ga_tracking_qs(context):
         'utm_source': context['campaign_source'],
         'utm_content': context['email_id']
     }
-    return urllib.urlencode(tracking_params)
+    return urllib.parse.urlencode(tracking_params)
 
 
 def truncate_subject(prefix, subject):

@@ -8,7 +8,7 @@ import logging
 import os
 import re
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import bs4
 import calendar
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             # We split that into ['Part', 'VIIIA', 'September', '2017']
             words = re.split(
                 r'[ -]+',
-                urllib.unquote(os.path.splitext(
+                urllib.parse.unquote(os.path.splitext(
                     os.path.basename(a.attrs['href']))[0]))
             month_name, year = words[-2:]
             if len(year) == 2:

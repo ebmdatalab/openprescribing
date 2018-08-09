@@ -1,6 +1,6 @@
 from lxml import html
 from requests.exceptions import HTTPError
-from urllib import urlencode
+from urllib.parse import urlencode
 from urllib.parse import urlparse, urlunparse
 import functools
 import hashlib

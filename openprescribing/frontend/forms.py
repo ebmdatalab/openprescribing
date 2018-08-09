@@ -1,4 +1,4 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from django import forms
 from django.utils.safestring import mark_safe
 from frontend.models import PCT, Practice
@@ -71,11 +71,11 @@ class SearchBookmarkForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        return urllib.unquote(name)
+        return urllib.parse.unquote(name)
 
     def clean_url(self):
         url = self.cleaned_data['url']
-        return urllib.unquote(url)
+        return urllib.parse.unquote(url)
 
 
 class OrgBookmarkForm(forms.Form):
