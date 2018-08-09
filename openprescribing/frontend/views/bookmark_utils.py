@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from tempfile import NamedTemporaryFile
-import HTMLParser
+import html.parser
 import logging
 import re
 import subprocess
 import urllib
-import urlparse
+import urllib.parse
 
 from anymail.message import attach_inline_image_file
 from dateutil.relativedelta import relativedelta
@@ -694,7 +694,7 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
 def make_search_email(search_bookmark, preview=False, tag=None):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
-    parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
+    parsed_url = urllib.parse.urlparse(search_bookmark.dashboard_url())
     dashboard_uri = parsed_url.path
     if parsed_url.query:
         qs = '?' + parsed_url.query + '&' + msg.qs
@@ -745,7 +745,7 @@ def unescape_href(text):
     do about it](https://github.com/peterbe/premailer/issues/72).
     Unencode them again."""
     hrefs = re.findall(r'href=["\']([^"\']+)["\']', text)
-    html_parser = HTMLParser.HTMLParser()
+    html_parser = html.parser.HTMLParser()
     for href in hrefs:
         text = text.replace(href, html_parser.unescape(href))
     return text

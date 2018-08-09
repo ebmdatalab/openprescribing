@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 import requests
 from zipfile import ZipFile
 import datetime

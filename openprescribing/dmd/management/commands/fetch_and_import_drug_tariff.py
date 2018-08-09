@@ -1,9 +1,9 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from cStringIO import StringIO
+from io import StringIO
 import datetime
-from urlparse import urljoin
+from urllib.parse import urljoin
 import logging
 import os
 import re

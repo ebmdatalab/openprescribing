@@ -1,7 +1,7 @@
 from lxml import html
 from requests.exceptions import HTTPError
 from urllib import urlencode
-from urlparse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 import functools
 import hashlib
 import logging
