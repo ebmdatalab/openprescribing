@@ -40,28 +40,34 @@ class CommandTests(TestCase):
 
         call_command(
             'handle_orphan_practices',
-            '--prev-path', self.path1,
-            '--curr-path', self.path2
+            '--prev-epraccur', self.path1,
+            '--curr-epraccur', self.path2
         )
 
         # We expect closed practices in C01 and C04 not to have moved
         for practice in ccg_id_to_closed_practices['C01']:
             practice.refresh_from_db()
             self.assertEqual(practice.ccg_id, 'C01')
+            self.assertIsNone(practice.ccg_change_reason)
 
         for practice in ccg_id_to_closed_practices['C04']:
             practice.refresh_from_db()
             self.assertEqual(practice.ccg_id, 'C04')
+            self.assertIsNone(practice.ccg_change_reason)
 
         # We expect closed practices in C05 to have moved to C06
         for practice in ccg_id_to_closed_practices['C05']:
             practice.refresh_from_db()
             self.assertEqual(practice.ccg_id, 'C06')
+            self.assertEqual(
+                practice.ccg_change_reason,
+                'CCG set by handle_orphan_practices'
+            )
 
         self.assertEqual(notify_slack.call_count, 2)
         msgs = [c[0][0] for c in notify_slack.call_args_list]
         self.assertIn('Practices have left CCG C01', msgs[0])
-        self.assertIn('Active practices previously in CCG C04', msgs[1])
+        self.assertIn('All active practices previously in CCG C04', msgs[1])
 
     @mock.patch('pipeline.management.commands.handle_orphan_practices.notify_slack')
     def test_dry_run(self, notify_slack):
@@ -74,8 +80,8 @@ class CommandTests(TestCase):
             call_command(
                 'handle_orphan_practices',
                 '--dry-run',
-                '--prev-path', self.path1,
-                '--curr-path', self.path2
+                '--prev-epraccur', self.path1,
+                '--curr-epraccur', self.path2
             )
 
             self.assertFalse(notify_slack.called)

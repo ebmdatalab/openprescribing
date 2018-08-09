@@ -25,6 +25,9 @@
 # been moved to a new CCG.  Again, this requires human intervention.
 #
 # When a human needs to get involved, a message will be sent to Slack.
+#
+# To manually move a practice to a new CCG, you will need to update
+# Practice.ccg_id and Practice.ccg_change_reason.
 
 from collections import Counter, defaultdict
 import csv
@@ -40,12 +43,12 @@ from frontend.models import Practice, PCT
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--prev-path')
-        parser.add_argument('--curr-path')
+        parser.add_argument('--prev-epraccur')
+        parser.add_argument('--curr-epraccur')
         parser.add_argument('--dry-run', action='store_true')
 
     def handle(self, *args, **kwargs):
-        prev_path, curr_path = kwargs['prev_path'], kwargs['curr_path']
+        prev_path, curr_path = kwargs['prev_epraccur'], kwargs['curr_epraccur']
         self.dry_run = kwargs['dry_run']
 
         if prev_path is None:
@@ -103,7 +106,10 @@ class Command(BaseCommand):
                 continue
 
             if len(prev_practices) - len(curr_practices) <= 2:
-                # 2 or fewer practices have moved out of the CCG (or changed status)
+                # We expect one or two practices to move out of a CCG or change
+                # their status each month, so we'll ignore CCGs where the
+                # difference between the number of practices this month and
+                # last month is two or fewer.
                 continue
 
             if self.dry_run:
@@ -137,9 +143,11 @@ class Command(BaseCommand):
         if self.dry_run:
             self.stdout.write('All practices currently in CCG are closed or dormant')
             self.stdout.write('All active practices previously in CCG are now in {} ({})'.format(new_ccg, new_ccg_name))
+            self.stdout.write('Command would move all inactive practices to {} ({})'.format(new_ccg, new_ccg_name))
         else:
-            Practice.objects.filter(ccg_id=ccg).exclude(status_code='A').update(ccg_id=new_ccg)
-            # TODO mark as manually set
+            practices = Practice.objects.filter(ccg_id=ccg).exclude(status_code='A')
+            reason = 'CCG set by handle_orphan_practices'
+            practices.update(ccg_id=new_ccg, ccg_change_reason=reason)
 
     def handle_case_b(self, ccg, new_ccgs):
         # The CCG has closed and its practices have moved to multiple CCGs
@@ -154,7 +162,9 @@ class Command(BaseCommand):
 
         else:
             msg = '''
-Active practices previously in CCG {} ({}) are now in multiple CCGs:
+All active practices previously in CCG {} ({}) are now in multiple CCGs:
+Check whether inactive practices remaining in CCG should have moved.
+See instructions in handle_orphan_practices.py.
             '''.format(ccg, name).strip()
             for new_ccg, count in new_ccgs.most_common():
                 new_ccg_name = self.ccg_to_name[new_ccg]
@@ -171,5 +181,6 @@ Active practices previously in CCG {} ({}) are now in multiple CCGs:
             msg = '''
 Practices have left CCG {} ({}) and some remaining practices are not active.
 Check whether these inactive practices should have moved.
+See instructions in handle_orphan_practices.py.
             '''.format(ccg, name).strip()
             notify_slack(msg)
