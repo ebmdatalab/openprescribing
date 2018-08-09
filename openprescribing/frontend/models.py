@@ -765,7 +765,7 @@ class EmailMessage(models.Model):
 
     @property
     def message(self):
-        return pickle.loads(str(self.pickled_message))
+        return pickle.loads(self.pickled_message)
 
     @message.setter
     def message(self, value):
