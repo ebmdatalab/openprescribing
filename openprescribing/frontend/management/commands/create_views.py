@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
         raw_file = tempfile.NamedTemporaryFile()
         raw_path = raw_file.name
-        sorted_file = tempfile.NamedTemporaryFile()
+        sorted_file = tempfile.NamedTemporaryFile('rt')
         sorted_path = sorted_file.name
 
         self.log('Downloading {} to {}'.format(table_id, raw_path))
