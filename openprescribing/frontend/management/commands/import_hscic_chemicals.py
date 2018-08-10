@@ -32,11 +32,7 @@ class Command(BaseCommand):
         '''
         Strip whitespace from keys and values in dictionary.
         '''
-        for k in row:
-            if row[k]:
-                row[k] = row[k].strip()
-            row[k.strip()] = row.pop(k)
-        return row
+        return {k.strip(): v.strip() if v else v for k, v in row.items()}
 
     def import_chemicals(self, filename):
         if self.IS_VERBOSE:
