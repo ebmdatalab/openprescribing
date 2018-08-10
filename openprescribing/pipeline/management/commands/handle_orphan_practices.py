@@ -55,13 +55,16 @@ class Command(BaseCommand):
             if curr_path is not None:
                 msg = "Must either provide two paths, or no paths"
                 raise CommandError(msg)
-            data_path = os.path.join(
+            pattern = os.path.join(
                 settings.PIPELINE_DATA_BASEDIR,
                 "prescribing_details",
                 "*",
                 "epraccur.csv",
             )
-            prev_path, curr_path = glob.glob(data_path)[-2:]
+            paths = glob.glob(pattern)
+            if len(paths) < 2:
+                return
+            prev_path, curr_path = paths[-2:]
 
         else:
             if curr_path is None:
