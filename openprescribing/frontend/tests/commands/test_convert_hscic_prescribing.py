@@ -43,7 +43,7 @@ class ConvertHscicPrescribingTests(TestCase):
         bucket = client.get_bucket()
         blob = bucket.blob(gcs_path)
 
-        with open(raw_data_path) as f:
+        with open(raw_data_path, 'rb') as f:
             blob.upload_from_file(f)
 
         call_command('convert_hscic_prescribing', filename=raw_data_path)
