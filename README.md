@@ -97,13 +97,9 @@ Ensure pip and setuptools are up to date:
 
     pip install -U pip setuptools
 
-Install Python dependencies in development:
+Install Python dependencies:
 
-    pip install -r requirements/local.txt --process-dependency-links
-
-Or in production:
-
-    pip install -r requirements.txt --process-dependency-links
+    pip install -r requirements.txt
 
 And then install JavaScript dependencies. Make sure you have the latest version
 of nodejs:
