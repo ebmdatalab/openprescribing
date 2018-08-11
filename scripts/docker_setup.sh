@@ -4,7 +4,7 @@
 # application session via docker-compose
 
 python ./scripts/wait_for_postgres.py
-pip install -q -r requirements.txt
+pip install -r requirements.txt
 if ! [ -r openprescribing/media/js/node_modules ]; then
     ln -s /npm/node_modules openprescribing/media/js/
 else
