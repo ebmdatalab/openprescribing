@@ -441,11 +441,6 @@ def build_schema_from_model(model):
     return build_schema(*fields)
 
 
-class InterpolationDict(dict):
-    def __missing__(self, key):
-        return '{' + key + '}'
-
-
 def interpolate_sql(sql, **substitutions):
     '''Interpolates substitutions (plus datasets defined in DATASETS) into
     given SQL.
@@ -459,15 +454,15 @@ def interpolate_sql(sql, **substitutions):
     >>> interpolate_sql('SELECT {col} from {hscic}.table', col='c')
     'SELECT c from hscic_12345.table'
 
-    Since the values of some substitutions (esp. those from import_measures)
+    Since the values of some substitutions (those from import_measures)
     themselves contain template variables, we do the interpolation twice.
 
-    Use of the InterpolationDict allows us to do interpolation when the SQL
-    contains things in curly braces that shoudn't be interpolated (for
-    instance, JS functions defined in SQL).
+    The '{}' argument to `sql.format()` will replace the zeroth positional
+    field in `sql` with curly braces.  In practice, this means that the empty
+    JS object in ccgstatistics.sql can be passed through unchanged.
     '''
+
     substitutions.update(DATASETS)
-    substitutions = InterpolationDict(**substitutions)
-    sql = string.Formatter().vformat(sql, (), substitutions)
-    sql = string.Formatter().vformat(sql, (), substitutions)
+    sql = sql.format('{}', **substitutions)
+    sql = sql.format('{}', **substitutions)
     return sql
