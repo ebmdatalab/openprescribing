@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.6
 
 MAINTAINER Seb Bacon version: 0.1
 ENV PYTHONUNBUFFERED 1
