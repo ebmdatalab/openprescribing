@@ -30,6 +30,8 @@ cache:
 services:
   docker
 language: python
+python:
+  - "3.6"
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
