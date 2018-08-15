@@ -3,6 +3,9 @@ var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
 var downloadjs = require('downloadjs');
+
+var ALL_ORGS_PSEUDO_ID = '_all';
+
 var utils = {
 
   getDataUrls: function(options) {
@@ -397,19 +400,27 @@ var utils = {
             'prescribing behaviour. ');
       }
       if (d.isCostBased || options.isCostBasedMeasure) {
+        var noun1 = 'it';
+        var noun2 = 'this ' + options.orgType;
+        var noun3 = 'it';
+        if (orgId === ALL_ORGS_PSEUDO_ID) {
+          noun1 = 'all ' + options.orgType + 's in England';
+          noun2 = 'the NHS';
+          noun3 = 'they';
+        }
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
             'this ' + options.orgType + ' has saved the NHS £' +
             humanize.numberFormat((d.costSaving50th * -1), 2) +
             ' over the past ' + numMonths + ' months.';
         } else {
-          chartExplanation += 'If it had prescribed in line with the ' +
-            'median, this ' + options.orgType + ' would have spent £' +
+          chartExplanation += 'If ' + noun1 + ' had prescribed in line with the ' +
+            'median, ' + noun2 + ' would have spent £' +
             humanize.numberFormat(d.costSaving50th, 2) +
             ' less over the past ' + numMonths + ' months.';
         }
         if (d.costSaving10th > 0) {
-          chartExplanation += ' If it had prescribed in line with the best ' +
+          chartExplanation += ' If ' + noun3 + ' had prescribed in line with the best ' +
             '10%, it would have spent £' +
             humanize.numberFormat(d.costSaving10th, 2) + ' less. ';
         }
@@ -436,7 +447,7 @@ var utils = {
       var hcOptions = this._getChartOptions(d, isPercentageMeasure,
         options, chartOptions);
       hcOptions.series = [{
-        name: 'This ' + options.orgType,
+        name: options.orgId !== ALL_ORGS_PSEUDO_ID ? 'This ' + options.orgType : options.orgName,
         isNationalSeries: false,
         data: d.data,
         events: {
