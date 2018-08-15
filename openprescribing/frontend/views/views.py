@@ -17,6 +17,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.db import connection
+from django.db.models import Avg
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -27,6 +28,7 @@ from django.utils.safestring import mark_safe
 from allauth.account import app_settings
 from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
+from dateutil.relativedelta import relativedelta
 
 from common.utils import get_env_setting
 from common.utils import parse_date
@@ -364,89 +366,66 @@ def _total_savings(entity, date):
         return dictfetchall(cursor)[0]['total_savings']
 
 
+def _home_page_context_for_entity(request, entity):
+    prescribing_date = ImportLog.objects.latest_in_category(
+        'prescribing').current_at
+    six_months_ago = prescribing_date - relativedelta(months=6)
+    mv_filter = {
+        'month__gte': prescribing_date - six_months_ago,
+        'measure__tags__contains': ['core'],
+        'percentile__isnull': False
+    }
+    entity_type = type(entity).lower()
+    mv_filter["{}_id".format(entity_type)] = entity.code
+    # find the core measurevalue that is most outlierish
+    extreme_measurevalue = MeasureValue.objects.\filter(
+        **mv_filter
+    ).exclude(measure_id='lpzomnibus'
+    ).values('measure_id'
+    ).annotate(average_percentile=Avg('percentile')
+    ).order_by('-average_percentile').first()
+    if extreme_measurevalue:
+        extreme_measure = Measure.objects.get(pk=extreme_measurevalue['measure_id'])
+    else:
+        extreme_measure = None
+    ppu_date = _specified_or_last_date(request, 'ppu')
+    total_possible_savings = _total_savings(entity, ppu_date)
+    measures_count = Measure.objects.count()
+    return {
+        'measure': extreme_measure,
+        'measures_count': measures_count,
+        'entity': entity,
+        'entity_type': entity_type,
+        'entity_price_per_unit_url': '{}_price_per_unit'.format(entity_type),
+        'measures_for_one_entity_url': 'measures_for_one_{}'.format(entity_type),
+        'possible_savings': total_possible_savings,
+        'date': ppu_date,
+        'signed_up_for_alert': _signed_up_for_alert(request, entity),
+    }
+
+
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
-    else:
-        # find the core measurevalue that is most outlierish
-        prescribing_date = ImportLog.objects.latest_in_category(
-            'prescribing').current_at
-        extreme_measurevalue = MeasureValue.objects.filter(
-            pct=ccg,
-            practice__isnull=True,
-            month=prescribing_date,
-            measure__tags__contains=['core']).exclude(
-                measure_id='lpzomnibus'
-            ).order_by(
-                '-percentile').first()
-        if extreme_measurevalue:
-            extreme_measure = extreme_measurevalue.measure
-        else:
-            extreme_measure = None
-
-        practices = Practice.objects.filter(
-            ccg=ccg).filter(setting=4).order_by('name')
-
-        ppu_date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = _total_savings(ccg, ppu_date)
-        measures_count = Measure.objects.count()
-        context = {
-            'measure': extreme_measure,
-            'measures_count': measures_count,
-            'entity': ccg,
-            'entity_type': 'CCG',
-            'entity_price_per_unit_url': 'ccg_price_per_unit',
-            'measures_for_one_entity_url': 'measures_for_one_ccg',
-            'possible_savings': total_possible_savings,
-            'practices': practices,
-            'date': ppu_date,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(request, ccg),
-        }
-        return render(request, 'entity_home_page.html', context)
+    context = _home_page_context_for_entity(request, ccg)
+    context['form'] = form
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
 
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    request.session['came_from'] = request.path
     form = _bookmark_and_newsletter_form(
         request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
-    else:
-        # find the core measurevalue that is most outlierish
-        prescribing_date = ImportLog.objects.latest_in_category(
-            'prescribing').current_at
-        extreme_measurevalue = MeasureValue.objects.filter(
-            practice=practice,
-            month=prescribing_date,
-            measure__tags__contains=['core']).order_by(
-                '-percentile').first()
-        if extreme_measurevalue:
-            extreme_measure = extreme_measurevalue.measure
-        else:
-            extreme_measure = None
-
-        ppu_date = _specified_or_last_date(request, 'ppu')
-        total_possible_savings = _total_savings(practice, ppu_date)
-        measures_count = Measure.objects.count()
-        context = {
-            'measure': extreme_measure,
-            'measures_count': measures_count,
-            'entity': practice,
-            'entity_type': 'practice',
-            'entity_price_per_unit_url': 'practice_price_per_unit',
-            'measures_for_one_entity_url': 'measures_for_one_practice',
-            'possible_savings': total_possible_savings,
-            'date': ppu_date,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(request, practice),
-        }
-        return render(request, 'entity_home_page.html', context)
+    context = _home_page_context_for_entity(request, practice)
+    context['form'] = form
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
 
 
 @handle_bad_request
