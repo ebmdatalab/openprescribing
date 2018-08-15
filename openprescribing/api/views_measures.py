@@ -175,7 +175,6 @@ def measure_by_ccg(request, format=None):
     if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
     tags = utils.param_to_list(request.query_params.get('tags', []))
-    rolled = {}
     measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
 
     rsp_data = {
@@ -196,7 +195,6 @@ def measure_by_practice(request, format=None):
 
     measure_values = MeasureValue.objects.by_practice(orgs, measures,
                                                       tags)
-
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'practice')
     }
@@ -207,8 +205,7 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
     rolled = {}
 
     for measure_value in measure_values:
-        measure = measure_value.measure
-        measure_id = measure.id
+        measure_id = measure_value.measure_id
         measure_value_data = {
             'date': measure_value.month,
             'numerator': measure_value.numerator,
@@ -234,6 +231,7 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
         if measure_id in rolled:
             rolled[measure_id]['data'].append(measure_value_data)
         else:
+            measure = measure_value.measure
             rolled[measure_id] = {
                 'id': measure_id,
                 'name': measure.name,
