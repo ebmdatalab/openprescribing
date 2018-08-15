@@ -378,7 +378,7 @@ def _home_page_context_for_entity(request, entity):
     entity_type = type(entity).lower()
     mv_filter["{}_id".format(entity_type)] = entity.code
     # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.\filter(
+    extreme_measurevalue = MeasureValue.objects.filter(
         **mv_filter
     ).exclude(measure_id='lpzomnibus'
     ).values('measure_id'
