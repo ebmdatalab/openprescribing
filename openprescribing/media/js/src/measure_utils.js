@@ -388,6 +388,12 @@ var utils = {
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
+    if (orgId === ALL_ORGS_PSEUDO_ID) {
+      oneEntityUrl = null;
+      chartTitleUrl = null;
+      tagsFocusUrl = null;
+      measureForAllPracticesUrl = null;
+    }
     var costDataAvailable = d.isCostBased && d.costSaving10th;
     if (d.meanPercentile === null && ! costDataAvailable) {
       chartExplanation = 'No data available.';

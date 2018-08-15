@@ -25,7 +25,11 @@
   <div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
       <div class="panel panel-info">
           <div class="panel-heading">
+            {{# if chartTitleUrl }}
               <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+            {{else}}
+              {{ chartTitle }}
+            {{/if}}
           </div>
           <div class="panel-body" class="row">
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -63,12 +67,12 @@
                         </li>
                        {{/if}}
                      {{/if}}
-                     {{#if isCCG }}
+                      {{#if isCCG}}{{#if measureForAllPracticesUrl }}
                        <li>
                          <a href="{{ measureForAllPracticesUrl }}">Split the measure
                            into charts for individual practices</a>
                        </li>
-                     {{/if}}
+                     {{/if}}{{/if}}
                      <li><a href="{{ measureUrl }}">Compare all CCGs
                      in England on this measure</a></li>
                     </ul>
