@@ -17,11 +17,7 @@
       </dl>
     {% endif %}
     <p>
-      {% if entity_type == 'practice' %}
-      <a href="{% url 'measures_for_one_practice' practice.code %}">View all standard measures instead</a>.
-      {% else %}
-      <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all standard measures instead</a>.
-      {% endif %}
+      <a href="?">View all standard measures instead</a>.
     </p>
   </div>
 {% else %}
