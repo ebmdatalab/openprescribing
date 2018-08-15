@@ -1,0 +1,22 @@
+<div class="form-group">
+  <label>Sort prescribing measures by:</label>
+  <div class="btn-group" id="order">
+    <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
+      Potential for improvement
+    </button>
+    <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
+      Potential savings
+    </button>
+  </div>
+</div>
+<form class="form" action="">
+  <div class="form-group">
+    <span class="label label-warning pull-right">New!</span>
+    <label>Show measures categorised as:</label>
+    <select name="tags" class="form-control js-submit-on-change">
+      {% for tag in tag_filter.all_tags %}
+        <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>

@@ -430,6 +430,16 @@ def ccg_home_page(request, ccg_code):
     return render(request, 'entity_home_page.html', context)
 
 
+@handle_bad_request
+def all_england(request):
+    tag_filter = _get_measure_tag_filter(request.GET)
+    context = {
+        'tag_filter': tag_filter,
+        'entity_type': 'CCG'
+    }
+    return render(request, 'all_england.html', context)
+
+
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     form = _bookmark_and_newsletter_form(

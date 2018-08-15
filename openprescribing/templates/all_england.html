@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing measures for all CCGs in England{% endblock %}
+{% block active_class %}all_england{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="row">
+  <h1>Prescribing measures for all {{ entity_type }}s in England</h1>
+  <p>
+    We have brought together various prescribing measures to show the
+    distribution of prescribing behaviour across NHS England.  These measures
+    are indicative only, and should be approached with caution.
+    Each chart shows the combined performance across NHS England considered in
+    aggregate, plus deciles across individual {{ entity_type }}s.
+    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
+  </p>
+
+{% if tag_filter.show_message %}
+  <div class="alert alert-info">
+    <h4>Showing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h4>
+    {% if tag_filter.details|length == 1 %}
+      <p>{{ tag_filter.details.0.description|safe }}</p>
+    {% elif tag_filter.details|length > 1 %}
+      <dl>
+        {% for details in tag_filter.details %}
+          <dt>{{ details.name }}</dt>
+          <dd>{{ details.description|safe }}</dt>
+        {% endfor %}
+      </dl>
+    {% endif %}
+    <p>
+      <a href="?">View all standard measures instead</a>.
+    </p>
+  </div>
+{% endif %}
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    {% include '_measure_filters.html' %}
+  </div>
+</div>
+
+{% include '_measures_panel.html' %}
+
+<hr/>
+
+{% include '_get_in_touch.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+ var measureData = {
+   'tags': '{{ tag_filter.tags|join:"," }}',
+   'orgId': '_all',
+   'orgName': 'All {{ entity_type }}s in England',
+   'orgType': '{{ entity_type }}'
+};
+</script>
+{% conditional_js 'measures' %}
+
+{% endblock %}
