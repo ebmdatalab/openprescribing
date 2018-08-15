@@ -385,7 +385,8 @@ var utils = {
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
-    if (d.meanPercentile === null) {
+    var costDataAvailable = d.isCostBased && d.costSaving10th;
+    if (d.meanPercentile === null && ! costDataAvailable) {
       chartExplanation = 'No data available.';
     } else {
       if (d.lowIsGood === null) {
@@ -555,8 +556,10 @@ var utils = {
         str += '<br/>';
         str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
         str += (isPercentageMeasure) ? '%' : '';
-        str += ' (' + humanize.ordinal(percentile);
-        str += ' percentile)';
+        if (this.point.percentile !== null) {
+          str += ' (' + humanize.ordinal(percentile);
+          str += ' percentile)';
+        }
         return str;
       },
     };
