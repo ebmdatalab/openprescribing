@@ -383,14 +383,18 @@ def _home_page_context_for_entity(request, entity):
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
-    extreme_measurevalue = MeasureValue.objects.filter(
-        **mv_filter
-    ).exclude(measure_id='lpzomnibus'
-    ).values('measure_id'
-    ).annotate(average_percentile=Avg('percentile')
-    ).order_by('-average_percentile').first()
+    extreme_measurevalue = (
+        MeasureValue.objects
+        .filter(**mv_filter)
+        .exclude(measure_id='lpzomnibus')
+        .values('measure_id')
+        .annotate(average_percentile=Avg('percentile'))
+        .order_by('-average_percentile')
+        .first()
+    )
     if extreme_measurevalue:
-        extreme_measure = Measure.objects.get(pk=extreme_measurevalue['measure_id'])
+        extreme_measure = Measure.objects.get(
+            pk=extreme_measurevalue['measure_id'])
     else:
         extreme_measure = None
     ppu_date = _specified_or_last_date(request, 'ppu')
@@ -401,8 +405,8 @@ def _home_page_context_for_entity(request, entity):
         'measures_count': measures_count,
         'entity': entity,
         'entity_type': entity_type,
-        'entity_price_per_unit_url': '{}_price_per_unit'.format(entity_type),
-        'measures_for_one_entity_url': 'measures_for_one_{}'.format(entity_type),
+        'entity_price_per_unit_url': '%s_price_per_unit' % entity_type,
+        'measures_for_one_entity_url': 'measures_for_one_%s' % entity_type,
         'possible_savings': total_possible_savings,
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
