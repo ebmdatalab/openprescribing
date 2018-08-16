@@ -412,6 +412,7 @@ def _home_page_context_for_entity(request, entity):
         'possible_savings': total_possible_savings,
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
+        'parent_code': None
     }
 
 
@@ -437,6 +438,7 @@ def practice_home_page(request, practice_code):
         return form
     context = _home_page_context_for_entity(request, practice)
     context['form'] = form
+    context['parent_code'] = practice.ccg_id
     request.session['came_from'] = request.path
     return render(request, 'entity_home_page.html', context)
 

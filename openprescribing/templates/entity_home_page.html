@@ -138,12 +138,14 @@
   'measure': '{{ measure.id }}',
   'chartContainerId': '#top-measure-container',
   'orgId': '{{ entity.code }}',
+  'parentOrg': {% if parent_code %}'{{ parent_code }}'{% else %}null{% endif %},
   'orgName': '{{ entity.name }}',
   },
   {
   'measure': 'lpzomnibus',
   'chartContainerId': '#lpzomnibus-container',
   'orgId': '{{ entity.code }}',
+  'parentOrg': {% if parent_code %}'{{ parent_code }}'{% else %}null{% endif %},
   'orgName': '{{ entity.name }}',
   },
 
