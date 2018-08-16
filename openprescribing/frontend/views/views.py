@@ -45,7 +45,6 @@ from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
-from frontend.models import PPUSaving
 from frontend.models import SearchBookmark
 
 from mailchimp3 import MailChimp
@@ -371,12 +370,18 @@ def _home_page_context_for_entity(request, entity):
         'prescribing').current_at
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
-        'month__gte': prescribing_date - six_months_ago,
+        'month__gte': six_months_ago,
         'measure__tags__contains': ['core'],
         'percentile__isnull': False
     }
-    entity_type = type(entity).lower()
-    mv_filter["{}_id".format(entity_type)] = entity.code
+    if isinstance(entity, Practice):
+        mv_filter['practice_id'] = entity.code
+        entity_type = 'practice'
+    elif isinstance(entity, PCT):
+        mv_filter['pct_id'] = entity.code
+        entity_type = 'ccg'
+    else:
+        raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
     extreme_measurevalue = MeasureValue.objects.filter(
         **mv_filter
