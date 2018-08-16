@@ -379,7 +379,7 @@ def _home_page_context_for_entity(request, entity):
         entity_type = 'practice'
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
-        entity_type = 'ccg'
+        entity_type = 'CCG'
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
@@ -405,8 +405,10 @@ def _home_page_context_for_entity(request, entity):
         'measures_count': measures_count,
         'entity': entity,
         'entity_type': entity_type,
-        'entity_price_per_unit_url': '%s_price_per_unit' % entity_type,
-        'measures_for_one_entity_url': 'measures_for_one_%s' % entity_type,
+        'entity_price_per_unit_url': '{}_price_per_unit'.format(
+            entity_type.lower()),
+        'measures_for_one_entity_url': 'measures_for_one_{}'.format(
+            entity_type.lower()),
         'possible_savings': total_possible_savings,
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
@@ -419,8 +421,10 @@ def ccg_home_page(request, ccg_code):
         request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
+    practices = Practice.objects.filter(ccg=ccg, setting=4).order_by('name')
     context = _home_page_context_for_entity(request, ccg)
     context['form'] = form
+    context['practices'] = practices
     request.session['came_from'] = request.path
     return render(request, 'entity_home_page.html', context)
 
