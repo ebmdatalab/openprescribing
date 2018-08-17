@@ -147,7 +147,7 @@ travis.
 
     # Base docker image, for production
     docker build -t ebmdatalab/openprescribing-py3-base .
-    # Same as base, but with local-only pip dependencies
+    # Built from base image, with extras for testing
     docker build -t ebmdatalab/openprescribing-py3-test -f Dockerfile-test .
     docker login  # details in `pass`; only have to do this once on your machin
     # push the images to hub.docker.io
