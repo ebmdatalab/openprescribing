@@ -146,13 +146,13 @@ the docker image used by the tests to improve runtime performance of
 travis.
 
     # Base docker image, for production
-    docker build -t ebmdatalab/openprescribing-base .
+    docker build -t ebmdatalab/openprescribing-py3-base .
     # Same as base, but with local-only pip dependencies
-    docker build -t ebmdatalab/openprescribing-test -f Dockerfile-test .
+    docker build -t ebmdatalab/openprescribing-py3-test -f Dockerfile-test .
     docker login  # details in `pass`; only have to do this once on your machin
     # push the images to hub.docker.io
-    docker push ebmdatalab/openprescribing-base
-    docker push ebmdatalab/openprescribing-test
+    docker push ebmdatalab/openprescribing-py3-base
+    docker push ebmdatalab/openprescribing-py3-test
 
 
 ### Running the application from within Docker

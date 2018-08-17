@@ -4,7 +4,7 @@ services:
     image: mdillon/postgis:latest
     env_file: environment-docker
   test:
-    image: ebmdatalab/openprescribing-test:latest
+    image: ebmdatalab/openprescribing-py3-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh test && cd openprescribing && make test'
     env_file: environment-docker
     environment:
@@ -33,7 +33,7 @@ services:
       - db-test
 
   test-production:
-    image: ebmdatalab/openprescribing-base:latest
+    image: ebmdatalab/openprescribing-py3-base:latest
     command: /bin/bash -c './scripts/docker_setup.sh production && cd openprescribing && python manage.py check --deploy --settings openprescribing.settings.production'
     env_file: environment-docker
     environment:
@@ -64,7 +64,7 @@ services:
     image: mdillon/postgis:latest
     env_file: environment-docker
   dev:
-    image: ebmdatalab/openprescribing-test:latest
+    image: ebmdatalab/openprescribing-py3-test:latest
     command: /bin/bash -c './scripts/docker_setup.sh local &&  cd openprescribing && /bin/bash -l'
     env_file: environment-docker
     ports:
