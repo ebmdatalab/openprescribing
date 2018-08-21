@@ -314,6 +314,7 @@ BQ_HSCIC_DATASET = 'hscic'
 BQ_MEASURES_DATASET = 'measures'
 BQ_TMP_EU_DATASET = 'tmp_eu'
 BQ_DMD_DATASET = 'dmd'
+BQ_ARCHIVE_DATASET = 'archive'
 
 # Other BQ settings
 BQ_DEFAULT_TABLE_EXPIRATION_MS = None

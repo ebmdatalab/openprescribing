@@ -1,6 +1,7 @@
 import csv
 import tempfile
 
+from google.cloud.exceptions import NotFound
 from django.test import TestCase
 
 from gcutils.bigquery import Client, TableExporter, build_schema
@@ -17,6 +18,9 @@ class BQClientTest(TestCase):
         self.storage_prefix = 'test_bq_client/{}-'.format(client.dataset_id)
         client.create_dataset()
 
+        archive_client = Client('archive')
+        archive_client.create_dataset()
+
     def tearDown(self):
         client = Client('test')
         client.delete_dataset()
@@ -26,8 +30,12 @@ class BQClientTest(TestCase):
         for blob in bucket.list_blobs(prefix=self.storage_prefix):
             blob.delete()
 
+        archive_client = Client('archive')
+        archive_client.delete_dataset()
+
     def test_the_lot(self):
         client = Client('test')
+        archive_client = Client('archive')
 
         schema = build_schema(
             ('a', 'INTEGER'),
@@ -129,6 +137,19 @@ class BQClientTest(TestCase):
         results = client.query('SELECT * FROM {}'.format(t4.qualified_name))
 
         self.assertEqual(sorted(results.rows), rows[1:])
+
+        # Test Table.copy_to_new_dataset
+        t1.copy_to_new_dataset('archive')
+        t1_archived = archive_client.get_table('t1')
+        self.assertEqual(sorted(t1_archived.get_rows()), rows)
+        self.assertEqual(sorted(t1.get_rows()), rows)
+
+        # Test Table.move_to_new_dataset
+        t2.move_to_new_dataset('archive')
+        t2_archived = archive_client.get_table('t2')
+        self.assertEqual(sorted(t2_archived.get_rows()), rows)
+        with self.assertRaises(NotFound):
+            list(t2.get_rows())
 
         # Test Client.insert_rows_from_pg
         PCT.objects.create(code='ABC', name='CCG 1')
