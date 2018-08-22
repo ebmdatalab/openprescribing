@@ -7,40 +7,43 @@ NAME="openprescribing_{$ENVIRONMENT}"
 INSTALL_ROOT=$(dirname $(dirname $0))
 SITE_ROOT="$INSTALL_ROOT/openprescribing"
 
-SOCKFILE="$INSTALL_ROOT/run/gunicorn.sock"  # we will communicte using this unix socket
-USER=hello                                        # the user to run as
-GROUP=www-data                                    # the group to run as
-NUM_WORKERS=6                                     # how many worker processes should Gunicorn spawn
-DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENVIRONMENT"  # which settings file should Django use
-DJANGO_WSGI_MODULE=openprescribing.wsgi                     # WSGI module name
-LOGFILE="$INSTALL_ROOT/logs/gunicorn-error.log"
-ACCESS_LOGFILE="$INSTALL_ROOT/logs/gunicorn-access.log"
-TIMEOUT=60
- 
-echo "Starting $NAME as `whoami`"
-echo "Env variable $GMAIL_PASS"
-echo "DB_USER $DB_USER"
-echo "Test env variable $TEST1" 
-# Activate the virtual environment
-cd $SITE_ROOT
-source ../.venv/bin/activate
-export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+RUNDIR="$INSTALL_ROOT/run"
+LOGDIR="$INSTALL_ROOT/logs"
+
+# Create the run and logs directories if they don't exist
+mkdir -p $RUNDIR
+mkdir -p $LOGDIR
+
+SOCKFILE="$RUNDIR/gunicorn.sock"
+LOGFILE="$LOGDIR/gunicorn-error.log"
+ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
+
+# Export environment variables that depend on $ENVIRONMENT
+export DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENVIRONMENT"
 export PYTHONPATH=$SITE_ROOT:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$INSTALL_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENVIRONMENT
-export NEW_RELIC_LICENSE_KEY=ZZZZZZ
-# Create the run directory if it doesn't exist
-RUNDIR=$(dirname $SOCKFILE)
-test -d $RUNDIR || mkdir -p $RUNDIR
+
+echo "Starting $NAME"
+echo "whoami: $(whoami)"
+echo "ENVIRONMENT: $ENVIRONMENT"
+echo "INSTALL_ROOT: $INSTALL_ROOT"
+echo "SITE_ROOT: $SITE_ROOT"
+echo "DB_USER: $DB_USER"
+echo "GUNICORN_USER: $GUNICORN_USER"
+echo "PYTHONPATH: $PYTHONPATH"
+
+# Activate the virtual environment
+source "$INSTALL_ROOT/.venv/bin/activate"
  
-# Start your Django Unicorn
-# Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
-exec newrelic-admin run-program gunicorn ${DJANGO_WSGI_MODULE}:application \
+# Start gunicorn via newrelic-admin
+exec newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --name $NAME \
-  --workers $NUM_WORKERS \
-  --timeout $TIMEOUT \
-  --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE \
-  --log-level=warn \
+  --workers $GUNICORN_NUM_WORKERS \
+  --timeout $GUNICORN_TIMEOUT \
+  --user=$GUNICORN_USER \
+  --group=$GUNICORN_GROUP \
+  --log-level=$GUNICORN_LOG_LEVEL \
   --log-file=$LOGFILE \
   --access-logfile=$ACCESS_LOGFILE
