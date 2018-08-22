@@ -33,6 +33,9 @@ echo "DB_USER: $DB_USER"
 echo "GUNICORN_USER: $GUNICORN_USER"
 echo "PYTHONPATH: $PYTHONPATH"
 
+# Source environment file
+source "$INSTALL_ROOT/environment"
+
 # Activate the virtual environment
 source "$INSTALL_ROOT/.venv/bin/activate"
  
