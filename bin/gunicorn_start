@@ -1,15 +1,20 @@
 #!/bin/bash
- 
-NAME="openprescribing_prod"                                  # Name of the application
-DJANGODIR=/webapps/openprescribing/openprescribing             # Django project directory
-SOCKFILE=/webapps/openprescribing/run/gunicorn.sock  # we will communicte using this unix socket
+
+ENVIRONMENT=$1
+NAME="openprescribing_{$ENVIRONMENT}"
+
+# INSTALL_ROOT and SITE_ROOT match definitions in settings
+INSTALL_ROOT=$(dirname $(dirname $0))
+SITE_ROOT="$INSTALL_ROOT/openprescribing"
+
+SOCKFILE="$INSTALL_ROOT/run/gunicorn.sock"  # we will communicte using this unix socket
 USER=hello                                        # the user to run as
 GROUP=www-data                                    # the group to run as
 NUM_WORKERS=6                                     # how many worker processes should Gunicorn spawn
-DJANGO_SETTINGS_MODULE=openprescribing.settings.production             # which settings file should Django use
+DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENVIRONMENT"  # which settings file should Django use
 DJANGO_WSGI_MODULE=openprescribing.wsgi                     # WSGI module name
-LOGFILE=/webapps/openprescribing/logs/gunicorn-error.log
-ACCESS_LOGFILE=/webapps/openprescribing/logs/gunicorn-access.log
+LOGFILE="$INSTALL_ROOT/logs/gunicorn-error.log"
+ACCESS_LOGFILE="$INSTALL_ROOT/logs/gunicorn-access.log"
 TIMEOUT=60
  
 echo "Starting $NAME as `whoami`"
@@ -17,12 +22,12 @@ echo "Env variable $GMAIL_PASS"
 echo "DB_USER $DB_USER"
 echo "Test env variable $TEST1" 
 # Activate the virtual environment
-cd $DJANGODIR
+cd $SITE_ROOT
 source ../.venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-export PYTHONPATH=$DJANGODIR:$PYTHONPATH
-export NEW_RELIC_CONFIG_FILE=/webapps/openprescribing/newrelic.ini 
-export NEW_RELIC_ENVIRONMENT=production
+export PYTHONPATH=$SITE_ROOT:$PYTHONPATH
+export NEW_RELIC_CONFIG_FILE="$INSTALL_ROOT/newrelic.ini"
+export NEW_RELIC_ENVIRONMENT=$ENVIRONMENT
 export NEW_RELIC_LICENSE_KEY=ZZZZZZ
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)
