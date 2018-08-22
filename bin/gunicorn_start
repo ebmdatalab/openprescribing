@@ -1,7 +1,14 @@
 #!/bin/bash
 
-ENVIRONMENT=$1
-NAME="openprescribing_{$ENVIRONMENT}"
+ENV=$1
+
+if [[ $ENV != "production" && $ENV != "staging" ]]
+then
+  echo '$ENV must be "production" or "staging"'
+  exit 1
+fi
+
+NAME="openprescribing_{$ENV}"
 
 # INSTALL_ROOT and SITE_ROOT match definitions in settings
 INSTALL_ROOT=$(dirname $(dirname $0))
@@ -18,15 +25,15 @@ SOCKFILE="$RUNDIR/gunicorn.sock"
 LOGFILE="$LOGDIR/gunicorn-error.log"
 ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
-# Export environment variables that depend on $ENVIRONMENT
-export DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENVIRONMENT"
+# Export environment variables that depend on $ENV
+export DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENV"
 export PYTHONPATH=$SITE_ROOT:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$INSTALL_ROOT/newrelic.ini"
-export NEW_RELIC_ENVIRONMENT=$ENVIRONMENT
+export NEW_RELIC_ENVIRONMENT=$ENV
 
 echo "Starting $NAME"
 echo "whoami: $(whoami)"
-echo "ENVIRONMENT: $ENVIRONMENT"
+echo "ENV: $ENV"
 echo "INSTALL_ROOT: $INSTALL_ROOT"
 echo "SITE_ROOT: $SITE_ROOT"
 echo "DB_USER: $DB_USER"
