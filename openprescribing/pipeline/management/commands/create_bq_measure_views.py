@@ -28,4 +28,5 @@ class Command(BaseCommand):
             try:
                 client.create_table_with_view(table_name, sql, False)
             except Conflict:
-                pass
+                client.delete_table(table_name)
+                client.create_table_with_view(table_name, sql, False)
