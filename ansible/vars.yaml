@@ -3,7 +3,7 @@ USER: vagrant
 HOME: "/home/{{ USER }}"
 virtualenv_path: /code/openprescribing/venv
 project_root_path: /code/openprescribing/openprescribing
-requirements_path: /code/openprescribing/requirements
+requirements_path: /code/openprescribing/requirements.txt
 db_user: dev
 db_password: sdkjasdalskdax
 db_name: openprescribing_dev

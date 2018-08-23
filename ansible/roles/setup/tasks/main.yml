@@ -65,6 +65,7 @@
     state: installed
   with_items:
     - postgresql-9.5-postgis-2.2
+    - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
     - libpq-dev # Required for Ansible to interact with postgres
     - python-psycopg2 # Required for Ansible to interact with postgres
 

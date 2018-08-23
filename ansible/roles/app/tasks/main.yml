@@ -37,7 +37,7 @@
 - name: Install requirements
   pip:
     virtualenv: "{{ virtualenv_path }}"
-    requirements: "{{ requirements_path }}/local.txt"
+    requirements: "{{ requirements_path }}"
     extra_args: --process-dependency-links
 
 - name: Install jshint and less
