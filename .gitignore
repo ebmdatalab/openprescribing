@@ -38,3 +38,9 @@ Desktop.ini
 Icon?
 .coverage
 htmlcov
+.idea/
+
+ansible/.vagrant
+ansible/vagrant.retry
+openprescribing/envdir/
+venv/

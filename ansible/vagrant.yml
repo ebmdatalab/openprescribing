@@ -1,0 +1,10 @@
+---
+- hosts: all
+  pre_tasks:
+  - name: 'install python2'
+    raw: sudo apt-get -y install python-simplejson
+  roles:
+    - roles/setup
+    - roles/app
+  vars_files:
+   - vars.yaml
