@@ -1,7 +1,4 @@
--- This SQL should be executed once when we replace materialized views
--- with ordinary tables (see #247 for more).
-
--- It is also called by tests that rely on the view tables.
+-- SQL to create structure for the "view" tables
 
 DROP TABLE IF EXISTS vw__presentation_summary ;
 CREATE TABLE IF NOT EXISTS vw__presentation_summary (
