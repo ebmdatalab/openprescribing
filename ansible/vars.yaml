@@ -1,9 +1,10 @@
 ---
 USER: vagrant
 HOME: "/home/{{ USER }}"
-virtualenv_path: /code/openprescribing/venv
-project_root_path: /code/openprescribing/openprescribing
-requirements_path: /code/openprescribing/requirements.txt
+checkout_path: /code/openprescribing
+virtualenv_path: "{{ checkout_path }}/venv"
+project_root_path: "{{ checkout_path }}/openprescribing"
+requirements_path: "{{ checkout_path }}/requirements.txt"
 db_user: dev
 db_password: sdkjasdalskdax
 db_name: openprescribing_dev
@@ -19,15 +20,9 @@ envvars:
   - var: DB_PASS
     name: DB_PASS
     content: "{{ db_password }}"
+  - var: DB_HOST
+    name: DB_HOST
+    content: "localhost"
   - var: SECRET_KEY
     name: SECRET_KEY
     content: "{{ secret_key }}"
-  - var: GMAIL_PASS
-    name: GMAIL_PASS
-    content: test
-  - var: MAILGUN_WEBHOOK_USER
-    name: MAILGUN_WEBHOOK_USER
-    content: test
-  - var: MAILGUN_WEBHOOK_PASS
-    name: MAILGUN_WEBHOOK_PASS
-    content: test
