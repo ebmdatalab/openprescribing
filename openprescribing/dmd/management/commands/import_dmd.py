@@ -43,7 +43,6 @@ from lxml import etree
 import logging
 import glob
 import os
-import re
 import zipfile
 
 from django.core.management.base import BaseCommand
@@ -205,8 +204,7 @@ def create_all_tables(source_directory):
 def create_dmd_product():
     with connection.cursor() as cursor:
         fpath = os.path.dirname(__file__)
-        for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath),
-                        key=lambda x: int(re.findall(r'\d+', x)[0])):
+        for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath)):
             logger.info("Post-processing", f)
             with open(f, "rb") as sql:
                 sql = sql.read()
