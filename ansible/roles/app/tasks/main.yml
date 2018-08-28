@@ -34,6 +34,11 @@
     line: "cd {{ project_root_path }}"
     create: yes
 
+- name: Activate virtualenv on login
+  lineinfile:
+    dest: "{{ HOME }}/.bashrc"
+    line: "workon openprescribing"
+
 - name: Install requirements
   pip:
     virtualenv: "{{ virtualenv_path }}"
