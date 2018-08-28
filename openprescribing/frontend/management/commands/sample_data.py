@@ -116,7 +116,8 @@ def dump_create_table(table, dest_dir):
     dest = os.path.join(dest_dir, table + '.json')
     with connection.cursor() as cursor:
         sql = ("SELECT column_name FROM information_schema.columns "
-               "WHERE table_schema = 'public' AND table_name = '{}'".format(table))
+               "WHERE table_schema = 'public' AND table_name = '{}'"
+               .format(table))
         res = cursor.execute(sql)
         fields = cursor.fetchall()
         with open(dest, 'wb') as f:
@@ -145,7 +146,8 @@ class Command(BaseCommand):
                         sample = 'TABLESAMPLE SYSTEM (1)'
                     else:
                         sample = ''
-                    sql = "copy (SELECT * FROM {} {} WHERE {}) TO STDOUT WITH NULL '\N'"
+                    sql = ("copy (SELECT * FROM {} {} WHERE {}) "
+                           "TO STDOUT WITH NULL '\N'")
                     sql = sql.format(table, sample, where)
                     dump_create_table(table, path)
                     cursor.copy_expert(sql, f)
@@ -168,13 +170,15 @@ class Command(BaseCommand):
                     cursor.execute("TRUNCATE TABLE {} CASCADE".format(table))
                     with open(os.path.join(path, table + '.json'), 'rb') as f2:
                         cols = json.load(f2)
-                    cursor.copy_from(f, table, null='\N', columns=quote_cols(cols))
+                    cursor.copy_from(
+                        f, table, null='\N', columns=quote_cols(cols))
             for table, where in copy_sample.items():
                 with open(os.path.join(path, table), 'rb') as f:
                     cursor.execute("TRUNCATE TABLE {} CASCADE".format(table))
                     with open(os.path.join(path, table + '.json'), 'rb') as f2:
                         cols = json.load(f2)
-                    cursor.copy_from(f, table, null='\N', columns=quote_cols(cols))
+                    cursor.copy_from(
+                        f, table, null='\N', columns=quote_cols(cols))
 
     def add_arguments(self, parser):
         parser.add_argument('operation', nargs=1, choices=['load', 'dump'])
@@ -182,7 +186,8 @@ class Command(BaseCommand):
             '--dir',
             help="directory containing previously dumped files",
             default=tempfile.gettempdir())
-        parser.add_argument('--ccg', help="CCG to sample data for", default='09X')
+        parser.add_argument(
+            '--ccg', help="CCG to sample data for", default='09X')
 
     def handle(self, *args, **options):
         if 'load' in options['operation']:
