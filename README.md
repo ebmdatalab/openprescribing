@@ -140,32 +140,25 @@ Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](ht
 ### Set up a virtualenv and install ansible requirements
 
 If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
+
     mkvirtualenv openprescribing
     cd openprescribing/ansible
     pip install -r vagrant_requirements.txt
 
-
 ### Provision the vagrant box
-This uses envdir for environment variables; to set your own variables, modify the settings in openprescribing/ansible/vars.yaml.
+
 
     cd openprescribing/ansible
-    vagrant up
-    vagrant ssh
+    vagrant up   # invokes `vagrant provision` the first time it's run
 
-To activate the a shell with the environment variables loaded:
+### Start the server
 
-    envsh
-
-To activate the virtual environment and cd to the project directory:
-
-    workon openprescribing
-
-Start django:
-
+    vagrant ssh  # also activates the virtualenv for you
     python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
 
-   The application should then be accessible at ``http://127.0.0.1:3333/`` (using the vagrant-forwarded port)
-   from a web browser on the host computer.
+The application should then be accessible at
+``http://127.0.0.1:3333/`` (using the vagrant-forwarded port) from a
+web browser on the host computer.
 
 ## Production notes
 
