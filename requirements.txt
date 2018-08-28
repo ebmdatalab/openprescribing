@@ -20,7 +20,7 @@ click==6.7                # via pip-tools
 configparser==3.5.0       # via flake8
 contextlib2==0.5.5        # via raven
 coverage==4.5.1
-cryptography==2.0.3       # via paramiko, pyopenssl, requests
+cryptography==2.3.1       # via paramiko, pyopenssl, requests
 cssselect==1.0.1          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
 decorator==4.1.2          # via networkx
