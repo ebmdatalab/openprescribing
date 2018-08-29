@@ -184,21 +184,19 @@ Run migrations:
 
 ## Sandbox data
 
-You can copy everything from the production server, if you want, but the full set of prescribing data is enormous. To get a sample of that, you can run something like the following on production (this example grabs 1% of the September 2016 data):
+You can copy everything from the production server, if you want, but
+the full set of prescribing data is enormous. To get a sample of that,
+run the following on production:
 
-    copy (
-    SELECT
-      *
-    FROM
-      frontend_prescription_201609 TABLESAMPLE SYSTEM (1)) TO '/tmp/sample' WITH binary;
+    mkdir /tmp/sample
+    ./manage sample_data dump --dir /tmp/sample
 
-You can then import this data locally using `pg_restore`:
+Copy that to a local location (e.g. `/tmp/sample` again), then run:
 
-    copy frontend_prescription_201609 from '/tmp/sample' WITH BINARY;
+    ./manage sample_data load --dir /tmp/sample
 
-
-This does require you to have all associated tables (BNF codes, practices etc) up-to-date.
-
+By default, the `dump` invocation extracts data relating to the CCG
+`09X`, but you can override that with the `--ccg` switch.
 
 # Run tests
 
