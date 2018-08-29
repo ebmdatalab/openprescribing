@@ -137,14 +137,6 @@ Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
 
 Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
-### Set up a virtualenv and install ansible requirements
-
-If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
-
-    mkvirtualenv openprescribing
-    cd openprescribing/ansible
-    pip install -r vagrant_requirements.txt
-
 ### Provision the vagrant box
 
 

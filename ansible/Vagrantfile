@@ -38,7 +38,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     # ansible provisioning
-    config.vm.provision "ansible" do |ansible|
+    config.vm.provision "ansible_local" do |ansible|
+      ansible.install_mode = "pip_args_only"
+      ansible.pip_args = "-r /code/openprescribing/ansible/vagrant_requirements.txt"
       ansible.playbook = "vagrant.yml"
       ansible.verbose = "vv"
     end
