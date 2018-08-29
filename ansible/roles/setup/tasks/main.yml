@@ -52,7 +52,13 @@
     - firefox-esr
     - xvfb
 
-- name: Add nodejs 10.x apt repository
+- name: Add NodeSource apt signing key
+  become: yes
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Add NodeSource 10.x apt repository
   become: yes
   apt_repository:
     repo: 'deb https://deb.nodesource.com/node_10.x jessie main'
