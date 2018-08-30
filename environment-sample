@@ -23,3 +23,12 @@ SLACK_GENERAL_POST_KEY=slack_general_post_key
 CF_API_KEY=cf_api_key
 CF_API_EMAIL=cf_api_email
 NEWRELIC_API_KEY=newrelic_api_key
+
+# Only required on the server
+GUNICORN_USER=hello
+GUNICORN_GROUP=www-data
+GUNICORN_TIMEOUT=60
+GUNICORN_NUM_WORKERS=6
+GUNICORN_LOG_LEVEL=warn
+
+NEW_RELIC_LICENSE_KEY=new_relic_license_key
