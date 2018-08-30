@@ -8,7 +8,7 @@ then
   exit 1
 fi
 
-NAME="openprescribing_{$ENV}"
+NAME="openprescribing_$ENV"
 
 # INSTALL_ROOT and SITE_ROOT match definitions in settings
 INSTALL_ROOT=$(dirname $(dirname $0))
@@ -36,8 +36,6 @@ echo "whoami: $(whoami)"
 echo "ENV: $ENV"
 echo "INSTALL_ROOT: $INSTALL_ROOT"
 echo "SITE_ROOT: $SITE_ROOT"
-echo "DB_USER: $DB_USER"
-echo "GUNICORN_USER: $GUNICORN_USER"
 echo "PYTHONPATH: $PYTHONPATH"
 
 # Source environment file
