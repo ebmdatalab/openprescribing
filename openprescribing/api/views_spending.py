@@ -14,6 +14,7 @@ from rest_framework.exceptions import APIException
 from common.utils import namedtuplefetchall
 from common.utils import nhs_titlecase
 from common.utils import ppu_sql
+from frontend.managers import ALL_ORGS_PSEUDO_ID
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
@@ -195,6 +196,11 @@ def price_per_unit(request, format=None):
     filename = date
 
     practice_level = False
+    aggregate_over_ccgs = False
+
+    if entity_code == ALL_ORGS_PSEUDO_ID:
+        entity_code = None
+        aggregate_over_ccgs = True
 
     if bnf_code:
         params['bnf_code'] = bnf_code
@@ -231,7 +237,41 @@ def price_per_unit(request, format=None):
                 extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NULL'''
 
+    if aggregate_over_ccgs:
+        extra_conditions += '\nAND {ppusavings_table}.practice_id IS NULL'
+
     sql = ppu_sql(conditions=extra_conditions)
+
+    if aggregate_over_ccgs:
+        sql = """
+            WITH cte AS ({original_sql})
+            SELECT
+                -- Fields we're grouping by
+                date,
+                presentation,
+
+                -- Fields we aggregate over
+                SUM(quantity) AS quantity,
+                SUM(price_per_unit * quantity) / SUM(quantity) AS price_per_unit,
+                SUM(possible_savings) AS possible_savings,
+
+                -- Fixed value fields
+                '_all' AS pct,
+                NULL AS practice,
+                NULL AS practice_name,
+
+                -- These fields relate to the presentation and so they ought to
+                -- have a fixed value throughout the group. However Postgres
+                -- doesn't know this, so we need to tell it how to aggregate these
+                -- fields. In most cases we just use the modal value.
+                MAX(lowest_decile) AS lowest_decile,
+                MODE() WITHIN GROUP (ORDER BY formulation_swap) AS formulation_swap,
+                MODE() WITHIN GROUP (ORDER BY flag_bioequivalence) AS flag_bioequivalence,
+                MODE() WITHIN GROUP (ORDER BY price_concession) AS price_concession,
+                MODE() WITHIN GROUP (ORDER BY name) AS name
+            FROM cte
+            GROUP BY date, presentation
+            """.format(original_sql=sql)
 
     with connection.cursor() as cursor:
         cursor.execute(sql, params)

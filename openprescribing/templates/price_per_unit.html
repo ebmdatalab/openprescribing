@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block title %}PPU savings for {{ entity.cased_name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block active_class %}{% if not all_ccgs %}ccg{% else %}all_england{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -31,7 +31,7 @@
     </div>
     <p>
         We have identified about <strong>£<span id="total-savings">0</span>
-    of possible savings</strong> {% if presentation %} for {{ presentation.product_name }}{% endif %} in {% if entity.ccg %}<a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% else %}<a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% endif %} in {{ date|date:"F Y"}}.
+          of possible savings</strong> {% if presentation %} for {{ presentation.product_name }}{% endif %} in {% if entity.ccg %}<a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% elif not all_ccgs %}<a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% else %}{{ entity.cased_name }}{% endif %} in {{ date|date:"F Y"}}.
     {% if entity.ccg %}
       {{entity.cased_name }} is a GP practice in <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}?date={{ date|date:"Y-m-d" }}">{{ entity.ccg.cased_name }}</a>.
         {% endif %}
@@ -145,7 +145,11 @@
       // When viewing at CCG level, drill down to practices
       var first_column = 'presentation';
       var first_column_render = function(data, type, full, meta) {
-        var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+        {% if all_ccgs %}
+          var rendered = full['name'];
+        {% else %}
+          var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+        {% endif %}
         if (full['price_concession'] ) {
           rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'
         }

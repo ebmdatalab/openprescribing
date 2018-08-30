@@ -37,6 +37,7 @@ from common.utils import ppu_sql
 from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.managers import ALL_ORGS_PSEUDO_ID
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -260,6 +261,21 @@ def ccg_price_per_unit(request, code):
         'highlight_name': ccg.cased_name,
         'date': date,
         'by_ccg': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+@handle_bad_request
+def all_england_price_per_unit(request):
+    date = _specified_or_last_date(request, 'ppu')
+    ccg = PCT(code=ALL_ORGS_PSEUDO_ID, name='NHS England')
+    context = {
+        'entity': ccg,
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
+        'date': date,
+        'by_ccg': True,
+        'all_ccgs': True
     }
     return render(request, 'price_per_unit.html', context)
 

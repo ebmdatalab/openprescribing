@@ -22,6 +22,13 @@
     <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
   </p>
 
+  <p>
+    We have also calculated potential cost savings across NHS England through prescribing changes:
+  </p>
+  <p style="margin-bottom: 2em">
+    <a href="{% url 'all_england_price_per_unit' %}" class="btn btn-primary">View potential cost savings &rarr;</a>
+  </p>
+
 {% if tag_filter.show_message %}
   <div class="alert alert-info">
     <h4>Showing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h4>
