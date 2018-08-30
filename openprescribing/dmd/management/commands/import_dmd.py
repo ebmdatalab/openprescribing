@@ -78,10 +78,8 @@ PG_TYPE_MAP = {
 
 
 def create_table(info):
-    sql = 'DROP TABLE IF EXISTS "%s" CASCADE' % info['table_name']
     with connection.cursor() as cursor:
-        cursor.execute(sql.lower())
-        sql = 'CREATE TABLE "%s" (' % info['table_name']
+        sql = 'CREATE TABLE IF NOT EXISTS "%s" (' % info['table_name']
         cols = []
         indexes = []
         for name, coltype in info['columns']:
