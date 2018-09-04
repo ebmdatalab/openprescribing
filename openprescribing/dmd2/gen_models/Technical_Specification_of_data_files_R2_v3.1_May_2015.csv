@@ -1,0 +1,1393 @@
+NHS dictionary of medicines and devices (dm+d)
+Technical specification of data files for release 2
+of the Dictionary of Medicines and Devices
+(dm+d)
+Release 2.0 Version 3.1
+May 2015
+This document is produced and maintained by NHS Prescription Services
+(provided by NHS Business Services Authority) in partnership with the Health
+and Social Care Information Centre (HSCIC).
+CDR018H 1
+
+Document control since 2013,,,
+Version,Date issued,Brief summary of change,Amended /
+,,,Approved by
+07/08/2013,Release 2.0,Extract Format amended to include,NHSBSA
+,Version 3.0,GTIN zip file,
+,,Supplementary files amended to,
+,,reflect removal of GTIN content,
+,,GTINs to be 13 or 14 character in,
+,,length,
+,,Reference to CSM amended to EMA,
+,,Reference to ZERO_DISCD,
+,,amended to DND,
+,,Former Appendix C GTIN TAG Name,
+,,and associated details revised and,
+,,incorporated into Appendix A,
+May 2015,Release 2.0,Partition of document control with the,NHSBSA
+,Version 3.1,historical records prior to 2013 now,
+,,located in Annex I towards the end of the,
+,,document,
+CDR018H 2,,,
+
+Contents,,
+,,Page
+1,Introduction,4
+2,dm+d Release 2 Database Structure,4
+,2.1 dm+d Release 2 Extract Timetable,6
+,2.2 dm+d Release 2 Extract Files (General),6
+3,Extract Format,7
+,3.1 Access to Extract,8
+,3.2 Implementation Guidelines,8
+4,Supplementary Files,8
+Appendices,,
+A,Detailed Description of XML Files (including GTIN File),9
+B,Detailed Description of BNF/ATC XML Files,33
+Annex 1,,
+,Historical Issue Sheet,34
+,Document control prior to 2013,34
+CDR018H,,3
+
+1,Introduction
+,This document identifies the technical specifications of the data files for
+,distributing the information contained in release 2 of the Dictionary of
+,Medicines and Devices (dm+d).
+,"It will describe the form and the format of the files, how they can be accessed"
+,and how they need to be processed in order to create a useable database and
+,ensure data integrity.
+2,dm+d Release 2 Database Structure
+,The dm+d release 2 database consists of five major concept areas and a
+,number of ancillary support areas and is fully described in the documents
+,„NHS dictionary of medicines and devices Data Model‟ and NHS Dictionary of
+,Medicines and Devices Editorial Policy.
+CDR018H 4,
+
+The basic structure of the database is:,,,,,,,,
+Virtual,Virtual,Controlled Drug,,Drug Route,,,,
+Therapeutic,Product,Prescribing,,Information,,,,
+Moiety,Ingredient,Information,,,,,,
+,,,,,Actual,,,
+,,,,,,Appliance,,
+,,,,,Product,Product,,
+,0..*,0..1,,,Excipient,Information,,
+0..1,,,0..*,Ontology,,,,
+,,,,Drug Form &,,,,
+,,,,Route,,,,
+,,,,,,0..1,,
+,,,,Information,0..*,,,
+,,,0..*,,,,,
+,,,,Dose Form,,,,
+"Virtual
+Medicinal",,,,Information,,"Actual
+Medicinal",0..*,"Licensed
+Route"
+Product,,1,0..1,,,Product,,
+,,,,,1..*,,,
+1,,,,,,1,,
+1..*,,,,,,1..*,,
+Virtual,,,,,,Actual,,
+Medicinal,,,,,,Medicinal,,
+Product,1,,,,1..*,Product,,
+Pack,,,,,,,,
+,,,,Product,0..1,Pack,,
+0..*,0..1,,,"Prescribing
+Information
+0..1",0..1,0..1,0..*,
+"Virtual
+Combination
+Pack Content","Drug Tariff
+Category
+Information",,"Appliance
+Pack
+Information",,"Reimbursement
+Information","Medicinal
+Product
+Price","Actual
+Combination
+Pack Content",
+The 5 main concepts are:,,,,,,,,
+-,Virtual Therapeutic Moiety (VTM),,,,,,,
+-,Virtual Medicinal Product (VMP),,,,,,,
+-,Actual Medicinal Product (AMP),,,,,,,
+-,Virtual Medicinal Product Pack (VMPP),,,,,,,
+-,Actual Medicinal Product Pack (AMPP),,,,,,,
+CDR018H,,,,,,5,,
+
+,The cardinality on the diagram depicts:,
+,-,Each VTM can have many VMP‟s associated
+,-,Each VMP can be related to a single VTM
+,-,Each VMP can have many AMP‟s associated
+,-,Each AMP is related to a single VMP
+,-,Each AMP can have many AMPP‟s associated
+,-,Each AMPP is related to a single AMP
+,-,Each VMP can have many VMPP‟s associated
+,-,Each VMPP is related to a single VMP
+,-,Each VMPP can have many AMPP‟s associated
+,-,Each AMPP is related to a single VMPP
+,Two extra areas have been identified to hold common data:,
+,-,Ingredients (shown in the diagram as Virtual Product Ingredient and
+,,Actual Product Excipient).
+,-,Lookup (these are items held as codes within the model but with a
+,,narrative meaning eg Virtual medicinal product prescribing status is
+,,stored as 1 or 2 but these values relate to “Valid as a prescribable
+,,product” and “Invalid to prescribe in NHS primary care”
+,,"respectively).Other values are available, see lookup file for the"
+,,complete list.
+2.1,dm+d Release 2 Extract Timetable,
+,Once a week a full extract of the database will be published. This will be in a,
+,zipped format in order to minimise the download time. The data will be,
+,available for download from TRUD (Terminology Release Update,
+,Distribution). This is a service provided by the Health and Social Care,
+,Information Centre.,
+2.2,dm+d Release 2 Extract Files (General),
+,All files extracted from the database will be in XML format (.xml) and will be,
+,provided with an associated schema file (.xsd) that describes the format of the,
+,XML file and can be used to validate the XML file structure.,
+,There will be a total of 7 XML files and associated schemas made available as,
+,per the agreed timetable.,
+CDR018H 6,,
+
+3,Extract Format,
+,"Each week 7 files (and 1 further GTIN zip file, see note below) will be",
+,extracted relating to the following areas of the database:,
+,-,Virtual Therapeutic Moieties File (will contain all VTM‟s)
+,-,Virtual Medicinal Product File (will contain all VMP‟s)
+,-,Actual Medicinal Product File (will contain all AMP‟s)
+,-,Virtual Medicinal Product Pack File (will contain all VMPP‟s)
+,-,Actual Medicinal Product Pack File (will contain all AMPP‟s)
+,-,Ingredient File (will contain all ingredients associated with active VMP‟s
+,,and AMP‟s)
+,-,Lookup File (will contain descriptions of all items that are held as codes
+,,in the other files).
+,A full description of these files is given in appendix A.,
+,This set of files represents the entire data population of the dictionary at a,
+,specific point in time and must be combined to give a true image of the,
+,database.,
+,In order to maintain referential integrity within the target database the files,
+,need to be loaded in the following order:,
+,i),Lookup/Ingredient
+,ii),VTM
+,iii),VMP
+,iv),AMP/VMPP
+,v),AMPP
+,Within the VMPP and AMPP files there are entries relating to combination,
+,packs that will require loading after the main VMPPs and AMPPs are,
+,populated.,
+,This order assumes that the target database is being populated from scratch,
+,each time and that the structure is not significantly different to the dm+d,
+,Release 2 model.,
+CDR018H,,7
+
+Please note the extract will also contain a GTIN zip file that was previously available,,
+in the Supplementary Files. This is also presented as an XML file with an associated,,
+schema.,,
+3.1,Access to Extract,
+,The XML extracts and associated schema files will be available for download,
+,from the TRUD download site on a page secured by username and password.,
+,A username and password will be distributed to those allowed access to the,
+,files.,
+3.2,Implementation Guidelines,
+,The following guidelines should be noted:,
+,-,No additions or deletions should be made to the data set.
+,-,None of the information within the data set should be altered.
+,-,In order to achieve a standard coding system the supplied SNOMED
+,,CT codes should be used within suppliers‟ systems throughout the
+,,prescribing and dispensing process as well as for reimbursement and
+,,subsequent information provision. Any mapping to existing coding
+,,systems is the responsibility of the suppliers.
+4,Supplementary Files,
+,In addition to the dm+d files there is a supplementary file produced that,
+,provides details of BNF and ATC information relating to VMP‟s and AMP‟s.,
+,This file is produced to the same timetable as the dm+d files and is also,
+,presented as an XML file with associated schema file.,
+,"The file, when loaded, has a dependency on the pre-existence of VMP and",
+,AMP data and as such should be loaded after the main dm+d files.,
+CDR018H,,8
+
+Appendix A – Detailed Description of XML Files (including,,
+GTIN File),,
+Conventions used in tag naming.,,
+DT = date in format CCYY-MM-DD,,
+CD = from lookup,,
+NM = name,,
+ID = key field pointing to another tag on same or different file,,
+VTM,,
+TAG Name,Optional,Description
+<VIRTUAL_THERAPEUTIC_MOIETIES>,,Root Node
+<VTM>,,"Individual Virtual Therapeutic
+Moiety (VTM) (this collection of
+tags will occur for each VTM)"
+<VTMID>,,"Virtual Therapeutic Moiety
+identifier (SNOMED Code)
+Up to a maximum of 18 integers"
+<INVALID>,Y,"Invalidity flag. If set to 1 indicates
+this is an invalid entry in file.
+1 integer only"
+<NM>,,"Virtual Therapeutic Moiety Name
+Up to a maximum of 255
+characters"
+<ABBREVNM>,Y,"Virtual Therapeutic Moiety
+Abbreviated name
+Up to a maximum of 60
+characters"
+<VTMIDPREV>,Y,"Previous VTM identifier
+(SNOMED CODE)
+Up to a maximum of 18 digits"
+<VTMIDDT>,Y,"Virtual Therapeutic Moiety
+Identifier date - Date the VTM
+identifier became Valid
+Always 10 characters"
+</VTM>,,End Tag
+</VIRTUAL_THERAPEUTIC_MOIETIES>,,End Tag
+CDR018H 9,,
+
+VMP,,
+TAG Name,Optional,Description
+<VIRTUAL_MED_PRODUCTS>,,Root Node
+<VMPS>,,Collection of VMP‟s
+<VMP>,,"Individual Virtual Medicinal Product
+(VMP) (this collection of tags will
+occur for each VMP)"
+<VPID>,,"Virtual Medicinal Product identifier
+(SNOMED Code)
+Up to a maximum of 18 digits"
+<VPIDDT>,Y,"Date VMP identifier became Valid
+Always 10 characters"
+<VPIDPREV>,Y,"Previous product identifier
+(SNOMED Code)
+Up to a maximum of 18 digits"
+<VTMID>,Y,"VTM identifier (SNOMED Code).
+Can be located in VTM file.
+Up to a maximum of 18 integers"
+<INVALID>,Y,"Invalidity flag - If set to 1 indicates
+this is an invalid entry in file.
+1 digit only"
+<NM>,,"Virtual Medicinal Product Name
+Up to a maximum of 255
+characters"
+<ABBREVNM>,Y,"Virtual Medicinal Product
+Abbreviated name
+Up to a maximum of 60 characters"
+<BASISCD>,,Basis of preferred name - Name
+,,basis code narrative can be located
+,,in lookup file under tag
+,,<BASIS_OF_NAME>
+,,Always 4 digits
+<NMDT>,Y,"Date of Name applicability
+Always 10 characters"
+<NMPREV>,Y,"Previous Name
+Up to a maximum of 255
+characters"
+<BASIS_PREVCD>,Y,"Basis of previous name - code
+narrative can be located in lookup
+file under tag <BASIS_OF_NAME>
+Always 4 digits"
+<NMCHANGECD>,Y,Reason for name change - code
+,,narrative can be located in lookup
+,,file under tag
+,,<NAMECHANGE_REASON>
+,,Always 4 digits
+<COMBPRODCD>,Y,Combination product Indicator -
+,,code narrative can be located in
+,,lookup file under tag
+,,<COMBINATION_PROD_IND>
+,,Always 4 digits
+CDR018H,,10
+
+<PRES_STATCD>,,"Virtual Medicinal Product
+Prescribing Status - Prescribing
+Status code narrative can be
+located in lookup file under tag
+<VIRTUAL_PRODUCT_PRES_ST
+ATUS>
+Always 4 digits"
+<SUG_F>,Y,"Sugar Free Indicator (present and
+set to 1 if sugar free)
+1 digit only"
+<GLU_F>,Y,"Gluten Free Indicator (present and
+set to 1 if gluten free)
+1 digit only"
+<PRES_F>,Y,"Preservative Free Indicator
+(present and set to 1 if preservative
+free)
+1 digit only"
+<CFC_F>,Y,"CFC Free Indicator (present and
+set to 1 if CFC free)
+1 digit only"
+<NON_AVAILCD>,Y,Non-availability indicator - code
+,,narrative can be located in lookup
+,,file under tag
+,,<VIRTUAL_PRODUCT_NON_AVA
+,,IL>
+,,Always 4 digits
+<NON_AVAILDT>,Y,"Non availability status date
+Always 10 characters"
+<DF_INDCD>,Y,"Dose form indicator. Narrative can
+be located in lookup file under
+<DF_INDICATOR>
+1 digit only"
+<UDFS>,Y,Unit dose form size - Numerical
+,,value relating to size of entity. This
+,,will only be present if the unit dose
+,,form attribute is „discrete‟.
+,,Up to a maximum of 10 digits and 3
+,,decimal places
+<UDFS_UOMCD>,Y,Unit dose form units - Unit of
+,,Measure code relating to the size.
+,,This will only be present if the unit
+,,dose form attribute is „discrete‟.
+,,Narrative can be located in lookup
+,,file under tag
+,,<UNIT_OF_MEASURE>
+,,Up to a maximum of 18 digits
+<UNIT_DOSE_UOMCD>,Y,Unit dose unit of measure - Unit of
+,,Measure code relating to a
+,,description of the entity that can be
+,,handled. This will only be present if
+,,the Unit dose form attribute is
+,,„discrete‟. Narrative can be located
+,,in lookup file under tag
+,,<UNIT_OF_MEASURE>
+CDR018H,11,
+
+,,Up to a maximum of 18 digits
+</VMP>,,End Tag
+</VMPS>,,End Tag
+<VIRTUAL_PRODUCT_INGREDIENT>,,Virtual Product Ingredient tags.
+<VPI>,,"Ingredients associated with each
+VMP (this collection of tags will
+occur for each VMP/ingredient
+relationship)"
+<VPID>,,"VMP identifier (As above in VMP
+tag)
+Up to a maximum of 18 digits"
+<ISID>,,"Ingredient substance identifier
+(SNOMED Code) can be located in
+ingredient file.
+Up to a maximum of 18 digits"
+<BASIS_STRNTCD>,Y,Basis of pharmaceutical strength -
+,,code narrative can be located in
+,,lookup file under tag
+,,<BASIS_OF_STRNTH>
+,,Always 4 digits
+<BS_SUBID>,Y,"Basis of strength substance
+identifier (SNOMED ode) can be
+located in ingredient file
+Up to a maximum of 18 digits"
+<STRNT_NMRTR_VAL>,Y,"Strength value numerator - Value
+of numerator element of strength
+Up to a maximum of 10 digits and 3
+decimal places"
+<STRNT_NMRTR_UOMCD>,Y,Strength value numerator unit -
+,,Numerator value of strength Unit of
+,,Measure code. Narrative can be
+,,located in lookup file under tag
+,,<UNIT_OF_MEASURE>
+,,Up to a maximum of 18 digits
+<STRNT_DNMTR_VAL>,Y,"Strength value denominator - Value
+of denominator element of strength
+Up to a maximum of 10 digits and 3
+decimal places"
+<STRNT_DNMTR_UOMCD>,Y,Strength value denominator unit -
+,,Denominator value of strength Unit
+,,of Measure code. Narrative can be
+,,located in lookup file under tag
+,,<UNIT_OF_MEASURE>
+,,Up to a maximum of 18 digits
+</VPI>,,End Tag
+</VIRTUAL_PRODUCT_INGREDIENT>,,End Tag
+<ONT_DRUG_FORM>,,"Ontology Form & Route information
+associated with each VMP"
+<ONT>,,"Ontology Form & Route associated
+with each VMP (this collection of
+tags will occur for each"
+CDR018H,12,
+
+,VMP/formulation route relationship)
+<VPID>,"VMP ID (as above in VMP tag)
+Up to a maximum of 18 digits"
+<FORMCD>,Virtual Medicinal Product Form &
+,"Route - code, narrative can be"
+,located in lookup file under tag
+,<ONT_FORM_ROUTE>
+,Always 4 characters
+</ONT>,End Tag
+</ONT_DRUG_FORM>,End Tag
+<DRUG_FORM>,"Formulation or Form associated
+with each VMP"
+<DFORM>,"Formulation associated with each
+VMP (this collection of tags will
+occur for each VMP/formulation
+relationship)"
+<VPID>,"VMP identifier (as above in VMP
+tag)
+Up to a maximum of 18 digits"
+<FORMCD>,"Formulation code, narrative can be
+located in lookup file under tag
+<FORM>
+Up to a maximum of 18 digits"
+</DFORM>,End Tag
+</DRUG_FORM>,End Tag
+<DRUG_ROUTE>,Routes associated with each VMP
+<DROUTE>,"Route associated with each VMP
+(this collection of tags will occur for
+each VMP/route relationship)"
+<VPID>,"VMP identifier (as above in VMP
+tag)
+Up to a maximum of 18 digits"
+<ROUTECD>,"Route code, narrative can be
+located in lookup file under tag
+<ROUTE>
+Up to a maximum of 18 digits"
+</DROUTE>,End Tag
+</DRUG_ROUTE>,End Tag
+<CONTROL_DRUG_INFO>,"Control Drug Information
+associated with each VMP"
+<CONTROL_INFO>,"Control Drug Information
+associated with each VMP (this
+collection of tags will occur for each
+VMP/formulation relationship)"
+<VPID>,"VMP identifier (as above in VMP
+tag)
+Up to a maximum of 18 digits"
+CDR018H,13
+
+<CATCD>,,"Control Drug category - , narrative
+can be located in lookup file under
+tag
+<CONTROL_DRUG_CATEGORY>
+Always 4 digits"
+<CATDT>,Y,Date of applicability
+,,Always 10 characters
+<CAT_PREVCD>,Y,Previous Control Drug Information
+,,– „Controlled Drug category prior to
+,,change date‟ - narrative can be
+,,located in lookup file under tag
+,,<CONTROL_DRUG_CATEGORY>
+,,Always 4 digits
+</CONTROL_INFO>,,End Tag
+</CONTROL_DRUG_INFO>,,End Tag
+</VIRTUAL_MED_PRODUCTS>,,End Tag
+CDR018H 14,,
+
+AMP,,
+TAG Name,Optional,Description
+<ACTUAL_MEDICINAL_PRODUCTS>,,Root Node
+<AMPS>,,Collection of AMP‟s
+<AMP>,,"Individual Actual Medicinal Product
+(AMP) (this collection of tags will
+occur for each AMP)"
+<APID>,,"AMP identifier (SNOMED Code)
+Up to a maximum of 18 digits"
+<INVALID>,Y,"Invalidity flag - If set to 1 indicates
+this is an invalid entry in file.
+1 digit only"
+<VPID>,,"VMP identifier, points to parent
+Virtual Medicinal Product on VMP
+file
+Up to a maximum of 18 digits"
+<NM>,,"Actual Medicinal Product Name
+Up to a maximum of 255
+characters"
+<ABBREVNM>,Y,"Actual Medicinal Product
+Abbreviated name
+Up to a maximum of 60 characters"
+<DESC>,,"Actual Medicinal Product
+Description
+Up to a maximum of 700
+characters"
+<NMDT>,Y,"Date of name applicability
+Always 10 characters"
+<NM_PREV>,Y,"Previous Name
+Up to a maximum of 255
+characters"
+<SUPPCD>,,"Supplier - Supplier Code, narrative
+can be located in lookup file under
+tag <SUPPLIER>
+Up to a maximum of 18 digits"
+<LIC_AUTHCD>,,Current Licensing Authority -
+,,"Licensing Authority Code, narrative"
+,,can be located in lookup file under
+,,tag <LICENSING_AUTHORITY>
+,,Always 4 digits
+<LIC_AUTH_PREVCD>,Y,"Previous Licensing Authority Code,"
+,,narrative can be located in lookup
+,,file under tag
+,,<LICENSING_AUTHORITY>
+,,Always 4 digits
+<LIC_AUTHCHANGECD>,Y,Reason for change of licensing
+,,"authority code, narrative can be"
+,,located in lookup under tag
+,,<LICENSING_AUTHORITY_CHAN
+,,GE_REASON>
+,,Always 4 digits
+CDR018H,,15
+
+<LIC_AUTHCHANGEDT>,Y,"Date of change of licensing
+authority
+Always 10 characters"
+<COMBPRODCD>,Y,"Combination product indicator
+Code, narrative can be located in
+lookup file under tag
+<COMBINATION_PROD_IND>
+Always 4 digits"
+<FLAVOURCD>,Y,"Flavour Code, narrative can be"
+,,located in lookup file under tag
+,,<FLAVOUR>
+,,Always 4 digits
+<EMA>,Y,"EMA Additional Monitoring
+indicator – will be present and set
+to 1 if true
+1 digit only"
+<PARALLEL_IMPORT>,Y,"Parallel Import indicator – will be
+present and set to 1 if true
+1 digit only"
+<AVAIL_RESTRICTCD>,,"Restrictions on availability Code,"
+,,narrative can be located in lookup
+,,file under tag
+,,<AVAILABILITY_RESTRICTION>
+,,Always 4 digits
+</AMP>,,End Tag
+</AMPS>,,End Tag
+<AP_INGREDIENT>,,"Actual Product Excipients - AMP
+ingredients (excipients)"
+<AP_ING>,,"AMP excipients – this collection of
+tags will occur for each
+AMP/Ingredient relationship"
+<APID>,,"Actual Product (AMP) identifier
+Up to a maximum of 18 digits"
+<ISID>,,"Ingredient substance identifier (can
+be located in ingredient file)
+Up to a maximum of 18 digits"
+<STRNTH>,Y,"Pharmaceutical strength numerical
+value - strength value
+Up to a maximum of 10 digits and 3
+decimal places"
+<UOMCD>,Y,Pharmaceutical Strength Unit of
+,,"Measure code, narrative can be"
+,,located in lookup file under tag
+,,<UNIT_OF_MEASURE>
+,,Up to a maximum of 18 digits
+</AP_ING>,,End Tag
+</AP_INGREDIENT>,,End Tag
+<LICENSED_ROUTE>,,Licensed route for AMP‟s
+<LIC_ROUTE>,,"AMP licensed routes – this
+collection of tags will occur for each
+AMP/route relationship"
+<APID>,,"AMP identifier
+Up to a maximum of 18 digits"
+CDR018H,16,
+
+<ROUTECD>,,"Licenced route - Route Code,
+narrative can be located in lookup
+file under tag <ROUTE>
+Up to a maximum of 18 digits"
+</LIC_ROUTE>,,End Tag
+</LICENSED_ROUTE>,,End Tag
+<AP_INFORMATION>,,Appliance product information
+<AP_INFO>,,Appliance information
+<APID>,,"AMP identifier
+Up to a maximum of 18 digits"
+<SZ_WEIGHT>,Y,"Size / Weight
+Up to a maximum of 100
+characters"
+<COLOURCD>,Y,"Colour code, narrative can be
+located in lookup file under tag
+<COLOUR>
+Always 4 digits"
+<PROD_ORDER_NO>,Y,"Product order number - Order
+number of product within Drug
+Tariff
+Up to a maximum of 20 characters"
+</AP_INFO>,,End Tag
+</AP_INFORMATION>,,End Tag
+</ACTUAL_MEDICINAL_PRODUCTS>,,End Tag
+CDR018H 17,,
+
+VMPP,,,,
+TAG Name,Optional,Description,,
+<VIRTUAL_MED_PRODUCT_PACK>,,Root Node,,
+<VMPPS>,,Collection Of VMPP‟s,,
+<VMPP>,,"Individual Virtual Medicinal
+Product Packs (VMPP) – this
+collection of tags will occur for
+each VMPP",,
+<VPPID>,,"Virtual Medicinal Product Pack
+Identifier (SNOMED Code)
+Up to a maximum of 18 digits",,
+<INVALID>,Y,"Invalidity flag - If set to 1
+indicates this is an invalid entry
+in file.
+1 digit only",,
+<NM>,,"Virtual medicinal product pack
+description – Name
+Up to a maximum of 420
+characters",,
+<VPID>,,"VMP identifier – refers to parent
+VMP in VMP file
+Up to a maximum of 18 digits",,
+<QTYVAL>,Y,"Quantity Value
+Up to a maximum of 10 digits
+and 2 decimal places",,
+<QTY_UOMCD>,Y,"Quantity Unit of Measure code,",,
+,,narrative can be located,,in
+,,lookup file,under,tag
+,,<UNIT_OF_MEASURE>,,
+,,Up to a maximum of 18 digits,,
+<COMBPACKCD>,Y,Combination pack indicator -,,
+,,"Combination pack code,",,
+,,narrative can be located in,,
+,,lookup file under tag,,
+,,<COMBINATION_PACK_IND>,,
+,,Always 4 digits,,
+</VMPP>,,End Tag,,
+</VMPPS>,,End Tag,,
+<DRUG_TARIFF_INFO>,,Drug Tariff Category Information,,
+<DTINFO>,,"Drug tariff info for VMPP – this
+collection of tags will occur for
+each VMPP/drug Tariff
+combination",,
+<VPPID>,,"VMPP identifier (as above
+VMPP tag)
+Up to a maximum of 18 digits",,in
+<PAY_CATCD>,,Drug Tariff payment,category,
+,,"code, narrative can be located in",,
+,,lookup file,under,tag
+,,<DT_PAYMENT_CATEGORY>,,
+,,Always 4 digits,,
+<PRICE>,Y,Drug Tariff Price,,
+CDR018H,,,,18
+
+,,Up to a maximum of 6 integers,,
+<DT>,Y,"Date from which DT
+applicable
+Always 10 characters",price,is
+<PREVPRICE>,Y,"Previous price
+Up to a maximum of 6 integers",,
+</DTINFO>,,End Tag,,
+</DRUG_TARIFF_INFO>,,End Tag,,
+<COMB_CONTENT>,,Combination Pack content,,
+<CCONTENT>,,"Combination pack pairs – this
+collection of tags will occur for
+each combination pack",,
+<PRNTVPPID>,,"VMPP identifier for parent pack
+Up to a maximum of 18 digits",,
+<CHLDVPPID>,,"Constituent virtual product pack
+identifier - VMPP identifier for
+sub pack
+Up to a maximum of 18 digits",,
+</CCONTENT>,,End Tag,,
+</COMB_CONTENT>,,End Tag,,
+</VIRTUAL_MED_PRODUCT_PACK>,,End Tag,,
+CDR018H 19,,,,
+
+AMPP,,
+TAG Name,Optional,Description
+<ACTUAL_MEDICINAL_PROD_PACKS>,,Actual Medicinal Product Packs
+<AMPPS>,,"All Actual Medicinal Product
+Packs"
+<AMPP>,,"This collection of tags will repeat
+for each AMPP"
+<APPID>,Y,"AMPP identifier (SNOMED
+Code)
+Up to a maximum of 18 digits"
+<INVALID>,Y,"Invalidity flag - If set to 1
+indicates this is an invalid entry
+in file.
+1 digit only"
+<NM>,,"Actual Medicinal Product Pack
+description
+Up to a maximum of 774
+characters"
+<ABBREVNM>,Y,"Actual Medicinal Product Pack
+Abbreviated Name
+Up to a maximum of 60
+characters"
+<VPPID>,,"VMPP identifier (reference back
+to parent VMPP on VMPP file)
+Up to a maximum of 18 digits"
+<APID>,,"AMP identifier (reference back
+to parent AMP on AMP file)
+Up to a maximum of 18 digits"
+<COMBPACKCD>,Y,Combination pack Indicator
+,,"code, narrative can be located in"
+,,lookup file under tag
+,,<COMBINATION_PACK_IND>
+,,Always 4 digits
+<LEGAL_CATCD>,,"Legal category code, narrative"
+,,can be located in lookup file
+,,under tag
+,,<LEGAL_CATEGORY>
+,,Always 4 digits
+<SUBP>,Y,"Sub Pack Info
+Up to a maximum of 30
+characters"
+<DISCCD>,Y,"Discontinued Flag code,"
+,,narrative can be located in
+,,lookup file under tag
+,,<DISCONTINUED_IND>
+,,Always 4 digits
+<DISCDT>,Y,"Discontinued Flag Change date
+- Date of discontinuation
+Always 10 characters"
+</AMPP>,,End Tag
+</AMPPS>,,End Tag
+<APPLIANCE_PACK_INFO>,,Appliance pack Information.
+CDR018H,,20
+
+<PACK_INFO>,,"This collection of tags will occur
+for each AMPP appliance pack
+information relationship"
+<APPID>,,"AMPP identifier as in AMPP tag
+above
+Up to a maximum of 18 digits"
+<REIMB_STATCD>,,Appliance Reimbursement
+,,"status code, narrative can be"
+,,located in lookup file under tag
+,,<REIMBURSEMENT_STATUS>
+,,Always 4 digits
+<REIMB_STATDT>,Y,"Date Appliance reimbursement
+status became effective.
+Always 10 characters"
+<REIMB_STATPREVCD>,Y,Appliance Reimbursement
+,,"previous status code, narrative"
+,,can be located in lookup file
+,,under tag
+,,<REIMBURSEMENT_STATUS>
+,,Always 4 digits
+<PACK_ORDER_NO>,Y,Pack order number - Order
+,,number of pack within Drug
+,,Tariff
+,,Up to a maximum of 20
+,,characters
+</PACK_INFO>,,End Tag
+</APPLIANCE_PACK_INFO>,,End Tag
+<DRUG_PRODUCT_PRESCRIB_INFO>,,Product Prescribing Information
+<PRESCRIB_INFO>,,"This collection of tags will exist
+for every AMPP/Prescribing
+information relationship"
+<APPID>,,"AMPP identifier
+Up to a maximum of 18 digits"
+<SCHED_2>,Y,"Schedule 2 indicator – will be
+present and set to 1 if true
+1 digit only"
+<ACBS>,Y,"ACBS indicator – will be present
+and set to 1 if true
+1 digit only"
+<PADM>,Y,"Personally Administered
+indicator – will be present and
+set to 1 if true
+1 digit only"
+<FP10_MDA>,Y,"FP10 MDA Prescription
+indicator – will be present and
+set to 1 if true
+1 digit only"
+<SCHED_1>,Y,"Schedule 1 indicator – will be
+present and set to 1 if true
+1 digit only"
+<HOSP>,Y,"Hospital indicator – will be
+present and set to 1 if true
+1 digit only"
+<NURSE_F>,Y,Nurse Formulary indicator – will
+CDR018H,21,
+
+,,"be present and set to 1 if true
+1 digit only"
+<ENURSE_F>,Y,"Nurse Extended Formulary
+indicator – will be present and
+set to 1 if true
+1 digit only"
+<DENT_F>,Y,"Dental Formulary indicator – will
+be present and set to 1 if true
+1 digit only"
+</PRESCRIB_INFO>,,End Tag
+</DRUG_PRODUCT_PRESCRIB_INFO>,,End Tag
+<MEDICINAL_PRODUCT_PRICE>,,"Medicinal product price - AMPP
+Price"
+<PRICE_INFO>,,"This collection of tags will occur
+for each Actual Medicinal
+Product Pack (AMPP) Price
+relationship"
+<APPID>,,"AMPP identifier
+Up to a maximum of 18 digits"
+<PRICE>,Y,"Price
+Up to a maximum of 9 integers"
+<PRICEDT>,Y,"Date of price validity - Date of
+price applicability
+Always 10 characters"
+<PRICE_PREV>,Y,"Price prior to change date -
+Previous Price
+Up to a maximum of 9 integers"
+<PRICE_BASISCD>,,Price basis flag - Basis of price
+,,"code, narrative can be located in"
+,,lookup file under tag
+,,<PRICE_BASIS>
+,,Always 4 digits
+</PRICE_INFO>,,End Tag
+</MEDICINAL_PRODUCT_PRICE>,,End Tag
+<REIMBURSEMENT_INFO>,,"AMPP reimbursement
+Information"
+<REIMB_INFO>,,"This collection of tags will occur
+for each AMPP/reimbursement
+info relationship"
+<APPID>,,"AMPP identifier
+Up to a maximum of 18 digits"
+<PX_CHRGS>,Y,"Prescription Charges
+Up to a maximum of 2 digits"
+<DISP_FEES>,Y,"Dispensing Fees
+Up to a maximum of 2 digits"
+<BB>,Y,"Broken Bulk indicator will be
+present and set to 1 if true
+1 digit only"
+<LTD_STAB>,"The Drug Tariff no longer identifies products
+for this purpose. Therefore this indicator is
+no longer populated in dm+d. The data field
+will persist but remains blank.",
+<CAL_PACK>,Y,"Calendar pack indicator will be
+present and set to 1 if true"
+CDR018H,22,
+
+,,1 digit only
+<SPEC_CONTCD>,Y,Special Container Indicator
+,,"code, narrative can be located in"
+,,lookup file under tag
+,,<SPEC_CONT>
+,,Always 4 digits
+<DND>,Y,"Discount Not Deducted Indicator
+(previously Zero Discount
+Indicator)
+Always 4 digits"
+<FP34D>,Y,"FP34D prescription item
+indicator will be present and set
+to 1 if true
+1 digit only"
+</REIMB_INFO>,,End Tag
+</REIMBURSEMENT_INFO>,,End Tag
+<COMB_CONTENT>,,Combination Pack content
+<CCONTENT>,,"Combination pack pairs – this
+collection of tags will occur for
+each combination pack"
+<PRNTAPPID>,,"AMPP identifier for parent pack
+Up to a maximum of 18 digits"
+<CHLDAPPID>,,"AMPP identifier for sub pack
+Up to a maximum of 18 digits"
+</CCONTENT>,,End Tag
+</COMB_CONTENT>,,End Tag
+</ACTUAL_MEDICINAL_PROD_PACKS>,,End Tag
+CDR018H 23,,
+
+Ingredient,,
+TAG Name,Optional,Description
+<INGREDIENT_SUBSTANCES>,,Root Node
+<ING>,,"Ingredients – this collection of
+tags will occur for each
+ingredient"
+<ISID>,,"Ingredient Substance Identifier
+(SNOMED Code)
+Up to a maximum of 18 digits"
+<ISIDDT>,Y,"Date ingredient substance
+identifier became valid
+Always 10 characters"
+<ISIDPREV>,Y,"Previous ingredient substance
+identifier (SNOMED Code)
+Up to a maximum of 18 digits"
+<INVALID>,Y,"Invalidity flag - If set to 1
+indicates this is an invalid entry
+in file.
+1 digit only"
+<NM>,,"Ingredient Substance Name
+Up to a maximum of 255
+characters"
+</ING>,,End Tag
+</INGREDIENT_SUBSTANCES>,,End Tag
+CDR018H 24,,
+
+Lookup,,
+TAG Name,Optional,Description
+<LOOKUP>,Root Node,
+<COMBINATION_PACK_IND>,"Code descriptions for
+AMPP/VMPP combination
+indicator",
+<INFO>,"This collection of tags will
+occur for each code
+description pair.",
+<CD>,"Code
+Always 4 digits",
+<DESC>,"Description
+Up to a maximum of 60
+characters",
+</INFO>,End Tag,
+</COMBINATION_PACK_IND>,End Tag,
+<COMBINATION_PROD_IND>,"Code descriptions for
+AMP/VMP combination
+indicator",
+<INFO>,"This collection of tags will
+occur for each code
+description pair.",
+<CD>,"Code
+Always 4 digits",
+<DESC>,"Description
+Up to a maximum of 60
+characters",
+</INFO>,End Tag,
+</COMBINATION_PROD_IND>,End Tag,
+<BASIS_OF_NAME>,"Code descriptions for VMP
+name basis.",
+<INFO>,"This collection of tags will
+occur for each code
+description pair.",
+<CD>,"Code
+Always 4 digits",
+<DESC>,"Description
+Up to a maximum of 150
+characters",
+</INFO>,End Tag,
+</BASIS_OF_NAME>,End Tag,
+<NAMECHANGE_REASON>,"Code descriptions for VMP
+name change reason.",
+<INFO>,"This collection of tags will
+occur for each code
+description pair.",
+<CD>,"Code
+Always 4 digits",
+<DESC>,Description,
+CDR018H,,25
+
+,,"Up to a maximum of 150
+characters"
+</INFO>,,End Tag
+</NAMECHANGE_REASON>,,End Tag
+<VIRTUAL_PRODUCT_PRES_STATUS>,,"Code descriptions for VMP
+prescribing status."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</VIRTUAL_PRODUCT_PRES_STATUS>,,End Tag
+<CONTROL_DRUG_CATEGORY>,,"Code descriptions for
+controlled drug category."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</CONTROL_DRUG_CATEGORY>,,End Tag
+<LICENSING_AUTHORITY>,,"Code descriptions for licensing
+authority."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</LICENSING_AUTHORITY>,,End Tag
+<UNIT_OF_MEASURE>,,"Code descriptions for units of
+measure."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code (SNOMED)
+Up to a maximum of 18 digits"
+<CDDT>,Y,"Date code is applicable from
+Always 10 characters"
+CDR018H,26,
+
+<CDPREV>,Y,"Previous code
+Up to a maximum of 18 digits"
+<DESC>,,"Description
+Up to a maximum of 150
+characters"
+</INFO>,,End Tag
+</UNIT_OF_MEASURE>,,End Tag
+<FORM>,,"Code descriptions for
+formulations (Form)."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code (SNOMED)
+Up to a maximum of 18 digits"
+<CDDT>,Y,"Date code is applicable from
+Always 10 characters"
+<CDPREV>,Y,"Previous code
+Up to a maximum of 18 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</FORM>,,End Tag
+<ONT_FORM_ROUTE>,,"Code descriptions for ontology
+form route (VMP Form &
+Route) combinations."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</ONT_FORM_ROUTE>,,End Tag
+<ROUTE>,,"Code descriptions for routes of
+administration."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code (SNOMED)
+Up to a maximum of 18 digits"
+<CDDT>,Y,"Date code is applicable from
+Always 10 characters"
+<CDPREV>,Y,"Previous code
+Up to a maximum of 18 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+CDR018H,27,
+
+</ROUTE>,,End Tag
+<DT_PAYMENT_CATEGORY>,,"Code descriptions for Drug
+Tariff categories."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 characters"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</DT_PAYMENT_CATEGORY>,,End Tag
+<SUPPLIER>,,"Code descriptions for
+suppliers."
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code (SNOMED)
+Up to a maximum of 18 digits"
+<CDDT>,Y,"Date code is applicable from
+Always 10 characters"
+<CDPREV>,Y,"Previous code
+Up to a maximum of 18 digits"
+<INVALID>,Y,"Invalidity flag - If set to 1 entry
+is invalid.
+1 digit only"
+<DESC>,,"Description
+Up to a maximum of 80
+characters"
+</INFO>,,End Tag
+</SUPPLIER>,,End Tag
+<FLAVOUR>,,Code descriptions for flavours.
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+<DESC>,,"Description
+Up to a maximum of 60
+characters"
+</INFO>,,End Tag
+</FLAVOUR>,,End Tag
+<COLOUR>,,Code descriptions for colours.
+<INFO>,,"This collection of tags will
+occur for each code
+description pair."
+<CD>,,"Code
+Always 4 digits"
+CDR018H,28,
+
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</COLOUR>,End Tag
+<BASIS_OF_STRNTH>,"Code descriptions for basis of
+strength."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 150
+characters"
+</INFO>,End Tag
+</BASIS_OF_STRNTH>,End Tag
+<REIMBURSEMENT_STATUS>,"Code descriptions for
+reimbursement status."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</REIMBURSEMENT_STATUS>,End Tag
+<SPEC_CONT>,"Code descriptions for special
+container indicator."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</SPEC_CONT>,End Tag
+<DND>,"Code descriptions for Discount
+Not Deducted indicator."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,Description
+CDR018H,29
+
+,"Up to a maximum of 60
+characters"
+</INFO>,End Tag
+<DND>,End Tag
+<VIRTUAL_PRODUCT_NON_AVAIL>,"VMP non availability of VMP
+status codes."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</VIRTUAL_PRODUCT_NON_AVAIL>,End Tag
+<DISCONTINUED_IND>,"Code descriptions for
+discontinued indicator."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</DISCONTINUED_IND>,End Tag
+<DF_INDICATOR>,"Code descriptions for Dose
+form indicator."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+1 digit only"
+<DESC>,"Description
+Up to a maximum of 20
+characters"
+</INFO>,End Tag
+</DF_INDICATOR>,End Tag
+<PRICE_BASIS>,"Code descriptions for basis of
+AMPP price."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60"
+CDR018H,30
+
+,characters
+</INFO>,End Tag
+</PRICE_BASIS>,End Tag
+<LEGAL_CATEGORY>,"Code descriptions for AMPP
+legal category."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+</LEGAL_CATEGORY>,End Tag
+<AVAILABILITY_RESTRICTION>,"Code descriptions for AMP
+availability restriction."
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+<AVAILABILITY_RESTRICTION>,End Tag
+"<LICENSING_AUTHORITY_CHANGE_REA
+SON>",
+<INFO>,"This collection of tags will
+occur for each code
+description pair."
+<CD>,"Code
+Always 4 digits"
+<DESC>,"Description
+Up to a maximum of 60
+characters"
+</INFO>,End Tag
+"<LICENSING_AUTHORITY_CHANGE_REA
+SON>",End Tag
+</LOOKUP>,End Tag
+CDR018H 31,
+
+GTIN,,
+TAG Name,Optional,Description
+<GTIN_DETAILS>,,Root Node
+<AMPPS>,,"All Actual Medicinal Product
+Packs that have Global Trade
+Identification Numbers (GTINs)."
+<AMPP>,,"This collection of tags will repeat
+for each AMPP that contains a
+GTIN"
+<AMPPID>,,"AMPP identifier (SNOMED
+code) Reference to AMPP on
+main AMPP file
+Up to a maximum of 18 digits"
+<GTIN>,,"GTIN
+Either 13 or 14 digits with the
+rightmost digit a Check Digit"
+<STARTDT>,,"GTIN date - Date the GTIN
+became Valid
+Always 10 characters"
+<ENDDT>,Y,"The date the GTIN became
+invalid
+Always 10 characters"
+</GTINDATA>,,End Tag
+</AMPP>,,End Tag
+</AMPPS>,,End Tag
+</GTIN_DETAILS>,,End Tag
+CDR018H 32,,
+
+Appendix B – Detailed description of BNF/ATC XML files,,
+Conventions used in tag naming.,,
+DT = date in format CCYY-MM-DD,,
+CD = from lookup,,
+NM = name,,
+ID = key field pointing to another tag on same or different file,,
+BNF/ATC,,
+TAG Name,Optional,Description
+<BNF_DETAILS>,,Root Node
+<VMPS>,,"All Virtual Medicinal Products that
+have British National Formulary
+(BNF) or Anatomical Therapeutic
+Classification (ATC) details."
+<VMP>,,"Virtual Medicinal Product – this
+collection of tags will occur for each
+Virtual Medicinal Product"
+<VPID>,,"VMP identifier (SNOMED code).
+Reference to VMP on main VMP
+file
+Up to a maximum of 18 digits"
+<BNF>,Y,"BNF Code
+Up to a maximum of 8 digits"
+<ATC>,Y,"ATC Code
+Up to a maximum of 7 characters"
+<DDD>,Y,"Defined Daily dose relating to ATC
+code
+Up to a maximum of 6 digits"
+<DDD_UOMCD>,Y,"Defined daily dose Unit of measure,"
+,,narrative can be located in lookup
+,,file under tag
+,,<UNIT_OF_MEASURE>
+,,Up to a maximum of 18 digits
+</VMP>,,End Tag
+</VMPS>,,End Tag
+<AMPS>,,"All Actual Medicinal Products that
+have BNF details."
+<AMP>,,"Actual Medicinal Product – this
+collection of tags will occur for each
+Actual Medicinal Product"
+<APID>,,"AMP identifier (SNOMED code).
+Reference to AMP on main AMP
+file.
+Up to a maximum of 18 digits"
+<BNF>,,"BNF Code
+Up to a maximum of 8 digits"
+</AMP>,,End Tag
+</AMPS>,,End Tag
+</BNF_DETAILS>,,End Tag
+CDR018H 33,,
+
+Annex I,,,,
+Historical Issue Sheet,,,,
+Document reference,,CDR018H,,
+,,f:\csd\projects\cdr\sec\reports\cdr018H.do,,
+Document location,,,,
+,,c,,
+,,Technical Specification of Data Files for,,
+Title,,the Dictionary of Medicines and Devices,,
+,,(dm+d),,
+Author,,Alan Marshall/Kevan Mahoney,,
+Issued to,,Authorised dm+d Users,,
+Why issued,,For reference,,
+Document control prior to 2013,,,,
+Version,Date,Amended by,Approved by,Details of amendments
+Initial Release,24/05/2002,-,G Coyne,N/A
+A,09/09/2002,A Marshall,K Mahoney,Change in Tag Names
+B,16/12/2002,A Marshall,K Mahoney,Changes in extract frequency
+C,05/02/2003,A Marshall,K Mahoney,"Changes in tag order to match
+model"
+D,10/02/2003,A Marshall,K Mahoney,"Addition of INVALID and VMP
+non availability indicator"
+E,05/03/2004,R Thompson,A Marshall,Release 2 of DM+D
+F,06/12/2004,A Marshall,,"Reflect changes to schedule
+10 and 11 indicator"
+G,19/01/06,A Marshall,,"Changes to VTM for release
+2.3 and supplementary
+BNF/ATC files"
+H,15/12/06,K Frenz,,Changes to match Editorial
+,,M Johnson,,Policy and Data Model.
+,,,,Correction of TAG name in
+,,,,document only for strength
+,,,,value denominator/unit from
+,,,,„DENOM‟ to „DNMTR‟
+I,27/11/07,M Johnson,,EAN supplementary file
+J,18/04/2008,M Johnson,,Field sizes added
+K,13/10/2008,M Johnson,,"Reflect changes to distribution
+process. Updates to VMP
+prescribing status"
+L,28/07/2009,M Johnson,,"All references to EAN have
+been changed to GTIN"
+CDR018H,,,34,
+
+M,17/082010,M. Johnson,"Reflect textual changes to a
+VMP Prescribing status value."
+N,07/08/2013,G. Bawn,Extract Format amended to
+,,G. Jepson,include GTIN zip file
+,,,Supplementary files amended
+,,,to reflect removal of GTIN
+,,,content
+,,,GTINs to be 13 or 14
+,,,character in length
+,,,Reference to CSM amended
+,,,to EMA
+,,,Reference to ZERO_DISCD
+,,,amended to DND
+,,,Former Appendix C GTIN
+,,,TAG Name and associated
+,,,details revised and
+,,,incorporated into Appendix A
+CDR018H 35,,,
