@@ -1,21 +1,34 @@
+sudo: required
 env:
   global:
     DOCKER_COMPOSE_VERSION: 1.9.0
-  matrix:
-    - TEST_SUITE=nonfunctional
-    - TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
 matrix:
-  # The SauceLabs browser tests are very flaky such that we get frequent
-  # failures which disappear if the tests are re-run. At present, we're not
-  # touching the frontend code much at all and so these failures are just
-  # useless noise and promote the bad habit of ignoring CI results. As a
-  # quick improvement on this situation we now ignore failures in the browser
-  # tests when determining the overall test status, but we still run them so
-  # that the results can be checked manually if you're making frontend
-  # changes.
+  include:
+    - name: "Unit tests"
+      script: docker-compose run --service-ports test && docker-compose run --service-ports test-production
+      env: TEST_SUITE=nonfunctional
+    - name: "Functional tests"
+      script: docker-compose run --service-ports test && docker-compose run --service-ports test-production
+      env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
+    - name: "Ansible buildout test"
+      script:
+        - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/jessie /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
+      env: LANG=en_US.UTF-8
   allow_failures:
+    # The SauceLabs browser tests are very flaky such that we get frequent
+    # failures which disappear if the tests are re-run. At present, we're not
+    # touching the frontend code much at all and so these failures are just
+    # useless noise and promote the bad habit of ignoring CI results. As a
+    # quick improvement on this situation we now ignore failures in the browser
+    # tests when determining the overall test status, but we still run them so
+    # that the results can be checked manually if you're making frontend
+    # changes.
     - env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
-sudo: required
+cache:
+  directories:
+    docker
+services:
+  docker
 language: python
 before_install:
   - sudo rm /usr/local/bin/docker-compose
@@ -24,16 +37,11 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - openssl aes-256-cbc -K $encrypted_ef2af4a5c304_key -iv $encrypted_ef2af4a5c304_iv -in google-credentials.json.enc -out google-credentials.json -d
 install:
+  - docker pull dockette/jessie
   - docker pull ebmdatalab/openprescribing-base:latest
   - docker pull mdillon/postgis:latest
-cache:
-  directories:
-    - docker
-services:
-  - docker
-script:
+before_script:
   - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
-  - docker-compose run --service-ports test && docker-compose run --service-ports test-production
 notifications:
   email:
     - tech@ebmdatalab.net

@@ -1,14 +1,9 @@
 ---
 USER: vagrant
 HOME: "/home/{{ USER }}"
-checkout_path: /code/openprescribing
-virtualenv_path: "{{ checkout_path }}/venv"
-project_root_path: "{{ checkout_path }}/openprescribing"
-requirements_path: "{{ checkout_path }}/requirements.txt"
 db_user: dev
 db_password: sdkjasdalskdax
 db_name: openprescribing_dev
-log_path: /code/openprescribing/logs
 secret_key: sdjfhasiufqpiasln
 envvars:
   - var: DB_NAME
