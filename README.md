@@ -10,7 +10,100 @@ Information about data sources used on OpenPrescribing can be found [here](https
 # Set up the application
 
 You can install the application dependencies either on bare metal, or
-using docker.
+virtualised inside docker, or virtualbox (via vagrant).
+
+Which to use?
+
+* The vagrant route is probably the easiest. It creates a virtual
+  Debian server and then uses `ansible` to install all the dependencies
+  for you.
+* We currently deploy the site to production on bare metal, though we
+  may well switch to using ansible in the medium term. Use this route
+  if you don't want to mess around with virtualisation for some
+  reason.
+* Our tests are run in Travis using Docker - they have to, because
+  there's no pre-built postgis docker environment.  Use this route to
+  reproduce the travis test environment exactly (i.e. you probably
+  don't want to use this route!)
+
+## Using vagrant
+
+Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+
+### Provision the vagrant box
+
+
+    cd openprescribing/ansible
+    vagrant up   # invokes `vagrant provision` the first time it's run
+
+### Start the server
+
+    vagrant ssh  # also activates the virtualenv for you
+    python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
+
+The application should then be accessible at
+``http://127.0.0.1:3333/`` (using the vagrant-forwarded port) from a
+web browser on the host computer.
+
+## Using bare metal
+
+This should be enough to get a dev sandbox running; some brief notes
+about production environment follow.
+
+### Set up a virtualenv
+
+If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
+
+    mkvirtualenv openprescribing
+    cd openprescribing && add2virtualenv `pwd`
+    workon openprescribing
+
+### Install dependencies
+
+Install library dependencies (current as of Debian Jessie):
+
+    sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
+
+Ensure pip and setuptools are up to date:
+
+    pip install -U pip setuptools
+
+Install Python dependencies:
+
+    pip install -r requirements.txt
+
+And then install JavaScript dependencies. Make sure you have the latest version
+of nodejs:
+
+    cd openprescribing/media/js
+    npm install -g browserify
+    npm install -g jshint
+    npm install -g less
+    npm install
+
+To generate monthly alert emails (and run the tests for those) you'll
+need a `phantomjs` binary located at `/usr/local/bin/phantomjs`. Get
+it from [here](http://phantomjs.org/download.html).
+
+### Create database and env variables
+
+Set up a Postgres 9.5 database (required for `jsonb` type), with
+PostGIS extensions, and create a superuser for the database.
+
+    createuser -s <myuser>
+    createdb -O <myuser> <dbname>
+    psql -d <dbname> -c "CREATE EXTENSION postgis;"
+
+Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
+
+Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
+
+You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
+
+    http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
+
+Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
+
 
 ## Using docker
 
@@ -74,83 +167,6 @@ This will give a shell, at which you can start Django, specifying the ``0.0.0.0`
 The application should then be accessible at ``http://localhost:8000/`` from a web-
 on the host computer.
 
-## On bare metal
-
-This should be enough to get a dev sandbox running; some brief notes
-about production environment follow.
-
-### Set up a virtualenv
-
-If you're using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
-
-    mkvirtualenv openprescribing
-    cd openprescribing && add2virtualenv `pwd`
-    workon openprescribing
-
-### Install dependencies
-
-Install library dependencies (current as of Debian Jessie):
-
-    sudo apt-get install nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1 git-core vim sudo screen supervisor libpq-dev python-dev python-pip python-virtualenv python-gdal postgis emacs nginx build-essential libssl-dev libffi-dev unattended-upgrades libblas-dev liblapack-dev libatlas-base-dev gfortran libxml2-dev libxslt1-dev
-
-Ensure pip and setuptools are up to date:
-
-    pip install -U pip setuptools
-
-Install Python dependencies:
-
-    pip install -r requirements.txt
-
-And then install JavaScript dependencies. Make sure you have the latest version
-of nodejs:
-
-    cd openprescribing/media/js
-    npm install -g browserify
-    npm install -g jshint
-    npm install -g less
-    npm install
-
-To generate monthly alert emails (and run the tests for those) you'll
-need a `phantomjs` binary located at `/usr/local/bin/phantomjs`. Get
-it from [here](http://phantomjs.org/download.html).
-
-### Create database and env variables
-
-Set up a Postgres 9.5 database (required for `jsonb` type), with
-PostGIS extensions, and create a superuser for the database.
-
-    createuser -s <myuser>
-    createdb -O <myuser> <dbname>
-    psql -d <dbname> -c "CREATE EXTENSION postgis;"
-
-Copy `environment-sample` to `environment`, and set the `DB_*` environment variables.
-
-Set the `CF_API_EMAIL` and `CF_API_KEY` for Cloudflare (this is only required for automated deploys, see below).
-
-You will want `MAILGUN_WEBHOOK_USER` and `MAILGUN_WEBHOOK_PASS` if you want to process Mailgun webhook callbacks (see [`TRACKING.md`](./TRACKING.md)) to match the username/password configured in Mailgun. For example, if the webhook is
-
-    http://bobby:123@openprescribing.net/anymail/mailgun/tracking/
-
-Then set `MAILGUN_WEBHOOK_USER` to `bobby` and `MAILGUN_WEBHOOK_PASS` to `123`.
-
-## On vagrant
-
-Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-
-### Provision the vagrant box
-
-
-    cd openprescribing/ansible
-    vagrant up   # invokes `vagrant provision` the first time it's run
-
-### Start the server
-
-    vagrant ssh  # also activates the virtualenv for you
-    python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
-
-The application should then be accessible at
-``http://127.0.0.1:3333/`` (using the vagrant-forwarded port) from a
-web browser on the host computer.
 
 ## Production notes
 
