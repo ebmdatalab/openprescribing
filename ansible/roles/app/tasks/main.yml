@@ -34,6 +34,11 @@
     line: "cd {{ project_root_path }}"
     create: yes
 
+- name: Activate virtualenv on login
+  lineinfile:
+    dest: "{{ HOME }}/.bashrc"
+    line: "workon openprescribing"
+
 - name: Install requirements
   pip:
     virtualenv: "{{ virtualenv_path }}"
@@ -73,30 +78,23 @@
     path: "{{ project_root_path }}/manage.py"
     mode: 0777
 
-# Configure environment vars --------------------------------------------------
-- name: Install envdir globally
-  become: yes
-  pip: name=envdir
-
-- name: Create envdir
-  file: path={{ project_root_path }}/envdir state=directory
-
-- name: Add envdirs to envdir
+- name: Create environment file
   copy:
-    dest: "{{ project_root_path }}/envdir/{{ item.name }}"
-    content: "{{ item.content }}"
-  with_items: "{{ envvars }}"
+    remote_src: yes
+    src: "{{ checkout_path }}/environment-sample"
+    dest: "{{ checkout_path }}/environment"
+    force: yes
 
-- name: Add envshell shortcut
-  lineinfile:
-    dest: "{{ HOME }}/.bashrc"
-    line: alias envsh="envshell {{ project_root_path }}/envdir"
-    mode: 0644
-    create: yes
+- name: Set up environment file
+  replace:
+    regexp: "{{ item.name }}=.*"
+    replace: "{{ item.name }}={{ item.content }}"
+    path: "{{ checkout_path }}/environment"
+  with_items: "{{ envvars }}"
 
 - name: Django migrate
   become: yes
   become_user: "{{ USER }}"
-  shell: ". {{ virtualenv_path }}/bin/activate && envdir envdir ./manage.py migrate"
+  shell: ". {{ virtualenv_path }}/bin/activate && ./manage.py migrate"
   args:
     chdir: "{{ project_root_path }}"

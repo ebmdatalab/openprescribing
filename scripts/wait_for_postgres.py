@@ -5,18 +5,26 @@ postgres volume it takes a few seconds to become ready.
 
 """
 import time
-from os import environ
+import os
 import psycopg2
+import dotenv
+
 
 if __name__ == '__main__':
+    env_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        '..', 'environment'
+    )
+
+    dotenv.read_dotenv(env_path)
     elapsed = 0
     while elapsed < 30:
         try:
             psycopg2.connect(
-                host=environ['DB_HOST'],
-                user=environ['DB_USER'],
-                password=environ['DB_PASS'],
-                database=environ['DB_NAME'])
+                host=os.environ['DB_HOST'],
+                user=os.environ['DB_USER'],
+                password=os.environ['DB_PASS'],
+                database=os.environ['DB_NAME'])
             break
         except (psycopg2.OperationalError):
             if elapsed == 0:

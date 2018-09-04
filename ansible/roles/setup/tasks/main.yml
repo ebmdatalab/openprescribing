@@ -1,4 +1,16 @@
 ---
+- name: Install apt https transport
+  become: yes
+  apt:
+    pkg: apt-transport-https
+    state: installed
+
+- name: Add NodeSource apt signing key
+  become: yes
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
 - name: Update Apt Cache
   become: yes
   apt:
@@ -10,8 +22,8 @@
     pkg: "{{ item }}"
     state: installed
   with_items:
+    - apt-transport-https
     - ca-certificates
-    - nodejs
     - binutils
     - libproj-dev
     - gdal-bin
@@ -39,13 +51,26 @@
     - gfortran
     - libxml2-dev
     - libxslt1-dev
-    - npm
     - git
     - virtualenvwrapper
     - libfontconfig1  # for phantomjs
     - libfontconfig1-dev
     - firefox-esr
     - xvfb
+
+- name: Add NodeSource 10.x apt repository
+  become: yes
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_10.x jessie main'
+    update_cache: yes
+
+- name: Install nodejs
+  become: yes
+  apt:
+    pkg: "{{item}}"
+    state: installed
+  with_items:
+    - nodejs
 
 - name: Add postgres apt key
   become: yes
