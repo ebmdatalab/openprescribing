@@ -170,12 +170,13 @@ on the host computer.
 
 ## Production notes
 
-Keeping environment variables all in one place can be a faff. In
-production, we've solved this by adding them all in
-`/etc/profile.d/openprescribing.sh` and then adding `source
-/etc/profile.d/openprescribing.sh` to `<virtualenv>/bin/activate`.
+Secrets are stored in the `environment` file, and are loaded in
+Django's `manage.py` using the `django-dotenv` package.
 
-The script at `contrib/bin/gunicorn_start` is responsible for starting up a backend server. We proxy to this from nginx using a configuration like that at `contrib/nginx/`.  We control the gunicorn process using `supervisor`, with a script like that at `contrib/supervisor/`.
+The script at `contrib/bin/gunicorn_start` is responsible for starting
+up a backend server. We proxy to this from nginx using a configuration
+like that at `contrib/nginx/`.  We control the gunicorn process using
+`supervisor`, with a script like that at `contrib/supervisor/`.
 
 # Set up the database
 
