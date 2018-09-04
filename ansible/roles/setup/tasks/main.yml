@@ -5,6 +5,12 @@
     pkg: apt-transport-https
     state: installed
 
+- name: Add NodeSource apt signing key
+  become: yes
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
 - name: Update Apt Cache
   become: yes
   apt:
@@ -51,12 +57,6 @@
     - libfontconfig1-dev
     - firefox-esr
     - xvfb
-
-- name: Add NodeSource apt signing key
-  become: yes
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
 
 - name: Add NodeSource 10.x apt repository
   become: yes
