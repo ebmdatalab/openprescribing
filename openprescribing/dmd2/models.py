@@ -2,8 +2,9 @@ from django.db import models
 
 
 class VTM(models.Model):
-    vtmid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="vtmid",
         help_text="VTM identifier",
     )
     invalid = models.BooleanField(
@@ -18,7 +19,7 @@ class VTM(models.Model):
         null=True,
         help_text="VTM Abbreviated name",
     )
-    vtmidprev = models.IntegerField(
+    vtmidprev = models.BigIntegerField(
         null=True,
         help_text="Previous VTM identifier",
     )
@@ -29,19 +30,21 @@ class VTM(models.Model):
 
 
 class VMP(models.Model):
-    vpid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="vpid",
         help_text="VMP identifier",
     )
     vpiddt = models.DateField(
         null=True,
         help_text="Date VMP identifier became Valid",
     )
-    vpidprev = models.IntegerField(
+    vpidprev = models.BigIntegerField(
         null=True,
         help_text="Previous product identifier",
     )
-    vtmid = models.ForeignKey(
+    vtm = models.ForeignKey(
+        db_column="vtmid",
         to="VTM",
         on_delete=models.CASCADE,
         null=True,
@@ -59,7 +62,8 @@ class VMP(models.Model):
         null=True,
         help_text="VMP Abbreviated name",
     )
-    basiscd = models.ForeignKey(
+    basis = models.ForeignKey(
+        db_column="basiscd",
         to="BasisOfName",
         on_delete=models.CASCADE,
         help_text="Basis of preferred name",
@@ -73,26 +77,30 @@ class VMP(models.Model):
         null=True,
         help_text="Previous Name",
     )
-    basis_prevcd = models.ForeignKey(
+    basis_prev = models.ForeignKey(
+        db_column="basis_prevcd",
         to="BasisOfName",
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
         help_text="Basis of previous name",
     )
-    nmchangecd = models.ForeignKey(
+    nmchange = models.ForeignKey(
+        db_column="nmchangecd",
         to="NamechangeReason",
         on_delete=models.CASCADE,
         null=True,
         help_text="Reason for name change",
     )
-    combprodcd = models.ForeignKey(
+    combprod = models.ForeignKey(
+        db_column="combprodcd",
         to="CombinationProdInd",
         on_delete=models.CASCADE,
         null=True,
         help_text="Combination product Indicator",
     )
-    pres_statcd = models.ForeignKey(
+    pres_stat = models.ForeignKey(
+        db_column="pres_statcd",
         to="VirtualProductPresStatus",
         on_delete=models.CASCADE,
         help_text="VMP Prescribing Status",
@@ -109,7 +117,8 @@ class VMP(models.Model):
     cfc_f = models.BooleanField(
         help_text="CFC Free Indicator",
     )
-    non_availcd = models.ForeignKey(
+    non_avail = models.ForeignKey(
+        db_column="non_availcd",
         to="VirtualProductNonAvail",
         on_delete=models.CASCADE,
         null=True,
@@ -119,7 +128,8 @@ class VMP(models.Model):
         null=True,
         help_text="Non availability status date",
     )
-    df_indcd = models.ForeignKey(
+    df_ind = models.ForeignKey(
+        db_column="df_indcd",
         to="DfIndicator",
         on_delete=models.CASCADE,
         null=True,
@@ -131,14 +141,16 @@ class VMP(models.Model):
         null=True,
         help_text="Unit dose form size",
     )
-    udfs_uomcd = models.ForeignKey(
+    udfs_uom = models.ForeignKey(
+        db_column="udfs_uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
         help_text="Unit dose form units",
     )
-    unit_dose_uomcd = models.ForeignKey(
+    unit_dose_uom = models.ForeignKey(
+        db_column="unit_dose_uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
@@ -148,22 +160,26 @@ class VMP(models.Model):
 
 
 class VPI(models.Model):
-    vpid = models.IntegerField(
-        primary_key=True,
+    vmp = models.ForeignKey(
+        db_column="vpid",
+        to="VMP",
+        on_delete=models.CASCADE,
         help_text="VMP identifier",
     )
-    isid = models.ForeignKey(
+    ing = models.ForeignKey(
+        db_column="isid",
         to="Ing",
         on_delete=models.CASCADE,
         help_text="Ingredient substance identifier",
     )
-    basis_strntcd = models.ForeignKey(
+    basis_strnt = models.ForeignKey(
+        db_column="basis_strntcd",
         to="BasisOfStrnth",
         on_delete=models.CASCADE,
         null=True,
         help_text="Basis of pharmaceutical strength",
     )
-    bs_subid = models.IntegerField(
+    bs_subid = models.BigIntegerField(
         null=True,
         help_text="Basis of strength substance identifier",
     )
@@ -173,7 +189,8 @@ class VPI(models.Model):
         null=True,
         help_text="Strength value numerator",
     )
-    strnt_nmrtr_uomcd = models.ForeignKey(
+    strnt_nmrtr_uom = models.ForeignKey(
+        db_column="strnt_nmrtr_uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
@@ -186,7 +203,8 @@ class VPI(models.Model):
         null=True,
         help_text="Strength value denominator",
     )
-    strnt_dnmtr_uomcd = models.ForeignKey(
+    strnt_dnmtr_uom = models.ForeignKey(
+        db_column="strnt_dnmtr_uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
@@ -196,11 +214,14 @@ class VPI(models.Model):
 
 
 class Ont(models.Model):
-    vpid = models.IntegerField(
-        primary_key=True,
+    vmp = models.ForeignKey(
+        db_column="vpid",
+        to="VMP",
+        on_delete=models.CASCADE,
         help_text="VMP ID",
     )
-    formcd = models.ForeignKey(
+    form = models.ForeignKey(
+        db_column="formcd",
         to="OntFormRoute",
         on_delete=models.CASCADE,
         help_text="VMP Form & Route",
@@ -208,11 +229,14 @@ class Ont(models.Model):
 
 
 class Dform(models.Model):
-    vpid = models.IntegerField(
-        primary_key=True,
+    vmp = models.OneToOneField(
+        db_column="vpid",
+        to="VMP",
+        on_delete=models.CASCADE,
         help_text="VMP identifier",
     )
-    formcd = models.ForeignKey(
+    form = models.ForeignKey(
+        db_column="formcd",
         to="Form",
         on_delete=models.CASCADE,
         help_text="Formulation code",
@@ -220,11 +244,14 @@ class Dform(models.Model):
 
 
 class Droute(models.Model):
-    vpid = models.IntegerField(
-        primary_key=True,
+    vmp = models.ForeignKey(
+        db_column="vpid",
+        to="VMP",
+        on_delete=models.CASCADE,
         help_text="VMP identifier",
     )
-    routecd = models.ForeignKey(
+    route = models.ForeignKey(
+        db_column="routecd",
         to="Route",
         on_delete=models.CASCADE,
         help_text="Route code",
@@ -232,11 +259,14 @@ class Droute(models.Model):
 
 
 class ControlInfo(models.Model):
-    vpid = models.IntegerField(
-        primary_key=True,
+    vmp = models.OneToOneField(
+        db_column="vpid",
+        to="VMP",
+        on_delete=models.CASCADE,
         help_text="VMP identifier",
     )
-    catcd = models.ForeignKey(
+    cat = models.ForeignKey(
+        db_column="catcd",
         to="ControlDrugCategory",
         on_delete=models.CASCADE,
         help_text="Control Drug category",
@@ -245,7 +275,8 @@ class ControlInfo(models.Model):
         null=True,
         help_text="Date of applicability",
     )
-    cat_prevcd = models.ForeignKey(
+    cat_prev = models.ForeignKey(
+        db_column="cat_prevcd",
         to="ControlDrugCategory",
         on_delete=models.CASCADE,
         related_name="+",
@@ -255,14 +286,16 @@ class ControlInfo(models.Model):
 
 
 class AMP(models.Model):
-    apid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="apid",
         help_text="AMP identifier",
     )
     invalid = models.BooleanField(
         help_text="Invalidity flag",
     )
-    vpid = models.ForeignKey(
+    vmp = models.ForeignKey(
+        db_column="vpid",
         to="VMP",
         on_delete=models.CASCADE,
         help_text="VMP identifier",
@@ -276,7 +309,7 @@ class AMP(models.Model):
         null=True,
         help_text="AMP Abbreviated name",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=700,
         help_text="Description",
     )
@@ -289,24 +322,28 @@ class AMP(models.Model):
         null=True,
         help_text="Previous Name",
     )
-    suppcd = models.ForeignKey(
+    supp = models.ForeignKey(
+        db_column="suppcd",
         to="Supplier",
         on_delete=models.CASCADE,
         help_text="Supplier",
     )
-    lic_authcd = models.ForeignKey(
+    lic_auth = models.ForeignKey(
+        db_column="lic_authcd",
         to="LicensingAuthority",
         on_delete=models.CASCADE,
         help_text="Current Licensing Authority",
     )
-    lic_auth_prevcd = models.ForeignKey(
+    lic_auth_prev = models.ForeignKey(
+        db_column="lic_auth_prevcd",
         to="LicensingAuthority",
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
         help_text="Previous Licensing Authority Code",
     )
-    lic_authchangecd = models.ForeignKey(
+    lic_authchange = models.ForeignKey(
+        db_column="lic_authchangecd",
         to="LicensingAuthorityChangeReason",
         on_delete=models.CASCADE,
         null=True,
@@ -316,13 +353,15 @@ class AMP(models.Model):
         null=True,
         help_text="Date of change of licensing authority",
     )
-    combprodcd = models.ForeignKey(
+    combprod = models.ForeignKey(
+        db_column="combprodcd",
         to="CombinationProdInd",
         on_delete=models.CASCADE,
         null=True,
         help_text="Combination product indicator Code",
     )
-    flavourcd = models.ForeignKey(
+    flavour = models.ForeignKey(
+        db_column="flavourcd",
         to="Flavour",
         on_delete=models.CASCADE,
         null=True,
@@ -334,7 +373,8 @@ class AMP(models.Model):
     parallel_import = models.BooleanField(
         help_text="Parallel Import indicator",
     )
-    avail_restrictcd = models.ForeignKey(
+    avail_restrict = models.ForeignKey(
+        db_column="avail_restrictcd",
         to="AvailabilityRestriction",
         on_delete=models.CASCADE,
         help_text="Restrictions on availability Code",
@@ -342,11 +382,14 @@ class AMP(models.Model):
 
 
 class ApIng(models.Model):
-    apid = models.IntegerField(
-        primary_key=True,
+    amp = models.ForeignKey(
+        db_column="apid",
+        to="AMP",
+        on_delete=models.CASCADE,
         help_text="AMP",
     )
-    isid = models.ForeignKey(
+    ing = models.ForeignKey(
+        db_column="isid",
         to="Ing",
         on_delete=models.CASCADE,
         help_text="Ingredient substance identifier",
@@ -357,7 +400,8 @@ class ApIng(models.Model):
         null=True,
         help_text="Pharmaceutical strength numerical value",
     )
-    uomcd = models.ForeignKey(
+    uom = models.ForeignKey(
+        db_column="uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
@@ -367,11 +411,14 @@ class ApIng(models.Model):
 
 
 class LicRoute(models.Model):
-    apid = models.IntegerField(
-        primary_key=True,
+    amp = models.ForeignKey(
+        db_column="apid",
+        to="AMP",
+        on_delete=models.CASCADE,
         help_text="AMP identifier",
     )
-    routecd = models.ForeignKey(
+    route = models.ForeignKey(
+        db_column="routecd",
         to="Route",
         on_delete=models.CASCADE,
         help_text="Licenced route",
@@ -379,8 +426,10 @@ class LicRoute(models.Model):
 
 
 class ApInfo(models.Model):
-    apid = models.IntegerField(
-        primary_key=True,
+    amp = models.OneToOneField(
+        db_column="apid",
+        to="AMP",
+        on_delete=models.CASCADE,
         help_text="AMP identifier",
     )
     sz_weight = models.CharField(
@@ -388,7 +437,8 @@ class ApInfo(models.Model):
         null=True,
         help_text="Size / Weight",
     )
-    colourcd = models.ForeignKey(
+    colour = models.ForeignKey(
+        db_column="colourcd",
         to="Colour",
         on_delete=models.CASCADE,
         null=True,
@@ -402,8 +452,9 @@ class ApInfo(models.Model):
 
 
 class VMPP(models.Model):
-    vppid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="vppid",
         help_text="VMPP Identifier",
     )
     invalid = models.BooleanField(
@@ -413,7 +464,8 @@ class VMPP(models.Model):
         max_length=420,
         help_text="VMPP description",
     )
-    vpid = models.ForeignKey(
+    vmp = models.ForeignKey(
+        db_column="vpid",
         to="VMP",
         on_delete=models.CASCADE,
         help_text="VMP identifier",
@@ -424,14 +476,16 @@ class VMPP(models.Model):
         null=True,
         help_text="Quantity Value",
     )
-    qty_uomcd = models.ForeignKey(
+    qty_uom = models.ForeignKey(
+        db_column="qty_uomcd",
         to="UnitOfMeasure",
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
         help_text="Quantity Unit of Measure code",
     )
-    combpackcd = models.ForeignKey(
+    combpack = models.ForeignKey(
+        db_column="combpackcd",
         to="CombinationPackInd",
         on_delete=models.CASCADE,
         null=True,
@@ -440,11 +494,14 @@ class VMPP(models.Model):
 
 
 class Dtinfo(models.Model):
-    vppid = models.IntegerField(
-        primary_key=True,
+    vmpp = models.OneToOneField(
+        db_column="vppid",
+        to="VMPP",
+        on_delete=models.CASCADE,
         help_text="VMPP identifier",
     )
-    pay_catcd = models.ForeignKey(
+    pay_cat = models.ForeignKey(
+        db_column="pay_catcd",
         to="DtPaymentCategory",
         on_delete=models.CASCADE,
         help_text="Drug Tariff payment category code",
@@ -464,8 +521,9 @@ class Dtinfo(models.Model):
 
 
 class AMPP(models.Model):
-    appid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="appid",
         help_text="AMPP identifier",
     )
     invalid = models.BooleanField(
@@ -480,23 +538,27 @@ class AMPP(models.Model):
         null=True,
         help_text="AMPP Abbreviated Name",
     )
-    vppid = models.ForeignKey(
+    vmpp = models.ForeignKey(
+        db_column="vppid",
         to="VMPP",
         on_delete=models.CASCADE,
         help_text="VMPP identifier",
     )
-    apid = models.ForeignKey(
+    amp = models.ForeignKey(
+        db_column="apid",
         to="AMP",
         on_delete=models.CASCADE,
         help_text="AMP identifier",
     )
-    combpackcd = models.ForeignKey(
+    combpack = models.ForeignKey(
+        db_column="combpackcd",
         to="CombinationPackInd",
         on_delete=models.CASCADE,
         null=True,
         help_text="Combination pack Indicator code",
     )
-    legal_catcd = models.ForeignKey(
+    legal_cat = models.ForeignKey(
+        db_column="legal_catcd",
         to="LegalCategory",
         on_delete=models.CASCADE,
         help_text="Legal category code",
@@ -506,7 +568,8 @@ class AMPP(models.Model):
         null=True,
         help_text="Sub Pack Info",
     )
-    disccd = models.ForeignKey(
+    disc = models.ForeignKey(
+        db_column="disccd",
         to="DiscontinuedInd",
         on_delete=models.CASCADE,
         null=True,
@@ -519,11 +582,14 @@ class AMPP(models.Model):
 
 
 class PackInfo(models.Model):
-    appid = models.IntegerField(
-        primary_key=True,
+    ampp = models.OneToOneField(
+        db_column="appid",
+        to="AMPP",
+        on_delete=models.CASCADE,
         help_text="AMPP identifier as in AMPP tag above",
     )
-    reimb_statcd = models.ForeignKey(
+    reimb_stat = models.ForeignKey(
+        db_column="reimb_statcd",
         to="ReimbursementStatus",
         on_delete=models.CASCADE,
         help_text="Appliance Reimbursement status code",
@@ -532,7 +598,8 @@ class PackInfo(models.Model):
         null=True,
         help_text="Date Appliance reimbursement status became effective",
     )
-    reimb_statprevcd = models.ForeignKey(
+    reimb_statprev = models.ForeignKey(
+        db_column="reimb_statprevcd",
         to="ReimbursementStatus",
         on_delete=models.CASCADE,
         related_name="+",
@@ -547,8 +614,10 @@ class PackInfo(models.Model):
 
 
 class PrescribInfo(models.Model):
-    appid = models.IntegerField(
-        primary_key=True,
+    ampp = models.OneToOneField(
+        db_column="appid",
+        to="AMPP",
+        on_delete=models.CASCADE,
         help_text="AMPP identifier",
     )
     sched_2 = models.BooleanField(
@@ -581,8 +650,10 @@ class PrescribInfo(models.Model):
 
 
 class PriceInfo(models.Model):
-    appid = models.IntegerField(
-        primary_key=True,
+    ampp = models.OneToOneField(
+        db_column="appid",
+        to="AMPP",
+        on_delete=models.CASCADE,
         help_text="AMPP identifier",
     )
     price = models.IntegerField(
@@ -597,7 +668,8 @@ class PriceInfo(models.Model):
         null=True,
         help_text="Price prior to change date",
     )
-    price_basiscd = models.ForeignKey(
+    price_basis = models.ForeignKey(
+        db_column="price_basiscd",
         to="PriceBasis",
         on_delete=models.CASCADE,
         help_text="Price basis flag",
@@ -605,8 +677,10 @@ class PriceInfo(models.Model):
 
 
 class ReimbInfo(models.Model):
-    appid = models.IntegerField(
-        primary_key=True,
+    ampp = models.OneToOneField(
+        db_column="appid",
+        to="AMPP",
+        on_delete=models.CASCADE,
         help_text="AMPP identifier",
     )
     px_chrgs = models.IntegerField(
@@ -623,13 +697,15 @@ class ReimbInfo(models.Model):
     cal_pack = models.BooleanField(
         help_text="Calendar pack indicator",
     )
-    spec_contcd = models.ForeignKey(
+    spec_cont = models.ForeignKey(
+        db_column="spec_contcd",
         to="SpecCont",
         on_delete=models.CASCADE,
         null=True,
         help_text="Special Container Indicator code",
     )
     dnd = models.ForeignKey(
+        db_column="dndcd",
         to="Dnd",
         on_delete=models.CASCADE,
         null=True,
@@ -641,15 +717,16 @@ class ReimbInfo(models.Model):
 
 
 class Ing(models.Model):
-    isid = models.IntegerField(
+    id = models.BigIntegerField(
         primary_key=True,
+        db_column="isid",
         help_text="Ingredient Substance Identifier",
     )
     isiddt = models.DateField(
         null=True,
         help_text="Date ingredient substance identifier became valid",
     )
-    isidprev = models.IntegerField(
+    isidprev = models.BigIntegerField(
         null=True,
         help_text="Previous ingredient substance identifier",
     )
@@ -667,7 +744,7 @@ class CombinationPackInd(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -678,7 +755,7 @@ class CombinationProdInd(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -689,7 +766,7 @@ class BasisOfName(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=150,
         help_text="Description",
     )
@@ -700,7 +777,7 @@ class NamechangeReason(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=150,
         help_text="Description",
     )
@@ -711,7 +788,7 @@ class VirtualProductPresStatus(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -722,7 +799,7 @@ class ControlDrugCategory(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -733,14 +810,14 @@ class LicensingAuthority(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
 
 
 class UnitOfMeasure(models.Model):
-    cd = models.IntegerField(
+    cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
     )
@@ -748,18 +825,18 @@ class UnitOfMeasure(models.Model):
         null=True,
         help_text="Date code is applicable from",
     )
-    cdprev = models.IntegerField(
+    cdprev = models.BigIntegerField(
         null=True,
         help_text="Previous code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=150,
         help_text="Description",
     )
 
 
 class Form(models.Model):
-    cd = models.IntegerField(
+    cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
     )
@@ -767,11 +844,11 @@ class Form(models.Model):
         null=True,
         help_text="Date code is applicable from",
     )
-    cdprev = models.IntegerField(
+    cdprev = models.BigIntegerField(
         null=True,
         help_text="Previous code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -782,14 +859,14 @@ class OntFormRoute(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
 
 
 class Route(models.Model):
-    cd = models.IntegerField(
+    cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
     )
@@ -797,11 +874,11 @@ class Route(models.Model):
         null=True,
         help_text="Date code is applicable from",
     )
-    cdprev = models.IntegerField(
+    cdprev = models.BigIntegerField(
         null=True,
         help_text="Previous code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -812,14 +889,14 @@ class DtPaymentCategory(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
 
 
 class Supplier(models.Model):
-    cd = models.IntegerField(
+    cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
     )
@@ -827,14 +904,14 @@ class Supplier(models.Model):
         null=True,
         help_text="Date code is applicable from",
     )
-    cdprev = models.IntegerField(
+    cdprev = models.BigIntegerField(
         null=True,
         help_text="Previous code",
     )
     invalid = models.BooleanField(
         help_text="Invalidity flag",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=80,
         help_text="Description",
     )
@@ -845,7 +922,7 @@ class Flavour(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -856,7 +933,7 @@ class Colour(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -867,7 +944,7 @@ class BasisOfStrnth(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=150,
         help_text="Description",
     )
@@ -878,7 +955,7 @@ class ReimbursementStatus(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -889,7 +966,7 @@ class SpecCont(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -900,7 +977,7 @@ class Dnd(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -911,7 +988,7 @@ class VirtualProductNonAvail(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -922,7 +999,7 @@ class DiscontinuedInd(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -933,7 +1010,7 @@ class DfIndicator(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=20,
         help_text="Description",
     )
@@ -944,7 +1021,7 @@ class PriceBasis(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -955,7 +1032,7 @@ class LegalCategory(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -966,7 +1043,7 @@ class AvailabilityRestriction(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
@@ -977,18 +1054,20 @@ class LicensingAuthorityChangeReason(models.Model):
         primary_key=True,
         help_text="Code",
     )
-    desc = models.CharField(
+    descr = models.CharField(
         max_length=60,
         help_text="Description",
     )
 
 
-class Gtin(models.Model):
-    appid = models.IntegerField(
-        primary_key=True,
+class GTIN(models.Model):
+    ampp = models.OneToOneField(
+        db_column="appid",
+        to="AMPP",
+        on_delete=models.CASCADE,
         help_text="AMPP identifier",
     )
-    gtin = models.IntegerField(
+    gtin = models.BigIntegerField(
         help_text="GTIN",
     )
     startdt = models.DateField(

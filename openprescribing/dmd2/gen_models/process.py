@@ -4,30 +4,65 @@ import re
 fks = {
     'amppid': 'ampp',
     'apid': 'amp',
+    'appid': 'ampp',
     'isid': 'ing',
     'vpid': 'vmp',
     'vppid': 'vmpp',
     'vtmid': 'vtm',
 }
 
+
 with open('schema_raw.csv') as f:
     lines = list(csv.DictReader(f, fieldnames=['table', 'field', 'optional', 'orig_descr']))
 
 
-last_table = None
+table = None
 
 for line in lines:
-    if line['table'] != last_table:
-        last_table = line['table']
-        line['primary_key'] = True
-        line['type'] = 'IntegerField'
+    if line['table'] == 'ccontent':
+        continue
+
+    if line['table'] != table:
+        table = line['table']
+
+        if line['field'] == 'cd' or fks[line['field']] == table:
+            line['primary_key'] = True
+            if 'maximum of 18' in line['orig_descr']:
+                line['type'] = 'BigIntegerField'
+            else:
+                line['type'] = 'IntegerField'
+
+            if line['field'] != 'cd':
+                line['db_column'] = line['field']
+                line['field'] = 'id'
+
+        else:
+            if line['table'] in [
+                'vpi',
+                'ont',
+                'droute',
+                'ap_ing',
+                'lic_route',
+            ]:
+                line['type'] = 'ForeignKey'
+            else:
+                line['type'] = 'OneToOneField'
+
+            line['to'] = fks[line['field']]
+            line['db_column'] = line['field']
+            line['field'] = fks[line['field']]
 
     elif line['field'] in fks:
         line['type'] = 'ForeignKey'
-        line['foreign_key_to'] = fks[line['field']]
+        line['to'] = fks[line['field']]
+        line['db_column'] = line['field']
+        line['field'] = fks[line['field']]
 
     elif line['field'] == 'cdprev':
-        line['type'] = 'IntegerField'
+        if 'maximum of 18' in line['orig_descr']:
+            line['type'] = 'BigIntegerField'
+        else:
+            line['type'] = 'IntegerField'
 
     elif line['field'][-2:] == 'dt':
         line['type'] = 'DateField'
@@ -36,9 +71,12 @@ for line in lines:
         line['type'] = 'BooleanField'
 
     elif 'narrative' in line['orig_descr'].lower():
-        match = re.search('<([\w ]+)>', line['orig_descr'].lower())
+        assert line['field'][-2:] == 'cd'
         line['type'] = 'ForeignKey'
-        line['foreign_key_to'] = match.groups()[0].replace(' ', '')
+        match = re.search('<([\w ]+)>', line['orig_descr'].lower())
+        line['to'] = match.groups()[0].replace(' ', '')
+        line['db_column'] = line['field']
+        line['field'] = line['field'][:-2]
 
     elif 'decimal' in line['orig_descr']:
         line['type'] = 'DecimalField'
@@ -52,17 +90,21 @@ for line in lines:
             line['max_length'] = match.groups()[0]
 
         else:
-            line['type'] = 'IntegerField'
+            if 'maximum of 18' in line['orig_descr']:
+                line['type'] = 'BigIntegerField'
+            else:
+                line['type'] = 'IntegerField'
 
     elif 'present and set' in line['orig_descr']:
         line['type'] = 'BooleanField'
 
     elif line['field'] == 'gtin':
-        line['type'] = 'IntegerField'
+        line['type'] = 'BigIntegerField'
 
     elif line['field'] == 'dnd':
         line['type'] = 'ForeignKey'
-        line['foreign_key_to'] = 'dnd'
+        line['to'] = 'dnd'
+        line['db_column'] = 'dndcd'
 
     elif line['field'] == 'ltd_stab':
         line['type'] = 'retired'
@@ -78,6 +120,7 @@ for line in lines:
         descr = 'Code'
 
     elif line['field'] == 'desc':
+        line['field'] = 'descr'
         descr = 'Description'
 
     else:
@@ -113,7 +156,7 @@ for line in lines:
 
     line['descr'] = descr
 
-fieldnames = ['table', 'field', 'optional', 'orig_descr', 'type', 'primary_key', 'foreign_key_to', 'max_length', 'max_digits', 'decimal_places', 'descr']
+fieldnames = ['table', 'field', 'optional', 'orig_descr', 'type', 'primary_key', 'db_column', 'to', 'max_length', 'max_digits', 'decimal_places', 'descr']
 
 with open('schema.csv', 'w') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)

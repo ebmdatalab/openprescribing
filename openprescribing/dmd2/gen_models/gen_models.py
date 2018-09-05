@@ -9,6 +9,7 @@ def model_name(table_name):
         'vmpp',
         'amp',
         'ampp',
+        'gtin',
     ]:
         return table_name.upper()
     else:
@@ -46,11 +47,14 @@ for line in lines:
     if line['primary_key'] == 'True':
         options.append(('primary_key', 'True'))
 
-    if line['type'] == 'ForeignKey':
-        options.append(('to', quote(model_name(line['foreign_key_to']))))
+    if line['db_column']:
+        options.append(('db_column', quote(line['db_column'])))
+
+    if line['type'] in ['ForeignKey', 'OneToOneField']:
+        options.append(('to', quote(model_name(line['to']))))
         options.append(('on_delete', 'models.CASCADE'))
 
-        if 'prevcd' in line['field'] or 'uomcd' in line['field']:
+        if 'prevcd' in line['db_column'] or 'uomcd' in line['db_column']:
             options.append(('related_name', quote('+')))
 
     elif line['type'] == 'CharField':
