@@ -17,7 +17,7 @@ from openprescribing.slack import notify_slack
 from pipeline import runner
 
 
-e2e_path = os.path.join(settings.SITE_ROOT, 'pipeline', 'e2e-test-data')
+e2e_path = os.path.join(settings.APPS_ROOT, 'pipeline', 'e2e-test-data')
 
 
 class Command(BaseCommand):
@@ -42,7 +42,7 @@ class Command(BaseCommand):
 def run_end_to_end():
     print('BQ_NONCE: {}'.format(settings.BQ_NONCE))
 
-    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+    path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
                         'commands', 'measure_definitions')
     num_measures = len(os.listdir(path))
 
@@ -86,7 +86,7 @@ def run_end_to_end():
         ('numerator', 'INTEGER'),
         ('denominator', 'INTEGER'),
     )
-    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+    path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
                         'commands', 'measure_definitions', '*.json')
     for path in glob.glob(path):
         measure_id = os.path.splitext(os.path.basename(path))[0]
@@ -96,7 +96,7 @@ def run_end_to_end():
 
     call_command('generate_presentation_replacements')
 
-    path = os.path.join(settings.SITE_ROOT, 'frontend', 'management',
+    path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
                         'commands', 'replace_matviews.sql')
     with open(path) as f:
         with connection.cursor() as c:

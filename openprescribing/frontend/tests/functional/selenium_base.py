@@ -49,7 +49,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         return webdriver.Firefox(
             capabilities=caps,
             firefox_profile=fp,
-            log_path="%s/logs/webdriver.log" % settings.INSTALL_ROOT)
+            log_path="%s/logs/webdriver.log" % settings.REPO_ROOT)
 
     @classmethod
     def setUpClass(cls):

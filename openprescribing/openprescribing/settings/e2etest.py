@@ -11,13 +11,13 @@ DATABASES = {
     }
 }
 
-PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+PIPELINE_METADATA_DIR = os.path.join(APPS_ROOT, 'pipeline', 'metadata')
 
 PIPELINE_DATA_BASEDIR = os.path.join(
-    SITE_ROOT, 'pipeline', 'e2e-test-data', 'data', '')
+    APPS_ROOT, 'pipeline', 'e2e-test-data', 'data', '')
 
 PIPELINE_IMPORT_LOG_PATH=os.path.join(
-    SITE_ROOT, 'pipeline', 'e2e-test-data', 'log.json')
+    APPS_ROOT, 'pipeline', 'e2e-test-data', 'log.json')
 
 SLACK_SENDING_ACTIVE = True
 

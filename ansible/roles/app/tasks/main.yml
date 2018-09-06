@@ -31,7 +31,7 @@
 - name: Ensure cd to dir after workon
   lineinfile:
     dest: "{{ HOME }}/.virtualenvs/postactivate"
-    line: "cd {{ project_root_path }}"
+    line: "cd {{ apps_root }}"
     create: yes
 
 - name: Activate virtualenv on login
@@ -49,7 +49,7 @@
   become: yes
   npm:
     name: "{{ item }}"
-    path: "{{ project_root_path }}/media/js"
+    path: "{{ apps_root }}/media/js"
     global: yes
   with_items:
     - jshint
@@ -59,13 +59,13 @@
   become: yes
   npm:
     name: browserify
-    path: "{{ project_root_path }}/media/js"
+    path: "{{ apps_root }}/media/js"
     global: yes
     version: '>= 2.3.0 <4'
 
 - name: Install packages based on package.json
   npm:
-    path: "{{ project_root_path }}/media/js"
+    path: "{{ apps_root }}/media/js"
 
 - name: Install ipdb (pinned for python 2.7)
   pip:
@@ -75,21 +75,21 @@
 
 - name: Make manage.py executable
   file:
-    path: "{{ project_root_path }}/manage.py"
+    path: "{{ apps_root }}/manage.py"
     mode: 0777
 
 - name: Create environment file
   copy:
     remote_src: yes
-    src: "{{ checkout_path }}/environment-sample"
-    dest: "{{ checkout_path }}/environment"
+    src: "{{ repo_root }}/environment-sample"
+    dest: "{{ repo_root }}/environment"
     force: yes
 
 - name: Set up environment file
   replace:
     regexp: "{{ item.name }}=.*"
     replace: "{{ item.name }}={{ item.content }}"
-    path: "{{ checkout_path }}/environment"
+    path: "{{ repo_root }}/environment"
   with_items: "{{ envvars }}"
 
 - name: Django migrate
@@ -97,4 +97,4 @@
   become_user: "{{ USER }}"
   shell: ". {{ virtualenv_path }}/bin/activate && ./manage.py migrate"
   args:
-    chdir: "{{ project_root_path }}"
+    chdir: "{{ apps_root }}"

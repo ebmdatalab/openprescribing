@@ -24,7 +24,7 @@ class CommandTests(TestCase):
         ]:
             PCT.objects.create(code=code, name=name, org_type="CCG")
 
-        path = os.path.join(settings.SITE_ROOT, "pipeline", "test-data")
+        path = os.path.join(settings.APPS_ROOT, "pipeline", "test-data")
         cls.path1 = os.path.join(path, "epraccur1.csv")
         cls.path2 = os.path.join(path, "epraccur2.csv")
 

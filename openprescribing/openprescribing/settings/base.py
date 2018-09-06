@@ -5,22 +5,22 @@ from common import utils
 
 # PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
-DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+SETTINGS_ROOT = dirname(dirname(abspath(__file__)))
 
 # Absolute filesystem path to the top-level project folder:
-SITE_ROOT = dirname(DJANGO_ROOT)
+APPS_ROOT = dirname(SETTINGS_ROOT)
 
-INSTALL_ROOT = abspath(join(SITE_ROOT, '..'))
+REPO_ROOT = abspath(join(APPS_ROOT, '..'))
 
 # Site name:
-SITE_NAME = basename(DJANGO_ROOT)
+SITE_NAME = basename(SETTINGS_ROOT)
 
 # Site ID (django.contrib.sites framework, required by django-anyauth
 SITE_ID = 1
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
-path.append(DJANGO_ROOT)
+path.append(SETTINGS_ROOT)
 # END PATH CONFIGURATION
 
 
@@ -64,7 +64,7 @@ USE_TZ = True
 
 # MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
+MEDIA_ROOT = normpath(join(APPS_ROOT, 'media'))
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
@@ -80,7 +80,7 @@ MEDIA_URL = '/media/'
 # provide static files for serving -- specifically, the Django admin
 # app.
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
+STATIC_ROOT = normpath(join(APPS_ROOT, 'assets'))
 
 # The base URL which will be used in URLs for static assets
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
@@ -91,7 +91,7 @@ STATIC_URL = '/static/'
 # See:
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
-    normpath(join(SITE_ROOT, 'static')),
+    normpath(join(APPS_ROOT, 'static')),
 )
 
 # See:
@@ -119,7 +119,7 @@ ALLOWED_HOSTS = []
 # See:
 # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
-    normpath(join(SITE_ROOT, 'frontend', 'tests', 'fixtures')),
+    normpath(join(APPS_ROOT, 'frontend', 'tests', 'fixtures')),
 )
 # END FIXTURE CONFIGURATION
 
@@ -129,7 +129,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            normpath(join(SITE_ROOT, 'templates')),
+            normpath(join(APPS_ROOT, 'templates')),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

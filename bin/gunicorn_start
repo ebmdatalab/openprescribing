@@ -10,12 +10,12 @@ fi
 
 NAME="openprescribing_$ENV"
 
-# INSTALL_ROOT and SITE_ROOT match definitions in settings
-INSTALL_ROOT=$(dirname $(dirname $0))
-SITE_ROOT="$INSTALL_ROOT/openprescribing"
+# REPO_ROOT and APPS_ROOT match definitions in settings
+REPO_ROOT=$(dirname $(dirname $0))
+APPS_ROOT="$REPO_ROOT/openprescribing"
 
-RUNDIR="$INSTALL_ROOT/run"
-LOGDIR="$INSTALL_ROOT/logs"
+RUNDIR="$REPO_ROOT/run"
+LOGDIR="$REPO_ROOT/logs"
 
 # Create the run and logs directories if they don't exist
 mkdir -p $RUNDIR
@@ -27,22 +27,22 @@ ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
 # Export environment variables that depend on $ENV
 export DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENV"
-export PYTHONPATH=$SITE_ROOT:$PYTHONPATH
-export NEW_RELIC_CONFIG_FILE="$INSTALL_ROOT/newrelic.ini"
+export PYTHONPATH=$APPS_ROOT:$PYTHONPATH
+export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENV
 
 echo "Starting $NAME"
 echo "whoami: $(whoami)"
 echo "ENV: $ENV"
-echo "INSTALL_ROOT: $INSTALL_ROOT"
-echo "SITE_ROOT: $SITE_ROOT"
+echo "REPO_ROOT: $INSTALL_ROOT"
+echo "APPS_ROOT: $SITE_ROOT"
 echo "PYTHONPATH: $PYTHONPATH"
 
 # Source environment file
-source "$INSTALL_ROOT/environment"
+source "$REPO_ROOT/environment"
 
 # Activate the virtual environment
-source "$INSTALL_ROOT/.venv/bin/activate"
+source "$REPO_ROOT/.venv/bin/activate"
  
 # Start gunicorn via newrelic-admin
 exec newrelic-admin run-program gunicorn openprescribing.wsgi:application \

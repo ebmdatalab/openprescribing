@@ -162,7 +162,7 @@ class CommandsTestCase(TestCase):
 
         self.assertEqual(NCSOConcession.objects.count(), 2)
 
-        base_path = os.path.join(settings.SITE_ROOT, 'dmd', 'tests', 'pages')
+        base_path = os.path.join(settings.APPS_ROOT, 'dmd', 'tests', 'pages')
 
         with open(os.path.join(base_path, 'ncso-archive.html')) as f:
             archive_doc = bs4.BeautifulSoup(f.read(), 'html.parser')

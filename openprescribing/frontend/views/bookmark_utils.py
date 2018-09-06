@@ -28,7 +28,7 @@ from frontend.models import Measure
 from frontend.models import MeasureValue
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
-            settings.SITE_ROOT +
+            settings.APPS_ROOT +
             '/frontend/management/commands/grab_chart.js')
 
 logger = logging.getLogger(__name__)
