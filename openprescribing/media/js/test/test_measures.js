@@ -858,7 +858,8 @@ describe('Measures', function() {
         series: {
           name: 'Foo',
           options: {
-            isNationalSeries: true
+            isNationalSeries: true,
+            showTooltip: false
           }
         }
       };
@@ -876,7 +877,8 @@ describe('Measures', function() {
         series: {
           name: 'Foo',
           options: {
-            isNationalSeries: false
+            isNationalSeries: false,
+            showTooltip: true
           }
         }
       };
@@ -949,7 +951,8 @@ describe('Measures', function() {
         series: {
           name: 'Bar',
           options: {
-            isNationalSeries: false
+            isNationalSeries: false,
+            showTooltip: true
           }
         }
       };

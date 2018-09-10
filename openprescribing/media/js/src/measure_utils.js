@@ -449,12 +449,18 @@ var utils = {
 
   getGraphOptions: function(d, options, isPercentageMeasure, chartOptions) {
     // Assemble the series for the chart, and add chart config options.
-    if (d.data.length) {
-      var hcOptions = this._getChartOptions(d, isPercentageMeasure,
-        options, chartOptions);
-      hcOptions.series = [{
-        name: options.orgId !== ALL_ORGS_PSEUDO_ID ? 'This ' + options.orgType : options.orgName,
+    if ( ! d.data.length) {
+      return null;
+    }
+    var hcOptions = this._getChartOptions(d, isPercentageMeasure,
+      options, chartOptions);
+    var showCentilesOnly = (options.orgId === ALL_ORGS_PSEUDO_ID);
+    hcOptions.series = [];
+    if ( ! showCentilesOnly) {
+      hcOptions.series.push({
+        name: 'This ' + options.orgType,
         isNationalSeries: false,
+        showTooltip: true,
         data: d.data,
         events: {
           legendItemClick: function() { return false; }
@@ -464,36 +470,36 @@ var utils = {
         marker: {
           radius: 2,
         },
-      }];
-      _.each(_.keys(d.globalCentiles), function(k) {
-        var e = {
-          name: k + 'th percentile nationally',
-          isNationalSeries: true,
-          data: d.globalCentiles[k],
-          dashStyle: 'dot',
-          events: {
-            legendItemClick: function() { return false; }
-          },
-          color: 'blue',
-          lineWidth: 1,
-          showInLegend: false,
-          marker: {
-            enabled: false,
-          },
-        };
-        // Distinguish the median visually.
-        if (k === '50') {
-          e.dashStyle = 'longdash';
-        }
-        // Show median and an arbitrary decile in the legend
-        if (k === '10' || k === '50') {
-          e.showInLegend = true;
-        }
-        hcOptions.series.push(e);
       });
-      return hcOptions;
     }
-    return null;
+    _.each(_.keys(d.globalCentiles), function(k) {
+      var e = {
+        name: k + 'th percentile nationally',
+        isNationalSeries: true,
+        showTooltip: showCentilesOnly,
+        data: d.globalCentiles[k],
+        dashStyle: 'dot',
+        events: {
+          legendItemClick: function() { return false; }
+        },
+        color: 'blue',
+        lineWidth: 1,
+        showInLegend: false,
+        marker: {
+          enabled: false,
+        },
+      };
+      // Distinguish the median visually.
+      if (k === '50') {
+        e.dashStyle = showCentilesOnly ? 'solid' : 'longdash';
+      }
+      // Show median and an arbitrary decile in the legend
+      if (k === '10' || k === '50') {
+        e.showInLegend = true;
+      }
+      hcOptions.series.push(e);
+    });
+    return hcOptions;
   },
 
   _getChartOptions: function(d, isPercentageMeasure,
@@ -549,7 +555,7 @@ var utils = {
     }
     chOptions.tooltip = {
       formatter: function() {
-        if (this.series.options.isNationalSeries) {
+        if ( ! this.series.options.showTooltip) {
           return false;
         }
         var num = humanize.numberFormat(this.point.numerator, 0);
@@ -559,23 +565,28 @@ var utils = {
         str += '<b>' + this.series.name;
         str += ' in ' + humanize.date('M Y', new Date(this.x));
         str += '</b><br/>';
-        str += d.numeratorShort + ': ' + num;
-        str += '<br/>';
-        if (d.denominatorShort == '1000 patients') {
-          // Treat measures which are per 1000 patients a bit differently.
-          // See https://github.com/ebmdatalab/openprescribing/issues/436.
-          denom = humanize.numberFormat(1000 * this.point.denominator, 0);
-          str += 'Registered Patients: ' + denom;
+        if ( ! this.series.options.isNationalSeries) {
+          str += d.numeratorShort + ': ' + num;
+          str += '<br/>';
+          if (d.denominatorShort == '1000 patients') {
+            // Treat measures which are per 1000 patients a bit differently.
+            // See https://github.com/ebmdatalab/openprescribing/issues/436.
+            denom = humanize.numberFormat(1000 * this.point.denominator, 0);
+            str += 'Registered Patients: ' + denom;
+          } else {
+            denom = humanize.numberFormat(this.point.denominator, 0);
+            str += d.denominatorShort + ': ' + denom;
+          }
+          str += '<br/>';
+          str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
+          str += (isPercentageMeasure) ? '%' : '';
+          if (this.point.percentile !== null) {
+            str += ' (' + humanize.ordinal(percentile);
+            str += ' percentile)';
+          }
         } else {
-          denom = humanize.numberFormat(this.point.denominator, 0);
-          str += d.denominatorShort + ': ' + denom;
-        }
-        str += '<br/>';
-        str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
-        str += (isPercentageMeasure) ? '%' : '';
-        if (this.point.percentile !== null) {
-          str += ' (' + humanize.ordinal(percentile);
-          str += ' percentile)';
+          str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
+          str += (isPercentageMeasure) ? '%' : '';
         }
         return str;
       },
