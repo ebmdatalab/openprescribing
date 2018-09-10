@@ -119,7 +119,9 @@ var utils = {
       return d.id;
     }).sortBy(function(d) {
       // Now by score, respecting `lowIsGood`
-      var score = d.meanPercentile;
+      // For aggregates (i.e. the "All England" charts) we sort by cost saving
+      // as sorting by mean percentile doesn't make any sense
+      var score = d.isAggregateEntity ? d.costSaving50th : d.meanPercentile;
       if (score === null) {
         score = 101;
       } else if (d.lowIsGood !== false) {
@@ -378,6 +380,7 @@ var utils = {
     } else {
       orgId = options.orgId;
     }
+    var isAggregateEntity = (orgId === ALL_ORGS_PSEUDO_ID);
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
@@ -388,7 +391,7 @@ var utils = {
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
-    if (orgId === ALL_ORGS_PSEUDO_ID) {
+    if (isAggregateEntity) {
       oneEntityUrl = null;
       chartTitleUrl = null;
       tagsFocusUrl = null;
@@ -435,6 +438,7 @@ var utils = {
     return {
       measureUrl: measureUrl,
       isCCG: options.orgType == 'CCG',
+      isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
