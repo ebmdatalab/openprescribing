@@ -196,11 +196,14 @@ def price_per_unit(request, format=None):
     filename = date
 
     practice_level = False
+    include_only_ccgs = False
     aggregate_over_ccgs = False
 
     if entity_code == ALL_ORGS_PSEUDO_ID:
         entity_code = None
-        aggregate_over_ccgs = True
+        include_only_ccgs = True
+        if not bnf_code:
+            aggregate_over_ccgs = True
 
     if bnf_code:
         params['bnf_code'] = bnf_code
@@ -237,7 +240,7 @@ def price_per_unit(request, format=None):
                 extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NULL'''
 
-    if aggregate_over_ccgs:
+    if include_only_ccgs:
         extra_conditions += '\nAND {ppusavings_table}.practice_id IS NULL'
 
     sql = ppu_sql(conditions=extra_conditions)
@@ -257,6 +260,7 @@ def price_per_unit(request, format=None):
 
                 -- Fixed value fields
                 '_all' AS pct,
+                'NHS England' as pct_name,
                 NULL AS practice,
                 NULL AS practice_name,
 
@@ -280,6 +284,8 @@ def price_per_unit(request, format=None):
     for result in results:
         if result['practice_name'] is not None:
             result['practice_name'] = nhs_titlecase(result['practice_name'])
+        if result['pct_name'] is not None:
+            result['pct_name'] = nhs_titlecase(result['pct_name'])
 
     response = Response(results)
     if request.accepted_renderer.format == 'csv':

@@ -3,8 +3,10 @@
   <thead>
     <tr>
       <th>
-        {% if by_presentation %}
+        {% if by_presentation and not all_ccgs %}
           Practice
+        {% elif by_presentation and all_ccgs %}
+          CCG
         {% else %}
           Presentation
         {% endif %}

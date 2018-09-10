@@ -280,6 +280,52 @@ def all_england_price_per_unit(request):
     return render(request, 'price_per_unit.html', context)
 
 
+@handle_bad_request
+def all_england_price_per_unit_by_presentation(request, bnf_code):
+    date = _specified_or_last_date(request, 'ppu')
+    presentation = get_object_or_404(Presentation, pk=bnf_code)
+    product = presentation.dmd_product
+    entity = PCT(code=ALL_ORGS_PSEUDO_ID, name='NHS England')
+
+    query = {
+        'format': 'json',
+        'bnf_code': presentation.bnf_code,
+        'highlight': entity.code,
+        'date': date.strftime('%Y-%m-%d'),
+    }
+
+    if 'trim' in request.GET:
+        query['trim'] = request.GET['trim']
+
+    querystring = urlencode(query)
+
+    parsed_url = urlparse(settings.API_HOST)
+
+    bubble_data_url = urlunparse((
+        parsed_url.scheme,   # scheme
+        parsed_url.netloc,   # host
+        '/api/1.0/bubble/',  # path
+        '',                  # params
+        querystring,         # query
+        '',                  # fragment
+    ))
+
+    context = {
+        'entity': entity,
+         # 'highlight': entity.code,
+         # 'highlight_name': entity.cased_name,
+        'name': presentation.product_name,
+        'bnf_code': presentation.bnf_code,
+        'presentation': presentation,
+        'product': product,
+        'date': date,
+        'by_presentation': True,
+        'bubble_data_url': bubble_data_url,
+        'all_ccgs': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
 ##################################################
 # MEASURES
 # These replace old CCG and practice dashboards.

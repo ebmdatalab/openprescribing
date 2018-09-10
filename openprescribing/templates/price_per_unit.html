@@ -39,7 +39,8 @@
     {% if by_presentation %}
      <h3>What is the cheapest presentation of {{ presentation.product_name }}?</h3>
     <p>
-      The following chart is to help you pick the cheapest treatment. It shows the various prices for all brands and formulations of <span id="extended-info-link">{{ presentation.product_name }}</span> that are prescribed across the country. You can click the adjacent tab to view your own practice or CCG’s prescribing.
+      The following chart is to help you pick the cheapest treatment. It shows the various prices for all brands and formulations of <span id="extended-info-link">{{ presentation.product_name }}</span> that are prescribed across the country.
+      {% if not all_ccgs %}You can click the adjacent tab to view your own practice or CCG’s prescribing.{% endif %}
       </p>
     {% endif %}
     {% if product %}
@@ -134,19 +135,25 @@
         doorbell.show();
       }
     });
-    {% if by_presentation %}
+    {% if by_presentation and not all_ccgs %}
       // When viewing at Presentation level, link back to practice-level
       var first_column = 'practice_name';
       var first_column_render = function(data, type, full, meta) {
         return ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
-        return link;
+      }
+    {% elif by_presentation and all_ccgs %}
+      // When viewing at Presentation level, link back to practice-level
+      var first_column = 'pct_name';
+      var first_column_render = function(data, type, full, meta) {
+        return ' <a href="/ccg/'+full['pct']+'/price_per_unit/?date='+ full['date']+ '">'+full['pct_name']+'</a>';
       }
     {% elif by_ccg %}
       // When viewing at CCG level, drill down to practices
       var first_column = 'presentation';
       var first_column_render = function(data, type, full, meta) {
         {% if all_ccgs %}
-          var rendered = full['name'];
+          var url = '{% url "all_england_price_per_unit_by_presentation" "BNFCODE" %}'.replace(/BNFCODE/, data)
+          var rendered = ' <a href="'+url+'?date='+ full['date']+ '">'+full['name']+'</a>';
         {% else %}
           var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
         {% endif %}
@@ -163,7 +170,7 @@
       }
     {% endif %}
       var pagination_text = "Showing page _PAGE_ of _PAGES_";
-    {% if by_presentation and not entity.ccg %}
+    {% if by_presentation and not entity.ccg and not all_ccgs %}
       pagination_text += ".  Where a practice is missing, no saving opportunities over £50 were identified for this product.";
     {% endif %}
     $('#price_per_pill').DataTable(
