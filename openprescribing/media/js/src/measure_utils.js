@@ -240,7 +240,7 @@ var utils = {
             'practice ' : 'CCG ';
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 2) +
+            humanize.numberFormat(perf.potentialSavings50th, 0) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of practices were already ' +
             'prescribing at this level or better, so we think it ought ' +
@@ -254,7 +254,7 @@ var utils = {
           perf.costSavings += (options.orgType === 'practice') ?
             'this CCG ' : 'NHS England ';
           perf.costSavings += 'would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 2) +
+            humanize.numberFormat(perf.potentialSavings50th, 0) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of ';
           perf.costSavings += (options.orgType === 'practice') ?
@@ -417,18 +417,18 @@ var utils = {
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
             'this ' + options.orgType + ' has saved the NHS £' +
-            humanize.numberFormat((d.costSaving50th * -1), 2) +
+            humanize.numberFormat((d.costSaving50th * -1), 0) +
             ' over the past ' + numMonths + ' months.';
         } else {
           chartExplanation += 'If ' + noun1 + ' had prescribed in line with the ' +
             'median, ' + noun2 + ' would have spent £' +
-            humanize.numberFormat(d.costSaving50th, 2) +
+            humanize.numberFormat(d.costSaving50th, 0) +
             ' less over the past ' + numMonths + ' months.';
         }
         if (d.costSaving10th > 0) {
           chartExplanation += ' If ' + noun3 + ' had prescribed in line with the best ' +
             '10%, it would have spent £' +
-            humanize.numberFormat(d.costSaving10th, 2) + ' less. ';
+            humanize.numberFormat(d.costSaving10th, 0) + ' less. ';
         }
       }
     }
