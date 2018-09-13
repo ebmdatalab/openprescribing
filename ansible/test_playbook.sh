@@ -16,3 +16,6 @@ sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
 # Do minimal database-connection test
 su -c 'SKIP_NPM_BUILD=1 /openprescribing/venv/bin/python /openprescribing/openprescribing/manage.py test frontend.tests.test_models.SearchBookmarkTestCase' vagrant
+
+# Check that gunicorn can start
+su -c 'CHECK_CONFIG=1 /openprescribing/bin/gunicorn_start production' vagrant
