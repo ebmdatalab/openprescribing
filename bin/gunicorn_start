@@ -34,8 +34,8 @@ export NEW_RELIC_ENVIRONMENT=$ENV
 echo "Starting $NAME"
 echo "whoami: $(whoami)"
 echo "ENV: $ENV"
-echo "REPO_ROOT: $INSTALL_ROOT"
-echo "APPS_ROOT: $SITE_ROOT"
+echo "REPO_ROOT: $REPO_ROOT"
+echo "APPS_ROOT: $APPS_ROOT"
 echo "PYTHONPATH: $PYTHONPATH"
 
 # Source environment file
