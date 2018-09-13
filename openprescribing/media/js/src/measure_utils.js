@@ -398,9 +398,7 @@ var utils = {
       measureForAllPracticesUrl = null;
     }
     var costDataAvailable = d.isCostBased && d.costSaving10th;
-    if (d.meanPercentile === null && ! costDataAvailable) {
-      chartExplanation = 'No data available.';
-    } else {
+    if (d.meanPercentile !== null || costDataAvailable) {
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
