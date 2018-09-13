@@ -42,9 +42,21 @@ echo "PYTHONPATH: $PYTHONPATH"
 source "$REPO_ROOT/environment"
 
 # Activate the virtual environment
-source "$REPO_ROOT/.venv/bin/activate"
- 
+source "$VIRTUALENV_PATH/bin/activate"
+
 # Start gunicorn via newrelic-admin
+echo exec newrelic-admin run-program gunicorn openprescribing.wsgi:application \
+  --name $NAME \
+  --bind=unix:$SOCKFILE \
+  --workers $GUNICORN_NUM_WORKERS \
+  --timeout $GUNICORN_TIMEOUT \
+  --user=$GUNICORN_USER \
+  --group=$GUNICORN_GROUP \
+  --log-level=$GUNICORN_LOG_LEVEL \
+  --log-file=$LOGFILE \
+  --access-logfile=$ACCESS_LOGFILE --check-config
+
+
 exec newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --name $NAME \
   --bind=unix:$SOCKFILE \
@@ -54,4 +66,4 @@ exec newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --group=$GUNICORN_GROUP \
   --log-level=$GUNICORN_LOG_LEVEL \
   --log-file=$LOGFILE \
-  --access-logfile=$ACCESS_LOGFILE
+  --access-logfile=$ACCESS_LOGFILE --check-config

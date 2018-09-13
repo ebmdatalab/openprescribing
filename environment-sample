@@ -1,3 +1,9 @@
+## This isn't just an example file; it's used in our ansible buildouts
+## and integration tests, so must be kept up to date.
+
+# Path to virtualenv
+VIRTUALENV_PATH=
+
 # Connection details for a PostgreSQL database.
 DB_NAME=
 DB_USER=
