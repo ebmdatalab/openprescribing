@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Prescribing measures for all CCGs in England{% endblock %}
+{% block title %}All {{ entity_type }}s across NHS England<{% endblock %}
 {% block active_class %}all_england{% endblock %}
 
 {% block extra_css %}
@@ -12,47 +12,63 @@
 {% block content %}
 
 <div class="row">
-  <h1>Prescribing measures for all {{ entity_type }}s in England</h1>
-  <p>
-    We have brought together various prescribing measures to show the
-    distribution of prescribing behaviour across NHS England.  These measures
-    are indicative only, and should be approached with caution.
-    Each chart shows the combined performance across NHS England considered in
-    aggregate, plus deciles across individual {{ entity_type }}s.
-    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
-  </p>
-
-  <p>
-    We have also calculated potential cost savings across NHS England through prescribing changes:
-  </p>
-  <p style="margin-bottom: 2em">
-    <a href="{% url 'all_england_price_per_unit' %}" class="btn btn-primary">View potential cost savings &rarr;</a>
-  </p>
-
-{% if tag_filter.show_message %}
-  <div class="alert alert-info">
-    <h4>Showing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h4>
-    {% if tag_filter.details|length == 1 %}
-      <p>{{ tag_filter.details.0.description|safe }}</p>
-    {% elif tag_filter.details|length > 1 %}
-      <dl>
-        {% for details in tag_filter.details %}
-          <dt>{{ details.name }}</dt>
-          <dd>{{ details.description|safe }}</dt>
-        {% endfor %}
-      </dl>
-    {% endif %}
-    <p>
-      <a href="?">View all standard measures instead</a>.
-    </p>
+  <div class="col-md-12">
+    <h1>Prescribing across all {{ entity_type }}s across NHS England</h1>
   </div>
-{% endif %}
 </div>
 
 <div class="row">
   <div class="col-md-6">
+    <h2>Cost savings</h2>
+    <p>
+      We have calculated potential cost savings across NHS England through prescribing changes. In <strong>June 2018</strong> these amounted to:<br>
+      <!-- hardcoded for now -->
+      <span style="font-size: 200%">£12,363,000</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="{% url 'all_england_price_per_unit' %}" class="btn btn-primary">View cost savings breakdown &rarr;</a>
+    </p>
+  </div>
+
+  <div class="col-md-6">
+    <h2>Prescribing measures</h2>
+    <p>
+      The charts below show the distribution of prescribing behaviour across {{entity_type}}s in NHS England on various measures.
+      Each chart shows performance at every decile and highlights the median.
+      These measures are indicative only, and should be approached with caution
+      (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).
+    </p>
+  </div>
+</div>
+
+<hr/>
+
+<div class="row">
+  {% if tag_filter.show_message %}
+    <div class="col-md-12">
+      <div class="alert alert-info">
+        <h4>Showing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h4>
+        {% if tag_filter.details|length == 1 %}
+          <p>{{ tag_filter.details.0.description|safe }}</p>
+        {% elif tag_filter.details|length > 1 %}
+          <dl>
+            {% for details in tag_filter.details %}
+              <dt>{{ details.name }}</dt>
+              <dd>{{ details.description|safe }}</dt>
+            {% endfor %}
+          </dl>
+        {% endif %}
+        <p>
+          <a href="?">View all standard measures instead</a>.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="col-md-6">
     {% include '_measure_filters.html' %}
   </div>
+
 </div>
 
 {% include '_measures_panel.html' %}
