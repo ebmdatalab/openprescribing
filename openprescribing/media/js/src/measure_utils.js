@@ -456,29 +456,26 @@ var utils = {
     }
     var hcOptions = this._getChartOptions(d, isPercentageMeasure,
       options, chartOptions);
-    var showCentilesOnly = (options.orgId === ALL_ORGS_PSEUDO_ID);
     hcOptions.series = [];
-    if ( ! showCentilesOnly) {
-      hcOptions.series.push({
-        name: 'This ' + options.orgType,
-        isNationalSeries: false,
-        showTooltip: true,
-        data: d.data,
-        events: {
-          legendItemClick: function() { return false; }
-        },
-        color: 'red',
-        showInLegend: true,
-        marker: {
-          radius: 2,
-        },
-      });
-    }
+    hcOptions.series.push({
+      name: (options.orgId !== ALL_ORGS_PSEUDO_ID) ? ('This ' + options.orgType) : options.orgName,
+      isNationalSeries: false,
+      showTooltip: true,
+      data: d.data,
+      events: {
+        legendItemClick: function() { return false; }
+      },
+      color: 'red',
+      showInLegend: true,
+      marker: {
+        radius: 2,
+      },
+    });
     _.each(_.keys(d.globalCentiles), function(k) {
       var e = {
         name: k + 'th percentile nationally',
         isNationalSeries: true,
-        showTooltip: showCentilesOnly,
+        showTooltip: false,
         data: d.globalCentiles[k],
         dashStyle: 'dot',
         events: {
@@ -493,7 +490,7 @@ var utils = {
       };
       // Distinguish the median visually.
       if (k === '50') {
-        e.dashStyle = showCentilesOnly ? 'solid' : 'longdash';
+        e.dashStyle = 'longdash';
       }
       // Show median and an arbitrary decile in the legend
       if (k === '10' || k === '50') {

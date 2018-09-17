@@ -497,6 +497,9 @@ def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
     context = {
         'tag_filter': tag_filter,
+        # Note, just changing this to "practice" should be enough to generate
+        # all NHS England cost-saving etc data at practice rather than CCG
+        # level
         'entity_type': 'CCG'
     }
     return render(request, 'all_england.html', context)
