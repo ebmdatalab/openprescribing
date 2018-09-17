@@ -109,8 +109,7 @@ def run_end_to_end():
 
     runner.run_all(2017, 9, under_test=True)
 
-    # We expect one MeasureGlobal per measure per month.  If this assert fails,
-    # check that num_measures is still correct.
+    # We expect one MeasureGlobal per measure per month.
     assert_count_equal(num_measures, MeasureGlobal)
 
     # We expect one MeasureValue for each CCG or Practice per measure per month
