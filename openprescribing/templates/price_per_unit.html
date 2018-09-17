@@ -94,8 +94,8 @@
 <script>
  {% if by_presentation %}
    var bubble_data_url = '{{ bubble_data_url|safe }}';
-   var highlight_name = '{{ highlight_name }}';
-   var generic_name = '{{ name }}';
+   var highlight_name = '{{ highlight_name|escapejs }}';
+   var generic_name = '{{ name|escapejs }}';
  {% endif %}
     $('#read-more').click(function (e) {
       e.preventDefault();
