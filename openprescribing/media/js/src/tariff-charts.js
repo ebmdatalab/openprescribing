@@ -1,8 +1,8 @@
 var $ = require('jquery');
 require('bootstrap');
 require('select2');
-require('Highcharts');
-require('Highcharts-export');
+var Highcharts = require('Highcharts');
+require('Highcharts-export')(Highcharts);
 var domready = require('domready');
 var _ = require('underscore');
 
