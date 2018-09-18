@@ -831,4 +831,4 @@ def custom_500(request):
 
 # This view deliberately triggers an error
 def error(request):
-    raise RuntimeError('Oh no')
+    raise RuntimeError('Deliberate error triggered for testing purposes')
