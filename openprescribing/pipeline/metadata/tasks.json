@@ -3,10 +3,6 @@
         "type": "manual_fetch",
         "source_id": "bnf_codes"
     },
-    "fetch_adqs": {
-        "type": "manual_fetch",
-        "source_id": "adqs"
-    },
     "fetch_ccg_boundaries": {
         "type": "manual_fetch",
         "source_id": "ccg_boundaries"
@@ -84,11 +80,9 @@
     },
     "import_adqs": {
         "type": "import",
-        "source_id": "adqs",
-        "command": "import_adqs --filename adqs_*csv",
+        "command": "import_adqs",
         "dependencies": [
-            "fetch_adqs",
-            "import_bnf_codes"
+          "import_hscic_prescribing"
         ]
     },
     "import_patient_list_weightings": {
