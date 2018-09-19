@@ -7,7 +7,7 @@
     - roles/setup
     - roles/app
   vars:
-    checkout_path: /openprescribing
+    checkout_path: /code/openprescribing
     virtualenv_path: "{{ checkout_path }}/venv"
     project_root_path: "{{ checkout_path }}/openprescribing"
     requirements_path: "{{ checkout_path }}/requirements.txt"
