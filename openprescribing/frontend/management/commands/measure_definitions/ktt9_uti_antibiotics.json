@@ -31,7 +31,7 @@
     "infections"
   ],
   "numerator_columns": [
-    "SUM(p.quantity * r.percent_of_adq) AS numerator, "
+    "SUM(p.quantity * r.adq_per_quantity) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
