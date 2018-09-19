@@ -30,9 +30,10 @@
           <div class="panel-body" class="row">
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <p class="measure-description">{{{ description }}}</p>
-
-                <div id="{{ chartId }}">
-                  <div class="status"></div>
+                <div id="{{ chartId }}-with-title">
+                  <div id="{{ chartId }}">
+                    <div class="status"></div>
+                  </div>
                 </div>
                 <p class="text-right" style="margin-top: 4px">
                   <a href="#" data-download-chart-id="{{ chartId }}">

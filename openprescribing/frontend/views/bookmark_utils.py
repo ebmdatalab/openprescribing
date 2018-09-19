@@ -622,6 +622,9 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
+def get_chart_id(measure_id):
+    return "#{}-with-title".format(measure_id)
+
 def make_org_email(org_bookmark, stats, preview=False, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
@@ -641,20 +644,20 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
                 msg,
                 org_bookmark.dashboard_url(),
                 getting_worse_file.name,
-                '#' + most_changing['declines'][0]['measure'].id
+                get_chart_id(most_changing['declines'][0]['measure'].id)
             )
         if stats['worst']:
             still_bad_img = attach_image(
                 msg,
                 org_bookmark.dashboard_url(),
                 still_bad_file.name,
-                '#' + stats['worst'][0].id)
+                get_chart_id(stats['worst'][0].id))
         if stats['interesting']:
             interesting_img = attach_image(
                 msg,
                 org_bookmark.dashboard_url(),
                 interesting_file.name,
-                '#' + stats['interesting'][0].id)
+                get_chart_id(stats['interesting'][0].id))
         unsubscribe_link = settings.GRAB_HOST + reverse(
             'bookmark-login',
             kwargs={'key': org_bookmark.user.profile.key})
