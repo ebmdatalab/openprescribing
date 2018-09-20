@@ -409,7 +409,6 @@ class Presentation(models.Model):
                 name = "n/a"
         return name
 
-
     class Meta:
         app_label = 'frontend'
 
