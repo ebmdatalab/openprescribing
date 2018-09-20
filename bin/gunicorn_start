@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 ENV=$1
 
 if [[ $ENV != "production" && $ENV != "staging" ]]
