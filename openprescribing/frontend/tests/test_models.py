@@ -151,6 +151,25 @@ class MailLogTestCase(TestCase):
         )
         self.assertEqual(MailLog.objects.first().message_id, '123')
 
+    def test_bounced_subject_no_stored_email(self):
+        MailLog.objects.create(
+            recipient='me',
+            event_type='bounced',
+            metadata={},
+            message_id='123'
+        )
+        self.assertEqual(
+            MailLog.objects.first().subject_from_metadata(), 'n/a')
+
+    def test_bounced_subject_no_message_id(self):
+        MailLog.objects.create(
+            recipient='me',
+            event_type='bounced',
+            metadata={}
+        )
+        self.assertEqual(
+            MailLog.objects.first().subject_from_metadata(), 'n/a')
+
 
 class PCTTestCase(TestCase):
     def test_name_titlecase(self):
