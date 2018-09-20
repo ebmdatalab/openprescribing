@@ -183,10 +183,10 @@
           {"data": first_column,
            "render": first_column_render
           },
-          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 0, '£' )},
-          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-          {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-          {"data": "quantity", render: $.fn.dataTable.render.number(',')},
+          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 0, '£' ), className: "text-right"},
+          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "quantity", render: $.fn.dataTable.render.number(','), className: "text-right"},
           {"data": "formulation_swap", "defaultContent": "-"},
         ]
       }
