@@ -39,7 +39,7 @@ Requires [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](ht
 ### Start the server
 
     vagrant ssh  # also activates the virtualenv for you
-    python manage.py runserver_plus 0.0.0.0:8000
+    python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
 
 The application should then be accessible at
 ``http://127.0.0.1:3333/`` (using the vagrant-forwarded port) from a
@@ -162,7 +162,7 @@ To be able to access the django instance running inside Docker from outside the 
 
 This will give a shell, at which you can start Django, specifying the ``0.0.0.0`` interface so that it will accept connections from all IP addesses (not just localhost):
 
-     python manage.py runserver_plus 0.0.0.0:8000
+     python manage.py runserver_plus 0.0.0.0:8000 --settings=openprescribing.settings.local
 
 The application should then be accessible at ``http://localhost:8000/`` from a web-
 on the host computer.
@@ -271,7 +271,7 @@ You can find the combinations we use for our Travis CI in
 
 # Run the application
 
-    python manage.py runserver_plus
+    python manage.py runserver_plus --settings=openprescribing.settings.local
 
 You should now have a Django application running with no data inside it.
 
