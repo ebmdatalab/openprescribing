@@ -210,7 +210,7 @@ If required, you can run individual Django tests as follows:
 
     python manage.py test frontend.tests.test_api_views
 
-We support IE8 and above. We have a free account for testing across
+We support IE9 and above. We have a free account for testing across
 multiple browsers, thanks to [BrowserStack](www.browserstack.com).
 
 ![image](https://user-images.githubusercontent.com/211271/29110431-887941d2-7cde-11e7-8c2f-199d85c5a3b5.png)
