@@ -1,14 +1,4 @@
 {
-    "adqs": {
-        "title": "Average Daily Quantities (ADQ)",
-        "description": "An ADQ is how much of the active ingredient in the drug a patient would take per day, on average.  This is useful because the prescribing data tells you how many pills were prescribed, but not how many patients were taking the drug.",
-        "publisher": "Health & Social Care Information Centre",
-        "urls": {
-            "2013": "http://www.hscic.gov.uk/media/9376/Average-daily-quantity-ADQ-values-2012-13/pdf/adqs_2012_13.pdf"
-        },
-        "notes": "Source is data provided privately by HSCIC, extracted from ePACT in April 2016. Not all presentations are included. Their ref NIC-23748-Q0D1L enquiries@hscic.gov.uk. We should refresh this approx yearly.",
-        "core_data": true
-    },
     "bnf_codes": {
         "title": "Human readable terms for BNF prescription codes",
         "description": "Every row of prescribing data has a `presentation` field, a 15 character code that encodes the chemical, a classification, and its formulation (e.g. 5ml per 100ml solution, etc). The BNF codes allow us to decode the presentation.",
