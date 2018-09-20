@@ -79,8 +79,9 @@
         ]
     },
     "import_adqs": {
-        "type": "import",
+        "type": "post_process",
         "command": "import_adqs",
+        "source_id": "prescribing",
         "dependencies": [
           "import_hscic_prescribing"
         ]
