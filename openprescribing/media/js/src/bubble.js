@@ -42,6 +42,14 @@ domready(function() {
           style: {
             textOverflow: 'none',
           },
+          formatter: function() {
+            var label = this.value.name || '';
+            if (this.value.is_generic) {
+              label += ' <span style="color: red">';
+              label += '(prescribed generically)</span>';
+            }
+            return label;
+          }
         },
       },
 
@@ -96,32 +104,19 @@ domready(function() {
         d.color = scale(ratio).hex();
       });
     }
-    /** Add some text indicating which presentation is the generic
-     */
-    function labelGenericInSeries(data) {
-      var generic_index = _.findIndex(data.categories, function(x) {
-        return x.is_generic;
-      });
-      if (generic_index > -1) {
-        var generic_name = data.categories[generic_index].name;
-        _.each(data.series, function(d) {
-          if (d.name === generic_name) {
-            d.name += ' <span style="color: red">';
-            d.name += '(prescribed generically)</span>';
-          }
-        });
-      }
-    }
     $.getJSON(
       bubble_data_url,
       function(data) {
         setGenericColours(data);
-        labelGenericInSeries(data);
+        // Categories are treated as 1-indexed in the series data so we add an
+        // intial blank value here
+        data.categories.unshift(null);
         var options = $.extend(true, {}, highchartsOptions);
         options.chart.width = $('.tab-content').width();
         options.subtitle.text = 'for prescriptions within NHS England';
         options.series[0].data = data.series;
         options.yAxis.plotLines[0].value = data.plotline;
+        options.xAxis.categories = data.categories;
         $('#all_practices_chart').highcharts(options);
       }
     );
@@ -129,7 +124,9 @@ domready(function() {
       bubble_data_url + '&focus=1',
       function(data) {
         setGenericColours(data);
-        labelGenericInSeries(data);
+        // Categories are treated as 1-indexed in the series data so we add an
+        // intial blank value here
+        data.categories.unshift(null);
         var options = $.extend(true, {}, highchartsOptions);
         // Set the width explicitly, because highcharts can't tell the
         // width of a hidden tab container
@@ -137,6 +134,7 @@ domready(function() {
         options.subtitle.text = 'for prescriptions within ' + highlight_name;
         options.series[0].data = data.series;
         options.yAxis.plotLines[0].value = data.plotline;
+        options.xAxis.categories = data.categories;
         $('#highlight_chart').highcharts(options);
       }
     );

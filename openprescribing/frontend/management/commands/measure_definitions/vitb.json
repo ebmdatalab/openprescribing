@@ -13,7 +13,8 @@
     "<a href='https://www.nice.org.uk/guidance/cg100/chapter/1-Guidance#wernickes-encephalopathy'>2010 NICE guidance</a> states: ",
     "thiamine should be given in doses toward the upper end of the British national formulary range.  ",
     "This range is: <a href='https://bnf.nice.org.uk/drug/thiamine.html#indicationsAndDoses'>Mild deficiency, by mouth, 25–100 mg daily; severe deficiency, 200–300 mg daily in divided dose</a>. ",
-    "Vitamin B compound tablets and compound strong tablets have 1mg and 5mg of thiamine respectively, and are not recommended in the NICE guidance."
+    "Vitamin B compound tablets and compound strong tablets have 1mg and 5mg of thiamine respectively, ",
+    "and therefore do not meet these minimum recommended dosage levels."
   ],
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "Vitamin B complex and thiamine items",

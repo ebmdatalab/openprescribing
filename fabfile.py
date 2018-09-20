@@ -189,15 +189,13 @@ def deploy_static():
     with shell_env(**bootstrap_environ):
         with prefix('source .venv/bin/activate'):
             run('cd openprescribing/ && '
-                'python manage.py collectstatic -v0 --noinput '
-                '--settings=openprescribing.settings.production')
+                'python manage.py collectstatic -v0 --noinput')
 
 
 def run_migrations():
     if env.environment == 'production':
         with prefix('source .venv/bin/activate'):
-            run('cd openprescribing/ && python manage.py migrate '
-                '--settings=openprescribing.settings.production')
+            run('cd openprescribing/ && python manage.py migrate')
     else:
         warn("Refusing to run migrations in staging environment")
 
