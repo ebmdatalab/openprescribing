@@ -172,7 +172,8 @@
             var total = data.reduce(function(memo, item) {
               return memo + item.possible_savings;
             }, 0);
-            $('#total-savings').text(Math.round(total / 100) * 100);
+            var formattedTotal = $.fn.dataTable.render.number(',').display(total);
+            $('#total-savings').text(formattedTotal);
             return data;
 
           }
@@ -182,7 +183,7 @@
           {"data": first_column,
            "render": first_column_render
           },
-          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
+          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 0, '£' )},
           {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
           {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
           {"data": "quantity", render: $.fn.dataTable.render.number(',')},
