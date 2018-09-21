@@ -7,7 +7,7 @@ FROM
   `{hscic}.normalised_prescribing_standard`
 WHERE
   bnf_code LIKE '0212000AA%'
-  AND practice='A81015'
+  AND practice='F84747'
   AND {{ date_condition }}
 GROUP BY
   month
