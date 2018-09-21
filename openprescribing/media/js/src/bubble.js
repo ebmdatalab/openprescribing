@@ -40,7 +40,7 @@ domready(function() {
         },
         labels: {
           style: {
-            textOverflow: 'none',
+            textOverflow: 'clip',
           },
           formatter: function() {
             var label = this.value.name || '';
