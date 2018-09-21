@@ -59,7 +59,13 @@ domready(function() {
           text: 'PPU',
         },
         labels: {
-          format: '£{value}',
+          formatter: function() {
+            if (this.value < 0) {
+              return '';
+            } else {
+              return '£' + this.value;
+            }
+          }
         },
         plotLines: [{
           color: 'black',
