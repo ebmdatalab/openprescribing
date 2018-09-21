@@ -275,6 +275,7 @@ def tariff(request, format=None):
     SELECT dmd_tariffprice.date AS date,
            dmd_tariffprice.price_pence AS price_pence,
            dmd_vmpp.nm AS vmpp,
+           dmd_vmpp.vppid AS vmpp_id,
            dmd_product.bnf_code AS product,
            dmd_ncsoconcession.price_concession_pence AS concession,
            dmd_lookup_dt_payment_category.desc AS tariff_category,

@@ -37,6 +37,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'price_pence': '900',
              'tariff_category': 'Part VIIIA Category A',
              'vmpp': 'Bar tablets 84 tablet',
+             'vmpp_id': '5120711000001104',
              'pack_size': '84.0'}
         ])
 
@@ -50,6 +51,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'price_pence': '900',
              'tariff_category': 'Part VIIIA Category A',
              'vmpp': 'Bar tablets 84 tablet',
+             'vmpp_id': '5120711000001104',
              'pack_size': '84.0'},
             {'date': '2010-03-01',
              'concession': '',
@@ -57,6 +59,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'price_pence': '2400',
              'tariff_category': 'Part VIIIA Category A',
              'vmpp': 'Foo tablets 84 tablet',
+             'vmpp_id': '994511000001109',
              'pack_size': '84.0'},
             {'date': '2010-04-01',
              'concession': '',
@@ -64,6 +67,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'price_pence': '1100',
              'tariff_category': 'Part VIIIA Category A',
              'vmpp': 'Foo tablets 84 tablet',
+             'vmpp_id': '994511000001109',
              'pack_size': '84.0'},
         ])
 
