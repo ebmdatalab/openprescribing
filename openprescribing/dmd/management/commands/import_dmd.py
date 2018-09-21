@@ -77,7 +77,7 @@ PG_TYPE_MAP = {
 }
 
 
-def create_table(info):
+def create_and_clear_table(info):
     with connection.cursor() as cursor:
         sql = 'CREATE TABLE IF NOT EXISTS "%s" (' % info['table_name']
         cols = []
@@ -97,6 +97,7 @@ def create_table(info):
             sql = 'CREATE INDEX IF NOT EXISTS i_%s_%s ON "%s"("%s");' % (
                 info['table_name'], i, info['table_name'], i)
             cursor.execute(sql.lower())
+        cursor.execute('DELETE FROM %s' % info['table_name'])
 
 
 def insert_row(cursor, table_info, row_data):
@@ -196,7 +197,7 @@ def create_all_tables(source_directory):
     files = [x.split('/')[-1] for x in glob.glob("%s/*xsd" % source_directory)]
     table_info = get_table_info(source_directory, files)
     for name, info in table_info.items():
-        create_table(info)
+        create_and_clear_table(info)
 
 
 def create_dmd_product():
@@ -320,7 +321,6 @@ class Command(BaseCommand):
         else:
             with transaction.atomic():
                 process_datafiles(dir_path)
-            with transaction.atomic():
                 create_dmd_product()
 
         Client('dmd').upload_model(DMDVmpp)

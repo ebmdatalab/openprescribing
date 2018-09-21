@@ -139,6 +139,11 @@ class CommandsTestCase(TestCase):
             'Diclofenac diethylammonium'
         )
 
+        # This checks that records with the same primary key can be imported
+        # multiple times.
+        with patch('zipfile.ZipFile'):
+            call_command('import_dmd', '--zip_path', path)
+
     def test_import_dmd_snomed(self):
         path = 'dmd/tests/fixtures/commands/dmd.zip'
         with patch('zipfile.ZipFile'):
