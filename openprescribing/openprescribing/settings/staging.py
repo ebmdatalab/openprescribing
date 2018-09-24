@@ -40,7 +40,7 @@ CACHES = {
 }
 # END CACHE CONFIGURATION
 
-ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "staging.openprescribing.net",
+ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "staging.openprescribing.net"
 SUPPORT_EMAIL = 'feedback@staging.openprescribing.net'
 DEFAULT_FROM_EMAIL = 'OpenPrescribing <{}>'.format(SUPPORT_EMAIL)
 
