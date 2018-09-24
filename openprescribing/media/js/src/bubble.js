@@ -110,39 +110,25 @@ domready(function() {
         d.color = scale(ratio).hex();
       });
     }
-    $.getJSON(
-      bubble_data_url,
-      function(data) {
-        setGenericColours(data);
-        // Categories are treated as 1-indexed in the series data so we add an
-        // intial blank value here
-        data.categories.unshift(null);
-        var options = $.extend(true, {}, highchartsOptions);
-        options.chart.width = $('.tab-content').width();
-        options.subtitle.text = 'for prescriptions within NHS England';
-        options.series[0].data = data.series;
-        options.yAxis.plotLines[0].value = data.plotline;
-        options.xAxis.categories = data.categories;
-        $('#all_practices_chart').highcharts(options);
-      }
-    );
-    $.getJSON(
-      bubble_data_url + '&focus=1',
-      function(data) {
-        setGenericColours(data);
-        // Categories are treated as 1-indexed in the series data so we add an
-        // intial blank value here
-        data.categories.unshift(null);
-        var options = $.extend(true, {}, highchartsOptions);
-        // Set the width explicitly, because highcharts can't tell the
-        // width of a hidden tab container
-        options.chart.width = $('.tab-content').width();
-        options.subtitle.text = 'for prescriptions within ' + highlight_name;
-        options.series[0].data = data.series;
-        options.yAxis.plotLines[0].value = data.plotline;
-        options.xAxis.categories = data.categories;
-        $('#highlight_chart').highcharts(options);
-      }
-    );
+    function renderChart(url, elementSelector, orgName) {
+      $.getJSON(
+        url,
+        function(data) {
+          setGenericColours(data);
+          // Categories are treated as 1-indexed in the series data so we add an
+          // intial blank value here
+          data.categories.unshift(null);
+          var options = $.extend(true, {}, highchartsOptions);
+          options.chart.width = $('.tab-content').width();
+          options.subtitle.text = 'for prescriptions within ' + orgName;
+          options.series[0].data = data.series;
+          options.yAxis.plotLines[0].value = data.plotline;
+          options.xAxis.categories = data.categories;
+          $(elementSelector).highcharts(options);
+        }
+      );
+    }
+    renderChart(bubble_data_url, '#all_practices_chart', 'NHS England');
+    renderChart(bubble_data_url+'&focus=1', '#highlight_chart', highlight_name);
   }
 });
