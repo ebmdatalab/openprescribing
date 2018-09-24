@@ -625,6 +625,7 @@ def make_email_with_campaign(bookmark, campaign_source):
 def get_chart_id(measure_id):
     return "#{}-with-title".format(measure_id)
 
+
 def make_org_email(org_bookmark, stats, preview=False, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
