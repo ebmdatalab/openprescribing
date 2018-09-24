@@ -32,7 +32,7 @@ domready(function() {
           minSize: 3,
         },
       },
-      xAxis: {
+      yAxis: {
         type: 'category',
         gridLineWidth: 1,
         title: {
@@ -53,7 +53,7 @@ domready(function() {
         },
       },
 
-      yAxis: {
+      xAxis: {
         gridLineWidth: 1,
         title: {
           text: 'PPU',
@@ -115,15 +115,18 @@ domready(function() {
         url,
         function(data) {
           setGenericColours(data);
-          // Categories are treated as 1-indexed in the series data so we add an
-          // intial blank value here
-          data.categories.unshift(null);
+          _.each(data.series, function(d) {
+            var tmp = d.x;
+            d.x = d.y;
+            // Translate from 1-index to 0-index
+            d.y = tmp - 1;
+          });
           var options = $.extend(true, {}, highchartsOptions);
           options.chart.width = $('.tab-content').width();
           options.subtitle.text = 'for prescriptions within ' + orgName;
           options.series[0].data = data.series;
-          options.yAxis.plotLines[0].value = data.plotline;
-          options.xAxis.categories = data.categories;
+          options.xAxis.plotLines[0].value = data.plotline;
+          options.yAxis.categories = data.categories;
           $(elementSelector).highcharts(options);
         }
       );
