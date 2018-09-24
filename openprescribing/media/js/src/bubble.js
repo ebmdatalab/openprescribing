@@ -2,9 +2,9 @@ var $ = require('jquery');
 var domready = require('domready');
 
 require('bootstrap');
-require('Highcharts');
-require('Highcharts-export');
-require('Highcharts-more');
+var Highcharts = require('Highcharts');
+require('Highcharts-export')(Highcharts);
+require('Highcharts-more')(Highcharts);
 var chroma = require('chroma-js');
 var _ = require('underscore');
 
