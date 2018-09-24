@@ -44,11 +44,11 @@
               </div>
 
               <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
-                  <p><strong>Why it matters:</strong> {{{ why_it_matters }}}</p>
+                  <div class="descriptive"><strong>Why it matters:</strong> {{{ why_it_matters }}}</div>
                  {{#if chartExplanation }}
-                  <p><strong>Performance:</strong> {{{ chartExplanation }}}</p>
+                  <div class="descriptive"><strong>Performance:</strong> {{{ chartExplanation }}}</div>
                  {{/if}}
-                  <p><strong>Explore:</strong>
+                  <div class="descriptive"><strong>Explore:</strong>
                     <ul>
                      {{#if tagsFocus }}
                      <li>
@@ -72,14 +72,14 @@
                      <li><a href="{{ measureUrl }}">Compare all CCGs
                      in England on this measure</a></li>
                     </ul>
-                  </p>
-                  <p>
+                  </div>
+                  <div class="descriptive">
                     <strong>Tagged as:</strong>
                     {{# each tagsForDisplay as |tag index|}}
                       <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
                     {{/each}}
                     {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
-                  </p>
+                  </div>
               </div>
           </div>
 
