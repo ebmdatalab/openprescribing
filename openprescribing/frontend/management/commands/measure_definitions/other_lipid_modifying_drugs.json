@@ -1,0 +1,44 @@
+{
+  "name": "Other lipid-modifying drugs",
+  "description": [
+    "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
+    "per 1000 registered patients"
+  ],
+  "why_it_matters": [
+    "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'>NICE guidance suggests</a> that, for the vast ",
+    "majority of people who need treatment for high cholesterol, these drugs should not be used. ",
+    "There is no evidence that omega 3 fatty acids reduce the chances of patients getting cardiovascular disease."
+  ],
+  "title": [
+    "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
+    "per 1000 registered patients"
+  ],
+  "numerator_short": "Cost of selected items (£)",
+  "denominator_short": "100 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cardiovascular",
+    "core",
+    "efficacy"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "bnf_code LIKE '0212000A0%' OR bnf_code LIKE '0212000D0%' OR bnf_code LIKE '021200010%' OR ",
+    "bnf_code LIKE '0212000AD%' OR bnf_code LIKE '0212000K0%' OR bnf_code LIKE '0212000F0%' OR ",
+    "bnf_code LIKE '0212000P0%' OR bnf_code LIKE '0212000Q0%' OR bnf_code LIKE '0212000U0%' OR ",
+    "bnf_code LIKE '0212000AE%' OR bnf_code LIKE '0212000V0%' OR bnf_code LIKE '0212000AB%'"
+ ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
