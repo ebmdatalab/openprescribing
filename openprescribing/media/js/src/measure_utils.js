@@ -496,6 +496,8 @@ var utils = {
           return "National decile";
         } else if (this.name === '50th percentile nationally') {
           return "National median";
+        } else {
+          return this.name;
         }
       }
     };
