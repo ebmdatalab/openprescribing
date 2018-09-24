@@ -2,24 +2,18 @@
   "name": "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9)",
   "title": [
     "Antibiotic stewardship: co-amoxiclav, cephalosporins & quinolones (KTT9):",
-    "Number of prescription items for co-amoxiclav,",
-    "cephalosporins and quinolones as a percentage of the",
-    "total number of prescription items for selected",
-    "antibacterial drugs (sub-set of BNF 5.1)"
+    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage of the",
+    "total number of prescription items for selectedvantibacterial drugs (sub-set of BNF 5.1)"
   ],
   "description": [
-    "Number of prescription items for co-amoxiclav (0501013K0),",
-    "cephalosporins (0501021) and quinolones (050112), as a percentage",
-    "of total prescription items for cephalosporins (0501021), macrolides (050105), ",
-    "metronidazole tinidazole & ornidazole (050111), penicillins (050101), quinolones (050112), ",
-    "sulphonamides & trimethoprim (050108), tetracyclines (050103) and drugs for urinary-tract infections (050113)"
+    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones as a percentage ",
+    "of total prescription items for cephalosporins, macrolides, metronidazole tinidazole & ornidazole, ",
+    "penicillins, quinolones, sulphonamides & trimethoprim, tetracyclines and drugs for urinary-tract infections."
   ],
   "why_it_matters": [
-    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can ",
-    "be used when others have failed. It is important that ",
-    "they are used sparingly, to avoid drug-resistant bacteria ",
-    "developing. This measure looks at the quantity of these ",
-    "prescribed, versus the broad class of similar antibiotics."
+    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
+    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ",
+    "This measure looks at the quantity of these prescribed, versus the broad class of similar antibiotics."
   ],
   "numerator_short": "Selected items",
   "denominator_short": "Other selected items",
@@ -37,13 +31,14 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "((bnf_code LIKE '0501013K0%%')  OR (bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050112%%'))  "
+    "(bnf_code LIKE '0501013K0%'  OR bnf_code LIKE '0501021%'  OR bnf_code LIKE '050112%')  "
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "((bnf_code LIKE '0501021%%')  OR (bnf_code LIKE '050105%%')  OR (bnf_code LIKE '050111%%')  OR (bnf_code LIKE '050101%%')  OR (bnf_code LIKE '050112%%')  OR (bnf_code LIKE '050108%%')  OR (bnf_code LIKE '050103%%')  OR (bnf_code LIKE '050113%%'))  "
+    "bnf_code LIKE '0501021%' OR bnf_code LIKE '050105%' OR bnf_code LIKE '050111%' OR bnf_code LIKE '050101%' ",
+    "OR bnf_code LIKE '050112%' OR bnf_code LIKE '050108%' OR bnf_code LIKE '050103%' OR bnf_code LIKE '050113%')"
   ]
 }
