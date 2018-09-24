@@ -11,7 +11,13 @@
 
 <div class="row">
   <div class="col-md-7">
-    There is wide variation in the unit cost of a number of medicines prescribed across  England, due to the way the reimbursement system is structured.  Every month we estimate what could be saved if every organisation were prescribing as well as the best 10%.  <a href="#more-text" id="read-more">Read more...</a>
+    <p>
+      There is wide variation in the unit cost of a number of medicines
+      prescribed across  England, due to the way the reimbursement system is
+      structured.  Every month we estimate what could be saved if every
+      organisation were prescribing as well as the best 10%.  <a
+        href="#more-text" id="read-more">Read more...</a>
+    </p>
   </div>
   <div class="col-md-5">
     <p class="alert alert-info" style="margin-top: 0">This is a new, experimental feature. We'd love to <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show" style="text-decoration: underline">hear your feedback</a>.</p>
@@ -117,9 +123,9 @@
     {% endif %}
 
   </script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
 <script type="text/javascript">
   $(function() {
     $('.doorbell-show').click(function(e) {
@@ -154,7 +160,7 @@
     {% endif %}
       var pagination_text = "Showing page _PAGE_ of _PAGES_";
     {% if by_presentation and not entity.ccg %}
-      pagination_text += ".  Where a practice is missing, no saving opportunities over £50 where identified for this product.";
+      pagination_text += ".  Where a practice is missing, no saving opportunities over £50 were identified for this product.";
     {% endif %}
     $('#price_per_pill').DataTable(
       {
@@ -166,7 +172,8 @@
             var total = data.reduce(function(memo, item) {
               return memo + item.possible_savings;
             }, 0);
-            $('#total-savings').text(Math.round(total / 100) * 100);
+            var formattedTotal = $.fn.dataTable.render.number(',').display(total);
+            $('#total-savings').text(formattedTotal);
             return data;
 
           }
@@ -176,10 +183,10 @@
           {"data": first_column,
            "render": first_column_render
           },
-          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-          {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' )},
-          {"data": "quantity", render: $.fn.dataTable.render.number(',')},
+          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 0, '£' ), className: "text-right"},
+          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "lowest_decile", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "quantity", render: $.fn.dataTable.render.number(','), className: "text-right"},
           {"data": "formulation_swap", "defaultContent": "-"},
         ]
       }

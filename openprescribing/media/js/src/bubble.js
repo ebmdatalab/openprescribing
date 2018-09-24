@@ -2,9 +2,9 @@ var $ = require('jquery');
 var domready = require('domready');
 
 require('bootstrap');
-require('Highcharts');
-require('Highcharts-export');
-require('Highcharts-more');
+var Highcharts = require('Highcharts');
+require('Highcharts-export')(Highcharts);
+require('Highcharts-more')(Highcharts);
 var chroma = require('chroma-js');
 var _ = require('underscore');
 
@@ -40,7 +40,7 @@ domready(function() {
         },
         labels: {
           style: {
-            textOverflow: 'none',
+            textOverflow: 'clip',
           },
           formatter: function() {
             var label = this.value.name || '';
@@ -59,7 +59,13 @@ domready(function() {
           text: 'PPU',
         },
         labels: {
-          format: '£{value}',
+          formatter: function() {
+            if (this.value < 0) {
+              return '';
+            } else {
+              return '£' + this.value;
+            }
+          }
         },
         plotLines: [{
           color: 'black',

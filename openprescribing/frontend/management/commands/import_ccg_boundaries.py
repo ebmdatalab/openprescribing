@@ -46,7 +46,8 @@ Here's what I did:
    `Lower_Laye`; you can examine the column names with `ogrinfo`)
 * Don't forget to import CCG names after running this command (I ran
   `python manage.py import_org_names --ccg
-  ~/openprescribing-data/data/ccg_details/2017_06/eccg.csv)
+  ~/openprescribing-data/data/ccg_details/2017_06/eccg.csv
+  --settings=openprescribing.settings.production`)
 
 """
 

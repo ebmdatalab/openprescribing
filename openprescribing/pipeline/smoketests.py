@@ -83,7 +83,7 @@ class TestSmokeTestSpendingByEveryone(SmokeTestBase):
 
 class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
     def test_presentation_by_one_practice(self):
-        params = {'code': '0703021Q0BBAAAA', 'org': 'A81015'}  # Cerazette 75mcg.
+        params = {'code': '0703021Q0BBAAAA', 'org': 'F84747'}  # Cerazette 75mcg.
         self._run_tests(
             'presentation_by_one_practice',
             'spending_by_practice',
@@ -91,7 +91,7 @@ class TestSmokeTestSpendingByOnePractice(SmokeTestBase):
         )
 
     def test_chemical_by_one_practice(self):
-        params = {'code': '0212000AA', 'org': 'A81015'}  # Rosuvastatin Calcium.
+        params = {'code': '0212000AA', 'org': 'F84747'}  # Rosuvastatin Calcium.
         self._run_tests(
             'chemical_by_one_practice',
             'spending_by_practice',

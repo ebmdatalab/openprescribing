@@ -804,9 +804,10 @@ class MailLog(models.Model):
                 )
                 subject = subject_header[1]
         else:
-            # likely to be "clicked" event
+            # e.g. "clicked" or "bounced" event_type
             try:
-                subject = self.message.subject
+                if self.message:
+                    subject = self.message.subject
             except EmailMessage.DoesNotExist:
                 pass
         return subject

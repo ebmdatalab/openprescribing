@@ -1,7 +1,7 @@
 var $ = require('jquery');
 
 var Highcharts = require('Highcharts');
-require('Highcharts-export');
+require('Highcharts-export')(Highcharts);
 var _ = require('underscore');
 var domready = require('domready');
 

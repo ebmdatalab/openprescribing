@@ -1,7 +1,7 @@
 var $ = require('jquery');
 require('bootstrap');
-require('Highcharts');
-require('Highcharts-export');
+var Highcharts = require('Highcharts');
+require('Highcharts-export')(Highcharts);
 require('bootstrap');
 var downloadjs = require('downloadjs');
 var Cookies = require('cookies-js');
