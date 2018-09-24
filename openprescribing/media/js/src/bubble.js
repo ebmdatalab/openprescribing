@@ -123,6 +123,7 @@ domready(function() {
           });
           var options = $.extend(true, {}, highchartsOptions);
           options.chart.width = $('.tab-content').width();
+          options.chart.height = Math.max(400, data.categories.length * 20 + 200);
           options.subtitle.text = 'for prescriptions within ' + orgName;
           options.series[0].data = data.series;
           options.xAxis.plotLines[0].value = data.plotline;
