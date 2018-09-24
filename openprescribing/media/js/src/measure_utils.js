@@ -439,6 +439,7 @@ var utils = {
         isNationalSeries: false,
         data: d.data,
         color: 'red',
+        showInLegend: true,
         marker: {
           radius: 2,
         },
@@ -451,6 +452,7 @@ var utils = {
           dashStyle: 'dot',
           color: 'blue',
           lineWidth: 1,
+          showInLegend: false,
           marker: {
             enabled: false,
           },
@@ -458,6 +460,10 @@ var utils = {
         // Distinguish the median visually.
         if (k === '50') {
           e.dashStyle = 'longdash';
+        }
+        // Show median and an arbitrary decile in the legend
+        if (k === '10' || k === '50') {
+          e.showInLegend = true;
         }
         hcOptions.series.push(e);
       });
@@ -480,7 +486,19 @@ var utils = {
     isPercentageMeasure = (d.isPercentage || isPercentageMeasure);
     chOptions.chart.renderTo = d.chartId;
     chOptions.chart.height = 250;
-    chOptions.legend.enabled = false;
+    chOptions.legend = {
+      enabled: true,
+      x: 0,
+      y: 0,
+      labelFormatter: function() {
+        // Rename selected series for the legend
+        if (this.name === '10th percentile nationally') {
+          return "National decile";
+        } else if (this.name === '50th percentile nationally') {
+          return "National median";
+        }
+      }
+    };
     if (options.rollUpBy === 'org_id') {
       ymax = _.max([localMax.y, options.globalYMax.y]);
       ymin = _.min([localMin.y, options.globalYMin.y]);
