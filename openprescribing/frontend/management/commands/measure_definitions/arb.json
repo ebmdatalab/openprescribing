@@ -1,7 +1,7 @@
 {
-  "name": "High-cost ARBs",
+  "name": "High-cost Angiotensin-II Receptor Blockers (ARBs)",
   "title": [
-    "Prescribing of high-cost ARBs ",
+    "Prescribing of high-cost Angiotensin-II Receptor Blockers (ARBs) ",
     "as a percentage of prescribing of all ARBs"
   ],
   "description": [
@@ -10,7 +10,9 @@
     "See the <a href='https://docs.google.com/spreadsheets/d/1VEvnh3iBUk4vjn6iHO5ax0e3YMJyXaWGZpWl0DD8VS4/edit#gid=1417276769'>full list of BNF codes used in this measure</a>."
   ],
   "why_it_matters": [
-    "Various angiotensin receptor blockers (ARBs) are available. A number of them are now available generically, and are of low cost. NICE guidance for treating high blood pressure recommends that the low-cost versions should be used."
+    "Various angiotensin-II receptor blockers (ARBs) are available. A number of them are now available generically, and are of low cost. ",
+    "<a href='https://www.nice.org.uk/guidance/cg127/chapter/1-guidance#choosing-antihypertensive-drug-treatment-2'>",
+    "NICE guidance for treating high blood pressure recommends that the low-cost versions should be used.</a>"
   ],
   "numerator_short": "High-cost ARBs quantity",
   "denominator_short": "All included ARBs quantity",
