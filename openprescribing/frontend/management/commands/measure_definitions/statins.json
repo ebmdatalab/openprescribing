@@ -20,9 +20,9 @@
   "low_is_good": true,
   "tags": [
     "cardiovascular",
-    "core",
     "cost",
-    "generic"
+    "generic",
+    "retired"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
