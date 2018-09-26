@@ -2,8 +2,8 @@ from django.db import models
 
 
 class VTM(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Virtual Therapeutic Moiety"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -33,8 +33,8 @@ class VTM(models.Model):
 
 
 class VMP(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Virtual Medicinal Product"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -166,8 +166,8 @@ class VMP(models.Model):
 
 
 class VPI(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Virtual Product Ingredient"
 
     vmp = models.ForeignKey(
         db_column="vpid",
@@ -223,8 +223,8 @@ class VPI(models.Model):
 
 
 class Ont(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Ontology Drug Form & Route"
 
     vmp = models.ForeignKey(
         db_column="vpid",
@@ -241,8 +241,8 @@ class Ont(models.Model):
 
 
 class Dform(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Dose Form"
 
     vmp = models.OneToOneField(
         db_column="vpid",
@@ -259,8 +259,8 @@ class Dform(models.Model):
 
 
 class Droute(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Drug Route"
 
     vmp = models.ForeignKey(
         db_column="vpid",
@@ -277,8 +277,8 @@ class Droute(models.Model):
 
 
 class ControlInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Controlled Drug Prescribing Information"
 
     vmp = models.OneToOneField(
         db_column="vpid",
@@ -307,8 +307,8 @@ class ControlInfo(models.Model):
 
 
 class AMP(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Actual Medicinal Product"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -406,8 +406,8 @@ class AMP(models.Model):
 
 
 class ApIng(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "TODO"
 
     amp = models.ForeignKey(
         db_column="apid",
@@ -438,8 +438,8 @@ class ApIng(models.Model):
 
 
 class LicRoute(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Licensed Route"
 
     amp = models.ForeignKey(
         db_column="apid",
@@ -456,8 +456,8 @@ class LicRoute(models.Model):
 
 
 class ApInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Appliance Product Information"
 
     amp = models.OneToOneField(
         db_column="apid",
@@ -485,8 +485,8 @@ class ApInfo(models.Model):
 
 
 class VMPP(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Virtual Medicinal Product Pack"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -530,8 +530,8 @@ class VMPP(models.Model):
 
 
 class Dtinfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Drug Tariff Category Information"
 
     vmpp = models.OneToOneField(
         db_column="vppid",
@@ -560,8 +560,8 @@ class Dtinfo(models.Model):
 
 
 class AMPP(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Actual Medicinal Product Pack"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -624,8 +624,8 @@ class AMPP(models.Model):
 
 
 class PackInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "TODO"
 
     ampp = models.OneToOneField(
         db_column="appid",
@@ -659,8 +659,8 @@ class PackInfo(models.Model):
 
 
 class PrescribInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Product Prescribing Information"
 
     ampp = models.OneToOneField(
         db_column="appid",
@@ -698,8 +698,8 @@ class PrescribInfo(models.Model):
 
 
 class PriceInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Medicinal Product Price"
 
     ampp = models.OneToOneField(
         db_column="appid",
@@ -728,8 +728,8 @@ class PriceInfo(models.Model):
 
 
 class ReimbInfo(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Reimbursement Information"
 
     ampp = models.OneToOneField(
         db_column="appid",
@@ -771,8 +771,8 @@ class ReimbInfo(models.Model):
 
 
 class Ing(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "TODO"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -797,9 +797,6 @@ class Ing(models.Model):
 
 
 class CombinationPackInd(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -811,9 +808,6 @@ class CombinationPackInd(models.Model):
 
 
 class CombinationProdInd(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -825,9 +819,6 @@ class CombinationProdInd(models.Model):
 
 
 class BasisOfName(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -839,9 +830,6 @@ class BasisOfName(models.Model):
 
 
 class NamechangeReason(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -853,9 +841,6 @@ class NamechangeReason(models.Model):
 
 
 class VirtualProductPresStatus(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -867,9 +852,6 @@ class VirtualProductPresStatus(models.Model):
 
 
 class ControlDrugCategory(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -881,9 +863,6 @@ class ControlDrugCategory(models.Model):
 
 
 class LicensingAuthority(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -895,9 +874,6 @@ class LicensingAuthority(models.Model):
 
 
 class UnitOfMeasure(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -917,9 +893,6 @@ class UnitOfMeasure(models.Model):
 
 
 class Form(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -939,9 +912,6 @@ class Form(models.Model):
 
 
 class OntFormRoute(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -953,9 +923,6 @@ class OntFormRoute(models.Model):
 
 
 class Route(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -975,9 +942,6 @@ class Route(models.Model):
 
 
 class DtPaymentCategory(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -989,9 +953,6 @@ class DtPaymentCategory(models.Model):
 
 
 class Supplier(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -1014,9 +975,6 @@ class Supplier(models.Model):
 
 
 class Flavour(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1028,9 +986,6 @@ class Flavour(models.Model):
 
 
 class Colour(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1042,9 +997,6 @@ class Colour(models.Model):
 
 
 class BasisOfStrnth(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1056,9 +1008,6 @@ class BasisOfStrnth(models.Model):
 
 
 class ReimbursementStatus(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1070,9 +1019,6 @@ class ReimbursementStatus(models.Model):
 
 
 class SpecCont(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1084,9 +1030,6 @@ class SpecCont(models.Model):
 
 
 class Dnd(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1098,9 +1041,6 @@ class Dnd(models.Model):
 
 
 class VirtualProductNonAvail(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1112,9 +1052,6 @@ class VirtualProductNonAvail(models.Model):
 
 
 class DiscontinuedInd(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1126,9 +1063,6 @@ class DiscontinuedInd(models.Model):
 
 
 class DfIndicator(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1140,9 +1074,6 @@ class DfIndicator(models.Model):
 
 
 class PriceBasis(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1154,9 +1085,6 @@ class PriceBasis(models.Model):
 
 
 class LegalCategory(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1168,9 +1096,6 @@ class LegalCategory(models.Model):
 
 
 class AvailabilityRestriction(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1182,9 +1107,6 @@ class AvailabilityRestriction(models.Model):
 
 
 class LicensingAuthorityChangeReason(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
-
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1196,8 +1118,8 @@ class LicensingAuthorityChangeReason(models.Model):
 
 
 class GTIN(models.Model):
-#    class Meta:
-#        verbose_name = "TODO"
+    class Meta:
+        verbose_name = "Global Trade Item Number"
 
     ampp = models.OneToOneField(
         db_column="appid",
