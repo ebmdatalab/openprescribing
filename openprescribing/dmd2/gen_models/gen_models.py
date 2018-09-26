@@ -38,6 +38,9 @@ for line in lines:
         print()
         print()
         print(f'class {model_name(table)}(models.Model):')
+        print('#    class Meta:')
+        print('#        verbose_name = "TODO"')
+        print()
 
     if line['type'] == 'retired':
         continue

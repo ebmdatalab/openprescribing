@@ -2,6 +2,9 @@ from django.db import models
 
 
 class VTM(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vtmid",
@@ -30,6 +33,9 @@ class VTM(models.Model):
 
 
 class VMP(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vpid",
@@ -97,7 +103,7 @@ class VMP(models.Model):
         to="CombinationProdInd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Combination product Indicator",
+        help_text="Combination product",
     )
     pres_stat = models.ForeignKey(
         db_column="pres_statcd",
@@ -106,23 +112,23 @@ class VMP(models.Model):
         help_text="VMP Prescribing Status",
     )
     sug_f = models.BooleanField(
-        help_text="Sugar Free Indicator",
+        help_text="Sugar Free",
     )
     glu_f = models.BooleanField(
-        help_text="Gluten Free Indicator",
+        help_text="Gluten Free",
     )
     pres_f = models.BooleanField(
-        help_text="Preservative Free Indicator",
+        help_text="Preservative Free",
     )
     cfc_f = models.BooleanField(
-        help_text="CFC Free Indicator",
+        help_text="CFC Free",
     )
     non_avail = models.ForeignKey(
         db_column="non_availcd",
         to="VirtualProductNonAvail",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Non-availability indicator",
+        help_text="Non-availability",
     )
     non_availdt = models.DateField(
         null=True,
@@ -133,7 +139,7 @@ class VMP(models.Model):
         to="DfIndicator",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Dose form indicator",
+        help_text="Dose form",
     )
     udfs = models.DecimalField(
         max_digits=10,
@@ -160,6 +166,9 @@ class VMP(models.Model):
 
 
 class VPI(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmp = models.ForeignKey(
         db_column="vpid",
         to="VMP",
@@ -214,6 +223,9 @@ class VPI(models.Model):
 
 
 class Ont(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmp = models.ForeignKey(
         db_column="vpid",
         to="VMP",
@@ -229,6 +241,9 @@ class Ont(models.Model):
 
 
 class Dform(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmp = models.OneToOneField(
         db_column="vpid",
         to="VMP",
@@ -239,11 +254,14 @@ class Dform(models.Model):
         db_column="formcd",
         to="Form",
         on_delete=models.CASCADE,
-        help_text="Formulation code",
+        help_text="Formulation",
     )
 
 
 class Droute(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmp = models.ForeignKey(
         db_column="vpid",
         to="VMP",
@@ -254,11 +272,14 @@ class Droute(models.Model):
         db_column="routecd",
         to="Route",
         on_delete=models.CASCADE,
-        help_text="Route code",
+        help_text="Route",
     )
 
 
 class ControlInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmp = models.OneToOneField(
         db_column="vpid",
         to="VMP",
@@ -286,6 +307,9 @@ class ControlInfo(models.Model):
 
 
 class AMP(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="apid",
@@ -340,14 +364,14 @@ class AMP(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
-        help_text="Previous Licensing Authority Code",
+        help_text="Previous Licensing Authority",
     )
     lic_authchange = models.ForeignKey(
         db_column="lic_authchangecd",
         to="LicensingAuthorityChangeReason",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Reason for change of licensing authority code",
+        help_text="Reason for change of licensing authority",
     )
     lic_authchangedt = models.DateField(
         null=True,
@@ -358,30 +382,33 @@ class AMP(models.Model):
         to="CombinationProdInd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Combination product indicator Code",
+        help_text="Combination product",
     )
     flavour = models.ForeignKey(
         db_column="flavourcd",
         to="Flavour",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Flavour Code",
+        help_text="Flavour",
     )
     ema = models.BooleanField(
-        help_text="EMA Additional Monitoring indicator",
+        help_text="EMA Additional Monitoring",
     )
     parallel_import = models.BooleanField(
-        help_text="Parallel Import indicator",
+        help_text="Parallel Import",
     )
     avail_restrict = models.ForeignKey(
         db_column="avail_restrictcd",
         to="AvailabilityRestriction",
         on_delete=models.CASCADE,
-        help_text="Restrictions on availability Code",
+        help_text="Restrictions on availability",
     )
 
 
 class ApIng(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     amp = models.ForeignKey(
         db_column="apid",
         to="AMP",
@@ -406,11 +433,14 @@ class ApIng(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
-        help_text="Pharmaceutical Strength Unit of Measure code",
+        help_text="Pharmaceutical Strength Unit of Measure",
     )
 
 
 class LicRoute(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     amp = models.ForeignKey(
         db_column="apid",
         to="AMP",
@@ -426,6 +456,9 @@ class LicRoute(models.Model):
 
 
 class ApInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     amp = models.OneToOneField(
         db_column="apid",
         to="AMP",
@@ -442,7 +475,7 @@ class ApInfo(models.Model):
         to="Colour",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Colour code",
+        help_text="Colour",
     )
     prod_order_no = models.CharField(
         max_length=20,
@@ -452,6 +485,9 @@ class ApInfo(models.Model):
 
 
 class VMPP(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vppid",
@@ -482,18 +518,21 @@ class VMPP(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
-        help_text="Quantity Unit of Measure code",
+        help_text="Quantity Unit of Measure",
     )
     combpack = models.ForeignKey(
         db_column="combpackcd",
         to="CombinationPackInd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Combination pack indicator",
+        help_text="Combination pack",
     )
 
 
 class Dtinfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     vmpp = models.OneToOneField(
         db_column="vppid",
         to="VMPP",
@@ -504,7 +543,7 @@ class Dtinfo(models.Model):
         db_column="pay_catcd",
         to="DtPaymentCategory",
         on_delete=models.CASCADE,
-        help_text="Drug Tariff payment category code",
+        help_text="Drug Tariff payment category",
     )
     price = models.IntegerField(
         null=True,
@@ -521,6 +560,9 @@ class Dtinfo(models.Model):
 
 
 class AMPP(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="appid",
@@ -555,13 +597,13 @@ class AMPP(models.Model):
         to="CombinationPackInd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Combination pack Indicator code",
+        help_text="Combination pack",
     )
     legal_cat = models.ForeignKey(
         db_column="legal_catcd",
         to="LegalCategory",
         on_delete=models.CASCADE,
-        help_text="Legal category code",
+        help_text="Legal category",
     )
     subp = models.CharField(
         max_length=30,
@@ -573,7 +615,7 @@ class AMPP(models.Model):
         to="DiscontinuedInd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Discontinued Flag code",
+        help_text="Discontinued Flag",
     )
     discdt = models.DateField(
         null=True,
@@ -582,6 +624,9 @@ class AMPP(models.Model):
 
 
 class PackInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     ampp = models.OneToOneField(
         db_column="appid",
         to="AMPP",
@@ -592,7 +637,7 @@ class PackInfo(models.Model):
         db_column="reimb_statcd",
         to="ReimbursementStatus",
         on_delete=models.CASCADE,
-        help_text="Appliance Reimbursement status code",
+        help_text="Appliance Reimbursement status",
     )
     reimb_statdt = models.DateField(
         null=True,
@@ -604,7 +649,7 @@ class PackInfo(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
         null=True,
-        help_text="Appliance Reimbursement previous status code",
+        help_text="Appliance Reimbursement previous status",
     )
     pack_order_no = models.CharField(
         max_length=20,
@@ -614,6 +659,9 @@ class PackInfo(models.Model):
 
 
 class PrescribInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     ampp = models.OneToOneField(
         db_column="appid",
         to="AMPP",
@@ -621,35 +669,38 @@ class PrescribInfo(models.Model):
         help_text="AMPP identifier",
     )
     sched_2 = models.BooleanField(
-        help_text="Schedule 2 indicator",
+        help_text="Schedule 2",
     )
     acbs = models.BooleanField(
-        help_text="ACBS indicator",
+        help_text="ACBS",
     )
     padm = models.BooleanField(
-        help_text="Personally Administered indicator",
+        help_text="Personally Administered",
     )
     fp10_mda = models.BooleanField(
-        help_text="FP10 MDA Prescription indicator",
+        help_text="FP10 MDA Prescription",
     )
     sched_1 = models.BooleanField(
-        help_text="Schedule 1 indicator",
+        help_text="Schedule 1",
     )
     hosp = models.BooleanField(
-        help_text="Hospital indicator",
+        help_text="Hospital",
     )
     nurse_f = models.BooleanField(
-        help_text="Nurse Formulary indicator",
+        help_text="Nurse Formulary",
     )
     enurse_f = models.BooleanField(
-        help_text="Nurse Extended Formulary indicator",
+        help_text="Nurse Extended Formulary",
     )
     dent_f = models.BooleanField(
-        help_text="Dental Formulary indicator",
+        help_text="Dental Formulary",
     )
 
 
 class PriceInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     ampp = models.OneToOneField(
         db_column="appid",
         to="AMPP",
@@ -677,6 +728,9 @@ class PriceInfo(models.Model):
 
 
 class ReimbInfo(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     ampp = models.OneToOneField(
         db_column="appid",
         to="AMPP",
@@ -692,31 +746,34 @@ class ReimbInfo(models.Model):
         help_text="Dispensing Fees",
     )
     bb = models.BooleanField(
-        help_text="Broken Bulk indicator",
+        help_text="Broken Bulk",
     )
     cal_pack = models.BooleanField(
-        help_text="Calendar pack indicator",
+        help_text="Calendar pack",
     )
     spec_cont = models.ForeignKey(
         db_column="spec_contcd",
         to="SpecCont",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Special Container Indicator code",
+        help_text="Special Container",
     )
     dnd = models.ForeignKey(
         db_column="dndcd",
         to="Dnd",
         on_delete=models.CASCADE,
         null=True,
-        help_text="Discount Not Deducted Indicator",
+        help_text="Discount Not Deducted",
     )
     fp34d = models.BooleanField(
-        help_text="FP34D prescription item indicator",
+        help_text="FP34D prescription item",
     )
 
 
 class Ing(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="isid",
@@ -740,6 +797,9 @@ class Ing(models.Model):
 
 
 class CombinationPackInd(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -751,6 +811,9 @@ class CombinationPackInd(models.Model):
 
 
 class CombinationProdInd(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -762,6 +825,9 @@ class CombinationProdInd(models.Model):
 
 
 class BasisOfName(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -773,6 +839,9 @@ class BasisOfName(models.Model):
 
 
 class NamechangeReason(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -784,6 +853,9 @@ class NamechangeReason(models.Model):
 
 
 class VirtualProductPresStatus(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -795,6 +867,9 @@ class VirtualProductPresStatus(models.Model):
 
 
 class ControlDrugCategory(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -806,6 +881,9 @@ class ControlDrugCategory(models.Model):
 
 
 class LicensingAuthority(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -817,6 +895,9 @@ class LicensingAuthority(models.Model):
 
 
 class UnitOfMeasure(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -836,6 +917,9 @@ class UnitOfMeasure(models.Model):
 
 
 class Form(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -855,6 +939,9 @@ class Form(models.Model):
 
 
 class OntFormRoute(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -866,6 +953,9 @@ class OntFormRoute(models.Model):
 
 
 class Route(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -885,6 +975,9 @@ class Route(models.Model):
 
 
 class DtPaymentCategory(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -896,6 +989,9 @@ class DtPaymentCategory(models.Model):
 
 
 class Supplier(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.BigIntegerField(
         primary_key=True,
         help_text="Code",
@@ -918,6 +1014,9 @@ class Supplier(models.Model):
 
 
 class Flavour(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -929,6 +1028,9 @@ class Flavour(models.Model):
 
 
 class Colour(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -940,6 +1042,9 @@ class Colour(models.Model):
 
 
 class BasisOfStrnth(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -951,6 +1056,9 @@ class BasisOfStrnth(models.Model):
 
 
 class ReimbursementStatus(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -962,6 +1070,9 @@ class ReimbursementStatus(models.Model):
 
 
 class SpecCont(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -973,6 +1084,9 @@ class SpecCont(models.Model):
 
 
 class Dnd(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -984,6 +1098,9 @@ class Dnd(models.Model):
 
 
 class VirtualProductNonAvail(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -995,6 +1112,9 @@ class VirtualProductNonAvail(models.Model):
 
 
 class DiscontinuedInd(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1006,6 +1126,9 @@ class DiscontinuedInd(models.Model):
 
 
 class DfIndicator(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1017,6 +1140,9 @@ class DfIndicator(models.Model):
 
 
 class PriceBasis(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1028,6 +1154,9 @@ class PriceBasis(models.Model):
 
 
 class LegalCategory(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1039,6 +1168,9 @@ class LegalCategory(models.Model):
 
 
 class AvailabilityRestriction(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1050,6 +1182,9 @@ class AvailabilityRestriction(models.Model):
 
 
 class LicensingAuthorityChangeReason(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     cd = models.IntegerField(
         primary_key=True,
         help_text="Code",
@@ -1061,6 +1196,9 @@ class LicensingAuthorityChangeReason(models.Model):
 
 
 class GTIN(models.Model):
+#    class Meta:
+#        verbose_name = "TODO"
+
     ampp = models.OneToOneField(
         db_column="appid",
         to="AMPP",

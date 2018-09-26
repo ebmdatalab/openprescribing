@@ -130,14 +130,19 @@ for line in lines:
             '(',
             '-',
             '–',
-            'Up to a',
+            'up to a',
             'narrative',
-            'Narrative',
-            'Always 10',
-            'Either',
+            'always 10',
+            'either',
             'will be present',
+            'indicator',
         ]:
-            ix = descr.find(' ' + splitter)
+            ix = descr.lower().find(' ' + splitter)
+            if ix != -1:
+                descr = descr[:ix]
+
+        if 'date code is applic' not in descr.lower() and 'previous code' not in descr.lower():
+            ix = descr.lower().find(' code')
             if ix != -1:
                 descr = descr[:ix]
 
