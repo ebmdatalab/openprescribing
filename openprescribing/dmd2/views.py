@@ -93,12 +93,8 @@ def dmd_obj_view(request, obj_type, id):
         rows.append({"title": model._meta.verbose_name})
 
         related_instance = getattr(obj, field_name)
-        try:
-            value = related_instance.descr
-        except AttributeError:
-            value = related_instance.nm
         link = reverse("dmd_obj", args=[field_name, related_instance.id])
-        rows.append({"key": related_instance.id, "value": value, "link": link})
+        rows.append({"key": related_instance.id, "value": related_instance.title(), "link": link})
 
 
     # Related child dm+d objects (for a VMP, these will be VMPPs and AMPs)
@@ -114,12 +110,8 @@ def dmd_obj_view(request, obj_type, id):
 
         rows.append({"title": model._meta.verbose_name_plural})
         for related_instance in related_instances:
-            try:
-                value = related_instance.descr
-            except AttributeError:
-                value = related_instance.nm
             link = reverse("dmd_obj", args=[rel_name, related_instance.id])
-            rows.append({"key": related_instance.id, "value": value, "link": link})
+            rows.append({"key": related_instance.id, "value": related_instance.title(), "link": link})
 
     ctx = {
         "title": "{} {}".format(cls.__name__, id),

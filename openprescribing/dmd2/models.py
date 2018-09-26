@@ -31,6 +31,9 @@ class VTM(models.Model):
         help_text="VTM identifier date",
     )
 
+    def title(self):
+        return self.nm
+
 
 class VMP(models.Model):
     class Meta:
@@ -163,6 +166,9 @@ class VMP(models.Model):
         null=True,
         help_text="Unit dose unit of measure",
     )
+
+    def title(self):
+        return self.nm
 
 
 class VPI(models.Model):
@@ -404,6 +410,9 @@ class AMP(models.Model):
         help_text="Restrictions on availability",
     )
 
+    def title(self):
+        return self.descr
+
 
 class ApIng(models.Model):
     class Meta:
@@ -528,6 +537,9 @@ class VMPP(models.Model):
         help_text="Combination pack",
     )
 
+    def title(self):
+        return self.nm
+
 
 class Dtinfo(models.Model):
     class Meta:
@@ -621,6 +633,9 @@ class AMPP(models.Model):
         null=True,
         help_text="Discontinued change date",
     )
+
+    def title(self):
+        return self.nm
 
 
 class PackInfo(models.Model):
