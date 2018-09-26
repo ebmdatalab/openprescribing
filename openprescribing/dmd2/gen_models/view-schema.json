@@ -1,7 +1,6 @@
 {
     "vtm": {
         "fields": [
-            "id", 
             "invalid", 
             "nm", 
             "abbrevnm", 
@@ -16,7 +15,6 @@
     }, 
     "vmp": {
         "fields": [
-            "id", 
             "vpiddt", 
             "vpidprev", 
             "invalid", 
@@ -115,7 +113,6 @@
     }, 
     "amp": {
         "fields": [
-            "id", 
             "invalid", 
             "nm", 
             "abbrevnm", 
@@ -181,7 +178,6 @@
     }, 
     "vmpp": {
         "fields": [
-            "id", 
             "invalid", 
             "nm", 
             "qtyval", 
@@ -213,7 +209,6 @@
     }, 
     "ampp": {
         "fields": [
-            "id", 
             "invalid", 
             "nm", 
             "abbrevnm", 
