@@ -32,10 +32,13 @@ for line in lines:
         if table is not None:
             records[table] = record
 
-        record = {'fields': [], 'dmd_obj_relations': [], 'other_relations': []}
+        record = {'dmd_fields': [], 'fields': [], 'dmd_obj_relations': [], 'other_relations': []}
         table = line['table']
 
-    record['fields'].append(line['field'])
+    if line['field'] in table_names:
+        record['dmd_fields'].append(line['field'])
+    else:
+        record['fields'].append(line['field'])
 
     if line['type'] in ['ForeignKey', 'OneToOneField']:
         if line['to'] in table_names:

@@ -4,11 +4,12 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
-from .models import VMP, VMPP, AMP, AMPP
+from .models import VTM, VMP, VMPP, AMP, AMPP
 
 import json
 
 obj_type_to_cls = {
+    "vtm": VTM,
     "vmp": VMP,
     "vmpp": VMPP,
     "amp": AMP,
@@ -85,7 +86,22 @@ def dmd_obj_view(request, obj_type, id):
                 if row is not None:
                     rows.append(row)
 
-    # Related dm+d objects (for a VMP, these will be VMPPs and AMPs)
+    # Related parent dm+d objects (for an AMPP, these will be a VMPP and AMP)
+    for field_name in schema[obj_type]["dmd_fields"]:
+        field = fields_by_name[field_name]
+        model = field.related_model
+        rows.append({"title": model._meta.verbose_name})
+
+        related_instance = getattr(obj, field_name)
+        try:
+            value = related_instance.descr
+        except AttributeError:
+            value = related_instance.nm
+        link = reverse("dmd_obj", args=[field_name, related_instance.id])
+        rows.append({"key": related_instance.id, "value": value, "link": link})
+
+
+    # Related child dm+d objects (for a VMP, these will be VMPPs and AMPs)
     for rel_name in schema[obj_type]["dmd_obj_relations"]:
         relname = rel_name.replace("_", "")
         rel = rels_by_name[relname]
