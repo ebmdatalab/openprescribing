@@ -5,6 +5,8 @@ class VTM(models.Model):
     class Meta:
         verbose_name = "Virtual Therapeutic Moiety"
 
+    obj_type = "vtm"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vtmid",
@@ -38,6 +40,8 @@ class VTM(models.Model):
 class VMP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product"
+
+    obj_type = "vmp"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -316,6 +320,8 @@ class AMP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product"
 
+    obj_type = "amp"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="apid",
@@ -497,6 +503,8 @@ class VMPP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product Pack"
 
+    obj_type = "vmpp"
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vppid",
@@ -574,6 +582,8 @@ class Dtinfo(models.Model):
 class AMPP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product Pack"
+
+    obj_type = "ampp"
 
     id = models.BigIntegerField(
         primary_key=True,

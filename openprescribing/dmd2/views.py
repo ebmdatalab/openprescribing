@@ -1,10 +1,11 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ForeignKey
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from .models import VTM, VMP, VMPP, AMP, AMPP
+from .search import search
 
 import json
 
@@ -118,3 +119,24 @@ def dmd_obj_view(request, obj_type, id):
         "rows": rows,
     }
     return render(request, "dmd/dmd_obj.html", ctx)
+
+
+def search_view(request):
+    q = request.GET.get("q")
+
+    ctx = {"q": q}
+
+    if q:
+        results = search(q)
+
+        if len(results) == 1:
+            if len(results.values()[0]) == 1:
+                obj = results.values()[0][0]
+                link = reverse("dmd_obj", args=[type(obj).__name__.lower(), obj.id])
+                return redirect(link)
+
+        ctx["results"] = results
+    else:
+        ctx["results"] = None
+
+    return render(request, "dmd/search.html", ctx)
