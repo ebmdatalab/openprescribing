@@ -1,8 +1,8 @@
 {
     "vtm": {
         "fields": [
-            "invalid", 
             "nm", 
+            "invalid", 
             "abbrevnm", 
             "vtmidprev", 
             "vtmiddt"
@@ -15,10 +15,10 @@
     }, 
     "vmp": {
         "fields": [
+            "nm", 
             "vpiddt", 
             "vpidprev", 
             "invalid", 
-            "nm", 
             "abbrevnm", 
             "basis", 
             "nmdt", 
@@ -113,8 +113,8 @@
     }, 
     "amp": {
         "fields": [
-            "invalid", 
             "nm", 
+            "invalid", 
             "abbrevnm", 
             "descr", 
             "nmdt", 
@@ -178,8 +178,8 @@
     }, 
     "vmpp": {
         "fields": [
-            "invalid", 
             "nm", 
+            "invalid", 
             "qtyval", 
             "qty_uom", 
             "combpack"
@@ -209,8 +209,8 @@
     }, 
     "ampp": {
         "fields": [
-            "invalid", 
             "nm", 
+            "invalid", 
             "abbrevnm", 
             "combpack", 
             "legal_cat", 
@@ -293,11 +293,10 @@
     }, 
     "ing": {
         "fields": [
-            "id", 
+            "nm",
             "isiddt", 
             "isidprev", 
-            "invalid", 
-            "nm"
+            "invalid" 
         ], 
         "dmd_obj_relations": [], 
         "dmd_fields": [], 
