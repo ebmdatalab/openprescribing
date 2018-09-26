@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+
+<table class="table table-condensed">
+  {% for row in rows %}
+  <tr>
+    {% if row.title %}
+    <th colspan="2">
+      {{ row.title }}
+    </th>
+    {% else %}
+    <td>{{ row.key }}</td>
+    {% if row.link %}
+    <td><a href="{{ row.link }}">{{ row.value }}</a></td>
+    {% else %}
+    <td>{{ row.value }}</td>
+    {% endif %}
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
