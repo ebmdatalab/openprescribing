@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .models import VTM, VMP, VMPP, AMP, AMPP
 from .search import search
+from .view_schema import schema
 
 import json
 
@@ -39,13 +40,6 @@ def dmd_obj_view(request, obj_type, id):
         raise Http404
 
     obj = get_object_or_404(cls, id=id)
-
-    # I'm loading this from a JSON file on each request because this is quicker
-    # than keeping the data in Python and waiting for the server to reload on
-    # each change.  TODO change this once the we've worked out what fields to
-    # show, and in what order.
-    with open("dmd2/gen_models/view-schema.json") as f:
-        schema = json.load(f)
 
     fields_by_name = {field.name: field for field in cls._meta.fields}
     rels_by_name = {rel.name: rel for rel in cls._meta.related_objects}

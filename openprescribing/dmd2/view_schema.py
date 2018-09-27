@@ -1,0 +1,560 @@
+schema = {
+    "vtm": {
+        "fields": [
+            "nm", 
+            "invalid", 
+            "abbrevnm", 
+            "vtmidprev", 
+            "vtmiddt"
+        ], 
+        "dmd_obj_relations": [
+            "vmp"
+        ], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "vmp": {
+        "fields": [
+            "nm", 
+            "vpiddt", 
+            "vpidprev", 
+            "invalid", 
+            "abbrevnm", 
+            "basis", 
+            "nmdt", 
+            "nmprev", 
+            "basis_prev", 
+            "nmchange", 
+            "combprod", 
+            "pres_stat", 
+            "sug_f", 
+            "glu_f", 
+            "pres_f", 
+            "cfc_f", 
+            "non_avail", 
+            "non_availdt", 
+            "df_ind", 
+            "udfs", 
+            "udfs_uom", 
+            "unit_dose_uom"
+        ], 
+        "dmd_obj_relations": [
+            "amp", 
+            "vmpp"
+        ], 
+        "dmd_fields": [
+            "vtm"
+        ], 
+        "other_relations": [
+            "vpi", 
+            "ont", 
+            "dform", 
+            "droute", 
+            "control_info"
+        ]
+    }, 
+    "vpi": {
+        "fields": [
+            "ing", 
+            "basis_strnt", 
+            "bs_subid", 
+            "strnt_nmrtr_val", 
+            "strnt_nmrtr_uom", 
+            "strnt_dnmtr_val", 
+            "strnt_dnmtr_uom"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": []
+    }, 
+    "ont": {
+        "fields": [
+            "form"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": []
+    }, 
+    "dform": {
+        "fields": [
+            "form"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": []
+    }, 
+    "droute": {
+        "fields": [
+            "route"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": []
+    }, 
+    "control_info": {
+        "fields": [
+            "cat", 
+            "catdt", 
+            "cat_prev"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": []
+    }, 
+    "amp": {
+        "fields": [
+            "nm", 
+            "invalid", 
+            "abbrevnm", 
+            "descr", 
+            "nmdt", 
+            "nm_prev", 
+            "supp", 
+            "lic_auth", 
+            "lic_auth_prev", 
+            "lic_authchange", 
+            "lic_authchangedt", 
+            "combprod", 
+            "flavour", 
+            "ema", 
+            "parallel_import", 
+            "avail_restrict"
+        ], 
+        "dmd_obj_relations": [
+            "ampp"
+        ], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": [
+            "ap_ing", 
+            "lic_route", 
+            "ap_info"
+        ]
+    }, 
+    "ap_ing": {
+        "fields": [
+            "ing", 
+            "strnth", 
+            "uom"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "amp"
+        ], 
+        "other_relations": []
+    }, 
+    "lic_route": {
+        "fields": [
+            "route"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "amp"
+        ], 
+        "other_relations": []
+    }, 
+    "ap_info": {
+        "fields": [
+            "sz_weight", 
+            "colour", 
+            "prod_order_no"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "amp"
+        ], 
+        "other_relations": []
+    }, 
+    "vmpp": {
+        "fields": [
+            "nm", 
+            "invalid", 
+            "qtyval", 
+            "qty_uom", 
+            "combpack"
+        ], 
+        "dmd_obj_relations": [
+            "ampp"
+        ], 
+        "dmd_fields": [
+            "vmp"
+        ], 
+        "other_relations": [
+            "dtinfo"
+        ]
+    }, 
+    "dtinfo": {
+        "fields": [
+            "pay_cat", 
+            "price", 
+            "dt", 
+            "prevprice"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmpp"
+        ], 
+        "other_relations": []
+    }, 
+    "ampp": {
+        "fields": [
+            "nm", 
+            "invalid", 
+            "abbrevnm", 
+            "combpack", 
+            "legal_cat", 
+            "subp", 
+            "disc", 
+            "discdt"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "vmpp", 
+            "amp"
+        ], 
+        "other_relations": [
+            "pack_info", 
+            "prescrib_info", 
+            "price_info", 
+            "reimb_info", 
+            "gtin"
+        ]
+    }, 
+    "pack_info": {
+        "fields": [
+            "reimb_stat", 
+            "reimb_statdt", 
+            "reimb_statprev", 
+            "pack_order_no"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "ampp"
+        ], 
+        "other_relations": []
+    }, 
+    "prescrib_info": {
+        "fields": [
+            "sched_2", 
+            "acbs", 
+            "padm", 
+            "fp10_mda", 
+            "sched_1", 
+            "hosp", 
+            "nurse_f", 
+            "enurse_f", 
+            "dent_f"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "ampp"
+        ], 
+        "other_relations": []
+    }, 
+    "price_info": {
+        "fields": [
+            "price", 
+            "pricedt", 
+            "price_prev", 
+            "price_basis"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "ampp"
+        ], 
+        "other_relations": []
+    }, 
+    "reimb_info": {
+        "fields": [
+            "px_chrgs", 
+            "disp_fees", 
+            "bb", 
+            "cal_pack", 
+            "spec_cont", 
+            "dnd", 
+            "fp34d"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "ampp"
+        ], 
+        "other_relations": []
+    }, 
+    "ing": {
+        "fields": [
+            "nm",
+            "isiddt", 
+            "isidprev", 
+            "invalid" 
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "combination_pack_ind": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "combination_prod_ind": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "basis_of_name": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "namechange_reason": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "virtual_product_pres_status": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "control_drug_category": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "licensing_authority": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "unit_of_measure": {
+        "fields": [
+            "cd", 
+            "cddt", 
+            "cdprev", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "form": {
+        "fields": [
+            "cd", 
+            "cddt", 
+            "cdprev", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "ont_form_route": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "route": {
+        "fields": [
+            "cd", 
+            "cddt", 
+            "cdprev", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "dt_payment_category": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "supplier": {
+        "fields": [
+            "cd", 
+            "cddt", 
+            "cdprev", 
+            "invalid", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "flavour": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "colour": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "basis_of_strnth": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "reimbursement_status": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "spec_cont": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "dnd": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "virtual_product_non_avail": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "discontinued_ind": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "df_indicator": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "price_basis": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "legal_category": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "availability_restriction": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "licensing_authority_change_reason": {
+        "fields": [
+            "cd", 
+            "descr"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [], 
+        "other_relations": []
+    }, 
+    "gtin": {
+        "fields": [
+            "gtin", 
+            "startdt", 
+            "enddt"
+        ], 
+        "dmd_obj_relations": [], 
+        "dmd_fields": [
+            "ampp"
+        ], 
+        "other_relations": []
+    }
+}
