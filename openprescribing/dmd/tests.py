@@ -16,13 +16,46 @@ from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
 class CommandsTestCase(TestCase):
 
     def test_import_dmd(self):
+        # These products are created by import_ppu_savings.py, and we want to
+        # ensure they are not deleted.
+        DMDProduct.objects.get_or_create(
+            dmdid=10000000000,
+            bnf_code='0601060D0AAA0A0',
+            vpid=10000000000,
+            name='Glucose Blood Testing Reagents',
+            concept_class=1,
+            product_type=1
+        )
+        DMDProduct.objects.get_or_create(
+            dmdid=10000000001,
+            vpid=10000000001,
+            bnf_code='0601060U0AAA0A0',
+            name='Urine Testing Reagents',
+            product_type=1,
+            concept_class=1)
+
+        # This is a product that is not present in the imported data, and so we
+        # expect it to be deleted by import_dmd.  This would occur if the
+        # product's SNOMED code (the dmdid) changes.  See
+        # https://github.com/ebmdatalab/openprescribing/issues/955.
+        DMDProduct.objects.get_or_create(
+            dmdid=123,
+            vpid=123,
+            name='Something',
+            product_type=1,
+            concept_class=1)
+
         # dmd.zip doesn't exist!  The data to be imported is already unzipped
         # in dmd/tests/fixtures/commands/.
         path = 'dmd/tests/fixtures/commands/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        self.assertEqual(DMDProduct.objects.count(), 6)
+        self.assertEqual(DMDProduct.objects.count(), 8)
+
+        self.assertTrue(DMDProduct.objects.filter(dmdid=10000000000).exists())
+        self.assertTrue(DMDProduct.objects.filter(dmdid=10000000001).exists())
+        self.assertFalse(DMDProduct.objects.filter(dmdid=123).exists())
 
         diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
         self.assertEqual(diclofenac_prods.count(), 4)
@@ -105,6 +138,11 @@ class CommandsTestCase(TestCase):
             'SELECT nm FROM dmd_vtm WHERE vtmid = 32889211000001103',
             'Diclofenac diethylammonium'
         )
+
+        # This checks that records with the same primary key can be imported
+        # multiple times.
+        with patch('zipfile.ZipFile'):
+            call_command('import_dmd', '--zip_path', path)
 
     def test_import_dmd_snomed(self):
         path = 'dmd/tests/fixtures/commands/dmd.zip'

@@ -25,7 +25,7 @@ from django.db import models
 
 class AvailabilityRestriction(models.Model):
     cd = models.IntegerField(primary_key=True)
-    desc = models.CharField(max_length=50)
+    desc = models.TextField()
 
     def __str__(self):
         return self.desc
@@ -36,7 +36,7 @@ class AvailabilityRestriction(models.Model):
 
 class Prescribability(models.Model):
     cd = models.IntegerField(primary_key=True)
-    desc = models.CharField(max_length=50)
+    desc = models.TextField()
 
     def __str__(self):
         return self.desc
@@ -47,7 +47,7 @@ class Prescribability(models.Model):
 
 class VMPNonAvailability(models.Model):
     cd = models.IntegerField(primary_key=True)
-    desc = models.CharField(max_length=50)
+    desc = models.TextField()
 
     def __str__(self):
         return self.desc
@@ -58,7 +58,7 @@ class VMPNonAvailability(models.Model):
 
 class ControlledDrugCategory(models.Model):
     cd = models.IntegerField(primary_key=True)
-    desc = models.CharField(max_length=50)
+    desc = models.TextField()
 
     def __str__(self):
         return self.desc
@@ -69,7 +69,7 @@ class ControlledDrugCategory(models.Model):
 
 class TariffCategory(models.Model):
     cd = models.IntegerField(primary_key=True)
-    desc = models.CharField(max_length=50)
+    desc = models.TextField()
 
     def __str__(self):
         return self.desc

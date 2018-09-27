@@ -804,10 +804,10 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
             {'series': [
                 {'y': 0.09, 'x': 1, 'z': 32.0,
                  'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095},
+                 'mean_ppu': 0.098},
                 {'y': 0.1, 'x': 1, 'z': 128.0,
                  'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095}],
+                 'mean_ppu': 0.098}],
              'categories': [
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
              'plotline': 0.08875}
@@ -825,7 +825,7 @@ class TestAPISpendingViewsPPUBubble(ApiTestBase):
             {'series': [
                 {'y': 0.09, 'x': 1, 'z': 32.0,
                  'name': 'Chlortalidone_Tab 50mg',
-                 'mean_ppu': 0.095}],
+                 'mean_ppu': 0.098}],
              'categories': [
                  {'is_generic': True, 'name': 'Chlortalidone_Tab 50mg'}],
              'plotline': 0.08875}

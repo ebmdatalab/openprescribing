@@ -119,8 +119,9 @@ def bubble(request, format=None):
         ordered_ppus_sql = binned_ppus_sql + (
             "SELECT * FROM ("
             " SELECT *, "
-            " AVG(ppu) OVER ("
-            "  PARTITION BY presentation_code) AS mean_ppu, "
+            " SUM(ppu * quantity) OVER (PARTITION BY presentation_code)"
+            "  / SUM(quantity) OVER (PARTITION BY presentation_code)"
+            "      AS mean_ppu, "
             " NTILE(%s) OVER (ORDER BY ppu) AS ntiled "
             " FROM binned_ppus "
             " ORDER BY mean_ppu, presentation_name) ranked "
@@ -130,7 +131,9 @@ def bubble(request, format=None):
 
         ordered_ppus_sql = binned_ppus_sql + (
             "SELECT *, "
-            "AVG(ppu) OVER (PARTITION BY presentation_code) AS mean_ppu "
+            "SUM(ppu * quantity) OVER (PARTITION BY presentation_code) "
+            " / SUM(quantity) OVER (PARTITION BY presentation_code)"
+            "     AS mean_ppu "
             "FROM binned_ppus "
             "ORDER BY mean_ppu, presentation_name, ppu"
         )

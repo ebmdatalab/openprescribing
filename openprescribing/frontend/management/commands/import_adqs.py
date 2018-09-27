@@ -1,57 +1,58 @@
-import csv
-import re
-import sys
-from django.core.exceptions import ObjectDoesNotExist
+"""This command extracts ADQ information from monthly detailed
+prescribing data.
+
+See https://github.com/ebmdatalab/openprescribing/issues/905 for
+details.
+
+"""
+
 from django.core.management.base import BaseCommand
+from django.db import transaction
+
+from frontend.models import ImportLog
 from frontend.models import Presentation
+from gcutils.bigquery import Client
+
+
+SQL = """
+WITH
+  codes AS (
+  SELECT
+    BNF_Code AS bnf_code,
+    IEEE_DIVIDE(ADQ_Usage, (Items * Quantity)) AS adq_per_quantity,
+    ROW_NUMBER() OVER (PARTITION BY BNF_Code) AS row_number
+  FROM
+    {detailed_raw_data_table})
+SELECT DISTINCT
+  CONCAT(
+    SUBSTR(codes.bnf_code, 0, 9),
+    '.*',
+    SUBSTR(codes.bnf_code, 14, 2)) AS bnf_code_regex,
+  adq_per_quantity
+FROM
+  codes
+WHERE
+  row_number = 1
+  AND adq_per_quantity > 0
+
+"""
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports ADQ codes.'
-
-    def add_arguments(self, parser):
-        parser.add_argument('--filename')
+    help = 'Imports ADQ codes from current raw prescribing data in BigQuery'
 
     def handle(self, *args, **options):
-        '''
-        Import BNF numbered chapters, sections and paragraphs.
-        '''
-        if not options['filename']:
-            print 'Please supply a filename'
-            sys.exit()
-
-        p = Presentation.objects.all()
-
-        reader = csv.DictReader(open(options['filename'], 'rU'))
-        for row in reader:
-            code = row['BNF Code']
-            try:
-                adq = row['ADQ Value'].strip()
-                if adq == 'N/A':
-                    continue
-                p = Presentation.objects.get(bnf_code=code)
-                adq_unit = row['ADQ Unit'].strip().lower()
-                active_quantity = self.get_active_quantity(
-                    row['BNF Name'], adq_unit)
-                p.active_quantity = active_quantity
-                p.adq = adq
-                p.adq_unit = adq_unit
-                if active_quantity:
-                    p.percent_of_adq = (float(active_quantity) / float(p.adq))
-                else:
-                    p.percent_of_adq = None
-                p.save()
-            except ObjectDoesNotExist:
-                pass
-
-    def get_active_quantity(self, bnf_name, adq_unit):
-        bnf_name = bnf_name.lower()
-        if adq_unit:
-            digits = re.findall('\d+' + adq_unit, bnf_name)
-        else:
-            digits = re.findall('\d+', bnf_name)
-        if digits:
-            return digits[0].replace(adq_unit, '')
-        else:
-            return None
+        client = Client('hscic')
+        year_and_month = ImportLog.objects.latest_in_category(
+            'prescribing').current_at.strftime("%Y_%m")
+        raw_data_table_name = 'tmp_eu.raw_prescribing_data_{}'.format(
+            year_and_month)
+        sql = SQL.format(
+            detailed_raw_data_table=raw_data_table_name
+        )
+        with transaction.atomic():
+            for row in client.query(sql):
+                bnf_code_regex, adq_per_quantity = row
+                matches = Presentation.objects.filter(
+                    bnf_code__regex=bnf_code_regex)
+                matches.update(adq_per_quantity=adq_per_quantity)

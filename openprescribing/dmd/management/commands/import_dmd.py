@@ -43,7 +43,6 @@ from lxml import etree
 import logging
 import glob
 import os
-import re
 import zipfile
 
 from django.core.management.base import BaseCommand
@@ -78,11 +77,9 @@ PG_TYPE_MAP = {
 }
 
 
-def create_table(info):
-    sql = 'DROP TABLE IF EXISTS "%s" CASCADE' % info['table_name']
+def create_and_clear_table(info):
     with connection.cursor() as cursor:
-        cursor.execute(sql.lower())
-        sql = 'CREATE TABLE "%s" (' % info['table_name']
+        sql = 'CREATE TABLE IF NOT EXISTS "%s" (' % info['table_name']
         cols = []
         indexes = []
         for name, coltype in info['columns']:
@@ -100,6 +97,7 @@ def create_table(info):
             sql = 'CREATE INDEX IF NOT EXISTS i_%s_%s ON "%s"("%s");' % (
                 info['table_name'], i, info['table_name'], i)
             cursor.execute(sql.lower())
+        cursor.execute('DELETE FROM %s' % info['table_name'])
 
 
 def insert_row(cursor, table_info, row_data):
@@ -199,14 +197,13 @@ def create_all_tables(source_directory):
     files = [x.split('/')[-1] for x in glob.glob("%s/*xsd" % source_directory)]
     table_info = get_table_info(source_directory, files)
     for name, info in table_info.items():
-        create_table(info)
+        create_and_clear_table(info)
 
 
 def create_dmd_product():
     with connection.cursor() as cursor:
         fpath = os.path.dirname(__file__)
-        for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath),
-                        key=lambda x: int(re.findall(r'\d+', x)[0])):
+        for f in sorted(glob.glob("%s/dmd_sql/*sql" % fpath)):
             logger.info("Post-processing", f)
             with open(f, "rb") as sql:
                 sql = sql.read()
@@ -324,7 +321,6 @@ class Command(BaseCommand):
         else:
             with transaction.atomic():
                 process_datafiles(dir_path)
-            with transaction.atomic():
                 create_dmd_product()
 
         Client('dmd').upload_model(DMDVmpp)
