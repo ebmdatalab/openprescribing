@@ -9,10 +9,11 @@
     "for all NSAIDs."
   ],
   "why_it_matters": [
-    "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some 'traditional' NSAIDS, for ",
-    "their effects on the stomach, kidneys and the risk of blood clots.  ",
-    "The latest evidence shows that ibuprofen and naproxen are two of the drugs with a lower level of risk, ",
-    "and therefore doctors should prescribe these to patients before trying the others."
+    "There have been a number of concerns about the safety of a number of anti-inflammatory drugs, including COX-2 inhibitors and some ",
+    "'traditional' NSAIDS, for their effects on the stomach, kidneys and the risk of blood clots.  ",
+    "<a href='https://www.nice.org.uk/advice/ktt13/resources/nonsteroidal-antiinflammatory-drugs-58757951055301'>NICE recommends that ",
+    "as ibuprofen and naproxen are two of the drugs with a lower level of risk,</a> doctors should prescribe these to patients ",
+    "before trying the others."
   ],
   "numerator_short": "NSAID items (excl naproxen and ibuprofen)",
   "denominator_short": "NSAID items",
