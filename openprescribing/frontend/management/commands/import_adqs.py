@@ -45,7 +45,8 @@ class Command(BaseCommand):
         client = Client('hscic')
         year_and_month = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime("%Y_%m")
-        raw_data_table_name = 'tmp_eu.raw_prescribing_data_{}'.format(year_and_month)
+        raw_data_table_name = 'tmp_eu.raw_prescribing_data_{}'.format(
+            year_and_month)
         sql = SQL.format(
             detailed_raw_data_table=raw_data_table_name
         )
