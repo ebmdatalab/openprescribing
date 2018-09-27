@@ -85,7 +85,7 @@ domready(function() {
       tooltip: {
         useHTML: true,
         headerFormat: '',
-        pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.y:,.2f}',
+        pointFormat: '{point.z:,.0f} units of {point.name} @ £{point.x:,.2f}',
         followPointer: true,
       },
 
