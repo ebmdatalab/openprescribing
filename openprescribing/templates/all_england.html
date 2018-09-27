@@ -13,32 +13,52 @@
 
 <div class="row">
   <div class="col-md-12">
-    <h1>Prescribing across all {{ entity_type }}s in NHS England</h1>
+    <h1>Prescribing across the NHS in England</h1>
   </div>
 </div>
 
 <div class="row">
+
   <div class="col-md-6">
-    <h2>Cost savings</h2>
+    <h2>Prescribing measures</h2>
     <p>
-      We have calculated potential cost savings across NHS England through prescribing changes. In <strong>June 2018</strong> these amounted to:<br>
-      <!-- hardcoded for now -->
-      <span style="font-size: 200%">£12,363,000</span>
+      The charts below show the distribution of prescribing behaviour across
+      {{entity_type}}s in NHS England on various measures
+      (<a href="{% url 'faq' %}#measureinterpret">read more about these</a>).
+    </p>
+    <p>
+      If all {{ entity_type}}s across England had prescribed at least as well
+      as the median {{ entity_type}} the monthly cost saving in
+      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      <span style="font-size: 200%">£{{ measure_savings.50|sigfigs:4|intcomma }}</span>
+    </p>
+    <p>
+      If they had prescribed as well as the best decile the saving would have been:<br>
+      <span style="font-size: 200%">£{{ measure_savings.10|sigfigs:4|intcomma }}</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="#perfsummary" class="btn btn-primary">View prescribing measures &rarr;</a>
+    </p>
+  </div>
+
+  <div class="col-md-6">
+    <h2>PPU cost savings</h2>
+    <p>
+      There is wide variation in the unit cost of a number of medicines
+      prescribed across England, due to the way the reimbursement system is
+      structured.
+    </p>
+    <p>
+      We have calculated the potential monthly cost saving if every {{ entity_type }}
+      acheived the unit cost obtained by the best 10%.
+      In <strong>{{ date|date:"F Y" }}</strong> this was:<br>
+      <span style="font-size: 200%">£{{ ppu_savings|sigfigs:4|intcomma }}</span>
     </p>
     <p style="margin-bottom: 2em">
       <a href="{% url 'all_england_price_per_unit' %}" class="btn btn-primary">View cost savings breakdown &rarr;</a>
     </p>
   </div>
 
-  <div class="col-md-6">
-    <h2>Prescribing measures</h2>
-    <p>
-      The charts below show the distribution of prescribing behaviour across {{entity_type}}s in NHS England on various measures.
-      Each chart shows performance at every decile and highlights the median.
-      These measures are indicative only, and should be approached with caution
-      (<a href='{% url 'faq' %}#measureinterpret'>read more</a>).
-    </p>
-  </div>
 </div>
 
 <hr/>

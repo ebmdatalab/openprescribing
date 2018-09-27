@@ -13,7 +13,8 @@ ALL_PCT_NAME = 'All CCGs in England'
 CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 
 
-class MeasureValueManager(models.Manager):
+class MeasureValueQuerySet(models.QuerySet):
+
     def by_ccg(self, org_ids, measure_ids=None, tags=None):
         org_ids, aggregate_all = _extract_all_orgs_pseudo_id(org_ids)
         org_Q = Q()
@@ -64,6 +65,20 @@ class MeasureValueManager(models.Manager):
         if aggregate_all:
             qs = _aggregate_all_results_by_measure(qs, include_practice=True)
         return qs
+
+    def aggregate_cost_savings(self):
+        """
+        Returns a dictionary of cost savings, summed over all MeasureValues in
+        the current query
+        """
+        result = self.aggregate(
+            total=_aggregate_over_json(
+                field='cost_savings',
+                aggregate_function=_sum_positive_values,
+                keys=CENTILES
+            )
+        )
+        return result['total']
 
 
 def _extract_all_orgs_pseudo_id(org_ids):

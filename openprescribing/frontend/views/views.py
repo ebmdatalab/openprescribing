@@ -421,7 +421,6 @@ def _total_savings(entity, date):
     sql = ("SELECT SUM(possible_savings) "
            "AS total_savings FROM ({}) all_savings").format(sql)
     params = {'date': date, 'entity_code': entity.pk}
-
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
         return dictfetchall(cursor)[0]['total_savings']
@@ -492,15 +491,46 @@ def ccg_home_page(request, ccg_code):
     return render(request, 'entity_home_page.html', context)
 
 
+def _all_england_ppu_savings(entity_type, date):
+    conditions = ' '
+    if entity_type == 'CCG':
+        conditions += 'AND {ppusavings_table}.pct_id IS NOT NULL '
+        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
+    elif entity_type == 'practice':
+        conditions += 'AND {ppusavings_table}.practice_id IS NOT NULL '
+    else:
+        raise BadRequestError(u'Unknown entity type: {}'.format(entity_type))
+    sql = ppu_sql(conditions=conditions)
+    sql = ("SELECT SUM(possible_savings) "
+           "AS total_savings FROM ({}) all_savings").format(sql)
+    params = {'date': date}
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        return dictfetchall(cursor)[0]['total_savings']
+
+
+def _all_england_measure_savings(entity_type, date):
+    return (
+        MeasureValue.objects
+        .filter(month=date, practice_id__isnull=(entity_type == 'CCG'))
+        .exclude(measure_id='lpzomnibus')
+        .aggregate_cost_savings()
+    )
+
+
 @handle_bad_request
 def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
+    entity_type = request.GET.get('entity_type', 'CCG')
+    date = _specified_or_last_date(request, 'ppu')
+    ppu_savings = _all_england_ppu_savings(entity_type, date)
+    measure_savings = _all_england_measure_savings(entity_type, date)
     context = {
         'tag_filter': tag_filter,
-        # Note, just changing this to "practice" should be enough to generate
-        # all NHS England cost-saving etc data at practice rather than CCG
-        # level
-        'entity_type': 'CCG'
+        'entity_type': entity_type,
+        'ppu_savings': ppu_savings,
+        'measure_savings': measure_savings,
+        'date': date
     }
     return render(request, 'all_england.html', context)
 
