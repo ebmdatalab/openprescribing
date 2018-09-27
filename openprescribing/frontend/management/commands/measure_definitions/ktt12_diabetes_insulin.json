@@ -10,7 +10,8 @@
     "intermediate acting insulins excluding biphasic insulins."
   ],
   "why_it_matters": [
-    "NICE recommend that 'neutral protamine Hagedorn' (NPH) insulin is the preferred starting therapy with insulin, and ",
+    "<a href='https://www.nice.org.uk/guidance/ng28/chapter/1-Recommendations'>NICE recommend that</a> for patients with type 2 diabetes requiring insulin, ",
+    "'neutral protamine Hagedorn' (NPH) insulin is the preferred starting therapy with insulin, and ",
     "that the more expensive long-acting insulin analogues (detemir and insulin glargine) can be considered as an alternative ",
     "in certain circumstances. "
   ],
@@ -30,7 +31,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "((bnf_code LIKE '0601012Z0%%')  OR (bnf_code LIKE '0601012X0%%')  OR (bnf_code LIKE '0601012V0%%'))  "
+    "(bnf_code LIKE '0601012Z0%' OR bnf_code LIKE '0601012X0%' OR bnf_code LIKE '0601012V0%')"
   ],
   "denominator_columns": [
     "SUM(items) AS items, ",
@@ -38,6 +39,10 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "((bnf_code LIKE '0601012Z0%%')  OR (bnf_code LIKE '0601012X0%%')  OR (bnf_code LIKE '0601012V0%%')  OR (bnf_code LIKE '0601012G0%%')  OR (bnf_code LIKE '0601012L0%%')  OR (bnf_code LIKE '0601012N0%%')  OR (bnf_code LIKE '0601012S0%%')  OR (bnf_code LIKE '060101200%%')  OR (bnf_code LIKE '0601012U0%%'))  AND (bnf_code NOT LIKE '0601012C0%%')  AND (bnf_code NOT LIKE '0601012F0%%')  AND (bnf_code NOT LIKE '0601012D0%%')  AND (bnf_code NOT LIKE '0601012W0%%') "
+    "(bnf_code LIKE '0601012Z0%' OR bnf_code LIKE '0601012X0%' OR bnf_code LIKE '0601012V0%' OR ",
+    "bnf_code LIKE '0601012G0%' OR bnf_code LIKE '0601012L0%' OR bnf_code LIKE '0601012N0%' OR ",
+    "bnf_code LIKE '0601012S0%' OR bnf_code LIKE '060101200%' OR bnf_code LIKE '0601012U0%%') AND ",
+    "((bnf_code NOT LIKE '0601012C0%')  AND (bnf_code NOT LIKE '0601012F0%')  AND (bnf_code NOT LIKE '0601012D0%') AND ",
+    "(bnf_code NOT LIKE '0601012W0%'))"
   ]
 }

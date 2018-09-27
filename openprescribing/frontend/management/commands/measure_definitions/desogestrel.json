@@ -5,9 +5,7 @@
     "compared with prescribing of all desogestrel "
   ],
   "description": [
-    "Total quantity of branded desogestrel ,",
-    "as a proportion of total quantity of desogestrel",
-    "(0703021Q0)."
+    "Total quantity of branded desogestrel as a proportion of total quantity of all desogestrel."
   ],
   "why_it_matters": [
     "Desogestrel is available as both generic tablets and as a number of brands. ",
@@ -15,7 +13,7 @@
     "However the price of the generic has now fallen and is the cheapest option to prescribe."
   ],
   "numerator_short": "Branded desogestrel quantity",
-  "denominator_short": "Total Desogestrel quantity",
+  "denominator_short": "Total desogestrel quantity",
   "url": null,
   "is_percentage": true,
   "is_cost_based": true,

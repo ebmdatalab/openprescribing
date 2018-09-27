@@ -6,15 +6,12 @@
     "cephalosporins and quinolones per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU"
   ],
   "description": [
-    "Number of prescription items for co-amoxiclav, ",
-    "cephalosporins and quinolones "
+    "Number of prescription items for co-amoxiclav, cephalosporins and quinolones per item-based STAR-PU "
   ],
   "why_it_matters": [
-    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can ",
-    "be used when others have failed. It is important that ",
-    "they are used sparingly, to avoid drug-resistant bacteria ",
-    "developing. This measure looks at the volume of these ",
-    "prescribed, versus the list size adjusted for need."
+    "Co-amoxiclav, cephalosporins and quinolones are broad spectrum antibiotics that can be used when others have failed. ",
+    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Evidence-context'> It is important that they are used sparingly, to avoid drug-resistant bacteria developing.</a> ", 
+    "This measure looks at the volume of these prescribed, versus the list size adjusted for need."
   ],
   "numerator_short": "Selected items",
   "denominator_short": "STAR-PUs",
