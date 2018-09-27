@@ -1,10 +1,12 @@
 {% load staticfiles %}
 {% load template_extras %}
+{% load raven %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <script>var SENTRY_PUBLIC_DSN = '{% sentry_public_dsn "https" %}';</script>
     {% if GOOGLE_TRACKING_ID %}
     <script>
       function setParamsFromQueryString(params, keys) {
