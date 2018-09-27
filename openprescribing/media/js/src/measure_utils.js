@@ -438,6 +438,9 @@ var utils = {
         name: 'This ' + options.orgType,
         isNationalSeries: false,
         data: d.data,
+        events: {
+          legendItemClick: function() { return false; }
+        },
         color: 'red',
         showInLegend: true,
         marker: {
@@ -450,6 +453,9 @@ var utils = {
           isNationalSeries: true,
           data: d.globalCentiles[k],
           dashStyle: 'dot',
+          events: {
+            legendItemClick: function() { return false; }
+          },
           color: 'blue',
           lineWidth: 1,
           showInLegend: false,
