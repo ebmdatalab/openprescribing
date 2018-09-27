@@ -655,4 +655,5 @@ def conditional_constraint_and_index_reconstructor(options):
         # updating the entire table.
         yield
     else:
-        yield utils.constraint_and_index_reconstructor('frontend_measurevalue')
+        with utils.constraint_and_index_reconstructor('frontend_measurevalue'):
+            yield

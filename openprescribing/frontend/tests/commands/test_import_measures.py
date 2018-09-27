@@ -86,25 +86,24 @@ class UnitTests(TestCase):
     """
     fixtures = ['measures']
 
-    @patch('django.db.connection')
-    def test_reconstructor_not_called_when_measures_specified(self, conn):
+    @patch('common.utils.db')
+    def test_reconstructor_not_called_when_measures_specified(self, db):
         from frontend.management.commands.import_measures \
             import conditional_constraint_and_index_reconstructor
         with conditional_constraint_and_index_reconstructor(
                 {'measure': 'thingy'}):
             pass
-        execute = conn.cursor.return_value.__enter__.return_value.execute
+        execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_not_called()
 
-    @patch('frontend.management.commands.import_measures.connection')
-    def test_reconstructor_called_when_no_measures_specified(self, conn):
+    @patch('common.utils.db')
+    def test_reconstructor_called_when_no_measures_specified(self, db):
         from frontend.management.commands.import_measures \
             import conditional_constraint_and_index_reconstructor
         with conditional_constraint_and_index_reconstructor({'measure': None}):
             pass
-        calls = conn.cursor.return_value.__enter__\
-                    .return_value.execute.mock_calls
-        self.assertGreater(calls, 0)
+        execute = db.connection.cursor.return_value.__enter__.return_value.execute
+        execute.assert_called()
 
 
 class BigqueryFunctionalTests(TestCase):
