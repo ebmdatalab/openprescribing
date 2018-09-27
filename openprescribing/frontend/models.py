@@ -351,6 +351,17 @@ class Presentation(models.Model):
     is_generic = models.NullBooleanField(default=None)
     is_current = models.BooleanField(default=True)
     replaced_by = models.ForeignKey('self', null=True, blank=True)
+
+    # An ADQ is the assumed average maintenance dose per day for a
+    # drug used for its main indication in adults.
+    #
+    # If a presentation's ADQ is "20mg", and its `quantity` field is
+    # measured in 10 mg tablets, then the `adq_per_quantity` whould be
+    # 2.  In other words, `adq_per_quantity` is a factor to apply to
+    # `quantity`, to obtain an ADQ.
+    #
+    # See https://github.com/ebmdatalab/openprescribing/issues/934 for
+    # more detail
     adq_per_quantity = models.FloatField(null=True, blank=True)
 
     objects = PresentationManager()
