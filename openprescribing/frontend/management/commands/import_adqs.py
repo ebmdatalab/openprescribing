@@ -51,7 +51,7 @@ class Command(BaseCommand):
             detailed_raw_data_table=raw_data_table_name
         )
         with transaction.atomic():
-            for row in client.query(sql):
+            for row in client.query(sql).rows:
                 bnf_code_regex, adq_per_quantity = row
                 matches = Presentation.objects.filter(
                     bnf_code__regex=bnf_code_regex)

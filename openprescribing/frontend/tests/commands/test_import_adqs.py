@@ -12,7 +12,7 @@ class CommandsTestCase(TestCase):
     @patch('gcutils.bigquery.Client')
     def test_import_adqs(self, mock_client):
         mock_query = MagicMock(name='query')
-        mock_query.query.return_value = [
+        mock_query.query.return_value.rows = [
             ('0202010F0.*AA', 0.333),
         ]
         mock_client.return_value = mock_query
@@ -23,9 +23,9 @@ class CommandsTestCase(TestCase):
         self.assertIn(
             "tmp_eu.raw_prescribing_data_2014_11",
             mock_query.query.call_args[0][0])
-
+grep
         # Check we set adq_per_quantity according to the bigquery results
         p = Presentation.objects.get(bnf_code='0202010F0AAAAAA')
         self.assertEqual(p.adq_per_quantity, 0.333)
-        p = Presentation.objects.get(bnf_code='0204000I0JKKKAL')
+        p = Presentation.objects.get(bnf_code='0204000I0JKKKAL')ca
         self.assertEqual(p.adq_per_quantity, None)
