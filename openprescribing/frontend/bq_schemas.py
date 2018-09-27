@@ -52,6 +52,7 @@ PRESCRIBING_SCHEMA = build_schema(
     ('actual_cost', 'FLOAT'),
     ('quantity', 'INTEGER'),
     ('month', 'TIMESTAMP'),
+    ('adq_per_quantity', 'FLOAT'),
 )
 
 PRESENTATION_SCHEMA = build_schema(
@@ -59,9 +60,6 @@ PRESENTATION_SCHEMA = build_schema(
     ('name', 'STRING'),
     ('is_generic', 'BOOLEAN'),
     ('active_quantity', 'FLOAT'),
-    ('adq', 'FLOAT'),
-    ('adq_unit', 'STRING'),
-    ('percent_of_adq', 'FLOAT'),
 )
 
 PRACTICE_SCHEMA = build_schema(
