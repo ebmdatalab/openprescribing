@@ -48,7 +48,7 @@
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings"
   },
   "lowpriority": {
-    "name": "Low Priority",
+    "name": "NHS England Low Priority",
     "description": [
       "This is an <strong>experimental</strong> list of products ",
       "considered a low priority for NHS Funding ",

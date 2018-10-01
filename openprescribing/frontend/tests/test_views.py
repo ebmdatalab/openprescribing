@@ -656,4 +656,4 @@ class TestGetMeasureTagFilter(TestCase):
 
     def test_returns_tag_name(self):
         tag_filter = _get_measure_tag_filter(QueryDict('tags=lowpriority'))
-        self.assertEqual(tag_filter['names'], ['Low Priority'])
+        self.assertEqual(tag_filter['names'], ['NHS England Low Priority'])
