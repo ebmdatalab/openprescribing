@@ -122,6 +122,10 @@ var utils = {
       // For aggregates (i.e. the "All England" charts) we sort by cost saving
       // as sorting by mean percentile doesn't make any sense
       var score = d.isAggregateEntity ? d.costSaving50th : d.meanPercentile;
+      // For the All England view, always sort the Low Priority Omnibus measure to the top
+      if (d.isAggregateEntity && d.id === 'lpzomnibus') {
+        score = 999999999999;
+      }
       if (score === null) {
         score = 101;
       } else if (d.lowIsGood !== false) {
