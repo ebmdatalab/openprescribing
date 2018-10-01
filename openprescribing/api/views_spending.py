@@ -249,30 +249,33 @@ def price_per_unit(request, format=None):
         sql = """
             WITH cte AS ({original_sql})
             SELECT
-                -- Fields we're grouping by
-                date,
-                presentation,
+              -- Fields we're grouping by
+              date,
+              presentation,
 
-                -- Fields we aggregate over
-                SUM(quantity) AS quantity,
-                SUM(price_per_unit * quantity) / SUM(quantity) AS price_per_unit,
-                SUM(possible_savings) AS possible_savings,
+              -- Fields we aggregate over
+              SUM(quantity) AS quantity,
+              SUM(price_per_unit * quantity) / SUM(quantity) AS price_per_unit,
+              SUM(possible_savings) AS possible_savings,
 
-                -- Fixed value fields
-                '_all' AS pct,
-                'NHS England' as pct_name,
-                NULL AS practice,
-                NULL AS practice_name,
+              -- Fixed value fields
+              '_all' AS pct,
+              'NHS England' as pct_name,
+              NULL AS practice,
+              NULL AS practice_name,
 
-                -- These fields relate to the presentation and so they ought to
-                -- have a fixed value throughout the group. However Postgres
-                -- doesn't know this, so we need to tell it how to aggregate these
-                -- fields. In most cases we just use the modal value.
-                MAX(lowest_decile) AS lowest_decile,
-                MODE() WITHIN GROUP (ORDER BY formulation_swap) AS formulation_swap,
-                MODE() WITHIN GROUP (ORDER BY flag_bioequivalence) AS flag_bioequivalence,
-                MODE() WITHIN GROUP (ORDER BY price_concession) AS price_concession,
-                MODE() WITHIN GROUP (ORDER BY name) AS name
+              -- These fields relate to the presentation and so they ought to
+              -- have a fixed value throughout the group. However Postgres
+              -- doesn't know this, so we need to tell it how to aggregate
+              -- these fields. In most cases we just use the modal value.
+              MAX(lowest_decile) AS lowest_decile,
+              MODE() WITHIN GROUP (ORDER BY formulation_swap)
+                AS formulation_swap,
+              MODE() WITHIN GROUP (ORDER BY flag_bioequivalence)
+                AS flag_bioequivalence,
+              MODE() WITHIN GROUP (ORDER BY price_concession)
+                AS price_concession,
+              MODE() WITHIN GROUP (ORDER BY name) AS name
             FROM cte
             GROUP BY date, presentation
             """.format(original_sql=sql)

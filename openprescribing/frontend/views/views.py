@@ -312,8 +312,6 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 
     context = {
         'entity': entity,
-         # 'highlight': entity.code,
-         # 'highlight_name': entity.cased_name,
         'name': presentation.product_name,
         'bnf_code': presentation.bnf_code,
         'presentation': presentation,
