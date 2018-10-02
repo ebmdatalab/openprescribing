@@ -7,7 +7,11 @@
     "Number of average daily quantities (ADQs) per 1000 patients"
   ],
   "why_it_matters": [
-    "<tbc when i've seen the data"
+    "Anxiolytics and Hypnotics are drugs that are prescribed for short-term treatment of conditions such as",
+    "anxiety and sleep problems. <a href='https://www.rcpsych.ac.uk/expertadvice/treatments/benzodiazepines.aspx'> The Royal College of Psychiatrists states</a> ",
+    "that \"around 4 in every 10 people who take them every day for more than 6 weeks will become addicted\" ",
+    "and therefore they should not be prescribed for longer than 4 weeks.  This measure shows the Average Daily Quantity (ADQ) of drug given per 1000 registered patients, ",
+    "for both the older benzodiazepines, such as diazepam and temazepam, and the newer \"Z-drugs\", such as zopiclone."
   ],
   "numerator_short": "Anxiolytics and Hypnotics ADQ",
   "denominator_short": "1000 Patients",
