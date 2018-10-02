@@ -42,6 +42,37 @@
   </div>
 
   <div class="col-md-6">
+
+    <h2>Low priority prescribing</h2>
+    <p>
+      NHS England produce a <a
+        href="https://www.england.nhs.uk/2017/07/medicine-consultation/">list
+        of products</a> considered low priority for funding by the NHS.
+      The total monthly spend on such products in {{ date|date:"F Y" }} was:
+      <strong>£{{ low_priority_total|sigfigs:4|intcomma }}</strong>
+    </p>
+    <p>
+      If every {{ entity_type }} had prescribed low priority products at least
+      as sparingly as the median {{ entity_type }} the monthly cost saving in
+      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      <span style="font-size: 200%">£{{ low_priority_savings.50|sigfigs:4|intcomma }}</span>
+    </p>
+    <p>
+      If they had prescribed at the level acheived by the best decile the saving
+      would have been:<br>
+      <span style="font-size: 200%">£{{ low_priority_savings.10|sigfigs:4|intcomma }}</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="#measure_lpzomnibus" class="btn btn-primary">View distribution of low priority prescribing &rarr;</a>
+    </p>
+
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col-md-12">
     <h2>PPU cost savings</h2>
     <p>
       There is wide variation in the unit cost of a number of medicines

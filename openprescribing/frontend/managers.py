@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import FloatField, Func, Q, Value, Sum
+from django.db.models import FloatField, Func, F, Q, Value, Sum
 from django.db.models.functions import Cast, Coalesce, Greatest
 from django.contrib.postgres.fields.jsonb import (
     JSONField, KeyTextTransform as ValueFromJsonObject
@@ -79,6 +79,41 @@ class MeasureValueQuerySet(models.QuerySet):
             )
         )
         return result['total']
+
+    def calculate_cost_savings(self, target_costs,
+                               cost_per_unit_field='calc_value',
+                               units_field='denominator'):
+        """
+        Calculates cost savings dynamically for measures (like Low Priority
+        measures) where we don't yet precalculate them.
+
+        `target_costs` is a dictionary mapping arbitrary keys (which will
+        usually be centiles, but don't have to be) to a target cost-per-unit.
+        Note "unit" here can be anything: in the case of Low Priority measures
+        it means "1000 patients".
+
+        Returns a dictionary whose keys are those supplied in `target_costs`
+        and whose values are the saving that would be acheived if that target
+        cost were met across all MeasureValues included in the current query.
+        """
+        savings = {
+            key: _calculate_saving_at_cost(
+                target_cost, cost_per_unit_field, units_field
+            )
+            for (key, target_cost) in target_costs.items()
+        }
+        savings_as_json = _build_json_object(savings)
+        return self.aggregate(savings=savings_as_json)['savings']
+
+
+def _calculate_saving_at_cost(target_cost, cost_per_unit_field, units_field):
+    """
+    SQL function which calculates savings achieved if the target cost-per-unit
+    was met across the aggregation
+    """
+    per_unit_saving = F(cost_per_unit_field) - Value(target_cost)
+    saving = F(units_field) * per_unit_saving
+    return _sum_positive_values(saving)
 
 
 def _extract_all_orgs_pseudo_id(org_ids):

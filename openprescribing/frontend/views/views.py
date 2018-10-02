@@ -17,7 +17,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.db import connection
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -42,6 +42,7 @@ from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.models import MeasureGlobal
 from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
@@ -516,6 +517,41 @@ def _all_england_measure_savings(entity_type, date):
     )
 
 
+def _all_england_low_priority_savings(entity_type, date):
+    target_costs = (
+        MeasureGlobal.objects
+        .get(month=date, measure_id='lpzomnibus')
+        .percentiles[entity_type.lower()]
+    )
+    return (
+        MeasureValue.objects.filter(
+            month=date,
+            measure_id='lpzomnibus',
+            practice_id__isnull=(entity_type == 'CCG')
+        )
+        .calculate_cost_savings(target_costs)
+    )
+
+
+def _all_england_low_priority_total(entity_type, date):
+    result = (
+        MeasureValue.objects.filter(
+            month=date,
+            measure_id='lpzomnibus',
+            practice_id__isnull=(entity_type == 'CCG')
+        )
+        .aggregate(total=Sum('numerator'))
+    )
+    return result['total']
+
+
+def _sum_dicts(a, b):
+    return {
+        key: a[key] + b[key]
+        for key in a.keys()
+    }
+
+
 @handle_bad_request
 def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
@@ -523,11 +559,16 @@ def all_england(request):
     date = _specified_or_last_date(request, 'ppu')
     ppu_savings = _all_england_ppu_savings(entity_type, date)
     measure_savings = _all_england_measure_savings(entity_type, date)
+    low_priority_savings = _all_england_low_priority_savings(entity_type, date)
+    low_priority_total = _all_england_low_priority_total(entity_type, date)
+    measure_savings = _sum_dicts(measure_savings, low_priority_savings)
     context = {
         'tag_filter': tag_filter,
         'entity_type': entity_type,
         'ppu_savings': ppu_savings,
         'measure_savings': measure_savings,
+        'low_priority_savings': low_priority_savings,
+        'low_priority_total': low_priority_total,
         'date': date
     }
     return render(request, 'all_england.html', context)
