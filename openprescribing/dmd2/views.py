@@ -99,7 +99,7 @@ def dmd_obj_view(request, obj_type, id):
         assert rel.multiple
         model = rel.related_model
 
-        related_instances = getattr(obj, rel.get_accessor_name()).all()
+        related_instances = getattr(obj, rel.get_accessor_name()).valid_and_available()
         if not related_instances.exists():
             continue
 
