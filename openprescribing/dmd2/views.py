@@ -1,5 +1,7 @@
+# coding=utf8
+
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import ForeignKey
+from django.db.models import BooleanField, ForeignKey
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -29,6 +31,8 @@ def _build_row(obj, field):
             value = value.descr
         except AttributeError:
             value = value.nm
+    elif isinstance(field, BooleanField):
+        value = {True: "✓", False: "✗"}.get(value)
 
     return {"key": field.help_text, "value": value}
 
