@@ -6,6 +6,7 @@ from . import managers
 class VTM(models.Model):
     class Meta:
         verbose_name = "Virtual Therapeutic Moiety"
+        ordering = ["nm"]
 
     objects = managers.VTMManager()
 
@@ -44,6 +45,7 @@ class VTM(models.Model):
 class VMP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product"
+        ordering = ["nm"]
 
     objects = managers.VMPManager()
 
@@ -325,6 +327,7 @@ class ControlInfo(models.Model):
 class AMP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product"
+        ordering = ["descr"]
 
     objects = managers.AMPManager()
 
@@ -510,6 +513,7 @@ class ApInfo(models.Model):
 class VMPP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product Pack"
+        ordering = ["nm"]
 
     objects = managers.VMPPManager()
 
@@ -592,6 +596,7 @@ class Dtinfo(models.Model):
 class AMPP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product Pack"
+        ordering = ["nm"]
 
     objects = managers.AMPPManager()
 
