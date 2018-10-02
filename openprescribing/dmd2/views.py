@@ -27,6 +27,9 @@ def _build_row(obj, field):
     if value is None:
         return
 
+    if field.name == "invalid" and not value:
+        return
+
     if isinstance(field, ForeignKey):
         related_model = field.related_model
         if related_model in cls_to_obj_type:
