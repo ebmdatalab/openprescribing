@@ -19,7 +19,12 @@
   "is_percentage": false,
   "is_cost_based": false,
   "low_is_good": true,
-  "tags": ["core"],
+  "tags": [
+    "core",
+    "benzodiazepines",
+    "central nervious system",
+    "safety"
+  ],
   "numerator_columns": [
     "SUM(p.quantity * r.percent_of_adq) AS numerator, "
   ],
