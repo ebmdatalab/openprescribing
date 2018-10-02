@@ -10,12 +10,12 @@ schema = {
         "dmd_obj_relations": [
             "vmp"
         ], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "vmp": {
         "fields": [
             "nm", 
+            "vtm", 
             "vpiddt", 
             "vpidprev", 
             "invalid", 
@@ -42,9 +42,6 @@ schema = {
             "amp", 
             "vmpp"
         ], 
-        "dmd_fields": [
-            "vtm"
-        ], 
         "other_relations": [
             "vpi", 
             "ont", 
@@ -55,6 +52,7 @@ schema = {
     }, 
     "vpi": {
         "fields": [
+            "vmp", 
             "ing", 
             "basis_strnt", 
             "bs_subid", 
@@ -64,59 +62,49 @@ schema = {
             "strnt_dnmtr_uom"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": []
     }, 
     "ont": {
         "fields": [
+            "vmp", 
             "form"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": []
     }, 
     "dform": {
         "fields": [
+            "vmp", 
             "form"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": []
     }, 
     "droute": {
         "fields": [
+            "vmp", 
             "route"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": []
     }, 
     "control_info": {
         "fields": [
+            "vmp", 
             "cat", 
             "catdt", 
             "cat_prev"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": []
     }, 
     "amp": {
         "fields": [
-            "nm", 
-            "invalid", 
-            "abbrevnm", 
             "descr", 
+            "vmp", 
+            "invalid", 
+            "nm", 
+            "abbrevnm", 
             "nmdt", 
             "nm_prev", 
             "supp", 
@@ -133,9 +121,6 @@ schema = {
         "dmd_obj_relations": [
             "ampp"
         ], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": [
             "ap_ing", 
             "lic_route", 
@@ -144,41 +129,36 @@ schema = {
     }, 
     "ap_ing": {
         "fields": [
+            "amp", 
             "ing", 
             "strnth", 
             "uom"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "amp"
-        ], 
         "other_relations": []
     }, 
     "lic_route": {
         "fields": [
+            "amp", 
             "route"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "amp"
-        ], 
         "other_relations": []
     }, 
     "ap_info": {
         "fields": [
+            "amp", 
             "sz_weight", 
             "colour", 
             "prod_order_no"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "amp"
-        ], 
         "other_relations": []
     }, 
     "vmpp": {
         "fields": [
             "nm", 
+            "vmp", 
             "invalid", 
             "qtyval", 
             "qty_uom", 
@@ -187,29 +167,26 @@ schema = {
         "dmd_obj_relations": [
             "ampp"
         ], 
-        "dmd_fields": [
-            "vmp"
-        ], 
         "other_relations": [
             "dtinfo"
         ]
     }, 
     "dtinfo": {
         "fields": [
+            "vmpp", 
             "pay_cat", 
             "price", 
             "dt", 
             "prevprice"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmpp"
-        ], 
         "other_relations": []
     }, 
     "ampp": {
         "fields": [
             "nm", 
+            "vmpp", 
+            "amp", 
             "invalid", 
             "abbrevnm", 
             "combpack", 
@@ -219,10 +196,6 @@ schema = {
             "discdt"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "vmpp", 
-            "amp"
-        ], 
         "other_relations": [
             "pack_info", 
             "prescrib_info", 
@@ -233,19 +206,18 @@ schema = {
     }, 
     "pack_info": {
         "fields": [
+            "ampp", 
             "reimb_stat", 
             "reimb_statdt", 
             "reimb_statprev", 
             "pack_order_no"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "ampp"
-        ], 
         "other_relations": []
     }, 
     "prescrib_info": {
         "fields": [
+            "ampp", 
             "sched_2", 
             "acbs", 
             "padm", 
@@ -257,26 +229,22 @@ schema = {
             "dent_f"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "ampp"
-        ], 
         "other_relations": []
     }, 
     "price_info": {
         "fields": [
+            "ampp", 
             "price", 
             "pricedt", 
             "price_prev", 
             "price_basis"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "ampp"
-        ], 
         "other_relations": []
     }, 
     "reimb_info": {
         "fields": [
+            "ampp", 
             "px_chrgs", 
             "disp_fees", 
             "bb", 
@@ -286,20 +254,16 @@ schema = {
             "fp34d"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "ampp"
-        ], 
         "other_relations": []
     }, 
     "ing": {
         "fields": [
-            "nm",
             "isiddt", 
             "isidprev", 
-            "invalid" 
+            "invalid", 
+            "nm"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "combination_pack_ind": {
@@ -308,7 +272,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "combination_prod_ind": {
@@ -317,7 +280,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "basis_of_name": {
@@ -326,7 +288,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "namechange_reason": {
@@ -335,7 +296,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "virtual_product_pres_status": {
@@ -344,7 +304,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "control_drug_category": {
@@ -353,7 +312,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "licensing_authority": {
@@ -362,7 +320,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "unit_of_measure": {
@@ -373,7 +330,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "form": {
@@ -384,7 +340,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "ont_form_route": {
@@ -393,7 +348,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "route": {
@@ -404,7 +358,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "dt_payment_category": {
@@ -413,7 +366,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "supplier": {
@@ -425,7 +377,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "flavour": {
@@ -434,7 +385,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "colour": {
@@ -443,7 +393,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "basis_of_strnth": {
@@ -452,7 +401,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "reimbursement_status": {
@@ -461,7 +409,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "spec_cont": {
@@ -470,7 +417,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "dnd": {
@@ -479,7 +425,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "virtual_product_non_avail": {
@@ -488,7 +433,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "discontinued_ind": {
@@ -497,7 +441,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "df_indicator": {
@@ -506,7 +449,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "price_basis": {
@@ -515,7 +457,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "legal_category": {
@@ -524,7 +465,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "availability_restriction": {
@@ -533,7 +473,6 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "licensing_authority_change_reason": {
@@ -542,19 +481,16 @@ schema = {
             "descr"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [], 
         "other_relations": []
     }, 
     "gtin": {
         "fields": [
+            "ampp", 
             "gtin", 
             "startdt", 
             "enddt"
         ], 
         "dmd_obj_relations": [], 
-        "dmd_fields": [
-            "ampp"
-        ], 
         "other_relations": []
     }
 }

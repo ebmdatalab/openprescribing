@@ -11,6 +11,7 @@ class VTM(models.Model):
     objects = managers.VTMManager()
 
     obj_type = "vtm"
+    name_field = "nm"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -50,6 +51,7 @@ class VMP(models.Model):
     objects = managers.VMPManager()
 
     obj_type = "vmp"
+    name_field = "nm"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -332,6 +334,7 @@ class AMP(models.Model):
     objects = managers.AMPManager()
 
     obj_type = "amp"
+    name_field = "descr"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -518,6 +521,7 @@ class VMPP(models.Model):
     objects = managers.VMPPManager()
 
     obj_type = "vmpp"
+    name_field = "nm"
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -601,6 +605,7 @@ class AMPP(models.Model):
     objects = managers.AMPPManager()
 
     obj_type = "ampp"
+    name_field = "nm"
 
     id = models.BigIntegerField(
         primary_key=True,

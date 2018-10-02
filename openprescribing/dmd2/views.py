@@ -20,6 +20,7 @@ obj_type_to_cls = {
     "ampp": AMPP,
 }
 
+cls_to_obj_type = {cls: obj_type for obj_type, cls in obj_type_to_cls.items()}
 
 def _build_row(obj, field):
     value = getattr(obj, field.name)
@@ -27,10 +28,22 @@ def _build_row(obj, field):
         return
 
     if isinstance(field, ForeignKey):
+        related_model = field.related_model
+        if related_model in cls_to_obj_type:
+            obj_type = cls_to_obj_type[related_model]
+            link = reverse("dmd_obj", args=[obj_type, value.id])
+            text = getattr(value, related_model.name_field)
+            return {
+                "key": related_model._meta.verbose_name,
+                "value": text,
+                "link": link
+            }
+
         try:
             value = value.descr
         except AttributeError:
             value = value.nm
+
     elif isinstance(field, BooleanField):
         value = {True: "✓", False: "✗"}.get(value)
 
@@ -85,17 +98,6 @@ def dmd_obj_view(request, obj_type, id):
                 if row is not None:
                     rows.append(row)
 
-    # Related parent dm+d objects (for an AMPP, these will be a VMPP and AMP)
-    for field_name in schema[obj_type]["dmd_fields"]:
-        field = fields_by_name[field_name]
-        model = field.related_model
-        rows.append({"title": model._meta.verbose_name})
-
-        related_instance = getattr(obj, field_name)
-        link = reverse("dmd_obj", args=[field_name, related_instance.id])
-        rows.append({"key": related_instance.id, "value": related_instance.title(), "link": link})
-
-
     # Related child dm+d objects (for a VMP, these will be VMPPs and AMPs)
     for rel_name in schema[obj_type]["dmd_obj_relations"]:
         relname = rel_name.replace("_", "")
@@ -110,7 +112,7 @@ def dmd_obj_view(request, obj_type, id):
         rows.append({"title": model._meta.verbose_name_plural})
         for related_instance in related_instances:
             link = reverse("dmd_obj", args=[rel_name, related_instance.id])
-            rows.append({"key": related_instance.id, "value": related_instance.title(), "link": link})
+            rows.append({"value": related_instance.title(), "link": link})
 
     ctx = {
         "title": "{} {}".format(cls.__name__, id),

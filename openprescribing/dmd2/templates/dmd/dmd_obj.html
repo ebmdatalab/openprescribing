@@ -10,11 +10,16 @@
       {{ row.title }}
     </th>
     {% else %}
+    {% if row.key %}
     <td>{{ row.key }}</td>
-    {% if row.link %}
-    <td><a href="{{ row.link }}">{{ row.value }}</a></td>
+    <td>
     {% else %}
-    <td>{{ row.value }}</td>
+    <td colspan=2>
+    {% endif %}
+    {% if row.link %}
+    <a href="{{ row.link }}">{{ row.value }}</a></td>
+    {% else %}
+    {{ row.value }}</td>
     {% endif %}
     {% endif %}
   </tr>
