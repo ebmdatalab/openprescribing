@@ -40,7 +40,9 @@ if (inProduction) {
 // * `watchify` observes and re-builds files on changes
 b.plugin('factor-bundle', {outputs: bundles}); //
 if (!inProduction) {
-  b.plugin('watchify');
+  b.plugin('watchify', {
+    poll: true  // work with NFS-within-vagrant
+  });
   b.on('update', bundle);
 }
 

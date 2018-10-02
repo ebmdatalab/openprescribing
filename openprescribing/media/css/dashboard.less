@@ -36,9 +36,13 @@
 }
 
 #measures {
-
+  font-size: 12px;
   margin-top: 20px;
   clear: both;
+
+  .descriptive {
+    margin-bottom: 10px;
+  }
 
   .loading-wrapper {
     display: block;
@@ -52,21 +56,23 @@
   .panel {
     white-space: nowrap;
     overflow: hidden;
-    .panel-heading {
-      font-size: 12px;
-    }
 
     .panel-body {
         padding: 5px;
-        .inner {
+        .inner, .measure-description {
           padding: 10px;
           overflow: auto;
           white-space: normal;
         }
     }
+    .measure-description {
+      font-style: italic;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
+      text-align: center;
+    }
     .explanation {
       margin: 5px 10px 10px 10px;
-      font-size: 12px;
       white-space: normal;
       min-height: 3.5em;
 
@@ -77,9 +83,6 @@
           color: #337ab7;
         }
       }
-    }
-    p, li {
-      font-size: 12px;
     }
     .chart {
       margin-top: 5px;
