@@ -4,7 +4,7 @@
     "All low priority treatments"
   ],
   "description": [
-    "An aggregation of prescribing on all low priority treatments as defined by NHS England"
+    "misc-measures-bundle"
   ],
   "why_it_matters": [
     "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a>.",
