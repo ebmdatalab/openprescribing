@@ -6,6 +6,7 @@ from . import managers
 class VTM(models.Model):
     class Meta:
         verbose_name = "Virtual Therapeutic Moiety"
+        verbose_name_plural = "Virtual Therapeutic Moieties"
         ordering = ["nm"]
 
     objects = managers.VTMManager()
