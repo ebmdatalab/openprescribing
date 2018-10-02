@@ -1,10 +1,10 @@
 {
-  "name": "Anxiolytics and Hypnotics: Average Daily Quantity per patient",
+  "name": "Anxiolytics and Hypnotics: Average Daily Quantity per 1000 patients",
   "title": [
-    "Anxiolytics and Hypnotics: Average Daily Quantity per item per 1000 patients"
+    "Anxiolytics and Hypnotics: Average Daily Quantity per 1000 patients"
   ],
   "description": [
-    "Number of average daily quantities (ADQs) per 1000 patients"
+    "Number of average daily quantities (ADQs) of Anxiolytics and Hypnotics per 1000 patients"
   ],
   "why_it_matters": [
     "Anxiolytics and Hypnotics are drugs that are prescribed for short-term treatment of conditions such as",
