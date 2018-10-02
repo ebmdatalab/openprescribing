@@ -23,7 +23,7 @@ SITE_ROOT = dirname(dirname(abspath(__file__)))
 path.append(SITE_ROOT)
 
 DJANGO_ROOT = dirname(SITE_ROOT)
-dotenv.read_dotenv(os.path.join(DJANGO_ROOT, 'environment'))
+dotenv.read_dotenv(os.path.join(DJANGO_ROOT, 'environment'), override=True)
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use

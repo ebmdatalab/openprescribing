@@ -1,3 +1,6 @@
+# Django settings
+DJANGO_SETTINGS_MODULE=openprescribing.settings.local
+
 # Connection details for a PostgreSQL database.
 DB_NAME=
 DB_USER=
