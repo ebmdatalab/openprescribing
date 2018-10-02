@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@sentry/browser": "^4.0.5",
     "bigtext": "^1.0.1",
     "bootstrap": "^3.3.4",
     "chroma-js": "^1.2",
