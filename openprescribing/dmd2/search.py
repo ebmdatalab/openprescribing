@@ -16,12 +16,7 @@ def search_by_term(q):
     results = OrderedDict()
 
     for cls in [VTM, VMP, VMPP, AMP, AMPP]:
-        if hasattr(cls, 'descr'):
-            kwargs = {'descr__icontains': q}
-        else:
-            kwargs = {'nm__icontains': q}
-
-        objs = list(cls.objects.filter(**kwargs))
+        objs = list(cls.objects.valid_and_available().search(q))
         if objs:
             results[cls._meta.verbose_name_plural] = objs
 

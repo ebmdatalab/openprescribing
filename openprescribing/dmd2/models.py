@@ -1,9 +1,13 @@
 from django.db import models
 
+from . import managers
+
 
 class VTM(models.Model):
     class Meta:
         verbose_name = "Virtual Therapeutic Moiety"
+
+    objects = managers.VTMManager()
 
     obj_type = "vtm"
 
@@ -40,6 +44,8 @@ class VTM(models.Model):
 class VMP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product"
+
+    objects = managers.VMPManager()
 
     obj_type = "vmp"
 
@@ -320,6 +326,8 @@ class AMP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product"
 
+    objects = managers.AMPManager()
+
     obj_type = "amp"
 
     id = models.BigIntegerField(
@@ -503,6 +511,8 @@ class VMPP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product Pack"
 
+    objects = managers.VMPPManager()
+
     obj_type = "vmpp"
 
     id = models.BigIntegerField(
@@ -582,6 +592,8 @@ class Dtinfo(models.Model):
 class AMPP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product Pack"
+
+    objects = managers.AMPPManager()
 
     obj_type = "ampp"
 
