@@ -38,7 +38,7 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "bnf_code LIKE '0501021%' OR bnf_code LIKE '050105%' OR bnf_code LIKE '050111%' OR bnf_code LIKE '050101%' ",
+    "(bnf_code LIKE '0501021%' OR bnf_code LIKE '050105%' OR bnf_code LIKE '050111%' OR bnf_code LIKE '050101%' ",
     "OR bnf_code LIKE '050112%' OR bnf_code LIKE '050108%' OR bnf_code LIKE '050103%' OR bnf_code LIKE '050113%')"
   ]
 }
