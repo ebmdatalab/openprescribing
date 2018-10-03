@@ -562,9 +562,14 @@ def all_england(request):
     low_priority_savings = _all_england_low_priority_savings(entity_type, date)
     low_priority_total = _all_england_low_priority_total(entity_type, date)
     measure_savings = _sum_dicts(measure_savings, low_priority_savings)
+    other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
+    other_entity_query = request.GET.copy()
+    other_entity_query['entity_type'] = other_entity_type
     context = {
         'tag_filter': tag_filter,
         'entity_type': entity_type,
+        'other_entity_type': other_entity_type,
+        'other_entity_url': '?' + other_entity_query.urlencode(),
         'ppu_savings': ppu_savings,
         'measure_savings': measure_savings,
         'low_priority_savings': low_priority_savings,
