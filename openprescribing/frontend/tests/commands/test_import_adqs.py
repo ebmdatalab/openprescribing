@@ -23,9 +23,9 @@ class CommandsTestCase(TestCase):
         self.assertIn(
             "tmp_eu.raw_prescribing_data_2014_11",
             mock_query.query.call_args[0][0])
-grep
+
         # Check we set adq_per_quantity according to the bigquery results
         p = Presentation.objects.get(bnf_code='0202010F0AAAAAA')
         self.assertEqual(p.adq_per_quantity, 0.333)
-        p = Presentation.objects.get(bnf_code='0204000I0JKKKAL')ca
+        p = Presentation.objects.get(bnf_code='0204000I0JKKKAL')
         self.assertEqual(p.adq_per_quantity, None)
