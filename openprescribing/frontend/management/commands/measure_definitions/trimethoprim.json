@@ -8,8 +8,8 @@
   ],
   "why_it_matters": [
     "Resistance to trimethoprim is increasing, and therefore Public Health England ",
-    "is recommending that nitrofurantoin is used first for empirical treatment of ",
-    "urinary tract infections."
+    "is recommending that <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/664740/Managing_common_infections_guidance_for_consultation_and_adaptation.pdf'> ",
+    "nitrofurantoin is used first for empirical treatment of urinary tract infections.</a>"
   ],
   "numerator_short": "Trimethoprim items",
   "denominator_short": "Total trimethoprim and nitrofurantoin items",

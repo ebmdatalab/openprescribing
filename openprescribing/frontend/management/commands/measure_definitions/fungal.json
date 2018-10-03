@@ -5,11 +5,12 @@
     "per 1000 patients"
   ],
   "description": [
-    "Prescribing of topical treatment of fungal nail infections",
+    "Items prescribed for topical treatment of fungal nail infections ",
     "per 1000 patients"
   ],
   "why_it_matters": [
-    "These treatments have a low cure rate, and treatment is required for three to six months.",
+    "These treatments have <a href='http://www.bad.org.uk/for-the-public/patient-information-leaflets/fungal-infections-of-the-nails'>a ",
+    "low cure rate</a>, and treatment is required for three to six months.",
     "Consideration should be given as to whether this is an effective treatment."
   ],
   "numerator_short": "Topical antifungal items",
