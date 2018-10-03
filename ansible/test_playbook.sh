@@ -12,7 +12,7 @@ curl https://bootstrap.pypa.io/get-pip.py | python
 sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
 # Run the playbook
-/usr/local/bin/ansible-playbook -v travis.yml
+/usr/local/bin/ansible-playbook travis.yml
 
 # Do minimal database-connection test
 su -c 'SKIP_NPM_BUILD=1 /openprescribing/venv/bin/python /openprescribing/openprescribing/manage.py test frontend.tests.test_models.SearchBookmarkTestCase' vagrant
