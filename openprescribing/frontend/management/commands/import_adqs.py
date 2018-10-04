@@ -42,13 +42,13 @@ class Command(BaseCommand):
     help = 'Imports ADQ codes from current raw prescribing data in BigQuery'
 
     def handle(self, *args, **options):
-        client = Client('hscic')
+        client = Client('tmp_eu')
         year_and_month = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime("%Y_%m")
-        raw_data_table_name = 'tmp_eu.raw_prescribing_data_{}'.format(
+        raw_data_table_name = 'raw_prescribing_data_{}'.format(
             year_and_month)
         sql = SQL.format(
-            detailed_raw_data_table=raw_data_table_name
+            detailed_raw_data_table="{tmp_eu}.%s" % raw_data_table_name
         )
         with transaction.atomic():
             for row in client.query(sql).rows:
