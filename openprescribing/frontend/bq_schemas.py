@@ -144,6 +144,23 @@ PPU_SAVING_SCHEMA = build_schema(
     ('practice_id', 'STRING'),
 )
 
+RAW_PRESCRIBING_SCHEMA = build_schema(
+    ('Regional_Office_Name', 'STRING'),
+    ('Regional_Office_Code', 'STRING'),
+    ('Area_Team_Name', 'STRING'),
+    ('Area_Team_Code', 'STRING'),
+    ('PCO_Name', 'STRING'),
+    ('PCO_Code', 'STRING'),
+    ('Practice_Name', 'STRING'),
+    ('Practice_Code', 'STRING'),
+    ('BNF_Code', 'STRING'),
+    ('BNF_Description', 'STRING'),
+    ('Items', 'INTEGER'),
+    ('Quantity', 'INTEGER'),
+    ('ADQ_Usage', 'FLOAT'),
+    ('NIC', 'FLOAT'),
+    ('Actual_Cost', 'FLOAT'),
+)
 
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it
