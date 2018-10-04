@@ -15,7 +15,7 @@ from frontend.models import ImportLog
 class CommandsTestCase(TestCase):
     fixtures = ['presentations', 'importlog']
 
-    @patch('gcutils.bigquery.Client')
+    @patch('frontend.management.commands.import_adqs.Client')
     def test_import_adqs(self, mock_client):
         mock_query = MagicMock(name='query')
         mock_query.query.return_value.rows = [
@@ -27,7 +27,7 @@ class CommandsTestCase(TestCase):
         # check we called bigquery with the right source table
         mock_query.query.assert_called_once()
         self.assertIn(
-            "tmp_eu.raw_prescribing_data_2014_11",
+            "raw_prescribing_data_2014_11",
             mock_query.query.call_args[0][0])
 
         # Check we set adq_per_quantity according to the bigquery results
