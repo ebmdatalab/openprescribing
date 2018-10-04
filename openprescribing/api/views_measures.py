@@ -101,6 +101,8 @@ def measure_numerators_by_org(request, format=None):
         ).replace(
             'bnf_name', 'pn.name'
         ).replace(
+            'month', 'processing_date'
+        ).replace(
             # This is required because the SQL contains %(var)s, which is used
             # for parameter interpolation
             '%', '%%'
