@@ -15,4 +15,7 @@ sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 /usr/local/bin/ansible-playbook travis.yml
 
 # Do minimal database-connection test
-su -c 'SKIP_NPM_BUILD=1 /openprescribing/venv/bin/python /openprescribing/openprescribing/manage.py test frontend.tests.test_models.SearchBookmarkTestCase' vagrant
+SKIP_NPM_BUILD=1 /openprescribing/venv/bin/python /openprescribing/openprescribing/manage.py test frontend.tests.test_models.SearchBookmarkTestCase
+
+# Check that gunicorn can start
+CHECK_CONFIG=1 /openprescribing/bin/gunicorn_start production

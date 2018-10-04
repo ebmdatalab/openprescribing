@@ -111,7 +111,7 @@ class PipelineTests(TestCase):
 
     def test_load_real_tasks(self):
         # We're just checking that no exceptions get raised here
-        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        path = os.path.join(settings.APPS_ROOT, 'pipeline', 'metadata')
         with override_settings(PIPELINE_METADATA_DIR=path):
             load_tasks()
 
@@ -119,7 +119,7 @@ class PipelineTests(TestCase):
         # We're not actually going to run the management commands, but we're
         # going to check that the management commands exist and can be run with
         # the given input
-        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        path = os.path.join(settings.APPS_ROOT, 'pipeline', 'metadata')
         with override_settings(PIPELINE_METADATA_DIR=path):
             tasks = load_tasks()
 
@@ -304,7 +304,7 @@ The last imported data can be found at:
         self.assertEqual(output, expected_output)
 
     def test_manual_fetch_instructions_with_real_data(self):
-        path = os.path.join(settings.SITE_ROOT, 'pipeline', 'metadata')
+        path = os.path.join(settings.APPS_ROOT, 'pipeline', 'metadata')
         with override_settings(PIPELINE_METADATA_DIR=path):
             tasks = load_tasks()
 

@@ -1,16 +1,13 @@
 ---
 - name: A play for installing locally, used for testing tasks in Travis
+  # The following two variables mean the app is installed directly in
+  # the Travis environment, as opposed to the default which installs
+  # over SSH to a remote host
   hosts: 127.0.0.1
   connection: local
   roles:
     - roles/setup
     - roles/app
-  vars:
-    checkout_path: /openprescribing
-    virtualenv_path: "{{ checkout_path }}/venv"
-    project_root_path: "{{ checkout_path }}/openprescribing"
-    requirements_path: "{{ checkout_path }}/requirements.txt"
-    log_path: "{{ checkout_path }}/logs"
   vars_files:
    - vars.yaml
   tasks:

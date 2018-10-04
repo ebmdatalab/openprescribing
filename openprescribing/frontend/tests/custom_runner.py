@@ -35,7 +35,7 @@ class AssetBuildingTestRunner(DiscoverRunner):
         if ('SKIP_NPM_BUILD' not in os.environ and
            os.environ.get('TEST_SUITE', '') != 'nonfunctional'):
             subprocess.check_call(
-                npm_cmd, shell=True, cwd=settings.SITE_ROOT + '/media/js')
+                npm_cmd, shell=True, cwd=settings.APPS_ROOT + '/media/js')
         if not os.environ.get('BROWSER'):
             # Default test environment for Saucelabs
             os.environ['BROWSER'] = 'firefox:latest:Windows 10'

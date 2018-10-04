@@ -74,14 +74,14 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': "%s/logs/gunicorn.log" % INSTALL_ROOT,
+            'filename': "%s/logs/gunicorn.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
         'signals': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': "%s/logs/mail-signals.log" % INSTALL_ROOT,
+            'filename': "%s/logs/mail-signals.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         }
 
@@ -106,7 +106,7 @@ LOGGING = {
 }
 
 # Base directory for pipeline metadata
-PIPELINE_METADATA_DIR = os.path.join(SITE_ROOT, 'pipeline', 'metadata')
+PIPELINE_METADATA_DIR = os.path.join(APPS_ROOT, 'pipeline', 'metadata')
 
 # Base directory for pipeline data
 PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'

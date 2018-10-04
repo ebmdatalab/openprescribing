@@ -1,3 +1,12 @@
+## This isn't just an example file; it's used in our ansible buildouts
+## and integration tests, so must be kept up to date.
+
+# Path to virtualenv
+VIRTUALENV_PATH=
+
+# Django settings
+DJANGO_SETTINGS_MODULE=openprescribing.settings.local
+
 # Connection details for a PostgreSQL database.
 DB_NAME=
 DB_USER=
@@ -25,8 +34,6 @@ CF_API_EMAIL=cf_api_email
 NEWRELIC_API_KEY=newrelic_api_key
 
 # Only required on the server
-GUNICORN_USER=hello
-GUNICORN_GROUP=www-data
 GUNICORN_TIMEOUT=60
 GUNICORN_NUM_WORKERS=6
 GUNICORN_LOG_LEVEL=warn

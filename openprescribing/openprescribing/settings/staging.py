@@ -60,7 +60,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': "%s/logs/gunicorn.log" % INSTALL_ROOT,
+            'filename': "%s/logs/gunicorn.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
         'signals': {
@@ -68,7 +68,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
             'filename':
-            "%s/logs/mail-signals.log" % INSTALL_ROOT,
+            "%s/logs/mail-signals.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
             }
     },

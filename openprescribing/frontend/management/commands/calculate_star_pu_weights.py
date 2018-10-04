@@ -38,7 +38,7 @@ class Command(BaseCommand):
             m = m.replace(' ', '_').replace('&', 'and').lower()
             weights[m] = self.parse_weight(sheet, cell_range)
 
-        path = os.path.join(settings.SITE_ROOT, 'frontend',
+        path = os.path.join(settings.APPS_ROOT, 'frontend',
                             'star_pu_weights.json')
         with open(path, 'w') as outfile:
             json.dump(weights, outfile, sort_keys=True, indent=4)
