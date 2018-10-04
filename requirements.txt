@@ -53,7 +53,7 @@ google-cloud-storage==1.7.0
 google-resumable-media==0.3.1  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.5.3  # via google-api-core
 graphviz==0.8.4
-gunicorn==19.3.0
+gunicorn==19.9.0
 html2text==2016.9.19
 httplib2==0.10.3          # via google-api-python-client, oauth2client
 identify==1.1.4           # via pre-commit
