@@ -5,7 +5,16 @@ db_user: dev
 db_password: sdkjasdalskdax
 db_name: openprescribing_dev
 secret_key: sdjfhasiufqpiasln
+repo_root: /openprescribing
+virtualenv_path: "{{ repo_root }}/venv"
+apps_root: "{{ repo_root }}/openprescribing"
+requirements_path: "{{ repo_root }}/requirements.txt"
+log_path: "{{ repo_root }}/logs"
+
 envvars:
+  - var: VIRTUALENV_PATH
+    name: VIRTUALENV_PATH
+    content: "{{ virtualenv_path }}"
   - var: DB_NAME
     name: DB_NAME
     content: "{{ db_name }}"

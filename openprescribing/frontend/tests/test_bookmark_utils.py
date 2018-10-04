@@ -155,7 +155,7 @@ class TestCUSUM(unittest.TestCase):
 
         """
         with open(
-                settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                settings.APPS_ROOT + '/frontend/tests/fixtures/'
                 'alert_test_cases.txt', 'rb') as expected:
             test_cases = expected.readlines()
         for test in each_cusum_test(test_cases):
@@ -473,7 +473,7 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             self.send_response(requests.codes.ok)
             self.send_header('Content-Type', 'text/javascript')
             self.end_headers()
-            with open(settings.SITE_ROOT + '/media/js/'
+            with open(settings.APPS_ROOT + '/media/js/'
                       'node_modules/jquery/dist/jquery.min.js', 'r') as f:
                 self.wfile.write(f.read())
                 return
@@ -521,7 +521,7 @@ class GenerateImageTestCase(unittest.TestCase):
         image = bookmark_utils.attach_image(
             self.msg, self.url, self.file_path, self.selector)
         with open(
-                settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                settings.APPS_ROOT + '/frontend/tests/fixtures/'
                 'alert-email-image.png', 'rb') as expected:
             self.assertEqual(len(self.msg.attachments), 1)
             attachment = self.msg.attachments[0]
@@ -541,7 +541,7 @@ class GenerateImageTestCase(unittest.TestCase):
         bookmark_utils.attach_image(
             self.msg, self.url, self.file_path, self.selector, '100x100')
         with open(
-                settings.SITE_ROOT + '/frontend/tests/fixtures/'
+                settings.APPS_ROOT + '/frontend/tests/fixtures/'
                 'alert-email-image-small.png', 'rb') as expected:
             attachment = self.msg.attachments[0]
             self.assertEqual(

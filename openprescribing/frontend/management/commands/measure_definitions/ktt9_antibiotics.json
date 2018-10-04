@@ -8,8 +8,10 @@
     "per oral antibacterials (BNF 5.1 sub-set) item-based STAR-PU."
   ],
   "why_it_matters": [
-    "It is important that we don't overuse antibiotics. ",
-    "This shows how many are being prescribed locally."
+    "<a href='https://www.nice.org.uk/advice/ktt9/chapter/Options-for-local-implementation'>",
+    "Antimicrobial resistance poses a significant threat to public health, ",
+    "especially because antimicrobials underpin routine medical practice. </a>",
+    "It is important that we don't overuse antibiotics. This measure shows how many are being prescribed locally."
   ],
   "numerator_short": "Antibacterials items",
   "denominator_short": "STAR-PUs",

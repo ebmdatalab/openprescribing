@@ -42,7 +42,7 @@ class Command(BaseCommand):
             self.IS_VERBOSE = True
 
         base_path = os.path.join(
-            settings.SITE_ROOT,
+            settings.APPS_ROOT,
             'frontend',
             'management',
             'commands',

@@ -30,7 +30,7 @@ def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
 
 
 def test_measures():
-    fpath = settings.INSTALL_ROOT
+    fpath = settings.REPO_ROOT
     fname = os.path.join(
         fpath, ('openprescribing/frontend/tests/fixtures/'
                 'cerazette_measure.json'))

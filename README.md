@@ -173,9 +173,9 @@ on the host computer.
 Secrets are stored in the `environment` file, and are loaded in
 Django's `manage.py` using the `django-dotenv` package.
 
-The script at `contrib/bin/gunicorn_start` is responsible for starting
+The script at `bin/gunicorn_start` is responsible for starting
 up a backend server. We proxy to this from nginx using a configuration
-like that at `contrib/nginx/`.  We control the gunicorn process using
+like that at `contrib/supervisor/nginx/`.  We control the gunicorn process using
 `supervisor`, with a script like that at `contrib/supervisor/`.
 
 # Set up the database
