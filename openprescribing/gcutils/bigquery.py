@@ -119,14 +119,14 @@ class Client(object):
             raise RuntimeError('Could not find blob at {}'.format(gcs_path))
 
         gcs_uri = 'gs://{}/{}'.format(self.project, gcs_path)
-
+        schema_as_dict = [{'name': s.name, 'type': s.field_type.lower()} for s in schema]
         resource = {
             'tableReference': {'tableId': table_id},
             'externalDataConfiguration': {
                 'csvOptions': {'skipLeadingRows': '1'},
                 'sourceFormat': 'CSV',
                 'sourceUris': [gcs_uri],
-                'schema': {'fields': schema}
+                'schema': {'fields': schema_as_dict}
             }
         }
 
