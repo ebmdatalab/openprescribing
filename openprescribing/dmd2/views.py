@@ -1,16 +1,18 @@
 # coding=utf8
 
+import colorsys
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import BooleanField, ForeignKey
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from frontend.models import Presentation
+
 from .models import VTM, VMP, VMPP, AMP, AMPP
 from .search import search
 from .view_schema import schema
-
-import json
 
 obj_type_to_cls = {
     "vtm": VTM,
@@ -122,6 +124,83 @@ def dmd_obj_view(request, obj_type, id):
         "rows": rows,
     }
     return render(request, "dmd/dmd_obj.html", ctx)
+
+
+def vmp_relationships_view(request, vmp_id):
+    bnf_codes = set()
+
+    vmp = get_object_or_404(VMP, id=vmp_id)
+    bnf_codes.add(vmp.bnf_code)
+
+    vmpps = vmp.vmpp_set.order_by('nm')
+    vmpp_ids = [vmpp.id for vmpp in vmpps]
+    bnf_codes |= {vmpp.bnf_code for vmpp in vmpps}
+
+    amps = vmp.amp_set.order_by('descr')
+    amp_ids = [amp.id for amp in amps]
+    bnf_codes |= {amp.bnf_code for amp in amps}
+
+    ampps = AMPP.objects.filter(vmpp__vmp=vmp)
+    bnf_codes |= {ampp.bnf_code for ampp in ampps}
+
+    presentations = Presentation.objects.filter(bnf_code__in=bnf_codes).order_by('bnf_code')
+    num_presentations = len(presentations)
+
+    colours_hls = [
+        ((ix * 1.0 / num_presentations), 0.85, 0.75)
+        for ix in range(num_presentations)
+    ]
+
+    colours_rgb = [colorsys.hls_to_rgb(*hls) for hls in colours_hls]
+    colours_hex = [
+        "#{0:02x}{1:02x}{2:02x}".format(
+            int(rgb[0] * 256),
+            int(rgb[1] * 256),
+            int(rgb[2] * 256),
+        )
+        for rgb in colours_rgb
+    ]
+
+    bnf_code_to_colour = {}
+
+    for ix, presentation in enumerate(presentations):
+        bnf_code_to_colour[presentation.bnf_code] = colours_hex[ix]
+        presentation.colour = colours_hex[ix]
+
+    # We can remove this if we're only showing objects with BNF codes
+    bnf_code_to_colour[None] = '#FFFFFF'
+
+    table = [
+        [None for _ in range(len(vmpps) + 1)]
+        for _ in range(len(amps) + 1)
+    ]
+
+    for ix, vmpp in enumerate(vmpps):
+        table[0][ix + 1] = {'obj': vmpp, 'colour': bnf_code_to_colour[vmpp.bnf_code]}
+
+    for ix, amp in enumerate(amps):
+        table[ix + 1][0] = {'obj': amp, 'colour': bnf_code_to_colour[amp.bnf_code]}
+
+    for ampp in ampps:
+        row_ix = amp_ids.index(ampp.amp_id) + 1
+        col_ix = vmpp_ids.index(ampp.vmpp_id) + 1
+        table[row_ix][col_ix] = {'obj': ampp, 'colour': bnf_code_to_colour[ampp.bnf_code]}
+
+    if vmp.bnf_code:
+        vmp_presentation = Presentation.objects.get(bnf_code=vmp.bnf_code)
+    else:
+        vmp_presentation = None
+    vmp_colour = bnf_code_to_colour[vmp.bnf_code]
+
+    ctx = {
+        'vmp': vmp,
+        'table': table,
+        'presentations': presentations,
+        'vmp_presentation': vmp_presentation,
+        'vmp_colour': vmp_colour,
+    }
+
+    return render(request, "dmd/vmp_relationships.html", ctx)
 
 
 def search_view(request):
