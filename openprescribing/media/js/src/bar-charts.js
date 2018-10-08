@@ -84,7 +84,9 @@ var barChart = {
         };
         chart.yAxis[0].update(newYAxisOptions, false);
         var newData = _this.getYValueOfData(data, graphType);
-        chart.series[0].setData(newData, false);
+        // See: https://api.highcharts.com/class-reference/Highcharts.Series#setData
+        // args below are: redraw=false, animation=false, updatePoints=false
+        chart.series[0].setData(newData, false, false, false);
         chart.setTitle({text: _this.getChartTitle(graphType)}, false);
         chart.redraw();
     },
