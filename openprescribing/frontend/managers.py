@@ -16,7 +16,6 @@ CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 class MeasureValueQuerySet(models.QuerySet):
 
     def by_ccg(self, org_ids, measure_ids=None, tags=None):
-        org_ids, aggregate_all = _extract_all_orgs_pseudo_id(org_ids)
         org_Q = Q()
         for org_id in org_ids:
             org_Q |= Q(pct_id=org_id)
@@ -36,12 +35,9 @@ class MeasureValueQuerySet(models.QuerySet):
         if tags:
             qs = qs.filter(measure__tags__contains=tags)
 
-        if aggregate_all:
-            qs = _aggregate_all_results_by_measure(qs, include_practice=False)
         return qs
 
     def by_practice(self, org_ids, measure_ids=None, tags=None):
-        org_ids, aggregate_all = _extract_all_orgs_pseudo_id(org_ids)
         org_Q = Q()
         for org_id in org_ids:
             if len(org_id) == 3:
@@ -62,9 +58,38 @@ class MeasureValueQuerySet(models.QuerySet):
         if tags:
             qs = qs.filter(measure__tags__contains=tags)
 
-        if aggregate_all:
-            qs = _aggregate_all_results_by_measure(qs, include_practice=True)
         return qs
+
+    def aggregate_by_measure_and_month(self):
+        """
+        Sum MeasureValues in the current query, grouped by measure and month
+
+        This handles recalcuating the ratios and summing the cost savings
+        correctly.  Note a couple of potential gotchas:
+
+         * Return value is a generator, not a QuerySet, so you can iterate
+           over it as normal but not do other things you might with a QuerySet
+
+         * Returned objects are unsaved MeasureValue instances so they have
+           all the attributes/methods you would expect on a MeasureValue but
+           they don't actually exist in the database
+        """
+        aggregate_queryset = (
+            self
+            .values('measure_id', 'month')
+            .order_by('measure_id', 'month')
+            .annotate(
+                numerator=Sum('numerator'),
+                denominator=Sum('denominator'),
+                calc_value=_divide('numerator', 'denominator'),
+                cost_savings=_aggregate_over_json(
+                    field='cost_savings',
+                    aggregate_function=_sum_positive_values,
+                    keys=CENTILES
+                )
+            )
+        )
+        return (self.model(**row) for row in aggregate_queryset)
 
     def aggregate_cost_savings(self):
         """
@@ -114,56 +139,6 @@ def _calculate_saving_at_cost(target_cost, cost_per_unit_field, units_field):
     per_unit_saving = F(cost_per_unit_field) - Value(target_cost)
     saving = F(units_field) * per_unit_saving
     return _sum_positive_values(saving)
-
-
-def _extract_all_orgs_pseudo_id(org_ids):
-    aggregate_all = False
-    if ALL_ORGS_PSEUDO_ID in org_ids:
-        if len(org_ids) != 1:
-            raise ValueError(
-                'Queries for "{}" cannot be combined with other '
-                'org_ids'.format(ALL_ORGS_PSEUDO_ID))
-        aggregate_all = True
-        org_ids = ()
-    return org_ids, aggregate_all
-
-
-def _aggregate_all_results_by_measure(queryset, include_practice=False):
-    # Avoid circular imports by getting model references from queryset
-    MeasureValue = queryset.model
-    Practice = MeasureValue.practice.field.related_model
-    PCT = MeasureValue.pct.field.related_model
-
-    pseudo_practice = Practice(name=ALL_PRACTICE_NAME)
-    pseudo_practice.id = ALL_ORGS_PSEUDO_ID
-    pseudo_pct = PCT(name=ALL_PCT_NAME)
-    pseudo_pct.id = ALL_ORGS_PSEUDO_ID
-
-    aggregate_queryset = (
-        queryset
-        .values('measure_id', 'month')
-        .order_by('measure_id', 'month')
-        .annotate(
-            numerator=Sum('numerator'),
-            denominator=Sum('denominator'),
-            calc_value=_divide('numerator', 'denominator'),
-            cost_savings=_aggregate_over_json(
-                field='cost_savings',
-                aggregate_function=_sum_positive_values,
-                keys=CENTILES
-            ),
-        )
-    )
-
-    for item in aggregate_queryset:
-        measure_value = MeasureValue(**item)
-        if include_practice:
-            measure_value.practice = pseudo_practice
-            measure_value.practice_id = pseudo_practice.id
-        else:
-            measure_value.pct = pseudo_pct
-            measure_value.pct_id = pseudo_pct.id
-        yield measure_value
 
 
 def _divide(numerator_field, denominator_field):

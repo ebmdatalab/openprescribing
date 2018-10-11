@@ -172,10 +172,13 @@ def measure_numerators_by_org(request, format=None):
 def measure_by_ccg(request, format=None):
     measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))
+    aggregate = bool(request.query_params.get('aggregate'))
     if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
     tags = utils.param_to_list(request.query_params.get('tags', []))
     measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
+    if aggregate:
+        measure_values = measure_values.aggregate_by_measure_and_month()
 
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'ccg')
@@ -187,7 +190,8 @@ def measure_by_ccg(request, format=None):
 def measure_by_practice(request, format=None):
     measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))
-    if not orgs:
+    aggregate = bool(request.query_params.get('aggregate'))
+    if not orgs and not aggregate:
         raise MissingParameter
     if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
@@ -195,6 +199,9 @@ def measure_by_practice(request, format=None):
 
     measure_values = MeasureValue.objects.by_practice(orgs, measures,
                                                       tags)
+    if aggregate:
+        measure_values = measure_values.aggregate_by_measure_and_month()
+
     rsp_data = {
         'measures': _roll_up_measure_values(measure_values, 'practice')
     }
@@ -216,15 +223,17 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
         }
 
         if practice_or_ccg == 'practice':
-            measure_value_data.update({
-                'practice_id': measure_value.practice_id,
-                'practice_name': measure_value.practice.name,
-            })
+            if measure_value.practice_id:
+                measure_value_data.update({
+                    'practice_id': measure_value.practice_id,
+                    'practice_name': measure_value.practice.name,
+                })
         elif practice_or_ccg == 'ccg':
-            measure_value_data.update({
-                'pct_id': measure_value.pct_id,
-                'pct_name': measure_value.pct.name,
-            })
+            if measure_value.pct_id:
+                measure_value_data.update({
+                    'pct_id': measure_value.pct_id,
+                    'pct_name': measure_value.pct.name,
+                })
         else:
             assert False
 

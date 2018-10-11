@@ -4,8 +4,6 @@ var humanize = require('humanize');
 var config = require('./config');
 var downloadjs = require('downloadjs');
 
-var ALL_ORGS_PSEUDO_ID = '_all';
-
 var utils = {
 
   getDataUrls: function(options) {
@@ -20,6 +18,7 @@ var utils = {
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'aggregate', 'aggregate');
     return urls;
   },
 
@@ -384,7 +383,7 @@ var utils = {
     } else {
       orgId = options.orgId;
     }
-    var isAggregateEntity = (orgId === ALL_ORGS_PSEUDO_ID);
+    var isAggregateEntity = ( ! orgId);
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
@@ -414,7 +413,7 @@ var utils = {
         var noun1 = 'it';
         var noun2 = 'this ' + options.orgType;
         var noun3 = 'it';
-        if (orgId === ALL_ORGS_PSEUDO_ID) {
+        if (isAggregateEntity) {
           noun1 = 'all ' + options.orgType + 's in England';
           noun2 = 'the NHS';
           noun3 = 'they';
@@ -462,7 +461,7 @@ var utils = {
       options, chartOptions);
     hcOptions.series = [];
     hcOptions.series.push({
-      name: (options.orgId !== ALL_ORGS_PSEUDO_ID) ? ('This ' + options.orgType) : options.orgName,
+      name: (options.orgId) ? ('This ' + options.orgType) : options.orgName,
       isNationalSeries: false,
       showTooltip: true,
       data: d.data,

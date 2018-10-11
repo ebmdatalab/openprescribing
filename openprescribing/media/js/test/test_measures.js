@@ -976,6 +976,7 @@ describe('Measures', function() {
         }
       },
       options = {
+        orgId: '99P',
         orgType: 'CCG',
         rollUpBy: 'org_id',
         globalYMax: { y: 50},

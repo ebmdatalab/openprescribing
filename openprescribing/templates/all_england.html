@@ -137,9 +137,9 @@
 
 {% block extra_js %}
 <script>
- var measureData = {
+  var measureData = {
+   'aggregate': true,
    'tags': '{{ tag_filter.tags|join:"," }}',
-   'orgId': '_all',
    'orgName': 'All {{ entity_type }}s in England',
    'orgType': '{{ entity_type }}'
 };
