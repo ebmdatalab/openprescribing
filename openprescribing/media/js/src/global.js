@@ -17,7 +17,7 @@ if (!window.console) {
   };
 }
 domready(function() {
-  $('.doorbell-show').click(function(e) {
+  $('.feedback-show').click(function(e) {
     e.preventDefault();
     window.location.href='/feedback/?from_url=' + encodeURIComponent(window.location.href);
   });
