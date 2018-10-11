@@ -128,12 +128,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
 <script type="text/javascript">
   $(function() {
-    $('.doorbell-show').click(function(e) {
-      if (typeof doorbell !== 'undefined') {
-        e.preventDefault();
-        doorbell.show();
-      }
-    });
     {% if by_presentation %}
       // When viewing at Presentation level, link back to practice-level
       var first_column = 'practice_name';
