@@ -37,7 +37,6 @@ from common.utils import ppu_sql
 from dmd.models import DMDProduct
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
-from frontend.managers import ALL_ORGS_PSEUDO_ID
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
@@ -188,6 +187,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
     context = {
         'entity': entity,
+        'entity_name': entity.cased_name,
         'highlight': entity.code,
         'highlight_name': entity.cased_name,
         'name': presentation.product_name,
@@ -231,6 +231,7 @@ def practice_price_per_unit(request, code):
     practice = get_object_or_404(Practice, code=code)
     context = {
         'entity': practice,
+        'entity_name': practice.cased_name,
         'highlight': practice.code,
         'highlight_name': practice.cased_name,
         'date': date,
@@ -258,6 +259,7 @@ def ccg_price_per_unit(request, code):
     ccg = get_object_or_404(PCT, code=code)
     context = {
         'entity': ccg,
+        'entity_name': ccg.cased_name,
         'highlight': ccg.code,
         'highlight_name': ccg.cased_name,
         'date': date,
@@ -269,14 +271,13 @@ def ccg_price_per_unit(request, code):
 @handle_bad_request
 def all_england_price_per_unit(request):
     date = _specified_or_last_date(request, 'ppu')
-    ccg = PCT(code=ALL_ORGS_PSEUDO_ID, name='NHS England')
     context = {
-        'entity': ccg,
-        'highlight': ccg.code,
-        'highlight_name': ccg.cased_name,
+        'entity_name': 'NHS England',
+        'highlight_name': 'NHS England',
         'date': date,
         'by_ccg': True,
-        'all_ccgs': True
+        'entity_type': 'CCG',
+        'aggregate': True
     }
     return render(request, 'price_per_unit.html', context)
 
@@ -286,12 +287,10 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     product = presentation.dmd_product
-    entity = PCT(code=ALL_ORGS_PSEUDO_ID, name='NHS England')
 
     query = {
         'format': 'json',
         'bnf_code': presentation.bnf_code,
-        'highlight': entity.code,
         'date': date.strftime('%Y-%m-%d'),
     }
 
@@ -312,7 +311,6 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
     ))
 
     context = {
-        'entity': entity,
         'name': presentation.product_name,
         'bnf_code': presentation.bnf_code,
         'presentation': presentation,
@@ -320,7 +318,8 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         'date': date,
         'by_presentation': True,
         'bubble_data_url': bubble_data_url,
-        'all_ccgs': True
+        'entity_name': 'NHS England',
+        'entity_type': 'CCG',
     }
     return render(request, 'price_per_unit.html', context)
 

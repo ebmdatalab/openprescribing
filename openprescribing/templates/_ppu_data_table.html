@@ -1,12 +1,10 @@
-<h4>Top savings in {{ entity.cased_name }}</h4>
+<h4>Top savings in {{ entity_name }}</h4>
 <table id="price_per_pill" class="table">
   <thead>
     <tr>
       <th>
-        {% if by_presentation and not all_ccgs %}
-          Practice
-        {% elif by_presentation and all_ccgs %}
-          CCG
+        {% if by_presentation %}
+          {% if entity_type == 'CCG' %} CCG {% else %} Practice {% endif %}
         {% else %}
           Presentation
         {% endif %}

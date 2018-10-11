@@ -6,10 +6,6 @@ from django.contrib.postgres.fields.jsonb import (
 )
 
 
-ALL_ORGS_PSEUDO_ID = '_all'
-ALL_PRACTICE_NAME = 'All practices in England'
-ALL_PCT_NAME = 'All CCGs in England'
-
 CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 
 
