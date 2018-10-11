@@ -678,7 +678,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/measures/?tags=foo,bar');
       });
       it('should return expected URL for practice', function() {
         var numMonths = 6; // required but not relevant to test
@@ -695,7 +695,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/measures/?tags=foo,bar');
       });
     });
     describe('oneEntityUrl output', function() {
