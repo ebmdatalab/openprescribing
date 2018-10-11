@@ -365,7 +365,7 @@ var utils = {
       // organisation page.
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
-        '/' + d.id;
+        '/' + d.id + '/measures/';
       measureId = options.measure;
       measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }
