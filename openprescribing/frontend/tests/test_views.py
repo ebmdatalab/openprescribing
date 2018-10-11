@@ -657,3 +657,31 @@ class TestGetMeasureTagFilter(TestCase):
     def test_returns_tag_name(self):
         tag_filter = _get_measure_tag_filter(QueryDict('tags=lowpriority'))
         self.assertEqual(tag_filter['names'], ['NHS England Low Priority'])
+
+
+class TestFeedbackView(TestCase):
+    def test_get(self):
+        from_url = "https://openprescribing.net/bnf/090603/"
+        rsp = self.client.get("/feedback/?from_url={}".format(from_url))
+        self.assertEqual(rsp.status_code, 200)
+
+    def test_post(self):
+        mail.outbox = []
+
+        form_data = {
+            "name": "Alice Apple",
+            "email": "alice@example.com",
+            "subject": "An apple a day...",
+            "message": "...keeps the doctor away",
+        }
+
+        from_url = "https://openprescribing.net/bnf/090603/"
+
+        rsp = self.client.post(
+            "/feedback/?from_url={}".format(from_url),
+            form_data,
+            follow=True
+        )
+
+        self.assertRedirects(rsp, "/contact/")
+        self.assertEqual(len(mail.outbox), 1)

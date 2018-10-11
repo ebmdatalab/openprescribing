@@ -35,6 +35,7 @@ from common.utils import parse_date
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import DMDProduct
+from frontend.forms import FeedbackForm
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
@@ -46,6 +47,7 @@ from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
+from frontend.feedback import send_feedback_mail
 
 from mailchimp3 import MailChimp
 
@@ -810,6 +812,24 @@ def tariff(request, code=None):
             [x.product_name for x in presentations])
     }
     return render(request, 'tariff.html', context)
+
+
+def feedback_view(request):
+    if request.POST:
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            send_feedback_mail(
+                user_name=form.cleaned_data['name'],
+                user_email_addr=form.cleaned_data['email'],
+                subject=form.cleaned_data['subject'],
+                message=form.cleaned_data['message'],
+                url=request.GET.get('from_url'),
+            )
+            return HttpResponseRedirect('/contact/')
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'feedback.html', {'form': form})
 
 
 ##################################################

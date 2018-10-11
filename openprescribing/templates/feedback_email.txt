@@ -1,0 +1,3 @@
+New feedback from {{ name }}{% if url %} (via {{ url|safe }}){% endif %}
+
+{{ message }}

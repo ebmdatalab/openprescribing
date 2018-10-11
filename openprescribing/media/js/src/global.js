@@ -18,10 +18,8 @@ if (!window.console) {
 }
 domready(function() {
   $('.doorbell-show').click(function(e) {
-    if (typeof doorbell !== 'undefined') {
-      e.preventDefault();
-      doorbell.show();
-    }
+    e.preventDefault();
+    window.location.href='/feedback/?from_url=' + encodeURIComponent(window.location.href);
   });
   $('.js-submit-on-change').on('change', function() {
     this.form.submit();

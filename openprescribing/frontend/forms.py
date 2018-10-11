@@ -123,3 +123,10 @@ class OrgBookmarkForm(forms.Form):
         else:
             raise forms.ValidationError("No practice or CCG specified")
         return self.cleaned_data
+
+
+class FeedbackForm(forms.Form):
+    email = forms.EmailField()
+    name = forms.CharField()
+    subject = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea)

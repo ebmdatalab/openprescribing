@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load template_extras %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block content %}
+<h2>Feedback</h2>
+
+<form method="post" role="form">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {{ form | crispy }}
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+
+{% endblock %}
