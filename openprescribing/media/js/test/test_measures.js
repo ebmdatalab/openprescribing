@@ -528,7 +528,7 @@ describe('Measures', function() {
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures/');
       str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
@@ -556,7 +556,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].measureUrl).to.be.undefined;
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures/');
     });
 
     it('copies selected properties from the global data', function() {
@@ -678,7 +678,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/measures/?tags=foo,bar');
       });
       it('should return expected URL for practice', function() {
         var numMonths = 6; // required but not relevant to test
@@ -695,7 +695,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/measures/?tags=foo,bar');
       });
     });
     describe('oneEntityUrl output', function() {

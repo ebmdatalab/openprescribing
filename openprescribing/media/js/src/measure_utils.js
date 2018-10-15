@@ -365,7 +365,7 @@ var utils = {
       // organisation page.
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
-        '/' + d.id;
+        '/' + d.id + '/measures/';
       measureId = options.measure;
       measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }
@@ -377,10 +377,10 @@ var utils = {
     }
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
-      tagsFocusUrl = '/practice/' + orgId + '/?tags=' + d.tagsFocus;
+      tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
     } else {
       oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
-      tagsFocusUrl = '/ccg/' + orgId + '/?tags=' + d.tagsFocus;
+      tagsFocusUrl = '/ccg/' + orgId + '/measures/?tags=' + d.tagsFocus;
     }
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
