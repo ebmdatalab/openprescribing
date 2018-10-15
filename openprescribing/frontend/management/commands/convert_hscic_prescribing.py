@@ -8,8 +8,6 @@ from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
 from gcutils.bigquery import Client, TableExporter, NotFound
-from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
-
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +78,26 @@ class Command(BaseCommand):
         logger.info('raw_data_table_name: %s', raw_data_table_name)
         logger.info('gcs_path: %s', gcs_path)
 
+        schema = [
+            {'name': 'Regional_Office_Name', 'type': 'string'},
+            {'name': 'Regional_Office_Code', 'type': 'string'},
+            {'name': 'Area_Team_Name', 'type': 'string'},
+            {'name': 'Area_Team_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'PCO_Name', 'type': 'string'},
+            {'name': 'PCO_Code', 'type': 'string'},
+            {'name': 'Practice_Name', 'type': 'string'},
+            {'name': 'Practice_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'BNF_Code', 'type': 'string', 'mode': 'required'},
+            {'name': 'BNF_Description', 'type': 'string', 'mode': 'required'},
+            {'name': 'Items', 'type': 'integer', 'mode': 'required'},
+            {'name': 'Quantity', 'type': 'integer', 'mode': 'required'},
+            {'name': 'ADQ_Usage', 'type': 'float'},
+            {'name': 'NIC', 'type': 'float', 'mode': 'required'},
+            {'name': 'Actual_Cost', 'type': 'float', 'mode': 'required'},
+        ]
         raw_data_table = tmp_dataset_client.create_storage_backed_table(
             raw_data_table_name,
-            RAW_PRESCRIBING_SCHEMA,
+            schema,
             gcs_path
         )
 
