@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 
 from frontend.models import MeasureValue
@@ -73,3 +75,22 @@ class MeasureValueManagerTests(TestCase):
         mvs = MeasureValue.objects.by_practice(
             ['C83051'], tags=['core', 'lowpriority'])
         self.assertEqual(len(mvs), 0)
+
+    def test_aggregate_by_measure_and_month(self):
+        results = (
+            MeasureValue.objects
+            .filter(measure_id='cerazette')
+            .by_practice([])
+            .aggregate_by_measure_and_month()
+        )
+        results = list(results)
+        self.assertEqual(len(results), 1)
+        mv = results[0]
+        self.assertEqual(mv.measure_id, 'cerazette')
+        self.assertEqual(mv.month, datetime.date(2015, 9, 1))
+        self.assertEqual(mv.numerator, 85500)
+        self.assertEqual(mv.denominator, 181500)
+        self.assertEqual("%.4f" % mv.calc_value, '0.4711')
+        self.assertEqual("%.2f" % mv.cost_savings['10'], '70149.77')
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '59029.41')
+        self.assertEqual("%.2f" % mv.cost_savings['90'], '162.00')

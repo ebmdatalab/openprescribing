@@ -740,6 +740,56 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         data = self._get(entity_code='000', date='2014-11-01')
         self.assertEqual(data, {'detail': 'Not found.'})
 
+    def test_aggregate_over_ccgs(self):
+        data = self._get(
+            entity_type='CCG',
+            date='2014-11-01',
+            aggregate='true'
+        )
+        expected = self._expected_results([2, 4])
+        expected[0].update(
+            pct=None,
+            pct_name='NHS England',
+            quantity=2,
+            possible_savings=200.0
+        )
+        expected[1].update(
+            pct=None,
+            pct_name='NHS England',
+            quantity=1,
+            possible_savings=100.0
+        )
+        expected[0].pop('id')
+        expected[1].pop('id')
+        self.assertEqual(data, expected)
+
+    def test_aggregate_over_practices(self):
+        data = self._get(
+            entity_type='practice',
+            date='2014-11-01',
+            aggregate='true'
+        )
+        expected = self._expected_results([1, 3])
+        expected[0].update(
+            pct=None,
+            pct_name=None,
+            practice=None,
+            practice_name='NHS England',
+            quantity=2,
+            possible_savings=200.0
+        )
+        expected[1].update(
+            pct=None,
+            pct_name=None,
+            practice=None,
+            practice_name='NHS England',
+            quantity=1,
+            possible_savings=100.0
+        )
+        expected[0].pop('id')
+        expected[1].pop('id')
+        self.assertEqual(data, expected)
+
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):
     fixtures = ApiTestBase.fixtures + ['importlog']

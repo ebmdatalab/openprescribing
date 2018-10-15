@@ -319,3 +319,31 @@ class TestAPIMeasureViews(TestCase):
         url = '/api/1.0/measure_by_practice/'
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
+
+    def test_api_measure_by_all_ccgs_aggregated(self):
+        url = '/api/1.0/measure_by_ccg/'
+        url += '?measure=cerazette&aggregate=true&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures'][0]['data']), 1)
+        d = data['measures'][0]['data'][0]
+        self.assertEqual(d['numerator'], 83500)
+        self.assertEqual(d['denominator'], 164500)
+        self.assertEqual(d['percentile'], None)
+        self.assertEqual("%.4f" % d['calc_value'], '0.5076')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '63588.51')
+        self.assertEqual("%.2f" % d['cost_savings']['50'], '58658.82')
+        self.assertEqual("%.2f" % d['cost_savings']['90'], '11731.76')
+
+    def test_api_measure_by_all_practices_aggregated(self):
+        url = '/api/1.0/measure_by_practice/'
+        url += '?measure=cerazette&aggregate=true&format=json'
+        data = self._get_json(url)
+        self.assertEqual(len(data['measures'][0]['data']), 1)
+        d = data['measures'][0]['data'][0]
+        self.assertEqual(d['numerator'], 85500)
+        self.assertEqual(d['denominator'], 181500)
+        self.assertEqual(d['percentile'], None)
+        self.assertEqual("%.4f" % d['calc_value'], '0.4711')
+        self.assertEqual("%.2f" % d['cost_savings']['10'], '70149.77')
+        self.assertEqual("%.2f" % d['cost_savings']['50'], '59029.41')
+        self.assertEqual("%.2f" % d['cost_savings']['90'], '162.00')
