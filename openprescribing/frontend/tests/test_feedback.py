@@ -5,7 +5,6 @@ from django.test import TestCase
 from frontend.feedback import send_feedback_mail
 
 
-
 class FeedbackTests(TestCase):
     def test_send_feedback_mail(self):
         mail.outbox = []
@@ -29,5 +28,7 @@ class FeedbackTests(TestCase):
         self.assertEqual(email.to, [settings.SUPPORT_EMAIL])
         self.assertEqual(email.from_email, "Alice Apple <alice@example.com>")
         self.assertEqual(email.reply_to, ["alice@example.com"])
-        self.assertEqual(email.subject, "OpenPrescribing Feedback: An apple a day...")
+        self.assertEqual(
+            email.subject,
+            "OpenPrescribing Feedback: An apple a day...")
         self.assertEqual(email.body, expected_body)

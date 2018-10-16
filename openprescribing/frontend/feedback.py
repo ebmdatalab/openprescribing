@@ -25,4 +25,3 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
     )
 
     return email.send()
-

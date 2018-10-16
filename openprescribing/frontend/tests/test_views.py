@@ -377,12 +377,12 @@ class TestFrontendViews(TestCase):
         with self.settings(DEBUG=False):
             response = self.client.get('')
             doc = pq(response.content)
-            mainjs = doc('script')[-2].attrib['src']
+            mainjs = doc('script')[-1].attrib['src']
             self.assertIn('global.min.js', mainjs)
         with self.settings(DEBUG=True, INTERNAL_IPS=('127.0.0.1',)):
             response = self.client.get('')
             doc = pq(response.content)
-            mainjs = doc('script')[-2].attrib['src']
+            mainjs = doc('script')[-1].attrib['src']
             self.assertIn('global.js', mainjs)
 
     def test_call_view_analyse(self):

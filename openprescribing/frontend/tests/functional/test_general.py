@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from urllib import quote_plus
 
 from mock import patch
 from mock import PropertyMock
@@ -60,19 +61,19 @@ class GeneralFrontendTest(SeleniumTestCase):
             url = self.live_server_url + url
             self.browser.get(url)
             self.find_by_xpath(
-                '//button[@id="doorbell-button"]')  # Wait for button load
+                '//a[@class="feedback-show"]')  # Wait for button load
             try:
                 el = self.find_visible_by_xpath(
-                    '//button[@id="doorbell-button"]')
+                    '//a[@class="feedback-show"]')
                 el.click()
             except TypeError as e:
                 e.args += ("at URL %s" % url,)
                 raise
 
-            self.assertTrue(
-                self.find_by_xpath('//div[@id="doorbell"]').is_displayed(),
-                "get in touch functionality broken at %s" % url
+            expected_url = '{}/feedback/?from_url={}'.format(
+                self.live_server_url, quote_plus(url)
             )
+            self.assertEqual(self.browser.current_url, expected_url)
 
     def test_drug_name_typeahead(self):
         self.browser.get(self.live_server_url + '/analyse/')
