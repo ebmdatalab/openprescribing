@@ -14,4 +14,10 @@
   <input class="btn btn-primary" type="submit" value="Submit">
 </form>
 
+{# The kind of bots which generate comment spam don't tend to execute JavaScript #}
+<script>
+  document.getElementById('id_human_test').value = '{{ form.HUMAN_TEST_ANSWER|escapejs }}';
+  document.getElementById('div_id_human_test').style.display = 'none';
+</script>
+
 {% endblock %}

@@ -672,6 +672,7 @@ class TestFeedbackView(TestCase):
             "name": "Alice Apple",
             "email": "alice@example.com",
             "subject": "An apple a day...",
+            "human_test": "health",
             "message": "...keeps the doctor away",
         }
 

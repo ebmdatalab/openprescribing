@@ -126,7 +126,26 @@ class OrgBookmarkForm(forms.Form):
 
 
 class FeedbackForm(forms.Form):
+
+    # This incredibly crude captcha technique has proved enough in the past to
+    # deter spam bots which blindly fill out any contact form they can find
+    HUMAN_TEST_ANSWER = 'health'
+
     email = forms.EmailField()
     name = forms.CharField()
     subject = forms.CharField()
+    human_test = forms.CharField(
+        label='Please type the word "{}" to show you\'re not a robot'.format(
+            HUMAN_TEST_ANSWER
+        )
+    )
     message = forms.CharField(widget=forms.Textarea)
+
+    def clean_human_test(self):
+        data = self.cleaned_data['human_test']
+        if data.strip().lower() != self.HUMAN_TEST_ANSWER:
+            raise forms.ValidationError(
+                'Sorry, you need to put the word "{}" here'.format(
+                    self.HUMAN_TEST_ANSWER
+                )
+            )
