@@ -1,19 +1,12 @@
-import base64
-from mock import patch
-
 from django.test import TransactionTestCase
 from django.core.urlresolvers import reverse
 
 from frontend.models import OrgBookmark
-from frontend.models import SearchBookmark
-from frontend.models import PCT
-from frontend.models import Practice
 from frontend.models import User
-from frontend.models import Measure
 
 
 class TestBookmarkViews(TransactionTestCase):
-    fixtures = ['bookmark_alerts']
+    fixtures = ['bookmark_alerts', 'bookmark_alerts_extra']
 
     def _get_bookmark_url_for_user(self):
         key = User.objects.get(username='bookmarks-user').profile.key
@@ -37,6 +30,7 @@ class TestBookmarkViews(TransactionTestCase):
     def test_unsubscribe_one_by_one(self):
         # First, log in
         url = self._get_bookmark_url_for_user()
+        bookmark_count = OrgBookmark.objects.count()
         self.client.get(url, follow=True)
         # There should be 2 bookmarks to get rid of
         for _ in range(3):
@@ -46,11 +40,12 @@ class TestBookmarkViews(TransactionTestCase):
             self.assertContains(
                 response,
                 "Unsubscribed from 1 alert")
-        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self.assertEqual(OrgBookmark.objects.count(), bookmark_count - 3)
 
     def test_unsubscribe_all_at_once(self):
         # First, log in
         url = self._get_bookmark_url_for_user()
+        bookmark_count = OrgBookmark.objects.count()
         self.client.get(url, follow=True)
         data = {'unsuball': 1}
         response = self.client.post(
@@ -60,4 +55,4 @@ class TestBookmarkViews(TransactionTestCase):
             "Unsubscribed from 3 alerts")
         # There's one org bookmark which is unapproved, so they don't
         # see it in their list, and it doesn't get deleted.
-        self.assertEqual(OrgBookmark.objects.count(), 2)
+        self.assertEqual(OrgBookmark.objects.count(), bookmark_count - 2)
