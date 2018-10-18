@@ -1,15 +1,8 @@
-import base64
-from mock import patch
-
 from django.test import TransactionTestCase
 from django.core.urlresolvers import reverse
 
 from frontend.models import OrgBookmark
-from frontend.models import SearchBookmark
-from frontend.models import PCT
-from frontend.models import Practice
 from frontend.models import User
-from frontend.models import Measure
 
 
 class TestBookmarkViews(TransactionTestCase):
