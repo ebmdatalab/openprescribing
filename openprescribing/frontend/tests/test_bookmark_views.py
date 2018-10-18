@@ -6,7 +6,7 @@ from frontend.models import User
 
 
 class TestBookmarkViews(TransactionTestCase):
-    fixtures = ['bookmark_alerts']
+    fixtures = ['bookmark_alerts', 'bookmark_alerts_extra']
 
     def _get_bookmark_url_for_user(self):
         key = User.objects.get(username='bookmarks-user').profile.key
