@@ -47,6 +47,7 @@ notifications:
     - tech@ebmdatalab.net
   slack:
     secure: ECNcYBYWt4emYm9Br88Ts9VRxHGe3IkMjLk/MTKAaqY3lJPmC7vy+d1+YazBufxPNAIbR/1OdxJGcxsnj+zpYoCgLVOF9sxWaOf6x9dL2bTquU+lUIzUVDb+VilRgnlqv9BHZQlcYUFsODQTqQhxeJ73pUpVxYsdXWuSs5CGgJMsJMJ6IQAgiLBStC/8dNCXFFQPGptjdA1xqeCG47lnLK0zwzlaWJobrqga50NqlL4xfjMnVXq+AohGq5HtmrOt4cy6HkX3zKuHR0GZs6j/hWA6wbIbGeO5d/4hGT0CaiROlK1trketyvec8z69MqjsQJrK0Au1KYF7VOhJjLykseFiTK4IdluLipn3rVX9JRjBAegrrMEy/Cpjgc8nJqo3WAYoaPL7SY+jl8vwzeL+Tg8JdKLp9L/2eELkLeqfaugqLPCkACkcVyZ5oKhUMdiK1WYyLsPzGu44lpCZ0DuXnpZLQ+AVC1EK9JAVfYC8mUCFzaIftT6g2MlaafevpXHQ3T0+CPfoQ58fQE7T6eoQpWYqlkFaV+cjb1n/1+qKCGGqJmSadZt3umADqF3vri46+HKO/BhNOxmAxPwcAdJ89qkvp5N5x7ZKBPm3KAiRNbB0nfiF+DWXMxFy01Ibfuc2Uoclk1h63ML8AgBdAUhqsmK3hI6xTcPA76QWRK9uYqU=
+  webhooks: https://coveralls.io/webhook
 addons:
   sauce_connect:
     username: ebmdatalab
