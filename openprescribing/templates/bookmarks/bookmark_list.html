@@ -12,6 +12,7 @@
      <strong><a href="{{ single_bookmark.get_absolute_url }}">{{ single_bookmark.name }}</a></strong>
    </p>
    <form class="form" method="post">
+     {% csrf_token %}
      <input class="btn btn-primary" type="submit" name="unsuball" value="Unsubscribe">
    </form>
  {% else %}
