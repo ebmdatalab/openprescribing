@@ -606,6 +606,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
+            "pct_name": "NHS Corby",
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
@@ -621,6 +622,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
+            "pct_name": "NHS Corby",
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
@@ -636,6 +638,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
+            "pct_name": "NHS Corby",
             "practice_name": "1/ST Andrews Medical Practice",
             "date": "2014-11-01",
             "quantity": 1,
@@ -651,6 +654,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
+            "pct_name": "NHS Corby",
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
@@ -666,6 +670,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": "N84014",
             "formulation_swap": None,
             "pct": "03Q",
+            "pct_name": "NHS Vale of York",
             "practice_name": "Ainsdale Village Surgery",
             "date": "2014-11-01",
             "quantity": 1,
@@ -681,6 +686,7 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "practice": None,
             "formulation_swap": None,
             "pct": "03Q",
+            "pct_name": "NHS Vale of York",
             "practice_name": None,
             "date": "2014-11-01",
             "quantity": 1,
@@ -733,6 +739,56 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
     def test_invalid_entity_code_ccg(self):
         data = self._get(entity_code='000', date='2014-11-01')
         self.assertEqual(data, {'detail': 'Not found.'})
+
+    def test_aggregate_over_ccgs(self):
+        data = self._get(
+            entity_type='CCG',
+            date='2014-11-01',
+            aggregate='true'
+        )
+        expected = self._expected_results([2, 4])
+        expected[0].update(
+            pct=None,
+            pct_name='NHS England',
+            quantity=2,
+            possible_savings=200.0
+        )
+        expected[1].update(
+            pct=None,
+            pct_name='NHS England',
+            quantity=1,
+            possible_savings=100.0
+        )
+        expected[0].pop('id')
+        expected[1].pop('id')
+        self.assertEqual(data, expected)
+
+    def test_aggregate_over_practices(self):
+        data = self._get(
+            entity_type='practice',
+            date='2014-11-01',
+            aggregate='true'
+        )
+        expected = self._expected_results([1, 3])
+        expected[0].update(
+            pct=None,
+            pct_name=None,
+            practice=None,
+            practice_name='NHS England',
+            quantity=2,
+            possible_savings=200.0
+        )
+        expected[1].update(
+            pct=None,
+            pct_name=None,
+            practice=None,
+            practice_name='NHS England',
+            quantity=1,
+            possible_savings=100.0
+        )
+        expected[0].pop('id')
+        expected[1].pop('id')
+        self.assertEqual(data, expected)
 
 
 class TestAPISpendingViewsPPUBubble(ApiTestBase):

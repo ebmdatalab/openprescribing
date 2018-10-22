@@ -3,6 +3,7 @@ var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
 var downloadjs = require('downloadjs');
+
 var utils = {
 
   getDataUrls: function(options) {
@@ -17,6 +18,7 @@ var utils = {
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'aggregate', 'aggregate');
     return urls;
   },
 
@@ -116,7 +118,13 @@ var utils = {
       return d.id;
     }).sortBy(function(d) {
       // Now by score, respecting `lowIsGood`
-      var score = d.meanPercentile;
+      // For aggregates (i.e. the "All England" charts) we sort by cost saving
+      // as sorting by mean percentile doesn't make any sense
+      var score = d.isAggregateEntity ? d.costSaving50th : d.meanPercentile;
+      // For the All England view, always sort the Low Priority Omnibus measure to the top
+      if (d.isAggregateEntity && d.id === 'lpzomnibus') {
+        score = 999999999999;
+      }
       if (score === null) {
         score = 101;
       } else if (d.lowIsGood !== false) {
@@ -237,7 +245,7 @@ var utils = {
             'practice ' : 'CCG ';
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 2) +
+            humanize.numberFormat(perf.potentialSavings50th, 0) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of practices were already ' +
             'prescribing at this level or better, so we think it ought ' +
@@ -251,7 +259,7 @@ var utils = {
           perf.costSavings += (options.orgType === 'practice') ?
             'this CCG ' : 'NHS England ';
           perf.costSavings += 'would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 2) +
+            humanize.numberFormat(perf.potentialSavings50th, 0) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of ';
           perf.costSavings += (options.orgType === 'practice') ?
@@ -375,6 +383,7 @@ var utils = {
     } else {
       orgId = options.orgId;
     }
+    var isAggregateEntity = ( ! orgId);
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
@@ -385,9 +394,14 @@ var utils = {
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
-    if (d.meanPercentile === null) {
-      chartExplanation = 'No data available.';
-    } else {
+    if (isAggregateEntity) {
+      oneEntityUrl = null;
+      chartTitleUrl = null;
+      tagsFocusUrl = null;
+      measureForAllPracticesUrl = null;
+    }
+    var costDataAvailable = d.isCostBased && d.costSaving10th;
+    if (d.meanPercentile !== null || costDataAvailable) {
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
@@ -396,27 +410,36 @@ var utils = {
             'prescribing behaviour. ');
       }
       if (d.isCostBased || options.isCostBasedMeasure) {
+        var noun1 = 'it';
+        var noun2 = 'this ' + options.orgType;
+        var noun3 = 'it';
+        if (isAggregateEntity) {
+          noun1 = 'all ' + options.orgType + 's in England';
+          noun2 = 'the NHS';
+          noun3 = 'they';
+        }
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
             'this ' + options.orgType + ' has saved the NHS £' +
-            humanize.numberFormat((d.costSaving50th * -1), 2) +
+            humanize.numberFormat((d.costSaving50th * -1), 0) +
             ' over the past ' + numMonths + ' months.';
         } else {
-          chartExplanation += 'If it had prescribed in line with the ' +
-            'median, this ' + options.orgType + ' would have spent £' +
-            humanize.numberFormat(d.costSaving50th, 2) +
+          chartExplanation += 'If ' + noun1 + ' had prescribed in line with the ' +
+            'median, ' + noun2 + ' would have spent £' +
+            humanize.numberFormat(d.costSaving50th, 0) +
             ' less over the past ' + numMonths + ' months.';
         }
         if (d.costSaving10th > 0) {
-          chartExplanation += ' If it had prescribed in line with the best ' +
+          chartExplanation += ' If ' + noun3 + ' had prescribed in line with the best ' +
             '10%, it would have spent £' +
-            humanize.numberFormat(d.costSaving10th, 2) + ' less. ';
+            humanize.numberFormat(d.costSaving10th, 0) + ' less. ';
         }
       }
     }
     return {
       measureUrl: measureUrl,
       isCCG: options.orgType == 'CCG',
+      isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
       chartTitleUrl: chartTitleUrl,
@@ -431,51 +454,54 @@ var utils = {
 
   getGraphOptions: function(d, options, isPercentageMeasure, chartOptions) {
     // Assemble the series for the chart, and add chart config options.
-    if (d.data.length) {
-      var hcOptions = this._getChartOptions(d, isPercentageMeasure,
-        options, chartOptions);
-      hcOptions.series = [{
-        name: 'This ' + options.orgType,
-        isNationalSeries: false,
-        data: d.data,
+    if ( ! d.data.length) {
+      return null;
+    }
+    var hcOptions = this._getChartOptions(d, isPercentageMeasure,
+      options, chartOptions);
+    hcOptions.series = [];
+    hcOptions.series.push({
+      name: (options.orgId) ? ('This ' + options.orgType) : options.orgName,
+      isNationalSeries: false,
+      showTooltip: true,
+      data: d.data,
+      events: {
+        legendItemClick: function() { return false; }
+      },
+      color: 'red',
+      showInLegend: true,
+      marker: {
+        radius: 2,
+      },
+    });
+    _.each(_.keys(d.globalCentiles), function(k) {
+      var e = {
+        name: k + 'th percentile nationally',
+        isNationalSeries: true,
+        showTooltip: false,
+        data: d.globalCentiles[k],
+        dashStyle: 'dot',
         events: {
           legendItemClick: function() { return false; }
         },
-        color: 'red',
-        showInLegend: true,
+        color: 'blue',
+        lineWidth: 1,
+        showInLegend: false,
         marker: {
-          radius: 2,
+          enabled: false,
         },
-      }];
-      _.each(_.keys(d.globalCentiles), function(k) {
-        var e = {
-          name: k + 'th percentile nationally',
-          isNationalSeries: true,
-          data: d.globalCentiles[k],
-          dashStyle: 'dot',
-          events: {
-            legendItemClick: function() { return false; }
-          },
-          color: 'blue',
-          lineWidth: 1,
-          showInLegend: false,
-          marker: {
-            enabled: false,
-          },
-        };
-        // Distinguish the median visually.
-        if (k === '50') {
-          e.dashStyle = 'longdash';
-        }
-        // Show median and an arbitrary decile in the legend
-        if (k === '10' || k === '50') {
-          e.showInLegend = true;
-        }
-        hcOptions.series.push(e);
-      });
-      return hcOptions;
-    }
-    return null;
+      };
+      // Distinguish the median visually.
+      if (k === '50') {
+        e.dashStyle = 'longdash';
+      }
+      // Show median and an arbitrary decile in the legend
+      if (k === '10' || k === '50') {
+        e.showInLegend = true;
+      }
+      hcOptions.series.push(e);
+    });
+    return hcOptions;
   },
 
   _getChartOptions: function(d, isPercentageMeasure,
@@ -531,7 +557,7 @@ var utils = {
     }
     chOptions.tooltip = {
       formatter: function() {
-        if (this.series.options.isNationalSeries) {
+        if ( ! this.series.options.showTooltip) {
           return false;
         }
         var num = humanize.numberFormat(this.point.numerator, 0);
@@ -541,22 +567,29 @@ var utils = {
         str += '<b>' + this.series.name;
         str += ' in ' + humanize.date('M Y', new Date(this.x));
         str += '</b><br/>';
-        str += d.numeratorShort + ': ' + num;
-        str += '<br/>';
-        if (d.denominatorShort == '1000 patients') {
-          // Treat measures which are per 1000 patients a bit differently.
-          // See https://github.com/ebmdatalab/openprescribing/issues/436.
-          denom = humanize.numberFormat(1000 * this.point.denominator, 0);
-          str += 'Registered Patients: ' + denom;
+        if ( ! this.series.options.isNationalSeries) {
+          str += d.numeratorShort + ': ' + num;
+          str += '<br/>';
+          if (d.denominatorShort == '1000 patients') {
+            // Treat measures which are per 1000 patients a bit differently.
+            // See https://github.com/ebmdatalab/openprescribing/issues/436.
+            denom = humanize.numberFormat(1000 * this.point.denominator, 0);
+            str += 'Registered Patients: ' + denom;
+          } else {
+            denom = humanize.numberFormat(this.point.denominator, 0);
+            str += d.denominatorShort + ': ' + denom;
+          }
+          str += '<br/>';
+          str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
+          str += (isPercentageMeasure) ? '%' : '';
+          if (this.point.percentile !== null) {
+            str += ' (' + humanize.ordinal(percentile);
+            str += ' percentile)';
+          }
         } else {
-          denom = humanize.numberFormat(this.point.denominator, 0);
-          str += d.denominatorShort + ': ' + denom;
+          str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
+          str += (isPercentageMeasure) ? '%' : '';
         }
-        str += '<br/>';
-        str += 'Measure: ' + humanize.numberFormat(this.point.y, 3);
-        str += (isPercentageMeasure) ? '%' : '';
-        str += ' (' + humanize.ordinal(percentile);
-        str += ' percentile)';
         return str;
       },
     };

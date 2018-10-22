@@ -184,17 +184,22 @@ def price_per_unit(request, format=None):
 
     """
     entity_code = request.query_params.get('entity_code')
+    entity_type = request.query_params.get('entity_type')
     date = request.query_params.get('date')
     bnf_code = request.query_params.get('bnf_code')
+    aggregate = bool(request.query_params.get('aggregate'))
+    if not entity_type and entity_code:
+        entity_type = 'CCG' if len(entity_code) == 3 else 'practice'
     if not date:
         raise NotValid("You must supply a date")
-    if not (entity_code or bnf_code):
-        raise NotValid("You must supply a value for entity_code or bnf_code")
+    if not (entity_code or bnf_code or aggregate):
+        raise NotValid(
+            "You must supply a value for entity_code or bnf_code, or set the "
+            "aggregate flag"
+        )
 
     params = {'date': date}
     filename = date
-
-    practice_level = False
 
     if bnf_code:
         params['bnf_code'] = bnf_code
@@ -203,11 +208,12 @@ def price_per_unit(request, format=None):
 
     if entity_code:
         params['entity_code'] = entity_code
-        if len(entity_code) == 3:
+        if entity_type == 'CCG':
             get_object_or_404(PCT, pk=entity_code)
-        else:
+        elif entity_type == 'practice':
             get_object_or_404(Practice, pk=entity_code)
-            practice_level = True
+        else:
+            raise ValueError(entity_type)
         filename += "-%s" % entity_code
 
     extra_conditions = ""
@@ -217,7 +223,7 @@ def price_per_unit(request, format=None):
         AND {ppusavings_table}.bnf_code = %(bnf_code)s'''
 
     if entity_code:
-        if practice_level:
+        if entity_type == 'practice':
             extra_conditions += '''
         AND {ppusavings_table}.practice_id = %(entity_code)s'''
         else:
@@ -230,8 +236,18 @@ def price_per_unit(request, format=None):
             else:
                 extra_conditions += '''
         AND {ppusavings_table}.practice_id IS NULL'''
+    else:
+        if entity_type == 'practice':
+            extra_conditions += '''
+                AND {ppusavings_table}.practice_id IS NOT NULL'''
+        elif entity_type == 'CCG':
+            extra_conditions += '''
+                AND {ppusavings_table}.practice_id IS NULL'''
 
     sql = ppu_sql(conditions=extra_conditions)
+
+    if aggregate:
+        sql = _aggregate_ppu_sql(sql, entity_type)
 
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
@@ -240,12 +256,60 @@ def price_per_unit(request, format=None):
     for result in results:
         if result['practice_name'] is not None:
             result['practice_name'] = nhs_titlecase(result['practice_name'])
+        if result['pct_name'] is not None:
+            result['pct_name'] = nhs_titlecase(result['pct_name'])
 
     response = Response(results)
     if request.accepted_renderer.format == 'csv':
         filename = "%s-ppd.csv" % (filename)
         response['content-disposition'] = "attachment; filename=%s" % filename
     return response
+
+
+def _aggregate_ppu_sql(original_sql, entity_type):
+    """
+    Takes a PPU SQL query and modifies it to return savings aggregated over all
+    the entities (CCGs or practices) in the original query
+    """
+    entity_name = "'NHS England'"
+
+    return """
+        WITH cte AS ({original_sql})
+        SELECT
+          -- Fields we're grouping by
+          date,
+          presentation,
+
+          -- Fields we aggregate over
+          SUM(quantity) AS quantity,
+          SUM(price_per_unit * quantity) / SUM(quantity) AS price_per_unit,
+          SUM(possible_savings) AS possible_savings,
+
+          -- Fixed value fields
+          NULL AS pct,
+          {pct_name} as pct_name,
+          NULL AS practice,
+          {practice_name} AS practice_name,
+
+          -- These fields relate to the presentation and so they ought to
+          -- have a fixed value throughout the group. However Postgres
+          -- doesn't know this, so we need to tell it how to aggregate
+          -- these fields. In most cases we just use the modal value.
+          MAX(lowest_decile) AS lowest_decile,
+          MODE() WITHIN GROUP (ORDER BY formulation_swap)
+            AS formulation_swap,
+          MODE() WITHIN GROUP (ORDER BY flag_bioequivalence)
+            AS flag_bioequivalence,
+          MODE() WITHIN GROUP (ORDER BY price_concession)
+            AS price_concession,
+          MODE() WITHIN GROUP (ORDER BY name) AS name
+        FROM cte
+        GROUP BY date, presentation
+        """.format(
+            original_sql=original_sql,
+            pct_name=entity_name if entity_type == 'CCG' else 'NULL',
+            practice_name="NULL" if entity_type == 'CCG' else entity_name,
+        )
 
 
 @db_timeout(58000)

@@ -107,17 +107,7 @@ var measures = {
       if (options.rollUpBy === 'measure_id') {
         _this.setUpSortGraphs();
       }
-      if (selectedMeasure !== '') {
-        $('#overlay').fadeIn(300);
-        var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
-        $(measureId).css('z-index', '99999');
-        $('html, body').animate({
-          scrollTop: $(measureId).offset().top,
-        }, 1000);
-        $('#overlay').on('click', function() {
-          $('#overlay').stop().fadeOut(300);
-        });
-      }
+      _this.highlightSelectedMeasure(selectedMeasure);
       if (location.search.indexOf('sortBySavings') > -1) {
         $(_this.el.sortButtons).click();
       }
@@ -125,6 +115,20 @@ var measures = {
       .fail(function(jqXHR, textStatus, error) {
         console.log('Error ' + error + ' when making request ' + jqXHR);
       });
+  },
+
+  highlightSelectedMeasure: function(selectedMeasure) {
+    if ( ! selectedMeasure || selectedMeasure === '') return;
+    var measureId = '#measure_' + selectedMeasure.substring(selectedMeasure.indexOf('#') + 1);
+    if ($(measureId).length === 0) return;
+    $('#overlay').fadeIn(300);
+    $(measureId).css('z-index', '99999');
+    $('html, body').animate({
+      scrollTop: $(measureId).offset().top,
+    }, 1000);
+    $('#overlay').on('click', function() {
+      $('#overlay').stop().fadeOut(300);
+    });
   },
 
   setUpShowPractices: function() {

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}All {{ entity_type }}s across NHS England{% endblock %}
+{% block active_class %}all_england{% endblock %}
+
+{% block extra_css %}
+<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    {# Below temporarily disabled because practice level data is too slow right now #}
+    {% comment %}
+    <a href="{{ other_entity_url }}" class="pull-right btn btn-default btn-sm" style="margin-top: 20px">
+      Switch to <strong>{{ other_entity_type }}</strong> level view
+    </a>
+    {% endcomment %}
+    <h1>Prescribing across the NHS in England</h1>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-md-6">
+    <h2>Prescribing measures</h2>
+    <p>
+      The charts below show the distribution of prescribing behaviour across
+      {{entity_type}}s in NHS England on various measures
+      (<a href="{% url 'faq' %}#measureinterpret">read more about these</a>).
+    </p>
+    <p>
+      If all {{ entity_type}}s across England had prescribed at least as well
+      as the median {{ entity_type}} the monthly cost saving in
+      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      <span style="font-size: 200%">£{{ measure_savings.50|sigfigs:4|intcomma }}</span>
+    </p>
+    <p>
+      If they had prescribed as well as the best decile the saving would have been:<br>
+      <span style="font-size: 200%">£{{ measure_savings.10|sigfigs:4|intcomma }}</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="#perfsummary" class="btn btn-primary">View prescribing measures &rarr;</a>
+    </p>
+  </div>
+
+  <div class="col-md-6">
+
+    <h2>Low priority prescribing</h2>
+    <p>
+      NHS England produce a <a
+        href="https://www.england.nhs.uk/2017/07/medicine-consultation/">list
+        of products</a> considered low priority for funding by the NHS.
+      The total monthly spend on such products in {{ date|date:"F Y" }} was:
+      <strong>£{{ low_priority_total|sigfigs:4|intcomma }}</strong>
+    </p>
+    <p>
+      If every {{ entity_type }} had prescribed low priority products at least
+      as sparingly as the median {{ entity_type }} the monthly cost saving in
+      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      <span style="font-size: 200%">£{{ low_priority_savings.50|sigfigs:4|intcomma }}</span>
+    </p>
+    <p>
+      If they had prescribed at the level acheived by the best decile the saving
+      would have been:<br>
+      <span style="font-size: 200%">£{{ low_priority_savings.10|sigfigs:4|intcomma }}</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="#measure_lpzomnibus" class="btn btn-primary">View distribution of low priority prescribing &rarr;</a>
+    </p>
+
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col-md-12">
+    <h2>PPU cost savings</h2>
+    <p>
+      There is wide variation in the unit cost of a number of medicines
+      prescribed across England, due to the way the reimbursement system is
+      structured.
+    </p>
+    <p>
+      We have calculated the potential monthly cost saving if every {{ entity_type }}
+      acheived the unit cost obtained by the best 10%.
+      In <strong>{{ date|date:"F Y" }}</strong> this was:<br>
+      <span style="font-size: 200%">£{{ ppu_savings|sigfigs:4|intcomma }}</span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="{% url 'all_england_price_per_unit' %}" class="btn btn-primary">View cost savings breakdown &rarr;</a>
+    </p>
+  </div>
+
+</div>
+
+<hr/>
+
+<div class="row">
+  {% if tag_filter.show_message %}
+    <div class="col-md-12">
+      <div class="alert alert-info">
+        <h4>Showing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h4>
+        {% if tag_filter.details|length == 1 %}
+          <p>{{ tag_filter.details.0.description|safe }}</p>
+        {% elif tag_filter.details|length > 1 %}
+          <dl>
+            {% for details in tag_filter.details %}
+              <dt>{{ details.name }}</dt>
+              <dd>{{ details.description|safe }}</dt>
+            {% endfor %}
+          </dl>
+        {% endif %}
+        <p>
+          <a href="?">View all standard measures instead</a>.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="col-md-6">
+    {% include '_measure_filters.html' %}
+  </div>
+
+</div>
+
+{% include '_measures_panel.html' %}
+
+<hr/>
+
+{% include '_get_in_touch.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var measureData = {
+   'aggregate': true,
+   'tags': '{{ tag_filter.tags|join:"," }}',
+   'orgName': 'All {{ entity_type }}s in England',
+   'orgType': '{{ entity_type }}'
+};
+</script>
+{% conditional_js 'measures' %}
+
+{% endblock %}
