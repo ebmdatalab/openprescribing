@@ -361,7 +361,7 @@ var analyseChart = {
       _this.setUpAlertSubscription();
     });
     // Outlier toggle
-    $(_this.el.outliersToggle).on('click', function(e) {
+    $(_this.el.outliersToggle).find('.toggle').on('click', function(e) {
       e.preventDefault();
       if (_this.globalOptions.hasOutliers) {
         if (_this.globalOptions.hideOutliers) {
