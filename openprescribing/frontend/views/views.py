@@ -544,13 +544,6 @@ def _all_england_low_priority_total(entity_type, date):
     return result['total']
 
 
-def _sum_dicts(a, b):
-    return {
-        key: a[key] + b[key]
-        for key in a.keys()
-    }
-
-
 @handle_bad_request
 def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
@@ -560,7 +553,6 @@ def all_england(request):
     measure_savings = _all_england_measure_savings(entity_type, date)
     low_priority_savings = _all_england_low_priority_savings(entity_type, date)
     low_priority_total = _all_england_low_priority_total(entity_type, date)
-    measure_savings = _sum_dicts(measure_savings, low_priority_savings)
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
     other_entity_query = request.GET.copy()
     other_entity_query['entity_type'] = other_entity_type
