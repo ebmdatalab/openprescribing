@@ -366,14 +366,10 @@ var analyseChart = {
       if (_this.globalOptions.hasOutliers) {
         if (_this.globalOptions.hideOutliers) {
           _this.globalOptions.hideOutliers = false;
-          $(_this.el.outliersToggle).find('a').text(
-            'Remove them from the chart');
           Cookies.set('hide_small_lists', '0');
         } else {
           // set a cookie
           _this.globalOptions.hideOutliers = true;
-          $(_this.el.outliersToggle).find('a').text(
-            'Show them in the chart');
           Cookies.set('hide_small_lists', '1');
         }
         _this.setOutlierLinkText();
