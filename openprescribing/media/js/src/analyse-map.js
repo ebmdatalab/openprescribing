@@ -1,4 +1,5 @@
 require('mapbox.js');
+var $ = require('jquery');
 var chroma = require('chroma-js');
 var utils = require('./chart_utils');
 var formatters = require('./chart_formatters');
@@ -30,6 +31,7 @@ var analyseMap = {
         _this.map.legendControl.removeLegend(_this.legendHtml);
       }
     }
+    var completed = $.Deferred();
 
     _this.popup = new L.Popup({autoPan: false});
     var boundsUrl = this.getBoundsUrl(options);
@@ -65,6 +67,7 @@ var analyseMap = {
       _this.updateMap('items',
                       options);
       $('#play-slider').show();
+      completed.resolve();
     }
 
     function joinFeaturesWithData(currentJson, data) {
@@ -85,6 +88,8 @@ var analyseMap = {
       }
       return joinedFeatures;
     }
+
+    return completed;
   },
 
   addLayerEvents: function(ratio, month) {

@@ -363,6 +363,8 @@ var analyseChart = {
     // Outlier toggle
     $(_this.el.outliersToggle).find('.toggle').on('click', function(e) {
       e.preventDefault();
+      if (_this.outlierToggleUpdating) return;
+      _this.outlierToggleUpdating = true;
       if (_this.globalOptions.hasOutliers) {
         if (_this.globalOptions.hideOutliers) {
           _this.globalOptions.hideOutliers = false;
@@ -382,7 +384,11 @@ var analyseChart = {
           _this.globalOptions.lineChart = lineChart.setUp(
             chartOptions.lineOptions,
             _this.globalOptions);
-          map.setup(_this.globalOptions);
+          map.setup(_this.globalOptions).then(function() {
+            _this.outlierToggleUpdating = false;
+          });
+        } else {
+          _this.outlierToggleUpdating = false;
         }
       }
     });
