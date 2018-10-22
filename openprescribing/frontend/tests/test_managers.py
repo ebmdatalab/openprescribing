@@ -2,7 +2,7 @@ import datetime
 
 from django.test import TestCase
 
-from frontend.models import MeasureValue
+from frontend.models import MeasureValue, MeasureGlobal
 
 
 class MeasureValueManagerTests(TestCase):
@@ -94,3 +94,25 @@ class MeasureValueManagerTests(TestCase):
         self.assertEqual("%.2f" % mv.cost_savings['10'], '70149.77')
         self.assertEqual("%.2f" % mv.cost_savings['50'], '59029.41')
         self.assertEqual("%.2f" % mv.cost_savings['90'], '162.00')
+
+
+class CalculateCostSavingsTests(TestCase):
+    fixtures = ['lowpriority_measures']
+
+    def test_calculate_cost_savings(self):
+        measure_id = 'lpglucosamine'
+        month = '2017-10-01'
+        target_costs = (
+            MeasureGlobal.objects
+            .filter(measure_id=measure_id, month=month)
+            .get()
+            .percentiles['ccg']
+        )
+        cost_savings = (
+            MeasureValue.objects
+            .filter(measure_id=measure_id, month=month)
+            .filter(practice_id__isnull=True)
+            .calculate_cost_savings(target_costs)
+        )
+        self.assertEqual("%.2f" % cost_savings['10'], '516.88')
+        self.assertEqual("%.2f" % cost_savings['50'], '401.60')
