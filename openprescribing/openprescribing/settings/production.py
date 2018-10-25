@@ -83,13 +83,21 @@ LOGGING = {
             'formatter': 'verbose',
             'filename': "%s/logs/mail-signals.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
-        }
-
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler'
+        },
     },
     'loggers': {
         'django': {
             'handlers': ['gunicorn'],
             'level': 'WARN',
+            'propagate': True,
+        },
+        'django.security.csrf': {
+            'handlers': ['sentry'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'frontend': {

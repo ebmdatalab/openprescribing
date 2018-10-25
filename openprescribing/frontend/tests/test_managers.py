@@ -1,6 +1,8 @@
+import datetime
+
 from django.test import TestCase
 
-from frontend.models import MeasureValue
+from frontend.models import MeasureValue, MeasureGlobal
 
 
 class MeasureValueManagerTests(TestCase):
@@ -73,3 +75,44 @@ class MeasureValueManagerTests(TestCase):
         mvs = MeasureValue.objects.by_practice(
             ['C83051'], tags=['core', 'lowpriority'])
         self.assertEqual(len(mvs), 0)
+
+    def test_aggregate_by_measure_and_month(self):
+        results = (
+            MeasureValue.objects
+            .filter(measure_id='cerazette')
+            .by_practice([])
+            .aggregate_by_measure_and_month()
+        )
+        results = list(results)
+        self.assertEqual(len(results), 1)
+        mv = results[0]
+        self.assertEqual(mv.measure_id, 'cerazette')
+        self.assertEqual(mv.month, datetime.date(2015, 9, 1))
+        self.assertEqual(mv.numerator, 85500)
+        self.assertEqual(mv.denominator, 181500)
+        self.assertEqual("%.4f" % mv.calc_value, '0.4711')
+        self.assertEqual("%.2f" % mv.cost_savings['10'], '70149.77')
+        self.assertEqual("%.2f" % mv.cost_savings['50'], '59029.41')
+        self.assertEqual("%.2f" % mv.cost_savings['90'], '162.00')
+
+
+class CalculateCostSavingsTests(TestCase):
+    fixtures = ['lowpriority_measures']
+
+    def test_calculate_cost_savings(self):
+        measure_id = 'lpglucosamine'
+        month = '2017-10-01'
+        target_costs = (
+            MeasureGlobal.objects
+            .filter(measure_id=measure_id, month=month)
+            .get()
+            .percentiles['ccg']
+        )
+        cost_savings = (
+            MeasureValue.objects
+            .filter(measure_id=measure_id, month=month)
+            .filter(practice_id__isnull=True)
+            .calculate_cost_savings(target_costs)
+        )
+        self.assertEqual("%.2f" % cost_savings['10'], '516.88')
+        self.assertEqual("%.2f" % cost_savings['50'], '401.60')

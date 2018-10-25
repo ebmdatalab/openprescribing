@@ -190,6 +190,7 @@ def ppu_sql(conditions=""):
     from frontend.models import PPUSaving
     from frontend.models import Presentation
     from frontend.models import Practice
+    from frontend.models import PCT
 
     # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
     # DMDProduct.
@@ -210,6 +211,7 @@ def ppu_sql(conditions=""):
         {ppusavings_table}.practice_id AS practice,
         {ppusavings_table}.bnf_code AS presentation,
         {practice_table}.name AS practice_name,
+        {pct_table}.name AS pct_name,
         {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
         subquery.price_concession IS NOT NULL as price_concession,
         COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
@@ -218,6 +220,8 @@ def ppu_sql(conditions=""):
         ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
     LEFT OUTER JOIN {practice_table}
         ON {ppusavings_table}.practice_id = {practice_table}.code
+    LEFT OUTER JOIN {pct_table}
+        ON {ppusavings_table}.pct_id = {pct_table}.code
     LEFT OUTER JOIN {dmdproduct_table}
         ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
     LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
@@ -234,6 +238,7 @@ def ppu_sql(conditions=""):
     return sql.format(
         ppusavings_table=PPUSaving._meta.db_table,
         practice_table=Practice._meta.db_table,
+        pct_table=PCT._meta.db_table,
         presentation_table=Presentation._meta.db_table,
         dmdproduct_table=DMDProduct._meta.db_table,
         dmdvmpp_table=DMDVmpp._meta.db_table,

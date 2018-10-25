@@ -52,14 +52,13 @@ PRESCRIBING_SCHEMA = build_schema(
     ('actual_cost', 'FLOAT'),
     ('quantity', 'INTEGER'),
     ('month', 'TIMESTAMP'),
-    ('adq_per_quantity', 'FLOAT'),
 )
 
 PRESENTATION_SCHEMA = build_schema(
     ('bnf_code', 'STRING'),
     ('name', 'STRING'),
     ('is_generic', 'BOOLEAN'),
-    ('active_quantity', 'FLOAT'),
+    ('adq_per_quantity', 'FLOAT'),
 )
 
 PRACTICE_SCHEMA = build_schema(

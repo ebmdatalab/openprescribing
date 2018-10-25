@@ -17,7 +17,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.db import connection
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -42,6 +42,7 @@ from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.models import MeasureGlobal
 from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import Practice, PCT, Section
@@ -188,6 +189,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 
     context = {
         'entity': entity,
+        'entity_name': entity.cased_name,
         'highlight': entity.code,
         'highlight_name': entity.cased_name,
         'name': presentation.product_name,
@@ -231,6 +233,7 @@ def practice_price_per_unit(request, code):
     practice = get_object_or_404(Practice, code=code)
     context = {
         'entity': practice,
+        'entity_name': practice.cased_name,
         'highlight': practice.code,
         'highlight_name': practice.cased_name,
         'date': date,
@@ -258,10 +261,67 @@ def ccg_price_per_unit(request, code):
     ccg = get_object_or_404(PCT, code=code)
     context = {
         'entity': ccg,
+        'entity_name': ccg.cased_name,
         'highlight': ccg.code,
         'highlight_name': ccg.cased_name,
         'date': date,
         'by_ccg': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+@handle_bad_request
+def all_england_price_per_unit(request):
+    date = _specified_or_last_date(request, 'ppu')
+    context = {
+        'entity_name': 'NHS England',
+        'highlight_name': 'NHS England',
+        'date': date,
+        'by_ccg': True,
+        'entity_type': 'CCG',
+        'aggregate': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+@handle_bad_request
+def all_england_price_per_unit_by_presentation(request, bnf_code):
+    date = _specified_or_last_date(request, 'ppu')
+    presentation = get_object_or_404(Presentation, pk=bnf_code)
+    product = presentation.dmd_product
+
+    query = {
+        'format': 'json',
+        'bnf_code': presentation.bnf_code,
+        'date': date.strftime('%Y-%m-%d'),
+    }
+
+    if 'trim' in request.GET:
+        query['trim'] = request.GET['trim']
+
+    querystring = urlencode(query)
+
+    parsed_url = urlparse(settings.API_HOST)
+
+    bubble_data_url = urlunparse((
+        parsed_url.scheme,   # scheme
+        parsed_url.netloc,   # host
+        '/api/1.0/bubble/',  # path
+        '',                  # params
+        querystring,         # query
+        '',                  # fragment
+    ))
+
+    context = {
+        'name': presentation.product_name,
+        'bnf_code': presentation.bnf_code,
+        'presentation': presentation,
+        'product': product,
+        'date': date,
+        'by_presentation': True,
+        'bubble_data_url': bubble_data_url,
+        'entity_name': 'NHS England',
+        'entity_type': 'CCG',
     }
     return render(request, 'price_per_unit.html', context)
 
@@ -361,7 +421,6 @@ def _total_savings(entity, date):
     sql = ("SELECT SUM(possible_savings) "
            "AS total_savings FROM ({}) all_savings").format(sql)
     params = {'date': date, 'entity_code': entity.pk}
-
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
         return dictfetchall(cursor)[0]['total_savings']
@@ -430,6 +489,87 @@ def ccg_home_page(request, ccg_code):
     context['practices'] = practices
     request.session['came_from'] = request.path
     return render(request, 'entity_home_page.html', context)
+
+
+def _all_england_ppu_savings(entity_type, date):
+    conditions = ' '
+    if entity_type == 'CCG':
+        conditions += 'AND {ppusavings_table}.pct_id IS NOT NULL '
+        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
+    elif entity_type == 'practice':
+        conditions += 'AND {ppusavings_table}.practice_id IS NOT NULL '
+    else:
+        raise BadRequestError(u'Unknown entity type: {}'.format(entity_type))
+    sql = ppu_sql(conditions=conditions)
+    sql = ("SELECT SUM(possible_savings) "
+           "AS total_savings FROM ({}) all_savings").format(sql)
+    params = {'date': date}
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        return dictfetchall(cursor)[0]['total_savings']
+
+
+def _all_england_measure_savings(entity_type, date):
+    return (
+        MeasureValue.objects
+        .filter(month=date, practice_id__isnull=(entity_type == 'CCG'))
+        .exclude(measure_id='lpzomnibus')
+        .aggregate_cost_savings()
+    )
+
+
+def _all_england_low_priority_savings(entity_type, date):
+    target_costs = (
+        MeasureGlobal.objects
+        .get(month=date, measure_id='lpzomnibus')
+        .percentiles[entity_type.lower()]
+    )
+    return (
+        MeasureValue.objects.filter(
+            month=date,
+            measure_id='lpzomnibus',
+            practice_id__isnull=(entity_type == 'CCG')
+        )
+        .calculate_cost_savings(target_costs)
+    )
+
+
+def _all_england_low_priority_total(entity_type, date):
+    result = (
+        MeasureValue.objects.filter(
+            month=date,
+            measure_id='lpzomnibus',
+            practice_id__isnull=(entity_type == 'CCG')
+        )
+        .aggregate(total=Sum('numerator'))
+    )
+    return result['total']
+
+
+@handle_bad_request
+def all_england(request):
+    tag_filter = _get_measure_tag_filter(request.GET)
+    entity_type = request.GET.get('entity_type', 'CCG')
+    date = _specified_or_last_date(request, 'ppu')
+    ppu_savings = _all_england_ppu_savings(entity_type, date)
+    measure_savings = _all_england_measure_savings(entity_type, date)
+    low_priority_savings = _all_england_low_priority_savings(entity_type, date)
+    low_priority_total = _all_england_low_priority_total(entity_type, date)
+    other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
+    other_entity_query = request.GET.copy()
+    other_entity_query['entity_type'] = other_entity_type
+    context = {
+        'tag_filter': tag_filter,
+        'entity_type': entity_type,
+        'other_entity_type': other_entity_type,
+        'other_entity_url': '?' + other_entity_query.urlencode(),
+        'ppu_savings': ppu_savings,
+        'measure_savings': measure_savings,
+        'low_priority_savings': low_priority_savings,
+        'low_priority_total': low_priority_total,
+        'date': date
+    }
+    return render(request, 'all_england.html', context)
 
 
 def practice_home_page(request, practice_code):

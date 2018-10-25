@@ -438,7 +438,7 @@ describe('Measures', function() {
       expect(result.potentialSavings50th).to.equal(300);
       str = 'Over the past 6 months, if all CCGs had prescribed at ';
       str += 'the median ratio or better, then NHS England would have ';
-      str += 'spent £300.00 less. (We use the national median as a ';
+      str += 'spent £300 less. (We use the national median as a ';
       str += 'suggested target because by definition, 50% of CCGs ';
       str += 'were already prescribing at this level or better, so ';
       str += 'we think it ought to be achievable.)';
@@ -467,7 +467,7 @@ describe('Measures', function() {
       expect(result.potentialSavings50th).to.equal(12000);
       str = "Over the past 6 months, if this practice  had prescribed ";
       str += "at the median ratio or better on all cost-saving measures ";
-      str += "below, then it would have spent £12,000.00 less. (We use ";
+      str += "below, then it would have spent £12,000 less. (We use ";
       str += "the national median as a suggested target because by ";
       str += "definition, 50% of practices were already prescribing ";
       str += "at this level or better, so we think it ought to be ";
@@ -528,8 +528,8 @@ describe('Measures', function() {
       var result = mu.addChartAttributes(data, globalData, globalCentiles,
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
-      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. If it had prescribed in line with the median, this CCG would have spent £10.00 less over the past 6 months.';
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures/');
+      str = 'This is a measure where there is disagreement about whether higher, or lower, is better. Nonetheless it is interesting to know if a CCG is a long way from average prescribing behaviour. If it had prescribed in line with the median, this CCG would have spent £10 less over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
 
@@ -556,7 +556,7 @@ describe('Measures', function() {
         centiles, options, 6);
       expect(result[0].chartTitle).to.equal('10W: NHS SOUTH READING CCG');
       expect(result[0].measureUrl).to.be.undefined;
-      expect(result[0].chartTitleUrl).to.equal('/ccg/10W');
+      expect(result[0].chartTitleUrl).to.equal('/ccg/10W/measures/');
     });
 
     it('copies selected properties from the global data', function() {
@@ -597,7 +597,7 @@ describe('Measures', function() {
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
       expect(result[0].measureUrl).to.equal('/measure/ace');
       str = 'If it had prescribed in line ';
-      str += 'with the median, this CCG would have spent £10.00 less ';
+      str += 'with the median, this CCG would have spent £10 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
@@ -627,7 +627,7 @@ describe('Measures', function() {
       expect(result[0].chartTitle).to.equal('ACE');
       expect(result[0].chartTitleUrl).to.equal('/ccg/03V/ace');
       str = 'If it had prescribed in line ';
-      str += 'with the median, this practice would have spent £10.00 less ';
+      str += 'with the median, this practice would have spent £10 less ';
       str += 'over the past 6 months.';
       expect(result[0].chartExplanation).to.equal(str);
     });
@@ -678,7 +678,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/ccg/99P/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/ccg/99P/measures/?tags=foo,bar');
       });
       it('should return expected URL for practice', function() {
         var numMonths = 6; // required but not relevant to test
@@ -695,7 +695,7 @@ describe('Measures', function() {
           data: []
         };
         var result = mu._getChartTitleEtc(d, options, numMonths);
-        expect(result.tagsFocusUrl).to.equal('/practice/P111111/?tags=foo,bar');
+        expect(result.tagsFocusUrl).to.equal('/practice/P111111/measures/?tags=foo,bar');
       });
     });
     describe('oneEntityUrl output', function() {
@@ -801,9 +801,9 @@ describe('Measures', function() {
       expect(result.chartTitle).to.equal('ACE');
       expect(result.chartTitleUrl).to.equal('/ccg/03V/ace');
       str = 'If it had prescribed in line ';
-      str += 'with the median, this practice would have spent £10.00 less ';
+      str += 'with the median, this practice would have spent £10 less ';
       str += 'over the past 6 months. If it had prescribed in line with ';
-      str += 'the best 10%, it would have spent £30.00 less. ';
+      str += 'the best 10%, it would have spent £30 less. ';
       expect(result.chartExplanation).to.equal(str);
     });
 
@@ -858,7 +858,8 @@ describe('Measures', function() {
         series: {
           name: 'Foo',
           options: {
-            isNationalSeries: true
+            isNationalSeries: true,
+            showTooltip: false
           }
         }
       };
@@ -876,7 +877,8 @@ describe('Measures', function() {
         series: {
           name: 'Foo',
           options: {
-            isNationalSeries: false
+            isNationalSeries: false,
+            showTooltip: true
           }
         }
       };
@@ -949,7 +951,8 @@ describe('Measures', function() {
         series: {
           name: 'Bar',
           options: {
-            isNationalSeries: false
+            isNationalSeries: false,
+            showTooltip: true
           }
         }
       };
@@ -973,6 +976,7 @@ describe('Measures', function() {
         }
       },
       options = {
+        orgId: '99P',
         orgType: 'CCG',
         rollUpBy: 'org_id',
         globalYMax: { y: 50},

@@ -105,10 +105,10 @@ class BQClientTest(TestCase):
             storage_path
         )
 
-        schema = [
-            {'name': 'a', 'type': 'integer'},
-            {'name': 'b', 'type': 'string'},
-        ]
+        schema = build_schema(
+            ('a', 'INTEGER'),
+            ('b', 'STRING')
+        )
 
         t3 = client.create_storage_backed_table(
             't3',

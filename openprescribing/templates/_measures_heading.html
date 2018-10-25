@@ -17,11 +17,7 @@
       </dl>
     {% endif %}
     <p>
-      {% if entity_type == 'practice' %}
-      <a href="{% url 'measures_for_one_practice' practice.code %}">View all standard measures instead</a>.
-      {% else %}
-      <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all standard measures instead</a>.
-      {% endif %}
+      <a href="?">View all standard measures instead</a>.
     </p>
   </div>
 {% else %}
@@ -54,17 +50,7 @@
           </button>
         </div>
       </div>
-      <form class="form" action="">
-        <div class="form-group">
-          <span class="label label-warning pull-right">New!</span>
-          <label>Show measures categorised as:</label>
-          <select name="tags" class="form-control js-submit-on-change">
-            {% for tag in tag_filter.all_tags %}
-              <option value="{{ tag.id }}"{% if tag.selected %} selected{% endif %}>{{ tag.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </form>
+      {% include '_measure_filters.html' %}
     </div>
   </div>
 </div>

@@ -2,12 +2,12 @@
 {% load template_extras %}
 {% load humanize %}
 
-{% block title %}PPU savings for {{ entity.cased_name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %}PPU savings for {{ entity_name }}{% endblock %}
+{% block active_class %}{% if entity %}ccg{% else %}all_england{% endif %}{% endblock %}
 
 {% block content %}
 
-<h1>Top saving opportunities for {{entity.cased_name }} in {{ date|date:"F Y"}}</h1>
+<h1>Top saving opportunities for {{entity_name }} in {{ date|date:"F Y"}}</h1>
 
 <div class="row">
   <div class="col-md-7">
@@ -15,31 +15,79 @@
       There is wide variation in the unit cost of a number of medicines
       prescribed across  England, due to the way the reimbursement system is
       structured.  Every month we estimate what could be saved if every
-      organisation were prescribing as well as the best 10%.  <a
-        href="#more-text" id="read-more">Read more...</a>
+      organisation were prescribing as well as the best 10%.
+      <a href="#more-text" id="read-more">Read more...</a>
     </p>
   </div>
   <div class="col-md-5">
     <p class="alert alert-info" style="margin-top: 0">This is a new, experimental feature. We'd love to <a href="mailto:{{ SUPPORT_EMAIL }}" class="feedback-show" style="text-decoration: underline">hear your feedback</a>.</p>
+    <p class="alert alert-info" style="margin-top: 0">
+      This is a new, experimental feature. We'd love to
+      <a href="mailto:{{ SUPPORT_EMAIL }}" class="feedback-show" style="text-decoration: underline">hear your feedback</a>.
+    </p>
   </div>
 
   <div class="col-md-12">
     <div id="more-text"><a name="more-text"></a>
       <p>
-        We have developed a new method that identifies very large cost-saving opportunities for practices and CCGs in the NHS: between £100m and £400m a year. This is more than any previous advice such as “always prescribe generically”. Our tool automatically identifies the drugs with the biggest cost savings opportunities for each individual practice, or CCG, every month; and then helps them choose cheaper options. </p>
-      <p>Our method is entirely new. Unlike more complex prescribing advice (“always use the cheapest drug in class”) our method does not require that patients switch to completely different drugs. Our <a href="/price-per-unit-faq">full FAQ</a> gives the detail, but in short: there can be huge variation in the price a practice or CCG pay for a treatment, even for the same drug at the same dose. It is well known that branded and generic versions of the same treatment will have different prices; but different specific “brands” of “branded generic” may also have different prices; and there are many other similar sources of variation in price. Our tool automatically identifies all the biggest cost-saving opportunities by examining variation in the price-per-unit of all treatments, and then compares every practice or CCG against the best 10% of most efficient prescribers, for every treatment. This is a massive piece of computation run by our DataLab at the University of Oxford, every month. The cost savings can be viewed using this tool, ranked in order of which drug has the biggest cost saving opportunities. The full methodology and national findings are described <a href="https://doi.org/10.1101/172569">in our paper</a>. The savings are down to you.</p>
+        We have developed a new method that identifies very large cost-saving
+        opportunities for practices and CCGs in the NHS: between £100m and
+        £400m a year. This is more than any previous advice such as “always
+        prescribe generically”. Our tool automatically identifies the drugs
+        with the biggest cost savings opportunities for each individual
+        practice, or CCG, every month; and then helps them choose cheaper
+        options.
+      </p>
+      <p>
+        Our method is entirely new. Unlike more complex
+        prescribing advice (“always use the cheapest drug in class”) our method
+        does not require that patients switch to completely different drugs.
+        Our <a href="/price-per-unit-faq">full FAQ</a> gives the detail, but in
+        short: there can be huge variation in the price a practice or CCG pay
+        for a treatment, even for the same drug at the same dose. It is well
+        known that branded and generic versions of the same treatment will have
+        different prices; but different specific “brands” of “branded generic”
+        may also have different prices; and there are many other similar
+        sources of variation in price. Our tool automatically identifies all
+        the biggest cost-saving opportunities by examining variation in the
+        price-per-unit of all treatments, and then compares every practice or
+        CCG against the best 10% of most efficient prescribers, for every
+        treatment. This is a massive piece of computation run by our DataLab at
+        the University of Oxford, every month. The cost savings can be viewed
+        using this tool, ranked in order of which drug has the biggest cost
+        saving opportunities. The full methodology and national findings are
+        described <a href="https://doi.org/10.1101/172569">in our paper</a>.
+        The savings are down to you.
+      </p>
     </div>
     <p>
-        We have identified about <strong>£<span id="total-savings">0</span>
-    of possible savings</strong> {% if presentation %} for {{ presentation.product_name }}{% endif %} in {% if entity.ccg %}<a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% else %}<a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity.cased_name }}</a>{% endif %} in {{ date|date:"F Y"}}.
-    {% if entity.ccg %}
-      {{entity.cased_name }} is a GP practice in <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}?date={{ date|date:"Y-m-d" }}">{{ entity.ccg.cased_name }}</a>.
-        {% endif %}
-        </p>
+      We have identified about <strong>£<span id="total-savings">0</span> of possible savings</strong>
+      {% if presentation %} for {{ presentation.product_name }}{% endif %} in
+      {% if entity.ccg %}
+        <a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity_name }}</a>
+      {% elif entity %}
+        <a href="{% url 'ccg_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity_name }}</a>
+      {% else %}
+        {{ entity_name }}
+      {% endif %}
+      in {{ date|date:"F Y"}}.
+      {% if entity.ccg %}
+        {{entity_name }} is a GP practice in
+        <a href="{% url 'ccg_price_per_unit' entity.ccg.code %}?date={{ date|date:"Y-m-d" }}">
+          {{ entity.ccg.cased_name }}
+        </a>.
+      {% endif %}
+    </p>
     {% if by_presentation %}
-     <h3>What is the cheapest presentation of {{ presentation.product_name }}?</h3>
-    <p>
-      The following chart is to help you pick the cheapest treatment. It shows the various prices for all brands and formulations of <span id="extended-info-link">{{ presentation.product_name }}</span> that are prescribed across the country. You can click the adjacent tab to view your own practice or CCG’s prescribing.
+      <h3>What is the cheapest presentation of {{ presentation.product_name }}?</h3>
+      <p>
+        The following chart is to help you pick the cheapest treatment. It shows
+        the various prices for all brands and formulations of
+        <span id="extended-info-link">{{ presentation.product_name }}</span> that are
+        prescribed across the country.
+        {% if entity %}
+          You can click the adjacent tab to view your own practice or CCG’s prescribing.
+        {% endif %}
       </p>
     {% endif %}
     {% if product %}
@@ -128,18 +176,28 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
 <script type="text/javascript">
   $(function() {
-    {% if by_presentation %}
+    {% if by_presentation and entity %}
       // When viewing at Presentation level, link back to practice-level
       var first_column = 'practice_name';
       var first_column_render = function(data, type, full, meta) {
         return ' <a href="/practice/'+full['practice']+'/price_per_unit/?date='+ full['date']+ '">'+full['practice_name']+'</a>';
-        return link;
+      }
+    {% elif by_presentation and not entity %}
+      // When viewing at Presentation level, link back to practice-level
+      var first_column = 'pct_name';
+      var first_column_render = function(data, type, full, meta) {
+        return ' <a href="/ccg/'+full['pct']+'/price_per_unit/?date='+ full['date']+ '">'+full['pct_name']+'</a>';
       }
     {% elif by_ccg %}
       // When viewing at CCG level, drill down to practices
       var first_column = 'presentation';
       var first_column_render = function(data, type, full, meta) {
-        var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+        {% if not entity %}
+          var url = '{% url "all_england_price_per_unit_by_presentation" "BNFCODE" %}'.replace(/BNFCODE/, data)
+          var rendered = ' <a href="'+url+'?date='+ full['date']+ '">'+full['name']+'</a>';
+        {% else %}
+          var rendered = ' <a href="/ccg/{{ entity.code }}/'+data+'/price_per_unit/?date='+ full['date']+ '">'+full['name']+'</a>';
+        {% endif %}
         if (full['price_concession'] ) {
           rendered += ' <a class="info-link" role="button" data-toggle="popover" data-trigger="hover" title="Price concessions" data-content="Savings may not be achievable long term as this item was in the Price Concessions/NCSO for {{ date|date:"F Y"}}"><span class="glyphicon glyphicon-exclamation-sign text-danger"></span></a>'
         }
@@ -153,7 +211,7 @@
       }
     {% endif %}
       var pagination_text = "Showing page _PAGE_ of _PAGES_";
-    {% if by_presentation and not entity.ccg %}
+    {% if by_presentation and entity and not entity.ccg %}
       pagination_text += ".  Where a practice is missing, no saving opportunities over £50 were identified for this product.";
     {% endif %}
     $('#price_per_pill').DataTable(
@@ -161,7 +219,7 @@
         "dom": '<"top"f>rt<"bottom"lip><"clear">',
         "language": {"info" : pagination_text},
         "ajax": {
-          "url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&format=json",
+          "url": "{{ API_HOST }}/api/1.0/price_per_unit/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&aggregate={{ aggregate }}&entity_type={{ entity_type }}&format=json",
           "dataSrc": function(data) {
             var total = data.reduce(function(memo, item) {
               return memo + item.possible_savings;
