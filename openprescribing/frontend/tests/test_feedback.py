@@ -20,13 +20,16 @@ class FeedbackTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
 
-        expected_body = """New feedback from Alice Apple (via https://openprescribing.net/bnf/090603/)
+        expected_body = """New feedback from Alice Apple (alice@example.com) via https://openprescribing.net/bnf/090603/
 
 ...keeps the doctor away
 """
 
         self.assertEqual(email.to, [settings.SUPPORT_TO_EMAIL])
-        self.assertEqual(email.from_email, "Alice Apple <alice@example.com>")
+        self.assertEqual(
+            email.from_email,
+            "Alice Apple <feedback@openprescribing.net>"
+        )
         self.assertEqual(email.reply_to, ["alice@example.com"])
         self.assertEqual(
             email.subject,

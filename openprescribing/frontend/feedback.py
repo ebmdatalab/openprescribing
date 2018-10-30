@@ -8,6 +8,7 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
 
     ctx = {
         'name': user_name,
+        'email_addr': user_email_addr,
         'url': url,
         'message': message,
     }
