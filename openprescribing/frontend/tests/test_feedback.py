@@ -25,7 +25,7 @@ class FeedbackTests(TestCase):
 ...keeps the doctor away
 """
 
-        self.assertEqual(email.to, [settings.SUPPORT_EMAIL])
+        self.assertEqual(email.to, [settings.SUPPORT_TO_EMAIL])
         self.assertEqual(email.from_email, "Alice Apple <alice@example.com>")
         self.assertEqual(email.reply_to, ["alice@example.com"])
         self.assertEqual(

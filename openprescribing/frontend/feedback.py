@@ -18,8 +18,8 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
     email = EmailMultiAlternatives(
         subject='OpenPrescribing Feedback: {}'.format(subject),
         body=body,
-        from_email='{} <{}>'.format(user_name, user_email_addr),
-        to=[settings.SUPPORT_EMAIL],
+        from_email='{} <{}>'.format(user_name, settings.SUPPORT_FROM_EMAIL),
+        to=[settings.SUPPORT_TO_EMAIL],
         reply_to=[user_email_addr],
         connection=connection
     )
