@@ -40,8 +40,6 @@ CACHES = {
 }
 # END CACHE CONFIGURATION
 
-ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "staging.openprescribing.net"
-
 # LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
 LOGGING = {
