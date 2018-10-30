@@ -361,19 +361,17 @@ var analyseChart = {
       _this.setUpAlertSubscription();
     });
     // Outlier toggle
-    $(_this.el.outliersToggle).on('click', function(e) {
+    $(_this.el.outliersToggle).find('.toggle').on('click', function(e) {
       e.preventDefault();
+      if (_this.outlierToggleUpdating) return;
+      _this.outlierToggleUpdating = true;
       if (_this.globalOptions.hasOutliers) {
         if (_this.globalOptions.hideOutliers) {
           _this.globalOptions.hideOutliers = false;
-          $(_this.el.outliersToggle).find('a').text(
-            'Remove them from the chart');
           Cookies.set('hide_small_lists', '0');
         } else {
           // set a cookie
           _this.globalOptions.hideOutliers = true;
-          $(_this.el.outliersToggle).find('a').text(
-            'Show them in the chart');
           Cookies.set('hide_small_lists', '1');
         }
         _this.setOutlierLinkText();
@@ -386,7 +384,11 @@ var analyseChart = {
           _this.globalOptions.lineChart = lineChart.setUp(
             chartOptions.lineOptions,
             _this.globalOptions);
-          map.setup(_this.globalOptions);
+          map.setup(_this.globalOptions).then(function() {
+            _this.outlierToggleUpdating = false;
+          });
+        } else {
+          _this.outlierToggleUpdating = false;
         }
       }
     });
