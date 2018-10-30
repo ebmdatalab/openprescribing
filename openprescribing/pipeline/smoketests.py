@@ -167,17 +167,6 @@ class TestSmokeTestMeasures(SmokeTestBase):
         return self.get_data_for_q3_2015(rows)
 
     def test_measure_by_practice(self):
-        q = self.retrieve_data_for_measure(
-            'ktt3_lipid_modifying_drugs', 'A81001')
-        bsa = {
-            'numerator': 34,
-            'denominator': 1265,
-            'calc_value': '2.688'
-        }
-        self.assertEqual(q['numerator'], bsa['numerator'])
-        self.assertEqual(q['denominator'], bsa['denominator'])
-        self.assertEqual("%.3f" % q['calc_value'], bsa['calc_value'])
-
         q = self.retrieve_data_for_measure('ktt9_antibiotics', 'A81001')
         bsa = {
             'numerator': 577,
