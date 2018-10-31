@@ -7,21 +7,21 @@
     <label for="mce-EMAIL" class="control-label">
       Email Address
     </label>
-    <input type="email" name="EMAIL" required class="form-control" id="mce-EMAIL" />
+    <input type="email" name="EMAIL" value="{{ request.GET.email }}" required class="form-control" id="mce-EMAIL" />
   </div>
 
   <div class="form-group">
     <label for="mce-FNAME" class="control-label">
       First Name
     </label>
-    <input type="text" name="FNAME" class="form-control" id="mce-FNAME" />
+    <input type="text" name="FNAME" value="{{ request.GET.fname }}" class="form-control" id="mce-FNAME" />
   </div>
 
   <div class="form-group">
     <label for="mce-LNAME" class="control-label">
       Last Name
     </label>
-    <input type="text" name="LNAME" class="form-control" id="mce-LNAME" />
+    <input type="text" name="LNAME" value="{{ request.GET.lname }}" class="form-control" id="mce-LNAME" />
   </div>
 
   <div class="form-group">
