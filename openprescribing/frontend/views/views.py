@@ -965,6 +965,10 @@ def feedback_view(request):
                 message=form.cleaned_data['message'],
                 url=request.GET.get('from_url'),
             )
+            msg = ("Thanks for sending your feedback/query! A copy of the "
+                   "message has been sent to you at {}. Please check your spam "
+                   "folder for our reply.".format(form.cleaned_data['email']))
+            messages.success(request, msg)
             return HttpResponseRedirect('/contact/')
     else:
         form = FeedbackForm()

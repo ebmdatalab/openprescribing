@@ -685,4 +685,5 @@ class TestFeedbackView(TestCase):
         )
 
         self.assertRedirects(rsp, "/contact/")
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertContains(rsp, "Thanks for sending your feedback")
+        self.assertEqual(len(mail.outbox), 2)
