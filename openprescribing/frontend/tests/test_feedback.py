@@ -17,10 +17,13 @@ class FeedbackTests(TestCase):
             url="https://openprescribing.net/bnf/090603/",
         )
 
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
+
         email = mail.outbox[0]
 
         expected_body = """New feedback from Alice Apple (alice@example.com) via https://openprescribing.net/bnf/090603/
+
+~~~
 
 ...keeps the doctor away
 """
@@ -31,6 +34,29 @@ class FeedbackTests(TestCase):
             "Alice Apple <feedback@openprescribing.net>"
         )
         self.assertEqual(email.reply_to, ["alice@example.com"])
+        self.assertEqual(
+            email.subject,
+            "OpenPrescribing Feedback: An apple a day...")
+        self.assertEqual(email.body, expected_body)
+        self.assertEqual(email.extra_headers["X-Mailgun-Track"], "no")
+
+        email = mail.outbox[1]
+
+        expected_body = """Hi Alice Apple,
+
+This is a copy of the feedback you sent to the OpenPrescribing.net team.
+
+~~~
+
+...keeps the doctor away
+"""
+
+        self.assertEqual(email.to, ["alice@example.com"])
+        self.assertEqual(
+            email.from_email,
+            settings.DEFAULT_FROM_EMAIL
+        )
+        self.assertEqual(email.reply_to, [])
         self.assertEqual(
             email.subject,
             "OpenPrescribing Feedback: An apple a day...")
