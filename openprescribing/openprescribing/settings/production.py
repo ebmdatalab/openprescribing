@@ -53,6 +53,8 @@ CACHES = {
 GOOGLE_TRACKING_ID = 'UA-62480003-1'
 GOOGLE_OPTIMIZE_CONTAINER_ID = 'GTM-5PX77GZ'
 
+ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "openprescribing.net"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
