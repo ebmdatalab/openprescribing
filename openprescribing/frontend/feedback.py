@@ -22,6 +22,7 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
         from_email='{} <{}>'.format(user_name, settings.SUPPORT_FROM_EMAIL),
         to=[settings.SUPPORT_TO_EMAIL],
         reply_to=[user_email_addr],
+        headers={'X-Mailgun-Track': 'no'},
         connection=connection
     )
 

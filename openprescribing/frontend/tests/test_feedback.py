@@ -35,3 +35,4 @@ class FeedbackTests(TestCase):
             email.subject,
             "OpenPrescribing Feedback: An apple a day...")
         self.assertEqual(email.body, expected_body)
+        self.assertEqual(email.extra_headers["X-Mailgun-Track"], "no")
