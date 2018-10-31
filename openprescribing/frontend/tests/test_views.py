@@ -676,7 +676,7 @@ class TestFeedbackView(TestCase):
             "message": "...keeps the doctor away",
         }
 
-        from_url = "https://openprescribing.net/bnf/090603/"
+        from_url = "http://testserver/bnf/"
 
         rsp = self.client.post(
             "/feedback/?from_url={}".format(from_url),
@@ -684,9 +684,6 @@ class TestFeedbackView(TestCase):
             follow=True
         )
 
-        self.assertRedirects(
-            rsp,
-            "/contact/?email=alice%40example.com&fname=Alice&lname=Apple"
-        )
+        self.assertRedirects(rsp, from_url)
         self.assertContains(rsp, "Thanks for sending your feedback")
         self.assertEqual(len(mail.outbox), 2)

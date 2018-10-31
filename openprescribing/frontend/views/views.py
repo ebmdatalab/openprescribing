@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from lxml import html
 from requests.exceptions import HTTPError
 from urllib import urlencode
@@ -961,30 +960,19 @@ def feedback_view(request):
         if form.is_valid():
             user_name = form.cleaned_data['name'].strip()
             user_email_addr = form.cleaned_data['email'].strip()
+            url = request.GET.get('from_url', '/')
             send_feedback_mail(
                 user_name=user_name,
                 user_email_addr=user_email_addr,
                 subject=form.cleaned_data['subject'].strip(),
                 message=form.cleaned_data['message'],
-                url=request.GET.get('from_url'),
+                url=url,
             )
+
             msg = ("Thanks for sending your feedback/query! A copy of the "
                    "message has been sent to you at {}. Please check your spam "
                    "folder for our reply.".format(user_email_addr))
             messages.success(request, msg)
-
-            # We use an OrderedDict for testing
-            query_params = OrderedDict()
-            query_params["email"] = user_email_addr
-
-            user_name_tokens = user_name.split()
-            if len(user_name_tokens) == 2:
-                query_params["fname"] = user_name_tokens[0]
-                query_params["lname"] = user_name_tokens[1]
-            else:
-                query_params["fname"] = user_name
-
-            url = '/contact/?' + urlencode(query_params)
 
             return HttpResponseRedirect(url)
     else:
