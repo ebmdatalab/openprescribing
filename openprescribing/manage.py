@@ -15,8 +15,11 @@ if __name__ == "__main__":
 
     dotenv.read_dotenv(env_path, override=True)
 
-    if len(sys.argv) > 1 and sys.argv[1] in ['test', 'pipeline_e2e_tests']:
-        os.environ["DJANGO_SETTINGS_MODULE"] = "openprescribing.settings.test"
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'test':
+            os.environ["DJANGO_SETTINGS_MODULE"] = "openprescribing.settings.test"
+        elif sys.argv[1] == 'pipeline_e2e_tests':
+            os.environ["DJANGO_SETTINGS_MODULE"] = "openprescribing.settings.e2etest"
 
     from django.core.management import execute_from_command_line
 
