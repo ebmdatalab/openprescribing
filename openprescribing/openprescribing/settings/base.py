@@ -295,8 +295,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
     'GET'
 )
-SUPPORT_EMAIL = 'feedback@openprescribing.net'
-DEFAULT_FROM_EMAIL = 'OpenPrescribing <{}>'.format(SUPPORT_EMAIL)
+SUPPORT_TO_EMAIL = 'ebmdatalab@phc.ox.ac.uk'
+SUPPORT_FROM_EMAIL = 'feedback@openprescribing.net'
+DEFAULT_FROM_EMAIL = 'OpenPrescribing <{}>'.format(SUPPORT_FROM_EMAIL)
 GDOC_DOCS = {
     'zooming': '1lz1uRfNOy2fQ-xSy_6BiLV_7Mgr-Z2V0-VWzo6HlCO0',
     'analyse': '1HqlJlUA86cnlyJpUxiQdGsM46Gsv9xyZkmhkTqjbwH0',

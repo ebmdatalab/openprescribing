@@ -6,7 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 def support_email(request):
-    return {'SUPPORT_EMAIL': settings.SUPPORT_EMAIL}
+    return {
+        'SUPPORT_TO_EMAIL': settings.SUPPORT_TO_EMAIL,
+        'SUPPORT_FROM_EMAIL': settings.SUPPORT_FROM_EMAIL,
+    }
 
 
 def api_host(request):

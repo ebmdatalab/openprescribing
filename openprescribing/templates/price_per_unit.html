@@ -20,9 +20,10 @@
     </p>
   </div>
   <div class="col-md-5">
+    <p class="alert alert-info" style="margin-top: 0">This is a new, experimental feature. We'd love to <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show" style="text-decoration: underline">hear your feedback</a>.</p>
     <p class="alert alert-info" style="margin-top: 0">
       This is a new, experimental feature. We'd love to
-      <a href="mailto:{{ SUPPORT_EMAIL }}" class="doorbell-show" style="text-decoration: underline">hear your feedback</a>.
+      <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show" style="text-decoration: underline">hear your feedback</a>.
     </p>
   </div>
 
@@ -175,12 +176,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
 <script type="text/javascript">
   $(function() {
-    $('.doorbell-show').click(function(e) {
-      if (typeof doorbell !== 'undefined') {
-        e.preventDefault();
-        doorbell.show();
-      }
-    });
     {% if by_presentation and entity %}
       // When viewing at Presentation level, link back to practice-level
       var first_column = 'practice_name';

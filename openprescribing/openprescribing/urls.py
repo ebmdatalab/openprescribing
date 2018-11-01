@@ -28,6 +28,7 @@ urlpatterns = [
         name="privacy"),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html'),
         name="contact"),
+    url(r'^feedback/$', frontend_views.feedback_view, name="feedback"),
     url(r'^how-to-use/$',
         TemplateView.as_view(template_name='how-to-use.html'),
         name="how-to-use"),

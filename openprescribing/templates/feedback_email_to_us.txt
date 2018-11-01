@@ -1,0 +1,5 @@
+New feedback from {{ name }} ({{ email_addr }}){% if url %} via {{ url|safe }}{% endif %}
+
+~~~
+
+{{ message }}

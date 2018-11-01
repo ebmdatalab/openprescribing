@@ -27,8 +27,8 @@ CODE_LENGTH_ERROR = (
     'search box. For example, you cannot search for Cerazette_Tab 75mcg '
     '(0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for '
     'Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this '
-    'data, please <a href="mailto:{{ SUPPORT_EMAIL }}" '
-    'class="doorbell-show">get in touch</a> and we may be able to extract it '
+    'data, please <a href="mailto:{{ SUPPORT_TO_EMAIL }}" '
+    'class="feedback-show">get in touch</a> and we may be able to extract it '
     'for you')
 
 
