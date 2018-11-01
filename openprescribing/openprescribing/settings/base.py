@@ -212,6 +212,7 @@ CONTRIB_APPS = (
     'anymail',
     'crispy_forms',
     'raven.contrib.django.raven_compat',
+    'import_export'
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
