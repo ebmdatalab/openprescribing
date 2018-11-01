@@ -14,6 +14,8 @@ from .models import SearchBookmark
 from .models import User
 from allauth.account.models import EmailAddress
 from allauth.account.models import EmailConfirmation
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
 admin.site.unregister(User)
 admin.site.unregister(EmailAddress)
@@ -55,24 +57,36 @@ class UserVerifiedFilter(admin.SimpleListFilter):
             return queryset.filter(emailaddress__verified=False)
 
 
+class SearchBookmarkResource(resources.ModelResource):
+    class Meta:
+        model = SearchBookmark
+
+
 @admin.register(SearchBookmark)
-class SearchBookmarkAdmin(admin.ModelAdmin):
+class SearchBookmarkAdmin(ImportExportModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
     readonly_fields = ('dashboard_link',)
+    resource_class = SearchBookmarkResource
 
     def dashboard_link(self, obj):
         return format_html(
             '<a href="{}">view in site</a>', obj.dashboard_url())
 
 
+class OrgBookmarkResource(resources.ModelResource):
+    class Meta:
+        model = OrgBookmark
+
+
 @admin.register(OrgBookmark)
-class OrgBookmarkAdmin(admin.ModelAdmin):
+class OrgBookmarkAdmin(ImportExportModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
     readonly_fields = ('dashboard_link',)
+    resource_class = OrgBookmarkResource
 
     def dashboard_link(self, obj):
         return format_html(
