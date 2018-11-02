@@ -35,7 +35,7 @@ openpyxl==2.3.3
 pandas-gbq==0.3.1
 pandas==0.20.2
 premailer==3.0.1
-psycopg2==2.5.4
+psycopg2==2.7.5
 python-dateutil==2.6.1
 pytz==2016.7
 raven
