@@ -42,6 +42,8 @@ class Command(BaseCommand):
 def run_end_to_end():
     print('BQ_NONCE: {}'.format(settings.BQ_NONCE))
 
+    call_command('migrate')
+
     path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
                         'commands', 'measure_definitions')
     num_measures = len(os.listdir(path))
