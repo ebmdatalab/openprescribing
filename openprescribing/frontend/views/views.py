@@ -23,6 +23,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
 from allauth.account import app_settings
@@ -974,7 +975,12 @@ def feedback_view(request):
                    "folder for our reply.".format(user_email_addr))
             messages.success(request, msg)
 
-            return HttpResponseRedirect(url)
+            if is_safe_url(url, allowed_hosts=[request.get_host()]):
+                redirect_url = url
+            else:
+                logger.error(u'Unsafe redirect URL: {}'.format(url))
+                redirect_url = '/'
+            return HttpResponseRedirect(redirect_url)
     else:
         form = FeedbackForm()
 
