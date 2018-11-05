@@ -40,7 +40,7 @@ python-dateutil==2.6.1
 pytz==2016.7
 raven
 requests-futures==0.9.7
-requests[security]==2.18.4
+requests[security]==2.20.0
 titlecase==0.8.2
 tqdm==4.14.0
 xlrd==1.0.0
