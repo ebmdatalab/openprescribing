@@ -7,6 +7,16 @@
 {% block content %}
 <h2>Feedback</h2>
 
+{% if show_warning %}
+  <div class="alert alert-warning">
+    <span class="glyphicon glyphicon-exclamation-sign"></span>
+    Note to patients: this form sends feedback to the OpenPrescribing team at
+    Oxford.  If you are trying to contact your practice please
+    <a href="https://www.nhs.uk/service-search/GP/LocationSearch/4">click here</a>
+    to search for them.
+  </div>
+{% endif %}
+
 <form method="post" role="form">
   {% csrf_token %}
   {{ form.non_field_errors }}
