@@ -25,7 +25,7 @@ decorator==4.1.2          # via networkx
 defusedxml==0.5.0         # via python3-openid
 diff-match-patch==20121119  # via django-import-export
 django-allauth==0.25.2
-django-anymail[mailgun]==2.2
+django-anymail[mailgun]==4.3
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-debug-toolbar-template-timings==0.9
