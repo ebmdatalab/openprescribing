@@ -13,7 +13,7 @@ beautifulsoup4==4.6.0
 cached-property==1.4.3    # via pre-commit
 cachetools==2.0.1         # via google-auth
 certifi==2017.7.27.1      # via requests
-cffi==1.11.1              # via bcrypt, cryptography, pynacl
+cffi==1.11.5              # via bcrypt, cryptography, pynacl
 cfgv==1.1.0               # via pre-commit
 chardet==3.0.4            # via requests
 click==6.7                # via pip-tools
