@@ -136,5 +136,14 @@
             "2014": "http://www.hscic.gov.uk/catalogue/PUB15751/qof-1314-CSVfilesCQRSdata.zip"
         },
         "research": true
+    },
+    "stp_mapping": {
+        "title": "Mapping from CCGs to STPs",
+        "publisher": "Office for National Statistics",
+        "publication_schedule": "unknown",
+        "urls": {
+            "2018": "http://geoportal.statistics.gov.uk/datasets/clinical-commissioning-group-to-stps-april-2018-lookup-in-england-version-2"
+        },
+        "core_data": true
     }
 }

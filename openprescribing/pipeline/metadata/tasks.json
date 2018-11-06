@@ -23,6 +23,10 @@
         "type": "manual_fetch",
         "source_id": "dmd_snomed"
     },
+    "fetch_stps": {
+        "type": "manual_fetch",
+        "source_id": "stp_mapping"
+    },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
@@ -75,6 +79,15 @@
         "command": "import_org_names --ccg eccg.csv",
         "dependencies": [
             "fetch_ccg_details",
+            "import_ccg_boundaries"
+        ]
+    },
+    "import_stps": {
+        "type": "import",
+        "source_id": "stp_mapping",
+        "command": "import_stps --filename stps.csv",
+        "dependencies": [
+            "fetch_stps",
             "import_ccg_boundaries"
         ]
     },
