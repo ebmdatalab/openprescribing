@@ -162,6 +162,16 @@ RAW_PRESCRIBING_SCHEMA = build_schema(
     ('Actual_Cost', 'FLOAT'),
 )
 
+BDZ_ADQ_SCHEMA = build_schema(
+    ('bnf_code', 'STRING'),
+    ('name', 'STRING'),
+    ('is_generic', 'BOOLEAN'),
+    ('active_quantity', 'FLOAT'),
+    ('adq', 'FLOAT'),
+    ('adq_unit', 'STRING'),
+    ('percent_of_adq', 'FLOAT'),
+)
+
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it
     matches our statistics schema
