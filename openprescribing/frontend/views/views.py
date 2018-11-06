@@ -955,12 +955,12 @@ def tariff(request, code=None):
 
 
 def feedback_view(request):
+    url = request.GET.get('from_url', '/')
     if request.POST:
         form = FeedbackForm(request.POST)
         if form.is_valid():
             user_name = form.cleaned_data['name'].strip()
             user_email_addr = form.cleaned_data['email'].strip()
-            url = request.GET.get('from_url', '/')
             send_feedback_mail(
                 user_name=user_name,
                 user_email_addr=user_email_addr,
@@ -978,7 +978,12 @@ def feedback_view(request):
     else:
         form = FeedbackForm()
 
-    return render(request, 'feedback.html', {'form': form})
+    show_warning = '/practice/' in url
+
+    return render(request, 'feedback.html', {
+        'form': form,
+        'show_warning': show_warning
+    })
 
 
 ##################################################
