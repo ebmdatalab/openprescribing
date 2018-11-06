@@ -72,7 +72,7 @@ odfpy==1.3.6              # via tablib
 openpyxl==2.3.3
 pandas-gbq==0.3.1
 pandas==0.20.2
-paramiko==2.4.1           # via fabric
+paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
 pbr==4.2.0                # via mock
 pip-tools==2.0.2
