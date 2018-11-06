@@ -75,6 +75,7 @@ def run_end_to_end():
     client.create_table('prescribing', schemas.PRESCRIBING_SCHEMA)
     client.create_table('presentation', schemas.PRESENTATION_SCHEMA)
     client.create_table('tariff', schemas.TARIFF_SCHEMA)
+    client.create_table('bdz_adq', schemas.BDZ_ADQ_SCHEMA)
 
     client = BQClient('measures')
     # This is enough of a schema to allow the practice_data_all_low_priority
