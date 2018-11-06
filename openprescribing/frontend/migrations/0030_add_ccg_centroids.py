@@ -25,5 +25,9 @@ class Migration(migrations.Migration):
             field=django.contrib.gis.db.models.fields.PointField(
                 blank=True, null=True, srid=4326),
         ),
-        migrations.RunPython(set_centroids_without_args),
+
+        # This is now commented out because the SQL generated to execute
+        # set_centroids_without_args includes a reference to the new
+        # frontend_pct.stp_id field, which isn't created until migration 36.
+        # migrations.RunPython(set_centroids_without_args),
     ]

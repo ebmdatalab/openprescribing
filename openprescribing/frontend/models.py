@@ -73,6 +73,11 @@ class Section(models.Model):
         ordering = ["bnf_id"]
 
 
+class STP(models.Model):
+    ons_code = models.CharField(max_length=9, primary_key=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+
+
 class PCT(models.Model):
     '''
     PCTs or CCGs (depending on date).
@@ -83,6 +88,7 @@ class PCT(models.Model):
         ('H', 'Hub'),
         ('Unknown', 'Unknown')
     )
+    stp = models.ForeignKey(STP, null=True)
     code = models.CharField(max_length=3, primary_key=True,
                             help_text='Primary care trust code')
     ons_code = models.CharField(max_length=9, null=True, blank=True)
