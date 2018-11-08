@@ -98,7 +98,7 @@ requests-futures==0.9.7
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.20.0
 rsa==3.4.2                # via google-auth, oauth2client
-selenium==3.14.0
+selenium==3.141.0
 six==1.11.0               # via bcrypt, cfgv, cryptography, django-anymail, django-extensions, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, oauth2client, pip-tools, pre-commit, protobuf, pynacl, pyopenssl, python-dateutil
 sqlparse==0.2.4           # via django-debug-toolbar
 tablib==0.12.1            # via django-import-export
