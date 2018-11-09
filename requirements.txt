@@ -29,7 +29,7 @@ django-anymail[mailgun]==2.2
 django-cors-headers==1.1.0
 django-crispy-forms==1.6.1
 django-debug-toolbar-template-timings==0.9
-django-debug-toolbar==1.9.1
+django-debug-toolbar==1.10.1
 django-dotenv==1.4.2
 django-extensions==2.1.0
 django-import-export==1.1.0
