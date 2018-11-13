@@ -1,12 +1,43 @@
+import functools
+
 from django.conf.urls import include, url
+from django.urls import reverse
 from django.views.generic import RedirectView, TemplateView
 from django.contrib import admin
+from django.http.response import HttpResponseRedirect
 from frontend.views import views as frontend_views
 from frontend.views import bookmark_views
 
 admin.autodiscover()
 
 handler500 = frontend_views.custom_500
+
+
+# Added 2018-11-15: maybe revist in a year to see if still required
+def redirect_if_tags_query(view_fn):
+    """
+    Redirect CCG/practice homepage requests if they have a "tags" query
+    parameter
+
+    We need this because these homepages used to show all measures which could
+    be filtered by tag, but that content has since moved to the
+    measures_for_one_X pages. Internal links have been updated but there are
+    links which we don't control.
+    """
+    @functools.wraps(view_fn)
+    def wrapper(request, **kwargs):
+        if not request.GET.get('tags'):
+            return view_fn(request, **kwargs)
+        if 'ccg_code' in kwargs:
+            url = reverse('measures_for_one_ccg', kwargs=kwargs)
+        else:
+            url = reverse(
+                'measures_for_one_practice',
+                kwargs={'code': kwargs['practice_code']})
+        url = '{}?{}'.format(url, request.GET.urlencode())
+        return HttpResponseRedirect(url)
+    return wrapper
+
 
 urlpatterns = [
     # Static pages.
@@ -69,10 +100,10 @@ urlpatterns = [
         name='measure_for_one_practice'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
-        frontend_views.ccg_home_page,
+        redirect_if_tags_query(frontend_views.ccg_home_page),
         name='ccg_home_page'),
     url(r'^practice/(?P<practice_code>[A-Z\d]+)/$',
-        frontend_views.practice_home_page,
+        redirect_if_tags_query(frontend_views.practice_home_page),
         name='practice_home_page'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
