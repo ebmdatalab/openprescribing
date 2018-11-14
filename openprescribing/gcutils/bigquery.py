@@ -172,11 +172,17 @@ class Client(object):
         return Table(table_ref, self)
 
     def query(self, sql, legacy=False, **options):
+        sql = interpolate_sql(sql)
         default_options = {
             'use_legacy_sql': legacy,
         }
-        args = [interpolate_sql(sql)]
-        iterator = self.run_job('query', args, options, default_options)
+        args = [sql]
+        try:
+            iterator = self.run_job('query', args, options, default_options)
+        except Exception:
+            for n, line in enumerate(sql.splitlines()):
+                print(n + 1, line)
+            raise
         return Results(iterator)
 
     def query_into_dataframe(self, sql, legacy=False):
@@ -188,7 +194,7 @@ class Client(object):
         }
         try:
             return pd.read_gbq(sql, **kwargs)
-        except:
+        except Exception:
             for n, line in enumerate(sql.splitlines()):
                 print(n + 1, line)
             raise
@@ -274,7 +280,12 @@ class Table(object):
         sql = interpolate_sql(sql, **substitutions)
 
         args = [sql]
-        self.run_job('query', args, options, default_options)
+        try:
+            self.run_job('query', args, options, default_options)
+        except Exception:
+            for n, line in enumerate(sql.splitlines()):
+                print(n + 1, line)
+            raise
 
     def insert_rows_from_csv(self, csv_path, **options):
         default_options = {
