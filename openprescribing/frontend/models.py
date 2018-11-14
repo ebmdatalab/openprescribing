@@ -533,6 +533,7 @@ class MeasureValue(models.Model):
     indicates the parent CCG, if it exists.
     '''
     measure = models.ForeignKey(Measure)
+    stp = models.ForeignKey(STP, null=True, blank=True)
     pct = models.ForeignKey(PCT, null=True, blank=True)
     practice = models.ForeignKey(Practice, null=True, blank=True)
     month = models.DateField()
