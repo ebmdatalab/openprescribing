@@ -18,9 +18,6 @@ urlpatterns = [
         name="faq"),
     url(r'^long_term_trends/$', TemplateView.as_view(template_name='long_term_trends.html'),
         name="long_term_trends"),
-    url(r'^pca/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='long_term_trends')),
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
@@ -112,7 +109,6 @@ urlpatterns = [
         frontend_views.gdoc_view,
         name='docs'),
 
-
     # Other files.
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='robots.txt',
                                                 content_type='text/plain')),
@@ -141,10 +137,12 @@ urlpatterns = [
     # anymail webhooks
     url(r'^anymail/', include('anymail.urls')),
 
-    # old page redirects
+    # Redirects
+    url(r'^pca/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='long_term_trends')),
     url(r'^caution/$', RedirectView.as_view(
         pattern_name='faq', permanent=True)),
-
     # Wrong URL got published
     url(r'^measures/$', RedirectView.as_view(
         pattern_name='all_measures', permanent=True)),
