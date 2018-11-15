@@ -83,8 +83,13 @@ def measure_numerators_by_org(request, format=None):
     org = utils.param_to_list(request.query_params.get('org', []))[0]
     if len(org) == 3:
         org_selector = 'pct_id'
-    else:
+    elif len(org) == 6:
         org_selector = 'practice_id'
+    elif len(org) == 9:
+        org_selector = 'stp_id'
+    else:
+        assert False, 'Unexpected org: {}'.format(org)
+
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
