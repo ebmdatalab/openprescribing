@@ -14,6 +14,7 @@ class Command(BaseCommand):
         sql = """
         SELECT
           prescribing.sha AS sha,
+          ccgs.stp_id AS stp,
           practices.ccg_id AS pct,
           prescribing.practice AS practice,
           COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
@@ -33,6 +34,9 @@ class Command(BaseCommand):
         INNER JOIN
           {project}.{hscic}.practices  AS practices
         ON practices.code = prescribing.practice
+        INNER JOIN
+          {project}.{hscic}.ccgs AS ccgs
+        ON practices.ccg_id = ccgs.code
         """
 
         client = Client('hscic')
