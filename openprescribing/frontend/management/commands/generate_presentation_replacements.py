@@ -101,8 +101,6 @@ from django.core.management.base import CommandError
 from django.db import connection
 from django.db import transaction
 
-from google.cloud.exceptions import Conflict
-
 from frontend.models import Chemical
 from frontend.models import Presentation
 from frontend.models import Product
@@ -325,63 +323,6 @@ def update_existing_prescribing():
                     )
 
 
-def create_bigquery_views():
-    """Create BigQuery views on the main prescribing data which map
-    historic BNF codes to their current equivalent.
-
-    If they already exist, do nothing.
-
-    """
-    # We have to create legacy and standard versions of the view, as a
-    # legacy query cannot address a standard view, and vice versa, and
-    # we use both flavours in our code.
-    sql = """
-    SELECT
-      prescribing.sha AS sha,
-      practices.ccg_id AS pct,
-      prescribing.practice AS practice,
-      COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
-        AS bnf_code,
-      prescribing.bnf_name AS bnf_name,
-      prescribing.items AS items,
-      prescribing.net_cost AS net_cost,
-      prescribing.actual_cost AS actual_cost,
-      prescribing.quantity AS quantity,
-      prescribing.month AS month
-    FROM
-      {project}.{hscic}.prescribing AS prescribing
-    LEFT JOIN
-      {project}.{hscic}.bnf_map AS bnf_map
-    ON
-      bnf_map.former_bnf_code = prescribing.bnf_code
-    INNER JOIN
-      {project}.{hscic}.practices  AS practices
-    ON practices.code = prescribing.practice
-    """
-
-    client = Client('hscic')
-
-    try:
-        client.create_table_with_view(
-            'normalised_prescribing_standard',
-            sql,
-            False
-        )
-    except Conflict:
-        pass
-
-    sql = sql.replace('{project}.', '{project}:')
-
-    try:
-        client.create_table_with_view(
-            'normalised_prescribing_legacy',
-            sql,
-            legacy=True
-        )
-    except Conflict:
-        pass
-
-
 class Command(BaseCommand):
     args = ''
     help = 'Imports presentation replacements.'
@@ -406,6 +347,5 @@ class Command(BaseCommand):
             )
         create_code_mapping(filenames)
         create_bigquery_table()
-        create_bigquery_views()
         update_existing_prescribing()
         cleanup_empty_classes()
