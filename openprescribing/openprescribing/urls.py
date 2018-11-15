@@ -87,10 +87,6 @@ urlpatterns = [
         '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='measures_for_one_ccg'),
-        name='ccg'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),
@@ -148,10 +144,6 @@ urlpatterns = [
     # old page redirects
     url(r'^caution/$', RedirectView.as_view(
         pattern_name='faq', permanent=True)),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(
-            permanent=True, pattern_name='measures_for_one_practice'),
-        name='practice'),
 
     # Wrong URL got published
     url(r'^measures/$', RedirectView.as_view(
