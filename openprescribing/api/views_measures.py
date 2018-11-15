@@ -174,6 +174,24 @@ def measure_numerators_by_org(request, format=None):
 
 
 @api_view(['GET'])
+def measure_by_stp(request, format=None):
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    aggregate = bool(request.query_params.get('aggregate'))
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
+    measure_values = MeasureValue.objects.by_stp(orgs, measures, tags)
+    if aggregate:
+        measure_values = measure_values.aggregate_by_measure_and_month()
+
+    rsp_data = {
+        'measures': _roll_up_measure_values(measure_values, 'stp')
+    }
+    return Response(rsp_data)
+
+
+@api_view(['GET'])
 def measure_by_ccg(request, format=None):
     measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))

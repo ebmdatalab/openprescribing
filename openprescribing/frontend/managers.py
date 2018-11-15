@@ -10,17 +10,46 @@ CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 
 
 class MeasureValueQuerySet(models.QuerySet):
+    def by_stp(self, org_ids, measure_ids=None, tags=None):
+        org_Q = Q()
+        for org_id in org_ids:
+            if len(org_id) == 9:
+                org_Q |= Q(stp_id=org_id)
+            else:
+                assert False, 'Unexpected org_id: {}'.format(org_id)
+
+        qs = self.select_related('measure').\
+            filter(
+                org_Q,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+            ).\
+            order_by('pct_id', 'measure_id', 'month')
+
+        if measure_ids:
+            qs = qs.filter(measure_id__in=measure_ids)
+
+        if tags:
+            qs = qs.filter(measure__tags__contains=tags)
+
+        return qs
 
     def by_ccg(self, org_ids, measure_ids=None, tags=None):
         org_Q = Q()
         for org_id in org_ids:
-            org_Q |= Q(pct_id=org_id)
+            if len(org_id) == 9:
+                org_Q |= Q(stp_id=org_id)
+            elif len(org_id) == 3:
+                org_Q |= Q(pct_id=org_id)
+            else:
+                assert False, 'Unexpected org_id: {}'.format(org_id)
 
         qs = self.select_related('pct', 'measure').\
             filter(
                 org_Q,
                 pct__org_type='CCG',
                 pct__close_date__isnull=True,
+                pct_id__isnull=False,
                 practice_id__isnull=True,
             ).\
             order_by('pct_id', 'measure_id', 'month')
@@ -38,8 +67,10 @@ class MeasureValueQuerySet(models.QuerySet):
         for org_id in org_ids:
             if len(org_id) == 3:
                 org_Q |= Q(pct_id=org_id)
-            else:
+            elif len(org_id) == 6:
                 org_Q |= Q(practice_id=org_id)
+            else:
+                assert False, 'Unexpected org_id: {}'.format(org_id)
 
         qs = self.select_related('practice', 'measure').\
             filter(
