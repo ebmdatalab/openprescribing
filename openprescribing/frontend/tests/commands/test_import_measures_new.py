@@ -158,6 +158,8 @@ class ImportMeasuresTests(TestCase):
         denominators = prescriptions[prescriptions['bnf_code'].str.startswith('0703021Q0')]
         mg = MeasureGlobal.objects.get(month=month)
 
+        self.assertEqual(MeasureValue.objects.filter(month=month).count(), 1110)
+
         practices = self.calculate_measure(
             numerators,
             denominators,
@@ -165,11 +167,14 @@ class ImportMeasuresTests(TestCase):
             Practice.objects.values_list('code', flat=True)
         )
         self.validate_measure_global(mg, practices, 'practice')
-        for mv in MeasureValue.objects.filter(
+        mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=False,
-            pct_id__isnull=True,
-        ):
+            pct_id__isnull=False,
+            stp_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 1000)
+        for mv in mvs:
             self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
         ccgs = self.calculate_measure(
@@ -179,11 +184,14 @@ class ImportMeasuresTests(TestCase):
             PCT.objects.values_list('code', flat=True)
         )
         self.validate_measure_global(mg, ccgs, 'ccg')
-        for mv in MeasureValue.objects.filter(
+        mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
             pct_id__isnull=False,
-        ):
+            stp_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 100)
+        for mv in mvs:
             self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
 
         stps = self.calculate_measure(
@@ -193,11 +201,14 @@ class ImportMeasuresTests(TestCase):
             STP.objects.values_list('ons_code', flat=True)
         )
         self.validate_measure_global(mg, stps, 'stp')
-        for mv in MeasureValue.objects.filter(
+        mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
             pct_id__isnull=True,
-        ):
+            stp_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 10)
+        for mv in mvs:
             self.validate_measure_value(mv, stps.loc[mv.stp_id])
 
     def calculate_measure(self, numerators, denominators, org_type, org_codes):

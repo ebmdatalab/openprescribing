@@ -1,5 +1,5 @@
 SELECT
-  stp_id,
+  ccgs.stp_id AS stp_id,
   month,
   SUM(numerator) AS numerator,
   SUM(denominator) AS denominator,

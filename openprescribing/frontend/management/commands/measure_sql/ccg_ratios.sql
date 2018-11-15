@@ -1,5 +1,6 @@
 SELECT
   pct_id,
+  ccgs.stp_id AS stp_id,
   month,
   SUM(numerator) AS numerator,
   SUM(denominator) AS denominator,
@@ -11,6 +12,7 @@ FROM
 JOIN {hscic}.ccgs AS ccgs
 ON (ccgs.code = pct_id AND ccgs.org_type = 'CCG')
 GROUP BY
+  stp_id,
   pct_id,
   month
 ORDER BY
