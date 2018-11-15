@@ -1,9 +1,15 @@
 from django.core.management import BaseCommand, CommandError
 from gcutils.bigquery import Client
-from google.cloud.exceptions import Conflict
+from google.cloud.exceptions import Conflict, NotFound
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--recreate', action='store_true',
+            help='Delete views before recreating them'
+        )
+
     def handle(self, *args, **kwargs):
         sql = """
         SELECT
@@ -31,22 +37,15 @@ class Command(BaseCommand):
 
         client = Client('hscic')
 
-        try:
-            client.create_table_with_view(
-                'normalised_prescribing_standard',
-                sql,
-                False
-            )
-        except Conflict:
-            pass
+        for table_name, legacy in [
+            ('normalised_prescribing_legacy', True),
+            ('normalised_prescribing_standard', False),
+        ]:
 
-        sql = sql.replace('{project}.', '{project}:')
+            if kwargs['recreate']:
+                try:
+                    client.delete_table(table_name)
+                except NotFound:
+                    pass
 
-        try:
-            client.create_table_with_view(
-                'normalised_prescribing_legacy',
-                sql,
-                legacy=True
-            )
-        except Conflict:
-            pass
+            client.create_table_with_view(table_name, sql, legacy)
