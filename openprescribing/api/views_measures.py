@@ -231,7 +231,7 @@ def measure_by_practice(request, format=None):
     return Response(rsp_data)
 
 
-def _roll_up_measure_values(measure_values, practice_or_ccg):
+def _roll_up_measure_values(measure_values, org_type):
     rolled = {}
 
     for measure_value in measure_values:
@@ -245,17 +245,23 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
             'cost_savings': measure_value.cost_savings,
         }
 
-        if practice_or_ccg == 'practice':
+        if org_type == 'practice':
             if measure_value.practice_id:
                 measure_value_data.update({
                     'practice_id': measure_value.practice_id,
                     'practice_name': measure_value.practice.name,
                 })
-        elif practice_or_ccg == 'ccg':
+        elif org_type == 'ccg':
             if measure_value.pct_id:
                 measure_value_data.update({
                     'pct_id': measure_value.pct_id,
                     'pct_name': measure_value.pct.name,
+                })
+        elif org_type == 'stp':
+            if measure_value.stp_id:
+                measure_value_data.update({
+                    'stp_id': measure_value.stp_id,
+                    'stp_name': measure_value.stp.name,
                 })
         else:
             assert False
