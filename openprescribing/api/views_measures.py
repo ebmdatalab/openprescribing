@@ -116,7 +116,7 @@ def measure_numerators_by_org(request, format=None):
         if org_selector == 'stp_id':
             extra_join = '''
             INNER JOIN frontend_pct
-            ON frontend_pct.code = frontend_prescription.pct_id
+            ON frontend_pct.code = p.pct_id
             '''
         else:
             extra_join = ''
