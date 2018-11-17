@@ -113,6 +113,14 @@ def measure_numerators_by_org(request, format=None):
             '%', '%%'
         )
 
+        if org_selector == 'stp_id':
+            extra_join = '''
+            INNER JOIN frontend_pct
+            ON frontend_pct.code = frontend_prescription.pct_id
+            '''
+        else:
+            extra_join = ''
+
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
@@ -144,6 +152,7 @@ def measure_numerators_by_org(request, format=None):
             INNER JOIN
               frontend_presentation pn
             ON p.presentation_code = pn.bnf_code
+            {extra_join}
             WHERE
               {org_selector} = %(org)s
               AND
@@ -158,6 +167,7 @@ def measure_numerators_by_org(request, format=None):
              numerator_selector=numerator_selector,
              three_months_ago=three_months_ago,
              numerator_where=numerator_where,
+             extra_join=extra_join,
         )
         params = {
             'org': org,
