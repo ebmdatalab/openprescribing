@@ -488,6 +488,13 @@ class TestFrontendViews(TestCase):
         practices = doc('#practices li')
         self.assertEqual(len(practices), 2)
 
+    def test_ccg_homepage_redirects_with_tags_query(self):
+        response = self.client.get('/ccg/03V/?tags=lowpriority')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response['Location'],
+            '/ccg/03V/measures/?tags=lowpriority')
+
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
         self.assertEqual(response.status_code, 200)
@@ -516,6 +523,13 @@ class TestFrontendViews(TestCase):
             ('Address: ST.ANDREWS MEDICAL CENTRE, 30 RUSSELL STREET '
              'ECCLES, MANCHESTER, M30 0NU'))
         lead = doc('.lead:last')
+
+    def test_practice_homepage_redirects_with_tags_query(self):
+        response = self.client.get('/practice/P87629/?tags=lowpriority')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response['Location'],
+            '/practice/P87629/measures/?tags=lowpriority')
 
     def test_call_single_measure_for_practice(self):
         response = self.client.get('/measure/cerazette/practice/P87629/')

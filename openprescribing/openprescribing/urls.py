@@ -1,12 +1,43 @@
+import functools
+
 from django.conf.urls import include, url
+from django.urls import reverse
 from django.views.generic import RedirectView, TemplateView
 from django.contrib import admin
+from django.http.response import HttpResponseRedirect
 from frontend.views import views as frontend_views
 from frontend.views import bookmark_views
 
 admin.autodiscover()
 
 handler500 = frontend_views.custom_500
+
+
+# Added 2018-11-15: maybe revist in a year to see if still required
+def redirect_if_tags_query(view_fn):
+    """
+    Redirect CCG/practice homepage requests if they have a "tags" query
+    parameter
+
+    We need this because these homepages used to show all measures which could
+    be filtered by tag, but that content has since moved to the
+    measures_for_one_X pages. Internal links have been updated but there are
+    links which we don't control.
+    """
+    @functools.wraps(view_fn)
+    def wrapper(request, **kwargs):
+        if not request.GET.get('tags'):
+            return view_fn(request, **kwargs)
+        if 'ccg_code' in kwargs:
+            url = reverse('measures_for_one_ccg', kwargs=kwargs)
+        else:
+            url = reverse(
+                'measures_for_one_practice',
+                kwargs={'code': kwargs['practice_code']})
+        url = '{}?{}'.format(url, request.GET.urlencode())
+        return HttpResponseRedirect(url)
+    return wrapper
+
 
 urlpatterns = [
     # Static pages.
@@ -18,9 +49,6 @@ urlpatterns = [
         name="faq"),
     url(r'^long_term_trends/$', TemplateView.as_view(template_name='long_term_trends.html'),
         name="long_term_trends"),
-    url(r'^pca/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='long_term_trends')),
     url(r'^price-per-unit-faq/$', TemplateView.as_view(
         template_name='price_per_unit_faq.html'),
         name="price_per_unit_faq"),
@@ -72,10 +100,10 @@ urlpatterns = [
         name='measure_for_one_practice'),
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
-        frontend_views.ccg_home_page,
+        redirect_if_tags_query(frontend_views.ccg_home_page),
         name='ccg_home_page'),
     url(r'^practice/(?P<practice_code>[A-Z\d]+)/$',
-        frontend_views.practice_home_page,
+        redirect_if_tags_query(frontend_views.practice_home_page),
         name='practice_home_page'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
@@ -87,10 +115,6 @@ urlpatterns = [
         '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(permanent=True,
-                             pattern_name='measures_for_one_ccg'),
-        name='ccg'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),
@@ -115,7 +139,6 @@ urlpatterns = [
     url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',
         frontend_views.gdoc_view,
         name='docs'),
-
 
     # Other files.
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='robots.txt',
@@ -145,14 +168,12 @@ urlpatterns = [
     # anymail webhooks
     url(r'^anymail/', include('anymail.urls')),
 
-    # old page redirects
+    # Redirects
+    url(r'^pca/$',
+        RedirectView.as_view(permanent=True,
+                             pattern_name='long_term_trends')),
     url(r'^caution/$', RedirectView.as_view(
         pattern_name='faq', permanent=True)),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
-        RedirectView.as_view(
-            permanent=True, pattern_name='measures_for_one_practice'),
-        name='practice'),
-
     # Wrong URL got published
     url(r'^measures/$', RedirectView.as_view(
         pattern_name='all_measures', permanent=True)),
