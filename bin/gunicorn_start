@@ -40,13 +40,10 @@ echo "REPO_ROOT: $REPO_ROOT"
 echo "APPS_ROOT: $APPS_ROOT"
 echo "PYTHONPATH: $PYTHONPATH"
 
-# Environment variables that are set in the "environment" file but
-# need to be marked for export otherwise they won't be passed into
-# child processes
-export NEW_RELIC_LICENSE_KEY
-
-# Source environment file
-source "$REPO_ROOT/environment"
+# Export each variable in the environment file, ignoring comments. Sourcing the
+# file is insufficient as it sets the vars in the current environment but
+# doesn't flag them for export to child processes.
+export $(grep -v '^\s*#' "$REPO_ROOT/environment" | xargs)
 
 # Activate the virtual environment
 source "$VIRTUALENV_PATH/bin/activate"
