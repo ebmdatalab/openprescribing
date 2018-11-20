@@ -66,76 +66,106 @@ urlpatterns = [
 
     url(r'^500/$', frontend_views.error, name='error'),
 
+    ##################################################
     # User-facing pages.
-    url(r'^analyse/$', frontend_views.analyse,
-        name="analyse"),
+    ##################################################
+
+    # BNF sections
+    url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
+    url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
+        name='bnf_section'),
+
+    # Chemicals
     url(r'^chemical/$', frontend_views.all_chemicals,
         name='all_chemicals'),
     url(r'^chemical/(?P<bnf_code>[A-Z\d]+)/$', frontend_views.chemical,
         name='chemical'),
+
+    # GP practices
     url(r'^practice/$', frontend_views.all_practices,
         name='all_practices'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
-        frontend_views.measures_for_one_practice,
-        name='measures_for_one_practice'),
-    url(r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$',
-        frontend_views.practice_price_per_unit,
-        name='practice_price_per_unit'),
-    url(r'^practice/(?P<entity_code>[A-Z\d]+)/'
-        '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
-        frontend_views.price_per_unit_by_presentation,
-        name='price_per_unit_by_presentation_practice'),
-    url(r'^measure/$',
-        frontend_views.all_measures,
-        name='all_measures'),
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
-        frontend_views.measure_for_all_ccgs,
-        name='measure_for_all_ccgs'),
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
-        frontend_views.measure_for_one_ccg,
-        name='measure_for_one_ccg'),
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
-        'practice/(?P<practice_code>[A-Z\d]+)/$',
-        frontend_views.measure_for_one_practice,
-        name='measure_for_one_practice'),
+    url(r'^practice/(?P<practice_code>[A-Z\d]+)/$',
+        redirect_if_tags_query(frontend_views.practice_home_page),
+        name='practice_home_page'),
+
+    # CCGs
     url(r'^ccg/$', frontend_views.all_ccgs, name='all_ccgs'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/$',
         redirect_if_tags_query(frontend_views.ccg_home_page),
         name='ccg_home_page'),
-    url(r'^practice/(?P<practice_code>[A-Z\d]+)/$',
-        redirect_if_tags_query(frontend_views.practice_home_page),
-        name='practice_home_page'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
-        frontend_views.measures_for_one_ccg,
-        name='measures_for_one_ccg'),
+
+    # All England
+    url(r'^all-england/$',
+        frontend_views.all_england,
+        name='all_england'),
+
+    # Analyse
+    url(r'^analyse/$', frontend_views.analyse,
+        name="analyse"),
+
+    # Price per unit
+    # This must come above measures, as the measure_for_practices_in_ccg
+    # pattern would also match the ccg_price_per_unit pattern.
+    url(r'^practice/(?P<code>[A-Z\d]+)/price_per_unit/$',
+        frontend_views.practice_price_per_unit,
+        name='practice_price_per_unit'),
     url(r'^ccg/(?P<code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.ccg_price_per_unit,
         name='ccg_price_per_unit'),
+    url(r'^all-england/price-per-unit/$',
+        frontend_views.all_england_price_per_unit,
+        name='all_england_price_per_unit'),
+
+    url(r'^practice/(?P<entity_code>[A-Z\d]+)/'
+        '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
+        frontend_views.price_per_unit_by_presentation,
+        name='price_per_unit_by_presentation_practice'),
     url(r'^ccg/(?P<entity_code>[A-Z\d]+)/'
         '(?P<bnf_code>[A-Z\d]+)/price_per_unit/$',
         frontend_views.price_per_unit_by_presentation,
         name='price_per_unit_by_presentation'),
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
-        frontend_views.measure_for_practices_in_ccg,
-        name='measure_for_practices_in_ccg'),
-    url(r'^all-england/$',
-        frontend_views.all_england,
-        name='all_england'),
-    url(r'^all-england/price-per-unit/$',
-        frontend_views.all_england_price_per_unit,
-        name='all_england_price_per_unit'),
     url(r'^all-england/(?P<bnf_code>[A-Z\d]+)/price-per-unit/$',
         frontend_views.all_england_price_per_unit_by_presentation,
         name='all_england_price_per_unit_by_presentation'),
-    url(r'^bnf/$', frontend_views.all_bnf, name='all_bnf'),
-    url(r'^bnf/(?P<section_id>[\d]+)/$', frontend_views.bnf_section,
-        name='bnf_section'),
+
+    # Measures
+    url(r'^measure/$',
+        frontend_views.all_measures,
+        name='all_measures'),
+
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_all_ccgs,
+        name='measure_for_all_ccgs'),
+
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
+        'practice/(?P<practice_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_practice,
+        name='measure_for_one_practice'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_ccg,
+        name='measure_for_one_ccg'),
+
+    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_practice,
+        name='measures_for_one_practice'),
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_ccg,
+        name='measures_for_one_ccg'),
+
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_practices_in_ccg,
+        name='measure_for_practices_in_ccg'),
+
+    # Tariffs
     url(r'^tariff/$', frontend_views.tariff,
         name='tariff_index'),
     url(r'^tariff/(?P<code>[A-Z\d]+)/$', frontend_views.tariff,
         name='tariff'),
+
+    # API
     url(r'^api/1.0/', include('api.urls')),
 
+    # Docs
     url(r'^docs/(?P<doc_id>[A-Za-z\d_-]+)/$',
         frontend_views.gdoc_view,
         name='docs'),
@@ -174,6 +204,7 @@ urlpatterns = [
                              pattern_name='long_term_trends')),
     url(r'^caution/$', RedirectView.as_view(
         pattern_name='faq', permanent=True)),
+
     # Wrong URL got published
     url(r'^measures/$', RedirectView.as_view(
         pattern_name='all_measures', permanent=True)),

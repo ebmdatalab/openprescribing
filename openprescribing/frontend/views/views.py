@@ -73,7 +73,7 @@ def handle_bad_request(view_function):
 
 
 ##################################################
-# BNF SECTIONS
+# BNF sections
 ##################################################
 def all_bnf(request):
     sections = Section.objects.filter(is_current=True)
@@ -118,7 +118,7 @@ def bnf_section(request, section_id):
 
 
 ##################################################
-# CHEMICALS
+# Chemicals
 ##################################################
 
 def all_chemicals(request):
@@ -153,8 +153,265 @@ def chemical(request, bnf_code):
 
 
 ##################################################
+# GP practices
+##################################################
+
+def all_practices(request):
+    practices = Practice.objects.filter(setting=4).order_by('name')
+    context = {
+        'practices': practices
+    }
+    return render(request, 'all_practices.html', context)
+
+
+def practice_home_page(request, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    form = _bookmark_and_newsletter_form(
+        request, practice)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    context = _home_page_context_for_entity(request, practice)
+    context['form'] = form
+    context['parent_code'] = practice.ccg_id
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
+# CCGs
+##################################################
+
+def all_ccgs(request):
+    ccgs = PCT.objects.filter(
+        close_date__isnull=True, org_type="CCG").order_by('name')
+    context = {
+        'ccgs': ccgs
+    }
+    return render(request, 'all_ccgs.html', context)
+
+
+def ccg_home_page(request, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    form = _bookmark_and_newsletter_form(
+        request, ccg)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    practices = Practice.objects.filter(ccg=ccg, setting=4).order_by('name')
+    context = _home_page_context_for_entity(request, ccg)
+    context['form'] = form
+    context['practices'] = practices
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
+# All England
+##################################################
+
+@handle_bad_request
+def all_england(request):
+    tag_filter = _get_measure_tag_filter(request.GET)
+    entity_type = request.GET.get('entity_type', 'CCG')
+    date = _specified_or_last_date(request, 'ppu')
+    ppu_savings = _all_england_ppu_savings(entity_type, date)
+    measure_savings = _all_england_measure_savings(entity_type, date)
+    low_priority_savings = _all_england_low_priority_savings(entity_type, date)
+    low_priority_total = _all_england_low_priority_total(entity_type, date)
+    other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
+    other_entity_query = request.GET.copy()
+    other_entity_query['entity_type'] = other_entity_type
+    context = {
+        'tag_filter': tag_filter,
+        'entity_type': entity_type,
+        'other_entity_type': other_entity_type,
+        'other_entity_url': '?' + other_entity_query.urlencode(),
+        'ppu_savings': ppu_savings,
+        'measure_savings': measure_savings,
+        'low_priority_savings': low_priority_savings,
+        'low_priority_total': low_priority_total,
+        'date': date
+    }
+    return render(request, 'all_england.html', context)
+
+
+##################################################
+# Analyse
+##################################################
+
+def analyse(request):
+    if request.method == 'POST':
+        # should this be the _bookmark_and_newsletter_form?
+        form = _handle_bookmark_and_newsletter_post(
+            request,
+            SearchBookmark,
+            SearchBookmarkForm,
+            'url', 'name'
+        )
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        # Note that the (hidden) URL field is filled via javascript on
+        # page load (see `alertForm` in `chart.js`)
+        form = SearchBookmarkForm(
+            initial={'email': getattr(request.user, 'email', '')})
+    return render(request, 'analyse.html', {'form': form})
+
+
+##################################################
+# Measures
+##################################################
+
+@handle_bad_request
+def all_measures(request):
+    tag_filter = _get_measure_tag_filter(request.GET, show_all_by_default=True)
+    query = {}
+    if tag_filter['tags']:
+        query['tags__overlap'] = tag_filter['tags']
+    measures = Measure.objects.filter(**query).order_by('name')
+    context = {
+        'tag_filter': tag_filter,
+        'measures': measures
+    }
+    return render(request, 'all_measures.html', context)
+
+
+def measure_for_all_ccgs(request, measure):
+    measure = get_object_or_404(Measure, id=measure)
+    context = {
+        'measure': measure
+    }
+    return render(request, 'measure_for_all_ccgs.html', context)
+
+
+def measure_for_one_practice(request, measure, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'practice': practice,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_practice.html', context)
+
+
+def measure_for_one_ccg(request, measure, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'ccg': ccg,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_ccg.html', context)
+
+
+@handle_bad_request
+def measures_for_one_practice(request, code):
+    p = get_object_or_404(Practice, code=code)
+    tag_filter = _get_measure_tag_filter(request.GET)
+    form = _bookmark_and_newsletter_form(
+        request, p)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    else:
+        context = {
+            'practice': p,
+            'page_id': code,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(request, p),
+            'tag_filter': tag_filter
+        }
+        return render(request, 'measures_for_one_practice.html', context)
+
+
+@handle_bad_request
+def measures_for_one_ccg(request, ccg_code):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    tag_filter = _get_measure_tag_filter(request.GET)
+    practices = Practice.objects.filter(
+        ccg=requested_ccg).filter(
+            setting=4).order_by('name')
+    form = _bookmark_and_newsletter_form(
+        request, requested_ccg)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+    else:
+        context = {
+            'ccg': requested_ccg,
+            'practices': practices,
+            'page_id': ccg_code,
+            'form': form,
+            'signed_up_for_alert': _signed_up_for_alert(
+                request, requested_ccg),
+            'tag_filter': tag_filter
+        }
+        return render(request, 'measures_for_one_ccg.html', context)
+
+
+def measure_for_practices_in_ccg(request, ccg_code, measure):
+    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    measure = get_object_or_404(Measure, id=measure)
+    practices = Practice.objects.filter(ccg=requested_ccg)\
+        .filter(setting=4).order_by('name')
+    context = {
+        'ccg': requested_ccg,
+        'practices': practices,
+        'page_id': ccg_code,
+        'measure': measure
+    }
+    return render(request, 'measure_for_practices_in_ccg.html', context)
+
+
+##################################################
 # Price per unit
 ##################################################
+
+@handle_bad_request
+def practice_price_per_unit(request, code):
+    date = _specified_or_last_date(request, 'ppu')
+    practice = get_object_or_404(Practice, code=code)
+    context = {
+        'entity': practice,
+        'entity_name': practice.cased_name,
+        'highlight': practice.code,
+        'highlight_name': practice.cased_name,
+        'date': date,
+        'by_practice': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+@handle_bad_request
+def ccg_price_per_unit(request, code):
+    date = _specified_or_last_date(request, 'ppu')
+    ccg = get_object_or_404(PCT, code=code)
+    context = {
+        'entity': ccg,
+        'entity_name': ccg.cased_name,
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
+        'date': date,
+        'by_ccg': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
+@handle_bad_request
+def all_england_price_per_unit(request):
+    date = _specified_or_last_date(request, 'ppu')
+    context = {
+        'entity_name': 'NHS England',
+        'highlight_name': 'NHS England',
+        'date': date,
+        'by_ccg': True,
+        'entity_type': 'CCG',
+        'aggregate': True
+    }
+    return render(request, 'price_per_unit.html', context)
+
+
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
@@ -204,87 +461,6 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     return render(request, 'price_per_unit.html', context)
 
 
-##################################################
-# GP PRACTICES
-##################################################
-
-def all_practices(request):
-    practices = Practice.objects.filter(setting=4).order_by('name')
-    context = {
-        'practices': practices
-    }
-    return render(request, 'all_practices.html', context)
-
-
-def _specified_or_last_date(request, category):
-    date = request.GET.get('date', None)
-    if date:
-        try:
-            date = parse_date(date)
-        except ValueError:
-            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
-    else:
-        date = ImportLog.objects.latest_in_category(category).current_at
-    return date
-
-
-@handle_bad_request
-def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, 'ppu')
-    practice = get_object_or_404(Practice, code=code)
-    context = {
-        'entity': practice,
-        'entity_name': practice.cased_name,
-        'highlight': practice.code,
-        'highlight_name': practice.cased_name,
-        'date': date,
-        'by_practice': True
-    }
-    return render(request, 'price_per_unit.html', context)
-
-
-##################################################
-# CCGs
-##################################################
-
-def all_ccgs(request):
-    ccgs = PCT.objects.filter(
-        close_date__isnull=True, org_type="CCG").order_by('name')
-    context = {
-        'ccgs': ccgs
-    }
-    return render(request, 'all_ccgs.html', context)
-
-
-@handle_bad_request
-def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, 'ppu')
-    ccg = get_object_or_404(PCT, code=code)
-    context = {
-        'entity': ccg,
-        'entity_name': ccg.cased_name,
-        'highlight': ccg.code,
-        'highlight_name': ccg.cased_name,
-        'date': date,
-        'by_ccg': True
-    }
-    return render(request, 'price_per_unit.html', context)
-
-
-@handle_bad_request
-def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, 'ppu')
-    context = {
-        'entity_name': 'NHS England',
-        'highlight_name': 'NHS England',
-        'date': date,
-        'by_ccg': True,
-        'entity_type': 'CCG',
-        'aggregate': True
-    }
-    return render(request, 'price_per_unit.html', context)
-
-
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
@@ -328,8 +504,219 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 
 
 ##################################################
-# MEASURES
-# These replace old CCG and practice dashboards.
+# Tariffs
+##################################################
+
+def tariff(request, code=None):
+    products = DMDProduct.objects.filter(
+        tariffprice__isnull=False,
+        bnf_code__isnull=False
+    ).distinct().order_by('name')
+    codes = []
+    if code:
+        codes = [code]
+    if 'codes' in request.GET:
+        codes.extend(request.GET.getlist('codes'))
+    if codes:
+        presentations = Presentation.objects.filter(bnf_code__in=codes)
+    else:
+        presentations = []
+    context = {
+        'bnf_codes': codes,
+        'presentations': presentations,
+        'products': products,
+        'chart_title': 'Tariff prices for ' + ', '.join(
+            [x.product_name for x in presentations])
+    }
+    return render(request, 'tariff.html', context)
+
+
+##################################################
+# Bookmarks
+##################################################
+
+def finalise_signup(request):
+    """Handle mailchimp signups.
+
+    Then redirect the logged in user to the CCG they last bookmarked, or if
+    they're not logged in, just go straight to the homepage -- both
+    with a message.
+
+    This method should be configured as the LOGIN_REDIRECT_URL,
+    i.e. the view that is called following any successful login, which
+    in our case is always performed by _handle_bookmark_and_newsletter_post.
+
+    """
+    # Users who are logged in are *REDIRECTED* here, which means the
+    # form is never shown.
+    next_url = None
+    if 'newsletter_email' in request.session:
+        if request.POST:
+            success = mailchimp_subscribe(
+                request,
+                request.POST['email'], request.POST['first_name'],
+                request.POST['last_name'], request.POST['organisation'],
+                request.POST['job_title']
+            )
+            if success:
+                messages.success(
+                    request,
+                    'You have successfully signed up for the newsletter.')
+            else:
+                messages.error(
+                    request,
+                    'There was a problem signing you up for the newsletter.')
+
+        else:
+            # Show the signup form
+            return render(request, 'newsletter_signup.html')
+    if not request.user.is_authenticated():
+        if 'alerts_requested' in request.session:
+            # Their first alert bookmark signup
+            del(request.session['alerts_requested'])
+            messages.success(
+                request, "Thanks, you're now subscribed to monthly alerts.")
+        if next_url:
+            return redirect(next_url)
+        else:
+            return redirect(request.session.get('came_from', 'home'))
+    else:
+        # The user is signing up to at least the second bookmark
+        # in this session.
+        last_bookmark = request.user.profile.most_recent_bookmark()
+        next_url = last_bookmark.dashboard_url()
+        messages.success(
+            request,
+            mark_safe("You're now subscribed to monthly "
+                      "alerts about <em>%s</em>." %
+                      last_bookmark.topic()))
+        return redirect(next_url)
+
+
+def mailchimp_subscribe(
+        request, email, first_name, last_name,
+        organisation, job_title):
+    """Subscribe `email` to newsletter.
+
+    Returns boolean indicating success
+    """
+    del(request.session['newsletter_email'])
+    email_hash = hashlib.md5(email).hexdigest()
+    data = {
+        'email_address': email,
+        'status': 'subscribed',
+        'merge_fields': {
+            'FNAME': first_name,
+            'LNAME': last_name,
+            'MMERGE3': organisation,
+            'MMERGE4': job_title
+        }
+    }
+    client = MailChimp(
+        get_env_setting('MAILCHIMP_USER'),
+        get_env_setting('MAILCHIMP_API_KEY'))
+    try:
+        client.lists.members.get(
+            list_id=settings.MAILCHIMP_LIST_ID,
+            subscriber_hash=email_hash)
+        return True
+    except HTTPError:
+        try:
+            client.lists.members.create(
+                list_id=settings.MAILCHIMP_LIST_ID, data=data)
+            return True
+        except HTTPError:
+            # things like blacklisted emails, etc
+            logger.warn("Unable to subscribe %s to newsletter", email)
+            return False
+
+
+##################################################
+# Misc.
+##################################################
+
+def gdoc_view(request, doc_id):
+    try:
+        gdoc_id = settings.GDOC_DOCS[doc_id]
+    except KeyError:
+        raise Http404("No doc named %s" % doc_id)
+    url = 'https://docs.google.com/document/d/%s/pub?embedded=true' % gdoc_id
+    page = requests.get(url)
+    tree = html.fromstring(page.text)
+
+    content = '<style>' + ''.join(
+        [html.tostring(child)
+         for child in tree.head.xpath('//style')]) + '</style>'
+    content += ''.join(
+        [html.tostring(child)
+         for child in tree.body])
+    context = {
+        'content': content
+    }
+    return render(request, 'gdoc.html', context)
+
+
+def feedback_view(request):
+    url = request.GET.get('from_url', '/')
+    if request.POST:
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            user_name = form.cleaned_data['name'].strip()
+            user_email_addr = form.cleaned_data['email'].strip()
+            send_feedback_mail(
+                user_name=user_name,
+                user_email_addr=user_email_addr,
+                subject=form.cleaned_data['subject'].strip(),
+                message=form.cleaned_data['message'],
+                url=url,
+            )
+
+            msg = ("Thanks for sending your feedback/query! A copy of the "
+                   "message has been sent to you at {}. Please check your spam "
+                   "folder for our reply.".format(user_email_addr))
+            messages.success(request, msg)
+
+            if is_safe_url(url, allowed_hosts=[request.get_host()]):
+                redirect_url = url
+            else:
+                logger.error(u'Unsafe redirect URL: {}'.format(url))
+                redirect_url = '/'
+            return HttpResponseRedirect(redirect_url)
+    else:
+        form = FeedbackForm()
+
+    show_warning = '/practice/' in url
+
+    return render(request, 'feedback.html', {
+        'form': form,
+        'show_warning': show_warning
+    })
+
+
+##################################################
+# Custom HTTP errors
+##################################################
+def custom_500(request):
+    type_, value, traceback = sys.exc_info()
+    context = {}
+    if 'canceling statement due to statement timeout' in unicode(value):
+        context['reason'] = ("The database took too long to respond.  If you "
+                             "were running an analysis with multiple codes, "
+                             "try again with fewer.")
+    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1 or
+       request.is_ajax()):
+        return HttpResponse(context['reason'], status=500)
+    else:
+        return render(request, '500.html', context, status=500)
+
+
+# This view deliberately triggers an error
+def error(request):
+    raise RuntimeError('Deliberate error triggered for testing purposes')
+
+
+##################################################
+# Helpers
 ##################################################
 
 CORE_TAG = 'core'
@@ -375,40 +762,16 @@ def _sort_core_tag_first(option):
     return (0 if option['id'] == CORE_TAG else 1, option['name'])
 
 
-@handle_bad_request
-def all_measures(request):
-    tag_filter = _get_measure_tag_filter(request.GET, show_all_by_default=True)
-    query = {}
-    if tag_filter['tags']:
-        query['tags__overlap'] = tag_filter['tags']
-    measures = Measure.objects.filter(**query).order_by('name')
-    context = {
-        'tag_filter': tag_filter,
-        'measures': measures
-    }
-    return render(request, 'all_measures.html', context)
-
-
-def measure_for_all_ccgs(request, measure):
-    measure = get_object_or_404(Measure, id=measure)
-    context = {
-        'measure': measure
-    }
-    return render(request, 'measure_for_all_ccgs.html', context)
-
-
-def measure_for_practices_in_ccg(request, ccg_code, measure):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    measure = get_object_or_404(Measure, id=measure)
-    practices = Practice.objects.filter(ccg=requested_ccg)\
-        .filter(setting=4).order_by('name')
-    context = {
-        'ccg': requested_ccg,
-        'practices': practices,
-        'page_id': ccg_code,
-        'measure': measure
-    }
-    return render(request, 'measure_for_practices_in_ccg.html', context)
+def _specified_or_last_date(request, category):
+    date = request.GET.get('date', None)
+    if date:
+        try:
+            date = parse_date(date)
+        except ValueError:
+            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
+    else:
+        date = ImportLog.objects.latest_in_category(category).current_at
+    return date
 
 
 def _total_savings(entity, date):
@@ -478,20 +841,6 @@ def _home_page_context_for_entity(request, entity):
     }
 
 
-def ccg_home_page(request, ccg_code):
-    ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _bookmark_and_newsletter_form(
-        request, ccg)
-    if isinstance(form, HttpResponseRedirect):
-        return form
-    practices = Practice.objects.filter(ccg=ccg, setting=4).order_by('name')
-    context = _home_page_context_for_entity(request, ccg)
-    context['form'] = form
-    context['practices'] = practices
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
-
-
 def _all_england_ppu_savings(entity_type, date):
     conditions = ' '
     if entity_type == 'CCG':
@@ -545,208 +894,6 @@ def _all_england_low_priority_total(entity_type, date):
         .aggregate(total=Sum('numerator'))
     )
     return result['total']
-
-
-@handle_bad_request
-def all_england(request):
-    tag_filter = _get_measure_tag_filter(request.GET)
-    entity_type = request.GET.get('entity_type', 'CCG')
-    date = _specified_or_last_date(request, 'ppu')
-    ppu_savings = _all_england_ppu_savings(entity_type, date)
-    measure_savings = _all_england_measure_savings(entity_type, date)
-    low_priority_savings = _all_england_low_priority_savings(entity_type, date)
-    low_priority_total = _all_england_low_priority_total(entity_type, date)
-    other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
-    other_entity_query = request.GET.copy()
-    other_entity_query['entity_type'] = other_entity_type
-    context = {
-        'tag_filter': tag_filter,
-        'entity_type': entity_type,
-        'other_entity_type': other_entity_type,
-        'other_entity_url': '?' + other_entity_query.urlencode(),
-        'ppu_savings': ppu_savings,
-        'measure_savings': measure_savings,
-        'low_priority_savings': low_priority_savings,
-        'low_priority_total': low_priority_total,
-        'date': date
-    }
-    return render(request, 'all_england.html', context)
-
-
-def practice_home_page(request, practice_code):
-    practice = get_object_or_404(Practice, code=practice_code)
-    form = _bookmark_and_newsletter_form(
-        request, practice)
-    if isinstance(form, HttpResponseRedirect):
-        return form
-    context = _home_page_context_for_entity(request, practice)
-    context['form'] = form
-    context['parent_code'] = practice.ccg_id
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
-
-
-@handle_bad_request
-def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    tag_filter = _get_measure_tag_filter(request.GET)
-    practices = Practice.objects.filter(
-        ccg=requested_ccg).filter(
-            setting=4).order_by('name')
-    form = _bookmark_and_newsletter_form(
-        request, requested_ccg)
-    if isinstance(form, HttpResponseRedirect):
-        return form
-    else:
-        context = {
-            'ccg': requested_ccg,
-            'practices': practices,
-            'page_id': ccg_code,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(
-                request, requested_ccg),
-            'tag_filter': tag_filter
-        }
-        return render(request, 'measures_for_one_ccg.html', context)
-
-
-def measure_for_one_ccg(request, measure, ccg_code):
-    ccg = get_object_or_404(PCT, code=ccg_code)
-    measure = get_object_or_404(Measure, pk=measure)
-    context = {
-        'ccg': ccg,
-        'measure': measure,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
-    }
-    return render(request, 'measure_for_one_ccg.html', context)
-
-
-def measure_for_one_practice(request, measure, practice_code):
-    practice = get_object_or_404(Practice, code=practice_code)
-    measure = get_object_or_404(Measure, pk=measure)
-    context = {
-        'practice': practice,
-        'measure': measure,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
-    }
-    return render(request, 'measure_for_one_practice.html', context)
-
-
-def finalise_signup(request):
-    """Handle mailchimp signups.
-
-    Then redirect the logged in user to the CCG they last bookmarked, or if
-    they're not logged in, just go straight to the homepage -- both
-    with a message.
-
-    This method should be configured as the LOGIN_REDIRECT_URL,
-    i.e. the view that is called following any successful login, which
-    in our case is always performed by _handle_bookmark_and_newsletter_post.
-
-    """
-    # Users who are logged in are *REDIRECTED* here, which means the
-    # form is never shown.
-    next_url = None
-    if 'newsletter_email' in request.session:
-        if request.POST:
-            success = mailchimp_subscribe(
-                request,
-                request.POST['email'], request.POST['first_name'],
-                request.POST['last_name'], request.POST['organisation'],
-                request.POST['job_title']
-            )
-            if success:
-                messages.success(
-                    request,
-                    'You have successfully signed up for the newsletter.')
-            else:
-                messages.error(
-                    request,
-                    'There was a problem signing you up for the newsletter.')
-
-        else:
-            # Show the signup form
-            return render(request, 'newsletter_signup.html')
-    if not request.user.is_authenticated():
-        if 'alerts_requested' in request.session:
-            # Their first alert bookmark signup
-            del(request.session['alerts_requested'])
-            messages.success(
-                request, "Thanks, you're now subscribed to monthly alerts.")
-        if next_url:
-            return redirect(next_url)
-        else:
-            return redirect(request.session.get('came_from', 'home'))
-    else:
-        # The user is signing up to at least the second bookmark
-        # in this session.
-        last_bookmark = request.user.profile.most_recent_bookmark()
-        next_url = last_bookmark.dashboard_url()
-        messages.success(
-            request,
-            mark_safe("You're now subscribed to monthly "
-                      "alerts about <em>%s</em>." %
-                      last_bookmark.topic()))
-        return redirect(next_url)
-
-
-def analyse(request):
-    if request.method == 'POST':
-        # should this be the _bookmark_and_newsletter_form?
-        form = _handle_bookmark_and_newsletter_post(
-            request,
-            SearchBookmark,
-            SearchBookmarkForm,
-            'url', 'name'
-        )
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        # Note that the (hidden) URL field is filled via javascript on
-        # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(
-            initial={'email': getattr(request.user, 'email', '')})
-    return render(request, 'analyse.html', {'form': form})
-
-
-def mailchimp_subscribe(
-        request, email, first_name, last_name,
-        organisation, job_title):
-    """Subscribe `email` to newsletter.
-
-    Returns boolean indicating success
-    """
-    del(request.session['newsletter_email'])
-    email_hash = hashlib.md5(email).hexdigest()
-    data = {
-        'email_address': email,
-        'status': 'subscribed',
-        'merge_fields': {
-            'FNAME': first_name,
-            'LNAME': last_name,
-            'MMERGE3': organisation,
-            'MMERGE4': job_title
-        }
-    }
-    client = MailChimp(
-        get_env_setting('MAILCHIMP_USER'),
-        get_env_setting('MAILCHIMP_API_KEY'))
-    try:
-        client.lists.members.get(
-            list_id=settings.MAILCHIMP_LIST_ID,
-            subscriber_hash=email_hash)
-        return True
-    except HTTPError:
-        try:
-            client.lists.members.create(
-                list_id=settings.MAILCHIMP_LIST_ID, data=data)
-            return True
-        except HTTPError:
-            # things like blacklisted emails, etc
-            logger.warn("Unable to subscribe %s to newsletter", email)
-            return False
 
 
 def _authenticate_possibly_new_user(email):
@@ -889,126 +1036,3 @@ def _handle_bookmark_and_newsletter_post(
         else:
             return redirect('newsletter-signup')
     return form
-
-
-@handle_bad_request
-def measures_for_one_practice(request, code):
-    p = get_object_or_404(Practice, code=code)
-    tag_filter = _get_measure_tag_filter(request.GET)
-    form = _bookmark_and_newsletter_form(
-        request, p)
-    if isinstance(form, HttpResponseRedirect):
-        return form
-    else:
-        context = {
-            'practice': p,
-            'page_id': code,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(request, p),
-            'tag_filter': tag_filter
-        }
-        return render(request, 'measures_for_one_practice.html', context)
-
-
-def gdoc_view(request, doc_id):
-    try:
-        gdoc_id = settings.GDOC_DOCS[doc_id]
-    except KeyError:
-        raise Http404("No doc named %s" % doc_id)
-    url = 'https://docs.google.com/document/d/%s/pub?embedded=true' % gdoc_id
-    page = requests.get(url)
-    tree = html.fromstring(page.text)
-
-    content = '<style>' + ''.join(
-        [html.tostring(child)
-         for child in tree.head.xpath('//style')]) + '</style>'
-    content += ''.join(
-        [html.tostring(child)
-         for child in tree.body])
-    context = {
-        'content': content
-    }
-    return render(request, 'gdoc.html', context)
-
-
-def tariff(request, code=None):
-    products = DMDProduct.objects.filter(
-        tariffprice__isnull=False,
-        bnf_code__isnull=False
-    ).distinct().order_by('name')
-    codes = []
-    if code:
-        codes = [code]
-    if 'codes' in request.GET:
-        codes.extend(request.GET.getlist('codes'))
-    if codes:
-        presentations = Presentation.objects.filter(bnf_code__in=codes)
-    else:
-        presentations = []
-    context = {
-        'bnf_codes': codes,
-        'presentations': presentations,
-        'products': products,
-        'chart_title': 'Tariff prices for ' + ', '.join(
-            [x.product_name for x in presentations])
-    }
-    return render(request, 'tariff.html', context)
-
-
-def feedback_view(request):
-    url = request.GET.get('from_url', '/')
-    if request.POST:
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            user_name = form.cleaned_data['name'].strip()
-            user_email_addr = form.cleaned_data['email'].strip()
-            send_feedback_mail(
-                user_name=user_name,
-                user_email_addr=user_email_addr,
-                subject=form.cleaned_data['subject'].strip(),
-                message=form.cleaned_data['message'],
-                url=url,
-            )
-
-            msg = ("Thanks for sending your feedback/query! A copy of the "
-                   "message has been sent to you at {}. Please check your spam "
-                   "folder for our reply.".format(user_email_addr))
-            messages.success(request, msg)
-
-            if is_safe_url(url, allowed_hosts=[request.get_host()]):
-                redirect_url = url
-            else:
-                logger.error(u'Unsafe redirect URL: {}'.format(url))
-                redirect_url = '/'
-            return HttpResponseRedirect(redirect_url)
-    else:
-        form = FeedbackForm()
-
-    show_warning = '/practice/' in url
-
-    return render(request, 'feedback.html', {
-        'form': form,
-        'show_warning': show_warning
-    })
-
-
-##################################################
-# Custom HTTP errors
-##################################################
-def custom_500(request):
-    type_, value, traceback = sys.exc_info()
-    context = {}
-    if 'canceling statement due to statement timeout' in unicode(value):
-        context['reason'] = ("The database took too long to respond.  If you "
-                             "were running an analysis with multiple codes, "
-                             "try again with fewer.")
-    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1 or
-       request.is_ajax()):
-        return HttpResponse(context['reason'], status=500)
-    else:
-        return render(request, '500.html', context, status=500)
-
-
-# This view deliberately triggers an error
-def error(request):
-    raise RuntimeError('Deliberate error triggered for testing purposes')
