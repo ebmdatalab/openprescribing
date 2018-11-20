@@ -16,6 +16,7 @@ var modules = [
   'bar-charts',
   'tariff-charts',
   'measures',
+  'spending-chart',
 ];
 
 var files = modules.map((x) => `./src/${x}.js`);
