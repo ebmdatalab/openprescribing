@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Spending for {{ entity_name }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ entity_name }}</h1>
+
+<div id="monthly-totals-chart"></div>
+
+<hr/>
+
+<form class="form pull-right" action="">
+  <select name="breakdown_date" class="form-control js-submit-on-change">
+    <option>Change date</option>
+    {% for date in available_dates %}
+      <option value="{{ date|date:"Y-m-d" }}">{{ date|date:"F Y" }}</option>
+    {% endfor %}
+  </select>
+</form>
+<h2>
+  {% if breakdown_is_estimate %}Estimated cost{% else %}Cost{%endif%}
+  breakdown for {{ breakdown_date|date:"F Y" }}
+</h2>
+
+{% if breakdown_is_estimate %}
+  <div class="alert alert-info">
+    These costs are estimated, produced by combining Drug Tariff and Price Concession data
+    for {{ breakdown_date|date:"F Y" }} with the latest available prescribing data for
+    {{ last_prescribing_date|date:"F Y" }}
+  </div>
+{% endif %}
+
+<br>
+<div id="breakdown-table-wrapper" class="hide">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>BNF code</th>
+        <th>Presentation</th>
+        <th>Quantity</th>
+        <th>Tariff cost</th>
+        <th>Additional concessions cost</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% conditional_js 'spending-chart' %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+
+{{ breakdown|json_script:"breakdown-data" }}
+{{ monthly_totals|json_script:"monthly-totals-data" }}
+
+<script>
+  var breakdownData = JSON.parse(document.getElementById('breakdown-data').innerHTML);
+  var $wrapper = $('#breakdown-table-wrapper');
+  $wrapper.find('table').DataTable({
+    data: breakdownData,
+    pageLength: 25,
+    order: [],
+    columns: [
+      {},
+      {},
+      {render: $.fn.dataTable.render.number(',', '.', 0, '' ), className: "text-right"},
+      {render: $.fn.dataTable.render.number(',', '.', 0, '£' ), className: "text-right"},
+      {render: $.fn.dataTable.render.number(',', '.', 0, '£' ), className: "text-right"},
+    ]
+  });
+  $wrapper.removeClass('hide');
+</script>
+{% endblock %}

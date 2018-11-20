@@ -128,6 +128,13 @@ urlpatterns = [
         frontend_views.all_england_price_per_unit_by_presentation,
         name='all_england_price_per_unit_by_presentation'),
 
+    # Spending
+    # (This must go above Measures because of the measure_for_practices_in_ccg
+    # pattern)
+    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/spending/$',
+        frontend_views.spending_for_one_ccg,
+        name='spending_for_one_ccg'),
+
     # Measures
     url(r'^measure/$',
         frontend_views.all_measures,
@@ -151,7 +158,6 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
-
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),

@@ -17,7 +17,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.db import connection
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Max, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -35,7 +35,7 @@ from common.utils import get_env_setting
 from common.utils import parse_date
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
-from dmd.models import DMDProduct
+from dmd.models import DMDProduct, NCSOConcession
 from frontend.forms import FeedbackForm
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
@@ -629,6 +629,143 @@ def mailchimp_subscribe(
             # things like blacklisted emails, etc
             logger.warn("Unable to subscribe %s to newsletter", email)
             return False
+
+
+##################################################
+# Spending
+##################################################
+
+def _ncso_spending_for_entity(entity, entity_type):
+    if entity_type != 'CCG':
+        raise NotImplementedError()
+    prescribing_table = 'vw__presentation_summary_by_ccg'
+    end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
+    start_date = _date_add(end_date, year=-1)
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT MAX(processing_date) FROM {prescribing_table}'.format(
+                prescribing_table=prescribing_table))
+        last_prescribing_date = cursor.fetchone()[0]
+        sql = _ncso_spending_query(prescribing_table=prescribing_table)
+        params = {
+            'pct_id': entity.code,
+            'start_date': start_date,
+            'end_date': end_date,
+            'last_prescribing_date': last_prescribing_date
+        }
+        cursor.execute("""
+            SELECT month, SUM(tariff_cost), SUM(additional_cost), is_estimate
+            FROM ({}) AS subquery
+            GROUP BY month, is_estimate ORDER BY month
+            """.format(sql),
+            params)
+        return cursor.fetchall()
+
+
+def _ncso_spending_breakdown_for_entity(entity, entity_type, month):
+    if entity_type != 'CCG':
+        raise NotImplementedError()
+    prescribing_table = 'vw__presentation_summary_by_ccg'
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT MAX(processing_date) FROM {prescribing_table}'.format(
+                prescribing_table=prescribing_table))
+        last_prescribing_date = cursor.fetchone()[0]
+        sql = _ncso_spending_query(prescribing_table=prescribing_table)
+        params = {
+            'pct_id': entity.code,
+            'last_prescribing_date': last_prescribing_date,
+            'month': month,
+            'start_date': _date_add(month, month=-1),
+            'end_date': month,
+        }
+        cursor.execute("""
+            SELECT bnf_code, product_name, quantity, tariff_cost, additional_cost
+            FROM ({}) AS subquery
+            WHERE month=%(month)s
+            ORDER BY additional_cost DESC, tariff_cost DESC
+            """.format(sql),
+            params)
+        return cursor.fetchall()
+
+
+def _date_add(d, year=0, month=0, day=0):
+    return d.__class__(
+        year=d.year + year,
+        month=d.month + month,
+        day=d.day + day
+    )
+
+
+def _ncso_spending_query(prescribing_table='frontend_presciption'):
+    sql = """
+        SELECT
+          dt.date AS month,
+          product.bnf_code AS bnf_code,
+          product.name AS product_name,
+          SUM(rx.quantity) AS quantity,
+          SUM(dt.price_pence * (rx.quantity / vmpp.qtyval) / 100) AS tariff_cost,
+          SUM(COALESCE((ncso.price_concession_pence - dt.price_pence) * (rx.quantity / vmpp.qtyval), 0) / 100) AS additional_cost,
+          dt.date > %(last_prescribing_date)s AS is_estimate
+        FROM
+          dmd_tariffprice AS dt
+        JOIN
+          dmd_product AS product
+        ON
+          dt.product_id=product.dmdid
+        JOIN
+          dmd_vmpp AS vmpp
+        ON
+          vmpp.vppid=dt.vmpp_id
+        LEFT JOIN
+          dmd_ncsoconcession AS ncso
+        ON
+          ncso.vmpp_id = dt.vmpp_id
+          AND ncso.date = dt.date
+        JOIN
+          {prescribing_table} AS rx
+        ON
+          rx.presentation_code = product.bnf_code
+          AND
+          (
+            rx.processing_date = dt.date
+            OR
+            (
+              rx.processing_date = %(last_prescribing_date)s
+              AND
+              dt.date > rx.processing_date
+            )
+          )
+        WHERE dt.date > %(start_date)s AND dt.date <= %(end_date)s AND rx.pct_id = %(pct_id)s
+        GROUP BY
+          month,
+          bnf_code,
+          product_name
+        ORDER BY month
+        """
+    return sql.format(prescribing_table=prescribing_table)
+
+
+def spending_for_one_ccg(request, ccg_code):
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    monthly_totals = _ncso_spending_for_entity(ccg, 'CCG')
+    end_date = max(row[0] for row in monthly_totals)
+    last_prescribing_date = max(row[0] for row in monthly_totals if not row[3])
+    breakdown_date = request.GET.get('breakdown_date')
+    breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    breakdown = _ncso_spending_breakdown_for_entity(ccg, 'CCG', breakdown_date)
+    context = {
+        'entity_type': 'CCG',
+        'entity_name': ccg.name,
+        'monthly_totals': monthly_totals,
+        'available_dates': [row[0] for row in reversed(monthly_totals)],
+        'breakdown': breakdown,
+        'breakdown_date': breakdown_date,
+        'breakdown_is_estimate': breakdown_date > last_prescribing_date,
+        'last_prescribing_date': last_prescribing_date
+    }
+    return render(request, 'spending_for_one_entity.html', context)
+
 
 
 ##################################################
