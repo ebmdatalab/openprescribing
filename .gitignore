@@ -44,3 +44,4 @@ ansible/.vagrant
 ansible/vagrant.retry
 openprescribing/envdir/
 venv/
+tmp
