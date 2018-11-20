@@ -109,7 +109,7 @@ toml==0.9.4               # via pre-commit
 tqdm==4.14.0
 unicodecsv==0.14.1        # via tablib
 uritemplate==3.0.0        # via google-api-python-client
-urllib3==1.22             # via requests, selenium
+urllib3==1.24.1           # via requests, selenium
 virtualenv==16.0.0        # via pre-commit
 watchdog==0.8.3           # via when-changed
 when-changed==0.3.0
