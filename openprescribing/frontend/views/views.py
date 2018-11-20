@@ -46,7 +46,7 @@ from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
 from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
-from frontend.models import Practice, PCT, Section
+from frontend.models import Practice, PCT, STP, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
@@ -205,6 +205,27 @@ def ccg_home_page(request, ccg_code):
 
 
 ##################################################
+# STPs
+##################################################
+
+def all_stps(request):
+    stps = STP.objects.order_by('name')
+    context = {
+        'stps': stps
+    }
+    return render(request, 'all_stps.html', context)
+
+
+def stp_home_page(request, stp_code):
+    stp = get_object_or_404(STP, ons_code=stp_code)
+    ccgs = PCT.objects.filter(stp=stp).order_by('name')
+    context = _home_page_context_for_entity(request, stp)
+    context['ccgs'] = ccgs
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
 # All England
 ##################################################
 
@@ -283,6 +304,14 @@ def measure_for_all_ccgs(request, measure):
     return render(request, 'measure_for_all_ccgs.html', context)
 
 
+def measure_for_all_stps(request, measure):
+    measure = get_object_or_404(Measure, id=measure)
+    context = {
+        'measure': measure
+    }
+    return render(request, 'measure_for_all_stps.html', context)
+
+
 def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
@@ -305,6 +334,18 @@ def measure_for_one_ccg(request, measure, ccg_code):
             'prescribing').current_at
     }
     return render(request, 'measure_for_one_ccg.html', context)
+
+
+def measure_for_one_stp(request, measure, stp_code):
+    stp = get_object_or_404(STP, ons_code=stp_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'stp': stp,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_stp.html', context)
 
 
 @handle_bad_request
@@ -350,6 +391,21 @@ def measures_for_one_ccg(request, ccg_code):
         return render(request, 'measures_for_one_ccg.html', context)
 
 
+@handle_bad_request
+def measures_for_one_stp(request, stp_code):
+    requested_stp = get_object_or_404(STP, ons_code=stp_code)
+    tag_filter = _get_measure_tag_filter(request.GET)
+    ccgs = PCT.objects.filter(stp=requested_stp).order_by('name')
+
+    context = {
+        'stp': requested_stp,
+        'ccgs': ccgs,
+        'page_id': stp_code,
+        'tag_filter': tag_filter
+    }
+    return render(request, 'measures_for_one_stp.html', context)
+
+
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
@@ -362,6 +418,19 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
         'measure': measure
     }
     return render(request, 'measure_for_practices_in_ccg.html', context)
+
+
+def measure_for_ccgs_in_stp(request, stp_code, measure):
+    requested_stp = get_object_or_404(STP, ons_code=stp_code)
+    measure = get_object_or_404(Measure, id=measure)
+    ccgs = PCT.objects.filter(stp=requested_stp).order_by('name')
+    context = {
+        'stp': requested_stp,
+        'ccgs': ccgs,
+        'page_id': stp_code,
+        'measure': measure
+    }
+    return render(request, 'measure_for_ccgs_in_stp.html', context)
 
 
 ##################################################
@@ -804,7 +873,13 @@ def _home_page_context_for_entity(request, entity):
         entity_type = 'practice'
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
+        mv_filter['practice_id'] = None
         entity_type = 'CCG'
+    elif isinstance(entity, STP):
+        mv_filter['stp_id'] = entity.ons_code
+        mv_filter['pct_id'] = None
+        mv_filter['practice_id'] = None
+        entity_type = 'STP'
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
@@ -822,23 +897,27 @@ def _home_page_context_for_entity(request, entity):
             pk=extreme_measurevalue['measure_id'])
     else:
         extreme_measure = None
-    ppu_date = _specified_or_last_date(request, 'ppu')
-    total_possible_savings = _total_savings(entity, ppu_date)
+
     measures_count = Measure.objects.count()
-    return {
+
+    context = {
         'measure': extreme_measure,
         'measures_count': measures_count,
         'entity': entity,
         'entity_type': entity_type,
-        'entity_price_per_unit_url': '{}_price_per_unit'.format(
-            entity_type.lower()),
         'measures_for_one_entity_url': 'measures_for_one_{}'.format(
             entity_type.lower()),
-        'possible_savings': total_possible_savings,
-        'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
         'parent_code': None
     }
+
+    if entity_type in ['practice', 'ccg']:
+        context['entity_price_per_unit_url'] = '{}_price_per_unit'.format(
+            entity_type.lower()),
+        context['possible_savings'] = _total_savings(entity, ppu_date)
+        context['date'] = _specified_or_last_date(request, 'ppu')
+
+    return context
 
 
 def _all_england_ppu_savings(entity_type, date):

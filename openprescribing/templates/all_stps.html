@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}All STPs{% endblock %}
+{% block active_class %}stp{% endblock %}
+
+{% block content %}
+
+<h1>All STPs</h1>
+
+<p>Search for a STP by name or code, and see how this STP's GP prescribing compares with its peers across the NHS in England</p>
+
+<input class="form-control" id="search" placeholder="Search by name or code, e.g. London" />
+
+<ul class="list-unstyled" id="all-results">
+{% for stp in stps %}
+<li><a class="stp" href="{% url 'stp_home_page' stp.ons_code %}">{{ stp.name }} ({{ stp.ons_code }})</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var inputSearch = '#search',
+  resultsList = '#all-results',
+  allItems = [];
+{% for stp in stps %}
+var stp = {
+    name: '{{ stp.name }}',
+    code: '{{ stp.ons_code }}',
+    url: "{% url 'stp_home_page' stp.ons_code %}"
+};
+allItems.push(stp);
+{% endfor %}
+</script>
+{% conditional_js 'list-filter' %}
+{% endblock %}

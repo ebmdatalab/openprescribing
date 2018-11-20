@@ -28,16 +28,18 @@
     {% if entity_type == 'practice' %}
       Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
     {% else %}
-      Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
+      Each chart shows the results for the {{ entity_type|upper }}, plus deciles across all {{ entity_type|upper }}s in the NHS in England.
     {% endif %}
     <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
   </p>
 {% endif %}
 
   <div class="row">
-    <div class="col-md-6">
-      {% include '_alert_signup_form.html' %}
-    </div>
+    {% if entity_type == 'practice' or entity_type == 'ccg' %}
+      <div class="col-md-6">
+        {% include '_alert_signup_form.html' %}
+      </div>
+    {% endif %}
     <div class="col-md-6">
       <div class="form-group">
         <label>Sort prescribing measures by:</label>

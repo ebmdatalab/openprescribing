@@ -138,8 +138,22 @@ var utils = {
   _rollUpByOrg: function(data, orgType) {
     var rolled = {};
     _.each(data.data, function(d) {
-      var id = (orgType === 'practice') ? d.practice_id : d.pct_id;
-      var name = (orgType === 'practice') ? d.practice_name : d.pct_name;
+      var id;
+      var name;
+
+      if (orgType == 'practice') {
+        id = d.practice_id;
+        name = d.practice_name;
+      } else if (orgType == 'CCG') {
+        id = d.pct_id;
+        name = d.pct_name;
+      } else if (orgType == 'STP') {
+        id = d.stp_id;
+        name = d.stp_name;
+      } else {
+        console.log('unexpected orgType: ' + orgType);
+      }
+
       if (id in rolled) {
         rolled[id].data.push(d);
       } else {
@@ -241,8 +255,7 @@ var utils = {
       if (options.isCostBasedMeasure) {
         if (options.rollUpBy === 'measure_id') {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practice ' : 'CCG ';
+          perf.costSavings += options.orgType;
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
             humanize.numberFormat(perf.potentialSavings50th, 0) +
@@ -252,9 +265,8 @@ var utils = {
             'to be achievable.)';
         } else {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practices ' : 'CCGs ';
-          perf.costSavings += 'had prescribed at the median ratio ' +
+          perf.costSavings += options.orgType;
+          perf.costSavings += 's had prescribed at the median ratio ' +
             'or better, then ';
           perf.costSavings += (options.orgType === 'practice') ?
             'this CCG ' : 'NHS England ';
@@ -262,9 +274,8 @@ var utils = {
             humanize.numberFormat(perf.potentialSavings50th, 0) +
             ' less. (We use the national median as a suggested ' +
             'target because by definition, 50% of ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practices ' : 'CCGs ';
-          perf.costSavings += 'were already prescribing ' +
+          perf.costSavings += options.orgType;
+          perf.costSavings += 's were already prescribing ' +
             'at this level or better, so we think it ought to be achievable.)';
         }
       }
@@ -356,7 +367,7 @@ var utils = {
       // We want measure charts to link to the
       // measure-by-all-practices-in-CCG page.
       chartTitle = d.name;
-      chartTitleUrl = '/ccg/';
+      chartTitleUrl = '/' + options.orgType.toLowerCase() + '/';
       if (options.specificMeasures) {
         var thisMeasure = _.findWhere(
           options.specificMeasures, {measure: d.id});
@@ -375,7 +386,7 @@ var utils = {
       chartTitleUrl = '/' + options.orgType.toLowerCase() +
         '/' + d.id + '/measures/';
       measureId = options.measure;
-      measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
+      measureForAllPracticesUrl = '/' + options.orgType.toLowerCase() + '/' + d.id + '/' + measureId;
     }
     var orgId;
     if (options.rollUpBy == 'org_id') {
@@ -384,13 +395,10 @@ var utils = {
       orgId = options.orgId;
     }
     var isAggregateEntity = ( ! orgId);
-    if (options.orgType == 'practice') {
-      oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
-      tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
-    } else {
-      oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
-      tagsFocusUrl = '/ccg/' + orgId + '/measures/?tags=' + d.tagsFocus;
-    }
+
+    oneEntityUrl = '/measure/' + measureId + '/' + options.orgType.toLowerCase() + '/' + orgId + '/';
+    tagsFocusUrl = '/' + options.orgType.toLowerCase() + '/' + orgId + '/measures/?tags=' + d.tagsFocus;
+
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
@@ -439,6 +447,7 @@ var utils = {
     return {
       measureUrl: measureUrl,
       isCCG: options.orgType == 'CCG',
+      isSTP: options.orgType == 'STP',
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
@@ -620,8 +629,17 @@ var utils = {
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
-    var orgIDColumn = (chartData.isCCG) ? 'pct_id' : 'practice_id';
-    var orgNameColumn = (chartData.isCCG) ? 'pct_name' : 'practice_name';
+
+    if (chartData.isSTP) {
+      var orgIDColumn = 'stp_id';
+      var orgNameColumn = 'stp_name';
+    } else if (chartData.isCCG) {
+      var orgIDColumn = 'pct_id';
+      var orgNameColumn = 'pct_name';
+    } else {
+      var orgIDColumn = 'practice_id';
+      var orgNameColumn ='practice_name';
+    }
     var table = chartData.data.map(function(d) {
       return [
           d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,

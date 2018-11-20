@@ -77,6 +77,17 @@ class STP(models.Model):
     ons_code = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
+    @property
+    def code(self):
+        return self.ons_code
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
 
 class PCT(models.Model):
     '''

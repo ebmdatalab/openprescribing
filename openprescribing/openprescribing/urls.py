@@ -94,6 +94,12 @@ urlpatterns = [
         redirect_if_tags_query(frontend_views.ccg_home_page),
         name='ccg_home_page'),
 
+    # STPs
+    url(r'^stp/$', frontend_views.all_stps, name='all_stps'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/$',
+        frontend_views.stp_home_page,
+        name='stp_home_page'),
+
     # All England
     url(r'^all-england/$',
         frontend_views.all_england,
@@ -136,6 +142,9 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_all_ccgs,
         name='measure_for_all_ccgs'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/$',
+        frontend_views.measure_for_all_stps,
+        name='measure_for_all_stps'),
 
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
         'practice/(?P<practice_code>[A-Z\d]+)/$',
@@ -144,6 +153,9 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_ccg,
         name='measure_for_one_ccg'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/(?P<stp_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_stp,
+        name='measure_for_one_stp'),
 
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
@@ -151,10 +163,16 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_stp,
+        name='measures_for_one_stp'),
 
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_ccgs_in_stp,
+        name='measure_for_ccgs_in_stp'),
 
     # Tariffs
     url(r'^tariff/$', frontend_views.tariff,

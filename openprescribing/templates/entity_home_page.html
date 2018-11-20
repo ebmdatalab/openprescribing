@@ -16,7 +16,7 @@
   <div class="col-md-6">
     <h1>{{ entity.cased_name }}</h1>
     {% if entity_type == 'CCG' %}
-      <p>There are {{ practices.count }} practices currently in this {{ entity_type }}. <a id="showall" href="#">&raquo; show them...</a></p>
+      <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
       <ul class="list-unstyled" id="practices">
       {% for p in practices %}
         <li class="hidden">
@@ -25,6 +25,17 @@
         </li>
       {% endfor %}
       </ul>
+
+    {% elif entity_type == 'STP' %}
+      <p>There are {{ ccgs.count }} CCGs in this STP.</p>
+      <ul class="list-unstyled" id="ccgs">
+      {% for ccg in ccgs %}
+        <li>
+          <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg }}</a>
+        </li>
+      {% endfor %}
+      </ul>
+
     {% else %}
       <p>Address: {{ entity.address_pretty }}</p>
       {% if entity.ccg %}
@@ -78,38 +89,40 @@
   </div>
 </div>
 
-<hr>
+{% if entity_type == 'practice' or entity_type == 'ccg' %}
+  <hr>
 
-<div class="row" >
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
-      <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
-      {% if possible_savings %}
-      <div class="col-md-4 ppu-on-landing-page bigtext">
-        <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
+  <div class="row" >
+    <div class="col-md-6">
+      <div class="landing-panel">
+        <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
+        <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
+        {% if possible_savings %}
+        <div class="col-md-4 ppu-on-landing-page bigtext">
+          <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
+        </div>
+        <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type }} could have saved
+          this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
+        </div>
+        {% else %}
+        <div class="bigtext">
+          <span>
+            ☺ No savings this month!
+          </span>
+        </div>
+        <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
+        {% endif %}
       </div>
-      <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type }} could have saved
-        this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
+    </div>
+    <hr class="visible-sm">
+    <div class="col-md-6">
+      <div class="landing-panel">
+        <h3>Sign up for alerts or updates</h3>
+        {% include '_alert_signup_form.html' %}
       </div>
-      {% else %}
-      <div class="bigtext">
-        <span>
-          ☺ No savings this month!
-        </span>
-      </div>
-      <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
-      {% endif %}
     </div>
   </div>
-  <hr class="visible-sm">
-  <div class="col-md-6">
-    <div class="landing-panel">
-      <h3>Sign up for alerts or updates</h3>
-      {% include '_alert_signup_form.html' %}
-    </div>
-  </div>
-</div>
+{% endif %}
 
 <hr>
 
