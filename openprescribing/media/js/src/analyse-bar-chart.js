@@ -68,7 +68,7 @@ var barChart = {
   },
 
   _getCategoriesFromSeries: function (series) {
-    return series.data.map(function(d) { return d.name + ' (' + d.id + ')'; });
+    return series.data.map(function(d) { return d.name; });
   },
 
   update: function(chart, month, ratio, title, formatter, playing, yAxisMax) {
