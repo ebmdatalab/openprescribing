@@ -299,24 +299,26 @@ def all_measures(request):
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
     context = {
-        'measure': measure
+        'measure': measure,
+        'org_type': 'CCG',
     }
-    return render(request, 'measure_for_all_ccgs.html', context)
+    return render(request, 'measure_for_all_orgs.html', context)
 
 
 def measure_for_all_stps(request, measure):
     measure = get_object_or_404(Measure, id=measure)
     context = {
-        'measure': measure
+        'measure': measure,
+        'org_type': 'STP',
     }
-    return render(request, 'measure_for_all_stps.html', context)
+    return render(request, 'measure_for_all_orgs.html', context)
 
 
 def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
-        'practice': practice,
+        'org': practice,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
@@ -328,24 +330,26 @@ def measure_for_one_ccg(request, measure, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
-        'ccg': ccg,
+        'org_type': 'CCG',
+        'org': ccg,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
     }
-    return render(request, 'measure_for_one_ccg.html', context)
+    return render(request, 'measure_for_one_org.html', context)
 
 
 def measure_for_one_stp(request, measure, stp_code):
     stp = get_object_or_404(STP, ons_code=stp_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
-        'stp': stp,
+        'org_type': 'STP',
+        'org': stp,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
     }
-    return render(request, 'measure_for_one_stp.html', context)
+    return render(request, 'measure_for_one_org.html', context)
 
 
 @handle_bad_request
@@ -380,7 +384,8 @@ def measures_for_one_ccg(request, ccg_code):
         return form
     else:
         context = {
-            'ccg': requested_ccg,
+            'org_type': 'CCG',
+            'org': requested_ccg,
             'practices': practices,
             'page_id': ccg_code,
             'form': form,
@@ -388,7 +393,7 @@ def measures_for_one_ccg(request, ccg_code):
                 request, requested_ccg),
             'tag_filter': tag_filter
         }
-        return render(request, 'measures_for_one_ccg.html', context)
+        return render(request, 'measures_for_one_org.html', context)
 
 
 @handle_bad_request
@@ -398,12 +403,13 @@ def measures_for_one_stp(request, stp_code):
     ccgs = PCT.objects.filter(stp=requested_stp).order_by('name')
 
     context = {
-        'stp': requested_stp,
+        'org_type': 'STP',
+        'org': requested_stp,
         'ccgs': ccgs,
         'page_id': stp_code,
         'tag_filter': tag_filter
     }
-    return render(request, 'measures_for_one_stp.html', context)
+    return render(request, 'measures_for_one_org.html', context)
 
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):

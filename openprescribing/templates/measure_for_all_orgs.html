@@ -2,12 +2,12 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %} {{ measure }} by all CCGs{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %} {{ measure }} by all {{ org_type }}s{% endblock %}
+{% block active_class %}stp{% endblock %}
 
 {% block content %}
 
-<h1>{{measure.name}} by all CCGs</h1>
+<h1>{{measure.name}} by all {{ org_type }}s</h1>
 
 {% if measure.url %}
 <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
@@ -15,7 +15,7 @@
 
 {% include '_measure_header.html' %}
 
-<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
+<p>{{ org_type }}s are ordered by mean percentile over the past six months. Each chart shows the results for the individual {{ org_type }}, plus deciles across all {{ org_type }}s in the NHS in England.</p>
 
 <div id="measures">
 <div id="charts" class="row">
@@ -53,7 +53,7 @@ text
           {{{ chartExplanation }}}
           <ul>
             <li>
-              <a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a>
+              <a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual CCGs</a>
             </li>
           {{#if numeratorCanBeQueried }}
             {{#if oneEntityUrl }}
@@ -62,7 +62,6 @@ text
               </li>
              {{/if}}
            {{/if}}
-          </ul>
         </div>
     </div>
 </div>
@@ -75,7 +74,7 @@ text
 {% block extra_js %}
 <script>
 var measureData = {
-    'orgType': 'CCG',
+    'orgType': '{{ org_type }}',
     'measure': '{{ measure.id }}',
     'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
     'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},

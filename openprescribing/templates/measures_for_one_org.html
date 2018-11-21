@@ -2,8 +2,8 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Prescribing measures for {{ ccg.name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %}Prescribing measures for {{ org.name }}{% endblock %}
+{% block active_class %}{{ org_type|lower }}{% endblock %}
 
 {% block extra_css %}
 <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
@@ -11,11 +11,12 @@
 
 {% block content %}
 
-<h1>CCG: {{ ccg.name }}</h1>
+<h1>{{ org_type }}: {{ org.name }}</h1>
 
 <div class="row" id="intro">
+  {% if org_type == 'CCG' %}
   <div class="col-md-6">
-    <p>Standard practices currently in this CCG:</p>
+    <p>Standard practices currently in this {{ org_type }}:</p>
     <ul class="list-unstyled" id="practices">
     {% for p in practices %}
       <li
@@ -35,12 +36,23 @@
   <div class="col-md-6" id="map-container">
     <div id="map-measure"></div>
   </div>
-
+  {% elif org_type == 'STP' %}
+  <div class="col-md-6">
+    <p>CCGs in this STP:</p>
+    <ul class="list-unstyled" id="ccgs">
+    {% for ccg in ccgs %}
+      <li>
+        <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 </div>
 
 <hr/>
 
-{% include '_measures_heading.html' with entity_type='CCG' %}
+{% include '_measures_heading.html' %}
 {% include '_measures_panel.html' %}
 
 <hr/>
@@ -52,9 +64,9 @@
 <script>
  var measureData = {
     'tags': '{{ tag_filter.tags|join:"," }}',
-    'orgId': '{{ ccg.code }}',
-    'orgName': '{{ ccg.name }}',
-    'orgType': 'CCG'
+    'orgId': '{{ org.code }}',
+    'orgName': '{{ org.name }}',
+    'orgType': '{{ org_type }}'
 };
 </script>
 {% conditional_js 'measures' %}
