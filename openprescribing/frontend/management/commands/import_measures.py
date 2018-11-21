@@ -287,6 +287,7 @@ class MeasureCalculation(object):
         number_rows_written += self.calculate_practices()
         number_rows_written += self.calculate_orgs('ccg')
         number_rows_written += self.calculate_orgs('stp')
+        number_rows_written += self.calculate_orgs('regtm')  # Regional Team
 
         if number_rows_written == 0:
             raise CommandError(
@@ -406,7 +407,7 @@ class MeasureCalculation(object):
         load time performance.
 
         """
-        fieldnames = ['stp_id', 'pct_id', 'measure_id', 'num_items', 'numerator',
+        fieldnames = ['regional_team_id', 'stp_id', 'pct_id', 'measure_id', 'num_items', 'numerator',
                       'denominator', 'month',
                       'percentile', 'calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
@@ -554,6 +555,7 @@ class MeasureCalculation(object):
                  % self.table_name('global'))
         count = 0
         for d in self.get_rows_as_dicts(self.table_name('global')):
+            regtm_cost_savings = {}
             stp_cost_savings = {}
             ccg_cost_savings = {}
             practice_cost_savings = {}
@@ -579,7 +581,10 @@ class MeasureCalculation(object):
                     d, prefix='ccg')
                 stp_cost_savings = convertSavingsToDict(
                     d, prefix='stp')
+                regtm_cost_savings = convertSavingsToDict(
+                    d, prefix='regtm')
                 mg.cost_savings = {
+                    'regional_team': regtm_cost_savings,
                     'stp': stp_cost_savings,
                     'ccg': ccg_cost_savings,
                     'practice': practice_cost_savings
@@ -587,7 +592,9 @@ class MeasureCalculation(object):
             practice_deciles = convertDecilesToDict(d, prefix='practice')
             ccg_deciles = convertDecilesToDict(d, prefix='ccg')
             stp_deciles = convertDecilesToDict(d, prefix='stp')
+            regtm_deciles = convertDecilesToDict(d, prefix='regtm')
             mg.percentiles = {
+                'regional_team': regtm_deciles,
                 'stp': stp_deciles,
                 'ccg': ccg_deciles,
                 'practice': practice_deciles,

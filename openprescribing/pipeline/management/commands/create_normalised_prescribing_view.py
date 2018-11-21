@@ -14,6 +14,7 @@ class Command(BaseCommand):
         sql = """
         SELECT
           prescribing.sha AS sha,
+          ccgs.regional_team_id AS regional_team,
           ccgs.stp_id AS stp,
           practices.ccg_id AS pct,
           prescribing.practice AS practice,

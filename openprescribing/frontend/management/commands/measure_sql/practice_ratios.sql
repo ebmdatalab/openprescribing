@@ -4,7 +4,8 @@
   SELECT prescribing.month AS month,
          practices.code AS practice_id,
          ccg_id,
-         stp_id
+         stp_id,
+         regional_team_id
   FROM {hscic}.practices AS practices
   CROSS JOIN (
     SELECT month
@@ -50,6 +51,7 @@ SELECT
   practice_id,
   pct_id,
   stp_id,
+  regional_team_id,
   month,
   IF(IS_INF(calc_value) OR IS_NAN(calc_value), NULL, calc_value) AS calc_value
   {aliased_denominators}
@@ -68,6 +70,7 @@ FROM (
         practices_with_months.practice_id,
         practices_with_months.ccg_id AS pct_id,
         practices_with_months.stp_id,
+        practices_with_months.regional_team_id,
         DATE(practices_with_months.month) AS month
         {numerator_aliases}
         {denominator_aliases}
