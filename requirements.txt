@@ -40,7 +40,6 @@ easyprocess==0.2.3        # via pyvirtualdisplay
 enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.13.1
-first==2.0.1              # via pip-tools
 flake8==3.6.0
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.6.2
@@ -77,7 +76,7 @@ pandas==0.23.4
 paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
 pbr==4.2.0                # via mock
-pip-tools==2.0.2
+pip-tools==3.1.0
 pre-commit==1.12.0
 premailer==3.0.1
 protobuf==3.4.0           # via google-api-core, googleapis-common-protos
