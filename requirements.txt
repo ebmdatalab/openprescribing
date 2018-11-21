@@ -44,10 +44,10 @@ flake8==3.6.0
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.6.2
 google-auth-oauthlib==0.2.0  # via pandas-gbq
-google-auth==1.4.1        # via google-api-core, google-auth-oauthlib, google-cloud-bigquery, google-cloud-storage, pandas-gbq
+google-auth==1.4.1        # via google-api-core, google-auth-oauthlib, google-cloud-bigquery, pandas-gbq
 google-cloud-bigquery==0.30.0
 google-cloud-core==0.28.0  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.7.0
+google-cloud-storage==1.13.0
 google-resumable-media==0.3.1  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.5.3  # via google-api-core
 graphviz==0.10.1
