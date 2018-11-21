@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}{{measure.name}} by CCGs in {{ stp.name }}{% endblock %}
+{% block title %}{{measure.name}} by CCGs in {{ stp.name }} STP{% endblock %}
 {% block active_class %}stp{% endblock %}
 
 {% block extra_css %}
@@ -11,7 +11,7 @@
 
 {% block content %}
 
-<h1>{{measure.name}} by CCGs in {{ stp.name }}</h1>
+<h1>{{measure.name}} by CCGs in {{ stp.name }} STP</h1>
 
 {% include '_measure_header.html' %}
 
