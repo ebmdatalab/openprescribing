@@ -911,11 +911,11 @@ def _home_page_context_for_entity(request, entity):
         'parent_code': None
     }
 
-    if entity_type in ['practice', 'ccg']:
+    if entity_type in ['practice', 'CCG']:
         context['entity_price_per_unit_url'] = '{}_price_per_unit'.format(
-            entity_type.lower()),
-        context['possible_savings'] = _total_savings(entity, ppu_date)
+            entity_type.lower())
         context['date'] = _specified_or_last_date(request, 'ppu')
+        context['possible_savings'] = _total_savings(entity, context['date'])
 
     return context
 
