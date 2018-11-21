@@ -73,6 +73,22 @@ class Section(models.Model):
         ordering = ["bnf_id"]
 
 
+class RegionalTeam(models.Model):
+    code = models.CharField(max_length=3, primary_key=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    open_date = models.DateField(null=True, blank=True)
+    close_date = models.DateField(null=True, blank=True)
+    address = models.CharField(max_length=400, null=True, blank=True)
+    postcode = models.CharField(max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
+
 class STP(models.Model):
     ons_code = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -99,9 +115,10 @@ class PCT(models.Model):
         ('H', 'Hub'),
         ('Unknown', 'Unknown')
     )
-    stp = models.ForeignKey(STP, null=True)
     code = models.CharField(max_length=3, primary_key=True,
                             help_text='Primary care trust code')
+    regional_team = models.ForeignKey(RegionalTeam, null=True)
+    stp = models.ForeignKey(STP, null=True)
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,

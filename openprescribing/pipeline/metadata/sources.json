@@ -22,7 +22,15 @@
         "description": "The definitive source of NHS organisational data",
         "publisher": "Health & Social Care Information Centre",
         "publication_schedule": "end of each month",
-        "index_url": "http://systems.hscic.gov.uk/data/ods/datadownloads/othernhs/index_html",
+        "index_url": "https://files.digital.nhs.uk/assets/ods/current/eccg.zip",
+        "notes": "Quarterly and monthly diffs are also available",
+        "core_data": true
+    },
+    "region_details": {
+        "title": "Addresses and dates for regions above CCG level",
+        "publisher": "Health & Social Care Information Centre",
+        "publication_schedule": "end of each month",
+        "index_url": "https://files.digital.nhs.uk/assets/ods/current/eauth.zip",
         "notes": "Quarterly and monthly diffs are also available",
         "core_data": true
     },
@@ -101,7 +109,7 @@
         "description": "The definitive source of NHS organisational data: includes practice setting and practice-CCG membership",
         "publisher": "Health & Social Care Information Centre",
         "publication_schedule": "end of each month",
-        "index_url": "http://systems.hscic.gov.uk/data/ods/datadownloads/gppractice/index_html",
+        "index_url": "https://files.digital.nhs.uk/assets/ods/current/epraccur.zip",
         "notes": "Quarterly and monthly diffs are also available",
         "core_data": true
     },

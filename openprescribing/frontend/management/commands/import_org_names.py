@@ -29,6 +29,7 @@ class Command(BaseCommand):
                 code=row[0]
             )
             ccg.name = row[1]
+            ccg.regional_team_id = row[2]
             ccg.address = ', '.join([r for r in row[4:9] if r])
             ccg.postcode = row[9]
             od = row[10]
