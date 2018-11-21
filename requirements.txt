@@ -17,7 +17,7 @@ cffi==1.11.5              # via bcrypt, cryptography, pynacl
 cfgv==1.1.0               # via pre-commit
 chardet==3.0.4            # via requests
 click==6.7                # via pip-tools
-coverage==4.5.1
+coverage==4.5.2
 cryptography==2.3.1       # via paramiko, pyopenssl, requests
 cssselect==1.0.1          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
