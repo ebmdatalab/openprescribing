@@ -95,7 +95,7 @@ pytz==2018.7
 pyvirtualdisplay==0.2.1
 pyyaml==3.13              # via aspy.yaml, pre-commit, tablib, watchdog
 raven==6.9.0
-requests-futures==0.9.7
+requests-futures==0.9.8
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.20.1
 rsa==3.4.2                # via google-auth, oauth2client
