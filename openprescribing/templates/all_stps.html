@@ -14,7 +14,7 @@
 
 <ul class="list-unstyled" id="all-results">
 {% for stp in stps %}
-<li><a class="stp" href="{% url 'stp_home_page' stp.ons_code %}">{{ stp.name }} ({{ stp.ons_code }})</a></li>
+<li><a class="stp" href="{% url 'stp_home_page' stp.ons_code %}">{{ stp.name }}</a></li>
 {% endfor %}
 </ul>
 
