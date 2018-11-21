@@ -92,7 +92,7 @@ pyopenssl==18.0.0         # via requests
 pyquery==1.4.0
 python-dateutil==2.7.5
 python3-openid==3.1.0     # via django-allauth
-pytz==2016.7
+pytz==2018.7
 pyvirtualdisplay==0.2.1
 pyyaml==3.13              # via aspy.yaml, pre-commit, tablib, watchdog
 raven==6.9.0
