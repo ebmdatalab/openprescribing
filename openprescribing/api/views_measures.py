@@ -81,14 +81,21 @@ def measure_global(request, format=None):
 def measure_numerators_by_org(request, format=None):
     measure = request.query_params.get('measure', None)
     org = utils.param_to_list(request.query_params.get('org', []))[0]
-    if len(org) == 3:
-        org_selector = 'pct_id'
-    elif len(org) == 6:
-        org_selector = 'practice_id'
-    elif len(org) == 9:
-        org_selector = 'stp_id'
+    if request.query_params.get('org_type') in request.query_params:
+        org_selector = request.query_params['org_type']
     else:
-        assert False, 'Unexpected org: {}'.format(org)
+        # This is here for backwards compatibility, in case anybody else is
+        # using the API.  Now we have measures for regional teams, we cannot
+        # guess the type of an org by the length of its code, as both CCGs and
+        # Regional Teams have codes of length 3.
+        if len(org) == 3:
+            org_selector = 'pct_id'
+        elif len(org) == 6:
+            org_selector = 'practice_id'
+        elif len(org) == 9:
+            org_selector = 'stp_id'
+        else:
+            assert False, 'Unexpected org: {}'.format(org)
 
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
@@ -113,7 +120,7 @@ def measure_numerators_by_org(request, format=None):
             '%', '%%'
         )
 
-        if org_selector == 'stp_id':
+        if org_selector in ['stp_id', 'regional_team_id']:
             extra_join = '''
             INNER JOIN frontend_pct
             ON frontend_pct.code = p.pct_id
@@ -181,6 +188,24 @@ def measure_numerators_by_org(request, format=None):
     if request.accepted_renderer.format == 'csv':
         response['content-disposition'] = "attachment; filename=%s" % filename
     return response
+
+
+@api_view(['GET'])
+def measure_by_region(request, format=None):
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    aggregate = bool(request.query_params.get('aggregate'))
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
+    measure_values = MeasureValue.objects.by_region(orgs, measures, tags)
+    if aggregate:
+        measure_values = measure_values.aggregate_by_measure_and_month()
+
+    rsp_data = {
+        'measures': _roll_up_measure_values(measure_values, 'region')
+    }
+    return Response(rsp_data)
 
 
 @api_view(['GET'])
@@ -272,6 +297,12 @@ def _roll_up_measure_values(measure_values, org_type):
                 measure_value_data.update({
                     'stp_id': measure_value.stp_id,
                     'stp_name': measure_value.stp.name,
+                })
+        elif org_type == 'region':
+            if measure_value.regional_team_id:
+                measure_value_data.update({
+                    'region_id': measure_value.regional_team_id,
+                    'region_name': measure_value.regional_team.name,
                 })
         else:
             assert False

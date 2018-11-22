@@ -23,6 +23,8 @@ urlpatterns = [
         name='measure'),
     url(r'^measure_by_stp/$', views_measures.measure_by_stp,
         name='measure_by_stp'),
+    url(r'^measure_by_region/$', views_measures.measure_by_region,
+        name='measure_by_region'),
     url(r'^measure_by_ccg/$', views_measures.measure_by_ccg,
         name='measure_by_ccg'),
     url(r'^measure_numerators_by_org/$',
