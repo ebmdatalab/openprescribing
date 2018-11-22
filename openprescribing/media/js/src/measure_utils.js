@@ -19,6 +19,7 @@ var utils = {
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
     urls.panelMeasuresUrl += this._getOneOrMore(options, 'aggregate', 'aggregate');
+    urls.panelMeasuresUrl += this._getOneOrMore(options, 'parentOrgType', 'parent_org_type');
     return urls;
   },
 
@@ -150,6 +151,9 @@ var utils = {
       } else if (orgType == 'STP') {
         id = d.stp_id;
         name = d.stp_name;
+      } else if (orgType == 'Region') {
+        id = d.region_id;
+        name = d.region_name;
       } else {
         console.log('unexpected orgType: ' + orgType);
       }
@@ -342,6 +346,9 @@ var utils = {
       if (isGlobal) {
         var p = d.percentiles;
         var org = options.orgType.toLowerCase();
+        if (org == 'region') {
+          org = 'regional_team';
+        }
         d.y = (p && p[org] && p[org][centile] !== null) ?
           parseFloat(p[org][centile]) : null;
       } else {
@@ -446,8 +453,6 @@ var utils = {
     }
     return {
       measureUrl: measureUrl,
-      isCCG: options.orgType == 'CCG',
-      isSTP: options.orgType == 'STP',
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
@@ -630,16 +635,22 @@ var utils = {
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
 
-    if (chartData.isSTP) {
-      var orgIDColumn = 'stp_id';
-      var orgNameColumn = 'stp_name';
-    } else if (chartData.isCCG) {
-      var orgIDColumn = 'pct_id';
-      var orgNameColumn = 'pct_name';
-    } else {
+    if (orgType == 'practice') {
       var orgIDColumn = 'practice_id';
       var orgNameColumn ='practice_name';
+    } else if (orgType == 'CCG') {
+      var orgIDColumn = 'pct_id';
+      var orgNameColumn = 'pct_name';
+    } else if (orgType == 'STP') {
+      var orgIDColumn = 'stp_id';
+      var orgNameColumn = 'stp_name';
+    } else if (orgType == 'Region') {
+      var orgIDColumn = 'region_id';
+      var orgNameColumn = 'region_name';
+    } else {
+      console.log('unexpected orgType: ' + orgType);
     }
+
     var table = chartData.data.map(function(d) {
       return [
           d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,

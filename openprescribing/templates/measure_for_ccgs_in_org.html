@@ -2,8 +2,8 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}{{measure.name}} by CCGs in {{ stp.name }} STP{% endblock %}
-{% block active_class %}stp{% endblock %}
+{% block title %}{{measure.name}} by CCGs in {{ org.name }} {{ org_type }}{% endblock %}
+{% block active_class %}{{ org_type|lower }}{% endblock %}
 
 {% block extra_css %}
 <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
@@ -11,7 +11,7 @@
 
 {% block content %}
 
-<h1>{{measure.name}} by CCGs in {{ stp.name }} STP</h1>
+<h1>{{measure.name}} by CCGs in {{ org.name }} {{ org_type }}</h1>
 
 {% include '_measure_header.html' %}
 
@@ -79,9 +79,10 @@ text
 {% block extra_js %}
 <script>
 var measureData = {
-    'orgId': '{{ stp.code }}',
-    'orgName': '{{ stp.name }}',
+    'orgId': '{{ org.code }}',
+    'orgName': '{{ org.name }}',
     'orgType': 'CCG',
+    'parentOrgType': '{{ org_type_param }}',
     'measure': '{{ measure.id }}',
     'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
     'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},

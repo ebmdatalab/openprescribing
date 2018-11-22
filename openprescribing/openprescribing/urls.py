@@ -100,6 +100,12 @@ urlpatterns = [
         frontend_views.stp_home_page,
         name='stp_home_page'),
 
+    # Regional teams
+    url(r'^region/$', frontend_views.all_regions, name='all_regions'),
+    url(r'^region/(?P<region_code>[A-Z\d]+)/$',
+        frontend_views.region_home_page,
+        name='region_home_page'),
+
     # All England
     url(r'^all-england/$',
         frontend_views.all_england,
@@ -145,6 +151,9 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/$',
         frontend_views.measure_for_all_stps,
         name='measure_for_all_stps'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/region/$',
+        frontend_views.measure_for_all_regions,
+        name='measure_for_all_regions'),
 
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
         'practice/(?P<practice_code>[A-Z\d]+)/$',
@@ -156,6 +165,9 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/(?P<stp_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_stp,
         name='measure_for_one_stp'),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/region/(?P<region_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_region,
+        name='measure_for_one_region'),
 
     url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
@@ -166,6 +178,9 @@ urlpatterns = [
     url(r'^stp/(?P<stp_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_stp,
         name='measures_for_one_stp'),
+    url(r'^region/(?P<region_code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_region,
+        name='measures_for_one_region'),
 
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
@@ -173,6 +188,9 @@ urlpatterns = [
     url(r'^stp/(?P<stp_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_ccgs_in_stp,
         name='measure_for_ccgs_in_stp'),
+    url(r'^region/(?P<region_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_ccgs_in_region,
+        name='measure_for_ccgs_in_region'),
 
     # Tariffs
     url(r'^tariff/$', frontend_views.tariff,

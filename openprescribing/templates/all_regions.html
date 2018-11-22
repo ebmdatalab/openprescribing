@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}All Regional Teams{% endblock %}
+{% block active_class %}region{% endblock %}
+
+{% block content %}
+
+<h1>All Regional Teams</h1>
+
+<ul class="list-unstyled" id="all-results">
+{% for region in regions %}
+<li><a class="region" href="{% url 'region_home_page' region.code %}">{{ region.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

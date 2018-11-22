@@ -46,7 +46,7 @@ from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
 from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
-from frontend.models import Practice, PCT, STP, Section
+from frontend.models import Practice, PCT, STP, RegionalTeam, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
@@ -226,6 +226,27 @@ def stp_home_page(request, stp_code):
 
 
 ##################################################
+# Regional teams
+##################################################
+
+def all_regions(request):
+    regions = RegionalTeam.objects.order_by('name')
+    context = {
+        'regions': regions
+    }
+    return render(request, 'all_regions.html', context)
+
+
+def region_home_page(request, region_code):
+    region = get_object_or_404(RegionalTeam, code=region_code)
+    ccgs = PCT.objects.filter(regional_team=region).order_by('name')
+    context = _home_page_context_for_entity(request, region)
+    context['ccgs'] = ccgs
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
 # All England
 ##################################################
 
@@ -314,10 +335,20 @@ def measure_for_all_stps(request, measure):
     return render(request, 'measure_for_all_orgs.html', context)
 
 
+def measure_for_all_regions(request, measure):
+    measure = get_object_or_404(Measure, id=measure)
+    context = {
+        'measure': measure,
+        'org_type': 'Region',
+    }
+    return render(request, 'measure_for_all_orgs.html', context)
+
+
 def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
     context = {
+        'org_type_param': 'practice',
         'org': practice,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
@@ -331,6 +362,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
     measure = get_object_or_404(Measure, pk=measure)
     context = {
         'org_type': 'CCG',
+        'org_type_param': 'ccg',
         'org': ccg,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
@@ -344,7 +376,22 @@ def measure_for_one_stp(request, measure, stp_code):
     measure = get_object_or_404(Measure, pk=measure)
     context = {
         'org_type': 'STP',
+        'org_type_param': 'stp',
         'org': stp,
+        'measure': measure,
+        'current_at': ImportLog.objects.latest_in_category(
+            'prescribing').current_at
+    }
+    return render(request, 'measure_for_one_org.html', context)
+
+
+def measure_for_one_region(request, measure, region_code):
+    region = get_object_or_404(RegionalTeam, code=region_code)
+    measure = get_object_or_404(Measure, pk=measure)
+    context = {
+        'org_type': 'Region',
+        'org_type_param': 'regional_team',
+        'org': region,
         'measure': measure,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
@@ -412,6 +459,22 @@ def measures_for_one_stp(request, stp_code):
     return render(request, 'measures_for_one_org.html', context)
 
 
+@handle_bad_request
+def measures_for_one_region(request, region_code):
+    requested_region = get_object_or_404(RegionalTeam, code=region_code)
+    tag_filter = _get_measure_tag_filter(request.GET)
+    ccgs = PCT.objects.filter(regional_team=requested_region).order_by('name')
+
+    context = {
+        'org_type': 'Region',
+        'org': requested_region,
+        'ccgs': ccgs,
+        'page_id': region_code,
+        'tag_filter': tag_filter
+    }
+    return render(request, 'measures_for_one_org.html', context)
+
+
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     requested_ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
@@ -431,12 +494,29 @@ def measure_for_ccgs_in_stp(request, stp_code, measure):
     measure = get_object_or_404(Measure, id=measure)
     ccgs = PCT.objects.filter(stp=requested_stp).order_by('name')
     context = {
-        'stp': requested_stp,
+        'org_type': 'STP',
+        'org_type_param': 'stp',
+        'org': requested_stp,
         'ccgs': ccgs,
         'page_id': stp_code,
         'measure': measure
     }
-    return render(request, 'measure_for_ccgs_in_stp.html', context)
+    return render(request, 'measure_for_ccgs_in_org.html', context)
+
+
+def measure_for_ccgs_in_region(request, region_code, measure):
+    requested_region = get_object_or_404(RegionalTeam, code=region_code)
+    measure = get_object_or_404(Measure, id=measure)
+    ccgs = PCT.objects.filter(regional_team=requested_region).order_by('name')
+    context = {
+        'org_type': 'Region',
+        'org_type_param': 'regional_team',
+        'org': requested_region,
+        'ccgs': ccgs,
+        'page_id': region_code,
+        'measure': measure
+    }
+    return render(request, 'measure_for_ccgs_in_org.html', context)
 
 
 ##################################################
@@ -886,6 +966,11 @@ def _home_page_context_for_entity(request, entity):
         mv_filter['pct_id'] = None
         mv_filter['practice_id'] = None
         entity_type = 'STP'
+    elif isinstance(entity, RegionalTeam):
+        mv_filter['regional_team_id'] = entity.code
+        mv_filter['pct_id'] = None
+        mv_filter['practice_id'] = None
+        entity_type = 'Region'
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
