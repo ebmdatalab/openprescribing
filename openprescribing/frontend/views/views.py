@@ -230,7 +230,7 @@ def stp_home_page(request, stp_code):
 ##################################################
 
 def all_regions(request):
-    regions = RegionalTeam.objects.order_by('name')
+    regions = RegionalTeam.objects.filter(close_date__isnull=True).order_by('name')
     context = {
         'regions': regions
     }
