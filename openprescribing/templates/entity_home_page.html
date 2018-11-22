@@ -26,7 +26,7 @@
       {% endfor %}
       </ul>
 
-    {% elif entity_type == 'STP' %}
+    {% elif entity_type == 'STP' or entity_type == 'Region' %}
       <p>There are {{ ccgs.count }} CCGs in this STP.</p>
       <ul class="list-unstyled" id="ccgs">
       {% for ccg in ccgs %}
