@@ -81,7 +81,7 @@ def measure_global(request, format=None):
 def measure_numerators_by_org(request, format=None):
     measure = request.query_params.get('measure', None)
     org = utils.param_to_list(request.query_params.get('org', []))[0]
-    if request.query_params.get('org_type') in request.query_params:
+    if 'org_type' in request.query_params:
         org_selector = request.query_params['org_type'] + '_id'
     else:
         # This is here for backwards compatibility, in case anybody else is
