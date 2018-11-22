@@ -10,6 +10,31 @@ CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 
 
 class MeasureValueQuerySet(models.QuerySet):
+    def by_region(self, org_ids, measure_ids=None, tags=None):
+        org_Q = Q()
+        for org_id in org_ids:
+            if len(org_id) == 3:
+                org_Q |= Q(regional_team_id=org_id)
+            else:
+                assert False, 'Unexpected org_id: {}'.format(org_id)
+
+        qs = self.select_related('measure').\
+            filter(
+                org_Q,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+                regional_team_id__isnull=False,
+            ).\
+            order_by('pct_id', 'measure_id', 'month')
+
+        if measure_ids:
+            qs = qs.filter(measure_id__in=measure_ids)
+
+        if tags:
+            qs = qs.filter(measure__tags__contains=tags)
+
+        return qs
+
     def by_stp(self, org_ids, measure_ids=None, tags=None):
         org_Q = Q()
         for org_id in org_ids:
@@ -23,6 +48,7 @@ class MeasureValueQuerySet(models.QuerySet):
                 org_Q,
                 pct_id__isnull=True,
                 practice_id__isnull=True,
+                stp_id__isnull=False,
             ).\
             order_by('pct_id', 'measure_id', 'month')
 
