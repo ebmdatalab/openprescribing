@@ -230,11 +230,12 @@ def measure_by_stp(request, format=None):
 def measure_by_ccg(request, format=None):
     measures = utils.param_to_list(request.query_params.get('measure', None))
     orgs = utils.param_to_list(request.query_params.get('org', []))
+    org_type = request.query_params.get('parent_org_type', 'pct')
     aggregate = bool(request.query_params.get('aggregate'))
     if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
     tags = utils.param_to_list(request.query_params.get('tags', []))
-    measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
+    measure_values = MeasureValue.objects.by_ccg(org_type, orgs, measures, tags)
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 

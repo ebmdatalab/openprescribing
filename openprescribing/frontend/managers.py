@@ -60,15 +60,11 @@ class MeasureValueQuerySet(models.QuerySet):
 
         return qs
 
-    def by_ccg(self, org_ids, measure_ids=None, tags=None):
+    def by_ccg(self, org_type, org_ids, measure_ids=None, tags=None):
         org_Q = Q()
+        org_type_key = org_type + '_id'
         for org_id in org_ids:
-            if len(org_id) == 9:
-                org_Q |= Q(stp_id=org_id)
-            elif len(org_id) == 3:
-                org_Q |= Q(pct_id=org_id)
-            else:
-                assert False, 'Unexpected org_id: {}'.format(org_id)
+            org_Q |= Q(**{org_type_key: org_id})
 
         qs = self.select_related('pct', 'measure').\
             filter(
