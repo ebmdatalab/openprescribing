@@ -29,7 +29,7 @@ class Command(BaseCommand):
         wb = load_workbook(filename=filename)
         rows = wb.active.rows
 
-        headers = rows[0]
+        headers = next(rows)
         assert headers[0].value == 'BNF Code'
         assert headers[2].value == 'VMPP / AMPP SNOMED Code'
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             with connection.cursor() as cursor:
-                for row in rows[1:]:
+                for row in rows:
                     bnf_code = row[0].value
                     if not bnf_code:
                         continue
