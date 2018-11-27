@@ -635,20 +635,20 @@ var utils = {
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
 
-    if (orgType == 'practice') {
+    if (chartData.orgType == 'practice') {
       var orgIDColumn = 'practice_id';
       var orgNameColumn ='practice_name';
-    } else if (orgType == 'CCG') {
+    } else if (chartData.orgType == 'CCG') {
       var orgIDColumn = 'pct_id';
       var orgNameColumn = 'pct_name';
-    } else if (orgType == 'STP') {
+    } else if (chartData.orgType == 'STP') {
       var orgIDColumn = 'stp_id';
       var orgNameColumn = 'stp_name';
-    } else if (orgType == 'Region') {
+    } else if (chartData.orgType == 'Region') {
       var orgIDColumn = 'region_id';
       var orgNameColumn = 'region_name';
     } else {
-      console.log('unexpected orgType: ' + orgType);
+      console.log('unexpected orgType: ' + chartData.orgType);
     }
 
     var table = chartData.data.map(function(d) {

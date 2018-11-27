@@ -998,7 +998,7 @@ describe('Measures', function() {
       var result = mu.getChartDataAsTable({
         "chartId": "ktt9_uti_antibiotics",
         "chartTitle": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
-        "isCCG": true,
+        "orgType": "CCG",
         "data": [
           {
             "denominator": 1744,
