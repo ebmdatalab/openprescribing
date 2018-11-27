@@ -235,7 +235,7 @@ class TestAlertViews(TestCase):
         self._create_user_and_login(email)
         response = self._post_org_signup('03V', email=email)
         self.assertEqual(response.context['user'].email, email)
-        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measures_for_one_org.html')
         self.assertContains(response, "You're now subscribed")
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(OrgBookmark.objects.count(), 1)
@@ -498,7 +498,7 @@ class TestFrontendViews(TestCase):
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measure_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measure_for_one_org.html')
 
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
@@ -539,7 +539,7 @@ class TestFrontendViews(TestCase):
     def test_call_view_measure_ccg(self):
         response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measures_for_one_org.html')
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), 'CCG: NHS Corby')

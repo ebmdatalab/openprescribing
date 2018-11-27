@@ -1,10 +1,11 @@
 import datetime
 from django.core.management import call_command
 from django.test import TestCase
-from frontend.models import PCT
+from frontend.models import PCT, RegionalTeam
 
 
 def setUpModule():
+    RegionalTeam.objects.create(code='Y54')
     PCT.objects.create(code='06F',
                        name='NHS Bedfordshire')
 

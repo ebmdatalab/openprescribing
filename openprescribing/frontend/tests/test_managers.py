@@ -9,33 +9,33 @@ class MeasureValueManagerTests(TestCase):
     fixtures = ['one_month_of_measures']
 
     def test_by_ccg_with_no_org(self):
-        mvs = MeasureValue.objects.by_ccg([])
+        mvs = MeasureValue.objects.by_ccg('pct', [])
         self.assertEqual(len(mvs), 2)
 
     def test_by_ccg_with_org(self):
-        mvs = MeasureValue.objects.by_ccg(['04D'])
+        mvs = MeasureValue.objects.by_ccg('pct', ['04D'])
         self.assertEqual(len(mvs), 1)
 
     def test_by_ccg_with_orgs(self):
-        mvs = MeasureValue.objects.by_ccg(['04D', '02Q'])
+        mvs = MeasureValue.objects.by_ccg('pct', ['04D', '02Q'])
         self.assertEqual(len(mvs), 2)
 
     def test_by_ccg_with_measure(self):
-        mvs = MeasureValue.objects.by_ccg([], measure_ids=['cerazette'])
+        mvs = MeasureValue.objects.by_ccg('pct', [], measure_ids=['cerazette'])
         self.assertEqual(len(mvs), 2)
 
-        mvs = MeasureValue.objects.by_ccg([], measure_ids=['bananas'])
+        mvs = MeasureValue.objects.by_ccg('pct', [], measure_ids=['bananas'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_ccg_with_tag(self):
-        mvs = MeasureValue.objects.by_ccg([], tags=['core'])
+        mvs = MeasureValue.objects.by_ccg('pct', [], tags=['core'])
         self.assertEqual(len(mvs), 2)
 
-        mvs = MeasureValue.objects.by_ccg([], tags=['lowpriority'])
+        mvs = MeasureValue.objects.by_ccg('pct', [], tags=['lowpriority'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_ccg_with_tags(self):
-        mvs = MeasureValue.objects.by_ccg([], tags=['core', 'lowpriority'])
+        mvs = MeasureValue.objects.by_ccg('pct', [], tags=['core', 'lowpriority'])
         self.assertEqual(len(mvs), 0)
 
     def test_by_practice_with_no_org(self):
