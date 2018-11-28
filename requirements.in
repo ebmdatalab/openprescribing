@@ -56,7 +56,7 @@ mock
 django-debug-toolbar
 django-debug-toolbar-template-timings
 django-extensions
-fabric==1.13.1
+fabric==2.4.0
 flake8
 graphviz
 pip-tools
