@@ -50,11 +50,11 @@
   "lowpriority": {
     "name": "NHS England Low Priority",
     "description": [
-      "This is an <strong>experimental</strong> list of products ",
+      "This is a list of products ",
       "considered a low priority for NHS Funding ",
-      "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>;",
-      " we welcome feedback.  These are indicative only, and should be approached with caution ",
-      "(<a href=\"/faq/#measureinterpret\">read more</a>)."
+      "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>."
+    ]
+  },
   "lowpriorityconsultation": {
     "name": "NHS England Low Priority (Consultation)",
     "description": [
