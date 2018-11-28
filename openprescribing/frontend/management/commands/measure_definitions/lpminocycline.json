@@ -1,0 +1,42 @@
+{
+  "name": "NHS England Low Priority Treatment - Minocycline",
+  "title": [
+    "Minocycline cost per 1000 patients"
+  ],
+  "description": [
+    "Minocycline per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Minocycline is mainly used for acne, however there are various safety risks associated with its use. ",    
+    "<a href='https://cks.nice.org.uk/acne-vulgaris#!prescribinginfosub:10'>NICE CKS advises</a> ",
+    "Minocycline is not recommended for use in acne as it is associated with an increased risk of adverse effects such as drug-",
+    "induced lupus, skin pigmentation and hepatitis.",
+    "This is currently under consultation.  More details can be found on the <a href='https://www.england.nhs.uk/'>NHS England website</a>."
+ ],
+  "numerator_short": "Minocycline cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "antimicrobial",
+    "cost",
+    "safety",
+    "lowpriorityconsultation"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '0501030P0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
