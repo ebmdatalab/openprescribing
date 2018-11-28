@@ -74,7 +74,7 @@
       {
         targets: [1],
         render: function(data, type, row) {
-          return '<a href="'+ppuUrlPrefix+row[0]+'/price_per_unit/">'+data+'</a>';
+          return '<a href="'+ppuUrlPrefix+row.bnf_code+'/price_per_unit/">'+data+'</a>';
         }
       },
       {targets: [2, 3, 4], className: "text-right"},

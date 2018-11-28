@@ -131,7 +131,10 @@ urlpatterns = [
     # Spending
     # (This must go above Measures because of the measure_for_practices_in_ccg
     # pattern)
-    url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/spending/$',
+    url(r'^practice/(?P<entity_code>[A-Z\d]+)/spending/$',
+        frontend_views.spending_for_one_practice,
+        name='spending_for_one_practice'),
+    url(r'^ccg/(?P<entity_code>[A-Z\d]+)/spending/$',
         frontend_views.spending_for_one_ccg,
         name='spending_for_one_ccg'),
 

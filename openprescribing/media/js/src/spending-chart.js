@@ -11,10 +11,10 @@ $(function() {
 
   function rowToPoint(row, valueKey) {
     var point = {
-      date: parseDate(row[0]),
-      tariffCost: row[1],
-      addCost: row[2],
-      isEstimate: row[3]
+      date: parseDate(row.month),
+      tariffCost: row.tariff_cost,
+      addCost: row.additional_cost,
+      isEstimate: row.is_estimate
     };
     point.x = point.date;
     point.y = point[valueKey];
