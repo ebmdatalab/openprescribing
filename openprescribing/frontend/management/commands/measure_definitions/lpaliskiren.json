@@ -1,10 +1,10 @@
 {
-  "name": "NHS England Low Priority Treatment Consultation - Aliskerin",
+  "name": "NHS England Low Priority Treatment Consultation - Aliskiren",
   "title": [
-    "Aliskerin cost per 1000 patients"
+    "Aliskiren cost per 1000 patients"
   ],
   "description": [
-    "Cost of Aliskerin per 1000 patients"
+    "Cost of Aliskiren per 1000 patients"
   ],
   "why_it_matters": [
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
@@ -14,7 +14,7 @@
     "<br><br><strong>This measure is currently under consultation.  ",
     "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
    ],
-  "numerator_short": "Aliskerin cost (£)",
+  "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
