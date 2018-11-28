@@ -69,8 +69,8 @@ $(function() {
     valuePrefix: '£'
   };
   options.series = [
-    {name: 'Actual cost', data: actualCosts},
-    {name: 'Estimated cost', data: estimatedCosts, color: '#E97E38'}
+    {name: 'Actual cost', data: actualCosts, color: 'rgba(0, 0, 255, .8)'},
+    {name: 'Estimated cost', data: estimatedCosts, color: 'rgba(255, 0, 0, .8)'}
   ];
   var chart = Highcharts.chart('monthly-totals-chart', options);
 });
