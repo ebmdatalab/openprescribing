@@ -700,15 +700,20 @@ def _date_add(d, year=0, month=0, day=0):
 def _ncso_spending_query(prescribing_table='frontend_presciption'):
     sql = """
         SELECT
-          dt.date AS month,
+          ncso.date AS month,
           product.bnf_code AS bnf_code,
           product.name AS product_name,
           SUM(rx.quantity) AS quantity,
           SUM(dt.price_pence * (rx.quantity / vmpp.qtyval) / 100) AS tariff_cost,
           SUM(COALESCE((ncso.price_concession_pence - dt.price_pence) * (rx.quantity / vmpp.qtyval), 0) / 100) AS additional_cost,
-          dt.date > %(last_prescribing_date)s AS is_estimate
+          ncso.date > %(last_prescribing_date)s AS is_estimate
         FROM
+          dmd_ncsoconcession AS ncso
+        JOIN
           dmd_tariffprice AS dt
+        ON
+          ncso.vmpp_id = dt.vmpp_id
+          AND ncso.date = dt.date
         JOIN
           dmd_product AS product
         ON
@@ -716,27 +721,22 @@ def _ncso_spending_query(prescribing_table='frontend_presciption'):
         JOIN
           dmd_vmpp AS vmpp
         ON
-          vmpp.vppid=dt.vmpp_id
-        LEFT JOIN
-          dmd_ncsoconcession AS ncso
-        ON
-          ncso.vmpp_id = dt.vmpp_id
-          AND ncso.date = dt.date
+          vmpp.vppid=ncso.vmpp_id
         JOIN
           {prescribing_table} AS rx
         ON
           rx.presentation_code = product.bnf_code
           AND
           (
-            rx.processing_date = dt.date
+            rx.processing_date = ncso.date
             OR
             (
               rx.processing_date = %(last_prescribing_date)s
               AND
-              dt.date > rx.processing_date
+              ncso.date > rx.processing_date
             )
           )
-        WHERE dt.date > %(start_date)s AND dt.date <= %(end_date)s AND rx.pct_id = %(pct_id)s
+        WHERE ncso.date > %(start_date)s AND ncso.date <= %(end_date)s AND rx.pct_id = %(pct_id)s
         GROUP BY
           month,
           bnf_code,
