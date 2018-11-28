@@ -55,6 +55,13 @@
       "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>;",
       " we welcome feedback.  These are indicative only, and should be approached with caution ",
       "(<a href=\"/faq/#measureinterpret\">read more</a>)."
+  "lowpriorityconsultation": {
+    "name": "NHS England Low Priority (Consultation)",
+    "description": [
+      "This is an <strong>experimental</strong> list of products ",
+      "which NHS England ",
+      "<a href=\"https://www.england.nhs.uk/publication/nhs-england-board-meeting-papers-28-november-2018/\">",
+      "have proposed</a> to add to their Low Priority list"
     ]
   },
   "mentalhealth": {

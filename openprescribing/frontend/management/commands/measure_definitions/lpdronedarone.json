@@ -1,0 +1,45 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Dronedarone",
+  "title": [
+    "Dronedarone cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of Dronedarone per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Dronedarone was originally approved to prevent recurrence of atrial fibrillation, or to lower the heart rate ",
+    "in adults who have had or have non-permanent atrial fibrillation. In September 2011 this indication was restricted",
+    "to the maintenance of normal heart rhythm in ‘persistent’ or ‘paroxysmal’ atrial fibrillation after normal heart ",
+    "rhythm has been restored.",
+    "<a href='https://www.nice.org.uk/guidance/CG180'> NICE clinical guideline on Atrial Fibrillation</a> ",
+    "puts greater emphasis on rate rather than rhythm control and has clarified the place of dronedarone in the treatment pathway.",
+    "<br><br><strong>This measure is currently under consultation.  ",
+    "More details can be found on the <a href='https://www.england.nhs.uk/'>NHS England website</a>.</strong>"
+  ],
+  "numerator_short": "Dronedarone cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriorityconsultation",
+    "cardiovascular",
+    "safety"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '0203020X0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

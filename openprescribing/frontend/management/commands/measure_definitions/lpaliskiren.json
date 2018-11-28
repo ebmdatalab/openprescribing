@@ -1,0 +1,42 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Aliskerin",
+  "title": [
+    "Aliskerin cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of Aliskerin per 1000 patients"
+  ],
+  "why_it_matters": [
+    "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
+    "evidence of its effectiveness to determine its suitability for use in resistant hypertension.",
+    "Whilst aliskiren has shown comparable efficacy to other antihypertensive agents in terms of blood ",
+    "pressure reduction, its effects on mortality and long-term morbidity are currently unknown." ,
+    "<br><br><strong>This measure is currently under consultation.  ",
+    "More details can be found on the <a href='https://www.england.nhs.uk/'>NHS England website</a>.</strong>"
+   ],
+  "numerator_short": "Aliskerin cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriorityconsultation",
+    "cardiovascular"   
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '0205053A0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

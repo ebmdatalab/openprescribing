@@ -1,0 +1,46 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Higher Cost Insulin Pen Needles",
+  "title": [
+    "Cost per 1000 registered patients"
+  ],
+  "description": [
+    "Cost of higher cost (≥£5/box) insulin pen needles per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Insulin pen needles range in price between approximately £3.95 to £30.00 per box. There is no evidence that suggests ",
+    "that there are any significant differences between brands of needles, although there are reommendations about length of needle. ",
+    "NHS England is promoting the use of lower cost needles, i.e. those under £5 per box, which are already in widespread use across the NHS. ",
+    "<br><br><strong>This measure is currently under consultation.  ",
+    "More details can be found on the <a href='https://www.england.nhs.uk/'>NHS England website</a>.</strong>"
+  ],
+  "numerator_short": "Higher cost pen needles cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "efficacy",
+    "diabetes", 
+    "lowpriorityconsultation"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {hscic}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
+  "numerator_where": [
+    "(",
+    " (p.bnf_code LIKE '210109006%' OR p.bnf_code LIKE '210109007%' OR p.bnf_code LIKE '210109008%' OR p.bnf_code LIKE '210109009%')",
+    " AND p.bnf_name LIKE '%Needles%' ",
+    "AND r.median_price_per_unit >=0.05",
+    ")"
+  ],
+ "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
