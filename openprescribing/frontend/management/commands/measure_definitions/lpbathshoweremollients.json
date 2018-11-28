@@ -1,0 +1,44 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Bath and Shower emollients",
+  "title": [
+    "Bath and Shower emollients cost per 1000 patients"
+  ],
+  "description": [
+    "Bath and Shower emollients per 1000 patients"
+  ],
+  "why_it_matters": [
+  "The <a href='https://www.bmj.com/content/361/bmj.k1332'>BATHE study</a>",
+  "found that there was no evidence",
+  "of clinical benefit for using bath and shower emollients in the standard management of childhood eczema. ",
+  "‘Leave-on’ emollient moisturisers can still be used for treating eczema and these emollients can still be used as soap substitutes.",
+  "<br><br><strong>This measure is currently under consultation.  ",
+  "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+  ],
+  "numerator_short": "Bath and Shower emollients cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriorityconsultation",
+    "efficacy"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '1302011L0%' or bnf_code = '21220000128' or bnf_code ='21220000129' or bnf_code = '21220000130' ", 
+    "or bnf_code = '21220000209' or bnf_code = '21220000217' or bnf_code = '21220000227' or bnf_code = '21220000229') ",
+    "AND (bnf_code !='130201100AAAJAJ' AND bnf_code != '130201100AAAMAM')"
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

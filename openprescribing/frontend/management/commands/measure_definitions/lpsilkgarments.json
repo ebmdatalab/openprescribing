@@ -1,0 +1,43 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Silk Garments",
+  "title": [
+    "Silk Garments cost per 1000 patients"
+  ],
+  "description": [
+    "Silk Garments per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Silk Garments are knitted, medical grade silk clothing which are sometimes used ",
+    "as an adjunct to normal treatment for severe eczema and allergic skin conditions. ",
+    "The NIHR commissioned",
+    "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx'> CLOTHES trial</a> ",
+    "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS." ,
+    "<br><br><strong>This measure is currently under consultation.  ",
+    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+  ],
+  "numerator_short": "Silk Garments (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriorityconsultation",
+    "efficacy"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '2020%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}

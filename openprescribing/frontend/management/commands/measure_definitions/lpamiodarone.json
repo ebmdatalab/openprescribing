@@ -1,0 +1,42 @@
+{
+  "name": "NHS England Low Priority Treatment Consultation - Amiodarone",
+  "title": [
+    "Amiodarone cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of Amiodarone per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Amiodarone is used to treat severe cardiac rhythm disorders but also has the potential to cause severe toxicity and side-effects",
+    "and must be closely monitored. <a href='https://www.nice.org.uk/guidance/CG180'>NICE advise in their guidance for Atrial Fibrillation </a>",
+    "that amiodarone should not be used for long-term rate control.",
+    "<br><br><strong>This measure is currently under consultation.  ",
+    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+  ],
+  "numerator_short": "Amiodarone cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriorityconsultation",
+    "cardiovascular",
+    "safety"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code LIKE '0203020D0%')  "
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
