@@ -759,7 +759,7 @@ def spending_for_one_ccg(request, ccg_code):
         'entity_name': ccg.name,
         'monthly_totals': monthly_totals,
         'available_dates': [row[0] for row in reversed(monthly_totals)],
-        'breakdown': breakdown,
+        'breakdown': {'table': breakdown, 'ppu_url_prefix': '/ccg/%s/' % ccg.code},
         'breakdown_date': breakdown_date,
         'breakdown_is_estimate': breakdown_date > last_prescribing_date,
         'last_prescribing_date': last_prescribing_date
