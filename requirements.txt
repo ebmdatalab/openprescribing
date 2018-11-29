@@ -39,7 +39,7 @@ djangorestframework==3.7.3
 easyprocess==0.2.3        # via pyvirtualdisplay
 enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
-fabric==1.13.1
+fabric==1.14.1
 flake8==3.6.0
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.7.4
