@@ -83,7 +83,13 @@ def import_month(xls_file, date):
     wb = load_workbook(xls_file)
     rows = wb.active.rows
 
-    headers = [(c.value or '?').lower() for c in rows[2]]
+    # The first row is a title, and the second is empty
+    next(rows)
+    next(rows)
+
+    # The third row is column headings
+    header_row = next(rows)
+    headers = [(c.value or '?').lower() for c in header_row]
     assert headers == [
         'medicine',
         'pack size',
@@ -94,7 +100,7 @@ def import_month(xls_file, date):
     ]
 
     with transaction.atomic():
-        for row in rows[3:]:
+        for row in rows:
             values = [c.value for c in row]
             if all(v is None for v in values):
                 continue
