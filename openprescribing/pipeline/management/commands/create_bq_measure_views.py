@@ -20,6 +20,7 @@ class Command(BaseCommand):
             'opioid_total_ome',
             'practice_data_all_low_priority',
             'pregabalin_total_mg',
+            'vw__median_price_per_unit',
         ]:
             path = os.path.join(base_path, table_name + '.sql')
             with open(path, "r") as sql_file:
