@@ -27,6 +27,7 @@ class Command(BaseCommand):
         parser.add_argument('--ccg', action='store_true')
         parser.add_argument('--practice', action='store_true')
         parser.add_argument('--postcode', action='store_true')
+        parser.add_argument('--region', action='store_true')
 
     def handle(self, *args, **kwargs):
         self.verbose = (kwargs['verbosity'] > 1)
@@ -37,6 +38,8 @@ class Command(BaseCommand):
             self.fetch_and_extract_zipped_csv('eccg', 'ccg_details')
         if kwargs['postcode']:
             self.fetch_and_extract_zipped_csv('gridall', 'nhs_postcode_file')
+        if kwargs['region']:
+            self.fetch_and_extract_zipped_csv('eauth', 'region_details')
 
     def fetch_and_extract_zipped_csv(self, base_filename, dest_dirname):
         """Grab a zipfile from a url, and extract a CSV.
