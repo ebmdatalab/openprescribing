@@ -25,10 +25,4 @@ class Migration(migrations.Migration):
             field=django.contrib.gis.db.models.fields.PointField(
                 blank=True, null=True, srid=4326),
         ),
-
-        # This is now commented out because the SQL generated to execute
-        # set_centroids_without_args includes a reference to fiels which aren't
-        # created until migration 36.
-
-        # migrations.RunPython(set_centroids_without_args),
     ]
