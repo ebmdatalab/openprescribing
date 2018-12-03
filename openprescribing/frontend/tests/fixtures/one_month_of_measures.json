@@ -323,7 +323,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 1,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -354,7 +353,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 2,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -385,7 +383,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 3,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -416,7 +413,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 4,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -447,7 +443,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 13,
     "fields": {
       "measure": "cerazette2",
       "pct": "02Q",
@@ -478,7 +473,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 5,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -509,7 +503,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 6,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -540,7 +533,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 7,
     "fields": {
       "measure": "cerazette",
       "pct": "04D",
@@ -571,7 +563,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 8,
     "fields": {
       "measure": "cerazette",
       "pct": "03T",
@@ -602,7 +593,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 9,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -633,7 +623,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 10,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -664,7 +653,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 11,
     "fields": {
       "measure": "cerazette",
       "pct": "04D",
@@ -695,7 +683,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 12,
     "fields": {
       "measure": "cerazette",
       "pct": "03T",
