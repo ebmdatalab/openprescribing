@@ -1,7 +1,7 @@
 from datetime import date
 import os
 
-from google.cloud.exceptions import Conflict
+from google.cloud.exceptions import NotFound
 
 from django.core.management import call_command
 from django.db import connection
@@ -88,7 +88,7 @@ class CommandsTestCase(SimpleTestCase):
 
             try:
                 client.delete_table('normalised_prescribing_standard')
-            except Conflict:
+            except NotFound:
                 pass
 
             client.create_table_with_view(

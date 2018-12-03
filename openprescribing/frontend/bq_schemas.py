@@ -39,10 +39,14 @@ CCG_SCHEMA = build_schema(
     ('close_date', 'TIMESTAMP'),
     ('address', 'STRING'),
     ('postcode', 'STRING'),
+    ('stp_id', 'STRING'),
+    ('regional_team_id', 'STRING'),
 )
 
 PRESCRIBING_SCHEMA = build_schema(
     ('sha', 'STRING'),
+    ('regional_team', 'STRING'),
+    ('stp', 'STRING'),
     ('pct', 'STRING'),
     ('practice', 'STRING'),
     ('bnf_code', 'STRING'),
