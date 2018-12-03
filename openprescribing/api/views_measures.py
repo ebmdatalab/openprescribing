@@ -81,10 +81,20 @@ def measure_global(request, format=None):
 def measure_numerators_by_org(request, format=None):
     measure = request.query_params.get('measure', None)
     org = utils.param_to_list(request.query_params.get('org', []))[0]
-    if len(org) == 3:
-        org_selector = 'pct_id'
+    if 'org_type' in request.query_params:
+        org_selector = request.query_params['org_type'] + '_id'
     else:
-        org_selector = 'practice_id'
+        # This is here for backwards compatibility, in case anybody else is
+        # using the API.  Now we have measures for regional teams, we cannot
+        # guess the type of an org by the length of its code, as both CCGs and
+        # regional teams have codes of length 3.
+        if len(org) == 3:
+            org_selector = 'pct_id'
+        elif len(org) == 6:
+            org_selector = 'practice_id'
+        else:
+            assert False, 'Unexpected org: {}'.format(org)
+
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
@@ -108,21 +118,30 @@ def measure_numerators_by_org(request, format=None):
             '%', '%%'
         )
 
+        if org_selector in ['stp_id', 'regional_team_id']:
+            extra_join = '''
+            INNER JOIN frontend_pct
+            ON frontend_pct.code = p.pct_id
+            '''
+        else:
+            extra_join = ''
+
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
         # names
         query = '''
             WITH nice_names AS (
-            SELECT
-              bnf_code,
-              MAX(name) AS name
-            FROM
-              dmd_product
-            GROUP BY
-              bnf_code
-            HAVING
-              COUNT(*) = 1)
+              SELECT
+                bnf_code,
+                MAX(name) AS name
+              FROM
+                dmd_product
+              GROUP BY
+                bnf_code
+              HAVING
+                COUNT(*) = 1
+            )
             SELECT
               {org_selector} AS entity,
               presentation_code AS bnf_code,
@@ -139,6 +158,7 @@ def measure_numerators_by_org(request, format=None):
             INNER JOIN
               frontend_presentation pn
             ON p.presentation_code = pn.bnf_code
+            {extra_join}
             WHERE
               {org_selector} = %(org)s
               AND
@@ -153,6 +173,7 @@ def measure_numerators_by_org(request, format=None):
              numerator_selector=numerator_selector,
              three_months_ago=three_months_ago,
              numerator_where=numerator_where,
+             extra_join=extra_join,
         )
         params = {
             'org': org,
