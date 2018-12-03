@@ -10,99 +10,104 @@ CENTILES = ['10', '20', '30', '40', '50', '60', '70', '80', '90']
 
 
 class MeasureValueQuerySet(models.QuerySet):
-    def by_regional_team(self, org_ids, measure_ids=None, tags=None):
-        org_Q = Q()
-        for org_id in org_ids:
-            if len(org_id) == 3:
-                org_Q |= Q(regional_team_id=org_id)
-            else:
-                assert False, 'Unexpected org_id: {}'.format(org_id)
-
-        qs = self.select_related('measure').\
-            filter(
-                org_Q,
-                pct_id__isnull=True,
-                practice_id__isnull=True,
-                regional_team_id__isnull=False,
-            ).\
-            order_by('regional_team_id', 'measure_id', 'month')
-
+    def for_measures(self, measure_ids):
         if measure_ids:
-            qs = qs.filter(measure_id__in=measure_ids)
+            return self.filter(measure_id__in=measure_ids)
+        else:
+            return self
 
+    def for_tags(self, tags):
         if tags:
-            qs = qs.filter(measure__tags__contains=tags)
+            return self.filter(measure__tags__contains=tags)
+        else:
+            return self
+
+    def for_orgs(self, org_type, org_ids):
+        qs = self.select_related('measure', org_type)
+
+        if org_ids:
+            org_type_key = org_type + '_id'
+            org_Q = Q()
+
+            for org_id in org_ids:
+                org_Q |= Q(**{org_type_key: org_id})
+
+            qs = qs.filter(org_Q)
 
         return qs
 
-    def by_stp(self, org_ids, measure_ids=None, tags=None):
-        org_Q = Q()
-        for org_id in org_ids:
-            if len(org_id) == 9:
-                org_Q |= Q(stp_id=org_id)
+    def by_regional_team(self, org_ids=None, measure_ids=None, tags=None):
+        return self.by_org('regional_team', 'regional_team', org_ids, measure_ids, tags)
+
+    def by_stp(self, org_ids=None, measure_ids=None, tags=None):
+        return self.by_org('stp', 'stp', org_ids, measure_ids, tags)
+
+    def by_ccg(self, org_ids=None, measure_ids=None, tags=None):
+        return self.by_org('ccg', 'pct', org_ids, measure_ids, tags)
+
+    def by_practice(self, org_ids=None, measure_ids=None, tags=None):
+        if org_ids:
+            l = len(org_ids[0])
+            assert all(len(org_id) == l for org_id in org_ids)
+
+            if l == 3:
+                parent_org_type = 'pct'
+            elif l == 6:
+                parent_org_type = 'practice'
             else:
-                assert False, 'Unexpected org_id: {}'.format(org_id)
+                assert False, l
+        else:
+            parent_org_type = 'practice'
 
-        qs = self.select_related('measure').\
-            filter(
-                org_Q,
-                pct_id__isnull=True,
-                practice_id__isnull=True,
-                stp_id__isnull=False,
-            ).\
-            order_by('stp_id', 'measure_id', 'month')
+        return self.by_org('practice', parent_org_type, org_ids, measure_ids, tags)
 
-        if measure_ids:
-            qs = qs.filter(measure_id__in=measure_ids)
-        if tags:
-            qs = qs.filter(measure__tags__contains=tags)
+    def by_org(
+            self,
+            org_type,
+            parent_org_type=None,
+            org_ids=None,
+            measure_ids=None,
+            tags=None
+        ):
+        '''Return MeasureValues for org_type.
 
-        return qs
+        MeasureValues can be restricted to particular organisations, measures,
+        and/or tags.
 
-    def by_ccg(self, org_ids, measure_ids=None, tags=None):
-        org_Q = Q()
-        for org_id in org_ids:
-            org_Q |= Q(pct_id=org_id)
+        For instance, to find all MeasureValues for practices in CCG 99P:
 
-        qs = self.select_related('pct', 'measure').\
-            filter(
-                org_Q,
+            .by_org('practice', parent_org_type='pct', org_ids=['P99'])
+        '''
+
+        if org_type == 'practice':
+            qs = self.filter(
+                practice_id__isnull=False,
+            )
+        elif org_type == 'ccg':
+            qs = self.filter(
                 pct__org_type='CCG',
                 pct__close_date__isnull=True,
+                pct_id__isnull=False,
                 practice_id__isnull=True,
-            ).\
-            order_by('pct_id', 'measure_id', 'month')
+            )
+        elif org_type == 'stp':
+            qs = self.filter(
+                stp_id__isnull=False,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+            )
+        elif org_type == 'regional_team':
+            qs = self.filter(
+                regional_team_id__isnull=False,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+            )
+        else:
+            assert False, org_type
 
-        if measure_ids:
-            qs = qs.filter(measure_id__in=measure_ids)
-
-        if tags:
-            qs = qs.filter(measure__tags__contains=tags)
-
-        return qs
-
-    def by_practice(self, org_ids, measure_ids=None, tags=None):
-        org_Q = Q()
-        for org_id in org_ids:
-            if len(org_id) == 3:
-                org_Q |= Q(pct_id=org_id)
-            else:
-                org_Q |= Q(practice_id=org_id)
-
-        qs = self.select_related('practice', 'measure').\
-            filter(
-                practice_id__isnull=False,
-            ).\
-            filter(org_Q).\
-            order_by('practice_id', 'measure_id', 'month')
-
-        if measure_ids:
-            qs = qs.filter(measure_id__in=measure_ids)
-
-        if tags:
-            qs = qs.filter(measure__tags__contains=tags)
-
-        return qs
+        return qs.for_orgs(parent_org_type, org_ids) \
+            .for_measures(measure_ids) \
+            .for_tags(tags)
 
     def aggregate_by_measure_and_month(self):
         """

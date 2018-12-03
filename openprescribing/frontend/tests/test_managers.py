@@ -110,9 +110,9 @@ class MeasureValueManagerTests(TestCase):
         mvs = MeasureValue.objects.by_practice(['C83051'])
         self.assertEqual(len(mvs), 1)
 
-    def test_by_practice_with_orgs(self):
-        mvs = MeasureValue.objects.by_practice(['C83051', '02Q'])
-        self.assertEqual(len(mvs), 9)
+    def test_by_practice_with_practice_orgs(self):
+        mvs = MeasureValue.objects.by_practice(['C83051', 'C83019'])
+        self.assertEqual(len(mvs), 2)
 
     def test_by_practice_with_measure(self):
         mvs = MeasureValue.objects.by_practice(
