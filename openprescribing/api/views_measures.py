@@ -170,45 +170,37 @@ def measure_numerators_by_org(request, format=None):
 
 @api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    measures = utils.param_to_list(request.query_params.get('measure', None))
-    orgs = utils.param_to_list(request.query_params.get('org', []))
-    aggregate = bool(request.query_params.get('aggregate'))
-    if len(orgs) > 1 and len(measures) > 1:
-        raise InvalidMultiParameter
-    tags = utils.param_to_list(request.query_params.get('tags', []))
-    measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
-    if aggregate:
-        measure_values = measure_values.aggregate_by_measure_and_month()
-
-    rsp_data = {
-        'measures': _roll_up_measure_values(measure_values, 'ccg')
-    }
-    return Response(rsp_data)
+    return _measure_by_org(request, 'ccg')
 
 
 @api_view(['GET'])
 def measure_by_practice(request, format=None):
+    return _measure_by_org(request, 'practice')
+
+
+def _measure_by_org(request, org_type):
     measures = utils.param_to_list(request.query_params.get('measure', None))
+    tags = utils.param_to_list(request.query_params.get('tags', []))
     orgs = utils.param_to_list(request.query_params.get('org', []))
     aggregate = bool(request.query_params.get('aggregate'))
-    if not orgs and not aggregate:
+
+    if org_type == 'practice' and not (orgs or aggregate):
         raise MissingParameter
     if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
-    tags = utils.param_to_list(request.query_params.get('tags', []))
 
-    measure_values = MeasureValue.objects.by_practice(orgs, measures,
-                                                      tags)
+    filter_fn = getattr(MeasureValue.objects, 'by_' + org_type)
+    measure_values = filter_fn(orgs, measures, tags)
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 
     rsp_data = {
-        'measures': _roll_up_measure_values(measure_values, 'practice')
+        'measures': _roll_up_measure_values(measure_values, org_type)
     }
     return Response(rsp_data)
 
 
-def _roll_up_measure_values(measure_values, practice_or_ccg):
+def _roll_up_measure_values(measure_values, org_type):
     rolled = {}
 
     for measure_value in measure_values:
@@ -222,13 +214,13 @@ def _roll_up_measure_values(measure_values, practice_or_ccg):
             'cost_savings': measure_value.cost_savings,
         }
 
-        if practice_or_ccg == 'practice':
+        if org_type == 'practice':
             if measure_value.practice_id:
                 measure_value_data.update({
                     'practice_id': measure_value.practice_id,
                     'practice_name': measure_value.practice.name,
                 })
-        elif practice_or_ccg == 'ccg':
+        elif org_type == 'ccg':
             if measure_value.pct_id:
                 measure_value_data.update({
                     'pct_id': measure_value.pct_id,
