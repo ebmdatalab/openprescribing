@@ -843,7 +843,12 @@ def spending_for_one_entity(request, entity_code, entity_type):
         'available_dates': [row['month'] for row in reversed(monthly_totals)],
         'breakdown': {
             'table': breakdown,
-            'url_template': url_template
+            'url_template': url_template,
+            'filename': 'price-concessions-cost-{}-{}-{}'.format(
+                entity_type,
+                entity.code,
+                breakdown_date
+            )
         },
         'breakdown_date': breakdown_date,
         'breakdown_is_estimate': breakdown_date > last_prescribing_date,
@@ -869,7 +874,10 @@ def spending_for_all_england(request):
         'available_dates': [row['month'] for row in reversed(monthly_totals)],
         'ccg_breakdown': {
             'table': ccg_breakdown,
-            'url_template': url_template
+            'url_template': url_template,
+            'filename': 'price-concessions-cost-all-england-{}'.format(
+                breakdown_date
+            )
         },
         'breakdown_date': breakdown_date,
         'breakdown_is_estimate': breakdown_date > last_prescribing_date,

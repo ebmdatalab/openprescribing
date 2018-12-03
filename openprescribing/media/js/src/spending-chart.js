@@ -1,7 +1,19 @@
 var $ = require('jquery');
 var Highcharts = require('Highcharts');
+var downloadjs = require('downloadjs');
 
 var chartOptions = require('./highcharts-options');
+var csvUtils = require('./csv-utils');
+
+
+function downloadCSVData(name, headers, rows) {
+  var table = [headers].concat(rows);
+  var csvData = csvUtils.formatTableAsCSV(table);
+  var filename = csvUtils.getFilename(name);
+  downloadjs(csvData, filename, 'text/csv');
+  return false;
+}
+
 
 $(function() {
 
@@ -104,6 +116,13 @@ $(function() {
       }
     ]
   });
+  $wrapper.find('.js-download-data').on('click', function() {
+    return downloadCSVData(
+      breakdownData.filename,
+      ['BNF Code', 'Presentation', 'Quantity', 'Tariff Cost', 'Additional Cost'],
+      breakdownData.table
+    );
+  });
   $wrapper.removeClass('hide');
 });
 
@@ -131,6 +150,13 @@ $(function() {
         render: $.fn.dataTable.render.number(',', '.', 0, '£' )
       }
     ]
+  });
+  $wrapper.find('.js-download-data').on('click', function() {
+    return downloadCSVData(
+      breakdownData.filename,
+      ['CCG Code', 'CCG Name', 'Additional Cost'],
+      breakdownData.table
+    );
   });
   $wrapper.removeClass('hide');
 });
