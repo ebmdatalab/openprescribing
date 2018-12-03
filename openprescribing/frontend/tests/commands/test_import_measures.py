@@ -20,6 +20,8 @@ from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import STP
+from frontend.models import RegionalTeam
 
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
@@ -109,11 +111,20 @@ class UnitTests(TestCase):
 class BigqueryFunctionalTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG')
-        lincs_west = PCT.objects.create(code='04D', org_type='CCG')
+        regional_team_54 = RegionalTeam.objects.create(code='Y54')
+        regional_team_55 = RegionalTeam.objects.create(code='Y55')
+        stp_1 = STP.objects.create(ons_code='E00000001')
+        stp_2 = STP.objects.create(ons_code='E00000002')
+
+        bassetlaw = PCT.objects.create(code='02Q', org_type='CCG', stp=stp_1,
+                                       regional_team=regional_team_54)
+        lincs_west = PCT.objects.create(code='04D', org_type='CCG', stp=stp_2,
+                                        regional_team=regional_team_55)
         lincs_east = PCT.objects.create(code='03T', org_type='CCG',
                                         open_date='2013-04-01',
-                                        close_date='2015-01-01')
+                                        close_date='2015-01-01',
+                                        stp=stp_2,
+                                        regional_team=regional_team_55)
         Chemical.objects.create(bnf_code='0703021Q0',
                                 chem_name='Desogestrel')
         Chemical.objects.create(bnf_code='0408010A0',

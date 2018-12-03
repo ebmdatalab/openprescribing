@@ -278,14 +278,16 @@ class MeasureCalculation(object):
         self.measure = measure
         self.start_date = start_date
         self.end_date = end_date
-        self.globals_table_name = "global_data_%s" % self.measure.id
-        self.ccg_table_name = "ccg_data_%s" % self.measure.id
-        self.practice_table_name = "practice_data_%s" % self.measure.id
+
+    def table_name(self, org_type):
+        return '{}_data_{}'.format(org_type, self.measure.id)
 
     def calculate(self):
         number_rows_written = 0
         number_rows_written += self.calculate_practices()
-        number_rows_written += self.calculate_ccgs()
+        number_rows_written += self.calculate_orgs('ccg')
+        number_rows_written += self.calculate_orgs('stp')
+        number_rows_written += self.calculate_orgs('regtm')  # Regional Team
 
         if number_rows_written == 0:
             raise CommandError(
@@ -298,16 +300,11 @@ class MeasureCalculation(object):
         practice level, and write these to the database.
 
         """
-        self.log("Calculating practice ratios")
         self.calculate_practice_ratios()
-        self.log("Adding percent rank to practices")
         self.add_practice_percent_rank()
-        self.log("Calculating global centiles for practices")
         self.calculate_global_centiles_for_practices()
         if self.measure.is_cost_based:
-            self.log("Calculating cost savings for practices")
             self.calculate_cost_savings_for_practices()
-        self.log("Writing practice ratios to postgres")
         number_rows_written = self.write_practice_ratios_to_database()
         return number_rows_written
 
@@ -348,7 +345,7 @@ class MeasureCalculation(object):
 
         self.insert_rows_from_query(
             'practice_ratios',
-            self.practice_table_name,
+            self.table_name('practice'),
             context
         )
 
@@ -357,7 +354,7 @@ class MeasureCalculation(object):
         """
         self.insert_rows_from_query(
             'practice_percent_rank',
-            self.practice_table_name,
+            self.table_name('practice'),
             {}
         )
 
@@ -387,7 +384,7 @@ class MeasureCalculation(object):
 
         self.insert_rows_from_query(
             'global_deciles_practices',
-            self.globals_table_name,
+            self.table_name('global'),
             context
         )
 
@@ -395,7 +392,7 @@ class MeasureCalculation(object):
         """Append cost savings column to the Practice working table"""
         self.insert_rows_from_query(
             'practice_cost_savings',
-            self.practice_table_name,
+            self.table_name('practice'),
             {}
         )
 
@@ -410,7 +407,7 @@ class MeasureCalculation(object):
         load time performance.
 
         """
-        fieldnames = ['pct_id', 'measure_id', 'num_items', 'numerator',
+        fieldnames = ['regional_team_id', 'stp_id', 'pct_id', 'measure_id', 'num_items', 'numerator',
                       'denominator', 'month',
                       'percentile', 'calc_value', 'denom_items',
                       'denom_quantity', 'denom_cost', 'num_cost',
@@ -419,7 +416,7 @@ class MeasureCalculation(object):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         c = 0
         # Write the data we want to load into a file
-        for datum in self.get_rows_as_dicts(self.practice_table_name):
+        for datum in self.get_rows_as_dicts(self.table_name('practice')):
             datum['measure_id'] = self.measure.id
             if self.measure.is_cost_based:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
@@ -437,27 +434,22 @@ class MeasureCalculation(object):
         self.log("Wrote %s values" % c)
         return c
 
-    def calculate_ccgs(self):
+    def calculate_orgs(self, org_type):
         """Calculate ratios, centiles and (optionally) cost savings at a
-        CCG level, and write these to the database.
+        organisation level, and write these to the database.
 
         """
-        self.log("Calculating CCG ratios")
-        self.calculate_ccg_ratios()
-        self.log("Adding rank to CCG ratios")
-        self.add_ccg_percent_rank()
-        self.log("Calculating global CCG centiles")
-        self.calculate_global_centiles_for_ccgs()
+        self.calculate_org_ratios(org_type)
+        self.add_org_percent_rank(org_type)
+        self.calculate_global_centiles_for_orgs(org_type)
         if self.measure.is_cost_based:
-            self.log("Calculating CCG cost savings")
-            self.calculate_cost_savings_for_ccgs()
-        self.log("Writing CCG data to postgres")
-        number_rows_written = self.write_ccg_ratios_to_database()
+            self.calculate_cost_savings_for_orgs(org_type)
+        number_rows_written = self.write_org_ratios_to_database(org_type)
         return number_rows_written
 
-    def calculate_ccg_ratios(self):
+    def calculate_org_ratios(self, org_type):
         """Sums all the fields in the per-practice table, grouped by
-        CCG. Stores in a new table.
+        organisation. Stores in a new table.
 
         """
         numerator_aliases = denominator_aliases = ''
@@ -471,20 +463,23 @@ class MeasureCalculation(object):
             'denominator_aliases': denominator_aliases,
             'numerator_aliases': numerator_aliases,
         }
-        self.insert_rows_from_query('ccg_ratios', self.ccg_table_name, context)
+        self.insert_rows_from_query(
+            '{}_ratios'.format(org_type),
+            self.table_name(org_type),
+            context
+        )
 
-    def add_ccg_percent_rank(self):
+    def add_org_percent_rank(self, org_type):
         """Add a percentile rank to the ratios table
         """
         self.insert_rows_from_query(
-            'ccg_percent_rank',
-            self.ccg_table_name,
+            '{}_percent_rank'.format(org_type),
+            self.table_name(org_type),
             {}
         )
 
-    def calculate_global_centiles_for_ccgs(self):
-        """Adds CCG centiles to the already-existing CCG centiles table
-
+    def calculate_global_centiles_for_orgs(self, org_type):
+        """Adds centiles to the already-existing centiles table
         """
         extra_fields = []
         # Add prefixes to the select columns so we can reference the joined
@@ -496,40 +491,38 @@ class MeasureCalculation(object):
             extra_fields.append("denom_" + col)
         extra_select_sql = ""
         for f in extra_fields:
-            extra_select_sql += ", practice_deciles.%s as %s" % (f, f)
+            extra_select_sql += ", global_deciles.%s as %s" % (f, f)
         if self.measure.is_cost_based:
             extra_select_sql += (
-                ", practice_deciles.cost_per_denom AS cost_per_denom"
-                ", practice_deciles.cost_per_num AS cost_per_num")
+                ", global_deciles.cost_per_denom AS cost_per_denom"
+                ", global_deciles.cost_per_num AS cost_per_num")
 
         context = {
             'extra_select_sql': extra_select_sql,
         }
 
         self.insert_rows_from_query(
-            'global_deciles_ccgs',
-            self.globals_table_name,
+            'global_deciles_{}s'.format(org_type),
+            self.table_name('global'),
             context
         )
 
-    def calculate_cost_savings_for_ccgs(self):
-        """Appends cost savings column to the CCG ratios table"""
+    def calculate_cost_savings_for_orgs(self, org_type):
+        """Appends cost savings column to the organisation ratios table"""
         self.insert_rows_from_query(
-            'ccg_cost_savings',
-            self.ccg_table_name,
+            '{}_cost_savings'.format(org_type),
+            self.table_name(org_type),
             {}
         )
 
-    def write_ccg_ratios_to_database(self):
-        """Create measure values for CCG ratios (these are distinguished from
-        practice ratios by having a NULL practice_id).
+    def write_org_ratios_to_database(self, org_type):
+        """Create measure values for organisation ratios.
 
         Retuns number of rows written.
-
         """
         with transaction.atomic():
             c = 0
-            for datum in self.get_rows_as_dicts(self.ccg_table_name):
+            for datum in self.get_rows_as_dicts(self.table_name(org_type)):
                 datum['measure_id'] = self.measure.id
                 if self.measure.is_cost_based:
                     datum['cost_savings'] = convertSavingsToDict(datum)
@@ -551,7 +544,7 @@ class MeasureCalculation(object):
         """
         self.insert_rows_from_query(
             'global_cost_savings',
-            self.globals_table_name,
+            self.table_name('global'),
             {}
         )
 
@@ -559,11 +552,11 @@ class MeasureCalculation(object):
         """Write the globals data from BigQuery to the local database
         """
         self.log("Writing global centiles from %s to database"
-                 % self.globals_table_name)
+                 % self.table_name('global'))
         count = 0
-        for d in self.get_rows_as_dicts(self.globals_table_name):
-            ccg_deciles = {}
-            practice_deciles = {}
+        for d in self.get_rows_as_dicts(self.table_name('global')):
+            regtm_cost_savings = {}
+            stp_cost_savings = {}
             ccg_cost_savings = {}
             practice_cost_savings = {}
             d['measure_id'] = self.measure.id
@@ -586,11 +579,26 @@ class MeasureCalculation(object):
                     d, prefix='practice')
                 ccg_cost_savings = convertSavingsToDict(
                     d, prefix='ccg')
-                mg.cost_savings = {'ccg': ccg_cost_savings,
-                                   'practice': practice_cost_savings}
+                stp_cost_savings = convertSavingsToDict(
+                    d, prefix='stp')
+                regtm_cost_savings = convertSavingsToDict(
+                    d, prefix='regtm')
+                mg.cost_savings = {
+                    'regional_team': regtm_cost_savings,
+                    'stp': stp_cost_savings,
+                    'ccg': ccg_cost_savings,
+                    'practice': practice_cost_savings
+                }
             practice_deciles = convertDecilesToDict(d, prefix='practice')
             ccg_deciles = convertDecilesToDict(d, prefix='ccg')
-            mg.percentiles = {'ccg': ccg_deciles, 'practice': practice_deciles}
+            stp_deciles = convertDecilesToDict(d, prefix='stp')
+            regtm_deciles = convertDecilesToDict(d, prefix='regtm')
+            mg.percentiles = {
+                'regional_team': regtm_deciles,
+                'stp': stp_deciles,
+                'ccg': ccg_deciles,
+                'practice': practice_deciles,
+            }
 
             # Set the rest of the data returned from bigquery directly
             # on the model

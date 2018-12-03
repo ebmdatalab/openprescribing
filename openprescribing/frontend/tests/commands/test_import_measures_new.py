@@ -10,7 +10,7 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from frontend import bq_schemas as schemas
-from frontend.models import ImportLog, MeasureGlobal, MeasureValue, Practice, PCT
+from frontend.models import ImportLog, MeasureGlobal, MeasureValue, Practice, PCT, STP, RegionalTeam
 from gcutils.bigquery import Client
 
 
@@ -22,21 +22,35 @@ class ImportMeasuresTests(TestCase):
         # calculated with Pandas.  See notebooks/measure-calculations.ipynb for
         # an explanation of these calculations.
 
-        # Create a bunch of CCGs and Practices
-        for ccg_ix in range(10):
-            ccg = PCT.objects.create(
-                code='C0{}'.format(ccg_ix),
-                name='CCG {}'.format(ccg_ix),
-                org_type='CCG',
+        # Create a bunch of RegionalTeams, STPs, CCGs, Practices
+        for regtm_ix in range(5):
+            regtm = RegionalTeam.objects.create(
+                code='Y0{}'.format(regtm_ix),
+                name='Region {}'.format(regtm_ix),
             )
 
-            for prac_ix in range(10):
-                Practice.objects.create(
-                    ccg=ccg,
-                    code='P000{}{}'.format(ccg_ix, prac_ix),
-                    name='Practice {}/{}'.format(ccg_ix, prac_ix),
-                    setting=4,
+            for stp_ix in range(5):
+                stp = STP.objects.create(
+                    ons_code='E000000{}{}'.format(regtm_ix, stp_ix),
+                    name='STP {}'.format(regtm_ix, stp_ix),
                 )
+
+                for ccg_ix in range(5):
+                    ccg = PCT.objects.create(
+                        regional_team=regtm,
+                        stp=stp,
+                        code='{}{}{}'.format(regtm_ix, stp_ix, ccg_ix).replace('0', 'A'),
+                        name='CCG {}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix),
+                        org_type='CCG',
+                    )
+
+                    for prac_ix in range(5):
+                        Practice.objects.create(
+                            ccg=ccg,
+                            code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
+                            name='Practice {}/{}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
+                            setting=4,
+                        )
 
         # import_measures uses this ImportLog to work out which months it
         # should import data.
@@ -45,7 +59,7 @@ class ImportMeasuresTests(TestCase):
             current_at='2018-08-01',
         )
 
-        # Set up BQ, and upload CCGs and Practices.
+        # Set up BQ, and upload STPs, CCGs, Practices.
         Client('measures').create_dataset()
         client = Client('hscic')
         table = client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
@@ -99,6 +113,8 @@ class ImportMeasuresTests(TestCase):
 
                     row = [
                         'sha',  #  This value doesn't matter.
+                        practice.ccg.regional_team_id,
+                        practice.ccg.stp_id,
                         practice.ccg_id,
                         practice.code,
                         bnf_code,
@@ -133,8 +149,9 @@ class ImportMeasuresTests(TestCase):
             f.seek(0)
             table.insert_rows_from_csv(f.name)
 
-            headers = ['sha', 'ccg_id', 'practice_id', 'bnf_code', 'bnf_name',
-                       'items', 'net_cost', 'actual_cost', 'quantity', 'month']
+            headers = ['sha', 'regional_team_id', 'stp_id', 'ccg_id',
+                       'practice_id', 'bnf_code', 'bnf_name', 'items',
+                       'net_cost', 'actual_cost', 'quantity', 'month']
             prescriptions = pd.read_csv(f.name, names=headers)
             prescriptions['month'] = prescriptions['month'].str[:10]
 
@@ -149,15 +166,79 @@ class ImportMeasuresTests(TestCase):
         denominators = prescriptions[prescriptions['bnf_code'].str.startswith('0703021Q0')]
         mg = MeasureGlobal.objects.get(month=month)
 
-        practices = self.calculate_measure(numerators, denominators, 'practice', Practice.objects.values_list('code', flat=True))
+        self.assertEqual(MeasureValue.objects.filter(month=month).count(), 780)
+
+        practices = self.calculate_measure(
+            numerators,
+            denominators,
+            'practice',
+            Practice.objects.values_list('code', flat=True)
+        )
         self.validate_measure_global(mg, practices, 'practice')
-        for mv in MeasureValue.objects.filter(month=month, practice_id__isnull=False):
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=False,
+            pct_id__isnull=False,
+            stp_id__isnull=False,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 625)
+        for mv in mvs:
             self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
-        ccgs = self.calculate_measure(numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True))
+        ccgs = self.calculate_measure(
+            numerators,
+            denominators,
+            'ccg',
+            PCT.objects.values_list('code', flat=True)
+        )
         self.validate_measure_global(mg, ccgs, 'ccg')
-        for mv in MeasureValue.objects.filter(month=month, practice_id__isnull=True):
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=False,
+            stp_id__isnull=False,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 125)
+        for mv in mvs:
             self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
+
+        stps = self.calculate_measure(
+            numerators,
+            denominators,
+            'stp',
+            STP.objects.values_list('ons_code', flat=True)
+        )
+        self.validate_measure_global(mg, stps, 'stp')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=True,
+            stp_id__isnull=False,
+            regional_team_id__isnull=True,
+        )
+        self.assertEqual(mvs.count(), 25)
+        for mv in mvs:
+            self.validate_measure_value(mv, stps.loc[mv.stp_id])
+
+        regtms = self.calculate_measure(
+            numerators,
+            denominators,
+            'regional_team',
+            RegionalTeam.objects.values_list('code', flat=True)
+        )
+        self.validate_measure_global(mg, regtms, 'regional_team')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=True,
+            stp_id__isnull=True,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), 5)
+        for mv in mvs:
+            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def calculate_measure(self, numerators, denominators, org_type, org_codes):
         org_column = org_type + '_id'
