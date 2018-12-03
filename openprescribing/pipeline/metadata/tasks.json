@@ -23,10 +23,19 @@
         "type": "manual_fetch",
         "source_id": "dmd_snomed"
     },
+    "fetch_stps": {
+        "type": "manual_fetch",
+        "source_id": "stp_mapping"
+    },
     "fetch_patient_list_size": {
         "type": "auto_fetch",
         "source_id": "patient_list_size",
         "command": "hscic_list_sizes {year} {month}"
+    },
+    "fetch_region_details": {
+        "type": "auto_fetch",
+        "source_id": "region_details",
+        "command": "org_codes --region"
     },
     "fetch_ccg_details": {
         "type": "auto_fetch",
@@ -69,12 +78,30 @@
             "fetch_ccg_boundaries"
         ]
     },
+    "import_regional_team_details": {
+        "type": "import",
+        "source_id": "region_details",
+        "command": "import_regional_teams --filename eauth.csv",
+        "dependencies": [
+            "fetch_region_details"
+        ]
+    },
     "import_ccg_details": {
         "type": "import",
         "source_id": "ccg_details",
         "command": "import_org_names --ccg eccg.csv",
         "dependencies": [
             "fetch_ccg_details",
+            "import_ccg_boundaries",
+            "import_regional_team_details"
+        ]
+    },
+    "import_stps": {
+        "type": "import",
+        "source_id": "stp_mapping",
+        "command": "import_stps --filename stps.csv",
+        "dependencies": [
+            "fetch_stps",
             "import_ccg_boundaries"
         ]
     },
