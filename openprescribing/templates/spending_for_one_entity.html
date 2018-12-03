@@ -2,11 +2,11 @@
 {% load humanize %}
 {% load template_extras %}
 
-{% block title %}Spending for {{ entity_name }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 
-<h1>{{ entity_name }}</h1>
+<h1>{{ title }}</h1>
 
 <div id="monthly-totals-chart"></div>
 
@@ -64,7 +64,7 @@
 <script>
   var breakdownData = JSON.parse(document.getElementById('breakdown-data').innerHTML);
   var $wrapper = $('#breakdown-table-wrapper');
-  var ppuUrlPrefix = breakdownData.ppu_url_prefix;
+  var urlTemplate = breakdownData.url_template;
   $wrapper.find('table').DataTable({
     data: breakdownData.table,
     pageLength: 25,
@@ -74,7 +74,7 @@
       {
         targets: [1],
         render: function(data, type, row) {
-          return '<a href="'+ppuUrlPrefix+row.bnf_code+'/price_per_unit/">'+data+'</a>';
+          return '<a href="'+urlTemplate.replace('{bnf_code}', row[0])+'">'+data+'</a>';
         }
       },
       {targets: [2, 3, 4], className: "text-right"},

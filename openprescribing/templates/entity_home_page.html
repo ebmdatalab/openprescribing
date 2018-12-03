@@ -105,19 +105,35 @@
   <hr class="visible-sm">
   <div class="col-md-6">
     <div class="landing-panel">
-      <h3><a href="{% url spending_for_one_entity_url entity.code %}" class="unstyled-link">Price concessions cost</a></h3>
-      <p>
-        We estimate that in <strong>{{ ncso_spending.month|date:"F Y" }}</strong>
-        price concessions for out-of-stock medicines will cost {{ entity.cased_name }}
-        an additional<br>
-        <span style="font-size: 48px">
-          &pound;{{ ncso_spending.additional_cost|floatformat:"0"|intcomma }}
-        </span>
-      </p>
-      <p>
-        See the full breakdown of this estimate, and view costs for other months on
-        the <a href="{% url spending_for_one_entity_url entity.code %}">price concessions dashboard</a>.
-      </p>
+      <h3>
+        <a href="{% url spending_for_one_entity_url entity.code %}" class="unstyled-link">
+          Price concessions cost
+        </a>
+      </h3>
+      {% if ncso_spending %}
+        <p>
+          We estimate that in <strong>{{ ncso_spending.month|date:"F Y" }}</strong>
+          price concessions for out-of-stock medicines will cost {{ entity.cased_name }}
+          an additional<br>
+          <span style="font-size: 48px">
+            &pound;{{ ncso_spending.additional_cost|floatformat:"0"|intcomma }}
+          </span>
+        </p>
+        <p>
+          See the full breakdown of this estimate, and view costs for other months on
+          the <a href="{% url spending_for_one_entity_url entity.code %}">
+            price concessions dashboard
+          </a>.
+        </p>
+      {% else %}
+        <p>
+          We don't have current data for the impact of price concessions on
+          {{ entity.cased_name }}. For historical data see the
+          <a href="{% url spending_for_one_entity_url entity.code %}">
+            price concessions dashboard
+          </a>.
+        </p>
+      {% endif %}
     </div>
   </div>
 </div>

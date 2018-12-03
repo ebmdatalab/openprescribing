@@ -23,6 +23,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
@@ -635,40 +636,44 @@ def mailchimp_subscribe(
 # Spending
 ##################################################
 
-def _ncso_spending_for_entity(entity, entity_type, months=12):
+def _ncso_spending_for_entity(entity, entity_type, num_months):
     if entity_type == 'CCG':
         prescribing_table = 'vw__presentation_summary_by_ccg'
         entity_field = 'pct_id'
+        entity_id = entity.code
     elif entity_type == 'practice':
         prescribing_table = 'frontend_prescription'
         entity_field = 'practice_id'
+        entity_id = entity.code
     else:
         raise NotImplementedError(entity_type)
     end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
-    start_date = end_date + relativedelta(months=-months)
+    start_date = end_date + relativedelta(months=-num_months)
     with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT MAX(processing_date) FROM {prescribing_table}'.format(
-                prescribing_table=prescribing_table))
-        last_prescribing_date = cursor.fetchone()[0]
-        sql = _ncso_spending_query(
-                prescribing_table=prescribing_table,
-                entity_field=entity_field)
-        params = {
-            entity_field: entity.code,
-            'start_date': start_date,
-            'end_date': end_date,
-            'last_prescribing_date': last_prescribing_date
-        }
+        sql, params = _ncso_spending_query(prescribing_table)
+        params.update(
+            entity_id=entity_id,
+            start_date=start_date,
+            end_date=end_date
+        )
         cursor.execute("""
             SELECT
               month,
               SUM(tariff_cost) AS tariff_cost,
               SUM(additional_cost) AS additional_cost,
-              is_estimate
-            FROM ({}) AS subquery
-            GROUP BY month, is_estimate ORDER BY month
-            """.format(sql),
+              is_estimate,
+              %(last_prescribing_date)s AS last_prescribing_date
+            FROM
+              ({sql}) AS subquery
+            WHERE
+              month > %(start_date)s AND month <= %(end_date)s
+              AND {entity_field} = %(entity_id)s
+            GROUP BY
+              month, is_estimate
+            ORDER BY
+              month
+            """.format(
+                sql=sql, entity_field=entity_field),
             params)
         return dictfetchall(cursor)
 
@@ -683,47 +688,55 @@ def _ncso_spending_breakdown_for_entity(entity, entity_type, month):
     else:
         raise NotImplementedError(entity_type)
     with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT MAX(processing_date) FROM {prescribing_table}'.format(
-                prescribing_table=prescribing_table))
-        last_prescribing_date = cursor.fetchone()[0]
-        sql = _ncso_spending_query(
-                prescribing_table=prescribing_table,
-                entity_field=entity_field)
-        params = {
-            entity_field: entity.code,
-            'last_prescribing_date': last_prescribing_date,
-            'month': month,
-            'start_date': month + relativedelta(months=-1),
-            'end_date': month,
-        }
+        sql, params = _ncso_spending_query(prescribing_table)
+        params.update(
+            entity_id=entity.code,
+            month=month
+        )
         cursor.execute("""
-            SELECT bnf_code, product_name, quantity, tariff_cost, additional_cost
-            FROM ({}) AS subquery
-            WHERE month=%(month)s
-            ORDER BY additional_cost DESC, tariff_cost DESC
-            """.format(sql),
+            SELECT
+              bnf_code, product_name, quantity, tariff_cost, additional_cost
+            FROM
+              ({sql}) AS subquery
+            WHERE
+              month=%(month)s AND {entity_field} = %(entity_id)s
+            ORDER BY
+              additional_cost DESC, tariff_cost DESC
+            """.format(
+                sql=sql, entity_field=entity_field),
             params)
         return cursor.fetchall()
 
 
-def _ncso_spending_query(prescribing_table='frontend_presciption', entity_field='practice_id'):
-    sql = """
+def _ncso_spending_query(prescribing_table='frontend_presciption'):
+    """
+    Return a query with params that joins all NCSO (i.e. price concession) items
+    with the spending on those items.
+
+    Where our NCSO data is more recent than our prescribing data we use the
+    latest prescribing data and flag the results as estimates.
+
+    The prescribing table is parameterised as sometimes we want to use the table
+    with prescribing pre-aggregated by CCG.
+    """
+    sql_template = """
         SELECT
           ncso.date AS month,
           product.bnf_code AS bnf_code,
           product.name AS product_name,
-          SUM(rx.quantity) AS quantity,
-          SUM(dt.price_pence * (rx.quantity / vmpp.qtyval) / 100) AS tariff_cost,
-          SUM(COALESCE((ncso.price_concession_pence - dt.price_pence) * (rx.quantity / vmpp.qtyval), 0) / 100) AS additional_cost,
-          ncso.date > %(last_prescribing_date)s AS is_estimate
+          dt.price_pence * (rx.quantity / vmpp.qtyval) / 100
+            AS tariff_cost,
+          COALESCE(ncso.price_concession_pence - dt.price_pence, 0)
+            * (rx.quantity / vmpp.qtyval) / 100
+            AS additional_cost,
+          ncso.date != rx.processing_date AS is_estimate,
+          rx.*
         FROM
           dmd_ncsoconcession AS ncso
         JOIN
           dmd_tariffprice AS dt
         ON
-          ncso.vmpp_id = dt.vmpp_id
-          AND ncso.date = dt.date
+          ncso.vmpp_id = dt.vmpp_id AND ncso.date = dt.date
         JOIN
           dmd_product AS product
         ON
@@ -737,6 +750,9 @@ def _ncso_spending_query(prescribing_table='frontend_presciption', entity_field=
         ON
           rx.presentation_code = product.bnf_code
           AND
+          -- Where we have prescribing data for the corresponding month we use
+          -- that, otherwise we use the latest month of prescribing data to
+          -- produce an estimate
           (
             rx.processing_date = ncso.date
             OR
@@ -746,46 +762,46 @@ def _ncso_spending_query(prescribing_table='frontend_presciption', entity_field=
               ncso.date > rx.processing_date
             )
           )
-        WHERE ncso.date > %(start_date)s AND ncso.date <= %(end_date)s AND rx.{entity_field} = %({entity_field})s
-        GROUP BY
-          month,
-          bnf_code,
-          product_name
-        ORDER BY month
         """
-    return sql.format(prescribing_table=prescribing_table, entity_field=entity_field)
-
-
-def spending_for_one_practice(request, entity_code):
-    return spending_for_one_entity(request, entity_code, 'practice')
-
-
-def spending_for_one_ccg(request, entity_code):
-    return spending_for_one_entity(request, entity_code, 'CCG')
+    sql = sql_template.format(prescribing_table=prescribing_table)
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT MAX(processing_date) FROM {}'.format(prescribing_table))
+        last_prescribing_date = cursor.fetchone()[0]
+    params = {'last_prescribing_date': last_prescribing_date}
+    return sql, params
 
 
 def spending_for_one_entity(request, entity_code, entity_type):
     if entity_type == 'practice':
         model = Practice
+        url_name = 'price_per_unit_by_presentation_practice'
     elif entity_type == 'CCG':
         model = PCT
+        url_name = 'price_per_unit_by_presentation'
     else:
-        raise ValueError(entity_type)
+        raise NotImplementedError(entity_type)
     entity = get_object_or_404(model, code=entity_code)
-    monthly_totals = _ncso_spending_for_entity(entity, entity_type, months=12)
+    monthly_totals = _ncso_spending_for_entity(entity, entity_type, num_months=12)
     end_date = max(row['month'] for row in monthly_totals)
-    last_prescribing_date = max(row['month'] for row in monthly_totals if not row['is_estimate'])
+    last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
     breakdown = _ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
+    url_template = (
+        reverse(url_name, kwargs={
+            'entity_code': entity.code,
+            'bnf_code': 'AAA'
+        })
+        .replace('AAA', '{bnf_code}')
+    )
     context = {
-        'entity_type': entity_type,
-        'entity_name': entity.name,
+        'title': 'Impact of price concessions on {}'.format(entity.cased_name),
         'monthly_totals': monthly_totals,
         'available_dates': [row['month'] for row in reversed(monthly_totals)],
         'breakdown': {
             'table': breakdown,
-            'ppu_url_prefix': '/{}/{}/'.format(entity_type.lower(), entity.code)
+            'url_template': url_template
         },
         'breakdown_date': breakdown_date,
         'breakdown_is_estimate': breakdown_date > last_prescribing_date,
@@ -988,7 +1004,9 @@ def _home_page_context_for_entity(request, entity):
     ppu_date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
-    ncso_spending = _ncso_spending_for_entity(entity, entity_type, months=1)[0]
+    _ncso_spending = _ncso_spending_for_entity(
+        entity, entity_type, num_months=1)
+    ncso_spending = _ncso_spending[0] if _ncso_spending else None
     return {
         'measure': extreme_measure,
         'measures_count': measures_count,
