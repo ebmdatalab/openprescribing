@@ -139,6 +139,9 @@ urlpatterns = [
         frontend_views.spending_for_one_entity,
         name='spending_for_one_ccg',
         kwargs={'entity_type': 'CCG'}),
+    url(r'^all-england/spending/$',
+        frontend_views.spending_for_all_england,
+        name='spending_for_all_england'),
 
     # Measures
     url(r'^measure/$',

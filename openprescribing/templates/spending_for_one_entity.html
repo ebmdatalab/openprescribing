@@ -50,6 +50,20 @@
   </table>
 </div>
 
+<div id="ccg-breakdown-table-wrapper" class="hide">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>CCG</th>
+        <th>Additional concessions cost</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -59,10 +73,13 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
 
 {{ breakdown|json_script:"breakdown-data" }}
+{{ ccg_breakdown|json_script:"ccg-breakdown-data" }}
 {{ monthly_totals|json_script:"monthly-totals-data" }}
 
 <script>
+(function() {
   var breakdownData = JSON.parse(document.getElementById('breakdown-data').innerHTML);
+  if ( ! breakdownData) return;
   var $wrapper = $('#breakdown-table-wrapper');
   var urlTemplate = breakdownData.url_template;
   $wrapper.find('table').DataTable({
@@ -89,5 +106,36 @@
     ]
   });
   $wrapper.removeClass('hide');
+})();
 </script>
+
+<script>
+(function() {
+  var breakdownData = JSON.parse(document.getElementById('ccg-breakdown-data').innerHTML);
+  if ( ! breakdownData) return;
+  var $wrapper = $('#ccg-breakdown-table-wrapper');
+  var urlTemplate = breakdownData.url_template;
+  $wrapper.find('table').DataTable({
+    data: breakdownData.table,
+    pageLength: 25,
+    order: [],
+    columnDefs: [
+      {targets: [0], visible: false},
+      {
+        targets: [1],
+        render: function(data, type, row) {
+          return '<a href="'+urlTemplate.replace('{code}', row[0])+'">'+data+'</a>';
+        }
+      },
+      {
+        targets: [2],
+        className: "text-right",
+        render: $.fn.dataTable.render.number(',', '.', 0, '£' )
+      }
+    ]
+  });
+  $wrapper.removeClass('hide');
+})();
+</script>
+
 {% endblock %}

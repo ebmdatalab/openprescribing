@@ -218,6 +218,8 @@ def all_england(request):
     measure_savings = _all_england_measure_savings(entity_type, date)
     low_priority_savings = _all_england_low_priority_savings(entity_type, date)
     low_priority_total = _all_england_low_priority_total(entity_type, date)
+    ncso_spending = _ncso_spending_for_entity(
+        None, 'all_england', num_months=1)[0]
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
     other_entity_query = request.GET.copy()
     other_entity_query['entity_type'] = other_entity_type
@@ -230,6 +232,7 @@ def all_england(request):
         'measure_savings': measure_savings,
         'low_priority_savings': low_priority_savings,
         'low_priority_total': low_priority_total,
+        'ncso_spending': ncso_spending,
         'date': date
     }
     return render(request, 'all_england.html', context)
@@ -645,6 +648,10 @@ def _ncso_spending_for_entity(entity, entity_type, num_months):
         prescribing_table = 'frontend_prescription'
         entity_field = 'practice_id'
         entity_id = entity.code
+    elif entity_type == 'all_england':
+        prescribing_table = 'vw__presentation_summary_by_ccg'
+        entity_field = 'frontend_pct.org_type'
+        entity_id = 'CCG'
     else:
         raise NotImplementedError(entity_type)
     end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
@@ -665,6 +672,8 @@ def _ncso_spending_for_entity(entity, entity_type, num_months):
               %(last_prescribing_date)s AS last_prescribing_date
             FROM
               ({sql}) AS subquery
+            JOIN
+              frontend_pct ON frontend_pct.code = pct_id
             WHERE
               month > %(start_date)s AND month <= %(end_date)s
               AND {entity_field} = %(entity_id)s
@@ -695,7 +704,11 @@ def _ncso_spending_breakdown_for_entity(entity, entity_type, month):
         )
         cursor.execute("""
             SELECT
-              bnf_code, product_name, quantity, tariff_cost, additional_cost
+              bnf_code,
+              product_name,
+              quantity,
+              tariff_cost,
+              additional_cost
             FROM
               ({sql}) AS subquery
             WHERE
@@ -708,7 +721,36 @@ def _ncso_spending_breakdown_for_entity(entity, entity_type, month):
         return cursor.fetchall()
 
 
-def _ncso_spending_query(prescribing_table='frontend_presciption'):
+def _ncso_spending_for_all_ccgs(month=None):
+    if month is None:
+        month = NCSOConcession.objects.aggregate(Max('date'))['date__max']
+    with connection.cursor() as cursor:
+        sql, params = _ncso_spending_query('vw__presentation_summary_by_ccg')
+        params.update(month=month)
+        cursor.execute("""
+            SELECT
+              pct_id,
+              frontend_pct.name AS pct_name,
+              SUM(additional_cost) AS additional_cost
+            FROM
+              ({sql}) AS subquery
+            JOIN
+              frontend_pct
+            ON
+              frontend_pct.code = pct_id
+            WHERE
+              month = %(month)s
+              AND frontend_pct.org_type = 'CCG'
+            GROUP BY
+              pct_id, pct_name
+            ORDER BY
+              additional_cost DESC
+            """.format(sql=sql),
+            params)
+        return cursor.fetchall()
+
+
+def _ncso_spending_query(prescribing_table='frontend_prescription'):
     """
     Return a query with params that joins all NCSO (i.e. price concession) items
     with the spending on those items.
@@ -801,6 +843,32 @@ def spending_for_one_entity(request, entity_code, entity_type):
         'available_dates': [row['month'] for row in reversed(monthly_totals)],
         'breakdown': {
             'table': breakdown,
+            'url_template': url_template
+        },
+        'breakdown_date': breakdown_date,
+        'breakdown_is_estimate': breakdown_date > last_prescribing_date,
+        'last_prescribing_date': last_prescribing_date
+    }
+    return render(request, 'spending_for_one_entity.html', context)
+
+
+def spending_for_all_england(request):
+    monthly_totals = _ncso_spending_for_entity(None, 'all_england', num_months=12)
+    end_date = max(row['month'] for row in monthly_totals)
+    last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
+    breakdown_date = request.GET.get('breakdown_date')
+    breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    ccg_breakdown = _ncso_spending_for_all_ccgs(breakdown_date)
+    url_template = (
+        reverse('spending_for_one_ccg', kwargs={'entity_code': 'AAA'})
+        .replace('AAA', '{code}')
+    )
+    context = {
+        'title': 'Impact of price concessions across NHS England',
+        'monthly_totals': monthly_totals,
+        'available_dates': [row['month'] for row in reversed(monthly_totals)],
+        'ccg_breakdown': {
+            'table': ccg_breakdown,
             'url_template': url_template
         },
         'breakdown_date': breakdown_date,
