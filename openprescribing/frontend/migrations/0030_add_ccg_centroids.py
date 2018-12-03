@@ -25,5 +25,4 @@ class Migration(migrations.Migration):
             field=django.contrib.gis.db.models.fields.PointField(
                 blank=True, null=True, srid=4326),
         ),
-        migrations.RunPython(set_centroids_without_args),
     ]
