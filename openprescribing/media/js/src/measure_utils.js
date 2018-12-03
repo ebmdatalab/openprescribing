@@ -3,6 +3,7 @@ var _ = require('underscore');
 var humanize = require('humanize');
 var config = require('./config');
 var downloadjs = require('downloadjs');
+var csvUtils = require('./csv-utils');
 
 var utils = {
 
@@ -599,8 +600,8 @@ var utils = {
   startDataDownload: function(allChartData, chartId) {
     var chartData = this.getChartDataById(allChartData, chartId);
     var dataTable = this.getChartDataAsTable(chartData);
-    var csvData = this.formatTableAsCSV(dataTable);
-    var filename = this.sanitizeFilename(chartData.chartTitle) + '.csv';
+    var csvData = csvUtils.formatTableAsCSV(dataTable);
+    var filename = csvUtils.getFilename(chartData.chartTitle);
     downloadjs(csvData, filename, 'text/csv');
   },
 
@@ -645,33 +646,6 @@ var utils = {
       });
     });
     return percentilesByDate;
-  },
-
-  formatTableAsCSV: function(table) {
-    return table.map(this.formatRowAsCSV.bind(this)).join('\n');
-  },
-
-  formatRowAsCSV: function(row) {
-    return row.map(this.formatCellAsCSV.bind(this)).join(',');
-  },
-
-  formatCellAsCSV: function(cell) {
-    cell = cell ? cell.toString() : '';
-    if (cell.match(/[,"\r\n]/)) {
-      return '"' + cell.replace(/"/g, '""') + '"';
-    } else {
-      return cell;
-    }
-  },
-
-  sanitizeFilename: function(name) {
-    return name
-      // Remove any chars not on whitelist
-      .replace(/[^\w \-\.]/g, '')
-      // Replace runs of whitespace with single space
-      .replace(/\s+/g, ' ')
-      // Trim leading and trailing whitespace
-      .replace(/^\s+|\s+$/g, '');
   }
 
 };

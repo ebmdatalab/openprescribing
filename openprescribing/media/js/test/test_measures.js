@@ -1180,22 +1180,4 @@ describe('Measures', function() {
       ]);
     });
   });
-
-  describe('#formatTableAsCSV', function() {
-    it('returns valid CSV', function() {
-      var result = mu.formatTableAsCSV([
-        ['one', 'two', 'three'],
-        [1, null, 'with, comma'],
-        [2, 'a', 'with " double quote'],
-      ]);
-      expect(result).to.equal('one,two,three\n1,,"with, comma"\n2,a,"with "" double quote"');
-    });
-  });
-
-  describe('#sanitizeFilename', function() {
-    it('removes special characters from string and collaposes multiple spaces', function() {
-      var result = mu.sanitizeFilename('Hello $" 123-456.test_str : ');
-      expect(result).to.equal('Hello 123-456.test_str');
-    });
-  });
 });
