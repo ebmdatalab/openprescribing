@@ -105,8 +105,13 @@ class PCT(models.Model):
     )
     code = models.CharField(max_length=3, primary_key=True,
                             help_text='Primary care trust code')
+
+    # These are NULLable, because not every PCT belongs to either a
+    # RegionalTeam or an STP.  Specifically, we create PCT objects when
+    # importing prescribing data if the PCT is not otherwise in our database.
     regional_team = models.ForeignKey(RegionalTeam, null=True)
     stp = models.ForeignKey(STP, null=True)
+
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
