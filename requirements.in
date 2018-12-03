@@ -39,7 +39,7 @@ psycopg2-binary==2.7.6.1
 python-dateutil==2.7.5
 pytz==2018.7
 raven
-requests-futures==0.9.8
+requests-futures==0.9.9
 requests[security]==2.20.1
 titlecase==0.12.0
 tqdm==4.28.1
