@@ -189,18 +189,38 @@ def measure_by_practice(request, format=None):
 
 
 def _measure_by_org(request, org_type):
-    measures = utils.param_to_list(request.query_params.get('measure', None))
+    measure_ids = utils.param_to_list(request.query_params.get('measure', None))
     tags = utils.param_to_list(request.query_params.get('tags', []))
-    orgs = utils.param_to_list(request.query_params.get('org', []))
+    org_ids = utils.param_to_list(request.query_params.get('org', []))
+    parent_org_type = utils.param_to_list(request.query_params.get('org', org_type))
     aggregate = bool(request.query_params.get('aggregate'))
 
-    if org_type == 'practice' and not (orgs or aggregate):
+    if org_type == 'practice' and not (org_ids or aggregate):
         raise MissingParameter
-    if len(orgs) > 1 and len(measures) > 1:
+    if len(org_ids) > 1 and len(measure_ids) > 1:
         raise InvalidMultiParameter
 
-    filter_fn = getattr(MeasureValue.objects, 'by_' + org_type)
-    measure_values = filter_fn(orgs, measures, tags)
+    if org_type == 'practice' and org_ids:
+        l = len(org_ids[0])
+        assert all(len(org_id) == l for org_id in org_ids)
+
+        if l == 3:
+            parent_org_type = 'pct'
+        elif l == 6:
+            parent_org_type = 'practice'
+        else:
+            assert False, l
+    else:
+        parent_org_type = org_type
+
+    measure_values = MeasureValue.objects.by_org(
+        org_type,
+        parent_org_type,
+        org_ids,
+        measure_ids,
+        tags,
+    )
+
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 

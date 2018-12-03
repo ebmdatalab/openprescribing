@@ -23,9 +23,11 @@ class MeasureValueQuerySet(models.QuerySet):
             return self
 
     def for_orgs(self, org_type, org_ids):
-        qs = self.select_related('measure', org_type)
+        qs = self.select_related('measure')
 
         if org_ids:
+            qs = qs.select_related(org_type)
+
             org_type_key = org_type + '_id'
             org_Q = Q()
 
@@ -35,31 +37,6 @@ class MeasureValueQuerySet(models.QuerySet):
             qs = qs.filter(org_Q)
 
         return qs
-
-    def by_regional_team(self, org_ids=None, measure_ids=None, tags=None):
-        return self.by_org('regional_team', 'regional_team', org_ids, measure_ids, tags)
-
-    def by_stp(self, org_ids=None, measure_ids=None, tags=None):
-        return self.by_org('stp', 'stp', org_ids, measure_ids, tags)
-
-    def by_ccg(self, org_ids=None, measure_ids=None, tags=None):
-        return self.by_org('ccg', 'pct', org_ids, measure_ids, tags)
-
-    def by_practice(self, org_ids=None, measure_ids=None, tags=None):
-        if org_ids:
-            l = len(org_ids[0])
-            assert all(len(org_id) == l for org_id in org_ids)
-
-            if l == 3:
-                parent_org_type = 'pct'
-            elif l == 6:
-                parent_org_type = 'practice'
-            else:
-                assert False, l
-        else:
-            parent_org_type = 'practice'
-
-        return self.by_org('practice', parent_org_type, org_ids, measure_ids, tags)
 
     def by_org(
             self,
@@ -76,14 +53,14 @@ class MeasureValueQuerySet(models.QuerySet):
 
         For instance, to find all MeasureValues for practices in CCG 99P:
 
-            .by_org('practice', parent_org_type='pct', org_ids=['P99'])
+            .by_org('practice', parent_org_type='ccg', org_ids=['P99'])
         '''
 
         if org_type == 'practice':
             qs = self.filter(
                 practice_id__isnull=False,
             )
-        elif org_type == 'ccg':
+        elif org_type in ['ccg', 'pct']:
             qs = self.filter(
                 pct__org_type='CCG',
                 pct__close_date__isnull=True,
@@ -104,6 +81,9 @@ class MeasureValueQuerySet(models.QuerySet):
             )
         else:
             assert False, org_type
+
+        if parent_org_type == 'ccg':
+            parent_org_type = 'pct'
 
         return qs.for_orgs(parent_org_type, org_ids) \
             .for_measures(measure_ids) \
