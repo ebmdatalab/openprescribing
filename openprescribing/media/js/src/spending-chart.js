@@ -74,3 +74,63 @@ $(function() {
   ];
   var chart = Highcharts.chart('monthly-totals-chart', options);
 });
+
+
+$(function() {
+  var breakdownData = JSON.parse(document.getElementById('breakdown-data').innerHTML);
+  if ( ! breakdownData) return;
+  var $wrapper = $('#breakdown-table-wrapper');
+  var urlTemplate = breakdownData.url_template;
+  $wrapper.find('table').DataTable({
+    data: breakdownData.table,
+    pageLength: 25,
+    order: [],
+    columnDefs: [
+      {targets: [0], visible: false},
+      {
+        targets: [1],
+        render: function(data, type, row) {
+          return '<a href="'+urlTemplate.replace('{bnf_code}', row[0])+'">'+data+'</a>';
+        }
+      },
+      {targets: [2, 3, 4], className: "text-right"},
+      {
+        targets: [2],
+        render: $.fn.dataTable.render.number(',', '.', 0, '' )
+      },
+      {
+        targets: [3, 4],
+        render: $.fn.dataTable.render.number(',', '.', 0, '£' )
+      }
+    ]
+  });
+  $wrapper.removeClass('hide');
+});
+
+
+$(function() {
+  var breakdownData = JSON.parse(document.getElementById('ccg-breakdown-data').innerHTML);
+  if ( ! breakdownData) return;
+  var $wrapper = $('#ccg-breakdown-table-wrapper');
+  var urlTemplate = breakdownData.url_template;
+  $wrapper.find('table').DataTable({
+    data: breakdownData.table,
+    pageLength: 25,
+    order: [],
+    columnDefs: [
+      {targets: [0], visible: false},
+      {
+        targets: [1],
+        render: function(data, type, row) {
+          return '<a href="'+urlTemplate.replace('{code}', row[0])+'">'+data+'</a>';
+        }
+      },
+      {
+        targets: [2],
+        className: "text-right",
+        render: $.fn.dataTable.render.number(',', '.', 0, '£' )
+      }
+    ]
+  });
+  $wrapper.removeClass('hide');
+});
