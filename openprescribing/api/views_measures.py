@@ -169,6 +169,16 @@ def measure_numerators_by_org(request, format=None):
 
 
 @api_view(['GET'])
+def measure_by_regional_team(request, format=None):
+    return _measure_by_org(request, 'regional_team')
+
+
+@api_view(['GET'])
+def measure_by_stp(request, format=None):
+    return _measure_by_org(request, 'stp')
+
+
+@api_view(['GET'])
 def measure_by_ccg(request, format=None):
     return _measure_by_org(request, 'ccg')
 
@@ -225,6 +235,18 @@ def _roll_up_measure_values(measure_values, org_type):
                 measure_value_data.update({
                     'pct_id': measure_value.pct_id,
                     'pct_name': measure_value.pct.name,
+                })
+        elif org_type == 'stp':
+            if measure_value.stp_id:
+                measure_value_data.update({
+                    'stp_id': measure_value.stp_id,
+                    'stp_name': measure_value.stp.name,
+                })
+        elif org_type == 'regional_team':
+            if measure_value.regional_team_id:
+                measure_value_data.update({
+                    'regional_team_id': measure_value.regional_team_id,
+                    'regional_team_name': measure_value.regional_team.name,
                 })
         else:
             assert False
