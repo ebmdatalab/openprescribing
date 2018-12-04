@@ -97,7 +97,6 @@ def run_end_to_end():
         client.create_table('ccg_data_' + measure_id, measures_schema)
         client.create_table('global_data_' + measure_id, measures_schema)
 
-    call_command('create_normalised_prescribing_view')
     call_command('generate_presentation_replacements')
 
     path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
