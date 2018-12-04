@@ -35,7 +35,7 @@ django-extensions==2.1.4
 django-import-export==1.1.0
 django==1.11.17
 djangorestframework-csv==1.4.1
-djangorestframework==3.7.3
+djangorestframework==3.9.0
 easyprocess==0.2.3        # via pyvirtualdisplay
 enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
