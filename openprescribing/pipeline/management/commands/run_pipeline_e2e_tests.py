@@ -28,10 +28,9 @@ class Command(BaseCommand):
 
         try:
             run_end_to_end()
-        except:
-            import traceback
+        except Exception:
             msg = 'End-to-end test failed (seed: %s)\n\n' % settings.BQ_NONCE
-            msg += traceback.format_exc()
+            msg += 'Check logs in /tmp/'
             notify_slack(msg)
             raise
 
