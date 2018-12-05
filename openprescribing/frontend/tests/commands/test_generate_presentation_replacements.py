@@ -12,6 +12,8 @@ from mock import patch
        '.cleanup_empty_classes')
 @patch('frontend.management.commands.generate_presentation_replacements'
        '.create_bigquery_table')
+@patch('pipeline.management.commands.create_normalised_prescribing_view'
+       '.Command.handle')
 class CommandsTestCase(TestCase):
     def setUp(self):
         Section.objects.create(bnf_id='0000',
@@ -60,7 +62,8 @@ class CommandsTestCase(TestCase):
     def test_replacements(
             self,
             mock_cleanup_empty_classes,
-            mock_create_bigquery_table):
+            mock_create_bigquery_table,
+            mock_handle):
         # Simple replacement
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)
@@ -79,7 +82,8 @@ class CommandsTestCase(TestCase):
     def test_chemical_currency(
             self,
             mock_cleanup_empty_classes,
-            mock_create_bigquery_table):
+            mock_create_bigquery_table,
+            mock_handle):
         call_command(
             'generate_presentation_replacements', *self.args, **self.opts)
         self.assertEqual(
