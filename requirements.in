@@ -18,7 +18,7 @@ django-crispy-forms==1.6.1
 django-dotenv
 django-import-export
 django>=1.11,<2.0
-djangorestframework-csv==1.4.1
+djangorestframework-csv==2.1.0
 djangorestframework>=3.3.2
 enum34
 google-api-python-client==1.7.5

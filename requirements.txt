@@ -34,7 +34,7 @@ django-dotenv==1.4.2
 django-extensions==2.1.4
 django-import-export==1.1.0
 django==1.11.17
-djangorestframework-csv==1.4.1
+djangorestframework-csv==2.1.0
 djangorestframework==3.9.0
 easyprocess==0.2.3        # via pyvirtualdisplay
 enum34==1.1.6
@@ -106,7 +106,7 @@ tablib==0.12.1            # via django-import-export
 titlecase==0.12.0
 toml==0.9.4               # via pre-commit
 tqdm==4.28.1
-unicodecsv==0.14.1        # via tablib
+unicodecsv==0.14.1        # via djangorestframework-csv, tablib
 uritemplate==3.0.0        # via google-api-python-client
 urllib3==1.24.1           # via requests, selenium
 virtualenv==16.0.0        # via pre-commit
