@@ -817,10 +817,8 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
 def spending_for_one_entity(request, entity_code, entity_type):
     if entity_type == 'practice':
         model = Practice
-        url_name = 'price_per_unit_by_presentation_practice'
     elif entity_type == 'CCG':
         model = PCT
-        url_name = 'price_per_unit_by_presentation'
     else:
         raise NotImplementedError(entity_type)
     entity = get_object_or_404(model, code=entity_code)
@@ -831,10 +829,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
     breakdown = _ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
     url_template = (
-        reverse(url_name, kwargs={
-            'entity_code': entity.code,
-            'bnf_code': 'AAA'
-        })
+        reverse('tariff', kwargs={'code': 'AAA'})
         .replace('AAA', '{bnf_code}')
     )
     context = {
