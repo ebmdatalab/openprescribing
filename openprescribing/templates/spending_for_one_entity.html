@@ -39,10 +39,15 @@
     <thead>
       <tr>
         <th>BNF code</th>
-        <th>Presentation</th>
-        <th>Quantity</th>
-        <th>Tariff cost</th>
-        <th>Additional concessions cost</th>
+        <th class="text-nowrap">Presentation</th>
+        <th class="text-nowrap">
+          Quantity
+          {% if breakdown_is_estimate %}
+            ({{ last_prescribing_date|date:"M y"}})
+          {% endif %}
+        </th>
+        <th class="text-nowrap">Normally costs</th>
+        <th class="text-nowrap">This month&rsquo;s extra cost</th>
       </tr>
     </thead>
     <tbody>

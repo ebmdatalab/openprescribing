@@ -15,6 +15,11 @@ function downloadCSVData(name, headers, rows) {
 }
 
 
+function getElementCleanText() {
+  return $(this).text().replace(/\s\s+/g, ' ').trim();
+}
+
+
 $(function() {
 
   $('.js-submit-on-change').on('change', function() {
@@ -93,6 +98,8 @@ $(function() {
   if ( ! breakdownData) return;
   var $wrapper = $('#breakdown-table-wrapper');
   var urlTemplate = breakdownData.url_template;
+  var headers = $wrapper.find('table th').map(getElementCleanText).get();
+
   $wrapper.find('table').DataTable({
     data: breakdownData.table,
     pageLength: 25,
@@ -116,12 +123,14 @@ $(function() {
       }
     ]
   });
+
   $wrapper.find('.js-download-data').on('click', function() {
     return downloadCSVData(
       breakdownData.filename,
-      ['BNF Code', 'Presentation', 'Quantity', 'Tariff Cost', 'Additional Cost'],
+      headers,
       breakdownData.table
     );
   });
+
   $wrapper.removeClass('hide');
 });
