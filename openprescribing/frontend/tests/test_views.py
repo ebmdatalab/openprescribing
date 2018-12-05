@@ -7,6 +7,7 @@ from pyquery import PyQuery as pq
 
 from django.conf import settings
 from django.core import mail
+from django.db import connection
 from django.http import QueryDict
 from django.test import TestCase
 
@@ -340,6 +341,15 @@ class TestFrontendHomepageViews(TestCase):
             category='prescribing',
             current_at='2015-09-01'
         )
+        view_create = 'frontend/management/commands/replace_matviews.sql'
+        fixture = 'frontend/tests/fixtures/api_test_data.sql'
+        with connection.cursor() as cursor:
+            with open(view_create, 'r') as f:
+                # Creates the view tables
+                cursor.execute(f.read())
+            with open(fixture, 'r') as f:
+                # Fills them with test data
+                cursor.execute(f.read())
 
     def test_call_view_ccg_homepage(self):
         response = self.client.get('/ccg/02Q/')
