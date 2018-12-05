@@ -73,6 +73,13 @@ def handle_bad_request(view_function):
     return wrapper
 
 
+def _first_or_none(lst):
+    try:
+        return lst[0]
+    except IndexError:
+        return None
+
+
 ##################################################
 # BNF sections
 ##################################################
@@ -218,8 +225,9 @@ def all_england(request):
     measure_savings = _all_england_measure_savings(entity_type, date)
     low_priority_savings = _all_england_low_priority_savings(entity_type, date)
     low_priority_total = _all_england_low_priority_total(entity_type, date)
-    ncso_spending = _ncso_spending_for_entity(
-        None, 'all_england', num_months=1)[0]
+    ncso_spending = _first_or_none(
+        _ncso_spending_for_entity(None, 'all_england', num_months=1)
+    )
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
     other_entity_query = request.GET.copy()
     other_entity_query['entity_type'] = other_entity_type
@@ -711,6 +719,10 @@ def _ncso_spending_for_entity(entity, entity_type, num_months):
     else:
         raise ValueError('Unknown entity_type: '+entity_type)
     end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
+    # In practice, we always have at least one NCSOConcession object but we
+    # need to handle the empty case in testing
+    if not end_date:
+        return []
     start_date = end_date + relativedelta(months=-num_months)
     with connection.cursor() as cursor:
         sql, params = _ncso_spending_query(prescribing_table)
@@ -1067,9 +1079,9 @@ def _home_page_context_for_entity(request, entity):
     ppu_date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
-    _ncso_spending = _ncso_spending_for_entity(
-        entity, entity_type, num_months=1)
-    ncso_spending = _ncso_spending[0] if _ncso_spending else None
+    ncso_spending = _first_or_none(
+        _ncso_spending_for_entity(entity, entity_type, num_months=1)
+    )
     return {
         'measure': extreme_measure,
         'measures_count': measures_count,
