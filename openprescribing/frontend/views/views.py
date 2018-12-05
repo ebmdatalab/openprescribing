@@ -639,6 +639,12 @@ def mailchimp_subscribe(
 # Spending
 ##################################################
 
+# The tariff (or concession) price is not what actually gets paid as each CCG
+# will have some kind of discount with the dispenser. However the average
+# discount has been pretty consistent over the years so we use that here.
+NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
+
+
 def spending_for_one_entity(request, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
     monthly_totals = _ncso_spending_for_entity(entity, entity_type, num_months=12)
@@ -672,7 +678,8 @@ def spending_for_one_entity(request, entity_code, entity_type):
         },
         'breakdown_date': breakdown_date,
         'breakdown_is_estimate': breakdown_date > last_prescribing_date,
-        'last_prescribing_date': last_prescribing_date
+        'last_prescribing_date': last_prescribing_date,
+        'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
     }
     return render(request, 'spending_for_one_entity.html', context)
 
@@ -813,10 +820,10 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
           ncso.date AS month,
           product.bnf_code AS bnf_code,
           product.name AS product_name,
-          dt.price_pence * (rx.quantity / vmpp.qtyval) / 100
+          dt.price_pence * (rx.quantity / vmpp.qtyval) * %(discount_factor)s
             AS tariff_cost,
           COALESCE(ncso.price_concession_pence - dt.price_pence, 0)
-            * (rx.quantity / vmpp.qtyval) / 100
+            * (rx.quantity / vmpp.qtyval) * %(discount_factor)s
             AS additional_cost,
           ncso.date != rx.processing_date AS is_estimate,
           rx.*
@@ -857,7 +864,12 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
         cursor.execute(
             'SELECT MAX(processing_date) FROM {}'.format(prescribing_table))
         last_prescribing_date = cursor.fetchone()[0]
-    params = {'last_prescribing_date': last_prescribing_date}
+    params = {
+        'last_prescribing_date': last_prescribing_date,
+        # We discount by an additional factor of 100 to convert the figures
+        # from pence to pounds
+        'discount_factor': (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)
+    }
     return sql, params
 
 
