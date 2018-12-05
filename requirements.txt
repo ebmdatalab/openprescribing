@@ -27,7 +27,7 @@ diff-match-patch==20121119  # via django-import-export
 django-allauth==0.25.2
 django-anymail[mailgun]==2.2
 django-cors-headers==2.4.0
-django-crispy-forms==1.6.1
+django-crispy-forms==1.7.2
 django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==1.11
 django-dotenv==1.4.2
