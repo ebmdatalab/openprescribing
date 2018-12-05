@@ -55,25 +55,6 @@
   </p>
 </div>
 
-<div id="ccg-breakdown-table-wrapper" class="hide">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Code</th>
-        <th>CCG</th>
-        <th>Additional concessions cost</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
-  <p>
-    <a href="#" class="btn btn-primary js-download-data">
-      Download data <span class="glyphicon glyphicon-save"></span>
-    </a>
-  </p>
-</div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -83,7 +64,6 @@
 {% conditional_js 'spending-chart' %}
 
 {{ breakdown|json_script:"breakdown-data" }}
-{{ ccg_breakdown|json_script:"ccg-breakdown-data" }}
 {{ monthly_totals|json_script:"monthly-totals-data" }}
 
 {% endblock %}

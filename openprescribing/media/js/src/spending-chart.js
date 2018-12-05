@@ -125,38 +125,3 @@ $(function() {
   });
   $wrapper.removeClass('hide');
 });
-
-
-$(function() {
-  var breakdownData = JSON.parse(document.getElementById('ccg-breakdown-data').innerHTML);
-  if ( ! breakdownData) return;
-  var $wrapper = $('#ccg-breakdown-table-wrapper');
-  var urlTemplate = breakdownData.url_template;
-  $wrapper.find('table').DataTable({
-    data: breakdownData.table,
-    pageLength: 25,
-    order: [],
-    columnDefs: [
-      {targets: [0], visible: false},
-      {
-        targets: [1],
-        render: function(data, type, row) {
-          return '<a href="'+urlTemplate.replace('{code}', row[0])+'">'+data+'</a>';
-        }
-      },
-      {
-        targets: [2],
-        className: "text-right",
-        render: $.fn.dataTable.render.number(',', '.', 0, '£' )
-      }
-    ]
-  });
-  $wrapper.find('.js-download-data').on('click', function() {
-    return downloadCSVData(
-      breakdownData.filename,
-      ['CCG Code', 'CCG Name', 'Additional Cost'],
-      breakdownData.table
-    );
-  });
-  $wrapper.removeClass('hide');
-});

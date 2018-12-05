@@ -140,8 +140,9 @@ urlpatterns = [
         name='spending_for_one_ccg',
         kwargs={'entity_type': 'CCG'}),
     url(r'^all-england/concessions/$',
-        frontend_views.spending_for_all_england,
-        name='spending_for_all_england'),
+        frontend_views.spending_for_one_entity,
+        name='spending_for_all_england',
+        kwargs={'entity_type': 'all_england', 'entity_code': None}),
 
     # Measures
     url(r'^measure/$',
