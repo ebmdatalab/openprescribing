@@ -3,6 +3,7 @@ from datetime import date
 from tempfile import NamedTemporaryFile
 import HTMLParser
 import logging
+import os
 import re
 import subprocess
 import urllib
@@ -32,6 +33,10 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             '/frontend/management/commands/grab_chart.js')
 
 logger = logging.getLogger(__name__)
+
+
+class BadAlertIimageError(Exception):
+    pass
 
 
 class CUSUM(object):
@@ -485,6 +490,9 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
     )
     result = subprocess.check_output(cmd, shell=True)
     logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
+    if os.path.getsize(file_path) == 0:
+        msg = "File at %s empty (generated from url %s)" % (file_path, url)
+        raise BadAlertIimageError(msg)
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 

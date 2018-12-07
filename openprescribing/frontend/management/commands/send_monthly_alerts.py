@@ -146,23 +146,31 @@ class Command(BaseCommand):
                         practice=org_bookmark.practice or options['practice'],
                         pct=org_bookmark.pct or options['ccg']
                     ).context_for_org_email()
-                    msg = bookmark_utils.make_org_email(
-                        org_bookmark, stats, tag=now_month)
-                    msg = EmailMessage.objects.create_from_message(msg)
-                    msg.send()
-                    logger.info("Sent org bookmark alert to %s about %s" % (
-                        msg.to, org_bookmark.id))
+                    try:
+                        msg = bookmark_utils.make_org_email(
+                            org_bookmark, stats, tag=now_month)
+                        msg = EmailMessage.objects.create_from_message(msg)
+                        msg.send()
+                        logger.info(
+                            "Sent org bookmark alert to %s about %s" % (
+                                msg.to, org_bookmark.id))
+                    except bookmark_utils.BadAlertIimageError as e:
+                        logger.exception(e)
                 email_retrier.try_email(callback)
             for search_bookmark in self.get_search_bookmarks(
                     now_month, **options):
                 def callback():
-                    recipient_id = search_bookmark.user.id
-                    msg = bookmark_utils.make_search_email(
-                        search_bookmark, tag=now_month)
-                    msg = EmailMessage.objects.create_from_message(msg)
-                    msg.send()
-                    logger.info("Sent search bookmark alert to %s about %s" % (
-                        recipient_id, search_bookmark.id))
+                    try:
+                        recipient_id = search_bookmark.user.id
+                        msg = bookmark_utils.make_search_email(
+                            search_bookmark, tag=now_month)
+                        msg = EmailMessage.objects.create_from_message(msg)
+                        msg.send()
+                        logger.info(
+                            "Sent search bookmark alert to %s about %s" % (
+                                recipient_id, search_bookmark.id))
+                    except bookmark_utils.BadAlertIimageError as e:
+                        logger.exception(e)
                 email_retrier.try_email(callback)
 
 
