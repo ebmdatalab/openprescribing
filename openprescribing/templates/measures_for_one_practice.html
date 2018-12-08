@@ -62,7 +62,7 @@
 
 {% block extra_js %}
 <script>
-  var measureData = {{ measure_options|as_json }}
+  var measureOptions = {{ measure_options|as_json }}
 </script>
 {% conditional_js 'measures' %}
 {% endblock %}

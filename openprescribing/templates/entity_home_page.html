@@ -187,7 +187,7 @@
 {% block extra_js %}
 <script>
   var maxZoom = 6;
-  var measureData = {{ measure_options|as_json }};
+  var measureOptions = {{ measure_options|as_json }};
 </script>
 {% conditional_js 'measures' %}
 {% endblock %}

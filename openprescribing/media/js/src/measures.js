@@ -39,7 +39,7 @@ var measures = {
     var selectedMeasure = window.location.hash;
     _this.allGraphsRendered = false;
     _this.graphsToRenderInitially = 24;
-    var options = measureData; // defined in handlebars templates
+    var options = measureOptions; // defined in handlebars templates
     if (!options.rollUpBy) {
       options.rollUpBy = (options.measure) ? 'org_id' : 'measure_id';
     }
