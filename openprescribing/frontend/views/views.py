@@ -303,8 +303,21 @@ def all_measures(request):
 
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
+    measure_options= {
+        'measure': measure.id,
+        'tags': request.GET.get('tags', ''),
+        'orgType': 'CCG',
+        'numerator': measure.numerator_short,
+        'denominator': measure.denominator_short,
+        'isCostBasedMeasure': measure.is_cost_based,
+        'lowIsGood': measure.low_is_good,
+    }
+    if measure.tags_focus:
+        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+
     context = {
-        'measure': measure
+        'measure': measure,
+        'measure_options': measure_options,
     }
     return render(request, 'measure_for_all_ccgs.html', context)
 
