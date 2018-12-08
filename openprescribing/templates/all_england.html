@@ -154,12 +154,7 @@
 
 {% block extra_js %}
 <script>
-  var measureData = {
-   'aggregate': true,
-   'tags': '{{ tag_filter.tags|join:"," }}',
-   'orgName': 'All {{ entity_type }}s in England',
-   'orgType': '{{ entity_type }}'
-};
+  var measureData = {{ measure_options|as_json }};
 </script>
 {% conditional_js 'measures' %}
 

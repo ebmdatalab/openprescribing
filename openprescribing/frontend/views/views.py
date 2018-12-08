@@ -237,6 +237,14 @@ def all_england(request):
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
     other_entity_query = request.GET.copy()
     other_entity_query['entity_type'] = other_entity_type
+
+    measure_options = {
+       'tags': ','.join(tag_filter['tags']),
+       'orgType': entity_type,
+       'orgName': 'All {}s in England'.format(entity_type),
+       'aggregate': True,
+    }
+
     context = {
         'tag_filter': tag_filter,
         'entity_type': entity_type,
@@ -247,7 +255,8 @@ def all_england(request):
         'low_priority_savings': low_priority_savings,
         'low_priority_total': low_priority_total,
         'ncso_spending': ncso_spending,
-        'date': date
+        'date': date,
+        'measure_options': measure_options,
     }
     return render(request, 'all_england.html', context)
 
