@@ -394,6 +394,13 @@ def measures_for_one_ccg(request, ccg_code):
     tag_filter = _get_measure_tag_filter(request.GET)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
 
+    measure_options = {
+        'tags': ','.join(tag_filter['tags']),
+        'orgType': 'CCG',
+        'orgId': ccg.code,
+        'orgName': ccg.name,
+    }
+
     context = {
         'ccg': ccg,
         'practices': practices,
@@ -401,6 +408,7 @@ def measures_for_one_ccg(request, ccg_code):
         'form': form,
         'signed_up_for_alert': _signed_up_for_alert(request, ccg),
         'tag_filter': tag_filter,
+        'measure_options': measure_options,
     }
     return render(request, 'measures_for_one_ccg.html', context)
 
