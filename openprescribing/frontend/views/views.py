@@ -337,11 +337,19 @@ def measure_for_one_practice(request, measure, practice_code):
 def measure_for_one_ccg(request, measure, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, pk=measure)
+    measure_options = {
+        'measure': measure.id,
+        'orgType': 'CCG',
+        'orgId': ccg.code,
+        'orgName': ccg.name,
+        'rollUpBy': 'measure_id',
+    }
     context = {
         'ccg': ccg,
         'measure': measure,
+        'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
+            'prescribing').current_at,
     }
     return render(request, 'measure_for_one_ccg.html', context)
 

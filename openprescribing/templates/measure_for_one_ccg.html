@@ -70,13 +70,7 @@ numerator was composed of the following presentations:</p>
 {% block extra_js %}
 
 <script>
-var measureData = {
-    'orgId': '{{ ccg.code }}',
-    'orgName': '{{ ccg.name }}',
-    'measure': '{{ measure.id }}',
-    'rollUpBy': 'measure_id',
-    'orgType': 'CCG'
-};
+  var measureData = {{ measure_options|as_json }};
 </script>
 
 {% conditional_js 'measures' %}
