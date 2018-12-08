@@ -372,6 +372,13 @@ def measures_for_one_practice(request, code):
         return form
 
     tag_filter = _get_measure_tag_filter(request.GET)
+    measure_options = {
+        'tags': ','.join(tag_filter['tags']),
+        'orgType': 'practice',
+        'orgId': practice.code,
+        'orgName': practice.name,
+        'parentOrg': practice.ccg.code,
+    }
 
     context = {
         'practice': practice,
@@ -379,6 +386,7 @@ def measures_for_one_practice(request, code):
         'form': form,
         'signed_up_for_alert': _signed_up_for_alert(request, practice),
         'tag_filter': tag_filter,
+        'measure_options': measure_options,
     }
     return render(request, 'measures_for_one_practice.html', context)
 

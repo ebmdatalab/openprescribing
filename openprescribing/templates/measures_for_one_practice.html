@@ -62,13 +62,7 @@
 
 {% block extra_js %}
 <script>
-var measureData = {
-    'tags': '{{ tag_filter.tags|join:"," }}',
-    'orgId': '{{ practice.code }}',
-    'parentOrg': '{{ practice.ccg.code }}',
-    'orgName': '{{ practice.name }}',
-    'orgType': 'practice'
-};
+  var measureData = {{ measure_options|as_json }}
 </script>
 {% conditional_js 'measures' %}
 {% endblock %}
