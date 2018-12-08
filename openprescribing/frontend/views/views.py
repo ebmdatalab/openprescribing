@@ -365,54 +365,52 @@ def measure_for_one_ccg(request, measure, ccg_code):
 
 @handle_bad_request
 def measures_for_one_practice(request, code):
-    p = get_object_or_404(Practice, code=code)
-    tag_filter = _get_measure_tag_filter(request.GET)
-    form = _bookmark_and_newsletter_form(
-        request, p)
+    practice = get_object_or_404(Practice, code=code)
+    form = _bookmark_and_newsletter_form(request, practice)
+
     if isinstance(form, HttpResponseRedirect):
         return form
-    else:
-        context = {
-            'practice': p,
-            'page_id': code,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(request, p),
-            'tag_filter': tag_filter
-        }
-        return render(request, 'measures_for_one_practice.html', context)
+
+    tag_filter = _get_measure_tag_filter(request.GET)
+
+    context = {
+        'practice': practice,
+        'page_id': code,
+        'form': form,
+        'signed_up_for_alert': _signed_up_for_alert(request, practice),
+        'tag_filter': tag_filter,
+    }
+    return render(request, 'measures_for_one_practice.html', context)
 
 
 @handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
-    tag_filter = _get_measure_tag_filter(request.GET)
-    practices = Practice.objects.filter(
-        ccg=requested_ccg).filter(
-            setting=4).order_by('name')
-    form = _bookmark_and_newsletter_form(
-        request, requested_ccg)
+    ccg = get_object_or_404(PCT, code=ccg_code)
+    form = _bookmark_and_newsletter_form(request, ccg)
+
     if isinstance(form, HttpResponseRedirect):
         return form
-    else:
-        context = {
-            'ccg': requested_ccg,
-            'practices': practices,
-            'page_id': ccg_code,
-            'form': form,
-            'signed_up_for_alert': _signed_up_for_alert(
-                request, requested_ccg),
-            'tag_filter': tag_filter
-        }
-        return render(request, 'measures_for_one_ccg.html', context)
+
+    tag_filter = _get_measure_tag_filter(request.GET)
+    practices = ccg.practice_set.filter(setting=4).order_by('name')
+
+    context = {
+        'ccg': ccg,
+        'practices': practices,
+        'page_id': ccg_code,
+        'form': form,
+        'signed_up_for_alert': _signed_up_for_alert(request, ccg),
+        'tag_filter': tag_filter,
+    }
+    return render(request, 'measures_for_one_ccg.html', context)
 
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):
-    requested_ccg = get_object_or_404(PCT, code=ccg_code)
+    ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
-    practices = Practice.objects.filter(ccg=requested_ccg)\
-        .filter(setting=4).order_by('name')
+    practices = ccg.practice_set.filter(setting=4).order_by('name')
     context = {
-        'ccg': requested_ccg,
+        'ccg': ccg,
         'practices': practices,
         'page_id': ccg_code,
         'measure': measure
