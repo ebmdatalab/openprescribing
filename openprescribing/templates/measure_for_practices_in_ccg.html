@@ -75,16 +75,7 @@ text
 
 {% block extra_js %}
 <script>
-var measureData = {
-    'orgId': '{{ ccg.code }}',
-    'orgName': '{{ ccg.name }}',
-    'orgType': 'practice',
-    'measure': '{{ measure.id }}',
-    'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
-    'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},
-    'numerator': '{{ measure.numerator_short }}',
-    'denominator': '{{ measure.denominator_short }}'
-};
+  var measureData = {{ measure_options|as_json }}
 </script>
 {% conditional_js 'measures' %}
 {% endblock %}

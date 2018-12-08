@@ -408,12 +408,23 @@ def measures_for_one_ccg(request, ccg_code):
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
+    measure_options= {
+        'measure': measure.id,
+        'orgId': ccg.code,
+        'orgName': ccg.name,
+        'orgType': 'practice',
+        'numerator': measure.numerator_short,
+        'denominator': measure.denominator_short,
+        'isCostBasedMeasure': measure.is_cost_based,
+        'lowIsGood': measure.low_is_good,
+    }
     practices = ccg.practice_set.filter(setting=4).order_by('name')
     context = {
         'ccg': ccg,
         'practices': practices,
         'page_id': ccg_code,
-        'measure': measure
+        'measure': measure,
+        'measure_options': measure_options,
     }
     return render(request, 'measure_for_practices_in_ccg.html', context)
 
