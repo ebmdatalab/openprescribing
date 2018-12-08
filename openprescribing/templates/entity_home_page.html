@@ -187,28 +187,7 @@
 {% block extra_js %}
 <script>
   var maxZoom = 6;
-  var measureData = {
-  'orgType': '{{ entity_type }}',
-  'rollUpBy': 'measure_id',
-  'orgId': '{{ entity.code }}',
-  specificMeasures: [
-  {
-  'measure': '{{ measure.id }}',
-  'chartContainerId': '#top-measure-container',
-  'orgId': '{{ entity.code }}',
-  'parentOrg': {% if parent_code %}'{{ parent_code }}'{% else %}null{% endif %},
-  'orgName': '{{ entity.name }}',
-  },
-  {
-  'measure': 'lpzomnibus',
-  'chartContainerId': '#lpzomnibus-container',
-  'orgId': '{{ entity.code }}',
-  'parentOrg': {% if parent_code %}'{{ parent_code }}'{% else %}null{% endif %},
-  'orgName': '{{ entity.name }}',
-  },
-
-  ]
-  };
+  var measureData = {{ measure_options|as_json }};
 </script>
 {% conditional_js 'measures' %}
 {% endblock %}

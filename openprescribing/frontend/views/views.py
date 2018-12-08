@@ -186,7 +186,6 @@ def practice_home_page(request, practice_code):
         return form
     context = _home_page_context_for_entity(request, practice)
     context['form'] = form
-    context['parent_code'] = practice.ccg_id
     request.session['came_from'] = request.path
     return render(request, 'entity_home_page.html', context)
 
@@ -926,9 +925,11 @@ def _home_page_context_for_entity(request, entity):
     if isinstance(entity, Practice):
         mv_filter['practice_id'] = entity.code
         entity_type = 'practice'
+        parent_org = entity.ccg_id
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
         entity_type = 'CCG'
+        parent_org = None
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
@@ -952,6 +953,26 @@ def _home_page_context_for_entity(request, entity):
     ncso_spending = _first_or_none(
         ncso_spending_for_entity(entity, entity_type, num_months=1)
     )
+
+    measure_options = {
+        'specificMeasures': [{
+          'measure': extreme_measure.id,
+          'chartContainerId': '#top-measure-container',
+          'orgId': entity.code,
+          'parentOrg': parent_org,
+          'orgName': entity.name,
+        }, {
+          'measure': 'lpzomnibus',
+          'chartContainerId': '#lpzomnibus-container',
+          'orgId': entity.code,
+          'parentOrg': parent_org,
+          'orgName': entity.name,
+        }],
+        'orgType': entity_type,
+        'orgId': entity.code,
+        'rollUpBy': 'measure_id',
+    }
+
     return {
         'measure': extreme_measure,
         'measures_count': measures_count,
@@ -967,7 +988,7 @@ def _home_page_context_for_entity(request, entity):
         'ncso_spending': ncso_spending,
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
-        'parent_code': None
+        'measure_options': measure_options,
     }
 
 
