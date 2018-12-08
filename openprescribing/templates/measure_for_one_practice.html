@@ -69,14 +69,7 @@ numerator in this measure was composed of the following presentations:</p>
 
 {% block extra_js %}
 <script>
-var measureData = {
-    'orgId': '{{ practice.code }}',
-    'orgName': '{{ practice.name }}',
-    'measure': '{{ measure.id }}',
-    'rollUpBy': 'measure_id',
-    'orgType': 'practice',
-    'parentOrg': '{{ practice.ccg.code }}',
-};
+  var measureData = {{ measure_options|as_json }};
 </script>
 {% conditional_js 'measures' %}
 {% include '_measure_breakdown_table.html' %}

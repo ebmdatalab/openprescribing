@@ -325,9 +325,18 @@ def measure_for_all_ccgs(request, measure):
 def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
+    measure_options = {
+        'measure': measure.id,
+        'orgType': 'practice',
+        'orgId': practice.code,
+        'orgName': practice.name,
+        'parentOrg': practice.ccg_id,
+        'rollUpBy': 'measure_id',
+    }
     context = {
         'practice': practice,
         'measure': measure,
+        'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
     }
