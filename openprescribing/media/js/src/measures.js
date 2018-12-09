@@ -46,10 +46,9 @@ var measures = {
     _this.setUpShowPractices();
     _this.setUpMap(options);
 
-    var urls = mu.getDataUrls(options);
     $.when(
-      $.ajax(urls.panelMeasuresUrl),
-      $.ajax(urls.globalMeasuresUrl)
+      $.ajax(options.panelMeasuresUrl),
+      $.ajax(options.globalMeasuresUrl)
     ).done(function(panelMeasures, globalMeasures) {
       var chartData = panelMeasures[0].measures;
       var globalData = globalMeasures[0].measures;

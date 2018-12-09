@@ -243,6 +243,7 @@ def all_england(request):
        'orgName': 'All {}s in England'.format(entity_type),
        'aggregate': True,
     }
+    _add_measure_data_urls(measure_options)
 
     context = {
         'tag_filter': tag_filter,
@@ -303,7 +304,7 @@ def all_measures(request):
 
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
-    measure_options= {
+    measure_options = {
         'measure': measure.id,
         'tags': request.GET.get('tags', ''),
         'orgType': 'CCG',
@@ -314,6 +315,7 @@ def measure_for_all_ccgs(request, measure):
     }
     if measure.tags_focus:
         measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+    _add_measure_data_urls(measure_options)
 
     context = {
         'measure': measure,
@@ -333,6 +335,7 @@ def measure_for_one_practice(request, measure, practice_code):
         'parentOrg': practice.ccg_id,
         'rollUpBy': 'measure_id',
     }
+    _add_measure_data_urls(measure_options)
     context = {
         'practice': practice,
         'measure': measure,
@@ -353,6 +356,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
         'orgName': ccg.name,
         'rollUpBy': 'measure_id',
     }
+    _add_measure_data_urls(measure_options)
     context = {
         'ccg': ccg,
         'measure': measure,
@@ -379,6 +383,7 @@ def measures_for_one_practice(request, code):
         'orgName': practice.name,
         'parentOrg': practice.ccg.code,
     }
+    _add_measure_data_urls(measure_options)
 
     context = {
         'practice': practice,
@@ -408,6 +413,7 @@ def measures_for_one_ccg(request, ccg_code):
         'orgId': ccg.code,
         'orgName': ccg.name,
     }
+    _add_measure_data_urls(measure_options)
 
     context = {
         'ccg': ccg,
@@ -424,7 +430,7 @@ def measures_for_one_ccg(request, ccg_code):
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
-    measure_options= {
+    measure_options = {
         'measure': measure.id,
         'orgId': ccg.code,
         'orgName': ccg.name,
@@ -434,6 +440,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
         'isCostBasedMeasure': measure.is_cost_based,
         'lowIsGood': measure.low_is_good,
     }
+    _add_measure_data_urls(measure_options)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
     context = {
         'ccg': ccg,
@@ -1027,6 +1034,7 @@ def _home_page_context_for_entity(request, entity):
         'orgId': entity.code,
         'rollUpBy': 'measure_id',
     }
+    _add_measure_data_urls(measure_options)
 
     return {
         'measure': extreme_measure,
@@ -1045,6 +1053,57 @@ def _home_page_context_for_entity(request, entity):
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
         'measure_options': measure_options,
     }
+
+
+def _add_measure_data_urls(measure_options):
+    panel_params = {'format': 'json'}
+    if 'measure' in measure_options:
+        panel_params['measure'] = measure_options['measure']
+    if 'specificMeasures' in measure_options:
+        panel_params['measure'] = ','.join(
+            specific_measure['measure']
+            for specific_measure in measure_options['specificMeasures']
+        )
+    if 'orgId' in measure_options:
+        panel_params['org'] = measure_options['orgId']
+    if 'tags' in measure_options:
+        panel_params['tags'] = measure_options['tags']
+    if 'aggregate' in measure_options:
+        panel_params['aggregate'] = measure_options['aggregate']
+
+    measure_options['panelMeasuresUrl'] = _build_api_url(
+        'measure_by_' + measure_options['orgType'].lower(),
+        panel_params
+    )
+
+    global_params = {'format': 'json'}
+    if 'measure' in measure_options:
+        global_params['measure'] = measure_options['measure']
+    if 'specificMeasures' in measure_options:
+        global_params['measure'] = ','.join(
+            specific_measure['measure']
+            for specific_measure in measure_options['specificMeasures']
+        )
+    if 'tags' in measure_options:
+        global_params['tags'] = measure_options['tags']
+
+    measure_options['globalMeasuresUrl'] = _build_api_url('measure', global_params)
+
+
+def _build_api_url(view_name, params):
+    path = reverse(view_name)
+    querystring = urlencode(params)
+
+    parsed_url = urlparse(settings.API_HOST)
+
+    return urlunparse((
+        parsed_url.scheme, # scheme
+        parsed_url.netloc, # host
+        path,              # path
+        '',                # params
+        querystring,       # query
+        '',                # fragment
+    ))
 
 
 def _all_england_ppu_savings(entity_type, date):

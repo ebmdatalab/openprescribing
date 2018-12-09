@@ -7,48 +7,6 @@ var csvUtils = require('./csv-utils');
 
 var utils = {
 
-  getDataUrls: function(options) {
-    var panelUrl = config.apiHost + '/api/1.0/measure_by_';
-    panelUrl += options.orgType.toLowerCase() + '/?format=json';
-    var urls = {
-      panelMeasuresUrl: panelUrl,
-      globalMeasuresUrl: config.apiHost + '/api/1.0/measure/?format=json',
-    };
-    urls.panelMeasuresUrl += this._getOneOrMore(options, 'orgId', 'org');
-    urls.panelMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
-    urls.globalMeasuresUrl += this._getOneOrMore(options, 'tags', 'tags');
-    urls.panelMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
-    urls.globalMeasuresUrl += this._getOneOrMore(options, 'measure', 'measure');
-    urls.panelMeasuresUrl += this._getOneOrMore(options, 'aggregate', 'aggregate');
-    return urls;
-  },
-
-  _getOneOrMore: function(options, optionName, paramName) {
-    /* Returns the value of `optionName` from `options`, encoded as a
-     * query string parameter matching `paramName`.
-
-     If there is an array of `specificMeasures` defined, does the same
-     thing, but joins together values defined in each item of the
-     array with commas.
-    */
-    var result;
-    if (typeof options.specificMeasures === 'undefined') {
-      result = options[optionName];
-    } else {
-      var valArray = [];
-      _.each(options.specificMeasures, function(m) {
-        if (m[optionName] && $.inArray(m[optionName], valArray) == -1) {
-          valArray.push(m[optionName]);
-        }
-      });
-      result = valArray.join(',');
-    }
-    if (result && result !== '') {
-      return '&' + paramName + '=' + result;
-    }
-    return '';
-  },
-
   getCentilesAndYAxisExtent: function(globalData, options, centiles) {
     /*
     If there is a single global set of centiles, calculate the global
