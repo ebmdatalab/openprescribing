@@ -97,7 +97,7 @@ pyyaml==3.13              # via aspy.yaml, pre-commit, tablib, watchdog
 raven==6.9.0
 requests-futures==0.9.9
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
-requests[security]==2.20.1
+requests[security]==2.21.0
 rsa==3.4.2                # via google-auth
 selenium==3.141.0
 six==1.11.0               # via bcrypt, cfgv, cryptography, django-anymail, django-extensions, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, pre-commit, protobuf, pynacl, pyopenssl, python-dateutil
