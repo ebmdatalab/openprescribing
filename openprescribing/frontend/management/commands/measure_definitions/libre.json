@@ -9,7 +9,7 @@
   "why_it_matters": [
     "tbc"
   ],
-  "numerator_short": "Freestyle Libre items",
+  "numerator_short": "Freestyle Libre quantity",
   "denominator_short": "1000 patients",
   "url": null,
   "is_percentage": false,
@@ -20,7 +20,7 @@
     "diabetes"
   ],
   "numerator_columns": [
-    "SUM(items) AS numerator, "
+    "SUM(quantity) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
