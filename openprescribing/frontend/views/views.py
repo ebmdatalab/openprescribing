@@ -660,16 +660,15 @@ def spending_for_one_entity(request, entity_code, entity_type):
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    breakdown = _ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
     url_template = (
         reverse('tariff', kwargs={'code': 'AAA'})
         .replace('AAA', '{bnf_code}')
     )
     if entity_type == 'all_england':
-        breakdown = _ncso_spending_breakdown_for_all_england(breakdown_date)
         title = 'Impact of price concessions across NHS England'
         entity_short_desc = 'nhs-england'
     else:
-        breakdown = _ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
         title = 'Impact of price concessions on {}'.format(entity.cased_name)
         entity_short_desc = '{}-{}'.format(entity_type, entity.code)
     context = {
@@ -756,7 +755,9 @@ def _ncso_spending_for_entity(entity, entity_type, num_months):
 
 
 def _ncso_spending_breakdown_for_entity(entity, entity_type, month):
-    if entity_type == 'CCG':
+    if entity_type == 'all_england':
+        return _ncso_spending_breakdown_for_all_england(month)
+    elif entity_type == 'CCG':
         prescribing_table = 'vw__presentation_summary_by_ccg'
         entity_field = 'pct_id'
     elif entity_type == 'practice':
