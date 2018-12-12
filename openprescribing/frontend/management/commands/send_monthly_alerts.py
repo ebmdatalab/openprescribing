@@ -139,7 +139,7 @@ class Command(BaseCommand):
         self.validate_options(**options)
         now_month = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime('%Y-%m-%d').lower()
-        with EmailRetrier(options['max_errors']) as email_retrier:
+        with EmailErrorDeferrer(options['max_errors']) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 def callback():
                     stats = bookmark_utils.InterestingMeasureFinder(
@@ -156,7 +156,7 @@ class Command(BaseCommand):
                                 msg.to, org_bookmark.id))
                     except bookmark_utils.BadAlertIimageError as e:
                         logger.exception(e)
-                email_retrier.try_email(callback)
+                error_deferrer.try_email(callback)
             for search_bookmark in self.get_search_bookmarks(
                     now_month, **options):
                 def callback():
@@ -171,7 +171,7 @@ class Command(BaseCommand):
                                 recipient_id, search_bookmark.id))
                     except bookmark_utils.BadAlertIimageError as e:
                         logger.exception(e)
-                email_retrier.try_email(callback)
+                error_deferrer.try_email(callback)
 
 
 class BatchedEmailErrors(Exception):
@@ -191,7 +191,11 @@ class BatchedEmailErrors(Exception):
         super(BatchedEmailErrors, self).__init__(msg)
 
 
-class EmailRetrier(object):
+class EmailErrorDeferrer(object):
+    """Defers raising an exception until `max_errors` is reached,
+    whereupon a new summary exception is raised.
+
+    """
     def __init__(self, max_errors=3):
         self.exceptions = []
         self.max_errors = max_errors
