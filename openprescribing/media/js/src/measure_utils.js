@@ -383,7 +383,7 @@ var utils = {
     } else {
       orgId = options.orgId;
     }
-    var isAggregateEntity = ( ! orgId);
+    var isAggregateEntity = options.aggregate;
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
@@ -461,7 +461,7 @@ var utils = {
       options, chartOptions);
     hcOptions.series = [];
     hcOptions.series.push({
-      name: (options.orgId) ? ('This ' + options.orgType) : options.orgName,
+      name: ( ! options.aggregate) ? ('This ' + options.orgType) : options.orgName,
       isNationalSeries: false,
       showTooltip: true,
       data: d.data,
