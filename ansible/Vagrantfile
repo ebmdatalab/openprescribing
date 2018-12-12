@@ -31,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Set up synced folders. Use NFS for shared folders for better
     # performance
-    config.vm.synced_folder "../", "/code/openprescribing", nfs: true
+    config.vm.synced_folder "../", "/openprescribing", nfs: true
 
     config.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -40,7 +40,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # ansible provisioning
     config.vm.provision "ansible_local" do |ansible|
       ansible.install_mode = "pip_args_only"
-      ansible.pip_args = "-r /code/openprescribing/ansible/vagrant_requirements.txt"
+      ansible.pip_args = "-r /openprescribing/ansible/vagrant_requirements.txt"
       ansible.playbook = "vagrant.yml"
       ansible.verbose = "vv"
     end

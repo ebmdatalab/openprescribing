@@ -139,31 +139,39 @@ class Command(BaseCommand):
         self.validate_options(**options)
         now_month = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime('%Y-%m-%d').lower()
-        with EmailRetrier(options['max_errors']) as email_retrier:
+        with EmailErrorDeferrer(options['max_errors']) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 def callback():
                     stats = bookmark_utils.InterestingMeasureFinder(
                         practice=org_bookmark.practice or options['practice'],
                         pct=org_bookmark.pct or options['ccg']
                     ).context_for_org_email()
-                    msg = bookmark_utils.make_org_email(
-                        org_bookmark, stats, tag=now_month)
-                    msg = EmailMessage.objects.create_from_message(msg)
-                    msg.send()
-                    logger.info("Sent org bookmark alert to %s about %s" % (
-                        msg.to, org_bookmark.id))
-                email_retrier.try_email(callback)
+                    try:
+                        msg = bookmark_utils.make_org_email(
+                            org_bookmark, stats, tag=now_month)
+                        msg = EmailMessage.objects.create_from_message(msg)
+                        msg.send()
+                        logger.info(
+                            "Sent org bookmark alert to %s about %s" % (
+                                msg.to, org_bookmark.id))
+                    except bookmark_utils.BadAlertIimageError as e:
+                        logger.exception(e)
+                error_deferrer.try_email(callback)
             for search_bookmark in self.get_search_bookmarks(
                     now_month, **options):
                 def callback():
-                    recipient_id = search_bookmark.user.id
-                    msg = bookmark_utils.make_search_email(
-                        search_bookmark, tag=now_month)
-                    msg = EmailMessage.objects.create_from_message(msg)
-                    msg.send()
-                    logger.info("Sent search bookmark alert to %s about %s" % (
-                        recipient_id, search_bookmark.id))
-                email_retrier.try_email(callback)
+                    try:
+                        recipient_id = search_bookmark.user.id
+                        msg = bookmark_utils.make_search_email(
+                            search_bookmark, tag=now_month)
+                        msg = EmailMessage.objects.create_from_message(msg)
+                        msg.send()
+                        logger.info(
+                            "Sent search bookmark alert to %s about %s" % (
+                                recipient_id, search_bookmark.id))
+                    except bookmark_utils.BadAlertIimageError as e:
+                        logger.exception(e)
+                error_deferrer.try_email(callback)
 
 
 class BatchedEmailErrors(Exception):
@@ -183,7 +191,11 @@ class BatchedEmailErrors(Exception):
         super(BatchedEmailErrors, self).__init__(msg)
 
 
-class EmailRetrier(object):
+class EmailErrorDeferrer(object):
+    """Defers raising an exception until `max_errors` is reached,
+    whereupon a new summary exception is raised.
+
+    """
     def __init__(self, max_errors=3):
         self.exceptions = []
         self.max_errors = max_errors

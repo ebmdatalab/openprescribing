@@ -513,6 +513,15 @@ class GenerateImageTestCase(unittest.TestCase):
             if e.errno != errno.ENOENT:
                 raise
 
+    @patch('subprocess.check_output')
+    def test_empty_image_raises(self, check_output):
+        with open(self.file_path, 'a'):
+            # create an empty file
+            os.utime(self.file_path, None)
+        with self.assertRaises(bookmark_utils.BadAlertIimageError):
+            bookmark_utils.attach_image(
+                self.msg, self.url, self.file_path, self.selector)
+
     def test_image_generated(self):
         # Note that the expected image may differ depending on the
         # server where this is run: phantomjs interacts with the

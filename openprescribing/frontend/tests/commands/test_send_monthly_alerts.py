@@ -15,6 +15,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
+from frontend.views.bookmark_utils import BadAlertIimageError
 from frontend.tests.test_bookmark_utils import _makeContext
 
 
@@ -130,10 +131,14 @@ class GetBookmarksTestCase(TestCase):
 @patch('frontend.views.bookmark_utils.InterestingMeasureFinder')
 @patch('frontend.views.bookmark_utils.attach_image')
 class FailingEmailTestCase(TestCase):
+    """Exercise the error batching mechanism that allowed a maximum number
+    of errors before failing the batch.
+
+    """
     fixtures = ['bookmark_alerts', 'measures', 'importlog']
 
     def test_successful_sends(self, attach_image, finder):
-        attach_image.side_effect = [StandardError, None, None]
+        attach_image.side_effect = [Exception, None, None]
         test_context = _makeContext(worst=[MagicMock()])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
@@ -141,8 +146,15 @@ class FailingEmailTestCase(TestCase):
         self.assertEqual(EmailMessage.objects.count(), 3)
         self.assertEqual(len(mail.outbox), 2)
 
+    def test_bad_alert_image_error_not_sent_and_not_raised(
+            self, attach_image, finder):
+        attach_image.side_effect = BadAlertIimageError
+        test_context = _makeContext(worst=[MagicMock()])
+        call_mocked_command(test_context, finder, max_errors=0)
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_max_errors(self, attach_image, finder):
-        attach_image.side_effect = [StandardError, None, None]
+        attach_image.side_effect = [Exception, None, None]
         test_context = _makeContext(worst=[MagicMock()])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
