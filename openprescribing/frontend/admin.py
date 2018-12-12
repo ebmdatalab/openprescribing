@@ -13,13 +13,11 @@ from .models import OrgBookmark
 from .models import SearchBookmark
 from .models import User
 from allauth.account.models import EmailAddress
-from allauth.account.models import EmailConfirmation
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 admin.site.unregister(User)
 admin.site.unregister(EmailAddress)
-admin.site.unregister(EmailConfirmation)
 
 
 class UserVerifiedFilter(admin.SimpleListFilter):
