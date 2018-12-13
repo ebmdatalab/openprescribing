@@ -139,7 +139,9 @@ class FailingEmailTestCase(TestCase):
 
     def test_successful_sends(self, attach_image, finder):
         attach_image.side_effect = [Exception, None, None]
-        test_context = _makeContext(worst=[MagicMock()])
+        measure = MagicMock()
+        measure.id = 'measureid'
+        test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
             call_mocked_command(test_context, finder, max_errors=4)
@@ -149,13 +151,17 @@ class FailingEmailTestCase(TestCase):
     def test_bad_alert_image_error_not_sent_and_not_raised(
             self, attach_image, finder):
         attach_image.side_effect = BadAlertIimageError
-        test_context = _makeContext(worst=[MagicMock()])
+        measure = MagicMock()
+        measure.id = 'measureid'
+        test_context = _makeContext(worst=[measure])
         call_mocked_command(test_context, finder, max_errors=0)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_max_errors(self, attach_image, finder):
         attach_image.side_effect = [Exception, None, None]
-        test_context = _makeContext(worst=[MagicMock()])
+        measure = MagicMock()
+        measure.id = 'measureid'
+        test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
             call_mocked_command(test_context, finder, max_errors=0)
