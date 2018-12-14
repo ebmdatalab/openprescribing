@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 import sys
 
 import dotenv
@@ -16,7 +17,7 @@ if __name__ == "__main__":
     dotenv.read_dotenv(env_path, override=True)
 
     if len(sys.argv) > 1:
-        if sys.argv[1] == 'test':
+        if sys.argv[1] == 'test' or re.match('generate_\w+_fixtures', sys.argv[1]):
             os.environ["DJANGO_SETTINGS_MODULE"] = "openprescribing.settings.test"
         elif sys.argv[1] == 'run_pipeline_e2e_tests':
             os.environ["DJANGO_SETTINGS_MODULE"] = "openprescribing.settings.e2etest"

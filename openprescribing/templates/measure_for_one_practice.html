@@ -74,7 +74,8 @@ var measureData = {
     'orgName': '{{ practice.name }}',
     'measure': '{{ measure.id }}',
     'rollUpBy': 'measure_id',
-    'orgType': 'practice'
+    'orgType': 'practice',
+    'parentOrg': '{{ practice.ccg.code }}',
 };
 </script>
 {% conditional_js 'measures' %}
