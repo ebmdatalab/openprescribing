@@ -55,7 +55,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
-            '/measure/lpzomnibus'
+            '/measure/lpzomnibus/'
         )
 
         panel_element = self._find_measure_panel('measure_core_0')
@@ -63,7 +63,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(1)',
             'Compare all CCGs in England on this measure',
-            '/measure/core_0'
+            '/measure/core_0/'
         )
 
     def test_all_england_low_priority(self):
@@ -74,7 +74,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(1)',
             'Compare all CCGs in England on this measure',
-            '/measure/lp_2'
+            '/measure/lp_2/'
         )
 
     def test_practice_home_page(self):
@@ -143,7 +143,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
-            '/measure/core_0'
+            '/measure/core_0/'
         )
 
         panel_element = self._find_measure_panel('measure_lpzomnibus')
@@ -169,7 +169,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
-            '/measure/lpzomnibus'
+            '/measure/lpzomnibus/'
         )
 
     def test_measures_for_one_practice_low_priority(self):
@@ -192,7 +192,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
-            '/measure/lp_2'
+            '/measure/lp_2/'
         )
 
     def test_measures_for_one_ccg(self):
@@ -221,7 +221,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
-            '/measure/core_0'
+            '/measure/core_0/'
         )
 
         panel_element = self._find_measure_panel('measure_lpzomnibus')
@@ -253,7 +253,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(4)',
             'Compare all CCGs in England on this measure',
-            '/measure/lpzomnibus'
+            '/measure/lpzomnibus/'
         )
 
     def test_measures_for_one_ccg_low_priority(self):
@@ -282,7 +282,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
-            '/measure/lp_2'
+            '/measure/lp_2/'
         )
 
     def test_measure_for_all_ccgs(self):
@@ -351,7 +351,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(1)',
             'Compare all CCGs in England on this measure',
-            '/measure/lp_2'
+            '/measure/lp_2/'
         )
 
     def test_measure_for_one_ccg(self):
@@ -374,7 +374,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
-            '/measure/lp_2'
+            '/measure/lp_2/'
         )
 
     def test_measure_for_practices_in_ccg(self):

@@ -323,7 +323,7 @@ var utils = {
       }
       chartTitleUrl += '/' + d.id;
       measureForAllPracticesUrl = chartTitleUrl;
-      measureUrl = '/measure/' + d.id;
+      measureUrl = options.measureUrlTemplate.replace('{measure_id}', d.id);
       measureId = d.id;
     } else {
       // We want organisation charts to link to the appropriate

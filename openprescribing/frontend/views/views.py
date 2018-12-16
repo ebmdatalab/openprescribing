@@ -1039,6 +1039,7 @@ def _home_page_context_for_entity(request, entity):
 
 
 def _add_urls_to_measure_options(measure_options):
+    # panelMeasuresUrl
     panel_params = {'format': 'json'}
     if 'measure' in measure_options:
         panel_params['measure'] = measure_options['measure']
@@ -1059,6 +1060,7 @@ def _add_urls_to_measure_options(measure_options):
         panel_params
     )
 
+    # globalMeasuresUrl
     global_params = {'format': 'json'}
     if 'measure' in measure_options:
         global_params['measure'] = measure_options['measure']
@@ -1072,6 +1074,7 @@ def _add_urls_to_measure_options(measure_options):
 
     measure_options['globalMeasuresUrl'] = _build_api_url('measure', global_params)
 
+    # orgLocationUrl
     if 'orgId' in measure_options:
         org_location_params = {
             'org_type': measure_options['orgType'].lower(),
@@ -1082,6 +1085,14 @@ def _add_urls_to_measure_options(measure_options):
             'org_location',
             org_location_params
         )
+
+    # measureUrlTemplate
+    if measure_options['rollUpBy'] == 'measure_id':
+        measure_options['measureUrlTemplate'] = (
+            reverse('measure_for_all_ccgs', kwargs={'measure': 'AAA'})
+            .replace('AAA', '{measure_id}')
+        )
+
 
 def _build_api_url(view_name, params):
     path = reverse(view_name)
