@@ -1015,6 +1015,7 @@ def _home_page_context_for_entity(request, entity):
         }],
         'orgType': entity_type,
         'orgId': entity.code,
+        'parentOrg': parent_org,
         'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)

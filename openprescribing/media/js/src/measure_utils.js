@@ -314,13 +314,7 @@ var utils = {
       // measure-by-all-practices-in-CCG page.
       chartTitle = d.name;
       chartTitleUrl = '/ccg/';
-      if (options.specificMeasures) {
-        var thisMeasure = _.findWhere(
-          options.specificMeasures, {measure: d.id});
-        chartTitleUrl += thisMeasure.parentOrg || thisMeasure.orgId;
-      } else {
-        chartTitleUrl += options.parentOrg || options.orgId;
-      }
+      chartTitleUrl += options.parentOrg || options.orgId;
       chartTitleUrl += '/' + d.id;
       measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = options.measureUrlTemplate.replace('{measure_id}', d.id);
