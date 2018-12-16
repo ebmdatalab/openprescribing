@@ -1039,57 +1039,57 @@ def _home_page_context_for_entity(request, entity):
     }
 
 
-def _add_urls_to_measure_options(measure_options):
+def _add_urls_to_measure_options(options):
     # panelMeasuresUrl
     panel_params = {'format': 'json'}
-    if 'measure' in measure_options:
-        panel_params['measure'] = measure_options['measure']
-    if 'specificMeasures' in measure_options:
+    if 'measure' in options:
+        panel_params['measure'] = options['measure']
+    if 'specificMeasures' in options:
         panel_params['measure'] = ','.join(
             specific_measure['measure']
-            for specific_measure in measure_options['specificMeasures']
+            for specific_measure in options['specificMeasures']
         )
-    if 'orgId' in measure_options:
-        panel_params['org'] = measure_options['orgId']
-    if 'tags' in measure_options:
-        panel_params['tags'] = measure_options['tags']
-    if 'aggregate' in measure_options:
-        panel_params['aggregate'] = measure_options['aggregate']
+    if 'orgId' in options:
+        panel_params['org'] = options['orgId']
+    if 'tags' in options:
+        panel_params['tags'] = options['tags']
+    if 'aggregate' in options:
+        panel_params['aggregate'] = options['aggregate']
 
-    measure_options['panelMeasuresUrl'] = _build_api_url(
-        'measure_by_' + measure_options['orgType'].lower(),
+    options['panelMeasuresUrl'] = _build_api_url(
+        'measure_by_' + options['orgType'].lower(),
         panel_params
     )
 
     # globalMeasuresUrl
     global_params = {'format': 'json'}
-    if 'measure' in measure_options:
-        global_params['measure'] = measure_options['measure']
-    if 'specificMeasures' in measure_options:
+    if 'measure' in options:
+        global_params['measure'] = options['measure']
+    if 'specificMeasures' in options:
         global_params['measure'] = ','.join(
             specific_measure['measure']
-            for specific_measure in measure_options['specificMeasures']
+            for specific_measure in options['specificMeasures']
         )
-    if 'tags' in measure_options:
-        global_params['tags'] = measure_options['tags']
+    if 'tags' in options:
+        global_params['tags'] = options['tags']
 
-    measure_options['globalMeasuresUrl'] = _build_api_url('measure', global_params)
+    options['globalMeasuresUrl'] = _build_api_url('measure', global_params)
 
     # orgLocationUrl
-    if 'orgId' in measure_options:
+    if 'orgId' in options:
         org_location_params = {
-            'org_type': measure_options['orgType'].lower(),
-            'q': measure_options['orgId'],
+            'org_type': options['orgType'].lower(),
+            'q': options['orgId'],
         }
 
-        measure_options['orgLocationUrl'] = _build_api_url(
+        options['orgLocationUrl'] = _build_api_url(
             'org_location',
             org_location_params
         )
 
     # chartTitleUrlTemplate
-    if measure_options['rollUpBy'] == 'measure_id':
-        measure_options['chartTitleUrlTemplate'] = (
+    if options['rollUpBy'] == 'measure_id':
+        options['chartTitleUrlTemplate'] = (
             reverse(
                 'measure_for_practices_in_ccg', kwargs={
                     'ccg_code': 'AAA',
@@ -1100,13 +1100,13 @@ def _add_urls_to_measure_options(measure_options):
             .replace('BBB', '{measure_id}')
         )
     else:
-        if measure_options['orgType'] == 'CCG':
-            measure_options['chartTitleUrlTemplate'] = (
+        if options['orgType'] == 'CCG':
+            options['chartTitleUrlTemplate'] = (
                 reverse('measures_for_one_ccg', kwargs={'ccg_code': 'AAA'})
                 .replace('AAA', '{org_code}')
             )
-        elif measure_options['orgType'] == 'practice':
-            measure_options['chartTitleUrlTemplate'] = (
+        elif options['orgType'] == 'practice':
+            options['chartTitleUrlTemplate'] = (
                 reverse('measures_for_one_practice', kwargs={'code': 'AAA'})
                 .replace('AAA', '{org_code}')
             )
@@ -1114,8 +1114,8 @@ def _add_urls_to_measure_options(measure_options):
             assert False
 
     # measureUrlTemplate
-    if measure_options['rollUpBy'] == 'measure_id':
-        measure_options['measureUrlTemplate'] = (
+    if options['rollUpBy'] == 'measure_id':
+        options['measureUrlTemplate'] = (
             reverse('measure_for_all_ccgs', kwargs={'measure': 'AAA'})
             .replace('AAA', '{measure_id}')
         )
