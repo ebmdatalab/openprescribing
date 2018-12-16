@@ -148,15 +148,12 @@ var measures = {
         'mapbox.streets',
         {zoomControl: false}).setView([52.905, -1.79], 6);
       map.scrollWheelZoom.disable();
-      var url = config.apiHost + '/api/1.0/org_location/?org_type=' +
-          options.orgType.toLowerCase();
-      url += '&q=' + options.orgId;
       var maxZoom = 5;
       if (options.orgType === 'practice') {
         maxZoom = 12;
       }
       var layer = L.mapbox.featureLayer()
-          .loadURL(url)
+          .loadURL(options['orgLocationUrl'])
           .on('ready', function() {
             if (layer.getBounds().isValid()) {
               map.fitBounds(layer.getBounds(), {maxZoom: maxZoom});
