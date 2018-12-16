@@ -242,6 +242,7 @@ def all_england(request):
        'orgType': entity_type,
        'orgName': 'All {}s in England'.format(entity_type),
        'aggregate': True,
+       'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
 
@@ -312,6 +313,7 @@ def measure_for_all_ccgs(request, measure):
         'denominator': measure.denominator_short,
         'isCostBasedMeasure': measure.is_cost_based,
         'lowIsGood': measure.low_is_good,
+        'rollUpBy': 'org_id',
     }
     if measure.tags_focus:
         measure_options['tagsFocus'] = ','.join(measure.tags_focus)
@@ -382,6 +384,7 @@ def measures_for_one_practice(request, code):
         'orgId': practice.code,
         'orgName': practice.name,
         'parentOrg': practice.ccg.code,
+        'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
 
@@ -412,6 +415,7 @@ def measures_for_one_ccg(request, ccg_code):
         'orgType': 'CCG',
         'orgId': ccg.code,
         'orgName': ccg.name,
+        'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
 
@@ -439,6 +443,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
         'denominator': measure.denominator_short,
         'isCostBasedMeasure': measure.is_cost_based,
         'lowIsGood': measure.low_is_good,
+        'rollUpBy': 'org_id',
     }
     _add_urls_to_measure_options(measure_options)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
