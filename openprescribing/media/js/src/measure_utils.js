@@ -310,21 +310,20 @@ var utils = {
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
     if (options.rollUpBy === 'measure_id') {
-      // We want measure charts to link to the
-      // measure-by-all-practices-in-CCG page.
+      // We want measure charts to link to the measure-by-all-practices-in-CCG page.
       chartTitle = d.name;
-      chartTitleUrl = '/ccg/';
-      chartTitleUrl += options.parentOrg || options.orgId;
-      chartTitleUrl += '/' + d.id;
+      chartTitleUrl = options.chartTitleUrlTemplate.replace(
+        '{measure_id}', d.id
+      ).replace(
+        '{ccg_code}', (options.parentOrg || options.orgId)
+      );
       measureForAllPracticesUrl = chartTitleUrl;
       measureUrl = options.measureUrlTemplate.replace('{measure_id}', d.id);
       measureId = d.id;
     } else {
-      // We want organisation charts to link to the appropriate
-      // organisation page.
+      // We want organisation charts to link to the appropriate organisation page.
       chartTitle = d.id + ': ' + d.name;
-      chartTitleUrl = '/' + options.orgType.toLowerCase() +
-        '/' + d.id + '/measures/';
+      chartTitleUrl = options.chartTitleUrlTemplate.replace('{org_code}', d.id);
       measureId = options.measure;
       measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }

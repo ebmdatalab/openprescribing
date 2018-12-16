@@ -89,7 +89,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             extreme_measure.name,
-            '/ccg/AAA/{}'.format(extreme_measure.id)
+            '/ccg/AAA/{}/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -97,7 +97,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
 
     def test_ccg_home_page(self):
@@ -112,7 +112,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             extreme_measure.name,
-            '/ccg/AAA/{}'.format(extreme_measure.id)
+            '/ccg/AAA/{}/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -120,7 +120,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
 
     def test_measures_for_one_practice(self):
@@ -131,7 +131,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'Core measure 0',
-            '/ccg/AAA/core_0'
+            '/ccg/AAA/core_0/'
         )
         self._verify_link(
             panel_element,
@@ -151,7 +151,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
         self._verify_link(
             panel_element,
@@ -180,7 +180,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP measure 2',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,
@@ -203,7 +203,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'Core measure 0',
-            '/ccg/AAA/core_0'
+            '/ccg/AAA/core_0/'
         )
         self._verify_link(
             panel_element,
@@ -215,7 +215,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/core_0'
+            '/ccg/AAA/core_0/'
         )
         self._verify_link(
             panel_element,
@@ -229,7 +229,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
         self._verify_link(
             panel_element,
@@ -247,7 +247,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(3)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
         self._verify_link(
             panel_element,
@@ -264,7 +264,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP measure 2',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,
@@ -276,7 +276,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(2)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,
@@ -345,7 +345,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP measure 2',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,
@@ -362,13 +362,13 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.panel-heading',
             'LP measure 2',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,
             '.inner li:nth-child(1)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/lp_2'
+            '/ccg/AAA/lp_2/'
         )
         self._verify_link(
             panel_element,

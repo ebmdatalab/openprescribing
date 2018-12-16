@@ -1087,6 +1087,32 @@ def _add_urls_to_measure_options(measure_options):
             org_location_params
         )
 
+    # chartTitleUrlTemplate
+    if measure_options['rollUpBy'] == 'measure_id':
+        measure_options['chartTitleUrlTemplate'] = (
+            reverse(
+                'measure_for_practices_in_ccg', kwargs={
+                    'ccg_code': 'AAA',
+                    'measure': 'BBB',
+                }
+            )
+            .replace('AAA', '{ccg_code}')
+            .replace('BBB', '{measure_id}')
+        )
+    else:
+        if measure_options['orgType'] == 'CCG':
+            measure_options['chartTitleUrlTemplate'] = (
+                reverse('measures_for_one_ccg', kwargs={'ccg_code': 'AAA'})
+                .replace('AAA', '{org_code}')
+            )
+        elif measure_options['orgType'] == 'practice':
+            measure_options['chartTitleUrlTemplate'] = (
+                reverse('measures_for_one_practice', kwargs={'code': 'AAA'})
+                .replace('AAA', '{org_code}')
+            )
+        else:
+            assert False
+
     # measureUrlTemplate
     if measure_options['rollUpBy'] == 'measure_id':
         measure_options['measureUrlTemplate'] = (
