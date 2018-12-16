@@ -510,7 +510,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     elif len(entity_code) == 6:
         entity = get_object_or_404(Practice, code=entity_code)
 
-    query = {
+    params = {
         'format': 'json',
         'bnf_code': presentation.bnf_code,
         'highlight': entity.code,
@@ -518,20 +518,9 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     }
 
     if 'trim' in request.GET:
-        query['trim'] = request.GET['trim']
+        params['trim'] = request.GET['trim']
 
-    querystring = urlencode(query)
-
-    parsed_url = urlparse(settings.API_HOST)
-
-    bubble_data_url = urlunparse((
-        parsed_url.scheme,   # scheme
-        parsed_url.netloc,   # host
-        '/api/1.0/bubble/',  # path
-        '',                  # params
-        querystring,         # query
-        '',                  # fragment
-    ))
+    bubble_data_url = _build_api_url('bubble', params)
 
     context = {
         'entity': entity,
@@ -555,27 +544,16 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     product = presentation.dmd_product
 
-    query = {
+    params = {
         'format': 'json',
         'bnf_code': presentation.bnf_code,
         'date': date.strftime('%Y-%m-%d'),
     }
 
     if 'trim' in request.GET:
-        query['trim'] = request.GET['trim']
+        params['trim'] = request.GET['trim']
 
-    querystring = urlencode(query)
-
-    parsed_url = urlparse(settings.API_HOST)
-
-    bubble_data_url = urlunparse((
-        parsed_url.scheme,   # scheme
-        parsed_url.netloc,   # host
-        '/api/1.0/bubble/',  # path
-        '',                  # params
-        querystring,         # query
-        '',                  # fragment
-    ))
+    bubble_data_url = _build_api_url('bubble', params)
 
     context = {
         'name': presentation.product_name,
