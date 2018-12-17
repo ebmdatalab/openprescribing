@@ -311,22 +311,31 @@ var utils = {
     var measureForAllPracticesUrl;
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the measure-by-all-practices-in-CCG page.
+      measureId = d.id;
+      orgId = (options.parentOrg || options.orgId);
       chartTitle = d.name;
       chartTitleUrl = options.chartTitleUrlTemplate.replace(
-        '{measure_id}', d.id
+        '{measure_id}', measureId
       ).replace(
-        '{ccg_code}', (options.parentOrg || options.orgId)
+        '{ccg_code}', orgId
       );
-      measureForAllPracticesUrl = chartTitleUrl;
-      measureUrl = options.measureUrlTemplate.replace('{measure_id}', d.id);
-      measureId = d.id;
+      measureUrl = options.measureUrlTemplate.replace('{measure_id}', measureId);
     } else {
       // We want organisation charts to link to the appropriate organisation page.
+      measureId = options.measure;
+      orgId = d.id;
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = options.chartTitleUrlTemplate.replace('{org_code}', d.id);
-      measureId = options.measure;
-      measureForAllPracticesUrl = '/ccg/' + d.id + '/' + measureId;
     }
+
+    if (options.measureForAllPracticesUrlTemplate) {
+      measureForAllPracticesUrl = options.measureForAllPracticesUrlTemplate.replace(
+        '{measure_id}', measureId
+      ).replace(
+        '{ccg_code}', orgId
+      );
+    }
+
     var orgId;
     if (options.rollUpBy == 'org_id') {
       orgId = d.id;

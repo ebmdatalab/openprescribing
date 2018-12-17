@@ -1113,6 +1113,19 @@ def _add_urls_to_measure_options(options):
         else:
             assert False
 
+    # measureForAllPracticesUrlTemplate
+    if options['orgType'] == 'CCG':
+        options['measureForAllPracticesUrlTemplate'] = (
+            reverse(
+                'measure_for_practices_in_ccg', kwargs={
+                    'ccg_code': 'AAA',
+                    'measure': 'BBB',
+                }
+            )
+            .replace('AAA', '{ccg_code}')
+            .replace('BBB', '{measure_id}')
+        )
+
     # measureUrlTemplate
     if options['rollUpBy'] == 'measure_id':
         options['measureUrlTemplate'] = (

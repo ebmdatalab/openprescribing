@@ -299,7 +299,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.explanation li:nth-child(1)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/core_0'
+            '/ccg/AAA/core_0/'
         )
         self._verify_link(
             panel_element,
@@ -322,7 +322,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.explanation li:nth-child(1)',
             'Split the measure into charts for individual practices',
-            '/ccg/AAA/lpzomnibus'
+            '/ccg/AAA/lpzomnibus/'
         )
         self._verify_link(
             panel_element,
