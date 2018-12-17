@@ -145,6 +145,20 @@
       {% include '_alert_signup_form.html' %}
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>Looking for more data?</h3>
+      <p>
+        Try our <a href="{% url 'analyse' %}">Analyse form</a> which allows you
+        run custom analyses on prescribing data for this {{ entity_type }}.
+      </p>
+      <p>
+        We can also provide custom extracts from our prescribing data for free.
+        <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">Get in touch</a>
+        to find out more.
+      </p>
+    </div>
+  </div>
 </div>
 
 <hr>
@@ -167,8 +181,6 @@
     </div>
 </script>
 {% endverbatim %}
-
-{% include '_get_in_touch.html' %}
 
 {% endblock %}
 
