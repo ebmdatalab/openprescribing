@@ -1133,6 +1133,32 @@ def _add_urls_to_measure_options(options):
             .replace('AAA', '{measure_id}')
         )
 
+    # oneEntityUrlTemplate
+    if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
+        # If we're rolling up by measure and a measure is provided in the
+        # options, then we are already on the measure_for_one_xxx page, so we
+        # shouldn't set oneEntityUrlTemplate.
+        if options['orgType'] == 'CCG':
+            options['oneEntityUrlTemplate'] = (
+                reverse('measure_for_one_ccg', kwargs={
+                    'ccg_code': 'AAA',
+                    'measure': 'BBB',
+                })
+                .replace('AAA', '{org_code}')
+                .replace('BBB', '{measure_id}')
+            )
+        elif options['orgType'] == 'practice':
+            options['oneEntityUrlTemplate'] = (
+                reverse('measure_for_one_practice', kwargs={
+                    'practice_code': 'AAA',
+                    'measure': 'BBB',
+                })
+                .replace('AAA', '{org_code}')
+                .replace('BBB', '{measure_id}')
+            )
+        else:
+            assert False
+
 
 def _build_api_url(view_name, params):
     path = reverse(view_name)

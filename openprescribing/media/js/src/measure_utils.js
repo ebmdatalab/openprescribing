@@ -344,14 +344,17 @@ var utils = {
     }
 
     if (options.orgType == 'practice') {
-      oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
     } else {
-      oneEntityUrl = '/measure/' + measureId + '/ccg/' + orgId + '/';
       tagsFocusUrl = '/ccg/' + orgId + '/measures/?tags=' + d.tagsFocus;
     }
-    if (window.location.pathname === oneEntityUrl) {
-      oneEntityUrl = null;
+
+    if (options.oneEntityUrlTemplate) {
+      oneEntityUrl = options.oneEntityUrlTemplate.replace(
+        '{org_code}', orgId
+      ).replace(
+        '{measure_id}', measureId
+      )
     }
 
     var isAggregateEntity = options.aggregate;
