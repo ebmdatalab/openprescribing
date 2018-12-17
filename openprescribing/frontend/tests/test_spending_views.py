@@ -9,9 +9,9 @@ from dateutil.relativedelta import relativedelta
 
 from frontend.models import Prescription
 from dmd.models import NCSOConcession, TariffPrice
-from frontend.views.views import (
-    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, _ncso_spending_for_entity,
-    _ncso_spending_breakdown_for_entity
+from frontend.views.spending_utils import (
+    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, ncso_spending_for_entity,
+    ncso_spending_breakdown_for_entity
 )
 from frontend.tests.data_factory import DataFactory
 
@@ -72,13 +72,13 @@ class TestSpendingViews(TestCase):
 
     def validate_ncso_spending_for_entity(self, *args, **kwargs):
         # with self.subTest(function='_ncso_spending_for_entity'):
-        results = _ncso_spending_for_entity(*args, **kwargs)
+        results = ncso_spending_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_for_entity(*args, **kwargs)
         self.assertEqual(results, expected)
 
     def validate_ncso_spending_breakdown_for_entity(self, *args, **kwargs):
         # with self.subTest(function='_ncso_spending_breakdown_for_entity'):
-        results = _ncso_spending_breakdown_for_entity(*args, **kwargs)
+        results = ncso_spending_breakdown_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_breakdown_for_entity(*args, **kwargs)
         self.assertEqual(results, expected)
 
