@@ -306,6 +306,7 @@ var utils = {
     var chartExplanation = '';
     var measureUrl;
     var oneEntityUrl;
+    var orgId;
     var measureId;
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
@@ -336,7 +337,6 @@ var utils = {
       );
     }
 
-    var orgId;
     if (options.rollUpBy == 'org_id') {
       orgId = d.id;
     } else {
