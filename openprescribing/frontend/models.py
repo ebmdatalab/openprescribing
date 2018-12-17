@@ -680,18 +680,31 @@ class OrgBookmark(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
-    def dashboard_url(self):
-        """The 'home page' for this bookmark
-
+    def dashboard_url(self, measure=None):
+        """The 'home page' for a measure for this bookmark, or for all
+        measures if none is specified
         """
         if self.practice is None:
-            return reverse(
-                'measures_for_one_ccg',
-                kwargs={'ccg_code': self.pct.code})
+            kwargs = {
+                'ccg_code': self.pct.code
+            }
+            if measure:
+                view = 'measure_for_one_ccg'
+                kwargs['measure'] = measure
+            else:
+                view = 'measures_for_one_ccg'
         else:
-            return reverse(
-                'measures_for_one_practice',
-                kwargs={'code': self.practice.code})
+            kwargs = {}
+            if measure:
+                view = 'measure_for_one_practice'
+                kwargs['practice_code'] = self.practice.code
+                kwargs['measure'] = measure
+            else:
+                kwargs['code'] = self.practice.code
+                view = 'measures_for_one_practice'
+        return reverse(
+            view,
+            kwargs=kwargs)
 
     @property
     def name(self):

@@ -649,24 +649,26 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
         most_changing = stats['most_changing']
         getting_worse_img = still_bad_img = interesting_img = None
         if most_changing['declines']:
+            measure_id = most_changing['declines'][0]['measure'].id
             getting_worse_img = attach_image(
                 msg,
-                org_bookmark.dashboard_url(),
+                org_bookmark.dashboard_url(measure_id),
                 getting_worse_file.name,
-                get_chart_id(most_changing['declines'][0]['measure'].id)
-            )
+                get_chart_id(measure_id))
         if stats['worst']:
+            measure_id = stats['worst'][0].id
             still_bad_img = attach_image(
                 msg,
-                org_bookmark.dashboard_url(),
+                org_bookmark.dashboard_url(measure_id),
                 still_bad_file.name,
-                get_chart_id(stats['worst'][0].id))
+                get_chart_id(measure_id))
         if stats['interesting']:
+            measure_id = stats['interesting'][0].id
             interesting_img = attach_image(
                 msg,
-                org_bookmark.dashboard_url(),
+                org_bookmark.dashboard_url(measure_id),
                 interesting_file.name,
-                get_chart_id(stats['interesting'][0].id))
+                get_chart_id(measure_id))
         unsubscribe_link = settings.GRAB_HOST + reverse(
             'bookmark-login',
             kwargs={'key': org_bookmark.user.profile.key})
