@@ -1159,6 +1159,13 @@ def _add_urls_to_measure_options(options):
         else:
             assert False
 
+    # tagsFocusUrlTemplate
+    if 'tagsFocus' in options:
+        options['tagsFocusUrlTemplate'] = (
+            reverse('measures_for_one_ccg', kwargs={'ccg_code': 'AAA'})
+            .replace('AAA', '{org_code}')
+        ) + '?tags=' + options['tagsFocus']
+
 
 def _build_api_url(view_name, params):
     path = reverse(view_name)

@@ -343,10 +343,8 @@ var utils = {
       orgId = options.orgId;
     }
 
-    if (options.orgType == 'practice') {
-      tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
-    } else {
-      tagsFocusUrl = '/ccg/' + orgId + '/measures/?tags=' + d.tagsFocus;
+    if (options.tagsFocusUrlTemplate) {
+      tagsFocusUrl = options.tagsFocusUrlTemplate.replace('{org_code}', orgId);
     }
 
     if (options.oneEntityUrlTemplate) {
