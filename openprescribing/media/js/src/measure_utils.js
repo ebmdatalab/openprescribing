@@ -342,7 +342,7 @@ var utils = {
     } else {
       orgId = options.orgId;
     }
-    var isAggregateEntity = options.aggregate;
+
     if (options.orgType == 'practice') {
       oneEntityUrl = '/measure/' + measureId + '/practice/' + orgId + '/';
       tagsFocusUrl = '/practice/' + orgId + '/measures/?tags=' + d.tagsFocus;
@@ -353,12 +353,15 @@ var utils = {
     if (window.location.pathname === oneEntityUrl) {
       oneEntityUrl = null;
     }
+
+    var isAggregateEntity = options.aggregate;
     if (isAggregateEntity) {
       oneEntityUrl = null;
       chartTitleUrl = null;
       tagsFocusUrl = null;
       measureForAllPracticesUrl = null;
     }
+
     var costDataAvailable = d.isCostBased && d.costSaving10th;
     if (d.meanPercentile !== null || costDataAvailable) {
       if (d.lowIsGood === null) {
