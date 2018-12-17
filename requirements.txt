@@ -112,5 +112,5 @@ urllib3==1.24.1           # via requests, selenium
 virtualenv==16.0.0        # via pre-commit
 watchdog==0.8.3           # via when-changed
 when-changed==0.3.0
-xlrd==1.1.0
+xlrd==1.2.0
 xlwt==1.3.0               # via tablib
