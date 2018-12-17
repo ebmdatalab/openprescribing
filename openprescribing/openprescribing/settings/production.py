@@ -90,11 +90,6 @@ LOGGING = {
         },
     },
     'loggers': {
-        '': {
-            'level': 'ERROR',
-            'handlers': ['sentry'],
-            'propagate': True,
-        },
         'django': {
             'handlers': ['gunicorn'],
             'level': 'WARN',
