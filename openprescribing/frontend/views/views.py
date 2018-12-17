@@ -23,6 +23,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
@@ -50,6 +51,10 @@ from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
+from frontend.views.spending_utils import (
+    ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
+    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+)
 
 from mailchimp3 import MailChimp
 
@@ -70,6 +75,13 @@ def handle_bad_request(view_function):
             context = {'error_code': 400, 'reason': unicode(e)}
             return render(request, '500.html', context, status=400)
     return wrapper
+
+
+def _first_or_none(lst):
+    try:
+        return lst[0]
+    except IndexError:
+        return None
 
 
 ##################################################
@@ -217,6 +229,9 @@ def all_england(request):
     measure_savings = _all_england_measure_savings(entity_type, date)
     low_priority_savings = _all_england_low_priority_savings(entity_type, date)
     low_priority_total = _all_england_low_priority_total(entity_type, date)
+    ncso_spending = _first_or_none(
+        ncso_spending_for_entity(None, 'all_england', num_months=1)
+    )
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
     other_entity_query = request.GET.copy()
     other_entity_query['entity_type'] = other_entity_type
@@ -229,6 +244,7 @@ def all_england(request):
         'measure_savings': measure_savings,
         'low_priority_savings': low_priority_savings,
         'low_priority_total': low_priority_total,
+        'ncso_spending': ncso_spending,
         'date': date
     }
     return render(request, 'all_england.html', context)
@@ -632,6 +648,59 @@ def mailchimp_subscribe(
 
 
 ##################################################
+# Spending
+##################################################
+
+def spending_for_one_entity(request, entity_code, entity_type):
+    entity = _get_entity(entity_type, entity_code)
+    monthly_totals = ncso_spending_for_entity(entity, entity_type, num_months=12)
+    end_date = max(row['month'] for row in monthly_totals)
+    last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
+    breakdown_date = request.GET.get('breakdown_date')
+    breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
+    breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
+    url_template = (
+        reverse('tariff', kwargs={'code': 'AAA'})
+        .replace('AAA', '{bnf_code}')
+    )
+    if entity_type == 'all_england':
+        title = 'Impact of price concessions across NHS England'
+        entity_short_desc = 'nhs-england'
+    else:
+        title = 'Impact of price concessions on {}'.format(entity.cased_name)
+        entity_short_desc = '{}-{}'.format(entity_type, entity.code)
+    context = {
+        'title': title,
+        'monthly_totals': monthly_totals,
+        'available_dates': [row['month'] for row in reversed(monthly_totals)],
+        'breakdown': {
+            'table': breakdown,
+            'url_template': url_template,
+            'filename': 'price-concessions-cost-{}-{}'.format(
+                entity_short_desc,
+                breakdown_date
+            )
+        },
+        'breakdown_date': breakdown_date,
+        'breakdown_is_estimate': breakdown_date > last_prescribing_date,
+        'last_prescribing_date': last_prescribing_date,
+        'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    }
+    return render(request, 'spending_for_one_entity.html', context)
+
+
+def _get_entity(entity_type, entity_code):
+    if entity_type == 'practice':
+        return get_object_or_404(Practice, code=entity_code)
+    elif entity_type == 'CCG':
+        return get_object_or_404(PCT, code=entity_code)
+    elif entity_type == 'all_england':
+        return None
+    else:
+        raise ValueError('Unknown entity_type: '+entity_type)
+
+
+##################################################
 # Misc.
 ##################################################
 
@@ -825,6 +894,9 @@ def _home_page_context_for_entity(request, entity):
     ppu_date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
+    ncso_spending = _first_or_none(
+        ncso_spending_for_entity(entity, entity_type, num_months=1)
+    )
     return {
         'measure': extreme_measure,
         'measures_count': measures_count,
@@ -834,7 +906,10 @@ def _home_page_context_for_entity(request, entity):
             entity_type.lower()),
         'measures_for_one_entity_url': 'measures_for_one_{}'.format(
             entity_type.lower()),
+        'spending_for_one_entity_url': 'spending_for_one_{}'.format(
+            entity_type.lower()),
         'possible_savings': total_possible_savings,
+        'ncso_spending': ncso_spending,
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
         'parent_code': None

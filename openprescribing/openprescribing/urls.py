@@ -128,6 +128,22 @@ urlpatterns = [
         frontend_views.all_england_price_per_unit_by_presentation,
         name='all_england_price_per_unit_by_presentation'),
 
+    # Spending
+    # (This must go above Measures because of the measure_for_practices_in_ccg
+    # pattern)
+    url(r'^practice/(?P<entity_code>[A-Z\d]+)/concessions/$',
+        frontend_views.spending_for_one_entity,
+        name='spending_for_one_practice',
+        kwargs={'entity_type': 'practice'}),
+    url(r'^ccg/(?P<entity_code>[A-Z\d]+)/concessions/$',
+        frontend_views.spending_for_one_entity,
+        name='spending_for_one_ccg',
+        kwargs={'entity_type': 'CCG'}),
+    url(r'^all-england/concessions/$',
+        frontend_views.spending_for_one_entity,
+        name='spending_for_all_england',
+        kwargs={'entity_type': 'all_england', 'entity_code': None}),
+
     # Measures
     url(r'^measure/$',
         frontend_views.all_measures,
@@ -151,7 +167,6 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
-
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),

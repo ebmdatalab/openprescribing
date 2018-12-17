@@ -5,7 +5,20 @@ from django.utils.safestring import mark_safe
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.utils import timezone
 
+
 register = template.Library()
+
+
+try:
+    from django.utils.html import json_script
+except ImportError:
+    from ._json_script_backport import json_script
+    register.filter('json_script', json_script, is_safe=True)
+else:
+    raise RuntimeError(
+        'Please remove the `_json_script_backport` module now that we are '
+        'using a version of Django which provides the `json_script` '
+        'template tag by default')
 
 
 @register.simple_tag(takes_context=True)

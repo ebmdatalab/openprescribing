@@ -96,6 +96,23 @@
     </p>
   </div>
 
+  <div class="col-md-12">
+    <h2>Impact of price concessions</h2>
+    <p>
+      We have estimated the additional spending due to price concessions on
+      out-of-stock products by taking the latest available prescibing data from
+      <strong>{{ ncso_spending.last_prescribing_date|date:"F Y" }}</strong>
+      and projecting forwards.
+      In <strong>{{ ncso_spending.month|date:"F Y" }}</strong> this amounts to:<br>
+      <span style="font-size: 200%">
+        £{{ ncso_spending.additional_cost|sigfigs:4|intcomma }}
+      </span>
+    </p>
+    <p style="margin-bottom: 2em">
+      <a href="{% url 'spending_for_all_england' %}" class="btn btn-primary">View price concessions breakdown &rarr;</a>
+    </p>
+  </div>
+
 </div>
 
 <hr/>

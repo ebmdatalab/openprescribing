@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<p>
+  Price concessions are a short term agreement by the NHS to pay for more
+  expensive versions of a medicine because the cheaper version has temporarily
+  gone out-of-stock. This dashboard tracks the additional costs these
+  concessions create.
+</p>
+<p>
+  Standard prices are updated monthly from
+  <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff">NHS BSA</a>,
+  concession data is updated daily from
+  <a href="http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/">PSNC</a>.
+</p>
+
+<div id="monthly-totals-chart"></div>
+
+<hr/>
+
+<form class="form pull-right" action="">
+  <select name="breakdown_date" class="form-control js-submit-on-change">
+    <option>Change date</option>
+    {% for date in available_dates %}
+      <option value="{{ date|date:"Y-m-d" }}">{{ date|date:"F Y" }}</option>
+    {% endfor %}
+  </select>
+</form>
+<h2>
+  {% if breakdown_is_estimate %}Projected cost{% else %}Estimated cost{%endif%}
+  breakdown for {{ breakdown_date|date:"F Y" }}
+</h2>
+
+<div class="alert alert-info">
+  {% if breakdown_is_estimate %}
+    These are projected costs, produced by combining drug tariff and price
+    concession data for {{ breakdown_date|date:"F Y" }} with the latest available
+    prescribing data for {{ last_prescribing_date|date:"F Y" }}.
+    <br><br>
+  {% endif %}
+  Actual costs are estimated from the Net Ingredient Cost by applying a national average discount of
+  {{ national_average_discount_percentage }}%
+</div>
+
+<br>
+<div id="breakdown-table-wrapper" class="hide">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>BNF code</th>
+        <th class="text-nowrap">Presentation</th>
+        <th class="text-nowrap">
+          Quantity
+          {% if breakdown_is_estimate %}
+            ({{ last_prescribing_date|date:"M y"}})
+          {% endif %}
+        </th>
+        <th class="text-nowrap">Normally costs</th>
+        <th class="text-nowrap">This month&rsquo;s extra cost</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <p>
+    <a href="#" class="btn btn-primary js-download-data">
+      Download data <span class="glyphicon glyphicon-save"></span>
+    </a>
+  </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+{% conditional_js 'spending-chart' %}
+
+{{ breakdown|json_script:"breakdown-data" }}
+{{ monthly_totals|json_script:"monthly-totals-data" }}
+
+{% endblock %}
