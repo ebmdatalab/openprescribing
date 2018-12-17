@@ -27,7 +27,3 @@ def json_script(value, element_id):
         u'<script id="{}" type="application/json">{}</script>',
         element_id, mark_safe(json_str)
     )
-
-
-def register_json_script_backport(register):
-    register.filter('json_script', json_script, is_safe=True)
