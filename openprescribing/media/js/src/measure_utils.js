@@ -401,7 +401,6 @@ var utils = {
     }
     return {
       measureUrl: measureUrl,
-      isCCG: options.orgType == 'CCG',
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
       oneEntityUrl: oneEntityUrl,
