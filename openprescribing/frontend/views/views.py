@@ -1003,15 +1003,9 @@ def _home_page_context_for_entity(request, entity):
         'specificMeasures': [{
           'measure': extreme_measure.id,
           'chartContainerId': '#top-measure-container',
-          'orgId': entity.code,
-          'parentOrg': parent_org,
-          'orgName': entity.name,
         }, {
           'measure': 'lpzomnibus',
           'chartContainerId': '#lpzomnibus-container',
-          'orgId': entity.code,
-          'parentOrg': parent_org,
-          'orgName': entity.name,
         }],
         'orgType': entity_type,
         'orgId': entity.code,
