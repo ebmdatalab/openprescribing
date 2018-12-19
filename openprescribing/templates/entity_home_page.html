@@ -122,16 +122,16 @@
         <p>
           See the full breakdown of this estimate, and view costs for other months on
           the <a href="{% url spending_for_one_entity_url entity.code %}">
-            price concessions dashboard
-          </a>.
+            price concessions dashboard.
+          </a>
         </p>
       {% else %}
         <p>
           We don't have current data for the impact of price concessions on
           {{ entity.cased_name }}. For historical data see the
           <a href="{% url spending_for_one_entity_url entity.code %}">
-            price concessions dashboard
-          </a>.
+            price concessions dashboard.
+          </a>
         </p>
       {% endif %}
     </div>
