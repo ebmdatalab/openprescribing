@@ -300,6 +300,16 @@ var utils = {
     return dataCopy;
   },
 
+  _buildUrl: function(urlTemplate, context) {
+    var url = urlTemplate;
+
+    _.each(context, function(v, k) {
+      url = url.replace('{' + k + '}', v);
+    });
+
+    return url
+  },
+
   _getChartTitleEtc: function(d, options, numMonths) {
     var chartTitle;
     var chartTitleUrl;
@@ -310,30 +320,36 @@ var utils = {
     var measureId;
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
+    var _this = this;
+
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the measure-by-all-practices-in-CCG page.
       measureId = d.id;
       orgId = (options.parentOrg || options.orgId);
       chartTitle = d.name;
-      chartTitleUrl = options.chartTitleUrlTemplate.replace(
-        '{measure_id}', measureId
-      ).replace(
-        '{ccg_code}', orgId
+      chartTitleUrl = _this._buildUrl(
+        options.chartTitleUrlTemplate,
+        {'measure_id': measureId, 'ccg_code': orgId}
       );
-      measureUrl = options.measureUrlTemplate.replace('{measure_id}', measureId);
+      measureUrl = _this._buildUrl(
+        options.measureUrlTemplate,
+        {'measure_id': measureId}
+      );
     } else {
       // We want organisation charts to link to the appropriate organisation page.
       measureId = options.measure;
       orgId = d.id;
       chartTitle = d.id + ': ' + d.name;
-      chartTitleUrl = options.chartTitleUrlTemplate.replace('{org_code}', d.id);
+      chartTitleUrl = _this._buildUrl(
+        options.chartTitleUrlTemplate,
+        {'org_code': d.id}
+      );
     }
 
     if (options.measureForAllPracticesUrlTemplate) {
-      measureForAllPracticesUrl = options.measureForAllPracticesUrlTemplate.replace(
-        '{measure_id}', measureId
-      ).replace(
-        '{ccg_code}', orgId
+      measureForAllPracticesUrl = _this._buildUrl(
+        options.measureForAllPracticesUrlTemplate,
+        {'measure_id': measureId, 'ccg_code': orgId}
       );
     }
 
@@ -344,15 +360,17 @@ var utils = {
     }
 
     if (options.tagsFocusUrlTemplate) {
-      tagsFocusUrl = options.tagsFocusUrlTemplate.replace('{org_code}', orgId);
+      tagsFocusUrl = _this._buildUrl(
+        options.tagsFocusUrlTemplate,
+        {'org_code': orgId}
+      );
     }
 
     if (options.oneEntityUrlTemplate) {
-      oneEntityUrl = options.oneEntityUrlTemplate.replace(
-        '{org_code}', orgId
-      ).replace(
-        '{measure_id}', measureId
-      )
+      oneEntityUrl = _this._buildUrl(
+        options.oneEntityUrlTemplate,
+        {'org_code': orgId, 'measure_id': measureId}
+      );
     }
 
     var isAggregateEntity = options.aggregate;
