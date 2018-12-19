@@ -391,6 +391,14 @@ class Presentation(models.Model):
     # more detail
     adq_per_quantity = models.FloatField(null=True, blank=True)
 
+    # Usually `quantity` measures something that comes *in* a pack e.g. "number
+    # of tablets" or "number of ml of liquid". (Note this is "pack" in the DM+D
+    # sense were a bottle and pump are both "packs"). Occasionally though,
+    # `quantity` measures the number of packs itself. We don't currently have a
+    # reliable way of populating this field, but we need it in place so we can
+    # begin populating it using various heuristics.
+    quantity_means_pack = models.NullBooleanField(default=None)
+
     objects = PresentationManager()
 
     def __str__(self):
