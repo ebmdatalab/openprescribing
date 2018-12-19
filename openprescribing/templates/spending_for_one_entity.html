@@ -43,6 +43,11 @@
     These are projected costs, produced by combining drug tariff and price
     concession data for {{ breakdown_date|date:"F Y" }} with the latest available
     prescribing data for {{ last_prescribing_date|date:"F Y" }}.
+    {% if breakdown_is_incomplete_month %}
+      Note that as the full set of price concessions for
+      {{ breakdown_date|date:"F" }} has not yet been released, costs for this
+      month may well rise further.
+    {% endif %}
     <br><br>
   {% endif %}
   Actual costs are estimated from the Net Ingredient Cost by applying a national average discount of

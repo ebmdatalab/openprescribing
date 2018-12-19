@@ -1,3 +1,4 @@
+import datetime
 from lxml import html
 from requests.exceptions import HTTPError
 from urllib import urlencode
@@ -653,12 +654,17 @@ def mailchimp_subscribe(
 
 def spending_for_one_entity(request, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
-    monthly_totals = ncso_spending_for_entity(entity, entity_type, num_months=12)
+    monthly_totals = ncso_spending_for_entity(
+        entity, entity_type,
+        num_months=12,
+        current_month=_get_current_month()
+    )
     end_date = max(row['month'] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
+    breakdown_metadata = [i for i in monthly_totals if i['month'] == breakdown_date][0]
     url_template = (
         reverse('tariff', kwargs={'code': 'AAA'})
         .replace('AAA', '{bnf_code}')
@@ -682,11 +688,16 @@ def spending_for_one_entity(request, entity_code, entity_type):
             )
         },
         'breakdown_date': breakdown_date,
-        'breakdown_is_estimate': breakdown_date > last_prescribing_date,
+        'breakdown_is_estimate': breakdown_metadata['is_estimate'],
+        'breakdown_is_incomplete_month': breakdown_metadata['is_incomplete_month'],
         'last_prescribing_date': last_prescribing_date,
         'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
     }
     return render(request, 'spending_for_one_entity.html', context)
+
+
+def _get_current_month():
+    return datetime.datetime.now().date().replace(day=1)
 
 
 def _get_entity(entity_type, entity_code):
