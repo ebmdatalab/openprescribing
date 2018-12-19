@@ -20,6 +20,14 @@
   concession data is updated daily from
   <a href="http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/">PSNC</a>.
 </p>
+<p>
+  Over the last 12 months we estimate that price concessions have cost
+  {{ entity_name }} an additional<br>
+  <strong>£{{ rolling_annual_total|sigfigs:5|floatformat:"0"|intcomma }}</strong>
+  (of which
+  <strong>£{{ financial_ytd_total|sigfigs:5|floatformat:"0"|intcomma }}</strong>
+  is in the current financial year)
+</p>
 
 <div id="monthly-totals-chart"></div>
 

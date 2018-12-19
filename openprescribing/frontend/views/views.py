@@ -661,6 +661,8 @@ def spending_for_one_entity(request, entity_code, entity_type):
     )
     end_date = max(row['month'] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
+    rolling_annual_total = sum(row['additional_cost'] for row in monthly_totals)
+    financial_ytd_total = _financial_ytd_total(monthly_totals)
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
@@ -670,14 +672,19 @@ def spending_for_one_entity(request, entity_code, entity_type):
         .replace('AAA', '{bnf_code}')
     )
     if entity_type == 'all_england':
-        title = 'Impact of price concessions across NHS England'
+        entity_name = 'NHS England'
+        title = 'Impact of price concessions across {}'.format(entity_name)
         entity_short_desc = 'nhs-england'
     else:
-        title = 'Impact of price concessions on {}'.format(entity.cased_name)
+        entity_name = entity.cased_name
+        title = 'Impact of price concessions on {}'.format(entity_name)
         entity_short_desc = '{}-{}'.format(entity_type, entity.code)
     context = {
         'title': title,
+        'entity_name': entity_name,
         'monthly_totals': monthly_totals,
+        'rolling_annual_total': rolling_annual_total,
+        'financial_ytd_total': financial_ytd_total,
         'available_dates': [row['month'] for row in reversed(monthly_totals)],
         'breakdown': {
             'table': breakdown,
@@ -698,6 +705,16 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
 def _get_current_month():
     return datetime.datetime.now().date().replace(day=1)
+
+
+def _financial_ytd_total(monthly_totals):
+    end_date = max(row['month'] for row in monthly_totals)
+    financial_year = end_date.year if end_date.month >= 4 else end_date.year - 1
+    financial_year_start = end_date.replace(year=financial_year, month=4)
+    return sum(
+        row['additional_cost'] for row in monthly_totals
+        if row['month'] >= financial_year_start
+    )
 
 
 def _get_entity(entity_type, entity_code):
