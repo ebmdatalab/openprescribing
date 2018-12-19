@@ -7,7 +7,7 @@ from django.db.models import Max
 
 from dateutil.relativedelta import relativedelta
 
-from frontend.models import Prescription
+from frontend.models import Prescription, Presentation
 from dmd.models import NCSOConcession, TariffPrice
 from frontend.views.spending_utils import (
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, ncso_spending_for_entity,
@@ -195,13 +195,15 @@ def get_ncso_concessions(start_date, end_date):
     for ncso in query:
         tariff = TariffPrice.objects.get(vmpp=ncso.vmpp, date=ncso.date)
         product = tariff.product
+        presentation = Presentation.objects.get(bnf_code=product.bnf_code)
         concessions.append({
             'date': ncso.date,
             'bnf_code': product.bnf_code,
             'product_name': product.name,
             'tariff_price_pence': tariff.price_pence,
             'concession_price_pence': ncso.price_concession_pence,
-            'quantity_value': ncso.vmpp.qtyval
+            'quantity_value': ncso.vmpp.qtyval,
+            'quantity_means_pack': presentation.quantity_means_pack
         })
     return concessions
 
@@ -243,7 +245,10 @@ def calculate_costs_for_concessions(concessions):
 
 
 def calculate_concession_costs(concession):
-    num_units = concession['quantity'] / concession['quantity_value']
+    if concession['quantity_means_pack']:
+        num_units = concession['quantity']
+    else:
+        num_units = concession['quantity'] / concession['quantity_value']
     tariff_cost_pence = num_units * concession['tariff_price_pence']
     concession_cost_pence = num_units * concession['concession_price_pence']
     tariff_cost = tariff_cost_pence / 100

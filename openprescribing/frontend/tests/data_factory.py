@@ -55,7 +55,8 @@ class DataFactory(object):
         for i in range(num_presentations):
             presentation = Presentation.objects.create(
                 bnf_code='0123456789ABCD{}'.format(i),
-                name='Foo Tablet {}'.format(i)
+                name='Foo Tablet {}'.format(i),
+                quantity_means_pack=self.random.choice([True, False, None])
             )
             product = DMDProduct.objects.create(
                 bnf_code=presentation.bnf_code,
@@ -67,7 +68,7 @@ class DataFactory(object):
                 vppid=i*10,
                 vpid=product.vpid,
                 nm='VMPP '+presentation.name,
-                qtyval=2
+                qtyval=self.random.randint(5, 25)
             )
             presentations.append(presentation)
         return presentations
@@ -104,7 +105,7 @@ class DataFactory(object):
                     practice=practice,
                     pct_id=practice.ccg_id,
                     presentation_code=presentation.bnf_code,
-                    quantity=i+1,
+                    quantity=self.random.randint(1, 1000),
                     total_items=0,
                     actual_cost=0,
                 )
