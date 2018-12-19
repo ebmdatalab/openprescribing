@@ -74,13 +74,13 @@ class TestSpendingViews(TestCase):
         # with self.subTest(function='_ncso_spending_for_entity'):
         results = ncso_spending_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_for_entity(*args, **kwargs)
-        self.assertEqual(results, expected)
+        self.assertEqual(round_floats(results), round_floats(expected))
 
     def validate_ncso_spending_breakdown_for_entity(self, *args, **kwargs):
         # with self.subTest(function='_ncso_spending_breakdown_for_entity'):
         results = ncso_spending_breakdown_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_breakdown_for_entity(*args, **kwargs)
-        self.assertEqual(results, expected)
+        self.assertEqual(round_floats(results), round_floats(expected))
 
     def test_spending_views(self):
         # Basic smoketest which just checks that the view loads OK and has
@@ -101,12 +101,24 @@ class TestSpendingViews(TestCase):
             )
 
 
+def round_floats(value):
+    if isinstance(value, float):
+        return round(value, 5)
+    elif isinstance(value, list):
+        return [round_floats(i) for i in value]
+    elif isinstance(value, tuple):
+        return tuple(round_floats(i) for i in value)
+    elif isinstance(value, dict):
+        return {k: round_floats(v) for (k, v) in value.items()}
+    else:
+        return value
+
+
 ##############################################################################
 # Below are functions which reimplement the NCSO spending calculations using
 # (as far as possible) Python rather than SQL so we have something to test the
 # SQL against
 ##############################################################################
-
 
 def recalculate_ncso_spending_for_entity(entity, entity_type, num_months):
     prescriptions = get_prescriptions_for_entity(entity, entity_type)
@@ -122,8 +134,8 @@ def recalculate_ncso_spending_for_entity(entity, entity_type, num_months):
     for row in aggregate_by_date(concessions):
         results.append({
             'month': row['date'],
-            'tariff_cost': round(row['tariff_cost'], 5),
-            'additional_cost': round(row['additional_cost'], 5),
+            'tariff_cost': row['tariff_cost'],
+            'additional_cost': row['additional_cost'],
             'is_estimate': row['is_estimate'],
             'last_prescribing_date': last_prescribing_date
         })
@@ -147,8 +159,8 @@ def recalculate_ncso_spending_breakdown_for_entity(entity, entity_type, month):
             row['bnf_code'],
             row['product_name'],
             row['quantity'],
-            round(row['tariff_cost'], 5),
-            round(row['additional_cost'], 5)
+            row['tariff_cost'],
+            row['additional_cost']
         ))
     results.sort(
         key=lambda row: (row[4], row[3]),
