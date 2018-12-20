@@ -8,7 +8,7 @@ from django.db.models import Max
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
-from frontend.models import Prescription
+from frontend.models import Prescription, Presentation
 from dmd.models import NCSOConcession, TariffPrice
 from frontend.views.spending_utils import (
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, ncso_spending_for_entity,
@@ -76,13 +76,13 @@ class TestSpendingViews(TestCase):
         # with self.subTest(function='_ncso_spending_for_entity'):
         results = ncso_spending_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_for_entity(*args, **kwargs)
-        self.assertEqual(results, expected)
+        self.assertEqual(round_floats(results), round_floats(expected))
 
     def validate_ncso_spending_breakdown_for_entity(self, *args, **kwargs):
         # with self.subTest(function='_ncso_spending_breakdown_for_entity'):
         results = ncso_spending_breakdown_for_entity(*args, **kwargs)
         expected = recalculate_ncso_spending_breakdown_for_entity(*args, **kwargs)
-        self.assertEqual(results, expected)
+        self.assertEqual(round_floats(results), round_floats(expected))
 
     def test_spending_views(self):
         # Basic smoketest which just checks that the view loads OK and has
@@ -103,12 +103,24 @@ class TestSpendingViews(TestCase):
             )
 
 
+def round_floats(value):
+    if isinstance(value, float):
+        return round(value, 5)
+    elif isinstance(value, list):
+        return [round_floats(i) for i in value]
+    elif isinstance(value, tuple):
+        return tuple(round_floats(i) for i in value)
+    elif isinstance(value, dict):
+        return {k: round_floats(v) for (k, v) in value.items()}
+    else:
+        return value
+
+
 ##############################################################################
 # Below are functions which reimplement the NCSO spending calculations using
 # (as far as possible) Python rather than SQL so we have something to test the
 # SQL against
 ##############################################################################
-
 
 def recalculate_ncso_spending_for_entity(entity, entity_type, num_months,
                                          current_month=None):
@@ -125,8 +137,8 @@ def recalculate_ncso_spending_for_entity(entity, entity_type, num_months,
     for row in aggregate_by_date(concessions):
         result = {
             'month': row['date'],
-            'tariff_cost': round(row['tariff_cost'], 5),
-            'additional_cost': round(row['additional_cost'], 5),
+            'tariff_cost': row['tariff_cost'],
+            'additional_cost': row['additional_cost'],
             'is_estimate': row['is_estimate'],
             'last_prescribing_date': last_prescribing_date
         }
@@ -153,8 +165,8 @@ def recalculate_ncso_spending_breakdown_for_entity(entity, entity_type, month):
             row['bnf_code'],
             row['product_name'],
             row['quantity'],
-            round(row['tariff_cost'], 5),
-            round(row['additional_cost'], 5)
+            row['tariff_cost'],
+            row['additional_cost']
         ))
     results.sort(
         key=lambda row: (row[4], row[3]),
@@ -189,13 +201,15 @@ def get_ncso_concessions(start_date, end_date):
     for ncso in query:
         tariff = TariffPrice.objects.get(vmpp=ncso.vmpp, date=ncso.date)
         product = tariff.product
+        presentation = Presentation.objects.get(bnf_code=product.bnf_code)
         concessions.append({
             'date': ncso.date,
             'bnf_code': product.bnf_code,
             'product_name': product.name,
             'tariff_price_pence': tariff.price_pence,
             'concession_price_pence': ncso.price_concession_pence,
-            'quantity_value': ncso.vmpp.qtyval
+            'quantity_value': ncso.vmpp.qtyval,
+            'quantity_means_pack': presentation.quantity_means_pack
         })
     return concessions
 
@@ -237,7 +251,10 @@ def calculate_costs_for_concessions(concessions):
 
 
 def calculate_concession_costs(concession):
-    num_units = concession['quantity'] / concession['quantity_value']
+    if concession['quantity_means_pack']:
+        num_units = concession['quantity']
+    else:
+        num_units = concession['quantity'] / concession['quantity_value']
     tariff_cost_pence = num_units * concession['tariff_price_pence']
     concession_cost_pence = num_units * concession['concession_price_pence']
     tariff_cost = tariff_cost_pence / 100

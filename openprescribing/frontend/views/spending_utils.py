@@ -152,10 +152,27 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
           ncso.date AS month,
           product.bnf_code AS bnf_code,
           product.name AS product_name,
-          dt.price_pence * (rx.quantity / vmpp.qtyval) * %(discount_factor)s
+          dt.price_pence
+            * rx.quantity
+            * CASE WHEN
+                presentation.quantity_means_pack
+              THEN
+                1
+              ELSE
+                1 / vmpp.qtyval
+              END
+            * %(discount_factor)s
             AS tariff_cost,
           COALESCE(ncso.price_concession_pence - dt.price_pence, 0)
-            * (rx.quantity / vmpp.qtyval) * %(discount_factor)s
+            * rx.quantity
+            * CASE WHEN
+                presentation.quantity_means_pack
+              THEN
+                1
+              ELSE
+                1 / vmpp.qtyval
+              END
+            * %(discount_factor)s
             AS additional_cost,
           ncso.date != rx.processing_date AS is_estimate,
           rx.*
@@ -173,6 +190,10 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
           dmd_vmpp AS vmpp
         ON
           vmpp.vppid=ncso.vmpp_id
+        JOIN
+          frontend_presentation AS presentation
+        ON
+          presentation.bnf_code = product.bnf_code
         JOIN
           {prescribing_table} AS rx
         ON
