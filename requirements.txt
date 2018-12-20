@@ -94,7 +94,7 @@ python3-openid==3.1.0     # via django-allauth
 pytz==2018.7
 pyvirtualdisplay==0.2.1
 pyyaml==3.13              # via aspy.yaml, pre-commit, tablib, watchdog
-raven==6.9.0
+raven==6.10.0
 requests-futures==0.9.9
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.21.0
