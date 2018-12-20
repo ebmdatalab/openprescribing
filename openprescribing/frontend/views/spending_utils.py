@@ -13,7 +13,7 @@ from dmd.models import NCSOConcession
 NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
 
 
-def ncso_spending_for_entity(entity, entity_type, num_months):
+def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
     if entity_type == 'CCG':
         prescribing_table = 'vw__presentation_summary_by_ccg'
         entity_field = 'pct_id'
@@ -62,7 +62,15 @@ def ncso_spending_for_entity(entity, entity_type, num_months):
             """.format(
                 sql=sql, entity_field=entity_field),
             params)
-        return dictfetchall(cursor)
+        results = dictfetchall(cursor)
+    # Price concessions are released gradually over the course of the month.
+    # This means that the numbers for the current month will start off looking
+    # low and then gradually increase as more concessions are granted. We want
+    # to flag this to the user.
+    if current_month is not None:
+        for row in results:
+            row['is_incomplete_month'] = row['month'] >= current_month
+    return results
 
 
 def ncso_spending_breakdown_for_entity(entity, entity_type, month):

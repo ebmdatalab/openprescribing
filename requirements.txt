@@ -42,7 +42,7 @@ et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.6.0
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
-google-api-python-client==1.7.6
+google-api-python-client==1.7.7
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth-oauthlib==0.2.0  # via pandas-gbq
 google-auth==1.4.1        # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-bigquery, pandas-gbq

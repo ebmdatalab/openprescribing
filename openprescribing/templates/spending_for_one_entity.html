@@ -10,15 +10,23 @@
 
 <p>
   Price concessions are a short term agreement by the NHS to pay for more
-  expensive versions of a medicine because the cheaper version has temporarily
-  gone out-of-stock. This dashboard tracks the additional costs these
-  concessions create.
+  expensive versions of a generic medicine because pharmacists are unable to
+  obtain the generic at its usual price. This dashboard tracks the additional
+  costs these concessions create.
 </p>
 <p>
   Standard prices are updated monthly from
   <a href="https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff">NHS BSA</a>,
   concession data is updated daily from
   <a href="http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/">PSNC</a>.
+</p>
+<p>
+  Over the last 12 months we estimate that price concessions have cost
+  {{ entity_name }} an additional<br>
+  <strong>£{{ rolling_annual_total|sigfigs:5|floatformat:"0"|intcomma }}</strong>
+  (of which
+  <strong>£{{ financial_ytd_total|sigfigs:5|floatformat:"0"|intcomma }}</strong>
+  is in the current financial year)
 </p>
 
 <div id="monthly-totals-chart"></div>
@@ -43,6 +51,11 @@
     These are projected costs, produced by combining drug tariff and price
     concession data for {{ breakdown_date|date:"F Y" }} with the latest available
     prescribing data for {{ last_prescribing_date|date:"F Y" }}.
+    {% if breakdown_is_incomplete_month %}
+      Note that as the full set of price concessions for
+      {{ breakdown_date|date:"F" }} has not yet been released, costs for this
+      month may well rise further.
+    {% endif %}
     <br><br>
   {% endif %}
   Actual costs are estimated from the Net Ingredient Cost by applying a national average discount of

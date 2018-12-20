@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.db.models import Max
 
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse as parse_date
 
 from frontend.models import Prescription, Presentation
 from dmd.models import NCSOConcession, TariffPrice
@@ -61,7 +62,8 @@ class TestSpendingViews(TestCase):
             # https://docs.python.org/3/library/unittest.html#subtests
             # with self.subTest(entity=entity, entity_type=entity_type):
             self.validate_ncso_spending_for_entity(
-                entity, entity_type, len(self.months)
+                entity, entity_type, len(self.months),
+                current_month=parse_date(self.months[-1]).date()
             )
             self.validate_ncso_spending_breakdown_for_entity(
                 entity, entity_type, self.months[0]
@@ -120,7 +122,8 @@ def round_floats(value):
 # SQL against
 ##############################################################################
 
-def recalculate_ncso_spending_for_entity(entity, entity_type, num_months):
+def recalculate_ncso_spending_for_entity(entity, entity_type, num_months,
+                                         current_month=None):
     prescriptions = get_prescriptions_for_entity(entity, entity_type)
     last_prescribing_date = get_last_prescribing_date()
     quantities = aggregate_quantities_by_date_and_bnf_code(prescriptions)
@@ -132,13 +135,16 @@ def recalculate_ncso_spending_for_entity(entity, entity_type, num_months):
     concessions = calculate_costs_for_concessions(concessions)
     results = []
     for row in aggregate_by_date(concessions):
-        results.append({
+        result = {
             'month': row['date'],
             'tariff_cost': row['tariff_cost'],
             'additional_cost': row['additional_cost'],
             'is_estimate': row['is_estimate'],
             'last_prescribing_date': last_prescribing_date
-        })
+        }
+        if current_month is not None:
+            result['is_incomplete_month'] = result['month'] >= current_month
+        results.append(result)
     results.sort(key=lambda row: row['month'])
     return results
 
