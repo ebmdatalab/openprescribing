@@ -329,11 +329,11 @@ var utils = {
       chartTitle = d.name;
       chartTitleUrl = _this._buildUrl(
         options.chartTitleUrlTemplate,
-        {'measure_id': measureId, 'ccg_code': orgId}
+        {'measure': measureId, 'ccg_code': orgId}
       );
       measureUrl = _this._buildUrl(
         options.measureUrlTemplate,
-        {'measure_id': measureId}
+        {'measure': measureId}
       );
     } else {
       // We want organisation charts to link to the appropriate organisation page.
@@ -342,14 +342,14 @@ var utils = {
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = _this._buildUrl(
         options.chartTitleUrlTemplate,
-        {'org_code': d.id}
+        {'ccg_code': d.id, 'code': d.id}
       );
     }
 
     if (options.measureForAllPracticesUrlTemplate) {
       measureForAllPracticesUrl = _this._buildUrl(
         options.measureForAllPracticesUrlTemplate,
-        {'measure_id': measureId, 'ccg_code': orgId}
+        {'measure': measureId, 'ccg_code': orgId}
       );
     }
 
@@ -362,14 +362,14 @@ var utils = {
     if (options.tagsFocusUrlTemplate) {
       tagsFocusUrl = _this._buildUrl(
         options.tagsFocusUrlTemplate,
-        {'org_code': orgId}
+        {'ccg_code': orgId}
       );
     }
 
     if (options.oneEntityUrlTemplate) {
       oneEntityUrl = _this._buildUrl(
         options.oneEntityUrlTemplate,
-        {'org_code': orgId, 'measure_id': measureId}
+        {'ccg_code': orgId, 'practice_code': orgId, 'measure': measureId}
       );
     }
 

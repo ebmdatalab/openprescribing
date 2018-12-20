@@ -7,6 +7,7 @@ from urlparse import urlparse, urlunparse
 import functools
 import hashlib
 import logging
+import re
 import requests
 import sys
 
@@ -18,6 +19,7 @@ from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
+from django.core.urlresolvers import get_resolver
 from django.db import connection
 from django.db.models import Avg, Sum
 from django.http import Http404
@@ -1033,6 +1035,13 @@ def _home_page_context_for_entity(request, entity):
     }
 
 
+def _url_template(view_name):
+    resolver = get_resolver()
+    pattern = resolver.reverse_dict[view_name][1]
+    pattern = '/' + pattern.rstrip('$')
+    return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
+
+
 def _add_urls_to_measure_options(options):
     # panelMeasuresUrl
     panel_params = {'format': 'json'}
@@ -1083,49 +1092,22 @@ def _add_urls_to_measure_options(options):
 
     # chartTitleUrlTemplate
     if options['rollUpBy'] == 'measure_id':
-        options['chartTitleUrlTemplate'] = (
-            reverse(
-                'measure_for_practices_in_ccg', kwargs={
-                    'ccg_code': 'AAA',
-                    'measure': 'BBB',
-                }
-            )
-            .replace('AAA', '{ccg_code}')
-            .replace('BBB', '{measure_id}')
-        )
+        options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
     else:
         if options['orgType'] == 'CCG':
-            options['chartTitleUrlTemplate'] = (
-                reverse('measures_for_one_ccg', kwargs={'ccg_code': 'AAA'})
-                .replace('AAA', '{org_code}')
-            )
+            options['chartTitleUrlTemplate'] = _url_template('measures_for_one_ccg')
         elif options['orgType'] == 'practice':
-            options['chartTitleUrlTemplate'] = (
-                reverse('measures_for_one_practice', kwargs={'code': 'AAA'})
-                .replace('AAA', '{org_code}')
-            )
+            options['chartTitleUrlTemplate'] = _url_template('measures_for_one_practice')
         else:
             assert False
 
     # measureForAllPracticesUrlTemplate
     if options['orgType'] == 'CCG':
-        options['measureForAllPracticesUrlTemplate'] = (
-            reverse(
-                'measure_for_practices_in_ccg', kwargs={
-                    'ccg_code': 'AAA',
-                    'measure': 'BBB',
-                }
-            )
-            .replace('AAA', '{ccg_code}')
-            .replace('BBB', '{measure_id}')
-        )
+        options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
 
     # measureUrlTemplate
     if options['rollUpBy'] == 'measure_id':
-        options['measureUrlTemplate'] = (
-            reverse('measure_for_all_ccgs', kwargs={'measure': 'AAA'})
-            .replace('AAA', '{measure_id}')
-        )
+        options['measureUrlTemplate'] = _url_template('measure_for_all_ccgs')
 
     # oneEntityUrlTemplate
     if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
@@ -1133,32 +1115,15 @@ def _add_urls_to_measure_options(options):
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
         if options['orgType'] == 'CCG':
-            options['oneEntityUrlTemplate'] = (
-                reverse('measure_for_one_ccg', kwargs={
-                    'ccg_code': 'AAA',
-                    'measure': 'BBB',
-                })
-                .replace('AAA', '{org_code}')
-                .replace('BBB', '{measure_id}')
-            )
+            options['oneEntityUrlTemplate'] = _url_template('measure_for_one_ccg')
         elif options['orgType'] == 'practice':
-            options['oneEntityUrlTemplate'] = (
-                reverse('measure_for_one_practice', kwargs={
-                    'practice_code': 'AAA',
-                    'measure': 'BBB',
-                })
-                .replace('AAA', '{org_code}')
-                .replace('BBB', '{measure_id}')
-            )
+            options['oneEntityUrlTemplate'] = _url_template('measure_for_one_practice')
         else:
             assert False
 
     # tagsFocusUrlTemplate
     if 'tagsFocus' in options:
-        options['tagsFocusUrlTemplate'] = (
-            reverse('measures_for_one_ccg', kwargs={'ccg_code': 'AAA'})
-            .replace('AAA', '{org_code}')
-        ) + '?tags=' + options['tagsFocus']
+        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg') + '?tags=' + options['tagsFocus']
 
 
 def _build_api_url(view_name, params):
