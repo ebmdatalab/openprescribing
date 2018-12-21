@@ -409,6 +409,7 @@ var utils = {
       }
     }
     return {
+      orgType: options.orgType,
       measureUrl: measureUrl,
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
@@ -591,8 +592,8 @@ var utils = {
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
-    var orgIDColumn = (chartData.isCCG) ? 'pct_id' : 'practice_id';
-    var orgNameColumn = (chartData.isCCG) ? 'pct_name' : 'practice_name';
+    var orgIDColumn = (chartData.orgType == 'CCG') ? 'pct_id' : 'practice_id';
+    var orgNameColumn = (chartData.orgType == 'CCG') ? 'pct_name' : 'practice_name';
     var table = chartData.data.map(function(d) {
       return [
           d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
