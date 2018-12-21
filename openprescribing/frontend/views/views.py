@@ -372,8 +372,8 @@ def measure_for_one_ccg(request, measure, ccg_code):
 
 
 @handle_bad_request
-def measures_for_one_practice(request, code):
-    practice = get_object_or_404(Practice, code=code)
+def measures_for_one_practice(request, practice_code):
+    practice = get_object_or_404(Practice, code=practice_code)
     form = _bookmark_and_newsletter_form(request, practice)
 
     if isinstance(form, HttpResponseRedirect):
@@ -392,7 +392,7 @@ def measures_for_one_practice(request, code):
 
     context = {
         'practice': practice,
-        'page_id': code,
+        'page_id': practice_code,
         'form': form,
         'signed_up_for_alert': _signed_up_for_alert(request, practice),
         'tag_filter': tag_filter,

@@ -342,7 +342,7 @@ var utils = {
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = _this._buildUrl(
         options.chartTitleUrlTemplate,
-        {'ccg_code': d.id, 'code': d.id}
+        {'ccg_code': d.id, 'practice_code': d.id}
       );
     }
 

@@ -161,7 +161,7 @@ urlpatterns = [
         frontend_views.measure_for_one_ccg,
         name='measure_for_one_ccg'),
 
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+    url(r'^practice/(?P<practice_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
