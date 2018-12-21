@@ -301,6 +301,10 @@ var utils = {
   },
 
   _buildUrl: function(urlTemplate, context) {
+    if (typeof urlTemplate == 'undefined') {
+      return null;
+    }
+
     var url = urlTemplate;
 
     _.each(context, function(v, k) {
@@ -322,6 +326,8 @@ var utils = {
     var _this = this;
 
     if (options.rollUpBy == 'measure_id') {
+      chartTitle = d.name;
+
       context['measure'] = d.id;
       if (options.orgType == 'practice') {
         context['practice_code'] = options.orgId;
@@ -330,6 +336,8 @@ var utils = {
         context['ccg_code'] = options.orgId;
       }
     } else {
+      chartTitle = d.id + ': ' + d.name;
+
       context['measure'] = options.measure;
       if (options.orgType == 'practice') {
         context['practice_code'] = d.id;
@@ -338,46 +346,26 @@ var utils = {
       }
     }
 
-    if (options.rollUpBy === 'measure_id') {
-      // We want measure charts to link to the measure-by-all-practices-in-CCG page.
-      chartTitle = d.name;
-      chartTitleUrl = _this._buildUrl(
-        options.chartTitleUrlTemplate,
-        context
-      );
-      measureUrl = _this._buildUrl(
-        options.measureUrlTemplate,
-        context
-      );
-    } else {
-      // We want organisation charts to link to the appropriate organisation page.
-      chartTitle = d.id + ': ' + d.name;
-      chartTitleUrl = _this._buildUrl(
-        options.chartTitleUrlTemplate,
-        context
-      );
-    }
-
-    if (options.measureForAllPracticesUrlTemplate) {
-      measureForAllPracticesUrl = _this._buildUrl(
-        options.measureForAllPracticesUrlTemplate,
-        context
-      );
-    }
-
-    if (options.tagsFocusUrlTemplate) {
-      tagsFocusUrl = _this._buildUrl(
-        options.tagsFocusUrlTemplate,
-        context
-      );
-    }
-
-    if (options.oneEntityUrlTemplate) {
-      oneEntityUrl = _this._buildUrl(
-        options.oneEntityUrlTemplate,
-        context
-      );
-    }
+    chartTitleUrl = _this._buildUrl(
+      options.chartTitleUrlTemplate,
+      context
+    );
+    measureUrl = _this._buildUrl(
+      options.measureUrlTemplate,
+      context
+    );
+    measureForAllPracticesUrl = _this._buildUrl(
+      options.measureForAllPracticesUrlTemplate,
+      context
+    );
+    tagsFocusUrl = _this._buildUrl(
+      options.tagsFocusUrlTemplate,
+      context
+    );
+    oneEntityUrl = _this._buildUrl(
+      options.oneEntityUrlTemplate,
+      context
+    );
 
     var isAggregateEntity = options.aggregate;
     if (isAggregateEntity) {
