@@ -308,12 +308,8 @@ def all_measures(request):
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
     measure_options = {
-        'measure': measure.id,
+        'measure': measure,
         'orgType': 'CCG',
-        'numerator': measure.numerator_short,
-        'denominator': measure.denominator_short,
-        'isCostBasedMeasure': measure.is_cost_based,
-        'lowIsGood': measure.low_is_good,
         'rollUpBy': 'org_id',
     }
     if measure.tags_focus:
@@ -331,7 +327,7 @@ def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
     measure_options = {
-        'measure': measure.id,
+        'measure': measure,
         'orgType': 'practice',
         'orgId': practice.code,
         'orgName': practice.name,
@@ -353,7 +349,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, pk=measure)
     measure_options = {
-        'measure': measure.id,
+        'measure': measure,
         'orgType': 'CCG',
         'orgId': ccg.code,
         'orgName': ccg.name,
@@ -436,14 +432,10 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
     measure_options = {
-        'measure': measure.id,
+        'measure': measure,
         'orgId': ccg.code,
         'orgName': ccg.name,
         'orgType': 'practice',
-        'numerator': measure.numerator_short,
-        'denominator': measure.denominator_short,
-        'isCostBasedMeasure': measure.is_cost_based,
-        'lowIsGood': measure.low_is_good,
         'rollUpBy': 'org_id',
     }
     measure_options = _build_measure_options(measure_options)
@@ -1042,6 +1034,15 @@ def _url_template(view_name):
 
 
 def _build_measure_options(options):
+    # measure etc
+    if 'measure' in options:
+        measure = options['measure']
+        options['measure'] = measure.id
+        options['numerator'] = measure.numerator_short
+        options['denominator'] = measure.denominator_short
+        options['isCostBasedMeasure'] = measure.is_cost_based
+        options['lowIsGood'] = measure.low_is_good
+
     # globalMeasuresUrl & panelMeasuresUrl
     params = {'format': 'json'}
     if 'measure' in options:
