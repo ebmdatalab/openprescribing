@@ -199,8 +199,7 @@ var utils = {
         humanize.numberFormat(perf.proportionAboveMedian * 100, 1);
       if (options.rollUpBy === 'measure_id') {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
-        perf.costSavings += (options.orgType === 'practice') ?
-          'practice ' : 'CCG ';
+        perf.costSavings += options.orgType;
         perf.costSavings += ' had prescribed at the median ratio or better ' +
           'on all cost-saving measures below, then it would have spent £' +
           humanize.numberFormat(perf.potentialSavings50th, 0) +
@@ -210,9 +209,8 @@ var utils = {
           'to be achievable.)';
       } else if (options.isCostBasedMeasure) {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
-        perf.costSavings += (options.orgType === 'practice') ?
-          'practices ' : 'CCGs ';
-        perf.costSavings += 'had prescribed at the median ratio ' +
+        perf.costSavings += options.orgType;
+        perf.costSavings += 's had prescribed at the median ratio ' +
           'or better, then ';
         perf.costSavings += (options.orgType === 'practice') ?
           'this CCG ' : 'NHS England ';
@@ -220,8 +218,7 @@ var utils = {
           humanize.numberFormat(perf.potentialSavings50th, 0) +
           ' less. (We use the national median as a suggested ' +
           'target because by definition, 50% of ';
-        perf.costSavings += (options.orgType === 'practice') ?
-          'practices ' : 'CCGs ';
+        perf.costSavings += options.orgType;
         perf.costSavings += 'were already prescribing ' +
           'at this level or better, so we think it ought to be achievable.)';
       }
