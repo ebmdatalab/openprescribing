@@ -331,7 +331,7 @@ var utils = {
       context['measure'] = d.id;
       if (options.orgType == 'practice') {
         context['practice_code'] = options.orgId;
-        context['ccg_code'] = options.parentOrg;
+        context['ccg_code'] = options.parentOrgId;
       } else {
         context['ccg_code'] = options.orgId;
       }

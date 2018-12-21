@@ -336,7 +336,7 @@ def measure_for_one_practice(request, measure, practice_code):
         'orgType': 'practice',
         'orgId': practice.code,
         'orgName': practice.name,
-        'parentOrg': practice.ccg_id,
+        'parentOrgId': practice.ccg_id,
         'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
@@ -385,7 +385,7 @@ def measures_for_one_practice(request, practice_code):
         'orgType': 'practice',
         'orgId': practice.code,
         'orgName': practice.name,
-        'parentOrg': practice.ccg.code,
+        'parentOrgId': practice.ccg.code,
         'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
@@ -1011,7 +1011,7 @@ def _home_page_context_for_entity(request, entity):
         }],
         'orgType': entity_type,
         'orgId': entity.code,
-        'parentOrg': parent_org,
+        'parentOrgId': parent_org,
         'rollUpBy': 'measure_id',
     }
     _add_urls_to_measure_options(measure_options)
