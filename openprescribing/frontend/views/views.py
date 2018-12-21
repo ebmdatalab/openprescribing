@@ -246,7 +246,7 @@ def all_england(request):
        'aggregate': True,
        'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     context = {
         'tag_filter': tag_filter,
@@ -319,7 +319,7 @@ def measure_for_all_ccgs(request, measure):
     }
     if measure.tags_focus:
         measure_options['tagsFocus'] = ','.join(measure.tags_focus)
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     context = {
         'measure': measure,
@@ -339,7 +339,7 @@ def measure_for_one_practice(request, measure, practice_code):
         'parentOrgId': practice.ccg_id,
         'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
     context = {
         'practice': practice,
         'measure': measure,
@@ -360,7 +360,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
         'orgName': ccg.name,
         'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
     context = {
         'ccg': ccg,
         'measure': measure,
@@ -388,7 +388,7 @@ def measures_for_one_practice(request, practice_code):
         'parentOrgId': practice.ccg.code,
         'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     context = {
         'practice': practice,
@@ -419,7 +419,7 @@ def measures_for_one_ccg(request, ccg_code):
         'orgName': ccg.name,
         'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     context = {
         'ccg': ccg,
@@ -447,7 +447,7 @@ def measure_for_practices_in_ccg(request, ccg_code, measure):
         'lowIsGood': measure.low_is_good,
         'rollUpBy': 'org_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
     context = {
         'ccg': ccg,
@@ -1014,7 +1014,7 @@ def _home_page_context_for_entity(request, entity):
         'parentOrgId': parent_org,
         'rollUpBy': 'measure_id',
     }
-    _add_urls_to_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     return {
         'measure': extreme_measure,
@@ -1042,7 +1042,7 @@ def _url_template(view_name):
     return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
 
 
-def _add_urls_to_measure_options(options):
+def _build_measure_options(options):
     # panelMeasuresUrl
     panel_params = {'format': 'json'}
     if 'measure' in options:
@@ -1124,6 +1124,8 @@ def _add_urls_to_measure_options(options):
     # tagsFocusUrlTemplate
     if 'tagsFocus' in options:
         options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg') + '?tags=' + options['tagsFocus']
+
+    return options
 
 
 def _build_api_url(view_name, params):
