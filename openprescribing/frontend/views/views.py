@@ -309,7 +309,6 @@ def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
     measure_options = {
         'measure': measure.id,
-        'tags': request.GET.get('tags', ''),
         'orgType': 'CCG',
         'numerator': measure.numerator_short,
         'denominator': measure.denominator_short,
