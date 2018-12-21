@@ -1042,40 +1042,27 @@ def _url_template(view_name):
 
 
 def _build_measure_options(options):
-    # panelMeasuresUrl
-    panel_params = {'format': 'json'}
+    # globalMeasuresUrl & panelMeasuresUrl
+    params = {'format': 'json'}
     if 'measure' in options:
-        panel_params['measure'] = options['measure']
+        params['measure'] = options['measure']
     if 'specificMeasures' in options:
-        panel_params['measure'] = ','.join(
+        params['measure'] = ','.join(
             specific_measure['measure']
             for specific_measure in options['specificMeasures']
         )
+    if 'tags' in options:
+        params['tags'] = options['tags']
+
+    options['globalMeasuresUrl'] = _build_api_url('measure', params)
+
     if 'orgId' in options:
-        panel_params['org'] = options['orgId']
-    if 'tags' in options:
-        panel_params['tags'] = options['tags']
+        params['org'] = options['orgId']
     if 'aggregate' in options:
-        panel_params['aggregate'] = options['aggregate']
+        params['aggregate'] = options['aggregate']
 
-    options['panelMeasuresUrl'] = _build_api_url(
-        'measure_by_' + options['orgType'].lower(),
-        panel_params
-    )
-
-    # globalMeasuresUrl
-    global_params = {'format': 'json'}
-    if 'measure' in options:
-        global_params['measure'] = options['measure']
-    if 'specificMeasures' in options:
-        global_params['measure'] = ','.join(
-            specific_measure['measure']
-            for specific_measure in options['specificMeasures']
-        )
-    if 'tags' in options:
-        global_params['tags'] = options['tags']
-
-    options['globalMeasuresUrl'] = _build_api_url('measure', global_params)
+    view_name = 'measure_by_' + options['orgType'].lower()
+    options['panelMeasuresUrl'] = _build_api_url(view_name, params)
 
     # orgLocationUrl
     if 'orgId' in options:
