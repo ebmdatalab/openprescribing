@@ -316,60 +316,66 @@ var utils = {
     var chartExplanation = '';
     var measureUrl;
     var oneEntityUrl;
-    var orgId;
-    var measureId;
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
+    var context = {};
     var _this = this;
+
+    if (options.rollUpBy == 'measure_id') {
+      context['measure'] = d.id;
+      if (options.orgType == 'practice') {
+        context['practice_code'] = options.orgId;
+        context['ccg_code'] = options.parentOrg;
+      } else {
+        context['ccg_code'] = options.orgId;
+      }
+    } else {
+      context['measure'] = options.measure;
+      if (options.orgType == 'practice') {
+        context['practice_code'] = d.id;
+      } else {
+        context['ccg_code'] = d.id;
+      }
+    }
 
     if (options.rollUpBy === 'measure_id') {
       // We want measure charts to link to the measure-by-all-practices-in-CCG page.
-      measureId = d.id;
-      orgId = (options.parentOrg || options.orgId);
       chartTitle = d.name;
       chartTitleUrl = _this._buildUrl(
         options.chartTitleUrlTemplate,
-        {'measure': measureId, 'ccg_code': orgId}
+        context
       );
       measureUrl = _this._buildUrl(
         options.measureUrlTemplate,
-        {'measure': measureId}
+        context
       );
     } else {
       // We want organisation charts to link to the appropriate organisation page.
-      measureId = options.measure;
-      orgId = d.id;
       chartTitle = d.id + ': ' + d.name;
       chartTitleUrl = _this._buildUrl(
         options.chartTitleUrlTemplate,
-        {'ccg_code': d.id, 'practice_code': d.id}
+        context
       );
     }
 
     if (options.measureForAllPracticesUrlTemplate) {
       measureForAllPracticesUrl = _this._buildUrl(
         options.measureForAllPracticesUrlTemplate,
-        {'measure': measureId, 'ccg_code': orgId}
+        context
       );
-    }
-
-    if (options.rollUpBy == 'org_id') {
-      orgId = d.id;
-    } else {
-      orgId = options.orgId;
     }
 
     if (options.tagsFocusUrlTemplate) {
       tagsFocusUrl = _this._buildUrl(
         options.tagsFocusUrlTemplate,
-        {'ccg_code': orgId}
+        context
       );
     }
 
     if (options.oneEntityUrlTemplate) {
       oneEntityUrl = _this._buildUrl(
         options.oneEntityUrlTemplate,
-        {'ccg_code': orgId, 'practice_code': orgId, 'measure': measureId}
+        context
       );
     }
 
