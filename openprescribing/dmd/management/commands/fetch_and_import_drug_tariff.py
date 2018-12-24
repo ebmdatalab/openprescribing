@@ -36,6 +36,7 @@ class Command(BaseCommand):
         doc = bs4.BeautifulSoup(rsp.content, 'html.parser')
 
         month_names = [x.lower() for x in calendar.month_name]
+        month_abbrs = [x.lower() for x in calendar.month_abbr]
 
         imported_months = []
 
@@ -51,7 +52,12 @@ class Command(BaseCommand):
             month_name, year = words[-2:]
             if len(year) == 2:
                 year = "20" + year
-            month = month_names.index(month_name.lower())
+
+            try:
+                month = month_names.index(month_name.lower())
+            except ValueError:
+                month = month_abbrs.index(month_name.lower())
+
             date = datetime.date(int(year), month, 1)
 
             if ImportLog.objects.filter(
