@@ -51,7 +51,6 @@ class Command(BaseCommand):
             month_name, year = words[-2:]
             if len(year) == 2:
                 year = "20" + year
-                assert "2000" <= year <= str(datetime.date.today().year)
             month = month_names.index(month_name.lower())
             date = datetime.date(int(year), month, 1)
 
