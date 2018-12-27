@@ -630,8 +630,8 @@ def mailchimp_subscribe(
         }
     }
     client = MailChimp(
-        get_env_setting('MAILCHIMP_USER'),
-        get_env_setting('MAILCHIMP_API_KEY'))
+        mc_user=get_env_setting('MAILCHIMP_USER'),
+        mc_api=get_env_setting('MAILCHIMP_API_KEY'))
     try:
         client.lists.members.get(
             list_id=settings.MAILCHIMP_LIST_ID,
