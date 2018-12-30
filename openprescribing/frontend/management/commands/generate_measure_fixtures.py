@@ -137,6 +137,9 @@ class Command(BaseCommand):
             else:
                 measure_id = 'measure_{}'.format(ix)
 
+            if ix == 0:
+                measure_definition['tags_focus'] = ['lowpriority']
+
             if ix == 1:
                 measure_definition['tags'] = ['lowpriority']
 

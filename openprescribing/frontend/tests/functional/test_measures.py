@@ -86,6 +86,32 @@ class MeasuresTests(SeleniumTestCase):
             '/measure/measure_2'
         )
 
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.panel-heading',
+            'Measure 0',
+            '/ccg/AAA/lpzomnibus'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            '/practice/P00000/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/practice/P00000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Compare all CCGs in England on this measure',
+            '/measure/lpzomnibus'
+        )
+
     def test_measures_for_one_practice_low_priority(self):
         self._get('/practice/P00000/measures/?tags=lowpriority')
 
@@ -136,6 +162,38 @@ class MeasuresTests(SeleniumTestCase):
             '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
             '/measure/measure_2'
+        )
+
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.panel-heading',
+            'Measure 0',
+            '/ccg/AAA/lpzomnibus'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            '/ccg/AAA/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/ccg/AAA/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Split the measure into charts for individual practices',
+            '/ccg/AAA/lpzomnibus'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
+            'Compare all CCGs in England on this measure',
+            '/measure/lpzomnibus'
         )
 
     def test_measures_for_one_ccg_low_priority(self):

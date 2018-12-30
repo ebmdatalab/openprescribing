@@ -547,7 +547,7 @@
     "why_it_matters": "Why measure 0 matters",
     "numerator_short": "Numerator 0",
     "tags": "[\"core\"]",
-    "tags_focus": "[]",
+    "tags_focus": "[\"lowpriority\"]",
     "denominator_short": "Denominator 0",
     "start_date": null,
     "end_date": null,
