@@ -248,6 +248,35 @@ class MeasuresTests(SeleniumTestCase):
             '/measure/measure_2/ccg/AAA/'
         )
 
+    def test_measure_for_all_ccgs_with_tags_focus(self):
+        self._get('/measure/lpzomnibus/')
+
+        panel_element = self._find_measure_panel('ccg_AAA')
+        self._verify_link(
+            panel_element,
+            '.panel-heading',
+            'AAA: CCG 0/0/0',
+            '/ccg/AAA/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Split the measure into charts for individual practices',
+            '/ccg/AAA/lpzomnibus'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(2)',
+            'Break it down into its constituent measures',
+            '/ccg/AAA/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(3)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/ccg/AAA/'
+        )
+
     def test_measure_for_one_practice(self):
         self._get('/measure/measure_1/practice/P00000/')
 
