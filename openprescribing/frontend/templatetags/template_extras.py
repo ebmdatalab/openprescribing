@@ -70,8 +70,14 @@ def sigfigs(value, figures=3):
     Round value to supplied significant figures
     """
     if not value:
+        # This might happen when testing.
         value = 0
-    order = int(math.floor(math.log10(math.fabs(value))))
+
+    if value == 0:
+        order = 0
+    else:
+        order = int(math.floor(math.log10(math.fabs(value))))
+
     places = figures - order - 1
     format_string = '{:.%df}' % max(0, places)
     return format_string.format(round(value, places))

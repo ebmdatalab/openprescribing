@@ -20,10 +20,49 @@ class MeasuresTests(SeleniumTestCase):
         element = panel_element.find_element_by_css_selector(css_selector)
         a_element = element.find_element_by_tag_name('a')
         self.assertEqual(a_element.text, exp_text)
-        self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
+        if exp_path is None:
+            self.assertEqual(a_element.get_attribute('href'), '')
+        else:
+            self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
 
     def _find_measure_panel(self, id_):
         return self.find_by_css('#{} .panel'.format(id_))
+
+    def test_all_england(self):
+        self._get('/all-england/')
+
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            None  # TODO fix this, it's a nothing link!
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Compare all CCGs in England on this measure',
+            '/measure/lpzomnibus'
+        )
+
+        panel_element = self._find_measure_panel('measure_measure_2')
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Compare all CCGs in England on this measure',
+            '/measure/measure_2'
+        )
+
+    def test_all_england_low_priority(self):
+        self._get('/all-england/?tags=lowpriority')
+
+        panel_element = self._find_measure_panel('measure_measure_1')
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Compare all CCGs in England on this measure',
+            '/measure/measure_1'
+        )
 
     def test_practice_home_page(self):
         self._get('/practice/P00000/')

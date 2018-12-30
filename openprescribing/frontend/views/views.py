@@ -959,7 +959,13 @@ def _all_england_ppu_savings(entity_type, date):
     params = {'date': date}
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
-        return dictfetchall(cursor)[0]['total_savings']
+        savings = dictfetchall(cursor)[0]['total_savings']
+
+    if savings is None:
+        # This might happen when testing.
+        return 0
+    else:
+        return savings
 
 
 def _all_england_measure_savings(entity_type, date):
