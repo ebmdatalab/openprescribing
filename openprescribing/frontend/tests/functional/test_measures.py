@@ -3,8 +3,12 @@
 # the links on the panels point to the expected places.  The rendering of the
 # measure graphs is not tested here.
 
+from collections import defaultdict
+
 import requests
 from selenium_base import SeleniumTestCase
+
+from frontend.models import PCT, Practice, Measure, MeasureValue
 
 
 class MeasuresTests(SeleniumTestCase):
@@ -67,12 +71,16 @@ class MeasuresTests(SeleniumTestCase):
     def test_practice_home_page(self):
         self._get('/practice/P00000/')
 
+        practice = Practice.objects.get(code='P00000')
+        mvs = MeasureValue.objects.filter(practice=practice)
+        extreme_measure = _get_extreme_measure(mvs)
+
         panel_element = self._find_measure_panel('top-measure-container')
         self._verify_link(
             panel_element,
             '.panel-heading',
-            'Measure 2',
-            '/ccg/AAA/measure_2'
+            extreme_measure.name,
+            '/ccg/AAA/{}'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -86,12 +94,16 @@ class MeasuresTests(SeleniumTestCase):
     def test_ccg_home_page(self):
         self._get('/ccg/AAA/')
 
+        ccg = PCT.objects.get(code='AAA')
+        mvs = MeasureValue.objects.filter(pct=ccg, practice=None)
+        extreme_measure = _get_extreme_measure(mvs)
+
         panel_element = self._find_measure_panel('top-measure-container')
         self._verify_link(
             panel_element,
             '.panel-heading',
-            'Measure 2',
-            '/ccg/AAA/measure_2'
+            extreme_measure.name,
+            '/ccg/AAA/{}'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -372,3 +384,25 @@ class MeasuresTests(SeleniumTestCase):
             'Break the overall score down into individual presentations',
             '/measure/measure_1/practice/P00000/'
         )
+
+
+def _get_extreme_measure(mvs):
+    mvs = mvs.filter(
+        month__gte='2018-03-01',
+        measure__tags__contains=['core'],
+    ).exclude(
+        measure_id='lpzomnibus'
+    )
+    percentiles_by_measure_id = defaultdict(list)
+    for mv in mvs:
+        if mv.percentile is not None:
+            percentiles_by_measure_id[mv.measure_id].append(mv.percentile)
+
+    avg_percentile_by_measure_id = {
+        measure_id: sum(percentiles) / len(percentiles)
+        for measure_id, percentiles in percentiles_by_measure_id.items()
+    }
+
+    measure_id = max(avg_percentile_by_measure_id, key=avg_percentile_by_measure_id.get)
+
+    return Measure.objects.get(id=measure_id)
