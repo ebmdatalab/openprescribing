@@ -1,8 +1,15 @@
 # This task generates the fixtures in frontend/tests/fixtures/functional-measures.json.
 # The generated data includes Practices and all their parent organisations,
-# Measures, MeasureValues, and MeasureGlobals.  The MeasureValues and
-# MeasureGlobals are computed by import_measures.  The numerators and
-# denominators are generated randomly, such that:
+# Measures, MeasureValues, and MeasureGlobals.
+#
+# There are five Measures:
+#
+#  * two core
+#  * two low-priority
+#  * lpzomnibus
+#
+# The MeasureValues and MeasureGlobals are computed by import_measures.  The
+# numerators and denominators are generated randomly, such that:
 #
 #  * the ratios decline over time
 #  * the ratios increase with practice ID
@@ -116,38 +123,49 @@ class Command(BaseCommand):
 
         bnf_codes = []
 
-        for ix in range(3):
+        for ix in range(5):
+            numerator_where = "bnf_code LIKE '0{}01%'".format(ix),
+            denominator_where = "bnf_code LIKE '0{}%'".format(ix),
+
+            if ix in [0, 1]:
+                measure_id = 'core_{}'.format(ix)
+                name = 'Core measure {}'.format(ix)
+                tags = ['core']
+                tags_focus = None
+            elif ix in [2, 3]:
+                measure_id = 'lp_{}'.format(ix)
+                name = 'LP measure {}'.format(ix)
+                tags = ['lowpriority']
+                tags_focus = None
+            else:
+                assert ix == 4
+                measure_id = 'lpzomnibus'
+                name = 'LP omnibus measure'
+                tags = ['core']
+                tags_focus = ['lowpriority']
+                numerator_where = "bnf_code LIKE '0201%' OR bnf_code LIKE'0301%'",
+                denominator_where = "bnf_code LIKE '02%' OR bnf_code LIKE'03%'",
+
             measure_definition = {
-                'name': 'Measure {}'.format(ix),
-                'title': 'Measure {} Title'.format(ix),
-                'description': 'Measure {} description'.format(ix),
-                'why_it_matters': 'Why measure {} matters'.format(ix),
-                'url': 'http://example.com/measure-{}'.format(ix),
-                'numerator_short': 'Numerator {}'.format(ix),
+                'name': name,
+                'title': '{} Title'.format(ix),
+                'description': '{} description'.format(name),
+                'why_it_matters': 'Why {} matters'.format(name),
+                'url': 'http://example.com/measure-{}'.format(measure_id),
+                'numerator_short': 'Numerator for {}'.format(measure_id),
                 'numerator_from': '{hscic}.normalised_prescribing_standard',
-                'numerator_where': "bnf_code LIKE '0{}01%'".format(ix),
+                'numerator_where': numerator_where,
                 'numerator_columns': 'SUM(quantity) AS numerator',
-                'denominator_short': 'Denominator {}'.format(ix),
+                'denominator_short': 'Denominator for {}'.format(measure_id),
                 'denominator_from': '{hscic}.normalised_prescribing_standard',
-                'denominator_where': "bnf_code LIKE '0{}%'".format(ix),
+                'denominator_where': denominator_where,
                 'denominator_columns': 'SUM(quantity) AS denominator',
                 'is_cost_based': True,
                 'is_percentage': True,
                 'low_is_good': True,
-                'tags': ['core'],
+                'tags': tags,
+                'tags_focus': tags_focus,
             }
-
-            # lpzomnibus is special-cased in the code
-            if ix == 0:
-                measure_id = 'lpzomnibus'
-            else:
-                measure_id = 'measure_{}'.format(ix)
-
-            if ix == 0:
-                measure_definition['tags_focus'] = ['lowpriority']
-
-            if ix == 1:
-                measure_definition['tags'] = ['lowpriority']
 
             path = os.path.join(
                 measure_definitions_path,
@@ -220,14 +238,20 @@ class Command(BaseCommand):
             table.insert_rows_from_csv(f.name)
 
         # Do the work.
-        call_command('import_measures', measure='lpzomnibus,measure_1,measure_2')
+        call_command('import_measures', measure='core_0,core_1,lp_2,lp_3,lpzomnibus')
 
         # Clean up.
-        for ix in range(3):
-            if ix == 0:
-                measure_id = 'lpzomnibus'
+        for ix in range(5):
+            numerator_where = "bnf_code LIKE '0{}01%'".format(ix),
+            denominator_where = "bnf_code LIKE '0{}%'".format(ix),
+
+            if ix in [0, 1]:
+                measure_id = 'core_{}'.format(ix)
+            elif ix in [2, 3]:
+                measure_id = 'lp_{}'.format(ix)
             else:
-                measure_id = 'measure_{}'.format(ix)
+                assert ix == 4
+                measure_id = 'lpzomnibus'
 
             path = os.path.join(
                 measure_definitions_path,
