@@ -2,9 +2,15 @@
 # The generated data includes Practices and all their parent organisations,
 # Measures, MeasureValues, and MeasureGlobals.  The MeasureValues and
 # MeasureGlobals are computed by import_measures.  The numerators and
-# denominators are generated randomly, and there is no extra structure,
-# although there could be.  For instance, we could make it so that the
-# performance of the CCGs follows a certain pattern.
+# denominators are generated randomly, such that:
+#
+#  * the ratios decline over time
+#  * the ratios increase with practice ID
+#  * the numerators are more expensive than non-numerators
+#
+# The first two points aren't currently important for the tests (they just
+# produce nice charts) but the last point is important, since the cost-saving
+# calculations assume this.
 
 from __future__ import print_function
 
@@ -157,14 +163,26 @@ class Command(BaseCommand):
         # database.
         prescribing_rows = []
 
-        for practice in Practice.objects.all():
+        for practice_ix, practice in enumerate(Practice.objects.all()):
             for month in [1, 2, 3, 4, 5, 6, 7, 8]:
                 timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
 
-                for bnf_code in bnf_codes:
-                    items = randint(0, 100)
-                    quantity = randint(6, 28) * items
-                    actual_cost =  randint(100, 200) * quantity * 0.01
+                # 0 <= practice_ix <= 15; 1 <= month <= 8
+                item_ratio = (22 + practice_ix - 2 * month + randint(-5, 5)) / 43.0
+                assert 0 < item_ratio < 1
+
+                numerator_items = 100 + randint(0, 100)
+                denominator_items = int(numerator_items / item_ratio)
+
+                for bnf_code_ix, bnf_code in enumerate(bnf_codes):
+                    if bnf_code_ix % 2 == 0:
+                        items = denominator_items
+                    else:
+                        items = numerator_items
+
+                    quantity = 28 * items
+                    unit_cost = 1 + bnf_code_ix
+                    actual_cost = unit_cost * quantity
 
                     # We don't care about net_cost.
                     net_cost = actual_cost
