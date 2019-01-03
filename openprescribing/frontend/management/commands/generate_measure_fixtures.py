@@ -116,6 +116,8 @@ class Command(BaseCommand):
             'measure_definitions'
         )
 
+        # lpzomnibus is a real measure, and we don't want to overwrite its
+        # definition.
         os.rename(
             os.path.join(measure_definitions_path, 'lpzomnibus.json'),
             os.path.join(measure_definitions_path, 'lpzomnibus.json.bak'),
