@@ -359,6 +359,9 @@ var utils = {
       options.tagsFocusUrlTemplate,
       context
     );
+    if (tagsFocusUrl) {
+      tagsFocusUrl = tagsFocusUrl + '?tags=' + d.tagsFocus;
+    }
     oneEntityUrl = _this._buildUrl(
       options.oneEntityUrlTemplate,
       context

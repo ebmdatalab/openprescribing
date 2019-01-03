@@ -1109,8 +1109,12 @@ def _build_measure_options(options):
             assert False
 
     # tagsFocusUrlTemplate
-    if 'tagsFocus' in options:
-        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg') + '?tags=' + options['tagsFocus']
+    if options['orgType'] == 'CCG':
+        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg')
+    elif options['orgType'] == 'practice':
+        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_practice')
+    else:
+        assert False
 
     return options
 
