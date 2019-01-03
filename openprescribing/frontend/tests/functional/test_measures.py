@@ -1,10 +1,14 @@
+# coding=utf8
+
 # The tests in this file verify that the measure panels are generated as
 # expected on each of the pages they appear on.  This is done by checking that
-# the links on the panels point to the expected places.  The rendering of the
-# measure graphs is not tested here.
+# the links on the panels point to the expected places, and that the perfomance
+# explanations are correct.  The rendering of the measure graphs is not tested
+# here.
 
 from collections import defaultdict
 
+from django.contrib.humanize.templatetags.humanize import intcomma
 import requests
 from selenium_base import SeleniumTestCase
 
@@ -12,6 +16,8 @@ from frontend.models import PCT, Practice, Measure, MeasureValue
 
 
 class MeasuresTests(SeleniumTestCase):
+    maxDiff = None
+
     fixtures = ['functional-measures']
 
     def _get(self, path):
@@ -384,6 +390,152 @@ class MeasuresTests(SeleniumTestCase):
             'Break the overall score down into individual presentations',
             '/measure/lp_2/practice/P00000/'
         )
+
+    def test_explanation_for_all_england(self):
+        mvs = MeasureValue.objects.filter(
+            pct__isnull=False,
+            practice__isnull=True,
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+
+        cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs if mv.cost_savings['10'] > 0)
+        cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs if mv.cost_savings['50'] > 0)
+
+        self._get('/all-england/')
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        exp_text = u'Performance: If all CCGs in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(cost_saving_50), _humanize(cost_saving_10))
+        self.assertEqual(perf_element.text, exp_text)
+
+    def test_explanation_for_practice(self):
+        # This test verifies that the explanation for a practice's performance
+        # for a single measure is correct on each page where it appears.
+
+        # First, we need to find interesting practices.  We want one that is
+        # better than the 10th percentile, one that is between the 10th and
+        # 50th percentiles, and one that is worse thanthe 50th percentiles.
+        pp = []
+
+        for p in Practice.objects.all():
+            mvs = MeasureValue.objects.filter(
+                practice=p,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+
+            p.cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs)
+            p.cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs)
+
+            pp.append(p)
+
+        # If the numerator items cost less than the denominator-only items,
+        # then we can end up with a practice that is better than the 10th
+        # percentile and worse than the 50th.  This makes no sense, and never
+        # happens with production data.
+        assert [p for p in pp if p.cost_saving_10 < 0 and p.cost_saving_50 > 0] == []
+
+        # p1 is better than the 10th percentile
+        # p2 is between the 10th and 50th percentiles
+        # p3 is worse than the 50th percentile
+        p1 = [p for p in pp if p.cost_saving_10 < 0 and p.cost_saving_50 < 0][0]
+        p2 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 < 0][0]
+        p3 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 > 0][0]
+
+        p1_exp_text = u'By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months.'.format(_humanize(p1.cost_saving_50))
+        p2_exp_text = u'By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(p2.cost_saving_50), _humanize(p2.cost_saving_10))
+        p3_exp_text = u'If it had prescribed in line with the median, this practice would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(p3.cost_saving_50), _humanize(p3.cost_saving_10))
+
+        # measure_for_one_practice
+        self._get('/measure/core_0/practice/{}/'.format(p1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/practice/{}/'.format(p2.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p2_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/practice/{}/'.format(p3.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p3_exp_text, perf_element.text)
+
+        # measures_for_one_practice
+        self._get('/practice/{}/measures/'.format(p1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        # measure_for_practices_in_ccg
+        ccg = p1.ccg
+        self._get('/ccg/{}/core_0/'.format(ccg.code))
+        panel_element = self._find_measure_panel('practice_{}'.format(p1.code))
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        # practice_home_page
+        self._get('/practice/{}/'.format(p1.code))
+        panel_element = self._find_measure_panel('top-measure-container')
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(p1_exp_text, perf_element.text)
+
+    def test_explanation_for_ccg(self):
+        # See comments in test_explanation_for_practice for details.
+        cc = []
+
+        for c in PCT.objects.all():
+            mvs = MeasureValue.objects.filter(
+                pct=c,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+
+            c.cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs)
+            c.cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs)
+
+            cc.append(c)
+
+        assert [c for c in cc if c.cost_saving_10 < 0 and c.cost_saving_50 > 0] == []
+        c1 = [c for c in cc if c.cost_saving_10 < 0 and c.cost_saving_50 < 0][0]
+        c2 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 < 0][0]
+        c3 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 > 0][0]
+
+        c1_exp_text = u'By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months.'.format(_humanize(c1.cost_saving_50))
+        c2_exp_text = u'By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(c2.cost_saving_50), _humanize(c2.cost_saving_10))
+        c3_exp_text = u'If it had prescribed in line with the median, this CCG would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(c3.cost_saving_50), _humanize(c3.cost_saving_10))
+
+        # measure_for_one_ccg
+        self._get('/measure/core_0/ccg/{}/'.format(c1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(c1_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/ccg/{}/'.format(c2.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(c2_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/ccg/{}/'.format(c3.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(c3_exp_text, perf_element.text)
+
+        # measures_for_one_ccg
+        self._get('/ccg/{}/measures/'.format(c1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(c1_exp_text, perf_element.text)
+
+        # measure_for_all_ccgs
+        self._get('/measure/core_0/')
+        panel_element = self._find_measure_panel('ccg_{}'.format(c1.code))
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(c1_exp_text, perf_element.text)
+
+        # ccg_home_page
+        self._get('/ccg/{}/'.format(c1.code))
+        panel_element = self._find_measure_panel('top-measure-container')
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(c1_exp_text, perf_element.text)
+
+
+
+def _humanize(cost_saving):
+    return intcomma(int(round(abs(cost_saving))))
 
 
 def _get_extreme_measure(mvs):
