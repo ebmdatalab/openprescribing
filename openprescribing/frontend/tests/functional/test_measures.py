@@ -578,6 +578,51 @@ class MeasuresTests(SeleniumTestCase):
         exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
+    def test_performance_summary_for_measures_for_one_ccg(self):
+        # First we need to find a CCG with a cost saving!  In reality, almost
+        # every CCG has a cost saving, but this is not the case with the test
+        # data.
+
+        for c in PCT.objects.all():
+            mvs = MeasureValue.objects.filter(
+                pct=c,
+                practice=None,
+                measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
+                month__gte='2018-03-01',
+            )
+            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find CCG with cost saving!'
+
+        self._get('/ccg/{}/measures/'.format(c.code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if this CCG had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measures_for_one_practice(self):
+        # First we need to find a practice with a cost saving!  In reality,
+        # almost every practice has a cost saving, but this is not the case
+        # with the test data.
+
+        for p in Practice.objects.all():
+            mvs = MeasureValue.objects.filter(
+                practice=p,
+                measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
+                month__gte='2018-03-01',
+            )
+            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find practice with cost saving!'
+
+        self._get('/practice/{}/measures/'.format(p.code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
 
 def _humanize(cost_saving):
     return intcomma(int(round(abs(cost_saving))))

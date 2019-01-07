@@ -229,45 +229,43 @@ var utils = {
           }
           if (d.meanPercentile > 50) {
             perf.potentialSavings50th +=
-              (options.isCostBasedMeasure) ? d.costSaving50th : 0;
+              (options.isCostBasedMeasure || d.isCostBased) ? d.costSaving50th : 0;
           }
           if (d.meanPercentile > 10) {
             perf.potentialSavings10th +=
-              (options.isCostBasedMeasure) ? d.costSaving50th : 0;
+              (options.isCostBasedMeasure || d.isCostBased) ? d.costSaving50th : 0;
           }
         }
       });
       perf.proportionAboveMedian =
         humanize.numberFormat(perf.proportionAboveMedian * 100, 1);
-      if (options.isCostBasedMeasure) {
-        if (options.rollUpBy === 'measure_id') {
-          perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practice ' : 'CCG ';
-          perf.costSavings += ' had prescribed at the median ratio or better ' +
-            'on all cost-saving measures below, then it would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 0) +
-            ' less. (We use the national median as a suggested ' +
-            'target because by definition, 50% of practices were already ' +
-            'prescribing at this level or better, so we think it ought ' +
-            'to be achievable.)';
-        } else {
-          perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practices ' : 'CCGs ';
-          perf.costSavings += 'had prescribed at the median ratio ' +
-            'or better, then ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'this CCG ' : 'NHS England ';
-          perf.costSavings += 'would have spent £' +
-            humanize.numberFormat(perf.potentialSavings50th, 0) +
-            ' less. (We use the national median as a suggested ' +
-            'target because by definition, 50% of ';
-          perf.costSavings += (options.orgType === 'practice') ?
-            'practices ' : 'CCGs ';
-          perf.costSavings += 'were already prescribing ' +
-            'at this level or better, so we think it ought to be achievable.)';
-        }
+      if (options.rollUpBy === 'measure_id') {
+        perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
+        perf.costSavings += (options.orgType === 'practice') ?
+          'practice ' : 'CCG ';
+        perf.costSavings += ' had prescribed at the median ratio or better ' +
+          'on all cost-saving measures below, then it would have spent £' +
+          humanize.numberFormat(perf.potentialSavings50th, 0) +
+          ' less. (We use the national median as a suggested ' +
+          'target because by definition, 50% of practices were already ' +
+          'prescribing at this level or better, so we think it ought ' +
+          'to be achievable.)';
+      } else if (options.isCostBasedMeasure) {
+        perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
+        perf.costSavings += (options.orgType === 'practice') ?
+          'practices ' : 'CCGs ';
+        perf.costSavings += 'had prescribed at the median ratio ' +
+          'or better, then ';
+        perf.costSavings += (options.orgType === 'practice') ?
+          'this CCG ' : 'NHS England ';
+        perf.costSavings += 'would have spent £' +
+          humanize.numberFormat(perf.potentialSavings50th, 0) +
+          ' less. (We use the national median as a suggested ' +
+          'target because by definition, 50% of ';
+        perf.costSavings += (options.orgType === 'practice') ?
+          'practices ' : 'CCGs ';
+        perf.costSavings += 'were already prescribing ' +
+          'at this level or better, so we think it ought to be achievable.)';
       }
     } else {
       perf.performanceDescription = 'This organisation hasn\'t ' +
