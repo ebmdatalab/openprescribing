@@ -1,0 +1,46 @@
+{
+  "name": "Prescribing of Amino acid formula (AAF) for Cow's Milk Protein Allergy (CMPA)",
+  "title": [
+    "Amino acid formula (AAF) as proportion of AAF and extensively hydrolysed formula (EHF)"
+  ],
+  "description": [
+    "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF) "
+  ],
+  "why_it_matters": [
+    "EHF formula is appropriate for the majority (around 90%) of children with CMPA. Amino acid formula products are almost three ",
+    "times more expensive than EHF and only a small number of infants (around 10%) need to be started on AAF in primary care."
+  ],
+  "numerator_short": "AAF items",
+  "denominator_short": "AAF and EHF items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "cardiovascular",
+    "core"
+  ],
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+    "(bnf_code like '090401000BBJFA0 ' OR bnf_code like '090401000BBLDA0' OR bnf_code like '090401000BBNAA0' OR ",
+    "bnf_code like '090401000BBNBA0' OR bnf_code like '090401000BBNMA0' OR bnf_code like '090401000BBNQA0' OR ",
+    "bnf_code like '090401000BBQTA0' OR bnf_code like '090401000BBUPA0' OR bnf_code like '090401000BBUQA0' OR ",
+    "bnf_code like '090401000BBVKA0' OR bnf_code like '090900000BBKWA0')  "
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.normalised_prescribing_standard ",
+  "denominator_where": [
+    "(bnf_code like '090401000BBJFA0 ' OR bnf_code like '090401000BBLDA0' OR bnf_code like '090401000BBNAA0' OR ",
+    "bnf_code like '090401000BBNBA0' OR bnf_code like '090401000BBNMA0' OR bnf_code like '090401000BBNQA0' OR ",
+    "bnf_code like '090401000BBQTA0' OR bnf_code like '090401000BBUPA0' OR bnf_code like '090401000BBUQA0' OR ",
+    "bnf_code like '090401000BBVKA0' OR bnf_code like '090900000BBKWA0' OR bnf_code like '090401000BBLPA0' OR ",
+    "bnf_code like '090401000BBLUA0' OR bnf_code like '090401000BBTGA0' OR bnf_code like '090401000BBTHA0' OR ",
+    "bnf_code like '090401000BBUXA0' OR bnf_code like '090402000BBNZA0' OR bnf_code like '090402000BBTQA0' OR ",
+    "bnf_code like '090900000BBKQA0' OR bnf_code like '090900000BBKRA0')  "
+  ]
+}
