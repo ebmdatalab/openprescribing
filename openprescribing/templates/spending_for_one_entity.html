@@ -35,7 +35,7 @@
 
 <form class="form pull-right" action="">
   <select name="breakdown_date" class="form-control js-submit-on-change">
-    <option>Change date</option>
+    <option value="">Change date</option>
     {% for date in available_dates %}
       <option value="{{ date|date:"Y-m-d" }}">{{ date|date:"F Y" }}</option>
     {% endfor %}
