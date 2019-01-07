@@ -659,6 +659,10 @@ def spending_for_one_entity(request, entity_code, entity_type):
         num_months=12,
         current_month=_get_current_month()
     )
+    # In the very rare cases where we don't have data we just return a 404
+    # rather than triggering an error
+    if not monthly_totals:
+        raise Http404('No data available')
     end_date = max(row['month'] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
     rolling_annual_total = sum(row['additional_cost'] for row in monthly_totals)
