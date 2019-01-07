@@ -532,6 +532,51 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(c1_exp_text, perf_element.text)
 
+    def test_performance_summary_for_measure_for_all_ccgs(self):
+        cost_saving = 0
+        for c in PCT.objects.all():
+            mvs = MeasureValue.objects.filter(
+                pct=c,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+            ccg_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if ccg_cost_saving > 0:
+                cost_saving += ccg_cost_saving
+
+        self._get('/measure/core_0/')
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_practices_in_ccg(self):
+        # First we need to find a CCG with a cost saving!  In reality, almost
+        # every CCG has a cost saving, but this is not the case with the test
+        # data.
+
+        for c in PCT.objects.all():
+            cost_saving = 0
+
+            for p in c.practice_set.all():
+                mvs = MeasureValue.objects.filter(
+                    practice=p,
+                    measure_id='core_0',
+                    month__gte='2018-03-01',
+                )
+                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+                if practice_cost_saving > 0:
+                    cost_saving += practice_cost_saving
+
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find CCG with cost saving!'
+
+        self._get('/ccg/{}/core_0/'.format(c.code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
 
 
 def _humanize(cost_saving):
