@@ -6,73 +6,57 @@
 {% block active_class %}ccg{% endblock %}
 
 {% block extra_css %}
-<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
 {% endblock extra_css %}
 
 {% block content %}
+  <h1>{{ ccg.name }}: {{ measure.name }}</h2>
+  <h2>Presentations contributing to variation</h2>
 
-<h1>{{ ccg.name }}: {{ measure.name }}</h2>
-<h2>Presentations contributing to variation</h2>
+  <p>In the quarter ending {{ current_at|date:"M Y" }}, the numerator was composed of the following presentations:</p>
 
-<p>In the quarter ending {{ current_at|date:"M Y" }}, the
-numerator was composed of the following presentations:</p>
+  <table id="numerator_breakdown" class="table">
+    <thead>
+      <tr>
+        <th>Presentation</th>
+        <th>Items</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Loading...</th>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 
-<table id="numerator_breakdown" class="table">
-  <thead>
-    <tr>
-      <th>
-        Presentation
-      </th>
-      <th>
-        Items
-      </th>
-      <th>
-        Quantity
-      </th>
-      <th>
-        Cost
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Loading...
-      </th>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <a class="btn btn-primary" href="{% url 'measure_numerators_by_org' %}?org={{ ccg.code }}&measure={{ measure.id }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
 
-<a class="btn btn-primary" href="{% url 'measure_numerators_by_org' %}?org={{ ccg.code }}&measure={{ measure.id }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+  <hr>
 
-<hr>
+  <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
 
-<p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+  {% include '_measures_heading.html' with entity_type='CCG' %}
+  {% include '_measures_panel.html' %}
 
-{% include '_measures_heading.html' with entity_type='CCG' %}
-{% include '_measures_panel.html' %}
+  <p>
+    <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all measures for {{ ccg.name }}</a>
+  </p>
 
-<p>
-  <a href="{% url 'measures_for_one_ccg' ccg.code %}">View all measures for {{ ccg.name }}</a>
-</p>
+  <hr/>
 
-<hr/>
-
-{% include '_get_in_touch.html' %}
-
+  {% include '_get_in_touch.html' %}
 {% endblock %}
 
 {% block extra_js %}
+  <script>
+    var measureOptions = {{ measure_options|as_json }};
+  </script>
 
-<script>
-  var measureOptions = {{ measure_options|as_json }};
-</script>
-
-{% conditional_js 'measures' %}
-{% include '_measure_breakdown_table.html' %}
+  {% conditional_js 'measures' %}
+  {% include '_measure_breakdown_table.html' %}
 {% endblock %}

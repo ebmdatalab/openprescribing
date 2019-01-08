@@ -3,10 +3,10 @@
 <div id="measures">
   <div id="charts" class="row">
     <div class="loading-wrapper col-xs-12">
-        <hr/>
-        <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
-        <br/>Fetching data...
-        <br/><br/>
+      <hr/>
+      <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+      <br/>Fetching data...
+      <br/><br/>
     </div>
   </div>
 
@@ -18,79 +18,80 @@
   <script id="summary-panel" type="text/x-handlebars-template">
   <p>{{ performanceDescription }}</p>
 
+  {{ topOpportunity }}
+
   {{{ costSavings }}}
 
   </script>
   <div id="overlay"></div>
   <script id="measure-panel" type="text/x-handlebars-template">
-  <a name="{{ chartId}}"></a>
-  <div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
+    <div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
       <div class="panel panel-info">
-          <div class="panel-heading">
-            {{# if chartTitleUrl }}
-              <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
-            {{else}}
-              {{ chartTitle }}
+        <div class="panel-heading">
+          {{# if chartTitleUrl }}
+            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+          {{else}}
+            {{ chartTitle }}
+          {{/if}}
+        </div>
+
+        <div class="panel-body" class="row">
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div id="{{ chartId }}-with-title">
+              <p class="measure-description">{{{ description }}}</p>
+              <div id="{{ chartId }}">
+                <div class="status"></div>
+              </div>
+            </div>
+            <p class="text-right" style="margin-top: 4px">
+              <a href="#" data-download-chart-id="{{ chartId }}">
+                Download data
+                <span class="glyphicon glyphicon-download-alt"></span>
+              </a>
+            </p>
+          </div>
+
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
+            <div class="descriptive">
+              <strong>Why it matters:</strong>
+              {{{ why_it_matters }}}
+            </div>
+            {{#if chartExplanation }}
+              <div class="descriptive">
+                <strong>Performance:</strong>
+                {{{ chartExplanation }}}
+              </div>
             {{/if}}
+            <div class="descriptive">
+              <strong>Explore:</strong>
+              <ul>
+                {{#if tagsFocus }}
+                  <li>This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures.</a></li>
+                {{/if}}
+                {{#if numeratorCanBeQueried }}
+                  {{#if oneEntityUrl }}
+                    <li>
+                      <a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>
+                    </li>
+                  {{/if}}
+                {{/if}}
+                {{#if measureForAllPracticesUrl }}
+                  <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
+                {{/if}}
+                <li><a href="{{ measureUrl }}">Compare all CCGs in England on this measure</a></li>
+              </ul>
+            </div>
+            <div class="descriptive">
+              <strong>Tagged as:</strong>
+              {{# each tagsForDisplay as |tag index|}}
+                <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
+              {{/each}}
+              {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
+            </div>
           </div>
-          <div class="panel-body" class="row">
-              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <div id="{{ chartId }}-with-title">
-                  <p class="measure-description">{{{ description }}}</p>
-                  <div id="{{ chartId }}">
-                    <div class="status"></div>
-                  </div>
-                </div>
-                <p class="text-right" style="margin-top: 4px">
-                  <a href="#" data-download-chart-id="{{ chartId }}">
-                    Download data
-                    <span class="glyphicon glyphicon-download-alt"></span>
-                  </a>
-                </p>
-              </div>
-
-              <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 inner">
-                  <div class="descriptive"><strong>Why it matters:</strong> {{{ why_it_matters }}}</div>
-                 {{#if chartExplanation }}
-                  <div class="descriptive"><strong>Performance:</strong> {{{ chartExplanation }}}</div>
-                 {{/if}}
-                  <div class="descriptive"><strong>Explore:</strong>
-                    <ul>
-                     {{#if tagsFocus }}
-                     <li>
-                       This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures.</a>
-                     </li>
-                     {{/if}}
-                     {{#if numeratorCanBeQueried }}
-                       {{#if oneEntityUrl }}
-                        <li>
-                          <a href="{{ oneEntityUrl }}">Break the overall
-                           score down into individual presentations</a>
-                        </li>
-                       {{/if}}
-                     {{/if}}
-                      {{#if measureForAllPracticesUrl }}
-                       <li>
-                         <a href="{{ measureForAllPracticesUrl }}">Split the measure
-                           into charts for individual practices</a>
-                       </li>
-                     {{/if}}
-                     <li><a href="{{ measureUrl }}">Compare all CCGs
-                     in England on this measure</a></li>
-                    </ul>
-                  </div>
-                  <div class="descriptive">
-                    <strong>Tagged as:</strong>
-                    {{# each tagsForDisplay as |tag index|}}
-                      <a href="?tags={{ tag.id }}">{{ tag.name }}</a>{{#unless @last }}, {{/unless}}
-                    {{/each}}
-                    {{# unless tagsForDisplay }}<em>No tags yet</em>{{/unless}}
-                  </div>
-              </div>
-          </div>
-
+        </div>
       </div>
-  </div>
+    </div>
   </script>
   {% endverbatim %}
 </div>

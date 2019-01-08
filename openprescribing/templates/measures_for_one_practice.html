@@ -6,63 +6,61 @@
 {% block active_class %}practice{% endblock %}
 
 {% block extra_css %}
-<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
 {% endblock extra_css %}
 
 {% block content %}
+  <div class="row" id="intro">
+    <div class="col-md-6">
+      <h1>{{ practice.cased_name }}</h1>
+      <p>Address: {{ practice.address_pretty }}</p>
+      {% if practice.ccg %}
+        <p>Part of CCG: <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
+      {% endif %}
+      {% if practice.list_size_13 %}
+        <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
+      {% endif %}
+      <p>Current practice type: {{ practice.get_setting_display }}</p>
+    </div>
 
-<div class="row" id="intro">
-  <div class="col-md-6">
-    <h1>{{ practice.cased_name }}</h1>
-    <p>Address: {{ practice.address_pretty }}</p>
-    {% if practice.ccg %}
-      <p>Part of CCG: <a href="{% url 'measures_for_one_ccg' practice.ccg.code %}">{{ practice.ccg.name }}</a></p>
-    {% endif %}
-    {% if practice.list_size_13 %}
-      <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
-    {% endif %}
-    <p>Current practice type: {{ practice.get_setting_display }}</p>
-
+    <div class="col-md-6" id="map-container">
+      <div id="map-measure"></div>
+      <small>Practice locations are approximate, based on postcode.</small>
+    </div>
   </div>
 
-  <div class="col-md-6" id="map-container">
-    <div id="map-measure"></div>
-    <small>Practice locations are approximate, based on postcode.</small>
-  </div>
-</div>
+  <hr/>
 
-<hr/>
+  {% if practice.setting != 4 %}
+    <div class="alert alert-warning" role="alert">
+      <strong>Warning!</strong> {{ practice.name }} is not a standard GP practice, so may have very low numbers for some of these dashboards. Don't be surprised if some of the graphs look strange.
+    </div>
+  {% endif %}
 
-{% if practice.setting != 4 %}
-  <div class="alert alert-warning" role="alert">
-    <strong>Warning!</strong> {{ practice.name }} is not a standard GP practice, so may have very low numbers for some of these dashboards. Don't be surprised if some of the graphs look strange.
-  </div>
-{% endif %}
+  {% if practice.is_inactive %}
+    <div class="alert alert-warning" role="alert">
+      Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
+      {% if practice.status_code == practice.STATUS_DORMANT %}
+        <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
+          What does this mean?
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
 
-{% if practice.is_inactive %}
-  <div class="alert alert-warning" role="alert">
-    Note: {{ practice.name }} is listed as <strong>{{ practice.get_status_code_display }}</strong>.
-    {% if practice.status_code == practice.STATUS_DORMANT %}
-      <a href="https://ebmdatalab.net/what-is-a-dormant-gp-practice-and-why-are-they-prescribing/">
-        What does this mean?
-      </a>
-    {% endif %}
-  </div>
-{% endif %}
+  {% include '_measures_heading.html' with entity_type='practice' %}
+  {% include '_measures_panel.html' %}
 
-{% include '_measures_heading.html' with entity_type='practice' %}
-{% include '_measures_panel.html' %}
+  <hr/>
 
-<hr/>
+  {% include '_get_in_touch.html' %}
 
-{% include '_get_in_touch.html' %}
-
-<small id="location">Practice locations based on <a href="http://systems.hscic.gov.uk/data/ods/datadownloads/onsdata">data from HSCIC/ONS</a>. Contains OS data © Crown copyright and database right 2016, Royal Mail data © Royal Mail copyright and database right 2016, National Statistics data © Crown copyright and database right 2016.</small>
+  <small id="location">Practice locations based on <a href="http://systems.hscic.gov.uk/data/ods/datadownloads/onsdata">data from HSCIC/ONS</a>. Contains OS data © Crown copyright and database right 2016, Royal Mail data © Royal Mail copyright and database right 2016, National Statistics data © Crown copyright and database right 2016.</small>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-  var measureOptions = {{ measure_options|as_json }}
-</script>
-{% conditional_js 'measures' %}
+  <script>
+    var measureOptions = {{ measure_options|as_json }}
+  </script>
+  {% conditional_js 'measures' %}
 {% endblock %}
