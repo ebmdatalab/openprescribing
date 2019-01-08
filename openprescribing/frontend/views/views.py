@@ -1,5 +1,6 @@
 import datetime
 from lxml import html
+import re
 from requests.exceptions import HTTPError
 from urllib import urlencode
 from urlparse import urlparse, urlunparse
@@ -653,6 +654,11 @@ def mailchimp_subscribe(
 ##################################################
 
 def spending_for_one_entity(request, entity_code, entity_type):
+    # Temporary hack as this page is very expensive to render and brings the
+    # site to its knees when bots decide to crawl us (most other pages do the
+    # expensive data loading via JS and so don't have this issue)
+    if _user_is_bot(request):
+        raise Http404()
     entity = _get_entity(entity_type, entity_code)
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
@@ -705,6 +711,14 @@ def spending_for_one_entity(request, entity_code, entity_type):
         'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
     }
     return render(request, 'spending_for_one_entity.html', context)
+
+
+def _user_is_bot(request):
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    # Despite appearances this is actually a fairly robust way of detecting bots
+    # See: https://webmasters.stackexchange.com/a/64805
+    match = re.search('(bot|crawl|spider)', user_agent.lower())
+    return bool(match)
 
 
 def _get_current_month():
