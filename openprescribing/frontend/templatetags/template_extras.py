@@ -71,7 +71,10 @@ def sigfigs(value, figures=3):
     """
     if not value:
         value = 0
-    order = int(math.floor(math.log10(math.fabs(value))))
+    if value != 0:
+        order = int(math.floor(math.log10(math.fabs(value))))
+    else:
+        order = 1
     places = figures - order - 1
     format_string = '{:.%df}' % max(0, places)
     return format_string.format(round(value, places))
