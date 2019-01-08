@@ -68,6 +68,10 @@
     "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions"
   },
+  "nutrition": {
+    "name": "Nutrition",
+    "description": "These measures are for treatments commonly used to improve nutrition"
+  },
   "opioids": {
     "name": "Opioids",
     "description": "These measures relate to the use of opioids. You may also like to use our Price Per Unit tool which identifies how you can make savings due to anomalies in the reimbursement system."
