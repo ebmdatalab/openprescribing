@@ -10,18 +10,18 @@
     "EHF formula is appropriate for the majority (around 90%) of children with CMPA. Amino acid formula products are almost three ",
     "times more expensive than EHF and only a small number of infants (around 10%) need to be started on AAF in primary care."
   ],
-  "numerator_short": "AAF items",
-  "denominator_short": "AAF and EHF items",
+  "numerator_short": "AAF quantity (grams)",
+  "denominator_short": "AAF and EHF quantity (grams)",
   "url": null,
   "is_percentage": true,
   "is_cost_based": false,
-  "low_is_good": null,
+  "low_is_good": true,
   "tags": [
     "cardiovascular",
     "core"
   ],
   "numerator_columns": [
-    "SUM(items) AS numerator, "
+    "SUM(quantity) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
@@ -31,7 +31,7 @@
     "bnf_code like '090401000BBVKA0' OR bnf_code like '090900000BBKWA0')  "
   ],
   "denominator_columns": [
-    "SUM(items) AS denominator, "
+    "SUM(quantity) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
