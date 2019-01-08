@@ -168,41 +168,24 @@ var utils = {
     (if applicable) the number of practices above the
     median, or (if applicable) the cost savings available.
     */
-    var perf = {
-      total: 0,
-      worseThanMedian: 0,
-      potentialSavings50th: 0,
-      potentialSavings10th: 0,
-      orgId: options.orgId,
-      measureId: options.measure,
-    };
+    var perf = {};
+    var potentialSavings50th = 0;
+
     if (orderedData.length) {
       _.each(orderedData, function(d) {
         if (d.meanPercentile !== null) {
-          perf.total += 1;
-          if (d.lowIsGood !== false && d.meanPercentile > 50) {
-            perf.worseThanMedian += 1;
-          } else if (d.lowIsGood === false && d.meanPercentile < 50) {
-            perf.worseThanMedian += 1;
-          }
           if (d.meanPercentile > 50) {
-            perf.potentialSavings50th +=
-              (options.isCostBasedMeasure || d.isCostBased) ? d.costSaving50th : 0;
-          }
-          if (d.meanPercentile > 10) {
-            perf.potentialSavings10th +=
+            potentialSavings50th +=
               (options.isCostBasedMeasure || d.isCostBased) ? d.costSaving50th : 0;
           }
         }
       });
-      perf.proportionAboveMedian =
-        humanize.numberFormat(perf.proportionAboveMedian * 100, 1);
       if (options.rollUpBy === 'measure_id') {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
         perf.costSavings += options.orgType;
         perf.costSavings += ' had prescribed at the median ratio or better ' +
           'on all cost-saving measures below, then it would have spent £' +
-          humanize.numberFormat(perf.potentialSavings50th, 0) +
+          humanize.numberFormat(potentialSavings50th, 0) +
           ' less. (We use the national median as a suggested ' +
           'target because by definition, 50% of practices were already ' +
           'prescribing at this level or better, so we think it ought ' +
@@ -215,7 +198,7 @@ var utils = {
         perf.costSavings += (options.orgType === 'practice') ?
           'this CCG ' : 'NHS England ';
         perf.costSavings += 'would have spent £' +
-          humanize.numberFormat(perf.potentialSavings50th, 0) +
+          humanize.numberFormat(potentialSavings50th, 0) +
           ' less. (We use the national median as a suggested ' +
           'target because by definition, 50% of ';
         perf.costSavings += options.orgType;
