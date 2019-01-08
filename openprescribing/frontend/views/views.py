@@ -307,14 +307,7 @@ def all_measures(request):
 
 def measure_for_all_ccgs(request, measure):
     measure = get_object_or_404(Measure, id=measure)
-    measure_options = {
-        'measure': measure,
-        'orgType': 'CCG',
-        'rollUpBy': 'org_id',
-    }
-    if measure.tags_focus:
-        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measure_for_all_entities(measure, 'CCG', None)
 
     context = {
         'measure': measure,
@@ -326,15 +319,7 @@ def measure_for_all_ccgs(request, measure):
 def measure_for_one_practice(request, measure, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
     measure = get_object_or_404(Measure, pk=measure)
-    measure_options = {
-        'measure': measure,
-        'orgType': 'practice',
-        'orgId': practice.code,
-        'orgName': practice.name,
-        'parentOrgId': practice.ccg_id,
-        'rollUpBy': 'measure_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measure_for_one_entity(measure, practice)
     context = {
         'practice': practice,
         'measure': measure,
@@ -348,14 +333,7 @@ def measure_for_one_practice(request, measure, practice_code):
 def measure_for_one_ccg(request, measure, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, pk=measure)
-    measure_options = {
-        'measure': measure,
-        'orgType': 'CCG',
-        'orgId': ccg.code,
-        'orgName': ccg.name,
-        'rollUpBy': 'measure_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measure_for_one_entity(measure, ccg)
     context = {
         'ccg': ccg,
         'measure': measure,
@@ -375,15 +353,7 @@ def measures_for_one_practice(request, practice_code):
         return form
 
     tag_filter = _get_measure_tag_filter(request.GET)
-    measure_options = {
-        'tags': ','.join(tag_filter['tags']),
-        'orgType': 'practice',
-        'orgId': practice.code,
-        'orgName': practice.name,
-        'parentOrgId': practice.ccg.code,
-        'rollUpBy': 'measure_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measures_for_one_entity(practice, tag_filter)
 
     context = {
         'practice': practice,
@@ -406,15 +376,7 @@ def measures_for_one_ccg(request, ccg_code):
 
     tag_filter = _get_measure_tag_filter(request.GET)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
-
-    measure_options = {
-        'tags': ','.join(tag_filter['tags']),
-        'orgType': 'CCG',
-        'orgId': ccg.code,
-        'orgName': ccg.name,
-        'rollUpBy': 'measure_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measures_for_one_entity(ccg, tag_filter)
 
     context = {
         'ccg': ccg,
@@ -431,14 +393,7 @@ def measures_for_one_ccg(request, ccg_code):
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     ccg = get_object_or_404(PCT, code=ccg_code)
     measure = get_object_or_404(Measure, id=measure)
-    measure_options = {
-        'measure': measure,
-        'orgId': ccg.code,
-        'orgName': ccg.name,
-        'orgType': 'practice',
-        'rollUpBy': 'org_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_measure_for_all_entities(measure, 'practice', ccg)
     practices = ccg.practice_set.filter(setting=4).order_by('name')
     context = {
         'ccg': ccg,
@@ -992,20 +947,11 @@ def _home_page_context_for_entity(request, entity):
         ncso_spending_for_entity(entity, entity_type, num_months=1)
     )
 
-    measure_options = {
-        'specificMeasures': [{
-          'measure': extreme_measure.id,
-          'chartContainerId': '#top-measure-container',
-        }, {
-          'measure': 'lpzomnibus',
-          'chartContainerId': '#lpzomnibus-container',
-        }],
-        'orgType': entity_type,
-        'orgId': entity.code,
-        'parentOrgId': parent_org,
-        'rollUpBy': 'measure_id',
-    }
-    measure_options = _build_measure_options(measure_options)
+    measure_options = _build_measure_options_for_entity_home_page(
+        extreme_measure,
+        entity,
+        parent_org
+    )
 
     return {
         'measure': extreme_measure,
@@ -1031,6 +977,85 @@ def _url_template(view_name):
     pattern = resolver.reverse_dict[view_name][1]
     pattern = '/' + pattern.rstrip('$')
     return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
+
+
+def _build_measure_options_for_measure_for_one_entity(measure, entity):
+    options = {
+        'rollUpBy': 'measure_id',
+        'measure': measure,
+        'orgId': entity.code,
+        'orgName': entity.name,
+    }
+
+    if isinstance(entity, Practice):
+        options['orgType'] = 'practice'
+        options['parentOrgId'] = entity.ccg_id
+    elif isinstance(entity, PCT):
+        options['orgType'] = 'CCG'
+    else:
+        assert False
+
+    return _build_measure_options(options)
+
+
+def _build_measure_options_for_measures_for_one_entity(entity, tag_filter):
+    options = {
+        'rollUpBy': 'measure_id',
+        'tags': ','.join(tag_filter['tags']),
+        'orgId': entity.code,
+        'orgName': entity.name,
+    }
+
+    if isinstance(entity, Practice):
+        options['orgType'] = 'practice'
+        options['parentOrgId'] = entity.ccg_id
+    elif isinstance(entity, PCT):
+        options['orgType'] = 'CCG'
+    else:
+        assert False
+
+    return _build_measure_options(options)
+
+
+def _build_measure_options_for_measure_for_all_entities(measure, entity_type, parent_entity):
+    options = {
+        'rollUpBy': 'org_id',
+        'measure': measure,
+        'orgType': entity_type,
+    }
+
+    if parent_entity is not None:
+        options['orgId'] = parent_entity.code
+        options['orgName'] = parent_entity.name
+
+    if measure.tags_focus:
+        options['tagsFocus'] = ','.join(measure.tags_focus)
+
+    return _build_measure_options(options)
+
+
+def _build_measure_options_for_entity_home_page(extreme_measure, entity, parent_entity):
+    options = {
+        'rollUpBy': 'measure_id',
+        'specificMeasures': [{
+          'measure': extreme_measure.id,
+          'chartContainerId': '#top-measure-container',
+        }, {
+          'measure': 'lpzomnibus',
+          'chartContainerId': '#lpzomnibus-container',
+        }],
+        'orgId': entity.code,
+    }
+
+    if isinstance(entity, Practice):
+        options['orgType'] = 'practice'
+        options['parentOrgId'] = entity.ccg_id
+    elif isinstance(entity, PCT):
+        options['orgType'] = 'CCG'
+    else:
+        assert False
+
+    return _build_measure_options(options)
 
 
 def _build_measure_options(options):
