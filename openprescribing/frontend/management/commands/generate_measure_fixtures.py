@@ -18,6 +18,12 @@
 # The first two points aren't currently important for the tests (they just
 # produce nice charts) but the last point is important, since the cost-saving
 # calculations assume this.
+#
+# When run, the test environment is automatically selected (see manage.py)
+# reducing the risk of trampling over production data.  However, the local
+# database (whatever the DATABASES setting points to) does get written to, and
+# this task expects that databsae to be empty.  Intermediate data is written to
+# BigQuery and is available for BQ_DEFAULT_TABLE_EXPIRATION_MS.
 
 from __future__ import print_function
 
