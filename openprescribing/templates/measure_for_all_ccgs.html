@@ -39,7 +39,7 @@ text
 </script>
 
 <script id="measure-panel" type="text/x-handlebars-template">
-<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+<div id="ccg_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
     <div class="panel panel-info">
         <div class="panel-heading">
             <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
@@ -55,6 +55,11 @@ text
             <li>
               <a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a>
             </li>
+          {{#if tagsFocus }}
+          <li>
+            This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.
+          </li>
+          {{/if}}
           {{#if numeratorCanBeQueried }}
             {{#if oneEntityUrl }}
               <li>

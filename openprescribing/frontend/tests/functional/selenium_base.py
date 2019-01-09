@@ -105,21 +105,27 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             cls.display.stop()
         super(SeleniumTestCase, cls).tearDownClass()
 
-    def _find_and_wait(self, locator, waiter):
+    def _find_and_wait(self, locator_type, locator, waiter):
         if use_saucelabs():
             wait = 60
         else:
             wait = 5
         try:
             element = WebDriverWait(self.browser, wait).until(
-                waiter((By.XPATH, locator))
+                waiter((locator_type, locator))
             )
             return element
         except TimeoutException:
             raise AssertionError("Expected to find element %s" % locator)
 
     def find_by_xpath(self, locator):
-        return self._find_and_wait(locator, EC.presence_of_element_located)
+        return self._find_and_wait(By.XPATH, locator, EC.presence_of_element_located)
 
     def find_visible_by_xpath(self, locator):
-        return self._find_and_wait(locator, EC.visibility_of_element_located)
+        return self._find_and_wait(By.XPATH, locator, EC.visibility_of_element_located)
+
+    def find_by_css(self, locator):
+        return self._find_and_wait(By.CSS_SELECTOR, locator, EC.presence_of_element_located)
+
+    def find_visible_by_css(self, locator):
+        return self._find_and_wait(By.CSS_SELECTOR, locator, EC.visibility_of_element_located)
