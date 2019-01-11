@@ -60,5 +60,4 @@ fabric==1.14.1
 flake8
 graphviz
 pip-tools
-pre-commit
 when-changed
