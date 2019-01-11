@@ -189,7 +189,7 @@ def get_prescriptions_for_entity(entity, entity_type):
 
 def get_start_and_end_dates(num_months):
     end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
-    start_date = end_date - relativedelta(months=(num_months-1))
+    start_date = end_date - relativedelta(months=(num_months - 1))
     return start_date, end_date
 
 
