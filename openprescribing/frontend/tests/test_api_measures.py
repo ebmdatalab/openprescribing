@@ -100,32 +100,6 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
-    def test_api_measure_numerators_by_regional_team(self):
-        url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=Y01&format=json&org_type=regional_team'
-        data = self._get_json(url)
-        self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'Y01',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
-
-    def test_api_measure_numerators_by_stp(self):
-        url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=E00000001&format=json&org_type=stp'
-        data = self._get_json(url)
-        self.assertEqual(data, [
-            {u'total_items': 1,
-             u'bnf_code': u'0205010F0AAAAAA',
-             u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
-             u'entity': u'E00000001',
-             u'cost': 1.0,
-             u'quantity': 100.0}])
-
     def test_api_measure_numerators_by_ccg(self):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'

@@ -81,20 +81,10 @@ def measure_global(request, format=None):
 def measure_numerators_by_org(request, format=None):
     measure = request.query_params.get('measure', None)
     org = utils.param_to_list(request.query_params.get('org', []))[0]
-    if 'org_type' in request.query_params:
-        org_selector = request.query_params['org_type'] + '_id'
+    if len(org) == 3:
+        org_selector = 'pct_id'
     else:
-        # This is here for backwards compatibility, in case anybody else is
-        # using the API.  Now we have measures for regional teams, we cannot
-        # guess the type of an org by the length of its code, as both CCGs and
-        # regional teams have codes of length 3.
-        if len(org) == 3:
-            org_selector = 'pct_id'
-        elif len(org) == 6:
-            org_selector = 'practice_id'
-        else:
-            assert False, 'Unexpected org: {}'.format(org)
-
+        org_selector = 'practice_id'
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
@@ -118,30 +108,21 @@ def measure_numerators_by_org(request, format=None):
             '%', '%%'
         )
 
-        if org_selector in ['stp_id', 'regional_team_id']:
-            extra_join = '''
-            INNER JOIN frontend_pct
-            ON frontend_pct.code = p.pct_id
-            '''
-        else:
-            extra_join = ''
-
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
         # names
         query = '''
             WITH nice_names AS (
-              SELECT
-                bnf_code,
-                MAX(name) AS name
-              FROM
-                dmd_product
-              GROUP BY
-                bnf_code
-              HAVING
-                COUNT(*) = 1
-            )
+            SELECT
+              bnf_code,
+              MAX(name) AS name
+            FROM
+              dmd_product
+            GROUP BY
+              bnf_code
+            HAVING
+              COUNT(*) = 1)
             SELECT
               {org_selector} AS entity,
               presentation_code AS bnf_code,
@@ -158,7 +139,6 @@ def measure_numerators_by_org(request, format=None):
             INNER JOIN
               frontend_presentation pn
             ON p.presentation_code = pn.bnf_code
-            {extra_join}
             WHERE
               {org_selector} = %(org)s
               AND
@@ -173,7 +153,6 @@ def measure_numerators_by_org(request, format=None):
              numerator_selector=numerator_selector,
              three_months_ago=three_months_ago,
              numerator_where=numerator_where,
-             extra_join=extra_join,
         )
         params = {
             'org': org,
@@ -190,68 +169,46 @@ def measure_numerators_by_org(request, format=None):
 
 
 @api_view(['GET'])
-def measure_by_regional_team(request, format=None):
-    return _measure_by_org(request, 'regional_team')
-
-
-@api_view(['GET'])
-def measure_by_stp(request, format=None):
-    return _measure_by_org(request, 'stp')
-
-
-@api_view(['GET'])
 def measure_by_ccg(request, format=None):
-    return _measure_by_org(request, 'ccg')
-
-
-@api_view(['GET'])
-def measure_by_practice(request, format=None):
-    return _measure_by_org(request, 'practice')
-
-
-def _measure_by_org(request, org_type):
-    measure_ids = utils.param_to_list(request.query_params.get('measure', None))
-    tags = utils.param_to_list(request.query_params.get('tags', []))
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    parent_org_type = utils.param_to_list(request.query_params.get('org', org_type))
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
     aggregate = bool(request.query_params.get('aggregate'))
-
-    if org_type == 'practice' and not (org_ids or aggregate):
-        raise MissingParameter
-    if len(org_ids) > 1 and len(measure_ids) > 1:
+    if len(orgs) > 1 and len(measures) > 1:
         raise InvalidMultiParameter
-
-    if org_type == 'practice' and org_ids:
-        l = len(org_ids[0])
-        assert all(len(org_id) == l for org_id in org_ids)
-
-        if l == 3:
-            parent_org_type = 'pct'
-        elif l == 6:
-            parent_org_type = 'practice'
-        else:
-            assert False, l
-    else:
-        parent_org_type = org_type
-
-    measure_values = MeasureValue.objects.by_org(
-        org_type,
-        parent_org_type,
-        org_ids,
-        measure_ids,
-        tags,
-    )
-
+    tags = utils.param_to_list(request.query_params.get('tags', []))
+    measure_values = MeasureValue.objects.by_ccg(orgs, measures, tags)
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 
     rsp_data = {
-        'measures': _roll_up_measure_values(measure_values, org_type)
+        'measures': _roll_up_measure_values(measure_values, 'ccg')
     }
     return Response(rsp_data)
 
 
-def _roll_up_measure_values(measure_values, org_type):
+@api_view(['GET'])
+def measure_by_practice(request, format=None):
+    measures = utils.param_to_list(request.query_params.get('measure', None))
+    orgs = utils.param_to_list(request.query_params.get('org', []))
+    aggregate = bool(request.query_params.get('aggregate'))
+    if not orgs and not aggregate:
+        raise MissingParameter
+    if len(orgs) > 1 and len(measures) > 1:
+        raise InvalidMultiParameter
+    tags = utils.param_to_list(request.query_params.get('tags', []))
+
+    measure_values = MeasureValue.objects.by_practice(orgs, measures,
+                                                      tags)
+    if aggregate:
+        measure_values = measure_values.aggregate_by_measure_and_month()
+
+    rsp_data = {
+        'measures': _roll_up_measure_values(measure_values, 'practice')
+    }
+    return Response(rsp_data)
+
+
+def _roll_up_measure_values(measure_values, practice_or_ccg):
     rolled = {}
 
     for measure_value in measure_values:
@@ -265,29 +222,17 @@ def _roll_up_measure_values(measure_values, org_type):
             'cost_savings': measure_value.cost_savings,
         }
 
-        if org_type == 'practice':
+        if practice_or_ccg == 'practice':
             if measure_value.practice_id:
                 measure_value_data.update({
                     'practice_id': measure_value.practice_id,
                     'practice_name': measure_value.practice.name,
                 })
-        elif org_type == 'ccg':
+        elif practice_or_ccg == 'ccg':
             if measure_value.pct_id:
                 measure_value_data.update({
                     'pct_id': measure_value.pct_id,
                     'pct_name': measure_value.pct.name,
-                })
-        elif org_type == 'stp':
-            if measure_value.stp_id:
-                measure_value_data.update({
-                    'stp_id': measure_value.stp_id,
-                    'stp_name': measure_value.stp.name,
-                })
-        elif org_type == 'regional_team':
-            if measure_value.regional_team_id:
-                measure_value_data.update({
-                    'regional_team_id': measure_value.regional_team_id,
-                    'regional_team_name': measure_value.regional_team.name,
                 })
         else:
             assert False
