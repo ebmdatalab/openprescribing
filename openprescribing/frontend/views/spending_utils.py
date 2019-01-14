@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 from api.view_utils import dictfetchall
 from dmd.models import NCSOConcession
+from frontend.models import ImportLog
 
 
 # The tariff (or concession) price is not what actually gets paid as each CCG
@@ -229,10 +230,9 @@ def _ncso_spending_query(
           )
         """
     sql = sql_template.format(prescribing_table=prescribing_table)
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT MAX(processing_date) FROM {}'.format(prescribing_table))
-        last_prescribing_date = cursor.fetchone()[0]
+    last_prescribing_date = (
+        ImportLog.objects.latest_in_category('prescribing').current_at
+    )
     params = {
         'last_prescribing_date': last_prescribing_date,
         'start_date': start_date,
