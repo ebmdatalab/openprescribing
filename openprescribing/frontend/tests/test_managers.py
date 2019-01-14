@@ -110,6 +110,17 @@ class MeasureValueManagerTests(TestCase):
         self.assertEqual("%.2f" % mv.cost_savings['90'], '162.00')
 
 
+# It is essential that MeasureValue.objects.by_org returns results ordered by
+# month, as the JS that renders the charts expects this.
+class MeasureValueManagerOrderingTests(TestCase):
+    fixtures = ['functional-measures']
+
+    def test_by_org_is_ordered_by_month(self):
+        mvs = list(MeasureValue.objects.by_org('practice'))
+        for mv1, mv2 in zip(mvs, mvs[1:]):
+            self.assertLessEqual(mv1.month, mv2.month)
+
+
 class CalculateCostSavingsTests(TestCase):
     fixtures = ['lowpriority_measures']
 
