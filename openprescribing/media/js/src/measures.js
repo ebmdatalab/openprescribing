@@ -39,7 +39,7 @@ var measures = {
     var selectedMeasure = window.location.hash;
     _this.allGraphsRendered = false;
     _this.graphsToRenderInitially = 24;
-    var options = measureOptions; // defined in handlebars templates
+    var options = JSON.parse(document.getElementById('measure-options').innerHTML);
     _this.setUpShowPractices();
     _this.setUpMap(options);
 

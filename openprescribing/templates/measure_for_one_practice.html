@@ -52,10 +52,7 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    var measureOptions = {{ measure_options|as_json }};
-  </script>
-
+  {{ measure_options|json_script:"measure-options" }}
   {% conditional_js 'measures' %}
   {% include '_measure_breakdown_table.html' %}
 {% endblock %}

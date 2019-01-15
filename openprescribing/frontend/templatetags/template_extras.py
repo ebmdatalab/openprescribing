@@ -108,8 +108,3 @@ def fancy_join(lst, sep=', ', final_sep=' and '):
         head, tail = lst[:-1], lst[-1]
         lst = [sep.join(head), tail]
     return final_sep.join(lst)
-
-
-@register.filter(is_safe=True)
-def as_json(obj):
-    return mark_safe(json.dumps(obj, indent=2))
