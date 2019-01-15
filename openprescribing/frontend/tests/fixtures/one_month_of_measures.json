@@ -1,11 +1,41 @@
 [
   {
+    "model": "frontend.regionalteam",
+    "pk": "Y01",
+    "fields": {
+      "name": "Regional team A"
+    }
+  },
+  {
+    "model": "frontend.regionalteam",
+    "pk": "Y02",
+    "fields": {
+      "name": "Regional team B"
+    }
+  },
+  {
+    "model": "frontend.stp",
+    "pk": "E00000001",
+    "fields": {
+      "name": "STP A"
+    }
+  },
+  {
+    "model": "frontend.stp",
+    "pk": "E00000002",
+    "fields": {
+      "name": "STP B"
+    }
+  },
+  {
     "model": "frontend.pct",
     "pk": "02Q",
     "fields": {
       "ons_code": null,
       "name": "NHS BASSETLAW CCG",
       "org_type": "CCG",
+      "regional_team": "Y01",
+      "stp": "E00000001",
       "boundary": null,
       "open_date": null,
       "close_date": null,
@@ -20,6 +50,8 @@
       "ons_code": null,
       "name": "NHS LINCOLNSHIRE EAST CCG",
       "org_type": "CCG",
+      "regional_team": "Y01",
+      "stp": "E00000001",
       "boundary": null,
       "open_date": "2013-04-01",
       "close_date": "2015-01-01",
@@ -34,6 +66,8 @@
       "ons_code": null,
       "name": "NHS LINCOLNSHIRE WEST CCG",
       "org_type": "CCG",
+      "regional_team": "Y02",
+      "stp": "E00000002",
       "boundary": null,
       "open_date": null,
       "close_date": null,
@@ -323,7 +357,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 1,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -354,7 +387,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 2,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -385,7 +417,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 3,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -416,7 +447,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 4,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -447,7 +477,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 13,
     "fields": {
       "measure": "cerazette2",
       "pct": "02Q",
@@ -478,7 +507,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 5,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -509,7 +537,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 6,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -540,7 +567,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 7,
     "fields": {
       "measure": "cerazette",
       "pct": "04D",
@@ -571,7 +597,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 8,
     "fields": {
       "measure": "cerazette",
       "pct": "03T",
@@ -602,7 +627,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 9,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -633,7 +657,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 10,
     "fields": {
       "measure": "cerazette",
       "pct": "02Q",
@@ -664,7 +687,6 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 11,
     "fields": {
       "measure": "cerazette",
       "pct": "04D",
@@ -695,11 +717,126 @@
   },
   {
     "model": "frontend.measurevalue",
-    "pk": 12,
     "fields": {
       "measure": "cerazette",
       "pct": "03T",
       "practice": null,
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 586.046511627907,
+        "20": 439.53488372093034,
+        "30": 293.02325581395326,
+        "50": 0,
+        "40": 146.51162790697708,
+        "60": -1394.6853146853146,
+        "70": -2789.370629370629,
+        "90": -5578.741258741258,
+        "80": -4184.0559440559455
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "fields": {
+      "measure": "cerazette",
+      "stp": "E00000001",
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 586.046511627907,
+        "20": 439.53488372093034,
+        "30": 293.02325581395326,
+        "50": 0,
+        "40": 146.51162790697708,
+        "60": -1394.6853146853146,
+        "70": -2789.370629370629,
+        "90": -5578.741258741258,
+        "80": -4184.0559440559455
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "fields": {
+      "measure": "cerazette",
+      "stp": "E00000002",
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 586.046511627907,
+        "20": 439.53488372093034,
+        "30": 293.02325581395326,
+        "50": 0,
+        "40": 146.51162790697708,
+        "60": -1394.6853146853146,
+        "70": -2789.370629370629,
+        "90": -5578.741258741258,
+        "80": -4184.0559440559455
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "fields": {
+      "measure": "cerazette",
+      "regional_team": "Y01",
+      "month": "2015-09-01",
+      "numerator": 2000,
+      "denominator": 17000,
+      "calc_value": 0.117647058823529,
+      "num_items": 20,
+      "denom_items": 170,
+      "num_cost": 2000,
+      "denom_cost": 3500,
+      "num_quantity": 2000,
+      "denom_quantity": 17000,
+      "percentile": 50,
+      "cost_savings": {
+        "10": 586.046511627907,
+        "20": 439.53488372093034,
+        "30": 293.02325581395326,
+        "50": 0,
+        "40": 146.51162790697708,
+        "60": -1394.6853146853146,
+        "70": -2789.370629370629,
+        "90": -5578.741258741258,
+        "80": -4184.0559440559455
+      }
+    }
+  },
+  {
+    "model": "frontend.measurevalue",
+    "fields": {
+      "measure": "cerazette",
+      "regional_team": "Y02",
       "month": "2015-09-01",
       "numerator": 2000,
       "denominator": 17000,
