@@ -14,6 +14,9 @@ class VTM(models.Model):
     obj_type = "vtm"
     name_field = "nm"
 
+    def __str__(self):
+        return str(self.id)
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vtmid",
@@ -53,6 +56,9 @@ class VMP(models.Model):
 
     obj_type = "vmp"
     name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
 
     id = models.BigIntegerField(
         primary_key=True,
@@ -338,6 +344,9 @@ class AMP(models.Model):
     obj_type = "amp"
     name_field = "descr"
 
+    def __str__(self):
+        return str(self.id)
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="apid",
@@ -526,6 +535,9 @@ class VMPP(models.Model):
     obj_type = "vmpp"
     name_field = "nm"
 
+    def __str__(self):
+        return str(self.id)
+
     id = models.BigIntegerField(
         primary_key=True,
         db_column="vppid",
@@ -610,6 +622,9 @@ class AMPP(models.Model):
 
     obj_type = "ampp"
     name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
 
     id = models.BigIntegerField(
         primary_key=True,
