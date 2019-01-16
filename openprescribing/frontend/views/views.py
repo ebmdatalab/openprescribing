@@ -1,11 +1,9 @@
 import datetime
 from lxml import html
 import re
-from requests.exceptions import HTTPError
 from urllib import urlencode
 from urlparse import urlparse, urlunparse
 import functools
-import hashlib
 import logging
 import requests
 import sys
@@ -34,7 +32,6 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import perform_login
 from dateutil.relativedelta import relativedelta
 
-from common.utils import get_env_setting
 from common.utils import parse_date
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
@@ -57,9 +54,7 @@ from frontend.views.spending_utils import (
     ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
 )
-
-from mailchimp3 import MailChimp
-
+from frontend.views.mailchimp_utils import mailchimp_subscribe
 
 logger = logging.getLogger(__name__)
 
@@ -609,44 +604,6 @@ def finalise_signup(request):
                       "alerts about <em>%s</em>." %
                       last_bookmark.topic()))
         return redirect(next_url)
-
-
-def mailchimp_subscribe(
-        request, email, first_name, last_name,
-        organisation, job_title):
-    """Subscribe `email` to newsletter.
-
-    Returns boolean indicating success
-    """
-    del(request.session['newsletter_email'])
-    email_hash = hashlib.md5(email).hexdigest()
-    data = {
-        'email_address': email,
-        'status': 'subscribed',
-        'merge_fields': {
-            'FNAME': first_name,
-            'LNAME': last_name,
-            'MMERGE3': organisation,
-            'MMERGE4': job_title
-        }
-    }
-    client = MailChimp(
-        mc_user=get_env_setting('MAILCHIMP_USER'),
-        mc_api=get_env_setting('MAILCHIMP_API_KEY'))
-    try:
-        client.lists.members.get(
-            list_id=settings.MAILCHIMP_LIST_ID,
-            subscriber_hash=email_hash)
-        return True
-    except HTTPError:
-        try:
-            client.lists.members.create(
-                list_id=settings.MAILCHIMP_LIST_ID, data=data)
-            return True
-        except HTTPError:
-            # things like blacklisted emails, etc
-            logger.warn("Unable to subscribe %s to newsletter", email)
-            return False
 
 
 ##################################################
