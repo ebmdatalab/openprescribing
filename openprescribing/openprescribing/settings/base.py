@@ -198,6 +198,7 @@ DJANGO_APPS = (
 LOCAL_APPS = (
     'frontend',
     'dmd',
+    'dmd2',
     'pipeline',
     'gcutils',
 )

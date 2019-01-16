@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>VMP {{ vmp.id }} relationships</h1>
+
+<table class="table table-condensed">
+  <tr>
+    <th>Name</th>
+    <td>{{ vmp.nm }}</td>
+    {% if vmp_presentation %}
+  </tr>
+  <tr bgcolor="{{ vmp_colour }}">
+    <th>Presentation</th>
+    <td>{{ vmp_presentation.name }}</td>
+  </tr>
+  <tr bgcolor="{{ vmp_colour }}">
+    <th>BNF Code</th>
+    <td>{{ vmp_presentation.bnf_code }}</td>
+  </tr>
+    {% else %}
+  <tr>
+    <th>Presentation</th>
+    <td>None</td>
+    {% endif %}
+  </tr>
+</table>
+
+<h2>Presentations</h2>
+{% if presentations %}
+<table class="table table-condensed">
+  {% for presentation in presentations %}
+  <tr bgcolor="{{ presentation.colour }}">
+    <td>{{ presentation.bnf_code }}</td>
+    <td>{{ presentation.name }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>There are no matching presentations.</p>
+{% endif %}
+
+<h2>VMPPs, AMPs, AMPPs</h2>
+<table class="table table-condensed">
+  {% for row in table %}
+  {% if forloop.counter0 == 0 %}
+  <tr>
+    {% for cell in row %}
+    {% if cell %}
+    <th bgcolor="{{ cell.colour }}">
+      {{ cell.obj.nm }}
+    </th>
+    {% else %}
+    <th></th>
+    {% endif %}
+    {% endfor %}
+  </tr>
+  {% else %}
+  <tr>
+    {% for cell in row %}
+    {% if forloop.counter0 == 0 %}
+    <th bgcolor="{{ cell.colour }}">
+      {{ cell.obj.descr }}
+    </th>
+    {% else %}
+    {% if cell %}
+    <td bgcolor="{{ cell.colour }}">
+      {{ cell.obj.nm }}
+    </td>
+    {% else %}
+    <td></td>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+  </tr>
+  {% endif %}
+  {% endfor %}
+</table>
+{% endblock %}
