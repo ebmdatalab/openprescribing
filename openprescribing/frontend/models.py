@@ -708,7 +708,7 @@ class OrgBookmark(models.Model):
                 kwargs['practice_code'] = self.practice.code
                 kwargs['measure'] = measure
             else:
-                kwargs['code'] = self.practice.code
+                kwargs['practice_code'] = self.practice.code
                 view = 'measures_for_one_practice'
         return reverse(
             view,
