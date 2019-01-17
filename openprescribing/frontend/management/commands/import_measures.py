@@ -59,14 +59,16 @@ class Command(BaseCommand):
             for measure_id in options['measure_ids']:
                 logger.info('Updating measure: %s' % measure_id)
                 measure = create_or_update_measure(measure_id)
+
+                if options['definitions_only']:
+                    continue
+
                 measure_start = datetime.datetime.now()
 
                 calcuation = MeasureCalculation(
                     measure, start_date=start_date, end_date=end_date,
                     verbose=verbose
                 )
-                if options['definitions_only']:
-                    continue
 
                 # Delete any existing measures data older than five years ago.
                 l = ImportLog.objects.latest_in_category('prescribing')
