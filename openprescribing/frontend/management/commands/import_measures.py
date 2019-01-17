@@ -223,51 +223,34 @@ def create_or_update_measure(measure_id):
     """
     measure_json = parse_measures()[measure_id]
     v = arrays_to_strings(measure_json)
+
     try:
-        measure = Measure.objects.get(pk=measure_id)
-        measure.title = v['title']
-        measure.description = v['description']
-        measure.why_it_matters = v['why_it_matters']
-        measure.name = v['name']
-        measure.tags = v['tags']
-        measure.tags_focus = v.get('tags_focus', [])
-        measure.title = v['title']
-        measure.description = v['description']
-        measure.numerator_short = v['numerator_short']
-        measure.denominator_short = v['denominator_short']
-        measure.numerator_from = v['numerator_from']
-        measure.numerator_where = v['numerator_where']
-        measure.numerator_columns = v['numerator_columns']
-        measure.denominator_from = v['denominator_from']
-        measure.denominator_where = v['denominator_where']
-        measure.denominator_columns = v['denominator_columns']
-        measure.url = v['url']
-        measure.is_cost_based = v['is_cost_based']
-        measure.is_percentage = v['is_percentage']
-        measure.low_is_good = v['low_is_good']
-        measure.save()
-    except ObjectDoesNotExist:
-        measure = Measure.objects.create(
-            id=measure_id,
-            name=v['name'],
-            tags=v['tags'],
-            tags_focus=v.get('tags_focus', []),
-            title=v['title'],
-            description=v['description'],
-            why_it_matters=v['why_it_matters'],
-            numerator_short=v['numerator_short'],
-            denominator_short=v['denominator_short'],
-            numerator_from=v['numerator_from'],
-            numerator_where=v['numerator_where'],
-            numerator_columns=v['numerator_columns'],
-            denominator_from=v['denominator_from'],
-            denominator_where=v['denominator_where'],
-            denominator_columns=v['denominator_columns'],
-            url=v['url'],
-            is_cost_based=v['is_cost_based'],
-            is_percentage=v['is_percentage'],
-            low_is_good=v['low_is_good']
-        )
+        measure = Measure.objects.get(id=measure_id)
+    except Measure.DoesNotExist:
+        measure = Measure(id=measure_id)
+
+    measure.title = v['title']
+    measure.description = v['description']
+    measure.why_it_matters = v['why_it_matters']
+    measure.name = v['name']
+    measure.tags = v['tags']
+    measure.tags_focus = v.get('tags_focus', [])
+    measure.title = v['title']
+    measure.description = v['description']
+    measure.numerator_short = v['numerator_short']
+    measure.denominator_short = v['denominator_short']
+    measure.numerator_from = v['numerator_from']
+    measure.numerator_where = v['numerator_where']
+    measure.numerator_columns = v['numerator_columns']
+    measure.denominator_from = v['denominator_from']
+    measure.denominator_where = v['denominator_where']
+    measure.denominator_columns = v['denominator_columns']
+    measure.url = v['url']
+    measure.is_cost_based = v['is_cost_based']
+    measure.is_percentage = v['is_percentage']
+    measure.low_is_good = v['low_is_good']
+    measure.save()
+
     return measure
 
 
