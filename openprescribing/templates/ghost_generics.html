@@ -46,7 +46,7 @@
       {
         "dom": '<"top"f>rt<"bottom"lip><"clear">',
         "ajax": {
-          "url": "{{ API_HOST }}/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&entity_type={{ entity_type }}&format=json",
+          "url": "{{ API_HOST }}/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&entity_type={{ entity_type }}&group_by=presentation&format=json",
           "dataSrc": function(data) {
             var total = data.reduce(function(memo, item) {
               return memo + item.possible_savings;
