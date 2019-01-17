@@ -25,7 +25,7 @@ class DataFactory(object):
         counter = itertools.count()
         self.next_id = lambda: next(counter)
 
-    def create_months(self, start_date, num_months):
+    def create_months_array(self, start_date=None, num_months=1):
         date = parse_date(start_date)
         return [
             (date + relativedelta(months=i)).strftime('%Y-%m-%d')
@@ -50,7 +50,7 @@ class DataFactory(object):
             org_type='CCG'
         )
 
-    def create_presentations(self, num_presentations):
+    def create_presentations(self, num_presentations, vmpp_per_presentation=1):
         presentations = []
         for i in range(num_presentations):
             presentation = Presentation.objects.create(
@@ -73,8 +73,8 @@ class DataFactory(object):
             presentations.append(presentation)
         return presentations
 
-    def create_tariff_and_ncso_costings(self, presentations, months):
-        tariff_category = TariffCategory.objects.create(cd=1, desc='')
+    def create_tariff_and_ncso_costings_for_presentations(
+            self, presentations, months=None):
         for presentation in presentations:
             product = DMDProduct.objects.get(bnf_code=presentation.bnf_code)
             vmpp = DMDVmpp.objects.get(vpid=product.vpid)
@@ -97,7 +97,11 @@ class DataFactory(object):
                         )
                     )
 
-    def create_prescribing(self, practice, presentations, months):
+    def create_prescribing_for_practice(
+            self,
+            practice,
+            presentations=None,
+            months=None):
         for date in months:
             self.create_import_log(date)
             for i, presentation in enumerate(presentations):
