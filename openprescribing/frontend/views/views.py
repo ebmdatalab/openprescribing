@@ -987,6 +987,8 @@ def _home_page_context_for_entity(request, entity):
         'entity_type': entity_type,
         'entity_price_per_unit_url': '{}_price_per_unit'.format(
             entity_type.lower()),
+        'entity_ghost_generics_url': '{}_ghost_generics'.format(
+            entity_type.lower()),
         'measures_for_one_entity_url': 'measures_for_one_{}'.format(
             entity_type.lower()),
         'spending_for_one_entity_url': 'spending_for_one_{}'.format(

@@ -321,6 +321,10 @@ def ghost_generics(request, format=None):
     if group_by == 'presentation':
         grouping = "SELECT date, pct, bnf_code, MAX(median_ppu) AS median_ppu, MAX(price_per_unit) AS price_per_unit, SUM(quantity) AS quantity, MAX(product_name) AS product_name, SUM(possible_savings) AS possible_savings FROM ({}) s GROUP BY date, pct, bnf_code"
         sql = grouping.format(sql)
+    elif group_by == 'all':
+        grouping = "SELECT SUM(possible_savings) AS possible_savings FROM ({}) s"
+        sql = grouping.format(sql)
+
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
         results = utils.dictfetchall(cursor)
