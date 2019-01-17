@@ -30,7 +30,7 @@ lxml==4.3.0
 mailchimp3>=2.0.18
 networkx==1.11
 newrelic
-numpy==1.15.4
+numpy==1.16.0
 openpyxl==2.5.12
 pandas-gbq==0.3.1
 pandas==0.23.4
@@ -42,7 +42,7 @@ raven
 requests-futures==0.9.9
 requests[security]==2.21.0
 titlecase==0.12.0
-tqdm==4.29.0
+tqdm==4.29.1
 xlrd==1.2.0
 
 # test requirements
@@ -60,5 +60,4 @@ fabric==1.14.1
 flake8
 graphviz
 pip-tools
-pre-commit
 when-changed

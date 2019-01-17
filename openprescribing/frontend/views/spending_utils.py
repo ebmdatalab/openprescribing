@@ -1,10 +1,12 @@
 from django.db import connection
 from django.db.models import Max
+from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
 from api.view_utils import dictfetchall
 from dmd.models import NCSOConcession
+from frontend.models import ImportLog
 
 
 # The tariff (or concession) price is not what actually gets paid as each CCG
@@ -35,11 +37,9 @@ def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None
         return []
     start_date = end_date + relativedelta(months=-num_months)
     with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query(prescribing_table)
+        sql, params = _ncso_spending_query(prescribing_table, start_date, end_date)
         params.update(
-            entity_condition=entity_condition,
-            start_date=start_date,
-            end_date=end_date
+            entity_condition=entity_condition
         )
         cursor.execute("""
             SELECT
@@ -85,7 +85,7 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
     else:
         raise ValueError('Unknown entity_type: '+entity_type)
     with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query(prescribing_table)
+        sql, params = _ncso_spending_query(prescribing_table, month, month)
         params.update(
             entity_id=entity.code,
             month=month
@@ -111,7 +111,8 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
 
 def _ncso_spending_breakdown_for_all_england(month):
     with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query('vw__presentation_summary_by_ccg')
+        sql, params = _ncso_spending_query(
+            'vw__presentation_summary_by_ccg', month, month)
         params.update(month=month)
         cursor.execute("""
             SELECT
@@ -136,9 +137,20 @@ def _ncso_spending_breakdown_for_all_england(month):
         return cursor.fetchall()
 
 
-def _ncso_spending_query(prescribing_table='frontend_prescription'):
-    """
-    Return a query with params that joins all NCSO (i.e. price concession) items
+def _date_as_str(d):
+    # Necessary because the prescribing table uses a DATE field for
+    # storing the date, but the view vw__presentation_summary_by_ccg
+    # uses a VARCHAR
+    if isinstance(d, date):
+        return d.strftime('%Y-%m-%d')
+    return d
+
+
+def _ncso_spending_query(
+        prescribing_table,
+        start_date,
+        end_date):
+    """Return a query with params that joins all NCSO (i.e. price concession) items
     with the spending on those items.
 
     Where our NCSO data is more recent than our prescribing data we use the
@@ -146,6 +158,7 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
 
     The prescribing table is parameterised as sometimes we want to use the table
     with prescribing pre-aggregated by CCG.
+
     """
     sql_template = """
         SELECT
@@ -198,7 +211,11 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
           {prescribing_table} AS rx
         ON
           rx.presentation_code = product.bnf_code
-          AND
+        AND
+          rx.processing_date >= %(earliest_date)s
+        AND
+          rx.processing_date <= %(end_date)s
+        AND
           -- Where we have prescribing data for the corresponding month we use
           -- that, otherwise we use the latest month of prescribing data to
           -- produce an estimate
@@ -213,12 +230,15 @@ def _ncso_spending_query(prescribing_table='frontend_prescription'):
           )
         """
     sql = sql_template.format(prescribing_table=prescribing_table)
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'SELECT MAX(processing_date) FROM {}'.format(prescribing_table))
-        last_prescribing_date = cursor.fetchone()[0]
+    last_prescribing_date = (
+        ImportLog.objects.latest_in_category('prescribing').current_at
+    )
     params = {
         'last_prescribing_date': last_prescribing_date,
+        'start_date': start_date,
+        'end_date': end_date,
+        'earliest_date': min(
+            _date_as_str(start_date), _date_as_str(last_prescribing_date)),
         # We discount by an additional factor of 100 to convert the figures
         # from pence to pounds
         'discount_factor': (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)

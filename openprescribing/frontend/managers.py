@@ -56,6 +56,11 @@ class MeasureValueQuerySet(models.QuerySet):
             .by_org('practice', parent_org_type='ccg', org_ids=['P99'])
         '''
 
+        # The JS code that displays MeasureValues will never cause this method
+        # to be called with multiple orgs and multiple measures.
+        if org_ids is not None and measure_ids is not None:
+            assert len(org_ids) <= 1 or len(measure_ids) <= 1
+
         if org_type == 'practice':
             qs = self.filter(
                 practice_id__isnull=False,
@@ -87,7 +92,8 @@ class MeasureValueQuerySet(models.QuerySet):
 
         return qs.for_orgs(parent_org_type, org_ids) \
             .for_measures(measure_ids) \
-            .for_tags(tags)
+            .for_tags(tags) \
+            .order_by('month')
 
     def aggregate_by_measure_and_month(self):
         """

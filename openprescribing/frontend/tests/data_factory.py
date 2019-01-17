@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    Practice, PCT, Prescription, Presentation
+    ImportLog, Practice, PCT, Prescription, Presentation
 )
 from dmd.models import (
     DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
@@ -99,6 +99,7 @@ class DataFactory(object):
 
     def create_prescribing(self, practice, presentations, months):
         for date in months:
+            self.create_import_log(date)
             for i, presentation in enumerate(presentations):
                 Prescription.objects.create(
                     processing_date=date,
@@ -109,6 +110,12 @@ class DataFactory(object):
                     total_items=0,
                     actual_cost=0,
                 )
+
+    def create_import_log(self, date):
+        ImportLog.objects.create(
+            current_at=date,
+            category='prescribing'
+        )
 
     def populate_presentation_summary_by_ccg_view(self):
         with connection.cursor() as cursor:

@@ -1,0 +1,18 @@
+This directory contains code for generating a models.py from the PDF at
+https://www.nhsbsa.nhs.uk/sites/default/files/2017-02/Technical_Specification_of_data_files_R2_v3.1_May_2015.pdf.
+
+We're interested in the definitions contained in the tables in Appendix A of the PDF.
+
+I used PDFTables to extract the tabular data from the PDF.  This gives
+Technical_Specification_of_data_files_R2_v3.csv.
+
+I then ran preprocess.sh to do some basic cleaning (extracting just Appendix A;
+removing blank lines and page numbers) and preprocess.py to fix the table
+layout.  (I wrote this code a couple of hours ago and now have no idea how it
+works.)  This produced schema_raw.csv.
+
+I then ran process.py to generate schema.csv, which contains details about the
+Django fields.  process.py could be a bit smarter when it comes to generating
+field descriptions, but it's good enough for the time being.
+
+I then ran gen_models.py to produce models.py.
