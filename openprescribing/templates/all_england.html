@@ -153,14 +153,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-  var measureData = {
-   'aggregate': true,
-   'tags': '{{ tag_filter.tags|join:"," }}',
-   'orgName': 'All {{ entity_type }}s in England',
-   'orgType': '{{ entity_type }}'
-};
-</script>
+{{ measure_options|json_script:"measure-options" }}
 {% conditional_js 'measures' %}
 
 {% endblock %}

@@ -1,57 +1,57 @@
 {% load template_extras %}
 
 {% if not measure.id %}
-<!-- only show sorting and alert signups when showing more than one measure -->
-<div class="row" >
-{% if tag_filter.show_message %}
-  <h2>Prescribing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h2>
-  <div class="alert alert-info">
-    {% if tag_filter.details|length == 1 %}
-      <p>{{ tag_filter.details.0.description|safe }}</p>
-    {% elif tag_filter.details|length > 1 %}
-      <dl>
-        {% for details in tag_filter.details %}
-          <dt>{{ details.name }}</dt>
-          <dd>{{ details.description|safe }}</dt>
-        {% endfor %}
-      </dl>
-    {% endif %}
-    <p>
-      <a href="?">View all standard measures instead</a>.
-    </p>
-  </div>
-{% else %}
-  <h2>Prescribing measures</h2>
-  <p>
-    We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
-    These are indicative only, and should be approached with caution.
-    {% if entity_type == 'practice' %}
-      Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
-    {% else %}
-      Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
-    {% endif %}
-    <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.
-  </p>
-{% endif %}
-
-  <div class="row">
-    <div class="col-md-6">
-      {% include '_alert_signup_form.html' %}
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <label>Sort prescribing measures by:</label>
-        <div class="btn-group" id="order">
-          <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
-            Potential for improvement
-          </button>
-          <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
-            Potential savings
-          </button>
-        </div>
+  <!-- only show sorting and alert signups when showing more than one measure -->
+  <div class="row" >
+    {% if tag_filter.show_message %}
+      <h2>Prescribing measures tagged <strong>{{ tag_filter.names|fancy_join }}</strong></h2>
+      <div class="alert alert-info">
+        {% if tag_filter.details|length == 1 %}
+          <p>{{ tag_filter.details.0.description|safe }}</p>
+        {% elif tag_filter.details|length > 1 %}
+          <dl>
+            {% for details in tag_filter.details %}
+              <dt>{{ details.name }}</dt>
+              <dd>{{ details.description|safe }}</dt>
+            {% endfor %}
+          </dl>
+        {% endif %}
+        <p>
+          <a href="?">View all standard measures instead</a>.
+        </p>
       </div>
-      {% include '_measure_filters.html' %}
+    {% else %}
+      <h2>Prescribing measures</h2>
+      <p>
+        We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
+        These are indicative only, and should be approached with caution.
+        {% if entity_type == 'practice' %}
+          Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
+        {% else %}
+          Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
+        {% endif %}
+        <a href="{% url 'faq' %}#measureinterpret">Read more about measures</a>.
+      </p>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-6">
+        {% include '_alert_signup_form.html' %}
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Sort prescribing measures by:</label>
+          <div class="btn-group" id="order">
+            <button type="button" data-orderby="percentile" class="btn btn-default active" aria-label="Percentile">
+              Potential for improvement
+            </button>
+            <button type="button" data-orderby="savings" class="btn btn-default" aria-label="Potential savings">
+              Potential savings
+            </button>
+          </div>
+        </div>
+        {% include '_measure_filters.html' %}
+      </div>
     </div>
   </div>
-</div>
 {% endif %}
