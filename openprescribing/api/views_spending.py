@@ -314,6 +314,7 @@ def ghost_generics(request, format=None):
         WHERE date = %(date)s {extra_conditions}
         AND
          ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 10 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= 10) ORDER BY possible_savings DESC
+         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 5 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= -5) ORDER BY possible_savings DESC
     """.format(
         prescribing_table=source_table,
         practice_join=practice_join,
