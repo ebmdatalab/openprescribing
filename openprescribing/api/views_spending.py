@@ -313,7 +313,8 @@ def ghost_generics(request, format=None):
             {practice_join}
         WHERE date = %(date)s {extra_conditions}
         AND
-         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 10 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= 10) ORDER BY possible_savings DESC
+          rx.presentation_code <> '1106000L0AAAAAA' -- lantanaprost quantities are broken in data
+        AND
          ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 5 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= -5) ORDER BY possible_savings DESC
     """.format(
         prescribing_table=source_table,
