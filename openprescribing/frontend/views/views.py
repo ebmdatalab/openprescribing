@@ -522,6 +522,43 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 
 
 ##################################################
+# Chost generics
+##################################################
+
+@handle_bad_request
+def practice_ghost_generics(request, code):
+    date = _specified_or_last_date(request, 'prescribing')
+    practice = get_object_or_404(Practice, code=code)
+    context = {
+        'entity': practice,
+        'entity_name': practice.cased_name,
+        'entity_type': 'practice',
+        'highlight': practice.code,
+        'highlight_name': practice.cased_name,
+        'date': date,
+        'by_practice': True
+    }
+    return render(request, 'ghost_generics.html', context)
+
+
+@handle_bad_request
+def ccg_ghost_generics(request, code):
+    date = _specified_or_last_date(request, 'prescribing')
+    ccg = get_object_or_404(PCT, code=code)
+    context = {
+        'entity': ccg,
+        'entity_name': ccg.cased_name,
+        'entity_type': 'CCG',
+        'highlight': ccg.code,
+        'highlight_name': ccg.cased_name,
+        'date': date,
+        'by_ccg': True
+    }
+    return render(request, 'ghost_generics.html', context)
+
+
+
+##################################################
 # Tariffs
 ##################################################
 

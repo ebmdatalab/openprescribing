@@ -34,6 +34,8 @@ urlpatterns = [
         name='measure_by_practice'),
     url(r'^price_per_unit/$', views_spending.price_per_unit,
         name='price_per_unit_api'),
+    url(r'^ghost_generics/$', views_spending.ghost_generics,
+        name='ghost_generics_api'),
     url(r'^org_details/$', views_org_details.org_details),
     url(r'^bnf_code/$', views_bnf_codes.bnf_codes),
     url(r'^org_code/$', views_org_codes.org_codes),

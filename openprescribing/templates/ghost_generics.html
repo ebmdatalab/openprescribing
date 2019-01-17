@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load template_extras %}
+{% load humanize %}
+
+{% block title %}PPU savings for {{ entity_name }}{% endblock %}
+{% block active_class %}{% if entity %}ccg{% else %}all_england{% endif %}{% endblock %}
+
+{% block content %}
+
+<h1>Top ghost-branded generics for {{entity_name }} in {{ date|date:"F Y"}}</h1>
+
+<div class="row">
+  <div class="col-md-7">
+    <p>
+      <strong>Ghost-branded generics</strong> are generic items which have unintentionally been prescribed with a manufacturer name. For example, <em>Naratriptan 2.5mg Tablets</em> is the correct generic name; a ghost-branded version is <em>Naratriptan 2.5mg Tablets (Teva UK Limited)</em>. When an item is prescribed generically, the dispenser is reimbursed at the price in the Drug Tariff; but when a manufacturer is stated, the reimbursement price is usually more expensive. <a href="/faq#ghostgenerics">Read more in our FAQ</a>.</p>
+
+    <p>This is a list of all generic items where the price paid has differed significantly from the Drug Tariff price. <strong>{{entity_name }} could have saved £<span id="total-savings"></span> in {{ date|date:"F Y"}} by avoiding ghost-branded generics.</strong></p>
+    </p>
+  </div>
+  <div class="col-md-5">
+    <p class="alert alert-info" style="margin-top: 0">
+      This is a new, experimental feature. We'd love to
+      <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show" style="text-decoration: underline">
+        hear your feedback
+      </a>.
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+{% include '_ghost_generics_data_table.html' %}
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript">
+  $(function() {
+    $('#ghost_generics').DataTable(
+      {
+        "dom": '<"top"f>rt<"bottom"lip><"clear">',
+        "ajax": {
+          "url": "{{ API_HOST }}/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&entity_type={{ entity_type }}&format=json",
+          "dataSrc": function(data) {
+            var total = data.reduce(function(memo, item) {
+              return memo + item.possible_savings;
+            }, 0);
+            var formattedTotal = $.fn.dataTable.render.number(',').display(total);
+            $('#total-savings').text(formattedTotal);
+            return data;
+
+          }
+         },
+        "order": [[1, "desc"]],
+        "columns": [
+          {"data": "product_name"},
+          {"data": "possible_savings", render: $.fn.dataTable.render.number(',', '.', 0, '£' ), className: "text-right"},
+          {"data": "price_per_unit", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "median_ppu", render: $.fn.dataTable.render.number(',', '.', 2, '£' ), className: "text-right"},
+          {"data": "quantity", render: $.fn.dataTable.render.number(','), className: "text-right"},
+        ]
+      }
+    );
+    $('#ghost_generics').on('draw.dt', function() {
+      $('#ghost_generics .info-link').popover();
+    });
+
+  });
+</script>
+{% endblock %}

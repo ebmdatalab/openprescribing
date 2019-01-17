@@ -1,12 +1,19 @@
+from collections import defaultdict
 import csv
 import datetime
 import json
 
 from django.db import connection
+from django.test import TestCase
 
 from .api_test_base import ApiTestBase
 
 from frontend.models import ImportLog
+from frontend.models import Prescription
+from frontend.tests.data_factory import DataFactory
+from dmd.models import TariffPrice
+
+import numpy as np
 
 
 def _create_prescribing_tables():
@@ -574,6 +581,118 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]['actual_cost'], '3.05')
         self.assertEqual(rows[0]['items'], '2')
         self.assertEqual(rows[0]['quantity'], '56')
+
+
+class TestAPISpendingViewsGhostGenerics(TestCase):
+    def setUp(self):
+        self.api_prefix = '/api/1.0'
+        factory = DataFactory()
+        self.months = factory.create_months_array(start_date='2018-02-01')
+        self.ccgs = [factory.create_ccg() for _ in range(2)]
+        self.practices = []
+        for ccg in self.ccgs:
+            for _ in range(2):
+                self.practices.append(factory.create_practice(ccg=ccg))
+        self.presentations = factory.create_presentations(
+            2, vmpp_per_presentation=2)
+        factory.create_tariff_and_ncso_costings_for_presentations(
+            presentations=self.presentations, months=self.months)
+
+        # Create prescribing for each of the practices we've created
+        for practice in self.practices:
+            factory.create_prescribing_for_practice(
+                practice,
+                presentations=self.presentations,
+                months=self.months
+            )
+        # Create and populate the materialized view table we need
+        factory.populate_presentation_summary_by_ccg_view()
+
+        # Refresh vw__medians_for_tariff materialized view
+        with connection.cursor() as cursor:
+            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
+        super(TestAPISpendingViewsGhostGenerics, self).setUp()
+
+    def _get(self, **data):
+        data['format'] = 'json'
+        url = self.api_prefix + '/ghost_generics/'
+        rsp = self.client.get(url, data, follow=True)
+        return json.loads(rsp.content)
+
+    def test_multi_priced_vmpps(self):
+        """Products with more than one VMPP whose cost per unit are different
+        should not be included in the analyses
+
+        """
+        # Change a single tariff price so that it's different. As all
+        # the products in the test data are created in pairs, this
+        # guarantees that one of them will become invalid for the
+        # purpose of calculating ghost generics
+        price_to_alter = TariffPrice.objects.last()
+        price_to_alter.price_pence *= 2
+        price_to_alter.save()
+        with connection.cursor() as cursor:
+            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
+
+        # Practice-level savings
+        practice_data = self._get(
+            entity_code=self.practices[0].code,
+            entity_type='practice', date='2018-02-01')
+        self.assertEqual(len(practice_data), 1)
+
+        # Same, but all practices in a CCG
+        ccg_data = self._get(entity_code=self.ccgs[0].code, entity_type='CCG', date='2018-02-01')
+        self.assertEqual(len(ccg_data), 2)
+
+    def test_savings(self):
+        expected = self._expected_savings()
+
+        # Practice-level savings
+        for practice in self.practices:
+            practice_data = self._get(
+                entity_code=practice.code,
+                entity_type='practice', date='2018-02-01')
+            for data in practice_data:
+                self.assertEqual(
+                    round(data['possible_savings'], 4),
+                    expected['practice_savings'][practice.code][data['bnf_code']])
+
+        # Same, but all practices in a CCG
+        ccg_data = self._get(entity_code=self.ccgs[0].code, entity_type='CCG', date='2018-02-01')
+        self.assertTrue(all([x['pct'] == self.ccgs[0].code for x in ccg_data]))
+        self.assertEqual(len(ccg_data), 4)
+
+        # Grouped by presentations
+        grouped_ccg_data = self._get(
+            entity_code=self.ccgs[0].code,
+            entity_type='CCG',
+            group_by='presentation',
+            date='2018-02-01')
+
+        for d in grouped_ccg_data:
+            self.assertEqual(d['possible_savings'], expected['ccg_savings'][d['pct']][d['bnf_code']])
+
+    def _expected_savings(self):
+        def autovivify(levels=1, final=dict):
+            return (defaultdict(final) if levels < 2 else
+                    defaultdict(lambda: autovivify(levels - 1, final)))
+        presentation_medians = {}
+        for presentation in self.presentations:
+            net_costs = []
+            for rx in Prescription.objects.filter(presentation_code=presentation.bnf_code):
+                net_costs.append(round(rx.net_cost / rx.quantity, 4))
+            presentation_medians[presentation.bnf_code] = np.percentile(
+                net_costs, 50, interpolation='lower')
+        practice_savings = autovivify(levels=2, final=int)
+        ccg_savings = autovivify(levels=2, final=int)
+        for practice in self.practices:
+            for rx in Prescription.objects.filter(practice=practice):
+                possible_saving = round(rx.net_cost - (presentation_medians[rx.presentation_code] * rx.quantity), 4)
+                practice_savings[practice.code][rx.presentation_code] = possible_saving
+                ccg_savings[practice.ccg.code][rx.presentation_code] += possible_saving
+        return {'practice_savings': practice_savings,
+                'ccg_savings': ccg_savings,
+                'medians': presentation_medians}
 
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):

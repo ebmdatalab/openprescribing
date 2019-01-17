@@ -62,40 +62,45 @@ class DataFactory(object):
                 bnf_code=presentation.bnf_code,
                 dmdid=i,
                 vpid=i,
-                name='DMD '+presentation.name
+                name='DMD ' + presentation.name
             )
-            DMDVmpp.objects.create(
-                vppid=i*10,
-                vpid=product.vpid,
-                nm='VMPP '+presentation.name,
-                qtyval=self.random.randint(5, 25)
-            )
+            qtyval = self.random.randint(5, 25)
+            for vppid in range(0, vmpp_per_presentation):
+                vppid = i * 10 + vppid
+                DMDVmpp.objects.create(
+                    vppid=vppid,
+                    vpid=product.vpid,
+                    nm='VMPP %s (%s)' % (presentation.name, vppid) ,
+                    qtyval=qtyval
+                )
             presentations.append(presentation)
         return presentations
 
     def create_tariff_and_ncso_costings_for_presentations(
             self, presentations, months=None):
+        tariff_category, _ = TariffCategory.objects.get_or_create(cd=1, desc='')
         for presentation in presentations:
             product = DMDProduct.objects.get(bnf_code=presentation.bnf_code)
-            vmpp = DMDVmpp.objects.get(vpid=product.vpid)
             for date in months:
-                tariff_price = TariffPrice.objects.create(
-                    date=date,
-                    vmpp=vmpp,
-                    product=product,
-                    tariff_category=tariff_category,
-                    price_pence=self.random.randint(10, 100)
-                )
-                if self.random.choice([True, False]):
-                    NCSOConcession.objects.create(
-                        vmpp=vmpp,
+                price_pence = self.random.randint(10, 100)
+                for vmpp in DMDVmpp.objects.filter(vpid=product.vpid):
+                    tariff_price = TariffPrice.objects.create(
                         date=date,
-                        drug='',
-                        pack_size='',
-                        price_concession_pence=(
-                            tariff_price.price_pence + self.random.randint(10, 100)
-                        )
+                        vmpp=vmpp,
+                        product=product,
+                        tariff_category=tariff_category,
+                        price_pence=price_pence
                     )
+                    if self.random.choice([True, False]):
+                        NCSOConcession.objects.create(
+                            vmpp=vmpp,
+                            date=date,
+                            drug='',
+                            pack_size='',
+                            price_concession_pence=(
+                                tariff_price.price_pence + self.random.randint(10, 100)
+                            )
+                        )
 
     def create_prescribing_for_practice(
             self,
@@ -112,6 +117,7 @@ class DataFactory(object):
                     presentation_code=presentation.bnf_code,
                     quantity=self.random.randint(1, 1000),
                     total_items=0,
+                    net_cost=self.random.randint(1, 1000),
                     actual_cost=0,
                 )
 

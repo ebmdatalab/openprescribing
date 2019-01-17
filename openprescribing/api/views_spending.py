@@ -266,6 +266,71 @@ def price_per_unit(request, format=None):
     return response
 
 
+@api_view(['GET'])
+def ghost_generics(request, format=None):
+    """Returns price per unit data for presentations and practices or
+    CCGs
+
+    """
+    date = request.query_params.get('date')
+    entity_code = request.query_params.get('entity_code')
+    entity_type = request.query_params.get('entity_type')
+    group_by = request.query_params.get('group_by')
+    if entity_type == 'CCG':
+        get_object_or_404(PCT, pk=entity_code)
+    elif entity_type == 'practice':
+        get_object_or_404(Practice, pk=entity_code)
+    else:
+        raise ValueError(entity_type)
+    if not date:
+        raise NotValid("You must supply a date")
+    if not entity_type and entity_code:
+        entity_type = 'CCG' if len(entity_code) == 3 else 'practice'
+
+    params = {'date': date, 'entity_code': entity_code}
+    filename = "ghost-generics-%s-%s" % (entity_code, date)
+    extra_conditions = ""
+    entity_select = ' practice.code AS practice_id, practice.ccg_id AS pct,'
+    if entity_type == 'practice':
+        extra_conditions += '  AND practice_id = %(entity_code)s'
+    elif entity_type == 'CCG':
+        extra_conditions += '  AND ccg_id = %(entity_code)s'
+    source_table = 'frontend_prescription'
+    practice_join = " JOIN frontend_practice practice ON practice.code = rx.practice_id"
+    cost_field = 'net_cost'
+    sql = """
+        SELECT dt.date,
+           {entity_select}
+           dt.median_ppu,
+           case when rx.quantity > 0 then round((rx.{cost_field} / rx.quantity)::numeric, 4) else 0 end AS price_per_unit,
+           rx.quantity,
+           rx.presentation_code AS bnf_code,
+           product.name AS product_name,
+           case when rx.quantity > 0 then {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) else 0 end AS possible_savings
+          FROM vw__medians_for_tariff dt
+            JOIN dmd_product product ON dt.product_id = product.dmdid
+            JOIN {prescribing_table} rx ON rx.processing_date = dt.date AND rx.presentation_code = product.bnf_code
+            {practice_join} WHERE date = %(date)s {extra_conditions} ORDER BY possible_savings DESC
+    """.format(
+        prescribing_table=source_table,
+        practice_join=practice_join,
+        entity_select=entity_select,
+        cost_field=cost_field,
+        extra_conditions=extra_conditions
+    )
+    if group_by == 'presentation':
+        grouping = "SELECT date, pct, bnf_code, MAX(median_ppu) AS median_ppu, MAX(price_per_unit) AS price_per_unit, SUM(quantity) AS quantity, MAX(product_name) AS product_name, SUM(possible_savings) AS possible_savings FROM ({}) s GROUP BY date, pct, bnf_code"
+        sql = grouping.format(sql)
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        results = utils.dictfetchall(cursor)
+    response = Response(results)
+    if request.accepted_renderer.format == 'csv':
+        filename = "%s.csv" % (filename)
+        response['content-disposition'] = "attachment; filename=%s" % filename
+    return response
+
+
 def _aggregate_ppu_sql(original_sql, entity_type):
     """
     Takes a PPU SQL query and modifies it to return savings aggregated over all
@@ -308,8 +373,7 @@ def _aggregate_ppu_sql(original_sql, entity_type):
         """.format(
             original_sql=original_sql,
             pct_name=entity_name if entity_type == 'CCG' else 'NULL',
-            practice_name="NULL" if entity_type == 'CCG' else entity_name,
-        )
+            practice_name="NULL" if entity_type == 'CCG' else entity_name)
 
 
 @db_timeout(58000)
