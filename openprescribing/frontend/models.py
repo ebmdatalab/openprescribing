@@ -512,6 +512,7 @@ class Measure(models.Model):
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
     low_is_good = models.NullBooleanField()
+    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
 
     def __str__(self):
         return self.name
