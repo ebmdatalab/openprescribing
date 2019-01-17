@@ -1035,15 +1035,21 @@ def _build_measure_options_for_measure_for_all_entities(measure, entity_type, pa
 
 
 def _build_measure_options_for_entity_home_page(extreme_measure, entity, parent_entity):
-    options = {
-        'rollUpBy': 'measure_id',
-        'specificMeasures': [{
-          'measure': extreme_measure.id,
-          'chartContainerId': '#top-measure-container',
-        }, {
+    specific_measures = [{
           'measure': 'lpzomnibus',
           'chartContainerId': '#lpzomnibus-container',
-        }],
+    }]
+
+    if extreme_measure:
+        # extreme_measure will be None for new practices (and in tests)
+        specific_measures.append({
+          'measure': extreme_measure.id,
+          'chartContainerId': '#top-measure-container',
+        })
+
+    options = {
+        'rollUpBy': 'measure_id',
+        'specificMeasures': specific_measures,
         'orgId': entity.code,
     }
 
