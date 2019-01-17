@@ -276,7 +276,7 @@ def ghost_generics(request, format=None):
     entity_code = request.query_params.get('entity_code')
     entity_type = request.query_params.get('entity_type')
     group_by = request.query_params.get('group_by')
-    if entity_type == 'CCG':
+    if entity_type.lower() == 'ccg':
         get_object_or_404(PCT, pk=entity_code)
     elif entity_type == 'practice':
         get_object_or_404(Practice, pk=entity_code)
@@ -285,7 +285,7 @@ def ghost_generics(request, format=None):
     if not date:
         raise NotValid("You must supply a date")
     if not entity_type and entity_code:
-        entity_type = 'CCG' if len(entity_code) == 3 else 'practice'
+        entity_type = 'ccg' if len(entity_code) == 3 else 'practice'
 
     params = {'date': date, 'entity_code': entity_code}
     filename = "ghost-generics-%s-%s" % (entity_code, date)
@@ -293,7 +293,7 @@ def ghost_generics(request, format=None):
     entity_select = ' practice.code AS practice_id, practice.ccg_id AS pct,'
     if entity_type == 'practice':
         extra_conditions += '  AND practice_id = %(entity_code)s'
-    elif entity_type == 'CCG':
+    elif entity_type.lower() == 'ccg':
         extra_conditions += '  AND ccg_id = %(entity_code)s'
     source_table = 'frontend_prescription'
     practice_join = " JOIN frontend_practice practice ON practice.code = rx.practice_id"
@@ -306,11 +306,14 @@ def ghost_generics(request, format=None):
            rx.quantity,
            rx.presentation_code AS bnf_code,
            product.name AS product_name,
-           case when rx.quantity > 0 then {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) else 0 end AS possible_savings
+            {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity)  AS possible_savings
           FROM vw__medians_for_tariff dt
             JOIN dmd_product product ON dt.product_id = product.dmdid
             JOIN {prescribing_table} rx ON rx.processing_date = dt.date AND rx.presentation_code = product.bnf_code
-            {practice_join} WHERE date = %(date)s {extra_conditions} ORDER BY possible_savings DESC
+            {practice_join}
+        WHERE date = %(date)s {extra_conditions}
+        AND
+         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 10 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= 10) ORDER BY possible_savings DESC
     """.format(
         prescribing_table=source_table,
         practice_join=practice_join,

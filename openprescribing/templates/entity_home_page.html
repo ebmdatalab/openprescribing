@@ -144,7 +144,7 @@
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Ghost-branded generics</h3>
-      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands. The last month of data suggests {{ entity.cased_name }} may be paying around <strong>£<span id="ghost-total">-</span></strong> more than if they prescribed as a true generic.  Find out more <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
+      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands. The last month of data suggests {{ entity.cased_name }} may be paying at least <strong>£<span id="ghost-total">-</span></strong> more than if they prescribed as a true generic.  Find out more <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
     </div>
   </div>
   <div class="col-md-6">
@@ -226,7 +226,7 @@
   };
 
 $.getJSON(
-  "/api/1.0/ghost_generics/?entity_code=09X&date=2018-10-01&entity_type=CCG&group_by=all&format=json", function(data) {
+  "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"Y-m-d"}}&entity_type={{ entity_type }}&group_by=all&format=json", function(data) {
   $('#ghost-total').html(Math.round(data[0]['possible_savings']));
 });
 
