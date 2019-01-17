@@ -33,7 +33,7 @@ def redirect_if_tags_query(view_fn):
         else:
             url = reverse(
                 'measures_for_one_practice',
-                kwargs={'code': kwargs['practice_code']})
+                kwargs={'practice_code': kwargs['practice_code']})
         url = '{}?{}'.format(url, request.GET.urlencode())
         return HttpResponseRedirect(url)
     return wrapper
