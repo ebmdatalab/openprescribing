@@ -33,7 +33,7 @@ def redirect_if_tags_query(view_fn):
         else:
             url = reverse(
                 'measures_for_one_practice',
-                kwargs={'code': kwargs['practice_code']})
+                kwargs={'practice_code': kwargs['practice_code']})
         url = '{}?{}'.format(url, request.GET.urlencode())
         return HttpResponseRedirect(url)
     return wrapper
@@ -169,7 +169,7 @@ urlpatterns = [
         frontend_views.measure_for_one_ccg,
         name='measure_for_one_ccg'),
 
-    url(r'^practice/(?P<code>[A-Z\d]+)/measures/$',
+    url(r'^practice/(?P<practice_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
         name='measures_for_one_practice'),
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
@@ -184,6 +184,9 @@ urlpatterns = [
         name='tariff_index'),
     url(r'^tariff/(?P<code>[A-Z\d]+)/$', frontend_views.tariff,
         name='tariff'),
+
+    # DM+D
+    url(r'^dmd/', include('dmd2.urls')),
 
     # API
     url(r'^api/1.0/', include('api.urls')),

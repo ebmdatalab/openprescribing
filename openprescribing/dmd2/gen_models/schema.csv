@@ -1,0 +1,203 @@
+table,field,optional,orig_descr,type,primary_key,db_column,to,max_length,max_digits,decimal_places,descr
+vtm,id,,Virtual Therapeutic Moiety identifier (SNOMED Code) Up to a maximum of 18 integers,BigIntegerField,True,vtmid,,,,,VTM identifier
+vtm,invalid,Y,Invalidity flag. If set to 1 indicates this is an invalid entry in file. 1 integer only,BooleanField,,,,,,,Invalidity flag
+vtm,nm,,Virtual Therapeutic Moiety Name Up to a maximum of 255 characters,CharField,,,,255,,,VTM Name
+vtm,abbrevnm,Y,Virtual Therapeutic Moiety Abbreviated name Up to a maximum of 60 characters,CharField,,,,60,,,VTM Abbreviated name
+vtm,vtmidprev,Y,Previous VTM identifier (SNOMED CODE) Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous VTM identifier
+vtm,vtmiddt,Y,Virtual Therapeutic Moiety Identifier date - Date the VTM identifier became Valid Always 10 characters,DateField,,,,,,,VTM Identifier date
+vmp,id,,Virtual Medicinal Product identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,True,vpid,,,,,VMP identifier
+vmp,vpiddt,Y,Date VMP identifier became Valid Always 10 characters,DateField,,,,,,,Date VMP identifier became Valid
+vmp,vpidprev,Y,Previous product identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous product identifier
+vmp,vtm,Y,VTM identifier (SNOMED Code). Can be located in VTM file. Up to a maximum of 18 integers,ForeignKey,,vtmid,vtm,,,,VTM identifier
+vmp,invalid,Y,Invalidity flag - If set to 1 indicates this is an invalid entry in file. 1 digit only,BooleanField,,,,,,,Invalidity flag
+vmp,nm,,Virtual Medicinal Product Name Up to a maximum of 255 characters,CharField,,,,255,,,VMP Name
+vmp,abbrevnm,Y,Virtual Medicinal Product Abbreviated name Up to a maximum of 60 characters,CharField,,,,60,,,VMP Abbreviated name
+vmp,basis,,Basis of preferred name - Name basis code narrative can be located in lookup file under tag <BASIS_OF_NAME> Always 4 digits,ForeignKey,,basiscd,basis_of_name,,,,Basis of preferred name
+vmp,nmdt,Y,Date of Name applicability Always 10 characters,DateField,,,,,,,Date of Name applicability
+vmp,nmprev,Y,Previous Name Up to a maximum of 255 characters,CharField,,,,255,,,Previous Name
+vmp,basis_prev,Y,Basis of previous name - code narrative can be located in lookup file under tag <BASIS_OF_NAME> Always 4 digits,ForeignKey,,basis_prevcd,basis_of_name,,,,Basis of previous name
+vmp,nmchange,Y,Reason for name change - code narrative can be located in lookup file under tag <NAMECHANGE_REASON> Always 4 digits,ForeignKey,,nmchangecd,namechange_reason,,,,Reason for name change
+vmp,combprod,Y,Combination product Indicator - code narrative can be located in lookup file under tag <COMBINATION_PROD_IND> Always 4 digits,ForeignKey,,combprodcd,combination_prod_ind,,,,Combination product
+vmp,pres_stat,,Virtual Medicinal Product Prescribing Status - Prescribing Status code narrative can be located in lookup file under tag <VIRTUAL_PRODUCT_PRES_ST ATUS> Always 4 digits,ForeignKey,,pres_statcd,virtual_product_pres_status,,,,VMP Prescribing Status
+vmp,sug_f,Y,Sugar Free Indicator (present and set to 1 if sugar free) 1 digit only,BooleanField,,,,,,,Sugar Free
+vmp,glu_f,Y,Gluten Free Indicator (present and set to 1 if gluten free) 1 digit only,BooleanField,,,,,,,Gluten Free
+vmp,pres_f,Y,Preservative Free Indicator (present and set to 1 if preservative free) 1 digit only,BooleanField,,,,,,,Preservative Free
+vmp,cfc_f,Y,CFC Free Indicator (present and set to 1 if CFC free) 1 digit only,BooleanField,,,,,,,CFC Free
+vmp,non_avail,Y,Non-availability indicator - code narrative can be located in lookup file under tag <VIRTUAL_PRODUCT_NON_AVA IL> Always 4 digits,ForeignKey,,non_availcd,virtual_product_non_avail,,,,Non-availability
+vmp,non_availdt,Y,Non availability status date Always 10 characters,DateField,,,,,,,Non availability status date
+vmp,df_ind,Y,Dose form indicator. Narrative can be located in lookup file under <DF_INDICATOR> 1 digit only,ForeignKey,,df_indcd,df_indicator,,,,Dose form
+vmp,udfs,Y,Unit dose form size - Numerical value relating to size of entity. This will only be present if the unit dose form attribute is „discrete‟. Up to a maximum of 10 digits and 3 decimal places,DecimalField,,,,,10,3,Unit dose form size
+vmp,udfs_uom,Y,Unit dose form units - Unit of Measure code relating to the size. This will only be present if the unit dose form attribute is „discrete‟. Narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits,ForeignKey,,udfs_uomcd,unit_of_measure,,,,Unit dose form units
+vmp,unit_dose_uom,Y,Unit dose unit of measure - Unit of Measure code relating to a description of the entity that can be handled. This will only be present if the Unit dose form attribute is „discrete‟. Narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits,ForeignKey,,unit_dose_uomcd,unit_of_measure,,,,Unit dose unit of measure
+vpi,vmp,,VMP identifier (As above in VMP tag) Up to a maximum of 18 digits,ForeignKey,,vpid,vmp,,,,VMP identifier
+vpi,ing,,Ingredient substance identifier (SNOMED Code) can be located in ingredient file. Up to a maximum of 18 digits,ForeignKey,,isid,ing,,,,Ingredient substance identifier
+vpi,basis_strnt,Y,Basis of pharmaceutical strength - code narrative can be located in lookup file under tag <BASIS_OF_STRNTH> Always 4 digits,ForeignKey,,basis_strntcd,basis_of_strnth,,,,Basis of pharmaceutical strength
+vpi,bs_subid,Y,Basis of strength substance identifier (SNOMED ode) can be located in ingredient file Up to a maximum of 18 digits,BigIntegerField,,,,,,,Basis of strength substance identifier
+vpi,strnt_nmrtr_val,Y,Strength value numerator - Value of numerator element of strength Up to a maximum of 10 digits and 3 decimal places,DecimalField,,,,,10,3,Strength value numerator
+vpi,strnt_nmrtr_uom,Y,Strength value numerator unit - Numerator value of strength Unit of Measure code. Narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits,ForeignKey,,strnt_nmrtr_uomcd,unit_of_measure,,,,Strength value numerator unit
+vpi,strnt_dnmtr_val,Y,Strength value denominator - Value of denominator element of strength Up to a maximum of 10 digits and 3 decimal places,DecimalField,,,,,10,3,Strength value denominator
+vpi,strnt_dnmtr_uom,Y,Strength value denominator unit - Denominator value of strength Unit of Measure code. Narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits,ForeignKey,,strnt_dnmtr_uomcd,unit_of_measure,,,,Strength value denominator unit
+ont,vmp,,VMP ID (as above in VMP tag) Up to a maximum of 18 digits,ForeignKey,,vpid,vmp,,,,VMP ID
+ont,form,,"Virtual Medicinal Product Form & Route - code, narrative can be located in lookup file under tag <ONT_FORM_ROUTE> Always 4 characters",ForeignKey,,formcd,ont_form_route,,,,VMP Form & Route
+dform,vmp,,VMP identifier (as above in VMP tag) Up to a maximum of 18 digits,OneToOneField,,vpid,vmp,,,,VMP identifier
+dform,form,,"Formulation code, narrative can be located in lookup file under tag <FORM> Up to a maximum of 18 digits",ForeignKey,,formcd,form,,,,Formulation
+droute,vmp,,VMP identifier (as above in VMP tag) Up to a maximum of 18 digits,ForeignKey,,vpid,vmp,,,,VMP identifier
+droute,route,,"Route code, narrative can be located in lookup file under tag <ROUTE> Up to a maximum of 18 digits",ForeignKey,,routecd,route,,,,Route
+control_info,vmp,,VMP identifier (as above in VMP tag) Up to a maximum of 18 digits,OneToOneField,,vpid,vmp,,,,VMP identifier
+control_info,cat,,"Control Drug category - , narrative can be located in lookup file under tag <CONTROL_DRUG_CATEGORY> Always 4 digits",ForeignKey,,catcd,control_drug_category,,,,Control Drug category
+control_info,catdt,Y,Date of applicability Always 10 characters,DateField,,,,,,,Date of applicability
+control_info,cat_prev,Y,Previous Control Drug Information – „Controlled Drug category prior to change date‟ - narrative can be located in lookup file under tag <CONTROL_DRUG_CATEGORY> Always 4 digits,ForeignKey,,cat_prevcd,control_drug_category,,,,Previous Control Drug Information
+amp,id,,AMP identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,True,apid,,,,,AMP identifier
+amp,invalid,Y,Invalidity flag - If set to 1 indicates this is an invalid entry in file. 1 digit only,BooleanField,,,,,,,Invalidity flag
+amp,vmp,,"VMP identifier, points to parent Virtual Medicinal Product on VMP file Up to a maximum of 18 digits",ForeignKey,,vpid,vmp,,,,VMP identifier
+amp,nm,,Actual Medicinal Product Name Up to a maximum of 255 characters,CharField,,,,255,,,AMP Name
+amp,abbrevnm,Y,Actual Medicinal Product Abbreviated name Up to a maximum of 60 characters,CharField,,,,60,,,AMP Abbreviated name
+amp,descr,,Actual Medicinal Product Description Up to a maximum of 700 characters,CharField,,,,700,,,Description
+amp,nmdt,Y,Date of name applicability Always 10 characters,DateField,,,,,,,Date of name applicability
+amp,nm_prev,Y,Previous Name Up to a maximum of 255 characters,CharField,,,,255,,,Previous Name
+amp,supp,,"Supplier - Supplier Code, narrative can be located in lookup file under tag <SUPPLIER> Up to a maximum of 18 digits",ForeignKey,,suppcd,supplier,,,,Supplier
+amp,lic_auth,,"Current Licensing Authority - Licensing Authority Code, narrative can be located in lookup file under tag <LICENSING_AUTHORITY> Always 4 digits",ForeignKey,,lic_authcd,licensing_authority,,,,Current Licensing Authority
+amp,lic_auth_prev,Y,"Previous Licensing Authority Code, narrative can be located in lookup file under tag <LICENSING_AUTHORITY> Always 4 digits",ForeignKey,,lic_auth_prevcd,licensing_authority,,,,Previous Licensing Authority
+amp,lic_authchange,Y,"Reason for change of licensing authority code, narrative can be located in lookup under tag <LICENSING_AUTHORITY_CHAN GE_REASON> Always 4 digits",ForeignKey,,lic_authchangecd,licensing_authority_change_reason,,,,Reason for change of licensing authority
+amp,lic_authchangedt,Y,Date of change of licensing authority Always 10 characters,DateField,,,,,,,Date of change of licensing authority
+amp,combprod,Y,"Combination product indicator Code, narrative can be located in lookup file under tag <COMBINATION_PROD_IND> Always 4 digits",ForeignKey,,combprodcd,combination_prod_ind,,,,Combination product
+amp,flavour,Y,"Flavour Code, narrative can be located in lookup file under tag <FLAVOUR> Always 4 digits",ForeignKey,,flavourcd,flavour,,,,Flavour
+amp,ema,Y,EMA Additional Monitoring indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,EMA Additional Monitoring
+amp,parallel_import,Y,Parallel Import indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Parallel Import
+amp,avail_restrict,,"Restrictions on availability Code, narrative can be located in lookup file under tag <AVAILABILITY_RESTRICTION> Always 4 digits",ForeignKey,,avail_restrictcd,availability_restriction,,,,Restrictions on availability
+ap_ing,amp,,Actual Product (AMP) identifier Up to a maximum of 18 digits,ForeignKey,,apid,amp,,,,AMP
+ap_ing,ing,,Ingredient substance identifier (can be located in ingredient file) Up to a maximum of 18 digits,ForeignKey,,isid,ing,,,,Ingredient substance identifier
+ap_ing,strnth,Y,Pharmaceutical strength numerical value - strength value Up to a maximum of 10 digits and 3 decimal places,DecimalField,,,,,10,3,Pharmaceutical strength numerical value
+ap_ing,uom,Y,"Pharmaceutical Strength Unit of Measure code, narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits",ForeignKey,,uomcd,unit_of_measure,,,,Pharmaceutical Strength Unit of Measure
+lic_route,amp,,AMP identifier Up to a maximum of 18 digits,ForeignKey,,apid,amp,,,,AMP identifier
+lic_route,route,,"Licenced route - Route Code, narrative can be located in lookup file under tag <ROUTE> Up to a maximum of 18 digits",ForeignKey,,routecd,route,,,,Licenced route
+ap_info,amp,,AMP identifier Up to a maximum of 18 digits,OneToOneField,,apid,amp,,,,AMP identifier
+ap_info,sz_weight,Y,Size / Weight Up to a maximum of 100 characters,CharField,,,,100,,,Size / Weight
+ap_info,colour,Y,"Colour code, narrative can be located in lookup file under tag <COLOUR> Always 4 digits",ForeignKey,,colourcd,colour,,,,Colour
+ap_info,prod_order_no,Y,Product order number - Order number of product within Drug Tariff Up to a maximum of 20 characters,CharField,,,,20,,,Product order number
+vmpp,id,,Virtual Medicinal Product Pack Identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,True,vppid,,,,,VMPP Identifier
+vmpp,invalid,Y,Invalidity flag - If set to 1 indicates this is an invalid entry in file. 1 digit only,BooleanField,,,,,,,Invalidity flag
+vmpp,nm,,Virtual medicinal product pack description – Name Up to a maximum of 420 characters,CharField,,,,420,,,VMPP description
+vmpp,vmp,,VMP identifier – refers to parent VMP in VMP file Up to a maximum of 18 digits,ForeignKey,,vpid,vmp,,,,VMP identifier
+vmpp,qtyval,Y,Quantity Value Up to a maximum of 10 digits and 2 decimal places,DecimalField,,,,,10,2,Quantity Value
+vmpp,qty_uom,Y,"Quantity Unit of Measure code, narrative can be located in lookup file under tag <UNIT_OF_MEASURE> Up to a maximum of 18 digits",ForeignKey,,qty_uomcd,unit_of_measure,,,,Quantity Unit of Measure
+vmpp,combpack,Y,"Combination pack indicator - Combination pack code, narrative can be located in lookup file under tag <COMBINATION_PACK_IND> Always 4 digits",ForeignKey,,combpackcd,combination_pack_ind,,,,Combination pack
+dtinfo,vmpp,,VMPP identifier (as above VMPP tag) Up to a maximum of 18 digits in,OneToOneField,,vppid,vmpp,,,,VMPP identifier
+dtinfo,pay_cat,,"Drug Tariff payment category code, narrative can be located in lookup file under tag <DT_PAYMENT_CATEGORY> Always 4 digits",ForeignKey,,pay_catcd,dt_payment_category,,,,Drug Tariff payment category
+dtinfo,price,Y,Drug Tariff Price Up to a maximum of 6 integers,IntegerField,,,,,,,Drug Tariff Price
+dtinfo,dt,Y,Date from which DT applicable Always 10 characters price is,DateField,,,,,,,Date from which DT applicable
+dtinfo,prevprice,Y,Previous price Up to a maximum of 6 integers,IntegerField,,,,,,,Previous price
+ccontent,prntvppid,,VMPP identifier for parent pack Up to a maximum of 18 digits,,,,,,,,
+ccontent,chldvppid,,Constituent virtual product pack identifier - VMPP identifier for sub pack Up to a maximum of 18 digits,,,,,,,,
+ampp,id,Y,AMPP identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,True,appid,,,,,AMPP identifier
+ampp,invalid,Y,Invalidity flag - If set to 1 indicates this is an invalid entry in file. 1 digit only,BooleanField,,,,,,,Invalidity flag
+ampp,nm,,Actual Medicinal Product Pack description Up to a maximum of 774 characters,CharField,,,,774,,,AMPP description
+ampp,abbrevnm,Y,Actual Medicinal Product Pack Abbreviated Name Up to a maximum of 60 characters,CharField,,,,60,,,AMPP Abbreviated Name
+ampp,vmpp,,VMPP identifier (reference back to parent VMPP on VMPP file) Up to a maximum of 18 digits,ForeignKey,,vppid,vmpp,,,,VMPP identifier
+ampp,amp,,AMP identifier (reference back to parent AMP on AMP file) Up to a maximum of 18 digits,ForeignKey,,apid,amp,,,,AMP identifier
+ampp,combpack,Y,"Combination pack Indicator code, narrative can be located in lookup file under tag <COMBINATION_PACK_IND> Always 4 digits",ForeignKey,,combpackcd,combination_pack_ind,,,,Combination pack
+ampp,legal_cat,,"Legal category code, narrative can be located in lookup file under tag <LEGAL_CATEGORY> Always 4 digits",ForeignKey,,legal_catcd,legal_category,,,,Legal category
+ampp,subp,Y,Sub Pack Info Up to a maximum of 30 characters,CharField,,,,30,,,Sub Pack Info
+ampp,disc,Y,"Discontinued Flag code, narrative can be located in lookup file under tag <DISCONTINUED_IND> Always 4 digits",ForeignKey,,disccd,discontinued_ind,,,,Discontinued Flag
+ampp,discdt,Y,Discontinued Flag Change date - Date of discontinuation Always 10 characters,DateField,,,,,,,Discontinued Flag Change date
+pack_info,ampp,,AMPP identifier as in AMPP tag above Up to a maximum of 18 digits,OneToOneField,,appid,ampp,,,,AMPP identifier as in AMPP tag above
+pack_info,reimb_stat,,"Appliance Reimbursement status code, narrative can be located in lookup file under tag <REIMBURSEMENT_STATUS> Always 4 digits",ForeignKey,,reimb_statcd,reimbursement_status,,,,Appliance Reimbursement status
+pack_info,reimb_statdt,Y,Date Appliance reimbursement status became effective. Always 10 characters,DateField,,,,,,,Date Appliance reimbursement status became effective
+pack_info,reimb_statprev,Y,"Appliance Reimbursement previous status code, narrative can be located in lookup file under tag <REIMBURSEMENT_STATUS> Always 4 digits",ForeignKey,,reimb_statprevcd,reimbursement_status,,,,Appliance Reimbursement previous status
+pack_info,pack_order_no,Y,Pack order number - Order number of pack within Drug Tariff Up to a maximum of 20 characters,CharField,,,,20,,,Pack order number
+prescrib_info,ampp,,AMPP identifier Up to a maximum of 18 digits,OneToOneField,,appid,ampp,,,,AMPP identifier
+prescrib_info,sched_2,Y,Schedule 2 indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Schedule 2
+prescrib_info,acbs,Y,ACBS indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,ACBS
+prescrib_info,padm,Y,Personally Administered indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Personally Administered
+prescrib_info,fp10_mda,Y,FP10 MDA Prescription indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,FP10 MDA Prescription
+prescrib_info,sched_1,Y,Schedule 1 indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Schedule 1
+prescrib_info,hosp,Y,Hospital indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Hospital
+prescrib_info,nurse_f,Y,Nurse Formulary indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Nurse Formulary
+prescrib_info,enurse_f,Y,Nurse Extended Formulary indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Nurse Extended Formulary
+prescrib_info,dent_f,Y,Dental Formulary indicator – will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Dental Formulary
+price_info,ampp,,AMPP identifier Up to a maximum of 18 digits,OneToOneField,,appid,ampp,,,,AMPP identifier
+price_info,price,Y,Price Up to a maximum of 9 integers,IntegerField,,,,,,,Price
+price_info,pricedt,Y,Date of price validity - Date of price applicability Always 10 characters,DateField,,,,,,,Date of price validity
+price_info,price_prev,Y,Price prior to change date - Previous Price Up to a maximum of 9 integers,IntegerField,,,,,,,Price prior to change date
+price_info,price_basis,,"Price basis flag - Basis of price code, narrative can be located in lookup file under tag <PRICE_BASIS> Always 4 digits",ForeignKey,,price_basiscd,price_basis,,,,Price basis flag
+reimb_info,ampp,,AMPP identifier Up to a maximum of 18 digits,OneToOneField,,appid,ampp,,,,AMPP identifier
+reimb_info,px_chrgs,Y,Prescription Charges Up to a maximum of 2 digits,IntegerField,,,,,,,Prescription Charges
+reimb_info,disp_fees,Y,Dispensing Fees Up to a maximum of 2 digits,IntegerField,,,,,,,Dispensing Fees
+reimb_info,bb,Y,Broken Bulk indicator will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Broken Bulk
+reimb_info,ltd_stab,,The Drug Tariff no longer identifies products for this purpose. Therefore this indicator is no longer populated in dm+d. The data field will persist but remains blank.,retired,,,,,,,The Drug Tariff no longer identifies products for this purpose
+reimb_info,cal_pack,Y,Calendar pack indicator will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,Calendar pack
+reimb_info,spec_cont,Y,"Special Container Indicator code, narrative can be located in lookup file under tag <SPEC_CONT> Always 4 digits",ForeignKey,,spec_contcd,spec_cont,,,,Special Container
+reimb_info,dnd,Y,Discount Not Deducted Indicator (previously Zero Discount Indicator) Always 4 digits,ForeignKey,,dndcd,dnd,,,,Discount Not Deducted
+reimb_info,fp34d,Y,FP34D prescription item indicator will be present and set to 1 if true 1 digit only,BooleanField,,,,,,,FP34D prescription item
+ccontent,prntappid,,AMPP identifier for parent pack Up to a maximum of 18 digits,,,,,,,,
+ccontent,chldappid,,AMPP identifier for sub pack Up to a maximum of 18 digits,,,,,,,,
+ing,id,,Ingredient Substance Identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,True,isid,,,,,Ingredient Substance Identifier
+ing,isiddt,Y,Date ingredient substance identifier became valid Always 10 characters,DateField,,,,,,,Date ingredient substance identifier became valid
+ing,isidprev,Y,Previous ingredient substance identifier (SNOMED Code) Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous ingredient substance identifier
+ing,invalid,Y,Invalidity flag - If set to 1 indicates this is an invalid entry in file. 1 digit only,BooleanField,,,,,,,Invalidity flag
+ing,nm,,Ingredient Substance Name Up to a maximum of 255 characters,CharField,,,,255,,,Ingredient Substance Name
+combination_pack_ind,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+combination_pack_ind,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+combination_prod_ind,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+combination_prod_ind,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+basis_of_name,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+basis_of_name,descr,,Description Up to a maximum of 150 characters,CharField,,,,150,,,Description
+namechange_reason,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+namechange_reason,descr,,Description Up to a maximum of 150 characters,CharField,,,,150,,,Description
+virtual_product_pres_status,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+virtual_product_pres_status,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+control_drug_category,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+control_drug_category,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+licensing_authority,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+licensing_authority,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+unit_of_measure,cd,,Code (SNOMED) Up to a maximum of 18 digits,BigIntegerField,True,,,,,,Code
+unit_of_measure,cddt,Y,Date code is applicable from Always 10 characters,DateField,,,,,,,Date code is applicable from
+unit_of_measure,cdprev,Y,Previous code Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous code
+unit_of_measure,descr,,Description Up to a maximum of 150 characters,CharField,,,,150,,,Description
+form,cd,,Code (SNOMED) Up to a maximum of 18 digits,BigIntegerField,True,,,,,,Code
+form,cddt,Y,Date code is applicable from Always 10 characters,DateField,,,,,,,Date code is applicable from
+form,cdprev,Y,Previous code Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous code
+form,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+ont_form_route,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+ont_form_route,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+route,cd,,Code (SNOMED) Up to a maximum of 18 digits,BigIntegerField,True,,,,,,Code
+route,cddt,Y,Date code is applicable from Always 10 characters,DateField,,,,,,,Date code is applicable from
+route,cdprev,Y,Previous code Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous code
+route,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+dt_payment_category,cd,,Code Always 4 characters,IntegerField,True,,,,,,Code
+dt_payment_category,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+supplier,cd,,Code (SNOMED) Up to a maximum of 18 digits,BigIntegerField,True,,,,,,Code
+supplier,cddt,Y,Date code is applicable from Always 10 characters,DateField,,,,,,,Date code is applicable from
+supplier,cdprev,Y,Previous code Up to a maximum of 18 digits,BigIntegerField,,,,,,,Previous code
+supplier,invalid,Y,Invalidity flag - If set to 1 entry is invalid. 1 digit only,BooleanField,,,,,,,Invalidity flag
+supplier,descr,,Description Up to a maximum of 80 characters,CharField,,,,80,,,Description
+flavour,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+flavour,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+colour,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+colour,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+basis_of_strnth,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+basis_of_strnth,descr,,Description Up to a maximum of 150 characters,CharField,,,,150,,,Description
+reimbursement_status,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+reimbursement_status,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+spec_cont,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+spec_cont,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+dnd,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+dnd,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+virtual_product_non_avail,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+virtual_product_non_avail,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+discontinued_ind,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+discontinued_ind,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+df_indicator,cd,,Code 1 digit only,IntegerField,True,,,,,,Code
+df_indicator,descr,,Description Up to a maximum of 20 characters,CharField,,,,20,,,Description
+price_basis,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+price_basis,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+legal_category,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+legal_category,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+availability_restriction,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+availability_restriction,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+licensing_authority_change_reason,cd,,Code Always 4 digits,IntegerField,True,,,,,,Code
+licensing_authority_change_reason,descr,,Description Up to a maximum of 60 characters,CharField,,,,60,,,Description
+gtin,ampp,,AMPP identifier (SNOMED code) Reference to AMPP on main AMPP file Up to a maximum of 18 digits,OneToOneField,,appid,ampp,,,,AMPP identifier
+gtin,gtin,,GTIN Either 13 or 14 digits with the rightmost digit a Check Digit,BigIntegerField,,,,,,,GTIN
+gtin,startdt,,GTIN date - Date the GTIN became Valid Always 10 characters,DateField,,,,,,,GTIN date
+gtin,enddt,Y,The date the GTIN became invalid Always 10 characters,DateField,,,,,,,The date the GTIN became invalid

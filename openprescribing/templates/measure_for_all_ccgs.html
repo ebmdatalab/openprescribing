@@ -6,90 +6,68 @@
 {% block active_class %}ccg{% endblock %}
 
 {% block content %}
+  <h1>{{measure.name}} by all CCGs</h1>
 
-<h1>{{measure.name}} by all CCGs</h1>
+  {% if measure.url %}
+    <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
+  {% endif %}
 
-{% if measure.url %}
-<p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
-{% endif %}
+  {% include '_measure_header.html' %}
 
-{% include '_measure_header.html' %}
+  <p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
 
-<p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
-
-<div id="measures">
-<div id="charts" class="row">
-<div class="loading-wrapper col-xs-12">
-    <hr/>
-    <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
-    <br/>Fetching data...
-    <br/><br/>
-</div>
-</div>
-
-</div>
-
-{% verbatim %}
-<!-- the following is inserted into the `perfsummary` element above
-and is the "if it prescribed at median then it would have saved X"
-text
--->
-<script id="summary-panel" type="text/x-handlebars-template">
-{{ costSavings }}
-</script>
-
-<script id="measure-panel" type="text/x-handlebars-template">
-<div id="ccg_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
-        </div>
-        <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
-            <div class="chart">
-                <div class="status"></div>
-            </div>
-        </div>
-        <div class="explanation">
-          {{{ chartExplanation }}}
-          <ul>
-            <li>
-              <a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a>
-            </li>
-          {{#if tagsFocus }}
-          <li>
-            This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.
-          </li>
-          {{/if}}
-          {{#if numeratorCanBeQueried }}
-            {{#if oneEntityUrl }}
-              <li>
-               <a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.
-              </li>
-             {{/if}}
-           {{/if}}
-        </div>
+  <div id="measures">
+    <div id="charts" class="row">
+      <div class="loading-wrapper col-xs-12">
+        <hr/>
+        <img class="loading" src="/static/img/logo.svg" onerror="this.src='/static/img/ajax-loader.gif';this.onerror=null;" title="Loading icon">
+        <br/>Fetching data...
+        <br/><br/>
+      </div>
     </div>
-</div>
-</script>
-{% endverbatim %}
+  </div>
 
-{% include '_get_in_touch.html' %}
+  {% verbatim %}
+    <script id="summary-panel" type="text/x-handlebars-template">
+      {{ costSavings }}
+    </script>
+
+    <script id="measure-panel" type="text/x-handlebars-template">
+      <div id="ccg_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+          </div>
+
+          <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
+            <div class="chart">
+              <div class="status"></div>
+            </div>
+          </div>
+
+          <div class="explanation">
+            {{{ chartExplanation }}}
+            <ul>
+              <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
+              {{#if tagsFocus }}
+                <li>This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.</li>
+              {{/if}}
+              {{#if numeratorCanBeQueried }}
+                {{#if oneEntityUrl }}
+                  <li><a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.</li>
+                {{/if}}
+              {{/if}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </script>
+  {% endverbatim %}
+
+  {% include '_get_in_touch.html' %}
 {% endblock %}
 
 {% block extra_js %}
-<script>
-var measureData = {
-    'orgType': 'CCG',
-    'measure': '{{ measure.id }}',
-    'isCostBasedMeasure': {{ measure.is_cost_based|yesno:"true,false" }},
-    'lowIsGood': {{ measure.low_is_good|yesno:"true,false,null" }},
-    'tags': '{{ request.GET.tags }}',
-    {% if measure.tags_focus %}
-    'tagsFocus': '{{ measure.tags_focus|join:"," }}',
-    {% endif %}
-    'numerator': '{{ measure.numerator_short }}',
-    'denominator': '{{ measure.denominator_short }}'
-};
-</script>
-{% conditional_js 'measures' %}
+  {{ measure_options|json_script:"measure-options" }}
+  {% conditional_js 'measures' %}
 {% endblock %}

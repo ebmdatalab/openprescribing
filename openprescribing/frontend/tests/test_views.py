@@ -11,10 +11,10 @@ from django.db import connection
 from django.http import QueryDict
 from django.test import TestCase
 
-from frontend.models import EmailMessage
-from frontend.models import OrgBookmark
-from frontend.models import SearchBookmark
-from frontend.models import ImportLog
+from frontend.models import (
+    EmailMessage, OrgBookmark, SearchBookmark, ImportLog, PCT, Practice,
+    MeasureValue, Measure
+)
 from frontend.views.views import BadRequestError, _get_measure_tag_filter
 
 from allauth.account.models import EmailAddress
@@ -489,6 +489,12 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(ccgs), 2)
 
     def test_call_view_ccg_section(self):
+        MeasureValue.objects.create(
+            pct=PCT.objects.get(code='03V'),
+            measure=Measure.objects.first(),
+            month='2015-09-01',
+            percentile=0.5,
+        )
         response = self.client.get('/ccg/03V/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entity_home_page.html')
@@ -521,6 +527,12 @@ class TestFrontendViews(TestCase):
         self.assertEqual(len(practices), 0)
 
     def test_call_view_practice_section(self):
+        MeasureValue.objects.create(
+            practice=Practice.objects.get(code='P87629'),
+            measure=Measure.objects.first(),
+            month='2015-09-01',
+            percentile=0.5,
+        )
         response = self.client.get('/practice/P87629/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entity_home_page.html')

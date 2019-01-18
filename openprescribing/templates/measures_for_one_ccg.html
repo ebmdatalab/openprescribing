@@ -6,57 +6,47 @@
 {% block active_class %}ccg{% endblock %}
 
 {% block extra_css %}
-<link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
 {% endblock extra_css %}
 
 {% block content %}
+  <h1>CCG: {{ ccg.name }}</h1>
 
-<h1>CCG: {{ ccg.name }}</h1>
-
-<div class="row" id="intro">
-  <div class="col-md-6">
-    <p>Standard practices currently in this CCG:</p>
-    <ul class="list-unstyled" id="practices">
-    {% for p in practices %}
-      <li
-        {% if forloop.counter > 6 %}
-          class='hidden'
-        {% endif %}
-        >
-        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
-      </li>
-    {% endfor %}
-    </ul>
-    {% if practices.count > 6 %}
-      <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
-    {% endif %}
+  <div class="row" id="intro">
+    <div class="col-md-6">
+      <p>Standard practices currently in this CCG:</p>
+      <ul class="list-unstyled" id="practices">
+        {% for p in practices %}
+          <li
+            {% if forloop.counter > 6 %}
+              class='hidden'
+            {% endif %}
+            >
+            <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
+            ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
+          </li>
+        {% endfor %}
+      </ul>
+      {% if practices.count > 6 %}
+        <a id="showall" href="#">&raquo; show all {{ practices.count }}  practices...</a>
+      {% endif %}
+    </div>
+    <div class="col-md-6" id="map-container">
+      <div id="map-measure"></div>
+    </div>
   </div>
-  <div class="col-md-6" id="map-container">
-    <div id="map-measure"></div>
-  </div>
 
-</div>
+  <hr/>
 
-<hr/>
+  {% include '_measures_heading.html' with entity_type='CCG' %}
+  {% include '_measures_panel.html' %}
 
-{% include '_measures_heading.html' with entity_type='CCG' %}
-{% include '_measures_panel.html' %}
+  <hr/>
 
-<hr/>
-
-{% include '_get_in_touch.html' %}
+  {% include '_get_in_touch.html' %}
 {% endblock %}
 
 {% block extra_js %}
-<script>
- var measureData = {
-    'tags': '{{ tag_filter.tags|join:"," }}',
-    'orgId': '{{ ccg.code }}',
-    'orgName': '{{ ccg.name }}',
-    'orgType': 'CCG'
-};
-</script>
-{% conditional_js 'measures' %}
-
+  {{ measure_options|json_script:"measure-options" }}
+  {% conditional_js 'measures' %}
 {% endblock %}

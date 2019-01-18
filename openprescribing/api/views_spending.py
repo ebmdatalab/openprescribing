@@ -1,8 +1,6 @@
 import datetime
 import re
 
-import numpy as np
-
 from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -52,11 +50,15 @@ def _valid_or_latest_date(date):
 def _build_conditions_and_patterns(code, focus):
     if not re.match(r'[A-Z0-9]{15}', code):
         raise NotValid("%s is not a valid code" % code)
-    extra_codes = GenericCodeMapping.objects.filter(
-        Q(from_code=code) | Q(to_code=code))
+
     # flatten and uniquify the list of codes
-    extra_codes = set(np.array(
-        [[x.from_code, x.to_code] for x in extra_codes]).flatten())
+    extra_codes = set()
+    for mapping in GenericCodeMapping.objects.filter(
+        Q(from_code=code) | Q(to_code=code)
+    ):
+        extra_codes.add(mapping.from_code)
+        extra_codes.add(mapping.to_code)
+
     patterns = ["%s____%s" % (code[:9], code[13:15])]
     for extra_code in extra_codes:
         if extra_code.endswith('%'):
