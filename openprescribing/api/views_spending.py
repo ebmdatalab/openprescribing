@@ -30,6 +30,7 @@ CODE_LENGTH_ERROR = (
     'data, please <a href="mailto:{{ SUPPORT_TO_EMAIL }}" '
     'class="feedback-show">get in touch</a> and we may be able to extract it '
     'for you')
+MIN_GHOST_GENERIC_DELTA = 5
 
 
 class NotValid(APIException):
@@ -315,12 +316,13 @@ def ghost_generics(request, format=None):
         AND
           rx.presentation_code <> '1106000L0AAAAAA' -- lantanaprost quantities are broken in data
         AND
-         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= 5 OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= -5) ORDER BY possible_savings DESC
+         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= {min_delta} OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= -{min_delta}) ORDER BY possible_savings DESC
     """.format(
         prescribing_table=source_table,
         practice_join=practice_join,
         entity_select=entity_select,
         cost_field=cost_field,
+        min_delta=MIN_GHOST_GENERIC_DELTA,
         extra_conditions=extra_conditions
     )
     if group_by == 'presentation':
