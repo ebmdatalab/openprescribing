@@ -327,7 +327,7 @@ def ghost_generics(request, format=None):
             AS possible_savings
           FROM vw__medians_for_tariff dt
             JOIN dmd_product product ON dt.product_id = product.dmdid
-            JOIN frontend_prescribing rx
+            JOIN frontend_prescription rx
               ON rx.processing_date = dt.date
               AND rx.presentation_code = product.bnf_code
             JOIN frontend_practice practice
@@ -340,7 +340,7 @@ def ghost_generics(request, format=None):
          net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
            >= {min_delta}
         OR
-         net_ccost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
+         net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
            <= -{min_delta})
         ORDER BY possible_savings DESC
     """.format(
