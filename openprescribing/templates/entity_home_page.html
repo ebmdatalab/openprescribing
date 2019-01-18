@@ -138,13 +138,26 @@
   </div>
 </div>
 
+<hr>
+
 <div class="row" >
+  <div class="col-md-6">
+    <div class="landing-panel">
+      <h3>Ghost-branded generics</h3>
+      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands.  {{ entity.cased_name }} may be paying at least <strong>£<span id="ghost-total">-</span></strong> more than necessary.  See a list of generics affected <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
+    </div>
+  </div>
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Sign up for alerts or updates</h3>
       {% include '_alert_signup_form.html' %}
     </div>
   </div>
+</div>
+
+<hr>
+
+<div class="row" >
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Looking for more data?</h3>
@@ -159,9 +172,11 @@
       </p>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="landing-panel">
+    </div>
+  </div>
 </div>
-
-<hr>
 
 {% verbatim %}
 <script id="summary-panel" type="text/x-handlebars-template">
@@ -187,6 +202,13 @@
 {% block extra_js %}
 <script>
   var maxZoom = 6;
+  $.getJSON(
+    "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"Y-m-d"}}&entity_type={{ entity_type }}&group_by=all&format=json", function(data) {
+    function numberWithCommas(x) {
+      return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    $('#ghost-total').html(numberWithCommas(data[0]['possible_savings']));
+  });
 </script>
 {{ measure_options|json_script:"measure-options" }}
 {% conditional_js 'measures' %}

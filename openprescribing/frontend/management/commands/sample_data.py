@@ -23,6 +23,8 @@ copy_all = [
     'frontend_importlog',
     'frontend_measure',
     'frontend_measureglobal',
+    'frontend_regionalteam',
+    'frontend_stp',
     'frontend_pct',
     'frontend_practice',
     'frontend_orgbookmark',

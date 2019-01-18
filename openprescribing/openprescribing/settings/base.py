@@ -3,6 +3,9 @@ from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 from common import utils
 
+import sys
+
+
 # PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
 SETTINGS_ROOT = dirname(dirname(abspath(__file__)))
@@ -17,6 +20,9 @@ SITE_NAME = basename(SETTINGS_ROOT)
 
 # Site ID (django.contrib.sites framework, required by django-anyauth
 SITE_ID = 1
+
+# Useful flag for special-casing shell operations
+SHELL = "shell" in sys.argv or "dbshell" in sys.argv
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
@@ -364,5 +370,5 @@ SLACK_SENDING_ACTIVE = True
 MAILCHIMP_LIST_ID = 'b2b7873a73'
 
 sentry_raven_dsn = utils.get_env_setting('SENTRY_RAVEN_DSN', default='')
-if sentry_raven_dsn:
+if sentry_raven_dsn and not SHELL:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}

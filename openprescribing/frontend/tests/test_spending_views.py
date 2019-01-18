@@ -23,7 +23,8 @@ class TestSpendingViews(TestCase):
     def setUpClass(cls):
         super(TestSpendingViews, cls).setUpClass()
         factory = DataFactory()
-        cls.months = factory.create_months('2018-02-01', 6)
+        cls.months = factory.create_months_array(
+            start_date='2018-02-01', num_months=6)
         # Our NCSO and tariff data extends further than our prescribing data by
         # a couple of months
         cls.prescribing_months = cls.months[:-2]
@@ -38,11 +39,15 @@ class TestSpendingViews(TestCase):
         # Create some presentations
         cls.presentations = factory.create_presentations(6)
         # Create drug tariff and price concessions costs for these presentations
-        factory.create_tariff_and_ncso_costings(cls.presentations, cls.months)
+        factory.create_tariff_and_ncso_costings_for_presentations(
+            cls.presentations,
+            months=cls.months)
         # Create prescribing for each of the practices we've created
         for practice in cls.practices:
-            factory.create_prescribing(
-                practice, cls.presentations, cls.prescribing_months
+            factory.create_prescribing_for_practice(
+                practice,
+                presentations=cls.presentations,
+                months=cls.prescribing_months
             )
         # Create and populate the materialized view table we need
         factory.populate_presentation_summary_by_ccg_view()

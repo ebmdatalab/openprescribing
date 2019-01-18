@@ -36,6 +36,8 @@
 <h2>CCG &amp; GP Dashboards</h2>
 <p><a href="#measureinterpret">How do I interpret the measures?</a></p>
 <p><a href="#measurechose">How are the measures chosen?</a></p>
+<p><a href="#ghostgenerics">How do you calculate savings for ghost-branded generics?</a></p>
+<p><a href="#ghostgenericshow">How do I decrease our use of ghost-branded generics?</a></p>
 <p><a href="#gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</a></p>
 
 <h2>Long term trends</h2>
@@ -139,6 +141,27 @@
 
 <h3 id="measurechose">How are the measures chosen?</h3>
 <p>Our measures were developed in discussion between Drs Jeff Aronson, Kamal Mahtani, <a href="https://ebmdatalab.net/ben-goldacre/">Ben Goldacre</a> at the University of Oxford, and <a href="https://ebmdatalab.net/richard-croker/">Richard Croker</a> from Northern, Eastern & Western Devon CCG.</p>
+
+<h3 id="measurechose">How do you work out savings on individual presentations?</h3>
+
+<p>
+  There can be huge variation in the price a practice or CCG pay for a treatment, even for the same drug at the same dose. It is well known that branded and generic versions of the same treatment will have different prices; but different specific “brands” of “branded generic” may also have different prices; and there are many other similar sources of variation in price. Every month we estimate what could be saved if every organisation were prescribing as well as the best 10%, for each item prescribed. <a href="/price-per-unit-faq/">Read our detailed FAQ on the subject here</a>.</p>
+
+<h3 id="ghostgenerics">How do you calculate savings for ghost-branded generics?</h3>
+<p>Ghost-branded generics are generic items which have unintentionally been prescribed with a manufacturer name. For example, Naratriptan 2.5mg Tablets is the correct generic name; a ghost-branded version is Naratriptan 2.5mg Tablets (Teva UK Limited). When an item is prescribed generically, the dispenser is reimbursed at the price in the Drug Tariff; but when a manufacturer is stated, the reimbursement price is usually more expensive.</p>
+
+<p>In some cases, generics will be deliberately prescribed with the manufacturer name, for example where a patient needs to have the same colour pill consistently, or in items with a narrow therapeutic index. However, we assume these are a tiny majority of the total ghost-branded prescribing that happens.</p>
+
+<p>The prescribing data released by NHS BSA aggregates all generic and ghost-generic prescribing together, so it is not possible for us to break down the data precisely.</p>
+
+<p>In addition, the published Drug Tariff prices are not necessarily the ones used by BSA for reimbursement (see <a href="https://github.com/ebmdatalab/openprescribing/issues/1318">our technical notes here</a> for an explanation of this). Therefore, to estimate the size of the problem for individual practices or CCGs, we first have to estimate the Drug Tariff price for a generic, which we do by taking the median price paid for that generic item across the entire country. This gives us a price that <em>should</em> be paid for all prescriptions of that generic. We then compare this with the price that was used for reimbursement. This difference gives a reasonable estimate of the total possible savings if a generic were prescribed correctly. We only include savings of more than £5. Note that we use Net Ingredient Cost for our calculations; the true reimbursement cost will typically be 7% less due to bulk discounts.</p>
+
+<p>You can read more about the background of this issue <a href="https://ebmdatalab.net/ghost-branded-generics-why-does-the-cost-of-generic-atorvastatin-vary%EF%BB%BF/">on our blog</a>.</p>
+
+<h3 id="ghostgenericshow">How can I decrease our use of ghost-branded generics?</h3>
+<p>The spreadsheet download on ghost-branded generics page for each CCG or practice is sorted by total possible savings.  The practices and items appearing near the top of this list are likely to be prescribing the highest level of ghost-branded generics.  From January 2018, data will be available in ePACT2 at an <em>AMPP</em> level for generics, meaning you can identify individual scripts which are at fault.</p>
+<p>In general, the fix will be dependent on your prescribing software. It should be possible to configure it so only true generics can be picked, at least for the most egregious items.</p>
+<p>We are currently gathering feedback from practices who have implemented such fixes, and will publish a summary on our blog in due course</p>.
 
 <h3 id="gpclose">A GP Practice has closed or merged - why is it included on your dashboards?</h3>
 <p>

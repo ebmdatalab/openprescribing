@@ -1,3 +1,4 @@
+from __future__ import print_function
 from multiprocessing.pool import Pool
 import glob
 import logging
@@ -19,11 +20,12 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    """A command to create 'views' (actually ordinary tables) in postgres
-    for subsets of data commonly requested over the API.
+    """A command to create 'views' (mostly ordinary tables, in fact) in
+    postgres for subsets of data commonly requested over the API.
 
-    Materialized views are too slow to build, so instead we generate
-    the data in BigQuery and then load it into existing tables.
+    In most cases, materialized views are too slow to build, so
+    instead we generate the data in BigQuery and then load it into
+    existing tables.
 
     The tables are not managed by Django so do not have models. They
     were created using the SQL at
@@ -48,7 +50,9 @@ class Command(BaseCommand):
             'commands',
             'views_sql'
         )
-
+        self.materialized_views = [
+            'vw__medians_for_tariff',
+        ]
         if options['view'] is not None:
             path = os.path.join(base_path), options['view'] + '.sql'
             self.view_paths = [path]
@@ -61,8 +65,12 @@ class Command(BaseCommand):
             self.fill_views()
 
     def list_views(self):
+        print("Precomputed tables:")
         for view in self.view_paths:
-            print os.path.basename(view).replace('.sql', '')
+            print(os.path.basename(view).replace('.sql', ''))
+        print("True materialized views:")
+        for view in self.materialized_views:
+            print(view)
 
     def fill_views(self):
         client = Client('hscic')
@@ -91,6 +99,11 @@ class Command(BaseCommand):
         for table in tables:
             self.download_and_import(table)
             self.log("-------------")
+
+        with connection.cursor() as cursor:
+            for view_id in self.materialized_views:
+                # This is quite slow! up to 10 mins.
+                cursor.execute("REFRESH MATERIALIZED VIEW %s" % view_id)
 
     def download_and_import(self, table):
         '''Download table from storage and import into local database.

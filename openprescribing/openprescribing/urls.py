@@ -128,6 +128,14 @@ urlpatterns = [
         frontend_views.all_england_price_per_unit_by_presentation,
         name='all_england_price_per_unit_by_presentation'),
 
+    # Ghost generics
+    url(r'^practice/(?P<code>[A-Z\d]+)/ghost_generics/$',
+        frontend_views.practice_ghost_generics,
+        name='practice_ghost_generics'),
+    url(r'^ccg/(?P<code>[A-Z\d]+)/ghost_generics/$',
+        frontend_views.ccg_ghost_generics,
+        name='ccg_ghost_generics'),
+
     # Spending
     # (This must go above Measures because of the measure_for_practices_in_ccg
     # pattern)
