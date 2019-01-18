@@ -11,6 +11,9 @@ from .api_test_base import ApiTestBase
 from frontend.models import ImportLog
 from frontend.models import Prescription
 from frontend.tests.data_factory import DataFactory
+from api.views_spending import MIN_GHOST_GENERIC_DELTA
+from dmd.models import DMDProduct
+from dmd.models import DMDVmpp
 from dmd.models import TariffPrice
 
 import numpy as np
@@ -634,15 +637,21 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         with connection.cursor() as cursor:
             cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
 
-        # Practice-level savings
-        practice_data = self._get(
-            entity_code=self.practices[0].code,
-            entity_type='practice', date='2018-02-01')
-        self.assertEqual(len(practice_data), 1)
-
+        expected = self._expected_savings()
         # Same, but all practices in a CCG
         ccg_data = self._get(entity_code=self.ccgs[0].code, entity_type='CCG', date='2018-02-01')
-        self.assertEqual(len(ccg_data), 2)
+        practices_in_ccg = [x.code for x in self.ccgs[0].practice_set.all()]
+        savings_count = 0
+        for p in practices_in_ccg:
+            savings_count += len(expected['practice_savings'][p].values())
+        self.assertEqual(len(ccg_data), savings_count)
+
+    def _practice_savings_for_ccg(self, ccg, expected):
+        practices_in_ccg = [x.code for x in ccg.practice_set.all()]
+        savings = []
+        for p in practices_in_ccg:
+            savings.extend(expected['practice_savings'][p].values())
+        return savings
 
     def test_savings(self):
         expected = self._expected_savings()
@@ -660,7 +669,8 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         # Same, but all practices in a CCG
         ccg_data = self._get(entity_code=self.ccgs[0].code, entity_type='CCG', date='2018-02-01')
         self.assertTrue(all([x['pct'] == self.ccgs[0].code for x in ccg_data]))
-        self.assertEqual(len(ccg_data), 4)
+        savings_count = len(self._practice_savings_for_ccg(self.ccgs[0], expected))
+        self.assertEqual(len(ccg_data), savings_count)
 
         # Grouped by presentations
         grouped_ccg_data = self._get(
@@ -670,16 +680,32 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
             date='2018-02-01')
 
         for d in grouped_ccg_data:
-            self.assertEqual(d['possible_savings'], expected['ccg_savings'][d['pct']][d['bnf_code']])
+            self.assertEqual(
+                d['possible_savings'],
+                expected['ccg_savings'][d['pct']][d['bnf_code']])
+
+        # Test multi-vmpp
+        price_to_alter = TariffPrice.objects.last()
+        price_to_alter.price_pence *= 2
+        price_to_alter.save()
+        with connection.cursor() as cursor:
+            cursor.execute("REFRESH MATERIALIZED VIEW vw__medians_for_tariff")
+        expected_2 = self._expected_savings()
+        ccg_data_2 = self._get(entity_code=self.ccgs[0].code, entity_type='CCG', date='2018-02-01')
+        savings_count_2 = len(self._practice_savings_for_ccg(self.ccgs[0], expected_2))
+        self.assertEqual(len(ccg_data_2), savings_count_2)
+        self.assertTrue(savings_count > savings_count_2)
 
     def _expected_savings(self):
         def autovivify(levels=1, final=dict):
             return (defaultdict(final) if levels < 2 else
                     defaultdict(lambda: autovivify(levels - 1, final)))
         presentation_medians = {}
+        # XXX exclude savinges > -10 or  < 10
         for presentation in self.presentations:
             net_costs = []
-            for rx in Prescription.objects.filter(presentation_code=presentation.bnf_code):
+            for rx in Prescription.objects.filter(
+                    presentation_code=presentation.bnf_code):
                 net_costs.append(round(rx.net_cost / rx.quantity, 4))
             presentation_medians[presentation.bnf_code] = np.percentile(
                 net_costs, 50, interpolation='lower')
@@ -687,9 +713,23 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         ccg_savings = autovivify(levels=2, final=int)
         for practice in self.practices:
             for rx in Prescription.objects.filter(practice=practice):
-                possible_saving = round(rx.net_cost - (presentation_medians[rx.presentation_code] * rx.quantity), 4)
-                practice_savings[practice.code][rx.presentation_code] = possible_saving
-                ccg_savings[practice.ccg.code][rx.presentation_code] += possible_saving
+                product = DMDProduct.objects.get(bnf_code=rx.presentation_code)
+                vmpps = DMDVmpp.objects.filter(vpid=product.vpid)
+                prices_per_pill = set()
+                for vmpp in vmpps:
+                    tariff = TariffPrice.objects.get(vmpp=vmpp)
+                    tariff_price_per_pill = tariff.price_pence / vmpp.qtyval
+                    prices_per_pill.add(tariff_price_per_pill)
+                only_one_tariff_price = len(prices_per_pill) == 1
+                if only_one_tariff_price:
+                    possible_saving = round(
+                        rx.net_cost - (
+                            presentation_medians[rx.presentation_code] * rx.quantity),
+                        4)
+                    if possible_saving <= -MIN_GHOST_GENERIC_DELTA or \
+                       possible_saving >= MIN_GHOST_GENERIC_DELTA:
+                        practice_savings[practice.code][rx.presentation_code] = possible_saving
+                        ccg_savings[practice.ccg.code][rx.presentation_code] += possible_saving
         return {'practice_savings': practice_savings,
                 'ccg_savings': ccg_savings,
                 'medians': presentation_medians}
