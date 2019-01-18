@@ -70,7 +70,7 @@ class DataFactory(object):
                 DMDVmpp.objects.create(
                     vppid=vppid,
                     vpid=product.vpid,
-                    nm='VMPP %s (%s)' % (presentation.name, vppid) ,
+                    nm='VMPP %s (%s)' % (presentation.name, vppid),
                     qtyval=qtyval
                 )
             presentations.append(presentation)

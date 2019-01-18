@@ -273,6 +273,19 @@ def ghost_generics(request, format=None):
     CCGs
 
     """
+    # We compare the price that should have been paid for a generic,
+    # with the price actually paid. The price that should have been
+    # paid comes from the Drug Tariff; however, we can't use that data
+    # reliably because the BSA use an internal copy that doesn't match
+    # with the published version (see #1318 for an explanation).
+    #
+    # Therefore, we use the median price paid nationally as a proxy
+    # for the Drug Tariff price, which is computed and stored in the
+    # materialized view `vw__medians_for_tariff` (only contains data
+    # for current month; updated as part of the pipeline).
+    #
+    # We exclude trivial amounts of saving on the grounds these should
+    # be actionable savings.
     date = request.query_params.get('date')
     entity_code = request.query_params.get('entity_code')
     entity_type = request.query_params.get('entity_type')
@@ -291,45 +304,64 @@ def ghost_generics(request, format=None):
     params = {'date': date, 'entity_code': entity_code}
     filename = "ghost-generics-%s-%s" % (entity_code, date)
     extra_conditions = ""
-    entity_select = ' practice.code AS practice_id, practice.ccg_id AS pct,'
     if entity_type == 'practice':
         extra_conditions += '  AND practice_id = %(entity_code)s'
     elif entity_type.lower() == 'ccg':
         extra_conditions += '  AND ccg_id = %(entity_code)s'
-    source_table = 'frontend_prescription'
-    practice_join = " JOIN frontend_practice practice ON practice.code = rx.practice_id"
-    cost_field = 'net_cost'
     sql = """
         SELECT dt.date,
-           {entity_select}
-           dt.median_ppu,
-           case when rx.quantity > 0 then round((rx.{cost_field} / rx.quantity)::numeric, 4) else 0 end AS price_per_unit,
-           rx.quantity,
-           rx.presentation_code AS bnf_code,
-           product.name AS product_name,
-            {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity)  AS possible_savings
+          practice.code AS practice_id,
+          practice.ccg_id AS pct,
+          dt.median_ppu,
+          CASE
+            WHEN rx.quantity > 0
+            THEN round((rx.net_cost / rx.quantity)::numeric, 4)
+            ELSE 0
+          END AS price_per_unit,
+          rx.quantity,
+          rx.presentation_code AS bnf_code,
+          product.name AS product_name,
+            net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
+            AS possible_savings
           FROM vw__medians_for_tariff dt
             JOIN dmd_product product ON dt.product_id = product.dmdid
-            JOIN {prescribing_table} rx ON rx.processing_date = dt.date AND rx.presentation_code = product.bnf_code
-            {practice_join}
+            JOIN frontend_prescribing rx
+              ON rx.processing_date = dt.date
+              AND rx.presentation_code = product.bnf_code
+            JOIN frontend_practice practice
+              ON practice.code = rx.practice_id
         WHERE date = %(date)s {extra_conditions}
         AND
-          rx.presentation_code <> '1106000L0AAAAAA' -- lantanaprost quantities are broken in data
-        AND
-         ({cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) >= {min_delta} OR {cost_field} - (round(dt.median_ppu::numeric, 4) * rx.quantity) <= -{min_delta}) ORDER BY possible_savings DESC
+          -- lantanaprost quantities are broken in data
+          rx.presentation_code <> '1106000L0AAAAAA'
+        AND (
+         net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
+           >= {min_delta}
+        OR
+         net_ccost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
+           <= -{min_delta})
+        ORDER BY possible_savings DESC
     """.format(
-        prescribing_table=source_table,
-        practice_join=practice_join,
-        entity_select=entity_select,
-        cost_field=cost_field,
         min_delta=MIN_GHOST_GENERIC_DELTA,
         extra_conditions=extra_conditions
     )
     if group_by == 'presentation':
-        grouping = "SELECT date, pct, bnf_code, MAX(median_ppu) AS median_ppu, MAX(price_per_unit) AS price_per_unit, SUM(quantity) AS quantity, MAX(product_name) AS product_name, SUM(possible_savings) AS possible_savings FROM ({}) s GROUP BY date, pct, bnf_code"
+        grouping = """
+          SELECT
+            date, pct, bnf_code,
+            MAX(median_ppu) AS median_ppu,
+            MAX(price_per_unit) AS price_per_unit,
+            SUM(quantity) AS quantity,
+            MAX(product_name) AS product_name,
+            SUM(possible_savings) AS possible_savings
+          FROM ({}) s
+          GROUP BY date, pct, bnf_code"""
         sql = grouping.format(sql)
     elif group_by == 'all':
-        grouping = "SELECT SUM(possible_savings) AS possible_savings FROM ({}) s"
+        grouping = """
+          SELECT
+            SUM(possible_savings) AS possible_savings
+          FROM ({}) s"""
         sql = grouping.format(sql)
 
     with connection.cursor() as cursor:
