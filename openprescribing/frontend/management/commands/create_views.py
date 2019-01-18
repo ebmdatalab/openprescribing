@@ -105,7 +105,6 @@ class Command(BaseCommand):
                 # This is quite slow! up to 10 mins.
                 cursor.execute("REFRESH MATERIALIZED VIEW %s" % view_id)
 
-
     def download_and_import(self, table):
         '''Download table from storage and import into local database.
 

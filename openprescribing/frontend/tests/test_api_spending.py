@@ -668,9 +668,9 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                 expected['ccg_savings'][d['pct']][d['bnf_code']])
 
         # Single presentations which have more than one tariff price
-        # (e.g. 20 pills for £10 and 40 pills for £30) should be
-        # ignored when calculating possible savings, as we don't have
-        # enough data to know which VMPP was dispensed
+        # (e.g. 20 pills for 10 pounds and 40 pills for 30 pounds)
+        # should be ignored when calculating possible savings, as we
+        # don't have enough data to know which VMPP was dispensed
         #
         # The fixtures already created have identical price-per-unit
         # for each of their (two) tariff prices. Alter just one of
@@ -729,8 +729,10 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                         4)
                     if possible_saving <= -MIN_GHOST_GENERIC_DELTA or \
                        possible_saving >= MIN_GHOST_GENERIC_DELTA:
-                        practice_savings[practice.code][rx.presentation_code] = possible_saving
-                        ccg_savings[practice.ccg.code][rx.presentation_code] += possible_saving
+                        practice_savings[practice.code][rx.presentation_code] \
+                            = possible_saving
+                        ccg_savings[practice.ccg.code][rx.presentation_code] \
+                            += possible_saving
         return {'practice_savings': practice_savings,
                 'ccg_savings': ccg_savings,
                 'medians': presentation_medians}

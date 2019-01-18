@@ -553,7 +553,6 @@ def ccg_ghost_generics(request, code):
     return render(request, 'ghost_generics.html', context)
 
 
-
 ##################################################
 # Tariffs
 ##################################################
