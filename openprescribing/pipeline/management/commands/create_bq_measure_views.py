@@ -8,7 +8,7 @@ from google.cloud.exceptions import Conflict
 
 
 class Command(BaseCommand):
-    help = 'Creates, if necessary, any BQ views that measures depend on'
+    help = 'Creates or updates all BQ views that measures depend on'
 
     def handle(self, *args, **kwargs):
         base_path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
