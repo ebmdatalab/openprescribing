@@ -1,3 +1,8 @@
+-- This SQL is checked in to the git repo at measure_sql/practice_data_all_low_priority.sql.
+-- Do not make changes directly in BQ!  Instead, change the version in the repo and run
+--
+--     ./manage.py create_bq_measure_views
+
 SELECT
   TIMESTAMP(month) AS month,
   practice_id AS practice,

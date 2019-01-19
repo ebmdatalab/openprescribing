@@ -1,3 +1,8 @@
+-- This SQL is checked in to the git repo at measure_sql/pregabalin_total_mg.sql.
+-- Do not make changes directly in BQ!  Instead, change the version in the repo and run
+--
+--     ./manage.py create_bq_measure_views
+
 SELECT
   month,
   practice,

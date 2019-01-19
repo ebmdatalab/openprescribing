@@ -28,7 +28,7 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {hscic}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
   "numerator_where": [
     "(",
     " (p.bnf_code LIKE '210109006%' OR p.bnf_code LIKE '210109007%' OR p.bnf_code LIKE '210109008%' OR p.bnf_code LIKE '210109009%')",

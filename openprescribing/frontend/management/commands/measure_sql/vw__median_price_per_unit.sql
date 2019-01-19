@@ -1,3 +1,8 @@
+-- This SQL is checked in to the git repo at measure_sql/vw__median_price_per_unit.sql.
+-- Do not make changes directly in BQ!  Instead, change the version in the repo and run
+--
+--     ./manage.py create_bq_measure_views
+
 WITH
   prices_per_unit AS (
   SELECT
