@@ -20,7 +20,6 @@ import re
 import tempfile
 
 from dateutil.relativedelta import relativedelta
-from google.cloud.exceptions import BadRequest
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
@@ -210,9 +209,12 @@ def arrays_to_strings(measure_json):
     """
     fields_to_convert = [
         'title', 'description', 'why_it_matters', 'numerator_columns',
-        'numerator_where', 'denominator_columns', 'denominator_where']
+        'numerator_where', 'denominator_columns', 'denominator_where',
+        'numerator_bnf_codes_query']
 
     for field in fields_to_convert:
+        if field not in measure_json:
+            continue
         if isinstance(measure_json[field], list):
             measure_json[field] = ' '.join(measure_json[field])
     return measure_json
@@ -250,6 +252,7 @@ def create_or_update_measure(measure_id):
     measure.is_cost_based = v['is_cost_based']
     measure.is_percentage = v['is_percentage']
     measure.low_is_good = v['low_is_good']
+    measure.numerator_bnf_codes_query = v.get('numerator_bnf_codes_query')
     measure.numerator_bnf_codes = get_numerator_bnf_codes(measure)
     measure.save()
 
@@ -257,34 +260,45 @@ def create_or_update_measure(measure_id):
 
 
 def get_numerator_bnf_codes(measure):
-    # It would be nice if we could do:
+    # For most measures, we are able to work out which presentations contribute
+    # to variation in the numerator by constructing a query using the
+    # numerator_from and numerator_where attributes of the measure.  In a
+    # handful of cases this cannot be done, and the creator of the measure must
+    # provide a query (numerator_bnf_codes_query) that can be used for this.
     #
-    #     SELECT normalised_prescribing_standard.bnf_code FROM ...
+    # For the lpzomnibus query, numerator_bnf_codes_query was produced with
+    # help from:
     #
-    # but BQ doesn't let you refer to an aliased table by its original name, so
-    # we have to mess around like this.
-    if '{hscic}.normalised_prescribing_standard p' in measure.numerator_from:
-        col_name = 'p.bnf_code'
+    # >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
+    # ...   print '"' + m.numerator_where.strip() + ' OR",'
+
+    if measure.numerator_bnf_codes_query is not None:
+        sql = measure.numerator_bnf_codes_query
+
     else:
-        col_name = 'bnf_code'
+        # It would be nice if we could do:
+        #
+        #     SELECT normalised_prescribing_standard.bnf_code FROM ...
+        #
+        # but BQ doesn't let you refer to an aliased table by its original
+        # name, so we have to mess around like this.
+        if '{hscic}.normalised_prescribing_standard p' in measure.numerator_from:
+            col_name = 'p.bnf_code'
+        else:
+            col_name = 'bnf_code'
 
-    sql = '''
-    SELECT DISTINCT {col_name}
-    FROM {numerator_from}
-    WHERE {numerator_where}
-    ORDER BY bnf_code
-    '''.format(
-        col_name=col_name,
-        numerator_from=measure.numerator_from,
-        numerator_where=measure.numerator_where,
-    )
+        sql = '''
+        SELECT DISTINCT {col_name}
+        FROM {numerator_from}
+        WHERE {numerator_where}
+        ORDER BY bnf_code
+        '''.format(
+            col_name=col_name,
+            numerator_from=measure.numerator_from,
+            numerator_where=measure.numerator_where,
+        )
 
-    try:
-        results = Client().query(sql)
-    except BadRequest as e:
-        print(e)
-        return []
-
+    results = Client().query(sql)
     return [row[0] for row in results.rows]
 
 
