@@ -114,8 +114,9 @@ def run_end_to_end():
     # We expect one MeasureGlobal per measure per month.
     assert_count_equal(num_measures, MeasureGlobal)
 
-    # We expect one MeasureValue for each CCG or Practice per measure per month
-    assert_count_equal(6 * num_measures, MeasureValue)
+    # We expect one MeasureValue for each organisation per measure per month
+    # (There are 4 practices, 2 CCGs, 2 STPs, and 2 regional teams).
+    assert_count_equal(10 * num_measures, MeasureValue)
 
     # We expect one statistic per CCG per month
     assert_raw_count_equal(2, 'vw__ccgstatistics')
@@ -149,8 +150,8 @@ def run_end_to_end():
     # We expect one MeasureGlobal per measure per month
     assert_count_equal(2 * num_measures, MeasureGlobal)
 
-    # We expect one MeasureValue for each CCG or Practice per measure per month
-    assert_count_equal(12 * num_measures, MeasureValue)
+    # We expect one MeasureValue for each organisation per measure per month
+    assert_count_equal(20 * num_measures, MeasureValue)
 
     # We expect one statistic per CCG per month
     assert_raw_count_equal(4, 'vw__ccgstatistics')
