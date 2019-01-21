@@ -13,7 +13,9 @@ class Command(BaseCommand):
 
         gcbq_client = Client().gcbq_client
 
-        for dataset_list_item in gcbq_client.list_datasets():
+        datasets = list(gcbq_client.list_datasets())
+
+        for dataset_list_item in datasets:
             dataset_ref = dataset_list_item.reference
             tables = list(gcbq_client.list_tables(dataset_ref))
             if len(tables) == 0:
