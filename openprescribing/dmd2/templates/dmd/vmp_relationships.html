@@ -1,30 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>VMP {{ vmp.id }} relationships</h1>
 
+<style>
+  #amp-table td, #amp-table th { border: none; }
+  #amp-table .amp-header { border-right: solid black 2px; }
+  #amp-table .pp-header { border-bottom: solid black 2px; }
+  #amp-table th { font-weight: normal; }
+  .pp-header, .amp-header { font-style: italic; background: #eee; }
+  .vertical { writing-mode: vertical-lr; }
+
+  /* shadows to make product pages appear sunken */
+  /* horizontal line */
+  .amp-first-row { box-shadow: 0px 7px 10px -5px #555 inset; }
+  /* vertical line */
+  .vmpp-first-col { box-shadow: 7px 0px 10px -5px #555 inset; }
+  /* vertical(for top left) */
+  .amp-first-row.vmpp-first-col { box-shadow: 7px 7px 10px -5px #555 inset; }
+
+}
+</style>
+
+<h1>VMP {{ vmp.id }} relationships</h1>
+<p>This page shows all the different ways that the <strong>generic product</strong> <span style="background: {{ vmp_colour }}">{{vmp.nm}}</span> can be prescribed.  The generic form is always in <span style="background: {{ vmp_colour }}">this colour</span>. Other BNF codes for the same product (that is, for branded versions or generic product packs) are indicated with other colours.</p>
 <table class="table table-condensed">
   <tr>
-    <th>Name</th>
+    <th>DM+D name of generic product</th>
     <td>{{ vmp.nm }}</td>
     {% if vmp_presentation %}
   </tr>
   <tr bgcolor="{{ vmp_colour }}">
-    <th>Presentation</th>
+    <th>BNF Name of generic product</th>
     <td>{{ vmp_presentation.name }}</td>
   </tr>
   <tr bgcolor="{{ vmp_colour }}">
-    <th>BNF Code</th>
+    <th>BNF Code of generic product</th>
     <td>{{ vmp_presentation.bnf_code }}</td>
   </tr>
     {% else %}
   <tr>
-    <th>Presentation</th>
+    <th>BNF Code of generic product</th>
     <td>None</td>
     {% endif %}
   </tr>
 </table>
 
-<h2>Presentations</h2>
+<h2>Related BNF codes</h2>
 {% if presentations %}
 <table class="table table-condensed">
   {% for presentation in presentations %}
@@ -35,14 +55,23 @@
   {% endfor %}
 </table>
 {% else %}
-<p>There are no matching presentations.</p>
+<p>There are no matching BNF codes.</p>
 {% endif %}
 
-<h2>VMPPs, AMPs, AMPPs</h2>
-<table class="table table-condensed">
+<h2>Related VMPPs, AMPs, AMPPs</h2>
+<p>This table shows how the BNF codes above relate to each other, and to their DM+D equivalents.  Cells are coloured by BNF code; cells without colors are products in DM+D that don't have a corresponding BNF code (and have therefore never appeared in dispensing data).</p>
+<table class="table table-condensed" id="amp-table">
+  <tr>
+    <td></td>
+    <td></td>
+    <th colspan="{{ vmpp_cols }}" class="pp-header">
+      generic product packs
+    </th>
+  </tr>
   {% for row in table %}
   {% if forloop.counter0 == 0 %}
   <tr>
+    <th></th>
     {% for cell in row %}
     {% if cell %}
     <th bgcolor="{{ cell.colour }}">
@@ -55,6 +84,7 @@
   </tr>
   {% else %}
   <tr>
+    {% if forloop.counter0 == 1 %}<th class="amp-header"   rowspan="{{ amp_rows }}"><div class="vertical">AMP/brand/supplier</div></th> {% endif %}
     {% for cell in row %}
     {% if forloop.counter0 == 0 %}
     <th bgcolor="{{ cell.colour }}">
@@ -62,7 +92,7 @@
     </th>
     {% else %}
     {% if cell %}
-    <td bgcolor="{{ cell.colour }}">
+    <td bgcolor="{{ cell.colour }}" class="{% if forloop.counter0 == 1 %}vmpp-first-col{% endif %}{% if forloop.parentloop.counter0 == 1 %} amp-first-row{% endif %}">
       {{ cell.obj.nm }}
     </td>
     {% else %}
