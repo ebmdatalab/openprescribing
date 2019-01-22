@@ -427,6 +427,9 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
         exp_text = u'Performance: If all CCGs in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(cost_saving_50), _humanize(cost_saving_10))
         self.assertEqual(perf_element.text, exp_text)
+        # The performance summary should be hidden for All England
+        perf_summary_element = self.find_by_xpath("//*[@id='perfsummary']")
+        self.assertEqual(perf_summary_element.text.strip(), '')
 
     def test_explanation_for_practice(self):
         # This test verifies that the explanation for a practice's performance
