@@ -144,7 +144,11 @@
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Ghost-branded generics</h3>
-      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands.  {{ entity.cased_name }} may be paying at least <strong>£<span id="ghost-total">-</span></strong> more than necessary this month.  See a list of generics affected <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
+      <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands.
+      <span id="ghost-total-text" class="invisible">
+        {{ entity.cased_name }} <span id="ghost-total"></span>.
+        See a list of generics that may be affected <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
+      </span>
     </div>
   </div>
   <div class="col-md-6">
@@ -205,9 +209,18 @@
   $.getJSON(
     "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"Y-m-d"}}&entity_type={{ entity_type }}&group_by=all&format=json", function(data) {
     function numberWithCommas(x) {
-      return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    $('#ghost-total').html(numberWithCommas(data[0]['possible_savings']));
+    var savings = data[0]['possible_savings'];
+    var formatted_savings = numberWithCommas(savings);
+    if (savings >= 20) {
+       msg = "may be paying at least <strong>£" + formatted_savings + "</strong> more than necessary this month";
+    } else  {
+       msg = "is not significantly affected by the problem this month";
+    }
+    $('#ghost-total').html(msg);
+    $('#ghost-total-text').css('visibility', 'visible');
+
   });
 </script>
 {{ measure_options|json_script:"measure-options" }}
