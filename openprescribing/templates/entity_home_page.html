@@ -78,6 +78,24 @@
   </div>
 </div>
 
+<div class="row" >
+  <div class="col-md-12">
+    We also have measures for
+    <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriorityconsultation">
+      items currently under consultation
+    </a>
+    for inclusion on the low-value list,
+    plus you can browse all of our measures by topic:
+    <small class="js-hide-long-list" data-max-items="7">
+      {% for tag, tag_details in measure_tags %}
+        <a href="{% url measures_for_one_entity_url entity.code %}?tags={{ tag }}">
+          {{ tag_details.name }}{% if not forloop.last %},{% endif %}
+        </a>
+      {% endfor %}
+    </small>
+  </div>
+</div>
+
 <hr>
 
 <div class="row" >

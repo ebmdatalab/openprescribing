@@ -21,8 +21,28 @@ domready(function() {
     e.preventDefault();
     window.location.href='/feedback/?from_url=' + encodeURIComponent(window.location.href);
   });
+
   $('.js-submit-on-change').on('change', function() {
     this.form.submit();
   });
+
   $('.bigtext').bigtext({resize: true});
+
+  $('.js-hide-long-list').each(function() {
+    var $container = $(this);
+    var maxItems = $container.data('max-items') || 10;
+    var $elementsToHide = $container.children().slice(maxItems);
+    if ( ! $elementsToHide.length) return;
+    var $button = $(
+      '<button type="button" class="btn btn-default btn-xs">'+
+      '  Show all &hellip;'+
+      '</button>'
+    );
+    $button.on('click', function() {
+      $button.remove();
+      $elementsToHide.css('display', '');
+    });
+    $elementsToHide.css('display', 'none');
+    $button.appendTo($container);
+  });
 });
