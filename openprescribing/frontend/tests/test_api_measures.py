@@ -9,18 +9,6 @@ from frontend.models import Measure
 from frontend.models import PCT
 
 
-def _get_test_measure():
-    return {
-        "is_cost_based": True,
-        "numerator_columns": ["SUM(quantity) AS numerator, "],
-        "numerator_from": "{hscic}.normalised_prescribing_standard",
-        "numerator_where": ["(bnf_code LIKE '0205%')"],
-        "denominator_columns": ["SUM(quantity) AS denominator"],
-        "denominator_from": "",
-        "denominator_where": ["(bnf_code LIKE '02%')"]
-    }
-
-
 class TestAPIMeasureViews(TestCase):
     fixtures = ['one_month_of_measures']
     api_prefix = '/api/1.0'
