@@ -180,7 +180,7 @@ var utils = {
           }
         }
       });
-      if (options.rollUpBy === 'measure_id') {
+      if (options.rollUpBy === 'measure_id' && ! options.aggregate) {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
         perf.costSavings += options.orgType;
         perf.costSavings += ' had prescribed at the median ratio or better ' +
