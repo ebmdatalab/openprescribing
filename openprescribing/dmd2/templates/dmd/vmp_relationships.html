@@ -96,7 +96,7 @@
       {{ cell.obj.nm }}
     </td>
     {% else %}
-    <td></td>
+    <td class="{% if forloop.counter0 == 1 %}vmpp-first-col{% endif %}{% if forloop.parentloop.counter0 == 1 %} amp-first-row{% endif %}">n/a</td>
     {% endif %}
     {% endif %}
     {% endfor %}
