@@ -1,3 +1,5 @@
+import re
+
 from dateutil.relativedelta import relativedelta
 
 from rest_framework.decorators import api_view
@@ -100,24 +102,6 @@ def measure_numerators_by_org(request, format=None):
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_can_be_queried():
-        # Awkwardly, because the column names in the prescriptions table
-        # are different from those in bigquery (for which the measure
-        # definitions are defined), we have to rename them (e.g. `items` ->
-        # `total_items`)
-        numerator_selector = m.columns_for_select('numerator').replace(
-            'items', 'total_items')
-        numerator_where = m.numerator_where.replace(
-            'bnf_code', 'presentation_code'
-        ).replace(
-            'bnf_name', 'pn.name'
-        ).replace(
-            'month', 'processing_date'
-        ).replace(
-            # This is required because the SQL contains %(var)s, which is used
-            # for parameter interpolation
-            '%', '%%'
-        )
-
         if org_selector in ['stp_id', 'regional_team_id']:
             extra_join = '''
             INNER JOIN frontend_pct
@@ -125,6 +109,16 @@ def measure_numerators_by_org(request, format=None):
             '''
         else:
             extra_join = ''
+
+        match = re.match(
+            'SUM\((items|quantity|actual_cost)\) AS numerator',
+            m.numerator_columns
+        )
+
+        if match:
+            order_col = match.groups()[0].replace('items', 'total_items')
+        else:
+            order_col = 'total_items'
 
         # The redundancy in the following column names is so we can
         # support various flavours of `WHERE` clause from the measure
@@ -148,8 +142,7 @@ def measure_numerators_by_org(request, format=None):
               COALESCE(nice_names.name, pn.name) AS presentation_name,
               SUM(total_items) AS total_items,
               SUM(actual_cost) AS cost,
-              SUM(quantity) AS quantity,
-              {numerator_selector}
+              SUM(quantity) AS quantity
             FROM
               frontend_prescription p
             LEFT JOIN
@@ -163,19 +156,20 @@ def measure_numerators_by_org(request, format=None):
               {org_selector} = %(org)s
               AND
               processing_date >= %(three_months_ago)s
-              AND ({numerator_where})
+              AND
+              pn.bnf_code = ANY(%(numerator_bnf_codes)s)
             GROUP BY
               {org_selector}, presentation_code, nice_names.name, pn.name
-            ORDER BY numerator DESC
+            ORDER BY {order_col} DESC
             LIMIT 50
         '''.format(
              org_selector=org_selector,
-             numerator_selector=numerator_selector,
              three_months_ago=three_months_ago,
-             numerator_where=numerator_where,
              extra_join=extra_join,
+             order_col=order_col,
         )
         params = {
+            'numerator_bnf_codes': m.numerator_bnf_codes,
             'org': org,
             'three_months_ago': three_months_ago,
         }

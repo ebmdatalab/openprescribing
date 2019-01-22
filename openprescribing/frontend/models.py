@@ -519,19 +519,14 @@ class Measure(models.Model):
         return self.name
 
     def numerator_can_be_queried(self):
-        """Is it possible for the numerators for a given measure to be
-        rewritten such that they can query the prescriptions table
-        directly?
+        """Does the numerator aggregate prescriptions by presentation?
 
-        For now, this means we query the main prescriptions table
-        only; an additional consequence is that we can't support
-        drilling down on JOINed data (specifically, this currently
-        means ktt9_uti_antibiotics)
-
+        While it is currently the case that all numerators aggregate
+        prescriptions by presentation, this may not continue to be the case.
+        For instance, a measure of number of GPs per 1000 patients would not do
+        so.
         """
-        table_there = 'normalised_prescribing_standard' in self.numerator_from
-        join_not_there = 'JOIN' not in self.numerator_from
-        return table_there and join_not_there
+        return True
 
     def columns_for_select(self, num_or_denom=None):
         """Parse measures definition for SELECT columns; add
