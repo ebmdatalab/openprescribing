@@ -518,7 +518,7 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 
 
 ##################################################
-# Chost generics
+# Ghost generics
 ##################################################
 
 @handle_bad_request
