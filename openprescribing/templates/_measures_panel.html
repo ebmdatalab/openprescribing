@@ -28,6 +28,10 @@
     <div id="measure_{{ chartId }}" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 chart" data-id="{{ chartId }}" data-costsaving="{{ costSaving50th }}">
       <div class="panel panel-info">
         <div class="panel-heading">
+          <span class="pull-right">
+            <a class="js-shareable-link" href="#{{ chartId }}"><span class="glyphicon glyphicon-link"></span> Link to chart</a>
+            <input type="text" class="form-control input-sm" readonly style="display: none; margin-top: -6px; right: -10px; position: relative; background-color: #fff;">
+          </span>
           {{# if chartTitleUrl }}
             <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
           {{else}}
