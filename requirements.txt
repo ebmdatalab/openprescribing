@@ -72,7 +72,7 @@ pbr==4.2.0                # via mock
 pip-tools==3.2.0
 premailer==3.2.0
 protobuf==3.4.0           # via google-api-core, googleapis-common-protos
-psycopg2-binary==2.7.6.1
+psycopg2-binary==2.7.7
 pyasn1-modules==0.2.1     # via google-auth
 pyasn1==0.4.2             # via paramiko, pyasn1-modules, rsa
 pycodestyle==2.4.0        # via flake8
