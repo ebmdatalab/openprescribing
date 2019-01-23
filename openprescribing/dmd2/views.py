@@ -194,6 +194,8 @@ def vmp_relationships_view(request, vmp_id):
 
     ctx = {
         'vmp': vmp,
+        'num_vmpps': len(vmpps),
+        'num_amps': len(amps),
         'table': table,
         'presentations': presentations,
         'vmp_presentation': vmp_presentation,
