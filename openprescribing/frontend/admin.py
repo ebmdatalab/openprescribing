@@ -66,6 +66,7 @@ class SearchBookmarkAdmin(ImportExportModelAdmin):
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
     readonly_fields = ('dashboard_link',)
+    search_fields = ('user__email',)
     resource_class = SearchBookmarkResource
 
     def dashboard_link(self, obj):
@@ -84,6 +85,7 @@ class OrgBookmarkAdmin(ImportExportModelAdmin):
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
     readonly_fields = ('dashboard_link',)
+    search_fields = ('user__email',)
     resource_class = OrgBookmarkResource
 
     def dashboard_link(self, obj):
