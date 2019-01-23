@@ -946,6 +946,11 @@ def _home_page_context_for_entity(request, entity):
         parent_org
     )
 
+    # This will blow up loudly if we remove this tag, at which point we should
+    # also remove the corresponding link from the entity_home_page.html
+    # template
+    assert 'lowpriorityconsultation' in MEASURE_TAGS
+
     return {
         'measure': extreme_measure,
         'measures_count': measures_count,
@@ -964,6 +969,10 @@ def _home_page_context_for_entity(request, entity):
         'date': ppu_date,
         'signed_up_for_alert': _signed_up_for_alert(request, entity),
         'measure_options': measure_options,
+        'measure_tags': [
+            (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
+            if k != 'core'
+        ]
     }
 
 
