@@ -21,7 +21,7 @@
 </style>
 
 <h1>VMP {{ vmp.id }} relationships</h1>
-<p>This page shows all the different ways that the <strong>generic product</strong> <span style="background: {{ vmp_colour }}">{{vmp.nm}}</span> can be prescribed.  The generic form is always in <span style="background: {{ vmp_colour }}">this colour</span>. Other BNF codes for the same product (that is, for branded versions or generic product packs) are indicated with other colours.</p>
+<p>This page shows all the different ways that the <strong>VMP</strong> (usually a generic product) <span style="background: {{ vmp_colour }}">{{vmp.nm}}</span> can be prescribed.  The VMP form is always in <span style="background: {{ vmp_colour }}">this colour</span>. Other BNF codes for the same product (viz. for branded versions, or generic product packs) are indicated with other colours.</p>
 <table class="table table-condensed">
   <tr>
     <th>DM+D name of generic product</th>
@@ -64,8 +64,8 @@
   <tr>
     <td></td>
     <td></td>
-    <th colspan="{{ vmpp_cols }}" class="pp-header">
-      generic product packs
+    <th colspan="{{ num_vmpps }}" class="pp-header">
+      VMPP
     </th>
   </tr>
   {% for row in table %}
@@ -84,7 +84,7 @@
   </tr>
   {% else %}
   <tr>
-    {% if forloop.counter0 == 1 %}<th class="amp-header"   rowspan="{{ amp_rows }}"><div class="vertical">AMP/brand/supplier</div></th> {% endif %}
+    {% if forloop.counter0 == 1 %}<th class="amp-header"   rowspan="{{ num_amps }}"><div class="vertical">AMP</div></th> {% endif %}
     {% for cell in row %}
     {% if forloop.counter0 == 0 %}
     <th bgcolor="{{ cell.colour }}">
