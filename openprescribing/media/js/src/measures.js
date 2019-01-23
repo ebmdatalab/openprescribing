@@ -170,13 +170,13 @@ var measures = {
   setUpSortGraphs: function() {
     var _this = this;
     var chartsByPercentile = $(_this.el.chart);
-    var chartsBySaving = $(chartsByPercentile).filter(function(a) {
-      return $(this).data('costsaving') !== 0;
+    var nonCostSavingCharts = $(chartsByPercentile).filter(function(a) {
+      return ! $(this).data('costsaving');
     });
-    chartsBySaving.sort(function(a, b) {
+    chartsBySaving = $(_this.el.chart).sort(function(a, b) {
       return $(b).data('costsaving') - $(a).data('costsaving');
     });
-    if (chartsBySaving.length === 0) {
+    if (nonCostSavingCharts.length === chartsByPercentile.length) {
       chartsBySaving = chartsBySaving.add(
         $(_this.el.noCostSavingWarning).clone().removeClass('hidden')
       );
@@ -185,10 +185,12 @@ var measures = {
       $(this).addClass('active').siblings().removeClass('active');
       if ($(this).data('orderby') === 'savings') {
         $(_this.el.charts).fadeOut(function() {
+          nonCostSavingCharts.hide();
           $(_this.el.charts).html(chartsBySaving).fadeIn();
         });
       } else {
         $(_this.el.charts).fadeOut(function() {
+          nonCostSavingCharts.show();
           $(_this.el.charts).html(chartsByPercentile).fadeIn();
         });
       }
