@@ -110,6 +110,11 @@ def measure_numerators_by_org(request, format=None):
         else:
             extra_join = ''
 
+        # For measures whose numerator sums one of the columns in the
+        # prescribing table, we order the presentations by that column.
+        # For other measures, the columns used to calculate the numerator is
+        # not available here (it's in BQ) so we order by total_items, which is
+        # the best we can do.
         match = re.match(
             'SUM\((items|quantity|actual_cost)\) AS numerator',
             m.numerator_columns
