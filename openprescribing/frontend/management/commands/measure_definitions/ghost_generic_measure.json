@@ -4,7 +4,7 @@
     "Ghost-generic excess spend as a percentage of all generic spending"
   ],
   "description": [
-    "Ghost-branded generics are generic items which have unintentionally been prescribed with a manufacturer name. For example, Naratriptan 2.5mg Tablets is the correct generic name; a ghost-branded version is Naratriptan 2.5mg Tablets (Teva UK Limited). A breakdown of which products have bee prescribed in this way is linked to from every CCG and Practice dashboard page.  <a href='https://ebmdatalab.net/ghost-branded-generics-a-new-dashboard-on-openprescribing/'>Read more on our blog</a>."
+    "Ghost-branded generics are generic items which have unintentionally been prescribed with a manufacturer name. For example, Naratriptan 2.5mg Tablets is the correct generic name; a ghost-branded version is Naratriptan 2.5mg Tablets (Teva UK Limited). A list of products which have been prescribed as ghost-generics is available on every CCG and Practice dashboard page.  <a href='https://ebmdatalab.net/ghost-branded-generics-a-new-dashboard-on-openprescribing/'>Read more on our blog</a>."
   ],
   "why_it_matters": [
     "When an item is prescribed generically, the dispenser is reimbursed at the price in the Drug Tariff; but when a manufacturer is stated, the reimbursement price is usually more expensive."
