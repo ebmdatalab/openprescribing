@@ -23,7 +23,7 @@
   ],
   "numerator_from": "{measures}.vw__ghost_generic_measure p",
   "numerator_where": [
-    "(possible_savings >= 5 OR possible_savings <=-5)"
+    "(possible_savings >= 2 OR possible_savings <=-2)"
   ],
   "denominator_columns": [
     "SUM(net_cost) AS denominator, "
