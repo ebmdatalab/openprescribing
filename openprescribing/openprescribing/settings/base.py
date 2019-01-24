@@ -162,7 +162,7 @@ TEMPLATES = [
 
 # MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'corsheaders.middleware.CorsMiddleware',
     # Default Django middleware.
     'django.middleware.common.CommonMiddleware',
@@ -173,7 +173,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'pipeline.middleware.ImportWarningMiddleware',
+    'pipeline.middleware.import_warning_middleware',
 )
 # END MIDDLEWARE CONFIGURATION
 
