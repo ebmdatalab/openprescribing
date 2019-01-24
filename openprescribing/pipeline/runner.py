@@ -442,6 +442,13 @@ def run_all(year, month, under_test=False):
             continue
         run_task(task, year, month, last_imported=last_imported)
 
+    TaskLog.objects.create(
+        year=year,
+        month=month,
+        task_name='fetch_and_import',
+        status=TaskLog.SUCCESSFUL,
+    )
+
     activity = random.choice([
         'Put the kettle on',
         'Have a glass of wine',
@@ -461,3 +468,20 @@ You should now:
 
     if not under_test:
         notify_slack(msg)
+
+
+def in_progress():
+    try:
+        current_year, current_month = TaskLog.objects.\
+                                        values_list('year', 'month').\
+                                        distinct().\
+                                        order_by('-year', '-month')[0]
+    except IndexError:
+        # In development there might be no TaskLog objects.
+        return False
+
+    return not TaskLog.objects.filter(
+        year=current_year,
+        month=current_month,
+        task_name='fetch_and_import',
+    ).exists()
