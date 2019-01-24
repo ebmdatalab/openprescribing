@@ -7,9 +7,9 @@ WITH
     DISTINCT date,
     product
   FROM
-    ebmdatalab.dmd.tariffprice dt
+    {project}.{dmd}.tariffprice dt
   INNER JOIN
-    ebmdatalab.dmd.vmpp vmpp
+    {project}.{dmd}.vmpp vmpp
   ON
     dt.vmpp = vmpp.vppid
   GROUP BY
@@ -27,9 +27,9 @@ WITH
     product.bnf_code,
     dt.median_price_per_unit
   FROM
-    `ebmdatalab.measures.vw__median_price_per_unit` dt
+    `{project}.{measures}.vw__median_price_per_unit` dt
   INNER JOIN
-    `ebmdatalab.dmd.product` product
+    `{project}.{dmd}.product` product
   ON
     product.bnf_code = dt.bnf_code
   INNER JOIN
@@ -53,7 +53,7 @@ SELECT
 FROM
   dt_prices dt
 JOIN
-  ebmdatalab.hscic.normalised_prescribing_standard rx
+  {project}.{hscic}.normalised_prescribing_standard rx
 ON
   rx.month = dt.date
   AND rx.bnf_code = dt.bnf_code
