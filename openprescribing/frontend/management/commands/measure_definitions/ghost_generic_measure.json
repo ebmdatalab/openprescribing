@@ -1,15 +1,15 @@
 {
   "name": "Ghost-branded generic excess spend",
   "title": [
-    "Ghost-generic excess spend as a percentage of all generic spending"
+    "Ghost-branded generic excess spend as a percentage of all generic spending"
   ],
   "description": [
-    "Ghost-branded generics are items when the prescription incorrectly includes a manufacturer name, leading to unecessary excess cost.   <a href='https://ebmdatalab.net/ghost-branded-generics-a-new-dashboard-on-openprescribing/'>Read more on our blog</a>."
+    "Excess spend on ghost-branded generics (<a href='https://ebmdatalab.net/ghost-branded-generics-a-new-dashboard-on-openprescribing/'>more info</a>) as a percentage of all spending on generics"
   ],
   "why_it_matters": [
     "When an item is prescribed generically, the dispenser is reimbursed at the price in the Drug Tariff; but when a manufacturer is stated, the reimbursement price is usually more expensive. A list of products which have been prescribed as ghost-generics is available on every CCG and Practice dashboard page. "
   ],
-  "numerator_short": "Ghost-generic excess spending",
+  "numerator_short": "Ghost-branded generic excess spending",
   "denominator_short": "All generic spending",
   "url": null,
   "is_percentage": true,
