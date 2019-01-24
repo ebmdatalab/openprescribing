@@ -60,6 +60,4 @@ ON
 WHERE
   -- lantanaprost quantities are broken in data
   rx.bnf_code <> '1106000L0AAAAAA'
-  -- discount trivial savings / costs
-  AND ( net_cost - (ROUND(dt.median_price_per_unit, 4) * rx.quantity) >= 5
-    OR net_cost - (ROUND(dt.median_price_per_unit, 4) * rx.quantity) <= -5)
+  -- trivial savings / costs are discounted in the measure definition
