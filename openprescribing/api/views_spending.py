@@ -77,6 +77,18 @@ def _build_conditions_and_patterns(code, focus):
     return conditions, patterns
 
 
+def _get_org_or_404(org_code, org_type=None):
+    if not org_type and org_code:
+        org_type = 'ccg' if len(org_code) == 3 else 'practice'
+    if org_type.lower() == 'ccg':
+        org = get_object_or_404(PCT, pk=org_code)
+    elif org_type == 'practice':
+        org = get_object_or_404(Practice, pk=org_code)
+    else:
+        raise ValueError(org_type)
+    return org
+
+
 @api_view(['GET'])
 def bubble(request, format=None):
     """Returns data relating to price-per-unit, in a format suitable for
@@ -191,8 +203,6 @@ def price_per_unit(request, format=None):
     date = request.query_params.get('date')
     bnf_code = request.query_params.get('bnf_code')
     aggregate = bool(request.query_params.get('aggregate'))
-    if not entity_type and entity_code:
-        entity_type = 'CCG' if len(entity_code) == 3 else 'practice'
     if not date:
         raise NotValid("You must supply a date")
     if not (entity_code or bnf_code or aggregate):
@@ -210,14 +220,14 @@ def price_per_unit(request, format=None):
         filename += "-%s" % bnf_code
 
     if entity_code:
+        entity = _get_org_or_404(entity_code, entity_type)
         params['entity_code'] = entity_code
-        if entity_type == 'CCG':
-            get_object_or_404(PCT, pk=entity_code)
-        elif entity_type == 'practice':
-            get_object_or_404(Practice, pk=entity_code)
-        else:
-            raise ValueError(entity_type)
         filename += "-%s" % entity_code
+        if not entity_type:
+            if isinstance(entity, PCT):
+                entity_type = 'CCG'
+            else:
+                entity_type = 'practice'
 
     extra_conditions = ""
 
@@ -226,7 +236,7 @@ def price_per_unit(request, format=None):
         AND {ppusavings_table}.bnf_code = %(bnf_code)s'''
 
     if entity_code:
-        if entity_type == 'practice':
+        if isinstance(entity, Practice):
             extra_conditions += '''
         AND {ppusavings_table}.practice_id = %(entity_code)s'''
         else:
@@ -292,24 +302,19 @@ def ghost_generics(request, format=None):
     entity_code = request.query_params.get('entity_code')
     entity_type = request.query_params.get('entity_type')
     group_by = request.query_params.get('group_by')
-    if entity_type.lower() == 'ccg':
-        get_object_or_404(PCT, pk=entity_code)
-    elif entity_type == 'practice':
-        get_object_or_404(Practice, pk=entity_code)
-    else:
-        raise ValueError(entity_type)
+    entity = _get_org_or_404(entity_code, org_type=entity_type)
     if not date:
         raise NotValid("You must supply a date")
-    if not entity_type and entity_code:
-        entity_type = 'ccg' if len(entity_code) == 3 else 'practice'
 
     params = {'date': date, 'entity_code': entity_code}
     filename = "ghost-generics-%s-%s" % (entity_code, date)
     extra_conditions = ""
-    if entity_type == 'practice':
+    if isinstance(entity, Practice):
         extra_conditions += '  AND practice_id = %(entity_code)s'
-    elif entity_type.lower() == 'ccg':
+    elif isinstance(entity, PCT):
         extra_conditions += '  AND ccg_id = %(entity_code)s'
+    else:
+        assert False, "Not implemented for {}".format(entity)
     sql = """
         SELECT dt.date,
           practice.code AS practice_id,
