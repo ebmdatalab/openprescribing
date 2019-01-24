@@ -6,7 +6,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 
 from pipeline.models import TaskLog
-from pipeline.runner import load_tasks, run_task
+from pipeline.runner import load_tasks, run_task, in_progress
 
 
 class PipelineTests(TestCase):
@@ -402,6 +402,25 @@ The last imported data can be found at:
             task_name='fetch_source_b'
         )
         self.assertEqual(2, logs.count())
+
+    def test_in_progress_when_not_in_progress(self):
+        TaskLog.objects.create(year=2017, month=7, task_name='task1')
+        TaskLog.objects.create(year=2017, month=7, task_name='task2')
+        TaskLog.objects.create(year=2017, month=7, task_name='fetch_and_import')
+        TaskLog.objects.create(year=2017, month=8, task_name='task1')
+        TaskLog.objects.create(year=2017, month=8, task_name='task2')
+        TaskLog.objects.create(year=2017, month=8, task_name='fetch_and_import')
+        self.assertFalse(in_progress())
+
+    def test_in_progress_when_in_progress(self):
+        TaskLog.objects.create(year=2017, month=7, task_name='task1')
+        TaskLog.objects.create(year=2017, month=7, task_name='task2')
+        TaskLog.objects.create(year=2017, month=7, task_name='fetch_and_import')
+        TaskLog.objects.create(year=2017, month=8, task_name='task1')
+        TaskLog.objects.create(year=2017, month=8, task_name='task2')
+        TaskLog.objects.create(year=2017, month=8, task_name='fetch_and_import')
+        TaskLog.objects.create(year=2017, month=9, task_name='task1')
+        self.assertTrue(in_progress())
 
 
 def build_path(source_id, year_and_month, filename):
