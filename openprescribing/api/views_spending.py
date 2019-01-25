@@ -316,38 +316,30 @@ def ghost_generics(request, format=None):
     else:
         assert False, "Not implemented for {}".format(entity)
     sql = """
-        SELECT dt.date,
-          practice.code AS practice_id,
-          practice.ccg_id AS pct,
-          dt.median_ppu,
-          CASE
-            WHEN rx.quantity > 0
-            THEN round((rx.net_cost / rx.quantity)::numeric, 4)
-            ELSE 0
-          END AS price_per_unit,
-          rx.quantity,
-          rx.presentation_code AS bnf_code,
-          product.name AS product_name,
-            net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
-            AS possible_savings
-          FROM vw__medians_for_tariff dt
-            JOIN dmd_product product ON dt.product_id = product.dmdid
-            JOIN frontend_prescription rx
-              ON rx.processing_date = dt.date
-              AND rx.presentation_code = product.bnf_code
-            JOIN frontend_practice practice
-              ON practice.code = rx.practice_id
-        WHERE date = %(date)s {extra_conditions}
-        AND
-          -- lantanaprost quantities are broken in data
-          rx.presentation_code <> '1106000L0AAAAAA'
-        AND (
-         net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
-           >= {min_delta}
-        OR
-         net_cost - (round(dt.median_ppu::numeric, 4) * rx.quantity)
-           <= -{min_delta})
-        ORDER BY possible_savings DESC
+       WITH savings AS (
+         SELECT dt.date,
+            practice.code AS practice_id,
+            practice.ccg_id AS pct,
+            dt.median_ppu,
+                CASE
+                    WHEN rx.quantity > 0::double precision THEN round((rx.net_cost / rx.quantity)::numeric, 4)
+                    ELSE 0
+                END AS price_per_unit,
+            rx.quantity,
+            rx.presentation_code AS bnf_code,
+            product.name AS product_name,
+            rx.net_cost - round(dt.median_ppu::numeric, 4)::double precision * rx.quantity AS possible_savings
+           FROM vw__medians_for_tariff dt
+             JOIN dmd_product product ON dt.product_id = product.dmdid
+             JOIN frontend_prescription rx ON rx.processing_date = dt.date AND rx.presentation_code = product.bnf_code
+             JOIN frontend_practice practice ON practice.code = rx.practice_id
+          WHERE rx.processing_date = %(date)s {extra_conditions}
+        )
+        SELECT *
+          FROM savings s
+         WHERE s.bnf_code::text <> '1106000L0AAAAAA'
+         AND (s.possible_savings >= {min_delta} OR s.possible_savings <= -{min_delta})
+               ORDER BY possible_savings DESC
     """.format(
         min_delta=MIN_GHOST_GENERIC_DELTA,
         extra_conditions=extra_conditions
