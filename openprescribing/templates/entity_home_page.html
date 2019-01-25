@@ -163,9 +163,10 @@
     <div class="landing-panel">
       <h3>Ghost-branded generics</h3>
       <strong>New</strong>: many practices are mistakenly prescribing generics as if they are brands.
+      See a list of generics that may be affected
+      <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
       <span id="ghost-total-text" class="invisible">
         {{ entity.cased_name }} <span id="ghost-total"></span>.
-        See a list of generics that may be affected <a href="{% url entity_ghost_generics_url entity.code %}">here</a>.
       </span>
     </div>
   </div>
