@@ -97,7 +97,7 @@ soupsieve==1.6            # via beautifulsoup4
 sqlparse==0.2.4           # via django-debug-toolbar
 tablib==0.12.1            # via django-import-export
 titlecase==0.12.0
-tqdm==4.29.1
+tqdm==4.30.0
 unicodecsv==0.14.1        # via djangorestframework-csv, tablib
 uritemplate==3.0.0        # via google-api-python-client
 urllib3==1.24.1           # via requests, selenium
