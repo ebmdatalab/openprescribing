@@ -5,11 +5,11 @@
   },
   "cardiovascular": {
     "name": "Cardiovascular system",
-    "description": "These measures are for treatments commonly used for treating conditions affecting the cardiovascular system"
+    "description": "These measures are for treatments commonly used for treating conditions affecting the cardiovascular system."
   },
   "centralnervous": {
     "name": "Central Nervous system",
-    "description": "These measures are for treatments commonly used for treating conditions affecting the central nervous system"
+    "description": "These measures are for treatments commonly used for treating conditions affecting the central nervous system."
   },
   "core": {
     "name": "Standard",
@@ -17,35 +17,35 @@
   },
   "cost": {
     "name": "Cost Saving",
-    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings"
+    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings."
   },
   "diabetes": {
     "name": "Diabetes",
-    "description": "These measures are for treatments commonly used for treating diabetes"
+    "description": "These measures are for treatments commonly used for treating diabetes."
   },
   "efficacy": {
     "name": "Efficacy",
-    "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives"
+    "description": "Available evidence suggests that these treatments may not be effective or have more efficacious alternatives."
   },
   "erectiledysfunction": {
     "name": "Erectile Dysfunction",
-    "description": "These measures are for treatments commonly used for treating erectile dysfunction"
+    "description": "These measures are for treatments commonly used for treating erectile dysfunction."
   },
   "eye": {
     "name": "Eye",
-    "description": "These measures are for treatments commonly used for treating conditions affecting the eye"
+    "description": "These measures are for treatments commonly used for treating conditions affecting the eye."
   },
   "gastrointestinal": {
     "name": "Gastrointestinal system",
-    "description": "These measures are for treatments commonly used for treating conditions affecting the gastrointestinal system"
+    "description": "These measures are for treatments commonly used for treating conditions affecting the gastrointestinal system."
   },
   "generic": {
     "name": "Generic prescribing",
-    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that can be prescribed generically."
+    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that should either be prescribed generically, or prescribed by brand for safety reasons."
   },
   "infections": {
     "name": "Infections",
-    "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings"
+    "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
   },
   "lowpriority": {
     "name": "NHS England Low Priority",
@@ -61,16 +61,16 @@
       "This is an <strong>experimental</strong> list of products ",
       "which NHS England ",
       "<a href=\"https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/\">",
-      "have proposed</a> to add to their Low Priority list"
+      "have proposed</a> to add to their Low Priority list."
     ]
   },
   "mentalhealth": {
     "name": "Mental Health",
-    "description": "These measures are for treatments commonly used for treating mental health conditions"
+    "description": "These measures are for treatments commonly used for treating mental health conditions."
   },
   "nutrition": {
     "name": "Nutrition",
-    "description": "These measures are for treatments commonly used to improve nutrition"
+    "description": "These measures are for treatments commonly used to improve nutrition."
   },
   "opioids": {
     "name": "Opioids",
@@ -78,7 +78,7 @@
   },
   "pain": {
     "name": "Pain",
-    "description": "These measures are for treatments commonly used for treating pain"
+    "description": "These measures are for treatments commonly used for treating pain."
   },
   "paper": {
     "name": "Mentioned in Papers",
@@ -88,11 +88,11 @@
   },
   "reproductive": {
     "name": "Reproductive system",
-    "description": "These measures are for treatments commonly used for treating conditions affecting the reproductive system"
+    "description": "These measures are for treatments commonly used for treating conditions affecting the reproductive system."
   },
   "respiratory": {
     "name": "Respiratory",
-    "description": "These measures are for treatments commonly used for treating respiratory conditions such as asthma and COPD"
+    "description": "These measures are for treatments commonly used for treating respiratory conditions such as asthma and COPD."
   },
   "safety": {
     "name": "Safety",
