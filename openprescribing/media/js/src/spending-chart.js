@@ -59,13 +59,15 @@ $(function() {
 
   options.title.text = 'Additional cost of price concessions';
   options.chart.type = 'column';
-  options.chart.marginBottom = 80;
+  options.chart.marginBottom = 86;
   options.legend.layout = 'horizontal';
   options.legend.align = 'right';
   options.legend.verticalAlign = 'bottom';
   options.legend.x = 0;
-  options.legend.y = 6;
+  options.legend.y = 4;
   options.legend.itemMarginBottom = 4;
+  // Undo settings from highcharts-options and restore to defaults
+  options.legend.itemStyle = {font: '', color: '#333', fontWeight: 'normal'};
   options.plotOptions.series = {stacking: 'normal'};
   options.yAxis.title = {enabled: true, text: 'Cost (£)'};
   options.tooltip = {
