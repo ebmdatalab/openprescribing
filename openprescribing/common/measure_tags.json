@@ -41,7 +41,7 @@
   },
   "generic": {
     "name": "Generic prescribing",
-    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that can be prescribed generically."
+    "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that should either be prescribed generically, or prescribed by brand for safety reasons."
   },
   "infections": {
     "name": "Infections",
