@@ -1239,23 +1239,16 @@ def _authenticate_possibly_new_user(email):
     return authenticate(key=user.profile.key)
 
 
-def _unapprove_bookmarks_when_different_user(user, request):
-    # An unverified account can only create unapproved bookmarks.
-    # When an account is verified, all its bookmarks are
-    # approved. Whenever someone tries to add a bookmark for
-    # someone else's email address (or they're not logged in),
-    # that email address is marked as unverified again.  In this
-    # way we can allow people who remain logged in to add several
-    # alerts without having to reconfirm by email.
+def _unverify_email_address_when_different_user(user, request):
+    # This is weird. Because entering any email address logs you in as that
+    # user (see force_login function below) we need to prevent accessing
+    # someone's bookmarks just by signing up using their email address. This is
+    # done by unverifying that email address if you're not already logged in as
+    # that user and then forcing a re-verification before you can access
+    # existing bookmarks.
     emailaddress = EmailAddress.objects.filter(user=user)
-    approved = False
-    if user == request.user:
-        approved = emailaddress.filter(
-            verified=True).exists()
-    else:
-        approved = False
+    if user != request.user:
         emailaddress.update(verified=False)
-    return approved
 
 
 def _force_login_and_redirect(request, user):
@@ -1363,8 +1356,10 @@ def _handle_bookmark_and_newsletter_post(
             request.session['alerts_requested'] = 1
             user = _authenticate_possibly_new_user(email)
             form_args = _make_bookmark_args(user, form, subject_field_ids)
-            form_args['approved'] = _unapprove_bookmarks_when_different_user(
-                user, request)
+            _unverify_email_address_when_different_user(user, request)
+            # We're automatically approving all alert signups from now on
+            # without waiting for the email address to be verified
+            form_args['approved'] = True
             subject_class.objects.get_or_create(**form_args)
             return _force_login_and_redirect(request, user)
         else:
