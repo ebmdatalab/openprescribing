@@ -324,7 +324,7 @@ def measure_for_one_practice(request, measure, practice_code):
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
     }
-    return render(request, 'measure_for_one_practice.html', context)
+    return render(request, 'measure_for_one_entity.html', context)
 
 
 def measure_for_one_ccg(request, measure, ccg_code):
@@ -340,7 +340,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at,
     }
-    return render(request, 'measure_for_one_ccg.html', context)
+    return render(request, 'measure_for_one_entity.html', context)
 
 
 @handle_bad_request

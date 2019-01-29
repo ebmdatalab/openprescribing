@@ -514,7 +514,7 @@ class TestFrontendViews(TestCase):
     def test_call_single_measure_for_ccg(self):
         response = self.client.get('/measure/cerazette/ccg/03V/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measure_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measure_for_one_entity.html')
 
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
@@ -556,7 +556,7 @@ class TestFrontendViews(TestCase):
     def test_call_single_measure_for_practice(self):
         response = self.client.get('/measure/cerazette/practice/P87629/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measure_for_one_practice.html')
+        self.assertTemplateUsed(response, 'measure_for_one_entity.html')
 
     def test_call_view_measure_ccg(self):
         response = self.client.get('/ccg/03V/measures/')
