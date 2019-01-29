@@ -514,6 +514,7 @@ class Measure(models.Model):
     low_is_good = models.NullBooleanField()
     numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
     numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -526,7 +527,7 @@ class Measure(models.Model):
         For instance, a measure of number of GPs per 1000 patients would not do
         so.
         """
-        return True
+        return self.numerator_is_list_of_bnf_codes
 
     def columns_for_select(self, num_or_denom=None):
         """Parse measures definition for SELECT columns; add
