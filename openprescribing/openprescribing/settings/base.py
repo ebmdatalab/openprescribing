@@ -151,7 +151,8 @@ TEMPLATES = [
                 'frontend.context_processors.support_email',
                 'frontend.context_processors.google_tracking_id',
                 'frontend.context_processors.api_host',
-                'frontend.context_processors.debug'
+                'frontend.context_processors.debug',
+                'pipeline.context_processors.import_in_progress'
             ],
             'debug': DEBUG
         },
@@ -173,7 +174,6 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'pipeline.middleware.import_warning_middleware',
 )
 # END MIDDLEWARE CONFIGURATION
 
