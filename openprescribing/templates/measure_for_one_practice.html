@@ -15,22 +15,23 @@
 
   <p>In the quarter ending {{ current_at|date:"M Y" }}, the numerator in this measure was composed of the following presentations:</p>
 
-<table id="numerator_breakdown" class="table">
-  <thead>
-    <tr>
-      <th>Presentation</th>
-      <th>Items</th>
-      <th>Quantity</th>
-      <th>Cost</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Loading...</th>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr></tbody>
+  <table id="numerator_breakdown" class="table">
+    <thead>
+      <tr>
+        <th>Presentation</th>
+        <th>Items</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Loading...</th>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
   </table>
 
   <a class="btn btn-primary" href="{% url 'measure_numerators_by_org' %}?org={{ entity.code }}&measure={{ measure.id }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
