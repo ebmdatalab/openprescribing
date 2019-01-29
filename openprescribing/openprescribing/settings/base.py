@@ -22,7 +22,7 @@ SITE_NAME = basename(SETTINGS_ROOT)
 SITE_ID = 1
 
 # Useful flag for special-casing shell operations
-SHELL = sys.argv[1] in ["shell", "dbshell"]
+SHELL = len(sys.argv) > 1 and sys.argv[1] in ["shell", "dbshell"]
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
