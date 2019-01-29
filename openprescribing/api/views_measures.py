@@ -68,7 +68,7 @@ def measure_global(request, format=None):
                 'is_percentage': measure.is_percentage,
                 'low_is_good': measure.low_is_good,
                 'tags_focus': tags_focus,
-                'numerator_can_be_queried': measure.numerator_can_be_queried(),
+                'numerator_is_list_of_bnf_codes': measure.numerator_is_list_of_bnf_codes,
                 'tags': _hydrate_tags(measure.tags),
                 'data': [d_copy]
             }
@@ -101,7 +101,7 @@ def measure_numerators_by_org(request, format=None):
     three_months_ago = (
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
-    if m.numerator_can_be_queried():
+    if m.numerator_is_list_of_bnf_codes:
         if org_selector in ['stp_id', 'regional_team_id']:
             extra_join = '''
             INNER JOIN frontend_pct

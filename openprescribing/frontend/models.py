@@ -519,16 +519,6 @@ class Measure(models.Model):
     def __str__(self):
         return self.name
 
-    def numerator_can_be_queried(self):
-        """Does the numerator aggregate prescriptions by presentation?
-
-        While it is currently the case that all numerators aggregate
-        prescriptions by presentation, this may not continue to be the case.
-        For instance, a measure of number of GPs per 1000 patients would not do
-        so.
-        """
-        return self.numerator_is_list_of_bnf_codes
-
     def columns_for_select(self, num_or_denom=None):
         """Parse measures definition for SELECT columns; add
         cost-savings-related columns when necessary.
