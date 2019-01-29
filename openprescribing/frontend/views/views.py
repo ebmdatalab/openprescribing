@@ -5,7 +5,6 @@ from urllib import urlencode
 from urlparse import urlparse, urlunparse
 import functools
 import logging
-import re
 import requests
 import sys
 
