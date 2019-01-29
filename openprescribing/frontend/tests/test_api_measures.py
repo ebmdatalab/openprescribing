@@ -96,7 +96,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'Y01',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -109,7 +108,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'E00000001',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -122,7 +120,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'02Q',
              u'cost': 1.0,
              u'quantity': 100.0}])
