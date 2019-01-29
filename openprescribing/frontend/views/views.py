@@ -311,34 +311,18 @@ def measure_for_all_ccgs(request, measure):
     return render(request, 'measure_for_all_ccgs.html', context)
 
 
-def measure_for_one_practice(request, measure, practice_code):
-    practice = get_object_or_404(Practice, code=practice_code)
+def measure_for_one_entity(request, measure, entity_code, entity_type):
+    entity = _get_entity(entity_type, entity_code)
     measure = get_object_or_404(Measure, pk=measure)
-    measure_options = _build_measure_options_for_measure_for_one_entity(measure, practice)
+    measure_options = _build_measure_options_for_measure_for_one_entity(measure, entity)
     context = {
-        'entity': practice,
-        'entity_type': 'practice',
-        'measures_url_name': 'measures_for_one_practice',
+        'entity': entity,
+        'entity_type': entity_type,
+        'measures_url_name': 'measures_for_one_{}'.format(entity_type.lower()),
         'measure': measure,
         'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(
             'prescribing').current_at
-    }
-    return render(request, 'measure_for_one_entity.html', context)
-
-
-def measure_for_one_ccg(request, measure, ccg_code):
-    ccg = get_object_or_404(PCT, code=ccg_code)
-    measure = get_object_or_404(Measure, pk=measure)
-    measure_options = _build_measure_options_for_measure_for_one_entity(measure, ccg)
-    context = {
-        'entity': ccg,
-        'entity_type': 'CCG',
-        'measures_url_name': 'measures_for_one_ccg',
-        'measure': measure,
-        'measure_options': measure_options,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at,
     }
     return render(request, 'measure_for_one_entity.html', context)
 

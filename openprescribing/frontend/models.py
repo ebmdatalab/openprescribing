@@ -693,23 +693,19 @@ class OrgBookmark(models.Model):
         measures if none is specified
         """
         if self.practice is None:
-            kwargs = {
-                'ccg_code': self.pct.code
-            }
             if measure:
                 view = 'measure_for_one_ccg'
-                kwargs['measure'] = measure
+                kwargs = {'measure': measure, 'entity_code': self.pct.code}
             else:
                 view = 'measures_for_one_ccg'
+                kwargs = {'ccg_code': self.pct.code}
         else:
-            kwargs = {}
             if measure:
                 view = 'measure_for_one_practice'
-                kwargs['practice_code'] = self.practice.code
-                kwargs['measure'] = measure
+                kwargs = {'measure': measure, 'entity_code': self.practice.code}
             else:
-                kwargs['practice_code'] = self.practice.code
                 view = 'measures_for_one_practice'
+                kwargs = {'practice_code': self.practice.code}
         return reverse(
             view,
             kwargs=kwargs)
