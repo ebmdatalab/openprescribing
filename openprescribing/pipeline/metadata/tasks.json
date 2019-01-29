@@ -102,7 +102,7 @@
         "command": "import_stps --filename stps.csv",
         "dependencies": [
             "fetch_stps",
-            "import_ccg_boundaries"
+            "import_ccg_details"
         ]
     },
     "import_adqs": {
