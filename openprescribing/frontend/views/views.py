@@ -318,6 +318,7 @@ def measure_for_one_practice(request, measure, practice_code):
     context = {
         'entity': practice,
         'entity_type': 'practice',
+        'measures_url_name': 'measures_for_one_practice',
         'measure': measure,
         'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(
@@ -333,6 +334,7 @@ def measure_for_one_ccg(request, measure, ccg_code):
     context = {
         'entity': ccg,
         'entity_type': 'CCG',
+        'measures_url_name': 'measures_for_one_ccg',
         'measure': measure,
         'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(

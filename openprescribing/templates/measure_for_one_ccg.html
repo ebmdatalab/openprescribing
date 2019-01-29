@@ -44,7 +44,7 @@
   {% include '_measures_panel.html' %}
 
   <p>
-    <a href="{% url 'measures_for_one_ccg' entity.code %}">View all measures for {{ entity.name }}</a>
+    <a href="{% url measures_url_name entity.code %}">View all measures for {{ entity.name }}</a>
   </p>
 
   <hr/>
