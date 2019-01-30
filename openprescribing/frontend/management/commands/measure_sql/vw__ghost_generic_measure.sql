@@ -1,3 +1,8 @@
+-- This SQL is checked in to the git repo at measure_sql/vw__ghost_generic_measure.sql.
+-- Do not make changes directly in BQ!  Instead, change the version in the repo and run
+--
+--     ./manage.py create_bq_measure_views
+
 WITH
   single_ppu_dt AS (
   -- skips anything in the DT with more than one PPU (e.g. different
