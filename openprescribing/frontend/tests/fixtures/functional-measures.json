@@ -560,9 +560,7 @@
     "url": "http://example.com/measure-core_0",
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true,
-    "numerator_bnf_codes": "[\"000100000000000\"]",
-    "numerator_bnf_codes_query": null
+    "low_is_good": true
   }
 },
 {
@@ -588,9 +586,7 @@
     "url": "http://example.com/measure-core_1",
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true,
-    "numerator_bnf_codes": "[\"010100000000000\"]",
-    "numerator_bnf_codes_query": null
+    "low_is_good": true
   }
 },
 {
@@ -616,9 +612,7 @@
     "url": "http://example.com/measure-lp_2",
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true,
-    "numerator_bnf_codes": "[\"020100000000000\"]",
-    "numerator_bnf_codes_query": null
+    "low_is_good": true
   }
 },
 {
@@ -644,9 +638,7 @@
     "url": "http://example.com/measure-lp_3",
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true,
-    "numerator_bnf_codes": "[\"030100000000000\"]",
-    "numerator_bnf_codes_query": null
+    "low_is_good": true
   }
 },
 {
@@ -672,9 +664,7 @@
     "url": "http://example.com/measure-lpzomnibus",
     "is_percentage": true,
     "is_cost_based": true,
-    "low_is_good": true,
-    "numerator_bnf_codes": "[\"020100000000000\", \"030100000000000\"]",
-    "numerator_bnf_codes_query": null
+    "low_is_good": true
   }
 },
 {
