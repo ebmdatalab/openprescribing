@@ -25,6 +25,7 @@
   "numerator_where": [
     "(possible_savings >= 2 OR possible_savings <=-2)"
   ],
+  "numerator_is_list_of_bnf_codes": false,
   "denominator_columns": [
     "SUM(net_cost) AS denominator, "
   ],

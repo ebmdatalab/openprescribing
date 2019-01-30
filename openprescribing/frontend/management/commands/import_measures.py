@@ -59,14 +59,16 @@ class Command(BaseCommand):
             for measure_id in options['measure_ids']:
                 logger.info('Updating measure: %s' % measure_id)
                 measure = create_or_update_measure(measure_id)
+
+                if options['definitions_only']:
+                    continue
+
                 measure_start = datetime.datetime.now()
 
                 calcuation = MeasureCalculation(
                     measure, start_date=start_date, end_date=end_date,
                     verbose=verbose
                 )
-                if options['definitions_only']:
-                    continue
 
                 # Delete any existing measures data older than five years ago.
                 l = ImportLog.objects.latest_in_category('prescribing')
@@ -207,9 +209,12 @@ def arrays_to_strings(measure_json):
     """
     fields_to_convert = [
         'title', 'description', 'why_it_matters', 'numerator_columns',
-        'numerator_where', 'denominator_columns', 'denominator_where']
+        'numerator_where', 'denominator_columns', 'denominator_where',
+        'numerator_bnf_codes_query']
 
     for field in fields_to_convert:
+        if field not in measure_json:
+            continue
         if isinstance(measure_json[field], list):
             measure_json[field] = ' '.join(measure_json[field])
     return measure_json
@@ -221,52 +226,84 @@ def create_or_update_measure(measure_id):
     """
     measure_json = parse_measures()[measure_id]
     v = arrays_to_strings(measure_json)
+
     try:
-        measure = Measure.objects.get(pk=measure_id)
-        measure.title = v['title']
-        measure.description = v['description']
-        measure.why_it_matters = v['why_it_matters']
-        measure.name = v['name']
-        measure.tags = v['tags']
-        measure.tags_focus = v.get('tags_focus', [])
-        measure.title = v['title']
-        measure.description = v['description']
-        measure.numerator_short = v['numerator_short']
-        measure.denominator_short = v['denominator_short']
-        measure.numerator_from = v['numerator_from']
-        measure.numerator_where = v['numerator_where']
-        measure.numerator_columns = v['numerator_columns']
-        measure.denominator_from = v['denominator_from']
-        measure.denominator_where = v['denominator_where']
-        measure.denominator_columns = v['denominator_columns']
-        measure.url = v['url']
-        measure.is_cost_based = v['is_cost_based']
-        measure.is_percentage = v['is_percentage']
-        measure.low_is_good = v['low_is_good']
-        measure.save()
-    except ObjectDoesNotExist:
-        measure = Measure.objects.create(
-            id=measure_id,
-            name=v['name'],
-            tags=v['tags'],
-            tags_focus=v.get('tags_focus', []),
-            title=v['title'],
-            description=v['description'],
-            why_it_matters=v['why_it_matters'],
-            numerator_short=v['numerator_short'],
-            denominator_short=v['denominator_short'],
-            numerator_from=v['numerator_from'],
-            numerator_where=v['numerator_where'],
-            numerator_columns=v['numerator_columns'],
-            denominator_from=v['denominator_from'],
-            denominator_where=v['denominator_where'],
-            denominator_columns=v['denominator_columns'],
-            url=v['url'],
-            is_cost_based=v['is_cost_based'],
-            is_percentage=v['is_percentage'],
-            low_is_good=v['low_is_good']
-        )
+        measure = Measure.objects.get(id=measure_id)
+    except Measure.DoesNotExist:
+        measure = Measure(id=measure_id)
+
+    measure.title = v['title']
+    measure.description = v['description']
+    measure.why_it_matters = v['why_it_matters']
+    measure.name = v['name']
+    measure.tags = v['tags']
+    measure.tags_focus = v.get('tags_focus', [])
+    measure.title = v['title']
+    measure.description = v['description']
+    measure.numerator_short = v['numerator_short']
+    measure.denominator_short = v['denominator_short']
+    measure.numerator_from = v['numerator_from']
+    measure.numerator_where = v['numerator_where']
+    measure.numerator_columns = v['numerator_columns']
+    measure.denominator_from = v['denominator_from']
+    measure.denominator_where = v['denominator_where']
+    measure.denominator_columns = v['denominator_columns']
+    measure.url = v['url']
+    measure.is_cost_based = v['is_cost_based']
+    measure.is_percentage = v['is_percentage']
+    measure.low_is_good = v['low_is_good']
+    measure.numerator_bnf_codes_query = v.get('numerator_bnf_codes_query')
+    measure.numerator_is_list_of_bnf_codes = v.get('numerator_is_list_of_bnf_codes', True)
+    measure.numerator_bnf_codes = get_numerator_bnf_codes(measure)
+    measure.save()
+
     return measure
+
+
+def get_numerator_bnf_codes(measure):
+    # For most measures, we are able to work out which presentations contribute
+    # to variation in the numerator by constructing a query using the
+    # numerator_from and numerator_where attributes of the measure.  In a
+    # handful of cases this cannot be done, and the creator of the measure must
+    # provide a query (numerator_bnf_codes_query) that can be used for this.
+    #
+    # For the lpzomnibus query, numerator_bnf_codes_query was produced with
+    # help from:
+    #
+    # >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
+    # ...   print '"' + m.numerator_where.strip() + ' OR",'
+
+    if not measure.numerator_is_list_of_bnf_codes:
+        return []
+
+    if measure.numerator_bnf_codes_query is not None:
+        sql = measure.numerator_bnf_codes_query
+
+    else:
+        # It would be nice if we could do:
+        #
+        #     SELECT normalised_prescribing_standard.bnf_code FROM ...
+        #
+        # but BQ doesn't let you refer to an aliased table by its original
+        # name, so we have to mess around like this.
+        if '{hscic}.normalised_prescribing_standard p' in measure.numerator_from:
+            col_name = 'p.bnf_code'
+        else:
+            col_name = 'bnf_code'
+
+        sql = '''
+        SELECT DISTINCT {col_name}
+        FROM {numerator_from}
+        WHERE {numerator_where}
+        ORDER BY bnf_code
+        '''.format(
+            col_name=col_name,
+            numerator_from=measure.numerator_from,
+            numerator_where=measure.numerator_where,
+        )
+
+    results = Client().query(sql)
+    return [row[0] for row in results.rows]
 
 
 class MeasureCalculation(object):
