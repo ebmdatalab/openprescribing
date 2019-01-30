@@ -162,12 +162,14 @@ urlpatterns = [
         name='measure_for_all_ccgs'),
 
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
-        'practice/(?P<practice_code>[A-Z\d]+)/$',
-        frontend_views.measure_for_one_practice,
-        name='measure_for_one_practice'),
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<ccg_code>[A-Z\d]+)/$',
-        frontend_views.measure_for_one_ccg,
-        name='measure_for_one_ccg'),
+        'practice/(?P<entity_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_entity,
+        name='measure_for_one_practice',
+        kwargs={'entity_type': 'practice'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<entity_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_entity,
+        name='measure_for_one_ccg',
+        kwargs={'entity_type': 'CCG'}),
 
     url(r'^practice/(?P<practice_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
