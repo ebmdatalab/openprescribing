@@ -34,10 +34,11 @@ django==1.11.18
 djangorestframework-csv==2.1.0
 djangorestframework==3.9.1
 easyprocess==0.2.3        # via pyvirtualdisplay
+entrypoints==0.3          # via flake8
 enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
-flake8==3.6.0
+flake8==3.7.0
 google-api-core==0.1.4    # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.7.8
 google-auth-httplib2==0.0.3  # via google-api-python-client
@@ -75,9 +76,9 @@ protobuf==3.4.0           # via google-api-core, googleapis-common-protos
 psycopg2-binary==2.7.7
 pyasn1-modules==0.2.1     # via google-auth
 pyasn1==0.4.2             # via paramiko, pyasn1-modules, rsa
-pycodestyle==2.4.0        # via flake8
+pycodestyle==2.5.0        # via flake8
 pycparser==2.18           # via cffi
-pyflakes==2.0.0           # via flake8
+pyflakes==2.1.0           # via flake8
 pynacl==1.2.1             # via paramiko
 pyopenssl==19.0.0         # via requests
 pyquery==1.4.0
