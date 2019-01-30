@@ -617,7 +617,7 @@ def make_email_with_campaign(bookmark, campaign_source):
     msg = EmailMultiAlternatives(
         truncate_subject(subject_prefix, bookmark.name),
         "This email is only available in HTML",
-        settings.SUPPORT_FROM_EMAIL,
+        settings.DEFAULT_FROM_EMAIL,
         [bookmark.user.email])
     metadata = {"subject": msg.subject,
                 "campaign_name": campaign_name,
