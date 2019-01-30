@@ -35,7 +35,6 @@
   "numerator_where": [
     "1 = 1"
   ],
-  "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.richard.opioid_measure",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

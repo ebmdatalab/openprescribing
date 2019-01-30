@@ -19,7 +19,7 @@
           {% endif %}
         </li>
       {% endif %}
-      {% if ccg and measure.numerator_is_list_of_bnf_codes %}
+      {% if ccg and measure.numerator_can_be_queried %}
         <li><a href="{% url 'measure_for_one_ccg' measure.id ccg.code %}">Break the overall score down into individual presentations</a></li>
         <li><a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all CCGs in England on this measure</a></li>
         <li>See <a href="{% url 'measures_for_one_ccg' ccg.code %}">how this CCG is doing on other standard measures</a></li>
