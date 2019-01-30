@@ -100,8 +100,8 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.url, 'stuff')
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, '~mysearch')
-        # But it's  not approved (until they log in)
-        self.assertFalse(bookmark.approved)
+        # Check that the bookmark is automatically approved
+        self.assertTrue(bookmark.approved)
 
     @patch('frontend.views.views.mailchimp_subscribe')
     def test_search_bookmark_newsletter(self, mailchimp):
@@ -134,9 +134,6 @@ class TestAlertViews(TestCase):
         self.assertContains(
             response, "subscribed to monthly alerts about <em>mysearch</em>")
         self.assertTrue(response.context['user'].is_active)
-        # The act of logging in approves bookmarks
-        bookmark = SearchBookmark.objects.last()
-        self.assertTrue(bookmark.approved)
 
     def test_ccg_email_invalid(self):
         response = self._post_org_signup('03V', email='boo')
@@ -241,24 +238,6 @@ class TestAlertViews(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         self.assertTrue(OrgBookmark.objects.last().approved)
-
-    def test_bookmark_added_by_other_user_is_unapproved(self):
-        # Create user A
-        user_a = self._create_user_and_login('a@a.com')
-        # Create user B
-        self._create_user_and_login('b@b.com')
-        # Now user B should not be able to sign up user A to anything
-        self._post_org_signup('03V', email='a@a.com')
-        created_bookmark = OrgBookmark.objects.last()
-        # Note that user A has had a bookmark created (there's nothing
-        # to stop anyone signing anyone else up....)
-        self.assertTrue(created_bookmark.user.email, 'a@a.com')
-        # And they should have an email
-        self.assertIn('a@a.com', mail.outbox[0].to)
-        # ...but it's an unapproved bookmark...
-        self.assertFalse(created_bookmark.approved)
-        # ...and user A must reconfirm their identity
-        self.assertFalse(user_a.emailaddress_set.first().verified)
 
     def test_ccg_bookmark_added_for_new_user_when_already_logged_in(self):
         self._create_user_and_login('a@a.com')
