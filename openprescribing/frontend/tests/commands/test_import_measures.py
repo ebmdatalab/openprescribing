@@ -161,6 +161,7 @@ class BigqueryFunctionalTests(TestCase):
             name='Cerazette vs. Desogestrel',
             title='Prescribing of...',
             tags=['core'],
+            numerator_bnf_codes=[],
         )
 
         # We expect this MeasureValue to be deleted because it is older than

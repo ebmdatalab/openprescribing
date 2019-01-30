@@ -10,7 +10,9 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from frontend import bq_schemas as schemas
-from frontend.models import ImportLog, MeasureGlobal, MeasureValue, Practice, PCT, STP, RegionalTeam
+from frontend.models import (
+    ImportLog, Measure, MeasureGlobal, MeasureValue, Practice, PCT, STP, RegionalTeam
+)
 from gcutils.bigquery import Client
 
 
@@ -157,6 +159,10 @@ class ImportMeasuresTests(TestCase):
 
         # Do the work.
         call_command('import_measures', measure='desogestrel')
+
+        # Check that numerator_bnf_codes has been set
+        m = Measure.objects.get(id='desogestrel')
+        self.assertEqual(m.numerator_bnf_codes, ['0703021Q0BBAAAA'])
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.

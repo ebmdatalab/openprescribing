@@ -19,6 +19,7 @@
       "numerator_columns": "SUM(quantity) AS numerator, ",
       "numerator_from": "{hscic}.normalised_prescribing_standard ",
       "numerator_where": "(bnf_code LIKE '0703021Q0BB%%')  ",
+      "numerator_bnf_codes": ["0703021Q0BBAAAA"],
       "denominator_columns": "SUM(quantity) AS denominator, ",
       "denominator_from": "{hscic}.normalised_prescribing_standard ",
       "denominator_where": "(bnf_code LIKE '0703021Q0%%')  "
