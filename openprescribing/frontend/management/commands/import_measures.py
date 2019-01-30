@@ -253,6 +253,7 @@ def create_or_update_measure(measure_id):
     measure.is_percentage = v['is_percentage']
     measure.low_is_good = v['low_is_good']
     measure.numerator_bnf_codes_query = v.get('numerator_bnf_codes_query')
+    measure.numerator_is_list_of_bnf_codes = v.get('numerator_is_list_of_bnf_codes', True)
     measure.numerator_bnf_codes = get_numerator_bnf_codes(measure)
     measure.save()
 
@@ -271,6 +272,9 @@ def get_numerator_bnf_codes(measure):
     #
     # >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
     # ...   print '"' + m.numerator_where.strip() + ' OR",'
+
+    if not measure.numerator_is_list_of_bnf_codes:
+        return []
 
     if measure.numerator_bnf_codes_query is not None:
         sql = measure.numerator_bnf_codes_query
