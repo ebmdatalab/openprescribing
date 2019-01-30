@@ -30,6 +30,7 @@
   "numerator_where": [
     "1 = 1 "
   ],
+  "numerator_is_list_of_bnf_codes": false,
   "denominator_columns": [
     "SUM(denominator)/17 AS denominator, "
   ],

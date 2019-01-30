@@ -9,18 +9,6 @@ from frontend.models import Measure
 from frontend.models import PCT
 
 
-def _get_test_measure():
-    return {
-        "is_cost_based": True,
-        "numerator_columns": ["SUM(quantity) AS numerator, "],
-        "numerator_from": "{hscic}.normalised_prescribing_standard",
-        "numerator_where": ["(bnf_code LIKE '0205%')"],
-        "denominator_columns": ["SUM(quantity) AS denominator"],
-        "denominator_from": "",
-        "denominator_where": ["(bnf_code LIKE '02%')"]
-    }
-
-
 class TestAPIMeasureViews(TestCase):
     fixtures = ['one_month_of_measures']
     api_prefix = '/api/1.0'
@@ -108,7 +96,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'Y01',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -121,7 +108,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'E00000001',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -134,7 +120,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'02Q',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -147,7 +132,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'N84014',
              u'cost': 1.0,
              u'quantity': 100.0}])
@@ -166,38 +150,9 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'numerator': 100.0,
              u'entity': u'N84014',
              u'cost': 1.0,
              u'quantity': 100.0}])
-
-    def test_api_measure_numerators_bnf_name_in_condition(self):
-        m = Measure.objects.first()
-        m.numerator_where = "bnf_name like 'ZZZ%'"
-        m.save()
-        url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=02Q&format=json'
-        data = self._get_json(url)
-        self.assertEqual(data, [])
-
-    def test_api_measure_numerators_unusable_table(self):
-        m = Measure.objects.first()
-        m.numerator_from = "some_nonstandard_table"
-        m.save()
-        url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=02Q&format=json'
-        data = self._get_json(url)
-        self.assertEqual(data, [])
-
-        m = Measure.objects.first()
-        m.numerator_from = (
-            "{hscic}.normalised_prescribing_standard p "
-            "LEFT JOIN {hscic}.presentation")
-        m.save()
-        url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=02Q&format=json'
-        data = self._get_json(url)
-        self.assertEqual(data, [])
 
     def test_api_measure_by_ccg(self):
         url = '/api/1.0/measure_by_ccg/'

@@ -358,7 +358,7 @@ describe('Measures', function() {
 
     it('copies selected properties from the global data', function() {
       var data = [{id: 'ace', data: []}],
-      globalData = [{id: 'ace', low_is_good: true, numerator_can_be_queried: true}],
+      globalData = [{id: 'ace', low_is_good: true, numerator_is_list_of_bnf_codes: true}],
       globalCentiles = [],
       centiles = [],
       options = {rollUpBy: 'measure_id'};

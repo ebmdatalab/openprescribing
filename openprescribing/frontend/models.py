@@ -512,24 +512,12 @@ class Measure(models.Model):
     is_percentage = models.NullBooleanField()
     is_cost_based = models.NullBooleanField()
     low_is_good = models.NullBooleanField()
+    numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
-
-    def numerator_can_be_queried(self):
-        """Is it possible for the numerators for a given measure to be
-        rewritten such that they can query the prescriptions table
-        directly?
-
-        For now, this means we query the main prescriptions table
-        only; an additional consequence is that we can't support
-        drilling down on JOINed data (specifically, this currently
-        means ktt9_uti_antibiotics)
-
-        """
-        table_there = 'normalised_prescribing_standard' in self.numerator_from
-        join_not_there = 'JOIN' not in self.numerator_from
-        return table_there and join_not_there
 
     def columns_for_select(self, num_or_denom=None):
         """Parse measures definition for SELECT columns; add
