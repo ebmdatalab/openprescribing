@@ -309,6 +309,7 @@ var utils = {
       chartTitle = d.name;
 
       context['measure'] = d.id;
+      context['entity_code'] = options.orgId;
       if (options.orgType == 'practice') {
         context['practice_code'] = options.orgId;
         context['ccg_code'] = options.parentOrgId;
