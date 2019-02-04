@@ -1,3 +1,4 @@
+# coding=utf8
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
@@ -62,3 +63,35 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
             "OpenPrescribing Feedback: An apple a day...")
         self.assertEqual(email.body, expected_body)
         self.assertEqual(email.extra_headers["X-Mailgun-Track"], "no")
+
+    def test_send_feedback_mail_name_escaped(self):
+        mail.outbox = []
+
+        send_feedback_mail(
+            user_name="Alice Apple, NHS England",
+            user_email_addr="alice@example.com",
+            subject="",
+            message="",
+            url="",
+        )
+        email = mail.outbox[0]
+        self.assertEqual(
+            email.from_email,
+            '"Alice Apple, NHS England" <feedback@openprescribing.net>'
+        )
+
+    def test_send_feedback_mail_name_encoded(self):
+        mail.outbox = []
+
+        send_feedback_mail(
+            user_name=u"Alicé Apple",
+            user_email_addr="alice@example.com",
+            subject="",
+            message="",
+            url="",
+        )
+        email = mail.outbox[0]
+        self.assertEqual(
+            email.from_email,
+            u'Alicé Apple <feedback@openprescribing.net>'
+        )
