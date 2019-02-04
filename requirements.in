@@ -30,10 +30,10 @@ lxml==4.3.0
 mailchimp3>=2.0.18
 networkx==1.11
 newrelic
-numpy==1.16.0
+numpy==1.16.1
 openpyxl==2.5.14
 pandas-gbq==0.3.1
-pandas==0.24.0
+pandas==0.24.1
 premailer==3.2.0
 psycopg2-binary==2.7.7
 python-dateutil==2.7.5

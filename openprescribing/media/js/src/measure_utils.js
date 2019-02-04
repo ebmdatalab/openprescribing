@@ -181,15 +181,17 @@ var utils = {
         }
       });
       if (options.rollUpBy === 'measure_id' && ! options.aggregate) {
-        perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
-        perf.costSavings += options.orgType;
-        perf.costSavings += ' had prescribed at the median ratio or better ' +
-          'on all cost-saving measures below, then it would have spent £' +
-          humanize.numberFormat(potentialSavings50th, 0) +
-          ' less. (We use the national median as a suggested ' +
-          'target because by definition, 50% of practices were already ' +
-          'prescribing at this level or better, so we think it ought ' +
-          'to be achievable.)';
+        if (potentialSavings50th > 0) {
+          perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
+          perf.costSavings += options.orgType;
+          perf.costSavings += ' had prescribed at the median ratio or better ' +
+            'on all cost-saving measures below, then it would have spent £' +
+            humanize.numberFormat(potentialSavings50th, 0) +
+            ' less. (We use the national median as a suggested ' +
+            'target because by definition, 50% of practices were already ' +
+            'prescribing at this level or better, so we think it ought ' +
+            'to be achievable.)';
+        }
       } else if (options.isCostBasedMeasure) {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
         perf.costSavings += options.orgType;
@@ -309,6 +311,7 @@ var utils = {
       chartTitle = d.name;
 
       context['measure'] = d.id;
+      context['entity_code'] = options.orgId;
       if (options.orgType == 'practice') {
         context['practice_code'] = options.orgId;
         context['ccg_code'] = options.parentOrgId;
