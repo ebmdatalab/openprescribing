@@ -1,0 +1,39 @@
+{
+  "name": "NHS England Low Priority Treatment - herbal medicines",
+  "title": [
+    "Herbal medicines cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of herbal medicines per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Under a Traditional Herbal Registration there is no requirement to prove scientifically that a product works, ",
+    "the registration is based on longstanding use of the product as a traditional medicine.  Therefore there is ",
+    "a lack of robust evidence of clinical effectiveness for these products."
+  ],
+  "numerator_short": "Herbal medicines cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "efficacy",
+    "lowpriority"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN (SELECT DISTINCT bnf_code FROM {richard.herbal_list}) r ON p.bnf_code = r.bnf_code",
+  "numerator_where": [
+    "1 = 1"
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
