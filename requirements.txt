@@ -66,7 +66,7 @@ oauthlib==2.0.4           # via requests-oauthlib
 odfpy==1.3.6              # via tablib
 openpyxl==2.5.14
 pandas-gbq==0.3.1
-pandas==0.24.0
+pandas==0.24.1
 paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
 pbr==4.2.0                # via mock
