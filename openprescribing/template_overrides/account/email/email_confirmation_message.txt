@@ -1,6 +1,6 @@
 {% load account %}{% autoescape off %}Hello from OpenPrescribing!
 
-You previously signed up to receive monthly alerts about {{ user.profile.most_recent_bookmark.topic }}.
+You previously signed up to receive monthly alerts about {{ user.profile.most_recent_bookmark.topic }}. (This may have been up to two years ago!)
 
 However, due to a technical problem, your alerts haven't been sent.
 
