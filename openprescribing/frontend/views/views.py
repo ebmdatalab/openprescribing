@@ -794,16 +794,16 @@ def feedback_view(request):
 ##################################################
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
-    context = {}
+    reason = 'Server error'
     if 'canceling statement due to statement timeout' in unicode(value):
-        context['reason'] = ("The database took too long to respond.  If you "
-                             "were running an analysis with multiple codes, "
-                             "try again with fewer.")
-    if (request.META.get('HTTP_ACCEPT', '').find('application/json') > -1 or
-       request.is_ajax()):
-        return HttpResponse(context['reason'], status=500)
+        reason = (
+            "The database took too long to respond.  If you were running an"
+            "analysis with multiple codes, try again with fewer."
+        )
+    if request.is_ajax() or 'application/json' in request.META.get('HTTP_ACCEPT', ''):
+        return HttpResponse(reason, status=500)
     else:
-        return render(request, '500.html', context, status=500)
+        return render(request, '500.html', {'reason': reason}, status=500)
 
 
 # This view deliberately triggers an error
