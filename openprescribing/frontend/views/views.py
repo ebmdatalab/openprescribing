@@ -512,6 +512,10 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 def practice_ghost_generics(request, code):
     date = _specified_or_last_date(request, 'prescribing')
     practice = get_object_or_404(Practice, code=code)
+    measure_for_entity_url = reverse(
+        'measure_for_one_practice',
+        kwargs={'measure': 'ghost_generic_measure', 'entity_code': code}
+    )
     context = {
         'entity': practice,
         'entity_name': practice.cased_name,
@@ -519,7 +523,8 @@ def practice_ghost_generics(request, code):
         'highlight': practice.code,
         'highlight_name': practice.cased_name,
         'date': date,
-        'by_practice': True
+        'by_practice': True,
+        'measure_for_entity_url': measure_for_entity_url,
     }
     return render(request, 'ghost_generics.html', context)
 
@@ -528,6 +533,10 @@ def practice_ghost_generics(request, code):
 def ccg_ghost_generics(request, code):
     date = _specified_or_last_date(request, 'prescribing')
     ccg = get_object_or_404(PCT, code=code)
+    measure_for_entity_url = reverse(
+        'measure_for_one_ccg',
+        kwargs={'measure': 'ghost_generic_measure', 'entity_code': code}
+    )
     context = {
         'entity': ccg,
         'entity_name': ccg.cased_name,
@@ -535,7 +544,8 @@ def ccg_ghost_generics(request, code):
         'highlight': ccg.code,
         'highlight_name': ccg.cased_name,
         'date': date,
-        'by_ccg': True
+        'by_ccg': True,
+        'measure_for_entity_url': measure_for_entity_url,
     }
     return render(request, 'ghost_generics.html', context)
 
