@@ -45,4 +45,31 @@ domready(function() {
     $elementsToHide.css('display', 'none');
     $button.appendTo($container);
   });
+
+  // We have to attach the listener to the chart container, rather than to the
+  // individual links, because at this point the charts and their links may not
+  // exist
+  $('#charts').on('click', '.js-shareable-link', function() {
+    var $link   = $(this);
+    var $input = $link.siblings('input');
+    $input.val($link.prop('href'));
+    $input.one('blur', function() {
+      $input.tooltip('destroy');
+      $input.hide();
+      $link.show();
+    });
+    $link.hide();
+    $input.show();
+    $input.select();
+    var copied = false;
+    try {
+      document.execCommand('copy');
+      copied = true;
+    } catch(err) {}
+    if (copied) {
+      $input.tooltip({trigger: 'manual', title: 'Copied to clipboard'});
+      $input.tooltip('show');
+    }
+    return false;
+  });
 });
