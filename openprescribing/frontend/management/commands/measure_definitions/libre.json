@@ -7,10 +7,11 @@
     "Prescribing of Freestyle Libre per 1000 patients"
   ],
   "why_it_matters": [
-    "Freestyle Libre is a new continuous blood glucose monitoring system for people with diabetes, which does not require finger pricking.",
+    "Freestyle Libre is a new continuous blood glucose monitoring system for people with diabetes, which reduces the amount of times a person may need to use a 'finger prick test'. ",
     "It is relatively expensive, and there has been some debate about its place in therapy.  Consequently CCGs have different funding ",
     "policies, although from April 2019 <a href='https://www.england.nhs.uk/2018/11/nhs-to-provide-life-changing-glucose-monitors-for-type-1-diabetes-patients/'> ",
-    "NHS England has confirmed that funding will be available</a> to patients who meet the clinical criteria."
+    "NHS England has confirmed that funding will be available</a> to patients who meet the clinical criteria. ",
+    "The current recommendations from the NHS Regional Medicines Optimisation Committee can be found <a href='https://www.sps.nhs.uk/wp-content/uploads/2017/11/Flash-Glucose-monitoring-System-RMOC-Statement-final-2.pdf'>here</a>."
   ],
   "numerator_short": "Freestyle Libre quantity",
   "denominator_short": "1000 patients",
