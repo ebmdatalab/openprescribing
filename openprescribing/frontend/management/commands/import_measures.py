@@ -11,7 +11,7 @@ clearly.
 from collections import OrderedDict
 from contextlib import contextmanager
 import csv
-import datetime
+from datetime import datetime
 import glob
 import json
 import logging
@@ -51,19 +51,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         options = self.parse_options(options)
-        start = datetime.datetime.now()
+        start = datetime.now()
         start_date = options['start_date']
         end_date = options['end_date']
         verbose = options['verbosity'] > 1
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
                 logger.info('Updating measure: %s' % measure_id)
-                measure = create_or_update_measure(measure_id)
+                measure = create_or_update_measure(measure_id, end_date)
 
                 if options['definitions_only']:
                     continue
 
-                measure_start = datetime.datetime.now()
+                measure_start = datetime.now()
 
                 calcuation = MeasureCalculation(
                     measure, start_date=start_date, end_date=end_date,
@@ -89,11 +89,11 @@ class Command(BaseCommand):
 
                 # Compute the measures
                 calcuation.calculate()
-                elapsed = datetime.datetime.now() - measure_start
+                elapsed = datetime.now() - measure_start
                 logger.warning("Elapsed time for %s: %s seconds" % (
                     measure_id, elapsed.seconds))
         logger.warning("Total elapsed time: %s" % (
-            datetime.datetime.now() - start))
+            datetime.now() - start))
 
     def add_arguments(self, parser):
         parser.add_argument('--month')
@@ -124,8 +124,8 @@ class Command(BaseCommand):
                 options['start_date'] = start_date.strftime('%Y-%m-%d')
                 options['end_date'] = l.current_at.strftime('%Y-%m-%d')
         # validate the date format
-        datetime.datetime.strptime(options['start_date'], "%Y-%m-%d")
-        datetime.datetime.strptime(options['end_date'], "%Y-%m-%d")
+        datetime.strptime(options['start_date'], "%Y-%m-%d")
+        datetime.strptime(options['end_date'], "%Y-%m-%d")
         return options
 
 
@@ -220,7 +220,7 @@ def arrays_to_strings(measure_json):
     return measure_json
 
 
-def create_or_update_measure(measure_id):
+def create_or_update_measure(measure_id, end_date):
     """Create a measure object based on a measure definition
 
     """
@@ -254,13 +254,13 @@ def create_or_update_measure(measure_id):
     measure.low_is_good = v['low_is_good']
     measure.numerator_bnf_codes_query = v.get('numerator_bnf_codes_query')
     measure.numerator_is_list_of_bnf_codes = v.get('numerator_is_list_of_bnf_codes', True)
-    measure.numerator_bnf_codes = get_numerator_bnf_codes(measure)
+    measure.numerator_bnf_codes = get_numerator_bnf_codes(measure, end_date)
     measure.save()
 
     return measure
 
 
-def get_numerator_bnf_codes(measure):
+def get_numerator_bnf_codes(measure, end_date):
     # For most measures, we are able to work out which presentations contribute
     # to variation in the numerator by constructing a query using the
     # numerator_from and numerator_where attributes of the measure.  In a
@@ -278,6 +278,12 @@ def get_numerator_bnf_codes(measure):
 
     if measure.numerator_bnf_codes_query is not None:
         sql = measure.numerator_bnf_codes_query
+        three_months_ago = (
+            datetime.strptime(end_date, '%Y-%m-%d') - relativedelta(months=2)
+        )
+        substitutions = {
+            'three_months_ago': three_months_ago.strftime('%Y-%m-01 00:00:00')
+        }
 
     else:
         # It would be nice if we could do:
@@ -301,8 +307,9 @@ def get_numerator_bnf_codes(measure):
             numerator_from=measure.numerator_from,
             numerator_where=measure.numerator_where,
         )
+        substitutions = None
 
-    results = Client().query(sql)
+    results = Client().query(sql, substitutions=substitutions)
     return [row[0] for row in results.rows]
 
 

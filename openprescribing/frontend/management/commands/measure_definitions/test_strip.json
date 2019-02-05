@@ -29,14 +29,22 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month = r.date AND p.bnf_code = r.bnf_code ",
   "numerator_where": [
     "(",
     " p.bnf_code LIKE '0601060D0%'",
     "AND r.median_price_per_unit >=0.2",
     ")"
   ],
- "denominator_columns": [
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT p.bnf_code",
+    "FROM {hscic}.normalised_prescribing_standard p",
+    "LEFT JOIN {measures}.vw__median_price_per_unit r",
+    "ON p.month = r.date AND p.bnf_code = r.bnf_code",
+    "WHERE p.bnf_code LIKE '0601060D0%' AND r.median_price_per_unit >= 0.2 AND p.month >= '{three_months_ago}'",
+    "ORDER BY bnf_code"
+  ],
+  "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],
   "denominator_from": "{hscic}.practice_statistics ",

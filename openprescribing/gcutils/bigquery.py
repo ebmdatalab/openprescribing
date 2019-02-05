@@ -171,11 +171,14 @@ class Client(object):
 
         return Table(table_ref, self)
 
-    def query(self, sql, legacy=False, **options):
-        sql = interpolate_sql(sql)
+    def query(self, sql, substitutions=None, legacy=False, **options):
         default_options = {
             'use_legacy_sql': legacy,
         }
+
+        substitutions = substitutions or {}
+        sql = interpolate_sql(sql, **substitutions)
+
         args = [sql]
         try:
             iterator = self.run_job('query', args, options, default_options)
