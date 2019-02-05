@@ -355,12 +355,6 @@ var utils = {
     );
 
     var isAggregateEntity = options.aggregate;
-    if (isAggregateEntity) {
-      oneEntityUrl = null;
-      chartTitleUrl = null;
-      tagsFocusUrl = null;
-      measureForAllPracticesUrl = null;
-    }
 
     var costDataAvailable = d.isCostBased && d.costSaving10th;
     if (d.meanPercentile !== null || costDataAvailable) {

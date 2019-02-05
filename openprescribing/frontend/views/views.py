@@ -1111,7 +1111,7 @@ def _build_measure_options(options):
             assert False
 
     # measureForAllPracticesUrlTemplate
-    if options['orgType'] == 'CCG':
+    if not options.get('aggregate') and options['orgType'] == 'CCG':
         options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
 
     # measureUrlTemplate
@@ -1119,7 +1119,7 @@ def _build_measure_options(options):
         options['measureUrlTemplate'] = _url_template('measure_for_all_ccgs')
 
     # oneEntityUrlTemplate
-    if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
+    if not options.get('aggregate') and not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
         # If we're rolling up by measure and a measure is provided in the
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
@@ -1131,7 +1131,9 @@ def _build_measure_options(options):
             assert False
 
     # tagsFocusUrlTemplate
-    if options['orgType'] == 'CCG':
+    if options.get('aggregate'):
+        options['tagsFocusUrlTemplate'] = reverse('all_england')
+    elif options['orgType'] == 'CCG':
         options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg')
     elif options['orgType'] == 'practice':
         options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_practice')

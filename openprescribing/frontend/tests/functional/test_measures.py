@@ -33,10 +33,7 @@ class MeasuresTests(SeleniumTestCase):
         element = base_element.find_element_by_css_selector(css_selector)
         a_element = element.find_element_by_tag_name('a')
         self.assertEqual(a_element.text, exp_text)
-        if exp_path is None:
-            self.assertEqual(a_element.get_attribute('href'), '')
-        else:
-            self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
+        self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
 
     def _verify_num_elements(self, base_element, css_selector, exp_num):
         self.assertEqual(
@@ -55,7 +52,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(1)',
             'Break it down into its constituent measures.',
-            None  # TODO fix this, it's a nothing link!
+            '/all-england/?tags=lowpriority'
         )
         self._verify_link(
             panel_element,
