@@ -1,10 +1,11 @@
 {% load account %}{% autoescape off %}Hello from OpenPrescribing!
 
-You're receiving this e-mail because someone has requested monthly alerts about {{ user.profile.most_recent_bookmark.topic }}.
+You've been subscribed to monthly alerts about {{ user.profile.most_recent_bookmark.topic }}.
 
-To confirm this is correct, go to {{ activate_url }}
+Please confirm your email address by visiting {{ activate_url }}
 
-If that wasn't you, just ignore this email.
+You can unsubscribe from this service at any time using the "Unsubscribe" link provided in each email we send.
+
 {% endautoescape %}
 
 Thanks,
