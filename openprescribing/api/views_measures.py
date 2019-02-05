@@ -115,13 +115,22 @@ def measure_numerators_by_org(request, format=None):
         # For other measures, the columns used to calculate the numerator is
         # not available here (it's in BQ) so we order by total_items, which is
         # the best we can do.
+        #
+        # But because the columns in BQ don't match the columns in PG (items vs
+        # total_items), and because we alias a column in the query below
+        # (actual_cost vs cost) we need to translate the name of the column we
+        # use for ordering the results.
         match = re.match(
             'SUM\((items|quantity|actual_cost)\) AS numerator',
             m.numerator_columns
         )
 
         if match:
-            order_col = match.groups()[0].replace('items', 'total_items')
+            order_col = {
+                'items': 'total_items',
+                'actual_cost': 'cost',
+                'quantity': 'quantity',
+            }[match.groups()[0]]
         else:
             order_col = 'total_items'
 
