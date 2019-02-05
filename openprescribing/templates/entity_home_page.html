@@ -208,7 +208,9 @@
 <script id="measure-panel" type="text/x-handlebars-template">
     <div class="panel panel-info">
       <div class="panel-heading">
-        <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+        <span class="panel-title">
+          <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+        </span>
       </div>
       <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
         <div class="chart">
