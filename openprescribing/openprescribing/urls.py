@@ -130,11 +130,13 @@ urlpatterns = [
 
     # Ghost generics
     url(r'^practice/(?P<code>[A-Z\d]+)/ghost_generics/$',
-        frontend_views.practice_ghost_generics,
-        name='practice_ghost_generics'),
+        frontend_views.ghost_generics_for_entity,
+        name='practice_ghost_generics',
+        kwargs={'entity_type': 'practice'}),
     url(r'^ccg/(?P<code>[A-Z\d]+)/ghost_generics/$',
-        frontend_views.ccg_ghost_generics,
-        name='ccg_ghost_generics'),
+        frontend_views.ghost_generics_for_entity,
+        name='ccg_ghost_generics',
+        kwargs={'entity_type': 'CCG'}),
 
     # Spending
     # (This must go above Measures because of the measure_for_practices_in_ccg
