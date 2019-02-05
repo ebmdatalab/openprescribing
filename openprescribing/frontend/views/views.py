@@ -509,34 +509,28 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
 ##################################################
 
 @handle_bad_request
-def practice_ghost_generics(request, code):
+def ghost_generics_for_entity(request, code, entity_type):
     date = _specified_or_last_date(request, 'prescribing')
-    practice = get_object_or_404(Practice, code=code)
+    entity = _get_entity(entity_type, code)
+    measure_for_entity_url = reverse(
+        'measure_for_one_{}'.format(entity_type.lower()),
+        kwargs={'measure': 'ghost_generic_measure', 'entity_code': code}
+    )
     context = {
-        'entity': practice,
-        'entity_name': practice.cased_name,
-        'entity_type': 'practice',
-        'highlight': practice.code,
-        'highlight_name': practice.cased_name,
+        'entity': entity,
+        'entity_name': entity.cased_name,
+        'entity_type': entity_type,
+        'highlight': entity.code,
+        'highlight_name': entity.cased_name,
         'date': date,
-        'by_practice': True
+        'measure_for_entity_url': measure_for_entity_url,
     }
-    return render(request, 'ghost_generics.html', context)
-
-
-@handle_bad_request
-def ccg_ghost_generics(request, code):
-    date = _specified_or_last_date(request, 'prescribing')
-    ccg = get_object_or_404(PCT, code=code)
-    context = {
-        'entity': ccg,
-        'entity_name': ccg.cased_name,
-        'entity_type': 'CCG',
-        'highlight': ccg.code,
-        'highlight_name': ccg.cased_name,
-        'date': date,
-        'by_ccg': True
-    }
+    if entity_type == 'practice':
+        context['by_practice'] = True
+    elif entity_type == 'CCG':
+        context['by_ccg'] = True
+    else:
+        raise ValueError('Unhandled entity_type: {}'.format(entity_type))
     return render(request, 'ghost_generics.html', context)
 
 
