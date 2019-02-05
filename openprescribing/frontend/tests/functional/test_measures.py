@@ -33,10 +33,7 @@ class MeasuresTests(SeleniumTestCase):
         element = base_element.find_element_by_css_selector(css_selector)
         a_element = element.find_element_by_tag_name('a')
         self.assertEqual(a_element.text, exp_text)
-        if exp_path is None:
-            self.assertEqual(a_element.get_attribute('href'), '')
-        else:
-            self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
+        self.assertEqual(a_element.get_attribute('href'), self.live_server_url + exp_path)
 
     def _verify_num_elements(self, base_element, css_selector, exp_num):
         self.assertEqual(
@@ -55,7 +52,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.inner li:nth-child(1)',
             'Break it down into its constituent measures.',
-            None  # TODO fix this, it's a nothing link!
+            '/all-england/?tags=lowpriority'
         )
         self._verify_link(
             panel_element,
@@ -96,7 +93,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('top-measure-container')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             extreme_measure.name,
             '/ccg/AAA/{}/'.format(extreme_measure.id)
         )
@@ -104,7 +101,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('lpzomnibus-container')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP omnibus measure',
             '/ccg/AAA/lpzomnibus/'
         )
@@ -119,7 +116,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('top-measure-container')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             extreme_measure.name,
             '/ccg/AAA/{}/'.format(extreme_measure.id)
         )
@@ -127,7 +124,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('lpzomnibus-container')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP omnibus measure',
             '/ccg/AAA/lpzomnibus/'
         )
@@ -138,7 +135,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_core_0')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'Core measure 0',
             '/ccg/AAA/core_0/'
         )
@@ -158,7 +155,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lpzomnibus')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP omnibus measure',
             '/ccg/AAA/lpzomnibus/'
         )
@@ -188,7 +185,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lp_2')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP measure 2',
             '/ccg/AAA/lp_2/'
         )
@@ -212,7 +209,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_core_0')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'Core measure 0',
             '/ccg/AAA/core_0/'
         )
@@ -238,7 +235,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lpzomnibus')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP omnibus measure',
             '/ccg/AAA/lpzomnibus/'
         )
@@ -274,7 +271,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lp_2')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP measure 2',
             '/ccg/AAA/lp_2/'
         )
@@ -304,7 +301,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('ccg_AAA')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'AAA: CCG 0/0/0',
             '/ccg/AAA/measures/'
         )
@@ -328,7 +325,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('ccg_AAA')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'AAA: CCG 0/0/0',
             '/ccg/AAA/measures/'
         )
@@ -358,7 +355,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lp_2')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP measure 2',
             '/ccg/AAA/lp_2/'
         )
@@ -376,7 +373,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('measure_lp_2')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'LP measure 2',
             '/ccg/AAA/lp_2/'
         )
@@ -400,7 +397,7 @@ class MeasuresTests(SeleniumTestCase):
         panel_element = self._find_measure_panel('practice_P00000')
         self._verify_link(
             panel_element,
-            '.panel-heading',
+            '.panel-title',
             'P00000: Practice 0/0/0/0',
             '/practice/P00000/measures/'
         )

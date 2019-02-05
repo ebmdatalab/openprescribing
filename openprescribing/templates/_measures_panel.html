@@ -35,7 +35,9 @@
             <input type="text" class="form-control input-sm" readonly style="display: none; margin-top: -6px; right: -10px; position: relative; background-color: #fff;">
           </span>
           {{# if chartTitleUrl }}
-            <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+            <span class="panel-title">
+              <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
+            </span>
           {{else}}
             {{ chartTitle }}
           {{/if}}
