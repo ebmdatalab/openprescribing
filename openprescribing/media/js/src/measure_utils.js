@@ -235,7 +235,7 @@ var utils = {
         if (typeof series !== 'undefined') {
           d.lowIsGood = series.low_is_good;
           d.tagsFocus = series.tags_focus;
-          d.numeratorCanBeQueried = series.numerator_can_be_queried;
+          d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
         }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
@@ -250,7 +250,7 @@ var utils = {
         d.tagsFocus = options.tagsFocus;
         series = _.findWhere(globalData, {id: options.measure});
         if (typeof series !== 'undefined') {
-          d.numeratorCanBeQueried = series.numerator_can_be_queried;
+          d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
         }
       }
       d.chartId = d.id;
