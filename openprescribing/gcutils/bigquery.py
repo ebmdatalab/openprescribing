@@ -376,6 +376,7 @@ class Table(object):
 
 class Results(object):
     def __init__(self, gcbq_row_iterator):
+        self._gcbq_row_iterator = gcbq_row_iterator
         self._rows = list(gcbq_row_iterator)
 
     @property
@@ -385,6 +386,19 @@ class Results(object):
     @property
     def rows_as_dicts(self):
         return [dict(row) for row in self._rows]
+
+    @property
+    def field_names(self):
+        """
+        Returns names of fields in the same order as they will be in
+        `row.values()`
+        """
+        field_to_index = self._gcbq_row_iterator._field_to_index
+        sorted_fields = sorted(
+            field_to_index.items(),
+            key=lambda (field, index): index
+        )
+        return [field for (field, index) in sorted_fields]
 
 
 class TableExporter(object):
