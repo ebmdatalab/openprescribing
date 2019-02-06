@@ -488,6 +488,9 @@ class Prescription(models.Model):
 
 
 class Measure(models.Model):
+    # Some of these fields are documented in
+    # https://github.com/ebmdatalab/openprescribing/wiki/Measure-definitions
+
     id = models.CharField(max_length=40, primary_key=True)
     name = models.CharField(max_length=500)
     title = models.CharField(max_length=500)

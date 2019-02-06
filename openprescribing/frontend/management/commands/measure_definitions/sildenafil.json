@@ -31,12 +31,36 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-  "bnf_code LIKE '070405%' ",
-  "AND (((bnf_code NOT LIKE '0704050Z0AAAAAA%' AND bnf_code NOT LIKE '0704050Z0AAABAB%' AND bnf_code NOT LIKE '0704050Z0AAACAC%') ",
-  "AND month <'2018-04-01 00:00:00') ",
-  "OR ((bnf_code NOT LIKE '0704050Z0AAAAAA%' AND bnf_code NOT LIKE '0704050Z0AAABAB%' AND bnf_code NOT LIKE '0704050Z0AAACAC%' ",
-  "AND bnf_code NOT LIKE '0704050R0AAAAAA%' AND bnf_code NOT LIKE '0704050R0AAABAB%' AND bnf_code NOT LIKE '0704050R0AAADAD%') ",
-  "AND month >='2018-04-01 00:00:00'))"
+    "bnf_code LIKE '070405%'",
+    "AND (",
+    "  (",
+    "        bnf_code NOT LIKE '0704050Z0AAAAAA%'",
+    "    AND bnf_code NOT LIKE '0704050Z0AAABAB%'",
+    "    AND bnf_code NOT LIKE '0704050Z0AAACAC%'",
+    "    AND MONTH <'2018-04-01 00:00:00'",
+    "  ) OR (",
+    "        bnf_code NOT LIKE '0704050Z0AAAAAA%'",
+    "    AND bnf_code NOT LIKE '0704050Z0AAABAB%'",
+    "    AND bnf_code NOT LIKE '0704050Z0AAACAC%'",
+    "    AND bnf_code NOT LIKE '0704050R0AAAAAA%'",
+    "    AND bnf_code NOT LIKE '0704050R0AAABAB%'",
+    "    AND bnf_code NOT LIKE '0704050R0AAADAD%'",
+    "    AND MONTH >='2018-04-01 00:00:00'",
+    "  )",
+    ")"
+  ],
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT bnf_code",
+    "FROM {hscic}.normalised_prescribing_standard",
+    "WHERE",
+    "    bnf_code LIKE '070405%'",
+    "AND bnf_code NOT LIKE '0704050Z0AAAAAA%'",
+    "AND bnf_code NOT LIKE '0704050Z0AAABAB%'",
+    "AND bnf_code NOT LIKE '0704050Z0AAACAC%'",
+    "AND bnf_code NOT LIKE '0704050R0AAAAAA%'",
+    "AND bnf_code NOT LIKE '0704050R0AAABAB%'",
+    "AND bnf_code NOT LIKE '0704050R0AAADAD%'",
+    "AND month >= '{three_months_ago}'"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
@@ -46,3 +70,4 @@
     "(bnf_code LIKE '070405%')"
   ]
 }
+
