@@ -32,6 +32,10 @@ except AttributeError:
     pass
 
 
+class BigQueryExportError(Exception):
+    pass
+
+
 class Client(object):
     def __init__(self, dataset_key=None):
         self.project = settings.BQ_PROJECT
@@ -332,7 +336,14 @@ class Table(object):
         )
 
         args = [self.gcbq_table, destination_uri]
-        self.run_job('extract_table', args, options, default_options)
+        result = self.run_job('extract_table', args, options, default_options)
+        if result.state != 'DONE' or result.error_result:
+            raise BigQueryExportError(
+                'Export job failed with state {state}: {error}'.format(
+                    state=result.state,
+                    error=result.error_result
+                )
+            )
 
     def delete_all_rows(self, **options):
         default_options = {
