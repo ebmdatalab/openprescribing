@@ -13,7 +13,7 @@ from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureValue, MeasureGlobal
-from dmd.models import NCSOConcession, DMDProduct, TariffPrice, VMPP
+from dmd.models import NCSOConcession, DMDProduct, TariffPrice, DMDVmpp
 from openprescribing.slack import notify_slack
 from pipeline import runner
 
@@ -103,7 +103,7 @@ def run_end_to_end():
     client.upload_model(NCSOConcession)
     client.upload_model(DMDProduct)
     client.upload_model(TariffPrice)
-    client.upload_model(VMPP)
+    client.upload_model(DMDVmpp)
 
     call_command('generate_presentation_replacements')
 
