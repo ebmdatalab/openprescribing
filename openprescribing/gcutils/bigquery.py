@@ -76,6 +76,9 @@ class Client(object):
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
 
+    def list_tables(self):
+        return self.gcbq_client.list_tables(self.dataset)
+
     def create_dataset(self):
         self.dataset.location = settings.BQ_LOCATION
         self.dataset.default_table_expiration_ms =\
