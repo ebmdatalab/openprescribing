@@ -179,6 +179,11 @@ barOptions.xAxis.type = 'category';
 barOptions.legend.enabled = false;
 barOptions.xAxis.labels = {
   formatter: function() {
+    if (typeof this.value === 'undefined') {
+      // We hope this will be logged by Sentry to give us some clues about why
+      // this.value is sometimes not defined.
+      console.log(barOptions);
+    };
     var str = this.value.substring(0, 17);
     str += (this.value.length > 17) ? '...' : '';
     return str;
