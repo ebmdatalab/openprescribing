@@ -23,6 +23,7 @@ DATASETS = {
     'tmp_eu': settings.BQ_TMP_EU_DATASET,
     'dmd': settings.BQ_DMD_DATASET,
     'archive': settings.BQ_ARCHIVE_DATASET,
+    'prescribing_export': settings.BQ_PRESCRIBING_EXPORT_DATASET
 }
 
 
