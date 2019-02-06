@@ -210,6 +210,7 @@ LOCAL_APPS = (
     'dmd2',
     'pipeline',
     'gcutils',
+    'matrixstore',
 )
 
 CONTRIB_APPS = (
