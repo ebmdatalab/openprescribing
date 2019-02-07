@@ -38,7 +38,8 @@ from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import DMDProduct
 from frontend.forms import FeedbackForm
-from frontend.forms import OrgBookmarkForm
+from frontend.forms import MonthlyOrgBookmarkForm
+from frontend.forms import NonMonthlyOrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.models import Chemical
 from frontend.models import ImportLog
@@ -47,6 +48,7 @@ from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
 from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
+from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
 from frontend.models import SearchBookmark
@@ -176,7 +178,7 @@ def all_practices(request):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _bookmark_and_newsletter_form(
+    form = _monthly_bookmark_and_newsletter_form(
         request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
@@ -201,7 +203,7 @@ def all_ccgs(request):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _bookmark_and_newsletter_form(
+    form = _monthly_bookmark_and_newsletter_form(
         request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
@@ -329,7 +331,7 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
 @handle_bad_request
 def measures_for_one_practice(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _bookmark_and_newsletter_form(request, practice)
+    form = _monthly_bookmark_and_newsletter_form(request, practice)
 
     if isinstance(form, HttpResponseRedirect):
         return form
@@ -341,7 +343,7 @@ def measures_for_one_practice(request, practice_code):
         'practice': practice,
         'page_id': practice_code,
         'form': form,
-        'signed_up_for_alert': _signed_up_for_alert(request, practice),
+        'signed_up_for_alert': _signed_up_for_alert(request, practice, OrgBookmark),
         'tag_filter': tag_filter,
         'measure_options': measure_options,
     }
@@ -351,7 +353,7 @@ def measures_for_one_practice(request, practice_code):
 @handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _bookmark_and_newsletter_form(request, ccg)
+    form = _monthly_bookmark_and_newsletter_form(request, ccg)
 
     if isinstance(form, HttpResponseRedirect):
         return form
@@ -365,7 +367,7 @@ def measures_for_one_ccg(request, ccg_code):
         'practices': practices,
         'page_id': ccg_code,
         'form': form,
-        'signed_up_for_alert': _signed_up_for_alert(request, ccg),
+        'signed_up_for_alert': _signed_up_for_alert(request, ccg, OrgBookmark),
         'tag_filter': tag_filter,
         'measure_options': measure_options,
     }
@@ -606,7 +608,7 @@ def finalise_signup(request):
             # Their first alert bookmark signup
             del(request.session['alerts_requested'])
             messages.success(
-                request, "Thanks, you're now subscribed to monthly alerts.")
+                request, "Thanks, you're now subscribed to alerts.")
         if next_url:
             return redirect(next_url)
         else:
@@ -618,8 +620,7 @@ def finalise_signup(request):
         next_url = last_bookmark.dashboard_url()
         messages.success(
             request,
-            mark_safe("You're now subscribed to monthly "
-                      "alerts about <em>%s</em>." %
+            mark_safe("You're now subscribed to alerts about <em>%s</em>." %
                       last_bookmark.topic()))
         return redirect(next_url)
 
@@ -634,7 +635,14 @@ def spending_for_one_entity(request, entity_code, entity_type):
     # expensive data loading via JS and so don't have this issue)
     if _user_is_bot(request):
         raise Http404()
+
     entity = _get_entity(entity_type, entity_code)
+
+    form = _ncso_concession_bookmark_and_newsletter_form(
+        request, entity)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
         num_months=12,
@@ -683,8 +691,11 @@ def spending_for_one_entity(request, entity_code, entity_type):
         'breakdown_is_estimate': breakdown_metadata['is_estimate'],
         'breakdown_is_incomplete_month': breakdown_metadata['is_incomplete_month'],
         'last_prescribing_date': last_prescribing_date,
-        'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+        'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
+        'signed_up_for_alert': _signed_up_for_alert(request, entity, NCSOConcessionBookmark),
+        'form': form,
     }
+    request.session['came_from'] = request.path
     return render(request, 'spending_for_one_entity.html', context)
 
 
@@ -948,7 +959,7 @@ def _home_page_context_for_entity(request, entity):
         'possible_savings': total_possible_savings,
         'ncso_spending': ncso_spending,
         'date': ppu_date,
-        'signed_up_for_alert': _signed_up_for_alert(request, entity),
+        'signed_up_for_alert': _signed_up_for_alert(request, entity, OrgBookmark),
         'measure_options': measure_options,
         'measure_tags': [
             (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
@@ -1288,17 +1299,15 @@ def _entity_type_from_object(entity):
         raise RuntimeError("Entity must be Practice or PCT")
 
 
-def _signed_up_for_alert(request, entity):
+def _signed_up_for_alert(request, entity, subject_class):
     if request.user.is_authenticated():
         q = {_entity_type_from_object(entity): entity}
-        signed_up_for_alert = bool(
-            request.user.orgbookmark_set.filter(**q))
+        return subject_class.objects.filter(user=request.user, **q).exists()
     else:
-        signed_up_for_alert = False
-    return signed_up_for_alert
+        return False
 
 
-def _bookmark_and_newsletter_form(request, entity):
+def _monthly_bookmark_and_newsletter_form(request, entity):
     """Build a form for newsletter/alert signups, and handle user login
     for POSTs to that form.
     """
@@ -1307,12 +1316,32 @@ def _bookmark_and_newsletter_form(request, entity):
         form = _handle_bookmark_and_newsletter_post(
             request,
             OrgBookmark,
-            OrgBookmarkForm,
+            MonthlyOrgBookmarkForm,
             entity_type)
     else:
-        form = OrgBookmarkForm(
+        form = MonthlyOrgBookmarkForm(
             initial={entity_type: entity.pk,
                      'email': getattr(request.user, 'email', '')})
+
+    return form
+
+
+def _ncso_concession_bookmark_and_newsletter_form(request, entity):
+    """Build a form for newsletter/alert signups, and handle user login
+    for POSTs to that form.
+    """
+    entity_type = _entity_type_from_object(entity)
+    if request.method == 'POST':
+        form = _handle_bookmark_and_newsletter_post(
+            request,
+            NCSOConcessionBookmark,
+            NonMonthlyOrgBookmarkForm,
+            entity_type)
+    else:
+        form = NonMonthlyOrgBookmarkForm(
+            initial={entity_type: entity.pk,
+                     'email': getattr(request.user, 'email', '')})
+
     return form
 
 

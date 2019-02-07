@@ -800,9 +800,14 @@ class Profile(models.Model):
     emails_clicked = models.IntegerField(default=0)
 
     def most_recent_bookmark(self):
-        org_bookmark = self.user.orgbookmark_set.last()
-        search_bookmark = self.user.searchbookmark_set.last()
-        bookmarks = [x for x in [org_bookmark, search_bookmark] if x]
+        bookmarks = [
+            bookmark for bookmark in [
+                 self.user.orgbookmark_set.last(),
+                 self.user.searchbookmark_set.last(),
+                 self.user.ncsoconcessionbookmark_set.last(),
+            ]
+            if bookmark
+        ]
         return sorted(bookmarks, key=lambda x: x.created_at)[-1]
 
 

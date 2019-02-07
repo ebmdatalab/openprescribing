@@ -132,7 +132,7 @@ class TestAlertViews(TestCase):
         response = self.client.get(confirm_url, follow=True)
         self.assertTemplateUsed(response, 'analyse.html')
         self.assertContains(
-            response, "subscribed to monthly alerts about <em>mysearch</em>")
+            response, "subscribed to alerts about <em>mysearch</em>")
         self.assertTrue(response.context['user'].is_active)
 
     def test_ccg_email_invalid(self):
@@ -277,7 +277,7 @@ class TestAlertViews(TestCase):
         response = self.client.get(confirm_url, follow=True)
         self.assertEqual(response.context['user'].email, 'f@frog.com')
         self.assertContains(
-            response, "subscribed to monthly alerts about "
+            response, "subscribed to alerts about "
             "<em>prescribing in NHS Corby")
         self.assertTrue(response.context['user'].is_active)
 
@@ -306,7 +306,7 @@ class TestAlertViews(TestCase):
                                mail.outbox[0].body, re.DOTALL).groups()[0]
         response = self.client.get(confirm_url, follow=True)
         self.assertContains(
-            response, "subscribed to monthly alerts about "
+            response, "subscribed to alerts about "
             "<em>prescribing in 1/ST Andrews")
         self.assertTrue(response.context['user'].is_active)
 

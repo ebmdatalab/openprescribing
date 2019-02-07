@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% load humanize %}
 {% load template_extras %}
 
@@ -31,6 +32,25 @@
 
 <div id="monthly-totals-chart"></div>
 
+<hr/>
+{% if not signed_up_for_alert %}
+<form method="post" class="form form-inline">
+ {% csrf_token %}
+ <p>
+   Get alerted by email when new price concession data is available.
+   You can also sign up for our monthly newsletter.
+  <p>
+  {{ form.non_field_errors }}
+  {{ form | crispy }}
+  <input class="btn btn-primary" type="submit" value="Subscribe">
+  </p>
+</form>
+{% else %}
+<p>
+  You're already signed up for alerts. You can
+  <a href="{% url 'bookmark-list' %}">change your subscriptions here</a>.
+</p>
+{% endif %}
 <hr/>
 
 <form class="form pull-right" action="">
