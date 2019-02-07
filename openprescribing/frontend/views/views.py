@@ -638,10 +638,13 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    form = _ncso_concession_bookmark_and_newsletter_form(
-        request, entity)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if entity:
+        form = _ncso_concession_bookmark_and_newsletter_form(
+            request, entity)
+        if isinstance(form, HttpResponseRedirect):
+            return form
+    else:
+        form = None
 
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
