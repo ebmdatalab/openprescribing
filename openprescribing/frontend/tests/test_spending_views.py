@@ -107,6 +107,17 @@ class TestSpendingViews(TestCase):
                 self.months[-1]
             )
 
+    def test_alert_signup(self):
+        url = '/practice/{}/concessions/'.format(self.practice.code)
+        data = {
+            'email': 'alice@example.com',
+            'practice': self.practice.code,
+            'newsletters': ['alerts'],
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+
 
 def round_floats(value):
     if isinstance(value, float):
