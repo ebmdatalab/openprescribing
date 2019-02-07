@@ -134,7 +134,7 @@
   {% if stats.interesting %}
       {% for measure in stats.interesting %}
         {% if forloop.first %}
-          <p>Over the last three months, we found that this {{ bookmark.org_type }} deviated a long way from the median practice on
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} deviated a long way from the median {{ bookmark.org_type }} on
           <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
           <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ interesting_image }}"></a><br>
         {% elif stats.interesting|length == 2 %}
