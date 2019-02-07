@@ -10,6 +10,7 @@ from django.views.generic import ListView
 from frontend.forms import BookmarkListForm
 from frontend.models import SearchBookmark
 from frontend.models import OrgBookmark
+from frontend.models import NCSOConcessionBookmark
 
 
 class BookmarkList(ListView):
@@ -24,14 +25,19 @@ class BookmarkList(ListView):
         if request.POST.get('unsuball'):
             org_bookmarks = [x.id for x in self._org_bookmarks()]
             search_bookmarks = [x.id for x in self._search_bookmarks()]
+            ncso_concessions_bookmarks = [x.id for x in self._ncso_concessions_bookmarks()]
         else:
             org_bookmarks = request.POST.getlist('org_bookmarks')
             search_bookmarks = request.POST.getlist('search_bookmarks')
+            ncso_concessions_bookmarks = request.POST.getlist('ncso_concessions_bookmarks')
         for b in org_bookmarks:
             OrgBookmark.objects.get(pk=b).delete()
             count += 1
         for b in search_bookmarks:
             SearchBookmark.objects.get(pk=b).delete()
+            count += 1
+        for b in ncso_concessions_bookmarks:
+            NCSOConcessionBookmark.objects.get(pk=b).delete()
             count += 1
         if count > 0:
             msg = "Unsubscribed from %s alert" % count
@@ -51,20 +57,28 @@ class BookmarkList(ListView):
         return OrgBookmark.objects.filter(
             user__id=self.request.user.id, approved=True)
 
+    def _ncso_concessions_bookmarks(self):
+        return NCSOConcessionBookmark.objects.filter(
+            user__id=self.request.user.id, approved=True)
+
     def get_context_data(self):
         search_bookmarks = self._search_bookmarks()
         org_bookmarks = self._org_bookmarks()
+        ncso_concessions_bookmarks = self._ncso_concessions_bookmarks()
         form = BookmarkListForm(
             org_bookmarks=org_bookmarks,
-            search_bookmarks=search_bookmarks
+            search_bookmarks=search_bookmarks,
+            ncso_concessions_bookmarks=ncso_concessions_bookmarks,
         )
-        count = search_bookmarks.count() + org_bookmarks.count()
+        count = search_bookmarks.count() + org_bookmarks.count() + ncso_concessions_bookmarks.count()
         single_bookmark = None
         if count == 1:
-            single_bookmark = search_bookmarks.first() or org_bookmarks.first()
+            single_bookmark = search_bookmarks.first() or org_bookmarks.first() or ncso_concessions_bookmarks.first()
+
         return {
             'search_bookmarks': search_bookmarks,
             'org_bookmarks': org_bookmarks,
+            'ncso_concessions_bookmarks': ncso_concessions_bookmarks,
             'form': form,
             'count': count,
             'single_bookmark': single_bookmark
