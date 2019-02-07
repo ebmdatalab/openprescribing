@@ -726,6 +726,47 @@ class OrgBookmark(models.Model):
         return 'Org Bookmark: ' + self.name
 
 
+class NCSOConcessionBookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    @property
+    def entity(self):
+        if self.practice is None:
+            assert self.pct is not None
+            return self.pct
+        else:
+            assert self.pct is None
+            return self.practice
+
+    @property
+    def entity_type(self):
+        if self.practice is None:
+            assert self.pct is not None
+            return 'CCG'
+        else:
+            assert self.pct is None
+            return 'practice'
+
+    @property
+    def name(self):
+        return 'NCSO concessions for {}'.format(self.entity.cased_name)
+
+    def dashboard_url(self):
+        kwargs={'entity_code': self.entity.code}
+
+        if self.entity_type == 'CCG':
+            return reverse('spending_for_one_ccg', kwargs=kwargs)
+        else:
+            return reverse('spending_for_one_practice', kwargs=kwargs)
+
+    def topic(self):
+        return self.name
+
+
 class ImportLogManager(models.Manager):
     def latest_in_category(self, category):
         return self.filter(category=category).first()
