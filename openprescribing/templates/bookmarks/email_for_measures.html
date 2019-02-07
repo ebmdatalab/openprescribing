@@ -134,14 +134,14 @@
   {% if stats.interesting %}
       {% for measure in stats.interesting %}
         {% if forloop.first %}
-          <p>Over the last three months, we found that this {{ bookmark.org_type }} was in the top or bottom 10% on
+          <p>Over the last three months, we found that this {{ bookmark.org_type }} deviated a long way from the median practice on
           <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>:<br>
           <a href="{{ dashboard_uri }}#{{measure.id}}"><img src="cid:{{ interesting_image }}"></a><br>
         {% elif stats.interesting|length == 2 %}
-          It was also in the top or bottom 10% on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
+          It was also an outlier on <a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a>.
         {% else %}
           {% if forloop.counter == 2 %}
-            It was also in the top or bottom 10% on:
+            It was also an outlier on:
             <ul>
           {% endif %}
               <li><a href="{{ dashboard_uri }}#{{measure.id}}">{{ measure.name }}</a></li>
