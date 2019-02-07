@@ -608,25 +608,25 @@ class TestContextForOrgEmail(unittest.TestCase):
         non_ordinal_measure_2 = MagicMock(low_is_good=None)
         most_change_against_window.return_value = {
             'improvements': [
-                {'measure': ordinal_measure_1}],
+                {'measure': ordinal_measure_1},
+                {'measure': non_ordinal_measure_2}],
             'declines': [
-                {'measure': non_ordinal_measure_1},
-                {'measure': non_ordinal_measure_2}]
+                {'measure': non_ordinal_measure_1}]
         }
         best_performing_in_period.return_value = [
-            ordinal_measure_1, non_ordinal_measure_1]
+            ordinal_measure_1, non_ordinal_measure_2]
         worst_performing_in_period.return_value = [
             ordinal_measure_1, non_ordinal_measure_1]
         finder = bookmark_utils.InterestingMeasureFinder(
             pct='foo')
         context = finder.context_for_org_email()
-        self.assertEqual(
+        self.assertItemsEqual(
             context['most_changing_interesting'],
             [{'measure': non_ordinal_measure_1},
              {'measure': non_ordinal_measure_2}]
         )
-        self.assertEqual(
-            context['interesting'], [non_ordinal_measure_1])
+        self.assertItemsEqual(
+            context['interesting'], [non_ordinal_measure_1, non_ordinal_measure_2])
         self.assertEqual(
             context['best'], [ordinal_measure_1])
         self.assertEqual(
