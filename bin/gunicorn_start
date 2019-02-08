@@ -24,6 +24,7 @@ mkdir -p $RUNDIR
 mkdir -p $LOGDIR
 
 SOCKFILE="$RUNDIR/gunicorn.sock"
+PIDFILE="$RUNDIR/gunicorn.pid"
 LOGFILE="$LOGDIR/gunicorn-error.log"
 ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
@@ -52,6 +53,7 @@ source "$VIRTUALENV_PATH/bin/activate"
 cmd="newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --name $NAME \
   --bind=unix:$SOCKFILE \
+  --pid=$PIDFILE \
   --workers $GUNICORN_NUM_WORKERS \
   --timeout $GUNICORN_TIMEOUT \
   --log-level=$GUNICORN_LOG_LEVEL \

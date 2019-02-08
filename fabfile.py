@@ -36,6 +36,38 @@ NEWRELIC_APPIDS = {
 }
 
 
+def sudo_script(script, www_user=False):
+    """Run script under `deploy/fab_scripts/` as sudo.
+
+    We don't use the `fabric` `sudo()` command, because instead we
+    expect the user that is running fabric to have passwordless sudo
+    access.  In this configuration, that is achieved by the user being
+    a member of the `fabric` group (see `setup_sudo()`, below).
+
+    """
+    if www_user:
+        sudo_cmd = 'sudo -u www-data '
+    else:
+        sudo_cmd = 'sudo '
+    return run(sudo_cmd +
+               os.path.join(
+                   env.path,
+                   'deploy/fab_scripts/%s' % script))
+
+
+def setup_sudo():
+    """Ensures members of `fabric` group can execute deployment scripts as
+    root without passwords
+
+    """
+    sudoer_file = '/etc/sudoers.d/openprescribing_fabric_{}'.format(env.app)
+    if not exists(sudoer_file):
+        sudo(
+            'echo "%fabric ALL = () '
+            'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
+                env.path, sudoer_file))
+
+
 def notify_slack(message):
     """Posts the message to #general
     """
@@ -202,11 +234,7 @@ def run_migrations():
 
 @task
 def graceful_reload():
-    result = run(r"""PID=$(sudo supervisorctl status | grep %s |
-    sed -n '/RUNNING/s/.*pid \([[:digit:]]\+\).*/\1/p');
-    if [[ -n "$PID" ]]; then kill -HUP $PID;
-    else echo "Error: server %s not running, so could not reload";
-    exit 1; fi""" % (env.app, env.app))
+    result = sudo_script('graceful_reload.sh %s' % env.app)
     if result.failed:
         # Use the error from the bash command(s) rather than rely on
         # noisy (and hard-to-interpret) output from fabric
@@ -259,7 +287,7 @@ def clear_cloudflare():
 def setup_cron():
     crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
     if exists(crontab_path):
-        sudo('cp %s /etc/cron.d/' % crontab_path)
+        sudo_script('setup_cron.sh %s' % crontab_path)
 
 
 @task
@@ -273,6 +301,7 @@ def deploy(environment, force_build=False, branch='master'):
     env.environment = environment
     env.path = "/webapps/%s" % env.app
     env.branch = branch
+    setup_sudo()
     with cd(env.path):
         checkpoint(force_build)
         git_pull()
