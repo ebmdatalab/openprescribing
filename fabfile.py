@@ -61,12 +61,19 @@ def setup_sudo():
     root without passwords
 
     """
-    sudoer_file = '/etc/sudoers.d/openprescribing_fabric_{}'.format(env.app)
-    if not exists(sudoer_file):
-        sudo(
+    sudoer_file_test = '/tmp/openprescribing_fabric_{}'.format(
+        env.app)
+    sudoer_file_real = '/etc/sudoers.d/openprescribing_fabric_{}'.format(
+        env.app)
+    if not exists(sudoer_file_real):
+        # Test the format of the file, to prevent locked-out-disasters
+        run(
             'echo "%fabric ALL = () '
             'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
-                env.path, sudoer_file))
+                env.path, sudoer_file_test))
+        run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
+        # Copy it to the right place
+        sudo('cp {} {}'.format(sudoer_file_test, sudoer_file_real))
 
 
 def notify_slack(message):
