@@ -1,3 +1,4 @@
+from __future__ import print_function
 from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env, shell_env
@@ -260,7 +261,7 @@ def list_cloudflare_zones():
         requests.get(url, headers=headers,).text)
     zones = map(lambda x: {'name': x['name'], 'id': x['id']},
                 [x for x in result["result"]])
-    print json.dumps(zones, indent=2)
+    print(json.dumps(zones, indent=2))
 
 
 def clear_cloudflare():
@@ -271,8 +272,8 @@ def clear_cloudflare():
         "X-Auth-Email": os.environ['CF_API_EMAIL']
     }
     data = {'purge_everything': True}
-    print "Purging from Cloudflare:"
-    print data
+    print("Purging from Cloudflare:")
+    print(data)
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
