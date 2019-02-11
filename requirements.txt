@@ -9,7 +9,7 @@ asn1crypto==0.23.0        # via cryptography
 backports.csv==1.0.5
 bcrypt==3.1.4             # via paramiko
 beautifulsoup4==4.7.1
-cachetools==2.0.1         # via google-auth
+cachetools==2.0.1         # via google-auth, premailer
 certifi==2017.7.27.1      # via requests
 cffi==1.11.5              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
@@ -71,7 +71,7 @@ paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
 pbr==4.2.0                # via mock
 pip-tools==3.3.2
-premailer==3.2.0
+premailer==3.3.0
 protobuf==3.4.0           # via google-api-core, googleapis-common-protos
 psycopg2-binary==2.7.7
 pyasn1-modules==0.2.1     # via google-auth
