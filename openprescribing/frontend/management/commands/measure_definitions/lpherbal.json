@@ -25,7 +25,7 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN (SELECT DISTINCT bnf_code FROM {richard}.herbal_list) r ON p.bnf_code = r.bnf_code",
+  "numerator_from": "{hscic}.normalised_prescribing_standard p INNER JOIN (SELECT DISTINCT bnf_code FROM ebmdatalab.richard.herbal_list) r ON p.bnf_code = r.bnf_code",
   "numerator_where": [
     "1 = 1"
   ],
