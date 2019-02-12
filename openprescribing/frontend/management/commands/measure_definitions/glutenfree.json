@@ -19,7 +19,8 @@
   "low_is_good": true,
   "tags": [
     "core",
-    "cost"
+    "cost",
+    "nutrition"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
