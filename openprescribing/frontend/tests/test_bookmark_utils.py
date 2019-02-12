@@ -518,7 +518,7 @@ class GenerateImageTestCase(unittest.TestCase):
         with open(self.file_path, 'a'):
             # create an empty file
             os.utime(self.file_path, None)
-        with self.assertRaises(bookmark_utils.BadAlertIimageError):
+        with self.assertRaises(bookmark_utils.BadAlertImageError):
             bookmark_utils.attach_image(
                 self.msg, self.url, self.file_path, self.selector)
 

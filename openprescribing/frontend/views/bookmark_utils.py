@@ -35,7 +35,7 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
 logger = logging.getLogger(__name__)
 
 
-class BadAlertIimageError(Exception):
+class BadAlertImageError(Exception):
     pass
 
 
@@ -492,7 +492,7 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
     logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
     if os.path.getsize(file_path) == 0:
         msg = "File at %s empty (generated from url %s)" % (file_path, url)
-        raise BadAlertIimageError(msg)
+        raise BadAlertImageError(msg)
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 

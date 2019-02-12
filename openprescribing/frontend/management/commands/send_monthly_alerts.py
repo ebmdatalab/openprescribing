@@ -154,7 +154,7 @@ class Command(BaseCommand):
                         logger.info(
                             "Sent org bookmark alert to %s about %s" % (
                                 msg.to, org_bookmark.id))
-                    except bookmark_utils.BadAlertIimageError as e:
+                    except bookmark_utils.BadAlertImageError as e:
                         logger.exception(e)
                 error_deferrer.try_email(callback)
             for search_bookmark in self.get_search_bookmarks(
@@ -169,7 +169,7 @@ class Command(BaseCommand):
                         logger.info(
                             "Sent search bookmark alert to %s about %s" % (
                                 recipient_id, search_bookmark.id))
-                    except bookmark_utils.BadAlertIimageError as e:
+                    except bookmark_utils.BadAlertImageError as e:
                         logger.exception(e)
                 error_deferrer.try_email(callback)
 
