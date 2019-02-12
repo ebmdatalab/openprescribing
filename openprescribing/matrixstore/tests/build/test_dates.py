@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 
-from matrixstore.dates import generate_dates
+from matrixstore.build.dates import generate_dates
 
 
 class TestDates(SimpleTestCase):
