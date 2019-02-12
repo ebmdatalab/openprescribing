@@ -634,14 +634,10 @@ def get_chart_id(measure_id):
     return "#{}-with-title".format(measure_id)
 
 
-def make_org_email(org_bookmark, stats, preview=False, tag=None):
+def make_org_email(org_bookmark, stats, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
-    if preview:
-        base_template = 'base.html'
-    else:
-        base_template = 'bookmarks/email_base.html'
-        dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
+    dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
     html_email = get_template('bookmarks/email_for_measures.html')
     with NamedTemporaryFile(suffix='.png') as getting_worse_file, \
             NamedTemporaryFile(suffix='.png') as still_bad_file, \
@@ -674,8 +670,6 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
             kwargs={'key': org_bookmark.user.profile.key})
         html = html_email.render(
             context={
-                'preview': preview,
-                'base_template': base_template,
                 'intro_text': getIntroText(
                     stats, org_bookmark.org_type()),
                 'total_possible_savings': sum(
@@ -693,19 +687,18 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
                 'stats': stats,
                 'unsubscribe_link': unsubscribe_link
             })
-        if not preview:
-            html = Premailer(
-                html, cssutils_logging_level=logging.ERROR).transform()
-            html = unescape_href(html)
-            text = email_as_text(html)
-            msg.body = text
+        html = Premailer(
+            html, cssutils_logging_level=logging.ERROR).transform()
+        html = unescape_href(html)
+        text = email_as_text(html)
+        msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
         msg.tags = ["monthly_update", "measures", tag]
         return msg
 
 
-def make_search_email(search_bookmark, preview=False, tag=None):
+def make_search_email(search_bookmark, tag=None):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
     html_email = get_template('bookmarks/email_for_searches.html')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
@@ -714,13 +707,8 @@ def make_search_email(search_bookmark, preview=False, tag=None):
         qs = '?' + parsed_url.query + '&' + msg.qs
     else:
         qs = '?' + msg.qs
-    if preview:
-        base_template = 'base.html'
-        dashboard_uri += '#' + parsed_url.fragment
-    else:
-        dashboard_uri = (settings.GRAB_HOST + dashboard_uri +
-                         qs + '#' + parsed_url.fragment)
-        base_template = 'bookmarks/email_base.html'
+    dashboard_uri = (settings.GRAB_HOST + dashboard_uri +
+                     qs + '#' + parsed_url.fragment)
 
     with NamedTemporaryFile(suffix='.png') as graph_file:
         graph = attach_image(
@@ -734,20 +722,17 @@ def make_search_email(search_bookmark, preview=False, tag=None):
             kwargs={'key': search_bookmark.user.profile.key})
         html = html_email.render(
             context={
-                'preview': preview,
-                'base_template': base_template,
                 'bookmark': search_bookmark,
                 'domain': settings.GRAB_HOST,
                 'graph': graph,
                 'dashboard_uri': mark_safe(dashboard_uri),
                 'unsubscribe_link': unsubscribe_link
             })
-        if not preview:
-            html = Premailer(
-                html, cssutils_logging_level=logging.ERROR).transform()
-            html = unescape_href(html)
-            text = email_as_text(html)
-            msg.body = text
+        html = Premailer(
+            html, cssutils_logging_level=logging.ERROR).transform()
+        html = unescape_href(html)
+        text = email_as_text(html)
+        msg.body = text
         msg.attach_alternative(html, "text/html")
         msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
         msg.tags = ["monthly_update", "analyse", tag]
