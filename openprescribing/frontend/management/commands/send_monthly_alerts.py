@@ -135,43 +135,52 @@ class Command(BaseCommand):
                 "You must specify either a URL, or one of a ccg or a practice"
             )
 
+    def send_org_bookmark_email(self, org_bookmark, now_month, options):
+        stats = bookmark_utils.InterestingMeasureFinder(
+            practice=org_bookmark.practice or options['practice'],
+            pct=org_bookmark.pct or options['ccg']
+        ).context_for_org_email()
+        try:
+            msg = bookmark_utils.make_org_email(org_bookmark, stats, tag=now_month)
+            msg = EmailMessage.objects.create_from_message(msg)
+            msg.send()
+            logger.info(
+                "Sent org bookmark alert to %s about %s" % (
+                    msg.to, org_bookmark.id))
+        except bookmark_utils.BadAlertImageError as e:
+            logger.exception(e)
+
+    def send_search_bookmark_email(self, search_bookmark, now_month):
+        try:
+            recipient_id = search_bookmark.user.id
+            msg = bookmark_utils.make_search_email(search_bookmark, tag=now_month)
+            msg = EmailMessage.objects.create_from_message(msg)
+            msg.send()
+            logger.info(
+                "Sent search bookmark alert to %s about %s" % (
+                    recipient_id, search_bookmark.id))
+        except bookmark_utils.BadAlertImageError as e:
+            logger.exception(e)
+
     def handle(self, *args, **options):
         self.validate_options(**options)
         now_month = ImportLog.objects.latest_in_category(
             'prescribing').current_at.strftime('%Y-%m-%d').lower()
         with EmailErrorDeferrer(options['max_errors']) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
-                def callback():
-                    stats = bookmark_utils.InterestingMeasureFinder(
-                        practice=org_bookmark.practice or options['practice'],
-                        pct=org_bookmark.pct or options['ccg']
-                    ).context_for_org_email()
-                    try:
-                        msg = bookmark_utils.make_org_email(
-                            org_bookmark, stats, tag=now_month)
-                        msg = EmailMessage.objects.create_from_message(msg)
-                        msg.send()
-                        logger.info(
-                            "Sent org bookmark alert to %s about %s" % (
-                                msg.to, org_bookmark.id))
-                    except bookmark_utils.BadAlertImageError as e:
-                        logger.exception(e)
-                error_deferrer.try_email(callback)
-            for search_bookmark in self.get_search_bookmarks(
-                    now_month, **options):
-                def callback():
-                    try:
-                        recipient_id = search_bookmark.user.id
-                        msg = bookmark_utils.make_search_email(
-                            search_bookmark, tag=now_month)
-                        msg = EmailMessage.objects.create_from_message(msg)
-                        msg.send()
-                        logger.info(
-                            "Sent search bookmark alert to %s about %s" % (
-                                recipient_id, search_bookmark.id))
-                    except bookmark_utils.BadAlertImageError as e:
-                        logger.exception(e)
-                error_deferrer.try_email(callback)
+                error_deferrer.try_email(
+                    self.send_org_bookmark_email,
+                    org_bookmark,
+                    now_month,
+                    options
+                )
+
+            for search_bookmark in self.get_search_bookmarks(now_month, **options):
+                error_deferrer.try_email(
+                    self.send_search_bookmark_email,
+                    search_bookmark,
+                    now_month
+                )
 
 
 class BatchedEmailErrors(Exception):
@@ -200,9 +209,9 @@ class EmailErrorDeferrer(object):
         self.exceptions = []
         self.max_errors = max_errors
 
-    def try_email(self, callback):
+    def try_email(self, callback, *args):
         try:
-            callback()
+            callback(*args)
         except Exception as e:
             self.exceptions.append(sys.exc_info())
             logger.exception(e)
