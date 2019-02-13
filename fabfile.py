@@ -277,8 +277,8 @@ def clear_cloudflare():
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
     if result['success']:
-        print "Cloudflare clearing succeeded: %s" % \
-            json.dumps(result, indent=2)
+        print("Cloudflare clearing succeeded: %s" %
+              json.dumps(result, indent=2))
     else:
         warn("Cloudflare clearing failed: %s" %
              json.dumps(result, indent=2))

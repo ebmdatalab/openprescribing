@@ -96,8 +96,9 @@
 
 - name: Create fabric group for automation
   become: yes
-  group: fabric
-  state: present
+  group:
+    name: fabric
+    state: present
 
 - name: Add user to required groups
   become: yes
