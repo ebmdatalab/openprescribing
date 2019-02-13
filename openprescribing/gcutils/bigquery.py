@@ -98,7 +98,7 @@ class Client(object):
         try:
             self.gcbq_client.create_table(table)
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client.create_table(table)
@@ -150,7 +150,7 @@ class Client(object):
                 data=resource
             )
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client._connection.api_request(
@@ -172,7 +172,7 @@ class Client(object):
         try:
             self.gcbq_client.create_table(table)
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client.create_table(table)
@@ -514,3 +514,7 @@ def interpolate_sql(sql, **substitutions):
     sql = string.Formatter().vformat(sql, (), substitutions)
     sql = string.Formatter().vformat(sql, (), substitutions)
     return sql
+
+
+def dataset_is_missing(exception):
+    return isinstance(exception, NotFound) and 'Not found: Dataset' in str(exception)
