@@ -23,6 +23,7 @@ class Command(BaseCommand):
     """
     def add_arguments(self, parser):
         parser.add_argument('--email_contains')
+        parser.add_argument('--sent_log')
 
     def handle(self, *args, **options):
         users = User.objects.filter(
@@ -30,6 +31,15 @@ class Command(BaseCommand):
             emailaddress__email__contains=options['email_contains'])
         request = RequestFactory().get('/')
         request.environ['SERVER_NAME'] = settings.ALLOWED_HOSTS[0]
-        for user in users:
-            print "Resending to", user
-            send_email_confirmation(request, user)
+        with open(options['sent_log'], 'a+') as f:
+            f.seek(0)
+            already_sent = set(f.read().strip().splitlines())
+            for user in users:
+                email = user.email
+                if email in already_sent:
+                    print 'Skipping', user
+                    continue
+                f.write(email+'\n')
+                f.flush()
+                print "Resending to", user
+                send_email_confirmation(request, user)
