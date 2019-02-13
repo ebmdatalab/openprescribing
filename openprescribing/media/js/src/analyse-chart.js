@@ -405,6 +405,7 @@ var analyseChart = {
       $('#items-spending-toggle .btn').removeClass('btn-info').addClass('btn-default');
       $(this).addClass('btn-info').removeClass('btn-default');
       _this.globalOptions.activeOption = $(this).data('type');
+      _this.globalOptions.barChart.zoom();
       _this.updateCharts();
     });
     // select the correct view tab
