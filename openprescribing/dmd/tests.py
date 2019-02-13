@@ -46,8 +46,8 @@ class CommandsTestCase(TestCase):
             concept_class=1)
 
         # dmd.zip doesn't exist!  The data to be imported is already unzipped
-        # in dmd/tests/fixtures/commands/.
-        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        # in dmd/tests/fixtures/dmd/1/.
+        path = 'dmd/tests/fixtures/dmd/1/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
@@ -145,11 +145,11 @@ class CommandsTestCase(TestCase):
             call_command('import_dmd', '--zip_path', path)
 
     def test_import_dmd_snomed(self):
-        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        path = 'dmd/tests/fixtures/dmd/1/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        path = 'dmd/tests/fixtures/commands/june-2018-snomed-mapping.xlsx'
+        path = 'dmd/tests/fixtures/snomed-mapping/june-2018-snomed-mapping.xlsx'
         call_command('import_dmd_snomed', '--filename', path)
 
         diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
