@@ -295,6 +295,30 @@ def process_datafiles(source_directory):
                         insert_row(cursor, info, row_data)
 
 
+def update_product_references():
+    """Update FK references to DMDProducts.
+
+    We need to do this because sometimes a VMP's ID changes between releases of
+    the data.  When this happens, the VMP's previous ID is available in the
+    vpidprev column.
+
+    It is only VMPs that might change their ID, so we do not need to consider
+    updating references to other dm+d objects.
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT vpid, vpidprev FROM dmd_vmp WHERE vpidprev IS NOT NULL'
+        )
+
+        values = cursor.fetchall()
+
+        cursor.executemany(
+            'UPDATE dmd_tariffprice SET product_id = %s WHERE product_id = %s',
+            values
+        )
+
+
 class Command(BaseCommand):
     args = ''
     help = ('Imports dm+d dataset to local SQL tables. Download it from '
@@ -322,5 +346,6 @@ class Command(BaseCommand):
             with transaction.atomic():
                 process_datafiles(dir_path)
                 create_dmd_product()
+                update_product_references()
 
         Client('dmd').upload_model(DMDVmpp)
