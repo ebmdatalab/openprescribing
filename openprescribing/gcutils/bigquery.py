@@ -78,7 +78,17 @@ class Client(object):
         return self.gcbq_client.list_jobs()
 
     def list_tables(self):
-        return self.gcbq_client.list_tables(self.dataset)
+        try:
+            # We need to consume the iterator here in order to trigger any errors
+            return list(self.gcbq_client.list_tables(self.dataset))
+        except NotFound as e:
+            # Treat a missing dataset as having no tables. This is consistent
+            # with our approach of implicitly creating datasets on write
+            # operations
+            if dataset_is_missing(e):
+                return []
+            else:
+                raise
 
     def create_dataset(self):
         self.dataset.location = settings.BQ_LOCATION
@@ -292,7 +302,13 @@ class Table(object):
 
         args = [sql]
         try:
-            self.run_job('query', args, options, default_options)
+            try:
+                self.run_job('query', args, options, default_options)
+            except NotFound as e:
+                if not dataset_is_missing(e):
+                    raise
+                self.client.create_dataset()
+                self.run_job('query', args, options, default_options)
         except Exception:
             for n, line in enumerate(sql.splitlines()):
                 print(n + 1, line)
