@@ -1,3 +1,4 @@
+from __future__ import print_function
 from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env, shell_env
@@ -34,6 +35,45 @@ NEWRELIC_APPIDS = {
     'staging': '45937313',
     'test': '45170011'
 }
+
+
+def sudo_script(script, www_user=False):
+    """Run script under `deploy/fab_scripts/` as sudo.
+
+    We don't use the `fabric` `sudo()` command, because instead we
+    expect the user that is running fabric to have passwordless sudo
+    access.  In this configuration, that is achieved by the user being
+    a member of the `fabric` group (see `setup_sudo()`, below).
+
+    """
+    if www_user:
+        sudo_cmd = 'sudo -u www-data '
+    else:
+        sudo_cmd = 'sudo '
+    return run(sudo_cmd +
+               os.path.join(
+                   env.path,
+                   'deploy/fab_scripts/%s' % script))
+
+
+def setup_sudo():
+    """Ensures members of `fabric` group can execute deployment scripts as
+    root without passwords
+
+    """
+    sudoer_file_test = '/tmp/openprescribing_fabric_{}'.format(
+        env.app)
+    sudoer_file_real = '/etc/sudoers.d/openprescribing_fabric_{}'.format(
+        env.app)
+    if not exists(sudoer_file_real):
+        # Test the format of the file, to prevent locked-out-disasters
+        run(
+            'echo "%fabric ALL = () '
+            'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
+                env.path, sudoer_file_test))
+        run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
+        # Copy it to the right place
+        sudo('cp {} {}'.format(sudoer_file_test, sudoer_file_real))
 
 
 def notify_slack(message):
@@ -202,11 +242,7 @@ def run_migrations():
 
 @task
 def graceful_reload():
-    result = run(r"""PID=$(sudo supervisorctl status | grep %s |
-    sed -n '/RUNNING/s/.*pid \([[:digit:]]\+\).*/\1/p');
-    if [[ -n "$PID" ]]; then kill -HUP $PID;
-    else echo "Error: server %s not running, so could not reload";
-    exit 1; fi""" % (env.app, env.app))
+    result = sudo_script('graceful_reload.sh %s' % env.app)
     if result.failed:
         # Use the error from the bash command(s) rather than rely on
         # noisy (and hard-to-interpret) output from fabric
@@ -232,7 +268,7 @@ def list_cloudflare_zones():
         requests.get(url, headers=headers,).text)
     zones = map(lambda x: {'name': x['name'], 'id': x['id']},
                 [x for x in result["result"]])
-    print json.dumps(zones, indent=2)
+    print(json.dumps(zones, indent=2))
 
 
 def clear_cloudflare():
@@ -243,14 +279,14 @@ def clear_cloudflare():
         "X-Auth-Email": os.environ['CF_API_EMAIL']
     }
     data = {'purge_everything': True}
-    print "Purging from Cloudflare:"
-    print data
+    print("Purging from Cloudflare:")
+    print(data)
     result = json.loads(
         requests.delete(url % ZONE_ID + '/purge_cache',
                         headers=headers, data=json.dumps(data)).text)
     if result['success']:
-        print "Cloudflare clearing succeeded: %s" % \
-            json.dumps(result, indent=2)
+        print("Cloudflare clearing succeeded: %s" %
+              json.dumps(result, indent=2))
     else:
         warn("Cloudflare clearing failed: %s" %
              json.dumps(result, indent=2))
@@ -259,7 +295,7 @@ def clear_cloudflare():
 def setup_cron():
     crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
     if exists(crontab_path):
-        sudo('cp %s /etc/cron.d/' % crontab_path)
+        sudo_script('setup_cron.sh %s' % crontab_path)
 
 
 @task
@@ -273,6 +309,7 @@ def deploy(environment, force_build=False, branch='master'):
     env.environment = environment
     env.path = "/webapps/%s" % env.app
     env.branch = branch
+    setup_sudo()
     with cd(env.path):
         checkpoint(force_build)
         git_pull()

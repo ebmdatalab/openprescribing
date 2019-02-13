@@ -94,11 +94,17 @@
     - libpq-dev # Required for Ansible to interact with postgres
     - python-psycopg2 # Required for Ansible to interact with postgres
 
-- name: Add user to www-data
+- name: Create fabric group for automation
+  become: yes
+  group:
+    name: fabric
+    state: present
+
+- name: Add user to required groups
   become: yes
   user:
     name: "{{ USER }}"
-    groups: www-data
+    groups: www-data,fabric
 
 - name: Install virtualenv
   become: yes
