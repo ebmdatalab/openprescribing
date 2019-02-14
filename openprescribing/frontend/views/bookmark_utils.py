@@ -630,14 +630,18 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
-def finalise_email(msg, html, tags, unsubscribe_link):
-    html = Premailer(
-        html, cssutils_logging_level=logging.ERROR).transform()
+def finalise_email(msg, template_name, context, tags):
+    """Set message body, add HTML alternative, and add some headers.
+    """
+
+    template = get_template(template_name)
+    html = template.render(context)
+    html = Premailer(html, cssutils_logging_level=logging.ERROR).transform()
     html = unescape_href(html)
     text = email_as_text(html)
     msg.body = text
     msg.attach_alternative(html, "text/html")
-    msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
+    msg.extra_headers['list-unsubscribe'] = "<%s>" % context['unsubscribe_link']
     msg.tags = ["monthly_update"] + tags
     return msg
 
@@ -650,7 +654,6 @@ def make_org_email(org_bookmark, stats, tag=None):
     msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
     dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
-    html_email = get_template('bookmarks/email_for_measures.html')
 
     with NamedTemporaryFile(suffix='.png') as getting_worse_file:
         most_changing = stats['most_changing']
@@ -689,34 +692,38 @@ def make_org_email(org_bookmark, stats, tag=None):
     unsubscribe_link = settings.GRAB_HOST + reverse(
         'bookmark-login',
         kwargs={'key': org_bookmark.user.profile.key})
-    html = html_email.render(
-        context={
-            'intro_text': getIntroText(
-                stats, org_bookmark.org_type()),
-            'total_possible_savings': sum(
-                [x[1] for x in
-                 stats['top_savings']['possible_savings']]),
-            'has_stats': _hasStats(stats),
-            'domain': settings.GRAB_HOST,
-            'measures_count': Measure.objects.count(),
-            'getting_worse_image': getting_worse_img,
-            'still_bad_image': still_bad_img,
-            'interesting_image': interesting_img,
-            'bookmark': org_bookmark,
-            'dashboard_uri': mark_safe(dashboard_uri),
-            'qs': mark_safe(msg.qs),
-            'stats': stats,
-            'unsubscribe_link': unsubscribe_link
-        })
 
-    finalise_email(msg, html, ['measures', tag], unsubscribe_link)
+    context = {
+        'intro_text': getIntroText(
+            stats, org_bookmark.org_type()),
+        'total_possible_savings': sum(
+            [x[1] for x in
+             stats['top_savings']['possible_savings']]),
+        'has_stats': _hasStats(stats),
+        'domain': settings.GRAB_HOST,
+        'measures_count': Measure.objects.count(),
+        'getting_worse_image': getting_worse_img,
+        'still_bad_image': still_bad_img,
+        'interesting_image': interesting_img,
+        'bookmark': org_bookmark,
+        'dashboard_uri': mark_safe(dashboard_uri),
+        'qs': mark_safe(msg.qs),
+        'stats': stats,
+        'unsubscribe_link': unsubscribe_link
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_measures.html',
+        context,
+        ['measures', tag]
+    )
 
     return msg
 
 
 def make_search_email(search_bookmark, tag=None):
     msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
-    html_email = get_template('bookmarks/email_for_searches.html')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
     dashboard_uri = parsed_url.path
     if parsed_url.query:
@@ -737,16 +744,21 @@ def make_search_email(search_bookmark, tag=None):
     unsubscribe_link = settings.GRAB_HOST + reverse(
         'bookmark-login',
         kwargs={'key': search_bookmark.user.profile.key})
-    html = html_email.render(
-        context={
-            'bookmark': search_bookmark,
-            'domain': settings.GRAB_HOST,
-            'graph': graph,
-            'dashboard_uri': mark_safe(dashboard_uri),
-            'unsubscribe_link': unsubscribe_link
-        })
 
-    finalise_email(msg, html, ['analyse', tag], unsubscribe_link)
+    context = {
+        'bookmark': search_bookmark,
+        'domain': settings.GRAB_HOST,
+        'graph': graph,
+        'dashboard_uri': mark_safe(dashboard_uri),
+        'unsubscribe_link': unsubscribe_link
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_searches.html',
+        context,
+        ['analyse', tag]
+    )
 
     return msg
 
