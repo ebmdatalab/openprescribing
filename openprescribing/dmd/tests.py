@@ -10,7 +10,7 @@ from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
 
-from dmd.models import DMDProduct, DMDVmpp, NCSOConcession
+from dmd.models import DMDProduct, DMDVmpp, NCSOConcession, TariffPrice
 
 
 class CommandsTestCase(TestCase):
@@ -34,20 +34,9 @@ class CommandsTestCase(TestCase):
             product_type=1,
             concept_class=1)
 
-        # This is a product that is not present in the imported data, and so we
-        # expect it to be deleted by import_dmd.  This would occur if the
-        # product's SNOMED code (the dmdid) changes.  See
-        # https://github.com/ebmdatalab/openprescribing/issues/955.
-        DMDProduct.objects.get_or_create(
-            dmdid=123,
-            vpid=123,
-            name='Something',
-            product_type=1,
-            concept_class=1)
-
         # dmd.zip doesn't exist!  The data to be imported is already unzipped
-        # in dmd/tests/fixtures/commands/.
-        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        # in dmd/tests/fixtures/dmd/1/.
+        path = 'dmd/tests/fixtures/dmd/1/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
@@ -55,7 +44,6 @@ class CommandsTestCase(TestCase):
 
         self.assertTrue(DMDProduct.objects.filter(dmdid=10000000000).exists())
         self.assertTrue(DMDProduct.objects.filter(dmdid=10000000001).exists())
-        self.assertFalse(DMDProduct.objects.filter(dmdid=123).exists())
 
         diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
         self.assertEqual(diclofenac_prods.count(), 4)
@@ -139,17 +127,55 @@ class CommandsTestCase(TestCase):
             'Diclofenac diethylammonium'
         )
 
-        # This checks that records with the same primary key can be imported
-        # multiple times.
+        # Now create a TariffPrice object referencing a product whose VPID will
+        # change in the next import.
+
+        vmpp = DMDVmpp.objects.get(pk=22479411000001100)
+        product = DMDProduct.objects.get(dmdid=vmpp.vpid)
+
+        tp = TariffPrice.objects.create(
+            date='2018-07-01',
+            vmpp=vmpp,
+            product=product,
+            tariff_category=product.tariff_category,
+            price_pence=100,
+        )
+
+        # Import another data dump.  This data is identical to that in dmd/1,
+        # except that the VMP with VPID 22480211000001104 has been updated with
+        # a new VPID (12345).  This VMP now has a VPIDPREV field, and all
+        # references to the old VPID have been updated to the new VPID.
+
+        path = 'dmd/tests/fixtures/dmd/2/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
+
+        # Check that there is no DMDProduct or VMP with the old VPID.
+        self.assertFalse(DMDProduct.objects.filter(dmdid=22480211000001104).exists())
+        self.assertQuery(
+            'SELECT count(*) FROM dmd_vmp WHERE vpid = 22480211000001104',
+            0
+        )
+
+        # Check that the TariffPrice has been updated to reference a new
+        # DMDProduct.
+        tp.refresh_from_db()
+        self.assertEqual(tp.product_id, 12345)
+
+        # Check that the VMPP has been updated to reference the new VMP.  (No
+        # special code is required to update references to VMPs whose VPID has
+        # been changed, but we may as well check here anyway.)
+        self.assertQuery(
+            'SELECT vpid FROM dmd_vmpp WHERE vppid = 22479411000001100',
+            12345
+        )
 
     def test_import_dmd_snomed(self):
-        path = 'dmd/tests/fixtures/commands/dmd.zip'
+        path = 'dmd/tests/fixtures/dmd/1/dmd.zip'
         with patch('zipfile.ZipFile'):
             call_command('import_dmd', '--zip_path', path)
 
-        path = 'dmd/tests/fixtures/commands/june-2018-snomed-mapping.xlsx'
+        path = 'dmd/tests/fixtures/snomed-mapping/june-2018-snomed-mapping.xlsx'
         call_command('import_dmd_snomed', '--filename', path)
 
         diclofenac_prods = DMDProduct.objects.filter(vpid=22480211000001104)
