@@ -10,11 +10,11 @@ from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
-from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
 
