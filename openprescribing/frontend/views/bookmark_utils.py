@@ -630,6 +630,18 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
+def finalise_email(msg, html, tags, unsubscribe_link):
+    html = Premailer(
+        html, cssutils_logging_level=logging.ERROR).transform()
+    html = unescape_href(html)
+    text = email_as_text(html)
+    msg.body = text
+    msg.attach_alternative(html, "text/html")
+    msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
+    msg.tags = ["monthly_update"] + tags
+    return msg
+
+
 def get_chart_id(measure_id):
     return "#{}-with-title".format(measure_id)
 
@@ -696,14 +708,9 @@ def make_org_email(org_bookmark, stats, tag=None):
             'stats': stats,
             'unsubscribe_link': unsubscribe_link
         })
-    html = Premailer(
-        html, cssutils_logging_level=logging.ERROR).transform()
-    html = unescape_href(html)
-    text = email_as_text(html)
-    msg.body = text
-    msg.attach_alternative(html, "text/html")
-    msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-    msg.tags = ["monthly_update", "measures", tag]
+
+    finalise_email(msg, html, ['measures', tag], unsubscribe_link)
+
     return msg
 
 
@@ -738,14 +745,9 @@ def make_search_email(search_bookmark, tag=None):
             'dashboard_uri': mark_safe(dashboard_uri),
             'unsubscribe_link': unsubscribe_link
         })
-    html = Premailer(
-        html, cssutils_logging_level=logging.ERROR).transform()
-    html = unescape_href(html)
-    text = email_as_text(html)
-    msg.body = text
-    msg.attach_alternative(html, "text/html")
-    msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-    msg.tags = ["monthly_update", "analyse", tag]
+
+    finalise_email(msg, html, ['analyse', tag], unsubscribe_link)
+
     return msg
 
 
