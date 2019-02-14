@@ -2,6 +2,7 @@ import itertools
 import random
 
 from django.db import connection
+from django.contrib.auth.models import User
 
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
@@ -158,3 +159,9 @@ class DataFactory(object):
                     presentation_code
                 )
             """)
+
+    def create_user(self):
+        index = self.next_id()
+        return User.objects.create_user(
+            username='User {}'.format(index),
+        )

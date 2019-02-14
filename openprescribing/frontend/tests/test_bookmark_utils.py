@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 import os
 import re
 import unittest
+from mock import patch
 
 from django.test import SimpleTestCase
 from django.test import TestCase
@@ -22,8 +23,10 @@ from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import PCT
 from frontend.models import Practice
+from frontend.models import NCSOConcessionBookmark
 from frontend.templatetags.template_extras import deltawords
 from frontend.views import bookmark_utils
+from frontend.tests.data_factory import DataFactory
 
 
 class IntroTextTest(unittest.TestCase):
@@ -719,3 +722,71 @@ def _makeContext(**kwargs):
         empty_context['most_changing_interesting'] = \
           kwargs['most_changing_interesting']
     return empty_context
+
+
+@patch('frontend.views.bookmark_utils.attach_image')
+class TestNCSOConcessions(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        factory = DataFactory()
+        cls.months = factory.create_months_array(
+            start_date='2018-02-01', num_months=6)
+        # Our NCSO and tariff data extends further than our prescribing data by
+        # a couple of months
+        cls.prescribing_months = cls.months[:-2]
+        # Create some CCGs (we need more than one so we can test aggregation
+        # across CCGs at the All England level)
+        cls.ccgs = [factory.create_ccg() for _ in range(2)]
+        # Populate those CCGs with practices
+        cls.practices = []
+        for ccg in cls.ccgs:
+            for _ in range(2):
+                cls.practices.append(factory.create_practice(ccg=ccg))
+        # Create some presentations
+        cls.presentations = factory.create_presentations(6)
+        # Create drug tariff and price concessions costs for these presentations
+        factory.create_tariff_and_ncso_costings_for_presentations(
+            cls.presentations,
+            months=cls.months)
+        # Create prescribing for each of the practices we've created
+        for practice in cls.practices:
+            factory.create_prescribing_for_practice(
+                practice,
+                presentations=cls.presentations,
+                months=cls.prescribing_months
+            )
+        # Create and populate the materialized view table we need
+        factory.populate_presentation_summary_by_ccg_view()
+        # Pull out an individual practice and CCG to use in our tests
+        cls.practice = cls.practices[0]
+        cls.ccg = cls.ccgs[0]
+        # Create user to own a bookmark
+        cls.user = factory.create_user()
+
+    def test_make_ncso_concessions_email_for_practice(self, attach_image):
+        bookmark = NCSOConcessionBookmark.objects.create(
+            user=self.user,
+            practice=self.practice,
+        )
+
+        msg = bookmark_utils.make_ncso_concession_email(bookmark)
+
+        self.assertIn('published for **July 2018**', msg.body)
+        self.assertIn(u'cost Practice 2 an additional **\xa3206**', msg.body)
+
+        html = msg.alternatives[0][0]
+        self.assertInHTML('<b>July 2018</b>', html)
+
+    def test_make_ncso_concessions_email_for_ccg(self, attach_image):
+        bookmark = NCSOConcessionBookmark.objects.create(
+            user=self.user,
+            pct=self.ccg,
+        )
+
+        msg = bookmark_utils.make_ncso_concession_email(bookmark)
+
+        self.assertIn('published for **July 2018**', msg.body)
+        self.assertIn(u'cost CCG 0 an additional **\xa3654**', msg.body)
+
+        html = msg.alternatives[0][0]
+        self.assertInHTML('<b>July 2018</b>', html)

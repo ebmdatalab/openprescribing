@@ -27,6 +27,9 @@ from common.utils import nhs_titlecase
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.views.spending_utils import (
+    ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
+)
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.APPS_ROOT +
@@ -758,6 +761,75 @@ def make_search_email(search_bookmark, tag=None):
         'bookmarks/email_for_searches.html',
         context,
         ['analyse', tag]
+    )
+
+    return msg
+
+
+def make_ncso_concession_email(bookmark, tag=None):
+    msg = initialise_email(bookmark, 'ncso-concessions-alerts')
+
+    monthly_totals = ncso_spending_for_entity(
+        bookmark.entity,
+        bookmark.entity_type,
+        num_months=1
+    )
+    latest_month = max(row['month'] for row in monthly_totals)
+    breakdown = ncso_spending_breakdown_for_entity(
+        bookmark.entity,
+        bookmark.entity_type,
+        latest_month
+    )[:10]
+
+    if bookmark.entity_type == 'CCG':
+        concessions_view_name = 'spending_for_one_ccg'
+        dashboard_view_name = 'ccg_home_page'
+        dashboard_kwargs = {'ccg_code': bookmark.entity.code}
+    elif bookmark.entity_type == 'practice':
+        concessions_view_name = 'spending_for_one_practice'
+        dashboard_view_name = 'practice_home_page'
+        dashboard_kwargs = {'practice_code': bookmark.entity.code}
+    else:
+        assert False
+
+    concessions_path = reverse(
+        concessions_view_name,
+        kwargs={'entity_code': bookmark.entity.code}
+    )
+    concessions_url = settings.GRAB_HOST + concessions_path
+
+    dashboard_path = reverse(dashboard_view_name, kwargs=dashboard_kwargs)
+    dashboard_url = settings.GRAB_HOST + dashboard_path
+
+    unsubscribe_path = reverse(
+        'bookmark-login',
+        kwargs={'key': bookmark.user.profile.key}
+    )
+    unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
+
+    with NamedTemporaryFile(suffix='.png') as f:
+        chart_image_cid = attach_image(
+            msg,
+            concessions_path,
+            f.name,
+            '#monthly-totals-chart'
+        )
+
+    context = {
+        'latest_month': latest_month,
+        'entity_name': bookmark.entity.cased_name,
+        'additional_cost': monthly_totals[0]['additional_cost'],
+        'breakdown': breakdown,
+        'concessions_url': concessions_url,
+        'chart_image_cid': chart_image_cid,
+        'unsubscribe_link': unsubscribe_link,
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_ncso_concessions.html',
+        context,
+        ['ncso_concessions', tag]
     )
 
     return msg
