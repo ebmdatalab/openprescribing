@@ -616,7 +616,7 @@ def make_email_with_campaign(bookmark, campaign_source):
     subject_prefix = 'Your monthly update about '
     msg = EmailMultiAlternatives(
         truncate_subject(subject_prefix, bookmark.name),
-        "This email is only available in HTML",
+        "...placeholder...",
         settings.DEFAULT_FROM_EMAIL,
         [bookmark.user.email])
     metadata = {"subject": msg.subject,
