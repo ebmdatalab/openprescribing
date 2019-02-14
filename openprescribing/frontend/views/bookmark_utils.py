@@ -607,7 +607,7 @@ def truncate_subject(prefix, subject):
     return prefix + truncated
 
 
-def make_email_with_campaign(bookmark, campaign_source):
+def initialise_email(bookmark, campaign_source):
     campaign_name = "monthly alert %s" % date.today().strftime("%Y-%m-%d")
     email_id = "/email/%s/%s/%s" % (
         campaign_name,
@@ -651,7 +651,7 @@ def get_chart_id(measure_id):
 
 
 def make_org_email(org_bookmark, stats, tag=None):
-    msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
+    msg = initialise_email(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
     dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
 
@@ -723,7 +723,7 @@ def make_org_email(org_bookmark, stats, tag=None):
 
 
 def make_search_email(search_bookmark, tag=None):
-    msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
+    msg = initialise_email(search_bookmark, 'analyse-alerts')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
     dashboard_uri = parsed_url.path
     if parsed_url.query:
