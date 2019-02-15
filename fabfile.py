@@ -118,7 +118,7 @@ def notify_newrelic(revision, url):
 def git_init():
     run('git init . && '
         'git remote add origin '
-        'git@github.com:ebmdatalab/openprescribing.git && '
+        'https://github.com/ebmdatalab/openprescribing.git && '
         'git fetch origin && '
         'git branch --set-upstream master origin/master')
 
