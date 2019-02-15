@@ -3,7 +3,7 @@
 
 # Open Prescribing
 
-Website code for https://openprescribing.net -- a Django application that provides a REST API and dashboards for the NHS Digitals's [GP-level prescribing data](http://content.digital.nhs.uk/searchcatalogue?q=title%3A%22presentation+level+data%22&area=&size=10&sort=Relevance) and [NHS BSA's Detailed Prescribing Information Report](https://apps.nhsbsa.nhs.uk/infosystems/welcome).
+Website code for https://openprescribing.net - a Django application that provides a REST API and dashboards for the NHS Digitals's [GP-level prescribing data](http://content.digital.nhs.uk/searchcatalogue?q=title%3A%22presentation+level+data%22&area=&size=10&sort=Relevance) and [NHS BSA's Detailed Prescribing Information Report](https://apps.nhsbsa.nhs.uk/infosystems/welcome).
 
 Information about data sources used on OpenPrescribing can be found [here](https://openprescribing.net/about/)
 
