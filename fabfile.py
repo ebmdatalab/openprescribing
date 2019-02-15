@@ -12,7 +12,8 @@ import os
 import dotenv
 import requests
 
-dotenv.read_dotenv('environment')
+basedir = os.path.dirname(os.path.abspath(__file__))
+dotenv.read_dotenv(os.path.join(basedir, 'environment'))
 
 
 env.hosts = ['web2.openprescribing.net']
