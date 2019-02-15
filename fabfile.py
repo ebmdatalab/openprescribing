@@ -73,7 +73,7 @@ def setup_sudo():
     if check_setup.failed:
         # Test the format of the file, to prevent locked-out-disasters
         run(
-            'echo "%fabric ALL = () '
+            'echo "%fabric ALL = (root) '
             'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
                 env.path, sudoer_file_test))
         run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
