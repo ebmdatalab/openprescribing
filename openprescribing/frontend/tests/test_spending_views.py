@@ -8,7 +8,7 @@ from django.db.models import Max
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
-from frontend.models import Prescription, Presentation
+from frontend.models import Prescription, Presentation, NCSOConcessionBookmark
 from dmd.models import NCSOConcession, TariffPrice
 from frontend.views.spending_utils import (
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, ncso_spending_for_entity,
@@ -108,6 +108,8 @@ class TestSpendingViews(TestCase):
             )
 
     def test_alert_signup(self):
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 0)
+
         url = '/practice/{}/concessions/'.format(self.practice.code)
         data = {
             'email': 'alice@example.com',
@@ -117,6 +119,12 @@ class TestSpendingViews(TestCase):
         response = self.client.post(url, data, follow=True)
         self.assertContains(
             response, "Check your email and click the confirmation link")
+
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
+        bookmark = NCSOConcessionBookmark.objects.get()
+        self.assertEqual(bookmark.practice, self.practice)
+        self.assertEqual(bookmark.user.email, 'alice@example.com')
+        self.assertEqual(bookmark.approved, True)
 
 
 def round_floats(value):
