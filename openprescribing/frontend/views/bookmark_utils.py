@@ -783,19 +783,23 @@ def make_ncso_concession_email(bookmark, tag=None):
 
     if bookmark.entity_type == 'CCG':
         concessions_view_name = 'spending_for_one_ccg'
+        concessions_kwargs = {'entity_code': bookmark.entity.code}
         dashboard_view_name = 'ccg_home_page'
         dashboard_kwargs = {'ccg_code': bookmark.entity.code}
     elif bookmark.entity_type == 'practice':
         concessions_view_name = 'spending_for_one_practice'
+        concessions_kwargs = {'entity_code': bookmark.entity.code}
         dashboard_view_name = 'practice_home_page'
         dashboard_kwargs = {'practice_code': bookmark.entity.code}
+    elif bookmark.entity_type == 'all_england':
+        concessions_view_name = 'spending_for_all_england'
+        concessions_kwargs = {}
+        dashboard_view_name = 'all_england'
+        dashboard_kwargs = {}
     else:
         assert False
 
-    concessions_path = reverse(
-        concessions_view_name,
-        kwargs={'entity_code': bookmark.entity.code}
-    )
+    concessions_path = reverse(concessions_view_name, kwargs=concessions_kwargs)
     concessions_url = settings.GRAB_HOST + concessions_path
 
     dashboard_path = reverse(dashboard_view_name, kwargs=dashboard_kwargs)
@@ -817,7 +821,7 @@ def make_ncso_concession_email(bookmark, tag=None):
 
     context = {
         'latest_month': latest_month,
-        'entity_name': bookmark.entity.cased_name,
+        'entity_name': bookmark.entity_cased_name,
         'additional_cost': monthly_totals[0]['additional_cost'],
         'breakdown': breakdown,
         'concessions_url': concessions_url,

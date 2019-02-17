@@ -126,6 +126,25 @@ class TestSpendingViews(TestCase):
         self.assertEqual(bookmark.user.email, 'alice@example.com')
         self.assertEqual(bookmark.approved, True)
 
+    def test_all_england_alert_signup(self):
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 0)
+
+        url = '/all-england/concessions/'
+        data = {
+            'email': 'alice@example.com',
+            'newsletters': ['alerts'],
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertContains(
+            response, "Check your email and click the confirmation link")
+
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
+        bookmark = NCSOConcessionBookmark.objects.get()
+        self.assertEqual(bookmark.practice, None)
+        self.assertEqual(bookmark.pct, None)
+        self.assertEqual(bookmark.user.email, 'alice@example.com')
+        self.assertEqual(bookmark.approved, True)
+
 
 def round_floats(value):
     if isinstance(value, float):

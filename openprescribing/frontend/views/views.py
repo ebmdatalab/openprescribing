@@ -638,13 +638,9 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    if entity:
-        form = _ncso_concession_bookmark_and_newsletter_form(
-            request, entity)
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        form = None
+    form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
+    if isinstance(form, HttpResponseRedirect):
+        return form
 
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
@@ -1304,7 +1300,12 @@ def _entity_type_from_object(entity):
 
 def _signed_up_for_alert(request, entity, subject_class):
     if request.user.is_authenticated():
-        q = {_entity_type_from_object(entity): entity}
+        if entity:
+            # Entity is a Practice or PCT
+            q = {_entity_type_from_object(entity): entity}
+        else:
+            # Entity is "All England"
+            q = {}
         return subject_class.objects.filter(user=request.user, **q).exists()
     else:
         return False
@@ -1333,6 +1334,9 @@ def _ncso_concession_bookmark_and_newsletter_form(request, entity):
     """Build a form for newsletter/alert signups, and handle user login
     for POSTs to that form.
     """
+    if entity is None:
+        return _ncso_concession_bookmark_and_newsletter_form_for_all_england(request)
+
     entity_type = _entity_type_from_object(entity)
     if request.method == 'POST':
         form = _handle_bookmark_and_newsletter_post(
@@ -1344,6 +1348,19 @@ def _ncso_concession_bookmark_and_newsletter_form(request, entity):
         form = NonMonthlyOrgBookmarkForm(
             initial={entity_type: entity.pk,
                      'email': getattr(request.user, 'email', '')})
+
+    return form
+
+
+def _ncso_concession_bookmark_and_newsletter_form_for_all_england(request):
+    if request.method == 'POST':
+        form = _handle_bookmark_and_newsletter_post(
+            request,
+            NCSOConcessionBookmark,
+            NonMonthlyOrgBookmarkForm)
+    else:
+        form = NonMonthlyOrgBookmarkForm(
+            initial={'email': getattr(request.user, 'email', '')})
 
     return form
 

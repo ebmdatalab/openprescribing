@@ -735,33 +735,46 @@ class NCSOConcessionBookmark(models.Model):
 
     @property
     def entity(self):
-        if self.practice is None:
-            assert self.pct is not None
+        if self.pct is not None:
             return self.pct
-        else:
-            assert self.pct is None
+        elif self.practice is not None:
             return self.practice
+        else:
+            # This is for all England
+            return None
 
     @property
     def entity_type(self):
-        if self.practice is None:
-            assert self.pct is not None
+        if self.pct is not None:
             return 'CCG'
-        else:
-            assert self.pct is None
+        elif self.practice is not None:
             return 'practice'
+        else:
+            return 'all_england'
+
+    @property
+    def entity_cased_name(self):
+        if self.entity is None:
+            return 'NHS England'
+        else:
+            return self.entity.cased_name
 
     @property
     def name(self):
-        return 'NCSO concessions for {}'.format(self.entity.cased_name)
+        if self.entity:
+            return 'NCSO concessions for {}'.format(self.entity.cased_name)
+        else:
+            return 'NCSO concessions for England'
 
     def dashboard_url(self):
-        kwargs={'entity_code': self.entity.code}
-
         if self.entity_type == 'CCG':
+            kwargs={'entity_code': self.entity.code}
             return reverse('spending_for_one_ccg', kwargs=kwargs)
-        else:
+        elif self.entity_type == 'practice':
+            kwargs={'entity_code': self.entity.code}
             return reverse('spending_for_one_practice', kwargs=kwargs)
+        else:
+            return reverse('spending_for_all_england')
 
     def topic(self):
         return self.name

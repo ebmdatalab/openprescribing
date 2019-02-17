@@ -790,3 +790,16 @@ class TestNCSOConcessions(TestCase):
 
         html = msg.alternatives[0][0]
         self.assertInHTML('<b>July 2018</b>', html)
+
+    def test_make_ncso_concessions_email_for_all_england(self, attach_image):
+        bookmark = NCSOConcessionBookmark.objects.create(
+            user=self.user,
+        )
+
+        msg = bookmark_utils.make_ncso_concession_email(bookmark)
+
+        self.assertIn('published for **July 2018**', msg.body)
+        self.assertIn(u'cost NHS England an additional **\xa31,269**', msg.body)
+
+        html = msg.alternatives[0][0]
+        self.assertInHTML('<b>July 2018</b>', html)

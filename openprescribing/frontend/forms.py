@@ -131,8 +131,7 @@ class BaseOrgBookmarkForm(forms.Form):
             except Practice.DoesNotExist:
                 raise forms.ValidationError(
                     "Practice %s does not exist" % pct_id)
-        else:
-            raise forms.ValidationError("No practice or CCG specified")
+
         return self.cleaned_data
 
 
