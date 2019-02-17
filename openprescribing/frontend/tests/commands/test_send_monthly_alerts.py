@@ -22,11 +22,6 @@ from frontend.tests.test_bookmark_utils import _makeContext
 CMD_NAME = 'send_monthly_alerts'
 
 
-class AnyStringWith(str):
-    def __eq__(self, other):
-        return self in other
-
-
 class ValidateOptionsTestCase(unittest.TestCase):
     def _defaultOpts(self, **extra):
         default = {

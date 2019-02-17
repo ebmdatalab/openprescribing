@@ -9,11 +9,6 @@ from frontend.models import MailLog
 from frontend.models import User
 
 
-class AnyStringWith(str):
-    def __eq__(self, other):
-        return self in other
-
-
 def send_event(**kwargs):
     sender = None
     event = AnymailTrackingEvent(**kwargs)
