@@ -39,8 +39,8 @@
   <form method="post" class="form form-inline">
    {% csrf_token %}
    <p>
-     Get alerted by email when new price concession data is available.
-     You can also sign up for our monthly newsletter.
+     Get alerted by email (roughly weekly) when new price concession data is
+     available.  You can also sign up for our monthly newsletter.
     <p>
     {{ form.non_field_errors }}
     {{ form | crispy }}
