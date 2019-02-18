@@ -12,7 +12,8 @@ import os
 import dotenv
 import requests
 
-dotenv.read_dotenv('environment')
+basedir = os.path.dirname(os.path.abspath(__file__))
+dotenv.read_dotenv(os.path.join(basedir, 'environment'))
 
 
 env.hosts = ['web2.openprescribing.net']
@@ -65,10 +66,14 @@ def setup_sudo():
         env.app)
     sudoer_file_real = '/etc/sudoers.d/openprescribing_fabric_{}'.format(
         env.app)
-    if not exists(sudoer_file_real):
+    # Raise an exception if not set up
+    check_setup = run(
+        "/usr/bin/sudo -n {}/deploy/fab_scripts/test.sh".format(env.path),
+        warn_only=True)
+    if check_setup.failed:
         # Test the format of the file, to prevent locked-out-disasters
         run(
-            'echo "%fabric ALL = () '
+            'echo "%fabric ALL = (root) '
             'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
                 env.path, sudoer_file_test))
         run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
@@ -113,7 +118,7 @@ def notify_newrelic(revision, url):
 def git_init():
     run('git init . && '
         'git remote add origin '
-        'git@github.com:ebmdatalab/openprescribing.git && '
+        'https://github.com/ebmdatalab/openprescribing.git && '
         'git fetch origin && '
         'git branch --set-upstream master origin/master')
 
