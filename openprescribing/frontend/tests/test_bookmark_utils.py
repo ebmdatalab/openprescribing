@@ -771,6 +771,10 @@ class TestNCSOConcessions(TestCase):
 
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
+        self.assertEqual(
+            msg.subject,
+            'Your update about NCSO Concessions for Practice 2'
+        )
         self.assertIn('published for **July 2018**', msg.body)
         self.assertIn(u'cost Practice 2 an additional **\xa3206**', msg.body)
 
@@ -785,6 +789,10 @@ class TestNCSOConcessions(TestCase):
 
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
+        self.assertEqual(
+            msg.subject,
+            'Your update about NCSO Concessions for CCG 0'
+        )
         self.assertIn('published for **July 2018**', msg.body)
         self.assertIn(u'cost CCG 0 an additional **\xa3654**', msg.body)
 
@@ -798,6 +806,10 @@ class TestNCSOConcessions(TestCase):
 
         msg = bookmark_utils.make_ncso_concession_email(bookmark)
 
+        self.assertEqual(
+            msg.subject,
+            'Your update about NCSO Concessions for NHS England'
+        )
         self.assertIn('published for **July 2018**', msg.body)
         self.assertIn(u'cost NHS England an additional **\xa31,269**', msg.body)
 

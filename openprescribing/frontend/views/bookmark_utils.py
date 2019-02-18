@@ -27,6 +27,7 @@ from common.utils import nhs_titlecase
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.models import NCSOConcessionBookmark
 from frontend.views.spending_utils import (
     ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
 )
@@ -616,7 +617,10 @@ def initialise_email(bookmark, campaign_source):
         campaign_name,
         campaign_source,
         bookmark.id)
-    subject_prefix = 'Your monthly update about '
+    if isinstance(bookmark, NCSOConcessionBookmark):
+        subject_prefix = 'Your update about '
+    else:
+        subject_prefix = 'Your monthly update about '
     msg = EmailMultiAlternatives(
         truncate_subject(subject_prefix, bookmark.name),
         "...placeholder...",
