@@ -167,13 +167,16 @@ class DataFactory(object):
             email='user-{}@example.com'.format(index),
         )
 
-    def create_ncso_concessions_bookmark(self, org):
+    def create_ncso_concessions_bookmark(self, org, user=None):
         kwargs = {
-            'user': self.create_user(),
+            'user': user or self.create_user(),
             'approved': True,
         }
 
-        if isinstance(org, PCT):
+        if org is None:
+            # All England
+            pass
+        elif isinstance(org, PCT):
             kwargs['pct'] = org
         elif isinstance(org, Practice):
             kwargs['practice'] = org

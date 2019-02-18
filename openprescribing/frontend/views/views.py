@@ -1305,7 +1305,7 @@ def _signed_up_for_alert(request, entity, subject_class):
             q = {_entity_type_from_object(entity): entity}
         else:
             # Entity is "All England"
-            q = {}
+            q = {'practice_id__isnull': True, 'pct_id__isnull': True}
         return subject_class.objects.filter(user=request.user, **q).exists()
     else:
         return False
