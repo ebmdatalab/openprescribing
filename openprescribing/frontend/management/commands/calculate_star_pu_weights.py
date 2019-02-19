@@ -65,6 +65,6 @@ class Command(BaseCommand):
 
     def parse_weight(self, sheet, cell_range):
         weight = {}
-        for age, m, f in sheet.iter_rows(cell_range):
+        for age, m, f in sheet[cell_range]:
             weight[age.value] = (m.value, f.value)
         return weight
