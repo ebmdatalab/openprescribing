@@ -311,7 +311,8 @@ GDOC_DOCS = {
     'zooming': '1lz1uRfNOy2fQ-xSy_6BiLV_7Mgr-Z2V0-VWzo6HlCO0',
     'analyse': '1HqlJlUA86cnlyJpUxiQdGsM46Gsv9xyZkmhkTqjbwH0',
     'analyse-by-practice': '1idnk9yczLLBLbYUbp06dMglfivobTNoKY7pA2zCDPI8',
-    'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0'
+    'analyse-by-ccg': '1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0',
+    'how-to-find-cost-savings': '1QHz4hl_8XklcAULawEPCIS0iMaDURhaPsW1VjdTAuUg',
 }
 
 API_HOST = utils.get_env_setting('API_HOST', default='')
