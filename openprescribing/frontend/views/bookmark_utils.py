@@ -784,6 +784,9 @@ def make_ncso_concession_email(bookmark, tag=None):
         bookmark.entity_type,
         latest_month
     )[:10]
+    last_prescribing_month = (
+        ImportLog.objects.latest_in_category('prescribing').current_at
+    )
 
     if bookmark.entity_type == 'CCG':
         concessions_view_name = 'spending_for_one_ccg'
@@ -823,8 +826,10 @@ def make_ncso_concession_email(bookmark, tag=None):
             '#monthly-totals-chart'
         )
 
+
     context = {
         'latest_month': latest_month,
+        'last_prescribing_month': last_prescribing_month,
         'entity_name': bookmark.entity_cased_name,
         'additional_cost': monthly_totals[0]['additional_cost'],
         'breakdown': breakdown,
