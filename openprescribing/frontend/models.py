@@ -768,10 +768,10 @@ class NCSOConcessionBookmark(models.Model):
 
     def dashboard_url(self):
         if self.entity_type == 'CCG':
-            kwargs={'entity_code': self.entity.code}
+            kwargs = {'entity_code': self.entity.code}
             return reverse('spending_for_one_ccg', kwargs=kwargs)
         elif self.entity_type == 'practice':
-            kwargs={'entity_code': self.entity.code}
+            kwargs = {'entity_code': self.entity.code}
             return reverse('spending_for_one_practice', kwargs=kwargs)
         else:
             return reverse('spending_for_all_england')
