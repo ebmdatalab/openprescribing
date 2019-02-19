@@ -237,7 +237,7 @@
     "import_measure_definitions": {
         "type": "post_process",
         "command": "import_measures --definitions_only",
-        "dependencies": []
+        "dependencies": ["create_bq_measure_views"]
     },
     "create_bq_measure_views": {
         "type": "post_process",
