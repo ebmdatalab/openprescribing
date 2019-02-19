@@ -1,10 +1,12 @@
-import datetime
+import json
 import os
+import re
 
+from bs4 import BeautifulSoup
 import requests
 
 from django.conf import settings
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand
 
 from openprescribing.utils import mkdir_p
 
@@ -14,50 +16,55 @@ class Command(BaseCommand):
         parser.add_argument('dataset', choices=['addresses', 'chemicals'])
 
     def handle(self, *args, **kwargs):
-        today = datetime.date.today()
-        year = today.year
-        month = today.month
+        # The page lists available downloads.  The data is stored in a JSON
+        # object.
+        url = 'https://data.gov.uk/dataset/176ae264-2484-4afe-a297-d51798eb8228/gp-practice-prescribing-data-presentation-level'
+        rsp = requests.get(url)
+        doc = BeautifulSoup(rsp.content, 'html.parser')
+        tag = doc.find('script', type='application/ld+json')
+        metadata = json.loads(tag.text)
 
-        num_missing_months = 0
         filename_fragment = {
-            'addresses': 'ADDR+BNFT',
-            'chemicals': 'CHEM+SUBS',
+            'addresses': 'ADDR%20BNFT',
+            'chemicals': 'CHEM%20SUBS',
         }[kwargs['dataset']]
+        pattern = 'T(\d{4})(\d{2})' + filename_fragment + '.CSV'
 
-        while True:
-            date = datetime.date(year, month, 1)
-            year_and_month = date.strftime('%Y_%m')  # eg 2017_01
+        urls = [
+            record['contentUrl'] for record in metadata['distribution']
+            if filename_fragment in record['contentUrl']
+        ]
+
+        # Iterate over the URLs, newest first, downloading as we go, and
+        # stopping once we find a URL that we have already downloaded.
+        for url in sorted(urls, key=lambda url: url.split('/')[-1], reverse=True):
+            filename = url.split('/')[-1]
+            tmp_filename = filename + '.tmp'
+            match = re.match(pattern, filename)
+            year_and_month = '_'.join(match.groups())
 
             dir_path = os.path.join(
                 settings.PIPELINE_DATA_BASEDIR,
                 'prescribing_metadata',
                 year_and_month
             )
-            filename = date.strftime('T%Y%m{}.CSV').format(filename_fragment)
-            file_path = os.path.join(dir_path, filename)
 
-            if os.path.exists(file_path):
+            if os.path.exists(os.path.join(dir_path, filename)):
+                break
+
+            # Older versions of the data have slightly different filenames.
+            if os.path.exists(os.path.join(dir_path, filename.replace('%20', '+'))):
                 break
 
             mkdir_p(dir_path)
 
-            # eg http://datagov.ic.nhs.uk/presentation/2017_08_August/T201708ADDR+BNFT.CSV
-            base_url = 'http://datagov.ic.nhs.uk/presentation'
-            path_fragment = date.strftime('%Y_%m_%B')
-            url = '{}/{}/{}'.format(base_url, path_fragment, filename)
-
             rsp = requests.get(url)
+            assert rsp.ok
 
-            if rsp.ok:
-                with open(file_path, 'w') as f:
-                    f.write(rsp.content)
-            else:
-                num_missing_months += 1
-                if num_missing_months >= 6:
-                    raise CommandError('No data for six months!')
+            # Since we check for the presence of the file to determine whether
+            # this data has already been fetched, we write to a temporary file
+            # and then rename it.
+            with open(os.path.join(dir_path, tmp_filename), 'w') as f:
+                f.write(rsp.content)
 
-            if month == 1:
-                year -= 1
-                month = 12
-            else:
-                month -= 1
+            os.rename(tmp_filename, filename)
