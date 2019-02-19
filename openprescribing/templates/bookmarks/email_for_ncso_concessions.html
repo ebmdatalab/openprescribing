@@ -40,7 +40,7 @@
     {% for row in breakdown %}
       <tr>
         <td>{{ row.1 }}</td>
-        <td align="right">£{{ row.2|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ row.2|floatformat:"0"|intcomma }}</td>
         <td align="right">£{{ row.3|floatformat:"0"|intcomma }}</td>
         <td align="right">£{{ row.4|floatformat:"0"|intcomma }}</td>
       </tr>
