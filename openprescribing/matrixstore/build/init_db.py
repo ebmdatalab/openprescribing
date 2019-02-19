@@ -4,6 +4,7 @@ statistics imported into it.
 
 Data on practices and presentations is obtained by connecting to BigQuery.
 """
+import logging
 import os
 import sqlite3
 
@@ -11,6 +12,9 @@ from gcutils.bigquery import Client
 
 from .common import get_temp_filename
 from .dates import generate_dates
+
+
+logger = logging.getLogger(__name__)
 
 
 SCHEMA_SQL = """
@@ -59,6 +63,7 @@ SCHEMA_SQL = """
 def init_db(end_date, sqlite_path, months=None):
     if os.path.exists(sqlite_path):
         raise RuntimeError('File already exists at: ' + sqlite_path)
+    logger.info('Initialising SQLite database at %s', sqlite_path)
     sqlite_path = os.path.abspath(sqlite_path)
     temp_filename = get_temp_filename(sqlite_path)
     sqlite_conn = sqlite3.connect(temp_filename)
@@ -90,6 +95,13 @@ def import_practices(bq_conn, sqlite_conn, dates):
     # "empty" practice rows doesn't make much difference there. But when we
     # start summing and processing these we use dense matrices and so it's
     # better to cut down the number of rows to a minimum.
+    date_start = min(dates)
+    date_end = max(dates)
+    logger.info(
+        'Querying practice codes which prescribed between %s and %s',
+        date_start,
+        date_end
+    )
     sql = (
         """
         SELECT DISTINCT practice FROM {hscic}.prescribing
@@ -97,8 +109,9 @@ def import_practices(bq_conn, sqlite_conn, dates):
           ORDER BY practice
         """
     )
-    result = bq_conn.query(sql % (min(dates), max(dates)))
+    result = bq_conn.query(sql % (date_start, date_end))
     practice_codes = [row[0] for row in result.rows]
+    logger.info('Writing %s practice codes to SQLite', len(practice_codes))
     sqlite_conn.executemany(
         'INSERT INTO practice (offset, code) VALUES (?, ?)',
         enumerate(practice_codes)
@@ -114,6 +127,7 @@ def import_presentations(bq_conn, sqlite_conn):
     # the database which are not prescribed against. And we don't actually know
     # which codes are and aren't used until we apply the "BNF map" which
     # translates old codes into new codes.
+    logger.info('Querying all presentation metadata')
     result = bq_conn.query(
         """
         SELECT bnf_code, is_generic, adq_per_quantity, name
@@ -121,11 +135,13 @@ def import_presentations(bq_conn, sqlite_conn):
           ORDER BY bnf_code
         """
     )
+    rows = result.rows
+    logger.info('Writing %s presentations to SQLite', len(rows))
     sqlite_conn.executemany(
         """
         INSERT INTO presentation
           (bnf_code, is_generic, adq_per_quantity, name)
           VALUES (?, ?, ?, ?)
         """,
-        result.rows
+        rows
     )

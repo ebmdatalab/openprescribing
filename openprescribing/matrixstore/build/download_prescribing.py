@@ -3,6 +3,7 @@ Download prescribing data from BigQuery to gzipped CSV files in the
 "matrixstore_import" directory inside `settings.PIPELINE_DATA_BASEDIR`
 """
 import glob
+import logging
 import os
 
 from django.conf import settings
@@ -14,6 +15,9 @@ from .common import (
 )
 from .dates import generate_dates
 from .sort_and_merge_gzipped_csv_files import sort_and_merge_gzipped_csv_files
+
+
+logger = logging.getLogger(__name__)
 
 
 # We need a way to indicate that an export from a BigQuery table has completed
@@ -120,7 +124,9 @@ def extract_data_for_date(date, bq_client):
     """
     Extract prescribing data for the given month into its own table on BigQuery
     """
-    table = bq_client.get_table(table_id_for_date(date))
+    table_id = table_id_for_date(date)
+    logger.info('Extracting date for %s into table %s', date, table_id)
+    table = bq_client.get_table(table_id)
     table.insert_rows_from_query(
         """
         SELECT
@@ -139,8 +145,13 @@ def export_data_for_date(date, bq_client, bucket):
     Export the one-month-only prescribing table for the given date to Google
     Cloud Storage as gzipped CSV
     """
-    table = bq_client.get_table(table_id_for_date(date))
+    table_id = table_id_for_date(date)
     prefix = remote_storage_prefix_for_date(date)
+    logger.info(
+        'Exporting data for %s into gs://%s/%s*',
+        date, bucket.name, prefix
+    )
+    table = bq_client.get_table(table_id)
     table.export_to_storage(prefix)
     sentinel_file = prefix + SENTINEL_SUFFIX
     bucket.blob(sentinel_file).upload_from_string('done')
@@ -155,12 +166,17 @@ def download_data_for_date(date, bucket):
     blobs = bucket.list_blobs(prefix=prefix)
     # Sort the files so we always download the sentinel file last
     blobs = sorted(blobs, key=lambda blob: blob.name)
+    logger.info(
+        'Downloading %s files from gs://%s/%s*',
+        len(blobs), bucket.name, prefix
+    )
     for blob in blobs:
         local_name = get_filename_for_download(blob.name)
         if not os.path.exists(local_name):
             temp_name = get_temp_filename(local_name)
             blob.download_to_filename(temp_name)
             os.rename(temp_name, local_name)
+            logger.info('Downloaded %s', blob.name)
     if not download_is_complete(date):
         raise RuntimeError(
             'Export for {date} looks incomplete (no sentinel file)'.format(
@@ -178,6 +194,10 @@ def consolidate_data_for_date(date):
     input_files = glob.glob(pattern)
     target_file = get_prescribing_filename(date)
     temp_file = get_temp_filename(target_file)
+    logger.info(
+        'Consolidating %s data files into %s',
+        len(input_files), target_file
+    )
     sort_and_merge_gzipped_csv_files(
         input_files,
         temp_file,

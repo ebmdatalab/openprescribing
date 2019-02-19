@@ -4,6 +4,7 @@ Import prescribing data from CSV files into SQLite
 from collections import namedtuple
 import csv
 from itertools import groupby
+import logging
 import os
 import sqlite3
 import gzip
@@ -13,6 +14,10 @@ from matrixstore.matrix_ops import sparse_matrix, finalise_matrix
 from matrixstore.serializer import serialize_compressed
 
 from .common import get_prescribing_filename
+
+
+logger = logging.getLogger(__name__)
+
 
 MatrixRow = namedtuple(
     'MatrixRow',
@@ -161,8 +166,7 @@ def format_as_sql_rows(matrices, connection):
         cursor.execute(
             'INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)',
             [row.bnf_code])
-        # Crude progress logging
-        print(row.bnf_code)
+        logger.info('Writing data for %s', row.bnf_code)
         yield (
             sqlite3.Binary(serialize_compressed(row.items)),
             sqlite3.Binary(serialize_compressed(row.quantity)),

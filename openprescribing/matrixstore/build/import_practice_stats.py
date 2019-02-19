@@ -4,6 +4,7 @@ Import practice statistics from downloaded CSV files into SQLite
 import csv
 import gzip
 import json
+import logging
 import os.path
 import sqlite3
 
@@ -11,6 +12,9 @@ from matrixstore.matrix_ops import sparse_matrix, finalise_matrix
 from matrixstore.serializer import serialize_compressed
 
 from .common import get_practice_stats_filename
+
+
+logger = logging.getLogger(__name__)
 
 
 class MissingHeaderError(Exception):
@@ -59,6 +63,7 @@ def get_practice_statistics_for_dates(dates):
             )
         )
     for filename in filenames:
+        logger.info('Reading practice statistics from %s', filename)
         with gzip.open(filename, 'rb') as f:
             for row in parse_practice_statistics_csv(f):
                 yield row
@@ -127,5 +132,8 @@ def build_matrices(practice_statistics, practices, dates):
             matrix = sparse_matrix(shape, integer=isinstance(value, int))
             matrices[statistic_name] = matrix
         matrix[practice_offset, date_offset] = value
+    logger.info(
+        'Writing %s practice statistics matrices to SQLite', len(matrices)
+    )
     for statistic_name, matrix in matrices.items():
         yield statistic_name, finalise_matrix(matrix)

@@ -2,12 +2,16 @@
 Update the prescribing data in a SQLite file using the `bnf_map` table in
 BigQuery which maps old BNF codes to their current versions
 """
+import logging
 import os.path
 import sqlite3
 
 from gcutils.bigquery import Client
 from matrixstore.matrix_ops import sparse_matrix, finalise_matrix, is_integer
 from matrixstore.serializer import deserialize, serialize_compressed
+
+
+logger = logging.getLogger(__name__)
 
 
 def update_bnf_map(sqlite_path):
@@ -30,7 +34,9 @@ def get_old_to_new_bnf_codes(bigquery_connection):
     result = bigquery_connection.query(
         'SELECT former_bnf_code, current_bnf_code FROM {hscic}.bnf_map'
     )
-    return result.rows
+    rows = result.rows
+    logger.info('Applying %s BNF code updates', len(rows))
+    return rows
 
 
 def move_values_from_old_code_to_new(cursor, old_code, new_code):
@@ -45,8 +51,18 @@ def move_values_from_old_code_to_new(cursor, old_code, new_code):
         return
     new_values = get_values_for_bnf_code(cursor, new_code)
     if not new_values:
+        logger.info(
+            'Moving prescribing data from %s to %s (new code had no existing data)',
+            old_code,
+            new_code
+        )
         new_values = old_values
     else:
+        logger.info(
+            'Merging prescribing data for %s with %s (both codes have existing data)',
+            old_code,
+            new_code
+        )
         new_values = sum_rows([new_values, old_values])
     # We want saving the new value and deleting the old to be an atomic
     # operation. We use savepoints for this which are equivalent to

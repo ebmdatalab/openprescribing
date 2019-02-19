@@ -79,7 +79,8 @@ class TestMatrixStoreBuild(SimpleTestCase):
                 'matrixstore_build',
                 end_date,
                 cls.data_file,
-                months=len(cls.months_to_import)
+                months=len(cls.months_to_import),
+                quiet=True
             )
         else:
             warnings.warn(

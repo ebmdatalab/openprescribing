@@ -4,12 +4,16 @@ directory inside `settings.PIPELINE_DATA_BASEDIR`
 """
 import csv
 import gzip
+import logging
 import os
 
 from gcutils.bigquery import Client
 
 from .common import get_practice_stats_filename, get_temp_filename
 from .dates import generate_dates
+
+
+logger = logging.getLogger(__name__)
 
 
 def download_practice_stats(end_date, months=None):
@@ -24,6 +28,7 @@ def ensure_stats_downloaded_for_date(date):
     filename = get_practice_stats_filename(date)
     if os.path.exists(filename):
         return
+    logger.info('Downloading practice statistics for %s', date)
     temp_name = get_temp_filename(filename)
     result = Client('hscic').query(
         """
