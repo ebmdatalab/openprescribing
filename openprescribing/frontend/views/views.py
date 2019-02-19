@@ -1279,8 +1279,15 @@ def _make_bookmark_args(user, form, subject_field_ids):
     new bookmark
     """
     form_args = {'user': user}
+
     for field in subject_field_ids:
         form_args[field] = form.cleaned_data[field]
+
+    if not subject_field_ids:
+        # There is no practice or PCT.
+        form_args['practice'] = None
+        form_args['pct'] = None
+
     return form_args
 
 

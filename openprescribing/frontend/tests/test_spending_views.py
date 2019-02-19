@@ -108,7 +108,11 @@ class TestSpendingViews(TestCase):
             )
 
     def test_alert_signup(self):
-        self.assertEqual(NCSOConcessionBookmark.objects.count(), 0)
+        factory = DataFactory()
+        user = factory.create_user(email='alice@example.com')
+        factory.create_ncso_concessions_bookmark(None)
+
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
         url = '/practice/{}/concessions/'.format(self.practice.code)
         data = {
@@ -120,14 +124,18 @@ class TestSpendingViews(TestCase):
         self.assertContains(
             response, "Check your email and click the confirmation link")
 
-        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
-        bookmark = NCSOConcessionBookmark.objects.get()
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
+        bookmark = NCSOConcessionBookmark.objects.last()
         self.assertEqual(bookmark.practice, self.practice)
         self.assertEqual(bookmark.user.email, 'alice@example.com')
         self.assertEqual(bookmark.approved, True)
 
     def test_all_england_alert_signup(self):
-        self.assertEqual(NCSOConcessionBookmark.objects.count(), 0)
+        factory = DataFactory()
+        user = factory.create_user(email='alice@example.com')
+        factory.create_ncso_concessions_bookmark(self.practice)
+
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
         url = '/all-england/concessions/'
         data = {
@@ -138,8 +146,8 @@ class TestSpendingViews(TestCase):
         self.assertContains(
             response, "Check your email and click the confirmation link")
 
-        self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
-        bookmark = NCSOConcessionBookmark.objects.get()
+        self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
+        bookmark = NCSOConcessionBookmark.objects.order_by('id').last()
         self.assertEqual(bookmark.practice, None)
         self.assertEqual(bookmark.pct, None)
         self.assertEqual(bookmark.user.email, 'alice@example.com')

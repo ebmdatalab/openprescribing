@@ -160,11 +160,12 @@ class DataFactory(object):
                 )
             """)
 
-    def create_user(self):
+    def create_user(self, email=None):
         index = self.next_id()
+        email = email or 'user-{}@example.com'.format(index)
         return User.objects.create_user(
             username='User {}'.format(index),
-            email='user-{}@example.com'.format(index),
+            email=email,
         )
 
     def create_ncso_concessions_bookmark(self, org, user=None):
