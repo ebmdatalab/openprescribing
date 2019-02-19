@@ -1,5 +1,18 @@
+from __future__ import division
+
 import numpy
 import scipy.sparse
+
+
+# Above a certain level of density it becomes more efficient to use a normal
+# dense matrix instead of a sparse one. This threshold was determined through a
+# not particularly scientific process of trial and error.  Due to the
+# compression we apply there's very little difference in storage requirements
+# between sparse and dense matrices, but the difference comes in the time take
+# to perform operations (e.g summing) using these matrices and that's harder to
+# measure. At some point we can profile and optimise the performance of the
+# MatrixStore, but for now it's fast enough.
+DENSITY_THRESHOLD = 0.5
 
 
 def sparse_matrix(shape, integer=False):
@@ -15,8 +28,11 @@ def finalise_matrix(matrix):
     """
     Return a copy of a sparse matrix in a form suitable for storage
     """
-    matrix = matrix.tocsc()
-    matrix.sort_indices()
+    if get_density(matrix) < DENSITY_THRESHOLD:
+        matrix = matrix.tocsc()
+        matrix.sort_indices()
+    else:
+        matrix = matrix.toarray()
     if is_integer(matrix):
         matrix = convert_to_smallest_int_type(matrix)
     return matrix
@@ -27,6 +43,13 @@ def is_integer(matrix):
     Return whether or not the matrix has integer type
     """
     return numpy.issubdtype(matrix.dtype, numpy.integer)
+
+
+def get_density(matrix):
+    """
+    Return the density of a sparse matrix
+    """
+    return matrix.getnnz() / (matrix.shape[0] * matrix.shape[1])
 
 
 def convert_to_smallest_int_type(matrix):
