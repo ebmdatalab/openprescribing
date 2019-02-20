@@ -68,6 +68,6 @@ class Command(BaseCommand):
                 f.write(rsp.content)
 
             os.rename(
-                os.path.join(dir_path, tmp_filename)
+                os.path.join(dir_path, tmp_filename),
                 os.path.join(dir_path, filename)
             )
