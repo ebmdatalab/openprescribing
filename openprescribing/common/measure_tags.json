@@ -17,7 +17,7 @@
   },
   "cost": {
     "name": "Cost Saving",
-    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings."
+    "description": "The following measures and an accumulation of all openprescribing.net measures where changes to prescribing in this area will result in cost savings. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our _How to_ guide <a href=\https://ebmdatalab.net/qipp-planning-how-to/\">here</a>"
   },
   "diabetes": {
     "name": "Diabetes",
@@ -52,7 +52,7 @@
     "description": [
       "This is a list of products ",
       "considered a low priority for NHS Funding ",
-      "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>."
+      "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our _How to_ guide <a href=\https://ebmdatalab.net/qipp-planning-how-to/\">here</a"
     ]
   },
   "lowpriorityconsultation": {
@@ -61,7 +61,7 @@
       "This is an <strong>experimental</strong> list of products ",
       "which NHS England ",
       "<a href=\"https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/\">",
-      "have proposed</a> to add to their Low Priority list."
+      "have proposed</a> to add to their Low Priority list. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our _How to_ guide <a href=\https://ebmdatalab.net/qipp-planning-how-to/\">here</a"
     ]
   },
   "mentalhealth": {
