@@ -67,4 +67,7 @@ class Command(BaseCommand):
             with open(os.path.join(dir_path, tmp_filename), 'w') as f:
                 f.write(rsp.content)
 
-            os.rename(tmp_filename, filename)
+            os.rename(
+                os.path.join(dir_path, tmp_filename)
+                os.path.join(dir_path, filename)
+            )
