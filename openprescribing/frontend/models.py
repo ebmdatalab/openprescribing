@@ -755,16 +755,13 @@ class NCSOConcessionBookmark(models.Model):
     @property
     def entity_cased_name(self):
         if self.entity is None:
-            return 'NHS England'
+            return 'the NHS in England'
         else:
             return self.entity.cased_name
 
     @property
     def name(self):
-        if self.entity:
-            return 'NCSO concessions for {}'.format(self.entity.cased_name)
-        else:
-            return 'NCSO concessions for NHS England'
+        return 'NCSO concessions for {}'.format(self.entity_cased_name)
 
     def dashboard_url(self):
         if self.entity_type == 'CCG':

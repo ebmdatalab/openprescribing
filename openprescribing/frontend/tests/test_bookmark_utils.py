@@ -808,10 +808,10 @@ class TestNCSOConcessions(TestCase):
 
         self.assertEqual(
             msg.subject,
-            'Your update about NCSO Concessions for NHS England'
+            'Your update about NCSO Concessions for the NHS in England'
         )
         self.assertIn('published for **July 2018**', msg.body)
-        self.assertIn(u'cost NHS England an additional **\xa31,269**', msg.body)
+        self.assertIn(u'cost the NHS in England an additional **\xa31,269**', msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML('<b>July 2018</b>', html)
