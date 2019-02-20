@@ -17,6 +17,9 @@ class BookmarkListForm(forms.Form):
     search_bookmarks = forms.MultipleChoiceField(
         label="Alerts about searches",
         widget=forms.CheckboxSelectMultiple())
+    ncso_concessions_bookmarks = forms.MultipleChoiceField(
+        label="Alerts about NCSO price concessions",
+        widget=forms.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
         """Populate choices with those passed in, and remove fields with no
@@ -25,6 +28,7 @@ class BookmarkListForm(forms.Form):
         """
         org_bookmarks = kwargs.pop('org_bookmarks', [])
         search_bookmarks = kwargs.pop('search_bookmarks', [])
+        ncso_concessions_bookmarks = kwargs.pop('ncso_concessions_bookmarks', [])
         super(BookmarkListForm, self).__init__(*args, **kwargs)
         if org_bookmarks:
             self.fields['org_bookmarks'].choices = [
@@ -36,11 +40,22 @@ class BookmarkListForm(forms.Form):
                 (x.id, _name_with_url(x)) for x in search_bookmarks]
         else:
             del self.fields['search_bookmarks']
+        if ncso_concessions_bookmarks:
+            self.fields['ncso_concessions_bookmarks'].choices = [
+                (x.id, _name_with_url(x)) for x in ncso_concessions_bookmarks]
+        else:
+            del self.fields['ncso_concessions_bookmarks']
 
 
-OPTIONS = (
+MONTHLY_OPTIONS = (
     ('newsletter', ' Newsletter'),
     ('alerts', ' Monthly alerts'),
+)
+
+
+NON_MONTHLY_OPTIONS = (
+    ('alerts', ' Alerts'),
+    ('newsletter', ' Newsletter'),
 )
 
 
@@ -58,7 +73,7 @@ class SearchBookmarkForm(forms.Form):
     )
     newsletters = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=OPTIONS,
+        choices=MONTHLY_OPTIONS,
         label='')
     url = forms.CharField(
         widget=forms.HiddenInput(),
@@ -78,7 +93,7 @@ class SearchBookmarkForm(forms.Form):
         return urllib.unquote(url)
 
 
-class OrgBookmarkForm(forms.Form):
+class BaseOrgBookmarkForm(forms.Form):
     email = forms.EmailField(
         label="",
         error_messages={
@@ -98,10 +113,6 @@ class OrgBookmarkForm(forms.Form):
         widget=forms.HiddenInput(),
         required=False
     )
-    newsletters = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        choices=OPTIONS,
-        label='')
 
     def clean(self):
         """Turn entity ids into Practice or PCT instances
@@ -120,9 +131,22 @@ class OrgBookmarkForm(forms.Form):
             except Practice.DoesNotExist:
                 raise forms.ValidationError(
                     "Practice %s does not exist" % pct_id)
-        else:
-            raise forms.ValidationError("No practice or CCG specified")
+
         return self.cleaned_data
+
+
+class MonthlyOrgBookmarkForm(BaseOrgBookmarkForm):
+    newsletters = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=MONTHLY_OPTIONS,
+        label='')
+
+
+class NonMonthlyOrgBookmarkForm(BaseOrgBookmarkForm):
+    newsletters = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=NON_MONTHLY_OPTIONS,
+        label='')
 
 
 class FeedbackForm(forms.Form):

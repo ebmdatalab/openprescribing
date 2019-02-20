@@ -27,6 +27,10 @@ from common.utils import nhs_titlecase
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
+from frontend.models import NCSOConcessionBookmark
+from frontend.views.spending_utils import (
+    ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
+)
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.APPS_ROOT +
@@ -35,7 +39,7 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
 logger = logging.getLogger(__name__)
 
 
-class BadAlertIimageError(Exception):
+class BadAlertImageError(Exception):
     pass
 
 
@@ -492,7 +496,7 @@ def attach_image(msg, url, file_path, selector, dimensions='1024x1024'):
     logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
     if os.path.getsize(file_path) == 0:
         msg = "File at %s empty (generated from url %s)" % (file_path, url)
-        raise BadAlertIimageError(msg)
+        raise BadAlertImageError(msg)
     return attach_inline_image_file(
         msg, file_path, subtype='png')
 
@@ -607,16 +611,19 @@ def truncate_subject(prefix, subject):
     return prefix + truncated
 
 
-def make_email_with_campaign(bookmark, campaign_source):
+def initialise_email(bookmark, campaign_source):
     campaign_name = "monthly alert %s" % date.today().strftime("%Y-%m-%d")
     email_id = "/email/%s/%s/%s" % (
         campaign_name,
         campaign_source,
         bookmark.id)
-    subject_prefix = 'Your monthly update about '
+    if isinstance(bookmark, NCSOConcessionBookmark):
+        subject_prefix = 'Your update about '
+    else:
+        subject_prefix = 'Your monthly update about '
     msg = EmailMultiAlternatives(
         truncate_subject(subject_prefix, bookmark.name),
-        "This email is only available in HTML",
+        "...placeholder...",
         settings.DEFAULT_FROM_EMAIL,
         [bookmark.user.email])
     metadata = {"subject": msg.subject,
@@ -630,24 +637,33 @@ def make_email_with_campaign(bookmark, campaign_source):
     return msg
 
 
+def finalise_email(msg, template_name, context, tags):
+    """Set message body, add HTML alternative, and add some headers.
+    """
+
+    template = get_template(template_name)
+    html = template.render(context)
+    html = Premailer(html, cssutils_logging_level=logging.ERROR).transform()
+    html = unescape_href(html)
+    text = email_as_text(html)
+    msg.body = text
+    msg.attach_alternative(html, "text/html")
+    msg.extra_headers['list-unsubscribe'] = "<%s>" % context['unsubscribe_link']
+    msg.tags = ["monthly_update"] + tags
+    return msg
+
+
 def get_chart_id(measure_id):
     return "#{}-with-title".format(measure_id)
 
 
-def make_org_email(org_bookmark, stats, preview=False, tag=None):
-    msg = make_email_with_campaign(org_bookmark, 'dashboard-alerts')
+def make_org_email(org_bookmark, stats, tag=None):
+    msg = initialise_email(org_bookmark, 'dashboard-alerts')
     dashboard_uri = org_bookmark.dashboard_url()
-    if preview:
-        base_template = 'base.html'
-    else:
-        base_template = 'bookmarks/email_base.html'
-        dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
-    html_email = get_template('bookmarks/email_for_measures.html')
-    with NamedTemporaryFile(suffix='.png') as getting_worse_file, \
-            NamedTemporaryFile(suffix='.png') as still_bad_file, \
-            NamedTemporaryFile(suffix='.png') as interesting_file:
+    dashboard_uri = settings.GRAB_HOST + dashboard_uri + '?' + msg.qs
+
+    with NamedTemporaryFile(suffix='.png') as getting_worse_file:
         most_changing = stats['most_changing']
-        getting_worse_img = still_bad_img = interesting_img = None
         if most_changing['declines']:
             measure_id = most_changing['declines'][0]['measure'].id
             getting_worse_img = attach_image(
@@ -655,6 +671,10 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
                 org_bookmark.dashboard_url(measure_id),
                 getting_worse_file.name,
                 get_chart_id(measure_id))
+        else:
+            getting_worse_img = None
+
+    with NamedTemporaryFile(suffix='.png') as still_bad_file:
         if stats['worst']:
             measure_id = stats['worst'][0].id
             still_bad_img = attach_image(
@@ -662,6 +682,10 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
                 org_bookmark.dashboard_url(measure_id),
                 still_bad_file.name,
                 get_chart_id(measure_id))
+        else:
+            still_bad_img = None
+
+    with NamedTemporaryFile(suffix='.png') as interesting_file:
         if stats['interesting']:
             measure_id = stats['interesting'][0].id
             interesting_img = attach_image(
@@ -669,58 +693,52 @@ def make_org_email(org_bookmark, stats, preview=False, tag=None):
                 org_bookmark.dashboard_url(measure_id),
                 interesting_file.name,
                 get_chart_id(measure_id))
-        unsubscribe_link = settings.GRAB_HOST + reverse(
-            'bookmark-login',
-            kwargs={'key': org_bookmark.user.profile.key})
-        html = html_email.render(
-            context={
-                'preview': preview,
-                'base_template': base_template,
-                'intro_text': getIntroText(
-                    stats, org_bookmark.org_type()),
-                'total_possible_savings': sum(
-                    [x[1] for x in
-                     stats['top_savings']['possible_savings']]),
-                'has_stats': _hasStats(stats),
-                'domain': settings.GRAB_HOST,
-                'measures_count': Measure.objects.count(),
-                'getting_worse_image': getting_worse_img,
-                'still_bad_image': still_bad_img,
-                'interesting_image': interesting_img,
-                'bookmark': org_bookmark,
-                'dashboard_uri': mark_safe(dashboard_uri),
-                'qs': mark_safe(msg.qs),
-                'stats': stats,
-                'unsubscribe_link': unsubscribe_link
-            })
-        if not preview:
-            html = Premailer(
-                html, cssutils_logging_level=logging.ERROR).transform()
-            html = unescape_href(html)
-            text = email_as_text(html)
-            msg.body = text
-        msg.attach_alternative(html, "text/html")
-        msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "measures", tag]
-        return msg
+        else:
+            interesting_img = None
+
+    unsubscribe_link = settings.GRAB_HOST + reverse(
+        'bookmark-login',
+        kwargs={'key': org_bookmark.user.profile.key})
+
+    context = {
+        'intro_text': getIntroText(
+            stats, org_bookmark.org_type()),
+        'total_possible_savings': sum(
+            [x[1] for x in
+             stats['top_savings']['possible_savings']]),
+        'has_stats': _hasStats(stats),
+        'domain': settings.GRAB_HOST,
+        'measures_count': Measure.objects.count(),
+        'getting_worse_image': getting_worse_img,
+        'still_bad_image': still_bad_img,
+        'interesting_image': interesting_img,
+        'bookmark': org_bookmark,
+        'dashboard_uri': mark_safe(dashboard_uri),
+        'qs': mark_safe(msg.qs),
+        'stats': stats,
+        'unsubscribe_link': unsubscribe_link
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_measures.html',
+        context,
+        ['measures', tag]
+    )
+
+    return msg
 
 
-def make_search_email(search_bookmark, preview=False, tag=None):
-    msg = make_email_with_campaign(search_bookmark, 'analyse-alerts')
-    html_email = get_template('bookmarks/email_for_searches.html')
+def make_search_email(search_bookmark, tag=None):
+    msg = initialise_email(search_bookmark, 'analyse-alerts')
     parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
     dashboard_uri = parsed_url.path
     if parsed_url.query:
         qs = '?' + parsed_url.query + '&' + msg.qs
     else:
         qs = '?' + msg.qs
-    if preview:
-        base_template = 'base.html'
-        dashboard_uri += '#' + parsed_url.fragment
-    else:
-        dashboard_uri = (settings.GRAB_HOST + dashboard_uri +
-                         qs + '#' + parsed_url.fragment)
-        base_template = 'bookmarks/email_base.html'
+    dashboard_uri = (settings.GRAB_HOST + dashboard_uri +
+                     qs + '#' + parsed_url.fragment)
 
     with NamedTemporaryFile(suffix='.png') as graph_file:
         graph = attach_image(
@@ -729,29 +747,105 @@ def make_search_email(search_bookmark, preview=False, tag=None):
             graph_file.name,
             '#results .tab-pane.active'
         )
-        unsubscribe_link = settings.GRAB_HOST + reverse(
-            'bookmark-login',
-            kwargs={'key': search_bookmark.user.profile.key})
-        html = html_email.render(
-            context={
-                'preview': preview,
-                'base_template': base_template,
-                'bookmark': search_bookmark,
-                'domain': settings.GRAB_HOST,
-                'graph': graph,
-                'dashboard_uri': mark_safe(dashboard_uri),
-                'unsubscribe_link': unsubscribe_link
-            })
-        if not preview:
-            html = Premailer(
-                html, cssutils_logging_level=logging.ERROR).transform()
-            html = unescape_href(html)
-            text = email_as_text(html)
-            msg.body = text
-        msg.attach_alternative(html, "text/html")
-        msg.extra_headers['list-unsubscribe'] = "<%s>" % unsubscribe_link
-        msg.tags = ["monthly_update", "analyse", tag]
-        return msg
+
+    unsubscribe_link = settings.GRAB_HOST + reverse(
+        'bookmark-login',
+        kwargs={'key': search_bookmark.user.profile.key})
+
+    context = {
+        'bookmark': search_bookmark,
+        'domain': settings.GRAB_HOST,
+        'graph': graph,
+        'dashboard_uri': mark_safe(dashboard_uri),
+        'unsubscribe_link': unsubscribe_link
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_searches.html',
+        context,
+        ['analyse', tag]
+    )
+
+    return msg
+
+
+def make_ncso_concession_email(bookmark, tag=None):
+    msg = initialise_email(bookmark, 'ncso-concessions-alerts')
+
+    monthly_totals = ncso_spending_for_entity(
+        bookmark.entity,
+        bookmark.entity_type,
+        num_months=1
+    )
+    latest_month = max(row['month'] for row in monthly_totals)
+    breakdown = ncso_spending_breakdown_for_entity(
+        bookmark.entity,
+        bookmark.entity_type,
+        latest_month
+    )[:10]
+    last_prescribing_month = (
+        ImportLog.objects.latest_in_category('prescribing').current_at
+    )
+
+    if bookmark.entity_type == 'CCG':
+        concessions_view_name = 'spending_for_one_ccg'
+        concessions_kwargs = {'entity_code': bookmark.entity.code}
+        dashboard_view_name = 'ccg_home_page'
+        dashboard_kwargs = {'ccg_code': bookmark.entity.code}
+    elif bookmark.entity_type == 'practice':
+        concessions_view_name = 'spending_for_one_practice'
+        concessions_kwargs = {'entity_code': bookmark.entity.code}
+        dashboard_view_name = 'practice_home_page'
+        dashboard_kwargs = {'practice_code': bookmark.entity.code}
+    elif bookmark.entity_type == 'all_england':
+        concessions_view_name = 'spending_for_all_england'
+        concessions_kwargs = {}
+        dashboard_view_name = 'all_england'
+        dashboard_kwargs = {}
+    else:
+        assert False
+
+    concessions_path = reverse(concessions_view_name, kwargs=concessions_kwargs)
+    concessions_url = settings.GRAB_HOST + concessions_path
+
+    dashboard_path = reverse(dashboard_view_name, kwargs=dashboard_kwargs)
+    dashboard_url = settings.GRAB_HOST + dashboard_path
+
+    unsubscribe_path = reverse(
+        'bookmark-login',
+        kwargs={'key': bookmark.user.profile.key}
+    )
+    unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
+
+    with NamedTemporaryFile(suffix='.png') as f:
+        chart_image_cid = attach_image(
+            msg,
+            concessions_path,
+            f.name,
+            '#monthly-totals-chart'
+        )
+
+
+    context = {
+        'latest_month': latest_month,
+        'last_prescribing_month': last_prescribing_month,
+        'entity_name': bookmark.entity_cased_name,
+        'additional_cost': monthly_totals[0]['additional_cost'],
+        'breakdown': breakdown,
+        'concessions_url': concessions_url,
+        'chart_image_cid': chart_image_cid,
+        'unsubscribe_link': unsubscribe_link,
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_ncso_concessions.html',
+        context,
+        ['ncso_concessions', tag]
+    )
+
+    return msg
 
 
 def unescape_href(text):

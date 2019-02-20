@@ -2,12 +2,13 @@ import itertools
 import random
 
 from django.db import connection
+from django.contrib.auth.models import User
 
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    ImportLog, Practice, PCT, Prescription, Presentation
+    ImportLog, Practice, PCT, Prescription, Presentation, NCSOConcessionBookmark
 )
 from dmd.models import (
     DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
@@ -158,3 +159,29 @@ class DataFactory(object):
                     presentation_code
                 )
             """)
+
+    def create_user(self, email=None):
+        index = self.next_id()
+        email = email or 'user-{}@example.com'.format(index)
+        return User.objects.create_user(
+            username='User {}'.format(index),
+            email=email,
+        )
+
+    def create_ncso_concessions_bookmark(self, org, user=None):
+        kwargs = {
+            'user': user or self.create_user(),
+            'approved': True,
+        }
+
+        if org is None:
+            # All England
+            pass
+        elif isinstance(org, PCT):
+            kwargs['pct'] = org
+        elif isinstance(org, Practice):
+            kwargs['practice'] = org
+        else:
+            assert False
+
+        return NCSOConcessionBookmark.objects.create(**kwargs)

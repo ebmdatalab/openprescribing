@@ -10,21 +10,16 @@ from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
-from frontend.management.commands.send_monthly_alerts import BatchedEmailErrors
-from frontend.views.bookmark_utils import BadAlertIimageError
+from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
 
 
 CMD_NAME = 'send_monthly_alerts'
-
-
-class AnyStringWith(str):
-    def __eq__(self, other):
-        return self in other
 
 
 class ValidateOptionsTestCase(unittest.TestCase):
@@ -150,7 +145,7 @@ class FailingEmailTestCase(TestCase):
 
     def test_bad_alert_image_error_not_sent_and_not_raised(
             self, attach_image, finder):
-        attach_image.side_effect = BadAlertIimageError
+        attach_image.side_effect = BadAlertImageError
         measure = MagicMock()
         measure.id = 'measureid'
         test_context = _makeContext(worst=[measure])

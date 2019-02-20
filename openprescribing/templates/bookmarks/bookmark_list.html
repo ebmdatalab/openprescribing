@@ -6,7 +6,7 @@
 {% block content %}
 
 <h2>Your alerts</h2>
-{% if org_bookmarks or search_bookmarks %}
+{% if org_bookmarks or search_bookmarks or ncso_concessions_bookmarks %}
  {% if single_bookmark %}
    <p>You are subscribed to a monthly alert about
      <strong><a href="{{ single_bookmark.get_absolute_url }}">{{ single_bookmark.name }}</a></strong>

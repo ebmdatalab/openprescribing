@@ -1,6 +1,6 @@
 {% load account %}{% autoescape off %}Hello from OpenPrescribing!
 
-You've been subscribed to monthly alerts about {{ user.profile.most_recent_bookmark.topic }}.
+You've been subscribed to alerts about {{ user.profile.most_recent_bookmark.topic }}.
 
 Please confirm your email address by visiting {{ activate_url }}
 

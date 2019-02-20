@@ -1,0 +1,66 @@
+{% extends 'bookmarks/email_base.html' %}
+{% load template_extras %}
+{% load humanize %}
+{% block title %}Your NCSO price concession alert from OpenPrescribing{% endblock %}
+
+{% block content %}
+
+<p><b>Hello from OpenPrescribing!</b></p>
+
+<p>
+  This is an experimental new service and we are keen for feedback: just reply
+  to this email.
+</p>
+
+<p>
+  New or updated price concession data has been published for
+  <b>{{ latest_month|date:"F Y" }}</b>.
+</p>
+
+<p>
+  We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
+  out-of-stock medicines will cost {{ entity_name }} an additional
+  <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
+</p>
+
+<p>
+  At OpenPrescribing we check for updates on concessions every day and we will
+  email you the next time concessions are announced.
+</p>
+
+<p>
+  The top {{ breakdown|length }} most significant extra costs are:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Presentation</th>
+      <th>Quantity ({{ last_prescribing_month|date:"M Y" }})</th>
+      <th>Normally costs</th>
+      <th>This month's projected extra cost ({{ latest_month|date:"M Y" }})</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in breakdown %}
+      <tr>
+        <td>{{ row.1 }}</td>
+        <td align="right">{{ row.2|floatformat:"0"|intcomma }}</td>
+        <td align="right">£{{ row.3|floatformat:"0"|intcomma }}</td>
+        <td align="right">£{{ row.4|floatformat:"0"|intcomma }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>
+  <a href="{{ concessions_url }}"><img src="cid:{{ chart_image_cid }}"></a><br>
+</p>
+
+<p>
+  <a href="{{ concessions_url }}">Further analysis</a> is on our website,
+  where you can also <a href="{{ dashboard_url }}">view our dashboard for
+  {{ entity_name }}</a> and subscribe to alerts for all our standard measures.
+</p>
+
+{% endblock %}

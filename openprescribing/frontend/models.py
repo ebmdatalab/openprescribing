@@ -726,6 +726,57 @@ class OrgBookmark(models.Model):
         return 'Org Bookmark: ' + self.name
 
 
+class NCSOConcessionBookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    @property
+    def entity(self):
+        if self.pct is not None:
+            return self.pct
+        elif self.practice is not None:
+            return self.practice
+        else:
+            # This is for all England
+            return None
+
+    @property
+    def entity_type(self):
+        if self.pct is not None:
+            return 'CCG'
+        elif self.practice is not None:
+            return 'practice'
+        else:
+            return 'all_england'
+
+    @property
+    def entity_cased_name(self):
+        if self.entity is None:
+            return 'the NHS in England'
+        else:
+            return self.entity.cased_name
+
+    @property
+    def name(self):
+        return 'NCSO concessions for {}'.format(self.entity_cased_name)
+
+    def dashboard_url(self):
+        if self.entity_type == 'CCG':
+            kwargs = {'entity_code': self.entity.code}
+            return reverse('spending_for_one_ccg', kwargs=kwargs)
+        elif self.entity_type == 'practice':
+            kwargs = {'entity_code': self.entity.code}
+            return reverse('spending_for_one_practice', kwargs=kwargs)
+        else:
+            return reverse('spending_for_all_england')
+
+    def topic(self):
+        return self.name
+
+
 class ImportLogManager(models.Manager):
     def latest_in_category(self, category):
         return self.filter(category=category).first()
@@ -759,9 +810,14 @@ class Profile(models.Model):
     emails_clicked = models.IntegerField(default=0)
 
     def most_recent_bookmark(self):
-        org_bookmark = self.user.orgbookmark_set.last()
-        search_bookmark = self.user.searchbookmark_set.last()
-        bookmarks = [x for x in [org_bookmark, search_bookmark] if x]
+        bookmarks = [
+            bookmark for bookmark in [
+                 self.user.orgbookmark_set.last(),
+                 self.user.searchbookmark_set.last(),
+                 self.user.ncsoconcessionbookmark_set.last(),
+            ]
+            if bookmark
+        ]
         return sorted(bookmarks, key=lambda x: x.created_at)[-1]
 
 
