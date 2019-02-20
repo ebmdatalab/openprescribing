@@ -39,8 +39,9 @@
  {% csrf_token %}
  <p>
    <img src="/static/img/bang.jpg" style="float: left; margin-right: 10px">
-   Get alerted by email (roughly weekly) when new price concession data is
-   available.  You can also sign up for our monthly newsletter.
+   Get email updates (roughly weekly) for {{ entity_name }} when new price
+   concession data is available.  You can also sign up for our monthly
+   newsletter.
   <p>
   {{ form.non_field_errors }}
   {{ form | crispy }}
