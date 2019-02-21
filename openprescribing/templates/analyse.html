@@ -208,7 +208,34 @@
       <p><a id="data-link" download="data.csv" class="btn btn-info" href="#">Download as CSV <span id="data-rows-count"></span></a> </p>
     </div>
 
-</div>
+  </div>
+
+  <div id="js-summary-totals" class="panel panel-default" style="margin-top: 18px">
+    <div class="panel-heading">
+      Total prescribing for <em class="js-friendly-numerator"></em>
+      across <span class="js-orgs-description"></span>
+    </div>
+    <table class="table">
+      <tr>
+        <th></th>
+        <th class="text-right js-selected-month"></th>
+        <th class="text-right">Financial YTD (<span class="js-financial-year-range"></span>)</th>
+        <th class="text-right">Last 12 months (<span class="js-year-range"></span>)</th>
+      </tr>
+      <tr>
+        <th>Cost (£)</th>
+        <td class="text-right js-cost-month-total"></td>
+        <td class="text-right js-cost-financial-year-total"></td>
+        <td class="text-right js-cost-year-total"></td>
+      </tr>
+      <tr>
+        <th>Items</th>
+        <td class="text-right js-items-month-total"></td>
+        <td class="text-right js-items-financial-year-total"></td>
+        <td class="text-right js-items-year-total"></td>
+      </tr>
+    </table>
+  </div>
 
 </div>
 
