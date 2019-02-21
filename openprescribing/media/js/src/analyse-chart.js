@@ -474,9 +474,7 @@ var analyseChart = {
         stepped: true,
         format: {
           to: function(val) {
-            var d = _this.globalOptions.allMonths[val];
-            return Highcharts.dateFormat('%b \'%y',
-                                         new Date(d.replace(/-/g, '/')));
+            return formatDate(_this.globalOptions.allMonths[val]);
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -503,9 +501,7 @@ var analyseChart = {
         stepped: true,
         format: {
           to: function(val) {
-            var d = _this.globalOptions.allMonths[val];
-            return Highcharts.dateFormat('%b \'%y',
-                                         new Date(d.replace(/-/g, '/')));
+            return formatDate(_this.globalOptions.allMonths[val]);
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -531,4 +527,9 @@ var analyseChart = {
   },
 
 };
+
+function formatDate(dateStr) {
+  return Highcharts.dateFormat("%b '%y", new Date(dateStr));
+}
+
 module.exports = analyseChart;
