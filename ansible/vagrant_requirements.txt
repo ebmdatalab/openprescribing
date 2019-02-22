@@ -1,4 +1,4 @@
-ansible==2.7.7
+ansible==2.7.8
 pyOpenSSL>=16.2.0  # needed for ansible
 urllib3[secure]  # needed for modern certificate verification
 cffi>=1.6  # See https://github.com/nylas/sync-engine/pull/295
