@@ -212,6 +212,12 @@ var queryForm = {
           };
           item.name = d.name || d.text;
           item.text = item.name;
+          if (d.type) {
+            item.type = d.type;
+          }
+          if (d.code) {
+            item.code = d.code;
+          }
           _this.globalOptions[optionId].push(item);
         });
         _this.checkIfButtonShouldBeEnabled(_this.globalOptions);
