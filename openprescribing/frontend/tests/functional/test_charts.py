@@ -65,3 +65,40 @@ class SmallListTest(SeleniumTestCase):
         xlabels = self.find_by_xpath(
             "//*[contains(@class, 'highcharts-xaxis-labels')]")
         self.assertNotIn('GREEN', xlabels.text)
+
+
+class AnalyseSummaryTotalsTest(SeleniumTestCase):
+
+    def test_summary_totals_on_analyse_page(self):
+        self.browser.get(
+            self.live_server_url +
+            '/analyse/#org=CCG&numIds=0212000AA')
+        expected = {
+            'panel-heading': (
+                u'Total prescribing for Rosuvastatin Calcium across all '
+                u'CCGs in NHS England'
+            ),
+            'js-selected-month': u"Sep '16",
+            'js-financial-year-range': u"Apr—Sep '16",
+            'js-year-range': u"Oct '15—Sep '16",
+            'js-cost-month-total': u'29,720',
+            'js-cost-financial-year-total': u'178,726',
+            'js-cost-year-total': u'379,182',
+            'js-items-month-total': u'1,669',
+            'js-items-financial-year-total': u'9,836',
+            'js-items-year-total': u'20,622',
+        }
+        for classname, value in expected.items():
+            selector = (
+                '//*[@id="{id}"]'
+                '//*[contains(concat(" ", @class, " "), " {classname} ")]'.format(
+                    id='js-summary-totals',
+                    classname=classname
+                )
+            )
+            element = self.find_by_xpath(selector)
+            self.assertTrue(
+                element.is_displayed(),
+                '.{} is not visible'.format(classname)
+            )
+            self.assertEqual(element.text.strip(), value)
