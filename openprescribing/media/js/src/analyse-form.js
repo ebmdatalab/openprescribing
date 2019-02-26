@@ -106,7 +106,8 @@ var queryForm = {
         $(this.el.orgHelp).text('Hint: add a CCG to see all its practices');
         $(this.el.orgHelp).fadeIn();
       } else if (this.globalOptions.org === 'CCG') {
-        $(this.el.orgHelp).fadeOut();
+        $(this.el.orgHelp).text('Hint: leave blank to see national totals');
+        $(this.el.orgHelp).fadeIn();
       }
     } else {
       $(this.el.orgHelp).fadeOut();
