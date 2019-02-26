@@ -64,7 +64,7 @@ def _get_practices_like_code(q):
             'postcode': p.postcode,
             'setting': p.setting,
             'setting_name': None,
-            'type': 'Practice',
+            'type': 'practice',
             'ccg': None
         }
         data['setting_name'] = p.get_setting_display()

@@ -43,6 +43,7 @@ var analyseChart = {
     rowCount: ('#data-rows-count'),
     alertForm: ('#alert-form'),
     outliersToggle: ('.outliers-toggle'),
+    summaryTotals: $('#js-summary-totals'),
   },
 
   renderChart: function(globalOptions) {
@@ -54,6 +55,7 @@ var analyseChart = {
     this.globalOptions = globalOptions;
     this.el.submitButton.button('loading');
     this.el.errorContainer.hide();
+    this.el.summaryTotals.hide();
     this.el.loadingEl.show();
     this.getBackendData();
   },
@@ -203,6 +205,7 @@ var analyseChart = {
       this.setUpSaveUrl();
       this.setUpSaveUrlUI();
       this.setUpAlertSubscription();
+      this.displayTotals();
     } else {
       this.showErrorMessage(
         'No data found for this query. Please try again.', null);
@@ -474,9 +477,7 @@ var analyseChart = {
         stepped: true,
         format: {
           to: function(val) {
-            var d = _this.globalOptions.allMonths[val];
-            return Highcharts.dateFormat('%b \'%y',
-                                         new Date(d.replace(/-/g, '/')));
+            return formatDate(_this.globalOptions.allMonths[val]);
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -503,9 +504,7 @@ var analyseChart = {
         stepped: true,
         format: {
           to: function(val) {
-            var d = _this.globalOptions.allMonths[val];
-            return Highcharts.dateFormat('%b \'%y',
-                                         new Date(d.replace(/-/g, '/')));
+            return formatDate(_this.globalOptions.allMonths[val]);
           },
           from: function(val) {
             return _this.globalOptions.allMonths.indexOf[val] + 1;
@@ -530,5 +529,115 @@ var analyseChart = {
     this.updateCharts();
   },
 
+  displayTotals: function() {
+    var selectedOrgs;
+    try {
+      selectedOrgs = getOrgSelection(this.globalOptions.org, this.globalOptions.orgIds);
+    } catch(error) {
+      if (/^Unhandled selection:/.test(error)) {
+        // If we can't display a total for this particular selection just bail
+        // out and show nothing
+        return;
+      }
+      throw error;
+    }
+    var allMonths = this.globalOptions.allMonths;
+    var lastMonth = allMonths[allMonths.length - 1];
+    var twelveMonthsAgo = allMonths[allMonths.length - 12];
+    var financialYearStart = getFinancialYearStart(lastMonth);
+    var data = this.globalOptions.data.numeratorData;
+    var activeMonth = this.globalOptions.activeMonth;
+    var itemsMonthTotal = 0, itemsYearTotal = 0, itemsFinancialYearTotal = 0;
+    var costMonthTotal = 0, costYearTotal = 0, costFinancialYearTotal = 0;
+    var entry;
+    for (var i = 0; i < data.length; i++) {
+      entry = data[i];
+      if (selectedOrgs && ! selectedOrgs[entry.row_id]) continue;
+      if (entry.date === activeMonth) {
+        itemsMonthTotal += entry.items;
+        costMonthTotal += entry.actual_cost;
+      }
+      if (entry.date >= twelveMonthsAgo) {
+        itemsYearTotal += entry.items;
+        costYearTotal += entry.actual_cost;
+        if (entry.date >= financialYearStart) {
+          itemsFinancialYearTotal += entry.items;
+          costFinancialYearTotal += entry.actual_cost;
+        }
+      }
+    }
+    var el = this.el.summaryTotals;
+    el.find('.js-friendly-numerator').text(this.globalOptions.friendly.friendlyNumerator);
+    el.find('.js-orgs-description').text(getOrgsDescription(this.globalOptions.org, this.globalOptions.orgIds));
+    el.find('.js-selected-month').text(formatDate(activeMonth));
+    el.find('.js-financial-year-range').text(formatDateRange(financialYearStart, lastMonth));
+    el.find('.js-year-range').text(formatDateRange(twelveMonthsAgo, lastMonth));
+    el.find('.js-cost-month-total').text(formatNum(costMonthTotal));
+    el.find('.js-cost-year-total').text(formatNum(costYearTotal));
+    el.find('.js-cost-financial-year-total').text(formatNum(costFinancialYearTotal));
+    el.find('.js-items-month-total').text(formatNum(itemsMonthTotal));
+    el.find('.js-items-year-total').text(formatNum(itemsYearTotal));
+    el.find('.js-items-financial-year-total').text(formatNum(itemsFinancialYearTotal));
+    el.show();
+  }
+
 };
+
+function formatDate(dateStr) {
+  return Highcharts.dateFormat("%b '%y", new Date(dateStr));
+}
+
+function formatNum(n) {
+  return Highcharts.numberFormat(n, 0);
+}
+
+function getFinancialYearStart(dateStr) {
+  var date = new Date(dateStr);
+  // Months are zero-indexed so 3 is April
+  var financialYear = date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1;
+  var yearStart = new Date(financialYear, 3, 1);
+  return Highcharts.dateFormat('%Y-%m-%d', yearStart);
+}
+
+function formatDateRange(fromDateStr, toDateStr) {
+  var fromDate = new Date(fromDateStr);
+  var toDate = new Date(toDateStr);
+  var formatStr = (fromDate.getFullYear() === toDate.getFullYear()) ? "%b" : "%b '%y";
+  var fromDateFormatted = Highcharts.dateFormat(formatStr, fromDate);
+  var toDateFormatted = Highcharts.dateFormat("%b '%y", toDate);
+  if (fromDateStr !== toDateStr) {
+    return fromDateFormatted + '\u2014' + toDateFormatted;
+  } else {
+    // Handle the case where the start and end of the range is the same
+    return toDateFormatted;
+  }
+}
+
+function getOrgSelection(orgType, orgs) {
+  // Given the current behaviour of the Analyse form it shouldn't be possible
+  // to get practice level data without selecting some practices, and it's
+  // not obvious how we should handle this if we do
+  if (orgs.length === 0) {
+    if (orgType === 'practice') {
+      throw "Unhandled selection: all practices";
+    } else {
+      // A selection of "false" means "select everything"
+      return false;
+    }
+  }
+  var selectedOrgs= {};
+  for(var i = 0; i < orgs.length; i++) {
+    if (orgs[i].type !== orgType) {
+      throw "Unhandled selection: mixed org types";
+    }
+    selectedOrgs[orgs[i].id] = true;
+  }
+  return selectedOrgs;
+}
+
+function getOrgsDescription(orgType, orgs) {
+  if (orgs.length === 0) return 'all CCGs in NHS England';
+  return orgs.map(function(org) { return org.name; }).join(' + ');
+}
+
 module.exports = analyseChart;

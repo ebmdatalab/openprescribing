@@ -106,7 +106,8 @@ var queryForm = {
         $(this.el.orgHelp).text('Hint: add a CCG to see all its practices');
         $(this.el.orgHelp).fadeIn();
       } else if (this.globalOptions.org === 'CCG') {
-        $(this.el.orgHelp).fadeOut();
+        $(this.el.orgHelp).text('Hint: leave blank to see national totals');
+        $(this.el.orgHelp).fadeIn();
       }
     } else {
       $(this.el.orgHelp).fadeOut();
@@ -212,6 +213,12 @@ var queryForm = {
           };
           item.name = d.name || d.text;
           item.text = item.name;
+          if (d.type) {
+            item.type = d.type;
+          }
+          if (d.code) {
+            item.code = d.code;
+          }
           _this.globalOptions[optionId].push(item);
         });
         _this.checkIfButtonShouldBeEnabled(_this.globalOptions);
