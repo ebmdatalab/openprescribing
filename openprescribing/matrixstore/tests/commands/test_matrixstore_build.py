@@ -23,6 +23,8 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import SimpleTestCase, override_settings
 
+import numpy
+
 from matrixstore.serializer import deserialize
 from matrixstore.tests.data_factory import DataFactory
 
@@ -146,26 +148,37 @@ class TestMatrixStoreBuild(SimpleTestCase):
         get_value = MatrixValueFetcher(
             self.connection, 'practice_statistic', 'name', 'value'
         )
+        expected_entries = 0
         for entry in self.practice_statistics:
             practice = entry['practice']
             month = entry['month']
             if month not in self.months_to_import:
                 continue
-            expected_total_list_size = entry['total_list_size']
-            expected_statins_cost = json.loads(entry['star_pu'])['statins_cost']
-            total_list_size = get_value('total_list_size', practice, month)
-            statins_cost = get_value('star_pu.statins_cost', practice, month)
-            self.assertEqual(total_list_size, expected_total_list_size)
-            self.assertEqual(statins_cost, expected_statins_cost)
+            for field, expected_value in entry.items():
+                if field in ('month', 'practice', 'pct_id', 'star_pu'):
+                    continue
+                expected_entries += 1
+                value = get_value(field, practice, month)
+                self.assertEqual(value, expected_value)
+            for name, expected_value in json.loads(entry['star_pu']).items():
+                expected_entries += 1
+                value = get_value('star_pu.' + name, practice, month)
+                self.assertEqual(value, expected_value)
+        # Check there are no additional values that we weren't expecting
+        self.assertEqual(get_value.nonzero_values, expected_entries)
 
     def test_prescribing_values_are_correct(self):
         for field in ('items', 'quantity', 'net_cost', 'actual_cost'):
             get_value = MatrixValueFetcher(
                 self.connection, 'presentation', 'bnf_code', field
             )
+            expected_entries = 0
             for entry in self._expected_prescribing_values():
+                expected_entries += 1
                 value = get_value(entry['bnf_code'], entry['practice'], entry['month'])
                 self.assertEqual(value, entry[field])
+            # Check there are no additional values that we weren't expecting
+            self.assertEqual(get_value.nonzero_values, expected_entries)
 
     def _expected_prescribing_values(self):
         # First we yield the standard prescribing, filtered by month
@@ -201,8 +214,11 @@ class MatrixValueFetcher(object):
             'SELECT {}, {} FROM {}'.format(key_field, value_field, table)
         )
         self.matrices = {}
+        self.nonzero_values = 0
         for key, value in results:
-            self.matrices[key] = deserialize(value)
+            matrix = deserialize(value)
+            self.matrices[key] = matrix
+            self.nonzero_values += numpy.count_nonzero(matrix)
         self.practices = dict(connection.execute('SELECT code, offset FROM practice'))
         self.dates = dict(connection.execute('SELECT date, offset FROM date'))
         for date, offset in list(self.dates.items()):
