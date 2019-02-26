@@ -38,7 +38,7 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(len(content), 1)
         self.assertEqual(content[0]['code'], 'P87629')
         self.assertEqual(content[0]['name'], '1/ST ANDREWS MEDICAL PRACTICE')
-        self.assertEqual(content[0]['type'], 'Practice')
+        self.assertEqual(content[0]['type'], 'practice')
         self.assertEqual(content[0]['setting'], 4)
         self.assertEqual(content[0]['setting_name'], 'GP Practice')
 
@@ -104,4 +104,4 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(content[0]['type'], 'CCG')
         self.assertEqual(content[-1]['code'], 'B82018')
         self.assertEqual(content[-1]['name'], 'ESCRICK SURGERY')
-        self.assertEqual(content[-1]['type'], 'Practice')
+        self.assertEqual(content[-1]['type'], 'practice')
