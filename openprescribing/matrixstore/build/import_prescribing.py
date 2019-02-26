@@ -159,14 +159,23 @@ def format_as_sql_rows(matrices, connection):
     insertion into SQLite
     """
     cursor = connection.cursor()
+    num_presentations = next(cursor.execute('SELECT COUNT(*) FROM presentation'))[0]
+    count = 0
     for row in matrices:
+        count += 1
         # We make sure we have a row for every BNF code in the data, even ones
         # we didn't know about previously. This is a hack that we won't need
         # once we can use SQLite v3.24.0 which has proper UPSERT support.
         cursor.execute(
             'INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)',
             [row.bnf_code])
-        logger.info('Writing data for %s', row.bnf_code)
+        if should_log_message(count):
+            logger.info(
+                'Writing data for %s (%s/%s)',
+                row.bnf_code,
+                count,
+                num_presentations
+            )
         yield (
             sqlite3.Binary(serialize_compressed(row.items)),
             sqlite3.Binary(serialize_compressed(row.quantity)),
@@ -174,3 +183,16 @@ def format_as_sql_rows(matrices, connection):
             sqlite3.Binary(serialize_compressed(row.net_cost)),
             row.bnf_code
         )
+    logger.info('Finished writing data for %s presentations', count)
+
+
+def should_log_message(n):
+    """
+    To avoid cluttering log output we don't log the insertion of every single
+    presentation
+    """
+    if n <= 10:
+        return True
+    if n == 100:
+        return True
+    return n % 200 == 0
