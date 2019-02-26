@@ -55,8 +55,8 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc=" crossorigin="anonymous" />
     <link href="{% static 'css/index.css' %}?q=1234567" rel="stylesheet">
 
-    <link rel="icon" href="/static/img/favicon.png?2">
-    <!--[if IE]><link rel="shortcut icon" href="/static/img/favicon.ico"><![endif]-->
+    <link rel="icon" href="{% static 'img/favicon.png?2' %}">
+    <!--[if IE]><link rel="shortcut icon" href="{% static 'img/favicon.ico' %}"><![endif]-->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -79,7 +79,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="{% url 'home' %}">
-          <img class="logo" src="/static/img/logo.svg" alt="OpenPrescribing logo" onerror="this.src='/static/img/logo.png';this.onerror=null;" />
+          <img class="logo" src="{% static 'img/logo.svg' %}" alt="OpenPrescribing logo" onerror="this.src='{% static "img/logo.png" %}';this.onerror=null;" />
           OpenPrescribing<span class="beta">beta</span>
           </a>
         </div>
@@ -156,12 +156,12 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
       <div class="container">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 sponsors">
-              <a href="http://www.health.org.uk/"><img src="/static/img/health_foundation_logo.png" alt="Health Foundation logo"/></a>
-              <a href="http://weahsn.net"><img src="/static/img/weahsn_logo_bw.png" alt="WEAHSN logo"/></a>
-              <a href="http://cebm.net"><img src="/static/img/cebm_logo.png" alt="Centre for Evidence-Based Medicine logo"/></a>
-              <a href="http://www.ox.ac.uk"><img src="/static/img/oxford_logo.png" alt="University of Oxford logo"/></a>
-              <a href="http://www.lshtm.ac.uk"><img src="/static/img/lshtm_logo.png" alt="LSHTM logo"/></a>
-              <a href="http://www.nihr.ac.uk/"><img src="/static/img/nihr_logo.png" alt="National Institute for Health Research logo"/></a>
+              <a href="http://www.health.org.uk/"><img src="{% static 'img/health_foundation_logo.png' %}" alt="Health Foundation logo"/></a>
+              <a href="http://weahsn.net"><img src="{% static 'img/weahsn_logo_bw.png' %}" alt="WEAHSN logo"/></a>
+              <a href="http://cebm.net"><img src="{% static 'img/cebm_logo.png' %}" alt="Centre for Evidence-Based Medicine logo"/></a>
+              <a href="http://www.ox.ac.uk"><img src="{% static 'img/oxford_logo.png' %}" alt="University of Oxford logo"/></a>
+              <a href="http://www.lshtm.ac.uk"><img src="{% static 'img/lshtm_logo.png' %}" alt="LSHTM logo"/></a>
+              <a href="http://www.nihr.ac.uk/"><img src="{% static 'img/nihr_logo.png' %}" alt="National Institute for Health Research logo"/></a>
             </div>
             <div class="col-md-9 col-sm-9 col-xs-12 attribution text-muted">
               <div>Designed and built by the <a href="http://ebmdatalab.net">EBM DataLab</a>, <a href="http://www.phc.ox.ac.uk/">Department of Primary Care Health Sciences</a>, University of Oxford. Funded by <a href="">WEAHSN</a> and <a href="http://www.health.org.uk/">The Health Foundation</a>.
