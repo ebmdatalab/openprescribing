@@ -58,37 +58,39 @@ class Command(BaseCommand):
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
                 logger.info('Updating measure: %s' % measure_id)
-                measure = create_or_update_measure(measure_id, end_date)
-
-                if options['definitions_only']:
-                    continue
-
                 measure_start = datetime.now()
 
-                calcuation = MeasureCalculation(
-                    measure, start_date=start_date, end_date=end_date,
-                    verbose=verbose
-                )
+                with transaction.atomic():
+                    measure = create_or_update_measure(measure_id, end_date)
 
-                # Delete any existing measures data older than five years ago.
-                l = ImportLog.objects.latest_in_category('prescribing')
-                five_years_ago = l.current_at - relativedelta(years=5)
-                MeasureValue.objects.filter(month__lte=five_years_ago)\
-                                    .filter(measure=measure).delete()
-                MeasureGlobal.objects.filter(month__lte=five_years_ago)\
-                                     .filter(measure=measure).delete()
+                    if options['definitions_only']:
+                        continue
 
-                # Delete any existing measures data relating to the
-                # current month(s)
-                MeasureValue.objects.filter(month__gte=start_date)\
-                                    .filter(month__lte=end_date)\
-                                    .filter(measure=measure).delete()
-                MeasureGlobal.objects.filter(month__gte=start_date)\
-                                     .filter(month__lte=end_date)\
-                                     .filter(measure=measure).delete()
+                    calcuation = MeasureCalculation(
+                        measure, start_date=start_date, end_date=end_date,
+                        verbose=verbose
+                    )
 
-                # Compute the measures
-                calcuation.calculate()
+                    # Delete any existing measures data older than five years ago.
+                    l = ImportLog.objects.latest_in_category('prescribing')
+                    five_years_ago = l.current_at - relativedelta(years=5)
+                    MeasureValue.objects.filter(month__lte=five_years_ago)\
+                                        .filter(measure=measure).delete()
+                    MeasureGlobal.objects.filter(month__lte=five_years_ago)\
+                                         .filter(measure=measure).delete()
+
+                    # Delete any existing measures data relating to the
+                    # current month(s)
+                    MeasureValue.objects.filter(month__gte=start_date)\
+                                        .filter(month__lte=end_date)\
+                                        .filter(measure=measure).delete()
+                    MeasureGlobal.objects.filter(month__gte=start_date)\
+                                         .filter(month__lte=end_date)\
+                                         .filter(measure=measure).delete()
+
+                    # Compute the measures
+                    calcuation.calculate()
+
                 elapsed = datetime.now() - measure_start
                 logger.warning("Elapsed time for %s: %s seconds" % (
                     measure_id, elapsed.seconds))
@@ -564,15 +566,14 @@ class MeasureCalculation(object):
 
         Retuns number of rows written.
         """
-        with transaction.atomic():
-            c = 0
-            for datum in self.get_rows_as_dicts(self.table_name(org_type)):
-                datum['measure_id'] = self.measure.id
-                if self.measure.is_cost_based:
-                    datum['cost_savings'] = convertSavingsToDict(datum)
-                datum['percentile'] = normalisePercentile(datum['percentile'])
-                MeasureValue.objects.create(**datum)
-                c += 1
+        c = 0
+        for datum in self.get_rows_as_dicts(self.table_name(org_type)):
+            datum['measure_id'] = self.measure.id
+            if self.measure.is_cost_based:
+                datum['cost_savings'] = convertSavingsToDict(datum)
+            datum['percentile'] = normalisePercentile(datum['percentile'])
+            MeasureValue.objects.create(**datum)
+            c += 1
         self.log("Wrote %s CCG measures" % c)
         return c
 
