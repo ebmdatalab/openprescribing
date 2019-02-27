@@ -96,3 +96,8 @@ PIPELINE_IMPORT_LOG_PATH = os.path.join(
 )
 
 SLACK_SENDING_ACTIVE = False
+
+# Running with a different storage backend in test is not ideal but it's what
+# the Django docs recommend:
+# https://docs.djangoproject.com/en/1.11/ref/contrib/staticfiles/#django.contrib.staticfiles.storage.ManifestStaticFilesStorage.manifest_strict
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'

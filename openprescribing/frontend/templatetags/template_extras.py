@@ -4,6 +4,7 @@ import math
 from django import template
 from django.utils.safestring import mark_safe
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils import timezone
 
 
@@ -23,12 +24,11 @@ else:
 
 
 @register.simple_tag(takes_context=True)
-def conditional_js(context, filename):
-    tag_format = '<script src="/static/js/%s.%sjs"></script>'
-    if context.get('DEBUG', True):
-        tag = tag_format % (filename, '')
-    else:
-        tag = tag_format % (filename, 'min.')
+def conditional_js(context, script_name):
+    suffix = '' if context.get('DEBUG', True) else '.min'
+    filename = 'js/{}{}.js'.format(script_name, suffix)
+    url = staticfiles_storage.url(filename)
+    tag = '<script src="{}"></script>'.format(url)
     return mark_safe(tag)
 
 

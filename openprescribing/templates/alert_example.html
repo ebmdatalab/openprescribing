@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load template_extras %}
 
 {% block title %}FAQs{% endblock %}
@@ -13,7 +14,7 @@ highlighting measures where the specified CCG or practice is an
 outlier.  They look something like this:
 </p>
 
-<img src="/static/img/alert-example.png" >
+<img src="{% static 'img/alert-example.png' %}" >
 
 {% endblock %}
 
