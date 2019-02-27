@@ -3,19 +3,20 @@
 {% load staticfiles %}
 {% load template_extras %}
 
-{% block title %} {{ measure }} by all CCGs{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %}{{ measure.name }} by {{ child_entity_type_human }}s in {{ parent.name }}{% endblock %}
+{% block active_class %}{{ parent_entity_type }}{% endblock %}
 
 {% block content %}
-  <h1>{{measure.name}} by all CCGs</h1>
-
-  {% if measure.url %}
-    <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
-  {% endif %}
+  <h1>{{measure.name}} by {{ child_entity_type_human }}s in {{ parent.name }}</h1>
 
   {% include '_measure_header.html' %}
 
-  <p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
+  <p>
+    {{ child_entity_type_human }}s are ordered by mean percentile over the
+    past six months, with the worst-performing at the top. Each chart shows the
+    results for the individual {{ child_entity_type_human }}, plus deciles
+    across all {{ child_entity_type_human }}s in the NHS in England.
+  </p>
 
   <div id="measures">
     <div id="charts" class="row">
@@ -30,37 +31,32 @@
 
   {% verbatim %}
     <script id="summary-panel" type="text/x-handlebars-template">
+      {{ performanceDescription }}
       {{ costSavings }}
     </script>
 
     <script id="measure-panel" type="text/x-handlebars-template">
-      <div id="ccg_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+      <div id="{{ orgType }}_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
         <div class="panel panel-info">
           <div class="panel-heading">
             <span class="measure-panel-title">
               <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
             </span>
           </div>
-
           <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
             <div class="chart">
               <div class="status"></div>
             </div>
           </div>
-
           <div class="explanation">
             {{{ chartExplanation }}}
-            <ul>
-              <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
-              {{#if tagsFocus }}
-                <li>This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.</li>
-              {{/if}}
-              {{#if numeratorCanBeQueried }}
-                {{#if oneEntityUrl }}
+            {{#if numeratorCanBeQueried }}
+              {{#if oneEntityUrl }}
+                <ul>
                   <li><a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.</li>
-                {{/if}}
+                </ul>
               {{/if}}
-            </ul>
+            {{/if}}
           </div>
         </div>
       </div>

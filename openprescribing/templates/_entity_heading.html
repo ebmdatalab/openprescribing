@@ -1,0 +1,55 @@
+{% load humanize %}
+<div class="row" id="intro">
+{% if entity_type == 'practice' %}
+  <div class="col-md-6">
+    <h1>{{ entity.cased_name }}</h1>
+
+    <p>Address: {{ entity.address_pretty }}</p>
+    {% if entity.ccg %}
+      <p>Part of CCG:
+        <a href="{% url 'ccg_home_page' entity.ccg.code %}">{{ entity.ccg.name }}</a>
+      </p>
+    {% endif %}
+    {% if practice.list_size_13 %}
+      <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
+    {% endif %}
+    <p>Current practice type: {{ practice.get_setting_display }}</p>
+  </div>
+
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+    <small>Practice locations are approximate, based on postcode.</small>
+  </div>
+
+{% elif entity_type == 'ccg' %}
+  <div class="col-md-6">
+    <h1>{{ entity.cased_name }}</h1>
+    <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
+    <ul class="list-unstyled" id="child-entities">
+    {% for p in practices %}
+      <li class="hidden">
+        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
+        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+  </div>
+
+{% elif entity_type == 'regional_team' or entity_type == 'stp' %}
+  <div class="col-md-6">
+    <h1>{{ entity.cased_name }}</h1>
+    <p>There are {{ ccgs.count }} CCGs in this {{ entity_type_human }}.<a id="showall" href="#">&raquo; show them...</a></p>
+    <ul class="list-unstyled" id="child-entities">
+    {% for ccg in ccgs %}
+      <li class="hidden">
+        <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+</div>

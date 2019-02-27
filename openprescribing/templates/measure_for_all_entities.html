@@ -3,19 +3,24 @@
 {% load staticfiles %}
 {% load template_extras %}
 
-{% block title %}{{measure.name}} by practices in {{ ccg.name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
-
-{% block extra_css %}
-  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
-{% endblock extra_css %}
+{% block title %} {{ measure }} by all {{ entity_type_human }}s{% endblock %}
+{% block active_class %}{{ entity_type }}{% endblock %}
 
 {% block content %}
-  <h1>{{measure.name}} by GP practices in {{ ccg.name }}</h1>
+  <h1>{{measure.name}} by all {{ entity_type_human }}s</h1>
+
+  {% if measure.url %}
+    <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
+  {% endif %}
 
   {% include '_measure_header.html' %}
 
-  <p>Practices are ordered by mean percentile over the past six months, with the worst-performing at the top. Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.</p>
+  <p>
+    {{ entity_type_human}}s are ordered by mean percentile over the past six
+    months. Each chart shows the results for the individual {{
+    entity_type_human}}, plus deciles across all {{ entity_type_human}}s in the
+    NHS in England.
+  </p>
 
   <div id="measures">
     <div id="charts" class="row">
@@ -30,32 +35,42 @@
 
   {% verbatim %}
     <script id="summary-panel" type="text/x-handlebars-template">
-      {{ performanceDescription }}
       {{ costSavings }}
     </script>
 
     <script id="measure-panel" type="text/x-handlebars-template">
-      <div id="practice_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+      <div id="{{ orgType }}_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
         <div class="panel panel-info">
           <div class="panel-heading">
             <span class="measure-panel-title">
               <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
             </span>
           </div>
+
           <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
             <div class="chart">
               <div class="status"></div>
             </div>
           </div>
+
           <div class="explanation">
             {{{ chartExplanation }}}
-            {{#if numeratorCanBeQueried }}
-              {{#if oneEntityUrl }}
-                <ul>
-                  <li><a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.</li>
-                </ul>
+            <ul>
+              {{#if measureForAllPracticesUrl }}
+                <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
               {{/if}}
-            {{/if}}
+              {{#if measureForAllCCGsUrl }}
+                <li><a href="{{ measureForAllCCGsUrl }}">Split the measure into charts for individual CCGs</a></li>
+              {{/if}}
+              {{#if tagsFocus }}
+                <li>This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.</li>
+              {{/if}}
+              {{#if numeratorCanBeQueried }}
+                {{#if oneEntityUrl }}
+                  <li><a href="{{ oneEntityUrl }}">Break the overall score down into individual presentations</a>.</li>
+                {{/if}}
+              {{/if}}
+            </ul>
           </div>
         </div>
       </div>

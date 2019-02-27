@@ -130,7 +130,7 @@ var measures = {
   setUpShowPractices: function() {
     $(this.el.showAll).on('click', function(e) {
       e.preventDefault();
-      $('#practices li.hidden').each(function(i, item) {
+      $('#child-entities li.hidden').each(function(i, item) {
         $(item).removeClass('hidden');
       });
       $(this).hide();

@@ -35,9 +35,11 @@
     {% endif %}
 
     <div class="row">
-      <div class="col-md-6">
-        {% include '_alert_signup_form.html' %}
-      </div>
+      {% if entity_type == 'practice' or entity_type == 'ccg' %}
+        <div class="col-md-6">
+          {% include '_alert_signup_form.html' %}
+        </div>
+      {% endif %}
       <div class="col-md-6">
         <div class="form-group">
           <label>Sort prescribing measures by:</label>
