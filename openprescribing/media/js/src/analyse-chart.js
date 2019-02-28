@@ -530,17 +530,7 @@ var analyseChart = {
   },
 
   displayTotals: function() {
-    var selectedOrgs;
-    try {
-      selectedOrgs = getOrgSelection(this.globalOptions.org, this.globalOptions.orgIds);
-    } catch(error) {
-      if (/^Unhandled selection:/.test(error)) {
-        // If we can't display a total for this particular selection just bail
-        // out and show nothing
-        return;
-      }
-      throw error;
-    }
+    var selectedOrgs = getOrgSelection(this.globalOptions.org, this.globalOptions.orgIds);
     var allMonths = this.globalOptions.allMonths;
     var lastMonth = allMonths[allMonths.length - 1];
     var twelveMonthsAgo = allMonths[allMonths.length - 12];
@@ -552,7 +542,14 @@ var analyseChart = {
     var entry;
     for (var i = 0; i < data.length; i++) {
       entry = data[i];
-      if (selectedOrgs && ! selectedOrgs[entry.row_id]) continue;
+      // We include an org both if its ID is selected, or if it belongs to a
+      // CCG which is itself selected.  This logic will need extending if we
+      // add other org types to the Analyse form, so we deliberately throw an
+      // 'Unhandled orgType' error elsewhere if we're given an org type we
+      // don't recognise.
+      if (selectedOrgs && ! selectedOrgs[entry.row_id] && ! selectedOrgs[entry.ccg]) {
+        continue;
+      }
       if (entry.date === activeMonth) {
         itemsMonthTotal += entry.items;
         costMonthTotal += entry.actual_cost;
@@ -614,6 +611,12 @@ function formatDateRange(fromDateStr, toDateStr) {
 }
 
 function getOrgSelection(orgType, orgs) {
+  // If the Analyse form is extended to cover other org types we will need to
+  // update bits of logic elsewhere. Search for 'Unhandled orgType' to find the
+  // relevant section
+  if (orgType !== 'CCG' && orgType !== 'practice') {
+    throw "Unhandled orgType: " + orgType;
+  }
   // Given the current behaviour of the Analyse form it shouldn't be possible
   // to get practice level data without selecting some practices, and it's
   // not obvious how we should handle this if we do
@@ -627,9 +630,6 @@ function getOrgSelection(orgType, orgs) {
   }
   var selectedOrgs= {};
   for(var i = 0; i < orgs.length; i++) {
-    if (orgs[i].type !== orgType) {
-      throw "Unhandled selection: mixed org types";
-    }
     selectedOrgs[orgs[i].id] = true;
   }
   return selectedOrgs;
