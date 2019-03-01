@@ -89,6 +89,9 @@ class MeasureValueQuerySet(models.QuerySet):
 
         if parent_org_type == 'ccg':
             parent_org_type = 'pct'
+            qs = qs.select_related('pct')
+        else:
+            qs = qs.select_related(org_type)
 
         return qs.for_orgs(parent_org_type, org_ids) \
             .for_measures(measure_ids) \
