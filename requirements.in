@@ -13,7 +13,7 @@ backports.csv
 beautifulsoup4
 django-allauth==0.39.0
 django-anymail[mailgun]==5.0
-django-cors-headers==2.4.0
+django-cors-headers==2.4.1
 django-crispy-forms==1.7.2
 django-dotenv
 django-import-export
