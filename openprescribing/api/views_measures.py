@@ -250,6 +250,12 @@ def _measure_by_org(request, org_type):
         tags,
     )
 
+    # Because we access the `name` of the related org for each MeasureValue
+    # during the roll-up process below we need to prefetch them to avoid doing
+    # N+1 db queries
+    org_field = org_type if org_type != 'ccg' else 'pct'
+    measure_values = measure_values.prefetch_related(org_field)
+
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 
