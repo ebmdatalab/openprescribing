@@ -33,6 +33,68 @@ to reduce storage requirements where data is sparse. And we use the
 library to further reduce space on disk.
 
 
+## How data is structured
+
+The [init_db](./build/init_db.py) contains the schema for the SQLite
+files we create. This contains several columns of BLOB type, which are
+designed to hold serialized matrices. These matrices may be of different
+types (some integer, some floats, some sparse, some dense) but they will
+all have the same shape which is: one row for each practice, and one
+column for each date.
+
+The row offset for each practice is stored in the `practice` table, and
+the column offset for each date is stored in the `date` table.
+
+So, as a simple illustration, the input data:
+
+date | practice | quantity | items
+-- | -- | -- | --
+date 1 | practice 1 | 10 | 1
+date 1 | practice 2 | 20 | 2
+date 2 | practice 1 | 10 | 1
+date 2 | practice 2 | 30 | 3
+
+would become two matrices, `quantity` and `items`, like this:
+
+  | practice 1 | practice 2
+-- | -- | --
+date 1 | 10 | 20
+date 2 | 10 | 30
+
+  | practice 1 | practice 2
+-- | -- | --
+date 1 | 1 | 2
+date 2 | 1 | 3
+
+
+### Worked example
+
+Suppose you want to know how many items were prescribed for BNF code
+010203040AAAAAA in practice ABC001 during 2018-06.
+
+First, find the row in the `presentation` table with `bnf_code =
+'010203040AAAAAA'` and get the binary blob stored in the `items` column.
+
+Deserialize the binary blob into a matrix (using `matrixstore.serializer.deserialize`).
+
+Next, find the row in the `practice` table with `code = 'ABC001'` and
+get the value of the `offset` column. This is the row offset of that
+practice within the matrix.
+
+Then find the row in the `date` table with `date = '2018-06-01'` and get
+the value in the `offset` column. This is the column offset for that
+date within the matrix.
+
+The value we want is then found at: `matrix[row_offset, column_offset]`
+
+Of course, this seems like a very convoluted process for getting a
+single value for a single practice on a single date. But usually we
+don't want just a single value; we want the values for all practices
+across all dates so we can compare values across the country and across
+time. And for this use case, the matrix is an incredibly efficient means
+of storing and accessing this data.
+
+
 ## Querying data
 
 Look in the [init_db](./build/init_db.py) file for an overview of the
