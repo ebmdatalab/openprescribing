@@ -28,7 +28,7 @@ gunicorn>=19.5.0
 html2text==2018.1.9
 lxml==4.3.2
 mailchimp3>=2.0.18
-networkx==1.11
+networkx==2.2
 newrelic
 numpy==1.16.2
 openpyxl==2.6.1
