@@ -18,7 +18,7 @@ coverage==4.5.2
 cryptography==2.3.1       # via paramiko, pyopenssl, requests
 cssselect==1.0.1          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
-decorator==4.1.2          # via networkx
+decorator==4.3.2          # via networkx
 defusedxml==0.5.0         # via python3-openid
 diff-match-patch==20121119  # via django-import-export
 django-allauth==0.39.1
@@ -60,7 +60,7 @@ lxml==4.3.2
 mailchimp3==3.0.6
 mccabe==0.6.1             # via flake8
 mock==2.0.0
-networkx==1.11
+networkx==2.2
 newrelic==4.14.0.115
 numpy==1.16.2
 oauthlib==2.0.4           # via requests-oauthlib
