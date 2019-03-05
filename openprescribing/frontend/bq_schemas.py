@@ -176,6 +176,12 @@ BDZ_ADQ_SCHEMA = build_schema(
     ('percent_of_adq', 'FLOAT'),
 )
 
+BNF_MAP_SCHEMA = build_schema(
+    ('former_bnf_code', 'STRING'),
+    ('current_bnf_code', 'STRING'),
+)
+
+
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it
     matches our statistics schema

@@ -23,12 +23,17 @@ DATASETS = {
     'tmp_eu': settings.BQ_TMP_EU_DATASET,
     'dmd': settings.BQ_DMD_DATASET,
     'archive': settings.BQ_ARCHIVE_DATASET,
+    'prescribing_export': settings.BQ_PRESCRIBING_EXPORT_DATASET
 }
 
 
 try:
     DATASETS['test'] = settings.BQ_TEST_DATASET
 except AttributeError:
+    pass
+
+
+class BigQueryExportError(Exception):
     pass
 
 
@@ -72,6 +77,19 @@ class Client(object):
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
 
+    def list_tables(self):
+        try:
+            # We need to consume the iterator here in order to trigger any errors
+            return list(self.gcbq_client.list_tables(self.dataset))
+        except NotFound as e:
+            # Treat a missing dataset as having no tables. This is consistent
+            # with our approach of implicitly creating datasets on write
+            # operations
+            if dataset_is_missing(e):
+                return []
+            else:
+                raise
+
     def create_dataset(self):
         self.dataset.location = settings.BQ_LOCATION
         self.dataset.default_table_expiration_ms =\
@@ -90,7 +108,7 @@ class Client(object):
         try:
             self.gcbq_client.create_table(table)
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client.create_table(table)
@@ -142,7 +160,7 @@ class Client(object):
                 data=resource
             )
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client._connection.api_request(
@@ -164,7 +182,7 @@ class Client(object):
         try:
             self.gcbq_client.create_table(table)
         except NotFound as e:
-            if 'Not found: Dataset' not in str(e):
+            if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client.create_table(table)
@@ -284,7 +302,13 @@ class Table(object):
 
         args = [sql]
         try:
-            self.run_job('query', args, options, default_options)
+            try:
+                self.run_job('query', args, options, default_options)
+            except NotFound as e:
+                if not dataset_is_missing(e):
+                    raise
+                self.client.create_dataset()
+                self.run_job('query', args, options, default_options)
         except Exception:
             for n, line in enumerate(sql.splitlines()):
                 print(n + 1, line)
@@ -332,7 +356,14 @@ class Table(object):
         )
 
         args = [self.gcbq_table, destination_uri]
-        self.run_job('extract_table', args, options, default_options)
+        result = self.run_job('extract_table', args, options, default_options)
+        if result.state != 'DONE' or result.error_result:
+            raise BigQueryExportError(
+                'Export job failed with state {state}: {error}'.format(
+                    state=result.state,
+                    error=result.error_result
+                )
+            )
 
     def delete_all_rows(self, **options):
         default_options = {
@@ -362,6 +393,7 @@ class Table(object):
 
 class Results(object):
     def __init__(self, gcbq_row_iterator):
+        self._gcbq_row_iterator = gcbq_row_iterator
         self._rows = list(gcbq_row_iterator)
 
     @property
@@ -371,6 +403,19 @@ class Results(object):
     @property
     def rows_as_dicts(self):
         return [dict(row) for row in self._rows]
+
+    @property
+    def field_names(self):
+        """
+        Returns names of fields in the same order as they will be in
+        `row.values()`
+        """
+        field_to_index = self._gcbq_row_iterator._field_to_index
+        sorted_fields = sorted(
+            field_to_index.items(),
+            key=lambda (field, index): index
+        )
+        return [field for (field, index) in sorted_fields]
 
 
 class TableExporter(object):
@@ -485,3 +530,7 @@ def interpolate_sql(sql, **substitutions):
     sql = string.Formatter().vformat(sql, (), substitutions)
     sql = string.Formatter().vformat(sql, (), substitutions)
     return sql
+
+
+def dataset_is_missing(exception):
+    return isinstance(exception, NotFound) and 'Not found: Dataset' in str(exception)

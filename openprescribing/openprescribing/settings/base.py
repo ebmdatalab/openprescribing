@@ -210,6 +210,7 @@ LOCAL_APPS = (
     'dmd2',
     'pipeline',
     'gcutils',
+    'matrixstore',
 )
 
 CONTRIB_APPS = (
@@ -328,6 +329,7 @@ BQ_MEASURES_DATASET = 'measures'
 BQ_TMP_EU_DATASET = 'tmp_eu'
 BQ_DMD_DATASET = 'dmd'
 BQ_ARCHIVE_DATASET = 'archive'
+BQ_PRESCRIBING_EXPORT_DATASET = 'prescribing_export'
 
 # Other BQ settings
 BQ_DEFAULT_TABLE_EXPIRATION_MS = None

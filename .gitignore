@@ -16,7 +16,6 @@ openprescribing/pipeline/e2e-test-data/log.json
 # System files
 *.py[co]
 *.egg*
-build
 *.db
 *.log
 .project

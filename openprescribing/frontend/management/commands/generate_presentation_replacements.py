@@ -106,17 +106,12 @@ from frontend.models import Chemical
 from frontend.models import Presentation
 from frontend.models import Product
 from frontend.models import Section
+from frontend import bq_schemas as schemas
 
 from gcutils.bigquery import Client, TableExporter, build_schema
 
 
 logger = logging.getLogger(__name__)
-
-
-BNF_MAP_SCHEMA = build_schema(
-    ('former_bnf_code', 'STRING'),
-    ('current_bnf_code', 'STRING'),
-)
 
 
 def create_code_mapping(filenames):
@@ -183,7 +178,7 @@ def create_bigquery_table():
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
         csv_file.seek(0)
         client = Client('hscic')
-        table = client.get_or_create_table('bnf_map', BNF_MAP_SCHEMA)
+        table = client.get_or_create_table('bnf_map', schemas.BNF_MAP_SCHEMA)
         table.insert_rows_from_csv(csv_file.name)
 
 
