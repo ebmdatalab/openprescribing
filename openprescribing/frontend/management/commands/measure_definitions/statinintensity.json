@@ -29,7 +29,8 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-  "bnf_code LIKE '0212000AA%' OR --Rosuvastatin Calcium \n",
+    "(",
+    "bnf_code LIKE '0212000AA%' OR --Rosuvastatin Calcium \n",
     "bnf_code LIKE '0212000AC%' OR --Simvastatin & Ezetimibe \n",
     "bnf_code LIKE '0212000B0%' OR --Atorvastatin \n",
     "bnf_code LIKE '0212000C0%' OR --Cerivastatin \n",
