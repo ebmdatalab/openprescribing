@@ -75,7 +75,8 @@
     "'0205051Y0AAACAC',  --Perindopril Arginine_Tab 10mg \n",
     "'0205051Y0BBAAAA',  --Coversyl Arginine_Tab 2.5mg \n",
     "'0205051Y0BBABAB',  --Coversyl Arginine_Tab 5mg \n",
-    "'0205051Y0BBACAC'  --Coversyl Arginine_Tab 10mg)"
+    "'0205051Y0BBACAC'  --Coversyl Arginine_Tab 10mg \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
@@ -168,6 +169,7 @@
     "'0205051Y0AAACAC',  --Perindopril Arginine_Tab 10mg \n",
     "'0205051Y0BBAAAA',  --Coversyl Arginine_Tab 2.5mg \n",
     "'0205051Y0BBABAB',  --Coversyl Arginine_Tab 5mg \n",
-    "'0205051Y0BBACAC'  --Coversyl Arginine_Tab 10mg)"
+    "'0205051Y0BBACAC'  --Coversyl Arginine_Tab \n",
+    ")"
   ]
 }
