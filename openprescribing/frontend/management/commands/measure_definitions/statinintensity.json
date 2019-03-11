@@ -29,20 +29,39 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
-    "or bnf_code like '0212000C0%' or bnf_code like '0212000M0%' or bnf_code like '0212000X0%' ",
-    "or bnf_code like '0212000Y0%') AND ",
-    "(bnf_code not like '0212000Y0%AH' and bnf_code not like '0212000B0%AB' and bnf_code not like '0212000B0%AN' ",
-    "and bnf_code not like '0212000B0%AC' and bnf_code not like '0212000B0%AP' and bnf_code not like '0212000B0%AD' ",
-    "and bnf_code not like '0212000AA%AA' and bnf_code not like '0212000AA%AB' and bnf_code not like '0212000AA%AC')"
+  "bnf_code LIKE '0212000AA%' OR --Rosuvastatin Calcium \n",
+    "bnf_code LIKE '0212000AC%' OR --Simvastatin & Ezetimibe \n",
+    "bnf_code LIKE '0212000B0%' OR --Atorvastatin \n",
+    "bnf_code LIKE '0212000C0%' OR --Cerivastatin \n",
+    "bnf_code LIKE '0212000M0%' OR --Fluvastatin Sodium \n",
+    "bnf_code LIKE '0212000X0%' OR --Pravastatin Sodium \n",
+    "bnf_code LIKE '0212000Y0%' --Simvastatin \n",
+    ") AND ",
+    "(",
+    "bnf_code NOT LIKE '0212000AAAAAAAA%' AND --Rosuvastatin Calc_Tab 10mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000AAAAABAB%' AND --Rosuvastatin Calc_Tab 20mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000AAAAACAC%' AND --Rosuvastatin Calc_Tab 40mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000B0AAABAB%' AND --Atorvastatin_Tab 20mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000B0AAACAC%' AND --Atorvastatin_Tab 40mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000B0AAADAD%' AND --Atorvastatin_Tab 80mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000B0AAANAN%' AND --Atorvastatin_Tab 30mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000B0AAAPAP%' AND --Atorvastatin_Tab 60mg (brand and generic) \n",
+    "bnf_code NOT LIKE '0212000Y0AAAHAH%' --Simvastatin_Tab 80mg (brand and generic) \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
-    "or bnf_code like '0212000C0%' or bnf_code like '0212000M0%' or bnf_code like '0212000X0%' ",
-    "or bnf_code like '0212000Y0%')"
+    "(",
+    "bnf_code LIKE '0212000AA%' OR --Rosuvastatin Calcium \n",
+    "bnf_code LIKE '0212000AC%' OR --Simvastatin & Ezetimibe \n",
+    "bnf_code LIKE '0212000B0%' OR --Atorvastatin \n",
+    "bnf_code LIKE '0212000C0%' OR --Cerivastatin \n",
+    "bnf_code LIKE '0212000M0%' OR --Fluvastatin Sodium \n",
+    "bnf_code LIKE '0212000X0%' OR --Pravastatin Sodium \n",
+    "bnf_code LIKE '0212000Y0%' --Simvastatin \n",
+    ")"
   ]
 }
