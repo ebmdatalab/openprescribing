@@ -1105,7 +1105,10 @@ def _build_measure_options(options):
 
     # chartTitleUrlTemplate
     if options['rollUpBy'] == 'measure_id':
-        options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
+        if options.get('aggregate'):
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_all_ccgs')
+        else:
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
     else:
         if options['orgType'] == 'CCG':
             options['chartTitleUrlTemplate'] = _url_template('measures_for_one_ccg')
