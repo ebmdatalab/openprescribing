@@ -51,7 +51,7 @@
     "bnf_code LIKE '0302000N0AABKBK%' OR --Fluticasone/Formoterol_Inh 250/10mcg120D (brands and generic) \n",
     "bnf_code LIKE '0302000U0AAABAB%' OR --Ciclesonide_Inh 160mcg (120 D) CFF (brands and generic) \n",
     "bnf_code LIKE '0302000U0AAACAC%' OR --Ciclesonide_Inh 160mcg (60 D) CFF (brands and generic) \n",
-    "bnf_code LIKE '0302000V0AAAAAA%' OR --Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic) \n",
+    "bnf_code LIKE '0302000V0AAAAAA%' --Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic) \n",
     ")"
   ],
   "denominator_columns": [
@@ -65,7 +65,7 @@
     "bnf_code LIKE '0302000N0%' OR --Fluticasone Propionate (Inh) \n",
     "bnf_code LIKE '0302000R0%' OR --Mometasone Furoate \n",
     "bnf_code LIKE '0302000U0%' OR --Ciclesonide \n",
-    "bnf_code LIKE '0302000V0%' OR --Fluticasone Furoate (Inh) \n",
+    "bnf_code LIKE '0302000V0%' --Fluticasone Furoate (Inh) \n",
     ")"
   ]
 }
