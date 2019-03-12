@@ -9,7 +9,6 @@ import dotenv
 # Run `list_cloudflare_zones` (below) to get a full list
 ZONE_ID = "198bb61a3679d0e1545e838a8f0c25b9"
 
-# source environment
 
 def list_cloudflare_zones():
     url = 'https://api.cloudflare.com/client/v4/zones'
