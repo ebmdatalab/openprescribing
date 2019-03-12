@@ -46,6 +46,7 @@
     "bnf_code LIKE '0408010A0AAABAB%' OR --Levetiracetam_Tab 500mg (brands and generic) \n",
     "bnf_code LIKE '0408010A0AAACAC%' OR --Levetiracetam_Tab 1g (brands and generic) \n",
     "bnf_code LIKE '0408010A0AAAIAI%' OR --Levetiracetam_Tab 750mg (brands and generic) \n",
-    "OR bnf_code LIKE '0408010A0%AI'")"
+    "OR bnf_code LIKE '0408010A0%AI'",
+    ")"
   ]
 }
