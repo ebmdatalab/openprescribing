@@ -29,7 +29,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0501%%')  "
+    "SUBSTR(bnf_code,1,4) IN ('0501') --Antibacterial Drugs"
   ],
   "denominator_columns": [
     "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator "
