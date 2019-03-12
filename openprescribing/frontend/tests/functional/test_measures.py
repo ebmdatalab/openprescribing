@@ -60,6 +60,12 @@ class MeasuresTests(SeleniumTestCase):
             'Compare all CCGs in England on this measure',
             '/measure/lpzomnibus/'
         )
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'NHS England Low Priority Treatment - All Low Priority Treatments',
+            '/measure/lpzomnibus/'
+        )
         self._verify_num_elements(panel_element, '.inner li', 2)
 
         panel_element = self._find_measure_panel('measure_core_0')

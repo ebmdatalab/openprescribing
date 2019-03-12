@@ -287,13 +287,13 @@ var utils = {
       return null;
     }
 
-    var url = urlTemplate;
-
-    _.each(context, function(v, k) {
-      url = url.replace('{' + k + '}', v);
+    return urlTemplate.replace(/\{(\w+)\}/g, function(_, key) {
+      var value = context[key];
+      if (value === null || typeof value === 'undefined') {
+        throw 'Invalid value for ' + key +' in ' + urlTemplate + ': ' + value;
+      }
+      return value;
     });
-
-    return url
   },
 
   _getChartTitleEtc: function(d, options, numMonths) {
