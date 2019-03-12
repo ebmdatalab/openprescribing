@@ -30,12 +30,6 @@ environments = {
 # Run `fab list_cloudflare_zones` to get a full list
 ZONE_ID = "198bb61a3679d0e1545e838a8f0c25b9"
 
-# Newrelic Apps
-NEWRELIC_APPIDS = {
-    'production': '45170403',
-    'staging': '45937313',
-    'test': '45170011'
-}
 
 
 def sudo_script(script, www_user=False):
@@ -79,40 +73,6 @@ def setup_sudo():
         run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
         # Copy it to the right place
         sudo('cp {} {}'.format(sudoer_file_test, sudoer_file_real))
-
-
-def notify_slack(message):
-    """Posts the message to #general
-    """
-    # Set the webhook_url to the one provided by Slack when you create
-    # the webhook at
-    # https://my.slack.com/services/new/incoming-webhook/
-    webhook_url = os.environ['SLACK_GENERAL_POST_KEY']
-    slack_data = {'text': message}
-
-    response = requests.post(webhook_url, json=slack_data)
-    if response.status_code != 200:
-        raise ValueError(
-            'Request to slack returned an error %s, the response is:\n%s'
-            % (response.status_code, response.text)
-        )
-
-
-def notify_newrelic(revision, url):
-    payload = {
-        "deployment": {
-            "revision": revision,
-            "changelog": url
-        }
-    }
-    app_id = NEWRELIC_APPIDS[env.environment]
-    headers = {'X-Api-Key': os.environ['NEWRELIC_API_KEY']}
-    response = requests.post(
-        ("https://api.newrelic.com/v2/applications/"
-         "%s/deployments.json" % app_id),
-        headers=headers,
-        json=payload)
-    response.raise_for_status()
 
 
 def git_init():
@@ -202,10 +162,9 @@ def log_deploy():
                            'ended_at': str(datetime.utcnow()),
                            'changes_url': url})
     run("echo '%s' >> deploy-log.json" % log_line)
-    notify_newrelic(current_commit, url)
-    if env.environment == 'production':
-        notify_slack(
-            "A #deploy just happened. Changes here: %s" % url)
+    with prefix('source .venv/bin/activate'):
+        run("python deploy/notify_deploy.py {revision} {url} {fab_env}".format(
+            revision=current_commit, url=url, fab_env=env.environment))
 
 
 def checkpoint(force_build):

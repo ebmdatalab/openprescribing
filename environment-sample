@@ -27,15 +27,15 @@ MAILCHIMP_API_KEY=mailchimp_api_key
 # Platform services (eg BigQuery, Cloud Storage).
 GOOGLE_APPLICATION_CREDENTIALS=
 
-# We plan to remove the need to set these locally soon
-SLACK_GENERAL_POST_KEY=slack_general_post_key
-CF_API_KEY=cf_api_key
-CF_API_EMAIL=cf_api_email
-NEWRELIC_API_KEY=newrelic_api_key
 
 # Only required on the server
 GUNICORN_TIMEOUT=60
 GUNICORN_NUM_WORKERS=6
 GUNICORN_LOG_LEVEL=warn
+
+SLACK_GENERAL_POST_KEY=slack_general_post_key
+CF_API_KEY=cf_api_key
+CF_API_EMAIL=cf_api_email
+NEWRELIC_API_KEY=newrelic_api_key
 
 NEW_RELIC_LICENSE_KEY=new_relic_license_key
