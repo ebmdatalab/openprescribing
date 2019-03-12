@@ -31,7 +31,11 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0601012Z0%' OR bnf_code LIKE '0601012X0%' OR bnf_code LIKE '0601012V0%')"
+    "(",
+    "bnf_code LIKE '0601012V0%' OR --Insulin Glargine \n",
+    "bnf_code LIKE '0601012X0%' OR --Insulin Detemir \n",
+    "bnf_code LIKE '0601012Z0%' --Insulin Degludec \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS items, ",
