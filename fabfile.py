@@ -10,7 +10,6 @@ import json
 import os
 
 import dotenv
-import requests
 
 basedir = os.path.dirname(os.path.abspath(__file__))
 dotenv.read_dotenv(os.path.join(basedir, 'environment'))
@@ -25,11 +24,6 @@ environments = {
     'production': 'openprescribing',
     'staging': 'openprescribing_staging'
 }
-
-# This zone ID may change if/when our account changes
-# Run `fab list_cloudflare_zones` to get a full list
-ZONE_ID = "198bb61a3679d0e1545e838a8f0c25b9"
-
 
 
 def sudo_script(script, www_user=False):
@@ -124,36 +118,6 @@ def npm_build_css(force=False):
         run('cd openprescribing/media/js && npm run build-css')
 
 
-def purge_urls(paths_from_git, changed_in_static):
-    """Turn 2 lists of filenames (changed in git, and in static) to a list
-    of URLs to purge in Cloudflare.
-
-    """
-    urls = []
-    if env.environment == 'production':
-        base_url = 'https://openprescribing.net'
-    else:
-        base_url = 'http://staging.openprescribing.net'
-
-    static_templates = {
-        'openprescribing/templates/index.html': '',
-        'openprescribing/templates/api.html': 'api/',
-        'openprescribing/templates/about.html': 'about/',
-        'openprescribing/templates/caution.html': 'caution/',
-        'openprescribing/templates/how-to-use.html': 'how-to-use/'
-    }
-    for name in changed_in_static:
-        if name.startswith('openprescribing/static'):
-            urls.append("%s/%s" %
-                        (base_url,
-                         name.replace('openprescribing/static/', '')))
-
-    for name in paths_from_git:
-        if name in static_templates:
-            urls.append("%s/%s" % (base_url, static_templates[name]))
-    return urls
-
-
 def log_deploy():
     current_commit = run("git rev-parse --verify HEAD")
     url = ("https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
@@ -220,46 +184,16 @@ def find_changed_static_files():
     return map(lambda x: x.replace(env.path + '/', ''), [x for x in changed])
 
 
-@task
-def list_cloudflare_zones():
-    url = 'https://api.cloudflare.com/client/v4/zones'
-    headers = {
-        "Content-Type": "application/json",
-        "X-Auth-Key": os.environ['CF_API_KEY'],
-        "X-Auth-Email": os.environ['CF_API_EMAIL']
-    }
-    result = json.loads(
-        requests.get(url, headers=headers,).text)
-    zones = map(lambda x: {'name': x['name'], 'id': x['id']},
-                [x for x in result["result"]])
-    print(json.dumps(zones, indent=2))
-
-
-def clear_cloudflare():
-    url = 'https://api.cloudflare.com/client/v4/zones/%s'
-    headers = {
-        "Content-Type": "application/json",
-        "X-Auth-Key": os.environ['CF_API_KEY'],
-        "X-Auth-Email": os.environ['CF_API_EMAIL']
-    }
-    data = {'purge_everything': True}
-    print("Purging from Cloudflare:")
-    print(data)
-    result = json.loads(
-        requests.delete(url % ZONE_ID + '/purge_cache',
-                        headers=headers, data=json.dumps(data)).text)
-    if result['success']:
-        print("Cloudflare clearing succeeded: %s" %
-              json.dumps(result, indent=2))
-    else:
-        warn("Cloudflare clearing failed: %s" %
-             json.dumps(result, indent=2))
-
-
 def setup_cron():
     crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
     if exists(crontab_path):
         sudo_script('setup_cron.sh %s' % crontab_path)
+
+
+@task
+def clear_cloudflare():
+    with prefix('source .venv/bin/activate'):
+        run("python deploy/clear_cache.py")
 
 
 @task
