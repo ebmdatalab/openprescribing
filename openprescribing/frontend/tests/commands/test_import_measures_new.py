@@ -12,7 +12,14 @@ from django.test import TestCase
 
 from frontend import bq_schemas as schemas
 from frontend.models import (
-    ImportLog, Measure, MeasureGlobal, MeasureValue, Practice, PCT, STP, RegionalTeam
+    ImportLog,
+    Measure,
+    MeasureGlobal,
+    MeasureValue,
+    Practice,
+    PCT,
+    STP,
+    RegionalTeam,
 )
 from gcutils.bigquery import Client
 
@@ -23,8 +30,7 @@ class ImportMeasuresTests(TestCase):
         # Create a bunch of RegionalTeams, STPs, CCGs, Practices
         for regtm_ix in range(5):
             regtm = RegionalTeam.objects.create(
-                code='Y0{}'.format(regtm_ix),
-                name='Region {}'.format(regtm_ix),
+                code='Y0{}'.format(regtm_ix), name='Region {}'.format(regtm_ix)
             )
 
             for stp_ix in range(5):
@@ -37,7 +43,9 @@ class ImportMeasuresTests(TestCase):
                     ccg = PCT.objects.create(
                         regional_team=regtm,
                         stp=stp,
-                        code='{}{}{}'.format(regtm_ix, stp_ix, ccg_ix).replace('0', 'A'),
+                        code='{}{}{}'.format(regtm_ix, stp_ix, ccg_ix).replace(
+                            '0', 'A'
+                        ),
                         name='CCG {}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix),
                         org_type='CCG',
                     )
@@ -46,16 +54,15 @@ class ImportMeasuresTests(TestCase):
                         Practice.objects.create(
                             ccg=ccg,
                             code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
-                            name='Practice {}/{}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
+                            name='Practice {}/{}/{}/{}'.format(
+                                regtm_ix, stp_ix, ccg_ix, prac_ix
+                            ),
                             setting=4,
                         )
 
         # import_measures uses this ImportLog to work out which months it
         # should import data.
-        ImportLog.objects.create(
-            category='prescribing',
-            current_at='2018-08-01',
-        )
+        ImportLog.objects.create(category='prescribing', current_at='2018-08-01')
 
         # Set up BQ, and upload STPs, CCGs, Practices.
         Client('measures').create_dataset()
@@ -78,8 +85,8 @@ class ImportMeasuresTests(TestCase):
         # Generate random prescribing data.  This data is never saved to the
         # database.
         presentations = [
-            ('0703021Q0AAAAAA', 'Desogestrel_Tab 75mcg'),        # generic
-            ('0703021Q0BBAAAA', 'Cerazette_Tab 75mcg'),          # branded
+            ('0703021Q0AAAAAA', 'Desogestrel_Tab 75mcg'),  # generic
+            ('0703021Q0BBAAAA', 'Cerazette_Tab 75mcg'),  # branded
             ('076543210AAAAAA', 'Etynodiol Diacet_Tab 500mcg'),  # irrelevant
         ]
 
@@ -112,7 +119,7 @@ class ImportMeasuresTests(TestCase):
 
                     # Multiplying by (1 + ix) ensures that the branded cost is
                     # always higher than the generic cost.
-                    actual_cost =  (1 + ix) * randint(100, 200) * quantity * 0.01
+                    actual_cost = (1 + ix) * randint(100, 200) * quantity * 0.01
 
                     # We don't care about net_cost.
                     net_cost = actual_cost
@@ -142,8 +149,7 @@ class ImportMeasuresTests(TestCase):
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
         table = Client('hscic').get_or_create_table(
-            'normalised_prescribing_standard',
-            schemas.PRESCRIBING_SCHEMA
+            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
         )
 
         # Upload prescribing_rows to normalised_prescribing_standard, and
@@ -155,9 +161,20 @@ class ImportMeasuresTests(TestCase):
             f.seek(0)
             table.insert_rows_from_csv(f.name)
 
-            headers = ['sha', 'regional_team_id', 'stp_id', 'ccg_id',
-                       'practice_id', 'bnf_code', 'bnf_name', 'items',
-                       'net_cost', 'actual_cost', 'quantity', 'month']
+            headers = [
+                'sha',
+                'regional_team_id',
+                'stp_id',
+                'ccg_id',
+                'practice_id',
+                'bnf_code',
+                'bnf_name',
+                'items',
+                'net_cost',
+                'actual_cost',
+                'quantity',
+                'month',
+            ]
             prescriptions = pd.read_csv(f.name, names=headers)
             prescriptions['month'] = prescriptions['month'].str[:10]
 
@@ -172,8 +189,12 @@ class ImportMeasuresTests(TestCase):
         # that results match.
         month = '2018-08-01'
         prescriptions = prescriptions[prescriptions['month'] == month]
-        numerators = prescriptions[prescriptions['bnf_code'].str.startswith('0703021Q0B')]
-        denominators = prescriptions[prescriptions['bnf_code'].str.startswith('0703021Q0')]
+        numerators = prescriptions[
+            prescriptions['bnf_code'].str.startswith('0703021Q0B')
+        ]
+        denominators = prescriptions[
+            prescriptions['bnf_code'].str.startswith('0703021Q0')
+        ]
         mg = MeasureGlobal.objects.get(month=month)
 
         self.assertEqual(MeasureValue.objects.filter(month=month).count(), 780)
@@ -182,7 +203,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'practice',
-            Practice.objects.values_list('code', flat=True)
+            Practice.objects.values_list('code', flat=True),
         )
         self.validate_cost_based_measure_global(mg, practices, 'practice')
         mvs = MeasureValue.objects.filter(
@@ -197,10 +218,7 @@ class ImportMeasuresTests(TestCase):
             self.validate_cost_based_measure_value(mv, practices.loc[mv.practice_id])
 
         ccgs = self.calculate_cost_based_measure(
-            numerators,
-            denominators,
-            'ccg',
-            PCT.objects.values_list('code', flat=True)
+            numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
         self.validate_cost_based_measure_global(mg, ccgs, 'ccg')
         mvs = MeasureValue.objects.filter(
@@ -218,7 +236,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'stp',
-            STP.objects.values_list('ons_code', flat=True)
+            STP.objects.values_list('ons_code', flat=True),
         )
         self.validate_cost_based_measure_global(mg, stps, 'stp')
         mvs = MeasureValue.objects.filter(
@@ -236,7 +254,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'regional_team',
-            RegionalTeam.objects.values_list('code', flat=True)
+            RegionalTeam.objects.values_list('code', flat=True),
         )
         self.validate_cost_based_measure_global(mg, regtms, 'regional_team')
         mvs = MeasureValue.objects.filter(
@@ -259,7 +277,7 @@ class ImportMeasuresTests(TestCase):
         # Generate random prescribing data.  This data is never saved to the
         # database.
         presentations = [
-            ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),     # relevant
+            ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),  # relevant
             ('0407010AAAAAAAA', 'Aspirin/Caffeine_Tab 500mg/32mg'),  # irrelevant
         ]
 
@@ -298,8 +316,7 @@ class ImportMeasuresTests(TestCase):
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
         table = Client('hscic').get_or_create_table(
-            'normalised_prescribing_standard',
-            schemas.PRESCRIBING_SCHEMA
+            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
         )
 
         # Upload prescribing_rows to normalised_prescribing_standard, and
@@ -311,17 +328,34 @@ class ImportMeasuresTests(TestCase):
             f.seek(0)
             table.insert_rows_from_csv(f.name)
 
-            headers = ['sha', 'regional_team_id', 'stp_id', 'ccg_id',
-                       'practice_id', 'bnf_code', 'bnf_name', 'items',
-                       'net_cost', 'actual_cost', 'quantity', 'month']
+            headers = [
+                'sha',
+                'regional_team_id',
+                'stp_id',
+                'ccg_id',
+                'practice_id',
+                'bnf_code',
+                'bnf_name',
+                'items',
+                'net_cost',
+                'actual_cost',
+                'quantity',
+                'month',
+            ]
             prescriptions = pd.read_csv(f.name, names=headers)
             prescriptions['month'] = prescriptions['month'].str[:10]
 
         # Generate random practice statistics data.  This data is never saved
         # to the database.
         practice_statistics_rows = []
-        columns = ['month', 'regional_team_id', 'stp_id', 'ccg_id',
-                   'practice_id', 'total_list_size']
+        columns = [
+            'month',
+            'regional_team_id',
+            'stp_id',
+            'ccg_id',
+            'practice_id',
+            'total_list_size',
+        ]
         practice_statistics = pd.DataFrame(columns=columns)
 
         for practice in Practice.objects.all():
@@ -334,31 +368,31 @@ class ImportMeasuresTests(TestCase):
                 total_list_size = randint(100, 200)
 
                 row = [
-                    timestamp,        #  month
-                    0,                #  male_0_4
-                    0,                #  female_0_4
-                    0,                #  male_5_14
-                    0,                #  male_15_24
-                    0,                #  male_25_34
-                    0,                #  male_35_44
-                    0,                #  male_45_54
-                    0,                #  male_55_64
-                    0,                #  male_65_74
-                    0,                #  male_75_plus
-                    0,                #  female_5_14
-                    0,                #  female_15_24
-                    0,                #  female_25_34
-                    0,                #  female_35_44
-                    0,                #  female_45_54
-                    0,                #  female_55_64
-                    0,                #  female_65_74
-                    0,                #  female_75_plus
+                    timestamp,  #  month
+                    0,  #  male_0_4
+                    0,  #  female_0_4
+                    0,  #  male_5_14
+                    0,  #  male_15_24
+                    0,  #  male_25_34
+                    0,  #  male_35_44
+                    0,  #  male_45_54
+                    0,  #  male_55_64
+                    0,  #  male_65_74
+                    0,  #  male_75_plus
+                    0,  #  female_5_14
+                    0,  #  female_15_24
+                    0,  #  female_25_34
+                    0,  #  female_35_44
+                    0,  #  female_45_54
+                    0,  #  female_55_64
+                    0,  #  female_65_74
+                    0,  #  female_75_plus
                     total_list_size,  #  total_list_size
-                    0,                #  astro_pu_cost
-                    0,                #  astro_pu_items
-                    '{}',             #  star_pu
+                    0,  #  astro_pu_cost
+                    0,  #  astro_pu_items
+                    '{}',  #  star_pu
                     practice.ccg_id,  #  pct_id
-                    practice.code,    #  practice
+                    practice.code,  #  practice
                 ]
 
                 practice_statistics_rows.append(row)
@@ -371,13 +405,12 @@ class ImportMeasuresTests(TestCase):
                         'regional_team_id': practice.ccg.regional_team_id,
                         'total_list_size': total_list_size,
                     },
-                    ignore_index=True
+                    ignore_index=True,
                 )
 
         # Upload practice_statistics_rows to BigQuery.
         table = Client('hscic').get_or_create_table(
-            'practice_statistics',
-            schemas.PRACTICE_STATISTICS_SCHEMA
+            'practice_statistics', schemas.PRACTICE_STATISTICS_SCHEMA
         )
 
         with tempfile.NamedTemporaryFile() as f:
@@ -402,7 +435,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'practice',
-            Practice.objects.values_list('code', flat=True)
+            Practice.objects.values_list('code', flat=True),
         )
         self.validate_practice_statistics_measure_global(mg, practices, 'practice')
         mvs = MeasureValue.objects.filter(
@@ -414,13 +447,12 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), 625)
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(mv, practices.loc[mv.practice_id])
+            self.validate_practice_statistics_measure_value(
+                mv, practices.loc[mv.practice_id]
+            )
 
         ccgs = self.calculate_practice_statistics_measure(
-            numerators,
-            denominators,
-            'ccg',
-            PCT.objects.values_list('code', flat=True)
+            numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
         self.validate_practice_statistics_measure_global(mg, ccgs, 'ccg')
         mvs = MeasureValue.objects.filter(
@@ -438,7 +470,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'stp',
-            STP.objects.values_list('ons_code', flat=True)
+            STP.objects.values_list('ons_code', flat=True),
         )
         self.validate_practice_statistics_measure_global(mg, stps, 'stp')
         mvs = MeasureValue.objects.filter(
@@ -456,7 +488,7 @@ class ImportMeasuresTests(TestCase):
             numerators,
             denominators,
             'regional_team',
-            RegionalTeam.objects.values_list('code', flat=True)
+            RegionalTeam.objects.values_list('code', flat=True),
         )
         self.validate_practice_statistics_measure_global(mg, regtms, 'regional_team')
         mvs = MeasureValue.objects.filter(
@@ -468,9 +500,13 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), 5)
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(mv, regtms.loc[mv.regional_team_id])
+            self.validate_practice_statistics_measure_value(
+                mv, regtms.loc[mv.regional_team_id]
+            )
 
-    def calculate_cost_based_measure(self, numerators, denominators, org_type, org_codes):
+    def calculate_cost_based_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
         org_column = org_type + '_id'
         df = pd.DataFrame(index=org_codes)
 
@@ -487,26 +523,41 @@ class ImportMeasuresTests(TestCase):
         ranks = df['quantity_ratio'].rank(method='min')
         num_non_nans = df['quantity_ratio'].count()
         df['quantity_ratio_percentile'] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
-        global_unit_cost_branded = df['cost_branded'].sum() / df['quantity_branded'].sum()
-        global_unit_cost_generic = df['cost_generic'].sum() / df['quantity_generic'].sum()
+        global_unit_cost_branded = (
+            df['cost_branded'].sum() / df['quantity_branded'].sum()
+        )
+        global_unit_cost_generic = (
+            df['cost_generic'].sum() / df['quantity_generic'].sum()
+        )
         df['unit_cost_branded'] = df['cost_branded'] / df['quantity_branded']
         df['unit_cost_generic'] = df['cost_generic'] / df['quantity_generic']
-        df['unit_cost_branded'] = df['unit_cost_branded'].fillna(global_unit_cost_branded)
-        df['unit_cost_generic'] = df['unit_cost_generic'].fillna(global_unit_cost_generic)
+        df['unit_cost_branded'] = df['unit_cost_branded'].fillna(
+            global_unit_cost_branded
+        )
+        df['unit_cost_generic'] = df['unit_cost_generic'].fillna(
+            global_unit_cost_generic
+        )
         practice_quantity_ratio_10 = df['quantity_ratio'].quantile(0.1)
         df['quantity_branded_10'] = df['quantity_total'] * practice_quantity_ratio_10
         df['quantity_generic_10'] = df['quantity_total'] - df['quantity_branded_10']
-        df['target_cost_10'] = df['unit_cost_branded'] * df['quantity_branded_10'] + df['unit_cost_generic'] * df['quantity_generic_10']
+        df['target_cost_10'] = (
+            df['unit_cost_branded'] * df['quantity_branded_10']
+            + df['unit_cost_generic'] * df['quantity_generic_10']
+        )
         df['cost_saving_10'] = df['cost_total'] - df['target_cost_10']
 
         return df
 
-    def calculate_practice_statistics_measure(self, numerators, denominators, org_type, org_codes):
+    def calculate_practice_statistics_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
         org_column = org_type + '_id'
         df = pd.DataFrame(index=org_codes)
 
         df['numerator'] = numerators.groupby(org_column)['items'].sum()
-        df['denominator'] = denominators.groupby(org_column)['total_list_size'].sum() / 1000
+        df['denominator'] = (
+            denominators.groupby(org_column)['total_list_size'].sum() / 1000
+        )
         df['ratio'] = df['numerator'] / df['denominator']
         df['numerator'] = df['numerator'].fillna(0)
         df['denominator'] = df['denominator'].fillna(0)
@@ -517,12 +568,11 @@ class ImportMeasuresTests(TestCase):
 
     def validate_cost_based_measure_global(self, mg, df, org_type):
         self.assertAlmostEqual(
-            mg.percentiles[org_type]['10'],
-            df['quantity_ratio'].quantile(0.1)
+            mg.percentiles[org_type]['10'], df['quantity_ratio'].quantile(0.1)
         )
         self.assertAlmostEqual(
             mg.cost_savings[org_type]['10'],
-            df[df['cost_saving_10'] > 0]['cost_saving_10'].sum()
+            df[df['cost_saving_10'] > 0]['cost_saving_10'].sum(),
         )
 
     def validate_cost_based_measure_value(self, mv, series):
@@ -538,8 +588,7 @@ class ImportMeasuresTests(TestCase):
 
     def validate_practice_statistics_measure_global(self, mg, df, org_type):
         self.assertAlmostEqual(
-            mg.percentiles[org_type]['10'],
-            df['ratio'].quantile(0.1)
+            mg.percentiles[org_type]['10'], df['ratio'].quantile(0.1)
         )
 
     def validate_practice_statistics_measure_value(self, mv, series):
