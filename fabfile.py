@@ -169,6 +169,33 @@ def run_migrations():
 
 
 @task
+def build_measures(environment=None, measures=None):
+    env.app = environments[environment]
+    env.environment = environment
+    env.path = "/webapps/%s" % env.app
+
+    with cd(env.path):
+        with prefix('source .venv/bin/activate'):
+            run("cd openprescribing/ && "
+                "python manage.py import_measures --measure {}".format(
+                    measures))
+
+
+def build_changed_measures():
+    """For any measures changed since the last deploy, run
+    `import_measures`.
+
+    """
+    measures = []
+    for f in env.changed_files:
+        if 'measure_definitions' in f:
+            measures.append(os.path.splitext(os.path.basename(f))[0])
+    if measures:
+        measures = ",".join(measures)
+        build_measures(environment=env.environment, measures=measures)
+
+
+@task
 def graceful_reload():
     result = sudo_script('graceful_reload.sh %s' % env.app)
     if result.failed:
@@ -218,6 +245,7 @@ def deploy(environment, force_build=False, branch='master'):
         npm_build_css(force_build)
         deploy_static()
         run_migrations()
+        build_changed_measures()
         graceful_reload()
         clear_cloudflare()
         setup_cron()
