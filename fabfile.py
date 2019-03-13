@@ -169,6 +169,30 @@ def run_migrations():
 
 
 @task
+def build_measures(environment=None, measures=None):
+    setup_env_from_environment(environment)
+
+    with cd(env.path):
+        with prefix('source .venv/bin/activate'):
+            run("cd openprescribing/ && "
+                "python manage.py import_measures --measure {}".format(
+                    measures))
+
+
+def build_changed_measures():
+    """For any measures changed since the last deploy, run
+    `import_measures`.
+
+    """
+    measures = []
+    for f in env.changed_files:
+        if 'measure_definitions' in f:
+            measures.append(os.path.splitext(os.path.basename(f))[0])
+    if measures:
+        measures = ",".join(measures)
+        build_measures(environment=env.environment, measures=measures)
+
+
 def graceful_reload():
     result = sudo_script('graceful_reload.sh %s' % env.app)
     if result.failed:
@@ -190,6 +214,15 @@ def setup_cron():
         sudo_script('setup_cron.sh %s' % crontab_path)
 
 
+def setup_env_from_environment(environment):
+    if environment not in environments:
+        abort("Specified environment must be one of %s" %
+              ",".join(environments.keys()))
+    env.app = environments[environment]
+    env.environment = environment
+    env.path = "/webapps/%s" % env.app
+
+
 @task
 def clear_cloudflare():
     with prefix('source .venv/bin/activate'):
@@ -200,12 +233,7 @@ def clear_cloudflare():
 def deploy(environment, force_build=False, branch='master'):
     if 'CF_API_KEY' not in os.environ:
         abort("Expected variables (e.g. `CF_API_KEY`) not found in environment")
-    if environment not in environments:
-        abort("Specified environment must be one of %s" %
-              ",".join(environments.keys()))
-    env.app = environments[environment]
-    env.environment = environment
-    env.path = "/webapps/%s" % env.app
+    setup_env_from_environment(environment)
     env.branch = branch
     setup_sudo()
     with cd(env.path):
@@ -218,6 +246,7 @@ def deploy(environment, force_build=False, branch='master'):
         npm_build_css(force_build)
         deploy_static()
         run_migrations()
+        build_changed_measures()
         graceful_reload()
         clear_cloudflare()
         setup_cron()
