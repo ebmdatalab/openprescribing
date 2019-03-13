@@ -168,7 +168,10 @@ class TestMatrixStoreBuild(SimpleTestCase):
         self.assertEqual(get_value.nonzero_values, expected_entries)
 
     def test_prescribing_values_are_correct(self):
-        for field in ('items', 'quantity', 'net_cost', 'actual_cost'):
+        for field in ['items', 'quantity', 'net_cost', 'actual_cost']:
+            # Cost figures are originally in pounds but we store them in pence
+            # as ints
+            multiplier = 100 if field.endswith('_cost') else 1
             get_value = MatrixValueFetcher(
                 self.connection, 'presentation', 'bnf_code', field
             )
@@ -176,7 +179,8 @@ class TestMatrixStoreBuild(SimpleTestCase):
             for entry in self._expected_prescribing_values():
                 expected_entries += 1
                 value = get_value(entry['bnf_code'], entry['practice'], entry['month'])
-                self.assertEqual(value, entry[field])
+                expected_value = round(entry[field] * multiplier)
+                self.assertEqual(value, expected_value)
             # Check there are no additional values that we weren't expecting
             self.assertEqual(get_value.nonzero_values, expected_entries)
 

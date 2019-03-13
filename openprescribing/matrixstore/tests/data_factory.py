@@ -1,3 +1,5 @@
+from __future__ import division
+
 import csv
 import itertools
 import json
@@ -116,8 +118,9 @@ class DataFactory(object):
             'bnf_name': presentation['name'],
             'items': self.random.randint(1, 100),
             'quantity': self.random.randint(1, 100),
-            'net_cost': self.random.random() * 100,
-            'actual_cost': self.random.random() * 100,
+            # Costs should be in pounds to two decimal places
+            'net_cost': self.random.randint(1, 10000) / 100,
+            'actual_cost': self.random.randint(1, 10000) / 100,
             'sha': None,
             'pct': None,
             'stp': None,

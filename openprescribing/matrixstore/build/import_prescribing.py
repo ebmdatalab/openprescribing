@@ -110,10 +110,14 @@ def parse_prescribing_csv(input_stream):
             # We only need the YYYY-MM-DD part of the date
             row[date_col][:10],
             int(row[items_col]),
-            float(row[quantity_col]),
-            float(row[actual_cost_col]),
-            float(row[net_cost_col])
+            int(row[quantity_col]),
+            pounds_to_pence(row[actual_cost_col]),
+            pounds_to_pence(row[net_cost_col])
         )
+
+
+def pounds_to_pence(value):
+    return int(round(float(value) * 100))
 
 
 def build_matrices(prescriptions, practices, dates):
@@ -134,8 +138,8 @@ def build_matrices(prescriptions, practices, dates):
     for bnf_code, row_group in grouped_by_bnf_code:
         items_matrix = sparse_matrix(shape, integer=True)
         quantity_matrix = sparse_matrix(shape, integer=True)
-        actual_cost_matrix = sparse_matrix(shape)
-        net_cost_matrix = sparse_matrix(shape)
+        actual_cost_matrix = sparse_matrix(shape, integer=True)
+        net_cost_matrix = sparse_matrix(shape, integer=True)
         for _, practice, date, items, quantity, actual_cost, net_cost in row_group:
             practice_offset = practices[practice]
             date_offset = dates[date]
