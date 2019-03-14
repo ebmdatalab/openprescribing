@@ -174,9 +174,15 @@ def build_measures(environment=None, measures=None):
 
     with cd(env.path):
         with prefix('source .venv/bin/activate'):
+            # Checking is worth doing first as it validates all the
+            # measures, rather than exiting at the first error
             run("cd openprescribing/ && "
-                "python manage.py import_measures --measure {}".format(
-                    measures))
+                "python manage.py import_measures --check "
+                "--measure {}".format(measures))
+
+            run("cd openprescribing/ && "
+                "python manage.py import_measures "
+                "--measure {}".format(measures))
 
 
 def build_changed_measures():
@@ -185,7 +191,25 @@ def build_changed_measures():
 
     """
     measures = []
-    for f in env.changed_files:
+    if env.environment == 'production':
+        # Production deploys are always one-off operations of tested
+        # branches, so we can just check all the newly-changed files
+        changed_files = env.changed_files
+    else:
+        # In staging, we often incrementally add commits and
+        # re-test. In this case, we should rebuild all the changed
+        # measures every time, because some of them may have failed to
+        # have been built.
+
+        # Git magic taken from https://stackoverflow.com/a/4991675/559140
+        # finds the start of the current branch
+        changed_files = run(
+            "git diff --name-only "
+            "$(diff --old-line-format='' --new-line-format='' "
+            '<(git rev-list --first-parent "${1:-master}") '
+            '<(git rev-list --first-parent "${2:-HEAD}") | head -1)')
+
+    for f in changed_files:
         if 'measure_definitions' in f:
             measures.append(os.path.splitext(os.path.basename(f))[0])
     if measures:
