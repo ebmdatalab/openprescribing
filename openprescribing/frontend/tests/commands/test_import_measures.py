@@ -597,7 +597,6 @@ class BigqueryFunctionalTests(TestCase):
 class TestAllCurrentMeasures(TestCase):
     def test_parse_and_run_measures(self):
         measures = parse_measures()
-        options = {'measure_ids': measures.keys()}
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
 
@@ -605,6 +604,3 @@ class TestAllCurrentMeasures(TestCase):
         # the omnibus measure relies on the other LP measures having
         # been calculated first
         self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
-
-        # Now check the SQL for all the measures
-        check_definition(options, '2001-01-01', '2030-01-01', True)
