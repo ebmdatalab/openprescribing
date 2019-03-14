@@ -255,8 +255,6 @@ def clear_cloudflare():
 
 @task
 def deploy(environment, force_build=False, branch='master'):
-    if 'CF_API_KEY' not in os.environ:
-        abort("Expected variables (e.g. `CF_API_KEY`) not found in environment")
     setup_env_from_environment(environment)
     env.branch = branch
     setup_sudo()
