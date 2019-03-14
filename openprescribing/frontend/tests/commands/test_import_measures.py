@@ -206,6 +206,8 @@ class BigqueryFunctionalTests(TestCase):
             current_at='2018-04-01',
             filename='/tmp/prescribing.csv',
         )
+        if 'SKIP_BQ_LOAD' in os.environ:
+            assert 'BQ_NONCE' in os.environ, "Specify BQ_NONCE to reuse fixtures"
 
         if 'SKIP_BQ_LOAD' not in os.environ:
             fixtures_path = os.path.join(
