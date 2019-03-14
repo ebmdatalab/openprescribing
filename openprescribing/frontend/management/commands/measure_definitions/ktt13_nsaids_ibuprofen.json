@@ -46,5 +46,3 @@
     "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs"
   ]
 }
-
-
