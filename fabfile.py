@@ -211,7 +211,7 @@ def build_changed_measures():
             pty=False).splitlines()
 
     for f in changed_files:
-        if 'measure_definitions' in f:
+        if 'commands/measure_definitions' in f:
             measures.append(os.path.splitext(os.path.basename(f))[0])
     if measures:
         measures = ",".join(measures)
