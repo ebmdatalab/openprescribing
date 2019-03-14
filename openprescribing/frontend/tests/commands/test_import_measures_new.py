@@ -146,37 +146,9 @@ class ImportMeasuresTests(TestCase):
         assert seen_practice_with_no_generic_prescribing
         assert seen_practice_with_no_branded_prescribing
 
-        # In production, normalised_prescribing_standard is actually a view,
-        # but for the tests it's much easier to set it up as a normal table.
-        table = Client('hscic').get_or_create_table(
-            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
-        )
-
         # Upload prescribing_rows to normalised_prescribing_standard, and
         # create a DataFrame for later verification.
-        with tempfile.NamedTemporaryFile() as f:
-            writer = csv.writer(f)
-            for row in prescribing_rows:
-                writer.writerow(row)
-            f.seek(0)
-            table.insert_rows_from_csv(f.name)
-
-            headers = [
-                'sha',
-                'regional_team_id',
-                'stp_id',
-                'ccg_id',
-                'practice_id',
-                'bnf_code',
-                'bnf_name',
-                'items',
-                'net_cost',
-                'actual_cost',
-                'quantity',
-                'month',
-            ]
-            prescriptions = pd.read_csv(f.name, names=headers)
-            prescriptions['month'] = prescriptions['month'].str[:10]
+        prescriptions = self.upload_prescribing_rows(prescribing_rows)
 
         # Do the work.
         call_command('import_measures', measure='desogestrel')
@@ -213,7 +185,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 625)
+        self.assertEqual(mvs.count(), Practice.objects.count())
         for mv in mvs:
             self.validate_cost_based_measure_value(mv, practices.loc[mv.practice_id])
 
@@ -228,7 +200,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 125)
+        self.assertEqual(mvs.count(), PCT.objects.count())
         for mv in mvs:
             self.validate_cost_based_measure_value(mv, ccgs.loc[mv.pct_id])
 
@@ -246,7 +218,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=True,
         )
-        self.assertEqual(mvs.count(), 25)
+        self.assertEqual(mvs.count(), STP.objects.count())
         for mv in mvs:
             self.validate_cost_based_measure_value(mv, stps.loc[mv.stp_id])
 
@@ -264,7 +236,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=True,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 5)
+        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
         for mv in mvs:
             self.validate_cost_based_measure_value(mv, regtms.loc[mv.regional_team_id])
 
@@ -313,41 +285,14 @@ class ImportMeasuresTests(TestCase):
 
                     prescribing_rows.append(row)
 
-        # In production, normalised_prescribing_standard is actually a view,
-        # but for the tests it's much easier to set it up as a normal table.
-        table = Client('hscic').get_or_create_table(
-            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
-        )
-
         # Upload prescribing_rows to normalised_prescribing_standard, and
         # create a DataFrame for later verification.
-        with tempfile.NamedTemporaryFile() as f:
-            writer = csv.writer(f)
-            for row in prescribing_rows:
-                writer.writerow(row)
-            f.seek(0)
-            table.insert_rows_from_csv(f.name)
-
-            headers = [
-                'sha',
-                'regional_team_id',
-                'stp_id',
-                'ccg_id',
-                'practice_id',
-                'bnf_code',
-                'bnf_name',
-                'items',
-                'net_cost',
-                'actual_cost',
-                'quantity',
-                'month',
-            ]
-            prescriptions = pd.read_csv(f.name, names=headers)
-            prescriptions['month'] = prescriptions['month'].str[:10]
+        prescriptions = self.upload_prescribing_rows(prescribing_rows)
 
         # Generate random practice statistics data.  This data is never saved
         # to the database.
         practice_statistics_rows = []
+        seen_practice_with_no_statistics = False
         columns = [
             'month',
             'regional_team_id',
@@ -363,6 +308,7 @@ class ImportMeasuresTests(TestCase):
                 timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
 
                 if month == 8 and practice.code == 'P00000':
+                    seen_practice_with_no_statistics = True
                     continue
 
                 total_list_size = randint(100, 200)
@@ -408,6 +354,8 @@ class ImportMeasuresTests(TestCase):
                     ignore_index=True,
                 )
 
+        assert seen_practice_with_no_statistics
+
         # Upload practice_statistics_rows to BigQuery.
         table = Client('hscic').get_or_create_table(
             'practice_statistics', schemas.PRACTICE_STATISTICS_SCHEMA
@@ -445,7 +393,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 625)
+        self.assertEqual(mvs.count(), Practice.objects.count())
         for mv in mvs:
             self.validate_practice_statistics_measure_value(
                 mv, practices.loc[mv.practice_id]
@@ -462,7 +410,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 125)
+        self.assertEqual(mvs.count(), PCT.objects.count())
         for mv in mvs:
             self.validate_practice_statistics_measure_value(mv, ccgs.loc[mv.pct_id])
 
@@ -480,7 +428,7 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=False,
             regional_team_id__isnull=True,
         )
-        self.assertEqual(mvs.count(), 25)
+        self.assertEqual(mvs.count(), STP.objects.count())
         for mv in mvs:
             self.validate_practice_statistics_measure_value(mv, stps.loc[mv.stp_id])
 
@@ -498,11 +446,48 @@ class ImportMeasuresTests(TestCase):
             stp_id__isnull=True,
             regional_team_id__isnull=False,
         )
-        self.assertEqual(mvs.count(), 5)
+        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
         for mv in mvs:
             self.validate_practice_statistics_measure_value(
                 mv, regtms.loc[mv.regional_team_id]
             )
+
+    def upload_prescribing_rows(self, prescribing_rows):
+        '''Upload prescribing_rows to BQ, and return DataFrame of prescribing
+        data.
+        '''
+
+        # In production, normalised_prescribing_standard is actually a view,
+        # but for the tests it's much easier to set it up as a normal table.
+        table = Client('hscic').get_or_create_table(
+            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
+        )
+
+        with tempfile.NamedTemporaryFile() as f:
+            writer = csv.writer(f)
+            for row in prescribing_rows:
+                writer.writerow(row)
+            f.seek(0)
+            table.insert_rows_from_csv(f.name)
+
+            headers = [
+                'sha',
+                'regional_team_id',
+                'stp_id',
+                'ccg_id',
+                'practice_id',
+                'bnf_code',
+                'bnf_name',
+                'items',
+                'net_cost',
+                'actual_cost',
+                'quantity',
+                'month',
+            ]
+            prescriptions = pd.read_csv(f.name, names=headers)
+            prescriptions['month'] = prescriptions['month'].str[:10]
+
+        return prescriptions
 
     def calculate_cost_based_measure(
         self, numerators, denominators, org_type, org_codes
