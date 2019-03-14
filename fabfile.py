@@ -207,7 +207,8 @@ def build_changed_measures():
             "git diff --name-only "
             "$(diff --old-line-format='' --new-line-format='' "
             '<(git rev-list --first-parent "${1:-master}") '
-            '<(git rev-list --first-parent "${2:-HEAD}") | head -1)')
+            '<(git rev-list --first-parent "${2:-HEAD}") | head -1)',
+            pty=False).splitlines()
 
     for f in changed_files:
         if 'measure_definitions' in f:
