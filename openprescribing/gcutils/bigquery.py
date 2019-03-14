@@ -71,8 +71,12 @@ class Client(object):
             setattr(job_config, k, v)
 
         method = getattr(self.gcbq_client, method_name)
+
         job = method(*args, job_config=job_config)
-        return job.result()
+        if getattr(job_config, 'dry_run', False):
+            return []
+        else:
+            return job.result()
 
     def list_jobs(self):
         return self.gcbq_client.list_jobs()
@@ -288,10 +292,11 @@ class Table(object):
         for row in self.get_rows():
             yield row_to_dict(row, field_names)
 
-    def insert_rows_from_query(self, sql, substitutions=None, legacy=False,
+    def insert_rows_from_query(self, sql, substitutions=None, legacy=False, dry_run=False,
                                **options):
         default_options = {
             'use_legacy_sql': legacy,
+            'dry_run': dry_run,
             'allow_large_results': True,
             'write_disposition': 'WRITE_TRUNCATE',
             'destination': self.gcbq_table_ref,

@@ -10,9 +10,11 @@ clearly.
 
 from collections import OrderedDict
 from contextlib import contextmanager
+from contextlib2 import redirect_stdout
 import csv
 from datetime import datetime
 import glob
+import io
 import json
 import logging
 import os
@@ -21,7 +23,6 @@ import tempfile
 
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db import transaction
@@ -30,6 +31,8 @@ from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+
+import google
 
 logger = logging.getLogger(__name__)
 
@@ -49,12 +52,33 @@ class Command(BaseCommand):
 
     '''
 
-    def handle(self, *args, **options):
-        options = self.parse_options(options)
-        start = datetime.now()
-        start_date = options['start_date']
-        end_date = options['end_date']
-        verbose = options['verbosity'] > 1
+    def check_definition(self, options, start_date, end_date, verbose):
+        """Checks SQL definition for measures.
+
+        Ability to parse the JSON will already have happened, as it is
+        checked when parsing the command options.
+        """
+        errors = []
+        for measure_id in options['measure_ids']:
+            stdout = io.BytesIO()
+            with redirect_stdout(stdout):
+                try:
+                    measure = create_or_update_measure(measure_id, end_date)
+                    calculation = MeasureCalculation(
+                        measure, start_date=start_date, end_date=end_date,
+                        verbose=verbose
+                    )
+                    calculation.check_definition()
+                except google.api_core.exceptions.BadRequest as e:
+                    stdout.seek(0)
+                    errors.append("* SQL error in `{}`: {} \n\n{}".format(
+                        measure_id,
+                        e.message,
+                        stdout.read()))
+        if errors:
+            raise google.api_core.exceptions.BadRequest("\n".join(errors))
+
+    def build_measures(self, options, start_date, end_date, verbose):
         with conditional_constraint_and_index_reconstructor(options):
             for measure_id in options['measure_ids']:
                 logger.info('Updating measure: %s' % measure_id)
@@ -94,6 +118,18 @@ class Command(BaseCommand):
                 elapsed = datetime.now() - measure_start
                 logger.warning("Elapsed time for %s: %s seconds" % (
                     measure_id, elapsed.seconds))
+
+    def handle(self, *args, **options):
+        options = self.parse_options(options)
+        start = datetime.now()
+        start_date = options['start_date']
+        end_date = options['end_date']
+        verbose = options['verbosity'] > 1
+        if options['check']:
+            action = self.check_definition
+        else:
+            action = self.build_measures
+        action(options, start_date, end_date, verbose)
         logger.warning("Total elapsed time: %s" % (
             datetime.now() - start))
 
@@ -103,6 +139,7 @@ class Command(BaseCommand):
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
         parser.add_argument('--definitions_only', action='store_true')
+        parser.add_argument('--check', action='store_true')
 
     def parse_options(self, options):
         """Parse command line options
@@ -339,6 +376,12 @@ class MeasureCalculation(object):
     def table_name(self, org_type):
         return '{}_data_{}'.format(org_type, self.measure.id)
 
+    def check_definition(self):
+        """Check that the measure definition would result in runnable
+        practice-level SQL
+        """
+        self.calculate_practice_ratios(dry_run=True)
+
     def calculate(self):
         number_rows_written = 0
         number_rows_written += self.calculate_practices()
@@ -365,7 +408,7 @@ class MeasureCalculation(object):
         number_rows_written = self.write_practice_ratios_to_database()
         return number_rows_written
 
-    def calculate_practice_ratios(self):
+    def calculate_practice_ratios(self, dry_run=False):
         """Given a measure defition, construct a BigQuery query which computes
         numerator/denominator ratios for practices.
 
@@ -403,7 +446,8 @@ class MeasureCalculation(object):
         self.insert_rows_from_query(
             'practice_ratios',
             self.table_name('practice'),
-            context
+            context,
+            dry_run=dry_run
         )
 
     def add_practice_percent_rank(self):
@@ -664,7 +708,7 @@ class MeasureCalculation(object):
             count += 1
         self.log("Created %s measureglobals" % count)
 
-    def insert_rows_from_query(self, query_id, table_name, ctx):
+    def insert_rows_from_query(self, query_id, table_name, ctx, dry_run=False):
         """Interpolate values from ctx into SQL identified by query_id, and
         insert results into given table.
         """
@@ -677,6 +721,7 @@ class MeasureCalculation(object):
         self.get_table(table_name).insert_rows_from_query(
             sql,
             substitutions=ctx,
+            dry_run=dry_run
         )
 
     def get_rows_as_dicts(self, table_name):

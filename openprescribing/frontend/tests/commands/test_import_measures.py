@@ -15,6 +15,7 @@ from django.test import TestCase
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
+from frontend.management.commands.import_measures import check_definition
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
@@ -23,6 +24,7 @@ from frontend.models import Practice
 from frontend.models import STP
 from frontend.models import RegionalTeam
 
+from google.api_core.exceptions import BadRequest
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
@@ -38,6 +40,21 @@ def working_measure_files():
                 'cerazette.json'))
     return [fname]
 
+
+def broken_json_measure_files():
+    fpath = settings.REPO_ROOT
+    fname = os.path.join(
+        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
+                'bad_json.json'))
+    return [fname]
+
+
+def broken_sql_measure_files():
+    fpath = settings.REPO_ROOT
+    fname = os.path.join(
+        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
+                'bad_sql.json'))
+    return [fname]
 
 
 def parse_args(*opts_args):
@@ -232,6 +249,22 @@ class BigqueryFunctionalTests(TestCase):
                    '.get_measure_definition_files',
                    new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', **opts)
+
+    @patch('frontend.management.commands.import_measures'
+           '.get_measure_definition_files',
+           new=MagicMock(return_value=broken_json_measure_files()))
+    def test_check_definition_bad_json(self):
+        with self.assertRaises(ValueError) as command_error:
+            call_command('import_measures', check=True)
+        self.assertIn("Problems parsing JSON", str(command_error.exception))
+
+    @patch('frontend.management.commands.import_measures'
+           '.get_measure_definition_files',
+           new=MagicMock(return_value=broken_sql_measure_files()))
+    def test_check_definition_bad_sql(self):
+        with self.assertRaises(BadRequest) as command_error:
+            call_command('import_measures', check=True)
+        self.assertIn("SQL error", str(command_error.exception))
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
         month = '2015-10-01'
@@ -559,10 +592,17 @@ class BigqueryFunctionalTests(TestCase):
                             actual, identifier, expected))
 
 
-class TestParseMeasures(TestCase):
-    def test_parse_measures(self):
+class TestAllCurrentMeasures(TestCase):
+    def test_parse_and_run_measures(self):
         measures = parse_measures()
+        options = {'measure_ids': measures.keys()}
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
 
+        # The order of these specific measures matters, as the SQL for
+        # the omnibus measure relies on the other LP measures having
+        # been calculated first
         self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
+
+        # Now check the SQL for all the measures
+        check_definition(options, '2001-01-01', '2030-01-01', True)
