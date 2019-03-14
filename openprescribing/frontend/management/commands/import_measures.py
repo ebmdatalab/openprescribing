@@ -131,16 +131,27 @@ class Command(BaseCommand):
         return options
 
 
+def get_measure_definition_files():
+    fpath = os.path.dirname(__file__)
+    return sorted(glob.glob(os.path.join(fpath, "./measure_definitions/*.json")))
+
+
 def parse_measures():
     """Deserialise JSON measures definition into dict
     """
     measures = OrderedDict()
-    fpath = os.path.dirname(__file__)
-    files = glob.glob(os.path.join(fpath, "./measure_definitions/*.json"))
-    for fname in sorted(files):
+    errors = []
+
+    for fname in get_measure_definition_files():
         measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-        with open(os.path.join(fpath, fname)) as f:
-            measures[measure_id] = json.load(f)
+        with open(fname) as f:
+            try:
+                measures[measure_id] = json.load(f)
+            except ValueError as e:
+                # Add the measure_id to the exception
+                errors.append("* {}: {}".format(measure_id, e.message))
+    if errors:
+        raise ValueError("Problems parsing JSON:\n" + "\n".join(errors))
     return measures
 
 

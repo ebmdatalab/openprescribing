@@ -31,15 +31,13 @@ def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
         return a == b
 
 
-def test_measures():
+def working_measure_files():
     fpath = settings.REPO_ROOT
     fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/'
-                'cerazette_measure.json'))
-    json_data = json.load(open(fname))
-    return {
-        'cerazette': json_data
-    }
+        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
+                'cerazette.json'))
+    return [fname]
+
 
 
 def parse_args(*opts_args):
@@ -55,8 +53,8 @@ def parse_args(*opts_args):
     return cmd.parse_options(options.__dict__)
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch('frontend.management.commands.import_measures.get_measure_definition_files',
+       new=MagicMock(return_value=working_measure_files()))
 class ArgumentTestCase(TestCase):
     def test_start_and_end_dates(self):
         with self.assertRaises(CommandError):
@@ -79,8 +77,8 @@ class ArgumentTestCase(TestCase):
         self.assertEqual(result['end_date'], '1999-01-01')
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch('frontend.management.commands.import_measures.get_measure_definition_files',
+       new=MagicMock(return_value=working_measure_files()))
 class UnitTests(TestCase):
     """Unit tests with mocked bigquery. Many of the functional
     tests could be moved hree.
@@ -231,8 +229,8 @@ class BigqueryFunctionalTests(TestCase):
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+                   '.get_measure_definition_files',
+                   new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', **opts)
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
@@ -245,8 +243,8 @@ class BigqueryFunctionalTests(TestCase):
             'v': 3
         }
         with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+                   '.get_measure_definition_files',
+                   new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', *args, **opts)
 
         m = Measure.objects.get(id='cerazette')
