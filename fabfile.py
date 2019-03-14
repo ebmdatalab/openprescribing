@@ -179,16 +179,16 @@ def build_measures(environment=None, measures=None):
             run("cd openprescribing/ && "
                 "python manage.py import_measures --check "
                 "--measure {}".format(measures))
-
+            print("Checks of measures passed")
             run("cd openprescribing/ && "
                 "python manage.py import_measures "
                 "--measure {}".format(measures))
+            print("Rebuild of measures completed")
 
 
 def build_changed_measures():
     """For any measures changed since the last deploy, run
     `import_measures`.
-
     """
     measures = []
     if env.environment == 'production':
@@ -215,6 +215,7 @@ def build_changed_measures():
             measures.append(os.path.splitext(os.path.basename(f))[0])
     if measures:
         measures = ",".join(measures)
+        print("Rebuilding measures {}".format(measures))
         build_measures(environment=env.environment, measures=measures)
 
 
