@@ -1,12 +1,15 @@
 from __future__ import print_function
 
+from contextlib import contextmanager
 import string
 import subprocess
+import sys
 import tempfile
 
 from google.cloud import bigquery as gcbq
 from google.cloud.exceptions import Conflict, NotFound
 
+from six import reraise
 import pandas as pd
 
 from django.conf import settings
@@ -35,6 +38,25 @@ except AttributeError:
 
 class BigQueryExportError(Exception):
     pass
+
+
+@contextmanager
+def exception_sql_printer(sql):
+    """If there is an exception, prepend line-numbered SQL to the
+    the exception message
+    """
+    try:
+        yield
+    except Exception as e:
+        msg = []
+        for n, line in enumerate(sql.splitlines()):
+            msg.append("{:>4}: {}".format(n + 1, line))
+        msg = "\n".join(msg)
+        msg = str(e) + "\n\n" + msg
+        reraise(
+            type(e),
+            type(e)(msg),
+            sys.exc_info()[2])
 
 
 class Client(object):
@@ -202,12 +224,8 @@ class Client(object):
         sql = interpolate_sql(sql, **substitutions)
 
         args = [sql]
-        try:
+        with exception_sql_printer(sql):
             iterator = self.run_job('query', args, options, default_options)
-        except Exception:
-            for n, line in enumerate(sql.splitlines()):
-                print(n + 1, line)
-            raise
         return Results(iterator)
 
     def query_into_dataframe(self, sql, legacy=False):
@@ -217,12 +235,8 @@ class Client(object):
             'verbose': False,
             'dialect': 'legacy' if legacy else 'standard',
         }
-        try:
+        with exception_sql_printer(sql):
             return pd.read_gbq(sql, **kwargs)
-        except Exception:
-            for n, line in enumerate(sql.splitlines()):
-                print(n + 1, line)
-            raise
 
     def upload_model(self, model, table_id=None):
         if table_id is None:
@@ -310,7 +324,7 @@ class Table(object):
         sql = interpolate_sql(sql, **substitutions)
 
         args = [sql]
-        try:
+        with exception_sql_printer(sql):
             try:
                 self.run_job('query', args, options, default_options)
             except NotFound as e:
@@ -318,10 +332,6 @@ class Table(object):
                     raise
                 self.client.create_dataset()
                 self.run_job('query', args, options, default_options)
-        except Exception:
-            for n, line in enumerate(sql.splitlines()):
-                print(n + 1, line)
-            raise
 
     def insert_rows_from_csv(self, csv_path, **options):
         default_options = {
