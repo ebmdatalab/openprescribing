@@ -10,11 +10,9 @@ clearly.
 
 from collections import OrderedDict
 from contextlib import contextmanager
-from contextlib2 import redirect_stdout
 import csv
 from datetime import datetime
 import glob
-import io
 import json
 import logging
 import os
@@ -61,22 +59,17 @@ class Command(BaseCommand):
         """
         errors = []
         for measure_id in options['measure_ids']:
-            stdout = io.BytesIO()
-            with redirect_stdout(stdout):
-                # ...because `gcutils` prints useful debugging detail to stdout
-                try:
-                    measure = create_or_update_measure(measure_id, end_date)
-                    calculation = MeasureCalculation(
-                        measure, start_date=start_date, end_date=end_date,
-                        verbose=verbose
-                    )
-                    calculation.check_definition()
-                except google.api_core.exceptions.BadRequest as e:
-                    stdout.seek(0)
-                    errors.append("* SQL error in `{}`: {} \n\n{}".format(
-                        measure_id,
-                        e.message,
-                        stdout.read()))
+            try:
+                measure = create_or_update_measure(measure_id, end_date)
+                calculation = MeasureCalculation(
+                    measure, start_date=start_date, end_date=end_date,
+                    verbose=verbose
+                )
+                calculation.check_definition()
+            except google.api_core.exceptions.BadRequest as e:
+                errors.append("* SQL error in `{}`: {}".format(
+                    measure_id,
+                    e.message))
         if errors:
             raise google.api_core.exceptions.BadRequest("\n".join(errors))
 
