@@ -11,6 +11,7 @@
 
 backports.csv
 beautifulsoup4
+contextlib2
 django-allauth==0.39.1
 django-anymail[mailgun]==6.0
 django-cors-headers==2.5.0
@@ -34,7 +35,7 @@ numpy==1.16.2
 openpyxl==2.6.1
 pandas-gbq==0.3.1
 pandas==0.24.1
-premailer==3.3.0
+premailer==3.4.0
 psycopg2-binary==2.7.7
 pyarrow==0.12.1
 python-dateutil==2.8.0
