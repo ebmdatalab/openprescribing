@@ -76,7 +76,7 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code IN (",
+    "bnf_code IN (",
     "'0205052ADAAAAAA', --Azilsartan Medoxomil_Tab 20mg \n",
     "'0205052ADAAABAB', --Azilsartan Medoxomil_Tab 40mg \n",
     "'0205052ADAAACAC', --Azilsartan Medoxomil_Tab 80mg \n",
