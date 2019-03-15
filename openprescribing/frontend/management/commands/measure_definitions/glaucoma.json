@@ -27,7 +27,6 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(",
     "bnf_code LIKE '1106000__B%') --Treatment of Glaucoma (branded) \n",
     "AND ",
     "(",
