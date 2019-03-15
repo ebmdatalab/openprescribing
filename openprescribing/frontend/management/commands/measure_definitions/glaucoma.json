@@ -39,8 +39,7 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(",
-    "bnf_code LIKE '1106000%') --Treatment of Glaucoma (branded and generic) \n",
+    "bnf_code LIKE '1106000%' --Treatment of Glaucoma (branded and generic) \n",
     "AND ",
     "(",
     "bnf_code NOT LIKE '1106000B0B%' AND --Acetazolamide (branded and generic) \n",
