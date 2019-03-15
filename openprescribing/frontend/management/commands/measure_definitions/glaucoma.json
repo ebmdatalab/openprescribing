@@ -27,25 +27,15 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(",
-    "bnf_code LIKE '1106000__B%') --Treatment of Glaucoma (branded) \n",
-    "AND ",
-    "(",
-    "bnf_code NOT LIKE '1106000B0B%' AND --Diamox \n",
-    "bnf_code NOT LIKE '1106000C0B%' --Diamox (Parent)",
-    ")"
+    "(bnf_code LIKE '1106000__B%') AND ",
+    "(bnf_code not like '1106000B0B%' AND bnf_code not like '1106000C0B%')"
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(",
-    "bnf_code LIKE '1106000%') --Treatment of Glaucoma (branded and generic) \n",
-    "AND ",
-    "(",
-    "bnf_code NOT LIKE '1106000B0B%' AND --Acetazolamide (branded and generic) \n",
-    "bnf_code NOT LIKE '1106000C0B%' --Acetazolamide (Parent) (branded and generic)",
-    ")"
+       "(bnf_code LIKE '1106000%') AND ",
+    "(bnf_code not like '1106000B0%' AND bnf_code not like '1106000C0%')"
   ]
 }
