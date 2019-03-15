@@ -26,6 +26,9 @@ from frontend.models import RegionalTeam
 from google.api_core.exceptions import BadRequest
 
 
+MODULE = 'frontend.management.commands.import_measures'
+
+
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -33,28 +36,24 @@ def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
         return a == b
 
 
-def working_measure_files():
+def _get_measure_fixture(name):
     fpath = settings.REPO_ROOT
     fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
-                'cerazette.json'))
+        fpath, ("openprescribing/frontend/tests/fixtures/measure_definitions/"
+                "{}.json".format(name)))
     return [fname]
+
+
+def working_measure_files():
+    return _get_measure_fixture('cerazette')
 
 
 def broken_json_measure_files():
-    fpath = settings.REPO_ROOT
-    fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
-                'bad_json.json'))
-    return [fname]
+    return _get_measure_fixture('bad_json')
 
 
 def broken_sql_measure_files():
-    fpath = settings.REPO_ROOT
-    fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/measure_definitions/'
-                'bad_sql.json'))
-    return [fname]
+    return _get_measure_fixture('bad_sql')
 
 
 def parse_args(*opts_args):
@@ -247,22 +246,19 @@ class BigqueryFunctionalTests(TestCase):
             'measure': 'cerazette',
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.get_measure_definition_files',
-                   new=MagicMock(return_value=working_measure_files())):
+        with patch(MODULE + '.get_measure_definition_files',
+                   new=working_measure_files):
             call_command('import_measures', **opts)
 
-    @patch('frontend.management.commands.import_measures'
-           '.get_measure_definition_files',
-           new=MagicMock(return_value=broken_json_measure_files()))
+    @patch(MODULE + '.get_measure_definition_files',
+           new=broken_json_measure_files)
     def test_check_definition_bad_json(self):
         with self.assertRaises(ValueError) as command_error:
             call_command('import_measures', check=True)
         self.assertIn("Problems parsing JSON", str(command_error.exception))
 
-    @patch('frontend.management.commands.import_measures'
-           '.get_measure_definition_files',
-           new=MagicMock(return_value=broken_sql_measure_files()))
+    @patch(MODULE + '.get_measure_definition_files',
+           new=broken_sql_measure_files)
     def test_check_definition_bad_sql(self):
         with self.assertRaises(BadRequest) as command_error:
             call_command('import_measures', check=True)
@@ -277,8 +273,7 @@ class BigqueryFunctionalTests(TestCase):
             'measure': measure_id,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.get_measure_definition_files',
+        with patch(MODULE + '.get_measure_definition_files',
                    new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', *args, **opts)
 
@@ -594,8 +589,8 @@ class BigqueryFunctionalTests(TestCase):
                             actual, identifier, expected))
 
 
-class TestAllCurrentMeasures(TestCase):
-    def test_parse_and_run_measures(self):
+class TestParseMeasures(TestCase):
+    def test_parse_measures(self):
         measures = parse_measures()
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')

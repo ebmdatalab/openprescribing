@@ -174,8 +174,10 @@ def build_measures(environment=None, measures=None):
 
     with cd(env.path):
         with prefix('source .venv/bin/activate'):
-            # Checking is worth doing first as it validates all the
-            # measures, rather than exiting at the first error
+            # First we `--check` measures. This option validates all
+            # the measures, rather than exiting at the first error,
+            # which makes the debugging cycle shorter when dealing
+            # with more than one
             run("cd openprescribing/ && "
                 "python manage.py import_measures --check "
                 "--measure {}".format(measures))

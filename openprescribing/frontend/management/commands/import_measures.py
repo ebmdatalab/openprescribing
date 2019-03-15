@@ -55,13 +55,15 @@ class Command(BaseCommand):
     def check_definition(self, options, start_date, end_date, verbose):
         """Checks SQL definition for measures.
 
-        Ability to parse the JSON will already have happened, as it is
-        checked when parsing the command options.
+        JSON parsing will already have been checked, as this is done
+        when parsing the command options.
+
         """
         errors = []
         for measure_id in options['measure_ids']:
             stdout = io.BytesIO()
             with redirect_stdout(stdout):
+                # ...because `gcutils` prints useful debugging detail to stdout
                 try:
                     measure = create_or_update_measure(measure_id, end_date)
                     calculation = MeasureCalculation(
