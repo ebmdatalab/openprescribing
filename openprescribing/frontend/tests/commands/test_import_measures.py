@@ -15,7 +15,6 @@ from django.test import TestCase
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
 from frontend.management.commands.import_measures import parse_measures
-from frontend.management.commands.import_measures import check_definition
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
