@@ -32,7 +32,7 @@
     "AND ",
     "(",
     "bnf_code NOT LIKE '1106000B0B%' AND --Diamox \n",
-    "bnf_code NOT LIKE '1106000C0B%' --Diamox (Parent)",
+    "bnf_code NOT LIKE '1106000C0B%' --Diamox (Parent)\n",
     ")"
   ],
   "denominator_columns": [
