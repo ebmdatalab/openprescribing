@@ -27,7 +27,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "bnf_code LIKE '1106000__B%') --Treatment of Glaucoma (branded) \n",
+    "bnf_code LIKE '1106000__B%' --Treatment of Glaucoma (branded) \n",
     "AND ",
     "(",
     "bnf_code NOT LIKE '1106000B0B%' AND --Diamox \n",
