@@ -26,6 +26,7 @@ from frontend.models import RegionalTeam
 
 from google.api_core.exceptions import BadRequest
 
+
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)

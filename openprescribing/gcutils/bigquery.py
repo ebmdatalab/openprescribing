@@ -292,7 +292,11 @@ class Table(object):
         for row in self.get_rows():
             yield row_to_dict(row, field_names)
 
-    def insert_rows_from_query(self, sql, substitutions=None, legacy=False, dry_run=False,
+    def insert_rows_from_query(self,
+                               sql,
+                               substitutions=None,
+                               legacy=False,
+                               dry_run=False,
                                **options):
         default_options = {
             'use_legacy_sql': legacy,
