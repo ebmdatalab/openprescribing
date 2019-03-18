@@ -35,15 +35,21 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {hscic}.presentation r  ON p.bnf_code = r.bnf_code ",
   "numerator_where": [
-    "(p.bnf_code like'0501130R0%AG' OR p.bnf_code like '0501130R0%AA' OR p.bnf_code like '0501130R0%AD' ",
-    "OR p.bnf_code like '0501015P0%AB' OR p.bnf_code like '0501080W0%AE') "
+    "p.bnf_code LIKE '0501015P0AAABAB%' OR --Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501080W0AAAEAE%' OR --Trimethoprim_Tab 200mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAAAAA%' OR --Nitrofurantoin_Cap 50mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAADAD%' OR --Nitrofurantoin_Tab 50mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAAGAG%' --Nitrofurantoin_Cap 100mg M/R (brands and generic)"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '0501130R0%AG' OR bnf_code like '0501130R0%AA' OR bnf_code like '0501130R0%AD' ",
-    "OR bnf_code like '0501015P0%AB' OR bnf_code like '0501080W0%AE')  "
+    "p.bnf_code LIKE '0501015P0AAABAB%' OR --Pivmecillinam HCl_Tab 200mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501080W0AAAEAE%' OR --Trimethoprim_Tab 200mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAAAAA%' OR --Nitrofurantoin_Cap 50mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAADAD%' OR --Nitrofurantoin_Tab 50mg (brands and generic) \n",
+    "p.bnf_code LIKE '0501130R0AAAGAG%' --Nitrofurantoin_Cap 100mg M/R (brands and generic"
   ]
 }
