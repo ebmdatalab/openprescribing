@@ -23,7 +23,7 @@ defusedxml==0.5.0         # via python3-openid
 diff-match-patch==20121119  # via django-import-export
 django-allauth==0.39.1
 django-anymail[mailgun]==6.0
-django-cors-headers==2.5.1
+django-cors-headers==2.5.2
 django-crispy-forms==1.7.2
 django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==1.11
