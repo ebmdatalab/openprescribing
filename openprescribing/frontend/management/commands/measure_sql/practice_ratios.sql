@@ -74,11 +74,13 @@ FROM (
         DATE(practices_with_months.month) AS month
         {numerator_aliases}
         {denominator_aliases}
-      FROM num
-      RIGHT JOIN denom
-      ON num.practice = denom.practice AND num.month = denom.month
-      RIGHT JOIN practices_with_months
-      ON practices_with_months.practice_id = denom.practice
-        AND practices_with_months.month = denom.month
+
+      FROM practices_with_months
+      LEFT JOIN num
+        ON practices_with_months.practice_id = num.practice
+          AND practices_with_months.month = num.month
+      LEFT JOIN denom
+        ON practices_with_months.practice_id = denom.practice
+          AND practices_with_months.month = denom.month
    )
 )
