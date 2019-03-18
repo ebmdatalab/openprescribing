@@ -33,7 +33,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0203020X0%')  "
+    "bnf_code LIKE '0203020X0%' --Dronedarone"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
