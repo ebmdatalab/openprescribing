@@ -29,10 +29,19 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "bnf_code LIKE '0212000A0%' OR bnf_code LIKE '0212000D0%' OR bnf_code LIKE '021200010%' OR ",
-    "bnf_code LIKE '0212000AD%' OR bnf_code LIKE '0212000K0%' OR bnf_code LIKE '0212000F0%' OR ",
-    "bnf_code LIKE '0212000P0%' OR bnf_code LIKE '0212000Q0%' OR bnf_code LIKE '0212000U0%' OR ",
-    "bnf_code LIKE '0212000AE%' OR bnf_code LIKE '0212000V0%' OR bnf_code LIKE '0212000AB%'"
+    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",    
+    "'021200010', --Ciprofibrate \n",
+    "'0212000A0', --Acipimox \n",
+    "'0212000AB', --Omega-3-Acid Ethyl Esters \n",
+    "'0212000AD', --Colesevelam Hydrochloride \n",
+    "'0212000AE', --Nicotinic Acid/Laropiprant \n",
+    "'0212000D0', --Bezafibrate \n",
+    "'0212000F0', --Colestyramine \n",
+    "'0212000K0', --Colestipol Hydrochloride \n",
+    "'0212000P0', --Fenofibrate \n",
+    "'0212000Q0', --Gemfibrozil \n",
+    "'0212000U0', --Nicotinic Acid \n",
+    "'0212000V0') --Omega-3 Marine Triglycerides"
  ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
