@@ -594,7 +594,6 @@ class TestParseMeasures(TestCase):
         measures = parse_measures()
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
-
         # The order of these specific measures matters, as the SQL for
         # the omnibus measure relies on the other LP measures having
         # been calculated first
