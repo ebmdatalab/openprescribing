@@ -27,7 +27,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0407010Q0%')  "
+    "(bnf_code LIKE '0407010Q0%') --Co-Proxamol (Dextroprop HCl/Paracet) "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
