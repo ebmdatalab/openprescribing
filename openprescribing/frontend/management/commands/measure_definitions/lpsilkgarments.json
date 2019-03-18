@@ -31,7 +31,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '2020%')  "
+    "bnf_code LIKE '2020%' --Silk Garments"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
