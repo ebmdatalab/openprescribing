@@ -30,7 +30,7 @@ from gcutils.bigquery import Client
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
 
-import google
+from google.api_core.exceptions import BadRequest
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +52,10 @@ class Command(BaseCommand):
 
     def check_definition(self, options, start_date, end_date, verbose):
         """Checks SQL definition for measures.
-
-        JSON parsing will already have been checked, as this is done
-        when parsing the command options.
-
         """
+
+        # We don't validate JSON here, as this is already done as a
+        # side-effect of parsing the command options.
         errors = []
         for measure_id in options['measure_ids']:
             try:
@@ -66,12 +65,12 @@ class Command(BaseCommand):
                     verbose=verbose
                 )
                 calculation.check_definition()
-            except google.api_core.exceptions.BadRequest as e:
+            except BadRequest as e:
                 errors.append("* SQL error in `{}`: {}".format(
                     measure_id,
                     e.message))
         if errors:
-            raise google.api_core.exceptions.BadRequest("\n".join(errors))
+            raise BadRequest("\n".join(errors))
 
     def build_measures(self, options, start_date, end_date, verbose):
         with conditional_constraint_and_index_reconstructor(options):
@@ -163,7 +162,7 @@ class Command(BaseCommand):
         return options
 
 
-def get_measure_definition_files():
+def get_measure_definition_paths():
     fpath = os.path.dirname(__file__)
     return sorted(glob.glob(os.path.join(fpath, "./measure_definitions/*.json")))
 
@@ -174,9 +173,9 @@ def parse_measures():
     measures = OrderedDict()
     errors = []
 
-    for fname in get_measure_definition_files():
-        measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-        with open(fname) as f:
+    for path in get_measure_definition_paths():
+        measure_id = re.match(r'.*/([^/.]+)\.json', path).groups()[0]
+        with open(path) as f:
             try:
                 measures[measure_id] = json.load(f)
             except ValueError as e:
