@@ -31,14 +31,22 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0501013K0%'  OR bnf_code LIKE '0501021%'  OR bnf_code LIKE '050112%')  "
+    "bnf_code LIKE '0501013K0% OR --Co-Amoxiclav \n",
+    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
+    "bnf_code LIKE '050112%'     --Quinolones"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0501021%' OR bnf_code LIKE '050105%' OR bnf_code LIKE '050111%' OR bnf_code LIKE '050101%' ",
-    "OR bnf_code LIKE '050112%' OR bnf_code LIKE '050108%' OR bnf_code LIKE '050103%' OR bnf_code LIKE '050113%')"
+    "bnf_code LIKE '050101%' OR  --Penicillins \n",
+    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
+    "bnf_code LIKE '050103%' OR  --Tetracyclines \n",
+    "bnf_code LIKE '050105%' OR  --Macrolides \n",
+    "bnf_code LIKE '050108%' OR  --Sulfonamides And Trimethoprim \n",
+    "bnf_code LIKE '050111%' OR  --Metronidazole, Tinidazole & Ornidazole \n",
+    "bnf_code LIKE '050112%' OR  --Quinolones \n",
+    "bnf_code LIKE '050113%'     --Urinary-Tract Infections"
   ]
 }
