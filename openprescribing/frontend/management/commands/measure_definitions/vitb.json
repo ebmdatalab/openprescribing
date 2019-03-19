@@ -31,13 +31,17 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA')"
+    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
+    "bnf_code LIKE '0906027G0%AB'    --Vit B Co Strong_Tab)"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0906027G0%AB' OR bnf_code LIKE '0906027G0%AA' OR bnf_code LIKE '0906026M0%AG' OR bnf_code LIKE '0906026M0%AF')"
+    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
+    "bnf_code LIKE '0906027G0%AB' OR --Vit B Co Strong_Tab) \n",
+    "bnf_code LIKE '0906026M0%AF' OR --Thiamine HCl_Tab 50mg \n",
+    "bnf_code LIKE '0906026M0%AG'    --Thiamine HCl_tab 100mg"
   ]
 }
