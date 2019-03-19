@@ -139,29 +139,15 @@ def measure_numerators_by_org(request, format=None):
         # definitions that may use a subset of any of these column
         # names
         query = '''
-            WITH nice_names AS (
-              SELECT
-                bnf_code,
-                MAX(name) AS name
-              FROM
-                dmd_product
-              GROUP BY
-                bnf_code
-              HAVING
-                COUNT(*) = 1
-            )
             SELECT
               {org_selector} AS entity,
               presentation_code AS bnf_code,
-              COALESCE(nice_names.name, pn.name) AS presentation_name,
+              pn.name AS presentation_name,
               SUM(total_items) AS total_items,
               SUM(actual_cost) AS cost,
               SUM(quantity) AS quantity
             FROM
               frontend_prescription p
-            LEFT JOIN
-              nice_names
-            ON p.presentation_code = nice_names.bnf_code
             INNER JOIN
               frontend_presentation pn
             ON p.presentation_code = pn.bnf_code
@@ -173,7 +159,7 @@ def measure_numerators_by_org(request, format=None):
               AND
               pn.bnf_code = ANY(%(numerator_bnf_codes)s)
             GROUP BY
-              {org_selector}, presentation_code, nice_names.name, pn.name
+              {org_selector}, presentation_code, pn.name
             ORDER BY {order_col} DESC
             LIMIT 50
         '''.format(
