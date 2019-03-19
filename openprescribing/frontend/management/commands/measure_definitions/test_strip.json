@@ -7,12 +7,15 @@
     "Cost of higher cost (≥£10/box) blood glucose testing strips per 1000 patients"
   ],
   "why_it_matters": [
-    "Blood Glucose Test Strips (BGTS) range in price between approximately £5.50 to £16.50 per box. There is no evidence that suggests ",
-    "that there are any significant differences between strips, and all meters must comply against a set international standard (ISO15197:2013). ",
-    "For type 2 diabetes, NHS England is promoting the use of lower cost strips, i.e. those under £10 per box, which are already in widespread use across the NHS. ",
-    "Please note that this data is for <strong>all test strip prescribing</strong>, as we are unable to determine whether prescribing is for <strong>type 1 or type 2</strong> diabetes.",
+    "Blood Glucose Test Strips (BGTS) range in price between approximately £5.50 to £16.50 per box. There is no evidence that ",
+    "suggests that there are any significant differences between strips, and all meters must comply against a set international ",
+    "standard (ISO15197:2013).",
+    "For type 2 diabetes, NHS England is promoting the use of lower cost strips, i.e. those under £10 per box, which are ",
+    "already in widespread use across the NHS.  Please note that this data is for <strong>all test strip prescribing</strong>, ",
+    "as we are unable to determine whether prescribing is for <strong>type 1 or type 2</strong> diabetes.",
     "<br><br><strong>This measure is currently under consultation.  ",
-    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+    "More details can be found on the ",
+    "<a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
   ],
   "numerator_short": "Higher cost BGTS cost (£)",
   "denominator_short": "1000 patients",
@@ -31,10 +34,8 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month = r.date AND p.bnf_code = r.bnf_code ",
   "numerator_where": [
-    "(",
-    " p.bnf_code LIKE '0601060D0%'",
-    "AND r.median_price_per_unit >=0.2",
-    ")"
+    "p.bnf_code LIKE '0601060D0%'      --Glucose Blood Testing Reagents \n",
+    "AND r.median_price_per_unit >=0.2 --this selects only products >=20p each (£10/box)"
   ],
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT p.bnf_code",
