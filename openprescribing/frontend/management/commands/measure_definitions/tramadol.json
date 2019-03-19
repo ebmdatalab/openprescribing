@@ -29,13 +29,14 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '040702040%' AND bnf_code NOT LIKE '040702040AAAAAA%') "
+    "bnf_code LIKE '040702040%'        --Tramadol Hydrochloride \n",
+    "AND bnf_code != '040702040AAAAAA' --Tramadol Hcl_Cap 50mg"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '040702040%')  "
+    "bnf_code like '040702040%' --Tramadol Hydrochloride"
   ]
 }
