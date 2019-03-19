@@ -30,14 +30,12 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.vw__median_price_per_unit r ON p.month=r.date AND p.bnf_code=r.bnf_code ",
   "numerator_where": [
-    "    (",
-    "         p.bnf_code LIKE '210109006%'",
-    "      OR p.bnf_code LIKE '210109007%'",
-    "      OR p.bnf_code LIKE '210109008%'",
-    "      OR p.bnf_code LIKE '210109009%'",
-    "    )",
-    "AND p.bnf_name LIKE '%Needles%' ",
-    "AND r.median_price_per_unit >= 0.05"
+    "(p.bnf_code LIKE '210109006%' OR",
+    "p.bnf_code LIKE '210109007%' OR",
+    "p.bnf_code LIKE '210109008%' OR",
+    "OR p.bnf_code LIKE '210109009%') --All needles with these codes \n",
+    "AND p.bnf_name LIKE '%Needles%' --Codes contain other products as well, so this selects needles only \n",
+    "AND r.median_price_per_unit >= 0.05 --this selects products with median price of >=£5 a box "
   ],
   "numerator_bnf_codes_query": [
     "SELECT DISTINCT p.bnf_code",
