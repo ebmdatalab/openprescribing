@@ -23,6 +23,11 @@ from frontend.models import Practice
 from frontend.models import STP
 from frontend.models import RegionalTeam
 
+from google.api_core.exceptions import BadRequest
+
+
+MODULE = 'frontend.management.commands.import_measures'
+
 
 def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
     if isinstance(a, Number) and isinstance(b, Number):
@@ -31,15 +36,24 @@ def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
         return a == b
 
 
-def test_measures():
+def _get_measure_fixture(name):
     fpath = settings.REPO_ROOT
     fname = os.path.join(
-        fpath, ('openprescribing/frontend/tests/fixtures/'
-                'cerazette_measure.json'))
-    json_data = json.load(open(fname))
-    return {
-        'cerazette': json_data
-    }
+        fpath, ("openprescribing/frontend/tests/fixtures/measure_definitions/"
+                "{}.json".format(name)))
+    return [fname]
+
+
+def working_measure_files():
+    return _get_measure_fixture('cerazette')
+
+
+def broken_json_measure_files():
+    return _get_measure_fixture('bad_json')
+
+
+def broken_sql_measure_files():
+    return _get_measure_fixture('bad_sql')
 
 
 def parse_args(*opts_args):
@@ -55,8 +69,8 @@ def parse_args(*opts_args):
     return cmd.parse_options(options.__dict__)
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch(MODULE + '.get_measure_definition_paths',
+       new=working_measure_files)
 class ArgumentTestCase(TestCase):
     def test_start_and_end_dates(self):
         with self.assertRaises(CommandError):
@@ -79,8 +93,8 @@ class ArgumentTestCase(TestCase):
         self.assertEqual(result['end_date'], '1999-01-01')
 
 
-@patch('frontend.management.commands.import_measures.parse_measures',
-       new=MagicMock(return_value=test_measures()))
+@patch(MODULE + '.get_measure_definition_paths',
+       new=working_measure_files)
 class UnitTests(TestCase):
     """Unit tests with mocked bigquery. Many of the functional
     tests could be moved hree.
@@ -191,6 +205,8 @@ class BigqueryFunctionalTests(TestCase):
             current_at='2018-04-01',
             filename='/tmp/prescribing.csv',
         )
+        if 'SKIP_BQ_LOAD' in os.environ:
+            assert 'BQ_NONCE' in os.environ, "Specify BQ_NONCE to reuse fixtures"
 
         if 'SKIP_BQ_LOAD' not in os.environ:
             fixtures_path = os.path.join(
@@ -230,10 +246,23 @@ class BigqueryFunctionalTests(TestCase):
             'measure': 'cerazette',
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+        with patch(MODULE + '.get_measure_definition_paths',
+                   new=working_measure_files):
             call_command('import_measures', **opts)
+
+    @patch(MODULE + '.get_measure_definition_paths',
+           new=broken_json_measure_files)
+    def test_check_definition_bad_json(self):
+        with self.assertRaises(ValueError) as command_error:
+            call_command('import_measures', check=True)
+        self.assertIn("Problems parsing JSON", str(command_error.exception))
+
+    @patch(MODULE + '.get_measure_definition_paths',
+           new=broken_sql_measure_files)
+    def test_check_definition_bad_sql(self):
+        with self.assertRaises(BadRequest) as command_error:
+            call_command('import_measures', check=True)
+        self.assertIn("SQL error", str(command_error.exception))
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
         month = '2015-10-01'
@@ -244,9 +273,8 @@ class BigqueryFunctionalTests(TestCase):
             'measure': measure_id,
             'v': 3
         }
-        with patch('frontend.management.commands.import_measures'
-                   '.parse_measures',
-                   new=MagicMock(return_value=test_measures())):
+        with patch(MODULE + '.get_measure_definition_paths',
+                   new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', *args, **opts)
 
         m = Measure.objects.get(id='cerazette')
@@ -566,5 +594,7 @@ class TestParseMeasures(TestCase):
         measures = parse_measures()
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
-
+        # The order of these specific measures matters, as the SQL for
+        # the omnibus measure relies on the other LP measures having
+        # been calculated first
         self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
