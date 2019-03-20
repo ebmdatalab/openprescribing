@@ -18,7 +18,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import get_resolver
 from django.db import connection
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Count, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -247,8 +247,11 @@ def stp_home_page(request, stp_code):
 ##################################################
 
 def all_regional_teams(request):
-    regional_teams = RegionalTeam.objects.filter(
-        close_date__isnull=True).order_by('name')
+    # NHS reorganisations sometimes include regions before CCGs have
+    # been assigned, hence the filter on an aggregation here:
+    regional_teams = RegionalTeam.objects.annotate(
+        num_ccgs=Count('pct')).filter(
+            close_date__isnull=True, num_ccgs__gt=0).order_by('name')
     context = {
         'regional_teams': regional_teams
     }
