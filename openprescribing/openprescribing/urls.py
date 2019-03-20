@@ -94,6 +94,19 @@ urlpatterns = [
         redirect_if_tags_query(frontend_views.ccg_home_page),
         name='ccg_home_page'),
 
+    # STPs
+    url(r'^stp/$', frontend_views.all_stps, name='all_stps'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/$',
+        frontend_views.stp_home_page,
+        name='stp_home_page'),
+
+    # Regional teams
+    url(r'^regional-team/$', frontend_views.all_regional_teams,
+        name='all_regional_teams'),
+    url(r'^regional-team/(?P<regional_team_code>[A-Z\d]+)/$',
+        frontend_views.regional_team_home_page,
+        name='regional_team_home_page'),
+
     # All England
     url(r'^all-england/$',
         frontend_views.all_england,
@@ -159,10 +172,6 @@ urlpatterns = [
         frontend_views.all_measures,
         name='all_measures'),
 
-    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
-        frontend_views.measure_for_all_ccgs,
-        name='measure_for_all_ccgs'),
-
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/'
         'practice/(?P<entity_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_entity,
@@ -171,7 +180,15 @@ urlpatterns = [
     url(r'^measure/(?P<measure>[A-Za-z\d_]+)/ccg/(?P<entity_code>[A-Z\d]+)/$',
         frontend_views.measure_for_one_entity,
         name='measure_for_one_ccg',
-        kwargs={'entity_type': 'CCG'}),
+        kwargs={'entity_type': 'ccg'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/(?P<entity_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_entity,
+        name='measure_for_one_stp',
+        kwargs={'entity_type': 'stp'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/regional-team/(?P<entity_code>[A-Z\d]+)/$',
+        frontend_views.measure_for_one_entity,
+        name='measure_for_one_regional_team',
+        kwargs={'entity_type': 'regional_team'}),
 
     url(r'^practice/(?P<practice_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
@@ -179,9 +196,35 @@ urlpatterns = [
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_ccg,
         name='measures_for_one_ccg'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_stp,
+        name='measures_for_one_stp'),
+    url(r'^regional-team/(?P<regional_team_code>[A-Z\d]+)/measures/$',
+        frontend_views.measures_for_one_regional_team,
+        name='measures_for_one_regional_team'),
+
     url(r'^ccg/(?P<ccg_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
         frontend_views.measure_for_practices_in_ccg,
         name='measure_for_practices_in_ccg'),
+    url(r'^stp/(?P<stp_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_ccgs_in_stp,
+        name='measure_for_ccgs_in_stp'),
+    url(r'^regional-team/(?P<regional_team_code>[A-Z\d]+)/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_ccgs_in_regional_team,
+        name='measure_for_ccgs_in_regional_team'),
+
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/$',
+        frontend_views.measure_for_all_entities,
+        name='measure_for_all_ccgs',
+        kwargs={'entity_type': 'ccg'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/stp/$',
+        frontend_views.measure_for_all_entities,
+        name='measure_for_all_stps',
+        kwargs={'entity_type': 'stp'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/regional-team/$',
+        frontend_views.measure_for_all_entities,
+        name='measure_for_all_regional_teams',
+        kwargs={'entity_type': 'regional_team'}),
 
     # Tariffs
     url(r'^tariff/$', frontend_views.tariff,

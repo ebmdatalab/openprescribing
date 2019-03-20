@@ -85,6 +85,8 @@ def measure_numerators_by_org(request, format=None):
     org = utils.param_to_list(request.query_params.get('org', []))[0]
     if 'org_type' in request.query_params:
         org_selector = request.query_params['org_type'] + '_id'
+        if org_selector == 'ccg_id':
+            org_selector = 'pct_id'
     else:
         # This is here for backwards compatibility, in case anybody else is
         # using the API.  Now we have measures for regional teams, we cannot
@@ -207,7 +209,7 @@ def _measure_by_org(request, org_type):
     measure_ids = utils.param_to_list(request.query_params.get('measure', None))
     tags = utils.param_to_list(request.query_params.get('tags', []))
     org_ids = utils.param_to_list(request.query_params.get('org', []))
-    parent_org_type = utils.param_to_list(request.query_params.get('org', org_type))
+    parent_org_type = request.query_params.get('parent_org_type', None)
     aggregate = bool(request.query_params.get('aggregate'))
 
     if org_type == 'practice' and not (org_ids or aggregate):
@@ -215,18 +217,19 @@ def _measure_by_org(request, org_type):
     if len(org_ids) > 1 and len(measure_ids) > 1:
         raise InvalidMultiParameter
 
-    if org_type == 'practice' and org_ids:
-        l = len(org_ids[0])
-        assert all(len(org_id) == l for org_id in org_ids)
+    if parent_org_type is None:
+        if org_type == 'practice' and org_ids:
+            l = len(org_ids[0])
+            assert all(len(org_id) == l for org_id in org_ids)
 
-        if l == 3:
-            parent_org_type = 'pct'
-        elif l == 6:
-            parent_org_type = 'practice'
+            if l == 3:
+                parent_org_type = 'pct'
+            elif l == 6:
+                parent_org_type = 'practice'
+            else:
+                assert False, l
         else:
-            assert False, l
-    else:
-        parent_org_type = org_type
+            parent_org_type = org_type
 
     measure_values = MeasureValue.objects.by_org(
         org_type,

@@ -233,7 +233,7 @@ class TestAlertViews(TestCase):
         self._create_user_and_login(email)
         response = self._post_org_signup('03V', email=email)
         self.assertEqual(response.context['user'].email, email)
-        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measures_for_one_entity.html')
         self.assertContains(response, "You're now subscribed")
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(OrgBookmark.objects.count(), 1)
@@ -338,7 +338,7 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context['measures_count'], 2)
         self.assertEqual(response.context['possible_savings'], 200.0)
         self.assertEqual(response.context['entity'].code, '02Q')
-        self.assertEqual(response.context['entity_type'], 'CCG')
+        self.assertEqual(response.context['entity_type'], 'ccg')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
 
     def test_call_view_practice_homepage(self):
@@ -480,7 +480,7 @@ class TestFrontendViews(TestCase):
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), 'NHS Corby')
-        practices = doc('#practices li')
+        practices = doc('#child-entities li')
         self.assertEqual(len(practices), 2)
 
     def test_ccg_homepage_redirects_with_tags_query(self):
@@ -540,17 +540,17 @@ class TestFrontendViews(TestCase):
     def test_call_view_measure_ccg(self):
         response = self.client.get('/ccg/03V/measures/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measures_for_one_ccg.html')
+        self.assertTemplateUsed(response, 'measures_for_one_entity.html')
         doc = pq(response.content)
         title = doc('h1')
-        self.assertEqual(title.text(), 'CCG: NHS Corby')
-        practices = doc('#practices li')
+        self.assertEqual(title.text(), 'NHS Corby')
+        practices = doc('#child-entities li')
         self.assertEqual(len(practices), 2)
 
     def test_call_view_measure_practice(self):
         response = self.client.get('/practice/P87629/measures/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measures_for_one_practice.html')
+        self.assertTemplateUsed(response, 'measures_for_one_entity.html')
         doc = pq(response.content)
         title = doc('h1')
         self.assertEqual(title.text(), '1/ST Andrews Medical Practice')
@@ -558,11 +558,10 @@ class TestFrontendViews(TestCase):
     def test_call_view_measure_practices_in_ccg(self):
         response = self.client.get('/ccg/03V/cerazette/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'measure_for_practices_in_ccg.html')
+        self.assertTemplateUsed(response, 'measure_for_children_in_entity.html')
         doc = pq(response.content)
         title = doc('h1')
-        t = ('Cerazette vs. Desogestrel by GP practices '
-             'in NHS Corby')
+        t = 'Cerazette vs. Desogestrel by practices in NHS Corby'
         self.assertEqual(title.text(), t)
 
     def test_all_measures(self):

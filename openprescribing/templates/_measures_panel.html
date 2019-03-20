@@ -87,7 +87,10 @@
                 {{#if measureForAllPracticesUrl }}
                   <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
                 {{/if}}
-                <li><a href="{{ measureUrl }}">Compare all CCGs in England on this measure</a></li>
+                {{#if measureForAllCCGsUrl }}
+                  <li><a href="{{ measureForAllCCGsUrl }}">Split the measure into charts for individual CCGs</a></li>
+                {{/if}}
+                <li><a href="{{ measureUrl }}">Compare all {{ comparisonOrgTypeHuman }}s in England on this measure</a></li>
               </ul>
             </div>
             <div class="descriptive">

@@ -84,6 +84,10 @@ class RegionalTeam(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
 
 class STP(models.Model):
     ons_code = models.CharField(max_length=9, primary_key=True)
@@ -91,6 +95,14 @@ class STP(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
+    @property
+    def code(self):
+        return self.ons_code
 
 
 class PCT(models.Model):

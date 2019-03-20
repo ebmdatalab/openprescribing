@@ -201,7 +201,7 @@ describe('Measures', function() {
         numerator_short: "High-cost ACEs quantity",
         title: "TBA"
       };
-      var result = mu._rollUpByOrg(data, 'CCG');
+      var result = mu._rollUpByOrg(data, 'ccg');
       expect(result.length).to.equal(2);
       expect(result[0].data[0].date).to.equal('2015-01-01');
     });
@@ -546,7 +546,8 @@ describe('Measures', function() {
       },
       options = {
         orgId: '99P',
-        orgType: 'CCG',
+        orgType: 'ccg',
+        orgTypeHuman: 'CCG',
         rollUpBy: 'org_id',
         globalYMax: { y: 50},
         globalYMin: { y: 0}
@@ -567,7 +568,7 @@ describe('Measures', function() {
       var result = mu.getChartDataAsTable({
         "chartId": "ktt9_uti_antibiotics",
         "chartTitle": "Antibiotic stewardship: three-day courses for uncomplicated UTIs",
-        "orgType": "CCG",
+        "orgType": "ccg",
         "data": [
           {
             "denominator": 1744,
