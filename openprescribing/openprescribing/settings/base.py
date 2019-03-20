@@ -299,7 +299,12 @@ REST_FRAMEWORK = {
         'rest_framework_csv.renderers.CSVRenderer',
     ),
     'DEFAULT_CONTENT_NEGOTIATION_CLASS':
-    'frontend.negotiation.IgnoreAcceptsContentNegotiation',
+        'frontend.negotiation.IgnoreAcceptsContentNegotiation',
+    # This removes HTTP BasicAuthentication, which DRF includes by default, as that
+    # clashes with the BasicAuth we use to protect staging from bots
+     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
 }
 
 CORS_URLS_REGEX = r'^/api/.*$'
