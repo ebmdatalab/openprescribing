@@ -30,7 +30,8 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '1302011L0%' OR        --Light Liquid Paraffin \n",
+    "(bnf_code LIKE '130201100%' OR        --Emollient Bath & Shower Preparation \n",
+    "bnf_code LIKE '1302011L0%' OR         --Light Liquid Paraffin \n",
     "bnf_code = '21220000128' OR           --Hydromol Bath & Shower Emollient 350ml (App) \n",
     "bnf_code = '21220000129' OR           --Hydromol Bath & Shower Emollient 500ml (App) \n",
     "bnf_code = '21220000130' OR           --Hydromol Bath & Shower Emollient 1L (App) \n",
@@ -39,7 +40,7 @@
     "bnf_code = '21220000227' OR           --Zerolatum Bath Add \n",
     "bnf_code = '21220000229')             --LPL 63.4 Bath Add and Emollient \n",
     "AND (bnf_code NOT LIKE '130201100%AJ' --Soya Oil_Liq 83.35% (brands and generics) \n",
-    "AND bnf_code NOT LIKE '130201100%AM') -- Aq_Crm)"
+    "AND bnf_code NOT LIKE '130201100%AM') -- Aq_Crm (brands and generics))"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
