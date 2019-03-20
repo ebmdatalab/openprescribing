@@ -216,6 +216,8 @@
 {% block extra_js %}
 <script>
   var maxZoom = 6;
+  {% if entity_type == 'practice' or entity_type == 'ccg' %}
+  {# Ghost-branded generics are not yet implemented for STPs and regions #}
   $.getJSON(
     "/api/1.0/ghost_generics/?entity_code={{ entity.code }}&date={{ date|date:"Y-m-d"}}&entity_type={{ entity_type }}&group_by=all&format=json", function(data) {
     function numberWithCommas(x) {
@@ -230,8 +232,8 @@
     }
     $('#ghost-total').html(msg);
     $('#ghost-total-text').css('visibility', 'visible');
-
   });
+  {% endif %}
 </script>
 {{ measure_options|json_script:"measure-options" }}
 {% conditional_js 'measures' %}
