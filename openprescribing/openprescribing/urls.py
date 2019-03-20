@@ -101,7 +101,8 @@ urlpatterns = [
         name='stp_home_page'),
 
     # Regional teams
-    url(r'^regional-team/$', frontend_views.all_regional_teams, name='all_regional_teams'),
+    url(r'^regional-team/$', frontend_views.all_regional_teams,
+        name='all_regional_teams'),
     url(r'^regional-team/(?P<regional_team_code>[A-Z\d]+)/$',
         frontend_views.regional_team_home_page,
         name='regional_team_home_page'),

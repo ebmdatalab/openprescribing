@@ -247,7 +247,8 @@ def stp_home_page(request, stp_code):
 ##################################################
 
 def all_regional_teams(request):
-    regional_teams = RegionalTeam.objects.filter(close_date__isnull=True).order_by('name')
+    regional_teams = RegionalTeam.objects.filter(
+        close_date__isnull=True).order_by('name')
     context = {
         'regional_teams': regional_teams
     }
@@ -464,9 +465,7 @@ def measure_for_ccgs_in_regional_team(request, regional_team_code, measure):
 
 
 def _measure_for_children_in_entity(
-        request, measure, parent_entity_code, parent_entity_type
-    ):
-
+        request, measure, parent_entity_code, parent_entity_type):
     parent = _get_entity(parent_entity_type, parent_entity_code)
     child_entity_type = {
         'ccg': 'practice',
@@ -487,7 +486,7 @@ def _measure_for_children_in_entity(
     if measure.tags_focus:
         measure_options['tagsFocus'] = ','.join(measure.tags_focus)
 
-    measure_options =  _build_measure_options(measure_options)
+    measure_options = _build_measure_options(measure_options)
 
     context = {
         'parent_entity_type': parent_entity_type,
@@ -1118,7 +1117,7 @@ def _home_page_context_for_entity(request, entity):
             entity_type.lower())
         context['date'] = _specified_or_last_date(request, 'ppu')
         context['possible_savings'] = _total_savings(entity, context['date'])
-        context['ncso_spending'] =  _first_or_none(
+        context['ncso_spending'] = _first_or_none(
             ncso_spending_for_entity(entity, entity_type, num_months=1)
         )
         context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
