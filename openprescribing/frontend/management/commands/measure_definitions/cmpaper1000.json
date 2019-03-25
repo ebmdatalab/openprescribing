@@ -31,6 +31,6 @@
   ],
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
-    "(male_0_4) > 10 "
+    "1 = 1"
   ]
 }
