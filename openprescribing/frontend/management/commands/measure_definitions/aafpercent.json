@@ -17,8 +17,16 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
-    "cardiovascular",
     "core"
+  ],
+  "date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
+  ],
+  "measure_complexity": [
+    "high"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
