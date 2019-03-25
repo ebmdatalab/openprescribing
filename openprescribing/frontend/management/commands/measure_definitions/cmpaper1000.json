@@ -27,9 +27,6 @@
     "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
   ],
   "denominator_columns": [
-    "SUM(quantity) AS denominator, "
-  ],
-  "denominator_columns": [
     "(max(male_0_4) + max(female_0_4)) ",
     "/ 1000.0 AS denominator "
   ],
