@@ -40,6 +40,6 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
   "denominator_where": [
-    "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
+    "r.type != 'exclude'  --this filters to all products not listed as 'excluded' in the products table'"
   ]
 }
