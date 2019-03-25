@@ -32,6 +32,6 @@
   ],
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
-    " (max(male_0_4) + max(female_0_4)) > 10 "
+    "(male_0_4) > 10 "
   ]
 }
