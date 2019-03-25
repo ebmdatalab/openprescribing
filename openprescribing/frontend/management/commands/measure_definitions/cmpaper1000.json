@@ -1,0 +1,40 @@
+{
+  "name": "Cost of milk formulas for Cow's Milk Protein Allergy (CMPA) per 1000 listed patients aged 0-5",
+  "title": [
+    "Prescribing for Cow's Milk Protein Allergy (CMPA) per 1000 patients aged 0-4"
+  ],
+  "description": [
+    "Cost of milk formulas for Cow's Milk Protein Allergy (CMPA) per 1000 listed patients aged 0-5"
+  ],
+  "why_it_matters": [
+    "Prescribing for Cow's Milk Protein Allergy is increasing. Milk formulas are expensive, and should be reviewed ",
+    "regularly to ensure that they are still required, particularly when Amino Acid Formula (AAF) products are used."
+  ],
+  "numerator_short": "AAF cost (£)",
+  "denominator_short": "Listed patients aged 0-4",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "core"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+"numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
+"numerator_where": [
+    "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
+  ],
+  "denominator_columns": [
+    "SUM(quantity) AS denominator, "
+  ],
+  "denominator_columns": [
+    "(max(male_0_4) + max(female_0_4)) ",
+    "/ 1000.0 AS denominator "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    " (max(male_0_4) + max(female_0_4)) > 10 "
+  ]
+}
