@@ -123,7 +123,7 @@ class Command(BaseCommand):
         assert 'price' in records[0][2].lower()
 
         for record in records[1:]:
-            drug, pack_size, price_concession = record
+            drug, pack_size, price_concession = [fix_spaces(item) for item in record]
             drug = drug.replace('(new)', '').strip()
             match = re.search(u'£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
@@ -194,13 +194,16 @@ class Command(BaseCommand):
         return None
 
 
+def fix_spaces(s):
+    '''Remove extra spaces and convert non-breaking spaces to normal ones.'''
+
+    s = s.replace(u'\xa0', ' ')
+    s = s.strip()
+    s = re.sub(' +', ' ', s)
+    return s
+
+
 def regularise_ncso_name(name):
-    # Some NCSO records have non-breaking spaces
-    name = name.replace(u'\xa0', '')
-
-    # Some NCSO records have multiple spaces
-    name = re.sub(' +', ' ', name)
-
     # dm+d uses "microgram" or "micrograms", usually with these rules
     name = name.replace('mcg ', 'microgram ')
     name = name.replace('mcg/', 'micrograms/')
