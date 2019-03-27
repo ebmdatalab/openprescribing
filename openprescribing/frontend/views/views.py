@@ -943,6 +943,13 @@ def error(request):
     raise RuntimeError('Deliberate error triggered for testing purposes')
 
 
+# This view is for uptime monitoring
+def ping(request):
+    num_practices = Practice.objects.count()
+    rsp = 'Pong: there are {} practices'.format(num_practices)
+    return HttpResponse(rsp)
+
+
 ##################################################
 # Helpers
 ##################################################
