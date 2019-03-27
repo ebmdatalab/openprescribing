@@ -20,33 +20,20 @@ logger = logging.getLogger(__file__)
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.vmpps = DMDVmpp.objects.values('nm', 'vppid')
-        self.counter = {
-            'new-and-matched': 0,
-            'new-and-unmatched': 0,
-            'changed': 0,
-            'unchanged': 0,
-        }
+        num_before = NCSOConcession.objects.count()
         self.import_from_archive()
         self.import_from_current()
-
+        num_after = NCSOConcession.objects.count()
         num_unmatched = NCSOConcession.objects.filter(vmpp__isnull=True).count()
-
-        logger.info('New and matched: %s', self.counter['new-and-matched'])
-        logger.info('New and unmatched: %s', self.counter['new-and-unmatched'])
-        logger.info('Changed: %s', self.counter['changed'])
-        logger.info('Unchanged: %s', self.counter['unchanged'])
-        logger.info('Unmatched: %s', num_unmatched)
 
         Client('dmd').upload_model(NCSOConcession)
 
-        msg = '\n'.join([
-            'Imported NCSO concessions',
-            'New and matched: %s' % self.counter['new-and-matched'],
-            'New and unmatched: %s' % self.counter['new-and-unmatched'],
-            'Changed: %s' % self.counter['changed'],
-            'Unchanged: %s' % self.counter['unchanged'],
-            'Unmatched: %s' % num_unmatched,
-        ])
+        if num_before == num_after:
+            msg = 'Found no new concessions to import'
+        else:
+            msg = 'Imported %s new concessions' % (num_after - num_before)
+        if num_unmatched:
+            msg += '\nThere are %s unmatched concessions' % num_unmatched
         notify_slack(msg)
 
     def import_from_archive(self):
@@ -56,12 +43,7 @@ class Command(BaseCommand):
         for h2 in doc.find_all('h2', class_='trigger'):
             table = h2.find_next('table')
             date = self.date_from_heading(h2)
-
-            num_records = self.import_from_table(table, date)
-
-            if num_records < NCSOConcession.objects.filter(date=date).count():
-                msg = 'NCSO concession(s) removed from source for {}'.format(date)
-                notify_slack(msg)
+            self.import_from_table(table, date)
 
     def download_archive(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/'
@@ -78,14 +60,8 @@ class Command(BaseCommand):
 
         date = self.date_from_heading(h1s[0])
 
-        num_records = 0
-
         for table in doc.find_all('table'):
-            num_records += self.import_from_table(table, date)
-
-        if num_records < NCSOConcession.objects.filter(date=date).count():
-            msg = 'NCSO concession(s) removed from source for {}'.format(date)
-            notify_slack(msg)
+            self.import_from_table(table, date)
 
     def download_current(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/'
@@ -114,7 +90,7 @@ class Command(BaseCommand):
             # Non-concession tables with three columns will obviously slip
             # through the net here, but will presumably trigger the asserts
             # below, and we can cross that bridge when the time comes.
-            return 0
+            return
 
         # Make sure the first row contains expected headers.
         # Unfortunately, the header names are not consistent.
@@ -122,51 +98,36 @@ class Command(BaseCommand):
         assert 'pack' in records[0][1].lower()
         assert 'price' in records[0][2].lower()
 
+        drugs_and_pack_sizes = set()
+
         for record in records[1:]:
-            drug, pack_size, price_concession = record
+            drug, pack_size, price_concession = [fix_spaces(item) for item in record]
             drug = drug.replace('(new)', '').strip()
             match = re.search(u'£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
-            self.import_record(date, drug, pack_size, price_concession_pence)
+            drugs_and_pack_sizes.add(u'{} {}'.format(drug, pack_size))
 
-        return len(records) - 1
+            NCSOConcession.objects.get_or_create(
+                date=date,
+                drug=drug,
+                pack_size=pack_size,
+                price_concession_pence=price_concession_pence,
+            )
 
-    def import_record(self, date, drug, pack_size, price_concession_pence):
-        concession, created = NCSOConcession.objects.get_or_create(
-            date=date,
-            drug=drug,
-            pack_size=pack_size,
-            defaults={'price_concession_pence': price_concession_pence}
-        )
+        for concession in NCSOConcession.objects.filter(date=date):
+            drug_and_pack_size = u'{} {}'.format(concession.drug, concession.pack_size)
+            if drug_and_pack_size not in drugs_and_pack_sizes:
+                concession.delete()
 
-        if created:
-            logger.info('Created new NCSOConcession for %s %s',
-                        drug, pack_size)
-            concession.price_concession_pence = price_concession_pence
+        self.reconcile()
+
+    def reconcile(self):
+        for concession in NCSOConcession.objects.filter(vmpp_id__isnull=True):
             matching_vmpp_id = self.get_matching_vmpp_id(concession)
             if matching_vmpp_id is not None:
-                logger.info('Found matching VMPP: %s', matching_vmpp_id)
                 concession.vmpp_id = matching_vmpp_id
-                status = 'new-and-matched'
-            else:
-                logger.info('Found no matching VMPP')
-                status = 'new-and-unmatched'
-
-            concession.save()
-
-        elif concession.price_concession_pence != price_concession_pence:
-            logger.info('Price has changed for %s %s', drug, pack_size)
-            logger.info('Was: %s', concession.price_concession_pence)
-            logger.info('Now: %s', price_concession_pence)
-            concession.price_concession_pence = price_concession_pence
-            concession.save()
-            status = 'changed'
-
-        else:
-            status = 'unchanged'
-
-        self.counter[status] += 1
+                concession.save()
 
     def get_matching_vmpp_id(self, concession):
         previous_concession = NCSOConcession.objects.filter(
@@ -194,13 +155,16 @@ class Command(BaseCommand):
         return None
 
 
+def fix_spaces(s):
+    '''Remove extra spaces and convert non-breaking spaces to normal ones.'''
+
+    s = s.replace(u'\xa0', ' ')
+    s = s.strip()
+    s = re.sub(' +', ' ', s)
+    return s
+
+
 def regularise_ncso_name(name):
-    # Some NCSO records have non-breaking spaces
-    name = name.replace(u'\xa0', '')
-
-    # Some NCSO records have multiple spaces
-    name = re.sub(' +', ' ', name)
-
     # dm+d uses "microgram" or "micrograms", usually with these rules
     name = name.replace('mcg ', 'microgram ')
     name = name.replace('mcg/', 'micrograms/')
