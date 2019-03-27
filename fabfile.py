@@ -253,8 +253,11 @@ def setup_env_from_environment(environment):
 
 @task
 def clear_cloudflare():
-    with prefix('source .venv/bin/activate'):
-        run("python deploy/clear_cache.py")
+    setup_env_from_environment('production')
+
+    with cd(env.path):
+        with prefix('source .venv/bin/activate'):
+            result = run("python deploy/clear_cache.py")
 
 
 @task
