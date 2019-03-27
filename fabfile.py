@@ -277,3 +277,31 @@ def deploy(environment, force_build=False, branch='master'):
         clear_cloudflare()
         setup_cron()
         log_deploy()
+
+
+@task
+def call_management_command(command_name, environment, args, kwargs):
+    '''Invokes management command in environment.
+
+    Returns output of command.
+
+    args and kwargs are passed to the command, with some best-effort shell
+    quoting.  (When we upgrade to Python 3, we can use shlex.quote.)
+    '''
+
+    cmd = 'python openprescribing/manage.py {}'.format(command_name)
+
+    for arg in args:
+        assert '"' not in arg
+        cmd += ' "{}"'.format(arg)
+
+    for k, v in kwargs.items():
+        assert '"' not in v
+        cmd += ' --{}="{}"'.format(k, v)
+
+    setup_env_from_environment(environment)
+    with cd(env.path):
+        with prefix('source .venv/bin/activate'):
+            output = run(cmd)
+
+    return output
