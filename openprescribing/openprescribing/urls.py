@@ -65,6 +65,7 @@ urlpatterns = [
         name="alert_example"),
 
     url(r'^500/$', frontend_views.error, name='error'),
+    url(r'^ping/$', frontend_views.ping, name='ping'),
 
     ##################################################
     # User-facing pages.
