@@ -51,5 +51,8 @@
   ],
   "measure_complexity": [
     "high"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb"
   ]
 }
