@@ -33,5 +33,20 @@
   "denominator_from": "{hscic}.practice_statistics ",
   "denominator_where": [
     "1 = 1"
+  ],
+"date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
+  ],
+  "authored_by": [
+    "RC"
+  ],
+  "checked_by": [
+    "BMK"
+  ],
+  "measure_complexity": [
+    "high"
   ]
 }
