@@ -776,7 +776,8 @@ class TestNCSOConcessions(TestCase):
             'Your update about NCSO Concessions for Practice 2'
         )
         self.assertIn('published for **July 2018**', msg.body)
-        self.assertIn(u'cost Practice 2 an additional **\xa3206**', msg.body)
+        self.assertIn('prescribed at Practice 2', msg.body)
+        self.assertIn(u'an additional **\xa3206**', msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML('<b>July 2018</b>', html)
