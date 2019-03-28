@@ -100,6 +100,9 @@ LOGGING = {
     }
 }
 
+# BigQuery project name
+BQ_MEASURES_DATASET = 'staging_{}'.format(BQ_MEASURES_DATASET)
+
 # For grabbing images that we insert into alert emails
 GRAB_HOST = "http://staging.openprescribing.net"
 
