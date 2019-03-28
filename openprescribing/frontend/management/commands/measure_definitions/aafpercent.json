@@ -23,15 +23,6 @@
     "nutrition",
     "core"
   ],
-  "date_reviewed": [
-    "2019-03-25"
-  ],
-  "next_review": [
-    "2019-10-01"
-  ],
-  "measure_complexity": [
-    "high"
-  ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -45,5 +36,20 @@
   "denominator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
   "denominator_where": [
     "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
+  ],
+  "date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
+  ],
+  "authored_by": [
+    "RC"
+  ],
+  "checked_by": [
+    "BMK"
+  ],
+  "measure_complexity": [
+    "high"
   ]
 }
