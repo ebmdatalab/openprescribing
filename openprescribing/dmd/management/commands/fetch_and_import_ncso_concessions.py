@@ -23,6 +23,7 @@ class Command(BaseCommand):
         num_before = NCSOConcession.objects.count()
         self.import_from_archive()
         self.import_from_current()
+        self.reconcile()
         num_after = NCSOConcession.objects.count()
         num_unmatched = NCSOConcession.objects.filter(vmpp__isnull=True).count()
 
@@ -43,7 +44,8 @@ class Command(BaseCommand):
         for h2 in doc.find_all('h2', class_='trigger'):
             table = h2.find_next('table')
             date = self.date_from_heading(h2)
-            self.import_from_table(table, date)
+            drugs_and_pack_sizes = self.import_from_table(table, date)
+            self.delete_missing(drugs_and_pack_sizes, date)
 
     def download_archive(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/ncso-archive/'
@@ -60,8 +62,12 @@ class Command(BaseCommand):
 
         date = self.date_from_heading(h1s[0])
 
+        drugs_and_pack_sizes = set()
+
         for table in doc.find_all('table'):
-            self.import_from_table(table, date)
+            drugs_and_pack_sizes |= self.import_from_table(table, date)
+
+        self.delete_missing(drugs_and_pack_sizes, date)
 
     def download_current(self):
         url = 'http://psnc.org.uk/dispensing-supply/supply-chain/generic-shortages/'
@@ -75,10 +81,18 @@ class Command(BaseCommand):
         return datetime.date(int(year), month, 1)
 
     def import_from_table(self, table, date):
+        '''Creates NCSOConcession objects for any new records in the table.
+
+        Returns set of strings containing drug name and pack size for all
+        records in the table.
+        '''
+
+        logger.info('import_from_table %s', date)
+
         if date < datetime.date(2014, 8, 1):
             # Data older than August 2018 is in a different format and we don't
             # need it at the moment.
-            return 0
+            return set()
 
         trs = table.find_all('tr')
         records = [[td.text.strip() for td in tr.find_all('td')] for tr in trs]
@@ -90,7 +104,7 @@ class Command(BaseCommand):
             # Non-concession tables with three columns will obviously slip
             # through the net here, but will presumably trigger the asserts
             # below, and we can cross that bridge when the time comes.
-            return
+            return set()
 
         # Make sure the first row contains expected headers.
         # Unfortunately, the header names are not consistent.
@@ -106,24 +120,30 @@ class Command(BaseCommand):
             match = re.search(u'£(\d+)\.(\d\d)', price_concession)
             price_concession_pence = 100 * int(match.groups()[0]) \
                 + int(match.groups()[1])
-            drugs_and_pack_sizes.add(u'{} {}'.format(drug, pack_size))
+            drug_and_pack_size = u'{} {}'.format(drug, pack_size)
+            drugs_and_pack_sizes.add(drug_and_pack_size)
 
-            NCSOConcession.objects.get_or_create(
+            _, created = NCSOConcession.objects.get_or_create(
                 date=date,
                 drug=drug,
                 pack_size=pack_size,
                 price_concession_pence=price_concession_pence,
             )
 
-        for concession in NCSOConcession.objects.filter(date=date):
-            drug_and_pack_size = u'{} {}'.format(concession.drug, concession.pack_size)
-            if drug_and_pack_size not in drugs_and_pack_sizes:
-                concession.delete()
+            if created:
+                logger.info('Creating %s %s', drug_and_pack_size, date)
 
-        self.reconcile()
+        return drugs_and_pack_sizes
+
+    def delete_missing(self, drugs_and_pack_sizes, date):
+        for concession in NCSOConcession.objects.filter(date=date):
+            if concession.drug_and_pack_size not in drugs_and_pack_sizes:
+                logger.info('Deleting %s %s', concession.drug_and_pack_size, date)
+                concession.delete()
 
     def reconcile(self):
         for concession in NCSOConcession.objects.filter(vmpp_id__isnull=True):
+            logger.info('Reconciling %s', concession.drug_and_pack_size)
             matching_vmpp_id = self.get_matching_vmpp_id(concession)
             if matching_vmpp_id is not None:
                 concession.vmpp_id = matching_vmpp_id
@@ -133,6 +153,7 @@ class Command(BaseCommand):
         previous_concession = NCSOConcession.objects.filter(
             drug=concession.drug,
             pack_size=concession.pack_size,
+            vmpp__isnull=False,
         ).exclude(
             date=concession.date
         ).first()
@@ -141,8 +162,7 @@ class Command(BaseCommand):
             logger.info('Found previous matching concession')
             return previous_concession.vmpp_id
 
-        ncso_name_raw = u'{} {}'.format(concession.drug, concession.pack_size)
-        ncso_name = regularise_ncso_name(ncso_name_raw)
+        ncso_name = regularise_ncso_name(concession.drug_and_pack_size)
 
         for vmpp in self.vmpps:
             vpmm_name = re.sub(' */ *', '/', vmpp['nm'].lower())

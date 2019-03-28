@@ -6,7 +6,7 @@ from mock import call, patch
 import bs4
 
 from django.conf import settings
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from django.db import connection
 from django.test import TestCase
 
@@ -264,6 +264,29 @@ class CommandsTestCase(TestCase):
             self.assertEqual(concession.pack_size, pack_size)
             self.assertEqual(concession.price_concession_pence, pcp)
             self.assertEqual(concession.vmpp, vmpp)
+
+    def test_reconcile_ncso_concession(self):
+        vmpp = DMDVmpp.objects.create(
+            vppid=1191111000001100,
+            nm='Amiloride 5mg tablets 28 tablet',
+        )
+
+        concession = NCSOConcession.objects.create(
+            id=1234,
+            date='2017-10-01',
+            drug='Amiloride 5mg tablets',
+            pack_size='28',
+            price_concession_pence=925,
+            vmpp_id=None,
+        )
+
+        call_command('reconcile_ncso_concession', 1234, 1191111000001100)
+
+        with self.assertRaises(CommandError):
+            call_command('reconcile_ncso_concession', 9234, 1191111000001100)
+
+        with self.assertRaises(CommandError):
+            call_command('reconcile_ncso_concession', 1234, 9191111000001100)
 
     def test_reconcile_ncso_concessions(self):
         vmpp = DMDVmpp.objects.create(
