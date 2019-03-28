@@ -40,7 +40,7 @@ class Command(BaseCommand):
         if num_unmatched_concessions > 0:
             lines.append("")
             lines.append("To reconcile, tell ebmbot:")
-            lines.append("`op reconcile concession [ID] against [VMPP ID]`")
+            lines.append("`op ncso reconcile concession [ID] against vmpp [VMPP ID]`")
 
         for c in unmatched_concessions:
             lines.append("-" * 80)
