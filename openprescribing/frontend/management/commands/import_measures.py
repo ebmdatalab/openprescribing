@@ -89,25 +89,26 @@ class Command(BaseCommand):
                         verbose=verbose
                     )
 
-                    # Delete any existing measures data older than five years ago.
-                    l = ImportLog.objects.latest_in_category('prescribing')
-                    five_years_ago = l.current_at - relativedelta(years=5)
-                    MeasureValue.objects.filter(month__lte=five_years_ago)\
-                                        .filter(measure=measure).delete()
-                    MeasureGlobal.objects.filter(month__lte=five_years_ago)\
-                                         .filter(measure=measure).delete()
+                    if not options['bigquery_only']:
+                        # Delete any existing measures data older than five years ago.
+                        l = ImportLog.objects.latest_in_category('prescribing')
+                        five_years_ago = l.current_at - relativedelta(years=5)
+                        MeasureValue.objects.filter(month__lte=five_years_ago)\
+                                            .filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(month__lte=five_years_ago)\
+                                             .filter(measure=measure).delete()
 
-                    # Delete any existing measures data relating to the
-                    # current month(s)
-                    MeasureValue.objects.filter(month__gte=start_date)\
-                                        .filter(month__lte=end_date)\
-                                        .filter(measure=measure).delete()
-                    MeasureGlobal.objects.filter(month__gte=start_date)\
-                                         .filter(month__lte=end_date)\
-                                         .filter(measure=measure).delete()
+                        # Delete any existing measures data relating to the
+                        # current month(s)
+                        MeasureValue.objects.filter(month__gte=start_date)\
+                                            .filter(month__lte=end_date)\
+                                            .filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(month__gte=start_date)\
+                                             .filter(month__lte=end_date)\
+                                             .filter(measure=measure).delete()
 
                     # Compute the measures
-                    calcuation.calculate()
+                    calcuation.calculate(options['bigquery_only'])
 
                 elapsed = datetime.now() - measure_start
                 logger.warning("Elapsed time for %s: %s seconds" % (
@@ -133,6 +134,7 @@ class Command(BaseCommand):
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
         parser.add_argument('--definitions_only', action='store_true')
+        parser.add_argument('--bigquery_only', action='store_true')
         parser.add_argument('--check', action='store_true')
 
     def parse_options(self, options):
@@ -376,14 +378,14 @@ class MeasureCalculation(object):
         """
         self.calculate_practice_ratios(dry_run=True)
 
-    def calculate(self):
-        self.calculate_practices()
-        self.calculate_orgs('ccg')
-        self.calculate_orgs('stp')
-        self.calculate_orgs('regtm')  # Regional Team
-        self.calculate_global()
+    def calculate(self, bigquery_only=False):
+        self.calculate_practices(bigquery_only=bigquery_only)
+        self.calculate_orgs('ccg', bigquery_only=bigquery_only)
+        self.calculate_orgs('stp', bigquery_only=bigquery_only)
+        self.calculate_orgs('regtm', bigquery_only=bigquery_only)  # Regional Team
+        self.calculate_global(bigquery_only=bigquery_only)
 
-    def calculate_practices(self):
+    def calculate_practices(self, bigquery_only=False):
         """Calculate ratios, centiles and (optionally) cost savings at a
         practice level, and write these to the database.
 
@@ -393,7 +395,8 @@ class MeasureCalculation(object):
         self.calculate_global_centiles_for_practices()
         if self.measure.is_cost_based:
             self.calculate_cost_savings_for_practices()
-        self.write_practice_ratios_to_database()
+        if not bigquery_only:
+            self.write_practice_ratios_to_database()
 
     def calculate_practice_ratios(self, dry_run=False):
         """Given a measure defition, construct a BigQuery query which computes
@@ -516,7 +519,7 @@ class MeasureCalculation(object):
             cursor.copy_expert(copy_str % ", ".join(fieldnames), f)
         f.close()
 
-    def calculate_orgs(self, org_type):
+    def calculate_orgs(self, org_type, bigquery_only=False):
         """Calculate ratios, centiles and (optionally) cost savings at a
         organisation level, and write these to the database.
 
@@ -526,7 +529,8 @@ class MeasureCalculation(object):
         self.calculate_global_centiles_for_orgs(org_type)
         if self.measure.is_cost_based:
             self.calculate_cost_savings_for_orgs(org_type)
-        self.write_org_ratios_to_database(org_type)
+        if not bigquery_only:
+            self.write_org_ratios_to_database(org_type)
 
     def calculate_org_ratios(self, org_type):
         """Sums all the fields in the per-practice table, grouped by
@@ -606,10 +610,11 @@ class MeasureCalculation(object):
             datum['percentile'] = normalisePercentile(datum['percentile'])
             MeasureValue.objects.create(**datum)
 
-    def calculate_global(self):
+    def calculate_global(self, bigquery_only=False):
         if self.measure.is_cost_based:
             self.calculate_global_cost_savings()
-        self.write_global_centiles_to_database()
+        if not bigquery_only:
+            self.write_global_centiles_to_database()
 
     def calculate_global_cost_savings(self):
         """Sum cost savings at practice and CCG levels.
