@@ -831,6 +831,7 @@ def make_ncso_concession_email(bookmark, tag=None):
         'latest_month': latest_month,
         'last_prescribing_month': last_prescribing_month,
         'entity_name': bookmark.entity_cased_name,
+        'entity_type': bookmark.entity_type,
         'additional_cost': monthly_totals[0]['additional_cost'],
         'breakdown': breakdown,
         'concessions_url': concessions_url,
