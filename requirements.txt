@@ -60,7 +60,7 @@ mailchimp3==3.0.7
 mccabe==0.6.1             # via flake8
 mock==2.0.0
 networkx==2.2
-newrelic==4.16.0.116
+newrelic==4.16.1.117
 numpy==1.16.2
 oauthlib==2.0.4           # via requests-oauthlib
 odfpy==1.3.6              # via tablib
