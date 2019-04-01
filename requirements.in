@@ -36,7 +36,7 @@ pandas-gbq==0.3.1
 pandas==0.24.2
 premailer==3.4.0
 psycopg2-binary==2.7.7
-pyarrow==0.12.1
+pyarrow==0.13.0
 python-dateutil==2.8.0
 pytz==2018.9
 raven
