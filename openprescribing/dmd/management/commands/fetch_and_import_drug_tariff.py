@@ -28,11 +28,8 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        host = 'https://www.nhsbsa.nhs.uk'
-        index = (host +
-                 '/pharmacies-gp-practices-and-appliance-contractors/'
-                 'drug-tariff/drug-tariff-part-viii/')
-        rsp = requests.get(index)
+        url = 'https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff/drug-tariff-part-viii/'
+        rsp = requests.get(url)
         doc = bs4.BeautifulSoup(rsp.content, 'html.parser')
 
         month_names = [x.lower() for x in calendar.month_name]
@@ -66,7 +63,7 @@ class Command(BaseCommand):
             ).exists():
                 continue
 
-            xls_url = urljoin(index, a.attrs['href'])
+            xls_url = urljoin(url, a.attrs['href'])
             xls_file = StringIO(requests.get(xls_url).content)
 
             import_month(xls_file, date)
