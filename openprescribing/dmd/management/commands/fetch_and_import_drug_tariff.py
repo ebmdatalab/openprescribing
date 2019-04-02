@@ -28,11 +28,8 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        host = 'https://www.nhsbsa.nhs.uk'
-        index = (host +
-                 '/pharmacies-gp-practices-and-appliance-contractors/'
-                 'drug-tariff/drug-tariff-part-viii/')
-        rsp = requests.get(index)
+        url = 'https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff/drug-tariff-part-viii/'
+        rsp = requests.get(url)
         doc = bs4.BeautifulSoup(rsp.content, 'html.parser')
 
         month_names = [x.lower() for x in calendar.month_name]
@@ -52,6 +49,11 @@ class Command(BaseCommand):
             month_name, year = words[-2:]
             if len(year) == 2:
                 year = "20" + year
+            elif len(year) > 4:
+                # We have seen the last token in `words` be "2019_0".  If the
+                # first 4 characters of `year` are not digits, then `int(year)`
+                # will fail below.
+                year = year[:4]
 
             try:
                 month = month_names.index(month_name.lower())
@@ -66,7 +68,7 @@ class Command(BaseCommand):
             ).exists():
                 continue
 
-            xls_url = urljoin(index, a.attrs['href'])
+            xls_url = urljoin(url, a.attrs['href'])
             xls_file = StringIO(requests.get(xls_url).content)
 
             import_month(xls_file, date)
