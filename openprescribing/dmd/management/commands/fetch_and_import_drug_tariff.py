@@ -47,13 +47,13 @@ class Command(BaseCommand):
                 urllib.unquote(os.path.splitext(
                     os.path.basename(a.attrs['href']))[0]))
             month_name, year = words[-2:]
+
+            # We have seen the last token in `words` be "19_0".  The year is
+            # reported to us via Slack, so if we pull out some nonsense here we
+            # *should* notice.
+            year = re.match('\d+', year).group()
             if len(year) == 2:
                 year = "20" + year
-            elif len(year) > 4:
-                # We have seen the last token in `words` be "2019_0".  If the
-                # first 4 characters of `year` are not digits, then `int(year)`
-                # will fail below.
-                year = year[:4]
 
             try:
                 month = month_names.index(month_name.lower())
