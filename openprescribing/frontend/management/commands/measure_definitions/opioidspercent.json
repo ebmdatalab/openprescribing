@@ -102,16 +102,7 @@
     "bnf_code LIKE '0407020Q0%EH' OR --Morph Sulf_Cap 60mg M/R (brands and generic) \n",
     "bnf_code LIKE '0407020Q0%EI'    --Morph Sulf_Cap 200mg M/R (brands and generic)"
   ],
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
-}
-  ],
-  "denominator_columns": [
+    "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
