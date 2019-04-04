@@ -17,11 +17,21 @@
   <b>{{ latest_month|date:"F Y" }}</b>.
 </p>
 
+{% if entity_type == 'practice' %}
+<p>
+  We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
+  out-of-stock medicines prescribed at {{ entity_name }} will cost your CCG an
+  additional <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
+  This is for information only; you should discuss with your CCG before
+  modifying a patient's medicine treatments based solely on Price Concessions.
+</p>
+{% else %}
 <p>
   We estimate that in {{ latest_month|date:"F Y" }} total price concessions for
   out-of-stock medicines will cost {{ entity_name }} an additional
   <b>£{{ additional_cost|sigfigs:5|floatformat:"0"|intcomma }}</b>.
 </p>
+{% endif %}
 
 <p>
   At OpenPrescribing we check for updates on concessions every day and we will

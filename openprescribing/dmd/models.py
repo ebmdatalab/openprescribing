@@ -188,6 +188,10 @@ class NCSOConcession(models.Model):
 
     objects = Manager()
 
+    @property
+    def drug_and_pack_size(self):
+        return u'{} {}'.format(self.drug, self.pack_size)
+
 
 class TariffPrice(models.Model):
     """Price

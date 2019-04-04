@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}All STPs{% endblock %}
+{% block active_class %}stp{% endblock %}
+
+{% block content %}
+
+<h1>All STPs</h1>
+
+<ul class="list-unstyled" id="all-results">
+{% for stp in stps %}
+<li><a class="stp" href="{% url 'stp_home_page' stp.code %}">{{ stp.cased_name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

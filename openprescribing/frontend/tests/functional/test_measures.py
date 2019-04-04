@@ -15,7 +15,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 import requests
 from selenium_base import SeleniumTestCase
 
-from frontend.models import PCT, Practice, Measure, MeasureValue
+from frontend.models import RegionalTeam, STP, PCT, Practice, Measure, MeasureValue
 
 
 class MeasuresTests(SeleniumTestCase):
@@ -63,7 +63,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.measure-panel-title',
-            'NHS England Low Priority Treatment - All Low Priority Treatments',
+            'LP omnibus measure',
             '/measure/lpzomnibus/'
         )
         self._verify_num_elements(panel_element, '.inner li', 2)
@@ -133,6 +133,52 @@ class MeasuresTests(SeleniumTestCase):
             '.measure-panel-title',
             'LP omnibus measure',
             '/ccg/AAA/lpzomnibus/'
+        )
+
+    def test_stp_home_page(self):
+        self._get('/stp/E00000000/')
+
+        stp = STP.objects.get(ons_code='E00000000')
+        mvs = MeasureValue.objects.filter(stp=stp, pct=None, practice=None)
+        extreme_measure = _get_extreme_measure(mvs)
+
+        panel_element = self._find_measure_panel('top-measure-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            extreme_measure.name,
+            '/stp/E00000000/{}/'.format(extreme_measure.id)
+        )
+
+        panel_element = self._find_measure_panel('lpzomnibus-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/stp/E00000000/lpzomnibus/'
+        )
+
+    def test_regional_team_home_page(self):
+        self._get('/regional-team/Y01/')
+
+        rt = RegionalTeam.objects.get(code='Y01')
+        mvs = MeasureValue.objects.filter(regional_team=rt, pct=None, practice=None)
+        extreme_measure = _get_extreme_measure(mvs)
+
+        panel_element = self._find_measure_panel('top-measure-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            extreme_measure.name,
+            '/regional-team/Y01/{}/'.format(extreme_measure.id)
+        )
+
+        panel_element = self._find_measure_panel('lpzomnibus-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/regional-team/Y01/lpzomnibus/'
         )
 
     def test_measures_for_one_practice(self):
@@ -301,6 +347,130 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.inner li', 3)
 
+    def test_measures_for_one_stp(self):
+        self._get('/stp/E00000000/measures/')
+
+        panel_element = self._find_measure_panel('measure_core_0')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'Core measure 0',
+            '/stp/E00000000/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/stp/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Split the measure into charts for individual CCGs',
+            '/stp/E00000000/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Compare all STPs in England on this measure',
+            '/measure/core_0/stp/'
+        )
+
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/stp/E00000000/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            '/stp/E00000000/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/stp/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Split the measure into charts for individual CCGs',
+            '/stp/E00000000/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
+            'Compare all STPs in England on this measure',
+            '/measure/lpzomnibus/stp/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 4)
+
+    def test_measures_for_one_regional_team(self):
+        self._get('/regional-team/Y01/measures/')
+
+        panel_element = self._find_measure_panel('measure_core_0')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'Core measure 0',
+            '/regional-team/Y01/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/regional-team/Y01/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Split the measure into charts for individual CCGs',
+            '/regional-team/Y01/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Compare all Regional Teams in England on this measure',
+            '/measure/core_0/regional-team/'
+        )
+
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/regional-team/Y01/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            '/regional-team/Y01/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/regional-team/Y01/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Split the measure into charts for individual CCGs',
+            '/regional-team/Y01/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
+            'Compare all Regional Teams in England on this measure',
+            '/measure/lpzomnibus/regional-team/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 4)
+
     def test_measure_for_all_ccgs(self):
         self._get('/measure/core_0/')
 
@@ -355,6 +525,54 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.explanation li', 3)
 
+    def test_measure_for_all_stps(self):
+        self._get('/measure/core_0/stp/')
+
+        panel_element = self._find_measure_panel('stp_E00000000')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'E00000000: STP 0/0',
+            '/stp/E00000000/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Split the measure into charts for individual CCGs',
+            '/stp/E00000000/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/stp/E00000000/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 2)
+
+    def test_measure_for_all_regional_teams(self):
+        self._get('/measure/core_0/regional-team/')
+
+        panel_element = self._find_measure_panel('regional_team_Y01')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'Y01: Region 1',
+            '/regional-team/Y01/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Split the measure into charts for individual CCGs',
+            '/regional-team/Y01/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/regional-team/Y01/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 2)
+
     def test_measure_for_one_practice(self):
         self._get('/measure/lp_2/practice/P00000/')
 
@@ -397,6 +615,54 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.inner li', 2)
 
+    def test_measure_for_one_stp(self):
+        self._get('/measure/lp_2/stp/E00000000/')
+
+        panel_element = self._find_measure_panel('measure_lp_2')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP measure 2',
+            '/stp/E00000000/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Split the measure into charts for individual CCGs',
+            '/stp/E00000000/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Compare all STPs in England on this measure',
+            '/measure/lp_2/stp/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 2)
+
+    def test_measure_for_one_regional_team(self):
+        self._get('/measure/lp_2/regional-team/Y01/')
+
+        panel_element = self._find_measure_panel('measure_lp_2')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP measure 2',
+            '/regional-team/Y01/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Split the measure into charts for individual CCGs',
+            '/regional-team/Y01/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Compare all Regional Teams in England on this measure',
+            '/measure/lp_2/regional-team/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 2)
+
     def test_measure_for_practices_in_ccg(self):
         self._get('/ccg/AAA/lp_2/')
 
@@ -412,6 +678,42 @@ class MeasuresTests(SeleniumTestCase):
             '.explanation li:nth-child(1)',
             'Break the overall score down into individual presentations',
             '/measure/lp_2/practice/P00000/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 1)
+
+    def test_measure_for_ccgs_in_stp(self):
+        self._get('/stp/E00000000/lp_2/')
+
+        panel_element = self._find_measure_panel('ccg_AAA')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'AAA: CCG 0/0/0',
+            '/ccg/AAA/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/lp_2/ccg/AAA/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 1)
+
+    def test_measure_for_ccgs_in_regional_team(self):
+        self._get('/regional-team/Y01/lp_2/')
+
+        panel_element = self._find_measure_panel('ccg_111')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            '111: CCG 1/1/1',
+            '/ccg/111/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/lp_2/ccg/111/'
         )
         self._verify_num_elements(panel_element, '.explanation li', 1)
 
@@ -559,6 +861,117 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(c1_exp_text, perf_element.text)
 
+    def test_explanation_for_stp(self):
+        # See comments in test_explanation_for_practice for details.
+        ss = []
+
+        for s in STP.objects.all():
+            mvs = MeasureValue.objects.filter(
+                stp=s,
+                pct=None,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+
+            s.cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs)
+            s.cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs)
+
+            ss.append(s)
+
+        assert [s for s in ss if s.cost_saving_10 < 0 and s.cost_saving_50 > 0] == []
+        s1 = [s for s in ss if s.cost_saving_10 < 0 and s.cost_saving_50 < 0][0]
+        s2 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 < 0][0]
+        s3 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 > 0][0]
+
+        s1_exp_text = u'By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months.'.format(_humanize(s1.cost_saving_50))
+        s2_exp_text = u'By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(s2.cost_saving_50), _humanize(s2.cost_saving_10))
+        s3_exp_text = u'If it had prescribed in line with the median, this STP would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(s3.cost_saving_50), _humanize(s3.cost_saving_10))
+
+        # measure_for_one_stp
+        self._get('/measure/core_0/stp/{}/'.format(s1.ons_code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(s1_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/stp/{}/'.format(s2.ons_code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(s2_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/stp/{}/'.format(s3.ons_code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(s3_exp_text, perf_element.text)
+
+        # measures_for_one_stp
+        self._get('/stp/{}/measures/'.format(s1.ons_code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(s1_exp_text, perf_element.text)
+
+        # measure_for_all_stps
+        self._get('/measure/core_0/stp/')
+        panel_element = self._find_measure_panel('stp_{}'.format(s1.ons_code))
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(s1_exp_text, perf_element.text)
+
+        # stp_home_page
+        self._get('/stp/{}/'.format(s1.ons_code))
+        panel_element = self._find_measure_panel('top-measure-container')
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(s1_exp_text, perf_element.text)
+
+    def test_explanation_for_regional_team(self):
+        # See comments in test_explanation_for_practice for details.  However,
+        # note that since there are only fixtures for two regional teams, there
+        # is no regional team whose prescribing is between the 10th and the
+        # 50th percentile.
+        rr = []
+
+        for r in RegionalTeam.objects.all():
+            mvs = MeasureValue.objects.filter(
+                regional_team=r,
+                pct=None,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+
+            r.cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs)
+            r.cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs)
+
+            rr.append(r)
+
+        assert [r for r in rr if r.cost_saving_10 < 0 and r.cost_saving_50 > 0] == []
+        r1 = [r for r in rr if r.cost_saving_10 < 0 and r.cost_saving_50 < 0][0]
+        r3 = [r for r in rr if r.cost_saving_10 > 0 and r.cost_saving_50 > 0][0]
+
+        r1_exp_text = u'By prescribing better than the median, this Regional Team has saved the NHS £{} over the past 6 months.'.format(_humanize(r1.cost_saving_50))
+        r3_exp_text = u'If it had prescribed in line with the median, this Regional Team would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(r3.cost_saving_50), _humanize(r3.cost_saving_10))
+
+        # measure_for_one_regional_team
+        self._get('/measure/core_0/regional-team/{}/'.format(r1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(r1_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/regional-team/{}/'.format(r3.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(r3_exp_text, perf_element.text)
+
+        # measures_for_one_regional_team
+        self._get('/regional-team/{}/measures/'.format(r1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(r1_exp_text, perf_element.text)
+
+        # measure_for_all_regional_teams
+        self._get('/measure/core_0/regional-team/')
+        panel_element = self._find_measure_panel('regional_team_{}'.format(r1.code))
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(r1_exp_text, perf_element.text)
+
+        # regional_team_home_page
+        self._get('/regional-team/{}/'.format(r1.code))
+        panel_element = self._find_measure_panel('top-measure-container')
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(r1_exp_text, perf_element.text)
+
     def test_performance_summary_for_measure_for_all_ccgs(self):
         cost_saving = 0
         for c in PCT.objects.all():
@@ -575,6 +988,44 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/measure/core_0/')
         perf_summary_element = self.find_by_css('#perfsummary')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_all_stps(self):
+        cost_saving = 0
+        for r in STP.objects.all():
+            mvs = MeasureValue.objects.filter(
+                stp=r,
+                pct=None,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+            stp_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if stp_cost_saving > 0:
+                cost_saving += stp_cost_saving
+
+        self._get('/measure/core_0/stp/')
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_all_regional_teams(self):
+        cost_saving = 0
+        for r in RegionalTeam.objects.all():
+            mvs = MeasureValue.objects.filter(
+                regional_team=r,
+                pct=None,
+                practice=None,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+            regional_team_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if regional_team_cost_saving > 0:
+                cost_saving += regional_team_cost_saving
+
+        self._get('/measure/core_0/regional-team/')
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all Regional Teams had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_practices_in_ccg(self):
@@ -603,6 +1054,64 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/ccg/{}/core_0/'.format(c.code))
         perf_summary_element = self.find_by_css('#perfsummary')
         exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_ccgs_in_stp(self):
+        # First we need to find a STP with a cost saving!  In reality,
+        # almost every STP has a cost saving, but this is not the
+        # case with the test data.
+
+        for r in STP.objects.all():
+            cost_saving = 0
+
+            for c in r.pct_set.all():
+                mvs = MeasureValue.objects.filter(
+                    pct=c,
+                    practice=None,
+                    measure_id='core_0',
+                    month__gte='2018-03-01',
+                )
+                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+                if practice_cost_saving > 0:
+                    cost_saving += practice_cost_saving
+
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find STP with cost saving!'
+
+        self._get('/stp/{}/core_0/'.format(r.ons_code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_ccgs_in_regional_team(self):
+        # First we need to find a RegionalTeam with a cost saving!  In reality,
+        # almost every RegionalTeam has a cost saving, but this is not the
+        # case with the test data.
+
+        for r in RegionalTeam.objects.all():
+            cost_saving = 0
+
+            for c in r.pct_set.all():
+                mvs = MeasureValue.objects.filter(
+                    pct=c,
+                    practice=None,
+                    measure_id='core_0',
+                    month__gte='2018-03-01',
+                )
+                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+                if practice_cost_saving > 0:
+                    cost_saving += practice_cost_saving
+
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find RegionalTeam with cost saving!'
+
+        self._get('/regional-team/{}/core_0/'.format(r.code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measures_for_one_ccg(self):
@@ -648,6 +1157,54 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/practice/{}/measures/'.format(p.code))
         perf_summary_element = self.find_by_css('#perfsummary')
         exp_text = u'Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measures_for_one_stp(self):
+        # First we need to find a STP with a cost saving!  In reality,
+        # almost every STP has a cost saving, but this is not the
+        # case with the test data.
+
+        for r in STP.objects.all():
+            mvs = MeasureValue.objects.filter(
+                stp=r,
+                pct=None,
+                practice=None,
+                measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
+                month__gte='2018-03-01',
+            )
+            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find STP with cost saving!'
+
+        self._get('/stp/{}/measures/'.format(r.ons_code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measures_for_one_regional_team(self):
+        # First we need to find a RegionalTeam with a cost saving!  In reality,
+        # almost every RegionalTeam has a cost saving, but this is not the
+        # case with the test data.
+
+        for r in RegionalTeam.objects.all():
+            mvs = MeasureValue.objects.filter(
+                regional_team=r,
+                pct=None,
+                practice=None,
+                measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
+                month__gte='2018-03-01',
+            )
+            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find RegionalTeam with cost saving!'
+
+        self._get('/regional-team/{}/measures/'.format(r.code))
+        perf_summary_element = self.find_by_css('#perfsummary')
+        exp_text = u'Over the past 6 months, if this Regional Team had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
 

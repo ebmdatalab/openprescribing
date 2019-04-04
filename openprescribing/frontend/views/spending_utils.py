@@ -16,7 +16,7 @@ NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
 
 
 def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
-    if entity_type == 'CCG':
+    if entity_type.lower() == 'ccg':
         prescribing_table = 'vw__presentation_summary_by_ccg'
         entity_field = 'pct_id'
         entity_condition = entity.code

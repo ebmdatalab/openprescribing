@@ -69,8 +69,8 @@ def parse_args(*opts_args):
     return cmd.parse_options(options.__dict__)
 
 
-@patch('frontend.management.commands.import_measures.get_measure_definition_files',
-       new=MagicMock(return_value=working_measure_files()))
+@patch(MODULE + '.get_measure_definition_paths',
+       new=working_measure_files)
 class ArgumentTestCase(TestCase):
     def test_start_and_end_dates(self):
         with self.assertRaises(CommandError):
@@ -93,8 +93,8 @@ class ArgumentTestCase(TestCase):
         self.assertEqual(result['end_date'], '1999-01-01')
 
 
-@patch('frontend.management.commands.import_measures.get_measure_definition_files',
-       new=MagicMock(return_value=working_measure_files()))
+@patch(MODULE + '.get_measure_definition_paths',
+       new=working_measure_files)
 class UnitTests(TestCase):
     """Unit tests with mocked bigquery. Many of the functional
     tests could be moved hree.
@@ -246,18 +246,18 @@ class BigqueryFunctionalTests(TestCase):
             'measure': 'cerazette',
             'v': 3
         }
-        with patch(MODULE + '.get_measure_definition_files',
+        with patch(MODULE + '.get_measure_definition_paths',
                    new=working_measure_files):
             call_command('import_measures', **opts)
 
-    @patch(MODULE + '.get_measure_definition_files',
+    @patch(MODULE + '.get_measure_definition_paths',
            new=broken_json_measure_files)
     def test_check_definition_bad_json(self):
         with self.assertRaises(ValueError) as command_error:
             call_command('import_measures', check=True)
         self.assertIn("Problems parsing JSON", str(command_error.exception))
 
-    @patch(MODULE + '.get_measure_definition_files',
+    @patch(MODULE + '.get_measure_definition_paths',
            new=broken_sql_measure_files)
     def test_check_definition_bad_sql(self):
         with self.assertRaises(BadRequest) as command_error:
@@ -273,7 +273,7 @@ class BigqueryFunctionalTests(TestCase):
             'measure': measure_id,
             'v': 3
         }
-        with patch(MODULE + '.get_measure_definition_files',
+        with patch(MODULE + '.get_measure_definition_paths',
                    new=MagicMock(return_value=working_measure_files())):
             call_command('import_measures', *args, **opts)
 
@@ -594,7 +594,6 @@ class TestParseMeasures(TestCase):
         measures = parse_measures()
         lpzomnibus_ix = list(measures).index('lpzomnibus')
         lptrimipramine_ix = list(measures).index('lptrimipramine')
-
         # The order of these specific measures matters, as the SQL for
         # the omnibus measure relies on the other LP measures having
         # been calculated first

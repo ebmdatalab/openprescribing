@@ -3,11 +3,11 @@
 {% load staticfiles %}
 {% load template_extras %}
 
-{% block title %} {{ measure }} by all CCGs{% endblock %}
-{% block active_class %}ccg{% endblock %}
+{% block title %} {{ measure }} by all {{ entity_type_human }}s{% endblock %}
+{% block active_class %}{{ entity_type }}{% endblock %}
 
 {% block content %}
-  <h1>{{measure.name}} by all CCGs</h1>
+  <h1>{{measure.name}} by all {{ entity_type_human }}s</h1>
 
   {% if measure.url %}
     <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
@@ -15,7 +15,12 @@
 
   {% include '_measure_header.html' %}
 
-  <p>CCGs are ordered by mean percentile over the past six months. Each chart shows the results for the individual CCG, plus deciles across all CCGs in the NHS in England.</p>
+  <p>
+    {{ entity_type_human}}s are ordered by mean percentile over the past six
+    months. Each chart shows the results for the individual {{ entity_type_human}},
+    plus deciles across all {{ entity_type_human }}s in the
+    NHS in England.
+  </p>
 
   <div id="measures">
     <div id="charts" class="row">
@@ -34,7 +39,7 @@
     </script>
 
     <script id="measure-panel" type="text/x-handlebars-template">
-      <div id="ccg_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+      <div id="{{ orgType }}_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
         <div class="panel panel-info">
           <div class="panel-heading">
             <span class="measure-panel-title">
@@ -51,7 +56,12 @@
           <div class="explanation">
             {{{ chartExplanation }}}
             <ul>
-              <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
+              {{#if measureForAllPracticesUrl }}
+                <li><a href="{{ measureForAllPracticesUrl }}">Split the measure into charts for individual practices</a></li>
+              {{/if}}
+              {{#if measureForAllCCGsUrl }}
+                <li><a href="{{ measureForAllCCGsUrl }}">Split the measure into charts for individual CCGs</a></li>
+              {{/if}}
               {{#if tagsFocus }}
                 <li>This is a compound measure. <a href="{{ tagsFocusUrl }}">Break it down into its constituent measures</a>.</li>
               {{/if}}

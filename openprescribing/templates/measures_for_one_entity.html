@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load template_extras %}
+
+{% block title %}Prescribing measures for {{ entity.name }}{% endblock %}
+{% block active_class %}entity_type{% endblock %}
+
+{% block extra_css %}
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+{% endblock extra_css %}
+
+{% block content %}
+  {% include '_entity_heading.html' %}
+
+  <hr/>
+
+  {% include '_measures_heading.html' %}
+  {% include '_measures_panel.html' %}
+
+  <hr/>
+
+  {% include '_get_in_touch.html' %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ measure_options|json_script:"measure-options" }}
+  {% conditional_js 'measures' %}
+{% endblock %}

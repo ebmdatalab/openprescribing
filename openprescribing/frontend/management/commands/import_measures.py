@@ -30,7 +30,7 @@ from gcutils.bigquery import Client
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
 
-import google
+from google.api_core.exceptions import BadRequest
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +52,10 @@ class Command(BaseCommand):
 
     def check_definition(self, options, start_date, end_date, verbose):
         """Checks SQL definition for measures.
-
-        JSON parsing will already have been checked, as this is done
-        when parsing the command options.
-
         """
+
+        # We don't validate JSON here, as this is already done as a
+        # side-effect of parsing the command options.
         errors = []
         for measure_id in options['measure_ids']:
             try:
@@ -66,12 +65,16 @@ class Command(BaseCommand):
                     verbose=verbose
                 )
                 calculation.check_definition()
-            except google.api_core.exceptions.BadRequest as e:
+            except BadRequest as e:
                 errors.append("* SQL error in `{}`: {}".format(
                     measure_id,
                     e.message))
+            except TypeError as e:
+                errors.append("* JSON error in `{}`: {}".format(
+                    measure_id,
+                    e.message))
         if errors:
-            raise google.api_core.exceptions.BadRequest("\n".join(errors))
+            raise BadRequest("\n".join(errors))
 
     def build_measures(self, options, start_date, end_date, verbose):
         with conditional_constraint_and_index_reconstructor(options):
@@ -90,25 +93,26 @@ class Command(BaseCommand):
                         verbose=verbose
                     )
 
-                    # Delete any existing measures data older than five years ago.
-                    l = ImportLog.objects.latest_in_category('prescribing')
-                    five_years_ago = l.current_at - relativedelta(years=5)
-                    MeasureValue.objects.filter(month__lte=five_years_ago)\
-                                        .filter(measure=measure).delete()
-                    MeasureGlobal.objects.filter(month__lte=five_years_ago)\
-                                         .filter(measure=measure).delete()
+                    if not options['bigquery_only']:
+                        # Delete any existing measures data older than five years ago.
+                        l = ImportLog.objects.latest_in_category('prescribing')
+                        five_years_ago = l.current_at - relativedelta(years=5)
+                        MeasureValue.objects.filter(month__lte=five_years_ago)\
+                                            .filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(month__lte=five_years_ago)\
+                                             .filter(measure=measure).delete()
 
-                    # Delete any existing measures data relating to the
-                    # current month(s)
-                    MeasureValue.objects.filter(month__gte=start_date)\
-                                        .filter(month__lte=end_date)\
-                                        .filter(measure=measure).delete()
-                    MeasureGlobal.objects.filter(month__gte=start_date)\
-                                         .filter(month__lte=end_date)\
-                                         .filter(measure=measure).delete()
+                        # Delete any existing measures data relating to the
+                        # current month(s)
+                        MeasureValue.objects.filter(month__gte=start_date)\
+                                            .filter(month__lte=end_date)\
+                                            .filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(month__gte=start_date)\
+                                             .filter(month__lte=end_date)\
+                                             .filter(measure=measure).delete()
 
                     # Compute the measures
-                    calcuation.calculate()
+                    calcuation.calculate(options['bigquery_only'])
 
                 elapsed = datetime.now() - measure_start
                 logger.warning("Elapsed time for %s: %s seconds" % (
@@ -134,6 +138,7 @@ class Command(BaseCommand):
         parser.add_argument('--end_date')
         parser.add_argument('--measure')
         parser.add_argument('--definitions_only', action='store_true')
+        parser.add_argument('--bigquery_only', action='store_true')
         parser.add_argument('--check', action='store_true')
 
     def parse_options(self, options):
@@ -163,7 +168,7 @@ class Command(BaseCommand):
         return options
 
 
-def get_measure_definition_files():
+def get_measure_definition_paths():
     fpath = os.path.dirname(__file__)
     return sorted(glob.glob(os.path.join(fpath, "./measure_definitions/*.json")))
 
@@ -174,9 +179,9 @@ def parse_measures():
     measures = OrderedDict()
     errors = []
 
-    for fname in get_measure_definition_files():
-        measure_id = re.match(r'.*/([^/.]+)\.json', fname).groups()[0]
-        with open(fname) as f:
+    for path in get_measure_definition_paths():
+        measure_id = re.match(r'.*/([^/.]+)\.json', path).groups()[0]
+        with open(path) as f:
             try:
                 measures[measure_id] = json.load(f)
             except ValueError as e:
@@ -377,20 +382,14 @@ class MeasureCalculation(object):
         """
         self.calculate_practice_ratios(dry_run=True)
 
-    def calculate(self):
-        number_rows_written = 0
-        number_rows_written += self.calculate_practices()
-        number_rows_written += self.calculate_orgs('ccg')
-        number_rows_written += self.calculate_orgs('stp')
-        number_rows_written += self.calculate_orgs('regtm')  # Regional Team
+    def calculate(self, bigquery_only=False):
+        self.calculate_practices(bigquery_only=bigquery_only)
+        self.calculate_orgs('ccg', bigquery_only=bigquery_only)
+        self.calculate_orgs('stp', bigquery_only=bigquery_only)
+        self.calculate_orgs('regtm', bigquery_only=bigquery_only)  # Regional Team
+        self.calculate_global(bigquery_only=bigquery_only)
 
-        if number_rows_written == 0:
-            raise CommandError(
-                "No rows generated by measure %s" % self.measure.id)
-
-        self.calculate_global()
-
-    def calculate_practices(self):
+    def calculate_practices(self, bigquery_only=False):
         """Calculate ratios, centiles and (optionally) cost savings at a
         practice level, and write these to the database.
 
@@ -400,8 +399,8 @@ class MeasureCalculation(object):
         self.calculate_global_centiles_for_practices()
         if self.measure.is_cost_based:
             self.calculate_cost_savings_for_practices()
-        number_rows_written = self.write_practice_ratios_to_database()
-        return number_rows_written
+        if not bigquery_only:
+            self.write_practice_ratios_to_database()
 
     def calculate_practice_ratios(self, dry_run=False):
         """Given a measure defition, construct a BigQuery query which computes
@@ -495,8 +494,6 @@ class MeasureCalculation(object):
     def write_practice_ratios_to_database(self):
         """Copy the bigquery ratios data to the local postgres database.
 
-        Returns number of rows written.
-
         Uses COPY command via a CSV file for performance as this can
         be a very large number, especially when computing many months'
         data at once.  We drop and then recreate indexes to improve
@@ -510,7 +507,6 @@ class MeasureCalculation(object):
                       'num_quantity', 'practice_id', 'cost_savings']
         f = tempfile.TemporaryFile(mode='r+')
         writer = csv.DictWriter(f, fieldnames=fieldnames)
-        c = 0
         # Write the data we want to load into a file
         for datum in self.get_rows_as_dicts(self.table_name('practice')):
             datum['measure_id'] = self.measure.id
@@ -518,7 +514,6 @@ class MeasureCalculation(object):
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
             datum['percentile'] = normalisePercentile(datum['percentile'])
             writer.writerow(datum)
-            c += 1
         # load data
         copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
@@ -527,10 +522,8 @@ class MeasureCalculation(object):
         with connection.cursor() as cursor:
             cursor.copy_expert(copy_str % ", ".join(fieldnames), f)
         f.close()
-        self.log("Wrote %s values" % c)
-        return c
 
-    def calculate_orgs(self, org_type):
+    def calculate_orgs(self, org_type, bigquery_only=False):
         """Calculate ratios, centiles and (optionally) cost savings at a
         organisation level, and write these to the database.
 
@@ -540,8 +533,8 @@ class MeasureCalculation(object):
         self.calculate_global_centiles_for_orgs(org_type)
         if self.measure.is_cost_based:
             self.calculate_cost_savings_for_orgs(org_type)
-        number_rows_written = self.write_org_ratios_to_database(org_type)
-        return number_rows_written
+        if not bigquery_only:
+            self.write_org_ratios_to_database(org_type)
 
     def calculate_org_ratios(self, org_type):
         """Sums all the fields in the per-practice table, grouped by
@@ -613,24 +606,19 @@ class MeasureCalculation(object):
 
     def write_org_ratios_to_database(self, org_type):
         """Create measure values for organisation ratios.
-
-        Retuns number of rows written.
         """
-        c = 0
         for datum in self.get_rows_as_dicts(self.table_name(org_type)):
             datum['measure_id'] = self.measure.id
             if self.measure.is_cost_based:
                 datum['cost_savings'] = convertSavingsToDict(datum)
             datum['percentile'] = normalisePercentile(datum['percentile'])
             MeasureValue.objects.create(**datum)
-            c += 1
-        self.log("Wrote %s CCG measures" % c)
-        return c
 
-    def calculate_global(self):
+    def calculate_global(self, bigquery_only=False):
         if self.measure.is_cost_based:
             self.calculate_global_cost_savings()
-        self.write_global_centiles_to_database()
+        if not bigquery_only:
+            self.write_global_centiles_to_database()
 
     def calculate_global_cost_savings(self):
         """Sum cost savings at practice and CCG levels.
@@ -648,7 +636,6 @@ class MeasureCalculation(object):
         """
         self.log("Writing global centiles from %s to database"
                  % self.table_name('global'))
-        count = 0
         for d in self.get_rows_as_dicts(self.table_name('global')):
             regtm_cost_savings = {}
             stp_cost_savings = {}
@@ -700,8 +687,6 @@ class MeasureCalculation(object):
             for attr, value in d.iteritems():
                 setattr(mg, attr, value)
             mg.save()
-            count += 1
-        self.log("Created %s measureglobals" % count)
 
     def insert_rows_from_query(self, query_id, table_name, ctx, dry_run=False):
         """Interpolate values from ctx into SQL identified by query_id, and

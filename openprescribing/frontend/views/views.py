@@ -18,7 +18,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import get_resolver
 from django.db import connection
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Count, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -51,6 +51,8 @@ from frontend.models import OrgBookmark
 from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import Presentation
+from frontend.models import RegionalTeam
+from frontend.models import STP
 from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
 from frontend.views.spending_utils import (
@@ -216,6 +218,60 @@ def ccg_home_page(request, ccg_code):
 
 
 ##################################################
+# STPs
+##################################################
+
+def all_stps(request):
+    stps = STP.objects.order_by('name')
+    context = {
+        'stps': stps
+    }
+    return render(request, 'all_stps.html', context)
+
+
+def stp_home_page(request, stp_code):
+    stp = get_object_or_404(STP, ons_code=stp_code)
+    ccgs = PCT.objects.filter(
+        stp=stp,
+        close_date__isnull=True,
+        org_type='CCG'
+    ).order_by('name')
+    context = _home_page_context_for_entity(request, stp)
+    context['ccgs'] = ccgs
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
+# Regional teams
+##################################################
+
+def all_regional_teams(request):
+    # NHS reorganisations sometimes include regions before CCGs have
+    # been assigned, hence the filter on an aggregation here:
+    regional_teams = RegionalTeam.objects.annotate(
+        num_ccgs=Count('pct')).filter(
+            close_date__isnull=True, num_ccgs__gt=0).order_by('name')
+    context = {
+        'regional_teams': regional_teams
+    }
+    return render(request, 'all_regional_teams.html', context)
+
+
+def regional_team_home_page(request, regional_team_code):
+    regional_team = get_object_or_404(RegionalTeam, code=regional_team_code)
+    ccgs = PCT.objects.filter(
+        regional_team=regional_team,
+        close_date__isnull=True,
+        org_type='CCG'
+    ).order_by('name')
+    context = _home_page_context_for_entity(request, regional_team)
+    context['ccgs'] = ccgs
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
 # All England
 ##################################################
 
@@ -237,7 +293,7 @@ def all_england(request):
 
     measure_options = {
        'tags': ','.join(tag_filter['tags']),
-       'orgType': entity_type,
+       'orgType': entity_type.lower(),
        'orgName': 'All {}s in England'.format(entity_type),
        'aggregate': True,
        'rollUpBy': 'measure_id',
@@ -301,25 +357,29 @@ def all_measures(request):
     return render(request, 'all_measures.html', context)
 
 
-def measure_for_all_ccgs(request, measure):
-    measure = get_object_or_404(Measure, id=measure)
-    measure_options = _build_measure_options_for_measure_for_all_entities(measure, 'CCG', None)
-
-    context = {
-        'measure': measure,
-        'measure_options': measure_options,
-    }
-    return render(request, 'measure_for_all_ccgs.html', context)
-
-
 def measure_for_one_entity(request, measure, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
     measure = get_object_or_404(Measure, pk=measure)
-    measure_options = _build_measure_options_for_measure_for_one_entity(measure, entity)
+
+    measure_options = {
+        'rollUpBy': 'measure_id',
+        'measure': measure,
+        'orgId': entity.code,
+        'orgName': entity.name,
+        'orgType': _org_type_for_entity(entity),
+    }
+
+    if isinstance(entity, Practice):
+        measure_options['parentOrgId'] = entity.ccg_id
+
+    measure_options = _build_measure_options(measure_options)
+
+    entity_type_human = _entity_type_human(entity_type)
     context = {
         'entity': entity,
         'entity_type': entity_type,
-        'measures_url_name': 'measures_for_one_{}'.format(entity_type.lower()),
+        'entity_type_human': entity_type_human,
+        'measures_url_name': 'measures_for_one_{}'.format(entity_type),
         'measure': measure,
         'measure_options': measure_options,
         'current_at': ImportLog.objects.latest_in_category(
@@ -328,65 +388,144 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
     return render(request, 'measure_for_one_entity.html', context)
 
 
+# Note that we cannot have a single view function for measures_for_one_entity or
+# measure_for_children_in_entity (as we do for eg measure_for_one_entity)
+# because the parameter names are used for building URLs by _url_template()
+# below and _buildUrl() in measure_utils.js.
+
 @handle_bad_request
 def measures_for_one_practice(request, practice_code):
-    practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_and_newsletter_form(request, practice)
-
-    if isinstance(form, HttpResponseRedirect):
-        return form
-
-    tag_filter = _get_measure_tag_filter(request.GET)
-    measure_options = _build_measure_options_for_measures_for_one_entity(practice, tag_filter)
-
-    context = {
-        'practice': practice,
-        'page_id': practice_code,
-        'form': form,
-        'signed_up_for_alert': _signed_up_for_alert(request, practice, OrgBookmark),
-        'tag_filter': tag_filter,
-        'measure_options': measure_options,
-    }
-    return render(request, 'measures_for_one_practice.html', context)
+    return _measures_for_one_entity(request, practice_code, 'practice')
 
 
 @handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
-    ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_and_newsletter_form(request, ccg)
+    return _measures_for_one_entity(request, ccg_code, 'ccg')
 
-    if isinstance(form, HttpResponseRedirect):
-        return form
 
+@handle_bad_request
+def measures_for_one_stp(request, stp_code):
+    return _measures_for_one_entity(request, stp_code, 'stp')
+
+
+@handle_bad_request
+def measures_for_one_regional_team(request, regional_team_code):
+    return _measures_for_one_entity(request, regional_team_code, 'regional_team')
+
+
+def _measures_for_one_entity(request, entity_code, entity_type):
+    entity = _get_entity(entity_type, entity_code)
     tag_filter = _get_measure_tag_filter(request.GET)
-    practices = ccg.practice_set.filter(setting=4).order_by('name')
-    measure_options = _build_measure_options_for_measures_for_one_entity(ccg, tag_filter)
+
+    measure_options = {
+        'rollUpBy': 'measure_id',
+        'tags': ','.join(tag_filter['tags']),
+        'orgId': entity.code,
+        'orgName': entity.name,
+        'orgType': _org_type_for_entity(entity),
+    }
+
+    if isinstance(entity, Practice):
+        measure_options['parentOrgId'] = entity.ccg_id
+
+    measure_options = _build_measure_options(measure_options)
 
     context = {
-        'ccg': ccg,
-        'practices': practices,
-        'page_id': ccg_code,
-        'form': form,
-        'signed_up_for_alert': _signed_up_for_alert(request, ccg, OrgBookmark),
+        'entity': entity,
+        'entity_type': entity_type,
+        'entity_type_human': _entity_type_human(entity_type),
+        'page_id': entity_code,
         'tag_filter': tag_filter,
         'measure_options': measure_options,
     }
-    return render(request, 'measures_for_one_ccg.html', context)
+
+    if entity_type == 'ccg':
+        context['practices'] = entity.practice_set.filter(setting=4).order_by('name')
+    elif entity_type in ['stp', 'regional_team']:
+        context['ccgs'] = entity.pct_set.filter(
+            close_date__isnull=True,
+            org_type='CCG'
+        ).order_by('name')
+
+    return render(request, 'measures_for_one_entity.html', context)
 
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):
-    ccg = get_object_or_404(PCT, code=ccg_code)
-    measure = get_object_or_404(Measure, id=measure)
-    measure_options = _build_measure_options_for_measure_for_all_entities(measure, 'practice', ccg)
-    practices = ccg.practice_set.filter(setting=4).order_by('name')
+    return _measure_for_children_in_entity(request, measure, ccg_code, 'ccg')
+
+
+def measure_for_ccgs_in_stp(request, stp_code, measure):
+    return _measure_for_children_in_entity(request, measure, stp_code, 'stp')
+
+
+def measure_for_ccgs_in_regional_team(request, regional_team_code, measure):
+    return _measure_for_children_in_entity(
+        request,
+        measure,
+        regional_team_code,
+        'regional_team'
+    )
+
+
+def _measure_for_children_in_entity(
+        request, measure, parent_entity_code, parent_entity_type):
+    parent = _get_entity(parent_entity_type, parent_entity_code)
+    child_entity_type = {
+        'ccg': 'practice',
+        'stp': 'ccg',
+        'regional_team': 'ccg',
+    }[parent_entity_type]
+    measure = get_object_or_404(Measure, pk=measure)
+
+    measure_options = {
+        'rollUpBy': 'org_id',
+        'measure': measure,
+        'orgType': child_entity_type,
+        'orgId': parent.code,
+        'orgName': parent.name,
+        'parentOrgType': _org_type_for_entity(parent),
+    }
+
+    if measure.tags_focus:
+        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+
+    measure_options = _build_measure_options(measure_options)
+
     context = {
-        'ccg': ccg,
-        'practices': practices,
-        'page_id': ccg_code,
+        'parent_entity_type': parent_entity_type,
+        'parent_entity_type_human': _entity_type_human(parent_entity_type),
+        'child_entity_type_human': _entity_type_human(child_entity_type),
+        'parent': parent,
+        'page_id': parent_entity_code,
         'measure': measure,
         'measure_options': measure_options,
     }
-    return render(request, 'measure_for_practices_in_ccg.html', context)
+    return render(request, 'measure_for_children_in_entity.html', context)
+
+
+def measure_for_all_entities(request, measure, entity_type):
+    measure = get_object_or_404(Measure, id=measure)
+
+    measure_options = {
+        'rollUpBy': 'org_id',
+        'measure': measure,
+        'orgType': entity_type,
+    }
+
+    if measure.tags_focus:
+        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+
+    measure_options = _build_measure_options(measure_options)
+
+    entity_type_human = _entity_type_human(entity_type)
+
+    context = {
+        'measure': measure,
+        'measure_options': measure_options,
+        'entity_type': entity_type,
+        'entity_type_human': entity_type_human,
+    }
+    return render(request, 'measure_for_all_entities.html', context)
 
 
 ##################################################
@@ -720,17 +859,6 @@ def _financial_ytd_total(monthly_totals):
     )
 
 
-def _get_entity(entity_type, entity_code):
-    if entity_type == 'practice':
-        return get_object_or_404(Practice, code=entity_code)
-    elif entity_type == 'CCG':
-        return get_object_or_404(PCT, code=entity_code)
-    elif entity_type == 'all_england':
-        return None
-    else:
-        raise ValueError('Unknown entity_type: '+entity_type)
-
-
 ##################################################
 # Misc.
 ##################################################
@@ -813,6 +941,13 @@ def custom_500(request):
 # This view deliberately triggers an error
 def error(request):
     raise RuntimeError('Deliberate error triggered for testing purposes')
+
+
+# This view is for uptime monitoring
+def ping(request):
+    num_practices = Practice.objects.count()
+    rsp = 'Pong: there are {} practices'.format(num_practices)
+    return HttpResponse(rsp)
 
 
 ##################################################
@@ -905,7 +1040,20 @@ def _home_page_context_for_entity(request, entity):
         parent_org = entity.ccg_id
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
-        entity_type = 'CCG'
+        mv_filter['practice_id'] = None
+        entity_type = 'ccg'
+        parent_org = None
+    elif isinstance(entity, STP):
+        mv_filter['stp_id'] = entity.code
+        mv_filter['pct_id'] = None
+        mv_filter['practice_id'] = None
+        entity_type = 'stp'
+        parent_org = None
+    elif isinstance(entity, RegionalTeam):
+        mv_filter['regional_team_id'] = entity.code
+        mv_filter['pct_id'] = None
+        mv_filter['practice_id'] = None
+        entity_type = 'regional_team'
         parent_org = None
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
@@ -927,109 +1075,7 @@ def _home_page_context_for_entity(request, entity):
     ppu_date = _specified_or_last_date(request, 'ppu')
     total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
-    ncso_spending = _first_or_none(
-        ncso_spending_for_entity(entity, entity_type, num_months=1)
-    )
 
-    measure_options = _build_measure_options_for_entity_home_page(
-        extreme_measure,
-        entity,
-        parent_org
-    )
-
-    # This will blow up loudly if we remove this tag, at which point we should
-    # also remove the corresponding link from the entity_home_page.html
-    # template
-    assert 'lowpriorityconsultation' in MEASURE_TAGS
-
-    return {
-        'measure': extreme_measure,
-        'measures_count': measures_count,
-        'entity': entity,
-        'entity_type': entity_type,
-        'entity_price_per_unit_url': '{}_price_per_unit'.format(
-            entity_type.lower()),
-        'entity_ghost_generics_url': '{}_ghost_generics'.format(
-            entity_type.lower()),
-        'measures_for_one_entity_url': 'measures_for_one_{}'.format(
-            entity_type.lower()),
-        'spending_for_one_entity_url': 'spending_for_one_{}'.format(
-            entity_type.lower()),
-        'possible_savings': total_possible_savings,
-        'ncso_spending': ncso_spending,
-        'date': ppu_date,
-        'signed_up_for_alert': _signed_up_for_alert(request, entity, OrgBookmark),
-        'measure_options': measure_options,
-        'measure_tags': [
-            (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
-            if k != 'core'
-        ]
-    }
-
-
-def _url_template(view_name):
-    resolver = get_resolver()
-    pattern = resolver.reverse_dict[view_name][1]
-    pattern = '/' + pattern.rstrip('$')
-    return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
-
-
-def _build_measure_options_for_measure_for_one_entity(measure, entity):
-    options = {
-        'rollUpBy': 'measure_id',
-        'measure': measure,
-        'orgId': entity.code,
-        'orgName': entity.name,
-    }
-
-    if isinstance(entity, Practice):
-        options['orgType'] = 'practice'
-        options['parentOrgId'] = entity.ccg_id
-    elif isinstance(entity, PCT):
-        options['orgType'] = 'CCG'
-    else:
-        assert False
-
-    return _build_measure_options(options)
-
-
-def _build_measure_options_for_measures_for_one_entity(entity, tag_filter):
-    options = {
-        'rollUpBy': 'measure_id',
-        'tags': ','.join(tag_filter['tags']),
-        'orgId': entity.code,
-        'orgName': entity.name,
-    }
-
-    if isinstance(entity, Practice):
-        options['orgType'] = 'practice'
-        options['parentOrgId'] = entity.ccg_id
-    elif isinstance(entity, PCT):
-        options['orgType'] = 'CCG'
-    else:
-        assert False
-
-    return _build_measure_options(options)
-
-
-def _build_measure_options_for_measure_for_all_entities(measure, entity_type, parent_entity):
-    options = {
-        'rollUpBy': 'org_id',
-        'measure': measure,
-        'orgType': entity_type,
-    }
-
-    if parent_entity is not None:
-        options['orgId'] = parent_entity.code
-        options['orgName'] = parent_entity.name
-
-    if measure.tags_focus:
-        options['tagsFocus'] = ','.join(measure.tags_focus)
-
-    return _build_measure_options(options)
-
-
-def _build_measure_options_for_entity_home_page(extreme_measure, entity, parent_entity):
     specific_measures = [{
           'measure': 'lpzomnibus',
           'chartContainerId': '#lpzomnibus-container',
@@ -1042,21 +1088,72 @@ def _build_measure_options_for_entity_home_page(extreme_measure, entity, parent_
           'chartContainerId': '#top-measure-container',
         })
 
-    options = {
+    measure_options = {
         'rollUpBy': 'measure_id',
         'specificMeasures': specific_measures,
         'orgId': entity.code,
+        'orgType': _org_type_for_entity(entity),
     }
 
     if isinstance(entity, Practice):
-        options['orgType'] = 'practice'
-        options['parentOrgId'] = entity.ccg_id
-    elif isinstance(entity, PCT):
-        options['orgType'] = 'CCG'
-    else:
-        assert False
+        measure_options['parentOrgId'] = entity.ccg_id
 
-    return _build_measure_options(options)
+    measure_options = _build_measure_options(measure_options)
+
+    # This will blow up loudly if we remove this tag, at which point we should
+    # also remove the corresponding link from the entity_home_page.html
+    # template
+    assert 'lowpriorityconsultation' in MEASURE_TAGS
+
+    context = {
+        'measure': extreme_measure,
+        'measures_count': measures_count,
+        'entity': entity,
+        'entity_type': entity_type,
+        'entity_type_human': _entity_type_human(entity_type),
+        'measures_for_one_entity_url': 'measures_for_one_{}'.format(
+            entity_type.lower().replace(' ', '_')),
+        'possible_savings': total_possible_savings,
+        'date': ppu_date,
+        'measure_options': measure_options,
+        'measure_tags': [
+            (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
+            if k != 'core'
+        ]
+    }
+
+    if entity_type in ['practice', 'ccg']:
+        context['entity_price_per_unit_url'] = '{}_price_per_unit'.format(
+            entity_type.lower())
+        context['date'] = _specified_or_last_date(request, 'ppu')
+        context['possible_savings'] = _total_savings(entity, context['date'])
+        context['ncso_spending'] = _first_or_none(
+            ncso_spending_for_entity(entity, entity_type, num_months=1)
+        )
+        context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
+            entity_type.lower())
+        context['spending_for_one_entity_url'] = 'spending_for_one_{}'.format(
+            entity_type.lower())
+        context['signed_up_for_alert'] = _signed_up_for_alert(
+            request, entity, OrgBookmark)
+
+    return context
+
+
+def _url_template(view_name):
+    resolver = get_resolver()
+    pattern = resolver.reverse_dict[view_name][1]
+    pattern = '/' + pattern.rstrip('$')
+    return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
+
+
+def _org_type_for_entity(entity):
+    return {
+        Practice: 'practice',
+        PCT: 'ccg',
+        STP: 'stp',
+        RegionalTeam: 'regional_team',
+    }[type(entity)]
 
 
 def _build_measure_options(options):
@@ -1087,14 +1184,16 @@ def _build_measure_options(options):
         params['org'] = options['orgId']
     if 'aggregate' in options:
         params['aggregate'] = options['aggregate']
+    if 'parentOrgType' in options:
+        params['parent_org_type'] = options['parentOrgType'].lower().replace(' ', '_')
 
-    view_name = 'measure_by_' + options['orgType'].lower()
+    view_name = 'measure_by_' + options['orgType']
     options['panelMeasuresUrl'] = _build_api_url(view_name, params)
 
     # orgLocationUrl
     if 'orgId' in options:
         org_location_params = {
-            'org_type': options['orgType'].lower(),
+            'org_type': options['orgType'],
             'q': options['orgId'],
         }
 
@@ -1107,45 +1206,51 @@ def _build_measure_options(options):
     if options['rollUpBy'] == 'measure_id':
         if options.get('aggregate'):
             options['chartTitleUrlTemplate'] = _url_template('measure_for_all_ccgs')
+        elif options['orgType'] == 'regional_team':
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_regional_team')
+        elif options['orgType'] == 'stp':
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_stp')
         else:
             options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
     else:
-        if options['orgType'] == 'CCG':
-            options['chartTitleUrlTemplate'] = _url_template('measures_for_one_ccg')
-        elif options['orgType'] == 'practice':
-            options['chartTitleUrlTemplate'] = _url_template('measures_for_one_practice')
-        else:
-            assert False
+        view_name = 'measures_for_one_{}'.format(options['orgType'])
+        options['chartTitleUrlTemplate'] = _url_template(view_name)
 
     # measureForAllPracticesUrlTemplate
-    if not options.get('aggregate') and options['orgType'] == 'CCG':
+    if not options.get('aggregate') and options['orgType'] == 'ccg':
         options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
+
+    # measureForAllCCGsUrlTemplate
+    if options['orgType'] in ['stp', 'regional_team']:
+        view_name = 'measure_for_ccgs_in_{}'.format(options['orgType'])
+        options['measureForAllCCGsUrlTemplate'] = _url_template(view_name)
 
     # measureUrlTemplate
     if options['rollUpBy'] == 'measure_id':
-        options['measureUrlTemplate'] = _url_template('measure_for_all_ccgs')
+        if options['orgType'] == 'practice':
+            view_name = 'measure_for_all_ccgs'
+        else:
+            view_name = 'measure_for_all_{}s'.format(options['orgType'])
+        options['measureUrlTemplate'] = _url_template(view_name)
 
     # oneEntityUrlTemplate
     if not options.get('aggregate') and not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
         # If we're rolling up by measure and a measure is provided in the
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
-        if options['orgType'] == 'CCG':
-            options['oneEntityUrlTemplate'] = _url_template('measure_for_one_ccg')
-        elif options['orgType'] == 'practice':
-            options['oneEntityUrlTemplate'] = _url_template('measure_for_one_practice')
-        else:
-            assert False
+        view_name = 'measure_for_one_{}'.format(options['orgType'])
+        options['oneEntityUrlTemplate'] = _url_template(view_name)
 
     # tagsFocusUrlTemplate
     if options.get('aggregate'):
         options['tagsFocusUrlTemplate'] = reverse('all_england')
-    elif options['orgType'] == 'CCG':
-        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_ccg')
-    elif options['orgType'] == 'practice':
-        options['tagsFocusUrlTemplate'] = _url_template('measures_for_one_practice')
     else:
-        assert False
+        view_name = 'measures_for_one_{}'.format(options['orgType'])
+        options['tagsFocusUrlTemplate'] = _url_template(view_name)
+
+    options['orgTypeHuman'] = _entity_type_human(options['orgType'])
+    if 'parentOrgType' in options:
+        options['parentOrgTypeHuman'] = _entity_type_human(options['parentOrgType'])
 
     return options
 
@@ -1408,3 +1513,29 @@ def _handle_bookmark_and_newsletter_post(
         else:
             return redirect('newsletter-signup')
     return form
+
+
+def _get_entity(entity_type, entity_code):
+    entity_type = entity_type.lower()
+
+    if entity_type == 'practice':
+        return get_object_or_404(Practice, code=entity_code)
+    elif entity_type == 'ccg':
+        return get_object_or_404(PCT, code=entity_code)
+    elif entity_type == 'stp':
+        return get_object_or_404(STP, ons_code=entity_code)
+    elif entity_type == 'regional_team':
+        return get_object_or_404(RegionalTeam, code=entity_code)
+    elif entity_type == 'all_england':
+        return None
+    else:
+        raise ValueError('Unknown entity_type: '+entity_type)
+
+
+def _entity_type_human(entity_type):
+    return {
+        'practice': 'practice',
+        'ccg': 'CCG',
+        'stp': 'STP',
+        'regional_team': 'Regional Team',
+    }[entity_type]

@@ -3,19 +3,20 @@
 {% load staticfiles %}
 {% load template_extras %}
 
-{% block title %}{{measure.name}} by practices in {{ ccg.name }}{% endblock %}
-{% block active_class %}ccg{% endblock %}
-
-{% block extra_css %}
-  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
-{% endblock extra_css %}
+{% block title %}{{ measure.name }} by {{ child_entity_type_human }}s in {{ parent.name }}{% endblock %}
+{% block active_class %}{{ parent_entity_type }}{% endblock %}
 
 {% block content %}
-  <h1>{{measure.name}} by GP practices in {{ ccg.name }}</h1>
+  <h1>{{measure.name}} by {{ child_entity_type_human }}s in {{ parent.name }}</h1>
 
   {% include '_measure_header.html' %}
 
-  <p>Practices are ordered by mean percentile over the past six months, with the worst-performing at the top. Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.</p>
+  <p>
+    {{ child_entity_type_human }}s are ordered by mean percentile over the
+    past six months, with the worst-performing at the top. Each chart shows the
+    results for the individual {{ child_entity_type_human }}, plus deciles
+    across all {{ child_entity_type_human }}s in the NHS in England.
+  </p>
 
   <div id="measures">
     <div id="charts" class="row">
@@ -35,7 +36,7 @@
     </script>
 
     <script id="measure-panel" type="text/x-handlebars-template">
-      <div id="practice_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+      <div id="{{ orgType }}_{{ chartId }}" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
         <div class="panel panel-info">
           <div class="panel-heading">
             <span class="measure-panel-title">

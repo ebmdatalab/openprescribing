@@ -40,7 +40,8 @@ class Command(BaseCommand):
         for url in sorted(urls, key=lambda url: url.split('/')[-1], reverse=True):
             filename = url.split('/')[-1]
             tmp_filename = filename + '.tmp'
-            match = re.match(pattern, filename)
+            # We ignore case here, as sometimes filename is .csv and sometimes .CSV.
+            match = re.match(pattern, filename, re.I)
             year_and_month = '_'.join(match.groups())
 
             dir_path = os.path.join(

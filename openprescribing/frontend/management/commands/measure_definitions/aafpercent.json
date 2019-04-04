@@ -1,0 +1,58 @@
+{
+  "name": "Prescribing of Amino acid formula (AAF) for Cow's Milk Protein Allergy (CMPA)",
+  "title": [
+    "Amino acid formula (AAF) as proportion of AAF and extensively hydrolysed formula (EHF)"
+  ],
+ "why_it_matters": [
+    "Extensively hydrolysed formula (EHF) is appropriate for the majority of children with Cow's Milk Protein Allergy (CMPA). ",
+    "Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
+    "proportion of infants ",
+    "(<a href='https://doi.org/10.1016/j.jaip.2017.09.003'>thought to be around 10%</a>) ",
+    "need to be started on AAF in primary care."
+  ],
+  "description": [
+    "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF) "
+  ],
+  "numerator_short": "AAF quantity (grams)",
+  "denominator_short": "AAF and EHF quantity (grams)",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "nutrition",
+    "core"
+  ],
+  "numerator_columns": [
+    "SUM(quantity) AS numerator, "
+  ],
+"numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
+"numerator_where": [
+    "r.type = 'AAF' --this filters to only products listed as 'AAF' in the products table"
+  ],
+  "denominator_columns": [
+    "SUM(quantity) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
+  "denominator_where": [
+    "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
+  ],
+  "date_reviewed": [
+    "2019-03-25"
+  ],
+  "next_review": [
+    "2019-10-01"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "high"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Cow's%20Milk%20Protein%20Allergy.ipynb"
+  ]
+}

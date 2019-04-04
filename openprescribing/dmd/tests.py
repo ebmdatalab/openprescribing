@@ -6,7 +6,7 @@ from mock import call, patch
 import bs4
 
 from django.conf import settings
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from django.db import connection
 from django.test import TestCase
 
@@ -197,8 +197,8 @@ class CommandsTestCase(TestCase):
         #   * Amiloride (new-and-matched)
         #   * Amlodipine (new-and-unmatched)
         #  2017_10 (archive)
-        #   * Amiloride (unchanged)
-        #   * Anastrozole (changed)
+        #   * Amiloride (unchanged, but originally had a typo)
+        #   * Anastrozole (unchanged)
 
         vmpp1 = DMDVmpp.objects.create(
             vppid=1191111000001100,
@@ -210,17 +210,17 @@ class CommandsTestCase(TestCase):
         )
 
         NCSOConcession.objects.create(
-            date='2017-10-1',
-            drug='Amiloride 5mg tablets',
+            date='2017-10-01',
+            drug='Amilorde 5mg tablets',  # typo is deliberate
             pack_size='28',
             price_concession_pence=925,
             vmpp_id=vmpp1.vppid,
         )
         NCSOConcession.objects.create(
-            date='2017-10-1',
+            date='2017-10-01',
             drug='Anastrozole 1mg tablets',
             pack_size='28',
-            price_concession_pence=1335,
+            price_concession_pence=1445,
             vmpp_id=vmpp2.vppid,
         )
 
@@ -237,20 +237,17 @@ class CommandsTestCase(TestCase):
         patch_path = 'dmd.management.commands.fetch_and_import_ncso_concessions'
         with patch(patch_path + '.Command.download_archive') as download_archive,\
                 patch(patch_path + '.Command.download_current') as download_current,\
-                patch(patch_path + '.logger.info') as info:
+                patch(patch_path + '.notify_slack') as notify_slack:
             download_archive.return_value = archive_doc
             download_current.return_value = current_doc
 
             call_command('fetch_and_import_ncso_concessions')
 
-            expected_logging_calls = [
-                call('New and matched: %s', 1),
-                call('New and unmatched: %s', 1),
-                call('Changed: %s', 1),
-                call('Unchanged: %s', 1),
-                call('Unmatched: %s', 1),
-            ]
-            self.assertEqual(info.call_args_list[-5:], expected_logging_calls)
+            exp_msg = '\n'.join([
+                'Imported 2 new concessions',
+                'There are 1 unmatched concessions',
+            ])
+            self.assertEqual(notify_slack.call_args[0], (exp_msg,))
 
         self.assertEqual(NCSOConcession.objects.count(), 4)
 
@@ -267,6 +264,29 @@ class CommandsTestCase(TestCase):
             self.assertEqual(concession.pack_size, pack_size)
             self.assertEqual(concession.price_concession_pence, pcp)
             self.assertEqual(concession.vmpp, vmpp)
+
+    def test_reconcile_ncso_concession(self):
+        vmpp = DMDVmpp.objects.create(
+            vppid=1191111000001100,
+            nm='Amiloride 5mg tablets 28 tablet',
+        )
+
+        concession = NCSOConcession.objects.create(
+            id=1234,
+            date='2017-10-01',
+            drug='Amiloride 5mg tablets',
+            pack_size='28',
+            price_concession_pence=925,
+            vmpp_id=None,
+        )
+
+        call_command('reconcile_ncso_concession', 1234, 1191111000001100)
+
+        with self.assertRaises(CommandError):
+            call_command('reconcile_ncso_concession', 9234, 1191111000001100)
+
+        with self.assertRaises(CommandError):
+            call_command('reconcile_ncso_concession', 1234, 9191111000001100)
 
     def test_reconcile_ncso_concessions(self):
         vmpp = DMDVmpp.objects.create(

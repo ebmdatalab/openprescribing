@@ -97,8 +97,17 @@ var utils = {
   _rollUpByOrg: function(data, orgType) {
     var rolled = {};
     _.each(data.data, function(d) {
-      var id = (orgType === 'practice') ? d.practice_id : d.pct_id;
-      var name = (orgType === 'practice') ? d.practice_name : d.pct_name;
+      var id;
+      var name;
+
+      if (orgType === 'ccg') {
+        id = d['pct_id'];
+        name = d['pct_name'];
+      } else {
+        id = d[orgType + '_id'];
+        name = d[orgType + '_name'];
+      }
+
       if (id in rolled) {
         rolled[id].data.push(d);
       } else {
@@ -183,7 +192,7 @@ var utils = {
       if (options.rollUpBy === 'measure_id' && ! options.aggregate) {
         if (potentialSavings50th > 0) {
           perf.costSavings = 'Over the past ' + numMonths + ' months, if this ';
-          perf.costSavings += options.orgType;
+          perf.costSavings += options.orgTypeHuman;
           perf.costSavings += ' had prescribed at the median ratio or better ' +
             'on all cost-saving measures below, then it would have spent £' +
             humanize.numberFormat(potentialSavings50th, 0) +
@@ -194,17 +203,20 @@ var utils = {
         }
       } else if (options.isCostBasedMeasure) {
         perf.costSavings = 'Over the past ' + numMonths + ' months, if all ';
-        perf.costSavings += options.orgType;
+        perf.costSavings += options.orgTypeHuman;
         perf.costSavings += 's had prescribed at the median ratio ' +
           'or better, then ';
-        perf.costSavings += (options.orgType === 'practice') ?
-          'this CCG ' : 'NHS England ';
-        perf.costSavings += 'would have spent £' +
+        if (options.parentOrgTypeHuman) {
+          perf.costSavings += 'this ' + options.parentOrgTypeHuman;
+        } else {
+          perf.costSavings += 'NHS England';
+        }
+        perf.costSavings += ' would have spent £' +
           humanize.numberFormat(potentialSavings50th, 0) +
           ' less. (We use the national median as a suggested ' +
           'target because by definition, 50% of ';
-        perf.costSavings += options.orgType;
-        perf.costSavings += 'were already prescribing ' +
+        perf.costSavings += options.orgTypeHuman;
+        perf.costSavings += 's were already prescribing ' +
           'at this level or better, so we think it ought to be achievable.)';
       }
     } else {
@@ -269,9 +281,9 @@ var utils = {
       d.x = Date.UTC(dates[0], dates[1] - 1, dates[2]);
       if (isGlobal) {
         var p = d.percentiles;
-        var org = options.orgType.toLowerCase();
-        d.y = (p && p[org] && p[org][centile] !== null) ?
-          parseFloat(p[org][centile]) : null;
+        var orgType = options.orgType;
+        d.y = (p && p[orgType] && p[orgType][centile] !== null) ?
+          parseFloat(p[orgType][centile]) : null;
       } else {
         d.y = (d.calc_value === null) ? null : parseFloat(d.calc_value);
       }
@@ -304,30 +316,23 @@ var utils = {
     var oneEntityUrl;
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
+    var measureForAllCCGsUrl;
     var context = {};
     var _this = this;
 
     if (options.rollUpBy == 'measure_id') {
       chartTitle = d.name;
-
       context['measure'] = d.id;
       context['entity_code'] = options.orgId;
+      context[options.orgType + '_code'] = options.orgId;
       if (options.orgType == 'practice') {
-        context['practice_code'] = options.orgId;
         context['ccg_code'] = options.parentOrgId;
-      } else {
-        context['ccg_code'] = options.orgId;
       }
     } else {
       chartTitle = d.id + ': ' + d.name;
-
       context['measure'] = options.measure;
       context['entity_code'] = d.id;
-      if (options.orgType == 'practice') {
-        context['practice_code'] = d.id;
-      } else {
-        context['ccg_code'] = d.id;
-      }
+      context[options.orgType + '_code'] = d.id;
     }
 
     chartTitleUrl = _this._buildUrl(
@@ -340,6 +345,10 @@ var utils = {
     );
     measureForAllPracticesUrl = _this._buildUrl(
       options.measureForAllPracticesUrlTemplate,
+      context
+    );
+    measureForAllCCGsUrl = _this._buildUrl(
+      options.measureForAllCCGsUrlTemplate,
       context
     );
     tagsFocusUrl = _this._buildUrl(
@@ -355,28 +364,27 @@ var utils = {
     );
 
     var isAggregateEntity = options.aggregate;
-
     var costDataAvailable = d.isCostBased && d.costSaving10th;
     if (d.meanPercentile !== null || costDataAvailable) {
       if (d.lowIsGood === null) {
         chartExplanation = (
           'This is a measure where there is disagreement about whether ' +
             'higher, or lower, is better. Nonetheless it is interesting to ' +
-            'know if a ' + options.orgType + ' is a long way from average ' +
+            'know if a ' + options.orgTypeHuman + ' is a long way from average ' +
             'prescribing behaviour. ');
       }
       if (d.isCostBased || options.isCostBasedMeasure) {
         var noun1 = 'it';
-        var noun2 = 'this ' + options.orgType;
+        var noun2 = 'this ' + options.orgTypeHuman;
         var noun3 = 'it';
         if (isAggregateEntity) {
-          noun1 = 'all ' + options.orgType + 's in England';
+          noun1 = 'all ' + options.orgTypeHuman + 's in England';
           noun2 = 'the NHS';
           noun3 = 'they';
         }
         if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
-            'this ' + options.orgType + ' has saved the NHS £' +
+            'this ' + options.orgTypeHuman + ' has saved the NHS £' +
             humanize.numberFormat((d.costSaving50th * -1), 0) +
             ' over the past ' + numMonths + ' months.';
         } else {
@@ -394,6 +402,8 @@ var utils = {
     }
     return {
       orgType: options.orgType,
+      orgTypeHuman: options.orgTypeHuman,
+      comparisonOrgTypeHuman: options.orgType == 'practice' ? 'CCG' : options.orgTypeHuman,
       measureUrl: measureUrl,
       isAggregateEntity: isAggregateEntity,
       chartTitle: chartTitle,
@@ -402,6 +412,7 @@ var utils = {
       tagsFocus: d.tagsFocus,
       tagsFocusUrl: tagsFocusUrl,
       measureForAllPracticesUrl: measureForAllPracticesUrl,
+      measureForAllCCGsUrl: measureForAllCCGsUrl,
       chartExplanation: chartExplanation,
       tags: d.tags,
       tagsForDisplay: (d.tags || []).filter(function(t) { return t.id !== 'core'; })
@@ -417,7 +428,7 @@ var utils = {
       options, chartOptions);
     hcOptions.series = [];
     hcOptions.series.push({
-      name: ( ! options.aggregate) ? ('This ' + options.orgType) : options.orgName,
+      name: ( ! options.aggregate) ? ('This ' + options.orgTypeHuman) : options.orgName,
       isNationalSeries: false,
       showTooltip: true,
       data: d.data,
@@ -576,8 +587,17 @@ var utils = {
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
-    var orgIDColumn = (chartData.orgType == 'CCG') ? 'pct_id' : 'practice_id';
-    var orgNameColumn = (chartData.orgType == 'CCG') ? 'pct_name' : 'practice_name';
+    var orgIDColumn;
+    var orgNameColumn;
+
+    if (chartData.orgType == 'ccg') {
+      orgIDColumn = 'pct_id';
+      orgNameColumn = 'pct_name';
+    } else {
+      orgIDColumn = chartData.orgType + '_id';
+      orgNameColumn = chartData.orgType + '_name';
+    }
+
     var table = chartData.data.map(function(d) {
       return [
           d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
