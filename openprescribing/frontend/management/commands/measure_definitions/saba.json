@@ -68,7 +68,6 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "((bnf_code LIKE '0301011R0%' OR bnf_code LIKE '0301011V0%' OR bnf_code LIKE '0302%') ",
     "bnf_code LIKE '0301011R0%AA' OR --Salbutamol_Inha 100mcg (200 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AC' OR --Salbutamol_Inha 100mcg (80 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AD' OR --Salbutamol_Inha B/A 100mcg (200 D) (brands and generic) \n",
