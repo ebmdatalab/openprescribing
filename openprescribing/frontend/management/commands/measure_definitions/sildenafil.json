@@ -31,7 +31,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction",
+    "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction \n",
     "AND ",
     "(",
     "(bnf_code NOT IN \n",
