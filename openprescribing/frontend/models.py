@@ -411,6 +411,11 @@ class Presentation(models.Model):
     # by anything else, especially not by hand.
     quantity_means_pack = models.NullBooleanField(default=None)
 
+    # The name of the corresponding product (or product pack) in dm+d.  This
+    # tends to be more user-friendly than the names in the BNF.  See
+    # set_dmd_names in import_dmd command for details of how this is set.
+    dmd_name = models.CharField(max_length=255, null=True)
+
     objects = PresentationManager()
 
     def __str__(self):
