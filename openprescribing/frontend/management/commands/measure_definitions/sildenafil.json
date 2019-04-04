@@ -33,7 +33,6 @@
   "numerator_where": [
     "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction \n",
     "AND ",
-    "(",
     "(bnf_code NOT IN \n",
     "('0704050Z0AAAAAA', --Sildenafil_Tab 50mg \n",
     "'0704050Z0AAABAB',  --Sildenafil_Tab 25mg \n",
