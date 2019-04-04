@@ -39,6 +39,6 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "bnf_code LIKE '0408010AE%' Pregabablin (brands and generic)"
+    "bnf_code LIKE '0408010AE%' --Pregabablin (brands and generic)"
   ]
 }
