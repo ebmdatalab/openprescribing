@@ -39,6 +39,8 @@ def send_alerts(date):
                 date
             )
 
+    print('Sent {} alerts'.format(bookmarks.count()))
+
 
 def get_unsent_bookmarks(date):
     '''Find unsent bookmarks for given date.
