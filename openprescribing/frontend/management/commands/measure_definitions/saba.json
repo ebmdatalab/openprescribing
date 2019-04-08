@@ -68,7 +68,7 @@
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "bnf_code LIKE '0301011R0%AA' OR --Salbutamol_Inha 100mcg (200 D) (brands and generic) \n",
+    "(bnf_code LIKE '0301011R0%AA' OR --Salbutamol_Inha 100mcg (200 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AC' OR --Salbutamol_Inha 100mcg (80 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AD' OR --Salbutamol_Inha B/A 100mcg (200 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AE' OR --Salbutamol_Inha 100mcg (200 D) + V/Spac (brands and generic) \n",
@@ -101,6 +101,11 @@
     "bnf_code LIKE '0301011V0%AM' OR --Terbut Sulf_Inha 250mcg (100 D) (brands and generic) \n",
     "bnf_code LIKE '0301011V0%AZ' OR --Terbut Sulf_Inha 250mcg (400D) Ref  @gn (brands and generic) \n",
     "bnf_code LIKE '0301011V0%BB' OR --Terbut Sulf_B/A Inha 500mcg (120 D) (brands and generic) \n",
-    "bnf_code LIKE '0302%'           --Corticosteroids (Respiratory)"
+    "bnf_code LIKE '0302%')           --Corticosteroids (Respiratory) \n",
+    "AND ",
+    "(bnf_code NOT LIKE '0302000K0%AI' AND --Budesonide_Inh Soln 1mg/2ml Ud Vl (brands and generic) \n",
+    "bnf_code NOT LIKE '0302000K0%AJ' AND  --Budesonide_Inh Soln 500mcg/2ml Ud Vl (brands and generic) \n",
+    "bnf_code NOT LIKE '0302000N0%AV' AND  --Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic) \n",
+    "bnf_code NOT LIKE '0302000N0%AW') --Fluticasone Prop_Inh Soln 2mg/2ml Ud (brands and generic) \n"
   ]
 }
