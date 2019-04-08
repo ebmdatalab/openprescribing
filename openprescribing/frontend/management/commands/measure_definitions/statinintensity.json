@@ -30,23 +30,23 @@
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN (",
-    "'0212000AA%', --Rosuvastatin Calcium \n",
-    "'0212000AC%', --Simvastatin & Ezetimibe \n",
-    "'0212000B0%', --Atorvastatin \n",
-    "'0212000C0%', --Cerivastatin \n",
-    "'0212000M0%', --Fluvastatin Sodium \n",
-    "'0212000X0%', --Pravastatin Sodium \n",
-    "'0212000Y0%') --Simvastatin \n",
-    "AND bnf_code NOT IN (\n",
-    "'0212000AAAAAAAA%', --Rosuvastatin Calc_Tab 10mg (brand, generic) \n",
-    "'0212000AAAAABAB%', --Rosuvastatin Calc_Tab 20mg (brand, generic) \n",
-    "'0212000AAAAACAC%', --Rosuvastatin Calc_Tab 40mg (brand, generic) \n",
-    "'0212000B0AAABAB%', --Atorvastatin_Tab 20mg (brand, generic) \n",
-    "'0212000B0AAACAC%', --Atorvastatin_Tab 40mg (brand, generic) \n",
-    "'0212000B0AAADAD%', --Atorvastatin_Tab 80mg (brand, generic) \n",
-    "'0212000B0AAANAN%', --Atorvastatin_Tab 30mg (brand, generic) \n",
-    "'0212000B0AAAPAP%', --Atorvastatin_Tab 60mg (brand, generic) \n",
-    "'0212000Y0AAAHAH%') --Simvastatin_Tab 80mg (brand, generic)"
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n",
+    "AND (concat(SUBSTR(bnf_code,1,9),SUBSTR(bnf_code,-2,2)) NOT IN (\n",
+    "'0212000AAAA', --Rosuvastatin Calc_Tab 10mg (brand, generic) \n",
+    "'0212000AAAB', --Rosuvastatin Calc_Tab 20mg (brand, generic) \n",
+    "'0212000AAAC', --Rosuvastatin Calc_Tab 40mg (brand, generic) \n",
+    "'0212000B0AB', --Atorvastatin_Tab 20mg (brand, generic) \n",
+    "'0212000B0AC', --Atorvastatin_Tab 40mg (brand, generic) \n",
+    "'0212000B0AD', --Atorvastatin_Tab 80mg (brand, generic) \n",
+    "'0212000B0AN', --Atorvastatin_Tab 30mg (brand, generic) \n",
+    "'0212000B0AP', --Atorvastatin_Tab 60mg (brand, generic) \n",
+    "'0212000Y0AH')) --Simvastatin_Tab 80mg (brand, generic)"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
@@ -54,12 +54,12 @@
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "SUBSTR(bnf_code,1,9) IN (",
-    "'0212000AA%', --Rosuvastatin Calcium \n",
-    "'0212000AC%', --Simvastatin & Ezetimibe \n",
-    "'0212000B0%', --Atorvastatin \n",
-    "'0212000C0%', --Cerivastatin \n",
-    "'0212000M0%', --Fluvastatin Sodium \n",
-    "'0212000X0%', --Pravastatin Sodium \n",
-    "'0212000Y0%') --Simvastatin \n"
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n"
   ]
 }
