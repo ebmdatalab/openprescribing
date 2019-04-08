@@ -33,6 +33,8 @@
   "numerator_where": [
     "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction \n",
     "AND ",
+    "(",
+    "(",
     "(bnf_code NOT IN \n",
     "('0704050Z0AAAAAA', --Sildenafil_Tab 50mg \n",
     "'0704050Z0AAABAB',  --Sildenafil_Tab 25mg \n",
@@ -40,14 +42,16 @@
     "AND MONTH <'2018-04-01 00:00:00') --before this point, only sildenafil was generic \n",
     ")",
     "OR ",
+    "(",
     "(bnf_code NOT IN \n",
     "('0704050Z0AAAAAA', --Sildenafil_Tab 50mg \n",
     "'0704050Z0AAABAB',  --Sildenafil_Tab 25mg \n",
-    "'0704050Z0AAACAC'   --Sildenafil_Tab 100mg \n",
+    "'0704050Z0AAACAC',   --Sildenafil_Tab 100mg \n",
     "'0704050R0AAAAAA',  --Tadalafil_Tab 10mg \n",
     "'0704050R0AAABAB',  --Tadalafil_Tab 20mg \n",
     "'0704050R0AAADAD')  --Tadalafil_Tab 5mg \n",
     "AND MONTH >='2018-04-01 00:00:00') --after this point, Tadalafil was generic in these strengths \n",
+    ")",
     ")"
   ],
   "numerator_bnf_codes_query": [
