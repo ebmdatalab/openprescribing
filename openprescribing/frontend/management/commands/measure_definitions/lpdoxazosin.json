@@ -25,8 +25,8 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "bnf_code LIKE '0205040D0AAAQAQ%' OR --Doxazosin Mesil_Tab 4mg M/R (brands and generic) \n",
-    "bnf_code LIKE '0205040D0AAARAR%' --Doxazosin Mesil_Tab 8mg M/R (brands and generic)"
+    "bnf_code LIKE '0205040D0%AQ' OR --Doxazosin Mesil_Tab 4mg M/R (brands and generic) \n",
+    "bnf_code LIKE '0205040D0%AR'     --Doxazosin Mesil_Tab 8mg M/R (brands and generic)"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
