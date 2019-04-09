@@ -1,14 +1,14 @@
 {
-  "name": "Prescribing of Amino acid formula (AAF) for Cow's Milk Protein Allergy (CMPA)",
+  "name": "Prescribing of Amino Acid Formula (AAF) and Extensively Hydrolysed Formula (EHF))",
   "title": [
     "Amino acid formula (AAF) as proportion of AAF and extensively hydrolysed formula (EHF)"
   ],
  "why_it_matters": [
-    "Extensively hydrolysed formula (EHF) is appropriate for the majority of children with Cow's Milk Protein Allergy (CMPA). ",
-    "Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
+    "These products are prescribed for a number of allergy indications, and are most commonly prescribed for Cow's Milk Protein Allergy ",
+    "(CMPA).  Amino acid formula (AAF) products are almost three times more expensive than EHF and it is believed that only a small ",
     "proportion of infants ",
     "(<a href='https://doi.org/10.1016/j.jaip.2017.09.003'>thought to be around 10%</a>) ",
-    "need to be started on AAF in primary care."
+    "need to be started on AAF for CMPA in primary care."
   ],
   "description": [
     "Prescribing of amino acid formula (AAF) products as proportion of AAF and extensively hydrolysed formula (EHF) "
