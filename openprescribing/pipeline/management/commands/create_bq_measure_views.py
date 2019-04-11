@@ -32,3 +32,11 @@ class Command(BaseCommand):
             except Conflict:
                 client.delete_table(table_name)
                 client.create_table_with_view(table_name, sql, False)
+
+        # cmpa_products is a table that has been created and managed by Rich.
+        schema = build_schema(
+            ('bnf_code', 'STRING'),
+            ('bnf_name', 'STRING'),
+            ('type', 'STRING'),
+        )
+        client.get_or_create_table('cmpa_products', schema)
