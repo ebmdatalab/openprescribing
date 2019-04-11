@@ -22,7 +22,7 @@
       <h3><a href="{% url measures_for_one_entity_url entity.code %}" class="unstyled-link">Standard measures</a></h3>
       <div class="row">
         <div class="col-md-12">
-          <p class="measure-description">Our {{ measures_count }} standard measures compare performance across England. This is the measure where {{ entity.cased_name }} has the greatest potential for improvement.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
+          <p class="measure-explanation">Our {{ measures_count }} standard measures compare performance across England. This is the measure where {{ entity.cased_name }} has the greatest potential for improvement.  <a href="{% url measures_for_one_entity_url entity.code %}">View all {{ measures_count }} measures...</a></p>
         </div>
         <div class="col-md-12">
           <div id="top-measure-container" class="row">
@@ -40,7 +40,7 @@
       <h3><a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority" class="unstyled-link">NHS low priority measures</a></h3>
       <div class="row">
         <div class="col-md-12">
-          <p class="measure-description">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 18 measures...</a></p>
+          <p class="measure-explanation">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 18 measures...</a></p>
         </div>
         <div class="col-md-12">
           <div id="lpzomnibus-container" class="row">
@@ -201,8 +201,9 @@
           <a href="{{ chartTitleUrl }}">{{ chartTitle }}</a>
         </span>
       </div>
-      <div class="panel-body" id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
-        <div class="chart">
+      <div class="panel-body" class="row">
+        <p class="measure-description">{{{ description }}}</p>
+        <div id="{{ chartId }}" data-costsaving="{{ cost_saving }}">
           <div class="status"></div>
         </div>
       </div>
