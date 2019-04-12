@@ -129,17 +129,17 @@ class TestSpending(ApiTestBase):
 
         self.assertEqual(len(rows), 60)
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '4.61')
-        self.assertEqual(rows[0]['items'], '3')
-        self.assertEqual(rows[0]['quantity'], '82')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
+        self.assertEqual(rows[0]['items'], '2')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[1]['date'], '2013-05-01')
         self.assertEqual(rows[1]['actual_cost'], '0.0')
         self.assertEqual(rows[1]['items'], '0')
         self.assertEqual(rows[1]['quantity'], '0')
         self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '90.54')
-        self.assertEqual(rows[19]['items'], '95')
-        self.assertEqual(rows[19]['quantity'], '5142')
+        self.assertEqual(rows[19]['actual_cost'], '230.54')
+        self.assertEqual(rows[19]['items'], '96')
+        self.assertEqual(rows[19]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section(self):
         _create_prescribing_tables()
@@ -148,13 +148,13 @@ class TestSpending(ApiTestBase):
         })
 
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '4.61')
-        self.assertEqual(rows[0]['items'], '3')
-        self.assertEqual(rows[0]['quantity'], '82')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
+        self.assertEqual(rows[0]['items'], '2')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '90.54')
-        self.assertEqual(rows[19]['items'], '95')
-        self.assertEqual(rows[19]['quantity'], '5142')
+        self.assertEqual(rows[19]['actual_cost'], '230.54')
+        self.assertEqual(rows[19]['items'], '96')
+        self.assertEqual(rows[19]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section_full_code(self):
         _create_prescribing_tables()
@@ -163,13 +163,13 @@ class TestSpending(ApiTestBase):
         })
 
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '4.61')
-        self.assertEqual(rows[0]['items'], '3')
-        self.assertEqual(rows[0]['quantity'], '82')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
+        self.assertEqual(rows[0]['items'], '2')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '90.54')
-        self.assertEqual(rows[19]['items'], '95')
-        self.assertEqual(rows[19]['quantity'], '5142')
+        self.assertEqual(rows[19]['actual_cost'], '230.54')
+        self.assertEqual(rows[19]['items'], '96')
+        self.assertEqual(rows[19]['quantity'], '5143')
 
     def test_total_spending_by_code(self):
         _create_prescribing_tables()
@@ -178,9 +178,9 @@ class TestSpending(ApiTestBase):
         })
 
         self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '36.28')
-        self.assertEqual(rows[19]['items'], '33')
-        self.assertEqual(rows[19]['quantity'], '2354')
+        self.assertEqual(rows[19]['actual_cost'], '176.28')
+        self.assertEqual(rows[19]['items'], '34')
+        self.assertEqual(rows[19]['quantity'], '2355')
 
     def test_total_spending_by_codes(self):
         _create_prescribing_tables()
@@ -208,12 +208,12 @@ class TestSpendingByCCG(ApiTestBase):
         rows = self._get_rows({})
 
         self.assertEqual(len(rows), 9)
-        self.assertEqual(rows[6]['row_id'], '03V')
-        self.assertEqual(rows[6]['row_name'], 'NHS Corby')
-        self.assertEqual(rows[6]['date'], '2014-09-01')
-        self.assertEqual(rows[6]['actual_cost'], '38.28')
-        self.assertEqual(rows[6]['items'], '41')
-        self.assertEqual(rows[6]['quantity'], '1241')
+        self.assertEqual(rows[5]['row_id'], '03V')
+        self.assertEqual(rows[5]['row_name'], 'NHS Corby')
+        self.assertEqual(rows[5]['date'], '2014-09-01')
+        self.assertEqual(rows[5]['actual_cost'], '38.28')
+        self.assertEqual(rows[5]['items'], '41')
+        self.assertEqual(rows[5]['quantity'], '1241')
 
     def test_total_spending_by_one_ccg(self):
         params = {
@@ -238,12 +238,12 @@ class TestSpendingByCCG(ApiTestBase):
 
         rows = self._rows_from_api('/spending_by_ccg?format=csv&org=03V,03Q')
         self.assertEqual(len(rows), 9)
-        self.assertEqual(rows[6]['row_id'], '03V')
-        self.assertEqual(rows[6]['row_name'], 'NHS Corby')
-        self.assertEqual(rows[6]['date'], '2014-09-01')
-        self.assertEqual(rows[6]['actual_cost'], '38.28')
-        self.assertEqual(rows[6]['items'], '41')
-        self.assertEqual(rows[6]['quantity'], '1241')
+        self.assertEqual(rows[5]['row_id'], '03V')
+        self.assertEqual(rows[5]['row_name'], 'NHS Corby')
+        self.assertEqual(rows[5]['date'], '2014-09-01')
+        self.assertEqual(rows[5]['actual_cost'], '38.28')
+        self.assertEqual(rows[5]['items'], '41')
+        self.assertEqual(rows[5]['quantity'], '1241')
 
     def test_spending_by_all_ccgs_on_chemical(self):
         params = {
@@ -257,9 +257,9 @@ class TestSpendingByCCG(ApiTestBase):
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '1.56')
-        self.assertEqual(rows[0]['items'], '1')
-        self.assertEqual(rows[0]['quantity'], '26')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
+        self.assertEqual(rows[0]['items'], '2')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[5]['row_id'], '03V')
         self.assertEqual(rows[5]['row_name'], 'NHS Corby')
         self.assertEqual(rows[5]['date'], '2014-11-01')
@@ -273,13 +273,13 @@ class TestSpendingByCCG(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 9)
-        self.assertEqual(rows[0]['row_id'], '03Q')
-        self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
+        self.assertEqual(len(rows), 8)
+        self.assertEqual(rows[0]['row_id'], '03V')
+        self.assertEqual(rows[0]['row_name'], 'NHS Corby')
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.05')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
         self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '56')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[-3]['row_id'], '03V')
         self.assertEqual(rows[-3]['row_name'], 'NHS Corby')
         self.assertEqual(rows[-3]['date'], '2014-09-01')
@@ -321,13 +321,13 @@ class TestSpendingByCCG(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 7)
-        self.assertEqual(rows[0]['row_id'], '03Q')
-        self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
+        self.assertEqual(len(rows), 6)
+        self.assertEqual(rows[0]['row_id'], '03V')
+        self.assertEqual(rows[0]['row_name'], 'NHS Corby')
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.05')
-        self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '56')
+        self.assertEqual(rows[0]['actual_cost'], '1.56')
+        self.assertEqual(rows[0]['items'], '1')
+        self.assertEqual(rows[0]['quantity'], '26')
 
     def test_spending_by_all_ccgs_on_bnf_section(self):
         params = {
@@ -335,13 +335,13 @@ class TestSpendingByCCG(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 9)
-        self.assertEqual(rows[0]['row_id'], '03Q')
-        self.assertEqual(rows[0]['row_name'], 'NHS Vale of York')
+        self.assertEqual(len(rows), 8)
+        self.assertEqual(rows[0]['row_id'], '03V')
+        self.assertEqual(rows[0]['row_name'], 'NHS Corby')
         self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.05')
+        self.assertEqual(rows[0]['actual_cost'], '3.12')
         self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '56')
+        self.assertEqual(rows[0]['quantity'], '52')
         self.assertEqual(rows[-1]['row_id'], '03V')
         self.assertEqual(rows[-1]['row_name'], 'NHS Corby')
         self.assertEqual(rows[-1]['date'], '2014-11-01')
@@ -355,13 +355,13 @@ class TestSpendingByCCG(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 9)
+        self.assertEqual(len(rows), 8)
         self.assertEqual(rows[-1]['row_id'], '03V')
         self.assertEqual(rows[-1]['row_name'], 'NHS Corby')
         self.assertEqual(rows[-1]['date'], '2014-11-01')
-        self.assertEqual(rows[-1]['actual_cost'], '90.54')
-        self.assertEqual(rows[-1]['items'], '95')
-        self.assertEqual(rows[-1]['quantity'], '5142')
+        self.assertEqual(rows[-1]['actual_cost'], '230.54')
+        self.assertEqual(rows[-1]['items'], '96')
+        self.assertEqual(rows[-1]['quantity'], '5143')
 
 
 class TestSpendingByPractice(ApiTestBase):
@@ -390,9 +390,9 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]['date'], '2014-11-01')
         self.assertEqual(rows[0]['setting'], '-1')
         self.assertEqual(rows[0]['ccg'], '03V')
-        self.assertEqual(rows[0]['actual_cost'], '26.28')
-        self.assertEqual(rows[0]['items'], '40')
-        self.assertEqual(rows[0]['quantity'], '2543')
+        self.assertEqual(rows[0]['actual_cost'], '166.28')
+        self.assertEqual(rows[0]['items'], '41')
+        self.assertEqual(rows[0]['quantity'], '2544')
 
     def test_spending_by_practice_on_chemical(self):
         params = {
@@ -407,9 +407,9 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]['setting'], '-1')
         self.assertEqual(rows[0]['ccg'], '03V')
         self.assertEqual(rows[0]['date'], '2014-11-01')
-        self.assertEqual(rows[0]['actual_cost'], '14.15')
-        self.assertEqual(rows[0]['items'], '16')
-        self.assertEqual(rows[0]['quantity'], '1154')
+        self.assertEqual(rows[0]['actual_cost'], '154.15')
+        self.assertEqual(rows[0]['items'], '17')
+        self.assertEqual(rows[0]['quantity'], '1155')
 
     def test_spending_by_all_practices_on_chemical_with_date(self):
         params = {
@@ -481,13 +481,13 @@ class TestSpendingByPractice(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 6)
-        self.assertEqual(rows[2]['row_id'], 'P87629')
-        self.assertEqual(rows[2]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
-        self.assertEqual(rows[2]['date'], '2013-10-01')
-        self.assertEqual(rows[2]['actual_cost'], '1.62')
-        self.assertEqual(rows[2]['items'], '1')
-        self.assertEqual(rows[2]['quantity'], '24')
+        self.assertEqual(len(rows), 7)
+        self.assertEqual(rows[3]['row_id'], 'P87629')
+        self.assertEqual(rows[3]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
+        self.assertEqual(rows[3]['date'], '2013-10-01')
+        self.assertEqual(rows[3]['actual_cost'], '1.62')
+        self.assertEqual(rows[3]['items'], '1')
+        self.assertEqual(rows[3]['quantity'], '24')
 
     def test_spending_by_all_practices_on_product(self):
         params = {
@@ -562,7 +562,7 @@ class TestSpendingByPractice(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 7)
         self.assertEqual(rows[-1]['row_id'], 'P87629')
         self.assertEqual(rows[-1]['row_name'], '1/ST ANDREWS MEDICAL PRACTICE')
         self.assertEqual(rows[-1]['date'], '2014-11-01')
@@ -577,13 +577,13 @@ class TestSpendingByPractice(ApiTestBase):
         }
         rows = self._get_rows(params)
 
-        self.assertEqual(len(rows), 4)
+        self.assertEqual(len(rows), 3)
         self.assertEqual(rows[0]['row_id'], 'N84014')
         self.assertEqual(rows[0]['row_name'], 'AINSDALE VILLAGE SURGERY')
-        self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.05')
-        self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '56')
+        self.assertEqual(rows[0]['date'], '2013-08-01')
+        self.assertEqual(rows[0]['actual_cost'], '1.53')
+        self.assertEqual(rows[0]['items'], '1')
+        self.assertEqual(rows[0]['quantity'], '28')
 
 
 class TestAPISpendingViewsGhostGenerics(TestCase):

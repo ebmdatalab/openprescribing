@@ -12,11 +12,11 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = list(csv.DictReader(response.content.splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['date'], '2015-01-01')
-        self.assertEqual(float(rows[0]['total_list_size']), 53)
-        self.assertEqual(rows[0]['astro_pu_cost'], '695.4')
-        self.assertEqual(rows[0]['astro_pu_items'], '1219.4')
+        self.assertEqual(float(rows[0]['total_list_size']), 1260)
+        self.assertEqual(rows[0]['astro_pu_cost'], '705.5')
+        self.assertEqual(rows[0]['astro_pu_items'], '955.5')
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
-                         '45.2')
+                         '95.5')
 
     def test_api_view_org_details_all_ccgs(self):
         url = self.api_prefix
@@ -24,15 +24,15 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         rows = list(csv.DictReader(response.content.splitlines()))
-        self.assertEqual(len(rows), 3)
+        self.assertEqual(len(rows), 4)
         self.assertEqual(rows[1]['row_id'], '03V')
         self.assertEqual(rows[1]['row_name'], 'NHS Corby')
         self.assertEqual(rows[1]['date'], '2015-01-01')
-        self.assertEqual(rows[1]['astro_pu_cost'], '205.7')
-        self.assertEqual(rows[1]['astro_pu_items'], '400.2')
+        self.assertEqual(rows[1]['astro_pu_cost'], '363.3')
+        self.assertEqual(rows[1]['astro_pu_items'], '453.3')
         self.assertEqual(rows[1]['star_pu.oral_antibacterials_item'],
-                         '35.2')
-        self.assertEqual(float(rows[1]['total_list_size']), 28)
+                         '45.3')
+        self.assertEqual(float(rows[1]['total_list_size']), 648)
 
     def test_api_view_org_details_all_ccgs_with_keys(self):
         url = self.api_prefix
@@ -40,12 +40,12 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         rows = list(csv.DictReader(response.content.splitlines()))
-        self.assertEqual(len(rows), 3)
+        self.assertEqual(len(rows), 4)
         self.assertEqual(rows[1]['row_id'], '03V')
         self.assertEqual(rows[1]['row_name'], 'NHS Corby')
         self.assertEqual(rows[1]['date'], '2015-01-01')
         self.assertEqual(rows[1].get('astro_pu_cost'), None)
-        self.assertEqual(float(rows[1]['total_list_size']), 28)
+        self.assertEqual(float(rows[1]['total_list_size']), 648)
 
     def test_api_view_org_details_all_ccgs_with_nothing_key(self):
         url = self.api_prefix
@@ -73,7 +73,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(rows[1]['row_name'], 'NHS Corby')
         self.assertEqual(rows[1]['date'], '2015-01-01')
         self.assertEqual(rows[1]['star_pu.oral_antibacterials_item'],
-                         '35.2')
+                         '45.3')
 
     def test_api_view_org_details_one_ccg(self):
         url = self.api_prefix
@@ -85,11 +85,11 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(rows[0]['row_id'], '03V')
         self.assertEqual(rows[0]['row_name'], 'NHS Corby')
         self.assertEqual(rows[0]['date'], '2015-01-01')
-        self.assertEqual(rows[0]['astro_pu_cost'], '205.7')
-        self.assertEqual(rows[0]['astro_pu_items'], '400.2')
+        self.assertEqual(rows[0]['astro_pu_cost'], '363.3')
+        self.assertEqual(rows[0]['astro_pu_items'], '453.3')
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
-                         '35.2')
-        self.assertEqual(float(rows[0]['total_list_size']), 28)
+                         '45.3')
+        self.assertEqual(float(rows[0]['total_list_size']), 648)
 
     def test_api_view_org_details_all_practices(self):
         url = self.api_prefix
@@ -171,7 +171,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         rows = list(csv.DictReader(response.content.splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]['date'], '2015-01-01')
-        self.assertEqual(float(rows[0]['total_list_size']), 53)
+        self.assertEqual(float(rows[0]['total_list_size']), 1260)
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
-                         '45.2')
-        self.assertEqual(rows[0].get('astro_pu_cost'), '695.4')
+                         '95.5')
+        self.assertEqual(rows[0].get('astro_pu_cost'), '705.5')

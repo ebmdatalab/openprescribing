@@ -1,60 +1,159 @@
-INSERT INTO vw__ccgstatistics VALUES('2015-01-01'::date,'03Q','NHS Vale of York',25.0000000000000000,819.2,489.7,'{"oral_antibacterials_item": 10}');
-INSERT INTO vw__ccgstatistics VALUES('2015-01-01'::date,'03V','NHS Corby',28.0000000000000000,400.2,205.7,'{"oral_antibacterials_item": 35.2}');
-INSERT INTO vw__ccgstatistics VALUES('2015-02-01'::date,'03V','NHS Corby',29.0000000000000000,1600.2,805.7,'{"oral_antibacterials_item": 29}');
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2013-04-01'::date,'03V','0202010B0',1,1.56,26);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2013-10-01'::date,'03V','0202010B0',1,1.62,24);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-11-01'::date,'03V','0204000I0',33,36.28,2354);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-09-01'::date,'03V','0202010B0',40,36.29,1209);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-09-01'::date,'03V','0202010F0',1,1.99,32);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2013-08-01'::date,'03V','0202010B0',1,1.69,23);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2013-08-01'::date,'03Q','0202010F0',1,1.53,28);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-10-01'::date,'03Q','0202010B0',50,58.08,1953);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-09-01'::date,'03Q','0202010F0',1,11.99,128);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2014-11-01'::date,'03V','0202010B0',62,54.26,2788);
-INSERT INTO vw__chemical_summary_by_ccg VALUES('2013-04-01'::date,'03Q','0202010F0',2,3.05,56);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2013-04-01'::date,'N84014','0202010F0',2,3.05,56);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-09-01'::date,'N84014','0202010F0',1,11.99,128);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-11-01'::date,'P87629','0202010B0',38,42.13,1399);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-11-01'::date,'K83059','0204000I0',16,14.15,1154);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2013-08-01'::date,'N84014','0202010F0',1,1.53,28);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-10-01'::date,'N84014','0202010B0',50,58.08,1953);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-09-01'::date,'P87629','0202010F0',1,1.99,32);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2013-08-01'::date,'P87629','0202010B0',1,1.69,23);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-11-01'::date,'K83059','0202010B0',24,12.13,1389);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-09-01'::date,'P87629','0202010B0',40,36.29,1209);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2014-11-01'::date,'P87629','0204000I0',17,22.13,1200);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2013-10-01'::date,'P87629','0202010B0',1,1.62,24);
-INSERT INTO vw__chemical_summary_by_practice VALUES('2013-04-01'::date,'P87629','0202010B0',1,1.56,26);
-INSERT INTO vw__practice_summary VALUES('2013-04-01'::date,'N84014',2,3.05,56);
-INSERT INTO vw__practice_summary VALUES('2014-09-01'::date,'N84014',1,11.99,128);
-INSERT INTO vw__practice_summary VALUES('2014-10-01'::date,'N84014',50,58.08,1953);
-INSERT INTO vw__practice_summary VALUES('2013-08-01'::date,'N84014',1,1.53,28);
-INSERT INTO vw__practice_summary VALUES('2014-09-01'::date,'P87629',41,38.28,1241);
-INSERT INTO vw__practice_summary VALUES('2013-08-01'::date,'P87629',1,1.69,23);
-INSERT INTO vw__practice_summary VALUES('2014-11-01'::date,'K83059',40,26.28,2543);
-INSERT INTO vw__practice_summary VALUES('2013-04-01'::date,'P87629',1,1.56,26);
-INSERT INTO vw__practice_summary VALUES('2013-10-01'::date,'P87629',1,1.62,24);
-INSERT INTO vw__practice_summary VALUES('2014-11-01'::date,'P87629',55,64.26,2599);
-INSERT INTO vw__presentation_summary VALUES('2014-11-01'::date,'0202010B0AAABAB',62,54.26,2788);
-INSERT INTO vw__presentation_summary VALUES('2014-11-01'::date,'0204000I0BCAAAB',29,32.26,2350);
-INSERT INTO vw__presentation_summary VALUES('2014-10-01'::date,'0202010B0AAABAB',50,58.08,1953);
-INSERT INTO vw__presentation_summary VALUES('2014-09-01'::date,'0202010B0AAABAB',40,36.29,1209);
-INSERT INTO vw__presentation_summary VALUES('2013-04-01'::date,'0202010B0AAACAC',1,1.56,26);
-INSERT INTO vw__presentation_summary VALUES('2013-10-01'::date,'0202010B0AAACAC',1,1.62,24);
-INSERT INTO vw__presentation_summary VALUES('2013-04-01'::date,'0202010F0AAAAAA',2,3.05,56);
-INSERT INTO vw__presentation_summary VALUES('2014-09-01'::date,'0202010F0AAAAAA',2,13.98,160);
-INSERT INTO vw__presentation_summary VALUES('2013-08-01'::date,'0202010B0AAACAC',1,1.69,23);
-INSERT INTO vw__presentation_summary VALUES('2013-08-01'::date,'0202010F0AAAAAA',1,1.53,28);
-INSERT INTO vw__presentation_summary VALUES('2014-11-01'::date,'0204000I0AAALAL',4,4.02,4);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-11-01'::date,'03V','0202010B0AAABAB',62,54.26,2788);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2013-08-01'::date,'03V','0202010B0AAACAC',1,1.69,23);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-10-01'::date,'03Q','0202010B0AAABAB',50,58.08,1953);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-09-01'::date,'03V','0202010F0AAAAAA',1,1.99,32);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-11-01'::date,'03V','0204000I0BCAAAB',29,32.26,2350);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2013-04-01'::date,'03V','0202010B0AAACAC',1,1.56,26);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2013-10-01'::date,'03V','0202010B0AAACAC',1,1.62,24);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2013-04-01'::date,'03Q','0202010F0AAAAAA',2,3.05,56);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2013-08-01'::date,'03Q','0202010F0AAAAAA',1,1.53,28);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-11-01'::date,'03V','0204000I0AAALAL',4,4.02,4);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-09-01'::date,'03Q','0202010F0AAAAAA',1,11.99,128);
-INSERT INTO vw__presentation_summary_by_ccg VALUES('2014-09-01'::date,'03V','0202010B0AAABAB',40,36.29,1209);
+/*
+ * This SQL script is used to populate the "materialised view" tables (ie.
+ * those with the `vw__` prefix) during testing.  The queries used are
+ * Postgres-ified versions of those in `frontend/management/commands/views_sql/`.
+ * In production the queries are run against BigQuery.
+*/
+
+INSERT INTO
+  vw__presentation_summary (
+    processing_date, presentation_code, items, cost, quantity
+  )
+SELECT
+  processing_date,
+  presentation_code,
+  SUM(total_items) AS items,
+  SUM(actual_cost) AS cost,
+  SUM(quantity)::int AS quantity
+FROM
+  frontend_prescription
+GROUP BY
+  processing_date,
+  presentation_code
+;
+
+INSERT INTO
+  vw__presentation_summary_by_ccg (
+    processing_date, pct_id, presentation_code, items, cost, quantity
+  )
+SELECT
+  processing_date,
+  frontend_practice.ccg_id AS pct_id,
+  presentation_code,
+  SUM(total_items) AS items,
+  SUM(actual_cost) AS cost,
+  SUM(quantity)::int AS quantity
+FROM
+  frontend_prescription
+JOIN
+  frontend_practice
+ON
+  frontend_prescription.practice_id = frontend_practice.code
+GROUP BY
+  processing_date,
+  frontend_practice.ccg_id,
+  presentation_code
+;
+
+INSERT INTO
+  vw__chemical_summary_by_ccg (
+    processing_date, pct_id, chemical_id, items, cost, quantity
+  )
+SELECT
+  processing_date,
+  frontend_practice.ccg_id AS pct_id,
+  SUBSTR(presentation_code, 1, 9) AS chemical_id,
+  SUM(total_items) AS items,
+  SUM(actual_cost) AS cost,
+  SUM(quantity)::int AS quantity
+FROM
+  frontend_prescription
+JOIN
+  frontend_practice
+ON
+  frontend_prescription.practice_id = frontend_practice.code
+GROUP BY
+  processing_date,
+  frontend_practice.ccg_id,
+  chemical_id
+;
+
+INSERT INTO
+  vw__chemical_summary_by_practice (
+    processing_date, practice_id, chemical_id, items, cost, quantity
+  )
+SELECT
+  processing_date,
+  practice_id,
+  SUBSTR(presentation_code, 1, 9) AS chemical_id,
+  SUM(total_items) AS items,
+  SUM(actual_cost) AS cost,
+  SUM(quantity)::int AS quantity
+FROM
+  frontend_prescription
+GROUP BY
+  processing_date,
+  practice_id,
+  chemical_id
+;
+
+INSERT INTO
+  vw__practice_summary (
+    processing_date, practice_id, items, cost, quantity
+  )
+SELECT
+  processing_date,
+  practice_id,
+  SUM(total_items) AS items,
+  SUM(actual_cost) AS cost,
+  SUM(quantity)::int AS quantity
+FROM
+  frontend_prescription
+GROUP BY
+  processing_date,
+  practice_id
+;
+
+INSERT INTO
+  vw__ccgstatistics (
+    date, pct_id, name, total_list_size, astro_pu_items, astro_pu_cost, star_pu
+  )
+SELECT
+  date,
+  frontend_pct.code AS pct_id,
+  frontend_pct.name AS name,
+  SUM(total_list_size) AS total_list_size,
+  SUM(astro_pu_items) AS astro_pu_items,
+  SUM(astro_pu_cost) AS astro_pu_cost,
+  jsonb_build_object(
+    'analgesics_cost', SUM((star_pu->>'analgesics_cost')::float),
+    'antidepressants_adq', SUM((star_pu->>'antidepressants_adq')::float),
+    'antidepressants_cost', SUM((star_pu->>'antidepressants_cost')::float),
+    'antiepileptic_drugs_cost', SUM((star_pu->>'antiepileptic_drugs_cost')::float),
+    'antiplatelet_drugs_cost', SUM((star_pu->>'antiplatelet_drugs_cost')::float),
+    'benzodiazepine_caps_and_tabs_cost', SUM((star_pu->>'benzodiazepine_caps_and_tabs_cost')::float),
+    'bisphosphonates_and_other_drugs_cost', SUM((star_pu->>'bisphosphonates_and_other_drugs_cost')::float),
+    'bronchodilators_cost', SUM((star_pu->>'bronchodilators_cost')::float),
+    'calcium-channel_blockers_cost', SUM((star_pu->>'calcium-channel_blockers_cost')::float),
+    'cox-2_inhibitors_cost', SUM((star_pu->>'cox-2_inhibitors_cost')::float),
+    'drugs_acting_on_benzodiazepine_receptors_cost', SUM((star_pu->>'drugs_acting_on_benzodiazepine_receptors_cost')::float),
+    'drugs_affecting_the_renin_angiotensin_system_cost', SUM((star_pu->>'drugs_affecting_the_renin_angiotensin_system_cost')::float),
+    'drugs_for_dementia_cost', SUM((star_pu->>'drugs_for_dementia_cost')::float),
+    'drugs_used_in_parkinsonism_and_related_disorders_cost', SUM((star_pu->>'drugs_used_in_parkinsonism_and_related_disorders_cost')::float),
+    'hypnotics_adq', SUM((star_pu->>'hypnotics_adq')::float),
+    'inhaled_corticosteroids_cost', SUM((star_pu->>'inhaled_corticosteroids_cost')::float),
+    'laxatives_cost', SUM((star_pu->>'laxatives_cost')::float),
+    'lipid-regulating_drugs_cost', SUM((star_pu->>'lipid-regulating_drugs_cost')::float),
+    'omega-3_fatty_acid_compounds_adq', SUM((star_pu->>'omega-3_fatty_acid_compounds_adq')::float),
+    'oral_antibacterials_cost', SUM((star_pu->>'oral_antibacterials_cost')::float),
+    'oral_antibacterials_item', SUM((star_pu->>'oral_antibacterials_item')::float),
+    'oral_nsaids_cost', SUM((star_pu->>'oral_nsaids_cost')::float),
+    'proton_pump_inhibitors_cost', SUM((star_pu->>'proton_pump_inhibitors_cost')::float),
+    'statins_cost', SUM((star_pu->>'statins_cost')::float),
+    'ulcer_healing_drugs_cost', SUM((star_pu->>'ulcer_healing_drugs_cost')::float)
+  ) AS star_pu
+FROM
+  frontend_practicestatistics
+JOIN
+  frontend_practice
+ON
+  frontend_practicestatistics.practice_id = frontend_practice.code
+JOIN
+  frontend_pct
+ON
+  frontend_practice.ccg_id = frontend_pct.code AND frontend_pct.org_type = 'CCG'
+GROUP BY
+  date,
+  frontend_pct.code,
+  frontend_pct.name
+;
