@@ -4,6 +4,7 @@ from django.db import connection
 from django.http import Http404
 from django.test import TransactionTestCase
 
+import api.view_utils
 
 class ApiTestBase(TransactionTestCase):
     """Base test case that sets up all the fixtures required by any of the
@@ -14,6 +15,16 @@ class ApiTestBase(TransactionTestCase):
                 'presentations', 'sections', 'prescriptions',
                 'chemicals', 'tariff']
     api_prefix = '/api/1.0'
+
+    @classmethod
+    def setUpClass(cls):
+        super(ApiTestBase, cls).setUpClass()
+        api.view_utils.DISABLE_DB_TIMEOUT = True
+
+    @classmethod
+    def tearDownClass(cls):
+        api.view_utils.DISABLE_DB_TIMEOUT = False
+        super(ApiTestBase, cls).tearDownClass()
 
     def setUp(self):
         view_create = 'frontend/management/commands/replace_matviews.sql'

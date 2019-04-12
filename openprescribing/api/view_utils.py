@@ -6,6 +6,9 @@ from functools import wraps
 from enum import Enum
 
 
+DISABLE_DB_TIMEOUT = False
+
+
 def db_timeout(timeout):
     """A decorator that applies a timeout to the current database
     connection.
@@ -19,8 +22,9 @@ def db_timeout(timeout):
         @wraps(func)
         def func_wrapper(*args, **kwargs):
             from django.db import connection
-            cursor = connection.cursor()
-            cursor.execute("set statement_timeout to %s; commit;" % timeout)
+            if not DISABLE_DB_TIMEOUT:
+                cursor = connection.cursor()
+                cursor.execute("set statement_timeout to %s; commit;" % timeout)
             return func(*args, **kwargs)
         return func_wrapper
     return timeout_decorator
