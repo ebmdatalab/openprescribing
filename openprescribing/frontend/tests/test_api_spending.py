@@ -20,20 +20,17 @@ import numpy as np
 
 
 def _create_prescribing_tables():
-    current = datetime.date(2013, 4, 1)
+    latest_date = ImportLog.objects.latest('current_at').current_at
     cmd = ("DROP TABLE IF EXISTS %s; "
            "CREATE TABLE %s () INHERITS (frontend_prescription)")
     with connection.cursor() as cursor:
-        for _ in range(0, 59):
+        for offset in range(-59, 1):
+            year = latest_date.year + int(offset / 12)
+            month = (((latest_date.month - 1) + offset) % 12) + 1
+            date = datetime.date(year, month, 1)
             table_name = "frontend_prescription_%s%s" % (
-                current.year, str(current.month).zfill(2))
+                date.year, str(date.month).zfill(2))
             cursor.execute(cmd % (table_name, table_name))
-            current = datetime.date(
-                current.year + (current.month / 12),
-                ((current.month % 12) + 1),
-                1)
-    ImportLog.objects.create(
-        current_at=current, category='prescribing')
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
@@ -128,18 +125,18 @@ class TestSpending(ApiTestBase):
         rows = self._get_rows({})
 
         self.assertEqual(len(rows), 60)
-        self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.12')
-        self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '52')
-        self.assertEqual(rows[1]['date'], '2013-05-01')
-        self.assertEqual(rows[1]['actual_cost'], '0.0')
-        self.assertEqual(rows[1]['items'], '0')
-        self.assertEqual(rows[1]['quantity'], '0')
-        self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '230.54')
-        self.assertEqual(rows[19]['items'], '96')
-        self.assertEqual(rows[19]['quantity'], '5143')
+        self.assertEqual(rows[25]['date'], '2013-04-01')
+        self.assertEqual(rows[25]['actual_cost'], '3.12')
+        self.assertEqual(rows[25]['items'], '2')
+        self.assertEqual(rows[25]['quantity'], '52')
+        self.assertEqual(rows[26]['date'], '2013-05-01')
+        self.assertEqual(rows[26]['actual_cost'], '0.0')
+        self.assertEqual(rows[26]['items'], '0')
+        self.assertEqual(rows[26]['quantity'], '0')
+        self.assertEqual(rows[44]['date'], '2014-11-01')
+        self.assertEqual(rows[44]['actual_cost'], '230.54')
+        self.assertEqual(rows[44]['items'], '96')
+        self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section(self):
         _create_prescribing_tables()
@@ -147,14 +144,14 @@ class TestSpending(ApiTestBase):
             'code': '2'
         })
 
-        self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.12')
-        self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '52')
-        self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '230.54')
-        self.assertEqual(rows[19]['items'], '96')
-        self.assertEqual(rows[19]['quantity'], '5143')
+        self.assertEqual(rows[25]['date'], '2013-04-01')
+        self.assertEqual(rows[25]['actual_cost'], '3.12')
+        self.assertEqual(rows[25]['items'], '2')
+        self.assertEqual(rows[25]['quantity'], '52')
+        self.assertEqual(rows[44]['date'], '2014-11-01')
+        self.assertEqual(rows[44]['actual_cost'], '230.54')
+        self.assertEqual(rows[44]['items'], '96')
+        self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section_full_code(self):
         _create_prescribing_tables()
@@ -162,14 +159,14 @@ class TestSpending(ApiTestBase):
             'code': '02',
         })
 
-        self.assertEqual(rows[0]['date'], '2013-04-01')
-        self.assertEqual(rows[0]['actual_cost'], '3.12')
-        self.assertEqual(rows[0]['items'], '2')
-        self.assertEqual(rows[0]['quantity'], '52')
-        self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '230.54')
-        self.assertEqual(rows[19]['items'], '96')
-        self.assertEqual(rows[19]['quantity'], '5143')
+        self.assertEqual(rows[25]['date'], '2013-04-01')
+        self.assertEqual(rows[25]['actual_cost'], '3.12')
+        self.assertEqual(rows[25]['items'], '2')
+        self.assertEqual(rows[25]['quantity'], '52')
+        self.assertEqual(rows[44]['date'], '2014-11-01')
+        self.assertEqual(rows[44]['actual_cost'], '230.54')
+        self.assertEqual(rows[44]['items'], '96')
+        self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_code(self):
         _create_prescribing_tables()
@@ -177,10 +174,10 @@ class TestSpending(ApiTestBase):
             'code': '0204000I0',
         })
 
-        self.assertEqual(rows[19]['date'], '2014-11-01')
-        self.assertEqual(rows[19]['actual_cost'], '176.28')
-        self.assertEqual(rows[19]['items'], '34')
-        self.assertEqual(rows[19]['quantity'], '2355')
+        self.assertEqual(rows[44]['date'], '2014-11-01')
+        self.assertEqual(rows[44]['actual_cost'], '176.28')
+        self.assertEqual(rows[44]['items'], '34')
+        self.assertEqual(rows[44]['quantity'], '2355')
 
     def test_total_spending_by_codes(self):
         _create_prescribing_tables()
@@ -188,10 +185,10 @@ class TestSpending(ApiTestBase):
             'code': '0204000I0,0202010B0',
         })
 
-        self.assertEqual(rows[17]['date'], '2014-09-01')
-        self.assertEqual(rows[17]['actual_cost'], '36.29')
-        self.assertEqual(rows[17]['items'], '40')
-        self.assertEqual(rows[17]['quantity'], '1209')
+        self.assertEqual(rows[42]['date'], '2014-09-01')
+        self.assertEqual(rows[42]['actual_cost'], '36.29')
+        self.assertEqual(rows[42]['items'], '40')
+        self.assertEqual(rows[42]['quantity'], '1209')
 
 
 class TestSpendingByCCG(ApiTestBase):

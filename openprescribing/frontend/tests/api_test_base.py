@@ -4,6 +4,8 @@ from django.db import connection
 from django.http import Http404
 from django.test import TestCase
 
+from frontend.models import Prescription, ImportLog
+
 import api.view_utils
 
 
@@ -29,6 +31,9 @@ class ApiTestBase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        # Create an ImportLog entry for the latest prescribing date we have
+        date = Prescription.objects.latest('processing_date').processing_date
+        ImportLog.objects.create(current_at=date, category='prescribing')
         view_create = 'frontend/management/commands/replace_matviews.sql'
         fixture = 'frontend/tests/fixtures/populate_matviews.sql'
         with connection.cursor() as cursor:
