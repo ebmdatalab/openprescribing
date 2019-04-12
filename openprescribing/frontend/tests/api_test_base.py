@@ -2,11 +2,12 @@ import csv
 
 from django.db import connection
 from django.http import Http404
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 import api.view_utils
 
-class ApiTestBase(TransactionTestCase):
+
+class ApiTestBase(TestCase):
     """Base test case that sets up all the fixtures required by any of the
     API tests.
 
@@ -26,7 +27,8 @@ class ApiTestBase(TransactionTestCase):
         api.view_utils.DISABLE_DB_TIMEOUT = False
         super(ApiTestBase, cls).tearDownClass()
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         view_create = 'frontend/management/commands/replace_matviews.sql'
         fixture = 'frontend/tests/fixtures/api_test_data.sql'
         with connection.cursor() as cursor:
@@ -36,7 +38,6 @@ class ApiTestBase(TransactionTestCase):
             with open(fixture, 'r') as f:
                 # Fills them with test data
                 cursor.execute(f.read())
-        super(ApiTestBase, self).setUp()
 
     def _rows_from_api(self, url):
         url = self.api_prefix + url
