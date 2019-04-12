@@ -609,7 +609,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
                 months=self.months
             )
         # Create and populate the materialized view table we need
-        factory.populate_presentation_summary_by_ccg_view()
+        factory.populate_materialised_views()
 
         # Refresh vw__medians_for_tariff materialized view
         with connection.cursor() as cursor:
