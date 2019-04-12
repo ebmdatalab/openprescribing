@@ -1,11 +1,11 @@
-from django.test import TransactionTestCase
+from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from frontend.models import OrgBookmark
 from frontend.models import User
 
 
-class TestBookmarkViews(TransactionTestCase):
+class TestBookmarkViews(TestCase):
     fixtures = ['bookmark_alerts', 'bookmark_alerts_extra']
 
     def _get_bookmark_url_for_user(self):
