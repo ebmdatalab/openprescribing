@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from gcutils.bigquery import Client
+from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
 
 
