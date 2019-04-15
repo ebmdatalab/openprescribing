@@ -37,14 +37,20 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0209000L0%')",
-    " OR (bnf_code LIKE '0209000V0%') "
+    "(",
+    "bnf_code LIKE '0209000L0%' OR --Dipyridamole \n",
+    "bnf_code LIKE '0209000V0%' --Dipyridamole & Aspirin \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0209000L0%' OR bnf_code LIKE '0209000V0%' OR bnf_code LIKE '0209000C0%') "
+    "(",
+    "bnf_code LIKE '0209000C0%' OR --Clopidogrel \n",
+    "bnf_code LIKE '0209000L0%' OR --Dipyridamole \n",
+    "bnf_code LIKE '0209000V0%' --Dipyridamole & Aspirin \n",
+    ")"
   ]
 }

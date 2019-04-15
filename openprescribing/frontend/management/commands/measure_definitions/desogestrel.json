@@ -29,13 +29,13 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0703021Q0B%')  "
+    "bnf_code LIKE '0703021Q0B%' --Desogestrel (all brands)"
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0703021Q0%')  "
+    "bnf_code LIKE '0703021Q0%' --Desogestrel (brand and generic)"
   ]
 }

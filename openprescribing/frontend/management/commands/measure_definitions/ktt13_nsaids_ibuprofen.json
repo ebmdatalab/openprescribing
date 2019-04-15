@@ -32,14 +32,17 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '100101%' ",
-    "AND (bnf_code NOT like '1001010J0%' AND bnf_code NOT like '1001010P0%'))  "
+    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs \n",
+    "AND (SUBSTR(bnf_code,1,9) NOT IN (",
+    "'1001010J0', --Ibuprofen \n",
+    "'1001010P0') --Naproxen \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '100101%')  "
+    "SUBSTR(bnf_code,1,6) IN ('100101') --Non-Steroidal Anti-Inflammatory Drugs"
   ]
 }
