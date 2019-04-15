@@ -128,37 +128,12 @@ class DataFactory(object):
             category='prescribing'
         )
 
-    def populate_presentation_summary_by_ccg_view(self):
+    def populate_materialised_views(self):
         with connection.cursor() as cursor:
             with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
                 cursor.execute(f.read())
-            cursor.execute("""
-                INSERT INTO
-                  vw__presentation_summary_by_ccg
-                  (
-                    processing_date,
-                    pct_id,
-                    presentation_code,
-                    items,
-                    cost,
-                    quantity
-                  )
-                (
-                  SELECT
-                    processing_date,
-                    pct_id,
-                    presentation_code,
-                    SUM(total_items),
-                    SUM(actual_cost),
-                    SUM(quantity)
-                  FROM
-                    frontend_prescription
-                  GROUP BY
-                    processing_date,
-                    pct_id,
-                    presentation_code
-                )
-            """)
+            with open('frontend/tests/fixtures/populate_matviews.sql', 'r') as f:
+                cursor.execute(f.read())
 
     def create_user(self, email=None):
         index = self.next_id()

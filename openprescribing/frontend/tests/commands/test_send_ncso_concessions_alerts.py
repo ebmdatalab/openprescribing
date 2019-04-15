@@ -39,7 +39,7 @@ class CommandTestCase(TestCase):
                 months=cls.prescribing_months
             )
         # Create and populate the materialized view table we need
-        factory.populate_presentation_summary_by_ccg_view()
+        factory.populate_materialised_views()
         # Pull out an individual practice and CCG to use in our tests
         cls.practice = cls.practices[0]
         cls.ccg = cls.ccgs[0]

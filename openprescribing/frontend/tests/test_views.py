@@ -321,7 +321,7 @@ class TestFrontendHomepageViews(TestCase):
             current_at='2015-09-01'
         )
         view_create = 'frontend/management/commands/replace_matviews.sql'
-        fixture = 'frontend/tests/fixtures/api_test_data.sql'
+        fixture = 'frontend/tests/fixtures/populate_matviews.sql'
         with connection.cursor() as cursor:
             with open(view_create, 'r') as f:
                 # Creates the view tables
