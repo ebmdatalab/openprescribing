@@ -29,13 +29,19 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0802020G0A%' OR bnf_code LIKE '0802020T0A%') "
+    "(",
+    "bnf_code LIKE '0802020G0AA%' OR --Ciclosporin (Systemic) (generic) \n",
+    "bnf_code LIKE '0802020T0AA%'  --Tacrolimus (Systemic) (generic) \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0802020G0%' OR bnf_code LIKE '0802020T0%')   "
+    "(",
+    "bnf_code LIKE '0802020G0%' OR --Ciclosporin (Systemic) (brand and generic) \n",
+    "bnf_code LIKE '0802020T0%'  --Tacrolimus (Systemic) (brand and generic) \n",
+    ")"
   ]
 }

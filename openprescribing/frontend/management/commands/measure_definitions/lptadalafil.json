@@ -28,7 +28,8 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0704050R0%AC' OR bnf_code LIKE '0704050R0%AD') "
+    "bnf_code LIKE '0704050R0%AC' OR --Tadalafil_Tab 2.5mg (brands and generic) \n",
+    "bnf_code LIKE '0704050R0%AD'    --Tadalafil_Tab 5mg (brands and generic)) "
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

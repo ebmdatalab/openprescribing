@@ -29,15 +29,20 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0408010A0BB%AC' OR bnf_code LIKE '0408010A0BB%AA' OR bnf_code LIKE '0408010A0BB%AB' ",
-    "OR bnf_code LIKE '0408010A0BB%AI')"
+    "bnf_code IN (",
+    "'0408010A0BBAAAA', --Keppra_Tab 250mg \n",
+    "'0408010A0BBABAB', --Keppra_Tab 500mg \n",
+    "'0408010A0BBACAC', --Keppra_Tab 1g \n",
+    "'0408010A0BBAEAI') --Keppra_Tab 750mg"
   ],
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0408010A0%AC' OR bnf_code LIKE '0408010A0%AA' OR bnf_code LIKE '0408010A0%AB' ",
-    "OR bnf_code LIKE '0408010A0%AI')"
+    "bnf_code LIKE '0408010A0%AA' OR --Levetiracetam_Tab 250mg (brands and generic) \n",
+    "bnf_code LIKE '0408010A0%AB' OR --Levetiracetam_Tab 500mg (brands and generic) \n",
+    "bnf_code LIKE '0408010A0%AC' OR --Levetiracetam_Tab 1g (brands and generic) \n",
+    "bnf_code LIKE '0408010A0%AI'    --Levetiracetam_Tab 750mg (brands and generic)"
   ]
 }

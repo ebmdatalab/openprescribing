@@ -29,20 +29,37 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
-    "or bnf_code like '0212000C0%' or bnf_code like '0212000M0%' or bnf_code like '0212000X0%' ",
-    "or bnf_code like '0212000Y0%') AND ",
-    "(bnf_code not like '0212000Y0%AH' and bnf_code not like '0212000B0%AB' and bnf_code not like '0212000B0%AN' ",
-    "and bnf_code not like '0212000B0%AC' and bnf_code not like '0212000B0%AP' and bnf_code not like '0212000B0%AD' ",
-    "and bnf_code not like '0212000AA%AA' and bnf_code not like '0212000AA%AB' and bnf_code not like '0212000AA%AC')"
+    "SUBSTR(bnf_code,1,9) IN (",
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n",
+    "AND (concat(SUBSTR(bnf_code,1,9),SUBSTR(bnf_code,-2,2)) NOT IN (\n",
+    "'0212000AAAA', --Rosuvastatin Calc_Tab 10mg (brand, generic) \n",
+    "'0212000AAAB', --Rosuvastatin Calc_Tab 20mg (brand, generic) \n",
+    "'0212000AAAC', --Rosuvastatin Calc_Tab 40mg (brand, generic) \n",
+    "'0212000B0AB', --Atorvastatin_Tab 20mg (brand, generic) \n",
+    "'0212000B0AC', --Atorvastatin_Tab 40mg (brand, generic) \n",
+    "'0212000B0AD', --Atorvastatin_Tab 80mg (brand, generic) \n",
+    "'0212000B0AN', --Atorvastatin_Tab 30mg (brand, generic) \n",
+    "'0212000B0AP', --Atorvastatin_Tab 60mg (brand, generic) \n",
+    "'0212000Y0AH')) --Simvastatin_Tab 80mg (brand, generic)"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '0212000AA%' or bnf_code like '0212000AC%' or bnf_code like '0212000B0%' ",
-    "or bnf_code like '0212000C0%' or bnf_code like '0212000M0%' or bnf_code like '0212000X0%' ",
-    "or bnf_code like '0212000Y0%')"
+    "SUBSTR(bnf_code,1,9) IN (",
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n"
   ]
 }

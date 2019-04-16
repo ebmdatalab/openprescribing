@@ -29,7 +29,9 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0501013K0%'  OR bnf_code LIKE '0501021%'  OR bnf_code LIKE '050112%')  "
+    "bnf_code LIKE '0501013K0%' OR --Co-Amoxiclav \n",
+    "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
+    "bnf_code LIKE '050112%'     --Quinolones"
   ],
    "denominator_columns": [
     "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator "

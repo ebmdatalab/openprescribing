@@ -30,13 +30,13 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0204000ABAAABAB%')  "
+    "bnf_code LIKE '0204000AB%AB' --Nebivolol_Tab 2.5mg (brands and generic)"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '0204000AB%')  "
+    "bnf_code like '0204000AB%' --Nebivolol"
   ]
 }

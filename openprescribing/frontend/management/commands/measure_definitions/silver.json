@@ -29,13 +29,14 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code like '20%' AND (bnf_name LIKE '%Silv%' OR bnf_name LIKE '% Ag %')) "
+    "(bnf_code like '20%' AND --Dressings \n",
+    "(bnf_name LIKE '%Silv%' OR bnf_name LIKE '% Ag %')) --dressings with either Silv or Ag in the name"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code like '20%')  "
+    "bnf_code like '20%' --Dressings"
   ]
 }

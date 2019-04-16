@@ -26,7 +26,9 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '040702040%AU' OR bnf_code LIKE '040702040%BA' OR bnf_code LIKE '040702040%BC')  "
+    "bnf_code LIKE '040702040%AU' OR --Tramadol HCl/Paracet_Tab 37.5mg/325mg (brands and generic) \n",
+    "bnf_code LIKE '040702040%BA' OR --Tramadol/Paracet_Tab Eff 37.5/325mg S/F (brands and generic) \n",
+    "bnf_code LIKE '040702040%BC'    --Tramadol/Paracet_Tab Eff 37.5/325mg S/F"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

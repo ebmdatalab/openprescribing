@@ -69,6 +69,10 @@ class Command(BaseCommand):
                 errors.append("* SQL error in `{}`: {}".format(
                     measure_id,
                     e.message))
+            except TypeError as e:
+                errors.append("* JSON error in `{}`: {}".format(
+                    measure_id,
+                    e.message))
         if errors:
             raise BadRequest("\n".join(errors))
 

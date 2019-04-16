@@ -34,21 +34,38 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0302000C0%BW' OR bnf_code LIKE '0302000C0%AC' OR bnf_code LIKE '0302000C0%AU' ",
-    "OR bnf_code LIKE '0302000C0%BK' OR bnf_code LIKE '0302000K0%AU' OR bnf_code LIKE '0302000K0%AH' ",
-    "OR bnf_code LIKE '0302000U0%AB' OR bnf_code LIKE '0302000U0%AC' OR bnf_code LIKE '0302000N0%BC' ",
-    "OR bnf_code LIKE '0302000N0%AU' OR bnf_code LIKE '0302000N0%AF' OR bnf_code LIKE '0302000N0%AP' ",
-    "OR bnf_code LIKE '0302000N0%BG' OR bnf_code LIKE '0302000N0%AZ' OR bnf_code LIKE '0302000N0%BM' ",
-    "OR bnf_code LIKE '0302000N0%BK' OR bnf_code LIKE '0302000C0%BZ' OR bnf_code LIKE '0301011Y0%AA' ",
-    "OR bnf_code LIKE '0302000V0%AA') "
+    "(",
+    "bnf_code LIKE '0302000C0%AC' OR --Beclomet Diprop_Inha 250mcg (200D) (brands and generic) \n",
+    "bnf_code LIKE '0302000C0%AU' OR --Beclomet Diprop_Inha B/A 250mcg (200 D) (brands and generic) \n",
+    "bnf_code LIKE '0302000C0%BK' OR --Beclomet Diprop_Pdr For Inh 250mcg(100 D (brands and generic) \n",
+    "bnf_code LIKE '0302000C0%BW' OR --Beclomet Diprop_Inha 250mcg (200 D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000C0%BZ' OR --Beclomet/Formoterol_Inh 200/6 (120D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000K0%AH' OR --Budesonide_Pdr For Inh 400mcg (50 D) (brands and generic) \n",
+    "bnf_code LIKE '0302000K0%AU' OR --Budesonide/Formoterol_InhaB/A 400/12(60D (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%AF' OR --Fluticasone Prop_Pdr Inh 250mcg Disk Ref (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%AP' OR --Fluticasone Prop_Pdr Inh 500mcg Disk+Dev (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%AU' OR --Fluticasone Prop_Pdr For Inh 500mcg(60D) (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%AZ' OR --Fluticasone/Salmeterol_Inh 500/50mcg 60D (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%BC' OR --Fluticasone Prop_Inha 250mcg (120 D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%BG' OR --Fluticasone/Salmeterol_Inh 250/25mcg120D (brands and generic) \n",
+    "bnf_code LIKE '0302000N0%BK' OR --Fluticasone/Formoterol_Inh 250/10mcg120D (brands and generic) \n",
+    "bnf_code LIKE '0302000U0%AB' OR --Ciclesonide_Inh 160mcg (120 D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000U0%AC' OR --Ciclesonide_Inh 160mcg (60 D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000V0%AA'    --Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic) \n",
+    ")"
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0302000K0%' OR bnf_code LIKE '0302000C0%' OR bnf_code LIKE '0302000R0%' ",
-    "OR bnf_code LIKE '0302000U0%' OR bnf_code LIKE '0302000N0%' OR bnf_code LIKE '0301011Y0%' ",
-    "OR bnf_code LIKE '0302000V0%') "
+    "(",
+    "bnf_code LIKE '0302000C0%' OR --Beclometasone Dipropionate \n",
+    "bnf_code LIKE '0302000K0%' OR --Budesonide \n",
+    "bnf_code LIKE '0302000N0%' OR --Fluticasone Propionate (Inh) \n",
+    "bnf_code LIKE '0302000R0%' OR --Mometasone Furoate \n",
+    "bnf_code LIKE '0302000U0%' OR --Ciclesonide \n",
+    "bnf_code LIKE '0302000V0%' --Fluticasone Furoate (Inh) \n",
+    ")"
   ]
 }

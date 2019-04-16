@@ -27,13 +27,14 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '1404000G0%' ",
-    "OR bnf_code LIKE '1404000U0%' ",
-    "OR bnf_code LIKE '1404000AB%' ",
-    "OR bnf_code LIKE '1404000X0%' ",
-    "OR bnf_code LIKE '1404000AA%' ",
-    "OR bnf_code LIKE '1404000N0%' ",
-    "OR bnf_code LIKE '0802040X0%') "
+    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
+    "'0802040X0', --Bacillus Calmette-Guerin (B.C.G.) \n",
+    "'1404000AA', --Tick-Borne Encephalitis Vaccine \n",
+    "'1404000AB', --Japanese Encephalitis Vaccine \n",
+    "'1404000G0', --Hepatitis B \n",
+    "'1404000N0', --Rabies \n",
+    "'1404000U0', --Yellow Fever \n",
+    "'1404000X0') --Meningococcal A + C + W135 + Y Vaccine"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

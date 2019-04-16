@@ -36,7 +36,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(SUBSTR(bnf_code,1,9) = '0803041S0')  "
+    "(SUBSTR(bnf_code,1,9) = '0803041S0') --Tamoxifen Citrate"
   ],
   "denominator_columns": [
     "(max(female_35_44) + max(female_45_54) + max(female_55_64) + max(female_65_74)) ",

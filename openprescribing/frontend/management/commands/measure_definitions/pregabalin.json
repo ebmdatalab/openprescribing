@@ -27,7 +27,7 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0408010AE%')  "
+    "bnf_code LIKE '0408010AE%' --Pregabalin"
   ],
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "

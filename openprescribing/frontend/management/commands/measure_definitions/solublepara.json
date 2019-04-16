@@ -30,15 +30,25 @@
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
-    "(bnf_code LIKE '0407010H0%AQ' OR bnf_code LIKE '0407010F0%AC' OR bnf_code LIKE '0407010F0%AF')"
+    "bnf_code LIKE '0407010F0%AC' OR --Co-Codamol Eff_Tab 8mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AF' OR --Co-Codamol Eff_Tab 30mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010H0%AQ'    --Paracet_Tab Solb 500mg (brands and generic)"
+
   ],
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
-    "(bnf_code LIKE '0407010F0%AA'OR bnf_code LIKE '0407010F0%AB' OR bnf_code LIKE '0407010F0%AC'",
-    "OR bnf_code LIKE '0407010F0%AD' OR bnf_code LIKE '0407010F0%AF' OR bnf_code LIKE '0407010F0%AH'",
-    "OR bnf_code LIKE '0407010H0%AA' OR bnf_code LIKE '0407010H0%AM' OR bnf_code LIKE '0407010H0%AQ')"
+    "bnf_code LIKE '0407010F0%AA' OR --Co-Codamol_Tab 8mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AB' OR --Co-Codamol_Cap 8mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AC' OR --Co-Codamol Eff_Tab 8mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AD' OR --Co-Codamol_Cap 30mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AF' OR --Co-Codamol Eff_Tab 30mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010F0%AH' OR --Co-Codamol_Tab 30mg/500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010H0%AA' OR --Paracet_Cap 500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010H0%AM' OR --Paracet_Tab 500mg (brands and generic) \n",
+    "bnf_code LIKE '0407010H0%AQ'    --Paracet_Tab Solb 500mg (brands and generic)"
+
   ]
 }
