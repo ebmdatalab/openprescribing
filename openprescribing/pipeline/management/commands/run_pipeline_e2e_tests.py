@@ -46,7 +46,12 @@ def run_end_to_end():
 
     path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
                         'commands', 'measure_definitions')
-    num_measures = len(os.listdir(path))
+
+    # No MeasureGlobals or MeasureValues are generated for the ghost branded
+    # generics measure, because both numerator and denominator are computed
+    # from a view (vw__ghost_generic_measure) which has no data.  Rather than
+    # populate this view, it is simpler to pretend it doesn't exist.
+    num_measures = len(os.listdir(path)) - 1
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
