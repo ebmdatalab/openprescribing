@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!-- Defining the required complex types -->    
+
+<!-- CD is an integer of maximum length 4 and DESC is a string of maximum length 60 -->
+<!-- 01/06/2013 GEBAW Changed name of ZERO_DISC to DND Discount Not Deducted  -->
+
+<xs:complexType name="InfoType">   
+<!-- each element in the group must occur at most once, but that order is not important --> 
+ <xs:all> 
+            <xs:element name="CD"        type="xs:integer"   minOccurs="1" maxOccurs="1" />
+            <xs:element name="DESC"      type="xs:string"    minOccurs="1" maxOccurs="1" />            
+  </xs:all>
+ </xs:complexType>
+
+<xs:complexType name="HistoryInfoType">   
+<!-- each element in the group must occur at most once, but that order is not important --> 
+ <xs:all> 
+            <xs:element name="CD"          type="xs:integer"   minOccurs="1" maxOccurs="1" />
+            <xs:element name="CDDT"      type="xs:date"      minOccurs="0" maxOccurs="1" /> 
+            <xs:element name="CDPREV" type="xs:integer"   minOccurs="0" maxOccurs="1" /> 
+            <xs:element name="DESC"      type="xs:string"    minOccurs="1" maxOccurs="1" />            
+  </xs:all>
+ </xs:complexType>
+
+<xs:complexType name="SupplierInfoType">   
+<!-- each element in the group must occur at most once, but that order is not important --> 
+ <xs:all> 
+            <xs:element name="CD"       type="xs:integer"   minOccurs="1" maxOccurs="1" />
+            <xs:element name="CDDT"     type="xs:date"      minOccurs="0" maxOccurs="1" /> 
+            <xs:element name="CDPREV"   type="xs:integer"   minOccurs="0" maxOccurs="1" /> 
+            <xs:element name="INVALID"  type="xs:integer"   minOccurs="0" maxOccurs="1" />            
+            <xs:element name="DESC"     type="xs:string"    minOccurs="1" maxOccurs="1" /> 
+           
+  </xs:all>
+ </xs:complexType>
+
+<!-- END-Defining the required complex types -->    
+           
+
+<!-- Defining the required main elements with subelements, using one of the above defined complex type-->    
+
+ <xs:element name="LOOKUP">
+  <xs:complexType>      
+     <xs:sequence>              
+     
+                <xs:element name="COMBINATION_PACK_IND">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+
+
+         <xs:element name="COMBINATION_PROD_IND">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+
+
+         <xs:element name="BASIS_OF_NAME">
+           <xs:complexType>      
+             <xs:sequence>              
+              <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="NAMECHANGE_REASON">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="VIRTUAL_PRODUCT_PRES_STATUS">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+        
+         <xs:element name="CONTROL_DRUG_CATEGORY">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="LICENSING_AUTHORITY">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element> 
+                 
+         
+         <xs:element name="UNIT_OF_MEASURE">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="HistoryInfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="FORM">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="HistoryInfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="ONT_FORM_ROUTE">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="ROUTE">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="HistoryInfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="DT_PAYMENT_CATEGORY">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="SUPPLIER">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="SupplierInfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="FLAVOUR">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="COLOUR">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>         
+         
+         <xs:element name="BASIS_OF_STRNTH">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="REIMBURSEMENT_STATUS">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+          
+         
+         <xs:element name="SPEC_CONT">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="DND">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+         
+         <xs:element name="VIRTUAL_PRODUCT_NON_AVAIL">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="DISCONTINUED_IND">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+ 
+         <xs:element name="DF_INDICATOR">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+  
+         <xs:element name="PRICE_BASIS">
+           <xs:complexType>      
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>              
+           </xs:complexType> 
+         </xs:element>
+      
+        <xs:element name="LEGAL_CATEGORY">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="AVAILABILITY_RESTRICTION">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+
+         <xs:element name="LICENSING_AUTHORITY_CHANGE_REASON">
+          <xs:complexType>
+             <xs:sequence>              
+               <xs:element name="INFO" type="InfoType" minOccurs="0" maxOccurs="unbounded"/>
+             </xs:sequence>
+            </xs:complexType> 
+         </xs:element>
+
+    </xs:sequence>              
+   </xs:complexType>
+ </xs:element>
+
+</xs:schema>
