@@ -23,6 +23,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             self.import_dmd()
             self.import_bnf_code_mapping()
+            self.set_vmp_bnf_codes()
 
     def import_dmd(self):
         # dm+d data is provided in several XML files:
@@ -286,3 +287,26 @@ class Command(BaseCommand):
                 continue
             obj.bnf_code = bnf_code
             obj.save()
+
+    def set_vmp_bnf_codes(self):
+        '''There are many VMPs that do not have BNF codes set in the mapping,
+        but whose VMPPs all have the same BNF code.  In these cases, we think
+        that the VMPPs' BNF code can be applied to the VMP too.
+        '''
+
+        vmps = models.VMP.objects.filter(
+            bnf_code__isnull=True
+        ).prefetch_related('vmpp_set')
+
+        # TODO: log all these
+
+        for vmp in vmps:
+            vmpp_bnf_codes = {
+                vmpp.bnf_code
+                for vmpp in vmp.vmpp_set.all()
+                if vmpp.bnf_code
+            }
+
+            if len(vmpp_bnf_codes) == 1:
+                vmp.bnf_code = list(vmpp_bnf_codes)[0]
+                vmp.save()

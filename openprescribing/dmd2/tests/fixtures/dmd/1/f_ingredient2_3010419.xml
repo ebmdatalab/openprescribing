@@ -3041,7 +3041,9 @@
     <NM>Liothyronine sodium</NM>
   </ING>
   <ING>
-    <ISID>3590511000001101</ISID>
+    <ISID>35645211000001101</ISID>
+    <ISIDDT>2018-07-25</ISIDDT>
+    <ISIDPREV>3590511000001101</ISIDPREV>
     <NM>Pizotifen hydrogen malate</NM>
   </ING>
   <ING>
@@ -4801,9 +4803,9 @@
     <NM>N-(3-Chloroallyl)hexaminium chloride</NM>
   </ING>
   <ING>
-    <ISID>734322003</ISID>
-    <ISIDDT>2018-04-23</ISIDDT>
-    <ISIDPREV>3518511000001104</ISIDPREV>
+    <ISID>35891711000001108</ISID>
+    <ISIDDT>2018-10-17</ISIDDT>
+    <ISIDPREV>734322003</ISIDPREV>
     <NM>Calcipotriol hydrate</NM>
   </ING>
   <ING>
@@ -7954,7 +7956,6 @@
   </ING>
   <ING>
     <ISID>4482911000001101</ISID>
-    <INVALID>1</INVALID>
     <NM>Naloxone hydrochloride dihydrate</NM>
   </ING>
   <ING>
@@ -9366,9 +9367,9 @@
     <NM>Squill oxymel</NM>
   </ING>
   <ING>
-    <ISID>38408002</ISID>
-    <ISIDDT>2009-11-10</ISIDDT>
-    <ISIDPREV>5216211000001100</ISIDPREV>
+    <ISID>35751311000001104</ISID>
+    <ISIDDT>2018-08-31</ISIDDT>
+    <ISIDPREV>38408002</ISIDPREV>
     <NM>Camphorated opium tincture</NM>
   </ING>
   <ING>
@@ -11938,7 +11939,7 @@
   </ING>
   <ING>
     <ISID>10584011000001101</ISID>
-    <NM>Sodium hydroxybutyrate</NM>
+    <NM>Sodium DL-3-hydroxybutyrate</NM>
   </ING>
   <ING>
     <ISID>10597611000001103</ISID>
@@ -12142,7 +12143,7 @@
   </ING>
   <ING>
     <ISID>395841008</ISID>
-    <NM>Pralidoxime mesylate</NM>
+    <NM>Pralidoxime mesilate</NM>
   </ING>
   <ING>
     <ISID>10909011000001108</ISID>
@@ -13416,7 +13417,9 @@
     <NM>Azacitidine</NM>
   </ING>
   <ING>
-    <ISID>15244011000001107</ISID>
+    <ISID>703366005</ISID>
+    <ISIDDT>2018-07-25</ISIDDT>
+    <ISIDPREV>15244011000001107</ISIDPREV>
     <NM>Trimetazidine dihydrochloride</NM>
   </ING>
   <ING>
@@ -15899,7 +15902,9 @@
     <NM>Altretamine</NM>
   </ING>
   <ING>
-    <ISID>31306811000001106</ISID>
+    <ISID>734511001</ISID>
+    <ISIDDT>2018-07-25</ISIDDT>
+    <ISIDPREV>31306811000001106</ISIDPREV>
     <NM>Cobimetinib hemifumarate</NM>
   </ING>
   <ING>
@@ -17270,5 +17275,170 @@
   <ING>
     <ISID>35600911000001107</ISID>
     <NM>Abemaciclib</NM>
+  </ING>
+  <ING>
+    <ISID>716223004</ISID>
+    <NM>Ospemifene</NM>
+  </ING>
+  <ING>
+    <ISID>35606711000001108</ISID>
+    <NM>Autologous chondrocyte spheroids</NM>
+  </ING>
+  <ING>
+    <ISID>35634911000001105</ISID>
+    <NM>Irinotecan hydrochloride trihydrate liposomal pegylated</NM>
+  </ING>
+  <ING>
+    <ISID>35635011000001105</ISID>
+    <NM>Daunorubicin hydrochloride citrate liposomal pegylated</NM>
+  </ING>
+  <ING>
+    <ISID>35635111000001106</ISID>
+    <NM>Cytarabine liposomal pegylated</NM>
+  </ING>
+  <ING>
+    <ISID>35635211000001100</ISID>
+    <NM>Bictegravir</NM>
+  </ING>
+  <ING>
+    <ISID>35690211000001100</ISID>
+    <NM>Erenumab</NM>
+  </ING>
+  <ING>
+    <ISID>35688511000001103</ISID>
+    <NM>Cariprazine</NM>
+  </ING>
+  <ING>
+    <ISID>35725111000001100</ISID>
+    <NM>Cariprazine hydrochloride</NM>
+  </ING>
+  <ING>
+    <ISID>735232002</ISID>
+    <NM>Nonacog beta pegol</NM>
+  </ING>
+  <ING>
+    <ISID>35777011000001109</ISID>
+    <NM>Rucaparib camsilate</NM>
+  </ING>
+  <ING>
+    <ISID>723984009</ISID>
+    <NM>Rucaparib</NM>
+  </ING>
+  <ING>
+    <ISID>35825711000001102</ISID>
+    <NM>Esketamine</NM>
+  </ING>
+  <ING>
+    <ISID>735230005</ISID>
+    <NM>Durvalumab</NM>
+  </ING>
+  <ING>
+    <ISID>35906311000001108</ISID>
+    <NM>Axicabtagene ciloleucel</NM>
+  </ING>
+  <ING>
+    <ISID>35906411000001101</ISID>
+    <NM>Binimetinib</NM>
+  </ING>
+  <ING>
+    <ISID>35906511000001102</ISID>
+    <NM>Encorafenib</NM>
+  </ING>
+  <ING>
+    <ISID>35906611000001103</ISID>
+    <NM>Tildrakizumab</NM>
+  </ING>
+  <ING>
+    <ISID>36002211000001107</ISID>
+    <NM>Disodium levofolinate</NM>
+  </ING>
+  <ING>
+    <ISID>36075411000001106</ISID>
+    <NM>Streptococcus pyogenes Su strain cells treated with penicillin</NM>
+  </ING>
+  <ING>
+    <ISID>36109111000001103</ISID>
+    <INVALID>1</INVALID>
+    <NM>Axicabtagene ciloleucel cells</NM>
+  </ING>
+  <ING>
+    <ISID>96048006</ISID>
+    <NM>Cefepime</NM>
+  </ING>
+  <ING>
+    <ISID>36412311000001108</ISID>
+    <NM>Cefepime dihydrochloride monohydrate</NM>
+  </ING>
+  <ING>
+    <ISID>725667002</ISID>
+    <NM>Apomorphine hydrochloride hemihydrate</NM>
+  </ING>
+  <ING>
+    <ISID>736634002</ISID>
+    <NM>Brigatinib</NM>
+  </ING>
+  <ING>
+    <ISID>764283003</ISID>
+    <NM>Semaglutide</NM>
+  </ING>
+  <ING>
+    <ISID>703582007</ISID>
+    <NM>Afatinib dimaleate</NM>
+  </ING>
+  <ING>
+    <ISID>425820005</ISID>
+    <NM>Lapatinib</NM>
+  </ING>
+  <ING>
+    <ISID>704314009</ISID>
+    <NM>Tofacitinib citrate</NM>
+  </ING>
+  <ING>
+    <ISID>764274008</ISID>
+    <NM>Ertugliflozin</NM>
+  </ING>
+  <ING>
+    <ISID>36513311000001108</ISID>
+    <NM>Ertugliflozin L-pyroglutamic acid</NM>
+  </ING>
+  <ING>
+    <ISID>766972001</ISID>
+    <NM>Apalutamide</NM>
+  </ING>
+  <ING>
+    <ISID>36754911000001103</ISID>
+    <NM>Influenza virus inactivated split (H1N1, H3N2-like, B/Brisbane/60/2008-like, strains)</NM>
+  </ING>
+  <ING>
+    <ISID>36751211000001105</ISID>
+    <NM>Tezacaftor</NM>
+  </ING>
+  <ING>
+    <ISID>36751311000001102</ISID>
+    <NM>Tisagenlecleucel</NM>
+  </ING>
+  <ING>
+    <ISID>36787011000001102</ISID>
+    <NM>Galcanezumab</NM>
+  </ING>
+  <ING>
+    <ISID>36812311000001102</ISID>
+    <NM>Dacomitinib</NM>
+  </ING>
+  <ING>
+    <ISID>36905511000001107</ISID>
+    <NM>Doravirine</NM>
+  </ING>
+  <ING>
+    <ISID>36887111000001104</ISID>
+    <NM>Darvadstrocel</NM>
+  </ING>
+  <ING>
+    <ISID>36906711000001105</ISID>
+    <NM>Inotersen</NM>
+  </ING>
+  <ING>
+    <ISID>36906811000001102</ISID>
+    <NM>Inotersen sodium</NM>
   </ING>
 </INGREDIENT_SUBSTANCES>

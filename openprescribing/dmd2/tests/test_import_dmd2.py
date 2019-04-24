@@ -19,8 +19,8 @@ class TestImportDmd2(TestCase):
         # Check that correct number of objects have been created.
         self.assertEqual(VMP.objects.count(), 2)
         self.assertEqual(VMPP.objects.count(), 5)
-        self.assertEqual(AMP.objects.count(), 5)
-        self.assertEqual(AMPP.objects.count(), 11)
+        self.assertEqual(AMP.objects.count(), 9)
+        self.assertEqual(AMPP.objects.count(), 13)
 
         # Check that a selection of fields have been set correctly.
         vmp = VMP.objects.get(id=22480211000001104)
@@ -66,6 +66,13 @@ class TestImportDmd2(TestCase):
         self.assertEqual(
             AMPP.objects.get(id=22479911000001108).bnf_code,
             '1003020U0BBADAI'
+        )
+
+        # This VMP does not have a BNF code in the mapping, but all its VMPPs
+        # have the same BNF code, so we assign this to the VMP.
+        self.assertEqual(
+            VMP.objects.get(id=35894711000001106).bnf_code,
+            '0203020C0AAAAAA'
         )
 
         # Import updated data.  This data is identical to that in dmd/1, except
