@@ -4,11 +4,21 @@ and AMPPs.
 The VMPs are:
 
  * Diclofenac 2.32% gel (22480211000001104)
-    * This has 3 VMPPs, 3 AMPs, and 7 AMPPs
-    * Each VMPP has a BNF code, but they are all the same, 1003020U0AAAIAI
-    * Each AMPP has a BNF code, but there are two separate codes:
-      * AMPPs branded as "Volterol" have code 1003020U0BBADAI
-      * Other AMPPs have the same code as the VMPPs
+    * There are three VMPPs:
+        * Diclofenac 2.32% gel 30 gram
+        * Diclofenac 2.32% gel 50 gram
+        * Diclofenac 2.32% gel 100 gram
+    * There are three AMPs:
+        * Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd)
+        * Diclofenac 2.32% gel (DE Pharmaceuticals)
+        * Voltarol 12 Hour Emulgel P 2.32% gel (GlaxoSmithKline Consumer Healthcare)
+    * There are seven AMPPs:
+        * Only Voltarol is available in a 100 gram pack
+    * The family has two BNF codes:
+        * 1003020U0AAAIAI is the code for the VMP and all VMPPs
+        * 1003020U0BBADAI is the code for the Voltarol AMP and its AMPPs
+        * The generic AMPs and AMPPs are not given BNF codes in the mapping
+        * See ../bnf_code_mapping/README.txt for details of the mapping
  * Tobramycin 200mg/5ml oral solution (35084911000001108)
     * This has 2 VMPPs, 2 AMPs, and 4 AMPPs
     * None of the VMPPs or AMPPs have BNF codes
