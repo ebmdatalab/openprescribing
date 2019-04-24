@@ -9,6 +9,7 @@ from django.db import connection, transaction
 from django.db.models import fields as django_fields
 
 from dmd2 import models
+from dmd2.models import AMP, AMPP, VMP, VMPP
 
 
 class Command(BaseCommand):
@@ -245,10 +246,10 @@ class Command(BaseCommand):
 
     def import_bnf_code_mapping(self):
         type_to_model = {
-            ('Presentation', 'VMP'): models.VMP,
-            ('Presentation', 'AMP'): models.AMP,
-            ('Pack', 'VMP'): models.VMPP,
-            ('Pack', 'AMP'): models.AMPP,
+            ('Presentation', 'VMP'): VMP,
+            ('Presentation', 'AMP'): AMP,
+            ('Pack', 'VMP'): VMPP,
+            ('Pack', 'AMP'): AMPP,
         }
 
         wb = load_workbook(filename=self.mapping_path)
@@ -260,10 +261,10 @@ class Command(BaseCommand):
         assert headers[2].value == 'BNF Code'
         assert headers[4].value == 'SNOMED Code'
 
-        models.VMP.objects.update(bnf_code=None)
-        models.AMP.objects.update(bnf_code=None)
-        models.VMPP.objects.update(bnf_code=None)
-        models.AMPP.objects.update(bnf_code=None)
+        VMP.objects.update(bnf_code=None)
+        AMP.objects.update(bnf_code=None)
+        VMPP.objects.update(bnf_code=None)
+        AMPP.objects.update(bnf_code=None)
 
         for ix, row in enumerate(rows):
             model = type_to_model[(row[0].value, row[1].value)]
@@ -294,7 +295,7 @@ class Command(BaseCommand):
         that the VMPPs' BNF code can be applied to the VMP too.
         '''
 
-        vmps = models.VMP.objects.filter(
+        vmps = VMP.objects.filter(
             bnf_code__isnull=True
         ).prefetch_related('vmpp_set')
 
