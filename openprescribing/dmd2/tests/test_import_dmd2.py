@@ -26,12 +26,12 @@ class TestImportDmd2(TestCase):
 
         cls.logs_path = tempfile.mkdtemp()
 
-        # Import the data.  See fixtures/dmd/README.txt for details of what
+        # Import the data.  See dmd2/tests/data/README.txt for details of what
         # objects will be created.
         call_command(
             'import_dmd2',
-            'dmd2/tests/fixtures/dmd/1/',
-            'dmd2/tests/fixtures/bnf_code_mapping/mapping.xlsx',
+            'dmd2/tests/data/dmd/1/',
+            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
             cls.logs_path + '/1',
         )
 
@@ -152,8 +152,8 @@ class TestImportDmd2(TestCase):
         # to the old VPID have been updated to the new VPID.
         call_command(
             'import_dmd2',
-            'dmd2/tests/fixtures/dmd/2/',
-            'dmd2/tests/fixtures/bnf_code_mapping/mapping.xlsx',
+            'dmd2/tests/data/dmd/2/',
+            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
             self.logs_path + '/2',
         )
 
