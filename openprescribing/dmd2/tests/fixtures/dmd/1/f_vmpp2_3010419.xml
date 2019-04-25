@@ -9,6 +9,20 @@
       <QTY_UOMCD>415818006</QTY_UOMCD>
     </VMPP>
     <VMPP>
+      <VPPID>28942411000001100</VPPID>
+      <NM>Coal tar 10% / Salicylic acid 5% in Aqueous cream 1 gram</NM>
+      <VPID>28946311000001106</VPID>
+      <QTYVAL>1</QTYVAL>
+      <QTY_UOMCD>258682000</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>28781611000001107</VPPID>
+      <NM>Coal tar solution 10% / Salicylic acid 5% in Aqueous cream 1 gram</NM>
+      <VPID>28789311000001103</VPID>
+      <QTYVAL>1</QTYVAL>
+      <QTY_UOMCD>258682000</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
       <VPPID>26352411000001101</VPPID>
       <NM>Diclofenac 2.32% gel 100 gram</NM>
       <VPID>22480211000001104</VPID>
@@ -30,11 +44,60 @@
       <QTY_UOMCD>258682000</QTY_UOMCD>
     </VMPP>
     <VMPP>
+      <VPPID>20293311000001106</VPPID>
+      <NM>Pilocarpine hydrochloride 6% eye drops preservative free 10 ml</NM>
+      <VPID>36016311000001102</VPID>
+      <QTYVAL>10</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>20293111000001109</VPPID>
+      <NM>Pilocarpine hydrochloride 6% eye drops 10 ml</NM>
+      <VPID>347208002</VPID>
+      <QTYVAL>10</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>9394111000001101</VPPID>
+      <NM>Pilocarpine hydrochloride 6% eye drops 1 ml</NM>
+      <VPID>347208002</VPID>
+      <QTYVAL>1</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>9393611000001106</VPPID>
+      <NM>Pilocarpine hydrochloride 6% eye drops preservative free 1 ml</NM>
+      <VPID>36016311000001102</VPID>
+      <QTYVAL>1</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
       <VPPID>4744111000001109</VPPID>
       <NM>Adenosine 6mg/2ml solution for injection vials 6 vial</NM>
       <VPID>35894711000001106</VPID>
       <QTYVAL>6</QTYVAL>
       <QTY_UOMCD>415818006</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>1045511000001107</VPPID>
+      <NM>Generic Nutrison liquid 1500 ml</NM>
+      <VPID>3549611000001100</VPID>
+      <QTYVAL>1500</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>998911000001109</VPPID>
+      <NM>Generic Nutrison liquid 1000 ml</NM>
+      <VPID>3549611000001100</VPID>
+      <QTYVAL>1000</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
+    </VMPP>
+    <VMPP>
+      <VPPID>1051411000001107</VPPID>
+      <NM>Generic Nutrison liquid 500 ml</NM>
+      <VPID>3549611000001100</VPID>
+      <QTYVAL>500</QTYVAL>
+      <QTY_UOMCD>258773002</QTY_UOMCD>
     </VMPP>
   </VMPPS>
   <DRUG_TARIFF_INFO>

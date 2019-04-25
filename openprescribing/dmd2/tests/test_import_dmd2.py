@@ -2,12 +2,24 @@ from django.core.management import call_command, CommandError
 from django.test import TestCase
 
 from dmd2.models import AMP, AMPP, VMP, VMPP
+from dmd2.management.commands.import_dmd2 import get_common_name
+from frontend.models import Presentation
 
 
 class TestImportDmd2(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        for bnf_code, name in [
+            ('0203020C0AAAAAA', 'Adenosine_I/V Inf 3mg/ml 2ml Vl'),
+            ('1003020U0AAAIAI', 'Diclofenac Sod_Gel 2.32%'),
+            ('1003020U0BBADAI', 'Voltarol 12 Hour Emulgel P_Gel 2.32%'),
+            ('1305020C0AAFVFV', 'Coal Tar 10%/Salic Acid 5%/Aq_Crm'),
+            ('1106000X0AAAIAI', 'Piloc HCl_Eye Dps 6%'),
+            ('090402000BBHCA0', 'Nutrison Pack_Stnd'),
+        ]:
+            Presentation.objects.create(bnf_code=bnf_code, name=name)
+
         # Import the data.  See fixtures/dmd/README.txt for details of what
         # objects will be created.
         call_command(
@@ -18,10 +30,10 @@ class TestImportDmd2(TestCase):
 
     def test_objects_created(self):
         # Check that correct number of objects have been created.
-        self.assertEqual(VMP.objects.count(), 2)
-        self.assertEqual(VMPP.objects.count(), 5)
-        self.assertEqual(AMP.objects.count(), 9)
-        self.assertEqual(AMPP.objects.count(), 13)
+        self.assertEqual(VMP.objects.count(), 7)
+        self.assertEqual(VMPP.objects.count(), 14)
+        self.assertEqual(AMP.objects.count(), 15)
+        self.assertEqual(AMPP.objects.count(), 26)
 
         # Check that a selection of fields have been set correctly.
         vmp = VMP.objects.get(id=22480211000001104)
@@ -59,7 +71,7 @@ class TestImportDmd2(TestCase):
         self.assertEqual(ampp.legal_cat.descr, 'P')
         self.assertIsNone(amp.bnf_code)
 
-        # The following AMP and AMPP do have BNF codes
+        # The following AMP and AMPP do have BNF codes.
         self.assertEqual(
             AMP.objects.get(id=22479611000001102).bnf_code,
             '1003020U0BBADAI'
@@ -76,6 +88,31 @@ class TestImportDmd2(TestCase):
             VMP.objects.get(id=35894711000001106).bnf_code,
             '0203020C0AAAAAA'
         )
+
+    def test_dmd_names(self):
+        def _assert_dmd_name(bnf_code, exp_dmd_name):
+            self.assertEqual(
+                Presentation.objects.get(bnf_code=bnf_code).dmd_name,
+                exp_dmd_name
+            )
+
+        # This BNF code corresponds to a single VMP.
+        _assert_dmd_name('1003020U0AAAIAI', 'Diclofenac 2.32% gel')
+
+        # This BNF code corresponds to a single AMP.
+        _assert_dmd_name('1003020U0BBADAI', 'Voltarol 12 Hour Emulgel P 2.32% gel')
+
+        # This BNF code corresponds to multiple VMPs and a common name can be
+        # inferred.
+        _assert_dmd_name('1106000X0AAAIAI', 'Pilocarpine hydrochloride 6% eye drops')
+
+        # This BNF code corresponds to multiple VMPs and a common name cannot
+        # be inferred.
+        _assert_dmd_name('1305020C0AAFVFV', None)
+
+        # This BNF code corresponds to multiple AMPPs and a common name can be
+        # inferred.
+        _assert_dmd_name('090402000BBHCA0', 'Nutrison liquid (Nutricia Ltd)')
 
     def test_another_import(self):
         # Import updated data.  This data is identical to that in dmd/1, except
@@ -99,3 +136,49 @@ class TestImportDmd2(TestCase):
 
         amp = AMP.objects.get(id=29915211000001103)
         self.assertEqual(amp.vmp, vmp)
+
+
+class TestGetCommonName(TestCase):
+    def test_common_name(self):
+        self._test_get_common_name([
+                'Zoledronic acid 4mg/100ml infusion bags',
+                'Zoledronic acid 4mg/100ml infusion bottles',
+            ],
+            'Zoledronic acid 4mg/100ml infusion'
+        )
+
+    def test_no_common_name(self):
+        self._test_get_common_name([
+                "Lassar's paste",
+                'Zinc and Salicylic acid paste',
+            ],
+            None
+        )
+
+    def test_common_name_too_short(self):
+        self._test_get_common_name([
+                'Coal tar 10% / Salicylic acid 5% in Aqueous cream',
+                'Coal tar solution 10% / Salicylic acid 5% in Aqueous cream',
+            ],
+            None
+        )
+
+    def test_trailing_with_removed(self):
+        self._test_get_common_name([
+                'Polyfield Soft Vinyl Patient Pack with small gloves',
+                'Polyfield Soft Vinyl Patient Pack with medium gloves',
+                'Polyfield Soft Vinyl Patient Pack with large gloves',
+            ],
+            'Polyfield Soft Vinyl Patient Pack'
+        )
+
+    def test_trailing_oral_removed(self):
+        self._test_get_common_name([
+                'Acetazolamide 350mg/5ml oral solution',
+                'Acetazolamide 350mg/5ml oral suspension',
+            ],
+            'Acetazolamide 350mg/5ml'
+        )
+
+    def _test_get_common_name(self, names, exp_common_name):
+        self.assertEqual(get_common_name(names), exp_common_name)

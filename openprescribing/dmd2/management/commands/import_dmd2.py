@@ -10,6 +10,7 @@ from django.db.models import fields as django_fields
 
 from dmd2 import models
 from dmd2.models import AMP, AMPP, VMP, VMPP
+from frontend.models import Presentation
 
 
 class Command(BaseCommand):
@@ -25,6 +26,7 @@ class Command(BaseCommand):
             self.import_dmd()
             self.import_bnf_code_mapping()
             self.set_vmp_bnf_codes()
+            self.set_dmd_names()
 
     def import_dmd(self):
         # dm+d data is provided in several XML files:
@@ -311,3 +313,166 @@ class Command(BaseCommand):
             if len(vmpp_bnf_codes) == 1:
                 vmp.bnf_code = list(vmpp_bnf_codes)[0]
                 vmp.save()
+
+    def set_dmd_names(self):
+        '''Sets Presentation.dmd_name by finding linked dm+d objects with the
+        same BNF code.  We look for matching VMPs first, then AMPs, then VMPPs,
+        then AMPPs.  We look at VMPs and AMPs first, since BNF codes are
+        supposed to correspond to products.  We prefer VMPs to AMPs (and VMPPs
+        to AMPPs) since a VMP's generic AMPs usually share the VMP's BNF code
+        (and also for VMPPs and AMPPs).
+
+        In many cases there will be multiple linked objects of the same type,
+        with the same BNF code.  For instance:
+
+        * There may be several VMPs with the same BNF code.  This often happens
+          where each size/flavour/colour of a presentation has its own VMP, eg:
+          * Coal tar 10% in Yellow soft paraffin
+          * Coal tar 10% in White soft paraffin
+          * etc
+        * There may be several AMPPs with the same BNF code, but with a
+          different BNF code to any other member of the VMPs family.  There
+          doesn't seem to be much of a pattern for why this happens.
+
+        When there are multiple linked objects of the same type, we try to
+        infer a name for the presentation by looking at the common left
+        substring of all the linked objects' names.
+        '''
+
+        # First, we clear all existing dmd_names.
+        Presentation.objects.update(dmd_name=None)
+
+        # We build a mapping from BNF code to another mapping, which maps from
+        # classes to a set of names of objects of that class with that BNF
+        # code.
+        #
+        # eg:
+        #   bnf_code_to_cls_to_names = {
+        #     '1003020U0BBADAI': {
+        #       VMP: set(),
+        #       VMPP: set(),
+        #       AMP: {
+        #           u'Voltarol 2.32% gel'
+        #       },
+        #       AMPP: {
+        #           u'Voltarol 2.32% gel (GSK) 100 gram',
+        #           u'Voltarol 2.32% gel (GSK) 30 gram',
+        #           u'Voltarol 2.32% gel (GSK) 50 gram',
+        #       },
+        #   }
+        #   '1003020U0AAAIAI': {...},
+        #   ...
+        #   }
+
+        bnf_code_to_cls_to_names = {}
+
+        for cls in VMP, AMP, VMPP, AMPP:
+            for obj in cls.objects.all():
+                if obj.bnf_code is None:
+                    continue
+                if obj.bnf_code not in bnf_code_to_cls_to_names:
+                    bnf_code_to_cls_to_names[obj.bnf_code] = {
+                        VMP: set(),
+                        AMP: set(),
+                        VMPP: set(),
+                        AMPP: set(),
+                    }
+                cls_to_names = bnf_code_to_cls_to_names[obj.bnf_code]
+                cls_to_names[type(obj)].add(obj.nm)
+
+        # For each presentation, we find all VMPs will that presentation's BNF
+        # code.  If there is one VMP, we take its name and assign that to the
+        # presentation's dmd_name field.  If there are multiple VMPs, we try to
+        # infer a name using get_common_name().  If no such VMPs exist, we look
+        # at AMPs, then VMPPs, then AMPPs.
+
+        for presentation in Presentation.objects.all():
+            try:
+                cls_to_names = bnf_code_to_cls_to_names[presentation.bnf_code]
+            except KeyError:
+                continue
+
+            for cls in VMP, AMP, VMPP, AMPP:
+                names = cls_to_names[cls]
+                if len(names) > 0:
+                    common_name = get_common_name(list(names))
+                    if common_name is not None:
+                        presentation.dmd_name = common_name
+                        presentation.save()
+                    break
+
+
+def get_common_name(names):
+    '''Find left substring common to all names, by splitting names on spaces,
+    and possibly ignoring certain common words.
+
+    >>> get_common_name([
+        'Polyfield Soft Vinyl Patient Pack with small gloves',
+        'Polyfield Soft Vinyl Patient Pack with medium gloves',
+        'Polyfield Soft Vinyl Patient Pack with large gloves',
+    ])
+    'Polyfield Soft Vinyl Patient Pack'
+
+    Returns None if left substring is less than half the length (in words) of
+    the first name.
+
+    This function could be improved.  For instance, in dm+d there are several
+    cases where names of two products with the same BNF code differ by one word
+    in the middle:
+
+    * Imodium 2mg capsules
+    * Imodium Original 2mg capsules
+
+    And there are several cases where names of two products with the same BNF
+    code have different versions of the same ratio:
+
+    * Taurolidine 5g/250ml intraperitoneal solution bottles
+    * Taurolidine 2g/100ml intraperitoneal solution bottles
+    '''
+
+    common_name = names[0]
+
+    for name in names[1:]:
+        words = []
+        for word1, word2 in zip(common_name.split(), name.split()):
+            if word1 != word2:
+                break
+            words.append(word1)
+
+        if not words:
+            return None
+
+        if words[-1] in ['with', 'in', 'size']:
+            # If the common substring ends in one of these words, we want to
+            # ignore it.
+            #
+            # For example:
+            #
+            # * with:
+            #   * Celluloid colostomy cup with solid rim, small
+            #   * Celluloid colostomy cup with sponge rim, small
+            # * in:
+            #   * Coal tar 10% in Yellow soft paraffin
+            #   * Coal tar 10% in White soft paraffin
+            # * size:
+            #   * Genesis 3H constrictor ring size 3
+            #   * Genesis 3H constrictor ring size 4
+            words = words[:-1]
+
+        if words[-1] == 'oral':
+            # If the common substring ends with 'oral', it probably means that
+            # there are two names corresponding to products with the same BNF
+            # code where one is a solution and the other is a suspension.
+            #
+            # For example:
+            #
+            #  * Acetazolamide 350mg/5ml oral solution
+            #  * Acetazolamide 350mg/5ml oral suspension
+            words = words[:-1]
+
+        common_name = ' '.join(words)
+
+    if len(common_name.split()) < len(names[0].split()) / 2:
+        return None
+
+    return common_name.strip()
