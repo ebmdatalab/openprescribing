@@ -1,3 +1,4 @@
+import csv
 import glob
 import os
 from lxml import etree
@@ -17,16 +18,32 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('dmd_data_path')
         parser.add_argument('mapping_path')
+        parser.add_argument('logs_path')
 
     def handle(self, *args, **kwargs):
         self.dmd_data_path = kwargs['dmd_data_path']
         self.mapping_path = kwargs['mapping_path']
+        self.logs_path = kwargs['logs_path']
+
+        self.log_keys = [
+            'dmd-objs-present-in-mapping-only',
+            'vmps-with-inferred-bnf-code',
+            'vmps-with-no-bnf-code',
+            'bnf-codes-with-multiple-dmd-objs',
+            'bnf-codes-with-multiple-dmd-objs-and-no-inferred-name',
+            'vmpps-with-different-bnf-code-to-vmp',
+            'ampps-with-different-bnf-code-to-amp',
+        ]
+        self.logs = {key: list() for key in self.log_keys}
 
         with transaction.atomic():
             self.import_dmd()
             self.import_bnf_code_mapping()
             self.set_vmp_bnf_codes()
             self.set_dmd_names()
+
+        self.log_other_oddities()
+        self.write_logs()
 
     def import_dmd(self):
         # dm+d data is provided in several XML files:
@@ -286,8 +303,10 @@ class Command(BaseCommand):
             try:
                 obj = model.objects.get(id=snomed_id)
             except model.DoesNotExist:
-                # TODO: log this
+                key = (model.__name__, snomed_id)
+                self.logs['dmd-objs-present-in-mapping-only'].append(key)
                 continue
+
             obj.bnf_code = bnf_code
             obj.save()
 
@@ -301,8 +320,6 @@ class Command(BaseCommand):
             bnf_code__isnull=True
         ).prefetch_related('vmpp_set')
 
-        # TODO: log all these
-
         for vmp in vmps:
             vmpp_bnf_codes = {
                 vmpp.bnf_code
@@ -311,8 +328,11 @@ class Command(BaseCommand):
             }
 
             if len(vmpp_bnf_codes) == 1:
+                self.logs['vmps-with-inferred-bnf-code'].append([vmp.id])
                 vmp.bnf_code = list(vmpp_bnf_codes)[0]
                 vmp.save()
+            else:
+                self.logs['vmps-with-no-bnf-code'].append([vmp.id])
 
     def set_dmd_names(self):
         '''Sets Presentation.dmd_name by finding linked dm+d objects with the
@@ -394,12 +414,71 @@ class Command(BaseCommand):
 
             for cls in VMP, AMP, VMPP, AMPP:
                 names = cls_to_names[cls]
-                if len(names) > 0:
+                if len(names) == 1:
+                    presentation.dmd_name = list(names)[0]
+                    presentation.save()
+                    break
+                elif len(names) > 1:
+                    self.logs['bnf-codes-with-multiple-dmd-objs'].append([presentation.bnf_code])
                     common_name = get_common_name(list(names))
-                    if common_name is not None:
+                    if common_name is None:
+                        self.logs['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name'].append([presentation.bnf_code])
+                    else:
                         presentation.dmd_name = common_name
                         presentation.save()
                     break
+
+    def log_other_oddities(self):
+        '''Log oddities in the data that are not captured elsewhere.'''
+
+        sql = '''
+        SELECT vmpp.vppid
+        FROM dmd2_vmp vmp
+        INNER JOIN dmd2_vmpp vmpp
+            ON vmp.vpid = vmpp.vpid
+        WHERE vmp.bnf_code IS NOT NULL
+          AND vmp.bnf_code != vmpp.bnf_code
+        '''
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            self.logs['vmpps-with-different-bnf-code-to-vmp'] = cursor.fetchall()
+
+        sql = sql.replace('v', 'a')
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            self.logs['ampps-with-different-bnf-code-to-amp'] = cursor.fetchall()
+
+    def write_logs(self):
+        '''Record summary and details of oddities we've found in the data.
+
+        We log (summary and details) the following things:
+         * dm+d objects only present in mapping
+         * VMPs with inferred BNF codes
+         * VMPs without BNF codes
+         * BNF codes with multiple dm+d objects
+         * BNF codes with multiple dm+d objects where a name cannot be
+           inferred
+         * VMPPs that have different BNF code to their VMP
+         * AMPPs that have different BNF code to their AMP
+
+        We also log summaries of the number of objects imported.
+        '''
+
+        os.mkdir(self.logs_path)
+
+        for key in self.log_keys:
+            with open(os.path.join(self.logs_path, key + '.csv'), 'w') as f:
+                writer = csv.writer(f)
+                writer.writerows(self.logs[key])
+
+        with open(os.path.join(self.logs_path, 'summary.csv'), 'w') as f:
+            writer = csv.writer(f)
+            for model in [VMP, AMP, VMPP, AMPP]:
+                writer.writerow([model.__name__, model.objects.count()])
+            for key in self.log_keys:
+                writer.writerow([key, len(self.logs[key])])
 
 
 def get_common_name(names):

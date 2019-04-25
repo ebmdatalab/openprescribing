@@ -1,3 +1,7 @@
+import csv
+import shutil
+import tempfile
+
 from django.core.management import call_command, CommandError
 from django.test import TestCase
 
@@ -20,13 +24,20 @@ class TestImportDmd2(TestCase):
         ]:
             Presentation.objects.create(bnf_code=bnf_code, name=name)
 
+        cls.logs_path = tempfile.mkdtemp()
+
         # Import the data.  See fixtures/dmd/README.txt for details of what
         # objects will be created.
         call_command(
             'import_dmd2',
             'dmd2/tests/fixtures/dmd/1/',
             'dmd2/tests/fixtures/bnf_code_mapping/mapping.xlsx',
+            cls.logs_path + '/1',
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.logs_path)
 
     def test_objects_created(self):
         # Check that correct number of objects have been created.
@@ -114,6 +125,26 @@ class TestImportDmd2(TestCase):
         # inferred.
         _assert_dmd_name('090402000BBHCA0', 'Nutrison liquid (Nutricia Ltd)')
 
+    def test_logs(self):
+        with open(self.logs_path + '/1/summary.csv') as f:
+            summary = list(csv.reader(f))
+
+        exp_summary = [
+            ['VMP','7'],
+            ['AMP','15'],
+            ['VMPP','14'],
+            ['AMPP','26'],
+            ['dmd-objs-present-in-mapping-only','0'],
+            ['vmps-with-inferred-bnf-code','2'],
+            ['vmps-with-no-bnf-code','1'],
+            ['bnf-codes-with-multiple-dmd-objs','3'],
+            ['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name','1'],
+            ['vmpps-with-different-bnf-code-to-vmp','0'],
+            ['ampps-with-different-bnf-code-to-amp','3'],
+        ]
+
+        self.assertEqual(summary, exp_summary)
+
     def test_another_import(self):
         # Import updated data.  This data is identical to that in dmd/1, except
         # that the VMP with VPID 22480211000001104 has been updated with a new
@@ -123,6 +154,7 @@ class TestImportDmd2(TestCase):
             'import_dmd2',
             'dmd2/tests/fixtures/dmd/2/',
             'dmd2/tests/fixtures/bnf_code_mapping/mapping.xlsx',
+            self.logs_path + '/2',
         )
 
         # Check that no VMP present with old VPID, that a new VMP has been
