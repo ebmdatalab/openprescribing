@@ -5,17 +5,18 @@ from dmd2.models import AMP, AMPP, VMP, VMPP
 
 
 class TestImportDmd2(TestCase):
-    def test_import_dmd2(self):
-        # See fixtures/dmd/README.txt for details of what objects will be
-        # created.
 
-        # Import the data.
+    @classmethod
+    def setUpTestData(cls):
+        # Import the data.  See fixtures/dmd/README.txt for details of what
+        # objects will be created.
         call_command(
             'import_dmd2',
             'dmd2/tests/fixtures/dmd/1/',
             'dmd2/tests/fixtures/bnf_code_mapping/mapping.xlsx',
         )
 
+    def test_objects_created(self):
         # Check that correct number of objects have been created.
         self.assertEqual(VMP.objects.count(), 2)
         self.assertEqual(VMPP.objects.count(), 5)
@@ -68,6 +69,7 @@ class TestImportDmd2(TestCase):
             '1003020U0BBADAI'
         )
 
+    def test_vmp_bnf_codes_set(self):
         # This VMP does not have a BNF code in the mapping, but all its VMPPs
         # have the same BNF code, so we assign this to the VMP.
         self.assertEqual(
@@ -75,6 +77,7 @@ class TestImportDmd2(TestCase):
             '0203020C0AAAAAA'
         )
 
+    def test_another_import(self):
         # Import updated data.  This data is identical to that in dmd/1, except
         # that the VMP with VPID 22480211000001104 has been updated with a new
         # VPID (12345).  This VMP now has a VPIDPREV field, and all references
@@ -91,8 +94,8 @@ class TestImportDmd2(TestCase):
         vmp = VMP.objects.get(id=12345)
         self.assertEqual(vmp.vpidprev, 22480211000001104)
 
-        vmpp.refresh_from_db()
+        vmpp = VMPP.objects.get(id=22479511000001101)
         self.assertEqual(vmpp.vmp, vmp)
 
-        amp.refresh_from_db()
+        amp = AMP.objects.get(id=29915211000001103)
         self.assertEqual(amp.vmp, vmp)
