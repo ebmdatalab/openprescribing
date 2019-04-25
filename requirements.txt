@@ -70,7 +70,7 @@ pandas==0.24.2
 paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
 pbr==4.2.0                # via mock
-pip-tools==3.6.0
+pip-tools==3.6.1
 premailer==3.4.0
 protobuf==3.4.0           # via google-api-core, googleapis-common-protos
 psycopg2-binary==2.8.2
