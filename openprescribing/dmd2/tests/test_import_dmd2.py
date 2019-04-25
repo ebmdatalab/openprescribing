@@ -11,7 +11,6 @@ from frontend.models import Presentation
 
 
 class TestImportDmd2(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         for bnf_code, name in [
@@ -64,8 +63,7 @@ class TestImportDmd2(TestCase):
         amp = AMP.objects.get(id=29915211000001103)
         self.assertEqual(amp.nm, 'Diclofenac 2.32% gel')
         self.assertEqual(
-            amp.descr,
-            'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd)'
+            amp.descr, 'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd)'
         )
         self.assertEqual(amp.vmp, vmp)
         self.assertEqual(amp.supp.descr, 'Colorama Pharmaceuticals Ltd')
@@ -74,8 +72,7 @@ class TestImportDmd2(TestCase):
 
         ampp = AMPP.objects.get(id=29915311000001106)
         self.assertEqual(
-            ampp.nm,
-            'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd) 30 gram'
+            ampp.nm, 'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd) 30 gram'
         )
         self.assertEqual(ampp.vmpp, vmpp)
         self.assertEqual(ampp.amp, amp)
@@ -84,27 +81,23 @@ class TestImportDmd2(TestCase):
 
         # The following AMP and AMPP do have BNF codes.
         self.assertEqual(
-            AMP.objects.get(id=22479611000001102).bnf_code,
-            '1003020U0BBADAI'
+            AMP.objects.get(id=22479611000001102).bnf_code, '1003020U0BBADAI'
         )
         self.assertEqual(
-            AMPP.objects.get(id=22479911000001108).bnf_code,
-            '1003020U0BBADAI'
+            AMPP.objects.get(id=22479911000001108).bnf_code, '1003020U0BBADAI'
         )
 
     def test_vmp_bnf_codes_set(self):
         # This VMP does not have a BNF code in the mapping, but all its VMPPs
         # have the same BNF code, so we assign this to the VMP.
         self.assertEqual(
-            VMP.objects.get(id=35894711000001106).bnf_code,
-            '0203020C0AAAAAA'
+            VMP.objects.get(id=35894711000001106).bnf_code, '0203020C0AAAAAA'
         )
 
     def test_dmd_names(self):
         def _assert_dmd_name(bnf_code, exp_dmd_name):
             self.assertEqual(
-                Presentation.objects.get(bnf_code=bnf_code).dmd_name,
-                exp_dmd_name
+                Presentation.objects.get(bnf_code=bnf_code).dmd_name, exp_dmd_name
             )
 
         # This BNF code corresponds to a single VMP.
@@ -130,17 +123,17 @@ class TestImportDmd2(TestCase):
             summary = list(csv.reader(f))
 
         exp_summary = [
-            ['VMP','7'],
-            ['AMP','15'],
-            ['VMPP','14'],
-            ['AMPP','26'],
-            ['dmd-objs-present-in-mapping-only','0'],
-            ['vmps-with-inferred-bnf-code','2'],
-            ['vmps-with-no-bnf-code','1'],
-            ['bnf-codes-with-multiple-dmd-objs','3'],
-            ['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name','1'],
-            ['vmpps-with-different-bnf-code-to-vmp','0'],
-            ['ampps-with-different-bnf-code-to-amp','3'],
+            ['VMP', '7'],
+            ['AMP', '15'],
+            ['VMPP', '14'],
+            ['AMPP', '26'],
+            ['dmd-objs-present-in-mapping-only', '0'],
+            ['vmps-with-inferred-bnf-code', '2'],
+            ['vmps-with-no-bnf-code', '1'],
+            ['bnf-codes-with-multiple-dmd-objs', '3'],
+            ['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name', '1'],
+            ['vmpps-with-different-bnf-code-to-vmp', '0'],
+            ['ampps-with-different-bnf-code-to-amp', '3'],
         ]
 
         self.assertEqual(summary, exp_summary)
@@ -172,44 +165,45 @@ class TestImportDmd2(TestCase):
 
 class TestGetCommonName(TestCase):
     def test_common_name(self):
-        self._test_get_common_name([
+        self._test_get_common_name(
+            [
                 'Zoledronic acid 4mg/100ml infusion bags',
                 'Zoledronic acid 4mg/100ml infusion bottles',
             ],
-            'Zoledronic acid 4mg/100ml infusion'
+            'Zoledronic acid 4mg/100ml infusion',
         )
 
     def test_no_common_name(self):
-        self._test_get_common_name([
-                "Lassar's paste",
-                'Zinc and Salicylic acid paste',
-            ],
-            None
+        self._test_get_common_name(
+            ["Lassar's paste", 'Zinc and Salicylic acid paste'], None
         )
 
     def test_common_name_too_short(self):
-        self._test_get_common_name([
+        self._test_get_common_name(
+            [
                 'Coal tar 10% / Salicylic acid 5% in Aqueous cream',
                 'Coal tar solution 10% / Salicylic acid 5% in Aqueous cream',
             ],
-            None
+            None,
         )
 
     def test_trailing_with_removed(self):
-        self._test_get_common_name([
+        self._test_get_common_name(
+            [
                 'Polyfield Soft Vinyl Patient Pack with small gloves',
                 'Polyfield Soft Vinyl Patient Pack with medium gloves',
                 'Polyfield Soft Vinyl Patient Pack with large gloves',
             ],
-            'Polyfield Soft Vinyl Patient Pack'
+            'Polyfield Soft Vinyl Patient Pack',
         )
 
     def test_trailing_oral_removed(self):
-        self._test_get_common_name([
+        self._test_get_common_name(
+            [
                 'Acetazolamide 350mg/5ml oral solution',
                 'Acetazolamide 350mg/5ml oral suspension',
             ],
-            'Acetazolamide 350mg/5ml'
+            'Acetazolamide 350mg/5ml',
         )
 
     def _test_get_common_name(self, names, exp_common_name):

@@ -187,7 +187,9 @@ class Command(BaseCommand):
     def load_elts(self, filename_fragment):
         '''Return list of non-comment top-level elements in given file.'''
 
-        paths = glob.glob(os.path.join(self.dmd_data_path, 'f_{}2_*.xml'.format(filename_fragment)))
+        paths = glob.glob(
+            os.path.join(self.dmd_data_path, 'f_{}2_*.xml'.format(filename_fragment))
+        )
         assert len(paths) == 1
 
         with open(paths[0]) as f:
@@ -204,7 +206,8 @@ class Command(BaseCommand):
         model.objects.all().delete()
 
         boolean_field_names = [
-            f.name for f in model._meta.fields
+            f.name
+            for f in model._meta.fields
             if isinstance(f, django_fields.BooleanField)
         ]
 
@@ -215,9 +218,7 @@ class Command(BaseCommand):
             if not isinstance(f, django_fields.AutoField)
         ]
         sql = 'INSERT INTO {} ({}) VALUES ({})'.format(
-            table_name,
-            ', '.join(column_names),
-            ', '.join(['%s'] * len(column_names))
+            table_name, ', '.join(column_names), ', '.join(['%s'] * len(column_names))
         )
 
         values = []
@@ -240,7 +241,7 @@ class Command(BaseCommand):
                 row[name] = value
 
             for name in boolean_field_names:
-                row[name] = (name in row)
+                row[name] = name in row
 
             values.append([row.get(name) for name in column_names])
 
@@ -250,15 +251,7 @@ class Command(BaseCommand):
     def make_model_name(self, tag_name):
         '''Construct name of Django model from XML tag name.'''
 
-        if tag_name in [
-            'VTM',
-            'VPI',
-            'VMP',
-            'VMPP',
-            'AMP',
-            'AMPP',
-            'GTIN',
-        ]:
+        if tag_name in ['VTM', 'VPI', 'VMP', 'VMPP', 'AMP', 'AMPP', 'GTIN']:
             return tag_name
         else:
             return ''.join(tok.title() for tok in tag_name.split('_'))
@@ -316,15 +309,11 @@ class Command(BaseCommand):
         that the VMPPs' BNF code can be applied to the VMP too.
         '''
 
-        vmps = VMP.objects.filter(
-            bnf_code__isnull=True
-        ).prefetch_related('vmpp_set')
+        vmps = VMP.objects.filter(bnf_code__isnull=True).prefetch_related('vmpp_set')
 
         for vmp in vmps:
             vmpp_bnf_codes = {
-                vmpp.bnf_code
-                for vmpp in vmp.vmpp_set.all()
-                if vmpp.bnf_code
+                vmpp.bnf_code for vmpp in vmp.vmpp_set.all() if vmpp.bnf_code
             }
 
             if len(vmpp_bnf_codes) == 1:
@@ -419,10 +408,14 @@ class Command(BaseCommand):
                     presentation.save()
                     break
                 elif len(names) > 1:
-                    self.logs['bnf-codes-with-multiple-dmd-objs'].append([presentation.bnf_code])
+                    self.logs['bnf-codes-with-multiple-dmd-objs'].append(
+                        [presentation.bnf_code]
+                    )
                     common_name = get_common_name(list(names))
                     if common_name is None:
-                        self.logs['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name'].append([presentation.bnf_code])
+                        self.logs[
+                            'bnf-codes-with-multiple-dmd-objs-and-no-inferred-name'
+                        ].append([presentation.bnf_code])
                     else:
                         presentation.dmd_name = common_name
                         presentation.save()
