@@ -37,6 +37,7 @@ class TestImportDmd2(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.logs_path)
+        super(TestImportDmd2, cls).tearDownClass()
 
     def test_objects_created(self):
         # Check that correct number of objects have been created.
