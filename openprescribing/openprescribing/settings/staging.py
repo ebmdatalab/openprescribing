@@ -112,3 +112,7 @@ GOOGLE_OPTIMIZE_CONTAINER_ID = 'GTM-KRQSJM9'
 sentry_raven_dsn = utils.get_env_setting('STAGING_SENTRY_RAVEN_DSN', default='')
 if sentry_raven_dsn:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = os.path.join(APPS_ROOT, 'pipeline', 'data')
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')

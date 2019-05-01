@@ -1,6 +1,6 @@
 """
 Download prescribing data from BigQuery to gzipped CSV files in the
-"matrixstore_import" directory inside `settings.PIPELINE_DATA_BASEDIR`
+`settings.MATRIXSTORE_IMPORT_DIR` directory
 """
 import glob
 import logging

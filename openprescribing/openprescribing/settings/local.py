@@ -136,6 +136,7 @@ PIPELINE_METADATA_DIR = os.path.join(APPS_ROOT, 'pipeline', 'metadata')
 
 # Base directory for pipeline data
 PIPELINE_DATA_BASEDIR = os.path.join(APPS_ROOT, 'pipeline', 'data')
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
 
 # Don't send messages to Slack
 SLACK_SENDING_ACTIVE = False

@@ -96,6 +96,8 @@ PIPELINE_IMPORT_LOG_PATH = os.path.join(
     APPS_ROOT, 'pipeline', 'test-data', 'log.json'
 )
 
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+
 SLACK_SENDING_ACTIVE = False
 
 # Running with a different storage backend in test is not ideal but it's what

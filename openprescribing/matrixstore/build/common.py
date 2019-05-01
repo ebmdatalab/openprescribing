@@ -6,9 +6,6 @@ import tempfile
 from django.conf import settings
 
 
-DATA_DIRECTORY_NAME = 'matrixstore_import'
-
-
 def get_practice_stats_filename(date):
     """
     Return the full path to the practice statistics CSV file for this date
@@ -29,8 +26,7 @@ def get_filename_for_download(remote_filename):
     to which this file should be downloaded
     """
     return os.path.join(
-        settings.PIPELINE_DATA_BASEDIR,
-        DATA_DIRECTORY_NAME,
+        settings.MATRIXSTORE_IMPORT_DIR,
         'temporary_downloads',
         os.path.basename(remote_filename)
     )
@@ -52,8 +48,7 @@ def get_temp_filename(filename):
 
 def _get_filename(date, type_name):
     return os.path.join(
-        settings.PIPELINE_DATA_BASEDIR,
-        DATA_DIRECTORY_NAME,
+        settings.MATRIXSTORE_IMPORT_DIR,
         '{}_{}.csv.gz'.format(date, type_name)
     )
 
