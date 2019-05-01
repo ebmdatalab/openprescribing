@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- Version 2.0 01/06/2013 GEBAW -->
+<!-- Modified to allow an AMPP to have multiple GTIN Codes -->
+<!-- Added mandatory start date and optional end date to each GTIN -->
+<!-- Added simpleType GTINCode to ensure validation of GTIN as 13 or 14 characters -->
+<!-- Changed GTINType to use GTINCode -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:complexType name="AMPPType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="AMPPID" type="xs:integer" />
+			<xs:element name="GTINDATA" type="GTINType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GTINType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="GTIN" type="GTINCode" minOccurs="1"  maxOccurs="1"/>
+			<xs:element name="STARTDT" type="xs:date" minOccurs="1"  maxOccurs="1" />
+			<xs:element name="ENDDT" type="xs:date" minOccurs="0"  maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="GTIN_DETAILS">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AMPPS">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AMPP" type="AMPPType" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="GTINCode">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="|([0-9]{13})|([0-9]{14})"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
