@@ -115,6 +115,52 @@ matrix = deserialize(value)
 print(matrix)
 ```
 
+### The MatrixStore class
+
+The [matrixstore.connection](./connection.py) module contains a
+`MatrixStore` class which, among other things, automatically handles
+deserialzation for you.
+
+Initialise it like this:
+```python
+from matrixstore.connection import MatrixStore
+matrixstore = MatrixStore.from_file('/path/to/file.sqlite')
+
+# Or with an existing sqlite connection like this:
+# matrixstore = MatrixStore(sqlite_connection)
+```
+
+And query it like this:
+```python
+results = matrixstore.query(
+    'SELECT bnf_code, items FROM presentation WHERE bnf_code LIKE ?',
+    ['10%']
+)
+for items, quantity in results:
+    print(bnf_code, items)
+```
+
+Note that the `items` column is automatically deserialized into a matrix
+object.
+
+If you know you only want a single row, you can use the `query_one`
+function:
+```python
+items, quantity = matrixstore.query_one(
+    'SELECT items, quantity FROM presentation WHERE bnf_code = ?',
+    ['0601023A0AAABAB']
+)
+```
+
+Each MatrixStore instance has two dictionaries mapping dates and
+practice codes to their respective columns and rows within the matrices.
+
+For example:
+```python
+column = matrixstore.date_offsets['2018-06-01']
+row = matrixstore.practice_offsets['G85724']
+```
+
 
 ## Building a MatrixStore SQLite file
 
