@@ -45,7 +45,7 @@ def serialize(obj):
     """
     Serialize an arbitrary Python object using our custom PyArrow context
     """
-    return context.serialize(obj).to_buffer()
+    return context.serialize(obj).to_buffer().to_pybytes()
 
 
 def serialize_compressed(obj):
@@ -53,7 +53,8 @@ def serialize_compressed(obj):
     Serialize an arbitrary Python object using our custom PyArrow context and
     compress the result using ZStandard
     """
-    return compressor.compress(serialize(obj))
+    data = context.serialize(obj).to_buffer()
+    return compressor.compress(data)
 
 
 def deserialize(data):
