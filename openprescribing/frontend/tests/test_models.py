@@ -207,3 +207,31 @@ class PresentationTestCase(TestCase):
     def test_product_name_without_dmd_product(self):
         p = Presentation.objects.get(pk='0202010B0AAACAC')
         self.assertEqual(p.product_name, 'Bendroflumethiazide_Tab 5mg')
+
+
+class TestPresentationDMDLinks(TestCase):
+    fixtures = ['presentations_and_dmd_objs']
+
+    def test_dmd_info(self):
+        # Testing dmd_info() thoroughly would require setting up a large amount
+        # of test data.  Constructing this manually is a lot of work.  Instead,
+        # I have generated fixtures from the test data in dmd2, which covers a
+        # range of the kinds of relationships between presentations and dm+d
+        # objects.
+
+        # This checks that dmd_info() returns something sensible for each key
+        # for one presentation.
+        p = Presentation.objects.get(bnf_code='1003020U0AAAIAI')
+        info = p.dmd_info()
+
+        self.assertEqual(info['availability_restrictions'], 'None')
+        self.assertEqual(
+            info['prescribability_statuses'],
+            'Valid as a prescribable product'
+        )
+        self.assertEqual(info['tariff_categories'], 'Part VIIIA Category C')
+
+        # This checks that most of the code paths for producing dmd_info() are
+        # exercised.
+        for p in Presentation.objects.all():
+            p.dmd_info()
