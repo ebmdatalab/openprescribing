@@ -136,7 +136,9 @@ class Command(BaseCommand):
         # vmpp
         for elements in self.load_elements('vmpp'):
             if elements[0].tag == 'CCONTENT':
-                # TODO Handle CCONTENT
+                # We don't yet handle the CCONTENT tag, which indicates that a
+                # VMPP is part of a combination pack, where two VMPPs are
+                # always prescribed together.
                 continue
 
             model_name = self.make_model_name(elements[0].tag)
@@ -165,7 +167,9 @@ class Command(BaseCommand):
                 continue
 
             if elements[0].tag == 'CCONTENT':
-                # TODO Handle CCONTENT
+                # We don't yet handle the CCONTENT tag, which indicates that a
+                # AMPP is part of a combination pack, where two AMPPs are
+                # always prescribed together.
                 continue
 
             model_name = self.make_model_name(elements[0].tag)
