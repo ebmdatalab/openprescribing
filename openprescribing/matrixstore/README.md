@@ -161,6 +161,28 @@ column = matrixstore.date_offsets['2018-06-01']
 row = matrixstore.practice_offsets['G85724']
 ```
 
+### Custom SQL functions
+
+The other important function of the MatrixStore class is to define
+various custom SQL functions for operating on matrices. These are:
+
+#### MATRIX_SUM()
+
+`MATRIX_SUM()` is an aggregation function much like `SUM()` except that it
+operates on matrices and sums them element-wise. Input matrices must be
+of the same shape and type (i.e. float or int) and the output is a
+matrix of that shape and type where each element is the sum of all the
+values at that row and column.
+
+Example:
+```sql
+SELECT MATRIX_SUM(items) FROM presentation WHERE bnf_code LIKE '10%';
+```
+
+(Note this function is actually more like SQLite's `TOTAL()` than
+`SUM()` as it ignores NULL input values, rather than immediately
+returning NULL.)
+
 
 ## Building a MatrixStore SQLite file
 
