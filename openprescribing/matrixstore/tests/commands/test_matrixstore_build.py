@@ -42,17 +42,22 @@ class TestMatrixStoreBuild(SimpleTestCase):
     def setUpClass(cls):
         factory = DataFactory()
         cls.months = factory.create_months('2019-01-01', 3)
-        cls.closed_practice = factory.create_practice()
-        cls.active_practices = factory.create_practices(3)
-        cls.practice_statistics = factory.create_practice_statistics(
-            cls.active_practices, cls.months
-        )
-        factory.create_practice_statistics(
-            [cls.closed_practice], cls.months
-        )
+        # This practice won't do any prescribing but it will have practice
+        # statistics so it should still show up in our data
+        cls.non_prescribing_practice = factory.create_practice()
+        # Create some practices that prescribe during the period
+        cls.prescribing_practices = factory.create_practices(3)
+        # Create some presentations and some prescribing
         cls.presentations = factory.create_presentations(4)
         cls.prescribing = factory.create_prescribing(
-            cls.presentations, cls.active_practices, cls.months
+            cls.presentations, cls.prescribing_practices, cls.months
+        )
+        # Create practices statistics for all active practices
+        cls.active_practices = cls.prescribing_practices + [
+            cls.non_prescribing_practice
+        ]
+        cls.practice_statistics = factory.create_practice_statistics(
+            cls.active_practices, cls.months
         )
         # Create a presentation which changes its BNF code and create some
         # prescribing with both old and new codes
@@ -67,10 +72,14 @@ class TestMatrixStoreBuild(SimpleTestCase):
         # We deliberately import data for fewer months than we've created so we
         # can test that only the right data is included
         cls.months_to_import = cls.months[1:]
-        # The closed practice only prescribes in the month we don't import, so
-        # it shouldn't show up at all in our data
+        # This practice only has data for the month we don't import, so it
+        # shouldn't show up at all in our data
+        cls.closed_practice = factory.create_practice()
         factory.create_prescription(
             cls.presentations[0], cls.closed_practice, cls.months[0]
+        )
+        factory.create_statistics_for_one_practice_and_month(
+            cls.closed_practice, cls.months[0]
         )
         cls.data_factory = factory
         # The format of `end_date` only uses year and month

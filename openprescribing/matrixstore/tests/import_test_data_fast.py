@@ -40,7 +40,7 @@ def import_test_data_fast(sqlite_conn, data_factory, end_date, months=None):
 def init_db(sqlite_conn, data_factory, dates):
     sqlite_conn.executescript(SCHEMA_SQL)
     import_dates(sqlite_conn, dates)
-    practice_codes = _get_prescribing_practice_codes(data_factory, dates)
+    practice_codes = _get_active_practice_codes(data_factory, dates)
     sqlite_conn.executemany(
         'INSERT INTO practice (offset, code) VALUES (?, ?)',
         enumerate(practice_codes)
@@ -87,11 +87,12 @@ def update_bnf_map(sqlite_conn, data_factory):
         )
 
 
-def _get_prescribing_practice_codes(data_factory, dates):
-    practice_codes = set(
-        prescription['practice']
-        for prescription in _filter_by_date(data_factory.prescribing, dates)
-    )
+def _get_active_practice_codes(data_factory, dates):
+    practice_codes = set()
+    for prescription in _filter_by_date(data_factory.prescribing, dates):
+        practice_codes.add(prescription['practice'])
+    for practice_stat in _filter_by_date(data_factory.practice_statistics, dates):
+        practice_codes.add(practice_stat['practice'])
     return sorted(practice_codes)
 
 
