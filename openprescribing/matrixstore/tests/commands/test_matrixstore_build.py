@@ -8,6 +8,10 @@ This tests the MatrixStore build process:
     'TestMatrixStoreBuildEndToEnd` runs the same set of tests but uploads data
     to BigQuery and exports it to Google Cloud Storage in order to excercise
     the full build process
+
+The end-to-end test contains an additional check whereby it builds a file using
+the fast process and checks that the resulting SQL dump is identical to that
+produced by the full end-to-end process.
 """
 from __future__ import print_function
 
@@ -69,19 +73,20 @@ class TestMatrixStoreBuild(SimpleTestCase):
         factory.create_prescription(
             cls.presentations[0], cls.closed_practice, cls.months[0]
         )
+        cls.data_factory = factory
         # The format of `end_date` only uses year and month
-        end_date = max(cls.months_to_import)[:7]
-        months = len(cls.months_to_import)
-        cls.create_matrixstore(factory, end_date, months)
+        cls.end_date = max(cls.months_to_import)[:7]
+        cls.number_of_months = len(cls.months_to_import)
+        cls.create_matrixstore(factory, cls.end_date, cls.number_of_months)
 
     @classmethod
-    def create_matrixstore(cls, data_factory, end_date, months):
+    def create_matrixstore(cls, data_factory, end_date, number_of_months):
         cls.connection = sqlite3.connect(':memory:')
         import_test_data_fast(
             cls.connection,
             data_factory,
             end_date,
-            months=months
+            months=number_of_months
         )
 
     @classmethod
@@ -199,11 +204,12 @@ class TestMatrixStoreBuild(SimpleTestCase):
 class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
     """
     Runs the same test as above but as a full integration test against actual
-    BigQuery and Google Cloud Storage
+    BigQuery and Google Cloud Storage. Also checks that the fast build process
+    produces an identical file to the full process.
     """
 
     @classmethod
-    def create_matrixstore(cls, data_factory, end_date, months):
+    def create_matrixstore(cls, data_factory, end_date, number_of_months):
         cls.tempdir = tempfile.mkdtemp()
         settings.PIPELINE_DATA_BASEDIR = cls.tempdir
         cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
@@ -212,7 +218,7 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
             cls.data_file,
             data_factory,
             end_date,
-            months=months
+            months=number_of_months
         )
 
     @classmethod
@@ -228,6 +234,18 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
 
     def tearDown(self):
         self.connection.close()
+
+    def test_same_file_produced_by_import_test_data_fast(self):
+        other_connection = sqlite3.connect(':memory:')
+        import_test_data_fast(
+            other_connection,
+            self.data_factory,
+            self.end_date,
+            self.number_of_months
+        )
+        db_dump = list(self.connection.iterdump())
+        other_db_dump = list(other_connection.iterdump())
+        self.assertEqual(db_dump, other_db_dump)
 
 
 class MatrixValueFetcher(object):

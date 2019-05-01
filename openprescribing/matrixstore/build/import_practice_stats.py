@@ -140,5 +140,5 @@ def build_matrices(practice_statistics, practices, dates):
     logger.info(
         'Writing %s practice statistics matrices to SQLite', len(matrices)
     )
-    for statistic_name, matrix in matrices.items():
+    for statistic_name, matrix in sorted(matrices.items()):
         yield statistic_name, finalise_matrix(matrix)
