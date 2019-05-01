@@ -593,23 +593,25 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
     if bnf_code_prefixes:
         where_clause = ' OR '.join(['bnf_code LIKE ?'] * len(bnf_code_prefixes))
         params = [code + '%' for code in bnf_code_prefixes]
-    else:
-        where_clause = '1=1'
-        params = []
-    sql = (
-        """
-        SELECT
-            matrix_sum(items) AS items,
-            matrix_sum(quantity) AS quantity,
-            matrix_sum(actual_cost) AS actual_cost
-        FROM
-            presentation
-        WHERE
-            items IS NOT NULL AND ({})
-        """.format(
-            where_clause
+        sql = (
+            """
+            SELECT
+                matrix_sum(items) AS items,
+                matrix_sum(quantity) AS quantity,
+                matrix_sum(actual_cost) AS actual_cost
+            FROM
+                presentation
+            WHERE
+                items IS NOT NULL AND ({})
+            """.format(
+                where_clause
+            )
         )
-    )
+    else:
+        # As summing over all presentations can be quite slow we use the
+        # precalculated results table
+        sql = 'SELECT items, quantity, actual_cost FROM all_presentations'
+        params = []
     items, quantity, actual_cost = db.query_one(sql, params)
     # Convert from pence to pounds
     if actual_cost is not None:
