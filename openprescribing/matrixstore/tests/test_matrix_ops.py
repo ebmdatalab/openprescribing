@@ -66,7 +66,7 @@ class TestFinaliseMatrix(SimpleTestCase):
         self.random = random.Random()
         self.random.seed(14)
 
-    def test_sufficiently_spare_matrices_remain_sparse(self):
+    def test_sufficiently_sparse_matrices_remain_sparse(self):
         matrix = sparse_matrix((4, 4))
         for coords in self._random_coords(matrix.shape, sample_density=0.3):
             matrix[coords] = self.random.random()

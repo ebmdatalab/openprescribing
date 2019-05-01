@@ -103,7 +103,7 @@ def parse_practice_statistics_csv(input_stream):
 
 def build_matrices(practice_statistics, practices, dates):
     """
-    Accepts an iterable of practice statistics. plus mappings of pratice codes
+    Accepts an iterable of practice statistics, plus mappings of pratice codes
     and date strings to their respective row/column offsets. Yields pairs of
     the form:
 
