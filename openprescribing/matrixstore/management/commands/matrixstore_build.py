@@ -16,6 +16,7 @@ from matrixstore.build.import_practice_stats import import_practice_stats
 from matrixstore.build.download_prescribing import download_prescribing
 from matrixstore.build.import_prescribing import import_prescribing
 from matrixstore.build.update_bnf_map import update_bnf_map
+from matrixstore.build.precalculate_totals import precalculate_totals
 from matrixstore.build.generate_filename import generate_filename
 
 
@@ -85,6 +86,7 @@ def build(end_date, months=None):
     download_prescribing(end_date, months=months)
     import_prescribing(sqlite_temp)
     update_bnf_map(sqlite_temp)
+    precalculate_totals(sqlite_temp)
     basename = generate_filename(sqlite_temp)
     filename = os.path.join(directory, basename)
     logger.info('Moving file to final location: %s', filename)

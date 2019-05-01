@@ -33,6 +33,19 @@ SCHEMA_SQL = """
         PRIMARY KEY (bnf_code)
     );
 
+   -- This table will contain a single row giving totals pre-calculated from
+   -- the above data as these are slightly too expensive to calculate at
+   -- runtime
+    CREATE TABLE all_presentations (
+        -- The below columns will contain total prescribing over all
+        -- presentations as serialized matrices of shape (number of practices,
+        -- number of months)
+        items BLOB,
+        quantity BLOB,
+        actual_cost BLOB,
+        net_cost BLOB
+    );
+
     CREATE TABLE practice_statistic (
         name TEXT,
         -- The "value" column will contain the actual statistics as serialized

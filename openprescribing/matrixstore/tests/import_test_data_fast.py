@@ -12,6 +12,9 @@ from matrixstore.build.import_prescribing import (
 from matrixstore.build.update_bnf_map import (
     move_values_from_old_code_to_new
 )
+from matrixstore.build.precalculate_totals import (
+    precalculate_totals_for_db
+)
 
 
 def import_test_data_fast(sqlite_conn, data_factory, end_date, months=None):
@@ -32,6 +35,7 @@ def import_test_data_fast(sqlite_conn, data_factory, end_date, months=None):
     import_practice_stats(sqlite_conn, data_factory, dates)
     import_prescribing(sqlite_conn, data_factory, dates)
     update_bnf_map(sqlite_conn, data_factory)
+    precalculate_totals_for_db(sqlite_conn)
 
     sqlite_conn.isolation_level = previous_isolation_level
     sqlite_conn.commit()

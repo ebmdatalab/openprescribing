@@ -207,6 +207,28 @@ class TestMatrixStoreBuild(SimpleTestCase):
                     'actual_cost': values['actual_cost'],
                 }
 
+    def test_precalculated_totals(self):
+        for field in ['items', 'quantity', 'net_cost', 'actual_cost']:
+            # Cost figures are originally in pounds but we store them in pence
+            # as ints
+            multiplier = 100 if field.endswith('_cost') else 1
+            get_value = MatrixValueFetcher(
+                # This table doesn't have a key column as it only has one row,
+                # so we just use 1 as a pseudo-column
+                self.connection, 'all_presentations', 1, field
+            )
+            # Calculate totals over all presentations
+            totals = defaultdict(int)
+            for entry in self._expected_prescribing_values():
+                value = round(entry[field] * multiplier)
+                totals[entry['practice'], entry['month']] += value
+            # Check they match the stored values
+            for (practice, month), expected_value in totals.items():
+                value = get_value(1, practice, month)
+                self.assertEqual(value, expected_value)
+            # Check there are no additional values that we weren't expecting
+            self.assertEqual(get_value.nonzero_values, len(totals))
+
 
 class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
     """
