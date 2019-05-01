@@ -6,8 +6,6 @@ from django.test import TestCase
 
 from frontend.models import Prescription, ImportLog
 
-import api.view_utils
-
 from matrixstore.tests.matrixstore_factory import (
     matrixstore_from_postgres, patch_global_matrixstore
 )
@@ -22,11 +20,6 @@ class ApiTestBase(TestCase):
                 'presentations', 'sections', 'prescriptions',
                 'chemicals', 'tariff']
     api_prefix = '/api/1.0'
-
-    @classmethod
-    def setUpClass(cls):
-        super(ApiTestBase, cls).setUpClass()
-        api.view_utils.DISABLE_DB_TIMEOUT = True
 
     @classmethod
     def setUpTestData(cls):
@@ -50,7 +43,6 @@ class ApiTestBase(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        api.view_utils.DISABLE_DB_TIMEOUT = False
         cls._stop_patching()
         super(ApiTestBase, cls).tearDownClass()
 
