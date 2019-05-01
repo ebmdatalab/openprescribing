@@ -267,7 +267,10 @@ class MatrixValueFetcher(object):
         for key, value in results:
             matrix = deserialize(value)
             self.matrices[key] = matrix
-            self.nonzero_values += numpy.count_nonzero(matrix)
+            if hasattr(matrix, 'count_nonzero'):
+                self.nonzero_values += matrix.count_nonzero()
+            else:
+                self.nonzero_values += numpy.count_nonzero(matrix)
         self.practices = dict(connection.execute('SELECT code, offset FROM practice'))
         self.dates = dict(connection.execute('SELECT date, offset FROM date'))
         for date, offset in list(self.dates.items()):
