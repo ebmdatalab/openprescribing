@@ -32,7 +32,7 @@ django-extensions==2.1.6
 django-import-export==1.2.0
 django==1.11.20
 djangorestframework-csv==2.1.0
-djangorestframework==3.9.2
+djangorestframework==3.9.3
 easyprocess==0.2.3        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 enum34==1.1.6
