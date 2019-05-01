@@ -116,3 +116,4 @@ if sentry_raven_dsn:
 # Base directory for pipeline data
 PIPELINE_DATA_BASEDIR = os.path.join(APPS_ROOT, 'pipeline', 'data')
 MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+MATRIXSTORE_BUILD_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_build')

@@ -3,26 +3,31 @@ import tempfile
 
 from django.conf import settings
 from django.core.management import call_command
+from django.test.utils import override_settings
 
 from frontend import bq_schemas as schemas
 from gcutils.bigquery import Client
 
 
-def import_test_data_full(sqlite_path, data_factory, end_date, months=None):
+def import_test_data_full(directory, data_factory, end_date, months=None):
     """
-    Imports the data in `data_factory` into the SQLfile at `sqlite_path` while
+    Imports the data in `data_factory` into an SQLite file in `directory` while
     exercising the entire matrixstore_build pipeline. This includes uploading
     data to BigQuery and exporting it to Google Cloud Storage and so it can
     take several minutes to run.
+
+    Returns the path of the newly created file
     """
     upload_to_bigquery(data_factory)
-    call_command(
-        'matrixstore_build',
-        end_date,
-        sqlite_path,
-        months=months,
-        quiet=True
-    )
+    with override_settings(
+            MATRIXSTORE_IMPORT_DIR=directory,
+            MATRIXSTORE_BUILD_DIR=directory):
+        return call_command(
+            'matrixstore_build',
+            end_date,
+            months=months,
+            quiet=True
+        )
 
 
 def upload_to_bigquery(data_factory):

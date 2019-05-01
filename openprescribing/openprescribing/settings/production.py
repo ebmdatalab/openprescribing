@@ -123,3 +123,4 @@ PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
 PIPELINE_IMPORT_LOG_PATH = '/home/hello/openprescribing-data/log.json'
 
 MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+MATRIXSTORE_BUILD_DIR = '/mnt/database/matrixstore'

@@ -23,8 +23,7 @@ import shutil
 import sqlite3
 import tempfile
 
-from django.conf import settings
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase
 
 import numpy
 
@@ -200,7 +199,6 @@ class TestMatrixStoreBuild(SimpleTestCase):
                 }
 
 
-@override_settings(MATRIXSTORE_IMPORT_DIR=None)
 class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
     """
     Runs the same test as above but as a full integration test against actual
@@ -211,11 +209,9 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
     @classmethod
     def create_matrixstore(cls, data_factory, end_date, number_of_months):
         cls.tempdir = tempfile.mkdtemp()
-        settings.MATRIXSTORE_IMPORT_DIR = cls.tempdir
-        cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
         # Upload data to BigQuery and build file
-        import_test_data_full(
-            cls.data_file,
+        cls.data_file = import_test_data_full(
+            cls.tempdir,
             data_factory,
             end_date,
             months=number_of_months

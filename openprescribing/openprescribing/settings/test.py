@@ -97,6 +97,7 @@ PIPELINE_IMPORT_LOG_PATH = os.path.join(
 )
 
 MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+MATRIXSTORE_BUILD_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_build')
 
 SLACK_SENDING_ACTIVE = False
 

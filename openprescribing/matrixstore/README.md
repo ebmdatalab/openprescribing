@@ -121,10 +121,17 @@ print(matrix)
 MatrixStore files are created by calling the management command:
 
 ```sh
-./manage.py matrixstore_build 2018-10 my_matrixstore_file.sqlite
+./manage.py matrixstore_build 2018-10
 ```
 
 **Note**: this can take several hours to run.
+
+The output file is created in `settings.MATRIXSTORE_BUILD_DIR` (override
+this with the `--directory` flag) and is named according to the
+following format:
+```
+matrixstore_<LATEST_MONTH_OF_DATA>_<DATETIME_OF_BUILD>_<HASH_OF_FILE>.sqlite
+```
 
 All data to build the file is sourced entirely from BigQuery (the
 command doesn't even connect to Postgres). This is done through a
