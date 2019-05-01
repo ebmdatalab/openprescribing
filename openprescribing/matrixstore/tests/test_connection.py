@@ -1,3 +1,4 @@
+from collections import defaultdict
 import numbers
 
 from django.test import SimpleTestCase
@@ -49,6 +50,22 @@ class TestMatrixStoreConnection(SimpleTestCase):
         )
         self.assertEqual(bnf_code, target_code)
         self.assertIsInstance(items_matrix[0, 0], numbers.Number)
+
+    def test_matrix_sum(self):
+        target_codes = [p['bnf_code'] for p in self.factory.presentations][:3]
+        items_matrix = self.matrixstore.query_one(
+            'SELECT MATRIX_SUM(items) FROM presentation WHERE bnf_code IN (?, ? ,?)',
+            target_codes
+        )[0]
+        items_dict = defaultdict(int)
+        for p in self.factory.prescribing:
+            if p['bnf_code'] in target_codes:
+                items_dict[p['practice'], p['month'][:10]] += p['items']
+        for practice, row_offset in self.matrixstore.practice_offsets.items():
+            for date, col_offset in self.matrixstore.date_offsets.items():
+                value = items_matrix[row_offset, col_offset]
+                expected_value = items_dict[practice, date]
+                self.assertEqual(value, expected_value)
 
     @classmethod
     def tearDownClass(cls):
