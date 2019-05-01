@@ -4,6 +4,7 @@ MatrixStore format and writes that file into `MATRIXSTORE_BUILD_DIR`
 """
 import logging
 import os
+import sqlite3
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -87,8 +88,25 @@ def build(end_date, months=None):
     import_prescribing(sqlite_temp)
     update_bnf_map(sqlite_temp)
     precalculate_totals(sqlite_temp)
+    vacuum_database(sqlite_temp)
     basename = generate_filename(sqlite_temp)
     filename = os.path.join(directory, basename)
     logger.info('Moving file to final location: %s', filename)
     os.rename(sqlite_temp, filename)
     return filename
+
+
+def vacuum_database(sqlite_path):
+    """
+    Rebuild the database file, repacking it into the minimal amount of space
+    and ensuring that table and index data is stored contiguously
+
+    This also has the advantage that files built with the same data should be
+    byte-for-byte identical, regardless of the order in which data was
+    processed.
+    """
+    logger.info('Vacuuming database file')
+    connection = sqlite3.connect(sqlite_path)
+    connection.execute('VACUUM')
+    connection.commit()
+    connection.close()
