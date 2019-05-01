@@ -288,5 +288,19 @@
         "dependencies": [
             "update_smoketests"
         ]
+    },
+    "build_matrixstore": {
+        "type": "post_process",
+        "command": "matrixstore_build {last_imported}",
+        "dependencies": [
+            "upload_to_bigquery"
+        ]
+    },
+    "publish_matrixstore": {
+        "type": "post_process",
+        "command": "matrixstore_set_live --date {last_imported}",
+        "dependencies": [
+            "build_matrixstore"
+        ]
     }
 }
