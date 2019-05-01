@@ -432,7 +432,7 @@ class Results(object):
         field_to_index = self._gcbq_row_iterator._field_to_index
         sorted_fields = sorted(
             field_to_index.items(),
-            key=lambda (field, index): index
+            key=lambda field_and_index: field_and_index[1]
         )
         return [field for (field, index) in sorted_fields]
 
