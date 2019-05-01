@@ -8,12 +8,6 @@ This tests the MatrixStore build process:
     'TestMatrixStoreBuildEndToEnd` runs the same set of tests but uploads data
     to BigQuery and exports it to Google Cloud Storage in order to excercise
     the full build process
-
-As this end-to-end test can take a few minutes to run it can be convenient
-while debugging a failing test to keep the resulting SQLite file around and
-re-use it between test runs. This can be acheived by setting the environment
-variable `PERSIST_MATRIXSTORE_TEST_FILE` to the path where the file should be
-created and kept.
 """
 from __future__ import print_function
 
@@ -24,7 +18,6 @@ import numbers
 import shutil
 import sqlite3
 import tempfile
-import warnings
 
 from django.conf import settings
 from django.test import SimpleTestCase, override_settings
@@ -213,25 +206,14 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
     def create_matrixstore(cls, data_factory, end_date, months):
         cls.tempdir = tempfile.mkdtemp()
         settings.PIPELINE_DATA_BASEDIR = cls.tempdir
-        # Optional path at which to preserve test file between runs (see module
-        # docstring)
-        cls.data_file = os.environ.get('PERSIST_MATRIXSTORE_TEST_FILE')
-        if not cls.data_file:
-            cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
+        cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
         # Upload data to BigQuery and build file
-        if not os.path.exists(cls.data_file):
-            import_test_data_full(
-                cls.data_file,
-                data_factory,
-                end_date,
-                months=months
-            )
-        else:
-            warnings.warn(
-                'Skipping test of matrixstore_build and re-using file at: {}'.format(
-                    cls.data_file
-                )
-            )
+        import_test_data_full(
+            cls.data_file,
+            data_factory,
+            end_date,
+            months=months
+        )
 
     @classmethod
     def tearDownClass(cls):
