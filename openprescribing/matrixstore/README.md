@@ -212,6 +212,31 @@ For an overview of the process, see the source for
 [matrixstore_build](./management/commands/matrixstore_build.py).
 
 
+## Updating the live version of the MatrixStore
+
+Once created, MatrixStore files should be considered immutable and never
+modified. To change the data shown on the site we update a symlink at
+`settings.MATRIXSTORE_LIVE_FILE` to point to the file we want. This can
+be done by calling a management command:
+
+```sh
+./manage.py matrixstore_set_live
+```
+
+**Note**: after running this, the application will need to be restarted
+in order to pick up the change.
+
+This will update the symlink to point to the most recent build
+containing the most up-to-date data. You can also use data from an older date:
+```sh
+./manage.py matrixstore_set_live --date 2018-10
+```
+
+Or specify a particular filename:
+```sh
+./manage.py matrixstore_set_live --filename matrixstore_2019-02_2019-04-18--18-59_063873dd6fda7f46.sqlite
+```
+
 ## Python 3 upgrade notes
 
 When we upgrade to Python 3, various bits of this code can be simplified
