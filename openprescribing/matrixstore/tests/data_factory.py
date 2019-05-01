@@ -18,6 +18,7 @@ class DataFactory(object):
         self.random.seed(seed)
         counter = itertools.count()
         self.next_id = lambda: next(counter)
+        self.months = []
         self.practices = []
         self.practice_statistics = []
         self.presentations = []
@@ -26,10 +27,12 @@ class DataFactory(object):
 
     def create_months(self, start_date, num_months):
         date = parse_date(start_date)
-        return [
+        months = [
             (date + relativedelta(months=i)).strftime('%Y-%m-%d 00:00:00 UTC')
             for i in range(0, num_months)
         ]
+        self.months = sorted(set(self.months + months))
+        return months
 
     def create_practice(self):
         practice = {'code': 'ABC{:03}'.format(self.next_id())}
@@ -155,3 +158,11 @@ class DataFactory(object):
         else:
             self.presentations.append(new_presentation)
         return new_presentation
+
+    def create_all(self, start_date='2018-10-01', num_months=1,
+                   num_practices=1, num_presentations=1):
+        months = self.create_months(start_date, num_months)
+        practices = self.create_practices(num_practices)
+        presentations = self.create_presentations(num_presentations)
+        self.create_practice_statistics(practices, months)
+        self.create_prescribing(presentations, practices, months)
