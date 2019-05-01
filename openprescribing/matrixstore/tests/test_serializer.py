@@ -13,8 +13,11 @@ class TestSerializer(SimpleTestCase):
         self.assertEqual(deserialize(serialize(obj)), obj)
 
     def test_simple_serialisation_with_compression(self):
-        obj = {'hello': 123}
-        self.assertEqual(deserialize(serialize_compressed(obj)), obj)
+        obj = {'hello': 'world' * 256}
+        data = serialize(obj)
+        compressed_data = serialize_compressed(obj)
+        self.assertLess(len(compressed_data), len(data))
+        self.assertEqual(deserialize(compressed_data), obj)
 
     def test_matrix_serialisation(self):
         obj = scipy.sparse.csc_matrix((5, 4))
