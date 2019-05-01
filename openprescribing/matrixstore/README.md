@@ -135,3 +135,28 @@ time we build a new file.
 
 For an overview of the process, see the source for
 [matrixstore_build](./management/commands/matrixstore_build.py).
+
+
+## Python 3 upgrade notes
+
+When we upgrade to Python 3, various bits of this code can be simplified
+or improved:
+ * The various references to `sqlite3.Binary` can be removed. For
+   whatever reason, the sqlite3 module in Python 3 can handle the
+   buffer/bytes objects as they are.
+ * We can remove the `to_pybytes` call in `serialize` for the same
+   reason.
+ * We can use the `uri` option to `sqlite3.connect` to open the file in
+   immutable mode:
+   ```python
+   encoded_path = urllib.parse.quote(os.path.abspath(path))
+   self.connection = sqlite3.connect(
+       'file://{}?immutable=1&mode=ro'.format(encoded_path),
+       uri=True,
+       check_same_thread=False
+   )
+   ```
+   This should improve performance a bit when we have lots of
+   simultaneous requests, but more importantly it opens up the possiblity
+   of allowing users to make arbitrary SQL queries through the web
+   interface as it guarantees that the connection is read-only.
