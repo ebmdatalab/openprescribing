@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import csv
 import sys
 from django.core.management.base import BaseCommand
@@ -15,13 +17,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if 'by_ccg' not in options:
-            print 'Please supply a filename for QOF prevalence by CCG'
+            print('Please supply a filename for QOF prevalence by CCG')
             sys.exit
         if 'by_ccg' not in options:
-            print 'Please supply a filename for QOF prevalence by practice'
+            print('Please supply a filename for QOF prevalence by practice')
             sys.exit
         if 'start_year' not in options:
-            print 'Please supply an option for year, e.g. 2013'
+            print('Please supply an option for year, e.g. 2013')
             sys.exit
 
         start_year = options['start_year']

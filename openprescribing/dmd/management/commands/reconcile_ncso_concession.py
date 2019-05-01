@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.core.management import BaseCommand, CommandError
 
 from dmd.models import NCSOConcession, DMDVmpp

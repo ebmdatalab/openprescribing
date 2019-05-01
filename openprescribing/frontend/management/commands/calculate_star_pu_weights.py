@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import json
 import os
 import openpyxl as op
@@ -22,7 +24,7 @@ class Command(BaseCommand):
         if options['verbosity'] > 1:
             self.IS_VERBOSE = True
         if not options['filename']:
-            print 'Please supply a filename'
+            print('Please supply a filename')
             sys.exit()
         fname = options['filename']
         f = op.load_workbook(fname)

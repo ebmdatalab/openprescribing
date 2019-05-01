@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import csv
 from django.core.management.base import BaseCommand
 from django.contrib.gis.gdal import SpatialReference, CoordTransform
@@ -18,7 +20,7 @@ class Command(BaseCommand):
         Import practice eastings and northings, from HSCIC data.
         '''
         if not options['filename']:
-            print 'Please supply a filename'
+            print('Please supply a filename')
         else:
             self.IS_VERBOSE = False
             if options['verbosity'] > 1:
