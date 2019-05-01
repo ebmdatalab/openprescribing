@@ -114,77 +114,77 @@ class Command(BaseCommand):
         # because the IDs of some SNOMED objects can change.
 
         # lookup
-        for elts in self.load_elts('lookup'):
-            model_name = self.make_model_name(elts.tag)
+        for elements in self.load_elements('lookup'):
+            model_name = self.make_model_name(elements.tag)
             model = getattr(models, model_name)
-            self.import_model(model, elts)
+            self.import_model(model, elements)
 
         # ingredient
-        elts = self.load_elts('ingredient')
-        self.import_model(models.Ing, elts)
+        elements = self.load_elements('ingredient')
+        self.import_model(models.Ing, elements)
 
         # vtm
-        elts = self.load_elts('vtm')
-        self.import_model(models.VTM, elts)
+        elements = self.load_elements('vtm')
+        self.import_model(models.VTM, elements)
 
         # vmp
-        for elts in self.load_elts('vmp'):
-            model_name = self.make_model_name(elts[0].tag)
+        for elements in self.load_elements('vmp'):
+            model_name = self.make_model_name(elements[0].tag)
             model = getattr(models, model_name)
-            self.import_model(model, elts)
+            self.import_model(model, elements)
 
         # vmpp
-        for elts in self.load_elts('vmpp'):
-            if elts[0].tag == 'CCONTENT':
+        for elements in self.load_elements('vmpp'):
+            if elements[0].tag == 'CCONTENT':
                 # TODO Handle CCONTENT
                 continue
 
-            model_name = self.make_model_name(elts[0].tag)
+            model_name = self.make_model_name(elements[0].tag)
             model = getattr(models, model_name)
-            self.import_model(model, elts)
+            self.import_model(model, elements)
 
         # amp
-        for elts in self.load_elts('amp'):
-            if len(elts) == 0:
+        for elements in self.load_elements('amp'):
+            if len(elements) == 0:
                 # For test data, some lists of elements are empty (eg
                 # AP_INFORMATION), and so we can't look at the first element of
                 # the list to get the name of the corresponding model.
                 continue
 
-            model_name = self.make_model_name(elts[0].tag)
+            model_name = self.make_model_name(elements[0].tag)
             model = getattr(models, model_name)
-            self.import_model(model, elts)
+            self.import_model(model, elements)
 
         # ampp
-        for elts in self.load_elts('ampp'):
-            if len(elts) == 0:
+        for elements in self.load_elements('ampp'):
+            if len(elements) == 0:
                 # For test data, some lists of elements are empty (eg
                 # APPLIANCE_PACK_INFO), and so we can't look at the first
                 # element of the list to get the name of the corresponding
                 # model.
                 continue
 
-            if elts[0].tag == 'CCONTENT':
+            if elements[0].tag == 'CCONTENT':
                 # TODO Handle CCONTENT
                 continue
 
-            model_name = self.make_model_name(elts[0].tag)
+            model_name = self.make_model_name(elements[0].tag)
             model = getattr(models, model_name)
-            self.import_model(model, elts)
+            self.import_model(model, elements)
 
         # gtin
-        elts = self.load_elts('gtin')[0]
-        for elt in elts:
-            assert elt[0].tag == 'AMPPID'
-            assert elt[1].tag == 'GTINDATA'
+        elements = self.load_elements('gtin')[0]
+        for element in elements:
+            assert element[0].tag == 'AMPPID'
+            assert element[1].tag == 'GTINDATA'
 
-            elt[0].tag = 'APPID'
-            for gtinelt in elt[1]:
-                elt.append(gtinelt)
-            elt.remove(elt[1])
-        self.import_model(models.GTIN, elts)
+            element[0].tag = 'APPID'
+            for gtinelt in element[1]:
+                element.append(gtinelt)
+            element.remove(element[1])
+        self.import_model(models.GTIN, elements)
 
-    def load_elts(self, filename_fragment):
+    def load_elements(self, filename_fragment):
         '''Return list of non-comment top-level elements in given file.'''
 
         paths = glob.glob(
@@ -196,11 +196,11 @@ class Command(BaseCommand):
             doc = etree.parse(f)
 
         root = doc.getroot()
-        elts = list(root)
-        assert isinstance(elts[0], etree._Comment)
-        return elts[1:]
+        elements = list(root)
+        assert isinstance(elements[0], etree._Comment)
+        return elements[1:]
 
-    def import_model(self, model, elts):
+    def import_model(self, model, elements):
         '''Import model instances from list of XML elements.'''
 
         model.objects.all().delete()
@@ -223,11 +223,11 @@ class Command(BaseCommand):
 
         values = []
 
-        for elt in elts:
+        for element in elements:
             row = {}
 
-            for field_elt in elt:
-                name = field_elt.tag.lower()
+            for field_element in element:
+                name = field_element.tag.lower()
                 if name == 'desc':
                     # "desc" is a really unhelpful field name if you're writing
                     # SQL!
@@ -237,7 +237,7 @@ class Command(BaseCommand):
                     # "dnd" to "dndcd", as it is a foreign key field.
                     name = 'dndcd'
 
-                value = field_elt.text
+                value = field_element.text
                 row[name] = value
 
             for name in boolean_field_names:
