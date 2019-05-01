@@ -1,12 +1,19 @@
 """
-This runs a full end-to-end test of the MatrixStore build process using both
-BigQuery and Google Cloud Storage.
+This tests the MatrixStore build process:
 
-As this process can take a few minutes to run it can be convenient while
-debugging a failing test to keep the resulting SQLite file around and re-use it
-between test runs. This can be acheived by setting the environment variable
-`PERSIST_MATRIXSTORE_TEST_FILE` to the path where the file should be created
-and kept.
+    `TestMatrixStoreBuild` runs entirely in memory and therefore shortcuts
+    various parts of the build process which involve downloading data from
+    BigQuery
+
+    'TestMatrixStoreBuildEndToEnd` runs the same set of tests but uploads data
+    to BigQuery and exports it to Google Cloud Storage in order to excercise
+    the full build process
+
+As this end-to-end test can take a few minutes to run it can be convenient
+while debugging a failing test to keep the resulting SQLite file around and
+re-use it between test runs. This can be acheived by setting the environment
+variable `PERSIST_MATRIXSTORE_TEST_FILE` to the path where the file should be
+created and kept.
 """
 from __future__ import print_function
 
@@ -20,17 +27,20 @@ import tempfile
 import warnings
 
 from django.conf import settings
-from django.core.management import call_command
 from django.test import SimpleTestCase, override_settings
 
 import numpy
 
 from matrixstore.serializer import deserialize
 from matrixstore.tests.data_factory import DataFactory
+from matrixstore.tests.import_test_data_fast import import_test_data_fast
+from matrixstore.tests.import_test_data_full import import_test_data_full
 
 
-@override_settings(PIPELINE_DATA_BASEDIR=None)
 class TestMatrixStoreBuild(SimpleTestCase):
+    """
+    Runs a test of the MatrixStore build process entirely in memory
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -66,44 +76,28 @@ class TestMatrixStoreBuild(SimpleTestCase):
         factory.create_prescription(
             cls.presentations[0], cls.closed_practice, cls.months[0]
         )
-        cls.tempdir = tempfile.mkdtemp()
-        settings.PIPELINE_DATA_BASEDIR = cls.tempdir
-        # Optional path at which to preserve test file between runs (see module
-        # docstring)
-        cls.data_file = os.environ.get('PERSIST_MATRIXSTORE_TEST_FILE')
-        if not cls.data_file:
-            cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
-        # Upload data to BigQuery and build file
-        if not os.path.exists(cls.data_file):
-            factory.upload_to_bigquery()
-            end_date = max(cls.months_to_import)[:7]
-            call_command(
-                'matrixstore_build',
-                end_date,
-                cls.data_file,
-                months=len(cls.months_to_import),
-                quiet=True
-            )
-        else:
-            warnings.warn(
-                'Skipping test of matrixstore_build and re-using file at: {}'.format(
-                    cls.data_file
-                )
-            )
+        # The format of `end_date` only uses year and month
+        end_date = max(cls.months_to_import)[:7]
+        months = len(cls.months_to_import)
+        cls.create_matrixstore(factory, end_date, months)
+
+    @classmethod
+    def create_matrixstore(cls, data_factory, end_date, months):
+        cls.connection = sqlite3.connect(':memory:')
+        import_test_data_fast(
+            cls.connection,
+            data_factory,
+            end_date,
+            months=months
+        )
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(cls.tempdir)
+        cls.connection.close()
 
     def setUp(self):
-        # We have to check this because the `sqlite3.connect` call will
-        # implicitly create the file if it doesn't exist
-        if not os.path.exists(self.data_file):
-            raise RuntimeError('No SQLite file created')
-        self.connection = sqlite3.connect(self.data_file)
-
-    def tearDown(self):
-        self.connection.close()
+        # Reset this as at least one test modifies it
+        self.connection.row_factory = None
 
     def test_dates_are_correct(self):
         dates = [
@@ -206,6 +200,52 @@ class TestMatrixStoreBuild(SimpleTestCase):
                     'net_cost': values['net_cost'],
                     'actual_cost': values['actual_cost'],
                 }
+
+
+@override_settings(PIPELINE_DATA_BASEDIR=None)
+class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
+    """
+    Runs the same test as above but as a full integration test against actual
+    BigQuery and Google Cloud Storage
+    """
+
+    @classmethod
+    def create_matrixstore(cls, data_factory, end_date, months):
+        cls.tempdir = tempfile.mkdtemp()
+        settings.PIPELINE_DATA_BASEDIR = cls.tempdir
+        # Optional path at which to preserve test file between runs (see module
+        # docstring)
+        cls.data_file = os.environ.get('PERSIST_MATRIXSTORE_TEST_FILE')
+        if not cls.data_file:
+            cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
+        # Upload data to BigQuery and build file
+        if not os.path.exists(cls.data_file):
+            import_test_data_full(
+                cls.data_file,
+                data_factory,
+                end_date,
+                months=months
+            )
+        else:
+            warnings.warn(
+                'Skipping test of matrixstore_build and re-using file at: {}'.format(
+                    cls.data_file
+                )
+            )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tempdir)
+
+    def setUp(self):
+        # We have to check this because the `sqlite3.connect` call will
+        # implicitly create the file if it doesn't exist
+        if not os.path.exists(self.data_file):
+            raise RuntimeError('No SQLite file created')
+        self.connection = sqlite3.connect(self.data_file)
+
+    def tearDown(self):
+        self.connection.close()
 
 
 class MatrixValueFetcher(object):

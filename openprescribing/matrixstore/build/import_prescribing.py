@@ -33,14 +33,21 @@ def import_prescribing(filename):
     if not os.path.exists(filename):
         raise RuntimeError('No SQLite file at: {}'.format(filename))
     connection = sqlite3.connect(filename)
-    cursor = connection.cursor()
     # Trade crash-safety for insert speed
-    cursor.execute('PRAGMA synchronous=OFF')
+    connection.execute('PRAGMA synchronous=OFF')
+    dates = [date for (date,) in connection.execute('SELECT date FROM date')]
+    prescriptions = get_prescriptions_for_dates(dates)
+    write_prescribing(connection, prescriptions)
+    connection.commit()
+    connection.close()
+
+
+def write_prescribing(connection, prescriptions):
+    cursor = connection.cursor()
     # Map practice codes and date strings to their corresponding row/column
     # offset in the matrix
     practices = dict(cursor.execute('SELECT code, offset FROM practice'))
     dates = dict(cursor.execute('SELECT date, offset FROM date'))
-    prescriptions = get_prescriptions_for_dates(dates)
     matrices = build_matrices(prescriptions, practices, dates)
     rows = format_as_sql_rows(matrices, connection)
     cursor.executemany(
@@ -50,8 +57,6 @@ def import_prescribing(filename):
         """,
         rows
     )
-    connection.commit()
-    connection.close()
 
 
 def get_prescriptions_for_dates(dates):
