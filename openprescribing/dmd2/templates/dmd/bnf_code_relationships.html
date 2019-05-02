@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{ presentation.name }} relationships</h1>
+
+{% if vmps %}
+  <h2>VMPs</h2>
+  <ul>
+    {% for vmp in vmps %}
+      <li><a href="{% url 'vmp_relationships' vmp.id %}">{{ vmp.nm }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if amps %}
+  <h2>AMPs</h2>
+  <ul>
+    {% for amp in amps %}
+      <li><a href="{% url 'vmp_relationships' amp.vmp_id %}">{{ amp.nm }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if vmpps %}
+  <h2>VMPPs</h2>
+  <ul>
+    {% for vmpp in vmpps %}
+      <li><a href="{% url 'vmp_relationships' vmpp.vmp_id %}">{{ vmpp.nm }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if ampps %}
+  <h2>AMPPs</h2>
+  <ul>
+    {% for ampp in ampps %}
+      <li><a href="{% url 'vmp_relationships' ampp.amp.vmp_id %}">{{ ampp.nm }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% endblock %}

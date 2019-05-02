@@ -205,6 +205,26 @@ def vmp_relationships_view(request, vmp_id):
     return render(request, "dmd/vmp_relationships.html", ctx)
 
 
+def bnf_code_relationships_view(request, bnf_code):
+    presentation = get_object_or_404(Presentation, bnf_code=bnf_code)
+
+    vmps = VMP.objects.filter(bnf_code=bnf_code)
+    vmpps = VMPP.objects.filter(bnf_code=bnf_code)
+    amps = AMP.objects.filter(bnf_code=bnf_code)
+    ampps = AMPP.objects.filter(bnf_code=bnf_code).select_related('amp')
+
+    ctx = {
+        'bnf_code': bnf_code,
+        'presentation': presentation,
+        'vmps': vmps,
+        'vmpps': vmpps,
+        'amps': amps,
+        'ampps': ampps,
+    }
+
+    return render(request, 'dmd/bnf_code_relationships.html', ctx)
+
+
 def search_view(request):
     q = request.GET.get("q")
 
