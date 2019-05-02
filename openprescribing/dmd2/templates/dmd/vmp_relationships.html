@@ -2,22 +2,13 @@
 {% block content %}
 
 <style>
-  #amp-table td, #amp-table th { border: none; }
-  #amp-table .amp-header { border-right: solid black 2px; }
-  #amp-table .pp-header { border-bottom: solid black 2px; }
-  #amp-table th { font-weight: normal; }
-  .pp-header, .amp-header { font-style: italic; background: #eee; }
-  .vertical { writing-mode: vertical-lr; }
-
-  /* shadows to make product pages appear sunken */
-  /* horizontal line */
-  .amp-first-row { box-shadow: 0px 7px 10px -5px #555 inset; }
-  /* vertical line */
-  .vmpp-first-col { box-shadow: 7px 0px 10px -5px #555 inset; }
-  /* vertical(for top left) */
-  .amp-first-row.vmpp-first-col { box-shadow: 7px 7px 10px -5px #555 inset; }
-
-}
+  #dmd-table td, #dmd-table th { border: none }
+  #dmd-table th { font-weight: normal; }
+  #dmd-table .vmpp-header { border-left: solid black 2px; text-align: center; }
+  #dmd-table .amp-header { border-top: solid black 2px; vertical-align: middle; }
+  #dmd-table .vmpp-header, #dmd-table .amp-header { font-style: italic; background: #eee; }
+  #dmd-table .vmpp-element { border-bottom: solid black 2px; }
+  #dmd-table .amp-element { border-right: solid black 2px; }
 </style>
 
 <h1>VMP {{ vmp.id }} relationships</h1>
@@ -60,12 +51,12 @@
 
 <h2>Related VMPPs, AMPs, AMPPs</h2>
 <p>This table shows how the BNF codes above relate to each other, and to their DM+D equivalents.  Cells are coloured by BNF code; cells without colors are products in DM+D that don't have a corresponding BNF code (and have therefore never appeared in dispensing data).</p>
-<table class="table table-condensed" id="amp-table">
+<table class="table table-condensed" id="dmd-table">
   <tr>
     <td></td>
     <td></td>
-    <th colspan="{{ num_vmpps }}" class="pp-header">
-      VMPP
+    <th colspan="{{ num_vmpps }}" class="vmpp-header">
+      VMPPs
     </th>
   </tr>
   {% for row in table %}
@@ -74,29 +65,29 @@
     <th></th>
     {% for cell in row %}
     {% if cell %}
-    <th bgcolor="{{ cell.colour }}">
+    <th bgcolor="{{ cell.colour }}" class="vmpp-element">
       {{ cell.obj.nm }}
     </th>
     {% else %}
-    <th></th>
+    <th class="vmpp-element{% if forloop.counter0 == 0 %} amp-element{% endif %}"></th>
     {% endif %}
     {% endfor %}
   </tr>
   {% else %}
   <tr>
-    {% if forloop.counter0 == 1 %}<th class="amp-header"   rowspan="{{ num_amps }}"><div class="vertical">AMP</div></th> {% endif %}
+    {% if forloop.counter0 == 1 %}<th class="amp-header" rowspan="{{ num_amps }}">AMPs</th>{% endif %}
     {% for cell in row %}
     {% if forloop.counter0 == 0 %}
-    <th bgcolor="{{ cell.colour }}">
+    <th bgcolor="{{ cell.colour }}" class="amp-element">
       {{ cell.obj.descr }}
     </th>
     {% else %}
     {% if cell %}
-    <td bgcolor="{{ cell.colour }}" class="{% if forloop.counter0 == 1 %}vmpp-first-col{% endif %}{% if forloop.parentloop.counter0 == 1 %} amp-first-row{% endif %}">
+    <td bgcolor="{{ cell.colour }}" class="ampp-element">
       {{ cell.obj.nm }}
     </td>
     {% else %}
-    <td class="{% if forloop.counter0 == 1 %}vmpp-first-col{% endif %}{% if forloop.parentloop.counter0 == 1 %} amp-first-row{% endif %}"></td>
+    <td></td>
     {% endif %}
     {% endif %}
     {% endfor %}
