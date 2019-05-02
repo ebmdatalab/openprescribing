@@ -14,10 +14,17 @@
 </style>
 
 <h1>VMP {{ vmp.id }} relationships</h1>
-<p>This page shows all the different ways that the <strong>VMP</strong> (usually a generic product) <span style="background: {{ vmp_colour }}">{{vmp.nm}}</span> can be prescribed.  The VMP form is always in <span style="background: {{ vmp_colour }}">this colour</span>. Other BNF codes for the same product (viz. for branded versions, or generic product packs) are indicated with other colours.</p>
+
+<p>
+  This page shows all the BNF codes and dm+d objects related to <a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{vmp.nm}}</a>.
+</p>
 
 <h2>Related BNF codes</h2>
+
 {% if presentations %}
+<p>
+  dm+d objects in the table below are coloured according to their BNF code.
+</p>
 <table class="table table-condensed">
   {% for presentation in presentations %}
   <tr bgcolor="{{ presentation.colour }}">
@@ -31,7 +38,11 @@
 {% endif %}
 
 <h2>Related VMPPs, AMPs, AMPPs</h2>
-<p>This table shows how the BNF codes above relate to each other, and to their DM+D equivalents.  Cells are coloured by BNF code; cells without colors are products in DM+D that don't have a corresponding BNF code (and have therefore never appeared in dispensing data).</p>
+
+<p>
+  This table shows all the VMPPs (column headings), AMPs (row headings), and AMPPs (cell entries) that belong to this VMP.
+</p>
+
 <table class="table table-condensed" id="dmd-table">
   <tr>
     <th class="vmp-header">VMP</th>
