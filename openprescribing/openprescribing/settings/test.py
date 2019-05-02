@@ -61,7 +61,7 @@ BQ_PROJECT = 'ebmdatalabtest'
 
 # Nonce to ensure test runs do not clash
 BQ_NONCE = int(utils.get_env_setting('BQ_NONCE', random.randrange(10000)))
-print 'BQ_NONCE:', BQ_NONCE
+print('BQ_NONCE:', BQ_NONCE)
 
 # BigQuery dataset names
 BQ_HSCIC_DATASET = '{}_{:04d}'.format(BQ_HSCIC_DATASET, BQ_NONCE)

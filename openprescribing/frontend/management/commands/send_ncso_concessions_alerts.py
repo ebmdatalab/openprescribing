@@ -2,6 +2,8 @@
 Send alerts about about NCSO concessions.
 '''
 
+from __future__ import print_function
+
 import logging
 
 from django.core.management import BaseCommand

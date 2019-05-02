@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from argparse import RawTextHelpFormatter
 import datetime
 import os
@@ -75,7 +77,7 @@ Specifically, you should:
         zip_path = os.path.join(dir_path, 'download.zip')
 
         if os.path.exists(dir_path):
-            print 'Data already downloaded for', year_and_month
+            print('Data already downloaded for', year_and_month)
             return
 
         mkdir_p(dir_path)

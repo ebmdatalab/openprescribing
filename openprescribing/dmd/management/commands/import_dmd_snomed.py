@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 
 from openpyxl import load_workbook
@@ -109,8 +111,8 @@ class Command(BaseCommand):
                             [bnf_code, dmdid]
                         )
 
-        print 'Rows matching AMPs:', num_amp_matches
-        print 'Rows matching VMPs:', num_vmp_matches
-        print 'Rows matching nothing:', num_no_matches
+        print('Rows matching AMPs:', num_amp_matches)
+        print('Rows matching VMPs:', num_vmp_matches)
+        print('Rows matching nothing:', num_no_matches)
 
         Client('dmd').upload_model(DMDProduct)

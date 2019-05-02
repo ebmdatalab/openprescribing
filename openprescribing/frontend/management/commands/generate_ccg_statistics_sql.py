@@ -7,6 +7,8 @@ When the keys in the JSON change, replace
 
 """
 
+from __future__ import print_function
+
 from django.core.management import BaseCommand
 from django.template import Context, Engine, Template
 
@@ -88,4 +90,4 @@ GROUP BY
             },
             autoescape=False
         )
-        print template.render(ctx)
+        print(template.render(ctx))

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import psycopg2
 from django.core.management.base import BaseCommand
 from common import utils
@@ -40,7 +42,7 @@ class Command(BaseCommand):
 
     def create_foreign_keys(self, cursor):
         if self.IS_VERBOSE:
-            print 'Adding foreign key references...'
+            print('Adding foreign key references...')
         prefix = 'ALTER TABLE frontend_prescription '
         prefix += 'ADD CONSTRAINT frontend_prescription'
         suffix = ' ON DELETE CASCADE'
@@ -60,11 +62,11 @@ class Command(BaseCommand):
 
     def analyze_db(self, cursor):
         if self.IS_VERBOSE:
-            print 'Analyzing database...'
+            print('Analyzing database...')
         self._print_and_execute(cursor, 'ANALYZE VERBOSE')
 
     def _print_and_execute(self, cursor, cmd):
         if self.IS_VERBOSE:
-            print cmd
+            print(cmd)
         cursor.execute(cmd)
         self.conn.commit()

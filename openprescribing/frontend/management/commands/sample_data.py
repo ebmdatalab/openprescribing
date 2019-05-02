@@ -137,7 +137,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             for table in copy_all:
                 with open(os.path.join(path, table), 'wb') as f:
-                    sql = "copy (SELECT * FROM {}) TO STDOUT WITH NULL '\N'"
+                    sql = r"copy (SELECT * FROM {}) TO STDOUT WITH NULL '\N'"
                     sql = sql.format(table)
                     dump_create_table(table, path)
                     cursor.copy_expert(sql, f)

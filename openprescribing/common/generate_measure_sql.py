@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import csv
 
 reader = csv.DictReader(open('statins.csv', 'rU'))
@@ -17,4 +19,4 @@ str += '"FROM frontend_prescription ",\n'
 str += '"WHERE (presentation_code IN (\'%s\')) ",\n' % code_list
 str += '"AND (practice_id=%s) ",\n'
 str += '"AND (processing_date=%s) "'
-print str
+print(str)

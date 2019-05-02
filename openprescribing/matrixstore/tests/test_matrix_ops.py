@@ -87,7 +87,8 @@ class TestFinaliseMatrix(SimpleTestCase):
         finalised = finalise_matrix(matrix)
         self.assertEqual(finalised.dtype, numpy.uint8)
 
-    def _random_coords(self, (rows, cols), sample_density):
+    def _random_coords(self, shape, sample_density):
+        rows, cols = shape
         size = rows * cols
         samples = max(1, int(size * sample_density))
         for n in self.random.sample(xrange(size), samples):
