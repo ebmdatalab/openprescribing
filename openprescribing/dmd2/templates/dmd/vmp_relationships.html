@@ -7,34 +7,14 @@
   #dmd-table a { color: black; }
   #dmd-table .vmpp-header { border-left: solid black 2px; text-align: center; }
   #dmd-table .amp-header { border-top: solid black 2px; vertical-align: middle; }
-  #dmd-table .vmpp-header, #dmd-table .amp-header { font-style: italic; background: #eee; }
+  #dmd-table .vmp-header, .vmpp-header, #dmd-table .amp-header { font-style: italic; background: #eee; }
+  #dmd-table .vmp-element { border-right: solid black 2px; border-bottom: solid black 2px; }
   #dmd-table .vmpp-element { border-bottom: solid black 2px; }
   #dmd-table .amp-element { border-right: solid black 2px; }
 </style>
 
 <h1>VMP {{ vmp.id }} relationships</h1>
 <p>This page shows all the different ways that the <strong>VMP</strong> (usually a generic product) <span style="background: {{ vmp_colour }}">{{vmp.nm}}</span> can be prescribed.  The VMP form is always in <span style="background: {{ vmp_colour }}">this colour</span>. Other BNF codes for the same product (viz. for branded versions, or generic product packs) are indicated with other colours.</p>
-<table class="table table-condensed">
-  <tr>
-    <th>DM+D name of generic product</th>
-    <td><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></td>
-  </tr>
-  {% if vmp_presentation %}
-  <tr bgcolor="{{ vmp_colour }}">
-    <th>BNF Name of generic product</th>
-    <td>{{ vmp_presentation.name }}</td>
-  </tr>
-  <tr bgcolor="{{ vmp_colour }}">
-    <th>BNF Code of generic product</th>
-    <td>{{ vmp_presentation.bnf_code }}</td>
-  </tr>
-    {% else %}
-  <tr>
-    <th>BNF Code of generic product</th>
-    <td>None</td>
-  </tr>
-  {% endif %}
-</table>
 
 <h2>Related BNF codes</h2>
 {% if presentations %}
@@ -54,8 +34,8 @@
 <p>This table shows how the BNF codes above relate to each other, and to their DM+D equivalents.  Cells are coloured by BNF code; cells without colors are products in DM+D that don't have a corresponding BNF code (and have therefore never appeared in dispensing data).</p>
 <table class="table table-condensed" id="dmd-table">
   <tr>
-    <td></td>
-    <td></td>
+    <th class="vmp-header">VMP</th>
+    <th class="vmp-header"></th>
     <th colspan="{{ num_vmpps }}" class="vmpp-header">
       VMPPs
     </th>
@@ -63,14 +43,16 @@
   {% for row in table %}
   {% if forloop.counter0 == 0 %}
   <tr>
-    <th></th>
+    <th class="vmp-header"></th>
     {% for cell in row %}
-    {% if cell %}
+    {% if forloop.counter0 == 0 %}
+    <th class="vmp-element" bgcolor="{{ vmp_colour }}">
+      <a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a>
+    </th>
+    {% else %}
     <th bgcolor="{{ cell.colour }}" class="vmpp-element">
       <a href="{% url 'dmd_obj' 'vmpp' cell.obj.id %}">{{ cell.obj.nm }}</a>
     </th>
-    {% else %}
-    <th class="vmpp-element{% if forloop.counter0 == 0 %} amp-element{% endif %}"></th>
     {% endif %}
     {% endfor %}
   </tr>
