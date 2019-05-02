@@ -10,10 +10,10 @@
         <a href="{% url 'ccg_home_page' entity.ccg.code %}">{{ entity.ccg.name }}</a>
       </p>
     {% endif %}
-    {% if practice.list_size_13 %}
-      <p class="lead">Registered patients in 2013/14: {{ practice.list_size_13|intcomma }}</p>
+    {% if entity.list_size_13 %}
+      <p class="lead">Registered patients in 2013/14: {{ entity.list_size_13|intcomma }}</p>
     {% endif %}
-    <p>Current practice type: {{ practice.get_setting_display }}</p>
+    <p>Current practice type: {{ entity.get_setting_display }}</p>
   </div>
 
   <div class="col-md-6" id="map-container">
