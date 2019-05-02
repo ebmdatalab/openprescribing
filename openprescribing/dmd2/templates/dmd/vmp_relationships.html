@@ -17,7 +17,7 @@
 <table class="table table-condensed">
   <tr>
     <th>DM+D name of generic product</th>
-    <td>{{ vmp.nm }}</td>
+    <td><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></td>
   </tr>
   {% if vmp_presentation %}
   <tr bgcolor="{{ vmp_colour }}">
