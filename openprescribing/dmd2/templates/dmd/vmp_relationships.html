@@ -4,6 +4,7 @@
 <style>
   #dmd-table td, #dmd-table th { border: none }
   #dmd-table th { font-weight: normal; }
+  #dmd-table a { color: black; }
   #dmd-table .vmpp-header { border-left: solid black 2px; text-align: center; }
   #dmd-table .amp-header { border-top: solid black 2px; vertical-align: middle; }
   #dmd-table .vmpp-header, #dmd-table .amp-header { font-style: italic; background: #eee; }
@@ -66,7 +67,7 @@
     {% for cell in row %}
     {% if cell %}
     <th bgcolor="{{ cell.colour }}" class="vmpp-element">
-      {{ cell.obj.nm }}
+      <a href="{% url 'dmd_obj' 'vmpp' cell.obj.id %}">{{ cell.obj.nm }}</a>
     </th>
     {% else %}
     <th class="vmpp-element{% if forloop.counter0 == 0 %} amp-element{% endif %}"></th>
@@ -79,12 +80,12 @@
     {% for cell in row %}
     {% if forloop.counter0 == 0 %}
     <th bgcolor="{{ cell.colour }}" class="amp-element">
-      {{ cell.obj.descr }}
+      <a href="{% url 'dmd_obj' 'amp' cell.obj.id %}">{{ cell.obj.descr }}</a>
     </th>
     {% else %}
     {% if cell %}
     <td bgcolor="{{ cell.colour }}" class="ampp-element">
-      {{ cell.obj.nm }}
+      <a href="{% url 'dmd_obj' 'ampp' cell.obj.id %}">{{ cell.obj.nm }}</a>
     </td>
     {% else %}
     <td></td>
