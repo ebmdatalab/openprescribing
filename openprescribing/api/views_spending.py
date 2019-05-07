@@ -19,7 +19,7 @@ from frontend.models import Practice, PCT
 from matrixstore.db import get_db, group_by
 
 import view_utils as utils
-from view_utils import db_timeout, BnfHierarchy
+from view_utils import BnfHierarchy
 
 
 CODE_LENGTH_ERROR = (

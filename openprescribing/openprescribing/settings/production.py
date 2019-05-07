@@ -27,7 +27,7 @@ DATABASES = {
         'USER': utils.get_env_setting('DB_USER'),
         'PASSWORD': utils.get_env_setting('DB_PASS'),
         'HOST': utils.get_env_setting('DB_HOST', '127.0.0.1'),
-        'CONN_MAX_AGE': 0  # Must be zero, see api/view_utils#db_timeout
+        'CONN_MAX_AGE': 0
     },
     'old': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
