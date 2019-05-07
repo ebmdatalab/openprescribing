@@ -424,8 +424,8 @@ class MeasureCalculation(object):
         context = {
             'numerator_from': m.numerator_from,
             'numerator_where': m.numerator_where,
-            'numerator_columns': m.columns_for_select('numerator'),
-            'denominator_columns': m.columns_for_select('denominator'),
+            'numerator_columns': self._columns_for_select('numerator'),
+            'denominator_columns': self._columns_for_select('denominator'),
             'denominator_from': m.denominator_from,
             'denominator_where': m.denominator_where,
             'numerator_aliases': numerator_aliases,
@@ -721,7 +721,7 @@ class MeasureCalculation(object):
         else:
             logger.info(message)
 
-    def _get_col_aliases(self, num_or_denom=None):
+    def _get_col_aliases(self, num_or_denom):
         """Return column names referred to in measure definitions for both
         numerator or denominator.
 
@@ -732,9 +732,27 @@ class MeasureCalculation(object):
         """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        cols = self.measure.columns_for_select(num_or_denom=num_or_denom)
+        cols = self._columns_for_select(num_or_denom)
         aliases = re.findall(r"AS ([a-z0-9_]+)", cols)
         return [x for x in aliases if x not in num_or_denom]
+
+    def _columns_for_select(self, num_or_denom):
+        """Parse measures definition for SELECT columns; add
+        cost-savings-related columns when necessary.
+
+        """
+        assert num_or_denom in ['numerator', 'denominator']
+        fieldname = "%s_columns" % num_or_denom
+        val = getattr(self.measure, fieldname)
+        # Deal with possible inconsistencies in measure definition
+        # trailing commas
+        if val.strip()[-1] == ',':
+            val = re.sub(r',\s*$', '', val) + ' '
+        if self.measure.is_cost_based:
+            val += (", SUM(items) AS items, "
+                    "SUM(actual_cost) AS cost, "
+                    "SUM(quantity) AS quantity ")
+        return val
 
 
 @contextmanager
