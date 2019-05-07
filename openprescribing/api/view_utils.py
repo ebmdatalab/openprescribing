@@ -2,8 +2,6 @@ import itertools
 from django.db import connection
 from django.shortcuts import get_object_or_404
 
-from enum import Enum
-
 
 def param_to_list(str):
     params = []
@@ -64,24 +62,3 @@ def get_bnf_codes_from_number_str(codes):
             # it's a presentation, not a section
             converted.append(code)
     return converted
-
-
-BnfHierarchy = Enum('BnfHierarchy', 'section chemical product presentation')
-
-
-def get_spending_type(codes):
-    # Codes must all be of the same length.
-    if not codes:
-        return None
-    code_len = len(codes[0])
-    for c in codes:
-        if len(c) != code_len:
-            return False
-    if code_len < 9:
-        return BnfHierarchy.section
-    elif code_len == 9:
-        return BnfHierarchy.chemical
-    elif code_len > 9 and code_len <= 11:
-        return BnfHierarchy.product
-    elif code_len > 11:
-        return BnfHierarchy.presentation
