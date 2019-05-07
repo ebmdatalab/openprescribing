@@ -27,52 +27,14 @@ from gcutils.bigquery import Client
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Create a bunch of RegionalTeams, STPs, CCGs, Practices
-        for regtm_ix in range(5):
-            regtm = RegionalTeam.objects.create(
-                code='Y0{}'.format(regtm_ix), name='Region {}'.format(regtm_ix)
-            )
-
-            for stp_ix in range(5):
-                stp = STP.objects.create(
-                    ons_code='E000000{}{}'.format(regtm_ix, stp_ix),
-                    name='STP {}'.format(regtm_ix, stp_ix),
-                )
-
-                for ccg_ix in range(5):
-                    ccg = PCT.objects.create(
-                        regional_team=regtm,
-                        stp=stp,
-                        code='{}{}{}'.format(regtm_ix, stp_ix, ccg_ix).replace(
-                            '0', 'A'
-                        ),
-                        name='CCG {}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix),
-                        org_type='CCG',
-                    )
-
-                    for prac_ix in range(5):
-                        Practice.objects.create(
-                            ccg=ccg,
-                            code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
-                            name='Practice {}/{}/{}/{}'.format(
-                                regtm_ix, stp_ix, ccg_ix, prac_ix
-                            ),
-                            setting=4,
-                        )
+        create_organisations()
+        set_up_bq()
+        cls.prescriptions = upload_prescribing()
+        cls.practice_statistics = upload_practice_statistics()
 
         # import_measures uses this ImportLog to work out which months it
         # should import data.
         ImportLog.objects.create(category='prescribing', current_at='2018-08-01')
-
-        # Set up BQ, and upload STPs, CCGs, Practices.
-        Client('measures').create_dataset()
-        client = Client('hscic')
-        table = client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
-        columns = [field.name for field in schemas.CCG_SCHEMA]
-        table.insert_rows_from_pg(PCT, columns, schemas.ccgs_transform)
-        table = client.get_or_create_table('practices', schemas.PRACTICE_SCHEMA)
-        columns = [field.name for field in schemas.PRACTICE_SCHEMA]
-        table.insert_rows_from_pg(Practice, columns)
 
     def test_import_measures_cost_based(self):
         # This test verifies the behaviour of import_measures for cost-based
@@ -81,74 +43,6 @@ class ImportMeasuresTests(TestCase):
         # objects match those calculated with Pandas.  See
         # notebooks/measure-calculations.ipynb for an explanation of these
         # calculations.
-
-        # Generate random prescribing data.  This data is never saved to the
-        # database.
-        presentations = [
-            ('0703021Q0AAAAAA', 'Desogestrel_Tab 75mcg'),  # generic
-            ('0703021Q0BBAAAA', 'Cerazette_Tab 75mcg'),  # branded
-            ('076543210AAAAAA', 'Etynodiol Diacet_Tab 500mcg'),  # irrelevant
-        ]
-
-        prescribing_rows = []
-        seen_practice_with_no_prescribing = False
-        seen_practice_with_no_relevant_prescribing = False
-        seen_practice_with_no_generic_prescribing = False
-        seen_practice_with_no_branded_prescribing = False
-
-        for practice in Practice.objects.all():
-            for month in [7, 8]:
-                timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
-
-                for ix, (bnf_code, bnf_name) in enumerate(presentations):
-                    if practice.code == 'P00000':
-                        seen_practice_with_no_prescribing = True
-                        continue
-                    elif practice.code == 'P00010' and '0703021Q' in bnf_code:
-                        seen_practice_with_no_relevant_prescribing = True
-                        continue
-                    elif practice.code == 'P00020' and bnf_code == '0703021Q0AAAAAA':
-                        seen_practice_with_no_generic_prescribing = True
-                        continue
-                    elif practice.code == 'P00030' and bnf_code == '0703021Q0BBAAAA':
-                        seen_practice_with_no_branded_prescribing = True
-                        continue
-
-                    items = randint(0, 100)
-                    quantity = randint(6, 28) * items
-
-                    # Multiplying by (1 + ix) ensures that the branded cost is
-                    # always higher than the generic cost.
-                    actual_cost = (1 + ix) * randint(100, 200) * quantity * 0.01
-
-                    # We don't care about net_cost.
-                    net_cost = actual_cost
-
-                    row = [
-                        'sha',  #  This value doesn't matter.
-                        practice.ccg.regional_team_id,
-                        practice.ccg.stp_id,
-                        practice.ccg_id,
-                        practice.code,
-                        bnf_code,
-                        bnf_name,
-                        items,
-                        net_cost,
-                        actual_cost,
-                        quantity,
-                        timestamp,
-                    ]
-
-                    prescribing_rows.append(row)
-
-        assert seen_practice_with_no_prescribing
-        assert seen_practice_with_no_relevant_prescribing
-        assert seen_practice_with_no_generic_prescribing
-        assert seen_practice_with_no_branded_prescribing
-
-        # Upload prescribing_rows to normalised_prescribing_standard, and
-        # create a DataFrame for later verification.
-        prescriptions = self.upload_prescribing_rows(prescribing_rows)
 
         # Do the work.
         call_command('import_measures', measure='desogestrel')
@@ -160,7 +54,7 @@ class ImportMeasuresTests(TestCase):
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
         month = '2018-08-01'
-        prescriptions = prescriptions[prescriptions['month'] == month]
+        prescriptions = self.prescriptions[self.prescriptions['month'] == month]
         numerators = prescriptions[
             prescriptions['bnf_code'].str.startswith('0703021Q0B')
         ]
@@ -246,137 +140,15 @@ class ImportMeasuresTests(TestCase):
         # a given practice in a given month.  It uses the coproxamol measure.
         # See #1520 for background.
 
-        # Generate random prescribing data.  This data is never saved to the
-        # database.
-        presentations = [
-            ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),  # relevant
-            ('0407010AAAAAAAA', 'Aspirin/Caffeine_Tab 500mg/32mg'),  # irrelevant
-        ]
-
-        prescribing_rows = []
-
-        for practice in Practice.objects.all():
-            for month in [7, 8]:
-                timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
-
-                for bnf_code, bnf_name in presentations:
-                    items = randint(0, 100)
-                    quantity = randint(6, 28) * items
-
-                    actual_cost = randint(100, 200) * quantity * 0.01
-
-                    # We don't care about net_cost.
-                    net_cost = actual_cost
-
-                    row = [
-                        'sha',  #  This value doesn't matter.
-                        practice.ccg.regional_team_id,
-                        practice.ccg.stp_id,
-                        practice.ccg_id,
-                        practice.code,
-                        bnf_code,
-                        bnf_name,
-                        items,
-                        net_cost,
-                        actual_cost,
-                        quantity,
-                        timestamp,
-                    ]
-
-                    prescribing_rows.append(row)
-
-        # Upload prescribing_rows to normalised_prescribing_standard, and
-        # create a DataFrame for later verification.
-        prescriptions = self.upload_prescribing_rows(prescribing_rows)
-
-        # Generate random practice statistics data.  This data is never saved
-        # to the database.
-        practice_statistics_rows = []
-        seen_practice_with_no_statistics = False
-        columns = [
-            'month',
-            'regional_team_id',
-            'stp_id',
-            'ccg_id',
-            'practice_id',
-            'total_list_size',
-        ]
-        practice_statistics = pd.DataFrame(columns=columns)
-
-        for practice in Practice.objects.all():
-            for month in [7, 8]:
-                timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
-
-                if month == 8 and practice.code == 'P00000':
-                    seen_practice_with_no_statistics = True
-                    continue
-
-                total_list_size = randint(100, 200)
-
-                row = [
-                    timestamp,  #  month
-                    0,  #  male_0_4
-                    0,  #  female_0_4
-                    0,  #  male_5_14
-                    0,  #  male_15_24
-                    0,  #  male_25_34
-                    0,  #  male_35_44
-                    0,  #  male_45_54
-                    0,  #  male_55_64
-                    0,  #  male_65_74
-                    0,  #  male_75_plus
-                    0,  #  female_5_14
-                    0,  #  female_15_24
-                    0,  #  female_25_34
-                    0,  #  female_35_44
-                    0,  #  female_45_54
-                    0,  #  female_55_64
-                    0,  #  female_65_74
-                    0,  #  female_75_plus
-                    total_list_size,  #  total_list_size
-                    0,  #  astro_pu_cost
-                    0,  #  astro_pu_items
-                    '{}',  #  star_pu
-                    practice.ccg_id,  #  pct_id
-                    practice.code,  #  practice
-                ]
-
-                practice_statistics_rows.append(row)
-                practice_statistics = practice_statistics.append(
-                    {
-                        'month': timestamp[:10],
-                        'practice_id': practice.code,
-                        'ccg_id': practice.ccg_id,
-                        'stp_id': practice.ccg.stp_id,
-                        'regional_team_id': practice.ccg.regional_team_id,
-                        'total_list_size': total_list_size,
-                    },
-                    ignore_index=True,
-                )
-
-        assert seen_practice_with_no_statistics
-
-        # Upload practice_statistics_rows to BigQuery.
-        table = Client('hscic').get_or_create_table(
-            'practice_statistics', schemas.PRACTICE_STATISTICS_SCHEMA
-        )
-
-        with tempfile.NamedTemporaryFile() as f:
-            writer = csv.writer(f)
-            for row in practice_statistics_rows:
-                writer.writerow(row)
-            f.seek(0)
-            table.insert_rows_from_csv(f.name)
-
         # Do the work.
         call_command('import_measures', measure='coproxamol')
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
         month = '2018-08-01'
-        prescriptions = prescriptions[prescriptions['month'] == month]
+        prescriptions = self.prescriptions[self.prescriptions['month'] == month]
         numerators = prescriptions[prescriptions['bnf_code'] == '0407010Q0AAAAAA']
-        denominators = practice_statistics[practice_statistics['month'] == month]
+        denominators = self.practice_statistics[self.practice_statistics['month'] == month]
         mg = MeasureGlobal.objects.get(month=month)
 
         practices = self.calculate_practice_statistics_measure(
@@ -451,43 +223,6 @@ class ImportMeasuresTests(TestCase):
             self.validate_practice_statistics_measure_value(
                 mv, regtms.loc[mv.regional_team_id]
             )
-
-    def upload_prescribing_rows(self, prescribing_rows):
-        '''Upload prescribing_rows to BQ, and return DataFrame of prescribing
-        data.
-        '''
-
-        # In production, normalised_prescribing_standard is actually a view,
-        # but for the tests it's much easier to set it up as a normal table.
-        table = Client('hscic').get_or_create_table(
-            'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
-        )
-
-        with tempfile.NamedTemporaryFile() as f:
-            writer = csv.writer(f)
-            for row in prescribing_rows:
-                writer.writerow(row)
-            f.seek(0)
-            table.insert_rows_from_csv(f.name)
-
-            headers = [
-                'sha',
-                'regional_team_id',
-                'stp_id',
-                'ccg_id',
-                'practice_id',
-                'bnf_code',
-                'bnf_name',
-                'items',
-                'net_cost',
-                'actual_cost',
-                'quantity',
-                'month',
-            ]
-            prescriptions = pd.read_csv(f.name, names=headers)
-            prescriptions['month'] = prescriptions['month'].str[:10]
-
-        return prescriptions
 
     def calculate_cost_based_measure(
         self, numerators, denominators, org_type, org_codes
@@ -585,3 +320,271 @@ class ImportMeasuresTests(TestCase):
         else:
             self.assertAlmostEqual(mv.calc_value, series['ratio'])
             self.assertAlmostEqual(mv.percentile, series['ratio_percentile'])
+
+
+def create_organisations():
+    '''Create RegionalTeams, STPs, CCGs, Practices'''
+
+    for regtm_ix in range(5):
+        regtm = RegionalTeam.objects.create(
+            code='Y0{}'.format(regtm_ix), name='Region {}'.format(regtm_ix)
+        )
+
+        for stp_ix in range(5):
+            stp = STP.objects.create(
+                ons_code='E000000{}{}'.format(regtm_ix, stp_ix),
+                name='STP {}'.format(regtm_ix, stp_ix),
+            )
+
+            for ccg_ix in range(5):
+                ccg = PCT.objects.create(
+                    regional_team=regtm,
+                    stp=stp,
+                    code='{}{}{}'.format(regtm_ix, stp_ix, ccg_ix).replace(
+                        '0', 'A'
+                    ),
+                    name='CCG {}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix),
+                    org_type='CCG',
+                )
+
+                for prac_ix in range(5):
+                    Practice.objects.create(
+                        ccg=ccg,
+                        code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
+                        name='Practice {}/{}/{}/{}'.format(
+                            regtm_ix, stp_ix, ccg_ix, prac_ix
+                        ),
+                        setting=4,
+                    )
+
+
+def set_up_bq():
+    '''Set up BQ, and upload CCGs and practices.'''
+
+    Client('measures').create_dataset()
+    client = Client('hscic')
+    table = client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
+    columns = [field.name for field in schemas.CCG_SCHEMA]
+    table.insert_rows_from_pg(PCT, columns, schemas.ccgs_transform)
+    table = client.get_or_create_table('practices', schemas.PRACTICE_SCHEMA)
+    columns = [field.name for field in schemas.PRACTICE_SCHEMA]
+    table.insert_rows_from_pg(Practice, columns)
+
+
+def upload_prescribing():
+    '''Generate prescribing data, and upload to BQ.'''
+
+    prescribing_rows = []
+
+    # These are for the desogestrel measure
+    presentations = [
+        ('0703021Q0AAAAAA', 'Desogestrel_Tab 75mcg'),  # generic
+        ('0703021Q0BBAAAA', 'Cerazette_Tab 75mcg'),  # branded
+        ('076543210AAAAAA', 'Etynodiol Diacet_Tab 500mcg'),  # irrelevant
+    ]
+
+    seen_practice_with_no_prescribing = False
+    seen_practice_with_no_relevant_prescribing = False
+    seen_practice_with_no_generic_prescribing = False
+    seen_practice_with_no_branded_prescribing = False
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
+
+            for ix, (bnf_code, bnf_name) in enumerate(presentations):
+                if practice.code == 'P00000':
+                    seen_practice_with_no_prescribing = True
+                    continue
+                elif practice.code == 'P00010' and '0703021Q' in bnf_code:
+                    seen_practice_with_no_relevant_prescribing = True
+                    continue
+                elif practice.code == 'P00020' and bnf_code == '0703021Q0AAAAAA':
+                    seen_practice_with_no_generic_prescribing = True
+                    continue
+                elif practice.code == 'P00030' and bnf_code == '0703021Q0BBAAAA':
+                    seen_practice_with_no_branded_prescribing = True
+                    continue
+
+                items = randint(0, 100)
+                quantity = randint(6, 28) * items
+
+                # Multiplying by (1 + ix) ensures that the branded cost is
+                # always higher than the generic cost.
+                actual_cost = (1 + ix) * randint(100, 200) * quantity * 0.01
+
+                # We don't care about net_cost.
+                net_cost = actual_cost
+
+                row = [
+                    'sha',  #  This value doesn't matter.
+                    practice.ccg.regional_team_id,
+                    practice.ccg.stp_id,
+                    practice.ccg_id,
+                    practice.code,
+                    bnf_code,
+                    bnf_name,
+                    items,
+                    net_cost,
+                    actual_cost,
+                    quantity,
+                    timestamp,
+                ]
+
+                prescribing_rows.append(row)
+
+    # These are for the coproxamol measure
+    presentations = [
+        ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),  # relevant
+        ('0407010AAAAAAAA', 'Aspirin/Caffeine_Tab 500mg/32mg'),  # irrelevant
+    ]
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
+
+            for bnf_code, bnf_name in presentations:
+                items = randint(0, 100)
+                quantity = randint(6, 28) * items
+
+                actual_cost = randint(100, 200) * quantity * 0.01
+
+                # We don't care about net_cost.
+                net_cost = actual_cost
+
+                row = [
+                    'sha',  #  This value doesn't matter.
+                    practice.ccg.regional_team_id,
+                    practice.ccg.stp_id,
+                    practice.ccg_id,
+                    practice.code,
+                    bnf_code,
+                    bnf_name,
+                    items,
+                    net_cost,
+                    actual_cost,
+                    quantity,
+                    timestamp,
+                ]
+
+                prescribing_rows.append(row)
+
+    assert seen_practice_with_no_prescribing
+    assert seen_practice_with_no_relevant_prescribing
+    assert seen_practice_with_no_generic_prescribing
+    assert seen_practice_with_no_branded_prescribing
+
+    # In production, normalised_prescribing_standard is actually a view,
+    # but for the tests it's much easier to set it up as a normal table.
+    table = Client('hscic').get_or_create_table(
+        'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
+    )
+
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in prescribing_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name)
+
+        headers = [
+            'sha',
+            'regional_team_id',
+            'stp_id',
+            'ccg_id',
+            'practice_id',
+            'bnf_code',
+            'bnf_name',
+            'items',
+            'net_cost',
+            'actual_cost',
+            'quantity',
+            'month',
+        ]
+        prescriptions = pd.read_csv(f.name, names=headers)
+        prescriptions['month'] = prescriptions['month'].str[:10]
+
+    return prescriptions
+
+
+def upload_practice_statistics():
+    '''Generate practice statistics data, and upload to BQ.'''
+
+    practice_statistics_rows = []
+    seen_practice_with_no_statistics = False
+    columns = [
+        'month',
+        'regional_team_id',
+        'stp_id',
+        'ccg_id',
+        'practice_id',
+        'total_list_size',
+    ]
+    practice_statistics = pd.DataFrame(columns=columns)
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = '2018-0{}-01 00:00:00 UTC'.format(month)
+
+            if month == 8 and practice.code == 'P00000':
+                seen_practice_with_no_statistics = True
+                continue
+
+            total_list_size = randint(100, 200)
+
+            row = [
+                timestamp,  #  month
+                0,  #  male_0_4
+                0,  #  female_0_4
+                0,  #  male_5_14
+                0,  #  male_15_24
+                0,  #  male_25_34
+                0,  #  male_35_44
+                0,  #  male_45_54
+                0,  #  male_55_64
+                0,  #  male_65_74
+                0,  #  male_75_plus
+                0,  #  female_5_14
+                0,  #  female_15_24
+                0,  #  female_25_34
+                0,  #  female_35_44
+                0,  #  female_45_54
+                0,  #  female_55_64
+                0,  #  female_65_74
+                0,  #  female_75_plus
+                total_list_size,  #  total_list_size
+                0,  #  astro_pu_cost
+                0,  #  astro_pu_items
+                '{}',  #  star_pu
+                practice.ccg_id,  #  pct_id
+                practice.code,  #  practice
+            ]
+
+            practice_statistics_rows.append(row)
+            practice_statistics = practice_statistics.append(
+                {
+                    'month': timestamp[:10],
+                    'practice_id': practice.code,
+                    'ccg_id': practice.ccg_id,
+                    'stp_id': practice.ccg.stp_id,
+                    'regional_team_id': practice.ccg.regional_team_id,
+                    'total_list_size': total_list_size,
+                },
+                ignore_index=True,
+            )
+
+    assert seen_practice_with_no_statistics
+
+    # Upload practice_statistics_rows to BigQuery.
+    table = Client('hscic').get_or_create_table(
+        'practice_statistics', schemas.PRACTICE_STATISTICS_SCHEMA
+    )
+
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in practice_statistics_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name)
+
+    return practice_statistics
