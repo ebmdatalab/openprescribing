@@ -8,6 +8,10 @@ from frontend.models import Prescription, ImportLog
 
 import api.view_utils
 
+from matrixstore.tests.matrixstore_factory import (
+    matrixstore_from_postgres, patch_global_matrixstore
+)
+
 
 class ApiTestBase(TestCase):
     """Base test case that sets up all the fixtures required by any of the
@@ -25,11 +29,6 @@ class ApiTestBase(TestCase):
         api.view_utils.DISABLE_DB_TIMEOUT = True
 
     @classmethod
-    def tearDownClass(cls):
-        api.view_utils.DISABLE_DB_TIMEOUT = False
-        super(ApiTestBase, cls).tearDownClass()
-
-    @classmethod
     def setUpTestData(cls):
         # Create an ImportLog entry for the latest prescribing date we have
         date = Prescription.objects.latest('processing_date').processing_date
@@ -43,6 +42,17 @@ class ApiTestBase(TestCase):
             with open(fixture, 'r') as f:
                 # Fills them with test data
                 cursor.execute(f.read())
+        matrixstore = matrixstore_from_postgres()
+        stop_patching = patch_global_matrixstore(matrixstore)
+        # Have to wrap this in a staticmethod decorator otherwise Python thinks
+        # we're trying to create a new class method
+        cls._stop_patching = staticmethod(stop_patching)
+
+    @classmethod
+    def tearDownClass(cls):
+        api.view_utils.DISABLE_DB_TIMEOUT = False
+        cls._stop_patching()
+        super(ApiTestBase, cls).tearDownClass()
 
     def _rows_from_api(self, url):
         url = self.api_prefix + url
