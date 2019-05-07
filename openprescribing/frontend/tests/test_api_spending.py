@@ -99,13 +99,6 @@ class TestSpending(ApiTestBase):
         rsp = self._get(params)
         return list(csv.DictReader(rsp.content.splitlines()))
 
-    def test_codes_are_rejected_if_not_same_length(self):
-        params = {
-            'code': '0202010B0,0202010B0AAAAAA',
-        }
-        response = self._get(params)
-        self.assertEqual(response.status_code, 400)
-
     def test_404_returned_for_unknown_short_code(self):
         params = {
             'code': '0',
