@@ -52,7 +52,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
     <title>{% block title %}{% endblock %} | OpenPrescribing</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc=" crossorigin="anonymous" />
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'css/index.css' %}" rel="stylesheet">
 
     <link rel="icon" href="{% static 'img/favicon.png' %}">

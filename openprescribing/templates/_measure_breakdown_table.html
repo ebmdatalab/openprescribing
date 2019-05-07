@@ -1,5 +1,6 @@
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/datatables/datatables-bs.css' %}"/>
+<script type="text/javascript" src="{% static 'vendor/datatables/datatables-bs.js' %}"></script>
 <script type="text/javascript">
   $('#numerator_breakdown').DataTable(
     {

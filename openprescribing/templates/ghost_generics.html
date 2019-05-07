@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load template_extras %}
 {% load humanize %}
+{% load staticfiles %}
 
 {% block title %}PPU savings for {{ entity_name }}{% endblock %}
 {% block active_class %}{% if entity %}ccg{% else %}all_england{% endif %}{% endblock %}
@@ -51,9 +52,9 @@
 {% endblock %}
 
 {% block extra_js %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/datatables/datatables-bs.css' %}"/>
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript" src="{% static 'vendor/datatables/datatables-bs.js' %}"></script>
 <script type="text/javascript">
   $(function() {
     $('#ghost_generics').DataTable(
