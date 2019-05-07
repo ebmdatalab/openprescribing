@@ -6,9 +6,6 @@ import tempfile
 from django.conf import settings
 
 
-DATA_DIRECTORY_NAME = 'matrixstore_import'
-
-
 def get_practice_stats_filename(date):
     """
     Return the full path to the practice statistics CSV file for this date
@@ -29,8 +26,7 @@ def get_filename_for_download(remote_filename):
     to which this file should be downloaded
     """
     return os.path.join(
-        settings.PIPELINE_DATA_BASEDIR,
-        DATA_DIRECTORY_NAME,
+        settings.MATRIXSTORE_IMPORT_DIR,
         'temporary_downloads',
         os.path.basename(remote_filename)
     )
@@ -43,17 +39,19 @@ def get_temp_filename(filename):
     """
     directory, basename = os.path.split(filename)
     _ensure_dir_exists(directory)
-    fd, name = tempfile.mkstemp(
-        prefix='_tmp.', suffix='.' + basename, dir=directory
+    # We want to return the name of the file without actually creating it as
+    # sometimes we use this to create a new SQLite file and SQLite will
+    # complain if the file already exists
+    return '{directory}/.tmp.{random}.{basename}'.format(
+        directory=directory,
+        basename=basename,
+        random=next(tempfile._get_candidate_names())
     )
-    os.close(fd)
-    return name
 
 
 def _get_filename(date, type_name):
     return os.path.join(
-        settings.PIPELINE_DATA_BASEDIR,
-        DATA_DIRECTORY_NAME,
+        settings.MATRIXSTORE_IMPORT_DIR,
         '{}_{}.csv.gz'.format(date, type_name)
     )
 

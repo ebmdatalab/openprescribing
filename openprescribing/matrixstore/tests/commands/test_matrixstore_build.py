@@ -1,12 +1,17 @@
 """
-This runs a full end-to-end test of the MatrixStore build process using both
-BigQuery and Google Cloud Storage.
+This tests the MatrixStore build process:
 
-As this process can take a few minutes to run it can be convenient while
-debugging a failing test to keep the resulting SQLite file around and re-use it
-between test runs. This can be acheived by setting the environment variable
-`PERSIST_MATRIXSTORE_TEST_FILE` to the path where the file should be created
-and kept.
+    `TestMatrixStoreBuild` runs entirely in memory and therefore shortcuts
+    various parts of the build process which involve downloading data from
+    BigQuery
+
+    'TestMatrixStoreBuildEndToEnd` runs the same set of tests but uploads data
+    to BigQuery and exports it to Google Cloud Storage in order to excercise
+    the full build process
+
+The end-to-end test contains an additional check whereby it builds a file using
+the fast process and checks that the resulting SQL dump is identical to that
+produced by the full end-to-end process.
 """
 from __future__ import print_function
 
@@ -17,36 +22,42 @@ import numbers
 import shutil
 import sqlite3
 import tempfile
-import warnings
 
-from django.conf import settings
-from django.core.management import call_command
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase
 
 import numpy
 
 from matrixstore.serializer import deserialize
 from matrixstore.tests.data_factory import DataFactory
+from matrixstore.tests.import_test_data_fast import import_test_data_fast
+from matrixstore.tests.import_test_data_full import import_test_data_full
 
 
-@override_settings(PIPELINE_DATA_BASEDIR=None)
 class TestMatrixStoreBuild(SimpleTestCase):
+    """
+    Runs a test of the MatrixStore build process entirely in memory
+    """
 
     @classmethod
     def setUpClass(cls):
         factory = DataFactory()
         cls.months = factory.create_months('2019-01-01', 3)
-        cls.closed_practice = factory.create_practice()
-        cls.active_practices = factory.create_practices(3)
-        cls.practice_statistics = factory.create_practice_statistics(
-            cls.active_practices, cls.months
-        )
-        factory.create_practice_statistics(
-            [cls.closed_practice], cls.months
-        )
+        # This practice won't do any prescribing but it will have practice
+        # statistics so it should still show up in our data
+        cls.non_prescribing_practice = factory.create_practice()
+        # Create some practices that prescribe during the period
+        cls.prescribing_practices = factory.create_practices(3)
+        # Create some presentations and some prescribing
         cls.presentations = factory.create_presentations(4)
         cls.prescribing = factory.create_prescribing(
-            cls.presentations, cls.active_practices, cls.months
+            cls.presentations, cls.prescribing_practices, cls.months
+        )
+        # Create practices statistics for all active practices
+        cls.active_practices = cls.prescribing_practices + [
+            cls.non_prescribing_practice
+        ]
+        cls.practice_statistics = factory.create_practice_statistics(
+            cls.active_practices, cls.months
         )
         # Create a presentation which changes its BNF code and create some
         # prescribing with both old and new codes
@@ -61,49 +72,38 @@ class TestMatrixStoreBuild(SimpleTestCase):
         # We deliberately import data for fewer months than we've created so we
         # can test that only the right data is included
         cls.months_to_import = cls.months[1:]
-        # The closed practice only prescribes in the month we don't import, so
-        # it shouldn't show up at all in our data
+        # This practice only has data for the month we don't import, so it
+        # shouldn't show up at all in our data
+        cls.closed_practice = factory.create_practice()
         factory.create_prescription(
             cls.presentations[0], cls.closed_practice, cls.months[0]
         )
-        cls.tempdir = tempfile.mkdtemp()
-        settings.PIPELINE_DATA_BASEDIR = cls.tempdir
-        # Optional path at which to preserve test file between runs (see module
-        # docstring)
-        cls.data_file = os.environ.get('PERSIST_MATRIXSTORE_TEST_FILE')
-        if not cls.data_file:
-            cls.data_file = os.path.join(cls.tempdir, 'matrixstore_test.sqlite')
-        # Upload data to BigQuery and build file
-        if not os.path.exists(cls.data_file):
-            factory.upload_to_bigquery()
-            end_date = max(cls.months_to_import)[:7]
-            call_command(
-                'matrixstore_build',
-                end_date,
-                cls.data_file,
-                months=len(cls.months_to_import),
-                quiet=True
-            )
-        else:
-            warnings.warn(
-                'Skipping test of matrixstore_build and re-using file at: {}'.format(
-                    cls.data_file
-                )
-            )
+        factory.create_statistics_for_one_practice_and_month(
+            cls.closed_practice, cls.months[0]
+        )
+        cls.data_factory = factory
+        # The format of `end_date` only uses year and month
+        cls.end_date = max(cls.months_to_import)[:7]
+        cls.number_of_months = len(cls.months_to_import)
+        cls.create_matrixstore(factory, cls.end_date, cls.number_of_months)
+
+    @classmethod
+    def create_matrixstore(cls, data_factory, end_date, number_of_months):
+        cls.connection = sqlite3.connect(':memory:')
+        import_test_data_fast(
+            cls.connection,
+            data_factory,
+            end_date,
+            months=number_of_months
+        )
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(cls.tempdir)
+        cls.connection.close()
 
     def setUp(self):
-        # We have to check this because the `sqlite3.connect` call will
-        # implicitly create the file if it doesn't exist
-        if not os.path.exists(self.data_file):
-            raise RuntimeError('No SQLite file created')
-        self.connection = sqlite3.connect(self.data_file)
-
-    def tearDown(self):
-        self.connection.close()
+        # Reset this as at least one test modifies it
+        self.connection.row_factory = None
 
     def test_dates_are_correct(self):
         dates = [
@@ -207,6 +207,73 @@ class TestMatrixStoreBuild(SimpleTestCase):
                     'actual_cost': values['actual_cost'],
                 }
 
+    def test_precalculated_totals(self):
+        for field in ['items', 'quantity', 'net_cost', 'actual_cost']:
+            # Cost figures are originally in pounds but we store them in pence
+            # as ints
+            multiplier = 100 if field.endswith('_cost') else 1
+            get_value = MatrixValueFetcher(
+                # This table doesn't have a key column as it only has one row,
+                # so we just use 1 as a pseudo-column
+                self.connection, 'all_presentations', 1, field
+            )
+            # Calculate totals over all presentations
+            totals = defaultdict(int)
+            for entry in self._expected_prescribing_values():
+                value = round(entry[field] * multiplier)
+                totals[entry['practice'], entry['month']] += value
+            # Check they match the stored values
+            for (practice, month), expected_value in totals.items():
+                value = get_value(1, practice, month)
+                self.assertEqual(value, expected_value)
+            # Check there are no additional values that we weren't expecting
+            self.assertEqual(get_value.nonzero_values, len(totals))
+
+
+class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
+    """
+    Runs the same test as above but as a full integration test against actual
+    BigQuery and Google Cloud Storage. Also checks that the fast build process
+    produces an identical file to the full process.
+    """
+
+    @classmethod
+    def create_matrixstore(cls, data_factory, end_date, number_of_months):
+        cls.tempdir = tempfile.mkdtemp()
+        # Upload data to BigQuery and build file
+        cls.data_file = import_test_data_full(
+            cls.tempdir,
+            data_factory,
+            end_date,
+            months=number_of_months
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tempdir)
+
+    def setUp(self):
+        # We have to check this because the `sqlite3.connect` call will
+        # implicitly create the file if it doesn't exist
+        if not os.path.exists(self.data_file):
+            raise RuntimeError('No SQLite file created')
+        self.connection = sqlite3.connect(self.data_file)
+
+    def tearDown(self):
+        self.connection.close()
+
+    def test_same_file_produced_by_import_test_data_fast(self):
+        other_connection = sqlite3.connect(':memory:')
+        import_test_data_fast(
+            other_connection,
+            self.data_factory,
+            self.end_date,
+            self.number_of_months
+        )
+        db_dump = list(self.connection.iterdump())
+        other_db_dump = list(other_connection.iterdump())
+        self.assertEqual(db_dump, other_db_dump)
+
 
 class MatrixValueFetcher(object):
     """
@@ -222,7 +289,10 @@ class MatrixValueFetcher(object):
         for key, value in results:
             matrix = deserialize(value)
             self.matrices[key] = matrix
-            self.nonzero_values += numpy.count_nonzero(matrix)
+            if hasattr(matrix, 'count_nonzero'):
+                self.nonzero_values += matrix.count_nonzero()
+            else:
+                self.nonzero_values += numpy.count_nonzero(matrix)
         self.practices = dict(connection.execute('SELECT code, offset FROM practice'))
         self.dates = dict(connection.execute('SELECT date, offset FROM date'))
         for date, offset in list(self.dates.items()):

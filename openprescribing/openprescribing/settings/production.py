@@ -121,3 +121,12 @@ PIPELINE_DATA_BASEDIR = '/home/hello/openprescribing-data/data/'
 
 # Path to import log for pipeline data
 PIPELINE_IMPORT_LOG_PATH = '/home/hello/openprescribing-data/log.json'
+
+# Contains monthly data downloaded fom BigQuery and stored as gzipped CSV
+# (about 80MB/month)
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+# Contains MatrixStore SQLite files, each containing 5 years' worth of data at
+# about 4GB each
+MATRIXSTORE_BUILD_DIR = '/mnt/database/matrixstore'
+# This is expected to be a symlink to a file in MATRIXSTORE_BUILD_DIR
+MATRIXSTORE_LIVE_FILE = os.path.join(MATRIXSTORE_BUILD_DIR, 'matrixstore_live.sqlite')

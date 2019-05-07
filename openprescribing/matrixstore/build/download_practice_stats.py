@@ -1,6 +1,6 @@
 """
-Downloads practice statistics data from BigQuery into the "matrixstore_import"
-directory inside `settings.PIPELINE_DATA_BASEDIR`
+Downloads practice statistics data from BigQuery into the
+`settings.MATRIXSTORE_IMPORT_DIR` directory
 """
 import csv
 import gzip

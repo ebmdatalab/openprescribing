@@ -3,9 +3,9 @@ DEFAULT_NUM_MONTHS = 60
 
 def generate_dates(end_str, months=None):
     """
-    Given an end date as a string in YYYY-MM form, return a list of N
-    consecutive months as strings in YYYY-MM-01 form, with that month as the
-    final member
+    Given an end date as a string in YYYY-MM form (or the underscore separated
+    equivalent), return a list of N consecutive months as strings in YYYY-MM-01
+    form, with that month as the final member
     """
     if months is None:
         months = DEFAULT_NUM_MONTHS
@@ -20,10 +20,10 @@ def generate_dates(end_str, months=None):
 
 def parse_date(date_str):
     """
-    Given a date string in YYYY-MM form, return a pair of (year, month)
-    integers
+    Given a date string in YYYY-MM form (or the underscore separated
+    equivalent), return a pair of (year, month) integers
     """
-    year_str, month_str = date_str.split('-')[:2]
+    year_str, month_str = date_str.replace('_', '-').split('-')[:2]
     assert len(year_str) == 4
     assert len(month_str) == 2
     return int(year_str), int(month_str)

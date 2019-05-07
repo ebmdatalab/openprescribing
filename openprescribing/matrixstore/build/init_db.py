@@ -33,6 +33,19 @@ SCHEMA_SQL = """
         PRIMARY KEY (bnf_code)
     );
 
+   -- This table will contain a single row giving totals pre-calculated from
+   -- the above data as these are slightly too expensive to calculate at
+   -- runtime
+    CREATE TABLE all_presentations (
+        -- The below columns will contain total prescribing over all
+        -- presentations as serialized matrices of shape (number of practices,
+        -- number of months)
+        items BLOB,
+        quantity BLOB,
+        actual_cost BLOB,
+        net_cost BLOB
+    );
+
     CREATE TABLE practice_statistic (
         name TEXT,
         -- The "value" column will contain the actual statistics as serialized
@@ -87,29 +100,31 @@ def import_dates(sqlite_conn, dates):
 
 def import_practices(bq_conn, sqlite_conn, dates):
     """
-    Query BigQuery for the list of practice codes which prescribed during this
-    time period and write them to SQLite
+    Query BigQuery for the list of active practice codes and write them to
+    SQLite
+
+    Active in this context just means that we have data for them in the
+    relevant period, either prescribing data or practice statistics; there's no
+    sense in having rows in the matrices which will never contain data.
     """
-    # We only create practice entries for practices which have prescribed in
-    # the current date range.  The stored matrices are sparse, so having
-    # "empty" practice rows doesn't make much difference there. But when we
-    # start summing and processing these we use dense matrices and so it's
-    # better to cut down the number of rows to a minimum.
     date_start = min(dates)
     date_end = max(dates)
     logger.info(
-        'Querying practice codes which prescribed between %s and %s',
+        'Querying for active practice codes between %s and %s',
         date_start,
         date_end
     )
     sql = (
         """
         SELECT DISTINCT practice FROM {hscic}.prescribing
-          WHERE month >= TIMESTAMP('%s') AND month <= TIMESTAMP('%s')
-          ORDER BY practice
+          WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
+        UNION DISTINCT
+        SELECT DISTINCT practice FROM {hscic}.practice_statistics_all_years
+          WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
+        ORDER BY practice
         """
     )
-    result = bq_conn.query(sql % (date_start, date_end))
+    result = bq_conn.query(sql % {'start': date_start, 'end': date_end})
     practice_codes = [row[0] for row in result.rows]
     logger.info('Writing %s practice codes to SQLite', len(practice_codes))
     sqlite_conn.executemany(
@@ -123,10 +138,11 @@ def import_presentations(bq_conn, sqlite_conn):
     Query BigQuery for BNF codes and metadata on all presentations and insert
     into SQLite
     """
-    # Unlike with practices above, it costs very little to have BNF codes in
-    # the database which are not prescribed against. And we don't actually know
-    # which codes are and aren't used until we apply the "BNF map" which
-    # translates old codes into new codes.
+    # Unlike with practices above, we make no attempt to determine which
+    # presentations have prescribing data during the period: it costs very
+    # little to have presentations in the database which are not prescribed
+    # against; and we don't actually know which codes are and aren't used until
+    # we apply the "BNF map" which translates old codes into new codes.
     logger.info('Querying all presentation metadata')
     result = bq_conn.query(
         """

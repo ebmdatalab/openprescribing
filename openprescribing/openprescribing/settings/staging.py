@@ -112,3 +112,14 @@ GOOGLE_OPTIMIZE_CONTAINER_ID = 'GTM-KRQSJM9'
 sentry_raven_dsn = utils.get_env_setting('STAGING_SENTRY_RAVEN_DSN', default='')
 if sentry_raven_dsn:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
+
+# Base directory for pipeline data
+PIPELINE_DATA_BASEDIR = os.path.join(APPS_ROOT, 'pipeline', 'data')
+# Contains monthly data downloaded fom BigQuery and stored as gzipped CSV
+# (about 80MB/month)
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_import')
+# Contains MatrixStore SQLite files, each containing 5 years' worth of data at
+# about 4GB each
+MATRIXSTORE_BUILD_DIR = os.path.join(PIPELINE_DATA_BASEDIR, 'matrixstore_build')
+# This is expected to be a symlink to a file in MATRIXSTORE_BUILD_DIR
+MATRIXSTORE_LIVE_FILE = os.path.join(MATRIXSTORE_BUILD_DIR, 'matrixstore_live.sqlite')

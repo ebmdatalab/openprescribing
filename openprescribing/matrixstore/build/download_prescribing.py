@@ -1,6 +1,6 @@
 """
 Download prescribing data from BigQuery to gzipped CSV files in the
-"matrixstore_import" directory inside `settings.PIPELINE_DATA_BASEDIR`
+`settings.MATRIXSTORE_IMPORT_DIR` directory
 """
 import glob
 import logging
@@ -125,7 +125,7 @@ def extract_data_for_date(date, bq_client):
     Extract prescribing data for the given month into its own table on BigQuery
     """
     table_id = table_id_for_date(date)
-    logger.info('Extracting date for %s into table %s', date, table_id)
+    logger.info('Extracting data for %s into table %s', date, table_id)
     table = bq_client.get_table(table_id)
     table.insert_rows_from_query(
         """

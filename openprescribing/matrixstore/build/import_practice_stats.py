@@ -25,12 +25,19 @@ def import_practice_stats(sqlite_path):
     if not os.path.exists(sqlite_path):
         raise RuntimeError('No SQLite file at: {}'.format(sqlite_path))
     connection = sqlite3.connect(sqlite_path)
+    dates = [date for (date,) in connection.execute('SELECT date FROM date')]
+    practice_statistics = get_practice_statistics_for_dates(dates)
+    write_practice_stats(connection, practice_statistics)
+    connection.commit()
+    connection.close()
+
+
+def write_practice_stats(connection, practice_statistics):
     cursor = connection.cursor()
     # Map practice codes and date strings to their corresponding row/column in
     # the matrix
     practices = dict(cursor.execute('SELECT code, offset FROM practice'))
     dates = dict(cursor.execute('SELECT date, offset FROM date'))
-    practice_statistics = get_practice_statistics_for_dates(dates)
     matrices = build_matrices(practice_statistics, practices, dates)
     for statistic_name, matrix in matrices:
         # Once we can use SQLite v3.24.0 which has proper UPSERT support we
@@ -43,8 +50,6 @@ def import_practice_stats(sqlite_path):
             UPDATE practice_statistic SET value=? WHERE name=?
             """,
             [sqlite3.Binary(serialize_compressed(matrix)), statistic_name])
-    connection.commit()
-    connection.close()
 
 
 def get_practice_statistics_for_dates(dates):
@@ -103,7 +108,7 @@ def parse_practice_statistics_csv(input_stream):
 
 def build_matrices(practice_statistics, practices, dates):
     """
-    Accepts an iterable of practice statistics. plus mappings of pratice codes
+    Accepts an iterable of practice statistics, plus mappings of pratice codes
     and date strings to their respective row/column offsets. Yields pairs of
     the form:
 
@@ -135,5 +140,5 @@ def build_matrices(practice_statistics, practices, dates):
     logger.info(
         'Writing %s practice statistics matrices to SQLite', len(matrices)
     )
-    for statistic_name, matrix in matrices.items():
+    for statistic_name, matrix in sorted(matrices.items()):
         yield statistic_name, finalise_matrix(matrix)
