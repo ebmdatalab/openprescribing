@@ -35,7 +35,7 @@ class Command(BaseCommand):
         if rsp.status_code != 200:
             raise CommandError('Could not find any data for %s' % datestamp)
 
-        filename = date.strftime('gp-reg-pat-prac-quin-age-%b-%y').lower()
+        filename = 'gp-reg-pat-prac-quin-age.csv'
         tree = html.fromstring(rsp.content)
         source_url = tree.xpath(
             "//a[contains(@href, '{}')]/@href".format(filename))[0]
