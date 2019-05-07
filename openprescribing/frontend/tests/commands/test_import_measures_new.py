@@ -61,78 +61,12 @@ class ImportMeasuresTests(TestCase):
         denominators = prescriptions[
             prescriptions['bnf_code'].str.startswith('0703021Q0')
         ]
-        mg = MeasureGlobal.objects.get(month=month)
-
-        self.assertEqual(MeasureValue.objects.filter(month=month).count(), 780)
-
-        practices = self.calculate_cost_based_measure(
+        self.validate_calculations(
+            self.calculate_cost_based_measure,
             numerators,
             denominators,
-            'practice',
-            Practice.objects.values_list('code', flat=True),
+            month
         )
-        self.validate_measure_global(mg, practices, 'practice')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=False,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), Practice.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, practices.loc[mv.practice_id])
-
-        ccgs = self.calculate_cost_based_measure(
-            numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
-        )
-        self.validate_measure_global(mg, ccgs, 'ccg')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), PCT.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
-
-        stps = self.calculate_cost_based_measure(
-            numerators,
-            denominators,
-            'stp',
-            STP.objects.values_list('ons_code', flat=True),
-        )
-        self.validate_measure_global(mg, stps, 'stp')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=False,
-            regional_team_id__isnull=True,
-        )
-        self.assertEqual(mvs.count(), STP.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, stps.loc[mv.stp_id])
-
-        regtms = self.calculate_cost_based_measure(
-            numerators,
-            denominators,
-            'regional_team',
-            RegionalTeam.objects.values_list('code', flat=True),
-        )
-        self.validate_measure_global(mg, regtms, 'regional_team')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=True,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def test_import_measures_practice_statistics(self):
         # This test verifies the behaviour of import_measures for measures
@@ -149,76 +83,12 @@ class ImportMeasuresTests(TestCase):
         prescriptions = self.prescriptions[self.prescriptions['month'] == month]
         numerators = prescriptions[prescriptions['bnf_code'] == '0407010Q0AAAAAA']
         denominators = self.practice_statistics[self.practice_statistics['month'] == month]
-        mg = MeasureGlobal.objects.get(month=month)
-
-        practices = self.calculate_practice_statistics_measure(
+        self.validate_calculations(
+            self.calculate_practice_statistics_measure,
             numerators,
             denominators,
-            'practice',
-            Practice.objects.values_list('code', flat=True),
+            month
         )
-        self.validate_measure_global(mg, practices, 'practice')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=False,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), Practice.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, practices.loc[mv.practice_id])
-
-        ccgs = self.calculate_practice_statistics_measure(
-            numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
-        )
-        self.validate_measure_global(mg, ccgs, 'ccg')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), PCT.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
-
-        stps = self.calculate_practice_statistics_measure(
-            numerators,
-            denominators,
-            'stp',
-            STP.objects.values_list('ons_code', flat=True),
-        )
-        self.validate_measure_global(mg, stps, 'stp')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=False,
-            regional_team_id__isnull=True,
-        )
-        self.assertEqual(mvs.count(), STP.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, stps.loc[mv.stp_id])
-
-        regtms = self.calculate_practice_statistics_measure(
-            numerators,
-            denominators,
-            'regional_team',
-            RegionalTeam.objects.values_list('code', flat=True),
-        )
-        self.validate_measure_global(mg, regtms, 'regional_team')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=True,
-            regional_team_id__isnull=False,
-        )
-        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
-        for mv in mvs:
-            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def calculate_cost_based_measure(
         self, numerators, denominators, org_type, org_codes
@@ -293,6 +163,80 @@ class ImportMeasuresTests(TestCase):
             'ratio': df['ratio'],
             'ratio_percentile': df['ratio_percentile'],
         })
+
+    def validate_calculations(self, calculator, numerators, denominators, month):
+        '''Validate measure calculations by redoing calculations with Pandas.'''
+
+        mg = MeasureGlobal.objects.get(month=month)
+
+        practices = calculator(
+            numerators,
+            denominators,
+            'practice',
+            Practice.objects.values_list('code', flat=True),
+        )
+        self.validate_measure_global(mg, practices, 'practice')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=False,
+            pct_id__isnull=False,
+            stp_id__isnull=False,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), Practice.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, practices.loc[mv.practice_id])
+
+        ccgs = calculator(
+            numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
+        )
+        self.validate_measure_global(mg, ccgs, 'ccg')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=False,
+            stp_id__isnull=False,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), PCT.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
+
+        stps = calculator(
+            numerators,
+            denominators,
+            'stp',
+            STP.objects.values_list('ons_code', flat=True),
+        )
+        self.validate_measure_global(mg, stps, 'stp')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=True,
+            stp_id__isnull=False,
+            regional_team_id__isnull=True,
+        )
+        self.assertEqual(mvs.count(), STP.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, stps.loc[mv.stp_id])
+
+        regtms = calculator(
+            numerators,
+            denominators,
+            'regional_team',
+            RegionalTeam.objects.values_list('code', flat=True),
+        )
+        self.validate_measure_global(mg, regtms, 'regional_team')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pct_id__isnull=True,
+            stp_id__isnull=True,
+            regional_team_id__isnull=False,
+        )
+        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def validate_measure_global(self, mg, df, org_type):
         self.assertAlmostEqual(
@@ -429,6 +373,11 @@ def upload_prescribing():
 
                 prescribing_rows.append(row)
 
+    assert seen_practice_with_no_prescribing
+    assert seen_practice_with_no_relevant_prescribing
+    assert seen_practice_with_no_generic_prescribing
+    assert seen_practice_with_no_branded_prescribing
+
     # These are for the coproxamol measure
     presentations = [
         ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),  # relevant
@@ -464,11 +413,6 @@ def upload_prescribing():
                 ]
 
                 prescribing_rows.append(row)
-
-    assert seen_practice_with_no_prescribing
-    assert seen_practice_with_no_relevant_prescribing
-    assert seen_practice_with_no_generic_prescribing
-    assert seen_practice_with_no_branded_prescribing
 
     # In production, normalised_prescribing_standard is actually a view,
     # but for the tests it's much easier to set it up as a normal table.
