@@ -71,7 +71,7 @@ class ImportMeasuresTests(TestCase):
             'practice',
             Practice.objects.values_list('code', flat=True),
         )
-        self.validate_cost_based_measure_global(mg, practices, 'practice')
+        self.validate_measure_global(mg, practices, 'practice')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=False,
@@ -81,12 +81,12 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), Practice.objects.count())
         for mv in mvs:
-            self.validate_cost_based_measure_value(mv, practices.loc[mv.practice_id])
+            self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
         ccgs = self.calculate_cost_based_measure(
             numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
-        self.validate_cost_based_measure_global(mg, ccgs, 'ccg')
+        self.validate_measure_global(mg, ccgs, 'ccg')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -96,7 +96,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), PCT.objects.count())
         for mv in mvs:
-            self.validate_cost_based_measure_value(mv, ccgs.loc[mv.pct_id])
+            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
 
         stps = self.calculate_cost_based_measure(
             numerators,
@@ -104,7 +104,7 @@ class ImportMeasuresTests(TestCase):
             'stp',
             STP.objects.values_list('ons_code', flat=True),
         )
-        self.validate_cost_based_measure_global(mg, stps, 'stp')
+        self.validate_measure_global(mg, stps, 'stp')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -114,7 +114,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), STP.objects.count())
         for mv in mvs:
-            self.validate_cost_based_measure_value(mv, stps.loc[mv.stp_id])
+            self.validate_measure_value(mv, stps.loc[mv.stp_id])
 
         regtms = self.calculate_cost_based_measure(
             numerators,
@@ -122,7 +122,7 @@ class ImportMeasuresTests(TestCase):
             'regional_team',
             RegionalTeam.objects.values_list('code', flat=True),
         )
-        self.validate_cost_based_measure_global(mg, regtms, 'regional_team')
+        self.validate_measure_global(mg, regtms, 'regional_team')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -132,7 +132,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), RegionalTeam.objects.count())
         for mv in mvs:
-            self.validate_cost_based_measure_value(mv, regtms.loc[mv.regional_team_id])
+            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def test_import_measures_practice_statistics(self):
         # This test verifies the behaviour of import_measures for measures
@@ -157,7 +157,7 @@ class ImportMeasuresTests(TestCase):
             'practice',
             Practice.objects.values_list('code', flat=True),
         )
-        self.validate_practice_statistics_measure_global(mg, practices, 'practice')
+        self.validate_measure_global(mg, practices, 'practice')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=False,
@@ -167,14 +167,12 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), Practice.objects.count())
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(
-                mv, practices.loc[mv.practice_id]
-            )
+            self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
         ccgs = self.calculate_practice_statistics_measure(
             numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
-        self.validate_practice_statistics_measure_global(mg, ccgs, 'ccg')
+        self.validate_measure_global(mg, ccgs, 'ccg')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -184,7 +182,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), PCT.objects.count())
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(mv, ccgs.loc[mv.pct_id])
+            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
 
         stps = self.calculate_practice_statistics_measure(
             numerators,
@@ -192,7 +190,7 @@ class ImportMeasuresTests(TestCase):
             'stp',
             STP.objects.values_list('ons_code', flat=True),
         )
-        self.validate_practice_statistics_measure_global(mg, stps, 'stp')
+        self.validate_measure_global(mg, stps, 'stp')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -202,7 +200,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), STP.objects.count())
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(mv, stps.loc[mv.stp_id])
+            self.validate_measure_value(mv, stps.loc[mv.stp_id])
 
         regtms = self.calculate_practice_statistics_measure(
             numerators,
@@ -210,7 +208,7 @@ class ImportMeasuresTests(TestCase):
             'regional_team',
             RegionalTeam.objects.values_list('code', flat=True),
         )
-        self.validate_practice_statistics_measure_global(mg, regtms, 'regional_team')
+        self.validate_measure_global(mg, regtms, 'regional_team')
         mvs = MeasureValue.objects.filter(
             month=month,
             practice_id__isnull=True,
@@ -220,9 +218,7 @@ class ImportMeasuresTests(TestCase):
         )
         self.assertEqual(mvs.count(), RegionalTeam.objects.count())
         for mv in mvs:
-            self.validate_practice_statistics_measure_value(
-                mv, regtms.loc[mv.regional_team_id]
-            )
+            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def calculate_cost_based_measure(
         self, numerators, denominators, org_type, org_codes
@@ -257,8 +253,8 @@ class ImportMeasuresTests(TestCase):
         df['unit_cost_generic'] = df['unit_cost_generic'].fillna(
             global_unit_cost_generic
         )
-        practice_quantity_ratio_10 = df['quantity_ratio'].quantile(0.1)
-        df['quantity_branded_10'] = df['quantity_total'] * practice_quantity_ratio_10
+        quantity_ratio_10 = df['quantity_ratio'].quantile(0.1)
+        df['quantity_branded_10'] = df['quantity_total'] * quantity_ratio_10
         df['quantity_generic_10'] = df['quantity_total'] - df['quantity_branded_10']
         df['target_cost_10'] = (
             df['unit_cost_branded'] * df['quantity_branded_10']
@@ -266,7 +262,13 @@ class ImportMeasuresTests(TestCase):
         )
         df['cost_saving_10'] = df['cost_total'] - df['target_cost_10']
 
-        return df
+        return pd.DataFrame.from_dict({
+            'numerator' : df['quantity_branded'],
+            'denominator': df['quantity_total'],
+            'ratio': df['quantity_ratio'],
+            'ratio_percentile': df['quantity_ratio_percentile'],
+            'cost_saving_10': df['cost_saving_10'],
+        })
 
     def calculate_practice_statistics_measure(
         self, numerators, denominators, org_type, org_codes
@@ -274,44 +276,35 @@ class ImportMeasuresTests(TestCase):
         org_column = org_type + '_id'
         df = pd.DataFrame(index=org_codes)
 
-        df['numerator'] = numerators.groupby(org_column)['items'].sum()
-        df['denominator'] = (
+        df['items'] = numerators.groupby(org_column)['items'].sum()
+        df['thousand_patients'] = (
             denominators.groupby(org_column)['total_list_size'].sum() / 1000
         )
-        df['ratio'] = df['numerator'] / df['denominator']
-        df['numerator'] = df['numerator'].fillna(0)
-        df['denominator'] = df['denominator'].fillna(0)
+        df['ratio'] = df['items'] / df['thousand_patients']
+        df['items'] = df['items'].fillna(0)
+        df['thousand_patients'] = df['thousand_patients'].fillna(0)
         ranks = df['ratio'].rank(method='min')
         num_non_nans = df['ratio'].count()
         df['ratio_percentile'] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
-        return df
 
-    def validate_cost_based_measure_global(self, mg, df, org_type):
-        self.assertAlmostEqual(
-            mg.percentiles[org_type]['10'], df['quantity_ratio'].quantile(0.1)
-        )
-        self.assertAlmostEqual(
-            mg.cost_savings[org_type]['10'],
-            df[df['cost_saving_10'] > 0]['cost_saving_10'].sum(),
-        )
+        return pd.DataFrame.from_dict({
+            'numerator' : df['items'],
+            'denominator': df['thousand_patients'],
+            'ratio': df['ratio'],
+            'ratio_percentile': df['ratio_percentile'],
+        })
 
-    def validate_cost_based_measure_value(self, mv, series):
-        self.assertEqual(mv.numerator, series['quantity_branded'])
-        self.assertEqual(mv.denominator, series['quantity_total'])
-        if mv.percentile is None:
-            self.assertTrue(np.isnan(series['quantity_ratio']))
-            self.assertTrue(np.isnan(series['quantity_ratio_percentile']))
-        else:
-            self.assertAlmostEqual(mv.calc_value, series['quantity_ratio'])
-            self.assertAlmostEqual(mv.percentile, series['quantity_ratio_percentile'])
-        self.assertAlmostEqual(mv.cost_savings['10'], series['cost_saving_10'])
-
-    def validate_practice_statistics_measure_global(self, mg, df, org_type):
+    def validate_measure_global(self, mg, df, org_type):
         self.assertAlmostEqual(
             mg.percentiles[org_type]['10'], df['ratio'].quantile(0.1)
         )
+        if mg.measure.is_cost_based:
+            self.assertAlmostEqual(
+                mg.cost_savings[org_type]['10'],
+                df[df['cost_saving_10'] > 0]['cost_saving_10'].sum(),
+            )
 
-    def validate_practice_statistics_measure_value(self, mv, series):
+    def validate_measure_value(self, mv, series):
         self.assertEqual(mv.numerator, series['numerator'])
         self.assertEqual(mv.denominator, series['denominator'])
         if mv.percentile is None:
@@ -320,6 +313,9 @@ class ImportMeasuresTests(TestCase):
         else:
             self.assertAlmostEqual(mv.calc_value, series['ratio'])
             self.assertAlmostEqual(mv.percentile, series['ratio_percentile'])
+
+        if mv.measure.is_cost_based:
+            self.assertAlmostEqual(mv.cost_savings['10'], series['cost_saving_10'])
 
 
 def create_organisations():
