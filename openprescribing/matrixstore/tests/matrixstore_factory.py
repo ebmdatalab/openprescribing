@@ -1,4 +1,5 @@
 import json
+import mock
 import sqlite3
 
 from frontend.models import (
@@ -6,6 +7,7 @@ from frontend.models import (
 )
 
 from matrixstore.connection import MatrixStore
+from matrixstore import db
 from matrixstore.tests.import_test_data_fast import import_test_data_fast
 
 
@@ -34,6 +36,29 @@ def matrixstore_from_postgres():
         end_date=end_date,
         months=60
     )
+
+
+def patch_global_matrixstore(matrixstore):
+    """
+    Temporarily replace the global MatrixStore instance (as accessed via
+    `matrixstore.db.get_db`) with the supplied matrixstore
+
+    Returns a function which undoes the monkeypatching
+    """
+    patcher = mock.patch('matrixstore.connection.MatrixStore.from_file')
+    mocked = patcher.start()
+    mocked.return_value = matrixstore
+    # There are memoized functions so we clear any previously memoized value
+    db.get_db.cache_clear()
+    db.group_by.cache_clear()
+
+    def stop_patching():
+        patcher.stop()
+        db.get_db.cache_clear()
+        db.group_by.cache_clear()
+        matrixstore.close()
+
+    return stop_patching
 
 
 class _DatabaseFixtures(object):
