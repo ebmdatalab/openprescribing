@@ -24,6 +24,12 @@ from frontend.models import (
 from gcutils.bigquery import Client
 
 
+# These tests test import_measures by repeating the measure calculations with
+# Pandas, and asserting that the values stored on MeasureValue and
+# MeasureGlobal objects match those calculated with Pandas.  See
+# notebooks/measure-calculations.ipynb for an explanation of these
+# calculations.
+
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -36,13 +42,12 @@ class ImportMeasuresTests(TestCase):
         # should import data.
         ImportLog.objects.create(category='prescribing', current_at='2018-08-01')
 
-    def test_import_measures_cost_based(self):
-        # This test verifies the behaviour of import_measures for cost-based
-        # measures by repeating the measure calculations with Pandas, and
-        # asserting that the values stored on MeasureValue and MeasureGlobal
-        # objects match those calculated with Pandas.  See
-        # notebooks/measure-calculations.ipynb for an explanation of these
-        # calculations.
+    def test_cost_based_percentage_measure(self):
+        # This test verifies the behaviour of import_measures for a cost-based
+        # measure that calculates the ratio between:
+        #  * quantity prescribed of a branded presentation (numerator)
+        #  * total quantity prescribed of the branded presentation and its
+        #      generic equivalent (denominator)
 
         # Do the work.
         call_command('import_measures', measure='desogestrel')
@@ -62,17 +67,20 @@ class ImportMeasuresTests(TestCase):
             prescriptions['bnf_code'].str.startswith('0703021Q0')
         ]
         self.validate_calculations(
-            self.calculate_cost_based_measure,
+            self.calculate_cost_based_percentage_measure,
             numerators,
             denominators,
             month
         )
 
-    def test_import_measures_practice_statistics(self):
-        # This test verifies the behaviour of import_measures for measures
-        # whose denominator involves practice statistics, which may be null for
-        # a given practice in a given month.  It uses the coproxamol measure.
-        # See #1520 for background.
+    def test_practice_statistics_measure(self):
+        # This test verifies the behaviour of import_measures for a measure
+        # that calculates the ratio between:
+        #  * items prescribed of a particular presentation (numerator)
+        #  * patients / 1000 (denominator)
+        #
+        # Of interest is the case where the number of patients may be null for
+        # a given practice in a given month.  See #1520.
 
         # Do the work.
         call_command('import_measures', measure='coproxamol')
@@ -90,7 +98,7 @@ class ImportMeasuresTests(TestCase):
             month
         )
 
-    def calculate_cost_based_measure(
+    def calculate_cost_based_percentage_measure(
         self, numerators, denominators, org_type, org_codes
     ):
         org_column = org_type + '_id'
