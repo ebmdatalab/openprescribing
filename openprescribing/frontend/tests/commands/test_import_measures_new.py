@@ -98,6 +98,28 @@ class ImportMeasuresTests(TestCase):
             month
         )
 
+    def test_cost_based_practice_statistics_measure(self):
+        # This test verifies the behaviour of import_measures for a cost-based
+        # measure that calculates the ratio between:
+        #  * cost of prescribing of a particular presentation (numerator)
+        #  * patients / 1000 (denominator)
+
+        # Do the work.
+        call_command('import_measures', measure='glutenfree')
+
+        # Check calculations by redoing calculations with Pandas, and asserting
+        # that results match.
+        month = '2018-08-01'
+        prescriptions = self.prescriptions[self.prescriptions['month'] == month]
+        numerators = prescriptions[prescriptions['bnf_code'] == '0904010AUBBAAAA']
+        denominators = self.practice_statistics[self.practice_statistics['month'] == month]
+        self.validate_calculations(
+            self.calculate_cost_based_practice_statistics_measure,
+            numerators,
+            denominators,
+            month
+        )
+
     def calculate_cost_based_percentage_measure(
         self, numerators, denominators, org_type, org_codes
     ):
@@ -170,6 +192,34 @@ class ImportMeasuresTests(TestCase):
             'denominator': df['thousand_patients'],
             'ratio': df['ratio'],
             'ratio_percentile': df['ratio_percentile'],
+        })
+
+    def calculate_cost_based_practice_statistics_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
+        org_column = org_type + '_id'
+        df = pd.DataFrame(index=org_codes)
+
+        df['cost'] = numerators.groupby(org_column)['actual_cost'].sum()
+        df['thousand_patients'] = (
+            denominators.groupby(org_column)['total_list_size'].sum() / 1000
+        )
+        df['ratio'] = df['cost'] / df['thousand_patients']
+        df['cost'] = df['cost'].fillna(0)
+        df['thousand_patients'] = df['thousand_patients'].fillna(0)
+        ranks = df['ratio'].rank(method='min')
+        num_non_nans = df['ratio'].count()
+        df['ratio_percentile'] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
+        ratio_10 = df['ratio'].quantile(0.1)
+        df['target_cost_10'] = ratio_10 * df['thousand_patients']
+        df['cost_saving_10'] = df['cost'] - df['target_cost_10']
+
+        return pd.DataFrame.from_dict({
+            'numerator' : df['cost'],
+            'denominator': df['thousand_patients'],
+            'ratio': df['ratio'],
+            'ratio_percentile': df['ratio_percentile'],
+            'cost_saving_10': df['cost_saving_10'],
         })
 
     def validate_calculations(self, calculator, numerators, denominators, month):
@@ -257,8 +307,8 @@ class ImportMeasuresTests(TestCase):
             )
 
     def validate_measure_value(self, mv, series):
-        self.assertEqual(mv.numerator, series['numerator'])
-        self.assertEqual(mv.denominator, series['denominator'])
+        self.assertAlmostEqual(mv.numerator, series['numerator'])
+        self.assertAlmostEqual(mv.denominator, series['denominator'])
         if mv.percentile is None:
             self.assertTrue(np.isnan(series['ratio']))
             self.assertTrue(np.isnan(series['ratio_percentile']))
@@ -386,10 +436,10 @@ def upload_prescribing():
     assert seen_practice_with_no_generic_prescribing
     assert seen_practice_with_no_branded_prescribing
 
-    # These are for the coproxamol measure
+    # These are for the coproxamol and glutenfree measures
     presentations = [
-        ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),  # relevant
-        ('0407010AAAAAAAA', 'Aspirin/Caffeine_Tab 500mg/32mg'),  # irrelevant
+        ('0407010Q0AAAAAA', 'Co-Proxamol_Tab 32.5mg/325mg'),
+        ('0904010AUBBAAAA', "Mrs Crimble's_G/F W/F Cheese Bites Orig"),
     ]
 
     for practice in Practice.objects.all():

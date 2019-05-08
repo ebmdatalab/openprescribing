@@ -480,7 +480,8 @@ class MeasureCalculation(object):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", SUM(%s) as %s" % (f, f)
-        if self.measure.is_cost_based:
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
             extra_select_sql += (
                 ", "
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
@@ -499,8 +500,12 @@ class MeasureCalculation(object):
 
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
+        if self.measure.is_percentage:
+            query_id = 'practice_percentage_measure_cost_savings'
+        else:
+            query_id = 'practice_list_size_measure_cost_savings'
         self.insert_rows_from_query(
-            'practice_cost_savings',
+            query_id,
             self.table_name('practice'),
             {}
         )
@@ -591,7 +596,8 @@ class MeasureCalculation(object):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", global_deciles.%s as %s" % (f, f)
-        if self.measure.is_cost_based:
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
             extra_select_sql += (
                 ", global_deciles.cost_per_denom AS cost_per_denom"
                 ", global_deciles.cost_per_num AS cost_per_num")
@@ -608,8 +614,12 @@ class MeasureCalculation(object):
 
     def calculate_cost_savings_for_orgs(self, org_type):
         """Appends cost savings column to the organisation ratios table"""
+        if self.measure.is_percentage:
+            query_id = '{}_percentage_measure_cost_savings'.format(org_type)
+        else:
+            query_id = '{}_list_size_measure_cost_savings'.format(org_type)
         self.insert_rows_from_query(
-            '{}_cost_savings'.format(org_type),
+            query_id,
             self.table_name(org_type),
             {}
         )
@@ -759,7 +769,8 @@ class MeasureCalculation(object):
         # trailing commas
         if val.strip()[-1] == ',':
             val = re.sub(r',\s*$', '', val) + ' '
-        if self.measure.is_cost_based:
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
             val += (", SUM(items) AS items, "
                     "SUM(actual_cost) AS cost, "
                     "SUM(quantity) AS quantity ")
