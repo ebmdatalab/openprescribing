@@ -65,16 +65,6 @@ regtm AS (
 global AS (
   SELECT
     month AS global_month,
-    cost_per_denom AS global_cost_per_denom,
-    cost_per_num AS global_cost_per_num,
-    denom_cost AS global_denom_cost,
-    denom_items AS global_denom_items,
-    denom_quantity AS global_denom_quantity,
-    denominator AS global_denominator,
-    num_cost AS global_num_cost,
-    num_items AS global_num_items,
-    num_quantity AS global_num_quantity,
-    numerator AS global_numerator,
     regtm_10th AS global_regtm_10th,
     regtm_20th AS global_regtm_20th,
     regtm_30th AS global_regtm_30th,
