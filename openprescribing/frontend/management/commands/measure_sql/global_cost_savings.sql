@@ -65,6 +65,8 @@ regtm AS (
 global AS (
   SELECT
     month AS global_month,
+    denominator AS global_denominator,
+    numerator AS global_numerator,
     regtm_10th AS global_regtm_10th,
     regtm_20th AS global_regtm_20th,
     regtm_30th AS global_regtm_30th,

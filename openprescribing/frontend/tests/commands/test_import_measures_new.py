@@ -298,6 +298,11 @@ class ImportMeasuresTests(TestCase):
             self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
 
     def validate_measure_global(self, mg, df, org_type):
+        numerator = df['numerator'].sum()
+        denominator = df['denominator'].sum()
+        self.assertAlmostEqual(mg.numerator, numerator)
+        self.assertAlmostEqual(mg.denominator, denominator)
+        self.assertAlmostEqual(mg.calc_value, 1.0 * numerator / denominator)
         self.assertAlmostEqual(
             mg.percentiles[org_type]['10'], df['ratio'].quantile(0.1)
         )
