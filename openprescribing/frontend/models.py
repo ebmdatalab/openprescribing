@@ -539,24 +539,6 @@ class Measure(models.Model):
     def __str__(self):
         return self.name
 
-    def columns_for_select(self, num_or_denom=None):
-        """Parse measures definition for SELECT columns; add
-        cost-savings-related columns when necessary.
-
-        """
-        assert num_or_denom in ['numerator', 'denominator']
-        fieldname = "%s_columns" % num_or_denom
-        val = getattr(self, fieldname)
-        # Deal with possible inconsistencies in measure definition
-        # trailing commas
-        if val.strip()[-1] == ',':
-            val = re.sub(r',\s*$', '', val) + ' '
-        if self.is_cost_based:
-            val += (", SUM(items) AS items, "
-                    "SUM(actual_cost) AS cost, "
-                    "SUM(quantity) AS quantity ")
-        return val
-
     class Meta:
         app_label = 'frontend'
 
@@ -579,15 +561,6 @@ class MeasureValue(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
-
-    # Optionally store the raw values, where appropriate.
-    # Cost and quantity are used for calculating cost savings.
-    num_items = models.IntegerField(null=True, blank=True)
-    denom_items = models.IntegerField(null=True, blank=True)
-    num_cost = models.FloatField(null=True, blank=True)
-    denom_cost = models.FloatField(null=True, blank=True)
-    num_quantity = models.FloatField(null=True, blank=True)
-    denom_quantity = models.FloatField(null=True, blank=True)
 
     percentile = models.FloatField(null=True, blank=True)
 
@@ -615,17 +588,6 @@ class MeasureGlobal(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
-
-    # Optionally store the raw values, where appropriate.
-    # Cost and quantity are used for calculating cost savings.
-    num_items = models.IntegerField(null=True, blank=True)
-    denom_items = models.IntegerField(null=True, blank=True)
-    num_cost = models.FloatField(null=True, blank=True)
-    denom_cost = models.FloatField(null=True, blank=True)
-    num_quantity = models.FloatField(null=True, blank=True)
-    denom_quantity = models.FloatField(null=True, blank=True)
-    cost_per_num = models.FloatField(null=True, blank=True)
-    cost_per_denom = models.FloatField(null=True, blank=True)
 
     # Percentile values for practices.
     percentiles = JSONField(null=True, blank=True)

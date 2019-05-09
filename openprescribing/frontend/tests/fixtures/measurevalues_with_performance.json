@@ -50,12 +50,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -71,12 +65,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -92,12 +80,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
@@ -113,12 +95,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -134,12 +110,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -155,12 +125,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
@@ -176,12 +140,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -197,12 +155,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -218,12 +170,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
@@ -239,12 +185,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -260,12 +200,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -281,12 +215,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
@@ -302,12 +230,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -323,12 +245,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -344,12 +260,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
@@ -365,12 +275,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -386,12 +290,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 95,
       "cost_savings": null
     }
@@ -407,12 +305,6 @@
       "numerator": null,
       "denominator": null,
       "calc_value": null,
-      "num_items": null,
-      "denom_items": null,
-      "num_cost": null,
-      "denom_cost": null,
-      "num_quantity": null,
-      "denom_quantity": null,
       "percentile": 5,
       "cost_savings": null
     }
