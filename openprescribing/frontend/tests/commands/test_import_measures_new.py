@@ -33,10 +33,11 @@ from gcutils.bigquery import Client
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        create_organisations()
         set_up_bq()
+        create_organisations()
+        upload_ccgs_and_practices()
         cls.prescriptions = upload_prescribing()
-        cls.practice_statistics = upload_practice_statistics()
+        cls.practice_stats = upload_practice_statistics()
 
         # import_measures uses this ImportLog to work out which months it
         # should import data.
@@ -90,7 +91,7 @@ class ImportMeasuresTests(TestCase):
         month = '2018-08-01'
         prescriptions = self.prescriptions[self.prescriptions['month'] == month]
         numerators = prescriptions[prescriptions['bnf_code'] == '0407010Q0AAAAAA']
-        denominators = self.practice_statistics[self.practice_statistics['month'] == month]
+        denominators = self.practice_stats[self.practice_stats['month'] == month]
         self.validate_calculations(
             self.calculate_practice_statistics_measure,
             numerators,
@@ -112,7 +113,7 @@ class ImportMeasuresTests(TestCase):
         month = '2018-08-01'
         prescriptions = self.prescriptions[self.prescriptions['month'] == month]
         numerators = prescriptions[prescriptions['bnf_code'] == '0904010AUBBAAAA']
-        denominators = self.practice_statistics[self.practice_statistics['month'] == month]
+        denominators = self.practice_stats[self.practice_stats['month'] == month]
         self.validate_calculations(
             self.calculate_cost_based_practice_statistics_measure,
             numerators,
@@ -163,7 +164,7 @@ class ImportMeasuresTests(TestCase):
         df['cost_saving_10'] = df['cost_total'] - df['target_cost_10']
 
         return pd.DataFrame.from_dict({
-            'numerator' : df['quantity_branded'],
+            'numerator': df['quantity_branded'],
             'denominator': df['quantity_total'],
             'ratio': df['quantity_ratio'],
             'ratio_percentile': df['quantity_ratio_percentile'],
@@ -188,7 +189,7 @@ class ImportMeasuresTests(TestCase):
         df['ratio_percentile'] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
 
         return pd.DataFrame.from_dict({
-            'numerator' : df['items'],
+            'numerator': df['items'],
             'denominator': df['thousand_patients'],
             'ratio': df['ratio'],
             'ratio_percentile': df['ratio_percentile'],
@@ -215,7 +216,7 @@ class ImportMeasuresTests(TestCase):
         df['cost_saving_10'] = df['cost'] - df['target_cost_10']
 
         return pd.DataFrame.from_dict({
-            'numerator' : df['cost'],
+            'numerator': df['cost'],
             'denominator': df['thousand_patients'],
             'ratio': df['ratio'],
             'ratio_percentile': df['ratio_percentile'],
@@ -320,8 +321,24 @@ class ImportMeasuresTests(TestCase):
             self.assertAlmostEqual(mv.cost_savings['10'], series['cost_saving_10'])
 
 
+def set_up_bq():
+    '''Set up BQ datasets and tables.'''
+
+    Client('measures').create_dataset()
+    client = Client('hscic')
+    client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
+    client.get_or_create_table('practices', schemas.PRACTICE_SCHEMA)
+    client.get_or_create_table(
+        'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
+    )
+    client.get_or_create_table(
+        'practice_statistics',
+        schemas.PRACTICE_STATISTICS_SCHEMA
+    )
+
+
 def create_organisations():
-    '''Create RegionalTeams, STPs, CCGs, Practices'''
+    '''Create RegionalTeams, STPs, CCGs, Practices in local DB.'''
 
     for regtm_ix in range(5):
         regtm = RegionalTeam.objects.create(
@@ -356,15 +373,13 @@ def create_organisations():
                     )
 
 
-def set_up_bq():
-    '''Set up BQ, and upload CCGs and practices.'''
+def upload_ccgs_and_practices():
+    '''Upload CCGs and Practices to BQ.'''
 
-    Client('measures').create_dataset()
-    client = Client('hscic')
-    table = client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
+    table = Client('hscic').get_table('ccgs')
     columns = [field.name for field in schemas.CCG_SCHEMA]
     table.insert_rows_from_pg(PCT, columns, schemas.ccgs_transform)
-    table = client.get_or_create_table('practices', schemas.PRACTICE_SCHEMA)
+    table = Client('hscic').get_table('practices')
     columns = [field.name for field in schemas.PRACTICE_SCHEMA]
     table.insert_rows_from_pg(Practice, columns)
 
@@ -474,9 +489,7 @@ def upload_prescribing():
 
     # In production, normalised_prescribing_standard is actually a view,
     # but for the tests it's much easier to set it up as a normal table.
-    table = Client('hscic').get_or_create_table(
-        'normalised_prescribing_standard', schemas.PRESCRIBING_SCHEMA
-    )
+    table = Client('hscic').get_table('normalised_prescribing_standard')
 
     with tempfile.NamedTemporaryFile() as f:
         writer = csv.writer(f)
@@ -518,7 +531,7 @@ def upload_practice_statistics():
         'practice_id',
         'total_list_size',
     ]
-    practice_statistics = pd.DataFrame(columns=columns)
+    practice_stats = pd.DataFrame(columns=columns)
 
     for practice in Practice.objects.all():
         for month in [7, 8]:
@@ -559,7 +572,7 @@ def upload_practice_statistics():
             ]
 
             practice_statistics_rows.append(row)
-            practice_statistics = practice_statistics.append(
+            practice_stats = practice_stats.append(
                 {
                     'month': timestamp[:10],
                     'practice_id': practice.code,
@@ -574,9 +587,7 @@ def upload_practice_statistics():
     assert seen_practice_with_no_statistics
 
     # Upload practice_statistics_rows to BigQuery.
-    table = Client('hscic').get_or_create_table(
-        'practice_statistics', schemas.PRACTICE_STATISTICS_SCHEMA
-    )
+    table = Client('hscic').get_table('practice_statistics')
 
     with tempfile.NamedTemporaryFile() as f:
         writer = csv.writer(f)
@@ -585,4 +596,4 @@ def upload_practice_statistics():
         f.seek(0)
         table.insert_rows_from_csv(f.name)
 
-    return practice_statistics
+    return practice_stats

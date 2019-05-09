@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 CENTILES = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 
-MEASURE_FILEDNAMES = [
+MEASURE_FIELDNAMES = [
     'measure_id',
     'regional_team_id',
     'stp_id',
@@ -520,22 +520,22 @@ class MeasureCalculation(object):
 
         """
         f = tempfile.TemporaryFile(mode='r+')
-        writer = csv.DictWriter(f, fieldnames=MEASURE_FILEDNAMES)
+        writer = csv.DictWriter(f, fieldnames=MEASURE_FIELDNAMES)
         # Write the data we want to load into a file
         for datum in self.get_rows_as_dicts(self.table_name('practice')):
             datum['measure_id'] = self.measure.id
             if self.measure.is_cost_based:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
             datum['percentile'] = normalisePercentile(datum['percentile'])
-            datum = {fn: datum[fn] for fn in MEASURE_FILEDNAMES if fn in datum}
+            datum = {fn: datum[fn] for fn in MEASURE_FIELDNAMES if fn in datum}
             writer.writerow(datum)
         # load data
         copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
-        self.log(copy_str % ", ".join(MEASURE_FILEDNAMES))
+        self.log(copy_str % ", ".join(MEASURE_FIELDNAMES))
         f.seek(0)
         with connection.cursor() as cursor:
-            cursor.copy_expert(copy_str % ", ".join(MEASURE_FILEDNAMES), f)
+            cursor.copy_expert(copy_str % ", ".join(MEASURE_FIELDNAMES), f)
         f.close()
 
     def calculate_orgs(self, org_type, bigquery_only=False):
@@ -632,7 +632,7 @@ class MeasureCalculation(object):
             if self.measure.is_cost_based:
                 datum['cost_savings'] = convertSavingsToDict(datum)
             datum['percentile'] = normalisePercentile(datum['percentile'])
-            datum = {fn: datum[fn] for fn in MEASURE_FILEDNAMES if fn in datum}
+            datum = {fn: datum[fn] for fn in MEASURE_FIELDNAMES if fn in datum}
             MeasureValue.objects.create(**datum)
 
     def calculate_global(self, bigquery_only=False):
