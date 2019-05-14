@@ -156,6 +156,9 @@ var utils = {
         var saving = (num.cost_savings) ? num.cost_savings['10'] : null;
         return memo + saving;
       }, null);
+      d.recentNumeratorTotal = _.reduce(latestData, function(memo, num) {
+        return memo + num.numerator;
+      }, null);
       // normalise to camelcase convention
       if (!('isPercentage' in d)) {
         d.isPercentage = d.is_percentage;
@@ -382,7 +385,16 @@ var utils = {
           noun2 = 'the NHS';
           noun3 = 'they';
         }
-        if (d.costSaving50th < 0) {
+        if (d.costSaving50th == 0) {
+          if (d.recentNumeratorTotal == 0) {
+            chartExplanation += 'Over the last six months this practice spent £0, ' +
+              'which is in line with the median practice. No further improvement ' +
+              'is possible! ';
+          } else {
+            chartExplanation += 'Over the last six months this practice spent in ' +
+              'line with the median practice. ';
+          }
+        } else if (d.costSaving50th < 0) {
           chartExplanation += 'By prescribing better than the median, ' +
             'this ' + options.orgTypeHuman + ' has saved the NHS £' +
             humanize.numberFormat((d.costSaving50th * -1), 0) +
