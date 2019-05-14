@@ -14,6 +14,15 @@ from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
 from dmd.models import DMDProduct
+from dmd2.models import (
+    VMP,
+    AMP,
+    VMPP,
+    AMPP,
+    DtPaymentCategory,
+    AvailabilityRestriction,
+    VirtualProductPresStatus,
+)
 from frontend.managers import MeasureValueQuerySet
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
@@ -447,6 +456,53 @@ class Presentation(models.Model):
                 version = next_version
                 next_version = version.replaced_by
         return version
+
+    def tariff_categories(self):
+        '''Return all tariff categories for this presentation.'''
+        vmpps = VMPP.objects.filter(bnf_code=self.bnf_code)
+        return DtPaymentCategory.objects.filter(dtinfo__vmpp__in=vmpps).distinct()
+
+    def tariff_categories_descr(self):
+        '''Return a description of the presentation's tariff category/ies.'''
+        return ', '.join(tc.descr for tc in self.tariff_categories())
+
+    def availability_restrictions(self):
+        '''Return all availability restrictions for this presentation.'''
+        amps = AMP.objects.filter(bnf_code=self.bnf_code)
+        return AvailabilityRestriction.objects.filter(amp__in=amps).distinct()
+
+    def availability_restrictions_descr(self):
+        '''Return a description of the presentation's availabilty restriction/s.
+
+        If any AMPs have "None" as their availability restriction, we
+        consider that the presentation itself has no availability restriction.
+        '''
+        descrs = [ar.descr for ar in self.availability_restrictions()]
+        if 'None' in descrs:
+            return 'None'
+        else:
+            return ', '.join(descrs)
+
+    def prescribability_statuses(self):
+        '''Return all prescribability statuses for this presentation.
+        '''
+        vmps = VMP.objects.filter(bnf_code=self.bnf_code)
+        return VirtualProductPresStatus.objects.filter(vmp__in=vmps).distinct()
+
+    def prescribability_statuses_descr(self):
+        '''Return a description of the presentation's prescribability status/es.'''
+        return ', '.join(ps.descr for ps in self.prescribability_statuses())
+
+    def dmd_info(self):
+        '''Return dictionary of information about this presentation extracted
+        from the dm+d data.'''
+
+        info = {
+            'tariff_categories': self.tariff_categories_descr(),
+            'availability_restrictions': self.availability_restrictions_descr(),
+            'prescribability_statuses': self.prescribability_statuses_descr(),
+        }
+        return {k: v for k, v in info.items() if v}
 
     @property
     def dmd_product(self):
