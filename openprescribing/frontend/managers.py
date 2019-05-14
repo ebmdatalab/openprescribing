@@ -153,7 +153,7 @@ class MeasureValueQuerySet(models.QuerySet):
         it means "1000 patients".
 
         Returns a dictionary whose keys are those supplied in `target_costs`
-        and whose values are the saving that would be acheived if that target
+        and whose values are the saving that would be achieved if that target
         cost were met across all MeasureValues included in the current query.
         """
         savings = {
