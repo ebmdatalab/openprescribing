@@ -242,8 +242,7 @@ class Client(object):
         if table_id is None:
             table_id = model._meta.db_table
             if self.dataset_key == 'dmd':
-                assert table_id.startswith('dmd_')
-                table_id = table_id[4:]
+                table_id = table_id.split('_', 1)[1]
         schema = build_schema_from_model(model)
         table = self.get_or_create_table(table_id, schema)
         columns = [
