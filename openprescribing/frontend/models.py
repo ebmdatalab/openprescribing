@@ -987,3 +987,37 @@ class PPUSaving(models.Model):
     pct = models.ForeignKey(PCT, null=True, blank=True, db_index=True)
     practice = models.ForeignKey(
         Practice, null=True, blank=True, db_index=True)
+
+
+class TariffPrice(models.Model):
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey('dmd2.VMPP')
+    # 1: Category A
+    # 3: Category C
+    # 11: Category M
+    tariff_category = models.ForeignKey('dmd2.DtPaymentCategory')
+    price_pence = models.IntegerField()
+
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
+
+class NCSOConcession(models.Model):
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey('dmd2.VMPP', null=True)
+    drug = models.CharField(max_length=400)
+    pack_size = models.CharField(max_length=40)
+    price_pence = models.IntegerField()
+
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
+    class Manager(models.Manager):
+        def unreconciled(self):
+            return self.filter(vmpp__isnull=True)
+
+    objects = Manager()
+
+    @property
+    def drug_and_pack_size(self):
+        return u'{} {}'.format(self.drug, self.pack_size)
