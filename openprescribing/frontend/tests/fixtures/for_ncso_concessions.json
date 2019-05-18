@@ -1,0 +1,321 @@
+[
+{
+  "model": "dmd2.vmpp",
+  "pk": 1191111000001100,
+  "fields": {
+    "invalid": false,
+    "nm": "Amiloride 5mg tablets 28 tablet",
+    "vmp": 318052005,
+    "qtyval": "28.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0202030C0AAACAC"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 975211000001100,
+  "fields": {
+    "invalid": false,
+    "nm": "Anastrozole 1mg tablets 28 tablet",
+    "vmp": 327373002,
+    "qtyval": "28.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0803041B0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 940711000001101,
+  "fields": {
+    "invalid": false,
+    "nm": "Carbamazepine 200mg tablets 84 tablet",
+    "vmp": 322864007,
+    "qtyval": "84.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0408010C0AAACAC"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 8049011000001108,
+  "fields": {
+    "invalid": false,
+    "nm": "Duloxetine 40mg gastro-resistant capsules 56 capsule",
+    "vmp": 8013211000001106,
+    "qtyval": "56.00",
+    "qty_uom": 428641000,
+    "combpack": null,
+    "bnf_code": "0704020AAAAABAB"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 9039011000001105,
+  "fields": {
+    "invalid": false,
+    "nm": "Duloxetine 60mg gastro-resistant capsules 28 capsule",
+    "vmp": 416946001,
+    "qtyval": "28.00",
+    "qty_uom": 428641000,
+    "combpack": null,
+    "bnf_code": "0403040Y0AAABAB"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 9039111000001106,
+  "fields": {
+    "invalid": false,
+    "nm": "Duloxetine 60mg gastro-resistant capsules 84 capsule",
+    "vmp": 416946001,
+    "qtyval": "84.00",
+    "qty_uom": 428641000,
+    "combpack": null,
+    "bnf_code": "0403040Y0AAABAB"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 318052005,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 87395005,
+    "invalid": false,
+    "nm": "Amiloride 5mg tablets",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428673006,
+    "unit_dose_uom": 428673006,
+    "bnf_code": "0202030C0AAACAC"
+  }
+},
+{
+  "model": "dmd2.unitofmeasure",
+  "pk": 428673006,
+  "fields": {
+    "cddt": "2008-11-01",
+    "cdprev": 3319411000001109,
+    "descr": "tablet"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 327373002,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 108774000,
+    "invalid": false,
+    "nm": "Anastrozole 1mg tablets",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428673006,
+    "unit_dose_uom": 428673006,
+    "bnf_code": "0803041B0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 322864007,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 40820003,
+    "invalid": false,
+    "nm": "Carbamazepine 200mg tablets",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 6,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428673006,
+    "unit_dose_uom": 428673006,
+    "bnf_code": "0408010C0AAACAC"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 8013211000001106,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 407033009,
+    "invalid": false,
+    "nm": "Duloxetine 40mg gastro-resistant capsules",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428641000,
+    "unit_dose_uom": 428641000,
+    "bnf_code": "0704020AAAAABAB"
+  }
+},
+{
+  "model": "dmd2.unitofmeasure",
+  "pk": 428641000,
+  "fields": {
+    "cddt": "2008-11-01",
+    "cdprev": 3316911000001105,
+    "descr": "capsule"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 416946001,
+  "fields": {
+    "vpiddt": "2007-10-23",
+    "vpidprev": 9043011000001108,
+    "vtm": 407033009,
+    "invalid": false,
+    "nm": "Duloxetine 60mg gastro-resistant capsules",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428641000,
+    "unit_dose_uom": 428641000,
+    "bnf_code": "0403040Y0AAABAB"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 87395005,
+  "fields": {
+    "invalid": false,
+    "nm": "Amiloride",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.basisofname",
+  "pk": 1,
+  "fields": {
+    "descr": "rINN - Recommended International Non-proprietary"
+  }
+},
+{
+  "model": "dmd2.virtualproductpresstatus",
+  "pk": 1,
+  "fields": {
+    "descr": "Valid as a prescribable product"
+  }
+},
+{
+  "model": "dmd2.dfindicator",
+  "pk": 1,
+  "fields": {
+    "descr": "Discrete"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 108774000,
+  "fields": {
+    "invalid": false,
+    "nm": "Anastrozole",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 40820003,
+  "fields": {
+    "invalid": false,
+    "nm": "Carbamazepine",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.virtualproductpresstatus",
+  "pk": 6,
+  "fields": {
+    "descr": "VMP not recommended to prescribe - brands not bioequivalent"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 407033009,
+  "fields": {
+    "invalid": false,
+    "nm": "Duloxetine",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+}
+]
+
