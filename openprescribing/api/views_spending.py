@@ -420,6 +420,11 @@ def total_spending(request, format=None):
 
 
 def _get_total_prescribing_entries(bnf_code_prefixes):
+    """
+    Yields a dict for each date in our data giving the total prescribing values
+    across all practices for all presentations matching the supplied BNF code
+    prefixes
+    """
     db = get_db()
     items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
         db, bnf_code_prefixes
@@ -440,6 +445,8 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
     # return a value for each date even if it's zero as this is what the
     # original API did)
     for date, col_offset in sorted(db.date_offsets.items()):
+        # The grouped matrices only ever have one row (which represents the
+        # total over all practices) so we always want row 0 in our index
         index = (0, col_offset)
         yield {
             'items': items_matrix[index],
@@ -528,6 +535,13 @@ def spending_by_practice(request, format=None):
 
 
 def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
+    """
+    For each date and organisation, yield a dict giving totals for all
+    prescribing matching the supplied BNF code prefixes.
+
+    If a date is supplied then data for just that date is returned, otherwise
+    all available dates are returned.
+    """
     db = get_db()
     items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
         db, bnf_code_prefixes
@@ -581,6 +595,12 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
 
 
 def _get_prescribing_for_codes(db, bnf_code_prefixes):
+    """
+    Return items, quantity and actual_cost matrices giving the totals for all
+    prescribing which matches any of the supplied BNF code prefixes. If no
+    prefixes are supplied then the totals will be over all prescribing for all
+    presentations.
+    """
     if bnf_code_prefixes:
         where_clause = ' OR '.join(['bnf_code LIKE ?'] * len(bnf_code_prefixes))
         params = [code + '%' for code in bnf_code_prefixes]
