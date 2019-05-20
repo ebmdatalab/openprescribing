@@ -72,5 +72,15 @@
       "is_generic": true,
       "is_current": false
     }
+  },
+  {
+    "model": "frontend.presentation",
+    "pk": "0206020T0AAAGAG",
+    "fields": {
+      "bnf_code": "0206020T0AAAGAG",
+      "name": "Verapamil HCl_Tab 160mg",
+      "is_generic": true,
+      "is_current": true
+    }
   }
 ]

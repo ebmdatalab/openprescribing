@@ -801,7 +801,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
+    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmd-subset-1', 'ncso-concessions']
 
     def _get(self, **data):
         data['format'] = 'json'
@@ -810,23 +810,12 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         return json.loads(rsp.content)
 
     def _expected_results(self, ids):
-        # This is something of a hack; because of the SELECT DISTINCT, we
-        # expect some queries to return one of two rows, but we don't know
-        # which will be returned, and nor do we care.
-        class Verapamil:
-            def __eq__(self, other):
-                return other in [
-                    "Verapamil 160mg tablets",
-                    "Verapamil 160mg tablets (dupe)",
-                ]
-
         expected = [{
             "id": 1,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": Verapamil(),
+            "name": 'Chlortalidone_Tab 50mg',
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
@@ -840,9 +829,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 2,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": Verapamil(),
+            "name": 'Chlortalidone_Tab 50mg',
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
@@ -855,10 +843,9 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "id": 3,
             "lowest_decile": 0.1,
-            "presentation": "0906050P0AAAFAF",
-            "name": "Vitamin E 400unit capsules",
+            "presentation": "0206020T0AAAGAG",
+            "name": "Verapamil HCl_Tab 160mg",
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
@@ -871,10 +858,9 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "id": 4,
             "lowest_decile": 0.1,
-            "presentation": "0906050P0AAAFAF",
-            "name": "Vitamin E 400unit capsules",
+            "presentation": "0206020T0AAAGAG",
+            "name": "Verapamil HCl_Tab 160mg",
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
@@ -888,9 +874,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 5,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": Verapamil(),
+            "name": 'Chlortalidone_Tab 50mg',
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": "N84014",
             "formulation_swap": None,
             "pct": "03Q",
@@ -904,9 +889,8 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 6,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": Verapamil(),
+            "name": 'Chlortalidone_Tab 50mg',
             "price_per_unit": 0.2,
-            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03Q",

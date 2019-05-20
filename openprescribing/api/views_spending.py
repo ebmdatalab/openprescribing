@@ -398,8 +398,6 @@ def _aggregate_ppu_sql(original_sql, entity_type):
           MAX(lowest_decile) AS lowest_decile,
           MODE() WITHIN GROUP (ORDER BY formulation_swap)
             AS formulation_swap,
-          MODE() WITHIN GROUP (ORDER BY flag_bioequivalence)
-            AS flag_bioequivalence,
           MODE() WITHIN GROUP (ORDER BY price_concession)
             AS price_concession,
           MODE() WITHIN GROUP (ORDER BY name) AS name

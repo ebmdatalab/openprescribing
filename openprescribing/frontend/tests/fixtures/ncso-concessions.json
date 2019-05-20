@@ -1,0 +1,14 @@
+[
+{
+  "model": "frontend.ncsoconcession",
+  "pk": 1,
+  "fields": {
+    "vmpp": 1079211000001106,
+    "date": "2014-11-01",
+    "drug": "Chlortalidone 50mg tablets",
+    "pack_size": "28",
+    "price_pence": 650
+  }
+}
+]
+
