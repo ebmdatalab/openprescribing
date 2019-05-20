@@ -135,13 +135,13 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
 
       <div class="starter-template">
 
-      <!-- {% if import_in_progess %} -->
-      <!--   <div class="alert alert-warning"> -->
-      <!--     We are currently importing the latest prescribing data.  You may see -->
-      <!--     incomplete data across the site.  Please check back in a couple of -->
-      <!--     hours! -->
-      <!--   </div> -->
-      <!-- {% endif %} -->
+      {% if import_in_progess %}
+        <div class="alert alert-warning">
+          We are currently importing the latest prescribing data.  You may see
+          incomplete data across the site.  Please check back in a couple of
+          hours!
+        </div>
+      {% endif %}
 
       {% if messages %}
 
