@@ -38,6 +38,16 @@ class Grouper(object):
             numpy.array(groups[group_id])
             for group_id in self.ids
         ]
+        # Where each group contains only one row (which is the case whenever
+        # we're working with practice level data) there's a much faster path we
+        # can take where we just pull out the relevant rows using a single
+        # selector
+        if all(len(group) == 1 for group in self._group_selectors):
+            self._single_row_groups_selector = numpy.array(
+                [rows[0] for rows in self._group_selectors]
+            )
+        else:
+            self._single_row_groups_selector = None
 
     def __call__(self, matrix):
         """
@@ -47,6 +57,9 @@ class Grouper(object):
 
             (number_of_groups X columns_in_original_matrix)
         """
+        # Fast path for the "each group contains only one row" case
+        if self._single_row_groups_selector is not None:
+            return matrix[self._single_row_groups_selector]
         rows = len(self._group_selectors)
         columns = matrix.shape[1]
         grouped = numpy.empty((rows, columns), dtype=matrix.dtype)

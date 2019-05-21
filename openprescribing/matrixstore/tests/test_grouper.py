@@ -30,10 +30,11 @@ class TestGrouper(SimpleTestCase):
             # with self.subTest(matrix=matrix_name, group=group_name):
             grouper = Grouper(group)
             grouped_matrix = grouper(matrix)
+            grouped_matrix = to_list_of_lists(grouped_matrix)
             # Transform the grouped matrix into a dict mapping group IDs to
             # lists of column values
             values = {
-                group_id: grouped_matrix[offset].tolist()
+                group_id: grouped_matrix[offset]
                 for (group_id, offset) in grouper.offsets.items()
             }
             # Calculate the same dict the boring way using pure Python
@@ -99,7 +100,25 @@ class TestGrouper(SimpleTestCase):
                 [(row, 'small') for row in range(self.rows // 2)]
                 + [(row, 'odd' if row % 2 else 'even') for row in range(self.rows)]
             ),
+            (
+                'each_row_in_exactly_one_group',
+                [(row, 'row_%s' % row) for row in range(self.rows)]
+            ),
+            (
+                'some_rows_in_exactly_one_group',
+                [(row, 'row_%s' % row) for row in range(self.rows) if row % 2]
+            ),
         ]
+
+
+def to_list_of_lists(matrix):
+    """
+    Convert a 2D matrix into a list of lists
+    """
+    return [
+        [matrix[i, j] for j in range(matrix.shape[1])]
+        for i in range(matrix.shape[0])
+    ]
 
 
 def round_floats(value):

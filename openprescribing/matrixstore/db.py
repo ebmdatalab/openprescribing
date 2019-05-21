@@ -39,12 +39,15 @@ def group_by(org_type):
     in the database then the application will need to be restarted to see the
     changes.
     """
-    # For practice level data we return a grouper that does nothing, but
-    # otherwise acts like a normal grouper so we don't need to treat ungrouped
-    # data differently
-    if org_type == 'practice':
-        return NoOpGrouper(get_db().practice_offsets)
     # Get the mapping from practice codes to IDs of groups
+    if org_type == 'practice':
+        # For practice level data we just map each practice code to itself. The
+        # means that we're not really doing any "grouping" in a meaningful
+        # sense, but it simplifies the code by keeping things consistent
+        mapping = {
+            practice_code: practice_code
+            for practice_code in get_db().practice_offsets.keys()
+        }
     elif org_type == 'ccg':
         mapping = _practice_to_ccg_map()
     elif org_type == 'stp':
@@ -60,24 +63,6 @@ def group_by(org_type):
         for practice_code, offset in get_db().practice_offsets.items()
         if practice_code in mapping
     )
-
-
-class NoOpGrouper(object):
-    """
-    Grouper that leaves data at practice level (i.e. does no grouping at all)
-    but which has the same interface as a normal grouper and so can help avoid
-    branching in parts of the codebase where we may or may not need to group
-    """
-
-    def __init__(self, practice_offsets):
-        self.offsets = practice_offsets
-        self.ids = sorted(
-            practice_offsets.keys(),
-            key=practice_offsets.__getitem__
-        )
-
-    def __call__(self, matrix):
-        return matrix
 
 
 def _practice_to_ccg_map():
