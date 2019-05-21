@@ -12,7 +12,6 @@ from django.core.urlresolvers import reverse
 from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
-from dmd.models import DMDProduct
 from dmd2.models import (
     VMP,
     AMP,
@@ -488,19 +487,6 @@ class Presentation(models.Model):
             'prescribability_statuses': self.prescribability_statuses_descr(),
         }
         return {k: v for k, v in info.items() if v}
-
-    @property
-    def dmd_product(self):
-        if self.is_generic:
-            concept_class = 1
-        else:
-            concept_class = 2
-        # Sometimes we get more than one DMD+D VMP for a single BNF
-        # code. This is usually where something is available in a
-        # suspension or a solution, or similar clinical equivalencies,
-        # so we just pick the first one.
-        return DMDProduct.objects.filter(
-            bnf_code=self.bnf_code, concept_class=concept_class).first()
 
     @property
     def product_name(self):

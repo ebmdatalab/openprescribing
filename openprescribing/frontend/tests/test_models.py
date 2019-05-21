@@ -182,7 +182,7 @@ class PCTTestCase(TestCase):
 
 
 class PresentationTestCase(TestCase):
-    fixtures = ['presentations', 'dmdproducts']
+    fixtures = ['presentations']
 
     def test_manager(self):
         current = Presentation.objects.current()
@@ -191,14 +191,6 @@ class PresentationTestCase(TestCase):
         to_make_not_current.replaced_by = current[1]
         to_make_not_current.save()
         self.assertEqual(len(Presentation.objects.current()), old_count - 1)
-
-    def test_dmd_product_which_exists(self):
-        p = Presentation.objects.get(pk='0202010F0AAAAAA')
-        self.assertEqual(p.dmd_product.vpid, 318248001)
-
-    def test_dmd_product_which_does_not_exist(self):
-        p = Presentation.objects.get(pk='0202010B0AAACAC')
-        self.assertEqual(p.dmd_product, None)
 
     def test_product_name_with_dmd_product(self):
         p = Presentation.objects.get(pk='0202010F0AAAAAA')
