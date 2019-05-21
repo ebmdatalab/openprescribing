@@ -504,14 +504,7 @@ class Presentation(models.Model):
 
     @property
     def product_name(self):
-        if self.dmd_product:
-            name = self.dmd_product.name
-        else:
-            try:
-                name = Presentation.objects.get(bnf_code=self.bnf_code).name
-            except Presentation.DoesNotExist:
-                name = "n/a"
-        return name
+        return self.dmd_name or self.name
 
     class Meta:
         app_label = 'frontend'
