@@ -9,11 +9,13 @@ from dateutil.parser import parse as parse_date
 
 from frontend.models import (
     ImportLog, Practice, PCT, Prescription, Presentation,
-    NCSOConcessionBookmark, OrgBookmark, Measure
+    NCSOConcessionBookmark, OrgBookmark, Measure,
+    NCSOConcession as NCSOConcession2, TariffPrice as TariffPrice2
 )
 from dmd.models import (
     DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
 )
+from dmd2 import models as dmd2_models
 
 
 class DataFactory(object):
@@ -54,10 +56,17 @@ class DataFactory(object):
 
     def create_presentations(self, num_presentations, vmpp_per_presentation=1):
         presentations = []
+        vmp_basis, _ = dmd2_models.BasisOfName.objects.get_or_create(
+            cd=1, descr='rINN - Recommended International Non-proprietary'
+        )
+        vmp_pres_stat, _ = dmd2_models.VirtualProductPresStatus.objects.get_or_create(
+            cd=1, descr='Valid as a prescribable product'
+        )
         for i in range(num_presentations):
             presentation = Presentation.objects.create(
                 bnf_code='0123456789ABCD{}'.format(i),
                 name='Foo Tablet {}'.format(i),
+                dmd_name='VMP Foo Tablet {}'.format(i),
                 quantity_means_pack=self.random.choice([True, False, None])
             )
             product = DMDProduct.objects.create(
@@ -65,6 +74,18 @@ class DataFactory(object):
                 dmdid=i,
                 vpid=i,
                 name='DMD ' + presentation.name
+            )
+            vmp = dmd2_models.VMP.objects.create(
+                id=i,
+                invalid=False,
+                nm='VMP ' + presentation.name,
+                basis=vmp_basis,
+                pres_stat=vmp_pres_stat,
+                sug_f=False,
+                glu_f=False,
+                pres_f=False,
+                cfc_f=False,
+                bnf_code=presentation.bnf_code,
             )
             qtyval = self.random.randint(5, 25)
             for vppid in range(0, vmpp_per_presentation):
@@ -75,12 +96,23 @@ class DataFactory(object):
                     nm='VMPP %s (%s)' % (presentation.name, vppid),
                     qtyval=qtyval
                 )
+                dmd2_models.VMPP.objects.create(
+                    id=vppid,
+                    vmp=vmp,
+                    invalid=False,
+                    nm='VMPP %s (%s)' % (presentation.name, vppid),
+                    qtyval=qtyval,
+                    bnf_code=presentation.bnf_code,
+                )
             presentations.append(presentation)
         return presentations
 
     def create_tariff_and_ncso_costings_for_presentations(
             self, presentations, months=None):
         tariff_category, _ = TariffCategory.objects.get_or_create(cd=1, desc='')
+        tariff_category_2, _ = dmd2_models.DtPaymentCategory.objects.get_or_create(
+            cd=1, descr='TariffCategoryrt VIIIA Category A'
+        )
         for presentation in presentations:
             product = DMDProduct.objects.get(bnf_code=presentation.bnf_code)
             for date in months:
@@ -101,6 +133,23 @@ class DataFactory(object):
                             pack_size='',
                             price_concession_pence=(
                                 tariff_price.price_pence + self.random.randint(10, 100)
+                            )
+                )
+                for vmpp in dmd2_models.VMPP.objects.filter(bnf_code=presentation.bnf_code):
+                    tariff_price_2 = TariffPrice2.objects.create(
+                        date=date,
+                        vmpp=vmpp,
+                        tariff_category=tariff_category_2,
+                        price_pence=price_pence
+                    )
+                    if self.random.choice([True, False]):
+                        NCSOConcession2.objects.create(
+                            vmpp=vmpp,
+                            date=date,
+                            drug='',
+                            pack_size='',
+                            price_pence=(
+                                tariff_price_2.price_pence + self.random.randint(10, 100)
                             )
                         )
 
