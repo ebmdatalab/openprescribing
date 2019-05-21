@@ -10,8 +10,8 @@ class RowGrouper(object):
     organisations that consist of groups of practices like CCGs or STPs.
     """
 
-    # Maps group IDs (which are usually strings but can be any hashable type)
-    # to their row offset within the grouped matrix
+    # Maps group IDs (which are usually strings but can be any hashable and
+    # sortable type) to their row offset within the grouped matrix
     offsets = None
     # Maps row offsets in the grouped matrix to the group ID of that row
     ids = None
@@ -27,8 +27,8 @@ class RowGrouper(object):
         groups = defaultdict(list)
         for row_offset, group_id in group_assignments:
             groups[group_id].append(row_offset)
-        # Maps group offset to ID
-        self.ids = list(groups.keys())
+        # Maps group offset to ID (sorted for consistency)
+        self.ids = sorted(groups.keys())
         # Maps group ID to offset
         self.offsets = {
             group_id: group_offset

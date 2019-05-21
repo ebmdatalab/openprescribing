@@ -20,40 +20,43 @@ class TestGrouper(SimpleTestCase):
         self.columns = 16
         self.shape = (self.rows, self.columns)
 
-    def test_all_groups(self):
+    def test_all_group_and_matrix_type_combinations(self):
         """
         Tests every combination of group and matrix
         """
-        test_cases = product(self.get_groups(), self.get_matrices())
+        test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
             # Use `subTest` when we upgrade to Python 3
             # with self.subTest(matrix=matrix_name, group=group_name):
             row_grouper = RowGrouper(group_definition)
             grouped_matrix = row_grouper.sum(matrix)
-            grouped_matrix = to_list_of_lists(grouped_matrix)
-            # Transform the grouped matrix into a dict mapping group IDs to
-            # lists of column values
-            values = {
-                group_id: grouped_matrix[offset]
-                for (group_id, offset) in row_grouper.offsets.items()
-            }
+            values = to_list_of_lists(grouped_matrix)
             # Calculate the same dict the boring way using pure Python
-            expected_values = self.get_expected_values(group_definition, matrix)
+            expected_values = self.sum_rows_by_group(group_definition, matrix)
             # We need to round floats to account for differences between
             # numpy and Python float rounding
             self.assertEqual(
                 round_floats(values), round_floats(expected_values)
             )
 
-    def get_expected_values(self, group, matrix):
-        expected_values = {}
-        for row, group_id in group:
-            if group_id not in expected_values:
-                expected_values[group_id] = [0.0] * self.columns
-            for col in range(self.columns):
-                value = matrix[row, col]
-                expected_values[group_id][col] += value
-        return expected_values
+    def sum_rows_by_group(self, group_definition, matrix):
+        """
+        Given a group definition and a matrix, calculate the column-wise totals
+        for each group (just like `row_grouper.sum` would do)
+        """
+        group_totals = {}
+        for row_offset, group_id in group_definition:
+            # Initialise a new zero-valued row for this group, if we don't have
+            # one already
+            if group_id not in group_totals:
+                group_totals[group_id] = [0.0] * self.columns
+            for column_offset in range(self.columns):
+                value = matrix[row_offset, column_offset]
+                group_totals[group_id][column_offset] += value
+        # Return the group totals as a list of lists, sorted by group_id
+        return [
+            row for (group_id, row) in sorted(group_totals.items())
+        ]
 
     def get_matrices(self):
         for sparse, integer in product([True, False], repeat=2):
@@ -81,7 +84,7 @@ class TestGrouper(SimpleTestCase):
             j = n % cols
             yield i, j
 
-    def get_groups(self):
+    def get_group_definitions(self):
         return [
             (
                 'basic_partition',
@@ -122,6 +125,10 @@ def to_list_of_lists(matrix):
 
 
 def round_floats(value):
+    """
+    Round all floating point values found anywhere within the supplied data
+    structure, recursing our way through any nested lists, tuples or dicts
+    """
     if isinstance(value, float):
         return round(value, 9)
     elif isinstance(value, list):
