@@ -5,7 +5,7 @@ from django.db.models import Q
 
 from frontend.models import Practice, PCT
 import view_utils as utils
-from matrixstore.db import get_db, group_by
+from matrixstore.db import get_db, get_row_grouper
 
 
 STATS_COLUMN_WHITELIST = (
@@ -64,19 +64,19 @@ def _get_orgs(org_type, org_codes):
 def _get_practice_stats_entries(keys, org_type, orgs):
     db = get_db()
     practice_stats = db.query(*_get_query_and_params(keys))
-    grouper = group_by(org_type)
+    group_by_org = get_row_grouper(org_type)
     practice_stats = [
-        (name, grouper(matrix))
+        (name, group_by_org.sum(matrix))
         for (name, matrix) in practice_stats
     ]
-    # `grouper.offsets` maps each organisation's primary key to its row offset
-    # within the matrices. We pair each organisation with its row offset,
-    # ignoring those organisations which aren't in the mapping (which implies
-    # that we have no statistics for them)
+    # `group_by_org.offsets` maps each organisation's primary key to its row
+    # offset within the matrices. We pair each organisation with its row
+    # offset, ignoring those organisations which aren't in the mapping (which
+    # implies that we have no statistics for them)
     org_offsets = [
-        (org, grouper.offsets[org.pk])
+        (org, group_by_org.offsets[org.pk])
         for org in orgs
-        if org.pk in grouper.offsets
+        if org.pk in group_by_org.offsets
     ]
     # For the "all_practices" grouping we have no orgs and just a single row
     if org_type == 'all_practices':

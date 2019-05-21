@@ -3,8 +3,8 @@ import random
 
 from django.test import SimpleTestCase
 
-from matrixstore.grouper import Grouper
 from matrixstore.matrix_ops import finalise_matrix, sparse_matrix
+from matrixstore.row_grouper import RowGrouper
 
 
 class TestGrouper(SimpleTestCase):
@@ -25,20 +25,20 @@ class TestGrouper(SimpleTestCase):
         Tests every combination of group and matrix
         """
         test_cases = product(self.get_groups(), self.get_matrices())
-        for (group_name, group), (matrix_name, matrix) in test_cases:
+        for (group_name, group_definition), (matrix_name, matrix) in test_cases:
             # Use `subTest` when we upgrade to Python 3
             # with self.subTest(matrix=matrix_name, group=group_name):
-            grouper = Grouper(group)
-            grouped_matrix = grouper(matrix)
+            row_grouper = RowGrouper(group_definition)
+            grouped_matrix = row_grouper.sum(matrix)
             grouped_matrix = to_list_of_lists(grouped_matrix)
             # Transform the grouped matrix into a dict mapping group IDs to
             # lists of column values
             values = {
                 group_id: grouped_matrix[offset]
-                for (group_id, offset) in grouper.offsets.items()
+                for (group_id, offset) in row_grouper.offsets.items()
             }
             # Calculate the same dict the boring way using pure Python
-            expected_values = self.get_expected_values(group, matrix)
+            expected_values = self.get_expected_values(group_definition, matrix)
             # We need to round floats to account for differences between
             # numpy and Python float rounding
             self.assertEqual(

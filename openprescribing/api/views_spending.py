@@ -16,7 +16,7 @@ from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
-from matrixstore.db import get_db, group_by
+from matrixstore.db import get_db, get_row_grouper
 
 import view_utils as utils
 
@@ -437,10 +437,10 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
     # not seem like what we want but is what the original API did (it was
     # powered by the `vw__presentation_summary` table which summed over all
     # practice types)
-    grouper = group_by('all_practices')
-    items_matrix = grouper(items_matrix)
-    quantity_matrix = grouper(quantity_matrix)
-    actual_cost_matrix = grouper(actual_cost_matrix)
+    group_all = get_row_grouper('all_practices')
+    items_matrix = group_all.sum(items_matrix)
+    quantity_matrix = group_all.sum(quantity_matrix)
+    actual_cost_matrix = group_all.sum(actual_cost_matrix)
     # Yield entries for each date (unlike _get_prescribing_entries below we
     # return a value for each date even if it's zero as this is what the
     # original API did)
@@ -551,18 +551,18 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
     if items_matrix is None:
         return
     # Group together practice level data to the appropriate organisation level
-    grouper = group_by(org_type)
-    items_matrix = grouper(items_matrix)
-    quantity_matrix = grouper(quantity_matrix)
-    actual_cost_matrix = grouper(actual_cost_matrix)
-    # `grouper.offsets` maps each organisation's primary key to its row offset
-    # within the matrices. We pair each organisation with its row offset,
-    # ignoring those organisations which aren't in the mapping (which implies
-    # that they did not prescribe in this period)
+    group_by_org = get_row_grouper(org_type)
+    items_matrix = group_by_org.sum(items_matrix)
+    quantity_matrix = group_by_org.sum(quantity_matrix)
+    actual_cost_matrix = group_by_org.sum(actual_cost_matrix)
+    # `group_by_org.offsets` maps each organisation's primary key to its row
+    # offset within the matrices. We pair each organisation with its row
+    # offset, ignoring those organisations which aren't in the mapping (which
+    # implies that they did not prescribe in this period)
     org_offsets = [
-        (org, grouper.offsets[org.pk])
+        (org, group_by_org.offsets[org.pk])
         for org in orgs
-        if org.pk in grouper.offsets
+        if org.pk in group_by_org.offsets
     ]
     # Pair each date with its column offset (either all available dates or just
     # the specified one)

@@ -3,9 +3,9 @@ from collections import defaultdict
 import numpy
 
 
-class Grouper(object):
+class RowGrouper(object):
     """
-    The `Grouper` class provides a callable which sums together groups of
+    The `RowGrouper` class provides a method which sums together groups of
     matrix rows. We generally use it for aggregating practice level data into
     organisations that consist of groups of practices like CCGs or STPs.
     """
@@ -49,7 +49,7 @@ class Grouper(object):
         else:
             self._single_row_groups_selector = None
 
-    def __call__(self, matrix):
+    def sum(self, matrix):
         """
         Sum rows of matrix column-wise, according to their group
 

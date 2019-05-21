@@ -11,8 +11,8 @@ from django.utils.lru_cache import lru_cache
 
 from frontend.models import Practice
 
-from .grouper import Grouper
 from .connection import MatrixStore
+from .row_grouper import RowGrouper
 
 
 # Create a memoize decorator (i.e. a decorator which caches the return value
@@ -30,10 +30,10 @@ def get_db():
 
 
 @memoize
-def group_by(org_type):
+def get_row_grouper(org_type):
     """
-    Return a "grouper" function which will group the rows of a practice level
-    matrix by the supplied `org_type`
+    Return a "row grouper" function which will group the rows of a practice
+    level matrix by the supplied `org_type`
 
     Note that the function is memoized so that if org relationships are changed
     in the database then the application will need to be restarted to see the
@@ -58,7 +58,7 @@ def group_by(org_type):
         mapping = _all_practices_map()
     else:
         raise ValueError('Unhandled org_type: ' + org_type)
-    return Grouper(
+    return RowGrouper(
         (offset, mapping[practice_code])
         for practice_code, offset in get_db().practice_offsets.items()
         if practice_code in mapping

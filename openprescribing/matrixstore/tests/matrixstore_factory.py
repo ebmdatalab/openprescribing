@@ -50,12 +50,12 @@ def patch_global_matrixstore(matrixstore):
     mocked.return_value = matrixstore
     # There are memoized functions so we clear any previously memoized value
     db.get_db.cache_clear()
-    db.group_by.cache_clear()
+    db.get_row_grouper.cache_clear()
 
     def stop_patching():
         patcher.stop()
         db.get_db.cache_clear()
-        db.group_by.cache_clear()
+        db.get_row_grouper.cache_clear()
         matrixstore.close()
 
     return stop_patching
