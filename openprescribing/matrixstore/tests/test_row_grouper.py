@@ -3,6 +3,8 @@ import random
 
 from django.test import SimpleTestCase
 
+import numpy
+
 from matrixstore.matrix_ops import finalise_matrix, sparse_matrix
 from matrixstore.row_grouper import RowGrouper
 
@@ -20,9 +22,33 @@ class TestGrouper(SimpleTestCase):
         self.columns = 16
         self.shape = (self.rows, self.columns)
 
+    def test_basic_sum_by_group(self):
+        """
+        Test grouping and summing on a matrix which is small enough to verify
+        the results by hand
+        """
+        group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
+        rows = [
+          [1, 2, 3, 4],
+          [2, 3, 4, 5],
+          [3, 4, 5, 6],
+          [4, 5, 6, 7],
+        ]
+        matrix = numpy.array(rows)
+        row_grouper = RowGrouper(group_definition)
+        grouped_matrix = row_grouper.sum(matrix)
+        value = to_list_of_lists(grouped_matrix)
+        expected_value = [
+            [4, 6, 8, 10],
+            [6, 8, 10, 12],
+        ]
+        self.assertEqual(value, expected_value)
+        self.assertEqual(row_grouper.ids, ['even', 'odd'])
+        self.assertEqual(row_grouper.offsets, {'even': 0, 'odd': 1})
+
     def test_all_group_and_matrix_type_combinations(self):
         """
-        Tests every combination of group and matrix
+        Tests every combination of group type and matrix type
         """
         test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:

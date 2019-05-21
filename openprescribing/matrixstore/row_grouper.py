@@ -8,6 +8,21 @@ class RowGrouper(object):
     The `RowGrouper` class provides a method which sums together groups of
     matrix rows. We generally use it for aggregating practice level data into
     organisations that consist of groups of practices like CCGs or STPs.
+
+    Example usage:
+
+    >>> group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
+    >>> rows = [
+    ...   [1, 2, 3, 4],
+    ...   [2, 3, 4, 5],
+    ...   [3, 4, 5, 6],
+    ...   [4, 5, 6, 7],
+    ... ]
+    >>> matrix = numpy.array(rows)
+    >>> row_grouper = RowGrouper(group_definition)
+    >>> row_grouper.sum(matrix)
+    array([[ 4,  6,  8, 10],
+           [ 6,  8, 10, 12]])
     """
 
     # Maps group IDs (which are usually strings but can be any hashable and
