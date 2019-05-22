@@ -599,11 +599,18 @@ class TestFrontendViews(TestCase):
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
 
-    def test_tariff(self):
-        response = self.client.get('/tariff/ABCD/')
-        self.assertContains(response, 'Tariff')
-        self.assertContains(response, 'bnfCodes = "ABCD"')
 
+class TestTariffView(TestCase):
+    fixtures = ['dmd-subset-1', 'tariff']
+
+    def test_tariff(self):
+        response = self.client.get('/tariff/0202010F0AAAAAA/')
+        self.assertContains(response, 'Tariff')
+        self.assertContains(response, 'bnfCodes = "0202010F0AAAAAA"')
+        self.assertContains(
+            response,
+            '<option value="0202010F0AAAAAA" selected>Chlortalidone 50mg tablets</option>'
+        )
 
 class TestPPUViews(TestCase):
     fixtures = ['orgs', 'importlog', 'practices', 'prescriptions', 'presentations']
