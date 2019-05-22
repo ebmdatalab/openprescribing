@@ -444,6 +444,15 @@ def tariff(request, format=None):
     # ORM.
     codes = utils.param_to_list(request.query_params.get('codes', []))
 
+    # On 2019-05-14 someone set up a job on Zapier which requests the entire
+    # (35MB) drug tariff every 10 minutes. We'd like Cloudflare to cache this
+    # for us but we don't want to cache every reponse from this endpoint as it
+    # contains NCSO concession data which gets updated regularly. As our
+    # internal uses of this endpoint never involve requesting the entire
+    # tariff, a pragmatic -- if hacky -- compromise is to just cache in the
+    # case that the request doesn't specify any BNF codes.
+    response_should_be_cached = not codes
+
     query = '''
     SELECT dmd_tariffprice.date AS date,
            dmd_tariffprice.price_pence AS price_pence,
@@ -480,6 +489,8 @@ def tariff(request, format=None):
     if request.accepted_renderer.format == 'csv':
         filename = "tariff.csv"
         response['content-disposition'] = "attachment; filename=%s" % filename
+    if response_should_be_cached:
+        response['cache-control'] = 'max-age={}, public'.format(60 * 60 * 8)
     return response
 
 
