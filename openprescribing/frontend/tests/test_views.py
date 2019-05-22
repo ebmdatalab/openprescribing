@@ -324,7 +324,7 @@ class TestAlertViews(TestCase):
 
 class TestFrontendHomepageViews(TestCase):
     fixtures = ['practices', 'orgs', 'one_month_of_measures', 'importlog',
-                'dmdproducts', 'ppusavings_entity_homepage']
+                'ppusavings_entity_homepage']
 
     def setUp(self):
         ImportLog.objects.create(
@@ -606,8 +606,7 @@ class TestFrontendViews(TestCase):
 
 
 class TestPPUViews(TestCase):
-    fixtures = ['orgs', 'importlog', 'dmdproducts',
-                'practices', 'prescriptions', 'presentations']
+    fixtures = ['orgs', 'importlog', 'practices', 'prescriptions', 'presentations']
 
     def test_practice_price_per_unit(self):
         response = self.client.get('/practice/P87629/price_per_unit/')
