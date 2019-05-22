@@ -18,13 +18,13 @@ import numpy as np
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['dmd-subset-1', 'tariff']
+    fixtures = ApiTestBase.fixtures + ['dmd-subset-1', 'tariff', 'ncso-concessions']
 
     def test_tariff_hit(self):
         url = '/tariff?format=csv&codes=0206020T0AAAGAG'
         rows = self._rows_from_api(url)
         self.assertEqual(rows, [
-            {'date': '2010-03-01',
+            {'date': '2014-10-01',
              'concession': '',
              'product': '0206020T0AAAGAG',
              'price_pence': '900',
@@ -38,7 +38,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
         url = '/tariff?format=csv&codes=0202010F0AAAAAA,0206020T0AAAGAG'
         rows = self._rows_from_api(url)
         self.assertItemsEqual(rows, [
-            {'date': '2010-03-01',
+            {'date': '2014-10-01',
              'concession': '',
              'product': '0206020T0AAAGAG',
              'price_pence': '900',
@@ -46,7 +46,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'vmpp': 'Verapamil 160mg tablets 100 tablet',
              'vmpp_id': '1027111000001105',
              'pack_size': '100.00'},
-            {'date': '2010-03-01',
+            {'date': '2014-10-01',
              'concession': '',
              'product': '0202010F0AAAAAA',
              'price_pence': '2400',
@@ -54,8 +54,8 @@ class TestAPISpendingViewsTariff(ApiTestBase):
              'vmpp': 'Chlortalidone 50mg tablets 28 tablet',
              'vmpp_id': '1079211000001106',
              'pack_size': '28.00'},
-            {'date': '2010-04-01',
-             'concession': '',
+            {'date': '2014-11-01',
+             'concession': '2650',
              'product': '0202010F0AAAAAA',
              'price_pence': '1100',
              'tariff_category': 'Part VIIIA Category C',

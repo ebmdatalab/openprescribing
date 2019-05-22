@@ -9,7 +9,7 @@
   {
     "model": "frontend.tariffprice",
     "fields": {
-      "date": "2010-03-01",
+      "date": "2014-10-01",
       "vmpp": 1027111000001105,
       "tariff_category": 3,
       "price_pence": "900"
@@ -18,7 +18,7 @@
   {
     "model": "frontend.tariffprice",
     "fields": {
-      "date": "2010-03-01",
+      "date": "2014-10-01",
       "vmpp": 1079211000001106,
       "tariff_category": 3,
       "price_pence": "2400"
@@ -28,7 +28,7 @@
     "model": "frontend.tariffprice",
     "pk": 43753,
     "fields": {
-      "date": "2010-04-01",
+      "date": "2014-11-01",
       "vmpp": 1079211000001106,
       "tariff_category": 3,
       "price_pence": "1100"
