@@ -18,48 +18,50 @@ import numpy as np
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
+    fixtures = ApiTestBase.fixtures + ['dmd-subset-1', 'tariff']
+
     def test_tariff_hit(self):
-        url = '/tariff?format=csv&codes=ABCD'
+        url = '/tariff?format=csv&codes=0206020T0AAAGAG'
         rows = self._rows_from_api(url)
         self.assertEqual(rows, [
             {'date': '2010-03-01',
              'concession': '',
-             'product': 'ABCD',
+             'product': '0206020T0AAAGAG',
              'price_pence': '900',
-             'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Bar tablets 84 tablet',
-             'vmpp_id': '5120711000001104',
-             'pack_size': '84.0'}
+             'tariff_category': 'Part VIIIA Category C',
+             'vmpp': 'Verapamil 160mg tablets 100 tablet',
+             'vmpp_id': '1027111000001105',
+             'pack_size': '100.00'},
         ])
 
     def test_tariff_hits(self):
-        url = '/tariff?format=csv&codes=ABCD,EFGH'
+        url = '/tariff?format=csv&codes=0202010F0AAAAAA,0206020T0AAAGAG'
         rows = self._rows_from_api(url)
         self.assertItemsEqual(rows, [
             {'date': '2010-03-01',
              'concession': '',
-             'product': 'ABCD',
+             'product': '0206020T0AAAGAG',
              'price_pence': '900',
-             'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Bar tablets 84 tablet',
-             'vmpp_id': '5120711000001104',
-             'pack_size': '84.0'},
+             'tariff_category': 'Part VIIIA Category C',
+             'vmpp': 'Verapamil 160mg tablets 100 tablet',
+             'vmpp_id': '1027111000001105',
+             'pack_size': '100.00'},
             {'date': '2010-03-01',
              'concession': '',
-             'product': 'EFGH',
+             'product': '0202010F0AAAAAA',
              'price_pence': '2400',
-             'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Foo tablets 84 tablet',
-             'vmpp_id': '994511000001109',
-             'pack_size': '84.0'},
+             'tariff_category': 'Part VIIIA Category C',
+             'vmpp': 'Chlortalidone 50mg tablets 28 tablet',
+             'vmpp_id': '1079211000001106',
+             'pack_size': '28.00'},
             {'date': '2010-04-01',
              'concession': '',
-             'product': 'EFGH',
+             'product': '0202010F0AAAAAA',
              'price_pence': '1100',
-             'tariff_category': 'Part VIIIA Category A',
-             'vmpp': 'Foo tablets 84 tablet',
-             'vmpp_id': '994511000001109',
-             'pack_size': '84.0'},
+             'tariff_category': 'Part VIIIA Category C',
+             'vmpp': 'Chlortalidone 50mg tablets 28 tablet',
+             'vmpp_id': '1079211000001106',
+             'pack_size': '28.00'},
         ])
 
     def test_tariff_miss(self):
