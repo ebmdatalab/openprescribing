@@ -8,11 +8,10 @@ from django.test import TestCase
 from .api_test_base import ApiTestBase
 
 from frontend.models import Prescription
+from frontend.models import TariffPrice
 from frontend.tests.data_factory import DataFactory
 from api.views_spending import MIN_GHOST_GENERIC_DELTA
-from dmd.models import DMDProduct
-from dmd.models import DMDVmpp
-from dmd.models import TariffPrice
+from dmd2.models import VMPP
 
 import numpy as np
 
@@ -778,8 +777,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         ccg_savings = autovivify(levels=2, final=int)
         for practice in self.practices:
             for rx in Prescription.objects.filter(practice=practice):
-                product = DMDProduct.objects.get(bnf_code=rx.presentation_code)
-                vmpps = DMDVmpp.objects.filter(vpid=product.vpid)
+                vmpps = VMPP.objects.filter(bnf_code=rx.presentation_code)
                 prices_per_pill = set()
                 for vmpp in vmpps:
                     tariff = TariffPrice.objects.get(vmpp=vmpp)
