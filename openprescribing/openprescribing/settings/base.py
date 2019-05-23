@@ -383,3 +383,33 @@ MAILCHIMP_LIST_ID = 'b2b7873a73'
 sentry_raven_dsn = utils.get_env_setting('SENTRY_RAVEN_DSN', default='')
 if sentry_raven_dsn and not SHELL:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
+
+
+redis_url = utils.get_env_setting('REDIS_URL', default='')
+
+if redis_url:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": redis_url,
+            "OPTIONS": {
+                # This C-based parser is much faster than the default pure
+                # Python one
+                "PARSER_CLASS": "redis.connection.HiredisParser",
+            }
+        }
+    }
+else:
+    # The dummy cache backend implements all the usual methods but never
+    # actually does any caching so it's perfect for developemt when you always
+    # want fresh values
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
+
+# The git sha of the currently running version of the code (will be empty in
+# development)
+SOURCE_COMMIT_ID = utils.get_env_setting('SOURCE_COMMIT_ID', default='')

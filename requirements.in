@@ -48,6 +48,10 @@ tqdm==4.32.1
 xlrd==1.2.0
 zstandard==0.11.1
 
+# redis
+django-redis
+hiredis
+
 # test requirements
 coverage
 selenium

@@ -16,6 +16,7 @@ from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.urlresolvers import get_resolver
 from django.db import connection
 from django.db.models import Avg, Count, Sum
@@ -275,15 +276,48 @@ def regional_team_home_page(request, regional_team_code):
 # All England
 ##################################################
 
+def _cache(function, *args):
+    """
+    Wrapper which caches the result of calling `function` with the supplied
+    arguments.
+
+    Note that all arguments must be serializable as strings. The commit sha of
+    the code is used as part of the cache key so any new deployment will
+    automatically invalidate the cache.
+    """
+    # If we don't have a git sha for the currently executing code which we can
+    # use to cache against then we do the safe thing which is not to cache at
+    # all
+    commit_id = settings.SOURCE_COMMIT_ID
+    if not commit_id:
+        return function(*args)
+    key_parts = [commit_id, __name__, function.__name__]
+    key_parts.extend(map(str, args))
+    key = ':'.join(key_parts)
+    result = cache.get(key)
+    if result is None:
+        result = function(*args)
+        # We cache for a week which is likely to be the maximum useful lifetime
+        # of these values, given that they are invalidated on every deploy. (We
+        # don't need to worry about stale data after an import as the functions
+        # we're caching include a date in their arguments)
+        cache.set(key, result, timeout=60*60*24*7)
+    return result
+
+
 @handle_bad_request
 def all_england(request):
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get('entity_type', 'CCG')
     date = _specified_or_last_date(request, 'ppu')
-    ppu_savings = _all_england_ppu_savings(entity_type, date)
-    measure_savings = _all_england_measure_savings(entity_type, date)
-    low_priority_savings = _all_england_low_priority_savings(entity_type, date)
-    low_priority_total = _all_england_low_priority_total(entity_type, date)
+    # We cache the results of these expensive function calls which only change
+    # when `date` changes
+    ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
+    measure_savings = _cache(_all_england_measure_savings, entity_type, date)
+    low_priority_savings = _cache(_all_england_low_priority_savings, entity_type, date)
+    low_priority_total = _cache(_all_england_low_priority_total, entity_type, date)
+    # We deliberately DON'T cache the NCSO spending query as this can change
+    # whenever new concession data comes in, which can happen at any time
     ncso_spending = _first_or_none(
         ncso_spending_for_entity(None, 'all_england', num_months=1)
     )
