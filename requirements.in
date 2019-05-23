@@ -21,7 +21,7 @@ django>=1.11,<2.0
 djangorestframework-csv==2.1.0
 djangorestframework>=3.3.2
 enum34
-google-api-python-client==1.7.8
+google-api-python-client==1.7.9
 google-cloud-bigquery==0.30.0
 google-cloud-storage==1.13.0
 gunicorn>=19.5.0
