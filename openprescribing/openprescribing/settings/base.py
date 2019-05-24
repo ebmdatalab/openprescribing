@@ -401,7 +401,7 @@ if redis_url:
     }
 else:
     # The dummy cache backend implements all the usual methods but never
-    # actually does any caching so it's perfect for developemt when you always
+    # actually does any caching so it's perfect for development when you always
     # want fresh values
     CACHES = {
         'default': {

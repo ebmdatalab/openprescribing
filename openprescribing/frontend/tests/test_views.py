@@ -1,4 +1,4 @@
-from mock import patch
+from mock import Mock, patch
 import datetime
 import re
 from urlparse import parse_qs, urlparse
@@ -9,13 +9,13 @@ from django.conf import settings
 from django.core import mail
 from django.db import connection
 from django.http import QueryDict
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase, override_settings
 
 from frontend.models import (
     EmailMessage, OrgBookmark, SearchBookmark, ImportLog, PCT, Practice,
     MeasureValue, Measure
 )
-from frontend.views.views import BadRequestError, _get_measure_tag_filter
+from frontend.views.views import BadRequestError, _get_measure_tag_filter, _cache
 
 from allauth.account.models import EmailAddress
 
@@ -701,3 +701,40 @@ class TestFeedbackView(TestCase):
         self.assertRedirects(rsp, from_url)
         self.assertContains(rsp, "Thanks for sending your feedback")
         self.assertEqual(len(mail.outbox), 2)
+
+
+LOCAL_MEMORY_CACHE = {
+    'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
+}
+
+
+@override_settings(CACHES=LOCAL_MEMORY_CACHE, SOURCE_COMMIT_ID='abc123')
+class TestCacheWrapper(SimpleTestCase):
+
+    def test_function_calls_are_cached(self):
+        test_func = Mock(
+            side_effect=lambda s: 'foo%s' % s,
+            __name__='test_func'
+        )
+        result = _cache(test_func, 'bar')
+        self.assertEqual(result, 'foobar')
+        result2 = _cache(test_func, 'bar')
+        self.assertEqual(result2, result)
+        test_func.assert_called_once_with('bar')
+
+    def test_source_commit_id_used_in_cache_key(self):
+        test_func = Mock(__name__='test_func', return_value='foo')
+        _cache(test_func)
+        _cache(test_func)
+        self.assertEqual(test_func.call_count, 1)
+        with override_settings(SOURCE_COMMIT_ID='def456'):
+            _cache(test_func)
+            _cache(test_func)
+        self.assertEqual(test_func.call_count, 2)
+
+    def test_no_caching_if_no_source_commit_id(self):
+        test_func = Mock(__name__='test_func', return_value='foo')
+        with override_settings(SOURCE_COMMIT_ID=''):
+            _cache(test_func)
+            _cache(test_func)
+        self.assertEqual(test_func.call_count, 2)
