@@ -27,6 +27,11 @@ MAILCHIMP_API_KEY=mailchimp_api_key
 # Platform services (eg BigQuery, Cloud Storage).
 GOOGLE_APPLICATION_CREDENTIALS=
 
+# URL of Redis instance to use for caching. The application will run fine
+# without this, it just won't be able to cache anything.
+# Accepts any format handled by redis-py:
+# # https://redis-py.readthedocs.io/en/latest/#redis.Redis.from_url
+REDIS_URL=
 
 # Only required on the server
 GUNICORN_TIMEOUT=60
