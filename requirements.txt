@@ -85,7 +85,7 @@ pyquery==1.4.0
 python-dateutil==2.8.0
 python3-openid==3.1.0     # via django-allauth
 pytz==2019.1
-pyvirtualdisplay==0.2.1
+pyvirtualdisplay==0.2.3
 pyyaml==5.1               # via tablib, watchdog
 raven==6.10.0
 requests-futures==0.9.9
