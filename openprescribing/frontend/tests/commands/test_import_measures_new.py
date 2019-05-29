@@ -179,7 +179,7 @@ class ImportMeasuresTests(TestCase):
 
         df['items'] = numerators.groupby(org_column)['items'].sum()
         df['thousand_patients'] = (
-            denominators.groupby(org_column)['total_list_size'].sum() / 1000
+            denominators.groupby(org_column)['thousand_patients'].sum()
         )
         df['ratio'] = df['items'] / df['thousand_patients']
         df['items'] = df['items'].fillna(0)
@@ -203,7 +203,7 @@ class ImportMeasuresTests(TestCase):
 
         df['cost'] = numerators.groupby(org_column)['actual_cost'].sum()
         df['thousand_patients'] = (
-            denominators.groupby(org_column)['total_list_size'].sum() / 1000
+            denominators.groupby(org_column)['thousand_patients'].sum()
         )
         df['ratio'] = df['cost'] / df['thousand_patients']
         df['cost'] = df['cost'].fillna(0)
@@ -584,7 +584,7 @@ def upload_practice_statistics():
                     'ccg_id': practice.ccg_id,
                     'stp_id': practice.ccg.stp_id,
                     'regional_team_id': practice.ccg.regional_team_id,
-                    'total_list_size': total_list_size,
+                    'thousand_patients': total_list_size / 1000.0,
                 },
                 ignore_index=True,
             )
