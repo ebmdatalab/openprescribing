@@ -245,11 +245,17 @@ class Client(object):
                 table_id = table_id.split('_', 1)[1]
         schema = build_schema_from_model(model)
         table = self.get_or_create_table(table_id, schema)
+        # We reload the schema here, as when older BQ tables were created,
+        # Django DateFields were mapped to BQ TIMESTAMP fields.  However, we
+        # now map them to DATE fields.
+        schema = table.gcbq_table.schema
+
         columns = [
             f.db_column or f.attname
             for f in model._meta.fields
             if not f.auto_created
         ]
+
         timestamp_ixs = [
             ix
             for ix, field in enumerate(schema)
@@ -257,7 +263,7 @@ class Client(object):
         ]
 
         def transformer(record):
-            for ix in timestamp_ixs:
+            for ix in timestamp_ixs and record[ix]:
                 record[ix] = record[ix] + ' 00:00:00'
             return record
 
@@ -501,12 +507,15 @@ def build_schema_from_model(model):
     field_mappings = {
         model_fields.BigIntegerField: 'INTEGER',
         model_fields.CharField: 'STRING',
-        model_fields.DateField: 'TIMESTAMP',
+        model_fields.DateField: 'DATE',
         model_fields.FloatField: 'FLOAT',
+        model_fields.DecimalField: 'NUMERIC',
         model_fields.IntegerField: 'INTEGER',
+        model_fields.BooleanField: 'BOOLEAN',
         model_fields.NullBooleanField: 'BOOLEAN',
         model_fields.TextField: 'STRING',
         related_fields.ForeignKey: 'INTEGER',
+        related_fields.OneToOneField: 'INTEGER',
     }
 
     fields = [
