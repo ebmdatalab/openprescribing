@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL('DROP MATERIALIZED VIEW vw__medians_for_tariff'),
+        migrations.RunSQL('DROP MATERIALIZED VIEW IF EXISTS vw__medians_for_tariff'),
         migrations.RunSQL("""
         CREATE MATERIALIZED VIEW vw__medians_for_tariff AS (
             WITH
