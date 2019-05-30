@@ -703,12 +703,13 @@ class TestFeedbackView(TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
 
-LOCAL_MEMORY_CACHE = {
-    'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
-}
-
-
-@override_settings(CACHES=LOCAL_MEMORY_CACHE, SOURCE_COMMIT_ID='abc123')
+@override_settings(
+    ENABLE_CACHING=True,
+    CACHES={
+        'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
+    },
+    SOURCE_COMMIT_ID='abc123'
+)
 class TestCacheWrapper(SimpleTestCase):
 
     def test_function_calls_are_cached(self):
@@ -732,9 +733,9 @@ class TestCacheWrapper(SimpleTestCase):
             _cache(test_func)
         self.assertEqual(test_func.call_count, 2)
 
-    def test_no_caching_if_no_source_commit_id(self):
+    def test_no_caching_if_not_enabled(self):
         test_func = Mock(__name__='test_func', return_value='foo')
-        with override_settings(SOURCE_COMMIT_ID=''):
+        with override_settings(ENABLE_CACHING=False):
             _cache(test_func)
             _cache(test_func)
         self.assertEqual(test_func.call_count, 2)

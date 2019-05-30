@@ -285,13 +285,9 @@ def _cache(function, *args):
     the code is used as part of the cache key so any new deployment will
     automatically invalidate the cache.
     """
-    # If we don't have a git sha for the currently executing code which we can
-    # use to cache against then we do the safe thing which is not to cache at
-    # all
-    commit_id = settings.SOURCE_COMMIT_ID
-    if not commit_id:
+    if not settings.ENABLE_CACHING:
         return function(*args)
-    key_parts = [commit_id, __name__, function.__name__]
+    key_parts = [settings.SOURCE_COMMIT_ID, __name__, function.__name__]
     key_parts.extend(map(str, args))
     key = ':'.join(key_parts)
     result = cache.get(key)

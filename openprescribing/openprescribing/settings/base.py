@@ -1,6 +1,7 @@
 """Common settings and globals."""
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
+from django.core.exceptions import ImproperlyConfigured
 from common import utils
 
 import sys
@@ -385,6 +386,8 @@ if sentry_raven_dsn and not SHELL:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
 
 
+ENABLE_CACHING = utils.get_env_setting_bool('ENABLE_CACHING', default=False)
+
 redis_url = utils.get_env_setting('REDIS_URL', default='')
 
 if redis_url:
@@ -411,5 +414,16 @@ else:
 
 
 # The git sha of the currently running version of the code (will be empty in
-# development)
-SOURCE_COMMIT_ID = utils.get_env_setting('SOURCE_COMMIT_ID', default='')
+# development). We set this conditionally so that if it isn't defined any
+# attempt to access it will blow up with an attribute error, rather than
+# silently getting an empty value
+source_commit_id = utils.get_env_setting('SOURCE_COMMIT_ID', default='')
+if source_commit_id:
+    SOURCE_COMMIT_ID = source_commit_id
+
+
+# Guard against invalid configurations
+if ENABLE_CACHING and (not redis_url or not source_commit_id):
+    raise ImproperlyConfigured(
+        'If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set'
+    )

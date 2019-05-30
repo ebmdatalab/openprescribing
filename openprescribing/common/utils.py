@@ -63,6 +63,27 @@ def get_env_setting(setting, default=None):
             raise ImproperlyConfigured(error_msg)
 
 
+def get_env_setting_bool(setting, default=None):
+    """ Get the environment setting as a boolean
+
+    Return the default, or raise an exception if none supplied
+    """
+    value = get_env_setting(setting, default=default)
+    if value is default:
+        return value
+    normalised = value.lower().strip()
+    if normalised == 'true':
+        return True
+    elif normalised == 'false':
+        return False
+    else:
+        raise ImproperlyConfigured(
+            'Value for env variable {} is not a valid boolean: {}'.format(
+                setting, value
+            )
+        )
+
+
 def under_test():
     return db.connections.databases['default']['NAME'].startswith("test_")
 
