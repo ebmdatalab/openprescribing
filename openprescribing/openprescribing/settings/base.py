@@ -1,6 +1,7 @@
 """Common settings and globals."""
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
+from django.core.exceptions import ImproperlyConfigured
 from common import utils
 
 import sys
@@ -383,3 +384,46 @@ MAILCHIMP_LIST_ID = 'b2b7873a73'
 sentry_raven_dsn = utils.get_env_setting('SENTRY_RAVEN_DSN', default='')
 if sentry_raven_dsn and not SHELL:
     RAVEN_CONFIG = {'dsn': sentry_raven_dsn}
+
+
+ENABLE_CACHING = utils.get_env_setting_bool('ENABLE_CACHING', default=False)
+
+redis_url = utils.get_env_setting('REDIS_URL', default='')
+
+if redis_url:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": redis_url,
+            "OPTIONS": {
+                # This C-based parser is much faster than the default pure
+                # Python one
+                "PARSER_CLASS": "redis.connection.HiredisParser",
+            }
+        }
+    }
+else:
+    # The dummy cache backend implements all the usual methods but never
+    # actually does any caching so it's perfect for development when you always
+    # want fresh values
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
+
+# The git sha of the currently running version of the code (will be empty in
+# development). We set this conditionally so that if it isn't defined any
+# attempt to access it will blow up with an attribute error, rather than
+# silently getting an empty value
+source_commit_id = utils.get_env_setting('SOURCE_COMMIT_ID', default='')
+if source_commit_id:
+    SOURCE_COMMIT_ID = source_commit_id
+
+
+# Guard against invalid configurations
+if ENABLE_CACHING and (not redis_url or not source_commit_id):
+    raise ImproperlyConfigured(
+        'If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set'
+    )
