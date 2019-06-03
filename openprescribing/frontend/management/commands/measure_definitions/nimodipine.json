@@ -1,0 +1,36 @@
+{
+  "name": "Nimodipine",
+  "title": [
+    "Nimodipine: Quantity per 1000 patients"
+  ],
+  "description": [
+    "Quantity (number of tablets) of nimodipine per 1000 patients"
+  ],
+  "why_it_matters": [
+    "TBC."
+  ],
+  "numerator_short": "Nimodipine quantity",
+  "denominator_short": "1000 Patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "centralnervous",
+    "research"
+  ],
+  "numerator_columns": [
+    "SUM(p.quantity) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard",
+  "numerator_where": [
+    "bnf_code LIKE '0206020M0%'
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
