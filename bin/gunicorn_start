@@ -34,7 +34,7 @@ export PYTHONPATH=$APPS_ROOT:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENV
 
-export SOURCE_COMMIT_ID="$(git rev-parse HEAD)"
+export SOURCE_COMMIT_ID="$(git --git-dir="$REPO_ROOT/.git" rev-parse HEAD)"
 
 echo "Starting $NAME"
 echo "whoami: $(whoami)"
