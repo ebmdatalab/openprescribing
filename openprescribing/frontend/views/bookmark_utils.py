@@ -31,6 +31,11 @@ from frontend.models import NCSOConcessionBookmark
 from frontend.views.spending_utils import (
     ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
 )
+from frontend.views.views import (
+    _cache, _first_or_none, _all_england_low_priority_total,
+    _all_england_low_priority_savings, _all_england_measure_savings,
+    _all_england_ppu_savings
+)
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             settings.APPS_ROOT +
@@ -859,3 +864,45 @@ def unescape_href(text):
     for href in hrefs:
         text = text.replace(href, html_parser.unescape(href))
     return text
+
+
+def make_all_england_email(bookmark, tag=None):
+    msg = initialise_email(bookmark, 'all-england-alerts')
+    msg.subject = 'Your monthly update on prescribing across NHS England'
+
+    date = ImportLog.objects.latest_in_category('ppu').current_at
+    entity_type = 'CCG'
+    ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
+    measure_savings = _cache(_all_england_measure_savings, entity_type, date)
+    low_priority_savings = _cache(_all_england_low_priority_savings, entity_type, date)
+    low_priority_total = _cache(_all_england_low_priority_total, entity_type, date)
+    ncso_spending = _first_or_none(
+        ncso_spending_for_entity(None, 'all_england', num_months=1)
+    )
+
+    unsubscribe_path = reverse(
+        'bookmark-login',
+        kwargs={'key': bookmark.user.profile.key}
+    )
+    unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
+
+    context = {
+        'entity_type': entity_type,
+        'ppu_savings': ppu_savings,
+        'measure_savings': measure_savings,
+        'low_priority_savings': low_priority_savings,
+        'low_priority_total': low_priority_total,
+        'ncso_spending': ncso_spending,
+        'date': date,
+        'unsubscribe_link': unsubscribe_link,
+        'HOST': settings.GRAB_HOST,
+    }
+
+    finalise_email(
+        msg,
+        'bookmarks/email_for_all_england.html',
+        context,
+        ['all_england', tag]
+    )
+
+    return msg

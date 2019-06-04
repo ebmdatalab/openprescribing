@@ -1,0 +1,111 @@
+{% extends 'bookmarks/email_base.html' %}
+{% load template_extras %}
+{% load humanize %}
+{% block title %}Your monthly update on prescribing across NHS England{% endblock %}
+
+{% block content %}
+
+<h2>OpenPrescribing National Prescribing Dashboard: monthly update</h2>
+
+<p>
+  <em>
+    This is an experimental new service and we are keen for feedback: just reply
+    to this email.
+  </em>
+</p>
+
+<p>
+  Each month the OpenPrescribing team process data on primary care prescribing
+  across NHS England and produce a
+  <a href="{{ HOST }}{% url 'all_england' %}">national prescribing dashboard</a>
+  (as well as dashboards for every individual practice, CCG, STP and regional
+  team).
+</p>
+
+<p>Below are some of this month's key numbers.</p>
+
+
+<h3>Prescribing measures</h3>
+<p>
+  We track the distribution of prescribing behaviour across
+  {{entity_type}}s in NHS England on various measures
+  (<a href="{{ HOST }}{% url 'faq' %}#measureinterpret">read more about these</a>).
+</p>
+<p>
+  If all {{ entity_type}}s across England had prescribed at least as well
+  as the median {{ entity_type}} the monthly cost saving in
+  <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+  <span style="font-size: 150%">£{{ measure_savings.50|sigfigs:4|intcomma }}</span>
+</p>
+<p>
+  If they had prescribed as well as the best decile the saving would have been:<br>
+  <span style="font-size: 150%">£{{ measure_savings.10|sigfigs:4|intcomma }}</span>
+</p>
+<p>
+  <a href="{{ HOST }}{% url 'all_england' %}#perfsummary">
+    View prescribing measures &rarr;
+  </a>
+</p>
+
+
+<h3>Low priority prescribing</h3>
+<p>
+  NHS England produce a <a
+    href="https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/">list
+    of products</a> considered low priority for funding by the NHS.
+  The total monthly spend on such products in {{ date|date:"F Y" }} was:
+  <strong>£{{ low_priority_total|sigfigs:4|intcomma }}</strong>
+</p>
+<p>
+  If every {{ entity_type }} had prescribed low priority products at least
+  as sparingly as the median {{ entity_type }} the monthly cost saving in
+  <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+  <span style="font-size: 150%">£{{ low_priority_savings.50|sigfigs:4|intcomma }}</span>
+</p>
+<p>
+  If they had prescribed at the level achieved by the best decile the saving
+  would have been:<br>
+  <span style="font-size: 150%">£{{ low_priority_savings.10|sigfigs:4|intcomma }}</span>
+</p>
+<p>
+  <a href="{{ HOST }}{% url 'all_england' %}#measure_lpzomnibus">
+    View distribution of low priority prescribing &rarr;
+  </a>
+</p>
+
+<h3>PPU cost savings</h3>
+<p>
+  There is wide variation in the unit cost of a number of medicines
+  prescribed across England, due to the way the reimbursement system is
+  structured.
+</p>
+<p>
+  We have calculated the potential monthly cost saving if every {{ entity_type }}
+  achieved the unit cost obtained by the best 10%.
+  In <strong>{{ date|date:"F Y" }}</strong> this was:<br>
+  <span style="font-size: 150%">£{{ ppu_savings|sigfigs:4|intcomma }}</span>
+</p>
+<p>
+  <a href="{{ HOST }}{% url 'all_england_price_per_unit' %}">
+    View cost savings breakdown &rarr;
+  </a>
+</p>
+
+<h3>Impact of price concessions</h3>
+<p>
+  We have estimated the additional spending due to price concessions on
+  out-of-stock products by taking the latest available prescribing data from
+  <strong>{{ ncso_spending.last_prescribing_date|date:"F Y" }}</strong>
+  and projecting forwards.
+  In <strong>{{ ncso_spending.month|date:"F Y" }}</strong> this amounts to:<br>
+  <span style="font-size: 150%">
+    £{{ ncso_spending.additional_cost|sigfigs:4|intcomma }}
+  </span>
+</p>
+<p>
+  <a href="{{ HOST }}{% url 'spending_for_all_england' %}">
+    View price concessions breakdown &rarr;
+  </a>
+</p>
+
+{% endblock %}
