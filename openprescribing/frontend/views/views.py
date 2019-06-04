@@ -42,12 +42,12 @@ from frontend.forms import FeedbackForm
 from frontend.forms import MonthlyOrgBookmarkForm
 from frontend.forms import NonMonthlyOrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
-from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section

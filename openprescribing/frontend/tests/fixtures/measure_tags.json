@@ -1,0 +1,10 @@
+{
+  "tag1": {
+    "name": "Tag One",
+    "description": "This description is a string"
+  },
+  "tag2": {
+    "name": "Tag Two",
+    "description": ["This description is", " an array"]
+  }
+}

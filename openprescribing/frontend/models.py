@@ -28,19 +28,6 @@ from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
 
 
-def _load_measure_tags(filename):
-    with open(filename) as f:
-        tags = json.load(f)
-    for tag in tags.values():
-        if isinstance(tag.get('description'), list):
-            tag['description'] = ''.join(tag['description'])
-    return tags
-
-
-MEASURE_TAGS = _load_measure_tags(
-    os.path.join(os.path.dirname(__file__), '../common/measure_tags.json'))
-
-
 class Section(models.Model):
     bnf_id = models.CharField(max_length=8, primary_key=True)
     name = models.CharField(max_length=200)

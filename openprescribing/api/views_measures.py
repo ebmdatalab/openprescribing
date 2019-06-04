@@ -6,11 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
-from frontend.models import MEASURE_TAGS
 
 import view_utils as utils
 
