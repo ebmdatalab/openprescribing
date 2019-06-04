@@ -1,6 +1,8 @@
 import json
 import os.path
 
+from frontend.models import Measure
+
 
 def _load_measure_tags(filename):
     with open(filename) as f:
@@ -10,6 +12,7 @@ def _load_measure_tags(filename):
             tag_details['description'] = ' '.join(
                 line.strip() for line in tag_details['description']
             )
+        tag_details['count'] = Measure.objects.filter(tags__contains=[tag_name]).count()
     return tags
 
 
