@@ -95,7 +95,7 @@ class DataFactory(object):
     def create_tariff_and_ncso_costings_for_presentations(
             self, presentations, months=None):
         tariff_category, _ = dmd2_models.DtPaymentCategory.objects.get_or_create(
-            cd=1, descr='TariffCategoryrt VIIIA Category A'
+            cd=1, descr='TariffCategory VIIIA Category A'
         )
         for presentation in presentations:
             for date in months:
