@@ -601,7 +601,7 @@ class TestFrontendViews(TestCase):
 
 
 class TestTariffView(TestCase):
-    fixtures = ['dmd-subset-1', 'tariff']
+    fixtures = ['dmd-subset', 'tariff']
 
     def test_tariff(self):
         response = self.client.get('/tariff/0202010F0AAAAAA/')

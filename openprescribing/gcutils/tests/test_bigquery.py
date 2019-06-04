@@ -12,7 +12,7 @@ from frontend.models import PCT
 
 
 class BQClientTest(TestCase):
-    fixtures = ['dmd-subset-1']
+    fixtures = ['dmd-subset']
 
     def setUp(self):
         client = Client('test')

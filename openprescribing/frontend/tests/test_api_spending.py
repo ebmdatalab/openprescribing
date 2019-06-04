@@ -17,7 +17,7 @@ import numpy as np
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['dmd-subset-1', 'tariff', 'ncso-concessions']
+    fixtures = ApiTestBase.fixtures + ['dmd-subset', 'tariff', 'ncso-concessions']
 
     def test_tariff_hit(self):
         url = '/tariff?format=csv&codes=0206020T0AAAGAG'
@@ -801,7 +801,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmd-subset-1', 'ncso-concessions']
+    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmd-subset', 'ncso-concessions']
 
     def _get(self, **data):
         data['format'] = 'json'
