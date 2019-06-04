@@ -34,6 +34,13 @@ export PYTHONPATH=$APPS_ROOT:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENV
 
+# This is set here rather than with the rest of the config as we only want
+# caching enabled for the web process not e.g. cron jobs or ad-hoc management
+# commands. This is because if we're going to enable caching we also need to
+# set SOURCE_COMMIT_ID and this can't be done in the static config file. The
+# proper fix here is a single entry point script which all invocations of the
+# app go through, but this avoids the problem for now.
+export ENABLE_CACHING=True
 export SOURCE_COMMIT_ID="$(git --git-dir="$REPO_ROOT/.git" rev-parse HEAD)"
 
 echo "Starting $NAME"
