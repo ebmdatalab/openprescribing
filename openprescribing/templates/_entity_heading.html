@@ -2,7 +2,12 @@
 <div class="row" id="intro">
 {% if entity_type == 'practice' %}
   <div class="col-md-6">
-    <h1>{{ entity.cased_name }}</h1>
+    <h1>
+      {{ entity.cased_name }}
+      {% if entity.is_inactive %}
+        ({{ entity.get_status_code_display }})
+      {% endif %}
+    </h1>
 
     <p>Address: {{ entity.address_pretty }}</p>
     {% if entity.ccg %}
@@ -14,6 +19,9 @@
       <p class="lead">Registered patients in 2013/14: {{ entity.list_size_13|intcomma }}</p>
     {% endif %}
     <p>Current practice type: {{ entity.get_setting_display }}</p>
+    {% if entity.close_date %}
+    <p>Closed: {{ entity.close_date }}</p>
+    {% endif %}
   </div>
 
   <div class="col-md-6" id="map-container">
@@ -23,7 +31,15 @@
 
 {% elif entity_type == 'ccg' %}
   <div class="col-md-6">
-    <h1>{{ entity.cased_name }}</h1>
+    <h1>
+      {{ entity.cased_name }}
+      {% if entity.close_date %}
+        (Closed)
+      {% endif %}
+    </h1>
+    {% if entity.close_date %}
+    <p>Closed: {{ entity.close_date }}</p>
+    {% endif %}
     <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
     <ul class="list-unstyled" id="child-entities">
     {% for p in practices %}
@@ -41,7 +57,15 @@
 
 {% elif entity_type == 'regional_team' or entity_type == 'stp' %}
   <div class="col-md-6">
-    <h1>{{ entity.cased_name }}</h1>
+    <h1>
+      {{ entity.cased_name }}
+      {% if entity.close_date %}
+        (Closed)
+      {% endif %}
+    </h1>
+    {% if entity.close_date %}
+    <p>Closed: {{ entity.close_date }}</p>
+    {% endif %}
     <p>There are {{ ccgs.count }} CCGs in this {{ entity_type_human }}.<a id="showall" href="#">&raquo; show them...</a></p>
     <ul class="list-unstyled" id="child-entities">
     {% for ccg in ccgs %}
