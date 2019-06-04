@@ -35,7 +35,9 @@ class TestAlertViews(TestCase):
         if alert:
             newsletter_types.append('alerts')
         form_data['newsletters'] = newsletter_types
-        if len(entity_id) == 3:
+        if entity_id == "all_england":
+            url = '/all-england/'
+        elif len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
             form_data['pct'] = entity_id
         else:
@@ -309,6 +311,15 @@ class TestAlertViews(TestCase):
             response, "subscribed to alerts about "
             "<em>prescribing in 1/ST Andrews")
         self.assertTrue(response.context['user'].is_active)
+
+    def test_all_england_bookmark_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup('all_england')
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.practice, None)
+        self.assertEqual(bookmark.pct, None)
+        self.assertEqual(bookmark.org_type(), 'all_england')
 
 
 class TestFrontendHomepageViews(TestCase):

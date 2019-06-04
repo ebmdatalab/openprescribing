@@ -702,9 +702,14 @@ class OrgBookmark(models.Model):
     '''
     A bookmark for an organistion a user is interested in.
 
-    If a bookmark for a CCG, the practice field will be null.
-    Otherwise, it's a bookmark for a practice, and the pct field
-    indicates the parent CCG, if it exists.
+    If a bookmark for a CCG, the practice field will be null. If the practice
+    field is set, it's a bookmark for a practice, and the pct field indicates
+    the parent CCG, if it exists. If neither practice nor CCG is set then it's
+    a bookmark for all of NHS England.
+
+    (This is very much not ideal, but it has the benefit of consistency with
+    the pattern already set in NCSOConcessionBookmark which should make
+    refactoring easier, when it comes.)
     '''
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     pct = models.ForeignKey(PCT, null=True, blank=True)
@@ -716,36 +721,48 @@ class OrgBookmark(models.Model):
         """The 'home page' for a measure for this bookmark, or for all
         measures if none is specified
         """
-        if self.practice is None:
+        fragment = None
+        if self.pct is not None and self.practice is None:
             if measure:
                 view = 'measure_for_one_ccg'
                 kwargs = {'measure': measure, 'entity_code': self.pct.code}
             else:
                 view = 'measures_for_one_ccg'
                 kwargs = {'ccg_code': self.pct.code}
-        else:
+        elif self.practice is not None:
             if measure:
                 view = 'measure_for_one_practice'
                 kwargs = {'measure': measure, 'entity_code': self.practice.code}
             else:
                 view = 'measures_for_one_practice'
                 kwargs = {'practice_code': self.practice.code}
-        return reverse(
-            view,
-            kwargs=kwargs)
+        else:
+            if measure:
+                fragment = measure
+            view = 'all_england'
+            kwargs = {}
+
+        url = reverse(view, kwargs=kwargs)
+        if fragment:
+            url = '{}#{}'.format(url, fragment)
+        return url
 
     @property
     def name(self):
-        if self.practice is None:
+        if self.pct is not None and self.practice is None:
             return self.pct.cased_name
-        else:
+        elif self.practice is not None:
             return self.practice.cased_name
+        else:
+            return 'the NHS in England'
 
     def org_type(self):
-        if self.practice is None:
+        if self.pct is not None and self.practice is None:
             return 'CCG'
-        else:
+        elif self.practice is not None:
             return 'practice'
+        else:
+            return 'all_england'
 
     def topic(self):
         """Sentence snippet describing the bookmark

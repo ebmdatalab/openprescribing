@@ -303,6 +303,11 @@ def _cache(function, *args):
 
 @handle_bad_request
 def all_england(request):
+    form = _monthly_bookmark_and_newsletter_form(
+        request, None)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get('entity_type', 'CCG')
     date = _specified_or_last_date(request, 'ppu')
@@ -342,6 +347,8 @@ def all_england(request):
         'ncso_spending': ncso_spending,
         'date': date,
         'measure_options': measure_options,
+        'form': form,
+        'signed_up_for_alert': _signed_up_for_alert(request, None, OrgBookmark),
     }
     return render(request, 'all_england.html', context)
 
@@ -1454,6 +1461,9 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
     """Build a form for newsletter/alert signups, and handle user login
     for POSTs to that form.
     """
+    if entity is None:
+        return _monthly_bookmark_and_newsletter_form_for_all_england(request)
+
     entity_type = _entity_type_from_object(entity)
     if request.method == 'POST':
         form = _handle_bookmark_and_newsletter_post(
@@ -1465,6 +1475,22 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
         form = MonthlyOrgBookmarkForm(
             initial={entity_type: entity.pk,
                      'email': getattr(request.user, 'email', '')})
+
+    return form
+
+
+def _monthly_bookmark_and_newsletter_form_for_all_england(request):
+    """Build a form for newsletter/alert signups, and handle user login
+    for POSTs to that form.
+    """
+    if request.method == 'POST':
+        form = _handle_bookmark_and_newsletter_post(
+            request,
+            OrgBookmark,
+            MonthlyOrgBookmarkForm)
+    else:
+        form = MonthlyOrgBookmarkForm(
+            initial={'email': getattr(request.user, 'email', '')})
 
     return form
 
