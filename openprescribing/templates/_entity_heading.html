@@ -20,7 +20,7 @@
     {% endif %}
     <p>Current practice type: {{ entity.get_setting_display }}</p>
     {% if entity.close_date %}
-    <p>Closed: {{ entity.close_date }}</p>
+    <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
     {% endif %}
   </div>
 
@@ -38,7 +38,7 @@
       {% endif %}
     </h1>
     {% if entity.close_date %}
-    <p>Closed: {{ entity.close_date }}</p>
+    <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
     {% endif %}
     <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
     <ul class="list-unstyled" id="child-entities">
@@ -64,7 +64,7 @@
       {% endif %}
     </h1>
     {% if entity.close_date %}
-    <p>Closed: {{ entity.close_date }}</p>
+    <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
     {% endif %}
     <p>There are {{ ccgs.count }} CCGs in this {{ entity_type_human }}.<a id="showall" href="#">&raquo; show them...</a></p>
     <ul class="list-unstyled" id="child-entities">
