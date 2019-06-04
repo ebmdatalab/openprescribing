@@ -610,7 +610,6 @@ def all_england_price_per_unit(request):
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
-    product = presentation.dmd_product
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
@@ -648,7 +647,6 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 def all_england_price_per_unit_by_presentation(request, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
-    product = presentation.dmd_product
 
     params = {
         'format': 'json',
@@ -1067,24 +1065,20 @@ def _home_page_context_for_entity(request, entity):
     if isinstance(entity, Practice):
         mv_filter['practice_id'] = entity.code
         entity_type = 'practice'
-        parent_org = entity.ccg_id
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
         mv_filter['practice_id'] = None
         entity_type = 'ccg'
-        parent_org = None
     elif isinstance(entity, STP):
         mv_filter['stp_id'] = entity.code
         mv_filter['pct_id'] = None
         mv_filter['practice_id'] = None
         entity_type = 'stp'
-        parent_org = None
     elif isinstance(entity, RegionalTeam):
         mv_filter['regional_team_id'] = entity.code
         mv_filter['pct_id'] = None
         mv_filter['practice_id'] = None
         entity_type = 'regional_team'
-        parent_org = None
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish

@@ -1,7 +1,6 @@
 import cPickle
 import json
 import os.path
-import re
 import uuid
 
 from django.contrib.gis.db import models
@@ -18,7 +17,6 @@ from dmd2.models import (
     VMP,
     AMP,
     VMPP,
-    AMPP,
     DtPaymentCategory,
     AvailabilityRestriction,
     VirtualProductPresStatus,
