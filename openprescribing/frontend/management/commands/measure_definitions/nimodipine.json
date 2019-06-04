@@ -20,7 +20,7 @@
     "research"
   ],
   "numerator_columns": [
-    "SUM(p.quantity) AS numerator, "
+    "SUM(quantity) AS numerator, "
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard",
   "numerator_where": [
