@@ -263,7 +263,7 @@ class Client(object):
         ]
 
         def transformer(record):
-            for ix in timestamp_ixs and record[ix]:
+            for ix in timestamp_ixs:
                 record[ix] = record[ix] + ' 00:00:00'
             return record
 
