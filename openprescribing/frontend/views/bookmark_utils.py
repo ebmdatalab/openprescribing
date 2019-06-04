@@ -835,6 +835,7 @@ def make_ncso_concession_email(bookmark, tag=None):
         'additional_cost': monthly_totals[0]['additional_cost'],
         'breakdown': breakdown,
         'concessions_url': concessions_url,
+        'dashboard_url': dashboard_url,
         'chart_image_cid': chart_image_cid,
         'unsubscribe_link': unsubscribe_link,
     }
