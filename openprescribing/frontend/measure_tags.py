@@ -7,7 +7,9 @@ def _load_measure_tags(filename):
         tags = json.load(f)
     for tag_name, tag_details in tags.items():
         if isinstance(tag_details.get('description'), list):
-            tag_details['description'] = ''.join(tag_details['description'])
+            tag_details['description'] = ' '.join(
+                line.strip() for line in tag_details['description']
+            )
     return tags
 
 

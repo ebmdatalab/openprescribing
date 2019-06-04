@@ -5,6 +5,6 @@
   },
   "tag2": {
     "name": "Tag Two",
-    "description": ["This description is", " an array"]
+    "description": ["This description is  ", "  an array"]
   }
 }
