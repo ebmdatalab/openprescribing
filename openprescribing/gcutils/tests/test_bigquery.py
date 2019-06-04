@@ -1,5 +1,6 @@
 import csv
 import tempfile
+from decimal import Decimal
 
 from google.cloud.exceptions import NotFound
 from django.test import TestCase
@@ -180,3 +181,18 @@ class BQClientTest(TestCase):
         table = client.get_table('vmpp')
         rows = list(table.get_rows_as_dicts())
         self.assertEqual(len(rows), 4)
+
+        for row in rows:
+            if row['id'] != 1079211000001106:
+                continue
+
+            for k, v in {
+                'invalid': False,
+                'nm': 'Chlortalidone 50mg tablets 28 tablet',
+                'vmp': 317935006,
+                'qtyval': Decimal('28.00'),
+                'qty_uom': 428673006,
+                'combpack': None,
+                'bnf_code': '0202010F0AAAAAA',
+            }.items():
+                self.assertEqual(row[k], v)
