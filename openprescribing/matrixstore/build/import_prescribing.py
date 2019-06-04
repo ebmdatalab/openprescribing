@@ -91,7 +91,7 @@ def read_gzipped_prescribing_csv(filename):
 
 def parse_prescribing_csv(input_stream):
     """
-    Accepts a stream of CSV and yields prescibing data as tuples of the form:
+    Accepts a stream of CSV and yields prescribing data as tuples of the form:
 
         bnf_code, practice_code, date, items, quantity, actual_cost, net_cost
     """
