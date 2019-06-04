@@ -47,8 +47,8 @@ futures==3.2.0            # via google-api-core, pyarrow, requests-futures
 google-api-core==1.11.1   # via google-cloud-bigquery, google-cloud-core, google-cloud-storage
 google-api-python-client==1.7.9
 google-auth-httplib2==0.0.3  # via google-api-python-client
-google-auth-oauthlib==0.3.0  # via pandas-gbq
-google-auth==1.6.3        # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq
+google-auth-oauthlib==0.3.0  # via pandas-gbq, pydata-google-auth
+google-auth==1.6.3        # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery==1.13.0
 google-cloud-core==1.0.1  # via google-cloud-bigquery, google-cloud-storage
 google-cloud-storage==1.16.0
@@ -72,7 +72,7 @@ numpy==1.16.4
 oauthlib==2.0.4           # via requests-oauthlib
 odfpy==1.3.6              # via tablib
 openpyxl==2.6.2
-pandas-gbq==0.3.1
+pandas-gbq==0.10.0
 pandas==0.24.2
 paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
@@ -85,12 +85,13 @@ pyasn1-modules==0.2.1     # via google-auth
 pyasn1==0.4.2             # via paramiko, pyasn1-modules, rsa
 pycodestyle==2.5.0        # via flake8
 pycparser==2.18           # via cffi
+pydata-google-auth==0.1.3  # via pandas-gbq
 pyflakes==2.1.0           # via flake8
 pynacl==1.2.1             # via paramiko
 pyopenssl==19.0.0         # via requests
 pyquery==1.4.0
 python-dateutil==2.8.0
-python3-openid==3.1.0     # via django-allauth
+python-openid==2.2.5      # via django-allauth
 pytz==2019.1
 pyvirtualdisplay==0.2.3
 pyyaml==5.1               # via tablib, watchdog
@@ -108,6 +109,7 @@ sqlparse==0.2.4           # via django-debug-toolbar
 tablib==0.12.1            # via django-import-export
 titlecase==0.12.0
 tqdm==4.32.1
+typing==3.6.6             # via django-extensions, flake8
 unicodecsv==0.14.1        # via djangorestframework-csv, tablib
 uritemplate==3.0.0        # via google-api-python-client
 urllib3==1.25.3           # via requests, selenium
