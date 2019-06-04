@@ -65,7 +65,7 @@
     <small class="js-hide-long-list" data-max-items="7">
       {% for tag, tag_details in measure_tags %}
         <a href="{% url measures_for_one_entity_url entity.code %}?tags={{ tag }}">
-          {{ tag_details.name }}{% if not forloop.last %},{% endif %}
+          {{ tag_details.name }} ({{ tag_details.count }}){% if not forloop.last %},{% endif %}
         </a>
       {% endfor %}
     </small>
