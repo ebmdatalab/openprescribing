@@ -80,7 +80,7 @@ def handle_bad_request(view_function):
     return wrapper
 
 
-def _first_or_none(lst):
+def first_or_none(lst):
     try:
         return lst[0]
     except IndexError:
@@ -276,7 +276,7 @@ def regional_team_home_page(request, regional_team_code):
 # All England
 ##################################################
 
-def _cache(function, *args):
+def cached(function, *args):
     """
     Wrapper which caches the result of calling `function` with the supplied
     arguments.
@@ -313,13 +313,13 @@ def all_england(request):
     date = _specified_or_last_date(request, 'ppu')
     # We cache the results of these expensive function calls which only change
     # when `date` changes
-    ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
-    measure_savings = _cache(_all_england_measure_savings, entity_type, date)
-    low_priority_savings = _cache(_all_england_low_priority_savings, entity_type, date)
-    low_priority_total = _cache(_all_england_low_priority_total, entity_type, date)
+    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
+    measure_savings = cached(all_england_measure_savings, entity_type, date)
+    low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
+    low_priority_total = cached(all_england_low_priority_total, entity_type, date)
     # We deliberately DON'T cache the NCSO spending query as this can change
     # whenever new concession data comes in, which can happen at any time
-    ncso_spending = _first_or_none(
+    ncso_spending = first_or_none(
         ncso_spending_for_entity(None, 'all_england', num_months=1)
     )
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
@@ -1158,7 +1158,7 @@ def _home_page_context_for_entity(request, entity):
             entity_type.lower())
         context['date'] = _specified_or_last_date(request, 'ppu')
         context['possible_savings'] = _total_savings(entity, context['date'])
-        context['ncso_spending'] = _first_or_none(
+        context['ncso_spending'] = first_or_none(
             ncso_spending_for_entity(entity, entity_type, num_months=1)
         )
         context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
@@ -1302,7 +1302,7 @@ def _build_api_url(view_name, params):
     ))
 
 
-def _all_england_ppu_savings(entity_type, date):
+def all_england_ppu_savings(entity_type, date):
     conditions = ' '
     if entity_type == 'CCG':
         conditions += 'AND {ppusavings_table}.pct_id IS NOT NULL '
@@ -1326,7 +1326,7 @@ def _all_england_ppu_savings(entity_type, date):
         return savings
 
 
-def _all_england_measure_savings(entity_type, date):
+def all_england_measure_savings(entity_type, date):
     return (
         MeasureValue.objects
         .filter(month=date, practice_id__isnull=(entity_type == 'CCG'))
@@ -1335,7 +1335,7 @@ def _all_england_measure_savings(entity_type, date):
     )
 
 
-def _all_england_low_priority_savings(entity_type, date):
+def all_england_low_priority_savings(entity_type, date):
     target_costs = (
         MeasureGlobal.objects
         .get(month=date, measure_id='lpzomnibus')
@@ -1351,7 +1351,7 @@ def _all_england_low_priority_savings(entity_type, date):
     )
 
 
-def _all_england_low_priority_total(entity_type, date):
+def all_england_low_priority_total(entity_type, date):
     result = (
         MeasureValue.objects.filter(
             month=date,

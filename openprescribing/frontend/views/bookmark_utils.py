@@ -32,9 +32,9 @@ from frontend.views.spending_utils import (
     ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
 )
 from frontend.views.views import (
-    _cache, _first_or_none, _all_england_low_priority_total,
-    _all_england_low_priority_savings, _all_england_measure_savings,
-    _all_england_ppu_savings
+    cached, first_or_none, all_england_low_priority_total,
+    all_england_low_priority_savings, all_england_measure_savings,
+    all_england_ppu_savings
 )
 
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
@@ -876,11 +876,11 @@ def make_all_england_email(bookmark, tag=None):
     # CCG level. We use CCG at present for performance reasons but we may want
     # to switch in future.
     entity_type = 'CCG'
-    ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
-    measure_savings = _cache(_all_england_measure_savings, entity_type, date)
-    low_priority_savings = _cache(_all_england_low_priority_savings, entity_type, date)
-    low_priority_total = _cache(_all_england_low_priority_total, entity_type, date)
-    ncso_spending = _first_or_none(
+    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
+    measure_savings = cached(all_england_measure_savings, entity_type, date)
+    low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
+    low_priority_total = cached(all_england_low_priority_total, entity_type, date)
+    ncso_spending = first_or_none(
         ncso_spending_for_entity(None, 'all_england', num_months=1)
     )
 

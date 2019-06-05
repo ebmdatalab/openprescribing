@@ -15,7 +15,7 @@ from frontend.models import (
     EmailMessage, OrgBookmark, SearchBookmark, ImportLog, PCT, Practice,
     MeasureValue, Measure
 )
-from frontend.views.views import BadRequestError, _get_measure_tag_filter, _cache
+from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
 
 from allauth.account.models import EmailAddress
 
@@ -728,25 +728,25 @@ class TestCacheWrapper(SimpleTestCase):
             side_effect=lambda s: 'foo%s' % s,
             __name__='test_func'
         )
-        result = _cache(test_func, 'bar')
+        result = cached(test_func, 'bar')
         self.assertEqual(result, 'foobar')
-        result2 = _cache(test_func, 'bar')
+        result2 = cached(test_func, 'bar')
         self.assertEqual(result2, result)
         test_func.assert_called_once_with('bar')
 
     def test_source_commit_id_used_in_cache_key(self):
         test_func = Mock(__name__='test_func', return_value='foo')
-        _cache(test_func)
-        _cache(test_func)
+        cached(test_func)
+        cached(test_func)
         self.assertEqual(test_func.call_count, 1)
         with override_settings(SOURCE_COMMIT_ID='def456'):
-            _cache(test_func)
-            _cache(test_func)
+            cached(test_func)
+            cached(test_func)
         self.assertEqual(test_func.call_count, 2)
 
     def test_no_caching_if_not_enabled(self):
         test_func = Mock(__name__='test_func', return_value='foo')
         with override_settings(ENABLE_CACHING=False):
-            _cache(test_func)
-            _cache(test_func)
+            cached(test_func)
+            cached(test_func)
         self.assertEqual(test_func.call_count, 2)
