@@ -871,6 +871,10 @@ def make_all_england_email(bookmark, tag=None):
     msg.subject = 'Your monthly update on prescribing across NHS England'
 
     date = ImportLog.objects.latest_in_category('ppu').current_at
+
+    # This allows us to switch between calculating savings at the practice or
+    # CCG level. We use CCG at present for performance reasons but we may want
+    # to switch in future.
     entity_type = 'CCG'
     ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
     measure_savings = _cache(_all_england_measure_savings, entity_type, date)
