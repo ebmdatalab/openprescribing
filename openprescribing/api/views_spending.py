@@ -28,7 +28,7 @@ CODE_LENGTH_ERROR = (
     'data, please <a href="mailto:{{ SUPPORT_TO_EMAIL }}" '
     'class="feedback-show">get in touch</a> and we may be able to extract it '
     'for you')
-MIN_GHOST_GENERIC_DELTA = 5
+MIN_GHOST_GENERIC_DELTA = 2
 
 
 class NotValid(APIException):
