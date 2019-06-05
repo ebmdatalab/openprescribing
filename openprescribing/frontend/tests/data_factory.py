@@ -8,7 +8,8 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    ImportLog, Practice, PCT, Prescription, Presentation, NCSOConcessionBookmark
+    ImportLog, Practice, PCT, Prescription, Presentation,
+    NCSOConcessionBookmark, OrgBookmark
 )
 from dmd.models import (
     DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
@@ -160,3 +161,21 @@ class DataFactory(object):
             assert False
 
         return NCSOConcessionBookmark.objects.create(**kwargs)
+
+    def create_org_bookmark(self, org, user=None):
+        kwargs = {
+            'user': user or self.create_user(),
+            'approved': True,
+        }
+
+        if org is None:
+            # All England
+            pass
+        elif isinstance(org, PCT):
+            kwargs['pct'] = org
+        elif isinstance(org, Practice):
+            kwargs['practice'] = org
+        else:
+            assert False
+
+        return OrgBookmark.objects.create(**kwargs)
