@@ -62,6 +62,7 @@ def dmd_obj_view(request, obj_type, id):
         raise Http404
 
     obj = get_object_or_404(cls, id=id)
+    obj_type_human = obj_type.upper()
 
     fields_by_name = {field.name: field for field in cls._meta.fields}
     rels_by_name = {rel.name: rel for rel in cls._meta.related_objects}
@@ -120,7 +121,9 @@ def dmd_obj_view(request, obj_type, id):
             rows.append({"value": related_instance.title(), "link": link})
 
     ctx = {
-        "title": "{} {}".format(cls.__name__, id),
+        "title": "{} {}".format(obj_type_human, id),
+        "obj": obj,
+        "obj_type": obj_type_human,
         "rows": rows,
     }
     return render(request, "dmd/dmd_obj.html", ctx)
