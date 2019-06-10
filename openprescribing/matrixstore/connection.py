@@ -31,6 +31,13 @@ class MatrixStore(object):
             # the connection across threads, should we want to
             check_same_thread=False
         )
+        # Enable mmapped I/O by making sure the max mmap size (0 by default)
+        # exceeds the file size by a comfortable margin. See:
+        # https://www.sqlite.org/mmap.html
+        size = os.path.getsize(path)
+        # We can't use parameter substitution in PRAGMA statements so we use
+        # `format` and force to an integer
+        connection.execute('PRAGMA mmap_size={:d}'.format(size + 1024*1024))
         return cls(connection)
 
     def query(self, sql, params=()):

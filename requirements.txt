@@ -36,7 +36,6 @@ djangorestframework-csv==2.1.0
 djangorestframework==3.9.4
 easyprocess==0.2.3        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
-enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.7

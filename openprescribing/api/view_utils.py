@@ -1,33 +1,6 @@
 import itertools
 from django.db import connection
 from django.shortcuts import get_object_or_404
-from functools import wraps
-
-from enum import Enum
-
-
-DISABLE_DB_TIMEOUT = False
-
-
-def db_timeout(timeout):
-    """A decorator that applies a timeout to the current database
-    connection.
-
-    Note this will only work as expected so long as CONN_MAX_AGE is
-    zero.  Otherwise, connection pooling will lead to unexpected
-    timeouts
-
-    """
-    def timeout_decorator(func):
-        @wraps(func)
-        def func_wrapper(*args, **kwargs):
-            from django.db import connection
-            if not DISABLE_DB_TIMEOUT:
-                cursor = connection.cursor()
-                cursor.execute("set statement_timeout to %s; commit;" % timeout)
-            return func(*args, **kwargs)
-        return func_wrapper
-    return timeout_decorator
 
 
 def param_to_list(str):
@@ -89,24 +62,3 @@ def get_bnf_codes_from_number_str(codes):
             # it's a presentation, not a section
             converted.append(code)
     return converted
-
-
-BnfHierarchy = Enum('BnfHierarchy', 'section chemical product presentation')
-
-
-def get_spending_type(codes):
-    # Codes must all be of the same length.
-    if not codes:
-        return None
-    code_len = len(codes[0])
-    for c in codes:
-        if len(c) != code_len:
-            return False
-    if code_len < 9:
-        return BnfHierarchy.section
-    elif code_len == 9:
-        return BnfHierarchy.chemical
-    elif code_len > 9 and code_len <= 11:
-        return BnfHierarchy.product
-    elif code_len > 11:
-        return BnfHierarchy.presentation

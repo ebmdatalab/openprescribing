@@ -1,6 +1,5 @@
 from collections import defaultdict
 import csv
-import datetime
 import json
 
 from django.db import connection
@@ -8,7 +7,6 @@ from django.test import TestCase
 
 from .api_test_base import ApiTestBase
 
-from frontend.models import ImportLog
 from frontend.models import Prescription
 from frontend.tests.data_factory import DataFactory
 from api.views_spending import MIN_GHOST_GENERIC_DELTA
@@ -17,20 +15,6 @@ from dmd.models import DMDVmpp
 from dmd.models import TariffPrice
 
 import numpy as np
-
-
-def _create_prescribing_tables():
-    latest_date = ImportLog.objects.latest('current_at').current_at
-    cmd = ("DROP TABLE IF EXISTS %s; "
-           "CREATE TABLE %s () INHERITS (frontend_prescription)")
-    with connection.cursor() as cursor:
-        for offset in range(-59, 1):
-            year = latest_date.year + int(offset / 12)
-            month = (((latest_date.month - 1) + offset) % 12) + 1
-            date = datetime.date(year, month, 1)
-            table_name = "frontend_prescription_%s%s" % (
-                date.year, str(date.month).zfill(2))
-            cursor.execute(cmd % (table_name, table_name))
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
@@ -99,13 +83,6 @@ class TestSpending(ApiTestBase):
         rsp = self._get(params)
         return list(csv.DictReader(rsp.content.splitlines()))
 
-    def test_codes_are_rejected_if_not_same_length(self):
-        params = {
-            'code': '0202010B0,0202010B0AAAAAA',
-        }
-        response = self._get(params)
-        self.assertEqual(response.status_code, 400)
-
     def test_404_returned_for_unknown_short_code(self):
         params = {
             'code': '0',
@@ -121,7 +98,6 @@ class TestSpending(ApiTestBase):
         self.assertEqual(response.status_code, 404)
 
     def test_total_spending(self):
-        _create_prescribing_tables()
         rows = self._get_rows({})
 
         self.assertEqual(len(rows), 60)
@@ -139,7 +115,6 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section(self):
-        _create_prescribing_tables()
         rows = self._get_rows({
             'code': '2'
         })
@@ -154,7 +129,6 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_bnf_section_full_code(self):
-        _create_prescribing_tables()
         rows = self._get_rows({
             'code': '02',
         })
@@ -169,7 +143,6 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[44]['quantity'], '5143')
 
     def test_total_spending_by_code(self):
-        _create_prescribing_tables()
         rows = self._get_rows({
             'code': '0204000I0',
         })
@@ -180,7 +153,6 @@ class TestSpending(ApiTestBase):
         self.assertEqual(rows[44]['quantity'], '2355')
 
     def test_total_spending_by_codes(self):
-        _create_prescribing_tables()
         rows = self._get_rows({
             'code': '0204000I0,0202010B0',
         })
