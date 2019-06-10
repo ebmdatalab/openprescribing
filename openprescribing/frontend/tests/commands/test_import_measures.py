@@ -326,11 +326,6 @@ class BigqueryFunctionalTests(TestCase):
                 'numerator': 1000,
                 'denominator': 11000,
                 'calc_value': 0.0909,
-                'num_items': 10,
-                'denom_items': 110,
-                'num_cost': 1000.0,
-                'denom_cost': 2000,
-                'denom_quantity': 11000,
                 'percentile': 33.33,
                 'pct.code': '02Q',
                 'cost_savings': {
@@ -352,11 +347,6 @@ class BigqueryFunctionalTests(TestCase):
                 'numerator': 0,
                 'denominator': 0,
                 'calc_value': None,
-                'num_items': None,
-                'denom_items': None,
-                'num_cost': None,
-                'denom_cost': None,
-                'denom_quantity': None,
                 'percentile': None,
                 'cost_savings': {
                     '10': 0,
@@ -487,12 +477,6 @@ class BigqueryFunctionalTests(TestCase):
             '_global_': {
                 'numerator': 85500,
                 'denominator': 181500,
-                'num_items': 855,
-                'denom_items': 1815,
-                'num_cost': 85500,
-                'denom_cost': 95100,
-                'num_quantity': 85500,
-                'denom_quantity': 181500,
                 'calc_value': 0.4711,
                 'percentiles': {
                     'practice': {

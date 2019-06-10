@@ -36,6 +36,20 @@ logger = logging.getLogger(__name__)
 
 CENTILES = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 
+MEASURE_FIELDNAMES = [
+    'measure_id',
+    'regional_team_id',
+    'stp_id',
+    'pct_id',
+    'practice_id',
+    'month',
+    'numerator',
+    'denominator',
+    'calc_value',
+    'percentile',
+    'cost_savings',
+]
+
 
 class Command(BaseCommand):
     '''Supply either --end_date to load data for all months
@@ -424,8 +438,8 @@ class MeasureCalculation(object):
         context = {
             'numerator_from': m.numerator_from,
             'numerator_where': m.numerator_where,
-            'numerator_columns': m.columns_for_select('numerator'),
-            'denominator_columns': m.columns_for_select('denominator'),
+            'numerator_columns': self._columns_for_select('numerator'),
+            'denominator_columns': self._columns_for_select('denominator'),
             'denominator_from': m.denominator_from,
             'denominator_where': m.denominator_where,
             'numerator_aliases': numerator_aliases,
@@ -466,7 +480,8 @@ class MeasureCalculation(object):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", SUM(%s) as %s" % (f, f)
-        if self.measure.is_cost_based:
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
             extra_select_sql += (
                 ", "
                 "(SUM(denom_cost) - SUM(num_cost)) / (SUM(denom_quantity)"
@@ -485,8 +500,12 @@ class MeasureCalculation(object):
 
     def calculate_cost_savings_for_practices(self):
         """Append cost savings column to the Practice working table"""
+        if self.measure.is_percentage:
+            query_id = 'practice_percentage_measure_cost_savings'
+        else:
+            query_id = 'practice_list_size_measure_cost_savings'
         self.insert_rows_from_query(
-            'practice_cost_savings',
+            query_id,
             self.table_name('practice'),
             {}
         )
@@ -500,27 +519,23 @@ class MeasureCalculation(object):
         load time performance.
 
         """
-        fieldnames = ['regional_team_id', 'stp_id', 'pct_id', 'measure_id', 'num_items', 'numerator',
-                      'denominator', 'month',
-                      'percentile', 'calc_value', 'denom_items',
-                      'denom_quantity', 'denom_cost', 'num_cost',
-                      'num_quantity', 'practice_id', 'cost_savings']
         f = tempfile.TemporaryFile(mode='r+')
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=MEASURE_FIELDNAMES)
         # Write the data we want to load into a file
         for datum in self.get_rows_as_dicts(self.table_name('practice')):
             datum['measure_id'] = self.measure.id
             if self.measure.is_cost_based:
                 datum['cost_savings'] = json.dumps(convertSavingsToDict(datum))
             datum['percentile'] = normalisePercentile(datum['percentile'])
+            datum = {fn: datum[fn] for fn in MEASURE_FIELDNAMES if fn in datum}
             writer.writerow(datum)
         # load data
         copy_str = "COPY frontend_measurevalue(%s) FROM STDIN "
         copy_str += "WITH (FORMAT CSV)"
-        self.log(copy_str % ", ".join(fieldnames))
+        self.log(copy_str % ", ".join(MEASURE_FIELDNAMES))
         f.seek(0)
         with connection.cursor() as cursor:
-            cursor.copy_expert(copy_str % ", ".join(fieldnames), f)
+            cursor.copy_expert(copy_str % ", ".join(MEASURE_FIELDNAMES), f)
         f.close()
 
     def calculate_orgs(self, org_type, bigquery_only=False):
@@ -581,7 +596,8 @@ class MeasureCalculation(object):
         extra_select_sql = ""
         for f in extra_fields:
             extra_select_sql += ", global_deciles.%s as %s" % (f, f)
-        if self.measure.is_cost_based:
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
             extra_select_sql += (
                 ", global_deciles.cost_per_denom AS cost_per_denom"
                 ", global_deciles.cost_per_num AS cost_per_num")
@@ -598,8 +614,12 @@ class MeasureCalculation(object):
 
     def calculate_cost_savings_for_orgs(self, org_type):
         """Appends cost savings column to the organisation ratios table"""
+        if self.measure.is_percentage:
+            query_id = '{}_percentage_measure_cost_savings'.format(org_type)
+        else:
+            query_id = '{}_list_size_measure_cost_savings'.format(org_type)
         self.insert_rows_from_query(
-            '{}_cost_savings'.format(org_type),
+            query_id,
             self.table_name(org_type),
             {}
         )
@@ -612,6 +632,7 @@ class MeasureCalculation(object):
             if self.measure.is_cost_based:
                 datum['cost_savings'] = convertSavingsToDict(datum)
             datum['percentile'] = normalisePercentile(datum['percentile'])
+            datum = {fn: datum[fn] for fn in MEASURE_FIELDNAMES if fn in datum}
             MeasureValue.objects.create(**datum)
 
     def calculate_global(self, bigquery_only=False):
@@ -721,7 +742,7 @@ class MeasureCalculation(object):
         else:
             logger.info(message)
 
-    def _get_col_aliases(self, num_or_denom=None):
+    def _get_col_aliases(self, num_or_denom):
         """Return column names referred to in measure definitions for both
         numerator or denominator.
 
@@ -732,9 +753,28 @@ class MeasureCalculation(object):
         """
         assert num_or_denom in ['numerator', 'denominator']
         cols = []
-        cols = self.measure.columns_for_select(num_or_denom=num_or_denom)
+        cols = self._columns_for_select(num_or_denom)
         aliases = re.findall(r"AS ([a-z0-9_]+)", cols)
         return [x for x in aliases if x not in num_or_denom]
+
+    def _columns_for_select(self, num_or_denom):
+        """Parse measures definition for SELECT columns; add
+        cost-savings-related columns when necessary.
+
+        """
+        assert num_or_denom in ['numerator', 'denominator']
+        fieldname = "%s_columns" % num_or_denom
+        val = getattr(self.measure, fieldname)
+        # Deal with possible inconsistencies in measure definition
+        # trailing commas
+        if val.strip()[-1] == ',':
+            val = re.sub(r',\s*$', '', val) + ' '
+        if self.measure.is_cost_based and self.measure.is_percentage:
+            # Cost calculations for percentage measures require extra columns.
+            val += (", SUM(items) AS items, "
+                    "SUM(actual_cost) AS cost, "
+                    "SUM(quantity) AS quantity ")
+        return val
 
 
 @contextmanager

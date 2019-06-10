@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load template_extras %}
 {% load humanize %}
+{% load staticfiles %}
 
 {% block title %}PPU savings for {{ entity_name }}{% endblock %}
 {% block active_class %}{% if entity %}ccg{% else %}all_england{% endif %}{% endblock %}
@@ -91,32 +92,32 @@
         {% endif %}
       </p>
     {% endif %}
-    {% if product %}
-     <div id="extended-info">
-      <h4>Extended information about {{name}}</h4>
-      <div id="extended-info-content">
-      {% if product %}
-       <table class="table table-condensed">
-         <tr>
-           <th>Tariff category</th>
-           <td>{{ product.tariff_category }}</td>
-         </tr>
-         <tr>
-           <th>Availability restrictions</th>
-           <td>{{ product.availability_restrictions }}</td>
-         </tr>
-         <tr>
-           <th>Prescribability status</th>
-           <td>{{ product.prescribability }}</td>
-         </tr>
-       </table>
-      {% else %}
-       <p>
-         Extended information from dm+d not available for this presentation.
-       </p>
-       {% endif %}
-       </div>
-     </div>
+    {% if dmd_info %}
+      <div id="extended-info">
+        <h4>Extended information about {{name}}</h4>
+        <div id="extended-info-content">
+          <table class="table table-condensed">
+            {% if dmd_info.tariff_categories %}
+              <tr>
+                <th>Tariff category</th>
+                <td>{{ dmd_info.tariff_categories }}</td>
+              </tr>
+            {% endif %}
+            {% if dmd_info.availability_restrictions %}
+              <tr>
+                <th>Availability restrictions</th>
+                <td>{{ dmd_info.availability_restrictions }}</td>
+              </tr>
+            {% endif %}
+            {% if dmd_info.prescribability_statuses %}
+              <tr>
+                <th>Prescribability status</th>
+                <td>{{ dmd_info.prescribability_statuses }}</td>
+              </tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
    {% endif %}
   </div>
 </div>
@@ -172,9 +173,9 @@
     {% endif %}
 
   </script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/datatables/datatables-bs.css' %}"/>
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+<script type="text/javascript" src="{% static 'vendor/datatables/datatables-bs.js' %}"></script>
 <script type="text/javascript">
   $(function() {
     {% if by_presentation and entity %}

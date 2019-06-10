@@ -41,15 +41,6 @@ DATABASES = {
 # END DATABASE CONFIGURATION
 
 
-# CACHE CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
-}
-# END CACHE CONFIGURATION
-
 GOOGLE_TRACKING_ID = 'UA-62480003-1'
 GOOGLE_OPTIMIZE_CONTAINER_ID = 'GTM-5PX77GZ'
 

@@ -61,7 +61,7 @@
       "This is an <strong>experimental</strong> list of products ",
       "which NHS England ",
       "<a href=\"https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/\">",
-      "have proposed</a> to add to their Low Priority list. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
+      "have proposed</a> to add to their Low Priority list. Please note this consultation has now closed. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
     ]
   },
   "mentalhealth": {
@@ -74,7 +74,7 @@
   },
   "opioids": {
     "name": "Opioids",
-    "description": "These measures relate to the use of opioids. You may also like to use our Price Per Unit tool which identifies how you can make savings due to anomalies in the reimbursement system."
+    "description": "Opioids are painkillers and their use has been increasing in England <a href=\"https://www.thelancet.com/pdfs/journals/lanpsy/PIIS2215-0366(18)30471-1.pdf\"> (see paper)</a>. Although opioids provide effective analgesia for acute pain and in palliative care, there is little evidence of benefit for long-term opioids in most patients with persistent non-cancer pain, in terms of pain, quality of life or functioning, and they can have serious side-effects. These measures relate to the use of opioids and can be used to openly audit prescribing. More resources for reviewing prescribing are available at the <a href=\"https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware\">Opioids Aware project</a>."
   },
   "pain": {
     "name": "Pain",

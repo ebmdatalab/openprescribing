@@ -14,6 +14,15 @@ from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
 from dmd.models import DMDProduct
+from dmd2.models import (
+    VMP,
+    AMP,
+    VMPP,
+    AMPP,
+    DtPaymentCategory,
+    AvailabilityRestriction,
+    VirtualProductPresStatus,
+)
 from frontend.managers import MeasureValueQuerySet
 from frontend.validators import isAlphaNumeric
 from frontend import model_prescribing_units
@@ -448,6 +457,53 @@ class Presentation(models.Model):
                 next_version = version.replaced_by
         return version
 
+    def tariff_categories(self):
+        '''Return all tariff categories for this presentation.'''
+        vmpps = VMPP.objects.filter(bnf_code=self.bnf_code)
+        return DtPaymentCategory.objects.filter(dtinfo__vmpp__in=vmpps).distinct()
+
+    def tariff_categories_descr(self):
+        '''Return a description of the presentation's tariff category/ies.'''
+        return ', '.join(tc.descr for tc in self.tariff_categories())
+
+    def availability_restrictions(self):
+        '''Return all availability restrictions for this presentation.'''
+        amps = AMP.objects.filter(bnf_code=self.bnf_code)
+        return AvailabilityRestriction.objects.filter(amp__in=amps).distinct()
+
+    def availability_restrictions_descr(self):
+        '''Return a description of the presentation's availabilty restriction/s.
+
+        If any AMPs have "None" as their availability restriction, we
+        consider that the presentation itself has no availability restriction.
+        '''
+        descrs = [ar.descr for ar in self.availability_restrictions()]
+        if 'None' in descrs:
+            return 'None'
+        else:
+            return ', '.join(descrs)
+
+    def prescribability_statuses(self):
+        '''Return all prescribability statuses for this presentation.
+        '''
+        vmps = VMP.objects.filter(bnf_code=self.bnf_code)
+        return VirtualProductPresStatus.objects.filter(vmp__in=vmps).distinct()
+
+    def prescribability_statuses_descr(self):
+        '''Return a description of the presentation's prescribability status/es.'''
+        return ', '.join(ps.descr for ps in self.prescribability_statuses())
+
+    def dmd_info(self):
+        '''Return dictionary of information about this presentation extracted
+        from the dm+d data.'''
+
+        info = {
+            'tariff_categories': self.tariff_categories_descr(),
+            'availability_restrictions': self.availability_restrictions_descr(),
+            'prescribability_statuses': self.prescribability_statuses_descr(),
+        }
+        return {k: v for k, v in info.items() if v}
+
     @property
     def dmd_product(self):
         if self.is_generic:
@@ -539,24 +595,6 @@ class Measure(models.Model):
     def __str__(self):
         return self.name
 
-    def columns_for_select(self, num_or_denom=None):
-        """Parse measures definition for SELECT columns; add
-        cost-savings-related columns when necessary.
-
-        """
-        assert num_or_denom in ['numerator', 'denominator']
-        fieldname = "%s_columns" % num_or_denom
-        val = getattr(self, fieldname)
-        # Deal with possible inconsistencies in measure definition
-        # trailing commas
-        if val.strip()[-1] == ',':
-            val = re.sub(r',\s*$', '', val) + ' '
-        if self.is_cost_based:
-            val += (", SUM(items) AS items, "
-                    "SUM(actual_cost) AS cost, "
-                    "SUM(quantity) AS quantity ")
-        return val
-
     class Meta:
         app_label = 'frontend'
 
@@ -579,15 +617,6 @@ class MeasureValue(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
-
-    # Optionally store the raw values, where appropriate.
-    # Cost and quantity are used for calculating cost savings.
-    num_items = models.IntegerField(null=True, blank=True)
-    denom_items = models.IntegerField(null=True, blank=True)
-    num_cost = models.FloatField(null=True, blank=True)
-    denom_cost = models.FloatField(null=True, blank=True)
-    num_quantity = models.FloatField(null=True, blank=True)
-    denom_quantity = models.FloatField(null=True, blank=True)
 
     percentile = models.FloatField(null=True, blank=True)
 
@@ -615,17 +644,6 @@ class MeasureGlobal(models.Model):
     numerator = models.FloatField(null=True, blank=True)
     denominator = models.FloatField(null=True, blank=True)
     calc_value = models.FloatField(null=True, blank=True)
-
-    # Optionally store the raw values, where appropriate.
-    # Cost and quantity are used for calculating cost savings.
-    num_items = models.IntegerField(null=True, blank=True)
-    denom_items = models.IntegerField(null=True, blank=True)
-    num_cost = models.FloatField(null=True, blank=True)
-    denom_cost = models.FloatField(null=True, blank=True)
-    num_quantity = models.FloatField(null=True, blank=True)
-    denom_quantity = models.FloatField(null=True, blank=True)
-    cost_per_num = models.FloatField(null=True, blank=True)
-    cost_per_denom = models.FloatField(null=True, blank=True)
 
     # Percentile values for practices.
     percentiles = JSONField(null=True, blank=True)
@@ -969,3 +987,37 @@ class PPUSaving(models.Model):
     pct = models.ForeignKey(PCT, null=True, blank=True, db_index=True)
     practice = models.ForeignKey(
         Practice, null=True, blank=True, db_index=True)
+
+
+class TariffPrice(models.Model):
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey('dmd2.VMPP')
+    # 1: Category A
+    # 3: Category C
+    # 11: Category M
+    tariff_category = models.ForeignKey('dmd2.DtPaymentCategory')
+    price_pence = models.IntegerField()
+
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
+
+class NCSOConcession(models.Model):
+    date = models.DateField(db_index=True)
+    vmpp = models.ForeignKey('dmd2.VMPP', null=True)
+    drug = models.CharField(max_length=400)
+    pack_size = models.CharField(max_length=40)
+    price_pence = models.IntegerField()
+
+    class Meta:
+        unique_together = ('date', 'vmpp')
+
+    class Manager(models.Manager):
+        def unreconciled(self):
+            return self.filter(vmpp__isnull=True)
+
+    objects = Manager()
+
+    @property
+    def drug_and_pack_size(self):
+        return u'{} {}'.format(self.drug, self.pack_size)
