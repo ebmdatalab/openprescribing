@@ -133,14 +133,22 @@ var barChart = {
           maxRatioActualCost = d.y;
         }
       });
-      newData[month].ratio_items = _.sortBy(newData[month].ratio_items, 'y');
-      newData[month].ratio_actual_cost = _.sortBy(newData[month].ratio_actual_cost, 'y');
+      newData[month].ratio_items = this._sortAndIndex(newData[month].ratio_items);
+      newData[month].ratio_actual_cost = this._sortAndIndex(newData[month].ratio_actual_cost);
     }
     return {
       barData: newData,
       maxRatioItems: maxRatioItems,
       maxRatioActualCost: maxRatioActualCost};
   },
+
+  _sortAndIndex: function(data) {
+    var sortedData = _.sortBy(data, 'y');
+    for (var index = 0; index < sortedData.length; index++) {
+      sortedData[index].x = index;
+    }
+    return sortedData;
+  }
 };
 
 module.exports = barChart;
