@@ -29,13 +29,15 @@
     <h2>Prescribing measures</h2>
     <p>
       The charts below show the distribution of prescribing behaviour across
-      {{entity_type}}s in NHS England on various measures
+      {{entity_type}}s in NHS England on various measures covering safety,
+      efficacy and cost-effectiveness
       (<a href="{% url 'faq' %}#measureinterpret">read more about these</a>).
     </p>
     <p>
       If all {{ entity_type}}s across England had prescribed at least as well
-      as the median {{ entity_type}} the monthly cost saving in
-      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      as the median {{ entity_type}} on the cost-saving measures the monthly
+      cost saving in <strong>{{ date|date:"F Y" }}</strong> would have
+      been:<br>
       <span style="font-size: 200%">£{{ measure_savings.50|sigfigs:4|intcomma }}</span>
     </p>
     <p>
