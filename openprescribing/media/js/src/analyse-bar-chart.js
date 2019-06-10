@@ -63,12 +63,12 @@ var barChart = {
       barOptions.yAxis.max = globalOptions.maxRatioItems;
     }
     barOptions.series = utils.createChartSeries(dataForMonth);
-    barOptions.xAxis.categories = this._getCategoriesFromSeries(barOptions.series[0]);
+    barOptions.xAxis.categories = this._getCategoriesFromData(dataForMonth);
     return new Highcharts.Chart(barOptions);
   },
 
-  _getCategoriesFromSeries: function (series) {
-    return series.data.map(function(d) { return d.name; });
+  _getCategoriesFromData: function (data) {
+    return data.map(function(d) { return d.name; });
   },
 
   update: function(chart, month, ratio, title, formatter, playing, yAxisMax) {
@@ -84,17 +84,14 @@ var barChart = {
       chart.animation = false;
     }
     chart.yAxis[0].update(newYAxisOptions, false);
-    if (month in this.barData) {
-      chart.series[0].setData(this.barData[month][ratio], false);
-    } else {
-      chart.series[0].setData([], false);
-    }
+    var data = (month in this.barData) ? this.barData[month][ratio] : [];
+    chart.series[0].setData(data, false);
     chart.yAxis[0].setExtremes(null, yAxisMax);
-    chart.xAxis[0].setCategories(this._getCategoriesFromSeries(chart.series[0]), false);
+    chart.xAxis[0].setCategories(this._getCategoriesFromData(data), false);
     try {
       chart.redraw();
     } catch (err) {
-      chart.series[0].setData(this.barData[month][ratio], true);
+      chart.series[0].setData(data, true);
     }
   },
 
