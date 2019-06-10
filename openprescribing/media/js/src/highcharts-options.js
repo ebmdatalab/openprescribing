@@ -179,6 +179,15 @@ barOptions.xAxis.type = 'category';
 barOptions.legend.enabled = false;
 barOptions.xAxis.labels = {
   formatter: function() {
+    // When animating chart transitions we can sometimes end up in a state
+    // where Highcharts want to format a label for an x-value for which we have
+    // no corresponding category e.g if we're transitioning to a chart with
+    // fewer practices then, during the transition, a portion of the x-axis
+    // will not correspond to any practice. In this case, we want an empty
+    // label rather than an error
+    if ( ! this.value.length) {
+      return '';
+    }
     var str = this.value.substring(0, 17);
     str += (this.value.length > 17) ? '...' : '';
     return str;
