@@ -90,7 +90,7 @@ pyvirtualdisplay==0.2.3
 pyyaml==5.1               # via tablib, watchdog
 raven==6.10.0
 redis==3.2.1              # via django-redis
-requests-futures==0.9.9
+requests-futures==1.0.0
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
 rsa==3.4.2                # via google-auth

@@ -39,7 +39,7 @@ pyarrow==0.13.0
 python-dateutil==2.8.0
 pytz==2019.1
 raven
-requests-futures==0.9.9
+requests-futures==1.0.0
 requests[security]==2.22.0
 scipy==1.2.1
 titlecase==0.12.0
