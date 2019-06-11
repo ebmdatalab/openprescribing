@@ -50,16 +50,16 @@
   "lowpriority": {
     "name": "NHS England Low Priority",
     "description": [
-      "This is a list of products ",
-      "considered a low priority for NHS Funding ",
+      "This is a list of products",
+      "considered a low priority for NHS Funding",
       "<a href=\"https://www.england.nhs.uk/2017/07/medicine-consultation/\">by NHS England</a>. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
     ]
   },
   "lowpriorityconsultation": {
     "name": "NHS England Low Priority (Consultation)",
     "description": [
-      "This is an <strong>experimental</strong> list of products ",
-      "which NHS England ",
+      "This is an <strong>experimental</strong> list of products",
+      "which NHS England",
       "<a href=\"https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/\">",
       "have proposed</a> to add to their Low Priority list. Please note this consultation has now closed. For more information on how OpenPrescribing can support identification of cost-saving opportunities please consult our <a href=\"https://ebmdatalab.net/qipp-planning-how-to/\">How-to guide</a>."
     ]

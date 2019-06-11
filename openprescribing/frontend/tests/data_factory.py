@@ -8,7 +8,8 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    ImportLog, Practice, PCT, Prescription, Presentation, NCSOConcessionBookmark
+    ImportLog, Practice, PCT, Prescription, Presentation, NCSOConcessionBookmark,
+    Measure
 )
 from dmd.models import (
     DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
@@ -160,3 +161,19 @@ class DataFactory(object):
             assert False
 
         return NCSOConcessionBookmark.objects.create(**kwargs)
+
+    def create_measure(self, tags=None):
+        index = self.next_id()
+        return Measure.objects.create(
+            id='measure_{}'.format(index),
+            name='Measure {}'.format(index),
+            title='Measure {}'.format(index),
+            tags=tags,
+            numerator_from='',
+            numerator_where='',
+            numerator_columns='',
+            denominator_from='',
+            denominator_where='',
+            denominator_columns='',
+            numerator_bnf_codes=[],
+        )
