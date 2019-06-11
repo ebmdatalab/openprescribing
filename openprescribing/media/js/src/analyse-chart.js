@@ -427,8 +427,8 @@ var analyseChart = {
     } else {
       yAxisMax = _this.globalOptions.maxRatioItems;
     }
-    console.log('ratio: ' + _this.globalOptions.chartValues.ratio);
-    console.log(_this.globalOptions);
+    // console.log('ratio: ' + _this.globalOptions.chartValues.ratio);
+    // console.log(_this.globalOptions);
     barChart.update(_this.globalOptions.barChart,
                     _this.globalOptions.activeMonth,
                     _this.globalOptions.chartValues.ratio,
