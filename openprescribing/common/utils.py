@@ -205,7 +205,7 @@ def ppu_sql(conditions=""):
     # Model imports here because util module is used in Django's
     # startup, before model registration is complete, leading to
     # errors
-    from dmd2.models import VMPP
+    from dmd2.models import VMP, VMPP
     from frontend.models import NCSOConcession
     from frontend.models import PPUSaving
     from frontend.models import Presentation
@@ -241,6 +241,8 @@ def ppu_sql(conditions=""):
                       ON {vmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
                      WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
         ON {ppusavings_table}.bnf_code = subquery.bnf_code
+    INNER JOIN {vmp_table}
+        ON {ppusavings_table}.bnf_code = {vmp_table}.bnf_code
     WHERE
         {ppusavings_table}.date = %(date)s
     '''
@@ -252,5 +254,6 @@ def ppu_sql(conditions=""):
         pct_table=PCT._meta.db_table,
         presentation_table=Presentation._meta.db_table,
         vmpp_table=VMPP._meta.db_table,
+        vmp_table=VMP._meta.db_table,
         ncsoconcession_table=NCSOConcession._meta.db_table,
     )

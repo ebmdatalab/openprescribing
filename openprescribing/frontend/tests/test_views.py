@@ -324,7 +324,7 @@ class TestAlertViews(TestCase):
 
 class TestFrontendHomepageViews(TestCase):
     fixtures = ['practices', 'orgs', 'one_month_of_measures', 'importlog',
-                'ppusavings_entity_homepage']
+                'ppusavings_entity_homepage', 'dmd-subset']
 
     def setUp(self):
         ImportLog.objects.create(
