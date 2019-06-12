@@ -256,6 +256,7 @@ var queryForm = {
       _.each(this.globalOptions.orgIds, function(d) {
         url += d.id + ',';
       });
+      url += '&org_type=' + this.globalOptions.org;
       return $.ajax({
         type: 'GET',
         url: url,
@@ -380,11 +381,11 @@ var queryForm = {
     $(this.el.denominatorIds).select2(optionsDenom);
     var optionsOrg = $.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
-      if (_this.globalOptions.org == 'CCG') {
-        return config.apiHost + '/api/1.0/org_code/?org_type=CCG&format=json';
-      } else {
-        return config.apiHost + '/api/1.0/org_code/?org_type=CCG,practice&format=json';
+      var orgType = _this.globalOptions.org;
+      if (orgType === 'practice') {
+        orgType = 'CCG,practice';
       }
+      return config.apiHost + '/api/1.0/org_code/?org_type=' + orgType + '&format=json';
     };
     $(this.el.orgIds).select2(optionsOrg);
     _this.globalOptions.selectOrgOptions = optionsOrg;
