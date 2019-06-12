@@ -3,16 +3,9 @@ from django.test import TestCase
 from frontend.models import PCT
 
 
-def setUpModule():
-    call_command('loaddata', 'frontend/tests/fixtures/ccgs.json',
-                 verbosity=0)
-
-
-def tearDownModule():
-    call_command('flush', verbosity=0, interactive=False)
-
-
 class CommandsTestCase(TestCase):
+
+    fixtures = ['ccgs']
 
     def test_import_ccg_boundaries(self):
         args = []

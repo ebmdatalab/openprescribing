@@ -1,25 +1,13 @@
 import datetime
 import json
-from django.core import management
 from django.test import TestCase
 
 from frontend.models import PCT
 
 
-def setUpModule():
-    fix_dir = 'frontend/tests/fixtures/'
-    management.call_command('loaddata', fix_dir + 'ccgs.json',
-                            verbosity=0)
-    management.call_command('loaddata', fix_dir + 'practices.json',
-                            verbosity=0)
-
-
-def tearDownModule():
-    management.call_command('flush', verbosity=0, interactive=False)
-
-
 class TestAPIOrgViews(TestCase):
 
+    fixtures = ['ccgs', 'practices']
     api_prefix = '/api/1.0'
 
     def test_api_view_org_code(self):
