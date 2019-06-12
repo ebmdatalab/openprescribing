@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import view_utils as utils
 from django.db.models import Q
-from frontend.models import PCT, Practice
+from frontend.models import PCT, Practice, STP, RegionalTeam
 
 @api_view(['GET'])
 def org_codes(request, format=None):
@@ -22,13 +22,20 @@ def org_codes(request, format=None):
 
 def _get_org_from_code(q, is_exact, org_type):
     if is_exact:
-        if len(q) == 3:
+        # Both regional teams and CCGs have 3 character codes, but I don't want
+        # to change the API to require org_type because I don't know what else
+        # might break
+        if len(q) == 3 and org_type != 'regional_team':
             results = PCT.objects.filter(Q(code=q) | Q(name=q)) \
                                  .filter(org_type='CCG')
             values = results.values('name', 'code')
             for v in values:
                 v['id'] = v['code']
                 v['type'] = 'CCG'
+        elif org_type == 'stp':
+            values = _get_stps_like_code(q, is_exact=True)
+        elif org_type == 'regional_team':
+            values = _get_regional_teams_like_code(q, is_exact=True)
         else:
             results = Practice.objects.filter(Q(code=q) | Q(name=q))
             values = results.values('name', 'code', 'ccg')
@@ -41,6 +48,10 @@ def _get_org_from_code(q, is_exact, org_type):
             values += _get_practices_like_code(q)
         elif org_type == 'CCG':
             values += _get_pcts_like_code(q)
+        elif org_type == 'stp':
+            values += _get_stps_like_code(q)
+        elif org_type == 'regional_team':
+            values += _get_regional_teams_like_code(q)
         else:
             values += _get_pcts_like_code(q)
             values += _get_practices_like_code(q)
@@ -85,3 +96,38 @@ def _get_pcts_like_code(q):
         p['id'] = p['code']
         p['type'] = 'CCG'
     return pct_values
+
+
+def _get_stps_like_code(q, is_exact=False):
+    orgs = STP.objects.all()
+    if is_exact:
+        orgs = orgs.filter(
+            Q(ons_code=q) | Q(name=q)
+        )
+    elif q:
+        orgs = orgs.filter(
+            Q(ons_code__istartswith=q) | Q(name__icontains=q)
+        )
+    org_values = orgs.values('name', 'ons_code')
+    for org in org_values:
+        org['code'] = org.pop('ons_code')
+        org['id'] = org['code']
+        org['type'] = 'stp'
+    return org_values
+
+
+def _get_regional_teams_like_code(q, is_exact=False):
+    orgs = RegionalTeam.objects.filter(close_date__isnull=True)
+    if is_exact:
+        orgs = orgs.filter(
+            Q(code=q) | Q(name=q)
+        )
+    elif q:
+        orgs = orgs.filter(
+            Q(code__istartswith=q) | Q(name__icontains=q)
+        )
+    org_values = orgs.values('name', 'code')
+    for org in org_values:
+        org['id'] = org['code']
+        org['type'] = 'regional_team'
+    return org_values
