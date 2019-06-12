@@ -15,7 +15,7 @@ from frontend.models import (
     EmailMessage, OrgBookmark, SearchBookmark, ImportLog, PCT, Practice,
     MeasureValue, Measure
 )
-from frontend.views.views import BadRequestError, _get_measure_tag_filter, _cache
+from frontend.views.views import BadRequestError, _get_measure_tag_filter, cached
 
 from allauth.account.models import EmailAddress
 
@@ -35,7 +35,9 @@ class TestAlertViews(TestCase):
         if alert:
             newsletter_types.append('alerts')
         form_data['newsletters'] = newsletter_types
-        if len(entity_id) == 3:
+        if entity_id == "all_england":
+            url = '/all-england/'
+        elif len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
             form_data['pct'] = entity_id
         else:
@@ -309,6 +311,15 @@ class TestAlertViews(TestCase):
             response, "subscribed to alerts about "
             "<em>prescribing in 1/ST Andrews")
         self.assertTrue(response.context['user'].is_active)
+
+    def test_all_england_bookmark_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup('all_england')
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.practice, None)
+        self.assertEqual(bookmark.pct, None)
+        self.assertEqual(bookmark.org_type(), 'all_england')
 
 
 class TestFrontendHomepageViews(TestCase):
@@ -717,25 +728,25 @@ class TestCacheWrapper(SimpleTestCase):
             side_effect=lambda s: 'foo%s' % s,
             __name__='test_func'
         )
-        result = _cache(test_func, 'bar')
+        result = cached(test_func, 'bar')
         self.assertEqual(result, 'foobar')
-        result2 = _cache(test_func, 'bar')
+        result2 = cached(test_func, 'bar')
         self.assertEqual(result2, result)
         test_func.assert_called_once_with('bar')
 
     def test_source_commit_id_used_in_cache_key(self):
         test_func = Mock(__name__='test_func', return_value='foo')
-        _cache(test_func)
-        _cache(test_func)
+        cached(test_func)
+        cached(test_func)
         self.assertEqual(test_func.call_count, 1)
         with override_settings(SOURCE_COMMIT_ID='def456'):
-            _cache(test_func)
-            _cache(test_func)
+            cached(test_func)
+            cached(test_func)
         self.assertEqual(test_func.call_count, 2)
 
     def test_no_caching_if_not_enabled(self):
         test_func = Mock(__name__='test_func', return_value='foo')
         with override_settings(ENABLE_CACHING=False):
-            _cache(test_func)
-            _cache(test_func)
+            cached(test_func)
+            cached(test_func)
         self.assertEqual(test_func.call_count, 2)

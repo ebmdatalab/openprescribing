@@ -29,13 +29,15 @@
     <h2>Prescribing measures</h2>
     <p>
       The charts below show the distribution of prescribing behaviour across
-      {{entity_type}}s in NHS England on various measures
+      {{entity_type}}s in NHS England on various measures covering safety,
+      efficacy and cost-effectiveness
       (<a href="{% url 'faq' %}#measureinterpret">read more about these</a>).
     </p>
     <p>
       If all {{ entity_type}}s across England had prescribed at least as well
-      as the median {{ entity_type}} the monthly cost saving in
-      <strong>{{ date|date:"F Y" }}</strong> would have been:<br>
+      as the median {{ entity_type}} on the cost-saving measures the monthly
+      cost saving in <strong>{{ date|date:"F Y" }}</strong> would have
+      been:<br>
       <span style="font-size: 200%">£{{ measure_savings.50|sigfigs:4|intcomma }}</span>
     </p>
     <p>
@@ -100,7 +102,7 @@
     <h2>Impact of price concessions</h2>
     <p>
       We have estimated the additional spending due to price concessions on
-      out-of-stock products by taking the latest available prescibing data from
+      out-of-stock products by taking the latest available prescribing data from
       <strong>{{ ncso_spending.last_prescribing_date|date:"F Y" }}</strong>
       and projecting forwards.
       In <strong>{{ ncso_spending.month|date:"F Y" }}</strong> this amounts to:<br>
@@ -138,6 +140,10 @@
       </div>
     </div>
   {% endif %}
+
+  <div class="col-md-6">
+    {% include '_alert_signup_form.html' with alert_type='all_england' %}
+  </div>
 
   <div class="col-md-6">
     {% include '_measure_filters.html' %}

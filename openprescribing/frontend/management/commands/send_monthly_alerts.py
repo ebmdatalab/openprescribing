@@ -69,7 +69,11 @@ class Command(BaseCommand):
         """
         query = (
             Q(approved=True, user__is_active=True) &
-            ~Q(user__emailmessage__tags__contains=['measures', now_month]))
+            ~Q(user__emailmessage__tags__contains=['measures', now_month]) &
+            # Only include bookmarks for either a practice or pct: when both
+            # are NULL this indicates an All England bookmark
+            (Q(practice__isnull=False) | Q(pct__isnull=False))
+        )
         if options['recipient_email'] and (
                 options['ccg'] or options['practice']):
             dummy_user = User(email=options['recipient_email'], id='dummyid')

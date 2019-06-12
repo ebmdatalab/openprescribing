@@ -80,7 +80,7 @@ def handle_bad_request(view_function):
     return wrapper
 
 
-def _first_or_none(lst):
+def first_or_none(lst):
     try:
         return lst[0]
     except IndexError:
@@ -276,7 +276,7 @@ def regional_team_home_page(request, regional_team_code):
 # All England
 ##################################################
 
-def _cache(function, *args):
+def cached(function, *args):
     """
     Wrapper which caches the result of calling `function` with the supplied
     arguments.
@@ -303,18 +303,23 @@ def _cache(function, *args):
 
 @handle_bad_request
 def all_england(request):
+    form = _monthly_bookmark_and_newsletter_form(
+        request, None)
+    if isinstance(form, HttpResponseRedirect):
+        return form
+
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get('entity_type', 'CCG')
     date = _specified_or_last_date(request, 'ppu')
     # We cache the results of these expensive function calls which only change
     # when `date` changes
-    ppu_savings = _cache(_all_england_ppu_savings, entity_type, date)
-    measure_savings = _cache(_all_england_measure_savings, entity_type, date)
-    low_priority_savings = _cache(_all_england_low_priority_savings, entity_type, date)
-    low_priority_total = _cache(_all_england_low_priority_total, entity_type, date)
+    ppu_savings = cached(all_england_ppu_savings, entity_type, date)
+    measure_savings = cached(all_england_measure_savings, entity_type, date)
+    low_priority_savings = cached(all_england_low_priority_savings, entity_type, date)
+    low_priority_total = cached(all_england_low_priority_total, entity_type, date)
     # We deliberately DON'T cache the NCSO spending query as this can change
     # whenever new concession data comes in, which can happen at any time
-    ncso_spending = _first_or_none(
+    ncso_spending = first_or_none(
         ncso_spending_for_entity(None, 'all_england', num_months=1)
     )
     other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
@@ -342,6 +347,8 @@ def all_england(request):
         'ncso_spending': ncso_spending,
         'date': date,
         'measure_options': measure_options,
+        'form': form,
+        'signed_up_for_alert': _signed_up_for_alert(request, None, OrgBookmark),
     }
     return render(request, 'all_england.html', context)
 
@@ -610,7 +617,6 @@ def all_england_price_per_unit(request):
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
-    product = presentation.dmd_product
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
     elif len(entity_code) == 6:
@@ -648,7 +654,6 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
 def all_england_price_per_unit_by_presentation(request, bnf_code):
     date = _specified_or_last_date(request, 'ppu')
     presentation = get_object_or_404(Presentation, pk=bnf_code)
-    product = presentation.dmd_product
 
     params = {
         'format': 'json',
@@ -1067,24 +1072,20 @@ def _home_page_context_for_entity(request, entity):
     if isinstance(entity, Practice):
         mv_filter['practice_id'] = entity.code
         entity_type = 'practice'
-        parent_org = entity.ccg_id
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
         mv_filter['practice_id'] = None
         entity_type = 'ccg'
-        parent_org = None
     elif isinstance(entity, STP):
         mv_filter['stp_id'] = entity.code
         mv_filter['pct_id'] = None
         mv_filter['practice_id'] = None
         entity_type = 'stp'
-        parent_org = None
     elif isinstance(entity, RegionalTeam):
         mv_filter['regional_team_id'] = entity.code
         mv_filter['pct_id'] = None
         mv_filter['practice_id'] = None
         entity_type = 'regional_team'
-        parent_org = None
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
@@ -1158,7 +1159,7 @@ def _home_page_context_for_entity(request, entity):
             entity_type.lower())
         context['date'] = _specified_or_last_date(request, 'ppu')
         context['possible_savings'] = _total_savings(entity, context['date'])
-        context['ncso_spending'] = _first_or_none(
+        context['ncso_spending'] = first_or_none(
             ncso_spending_for_entity(entity, entity_type, num_months=1)
         )
         context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
@@ -1302,7 +1303,7 @@ def _build_api_url(view_name, params):
     ))
 
 
-def _all_england_ppu_savings(entity_type, date):
+def all_england_ppu_savings(entity_type, date):
     conditions = ' '
     if entity_type == 'CCG':
         conditions += 'AND {ppusavings_table}.pct_id IS NOT NULL '
@@ -1326,7 +1327,7 @@ def _all_england_ppu_savings(entity_type, date):
         return savings
 
 
-def _all_england_measure_savings(entity_type, date):
+def all_england_measure_savings(entity_type, date):
     return (
         MeasureValue.objects
         .filter(month=date, practice_id__isnull=(entity_type == 'CCG'))
@@ -1335,7 +1336,7 @@ def _all_england_measure_savings(entity_type, date):
     )
 
 
-def _all_england_low_priority_savings(entity_type, date):
+def all_england_low_priority_savings(entity_type, date):
     target_costs = (
         MeasureGlobal.objects
         .get(month=date, measure_id='lpzomnibus')
@@ -1351,7 +1352,7 @@ def _all_england_low_priority_savings(entity_type, date):
     )
 
 
-def _all_england_low_priority_total(entity_type, date):
+def all_england_low_priority_total(entity_type, date):
     result = (
         MeasureValue.objects.filter(
             month=date,
@@ -1461,6 +1462,9 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
     """Build a form for newsletter/alert signups, and handle user login
     for POSTs to that form.
     """
+    if entity is None:
+        return _monthly_bookmark_and_newsletter_form_for_all_england(request)
+
     entity_type = _entity_type_from_object(entity)
     if request.method == 'POST':
         form = _handle_bookmark_and_newsletter_post(
@@ -1472,6 +1476,22 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
         form = MonthlyOrgBookmarkForm(
             initial={entity_type: entity.pk,
                      'email': getattr(request.user, 'email', '')})
+
+    return form
+
+
+def _monthly_bookmark_and_newsletter_form_for_all_england(request):
+    """Build a form for newsletter/alert signups, and handle user login
+    for POSTs to that form.
+    """
+    if request.method == 'POST':
+        form = _handle_bookmark_and_newsletter_post(
+            request,
+            OrgBookmark,
+            MonthlyOrgBookmarkForm)
+    else:
+        form = MonthlyOrgBookmarkForm(
+            initial={'email': getattr(request.user, 'email', '')})
 
     return form
 
