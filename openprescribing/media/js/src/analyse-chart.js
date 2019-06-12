@@ -187,8 +187,9 @@ var analyseChart = {
       // TODO: Text for tabs. Tidy this up.
       var summaryTab = '';
       var numOrgs = this.globalOptions.orgIds.length;
-      if (this.globalOptions.org === 'CCG') {
-        summaryTab = (numOrgs) ? 'Show vs other CCGs' : 'Show all CCGs';
+      if (this.globalOptions.org !== 'practice') {
+        var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);
+        summaryTab = ((numOrgs) ? 'Show vs other ' : 'Show all ') + orgTypeName + 's';
       } else {
         if (numOrgs) {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
