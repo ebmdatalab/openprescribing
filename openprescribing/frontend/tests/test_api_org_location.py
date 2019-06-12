@@ -9,7 +9,7 @@ from frontend.models import PCT
 
 class TestAPIOrgLocationViews(TestCase):
 
-    fixtures = ['ccgs', 'practices']
+    fixtures = ['orgs', 'practices']
     api_prefix = '/api/1.0'
 
     def test_api_view_org_location_all_ccgs(self):

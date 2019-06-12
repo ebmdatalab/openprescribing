@@ -25,7 +25,7 @@ class CommandsTestCase(SimpleTestCase):
             # Create local test data from fixtures, then upload this to a
             # test project in bigquery
             call_command('loaddata',
-                         'frontend/tests/fixtures/ccgs.json',
+                         'frontend/tests/fixtures/orgs.json',
                          verbosity=0)
             call_command('loaddata',
                          'frontend/tests/fixtures/practices.json',
