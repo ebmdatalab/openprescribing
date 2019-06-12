@@ -1,8 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from django.db.utils import ProgrammingError
+from django.db.models import Q
+
+from frontend.models import Practice, PCT
 import view_utils as utils
+from matrixstore.db import get_db, get_row_grouper
+
 
 STATS_COLUMN_WHITELIST = (
     'total_list_size',
@@ -24,108 +28,118 @@ def org_details(request, format=None):
     '''
     org_type = request.GET.get('org_type', None)
     keys = utils.param_to_list(request.query_params.get('keys', []))
-    orgs = utils.param_to_list(request.query_params.get('org', []))
-    cols = []
+    org_codes = utils.param_to_list(request.query_params.get('org', []))
+    if org_type is None:
+        org_type = 'all_practices'
+    orgs = _get_orgs(org_type, org_codes)
+    data = _get_practice_stats_entries(keys, org_type, orgs)
+    return Response(list(data))
+
+
+def _get_orgs(org_type, org_codes):
     if org_type == 'practice':
-        cols, query = _construct_cols(keys, True)
-        query += " FROM frontend_practicestatistics pr "
-        query += "JOIN frontend_practice pc ON pr.practice_id=pc.code "
-        if orgs:
-            query += "WHERE "
-            for i, c in enumerate(orgs):
-                if len(c) == 3:
-                    query += 'pc.ccg_id=%s '
-                else:
-                    query += "pr.practice_id=%s "
-                if (i != len(orgs) - 1):
-                    query += ' OR '
-        query += "ORDER BY date, row_id"
+        orgs = (
+            Practice.objects
+            .order_by('code')
+            .only('code', 'name')
+        )
+        if org_codes:
+            orgs = orgs.filter(Q(code__in=org_codes) | Q(ccg_id__in=org_codes))
     elif org_type == 'ccg':
-        cols, query = _construct_cols(keys, False)
-        query += ' FROM vw__ccgstatistics '
-        if orgs:
-            query += "WHERE ("
-            for i, c in enumerate(orgs):
-                query += "pct_id=%s "
-                if (i != len(orgs) - 1):
-                    query += ' OR '
-            query += ') '
-        query += 'ORDER BY date'
+        orgs = (
+            PCT.objects
+            .filter(org_type='CCG')
+            .order_by('code')
+            .only('code', 'name')
+        )
+        if org_codes:
+            orgs = orgs.filter(code__in=org_codes)
+    elif org_type == 'all_practices':
+        orgs = []
     else:
-        # Total across NHS England.
-        json_query, cols = _query_and_cols_for(keys, json_builder_only=True)
-        query = 'SELECT date, '
-        query += 'AVG(total_list_size) AS total_list_size, '
-        query += 'AVG(astro_pu_items) AS astro_pu_items, '
-        query += 'AVG(astro_pu_cost) AS astro_pu_cost, '
-        query += 'json_object_agg(key, val) AS star_pu '
-        query += 'FROM ('
-        query += 'SELECT date, '
-        query += 'SUM(total_list_size) AS total_list_size, '
-        query += 'SUM(astro_pu_items) AS astro_pu_items, '
-        query += 'SUM(astro_pu_cost) AS astro_pu_cost, '
-        query += 'key, SUM(value::numeric) val '
-        query += "FROM vw__ccgstatistics p, json_each_text("
-        if json_query:
-            query += json_query
-        else:
-            query += 'star_pu'
-        query += ") "
-        query += 'GROUP BY date, key '
-        query += ') p '
-        query += 'GROUP BY date ORDER BY date'
-    try:
-        if cols:
-            data = utils.execute_query(query, [cols, orgs])
-        else:
-            data = utils.execute_query(query, [orgs])
-    except ProgrammingError as e:
-        error = str(e)
-        if keys and 'does not exist' in error:
-            error = error.split('\n')[0].replace('column', 'key')
-            raise KeysNotValid(error)
-        else:
-            raise
-    return Response(data)
+        raise ValueError('Unknown org_type: {}'.format(org_type))
+    return orgs
 
 
-def _construct_cols(keys, is_practice):
-    cols = []
-    if is_practice:
-        query = "SELECT practice_id AS row_id, name as row_name, date, "
-    else:
-        query = "SELECT pct_id AS row_id, name as row_name, date, "
+def _get_practice_stats_entries(keys, org_type, orgs):
+    db = get_db()
+    practice_stats = db.query(*_get_query_and_params(keys))
+    group_by_org = get_row_grouper(org_type)
+    practice_stats = [
+        (name, group_by_org.sum(matrix))
+        for (name, matrix) in practice_stats
+    ]
+    # `group_by_org.offsets` maps each organisation's primary key to its row
+    # offset within the matrices. We pair each organisation with its row
+    # offset, ignoring those organisations which aren't in the mapping (which
+    # implies that we have no statistics for them)
+    org_offsets = [
+        (org, group_by_org.offsets[org.pk])
+        for org in orgs
+        if org.pk in group_by_org.offsets
+    ]
+    # For the "all_practices" grouping we have no orgs and just a single row
+    if org_type == 'all_practices':
+        org_offsets = [(None, 0)]
+    date_offsets = sorted(db.date_offsets.items())
+    # Yield entries for each organisation on each date
+    for date, col_offset in date_offsets:
+        for org, row_offset in org_offsets:
+            entry = {'date': date}
+            if org is not None:
+                entry['row_id'] = org.pk
+                entry['row_name'] = org.name
+            index = (row_offset, col_offset)
+            star_pu = {}
+            has_value = False
+            for name, matrix in practice_stats:
+                value = matrix[index]
+                if value != 0:
+                    has_value = True
+                if name == 'nothing':
+                    value = 1
+                if isinstance(value, float):
+                    value = round(value, 2)
+                if name.startswith('star_pu.'):
+                    star_pu[name[8:]] = value
+                else:
+                    entry[name] = value
+            if star_pu:
+                entry['star_pu'] = star_pu
+            if has_value:
+                yield entry
+
+
+def _get_query_and_params(keys):
+    params = []
+    for key in keys:
+        if key == 'nothing':
+            pass
+        elif key in STATS_COLUMN_WHITELIST or key.startswith('star_pu.'):
+            params.append(key)
+        else:
+            raise KeysNotValid("%s is not a valid key" % key)
     if keys:
-        q, cols = _query_and_cols_for(keys)
-        query += q
+        # `params` might be empty here because the only key supplied was
+        # "nothing", but that's fine: the empty IN clause won't match any rows,
+        # which is what we want
+        where = 'name IN ({})'.format(','.join('?' * len(params)))
     else:
-        query += '* '
-    return cols, query
-
-
-def _query_and_cols_for(keys, json_builder_only=False):
-    query = ""
-    cols = []
-    json_object_keys = []
-    for k in keys:
-        if k == 'nothing':
-            query += '1 as nothing, '
-        elif k.startswith('star_pu.'):
-            star_pu_type = k[len('star_pu.'):]
-            json_object_keys.append(star_pu_type)
-            cols += [star_pu_type, star_pu_type]
-        elif not json_builder_only:
-            if k not in STATS_COLUMN_WHITELIST:
-                raise KeysNotValid("%s is not a valid key" % k)
-            else:
-                query += '%s, ' % k
-    if json_object_keys:
-        query += 'json_build_object('
-        for k in json_object_keys:
-            query += "%s, star_pu->>%s"
-        query += ') '
-        if not json_builder_only:
-            query += 'AS star_pu'
-    if query.endswith(", "):
-        query = query[:-2]
-    return query, cols
+        # If no keys are supplied we treat this as an implicit "select all"
+        where = '1=1'
+    query = 'SELECT name, value FROM practice_statistic WHERE {}'.format(where)
+    # The special "nothing" key always evaluates to 1, but to match the
+    # previous API we should only return these "nothing" entries where there
+    # exist statistics for that organsation and date. So we use the
+    # total_list_size matrix, and only return entries where that has a non-zero
+    # value
+    if 'nothing' in keys:
+        query += (
+            """
+            UNION ALL
+            SELECT "nothing" AS name, value
+            FROM practice_statistic
+            WHERE name="total_list_size"
+            """
+        )
+    return query, params

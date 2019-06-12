@@ -174,4 +174,4 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(float(rows[0]['total_list_size']), 1260)
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
                          '95.5')
-        self.assertEqual(rows[0].get('astro_pu_cost'), '705.5')
+        self.assertEqual(rows[0].get('astro_pu_cost'), None)

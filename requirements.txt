@@ -28,7 +28,7 @@ django-crispy-forms==1.7.2
 django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==1.11
 django-dotenv==1.4.2
-django-extensions==2.1.7
+django-extensions==2.1.9
 django-import-export==1.2.0
 django-redis==4.10.0
 django==1.11.20
@@ -36,7 +36,6 @@ djangorestframework-csv==2.1.0
 djangorestframework==3.9.4
 easyprocess==0.2.3        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
-enum34==1.1.6
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.7
@@ -57,7 +56,7 @@ html2text==2018.1.9
 httplib2==0.10.3          # via google-api-python-client, google-auth-httplib2
 idna==2.6                 # via cryptography, requests
 jdcal==1.3                # via openpyxl
-lxml==4.3.3
+lxml==4.3.4
 mailchimp3==3.0.7
 mccabe==0.6.1             # via flake8
 mock==3.0.5
@@ -71,7 +70,7 @@ pandas-gbq==0.3.1
 pandas==0.24.2
 paramiko==2.4.2           # via fabric
 pathtools==0.1.2          # via watchdog
-pip-tools==3.7.0
+pip-tools==3.8.0
 premailer==3.4.1
 protobuf==3.4.0           # via google-api-core, googleapis-common-protos
 psycopg2-binary==2.8.2
@@ -91,7 +90,7 @@ pyvirtualdisplay==0.2.3
 pyyaml==5.1               # via tablib, watchdog
 raven==6.10.0
 redis==3.2.1              # via django-redis
-requests-futures==0.9.9
+requests-futures==1.0.0
 requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
 rsa==3.4.2                # via google-auth
@@ -111,3 +110,5 @@ when-changed==0.3.0
 xlrd==1.2.0
 xlwt==1.3.0               # via tablib
 zstandard==0.11.1
+
+#

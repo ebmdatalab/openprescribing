@@ -2,6 +2,14 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
+<p>
+  {% if obj.bnf_code %}
+    Click <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">here</a> to analyse prescribing.
+  {% else %}
+    This {{ obj_type }} cannot be matched against our prescribing data.
+  {% endif %}
+</p>
+
 <table class="table table-condensed">
   {% for row in rows %}
   <tr>

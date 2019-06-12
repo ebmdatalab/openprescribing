@@ -42,12 +42,12 @@ from frontend.forms import FeedbackForm
 from frontend.forms import MonthlyOrgBookmarkForm
 from frontend.forms import NonMonthlyOrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
-from frontend.models import MEASURE_TAGS
 from frontend.models import OrgBookmark
 from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
@@ -1093,6 +1093,7 @@ def _home_page_context_for_entity(request, entity):
         MeasureValue.objects
         .filter(**mv_filter)
         .exclude(measure_id='lpzomnibus')
+        .exclude(measure__low_is_good__isnull=True)
         .values('measure_id')
         .annotate(average_percentile=Avg('percentile'))
         .order_by('-average_percentile')

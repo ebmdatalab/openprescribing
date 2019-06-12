@@ -16,19 +16,12 @@ from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
 from frontend.models import Practice, PCT
+from matrixstore.db import get_db, get_row_grouper
+
 import view_utils as utils
-from view_utils import db_timeout, BnfHierarchy
 
 
-CODE_LENGTH_ERROR = (
-    'Error: BNF Codes must all be the same length if written in the same '
-    'search box. For example, you cannot search for Cerazette_Tab 75mcg '
-    '(0703021Q0BBAAAA) and Cerelle (0703021Q0BD), but you could search for '
-    'Cerazette (0703021Q0BB) and Cerelle (0703021Q0BD). If you need this '
-    'data, please <a href="mailto:{{ SUPPORT_TO_EMAIL }}" '
-    'class="feedback-show">get in touch</a> and we may be able to extract it '
-    'for you')
-MIN_GHOST_GENERIC_DELTA = 5
+MIN_GHOST_GENERIC_DELTA = 2
 
 
 class NotValid(APIException):
@@ -418,24 +411,49 @@ def _aggregate_ppu_sql(original_sql, entity_type):
             practice_name="NULL" if entity_type == 'CCG' else entity_name)
 
 
-@db_timeout(58000)
 @api_view(['GET'])
 def total_spending(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
+    data = _get_total_prescribing_entries(codes)
+    return Response(list(data))
 
-    spending_type = utils.get_spending_type(codes)
-    if spending_type is False:
-        err = CODE_LENGTH_ERROR
-        return Response(err, status=400)
 
-    query = _get_query_for_total_spending(codes)
-
-    if spending_type != BnfHierarchy.presentation:
-        codes = [c + '%' for c in codes]
-
-    data = utils.execute_query(query, [codes])
-    return Response(data)
+def _get_total_prescribing_entries(bnf_code_prefixes):
+    """
+    Yields a dict for each date in our data giving the total prescribing values
+    across all practices for all presentations matching the supplied BNF code
+    prefixes
+    """
+    db = get_db()
+    items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
+        db, bnf_code_prefixes
+    )
+    # If no data at all was found, return early which results in an empty
+    # iterator
+    if items_matrix is None:
+        return
+    # This will sum over every practice (whether setting 4 or not) which might
+    # not seem like what we want but is what the original API did (it was
+    # powered by the `vw__presentation_summary` table which summed over all
+    # practice types)
+    group_all = get_row_grouper('all_practices')
+    items_matrix = group_all.sum(items_matrix)
+    quantity_matrix = group_all.sum(quantity_matrix)
+    actual_cost_matrix = group_all.sum(actual_cost_matrix)
+    # Yield entries for each date (unlike _get_prescribing_entries below we
+    # return a value for each date even if it's zero as this is what the
+    # original API did)
+    for date, col_offset in sorted(db.date_offsets.items()):
+        # The grouped matrices only ever have one row (which represents the
+        # total over all practices) so we always want row 0 in our index
+        index = (0, col_offset)
+        yield {
+            'items': items_matrix[index],
+            'quantity': quantity_matrix[index],
+            'actual_cost': round(actual_cost_matrix[index], 2),
+            'date': date,
+        }
 
 
 @api_view(['GET'])
@@ -494,32 +512,18 @@ def tariff(request, format=None):
     return response
 
 
-@db_timeout(58000)
 @api_view(['GET'])
 def spending_by_ccg(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
     pct_ids = utils.param_to_list(request.query_params.get('org', []))
-
-    spending_type = utils.get_spending_type(codes)
-    if spending_type is False:
-        err = CODE_LENGTH_ERROR
-        return Response(err, status=400)
-
-    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
-        query = _get_query_for_presentations_by_ccg(codes, pct_ids)
-    else:
-        query = _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids,
-                                                            spending_type)
-
-    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
-        codes = [c + '%' for c in codes]
-
-    data = utils.execute_query(query, [codes, pct_ids])
-    return Response(data)
+    ccgs = PCT.objects.filter(org_type='CCG').order_by('code').only('code', 'name')
+    if pct_ids:
+        ccgs = ccgs.filter(code__in=pct_ids)
+    data = _get_prescribing_entries(codes, ccgs, 'ccg')
+    return Response(list(data))
 
 
-@db_timeout(58000)
 @api_view(['GET'])
 def spending_by_practice(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
@@ -527,305 +531,111 @@ def spending_by_practice(request, format=None):
     org_ids = utils.param_to_list(request.query_params.get('org', []))
     date = request.query_params.get('date', None)
 
-    spending_type = utils.get_spending_type(codes)
-    if spending_type is False:
-        err = 'Error: Codes must all be the same length'
-        return Response(err, status=400)
-
-    if spending_type in [BnfHierarchy.section, BnfHierarchy.product]:
-        codes = [c + '%' for c in codes]
-
     if not date and not org_ids:
         err = 'Error: You must supply either '
         err += 'a list of practice IDs or a date parameter, e.g. '
         err += 'date=2015-04-01'
         return Response(err, status=400)
 
-    params = [codes]
-
-    if spending_type in [BnfHierarchy.product, BnfHierarchy.presentation]:
-        assert len(codes) > 0
-        query = _get_presentations_by_practice(codes, org_ids, date)
-        params.append(org_ids)
-
-    elif spending_type in [BnfHierarchy.section, BnfHierarchy.chemical]:
-        assert len(codes) > 0
-        practice_ids = utils.get_practice_ids_from_org(org_ids)
-        query = _get_chemicals_or_sections_by_practice(codes,
-                                                       practice_ids,
-                                                       spending_type,
-                                                       date)
-        params.append(practice_ids)
-
-    else:
-        assert spending_type is None
-        assert len(codes) == 0
-
-        practice_ids = utils.get_practice_ids_from_org(org_ids)
-        query = _get_total_spending_by_practice(practice_ids, date)
-        params.append(practice_ids)
-
-    if date:
-        params.append([date])
-
-    data = utils.execute_query(query, params)
-    return Response(data)
+    practice_ids = utils.get_practice_ids_from_org(org_ids)
+    practices = Practice.objects.order_by('code')
+    if practice_ids:
+        practices = practices.filter(code__in=practice_ids)
+    data = _get_prescribing_entries(codes, practices, 'practice', date=date)
+    return Response(list(data))
 
 
-def _get_query_for_total_spending(codes):
-    # The CTE at the start ensures we return rows for every month in
-    # the last five years, even if that's zeros
-    query = """
-    WITH all_dates AS (
-        SELECT
-            MAX(current_at)::date - (d.date||'month')::interval AS date
-        FROM
-            generate_series(0, 59) AS d(date),
-            frontend_importlog
-        WHERE
-            category = 'prescribing'
-        GROUP BY
-            category,
-            d.date
-        ORDER BY
-            date
+def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
+    """
+    For each date and organisation, yield a dict giving totals for all
+    prescribing matching the supplied BNF code prefixes.
+
+    If a date is supplied then data for just that date is returned, otherwise
+    all available dates are returned.
+    """
+    db = get_db()
+    items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
+        db, bnf_code_prefixes
     )
-    SELECT
-        COALESCE(SUM(cost), 0) AS actual_cost,
-        COALESCE(SUM(items), 0) AS items,
-        COALESCE(SUM(quantity), 0) AS quantity,
-        all_dates.date::date AS date
-    FROM (
-        SELECT *
-        FROM
-        vw__presentation_summary
-        WHERE %s
-    ) pr
-    RIGHT OUTER JOIN all_dates
-    ON all_dates.date = pr.processing_date
-    GROUP BY date
-    ORDER BY date;"""
-
-    if codes:
-        code_clauses = ['presentation_code LIKE %s'] * len(codes)
-    else:
-        code_clauses = None
-
-    where_condition = _build_where_condition([code_clauses])
-
-    return query % where_condition
-
-
-def _get_query_for_chemicals_or_sections_by_ccg(codes, pct_ids, spending_type):
-    query = '''
-    SELECT pc.code as row_id,
-        pc.name as row_name,
-        pr.processing_date as date,
-        SUM(pr.cost) AS actual_cost,
-        SUM(pr.items) AS items,
-        SUM(pr.quantity) AS quantity
-    FROM vw__chemical_summary_by_ccg pr
-    JOIN frontend_pct pc ON pr.pct_id=pc.code
-    AND pc.org_type='CCG'
-    WHERE %s
-    GROUP BY pc.code, pc.name, date
-    ORDER BY date, pc.code
-    '''
-
-    if spending_type == BnfHierarchy.section:
-        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
-    elif spending_type == BnfHierarchy.chemical:
-        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
-    else:
-        chemical_clauses = None
-
-    if pct_ids:
-        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
-    else:
-        pct_clauses = None
-
-    where_condition = _build_where_condition([
-        chemical_clauses,
-        pct_clauses,
-    ])
-
-    return query % where_condition
-
-
-def _get_query_for_presentations_by_ccg(codes, pct_ids):
-    query = '''
-    SELECT
-        pc.code as row_id,
-        pc.name as row_name,
-        pr.processing_date as date,
-        SUM(pr.items) AS items,
-        SUM(pr.cost) AS actual_cost,
-        SUM(pr.quantity) AS quantity
-    FROM vw__presentation_summary_by_ccg pr
-    JOIN frontend_pct pc ON pr.pct_id=pc.code
-    AND pc.org_type='CCG'
-    WHERE %s
-    GROUP BY pc.code, pc.name, date
-    ORDER BY date, pc.code
-    '''
-
-    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
-
-    if pct_ids:
-        pct_clauses = ['pr.pct_id = %s'] * len(pct_ids)
-    else:
-        pct_clauses = None
-
-    where_condition = _build_where_condition([
-        code_clauses,
-        pct_clauses,
-    ])
-
-    return query % where_condition
-
-
-def _get_total_spending_by_practice(practice_ids, date):
-    query = '''
-    SELECT
-        pr.practice_id AS row_id,
-        pc.name AS row_name,
-        pc.setting AS setting,
-        pc.ccg_id AS ccg,
-        pr.processing_date AS date,
-        pr.cost AS actual_cost,
-        pr.items AS items,
-        pr.quantity AS quantity
-    FROM vw__practice_summary pr
-    JOIN frontend_practice pc ON pr.practice_id=pc.code
-    WHERE %s
-    ORDER BY date, pr.practice_id
-    '''
-
-    if practice_ids:
-        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
-    else:
-        practice_clauses = None
-
+    # If no data at all was found, return early which results in an empty
+    # iterator
+    if items_matrix is None:
+        return
+    # Group together practice level data to the appropriate organisation level
+    group_by_org = get_row_grouper(org_type)
+    items_matrix = group_by_org.sum(items_matrix)
+    quantity_matrix = group_by_org.sum(quantity_matrix)
+    actual_cost_matrix = group_by_org.sum(actual_cost_matrix)
+    # `group_by_org.offsets` maps each organisation's primary key to its row
+    # offset within the matrices. We pair each organisation with its row
+    # offset, ignoring those organisations which aren't in the mapping (which
+    # implies that they did not prescribe in this period)
+    org_offsets = [
+        (org, group_by_org.offsets[org.pk])
+        for org in orgs
+        if org.pk in group_by_org.offsets
+    ]
+    # Pair each date with its column offset (either all available dates or just
+    # the specified one)
     if date:
-        date_clause = 'pr.processing_date = %s'
+        date_offsets = [(date, db.date_offsets[date])]
     else:
-        date_clause = None
-
-    where_condition = _build_where_condition([
-        practice_clauses,
-        date_clause,
-    ])
-
-    return query % where_condition
-
-
-def _get_chemicals_or_sections_by_practice(codes, practice_ids, spending_type,
-                                           date):
-    query = '''
-    SELECT
-        pc.code AS row_id,
-        pc.name AS row_name,
-        pc.setting AS setting,
-        pc.ccg_id AS ccg,
-        pr.processing_date AS date,
-        SUM(pr.cost) AS actual_cost,
-        SUM(pr.items) AS items,
-        SUM(pr.quantity) AS quantity
-    FROM vw__chemical_summary_by_practice pr
-    JOIN frontend_practice pc ON pr.practice_id=pc.code
-    WHERE %s
-    GROUP BY pc.code, pc.name, date
-    ORDER BY date, pc.code
-    '''
-
-    if spending_type == BnfHierarchy.section:
-        chemical_clauses = ['pr.chemical_id LIKE %s'] * len(codes)
-    elif spending_type == BnfHierarchy.chemical:
-        chemical_clauses = ['pr.chemical_id = %s'] * len(codes)
-    else:
-        assert False
-
-    if practice_ids:
-        practice_clauses = ['pr.practice_id = %s'] * len(practice_ids)
-    else:
-        practice_clauses = None
-
-    if date:
-        date_clause = 'pr.processing_date = %s'
-    else:
-        date_clause = None
-
-    where_condition = _build_where_condition([
-        chemical_clauses,
-        practice_clauses,
-        date_clause,
-    ])
-
-    return query % where_condition
-
-
-def _get_presentations_by_practice(codes, org_ids, date):
-    query = '''
-    SELECT
-        pc.code AS row_id,
-        pc.name AS row_name,
-        pc.setting AS setting,
-        pc.ccg_id AS ccg,
-        pr.processing_date AS date,
-        SUM(pr.actual_cost) AS actual_cost,
-        SUM(pr.total_items) AS items,
-        CAST(SUM(pr.quantity) AS bigint) AS quantity
-    FROM frontend_prescription pr
-    JOIN frontend_practice pc ON pr.practice_id=pc.code
-    WHERE %s
-    GROUP BY pc.code, pc.name, date
-    ORDER BY date, pc.code
-    '''
-
-    code_clauses = ['pr.presentation_code LIKE %s'] * len(codes)
-
-    org_clauses = []
-    if org_ids:
-        for org_id in org_ids:
-            if len(org_id) == 3:
-                org_clauses.append('pc.ccg_id = %s')
-            else:
-                org_clauses.append('pc.code = %s')
-
-    if date:
-        date_clause = 'pr.processing_date = %s'
-    else:
-        date_clause = None
-
-    where_condition = _build_where_condition([
-        code_clauses,
-        org_clauses,
-        date_clause,
-    ])
-
-    return query % where_condition
-
-
-def _build_where_condition(clauses):
-    fragments = []
-
-    for clause in clauses:
-        if clause is None:
-            continue
-        elif isinstance(clause, str):
-            fragments.append(clause)
-        elif isinstance(clause, list):
-            if len(clause) == 0:
+        date_offsets = sorted(db.date_offsets.items())
+    # Yield entries for each organisation on each date
+    for date, col_offset in date_offsets:
+        for org, row_offset in org_offsets:
+            index = (row_offset, col_offset)
+            items = items_matrix[index]
+            # Mimicking the behaviour of the existing API, we don't return
+            # entries where there was no prescribing
+            if items == 0:
                 continue
-            elif len(clause) == 1:
-                fragments.append(clause[0])
-            else:
-                fragment = '(' + ' OR '.join(clause) + ')'
-                fragments.append(fragment)
-        else:
-            assert False, 'Unexpected clause: {}'.format(clause)
+            entry = {
+                'items': items,
+                'quantity': quantity_matrix[index],
+                'actual_cost': round(actual_cost_matrix[index], 2),
+                'date': date,
+                'row_id': org.pk,
+                'row_name': org.name,
+            }
+            # Practices get some extra attributes in the existing API
+            if org_type == 'practice':
+                entry['ccg'] = org.ccg_id
+                entry['setting'] = org.setting
+            yield entry
 
-    if not fragments:
-        return '1 = 1'
+
+def _get_prescribing_for_codes(db, bnf_code_prefixes):
+    """
+    Return items, quantity and actual_cost matrices giving the totals for all
+    prescribing which matches any of the supplied BNF code prefixes. If no
+    prefixes are supplied then the totals will be over all prescribing for all
+    presentations.
+    """
+    if bnf_code_prefixes:
+        where_clause = ' OR '.join(['bnf_code LIKE ?'] * len(bnf_code_prefixes))
+        params = [code + '%' for code in bnf_code_prefixes]
+        sql = (
+            """
+            SELECT
+                matrix_sum(items) AS items,
+                matrix_sum(quantity) AS quantity,
+                matrix_sum(actual_cost) AS actual_cost
+            FROM
+                presentation
+            WHERE
+                items IS NOT NULL AND ({})
+            """.format(
+                where_clause
+            )
+        )
     else:
-        return ' AND '.join(fragments)
+        # As summing over all presentations can be quite slow we use the
+        # precalculated results table
+        sql = 'SELECT items, quantity, actual_cost FROM all_presentations'
+        params = []
+    items, quantity, actual_cost = db.query_one(sql, params)
+    # Convert from pence to pounds
+    if actual_cost is not None:
+        actual_cost = actual_cost / 100.0
+    return items, quantity, actual_cost
