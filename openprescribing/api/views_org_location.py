@@ -1,9 +1,8 @@
-from django.http import HttpResponse
-from django.core.serializers import serialize
-
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from frontend.models import PCT, Practice
+from api.geojson_serializer import as_geojson
 import api.view_utils as utils
 
 
@@ -20,9 +19,8 @@ def org_location(request, format=None):
         raise ValueError('Unknown org_type: {}'.format(org_type))
     results, geo_field, other_fields = result_spec
     fields = other_fields + (geo_field,)
-    return HttpResponse(
-        serialize('geojson', results, geometry_field=geo_field, fields=fields),
-        content_type='application/json'
+    return Response(
+        as_geojson(results.values(*fields), geometry_field=geo_field)
     )
 
 
