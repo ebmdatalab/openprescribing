@@ -15,7 +15,7 @@ from common.utils import ppu_sql
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
-from frontend.models import Practice, PCT
+from frontend.models import Practice, PCT, STP, RegionalTeam
 from matrixstore.db import get_db, get_row_grouper
 
 import view_utils as utils
@@ -513,35 +513,57 @@ def tariff(request, format=None):
 
 
 @api_view(['GET'])
-def spending_by_ccg(request, format=None):
-    codes = utils.param_to_list(request.query_params.get('code', []))
-    codes = utils.get_bnf_codes_from_number_str(codes)
-    pct_ids = utils.param_to_list(request.query_params.get('org', []))
-    ccgs = PCT.objects.filter(org_type='CCG').order_by('code').only('code', 'name')
-    if pct_ids:
-        ccgs = ccgs.filter(code__in=pct_ids)
-    data = _get_prescribing_entries(codes, ccgs, 'ccg')
-    return Response(list(data))
-
-
-@api_view(['GET'])
-def spending_by_practice(request, format=None):
+def spending_by_org(request, format=None, org_type=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
     org_ids = utils.param_to_list(request.query_params.get('org', []))
+    org_type = request.query_params.get('org_type', org_type)
     date = request.query_params.get('date', None)
 
-    if not date and not org_ids:
-        err = 'Error: You must supply either '
-        err += 'a list of practice IDs or a date parameter, e.g. '
-        err += 'date=2015-04-01'
-        return Response(err, status=400)
+    # Accept both cases of CCG (better to fix this specific string rather than
+    # make the whole API case-insensitive)
+    if org_type == 'CCG':
+        org_type = 'ccg'
 
-    practice_ids = utils.get_practice_ids_from_org(org_ids)
-    practices = Practice.objects.order_by('code')
-    if practice_ids:
-        practices = practices.filter(code__in=practice_ids)
-    data = _get_prescribing_entries(codes, practices, 'practice', date=date)
+    # Some special case handling for practices
+    if org_type == 'practice':
+        # Translate any CCG codes into the codes of all practices in that CCG
+        org_ids = utils.get_practice_ids_from_org(org_ids)
+        # Due to the number of practices we only return data for all practices
+        # if a single date is specified
+        if not date and not org_ids:
+            return Response(
+                'Error: You must supply either a list of practice IDs or a date '
+                'parameter, e.g. date=2015-04-01',
+                status=400
+            )
+
+    # We don't (yet?) have a "proper" code field for STPs so we're using they
+    # ONS code
+    code_field = 'code' if org_type != 'stp' else 'ons_code'
+
+    if org_type == 'practice':
+        orgs = Practice.objects.all()
+    elif org_type == 'ccg':
+        orgs = PCT.objects.filter(org_type='CCG')
+    elif org_type == 'stp':
+        orgs = STP.objects.all()
+    elif org_type == 'regional_team':
+        orgs = RegionalTeam.objects.all()
+    else:
+        return Response('Error: unrecognised org_type parameter', status=400)
+
+    # Filter and sort
+    if org_ids:
+        orgs = orgs.filter(**{code_field + '__in': org_ids})
+    orgs = orgs.order_by(code_field)
+
+    # For most orgs we just want the code and name but (again) practices get
+    # slightly different treatment
+    if org_type != 'practice':
+        orgs = orgs.only(code_field, 'name')
+
+    data = _get_prescribing_entries(codes, orgs, org_type, date=date)
     return Response(list(data))
 
 
