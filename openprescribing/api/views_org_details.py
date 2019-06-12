@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from django.db.models import Q
 
-from frontend.models import Practice, PCT
+from frontend.models import Practice, PCT, STP, RegionalTeam
 import view_utils as utils
 from matrixstore.db import get_db, get_row_grouper
 
@@ -49,6 +49,22 @@ def _get_orgs(org_type, org_codes):
         orgs = (
             PCT.objects
             .filter(org_type='CCG')
+            .order_by('code')
+            .only('code', 'name')
+        )
+        if org_codes:
+            orgs = orgs.filter(code__in=org_codes)
+    elif org_type == 'stp':
+        orgs = (
+            STP.objects
+            .order_by('ons_code')
+            .only('ons_code', 'name')
+        )
+        if org_codes:
+            orgs = orgs.filter(ons_code__in=org_codes)
+    elif org_type == 'regional_team':
+        orgs = (
+            RegionalTeam.objects
             .order_by('code')
             .only('code', 'name')
         )
