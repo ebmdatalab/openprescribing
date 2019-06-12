@@ -543,10 +543,7 @@ var analyseChart = {
     for (var i = 0; i < data.length; i++) {
       entry = data[i];
       // We include an org both if its ID is selected, or if it belongs to a
-      // CCG which is itself selected.  This logic will need extending if we
-      // add other org types to the Analyse form, so we deliberately throw an
-      // 'Unhandled orgType' error elsewhere if we're given an org type we
-      // don't recognise.
+      // CCG which is itself selected
       if (selectedOrgs && ! selectedOrgs[entry.row_id] && ! selectedOrgs[entry.ccg]) {
         continue;
       }
@@ -611,12 +608,6 @@ function formatDateRange(fromDateStr, toDateStr) {
 }
 
 function getOrgSelection(orgType, orgs) {
-  // If the Analyse form is extended to cover other org types we will need to
-  // update bits of logic elsewhere. Search for 'Unhandled orgType' to find the
-  // relevant section
-  if (orgType !== 'CCG' && orgType !== 'practice') {
-    throw "Unhandled orgType: " + orgType;
-  }
   // Given the current behaviour of the Analyse form it shouldn't be possible
   // to get practice level data without selecting some practices, and it's
   // not obvious how we should handle this if we do
@@ -636,7 +627,8 @@ function getOrgSelection(orgType, orgs) {
 }
 
 function getOrgsDescription(orgType, orgs) {
-  if (orgs.length === 0) return 'all CCGs in NHS England';
+  var orgTypeName = formatters.getFriendlyOrgType(orgType);
+  if (orgs.length === 0) return 'all ' + orgTypeName + 's in NHS England';
   return orgs.map(function(org) { return org.name; }).join(' + ');
 }
 
