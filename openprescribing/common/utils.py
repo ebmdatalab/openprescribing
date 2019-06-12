@@ -212,7 +212,18 @@ def ppu_sql(conditions=""):
     from frontend.models import Practice
     from frontend.models import PCT
 
+    # See https://github.com/ebmdatalab/price-per-dose/issues/1 for an
+    # explanation of the extra BNF codes in vmp_bnf_codes below.
+
     sql = '''
+    WITH vmp_bnf_codes AS (
+        SELECT DISTINCT bnf_code FROM {vmp_table}
+        UNION ALL
+        SELECT '0601060D0AAA0A0'  -- "Glucose Blood Testing Reagents"
+        UNION ALL
+        SELECT '0601060U0AAA0A0'  -- "Urine Testing Reagents"
+    )
+
     SELECT
         {ppusavings_table}.id AS id,
         {ppusavings_table}.date AS date,
@@ -241,10 +252,9 @@ def ppu_sql(conditions=""):
                       ON {vmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
                      WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
         ON {ppusavings_table}.bnf_code = subquery.bnf_code
-    INNER JOIN {vmp_table}
-        ON {ppusavings_table}.bnf_code = {vmp_table}.bnf_code
     WHERE
         {ppusavings_table}.date = %(date)s
+        AND {ppusavings_table}.bnf_code IN (SELECT bnf_code FROM vmp_bnf_codes)
     '''
 
     sql += conditions
