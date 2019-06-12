@@ -100,7 +100,7 @@ var queryForm = {
     }
 
     // Hide or show CCG matches.
-    if ((this.globalOptions.org === 'CCG') || (this.globalOptions.org === 'practice')) {
+    if (this.globalOptions.org !== 'all') {
       $(this.el.orgIds).parent().fadeIn();
       if (this.globalOptions.org === 'practice') {
         $(this.el.orgHelp).text('Hint: add a CCG to see all its practices');
@@ -134,8 +134,10 @@ var queryForm = {
     var hasNumerator;
     var hasOrgIds;
     hasNumerator = ((options.num === 'all') || (options.numIds.length > 0));
-    hasOrgIds = ((options.org === 'all') || (options.org === 'CCG') ||
-                     (options.orgIds.length > 0));
+    hasOrgIds = (
+      (options.org && options.org !== 'practice') ||
+      (options.orgIds.length > 0)
+    );
     return hasNumerator && hasOrgIds;
   },
 
