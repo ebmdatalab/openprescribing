@@ -1,6 +1,27 @@
 var _ = require('underscore');
 var humanize = require('humanize');
 
+var ORG_TYPES = {
+  'practice': {
+    'name': 'practice',
+    'title': 'Practice'
+  },
+  'ccg': {
+    'name': 'CCG',
+    'title': 'CCG'
+  },
+  'stp': {
+    'name': 'STP',
+    'title': 'STP'
+  },
+  'regional_team': {
+    'name': 'regional team',
+    'title': 'Regional Team'
+  }
+};
+
+ORG_TYPES.CCG = ORG_TYPES.ccg;
+
 var formatters = {
 
   getFriendlyNamesForChart: function(options) {
@@ -55,19 +76,19 @@ var formatters = {
   },
 
   getFriendlyOrgType: function(orgType) {
-    switch(orgType) {
-      case 'practice':
-        return 'practice';
-      case 'ccg':
-      case 'CCG':
-        return 'CCG';
-      case 'stp':
-        return 'STP';
-      case 'regional_team':
-        return 'regional team';
-      default:
-        throw 'Unhandled orgType: ' + orgType;
+    var orgTypeDetails = ORG_TYPES[orgType];
+    if ( ! orgTypeDetails) {
+      throw 'Unhandled orgType: ' + orgType;
     }
+    return orgTypeDetails.name;
+  },
+
+  getFriendlyOrgTypeTitle: function(orgType) {
+    var orgTypeDetails = ORG_TYPES[orgType];
+    if ( ! orgTypeDetails) {
+      throw 'Unhandled orgType: ' + orgType;
+    }
+    return orgTypeDetails.title;
   },
 
   getFriendlyNumerator: function(numIds) {

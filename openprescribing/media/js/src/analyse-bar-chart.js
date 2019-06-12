@@ -17,7 +17,7 @@ var barChart = {
     barOptions.yAxis.labels = {
       formatter: globalOptions.friendly.yAxisFormatter,
     };
-    var xAxisTitle = (globalOptions.org == 'practice') ? 'Practice' : 'CCG';
+    var xAxisTitle = formatters.getFriendlyOrgTypeTitle(globalOptions.org);
     barOptions.xAxis.title = {text: xAxisTitle};
     var chartValues = globalOptions.chartValues;
     barOptions.tooltip = {
