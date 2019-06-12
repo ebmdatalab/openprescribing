@@ -93,3 +93,48 @@ class TestAPIOrgViews(TestCase):
         self.assertEqual(content[-1]['code'], 'B82018')
         self.assertEqual(content[-1]['name'], 'ESCRICK SURGERY')
         self.assertEqual(content[-1]['type'], 'practice')
+
+    def test_stp_inexact_match(self):
+        url = '%s/org_code?q=northampton&format=json&org_type=stp' % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'E54000020')
+        self.assertEqual(content[0]['name'], 'Northamptonshire')
+
+    def test_stp_exact_match(self):
+        url = '{}/org_code?q=E54000006&format=json&org_type=stp&exact=true'.format(
+            self.api_prefix
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'E54000006')
+        self.assertEqual(content[0]['name'], 'Humber, Coast and Vale')
+
+    def test_regional_team_inexact_match(self):
+        url = '{}/org_code?q=north&format=json&org_type=regional_team'.format(
+            self.api_prefix
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'Y54')
+        self.assertEqual(content[0]['name'], 'NORTH OF ENGLAND COMMISSIONING REGION')
+
+    def test_regional_team_exact_match(self):
+        url = '{}/org_code?q=Y55&format=json&org_type=regional_team&exact=true'.format(
+            self.api_prefix
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'Y55')
+        self.assertEqual(
+            content[0]['name'],
+            'MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION'
+        )
