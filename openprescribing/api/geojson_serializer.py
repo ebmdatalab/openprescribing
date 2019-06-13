@@ -4,51 +4,71 @@ only serialize fields defined on the model, so if you want to include results
 calculated on a QuerySet using e.g. `annotate` or `aggregate` then you're out
 of luck.
 
-Below is a dirt-simple implementation of a GeoJSON convertor which accepts
+Below is a dirt-simple implementation of a GeoJSON serializer which accepts
 dictionaries with arbitrary keys.
 """
+import json
+
 from django.contrib.gis.gdal import CoordTransform, SpatialReference
 
 
-def as_geojson(dictionaries, geometry_field='geometry', srid=4326):
+def as_geojson_stream(dicts, geometry_field='geometry', srid=4326):
     """
-    Convert an iterable of dictionaries into a GeoJSON structure
+    Convert an iterable of dictionaries into an iterable of strings giving
+    their GeoJSON representation
+
+    The slightly awkward hand-crafting of JSON is done because we only have
+    access to the geometries as already serialized JSON strings and parsing
+    these into a big data structure only so we can serialize them again seems a
+    bit ridiculous.
     """
-    converter = GeoJSONConvertor(geometry_field, srid)
-    return {
+    to_geojson = GeoJSONConvertor(srid)
+    header = {
         "type": "FeatureCollection",
         "crs": {
             "type": "name",
             "properties": {
-                "name": "EPSG:{:d}".format(srid)
+                "name": "EPSG:{}".format(srid)
             }
-        },
-        "features": [converter.convert_dict(d) for d in dictionaries]
+        }
     }
+    # Output header omitting closing brace
+    yield json.dumps(header)[:-1]
+    # Open "features" array
+    yield ', "features": ['
+    for n, dictionary in enumerate(dicts):
+        # Output separator
+        yield ',\n' if n > 0 else '\n'
+        geometry = dictionary.pop(geometry_field, None)
+        feature = {
+            'type': 'Feature',
+            'properties': dictionary
+        }
+        # Output feature omitting closing brace and newline
+        yield json.dumps(feature, indent=2)[:-2]
+        # Output geometry field, which is already a JSON string
+        yield ',\n  "geometry": '
+        yield to_geojson(geometry)
+        # Close feature
+        yield '\n}'
+    # Close features array and header object
+    yield '\n]}'
 
 
 class GeoJSONConvertor(object):
-
-    def __init__(self, geometry_field, srid):
-        self.geometry_field = geometry_field
+    """
+    Convert geometry object to GeoJSON string in the required SRID
+    """
+    def __init__(self, srid):
         self.srid = srid
-        self._transform_cache = {}
+        self._transforms = {}
 
-    def convert_dict(self, d):
-        geometry = d.pop(self.geometry_field, None)
-        if geometry is not None:
-            geometry = self.as_geojson(geometry)
-        return {
-            'geometry': geometry,
-            'type': 'Feature',
-            'properties': d
-        }
-
-    def as_geojson(self, geometry):
+    def __call__(self, geometry):
+        if geometry is None:
+            return 'null'
         if geometry.srid != self.srid:
-            if geometry.srid not in self._transform_cache:
+            if geometry.srid not in self._transforms:
                 srs = SpatialReference(self.srid)
-                self._transform_cache[geometry.srid] = CoordTransform(geometry.srs, srs)
-            geometry.transform(self._transform_cache[geometry.srid])
-        # This seems kind of bad, but it's what Django's geojson serializer does
-        return eval(geometry.geojson)
+                self._transforms[geometry.srid] = CoordTransform(geometry.srs, srs)
+            geometry.transform(self._transforms[geometry.srid])
+        return geometry.geojson
