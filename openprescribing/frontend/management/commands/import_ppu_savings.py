@@ -10,6 +10,7 @@ from django.db import transaction
 from gcutils.bigquery import Client
 
 from common.utils import valid_date
+from dmd.models import DMDProduct
 from frontend.models import ImportLog
 from frontend.models import PPUSaving
 from frontend.models import Presentation
@@ -208,12 +209,27 @@ class Command(BaseCommand):
                 if options['month'] <= log.current_at:
                     raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
-            # Create custom presentations for our overrides, if they don't exist.
-            # See https://github.com/ebmdatalab/price-per-dose/issues/1.
+            # Create custom DMD Products for our overrides, if they
+            # don't exist.
+            DMDProduct.objects.get_or_create(
+                dmdid=10000000000,
+                bnf_code='0601060D0AAA0A0',
+                vpid=10000000000,
+                name='Glucose Blood Testing Reagents',
+                concept_class=1,
+                product_type=1
+            )
             Presentation.objects.get_or_create(
                 bnf_code='0601060D0AAA0A0',
                 name='Glucose Blood Testing Reagents',
                 is_generic=True)
+            DMDProduct.objects.get_or_create(
+                dmdid=10000000001,
+                vpid=10000000001,
+                bnf_code='0601060U0AAA0A0',
+                name='Urine Testing Reagents',
+                product_type=1,
+                concept_class=1)
             Presentation.objects.get_or_create(
                 bnf_code='0601060U0AAA0A0',
                 name='Urine Testing Reagents',

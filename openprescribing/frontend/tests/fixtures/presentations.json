@@ -5,7 +5,6 @@
     "fields": {
       "bnf_code": "0202010F0AAAAAA",
       "name": "Chlortalidone_Tab 50mg",
-      "dmd_name": "Chlortalidone 50mg tablets",
       "is_generic": true
     }
   },
@@ -72,16 +71,6 @@
       "name": "non-current product",
       "is_generic": true,
       "is_current": false
-    }
-  },
-  {
-    "model": "frontend.presentation",
-    "pk": "0206020T0AAAGAG",
-    "fields": {
-      "bnf_code": "0206020T0AAAGAG",
-      "name": "Verapamil HCl_Tab 160mg",
-      "is_generic": true,
-      "is_current": true
     }
   }
 ]

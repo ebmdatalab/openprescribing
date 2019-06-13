@@ -2,8 +2,7 @@ from __future__ import print_function
 
 from django.core.management import BaseCommand, CommandError
 
-from dmd2.models import VMPP
-from frontend.models import NCSOConcession
+from dmd.models import NCSOConcession, DMDVmpp
 
 
 class Command(BaseCommand):
@@ -18,8 +17,8 @@ class Command(BaseCommand):
             raise CommandError('Could not find concession')
 
         try:
-            vmpp = VMPP.objects.get(id=kwargs['vmpp_id'])
-        except VMPP.DoesNotExist:
+            vmpp = DMDVmpp.objects.get(vppid=kwargs['vmpp_id'])
+        except DMDVmpp.DoesNotExist:
             raise CommandError('Could not find VMPP')
 
         concession.vmpp = vmpp

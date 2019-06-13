@@ -8,59 +8,58 @@ from django.test import TestCase
 from .api_test_base import ApiTestBase
 
 from frontend.models import Prescription
-from frontend.models import TariffPrice
 from frontend.tests.data_factory import DataFactory
 from api.views_spending import MIN_GHOST_GENERIC_DELTA
-from dmd2.models import VMPP
+from dmd.models import DMDProduct
+from dmd.models import DMDVmpp
+from dmd.models import TariffPrice
 
 import numpy as np
 
 
 class TestAPISpendingViewsTariff(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['dmd-subset', 'tariff', 'ncso-concessions']
-
     def test_tariff_hit(self):
-        url = '/tariff?format=csv&codes=0206020T0AAAGAG'
+        url = '/tariff?format=csv&codes=ABCD'
         rows = self._rows_from_api(url)
         self.assertEqual(rows, [
-            {'date': '2014-10-01',
+            {'date': '2010-03-01',
              'concession': '',
-             'product': '0206020T0AAAGAG',
+             'product': 'ABCD',
              'price_pence': '900',
-             'tariff_category': 'Part VIIIA Category C',
-             'vmpp': 'Verapamil 160mg tablets 100 tablet',
-             'vmpp_id': '1027111000001105',
-             'pack_size': '100.00'},
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Bar tablets 84 tablet',
+             'vmpp_id': '5120711000001104',
+             'pack_size': '84.0'}
         ])
 
     def test_tariff_hits(self):
-        url = '/tariff?format=csv&codes=0202010F0AAAAAA,0206020T0AAAGAG'
+        url = '/tariff?format=csv&codes=ABCD,EFGH'
         rows = self._rows_from_api(url)
         self.assertItemsEqual(rows, [
-            {'date': '2014-10-01',
+            {'date': '2010-03-01',
              'concession': '',
-             'product': '0206020T0AAAGAG',
+             'product': 'ABCD',
              'price_pence': '900',
-             'tariff_category': 'Part VIIIA Category C',
-             'vmpp': 'Verapamil 160mg tablets 100 tablet',
-             'vmpp_id': '1027111000001105',
-             'pack_size': '100.00'},
-            {'date': '2014-10-01',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Bar tablets 84 tablet',
+             'vmpp_id': '5120711000001104',
+             'pack_size': '84.0'},
+            {'date': '2010-03-01',
              'concession': '',
-             'product': '0202010F0AAAAAA',
+             'product': 'EFGH',
              'price_pence': '2400',
-             'tariff_category': 'Part VIIIA Category C',
-             'vmpp': 'Chlortalidone 50mg tablets 28 tablet',
-             'vmpp_id': '1079211000001106',
-             'pack_size': '28.00'},
-            {'date': '2014-11-01',
-             'concession': '2650',
-             'product': '0202010F0AAAAAA',
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet',
+             'vmpp_id': '994511000001109',
+             'pack_size': '84.0'},
+            {'date': '2010-04-01',
+             'concession': '',
+             'product': 'EFGH',
              'price_pence': '1100',
-             'tariff_category': 'Part VIIIA Category C',
-             'vmpp': 'Chlortalidone 50mg tablets 28 tablet',
-             'vmpp_id': '1079211000001106',
-             'pack_size': '28.00'},
+             'tariff_category': 'Part VIIIA Category A',
+             'vmpp': 'Foo tablets 84 tablet',
+             'vmpp_id': '994511000001109',
+             'pack_size': '84.0'},
         ])
 
     def test_tariff_miss(self):
@@ -777,7 +776,8 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
         ccg_savings = autovivify(levels=2, final=int)
         for practice in self.practices:
             for rx in Prescription.objects.filter(practice=practice):
-                vmpps = VMPP.objects.filter(bnf_code=rx.presentation_code)
+                product = DMDProduct.objects.get(bnf_code=rx.presentation_code)
+                vmpps = DMDVmpp.objects.filter(vpid=product.vpid)
                 prices_per_pill = set()
                 for vmpp in vmpps:
                     tariff = TariffPrice.objects.get(vmpp=vmpp)
@@ -801,7 +801,7 @@ class TestAPISpendingViewsGhostGenerics(TestCase):
 
 
 class TestAPISpendingViewsPPUTable(ApiTestBase):
-    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmd-subset', 'ncso-concessions']
+    fixtures = ApiTestBase.fixtures + ['ppusavings', 'dmdproducts']
 
     def _get(self, **data):
         data['format'] = 'json'
@@ -810,12 +810,23 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         return json.loads(rsp.content)
 
     def _expected_results(self, ids):
+        # This is something of a hack; because of the SELECT DISTINCT, we
+        # expect some queries to return one of two rows, but we don't know
+        # which will be returned, and nor do we care.
+        class Verapamil:
+            def __eq__(self, other):
+                return other in [
+                    "Verapamil 160mg tablets",
+                    "Verapamil 160mg tablets (dupe)",
+                ]
+
         expected = [{
             "id": 1,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": 'Chlortalidone 50mg tablets',
+            "name": Verapamil(),
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
@@ -829,8 +840,9 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 2,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": 'Chlortalidone 50mg tablets',
+            "name": Verapamil(),
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
@@ -843,9 +855,10 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "id": 3,
             "lowest_decile": 0.1,
-            "presentation": "0206020T0AAAGAG",
-            "name": "Verapamil HCl_Tab 160mg",
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": "P87629",
             "formulation_swap": None,
             "pct": "03V",
@@ -858,9 +871,10 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
         }, {
             "id": 4,
             "lowest_decile": 0.1,
-            "presentation": "0206020T0AAAGAG",
-            "name": "Verapamil HCl_Tab 160mg",
+            "presentation": "0906050P0AAAFAF",
+            "name": "Vitamin E 400unit capsules",
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03V",
@@ -874,8 +888,9 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 5,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": 'Chlortalidone 50mg tablets',
+            "name": Verapamil(),
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": "N84014",
             "formulation_swap": None,
             "pct": "03Q",
@@ -889,8 +904,9 @@ class TestAPISpendingViewsPPUTable(ApiTestBase):
             "id": 6,
             "lowest_decile": 0.1,
             "presentation": "0202010F0AAAAAA",
-            "name": 'Chlortalidone 50mg tablets',
+            "name": Verapamil(),
             "price_per_unit": 0.2,
+            "flag_bioequivalence": False,
             "practice": None,
             "formulation_swap": None,
             "pct": "03Q",
