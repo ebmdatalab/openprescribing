@@ -78,7 +78,7 @@ def _cluster_count(cursor):
 
 
 class FunctionalTests(TestCase):
-    fixtures = ['ccgs']
+    fixtures = ['orgs']
 
     def test_reconstructor_does_work(self):
         from django.db import connection

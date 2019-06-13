@@ -25,10 +25,8 @@ var utils = {
 
   constructQueryURLs: function(options) {
     var numeratorUrl = config.apiHost + '/api/1.0';
-    if (options.org === 'CCG') {
-      numeratorUrl += '/spending_by_ccg/?format=json';
-    } else if (options.org === 'practice') {
-      numeratorUrl += '/spending_by_practice/?format=json';
+    if (options.org && options.org !== 'all') {
+      numeratorUrl += '/spending_by_org/?format=json&org_type=' + options.org.toLowerCase();
     } else {
       numeratorUrl += '/spending/?format=json';
     }
@@ -50,10 +48,8 @@ var utils = {
     }
     var denominatorUrl = config.apiHost + '/api/1.0';
     if (options.denom === 'chemical') {
-      if (options.org === 'CCG') {
-        denominatorUrl += '/spending_by_ccg/?format=json';
-      } else if (options.org === 'practice') {
-        denominatorUrl += '/spending_by_practice/?format=json';
+      if (options.org && options.org !== 'all') {
+        denominatorUrl += '/spending_by_org/?format=json&org_type=' + options.org.toLowerCase();
       } else {
         denominatorUrl += '/spending/?format=json';
       }

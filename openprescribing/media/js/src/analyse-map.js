@@ -206,9 +206,7 @@ return x[1];
 
   getBoundsUrl: function(options) {
     var boundsUrl = config.apiHost + '/api/1.0/org_location/?format=json&';
-    if (options.org === 'CCG') {
-      boundsUrl += 'org_type=ccg';
-    } else {
+    if (options.org === 'practice') {
       boundsUrl += 'org_type=practice&q=';
       _.each(options.orgIds, function(d) {
         if (('ccg' in d) && (d.ccg)) {
@@ -217,6 +215,8 @@ return x[1];
           boundsUrl += d.id + ',';
         }
       });
+    } else {
+      boundsUrl += 'org_type=' + options.org.toLowerCase();
     }
     return boundsUrl;
   },

@@ -100,7 +100,7 @@ var queryForm = {
     }
 
     // Hide or show CCG matches.
-    if ((this.globalOptions.org === 'CCG') || (this.globalOptions.org === 'practice')) {
+    if (this.globalOptions.org !== 'all') {
       $(this.el.orgIds).parent().fadeIn();
       if (this.globalOptions.org === 'practice') {
         $(this.el.orgHelp).text('Hint: add a CCG to see all its practices');
@@ -134,8 +134,10 @@ var queryForm = {
     var hasNumerator;
     var hasOrgIds;
     hasNumerator = ((options.num === 'all') || (options.numIds.length > 0));
-    hasOrgIds = ((options.org === 'all') || (options.org === 'CCG') ||
-                     (options.orgIds.length > 0));
+    hasOrgIds = (
+      (options.org && options.org !== 'practice') ||
+      (options.orgIds.length > 0)
+    );
     return hasNumerator && hasOrgIds;
   },
 
@@ -256,6 +258,7 @@ var queryForm = {
       _.each(this.globalOptions.orgIds, function(d) {
         url += d.id + ',';
       });
+      url += '&org_type=' + this.globalOptions.org;
       return $.ajax({
         type: 'GET',
         url: url,
@@ -380,11 +383,11 @@ var queryForm = {
     $(this.el.denominatorIds).select2(optionsDenom);
     var optionsOrg = $.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
-      if (_this.globalOptions.org == 'CCG') {
-        return config.apiHost + '/api/1.0/org_code/?org_type=CCG&format=json';
-      } else {
-        return config.apiHost + '/api/1.0/org_code/?org_type=CCG,practice&format=json';
+      var orgType = _this.globalOptions.org;
+      if (orgType === 'practice') {
+        orgType = 'CCG,practice';
       }
+      return config.apiHost + '/api/1.0/org_code/?org_type=' + orgType + '&format=json';
     };
     $(this.el.orgIds).select2(optionsOrg);
     _this.globalOptions.selectOrgOptions = optionsOrg;

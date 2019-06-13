@@ -555,6 +555,99 @@ class TestSpendingByPractice(ApiTestBase):
         self.assertEqual(rows[0]['quantity'], '28')
 
 
+class TestSpendingByOrg(ApiTestBase):
+    def _get(self, params):
+        params['format'] = 'csv'
+        url = '/api/1.0/spending_by_org/'
+        return self.client.get(url, params)
+
+    def _get_rows(self, params):
+        rsp = self._get(params)
+        return list(csv.DictReader(rsp.content.splitlines()))
+
+    def test_spending_by_all_stps(self):
+        rows = self._get_rows({'org_type': 'stp'})
+        self.assertEqual(len(rows), 9)
+        self.assertEqual(
+            rows[1],
+            {
+                'actual_cost': '1.53',
+                'date': '2013-08-01',
+                'items': '1',
+                'quantity': '28',
+                'row_id': 'E54000006',
+                'row_name': 'Humber, Coast and Vale'
+            }
+        )
+        self.assertEqual(
+            rows[2],
+            {
+                'actual_cost': '1.69',
+                'date': '2013-08-01',
+                'items': '1',
+                'quantity': '23',
+                'row_id': 'E54000020',
+                'row_name': 'Northamptonshire'
+            }
+        )
+
+    def test_spending_by_one_stp_on_chapter(self):
+        rows = self._get_rows({'org_type': 'stp', 'org': 'E54000020', 'code': '02'})
+        self.assertEqual(len(rows), 5)
+        self.assertEqual(
+            rows[-1],
+            {
+                'actual_cost': '230.54',
+                'date': '2014-11-01',
+                'items': '96',
+                'quantity': '5143',
+                'row_id': 'E54000020',
+                'row_name': 'Northamptonshire'
+            }
+        )
+
+    def test_spending_by_all_regional_teams(self):
+        rows = self._get_rows({'org_type': 'regional_team'})
+        self.assertEqual(len(rows), 9)
+        self.assertEqual(
+            rows[1],
+            {
+                'actual_cost': '1.53',
+                'date': '2013-08-01',
+                'items': '1',
+                'quantity': '28',
+                'row_id': 'Y54',
+                'row_name': 'NORTH OF ENGLAND COMMISSIONING REGION'
+            }
+        )
+        self.assertEqual(
+            rows[2],
+            {
+                'actual_cost': '1.69',
+                'date': '2013-08-01',
+                'items': '1',
+                'quantity': '23',
+                'row_id': 'Y55',
+                'row_name': 'MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION'
+            }
+        )
+
+    def test_spending_by_one_regional_team_on_chapter(self):
+        rows = self._get_rows({'org_type': 'regional_team', 'org': 'Y55', 'code': '02'})
+        self.assertEqual(len(rows), 5)
+        self.assertEqual(
+            rows[-1],
+            {
+                'actual_cost': '230.54',
+                'date': '2014-11-01',
+                'items': '96',
+                'quantity': '5143',
+                'row_id': 'Y55',
+                'row_name': 'MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION'
+            }
+        )
+
+
 class TestAPISpendingViewsGhostGenerics(TestCase):
     def setUp(self):
         self.api_prefix = '/api/1.0'

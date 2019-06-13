@@ -1,6 +1,27 @@
 var _ = require('underscore');
 var humanize = require('humanize');
 
+var ORG_TYPES = {
+  'practice': {
+    'name': 'practice',
+    'title': 'Practice'
+  },
+  'ccg': {
+    'name': 'CCG',
+    'title': 'CCG'
+  },
+  'stp': {
+    'name': 'STP',
+    'title': 'STP'
+  },
+  'regional_team': {
+    'name': 'regional team',
+    'title': 'Regional Team'
+  }
+};
+
+ORG_TYPES.CCG = ORG_TYPES.ccg;
+
 var formatters = {
 
   getFriendlyNamesForChart: function(options) {
@@ -37,20 +58,37 @@ var formatters = {
     if (org === 'all') {
       str = 'all practices in NHS England';
     } else {
-      var is_practices = (org == 'practice') ? true : false;
-      if (orgIds.length > 0) {
-        str = this._getStringForIds(orgIds, is_practices);
-        if (_.any(_.map(orgIds, function(d) {
- return d.id.length > 3;
-}))) {
-          str += ' <br/>and other ' + org + 's';
-          str += (org === 'practice') ? ' in CCG' : '';
+      if (org === 'practice' && orgIds.length > 0) {
+        str = this._getStringForIds(orgIds, true);
+        if (_.any(_.map(orgIds, function(d) { return d.id.length > 3; }))) {
+          str += ' <br/>and other practices in CCG';
         }
       } else {
-        str = is_practices ? 'all practices' : 'all CCGs';
+        if (orgIds.length > 0) {
+          str = this._getStringForIds(orgIds, false);
+          str += ' <br/>and other ' + this.getFriendlyOrgType(org) + 's';
+        } else {
+          str = 'all ' + this.getFriendlyOrgType(org) + 's';
+        }
       }
     }
     return str;
+  },
+
+  getFriendlyOrgType: function(orgType) {
+    var orgTypeDetails = ORG_TYPES[orgType];
+    if ( ! orgTypeDetails) {
+      throw 'Unhandled orgType: ' + orgType;
+    }
+    return orgTypeDetails.name;
+  },
+
+  getFriendlyOrgTypeTitle: function(orgType) {
+    var orgTypeDetails = ORG_TYPES[orgType];
+    if ( ! orgTypeDetails) {
+      throw 'Unhandled orgType: ' + orgType;
+    }
+    return orgTypeDetails.title;
   },
 
   getFriendlyNumerator: function(numIds) {

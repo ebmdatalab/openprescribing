@@ -21,7 +21,7 @@ from allauth.account.models import EmailAddress
 
 
 class TestAlertViews(TestCase):
-    fixtures = ['chemicals', 'sections', 'ccgs',
+    fixtures = ['chemicals', 'sections', 'orgs',
                 'practices', 'prescriptions', 'measures', 'importlog']
 
     def _post_org_signup(self, entity_id, email='foo@baz.com',
@@ -323,7 +323,7 @@ class TestAlertViews(TestCase):
 
 
 class TestFrontendHomepageViews(TestCase):
-    fixtures = ['practices', 'ccgs', 'one_month_of_measures', 'importlog',
+    fixtures = ['practices', 'orgs', 'one_month_of_measures', 'importlog',
                 'dmdproducts', 'ppusavings_entity_homepage']
 
     def setUp(self):
@@ -365,7 +365,7 @@ class TestFrontendHomepageViews(TestCase):
 
 
 class TestFrontendViews(TestCase):
-    fixtures = ['chemicals', 'sections', 'ccgs',
+    fixtures = ['chemicals', 'sections', 'orgs',
                 'practices', 'prescriptions', 'measures', 'importlog']
 
     def test_call_view_homepage(self):
@@ -606,7 +606,7 @@ class TestFrontendViews(TestCase):
 
 
 class TestPPUViews(TestCase):
-    fixtures = ['ccgs', 'importlog', 'dmdproducts',
+    fixtures = ['orgs', 'importlog', 'dmdproducts',
                 'practices', 'prescriptions', 'presentations']
 
     def test_practice_price_per_unit(self):

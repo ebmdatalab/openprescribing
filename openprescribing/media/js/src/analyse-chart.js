@@ -187,15 +187,16 @@ var analyseChart = {
       // TODO: Text for tabs. Tidy this up.
       var summaryTab = '';
       var numOrgs = this.globalOptions.orgIds.length;
-      if (this.globalOptions.org === 'CCG') {
-        summaryTab = (numOrgs) ? 'Show vs other CCGs' : 'Show all CCGs';
-      } else {
+      if (this.globalOptions.org === 'practice') {
         if (numOrgs) {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
           summaryTab = (isPractice) ? 'Show vs others in CCG' : 'Show summary';
         } else {
           summaryTab = 'Show for all CCGs';
         }
+      } else {
+        var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);
+        summaryTab = ((numOrgs) ? 'Show vs other ' : 'Show all ') + orgTypeName + 's';
       }
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
@@ -542,11 +543,9 @@ var analyseChart = {
     var entry;
     for (var i = 0; i < data.length; i++) {
       entry = data[i];
-      // We include an org both if its ID is selected, or if it belongs to a
-      // CCG which is itself selected.  This logic will need extending if we
-      // add other org types to the Analyse form, so we deliberately throw an
-      // 'Unhandled orgType' error elsewhere if we're given an org type we
-      // don't recognise.
+      // We include an org both if its ID is selected, or if it is a practice
+      // belonging to a CCG which is itself selected (only for practices do we
+      // have this mixture of selected org types)
       if (selectedOrgs && ! selectedOrgs[entry.row_id] && ! selectedOrgs[entry.ccg]) {
         continue;
       }
@@ -611,12 +610,6 @@ function formatDateRange(fromDateStr, toDateStr) {
 }
 
 function getOrgSelection(orgType, orgs) {
-  // If the Analyse form is extended to cover other org types we will need to
-  // update bits of logic elsewhere. Search for 'Unhandled orgType' to find the
-  // relevant section
-  if (orgType !== 'CCG' && orgType !== 'practice') {
-    throw "Unhandled orgType: " + orgType;
-  }
   // Given the current behaviour of the Analyse form it shouldn't be possible
   // to get practice level data without selecting some practices, and it's
   // not obvious how we should handle this if we do
@@ -636,7 +629,8 @@ function getOrgSelection(orgType, orgs) {
 }
 
 function getOrgsDescription(orgType, orgs) {
-  if (orgs.length === 0) return 'all CCGs in NHS England';
+  var orgTypeName = formatters.getFriendlyOrgType(orgType);
+  if (orgs.length === 0) return 'all ' + orgTypeName + 's in NHS England';
   return orgs.map(function(org) { return org.name; }).join(' + ');
 }
 
