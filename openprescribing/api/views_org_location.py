@@ -31,7 +31,7 @@ def _get_practices(org_codes, centroids):
     org_codes = utils.get_practice_ids_from_org(org_codes)
     results = Practice.objects.filter(code__in=org_codes)
     return results.values(
-        'name', 'code', 'setting', 'is_dispensing',
+        'name', 'code', 'setting',
         geometry=F('location')
     )
 
