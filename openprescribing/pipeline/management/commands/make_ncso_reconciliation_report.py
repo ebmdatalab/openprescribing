@@ -7,9 +7,9 @@ from collections import Counter
 
 from django.core.management import BaseCommand
 
-from dmd.management.commands.fetch_and_import_ncso_concessions \
+from frontend.models import NCSOConcession
+from pipeline.management.commands.fetch_and_import_ncso_concessions \
     import regularise_ncso_name
-from dmd.models import NCSOConcession
 
 
 class Command(BaseCommand):

@@ -15,14 +15,6 @@
         "type": "manual_fetch",
         "source_id": "patient_list_weightings"
     },
-    "fetch_dmd": {
-        "type": "manual_fetch",
-        "source_id": "dmd"
-    },
-    "fetch_dmd_snomed": {
-        "type": "manual_fetch",
-        "source_id": "dmd_snomed"
-    },
     "fetch_stps": {
         "type": "manual_fetch",
         "source_id": "stp_mapping"
@@ -202,24 +194,6 @@
             "import_hscic_practices",
             "import_practice_details",
             "import_patient_list_weightings"
-        ]
-    },
-    "import_dmd": {
-        "type": "import",
-        "source_id": "dmd",
-        "command": "import_dmd --zip_path download.zip",
-        "dependencies": [
-            "fetch_dmd"
-        ]
-    },
-    "import_dmd_snomed": {
-        "#comment": "This is a post_process task because it must always run, even if there's no new data to import",
-        "type": "post_process",
-        "source_id": "dmd_snomed",
-        "command": "import_dmd_snomed",
-        "dependencies": [
-            "import_dmd",
-            "fetch_dmd_snomed"
         ]
     },
     "upload_to_bigquery": {

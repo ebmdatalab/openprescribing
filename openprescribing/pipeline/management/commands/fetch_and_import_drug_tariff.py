@@ -18,7 +18,8 @@ from django.core.management import BaseCommand
 from django.db import transaction
 
 from gcutils.bigquery import Client
-from dmd.models import DMDProduct, DMDVmpp, TariffPrice
+from dmd2.models import VMPP
+from frontend.models import TariffPrice
 from frontend.models import ImportLog
 from openprescribing.slack import notify_slack
 
@@ -117,7 +118,6 @@ def import_month(xls_file, date):
             TariffPrice.objects.get_or_create(
                 date=date,
                 vmpp_id=d['vmpp snomed code'],
-                product_id=get_product_id(d['vmpp snomed code']),
                 tariff_category_id=get_tariff_cat_id(d['drug tariff category']),
                 price_pence=int(d['basic price'])
             )
@@ -138,19 +138,3 @@ def get_tariff_cat_id(cat):
         return 11
     else:
         assert False, 'Unknown category: {}'.format(cat)
-
-
-def get_product_id(vmpp):
-    try:
-        vpid = DMDVmpp.objects.get(pk=vmpp).vpid
-    except DMDVmpp.DoesNotExist:
-        logger.exception("Could not find VMPP with id %s", vmpp)
-        raise
-
-    try:
-        product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
-    except DMDProduct.DoesNotExist:
-        logger.exception("Could not find DMD product with VPID %s", vpid)
-        raise
-
-    return product.pk

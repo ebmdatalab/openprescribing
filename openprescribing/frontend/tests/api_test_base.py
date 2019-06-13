@@ -17,8 +17,7 @@ class ApiTestBase(TestCase):
 
     """
     fixtures = ['orgs', 'practices', 'practice_listsizes', 'products',
-                'presentations', 'sections', 'prescriptions', 'chemicals',
-                'tariff']
+                'presentations', 'sections', 'prescriptions', 'chemicals']
     api_prefix = '/api/1.0'
 
     @classmethod

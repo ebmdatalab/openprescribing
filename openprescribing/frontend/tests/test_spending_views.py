@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import Prescription, Presentation, NCSOConcessionBookmark
-from dmd.models import NCSOConcession, TariffPrice
+from frontend.models import NCSOConcession, TariffPrice
 from frontend.views.spending_utils import (
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE, ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity
@@ -308,16 +308,16 @@ def get_ncso_concessions(start_date, end_date):
         date__gte=start_date, date__lte=end_date
     )
     for ncso in query:
-        tariff = TariffPrice.objects.get(vmpp=ncso.vmpp, date=ncso.date)
-        product = tariff.product
-        presentation = Presentation.objects.get(bnf_code=product.bnf_code)
+        vmpp = ncso.vmpp
+        tariff = TariffPrice.objects.get(vmpp=vmpp, date=ncso.date)
+        presentation = Presentation.objects.get(bnf_code=vmpp.bnf_code)
         concessions.append({
             'date': ncso.date,
-            'bnf_code': product.bnf_code,
-            'product_name': product.name,
+            'bnf_code': vmpp.bnf_code,
+            'product_name': vmpp.vmp.nm,
             'tariff_price_pence': tariff.price_pence,
-            'concession_price_pence': ncso.price_concession_pence,
-            'quantity_value': ncso.vmpp.qtyval,
+            'concession_price_pence': ncso.price_pence,
+            'quantity_value': float(ncso.vmpp.qtyval),
             'quantity_means_pack': presentation.quantity_means_pack
         })
     return concessions
