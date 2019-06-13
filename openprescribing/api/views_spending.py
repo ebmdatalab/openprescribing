@@ -538,7 +538,7 @@ def spending_by_org(request, format=None, org_type=None):
                 status=400
             )
 
-    # We don't (yet?) have a "proper" code field for STPs so we're using they
+    # We don't (yet?) have a "proper" code field for STPs so we're using their
     # ONS code
     code_field = 'code' if org_type != 'stp' else 'ons_code'
 
@@ -558,8 +558,9 @@ def spending_by_org(request, format=None, org_type=None):
         orgs = orgs.filter(**{code_field + '__in': org_ids})
     orgs = orgs.order_by(code_field)
 
-    # For most orgs we just want the code and name but (again) practices get
-    # slightly different treatment
+    # For most orgs we just want the code and name but for practices we want
+    # the entire object because, for compatibility with the existing API, we
+    # return extra data for practices
     if org_type != 'practice':
         orgs = orgs.only(code_field, 'name')
 

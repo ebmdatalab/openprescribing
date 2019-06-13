@@ -543,8 +543,9 @@ var analyseChart = {
     var entry;
     for (var i = 0; i < data.length; i++) {
       entry = data[i];
-      // We include an org both if its ID is selected, or if it belongs to a
-      // CCG which is itself selected
+      // We include an org both if its ID is selected, or if it is a practice
+      // belonging to a CCG which is itself selected (only for practices do we
+      // have this mixture of selected org types)
       if (selectedOrgs && ! selectedOrgs[entry.row_id] && ! selectedOrgs[entry.ccg]) {
         continue;
       }
