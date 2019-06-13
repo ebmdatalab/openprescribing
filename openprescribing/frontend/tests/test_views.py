@@ -324,7 +324,7 @@ class TestAlertViews(TestCase):
 
 class TestFrontendHomepageViews(TestCase):
     fixtures = ['practices', 'orgs', 'one_month_of_measures', 'importlog',
-                'ppusavings_entity_homepage', 'dmd-subset']
+                'dmdproducts', 'ppusavings_entity_homepage']
 
     def setUp(self):
         ImportLog.objects.create(
@@ -599,21 +599,15 @@ class TestFrontendViews(TestCase):
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
 
-
-class TestTariffView(TestCase):
-    fixtures = ['dmd-subset', 'tariff']
-
     def test_tariff(self):
-        response = self.client.get('/tariff/0202010F0AAAAAA/')
+        response = self.client.get('/tariff/ABCD/')
         self.assertContains(response, 'Tariff')
-        self.assertContains(response, 'bnfCodes = "0202010F0AAAAAA"')
-        self.assertContains(
-            response,
-            '<option value="0202010F0AAAAAA" selected>Chlortalidone 50mg tablets</option>'
-        )
+        self.assertContains(response, 'bnfCodes = "ABCD"')
+
 
 class TestPPUViews(TestCase):
-    fixtures = ['orgs', 'importlog', 'practices', 'prescriptions', 'presentations']
+    fixtures = ['orgs', 'importlog', 'dmdproducts',
+                'practices', 'prescriptions', 'presentations']
 
     def test_practice_price_per_unit(self):
         response = self.client.get('/practice/P87629/price_per_unit/')

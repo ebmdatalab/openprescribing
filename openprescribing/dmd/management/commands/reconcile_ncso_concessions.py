@@ -3,8 +3,7 @@ from __future__ import print_function
 from django.core.management import BaseCommand
 
 from openprescribing.utils import get_input
-from dmd2.models import VMPP
-from frontend.models import NCSOConcession
+from dmd.models import NCSOConcession, DMDVmpp
 from gcutils.bigquery import Client
 
 
@@ -31,7 +30,7 @@ class Command(BaseCommand):
             q = get_input()
             self.stdout.write('')
 
-            candidates = VMPP.objects.filter(nm__icontains=q).order_by('nm')
+            candidates = DMDVmpp.objects.filter(nm__icontains=q).order_by('nm')
 
             num_candidates = candidates.count()
 

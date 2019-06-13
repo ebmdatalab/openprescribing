@@ -10,8 +10,7 @@ import requests
 
 from django.core.management import BaseCommand
 
-from dmd2.models import VMPP
-from frontend.models import NCSOConcession
+from dmd.models import NCSOConcession, DMDVmpp
 from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack
 
@@ -20,7 +19,7 @@ logger = logging.getLogger(__file__)
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        self.vmpps = VMPP.objects.values('id', 'nm')
+        self.vmpps = DMDVmpp.objects.values('nm', 'vppid')
         num_before = NCSOConcession.objects.count()
         self.import_from_archive()
         self.import_from_current()
@@ -116,10 +115,11 @@ class Command(BaseCommand):
         drugs_and_pack_sizes = set()
 
         for record in records[1:]:
-            drug, pack_size, price_pence = [fix_spaces(item) for item in record]
+            drug, pack_size, price_concession = [fix_spaces(item) for item in record]
             drug = drug.replace('(new)', '').strip()
-            match = re.search(u'£(\d+)\.(\d\d)', price_pence)
-            price_pence = 100 * int(match.groups()[0]) + int(match.groups()[1])
+            match = re.search(u'£(\d+)\.(\d\d)', price_concession)
+            price_concession_pence = 100 * int(match.groups()[0]) \
+                + int(match.groups()[1])
             drug_and_pack_size = u'{} {}'.format(drug, pack_size)
             drugs_and_pack_sizes.add(drug_and_pack_size)
 
@@ -127,7 +127,7 @@ class Command(BaseCommand):
                 date=date,
                 drug=drug,
                 pack_size=pack_size,
-                price_pence=price_pence,
+                price_concession_pence=price_concession_pence,
             )
 
             if created:
@@ -169,7 +169,7 @@ class Command(BaseCommand):
 
             if vpmm_name == ncso_name or vpmm_name.startswith(ncso_name + ' '):
                 logger.info('Found match')
-                return vmpp['id']
+                return vmpp['vppid']
 
         logger.info('No match found')
         return None

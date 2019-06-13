@@ -9,10 +9,11 @@ from dateutil.parser import parse as parse_date
 
 from frontend.models import (
     ImportLog, Practice, PCT, Prescription, Presentation,
-    NCSOConcessionBookmark, OrgBookmark, Measure,
-    NCSOConcession, TariffPrice
+    NCSOConcessionBookmark, OrgBookmark, Measure
 )
-from dmd2 import models as dmd2_models
+from dmd.models import (
+    DMDProduct, DMDVmpp, NCSOConcession, TariffPrice, TariffCategory
+)
 
 
 class DataFactory(object):
@@ -53,57 +54,42 @@ class DataFactory(object):
 
     def create_presentations(self, num_presentations, vmpp_per_presentation=1):
         presentations = []
-        vmp_basis, _ = dmd2_models.BasisOfName.objects.get_or_create(
-            cd=1, descr='rINN - Recommended International Non-proprietary'
-        )
-        vmp_pres_stat, _ = dmd2_models.VirtualProductPresStatus.objects.get_or_create(
-            cd=1, descr='Valid as a prescribable product'
-        )
         for i in range(num_presentations):
             presentation = Presentation.objects.create(
                 bnf_code='0123456789ABCD{}'.format(i),
                 name='Foo Tablet {}'.format(i),
-                dmd_name='VMP Foo Tablet {}'.format(i),
                 quantity_means_pack=self.random.choice([True, False, None])
             )
-            vmp = dmd2_models.VMP.objects.create(
-                id=i,
-                invalid=False,
-                nm='VMP ' + presentation.name,
-                basis=vmp_basis,
-                pres_stat=vmp_pres_stat,
-                sug_f=False,
-                glu_f=False,
-                pres_f=False,
-                cfc_f=False,
+            product = DMDProduct.objects.create(
                 bnf_code=presentation.bnf_code,
+                dmdid=i,
+                vpid=i,
+                name='DMD ' + presentation.name
             )
             qtyval = self.random.randint(5, 25)
             for vppid in range(0, vmpp_per_presentation):
                 vppid = i * 10 + vppid
-                dmd2_models.VMPP.objects.create(
-                    id=vppid,
-                    vmp=vmp,
-                    invalid=False,
+                DMDVmpp.objects.create(
+                    vppid=vppid,
+                    vpid=product.vpid,
                     nm='VMPP %s (%s)' % (presentation.name, vppid),
-                    qtyval=qtyval,
-                    bnf_code=presentation.bnf_code,
+                    qtyval=qtyval
                 )
             presentations.append(presentation)
         return presentations
 
     def create_tariff_and_ncso_costings_for_presentations(
             self, presentations, months=None):
-        tariff_category, _ = dmd2_models.DtPaymentCategory.objects.get_or_create(
-            cd=1, descr='TariffCategory VIIIA Category A'
-        )
+        tariff_category, _ = TariffCategory.objects.get_or_create(cd=1, desc='')
         for presentation in presentations:
+            product = DMDProduct.objects.get(bnf_code=presentation.bnf_code)
             for date in months:
                 price_pence = self.random.randint(10, 100)
-                for vmpp in dmd2_models.VMPP.objects.filter(bnf_code=presentation.bnf_code):
+                for vmpp in DMDVmpp.objects.filter(vpid=product.vpid):
                     tariff_price = TariffPrice.objects.create(
                         date=date,
                         vmpp=vmpp,
+                        product=product,
                         tariff_category=tariff_category,
                         price_pence=price_pence
                     )
@@ -113,7 +99,7 @@ class DataFactory(object):
                             date=date,
                             drug='',
                             pack_size='',
-                            price_pence=(
+                            price_concession_pence=(
                                 tariff_price.price_pence + self.random.randint(10, 100)
                             )
                         )

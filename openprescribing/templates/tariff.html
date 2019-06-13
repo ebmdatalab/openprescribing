@@ -52,8 +52,8 @@
             name="codes"
             style="display: none; width: 100%"
             multiple="multiple">
-        {% for vmp in vmps %}
-        <option value="{{ vmp.bnf_code }}" {% if vmp.bnf_code in bnf_codes %}selected{% endif %}>{{ vmp.nm }}</option>
+        {% for p in products %}
+        <option value="{{ p.bnf_code }}" {% if p.bnf_code in bnf_codes %}selected{% endif %}>{{ p.name }}</option>
         {% endfor %}
     </select>
   </div>

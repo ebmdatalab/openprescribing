@@ -37,7 +37,7 @@ from dateutil.relativedelta import relativedelta
 from common.utils import parse_date
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
-from dmd2.models import VMP
+from dmd.models import DMDProduct
 from frontend.forms import FeedbackForm
 from frontend.forms import MonthlyOrgBookmarkForm
 from frontend.forms import NonMonthlyOrgBookmarkForm
@@ -715,10 +715,10 @@ def ghost_generics_for_entity(request, code, entity_type):
 ##################################################
 
 def tariff(request, code=None):
-    vmps = VMP.objects.filter(
-        vmpp__tariffprice__isnull=False,
+    products = DMDProduct.objects.filter(
+        tariffprice__isnull=False,
         bnf_code__isnull=False
-    ).distinct().order_by('nm')
+    ).distinct().order_by('name')
     codes = []
     if code:
         codes = [code]
@@ -731,7 +731,7 @@ def tariff(request, code=None):
     context = {
         'bnf_codes': codes,
         'presentations': presentations,
-        'vmps': vmps,
+        'products': products,
         'chart_title': 'Tariff prices for ' + ', '.join(
             [x.product_name for x in presentations])
     }

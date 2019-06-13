@@ -309,33 +309,30 @@ def ghost_generics(request, format=None):
     else:
         assert False, "Not implemented for {}".format(entity)
     sql = """
-    WITH savings AS (
-        SELECT
-            dt.date,
+       WITH savings AS (
+         SELECT dt.date,
             practice.code AS practice_id,
             practice.ccg_id AS pct,
             dt.median_ppu,
-            CASE
-                WHEN rx.quantity > 0::double precision
-                THEN round((rx.net_cost / rx.quantity)::numeric, 4)
-                ELSE 0
-            END AS price_per_unit,
+                CASE
+                    WHEN rx.quantity > 0::double precision THEN round((rx.net_cost / rx.quantity)::numeric, 4)
+                    ELSE 0
+                END AS price_per_unit,
             rx.quantity,
             rx.presentation_code AS bnf_code,
-            dt.nm,
+            product.name AS product_name,
             rx.net_cost - round(dt.median_ppu::numeric, 4)::double precision * rx.quantity AS possible_savings
-        FROM vw__medians_for_tariff dt
-        INNER JOIN frontend_prescription rx
-            ON rx.processing_date = dt.date AND rx.presentation_code = dt.bnf_code
-        INNER JOIN frontend_practice practice
-            ON practice.code = rx.practice_id
-        WHERE rx.processing_date = %(date)s {extra_conditions}
-    )
-    SELECT *
-    FROM savings s
-    WHERE s.bnf_code::text <> '1106000L0AAAAAA'
-        AND (s.possible_savings >= {min_delta} OR s.possible_savings <= -{min_delta})
-    ORDER BY possible_savings DESC
+           FROM vw__medians_for_tariff dt
+             JOIN dmd_product product ON dt.product_id = product.dmdid
+             JOIN frontend_prescription rx ON rx.processing_date = dt.date AND rx.presentation_code = product.bnf_code
+             JOIN frontend_practice practice ON practice.code = rx.practice_id
+          WHERE rx.processing_date = %(date)s {extra_conditions}
+        )
+        SELECT *
+          FROM savings s
+         WHERE s.bnf_code::text <> '1106000L0AAAAAA'
+         AND (s.possible_savings >= {min_delta} OR s.possible_savings <= -{min_delta})
+               ORDER BY possible_savings DESC
     """.format(
         min_delta=MIN_GHOST_GENERIC_DELTA,
         extra_conditions=extra_conditions
@@ -347,7 +344,7 @@ def ghost_generics(request, format=None):
             MAX(median_ppu) AS median_ppu,
             MAX(price_per_unit) AS price_per_unit,
             SUM(quantity) AS quantity,
-            MAX(nm) AS product_name,
+            MAX(product_name) AS product_name,
             SUM(possible_savings) AS possible_savings
           FROM ({}) s
           GROUP BY date, pct, bnf_code"""
@@ -401,6 +398,8 @@ def _aggregate_ppu_sql(original_sql, entity_type):
           MAX(lowest_decile) AS lowest_decile,
           MODE() WITHIN GROUP (ORDER BY formulation_swap)
             AS formulation_swap,
+          MODE() WITHIN GROUP (ORDER BY flag_bioequivalence)
+            AS flag_bioequivalence,
           MODE() WITHIN GROUP (ORDER BY price_concession)
             AS price_concession,
           MODE() WITHIN GROUP (ORDER BY name) AS name
@@ -473,26 +472,28 @@ def tariff(request, format=None):
     response_should_be_cached = not codes
 
     query = '''
-    SELECT tariffprice.date AS date,
-           tariffprice.price_pence AS price_pence,
-           vmpp.nm AS vmpp,
-           vmpp.vppid AS vmpp_id,
-           vmpp.bnf_code AS product,
-           ncso_concession.price_pence AS concession,
-           dtpaymentcategory.descr AS tariff_category,
-           vmpp.qtyval AS pack_size
-    FROM frontend_tariffprice tariffprice
-        INNER JOIN dmd2_dtpaymentcategory dtpaymentcategory
-            ON tariffprice.tariff_category_id = dtpaymentcategory.cd
-        INNER JOIN dmd2_vmpp vmpp
-            ON tariffprice.vmpp_id = vmpp.vppid
-        LEFT OUTER JOIN frontend_ncsoconcession ncso_concession
-            ON (tariffprice.date = ncso_concession.date
-                AND tariffprice.vmpp_id = ncso_concession.vmpp_id)
+    SELECT dmd_tariffprice.date AS date,
+           dmd_tariffprice.price_pence AS price_pence,
+           dmd_vmpp.nm AS vmpp,
+           dmd_vmpp.vppid AS vmpp_id,
+           dmd_product.bnf_code AS product,
+           dmd_ncsoconcession.price_concession_pence AS concession,
+           dmd_lookup_dt_payment_category.desc AS tariff_category,
+           dmd_vmpp.qtyval AS pack_size
+    FROM dmd_tariffprice
+        INNER JOIN dmd_lookup_dt_payment_category
+            ON dmd_tariffprice.tariff_category_id = dmd_lookup_dt_payment_category.cd
+        INNER JOIN dmd_product
+            ON dmd_tariffprice.product_id = dmd_product.dmdid
+        INNER JOIN dmd_vmpp
+            ON dmd_tariffprice.vmpp_id = dmd_vmpp.vppid
+        LEFT OUTER JOIN dmd_ncsoconcession
+            ON (dmd_tariffprice.date = dmd_ncsoconcession.date
+                AND dmd_tariffprice.vmpp_id = dmd_ncsoconcession.vmpp_id)
     '''
 
     if codes:
-        query += ' WHERE vmpp.bnf_code IN ('
+        query += ' WHERE dmd_product.bnf_code IN ('
         query += ','.join('%s' for _ in range(len(codes)))
         query += ')'
         params = [codes]
