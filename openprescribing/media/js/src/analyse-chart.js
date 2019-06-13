@@ -187,16 +187,16 @@ var analyseChart = {
       // TODO: Text for tabs. Tidy this up.
       var summaryTab = '';
       var numOrgs = this.globalOptions.orgIds.length;
-      if (this.globalOptions.org !== 'practice') {
-        var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);
-        summaryTab = ((numOrgs) ? 'Show vs other ' : 'Show all ') + orgTypeName + 's';
-      } else {
+      if (this.globalOptions.org === 'practice') {
         if (numOrgs) {
           var isPractice = (this.globalOptions.orgIds[0].id.length > 3);
           summaryTab = (isPractice) ? 'Show vs others in CCG' : 'Show summary';
         } else {
           summaryTab = 'Show for all CCGs';
         }
+      } else {
+        var orgTypeName = formatters.getFriendlyOrgType(this.globalOptions.org);
+        summaryTab = ((numOrgs) ? 'Show vs other ' : 'Show all ') + orgTypeName + 's';
       }
       $(this.el.tabSummary).find('a').text(summaryTab);
       $(_this.el.title).html(_this.globalOptions.friendly.chartTitle);
