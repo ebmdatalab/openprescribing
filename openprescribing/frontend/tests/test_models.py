@@ -7,6 +7,7 @@ from frontend.models import MailLog
 from frontend.models import PCT
 from frontend.models import Practice
 from frontend.models import Presentation
+from frontend.models import RegionalTeam
 from frontend.models import SearchBookmark
 from frontend.models import Section
 from frontend.models import User
@@ -240,3 +241,19 @@ class TestPresentationDMDLinks(TestCase):
         # exercised.
         for p in Presentation.objects.all():
             p.dmd_info()
+
+
+class RegionalTeamTest(TestCase):
+
+    fixtures = ['orgs']
+
+    def test_regional_team_with_no_pcts_excluded(self):
+        all_teams = RegionalTeam.objects.all()
+        empty_team = RegionalTeam.objects.get(pk='Y60')
+        self.assertEqual(empty_team.close_date, None)
+        active_teams = RegionalTeam.objects.active()
+        # This length check is not redundant: there are ways of attempting to
+        # exclude empty teams which produce a join that returns multiple
+        # instances of each team and we want to ensure that this doesn't happen
+        self.assertEqual(len(active_teams), len(all_teams) - 1)
+        self.assertNotIn(empty_team, active_teams)

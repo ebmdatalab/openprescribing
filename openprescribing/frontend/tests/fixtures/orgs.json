@@ -22,6 +22,17 @@
   }
 },
 {
+  "model": "frontend.regionalteam",
+  "pk": "Y60",
+  "fields": {
+    "name": "MIDLANDS COMMISSIONING REGION",
+    "open_date": "2019-04-01",
+    "close_date": null,
+    "address": "2-4 VICTORIA HOUSE, CAPITAL PARK, FULBOURN, CAMBRIDGE",
+    "postcode": "CB21 5XB"
+  }
+},
+{
   "model": "frontend.stp",
   "pk": "E54000006",
   "fields": {

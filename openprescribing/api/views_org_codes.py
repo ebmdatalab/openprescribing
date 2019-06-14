@@ -117,7 +117,7 @@ def _get_stps_like_code(q, is_exact=False):
 
 
 def _get_regional_teams_like_code(q, is_exact=False):
-    orgs = RegionalTeam.objects.filter(close_date__isnull=True)
+    orgs = RegionalTeam.objects.active()
     if is_exact:
         orgs = orgs.filter(
             Q(code=q) | Q(name=q)
