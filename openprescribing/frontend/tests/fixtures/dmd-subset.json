@@ -1,0 +1,275 @@
+[
+{
+  "model": "dmd2.vmpp",
+  "pk": 1079211000001106,
+  "fields": {
+    "invalid": false,
+    "nm": "Chlortalidone 50mg tablets 28 tablet",
+    "vmp": 317935006,
+    "qtyval": "28.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0202010F0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 23667511000001105,
+  "fields": {
+    "invalid": false,
+    "nm": "Chlortalidone 50mg tablets 30 tablet",
+    "vmp": 317935006,
+    "qtyval": "30.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0202010F0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 1027111000001105,
+  "fields": {
+    "invalid": false,
+    "nm": "Verapamil 160mg tablets 100 tablet",
+    "vmp": 318248001,
+    "qtyval": "100.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0206020T0AAAGAG"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 1259111000001109,
+  "fields": {
+    "invalid": false,
+    "nm": "Verapamil 160mg tablets 28 tablet",
+    "vmp": 318248001,
+    "qtyval": "28.00",
+    "qty_uom": 428673006,
+    "combpack": null,
+    "bnf_code": "0206020T0AAAGAG"
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 4588611000001101,
+  "fields": {
+    "invalid": false,
+    "vmp": 4598711000001106,
+    "nm": "Lemsip Max Cold & Flu capsules",
+    "abbrevnm": null,
+    "descr": "Lemsip Max Cold & Flu capsules (Reckitt Benckiser Healthcare (UK) Ltd)",
+    "nmdt": "2004-10-14",
+    "nm_prev": "Lemsip Cold and Flu Max Strength capsules",
+    "supp": 2084201000001101,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 1,
+    "bnf_code": "0407010X0CFACA0"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 317935006,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 57893000,
+    "invalid": false,
+    "nm": "Chlortalidone 50mg tablets",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428673006,
+    "unit_dose_uom": 428673006,
+    "bnf_code": "0202010F0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.unitofmeasure",
+  "pk": 428673006,
+  "fields": {
+    "cddt": "2008-11-01",
+    "cdprev": 3319411000001109,
+    "descr": "tablet"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 318248001,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 47898004,
+    "invalid": false,
+    "nm": "Verapamil 160mg tablets",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428673006,
+    "unit_dose_uom": 428673006,
+    "bnf_code": "0206020T0AAAGAG"
+  }
+},
+{
+  "model": "dmd2.vmp",
+  "pk": 4598711000001106,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": null,
+    "invalid": false,
+    "nm": "Generic Lemsip Max Cold & Flu capsules",
+    "abbrevnm": null,
+    "basis": 7,
+    "nmdt": "2004-10-14",
+    "nmprev": "Generic Lemsip Cold and Flu Max Strength capsules",
+    "basis_prev": 7,
+    "nmchange": 4,
+    "combprod": null,
+    "pres_stat": 4,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428641000,
+    "unit_dose_uom": 428641000,
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 2084201000001101,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Reckitt Benckiser Healthcare (UK) Ltd"
+  }
+},
+{
+  "model": "dmd2.licensingauthority",
+  "pk": 1,
+  "fields": {
+    "descr": "Medicines - MHRA/EMA"
+  }
+},
+{
+  "model": "dmd2.availabilityrestriction",
+  "pk": 1,
+  "fields": {
+    "descr": "None"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 57893000,
+  "fields": {
+    "invalid": false,
+    "nm": "Chlortalidone",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.basisofname",
+  "pk": 1,
+  "fields": {
+    "descr": "rINN - Recommended International Non-proprietary"
+  }
+},
+{
+  "model": "dmd2.virtualproductpresstatus",
+  "pk": 1,
+  "fields": {
+    "descr": "Valid as a prescribable product"
+  }
+},
+{
+  "model": "dmd2.dfindicator",
+  "pk": 1,
+  "fields": {
+    "descr": "Discrete"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 47898004,
+  "fields": {
+    "invalid": false,
+    "nm": "Verapamil",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.basisofname",
+  "pk": 7,
+  "fields": {
+    "descr": "Other"
+  }
+},
+{
+  "model": "dmd2.namechangereason",
+  "pk": 4,
+  "fields": {
+    "descr": "Other"
+  }
+},
+{
+  "model": "dmd2.virtualproductpresstatus",
+  "pk": 4,
+  "fields": {
+    "descr": "Never Valid To Prescribe As A VMP"
+  }
+},
+{
+  "model": "dmd2.unitofmeasure",
+  "pk": 428641000,
+  "fields": {
+    "cddt": "2008-11-01",
+    "cdprev": 3316911000001105,
+    "descr": "capsule"
+  }
+}
+]
+

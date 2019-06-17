@@ -2,6 +2,8 @@ import csv
 import shutil
 import tempfile
 
+from mock import patch
+
 from django.core.management import call_command, CommandError
 from django.test import TestCase
 
@@ -27,12 +29,13 @@ class TestImportDmd2(TestCase):
 
         # Import the data.  See dmd2/tests/data/README.txt for details of what
         # objects will be created.
-        call_command(
-            'import_dmd2',
-            'dmd2/tests/data/dmd/1/',
-            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
-            cls.logs_path + '/1',
-        )
+        with patch('gcutils.bigquery.Client.upload_model'):
+            call_command(
+                'import_dmd2',
+                'dmd2/tests/data/dmd/1/',
+                'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
+                cls.logs_path + '/1',
+            )
 
     @classmethod
     def tearDownClass(cls):
@@ -144,12 +147,13 @@ class TestImportDmd2(TestCase):
         # that the VMP with VPID 22480211000001104 has been updated with a new
         # VPID (12345).  This VMP now has a VPIDPREV field, and all references
         # to the old VPID have been updated to the new VPID.
-        call_command(
-            'import_dmd2',
-            'dmd2/tests/data/dmd/2/',
-            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
-            self.logs_path + '/2',
-        )
+        with patch('gcutils.bigquery.Client.upload_model'):
+            call_command(
+                'import_dmd2',
+                'dmd2/tests/data/dmd/2/',
+                'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
+                self.logs_path + '/2',
+            )
 
         # Check that no VMP present with old VPID, that a new VMP has been
         # created, and that references to VMP have been updated.

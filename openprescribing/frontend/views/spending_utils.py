@@ -5,8 +5,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from api.view_utils import dictfetchall
-from dmd.models import NCSOConcession
-from frontend.models import ImportLog
+from frontend.models import ImportLog, NCSOConcession
 
 
 # The tariff (or concession) price is not what actually gets paid as each CCG
@@ -163,8 +162,8 @@ def _ncso_spending_query(
     sql_template = """
         SELECT
           ncso.date AS month,
-          product.bnf_code AS bnf_code,
-          product.name AS product_name,
+          presentation.bnf_code AS bnf_code,
+          COALESCE(presentation.dmd_name, presentation.name) AS product_name,
           dt.price_pence
             * rx.quantity
             * CASE WHEN
@@ -172,45 +171,41 @@ def _ncso_spending_query(
               THEN
                 1
               ELSE
-                1 / vmpp.qtyval
+                1 / vmpp.qtyval::float
               END
             * %(discount_factor)s
             AS tariff_cost,
-          COALESCE(ncso.price_concession_pence - dt.price_pence, 0)
+          COALESCE(ncso.price_pence - dt.price_pence, 0)
             * rx.quantity
             * CASE WHEN
                 presentation.quantity_means_pack
               THEN
                 1
               ELSE
-                1 / vmpp.qtyval
+                1 / vmpp.qtyval::float
               END
             * %(discount_factor)s
             AS additional_cost,
           ncso.date != rx.processing_date AS is_estimate,
           rx.*
         FROM
-          dmd_ncsoconcession AS ncso
+          frontend_ncsoconcession AS ncso
         JOIN
-          dmd_tariffprice AS dt
+          frontend_tariffprice AS dt
         ON
           ncso.vmpp_id = dt.vmpp_id AND ncso.date = dt.date
         JOIN
-          dmd_product AS product
-        ON
-          dt.product_id=product.dmdid
-        JOIN
-          dmd_vmpp AS vmpp
+          dmd2_vmpp AS vmpp
         ON
           vmpp.vppid=ncso.vmpp_id
         JOIN
           frontend_presentation AS presentation
         ON
-          presentation.bnf_code = product.bnf_code
+          presentation.bnf_code = vmpp.bnf_code
         JOIN
           {prescribing_table} AS rx
         ON
-          rx.presentation_code = product.bnf_code
+          rx.presentation_code = vmpp.bnf_code
         AND
           rx.processing_date >= %(earliest_date)s
         AND
