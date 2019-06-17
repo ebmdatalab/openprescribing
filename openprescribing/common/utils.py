@@ -205,22 +205,26 @@ def ppu_sql(conditions=""):
     # Model imports here because util module is used in Django's
     # startup, before model registration is complete, leading to
     # errors
-    from dmd.models import DMDProduct
-    from dmd.models import DMDVmpp
-    from dmd.models import NCSOConcession
+    from dmd2.models import VMP, VMPP
+    from frontend.models import NCSOConcession
     from frontend.models import PPUSaving
     from frontend.models import Presentation
     from frontend.models import Practice
     from frontend.models import PCT
 
-    # We cannot use the ORM here since there is no ForeignKey from PPUSaving to
-    # DMDProduct.
+    # See https://github.com/ebmdatalab/price-per-dose/issues/1 for an
+    # explanation of the extra BNF codes in vmp_bnf_codes below.
+
     sql = '''
-    SELECT DISTINCT ON (
-            {dmdproduct_table}.bnf_code,
-            {ppusavings_table}.pct_id,
-            {ppusavings_table}.practice_id
-        )
+    WITH vmp_bnf_codes AS (
+        SELECT DISTINCT bnf_code FROM {vmp_table}
+        UNION ALL
+        SELECT '0601060D0AAA0A0'  -- "Glucose Blood Testing Reagents"
+        UNION ALL
+        SELECT '0601060U0AAA0A0'  -- "Urine Testing Reagents"
+    )
+
+    SELECT
         {ppusavings_table}.id AS id,
         {ppusavings_table}.date AS date,
         {ppusavings_table}.lowest_decile AS lowest_decile,
@@ -233,9 +237,8 @@ def ppu_sql(conditions=""):
         {ppusavings_table}.bnf_code AS presentation,
         {practice_table}.name AS practice_name,
         {pct_table}.name AS pct_name,
-        {dmdproduct_table}.flag_non_bioequivalence AS flag_bioequivalence,
         subquery.price_concession IS NOT NULL as price_concession,
-        COALESCE({dmdproduct_table}.name, {presentation_table}.name) AS name
+        COALESCE({presentation_table}.dmd_name, {presentation_table}.name) AS name
     FROM {ppusavings_table}
     LEFT OUTER JOIN {presentation_table}
         ON {ppusavings_table}.bnf_code = {presentation_table}.bnf_code
@@ -243,17 +246,16 @@ def ppu_sql(conditions=""):
         ON {ppusavings_table}.practice_id = {practice_table}.code
     LEFT OUTER JOIN {pct_table}
         ON {ppusavings_table}.pct_id = {pct_table}.code
-    LEFT OUTER JOIN {dmdproduct_table}
-        ON {ppusavings_table}.bnf_code = {dmdproduct_table}.bnf_code
-    LEFT OUTER JOIN (SELECT DISTINCT vpid, 1 AS price_concession
-                     FROM {dmdvmpp_table}
+    LEFT OUTER JOIN (SELECT DISTINCT bnf_code, 1 AS price_concession
+                     FROM {vmpp_table}
                      INNER JOIN {ncsoconcession_table}
-                      ON {dmdvmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
+                      ON {vmpp_table}.vppid = {ncsoconcession_table}.vmpp_id
                      WHERE {ncsoconcession_table}.date = %(date)s) AS subquery
-        ON {dmdproduct_table}.vpid = subquery.vpid
+        ON {ppusavings_table}.bnf_code = subquery.bnf_code
     WHERE
         {ppusavings_table}.date = %(date)s
-        AND {dmdproduct_table}.concept_class = 1'''
+        AND {ppusavings_table}.bnf_code IN (SELECT bnf_code FROM vmp_bnf_codes)
+    '''
 
     sql += conditions
     return sql.format(
@@ -261,7 +263,7 @@ def ppu_sql(conditions=""):
         practice_table=Practice._meta.db_table,
         pct_table=PCT._meta.db_table,
         presentation_table=Presentation._meta.db_table,
-        dmdproduct_table=DMDProduct._meta.db_table,
-        dmdvmpp_table=DMDVmpp._meta.db_table,
+        vmpp_table=VMPP._meta.db_table,
+        vmp_table=VMP._meta.db_table,
         ncsoconcession_table=NCSOConcession._meta.db_table,
     )

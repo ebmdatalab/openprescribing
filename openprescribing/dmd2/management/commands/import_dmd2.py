@@ -5,6 +5,7 @@ from lxml import etree
 
 from openpyxl import load_workbook
 
+from django.apps import apps
 from django.core.management import BaseCommand
 from django.db import connection, transaction
 from django.db.models import fields as django_fields
@@ -12,6 +13,7 @@ from django.db.models import fields as django_fields
 from dmd2 import models
 from dmd2.models import AMP, AMPP, VMP, VMPP
 from frontend.models import Presentation
+from gcutils.bigquery import Client
 
 
 class Command(BaseCommand):
@@ -42,6 +44,7 @@ class Command(BaseCommand):
             self.set_vmp_bnf_codes()
             self.set_dmd_names()
 
+        self.upload_to_bq()
         self.log_other_oddities()
         self.write_logs()
 
@@ -424,6 +427,11 @@ class Command(BaseCommand):
                         presentation.dmd_name = common_name
                         presentation.save()
                     break
+
+    def upload_to_bq(self):
+        client = Client('dmd')
+        for model in apps.get_app_config('dmd2').get_models():
+            client.upload_model(model)
 
     def log_other_oddities(self):
         '''Log oddities in the data that are not captured elsewhere.'''

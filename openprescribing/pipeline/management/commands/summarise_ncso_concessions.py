@@ -4,7 +4,7 @@ from datetime import date
 
 from django.core.management import BaseCommand
 
-from dmd.models import NCSOConcession
+from frontend.models import NCSOConcession
 
 
 class Command(BaseCommand):
