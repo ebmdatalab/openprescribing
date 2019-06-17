@@ -67,6 +67,12 @@ class Section(models.Model):
         ordering = ["bnf_id"]
 
 
+class RegionalTeamManager(models.Manager):
+
+    def active(self):
+        return self.exclude(close_date__isnull=False).exclude(pct=None)
+
+
 class RegionalTeam(models.Model):
     code = models.CharField(max_length=3, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -74,6 +80,8 @@ class RegionalTeam(models.Model):
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
+
+    objects = RegionalTeamManager()
 
     def __str__(self):
         return self.name

@@ -57,7 +57,7 @@ def _get_stps(org_codes, centroids):
 
 
 def _get_regional_teams(org_codes, centroids):
-    results = RegionalTeam.objects.filter(close_date__isnull=True)
+    results = RegionalTeam.objects.active()
     if org_codes:
         results = results.filter(code__in=org_codes)
     return results.values(
