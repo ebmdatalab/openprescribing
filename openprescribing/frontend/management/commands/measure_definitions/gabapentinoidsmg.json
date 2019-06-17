@@ -1,0 +1,62 @@
+{
+  "name": "Prescribing of gabapentin and pregabalin (approximate pregabalin equivalence)",
+  "title": [
+    "Prescribing of gabapentin and pregabalin (approximate pregabalin equivalence) per 1000 patients"
+  ],
+  "description": [
+    "Total mg of pregabalin + total mg/6 of gabapentin per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is rising rapidly in the NHS. ",
+    "There are also concerns about the potential for abuse.  There appears to be no robust mechanism for converting gabapentin to ",
+    "pregabalin. Toth et al describe using a <a href='https://www.ncbi.nlm.nih.gov/pubmed/20113408'>6mg:1mg ratio for gabapentin to ",
+    "pregabalin.</a> The DDD for gabapentin is also 6 times that of pregabalin. This measure is therefore based on gabapentin total ",
+    "milligrams / 6, as well as total milligrams for pregabalin. ",
+    "<br><br><strong>Please note that this is an experimental measure.</strong> We would be grateful for any feedback at ",
+    "<a href='mailto:hello@ebmdatalab.net'>hello@ebmdatalab.net."
+  ],
+  "numerator_short": "Gabapentin total quantity prescribed (in mg) /6 + pregabalin total quantity prescribed (in mg)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "core",
+    "pain",
+    "safety"
+  ],
+  "numerator_columns": [
+    "SUM(gaba_mg) AS numerator, "
+  ],
+  "numerator_from": "{measures}.gaba_total_mg ",
+  "numerator_where": [
+    "1 = 1"
+  ],
+  "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%' or LIKE '0408010G0%'",
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ],
+  "date_reviewed": [
+    "2019-06-17"
+  ],
+  "next_review": [
+    "209-12-17"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "high"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/New%20Measure%20-%20Gabapentin%20and%20Pregabalin%20mg%20equivalent.ipynb"
+  ]
+}
