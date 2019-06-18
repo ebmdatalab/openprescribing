@@ -1,25 +1,32 @@
 {% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
 {% block content %}
 <h1>dm+d browser</h1>
+<hr />
 
-<form class="form-inline">
-  <div class="form-group">
-    <label class="sr-only" for="search-query">Query</label>
-    <input name="q" value="{{ q|default_if_none:'' }}" type="text" class="form-control" id="search-query" placeholder="Query or SNOMED code">
-  </div>
-  <button type="submit" class="btn btn-default">Search</button>
-</form>
+{% crispy form %}
 
-{% if q %}
-{% for verbose_name_plural, objs in results.items %}
-<h2>{{ verbose_name_plural }}</h2>
-<ul>
-{% for obj in objs %}
-<li><a href="{% url 'dmd_obj' obj.obj_type obj.id %}">{{ obj.title }}</a></li>
-{% endfor %}
-</ul>
-{% empty %}
-<p>No results found.</p>
-{% endfor %}
+{% if results != None %}
+  <hr />
+
+  {% for result in results %}
+    <h2>{{ result.obj_type_human_plural }} ({{ result.num_hits }})</h2>
+    <ul>
+      {% for obj in result.objs %}
+        <li>
+          <a href="{% url 'dmd_obj' obj.obj_type obj.id %}">{{ obj.title }}</a>
+          {% if obj.status %}({{ obj.status }}){% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if result.link_to_more %}
+    <a href="{{ result.link_to_more }}">Show all {{ result.obj_type_human_plural }}</a>
+    {% endif %}
+  {% empty %}
+    <p>No results found.</p>
+  {% endfor %}
 {% endif %}
 {% endblock %}

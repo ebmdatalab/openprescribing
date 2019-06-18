@@ -9,16 +9,23 @@ class DMDObjectQuerySet(models.QuerySet):
     def valid(self):
         return self.exclude(invalid=True)
 
+    def available(self):
+        raise NotImplementedError
+
+    def with_bnf_code(self):
+        return self.filter(bnf_code__isnull=False)
+
     def valid_and_available(self):
         return self.valid().available()
-
-    def available(self, q):
-        raise NotImplementedError
 
 
 class VTMQuerySet(DMDObjectQuerySet):
     def available(self):
         # There are no fields on VTM relating to availability
+        return self
+
+    def with_bnf_code(self):
+        # We can't match BNF codes against VTMs
         return self
 
 

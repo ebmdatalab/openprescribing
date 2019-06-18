@@ -1,6 +1,8 @@
 # coding=utf8
 
 import colorsys
+from copy import copy
+from urllib import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import BooleanField, ForeignKey
@@ -10,9 +12,12 @@ from django.urls import reverse
 
 from frontend.models import Presentation
 
+from .forms import SearchForm
 from .models import VTM, VMP, VMPP, AMP, AMPP
 from .search import search
 from .view_schema import schema
+
+obj_types = ['vtm', 'vmp', 'vmpp', 'amp', 'ampp']
 
 obj_type_to_cls = {
     "vtm": VTM,
@@ -23,6 +28,7 @@ obj_type_to_cls = {
 }
 
 cls_to_obj_type = {cls: obj_type for obj_type, cls in obj_type_to_cls.items()}
+
 
 def _build_row(obj, field):
     value = getattr(obj, field.name)
@@ -229,21 +235,45 @@ def bnf_code_relationships_view(request, bnf_code):
 
 
 def search_view(request):
-    q = request.GET.get("q")
+    if 'q' in request.GET:
+        form = SearchForm(request.GET)
 
-    ctx = {"q": q}
+        if form.is_valid():
+            search_params = form.cleaned_data
+            max_results_per_obj_type = search_params.pop('max_results_per_obj_type') or 10
+            results = search(**search_params)
+            _annotate_search_results(results, search_params, max_results_per_obj_type)
 
-    if q:
-        results = search(q)
+            if len(results) == 1:
+                if len(results[0]['objs']) == 1:
+                    obj = results[0]['objs'][0]
+                    link = reverse("dmd_obj", args=[obj.obj_type, obj.id])
+                    return redirect(link)
 
-        if len(results) == 1:
-            if len(results.values()[0]) == 1:
-                obj = results.values()[0][0]
-                link = reverse("dmd_obj", args=[type(obj).__name__.lower(), obj.id])
-                return redirect(link)
+        else:
+            results = None
 
-        ctx["results"] = results
     else:
-        ctx["results"] = None
+        form = SearchForm()
+        results = None
+
+    ctx = {
+        "form": form,
+        "results": results
+    }
 
     return render(request, "dmd/search.html", ctx)
+
+
+def _annotate_search_results(results, search_params, max_results_per_obj_type):
+    for result in results:
+        result['obj_type_human_plural'] = result['cls']._meta.verbose_name_plural
+        result['num_hits'] = len(result['objs'])
+
+        if len(results) > 1:
+            if len(result['objs']) > max_results_per_obj_type:
+                result['objs'] = result['objs'][:max_results_per_obj_type]
+                new_search_params = copy(search_params)
+                new_search_params['obj_types'] = [result['cls'].obj_type]
+                querystring = urlencode(new_search_params, doseq=True)
+                result['link_to_more'] = reverse('dmd_search') + '?' + querystring

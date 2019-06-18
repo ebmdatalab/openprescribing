@@ -46,6 +46,12 @@ class VTM(models.Model):
     def title(self):
         return self.nm
 
+    def status(self):
+        if self.invalid:
+            return 'invalid'
+        else:
+            return None
+
 
 class VMP(models.Model):
     class Meta:
@@ -191,6 +197,18 @@ class VMP(models.Model):
 
     def title(self):
         return self.nm
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append('invalid')
+        if not self.bnf_code:
+            tokens.append('no BNF code')
+        if self.non_avail_id == 1:
+            tokens.append('not available')
+
+        return ', '.join(tokens) or None
 
 
 class VPI(models.Model):
@@ -445,6 +463,18 @@ class AMP(models.Model):
     def title(self):
         return self.descr
 
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append('invalid')
+        if not self.bnf_code:
+            tokens.append('no BNF code')
+        if self.avail_restrict_id == 9:
+            tokens.append('not available')
+
+        return ', '.join(tokens) or None
+
 
 class ApIng(models.Model):
     class Meta:
@@ -582,6 +612,16 @@ class VMPP(models.Model):
     def title(self):
         return self.nm
 
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append('invalid')
+        if not self.bnf_code:
+            tokens.append('no BNF code')
+
+        return ', '.join(tokens) or None
+
 
 class Dtinfo(models.Model):
     class Meta:
@@ -688,6 +728,18 @@ class AMPP(models.Model):
 
     def title(self):
         return self.nm
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append('invalid')
+        if not self.bnf_code:
+            tokens.append('no BNF code')
+        if self.disc_id == 1:
+            tokens.append('not available')
+
+        return ', '.join(tokens) or None
 
 
 class PackInfo(models.Model):

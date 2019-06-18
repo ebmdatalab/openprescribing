@@ -1,0 +1,479 @@
+[
+{
+  "model": "dmd2.vmp",
+  "pk": 318412000,
+  "fields": {
+    "vpiddt": null,
+    "vpidprev": null,
+    "vtm": 68088000,
+    "invalid": false,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "basis": 1,
+    "nmdt": null,
+    "nmprev": null,
+    "basis_prev": null,
+    "nmchange": null,
+    "combprod": null,
+    "pres_stat": 1,
+    "sug_f": false,
+    "glu_f": false,
+    "pres_f": false,
+    "cfc_f": false,
+    "non_avail": null,
+    "non_availdt": null,
+    "df_ind": 1,
+    "udfs": "1.000",
+    "udfs_uom": 428641000,
+    "unit_dose_uom": 428641000,
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 9703211000001108,
+  "fields": {
+    "invalid": true,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 3144701000001104,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 10347111000001100,
+  "fields": {
+    "invalid": false,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (Alliance Healthcare (Distribution) Ltd)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 2089901000001107,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 4814811000001108,
+  "fields": {
+    "invalid": false,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (Kent Pharmaceuticals Ltd)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 2073701000001100,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 17747811000001100,
+  "fields": {
+    "invalid": true,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (Phoenix Healthcare Distribution Ltd)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 17845311000001104,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 15057611000001104,
+  "fields": {
+    "invalid": true,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (Sigma Pharmaceuticals Plc)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 2087601000001106,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 21735411000001105,
+  "fields": {
+    "invalid": true,
+    "vmp": 318412000,
+    "nm": "Acebutolol 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Acebutolol 100mg capsules (Waymade Healthcare Plc)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 2091401000001103,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 9,
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.amp",
+  "pk": 632811000001105,
+  "fields": {
+    "invalid": false,
+    "vmp": 318412000,
+    "nm": "Sectral 100mg capsules",
+    "abbrevnm": null,
+    "descr": "Sectral 100mg capsules (Sanofi)",
+    "nmdt": null,
+    "nm_prev": null,
+    "supp": 9190711000001101,
+    "lic_auth": 1,
+    "lic_auth_prev": null,
+    "lic_authchange": null,
+    "lic_authchangedt": null,
+    "combprod": null,
+    "flavour": null,
+    "ema": false,
+    "parallel_import": false,
+    "avail_restrict": 1,
+    "bnf_code": "0204000C0BBAAAA"
+  }
+},
+{
+  "model": "dmd2.vmpp",
+  "pk": 1098611000001105,
+  "fields": {
+    "invalid": false,
+    "nm": "Acebutolol 100mg capsules 84 capsule",
+    "vmp": 318412000,
+    "qtyval": "84.00",
+    "qty_uom": 428641000,
+    "combpack": null,
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.vtm",
+  "pk": 68088000,
+  "fields": {
+    "invalid": false,
+    "nm": "Acebutolol",
+    "abbrevnm": null,
+    "vtmidprev": null,
+    "vtmiddt": null
+  }
+},
+{
+  "model": "dmd2.basisofname",
+  "pk": 1,
+  "fields": {
+    "descr": "rINN - Recommended International Non-proprietary"
+  }
+},
+{
+  "model": "dmd2.virtualproductpresstatus",
+  "pk": 1,
+  "fields": {
+    "descr": "Valid as a prescribable product"
+  }
+},
+{
+  "model": "dmd2.dfindicator",
+  "pk": 1,
+  "fields": {
+    "descr": "Discrete"
+  }
+},
+{
+  "model": "dmd2.unitofmeasure",
+  "pk": 428641000,
+  "fields": {
+    "cddt": "2008-11-01",
+    "cdprev": 3316911000001105,
+    "descr": "capsule"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 9703311000001100,
+  "fields": {
+    "invalid": true,
+    "nm": "Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd) 84 capsule",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 9703211000001108,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": null,
+    "disc": 1,
+    "discdt": "2017-08-08",
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 3144701000001104,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "A A H Pharmaceuticals Ltd"
+  }
+},
+{
+  "model": "dmd2.licensingauthority",
+  "pk": 1,
+  "fields": {
+    "descr": "Medicines - MHRA/EMA"
+  }
+},
+{
+  "model": "dmd2.availabilityrestriction",
+  "pk": 9,
+  "fields": {
+    "descr": "Not available"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 10347211000001106,
+  "fields": {
+    "invalid": false,
+    "nm": "Acebutolol 100mg capsules (Alliance Healthcare (Distribution) Ltd) 84 capsule",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 10347111000001100,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": null,
+    "disc": 1,
+    "discdt": "2010-05-25",
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 2089901000001107,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Alliance Healthcare (Distribution) Ltd"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 4814911000001103,
+  "fields": {
+    "invalid": false,
+    "nm": "Acebutolol 100mg capsules (Kent Pharmaceuticals Ltd) 84 capsule 6 x 14 capsules",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 4814811000001108,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": "6 x 14 capsules",
+    "disc": 1,
+    "discdt": "2007-03-27",
+    "bnf_code": "0204000C0AAAAAA"
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 2073701000001100,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Kent Pharmaceuticals Ltd"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 17747911000001105,
+  "fields": {
+    "invalid": true,
+    "nm": "Acebutolol 100mg capsules (Phoenix Healthcare Distribution Ltd) 84 capsule",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 17747811000001100,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": null,
+    "disc": 1,
+    "discdt": "2018-10-01",
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 17845311000001104,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Phoenix Healthcare Distribution Ltd"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 15057711000001108,
+  "fields": {
+    "invalid": true,
+    "nm": "Acebutolol 100mg capsules (Sigma Pharmaceuticals Plc) 84 capsule",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 15057611000001104,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": null,
+    "disc": 1,
+    "discdt": "2018-10-02",
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 2087601000001106,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Sigma Pharmaceuticals Plc"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 21735511000001109,
+  "fields": {
+    "invalid": true,
+    "nm": "Acebutolol 100mg capsules (Waymade Healthcare Plc) 84 capsule",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 21735411000001105,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": null,
+    "disc": 1,
+    "discdt": "2018-10-05",
+    "bnf_code": null
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 2091401000001103,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Waymade Healthcare Plc"
+  }
+},
+{
+  "model": "dmd2.ampp",
+  "pk": 1389011000001108,
+  "fields": {
+    "invalid": false,
+    "nm": "Sectral 100mg capsules (Sanofi) 84 capsule 6 x 14 capsules",
+    "abbrevnm": null,
+    "vmpp": 1098611000001105,
+    "amp": 632811000001105,
+    "combpack": null,
+    "legal_cat": 3,
+    "subp": "6 x 14 capsules",
+    "disc": null,
+    "discdt": null,
+    "bnf_code": "0204000C0BBAAAA"
+  }
+},
+{
+  "model": "dmd2.supplier",
+  "pk": 9190711000001101,
+  "fields": {
+    "cddt": null,
+    "cdprev": null,
+    "invalid": false,
+    "descr": "Sanofi"
+  }
+},
+{
+  "model": "dmd2.availabilityrestriction",
+  "pk": 1,
+  "fields": {
+    "descr": "None"
+  }
+},
+{
+  "model": "dmd2.legalcategory",
+  "pk": 3,
+  "fields": {
+    "descr": "POM"
+  }
+},
+{
+  "model": "dmd2.discontinuedind",
+  "pk": 1,
+  "fields": {
+    "descr": "Discontinued Flag"
+  }
+}
+]
+
