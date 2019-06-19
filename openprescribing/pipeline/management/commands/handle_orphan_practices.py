@@ -57,11 +57,11 @@ class Command(BaseCommand):
                 raise CommandError(msg)
             pattern = os.path.join(
                 settings.PIPELINE_DATA_BASEDIR,
-                "prescribing_details",
+                "practice_details",
                 "*",
                 "epraccur.csv",
             )
-            paths = glob.glob(pattern)
+            paths = sorted(glob.glob(pattern))
             if len(paths) < 2:
                 return
             prev_path, curr_path = paths[-2:]
