@@ -8,9 +8,9 @@ WITH
       SELECT
         DISTINCT tp.date,
         vmp.bnf_code
-      FROM dmd.vmp
-      INNER JOIN dmd.vmpp ON vmp.id = vmpp.vmp
-      INNER JOIN dmd.tariffprice tp ON vmpp.id = tp.vmpp
+      FROM {projects}.{dmd}.vmp
+      INNER JOIN {project}.{dmd}.vmpp ON vmp.id = vmpp.vmp
+      INNER JOIN {project}.{dmd}.tariffprice tp ON vmpp.id = tp.vmpp
       GROUP BY
         tp.date,
         vmp.bnf_code
@@ -28,10 +28,10 @@ WITH
       vw.bnf_code,
       vw.median_price_per_unit
     FROM
-      {project}.measures.vw__median_price_per_unit vw
+      {project}.{measures}.vw__median_price_per_unit vw
 
     INNER JOIN
-      {project}.dmd.vmp
+      {project}.{dmd}.vmp
     ON
       vmp.bnf_code = vw.bnf_code
 
