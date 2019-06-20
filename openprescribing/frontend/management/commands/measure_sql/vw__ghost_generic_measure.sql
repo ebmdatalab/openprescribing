@@ -8,7 +8,7 @@ WITH
       SELECT
         DISTINCT tp.date,
         vmp.bnf_code
-      FROM {projects}.{dmd}.vmp
+      FROM {project}.{dmd}.vmp
       INNER JOIN {project}.{dmd}.vmpp ON vmp.id = vmpp.vmp
       INNER JOIN {project}.{dmd}.tariffprice tp ON vmpp.id = tp.vmpp
       GROUP BY
