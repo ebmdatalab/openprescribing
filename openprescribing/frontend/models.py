@@ -1,6 +1,5 @@
 import cPickle
 import json
-import os.path
 import uuid
 
 from django.contrib.gis.db import models
