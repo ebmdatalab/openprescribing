@@ -11,7 +11,9 @@ import api.view_utils as utils
 
 @api_view(['GET'])
 def org_location(request, format=None):
-    org_type = request.GET.get('org_type', '')
+    # We make practice the default org type for compatibility with the previous
+    # API
+    org_type = request.GET.get('org_type', 'practice')
     centroids = request.GET.get('centroids', '')
     org_codes = utils.param_to_list(request.GET.get('q', ''))
     if org_type == 'practice':
