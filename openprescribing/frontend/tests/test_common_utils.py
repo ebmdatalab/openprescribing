@@ -1,16 +1,19 @@
+from django.db import connection
 from django.test import SimpleTestCase
 from django.test import TestCase
+
+from common.utils import (
+    constraint_and_index_reconstructor, get_env_setting, nhs_titlecase
+)
 
 
 class GetEnvSettingTests(SimpleTestCase):
     def test_falsey_default(self):
-        from common.utils import get_env_setting
         self.assertEqual(get_env_setting('FROB123', ''), '')
 
 
 class TitleCaseTests(SimpleTestCase):
-    def test_variaous_cases(self):
-        from common.utils import nhs_titlecase
+    def test_various_cases(self):
         tests = [
             (
                 'THING BY THE CHURCH',
@@ -78,12 +81,8 @@ def _cluster_count(cursor):
 
 
 class FunctionalTests(TestCase):
-    fixtures = ['orgs']
 
     def test_reconstructor_does_work(self):
-        from django.db import connection
-        from common.utils import constraint_and_index_reconstructor
-
         with connection.cursor() as cursor:
             # Set up a table
             cursor.execute("CREATE TABLE firmness (id integer PRIMARY KEY)")
