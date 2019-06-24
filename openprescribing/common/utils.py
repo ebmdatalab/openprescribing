@@ -158,26 +158,27 @@ def constraint_and_index_reconstructor(table_name):
             logger.info("Dropped index %s" % name)
 
         logger.info("Running wrapped command")
-        yield
+        try:
+            yield
+        finally:
+            # we're updating everything. This takes 52 minutes.
+            # restore indexes
+            logger.info("Recreating indexes")
+            for name, cmd in indexes.items():
+                cursor.execute(cmd)
+                logger.info("Recreated index %s" % name)
 
-        # we're updating everything. This takes 52 minutes.
-        # restore indexes
-        logger.info("Recreating indexes")
-        for name, cmd in indexes.items():
-            cursor.execute(cmd)
-            logger.info("Recreated index %s" % name)
-
-        logger.info("Recreating constraints")
-        # restore foreign key constraints
-        for name, cmd in constraints.items():
-            cmd = ("ALTER TABLE %s "
-                   "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
-            cursor.execute(cmd)
-            logger.info("Recreated constraint %s" % name)
-        if cluster:
-            cursor.execute("CLUSTER %s USING %s" % (table_name, cluster))
-            cursor.execute("ANALYZE %s" % table_name)
-            logger.info("CLUSTERED %s" % table_name)
+            logger.info("Recreating constraints")
+            # restore foreign key constraints
+            for name, cmd in constraints.items():
+                cmd = ("ALTER TABLE %s "
+                       "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
+                cursor.execute(cmd)
+                logger.info("Recreated constraint %s" % name)
+            if cluster:
+                cursor.execute("CLUSTER %s USING %s" % (table_name, cluster))
+                cursor.execute("ANALYZE %s" % table_name)
+                logger.info("CLUSTERED %s" % table_name)
 
 
 def parse_date(s):

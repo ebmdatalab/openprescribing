@@ -104,3 +104,29 @@ class FunctionalTests(TestCase):
             )
             self.assertEqual(cursor.fetchone()[0], 2)
             self.assertEqual(_cluster_count(cursor), 1)
+
+    def test_reconstructor_works_even_when_exception_thrown(self):
+        with connection.cursor() as cursor:
+            # Set up a table
+            cursor.execute("CREATE TABLE firmness (id integer PRIMARY KEY)")
+            cursor.execute("""
+                CREATE TABLE tofu (
+                  id integer PRIMARY KEY,
+                  brand varchar,
+                  firmness_id integer REFERENCES firmness (id))
+            """)
+            cursor.execute("CLUSTER tofu USING tofu_pkey")
+            cursor.execute("CREATE INDEX ON tofu (brand)")
+
+            class BadThingError(Exception):
+                pass
+
+            with self.assertRaises(BadThingError):
+                with constraint_and_index_reconstructor('tofu'):
+                    raise BadThingError('3.6 roentgen; not great, not terrible')
+
+            cursor.execute(
+                "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
+            )
+            self.assertEqual(cursor.fetchone()[0], 2)
+            self.assertEqual(_cluster_count(cursor), 1)
