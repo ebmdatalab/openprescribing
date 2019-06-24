@@ -122,9 +122,9 @@ class PCT(models.Model):
     # RegionalTeam or an STP.  Specifically, we create PCT objects when
     # importing prescribing data if the PCT is not otherwise in our database.
     regional_team = models.ForeignKey(
-        RegionalTeam, null=True, on_delete=models.CASCADE
+        RegionalTeam, null=True, on_delete=models.PROTECT
     )
-    stp = models.ForeignKey(STP, null=True, on_delete=models.CASCADE)
+    stp = models.ForeignKey(STP, null=True, on_delete=models.PROTECT)
 
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -190,7 +190,7 @@ class Practice(models.Model):
         (STATUS_DORMANT, 'Dormant'),
         ('P', 'Proposed')
     )
-    ccg = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    ccg = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     code = models.CharField(max_length=6, primary_key=True,
                             help_text='Practice code')
     name = models.CharField(max_length=200)
@@ -266,7 +266,7 @@ class PracticeIsDispensing(models.Model):
     Dispensing status, from
     https://www.report.ppa.org.uk/ActProd1/getfolderitems.do?volume=actprod&userid=ciruser&password=foicir
     '''
-    practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
+    practice = models.ForeignKey(Practice, on_delete=models.PROTECT)
     date = models.DateField()
 
     class Meta:
@@ -279,6 +279,9 @@ class PracticeStatistics(models.Model):
     Statistics for a practice in a particular month, including
     list sizes and derived values such as ASTRO-PUs and STAR-PUs.
     '''
+    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
+    # that was the previous default and the table is large enough that running
+    # the migration will take careful planning at some later stage
     practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
     pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
     date = models.DateField()
@@ -319,9 +322,9 @@ class QOFPrevalence(models.Model):
     '''
     TODO: Handle denormalization?
     '''
-    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     practice = models.ForeignKey(
-        Practice, null=True, blank=True, on_delete=models.CASCADE
+        Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     start_year = models.IntegerField()
     indicator_group = models.CharField(max_length=10)
@@ -394,7 +397,7 @@ class Presentation(models.Model):
     is_generic = models.NullBooleanField(default=None)
     is_current = models.BooleanField(default=True)
     replaced_by = models.ForeignKey(
-        'self', null=True, blank=True, on_delete=models.CASCADE
+        'self', null=True, blank=True, on_delete=models.PROTECT
     )
 
     # An ADQ is the assumed average maintenance dose per day for a
@@ -522,6 +525,9 @@ class Prescription(models.Model):
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
     '''
+    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
+    # that was the previous default and the table is large enough that running
+    # the migration will take careful planning at some later stage
     pct = models.ForeignKey(
         PCT, db_constraint=False, null=True, on_delete=models.CASCADE
     )
@@ -588,6 +594,9 @@ class MeasureValue(models.Model):
     Otherwise, it's a measure for a practice, and the pct field
     indicates the parent CCG, if it exists.
     '''
+    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
+    # that was the previous default and the table is large enough that running
+    # the migration will take careful planning at some later stage
     measure = models.ForeignKey(Measure, on_delete=models.CASCADE)
     regional_team = models.ForeignKey(
         RegionalTeam, null=True, blank=True, on_delete=models.CASCADE
@@ -623,6 +632,9 @@ class MeasureGlobal(models.Model):
     Percentile values may or may not be required. We
     include them as placeholders for now.
     '''
+    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
+    # that was the previous default and the table is large enough that running
+    # the migration will take careful planning at some later stage
     measure = models.ForeignKey(Measure, on_delete=models.CASCADE)
     month = models.DateField()
 
@@ -699,8 +711,10 @@ class OrgBookmark(models.Model):
     refactoring easier, when it comes.)
     '''
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
-    practice = models.ForeignKey(Practice, null=True, blank=True, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, on_delete=models.PROTECT
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
@@ -765,9 +779,9 @@ class OrgBookmark(models.Model):
 
 class NCSOConcessionBookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     practice = models.ForeignKey(
-        Practice, null=True, blank=True, on_delete=models.CASCADE
+        Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
@@ -931,7 +945,7 @@ class MailLog(models.Model):
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
     message = models.ForeignKey(
-        EmailMessage, null=True, db_constraint=False, on_delete=models.CASCADE
+        EmailMessage, null=True, db_constraint=False, on_delete=models.PROTECT
     )
 
     def subject_from_metadata(self):
@@ -980,6 +994,9 @@ class PPUSaving(models.Model):
     those with a practice_id are for data at a practice level.
 
     """
+    # We use ON DELETE CASCADE rather than PROTECT on this model simply because
+    # that was the previous default and the table is large enough that running
+    # the migration will take careful planning at some later stage
     date = models.DateField(db_index=True)
     # Sometimes we there are codes in prescribing data which are not
     # present in our presentations
@@ -1002,11 +1019,13 @@ class PPUSaving(models.Model):
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.CASCADE)
+    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.PROTECT)
     # 1: Category A
     # 3: Category C
     # 11: Category M
-    tariff_category = models.ForeignKey('dmd2.DtPaymentCategory', on_delete=models.CASCADE)
+    tariff_category = models.ForeignKey(
+        'dmd2.DtPaymentCategory', on_delete=models.PROTECT
+    )
     price_pence = models.IntegerField()
 
     class Meta:
@@ -1015,7 +1034,7 @@ class TariffPrice(models.Model):
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.CASCADE)
+    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.PROTECT)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()
