@@ -121,8 +121,10 @@ class PCT(models.Model):
     # These are NULLable, because not every PCT belongs to either a
     # RegionalTeam or an STP.  Specifically, we create PCT objects when
     # importing prescribing data if the PCT is not otherwise in our database.
-    regional_team = models.ForeignKey(RegionalTeam, null=True)
-    stp = models.ForeignKey(STP, null=True)
+    regional_team = models.ForeignKey(
+        RegionalTeam, null=True, on_delete=models.CASCADE
+    )
+    stp = models.ForeignKey(STP, null=True, on_delete=models.CASCADE)
 
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -188,7 +190,7 @@ class Practice(models.Model):
         (STATUS_DORMANT, 'Dormant'),
         ('P', 'Proposed')
     )
-    ccg = models.ForeignKey(PCT, null=True, blank=True)
+    ccg = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
     code = models.CharField(max_length=6, primary_key=True,
                             help_text='Practice code')
     name = models.CharField(max_length=200)
@@ -264,7 +266,7 @@ class PracticeIsDispensing(models.Model):
     Dispensing status, from
     https://www.report.ppa.org.uk/ActProd1/getfolderitems.do?volume=actprod&userid=ciruser&password=foicir
     '''
-    practice = models.ForeignKey(Practice)
+    practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
     date = models.DateField()
 
     class Meta:
@@ -277,8 +279,8 @@ class PracticeStatistics(models.Model):
     Statistics for a practice in a particular month, including
     list sizes and derived values such as ASTRO-PUs and STAR-PUs.
     '''
-    practice = models.ForeignKey(Practice)
-    pct = models.ForeignKey(PCT, null=True, blank=True)
+    practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
     date = models.DateField()
     male_0_4 = models.IntegerField()
     female_0_4 = models.IntegerField()
@@ -317,8 +319,10 @@ class QOFPrevalence(models.Model):
     '''
     TODO: Handle denormalization?
     '''
-    pct = models.ForeignKey(PCT, null=True, blank=True)
-    practice = models.ForeignKey(Practice, null=True, blank=True)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, on_delete=models.CASCADE
+    )
     start_year = models.IntegerField()
     indicator_group = models.CharField(max_length=10)
     register_description = models.CharField(max_length=100)
@@ -389,7 +393,9 @@ class Presentation(models.Model):
     name = models.CharField(max_length=200)
     is_generic = models.NullBooleanField(default=None)
     is_current = models.BooleanField(default=True)
-    replaced_by = models.ForeignKey('self', null=True, blank=True)
+    replaced_by = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.CASCADE
+    )
 
     # An ADQ is the assumed average maintenance dose per day for a
     # drug used for its main indication in adults.
@@ -516,8 +522,12 @@ class Prescription(models.Model):
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
     '''
-    pct = models.ForeignKey(PCT, db_constraint=False, null=True)
-    practice = models.ForeignKey(Practice, db_constraint=False, null=True)
+    pct = models.ForeignKey(
+        PCT, db_constraint=False, null=True, on_delete=models.CASCADE
+    )
+    practice = models.ForeignKey(
+        Practice, db_constraint=False, null=True, on_delete=models.CASCADE
+    )
     presentation_code = models.CharField(max_length=15,
                                          validators=[isAlphaNumeric])
     total_items = models.IntegerField()
@@ -578,11 +588,15 @@ class MeasureValue(models.Model):
     Otherwise, it's a measure for a practice, and the pct field
     indicates the parent CCG, if it exists.
     '''
-    measure = models.ForeignKey(Measure)
-    regional_team = models.ForeignKey(RegionalTeam, null=True, blank=True)
-    stp = models.ForeignKey(STP, null=True, blank=True)
-    pct = models.ForeignKey(PCT, null=True, blank=True)
-    practice = models.ForeignKey(Practice, null=True, blank=True)
+    measure = models.ForeignKey(Measure, on_delete=models.CASCADE)
+    regional_team = models.ForeignKey(
+        RegionalTeam, null=True, blank=True, on_delete=models.CASCADE
+    )
+    stp = models.ForeignKey(STP, null=True, blank=True, on_delete=models.CASCADE)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, on_delete=models.CASCADE
+    )
     month = models.DateField()
 
     numerator = models.FloatField(null=True, blank=True)
@@ -609,7 +623,7 @@ class MeasureGlobal(models.Model):
     Percentile values may or may not be required. We
     include them as placeholders for now.
     '''
-    measure = models.ForeignKey(Measure)
+    measure = models.ForeignKey(Measure, on_delete=models.CASCADE)
     month = models.DateField()
 
     numerator = models.FloatField(null=True, blank=True)
@@ -685,8 +699,8 @@ class OrgBookmark(models.Model):
     refactoring easier, when it comes.)
     '''
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    pct = models.ForeignKey(PCT, null=True, blank=True)
-    practice = models.ForeignKey(Practice, null=True, blank=True)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    practice = models.ForeignKey(Practice, null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
@@ -751,8 +765,10 @@ class OrgBookmark(models.Model):
 
 class NCSOConcessionBookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    pct = models.ForeignKey(PCT, null=True, blank=True)
-    practice = models.ForeignKey(Practice, null=True, blank=True)
+    pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    practice = models.ForeignKey(
+        Practice, null=True, blank=True, on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
@@ -875,7 +891,7 @@ class EmailMessage(models.Model):
         null=True
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    user = models.ForeignKey(User, null=True, blank=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     send_count = models.SmallIntegerField(default=0)
     objects = EmailMessageManager()
 
@@ -914,7 +930,9 @@ class MailLog(models.Model):
         choices=EVENT_TYPE_CHOICES,
         db_index=True)
     timestamp = models.DateTimeField(null=True, blank=True)
-    message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
+    message = models.ForeignKey(
+        EmailMessage, null=True, db_constraint=False, on_delete=models.CASCADE
+    )
 
     def subject_from_metadata(self):
         subject = 'n/a'
@@ -966,24 +984,29 @@ class PPUSaving(models.Model):
     # Sometimes we there are codes in prescribing data which are not
     # present in our presentations
     presentation = models.ForeignKey(
-        Presentation, db_column='bnf_code', db_constraint=False)
+        Presentation, db_column='bnf_code', db_constraint=False,
+        on_delete=models.CASCADE
+    )
     lowest_decile = models.FloatField()
     quantity = models.IntegerField()
     price_per_unit = models.FloatField()
     possible_savings = models.FloatField()
     formulation_swap = models.TextField(null=True, blank=True)
-    pct = models.ForeignKey(PCT, null=True, blank=True, db_index=True)
+    pct = models.ForeignKey(
+        PCT, null=True, blank=True, db_index=True, on_delete=models.CASCADE
+    )
     practice = models.ForeignKey(
-        Practice, null=True, blank=True, db_index=True)
+        Practice, null=True, blank=True, db_index=True, on_delete=models.CASCADE
+    )
 
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP')
+    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.CASCADE)
     # 1: Category A
     # 3: Category C
     # 11: Category M
-    tariff_category = models.ForeignKey('dmd2.DtPaymentCategory')
+    tariff_category = models.ForeignKey('dmd2.DtPaymentCategory', on_delete=models.CASCADE)
     price_pence = models.IntegerField()
 
     class Meta:
@@ -992,7 +1015,7 @@ class TariffPrice(models.Model):
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', null=True)
+    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.CASCADE)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()
