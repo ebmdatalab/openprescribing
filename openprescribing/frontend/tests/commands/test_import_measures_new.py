@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import csv
 import tempfile
-from random import randint
+from random import Random
 
 import numpy as np
 import pandas as pd
@@ -33,11 +33,14 @@ from gcutils.bigquery import Client
 class ImportMeasuresTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        random = Random()
+        random.seed(1980)
+
         set_up_bq()
         create_organisations()
         upload_ccgs_and_practices()
-        cls.prescriptions = upload_prescribing()
-        cls.practice_stats = upload_practice_statistics()
+        cls.prescriptions = upload_prescribing(random.randint)
+        cls.practice_stats = upload_practice_statistics(random.randint)
 
         # import_measures uses this ImportLog to work out which months it
         # should import data.
@@ -389,7 +392,7 @@ def upload_ccgs_and_practices():
     table.insert_rows_from_pg(Practice, columns)
 
 
-def upload_prescribing():
+def upload_prescribing(randint):
     '''Generate prescribing data, and upload to BQ.'''
 
     prescribing_rows = []
@@ -523,7 +526,7 @@ def upload_prescribing():
     return prescriptions
 
 
-def upload_practice_statistics():
+def upload_practice_statistics(randint):
     '''Generate practice statistics data, and upload to BQ.'''
 
     practice_statistics_rows = []
