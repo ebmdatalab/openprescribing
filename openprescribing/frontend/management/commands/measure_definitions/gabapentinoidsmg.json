@@ -7,10 +7,12 @@
     "Total mg of pregabalin + total mg/6 of gabapentin per 1000 patients"
   ],
   "why_it_matters": [
-    "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is rising rapidly in the NHS. ",
-    "There are also concerns about the potential for abuse.  There appears to be no robust mechanism for converting gabapentin to ",
-    "pregabalin. Toth et al describe using a <a href='https://www.ncbi.nlm.nih.gov/pubmed/20113408'>6mg:1mg ratio for gabapentin to ",
-    "pregabalin.</a> The <a href='https://www.who.int/medicines/regulation/medicines-safety/toolkit_ddd/en/'>Defined Daily Dose</a> ",
+    "Gabapentin and pregabalin are increasingly used in neuropathic and other types of pain, and use is ",
+    "rising rapidly in the NHS. There are also concerns about the ",
+    "<a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>",
+    "potential for abuse</a>. Although there appears to be no robust mechanism for converting gabapentin to  pregabalin, ",
+    "Toth et al describe using a <a href='https://www.ncbi.nlm.nih.gov/pubmed/20113408'>6mg:1mg ratio for gabapentin to pregabalin.</a> ",
+    "The <a href='https://www.who.int/medicines/regulation/medicines-safety/toolkit_ddd/en/'>Defined Daily Dose</a> ",
     "(DDD) for gabapentin is also 6 times that of pregabalin. This measure is therefore based on gabapentin total ",
     "milligrams / 6, as well as total milligrams for pregabalin.",
     "<br><br><strong>Please note that this is an experimental measure.</strong> We would be grateful for any feedback at ",
