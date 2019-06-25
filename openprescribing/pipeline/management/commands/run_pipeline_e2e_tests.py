@@ -15,7 +15,7 @@ from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureValue, MeasureGlobal, TariffPrice
-from dmd2.models import VMPP
+from dmd2.models import VMP, VMPP
 from openprescribing.slack import notify_slack
 from pipeline import runner
 
@@ -105,10 +105,11 @@ def run_end_to_end():
         client.create_table('global_data_' + measure_id, measures_schema)
 
     # Although there are no model instances, we call upload_model to create the
-    # tables in BQ that might be required by certain measure views.
+    # tables in BQ that are required by certain measure views.
     client = BQClient('dmd')
     client.upload_model(TariffPrice)
     client.upload_model(VMPP)
+    client.upload_model(VMP)
 
     call_command('generate_presentation_replacements')
 
