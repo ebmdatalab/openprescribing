@@ -1,16 +1,19 @@
+from django.db import connection
 from django.test import SimpleTestCase
 from django.test import TestCase
+
+from common.utils import (
+    constraint_and_index_reconstructor, get_env_setting, nhs_titlecase
+)
 
 
 class GetEnvSettingTests(SimpleTestCase):
     def test_falsey_default(self):
-        from common.utils import get_env_setting
         self.assertEqual(get_env_setting('FROB123', ''), '')
 
 
 class TitleCaseTests(SimpleTestCase):
-    def test_variaous_cases(self):
-        from common.utils import nhs_titlecase
+    def test_various_cases(self):
         tests = [
             (
                 'THING BY THE CHURCH',
@@ -78,12 +81,8 @@ def _cluster_count(cursor):
 
 
 class FunctionalTests(TestCase):
-    fixtures = ['orgs']
 
     def test_reconstructor_does_work(self):
-        from django.db import connection
-        from common.utils import constraint_and_index_reconstructor
-
         with connection.cursor() as cursor:
             # Set up a table
             cursor.execute("CREATE TABLE firmness (id integer PRIMARY KEY)")
@@ -100,6 +99,32 @@ class FunctionalTests(TestCase):
                     "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
                 )
                 self.assertEqual(cursor.fetchone()[0], 0)
+            cursor.execute(
+                "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
+            )
+            self.assertEqual(cursor.fetchone()[0], 2)
+            self.assertEqual(_cluster_count(cursor), 1)
+
+    def test_reconstructor_works_even_when_exception_thrown(self):
+        with connection.cursor() as cursor:
+            # Set up a table
+            cursor.execute("CREATE TABLE firmness (id integer PRIMARY KEY)")
+            cursor.execute("""
+                CREATE TABLE tofu (
+                  id integer PRIMARY KEY,
+                  brand varchar,
+                  firmness_id integer REFERENCES firmness (id))
+            """)
+            cursor.execute("CLUSTER tofu USING tofu_pkey")
+            cursor.execute("CREATE INDEX ON tofu (brand)")
+
+            class BadThingError(Exception):
+                pass
+
+            with self.assertRaises(BadThingError):
+                with constraint_and_index_reconstructor('tofu'):
+                    raise BadThingError('3.6 roentgen; not great, not terrible')
+
             cursor.execute(
                 "SELECT count(*) FROM pg_indexes WHERE tablename = 'tofu'"
             )
