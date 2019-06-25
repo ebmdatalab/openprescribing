@@ -29,7 +29,7 @@
     "safety"
   ],
   "numerator_columns": [
-    "SUM(gaba_mg) AS numerator, "
+    "SUM(gaba_ddd) AS numerator, "
   ],
   "numerator_from": "{measures}.gaba_total_ddd",
   "numerator_where": [
