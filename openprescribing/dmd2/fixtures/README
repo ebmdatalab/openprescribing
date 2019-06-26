@@ -1,0 +1,12 @@
+This directory contains the following fixtures:
+
+dmd-search-fixtures.json
+------------------------
+
+Generated with:
+
+    ./manage.py generate_dmd_fixture --include-reverse-relations 318412000
+
+Contains all objects in dm+d family for VMP 318412000 (Acebutolol 100mg
+capsules), which includes several AMPs which are not available, are invalid,
+and/or have no BNF code.
