@@ -236,24 +236,32 @@ def bnf_code_relationships_view(request, bnf_code):
 
 def search_view(request):
     if 'q' in request.GET:
+        # This is a request with a search query.
         form = SearchForm(request.GET)
 
         if form.is_valid():
+            # Do the search and annotate the results.
             search_params = form.cleaned_data
             max_results_per_obj_type = search_params.pop('max_results_per_obj_type') or 10
             results = search(**search_params)
             _annotate_search_results(results, search_params, max_results_per_obj_type)
 
             if len(results) == 1:
+                # There are only results for one type of object.
                 if len(results[0]['objs']) == 1:
+                    # There's only one object in these results, so we redirect
+                    # to that object.
                     obj = results[0]['objs'][0]
                     link = reverse("dmd_obj", args=[obj.obj_type, obj.id])
                     return redirect(link)
 
         else:
+            # The form is not valid, so don't do the search!
             results = None
 
     else:
+        # This is a request without a search query.  Render an empty form and
+        # no search results.
         form = SearchForm()
         results = None
 
@@ -266,6 +274,11 @@ def search_view(request):
 
 
 def _annotate_search_results(results, search_params, max_results_per_obj_type):
+    '''Add extra information to search results to be displayed to user.
+
+    Additionally, if there are results for more than one type of object, the
+    results are truncated, per object type.
+    '''
     for result in results:
         result['obj_type_human_plural'] = result['cls']._meta.verbose_name_plural
         result['num_hits'] = len(result['objs'])
