@@ -34,6 +34,7 @@ class SearchForm(forms.Form):
         label='Include...',
         choices=include_choices,
         required=False,
+        help_text='Unavailable items are not available to be prescribed and/or have been discontinued.',
     )
 
     # This is only used in tests
