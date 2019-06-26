@@ -22,6 +22,33 @@ class MeasureValueQuerySet(models.QuerySet):
         else:
             return self
 
+    def filter_by_org_type(self, org_type):
+        if org_type == 'practice':
+            return self.filter(
+                practice_id__isnull=False,
+            )
+        elif org_type == 'ccg':
+            return self.filter(
+                practice_id__isnull=True,
+                pct_id__isnull=False,
+                pct__org_type='CCG',
+                pct__close_date__isnull=True,
+            )
+        elif org_type == 'stp':
+            return self.filter(
+                stp_id__isnull=False,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+            )
+        elif org_type == 'regional_team':
+            return self.filter(
+                regional_team_id__isnull=False,
+                pct_id__isnull=True,
+                practice_id__isnull=True,
+            )
+        else:
+            raise ValueError('Unknown org_type: {}'.format(org_type))
+
     def for_orgs(self, org_type, org_ids):
         qs = self.select_related('measure')
 
@@ -61,31 +88,10 @@ class MeasureValueQuerySet(models.QuerySet):
         if org_ids is not None and measure_ids is not None:
             assert len(org_ids) <= 1 or len(measure_ids) <= 1
 
-        if org_type == 'practice':
-            qs = self.filter(
-                practice_id__isnull=False,
-            )
-        elif org_type in ['ccg', 'pct']:
-            qs = self.filter(
-                pct__org_type='CCG',
-                pct__close_date__isnull=True,
-                pct_id__isnull=False,
-                practice_id__isnull=True,
-            )
-        elif org_type == 'stp':
-            qs = self.filter(
-                stp_id__isnull=False,
-                pct_id__isnull=True,
-                practice_id__isnull=True,
-            )
-        elif org_type == 'regional_team':
-            qs = self.filter(
-                regional_team_id__isnull=False,
-                pct_id__isnull=True,
-                practice_id__isnull=True,
-            )
-        else:
-            assert False, org_type
+        if org_type == 'pct':
+            org_type = 'ccg'
+
+        qs = self.filter_by_org_type(org_type)
 
         if parent_org_type == 'ccg':
             parent_org_type = 'pct'

@@ -1072,23 +1072,19 @@ def _home_page_context_for_entity(request, entity):
         entity_type = 'practice'
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
-        mv_filter['practice_id'] = None
         entity_type = 'ccg'
     elif isinstance(entity, STP):
         mv_filter['stp_id'] = entity.code
-        mv_filter['pct_id'] = None
-        mv_filter['practice_id'] = None
         entity_type = 'stp'
     elif isinstance(entity, RegionalTeam):
         mv_filter['regional_team_id'] = entity.code
-        mv_filter['pct_id'] = None
-        mv_filter['practice_id'] = None
         entity_type = 'regional_team'
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
     extreme_measurevalue = (
         MeasureValue.objects
+        .filter_by_org_type(entity_type)
         .filter(**mv_filter)
         .exclude(measure_id='lpzomnibus')
         .exclude(measure__low_is_good__isnull=True)
@@ -1328,13 +1324,8 @@ def all_england_ppu_savings(entity_type, date):
 def all_england_measure_savings(entity_type, date):
     return (
         MeasureValue.objects
-        .filter(
-            month=date,
-            practice_id__isnull=(entity_type == 'CCG'),
-            # Practice level data also has `pct_id` set, but we want to exclude
-            # STP/RegionalTeam data
-            pct_id__isnull=False
-        )
+        .filter_by_org_type(entity_type.lower())
+        .filter(month=date)
         .exclude(measure_id='lpzomnibus')
         .aggregate_cost_savings()
     )
@@ -1347,28 +1338,18 @@ def all_england_low_priority_savings(entity_type, date):
         .percentiles[entity_type.lower()]
     )
     return (
-        MeasureValue.objects.filter(
-            month=date,
-            measure_id='lpzomnibus',
-            practice_id__isnull=(entity_type == 'CCG'),
-            # Practice level data also has `pct_id` set, but we want to exclude
-            # STP/RegionalTeam data
-            pct_id__isnull=False
-        )
+        MeasureValue.objects
+        .filter_by_org_type(entity_type.lower())
+        .filter(month=date, measure_id='lpzomnibus')
         .calculate_cost_savings(target_costs)
     )
 
 
 def all_england_low_priority_total(entity_type, date):
     result = (
-        MeasureValue.objects.filter(
-            month=date,
-            measure_id='lpzomnibus',
-            practice_id__isnull=(entity_type == 'CCG'),
-            # Practice level data also has `pct_id` set, but we want to exclude
-            # STP/RegionalTeam data
-            pct_id__isnull=False
-        )
+        MeasureValue.objects
+        .filter_by_org_type(entity_type.lower())
+        .filter(month=date, measure_id='lpzomnibus')
         .aggregate(total=Sum('numerator'))
     )
     return result['total']
