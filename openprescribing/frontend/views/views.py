@@ -1328,7 +1328,13 @@ def all_england_ppu_savings(entity_type, date):
 def all_england_measure_savings(entity_type, date):
     return (
         MeasureValue.objects
-        .filter(month=date, practice_id__isnull=(entity_type == 'CCG'))
+        .filter(
+            month=date,
+            practice_id__isnull=(entity_type == 'CCG'),
+            # Practice level data also has `pct_id` set, but we want to exclude
+            # STP/RegionalTeam data
+            pct_id__isnull=False
+        )
         .exclude(measure_id='lpzomnibus')
         .aggregate_cost_savings()
     )
@@ -1344,7 +1350,10 @@ def all_england_low_priority_savings(entity_type, date):
         MeasureValue.objects.filter(
             month=date,
             measure_id='lpzomnibus',
-            practice_id__isnull=(entity_type == 'CCG')
+            practice_id__isnull=(entity_type == 'CCG'),
+            # Practice level data also has `pct_id` set, but we want to exclude
+            # STP/RegionalTeam data
+            pct_id__isnull=False
         )
         .calculate_cost_savings(target_costs)
     )
@@ -1355,7 +1364,10 @@ def all_england_low_priority_total(entity_type, date):
         MeasureValue.objects.filter(
             month=date,
             measure_id='lpzomnibus',
-            practice_id__isnull=(entity_type == 'CCG')
+            practice_id__isnull=(entity_type == 'CCG'),
+            # Practice level data also has `pct_id` set, but we want to exclude
+            # STP/RegionalTeam data
+            pct_id__isnull=False
         )
         .aggregate(total=Sum('numerator'))
     )
