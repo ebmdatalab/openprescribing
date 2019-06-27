@@ -11,9 +11,7 @@
     "as an adjunct to normal treatment for severe eczema and allergic skin conditions. ",
     "The NIHR commissioned",
     "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx'> CLOTHES trial</a> ",
-    "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS." ,
-    "<br><br><strong>This measure is currently under consultation.  ",
-    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+    "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS."    
   ],
   "numerator_short": "Silk Garments (£)",
   "denominator_short": "1000 patients",
@@ -23,7 +21,7 @@
   "low_is_good": true,
   "tags": [
     "cost",
-    "lowpriorityconsultation",
+    "lowpriority",
     "efficacy"
   ],
   "numerator_columns": [
