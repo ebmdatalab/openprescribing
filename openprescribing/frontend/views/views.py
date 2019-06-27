@@ -1126,11 +1126,6 @@ def _home_page_context_for_entity(request, entity):
 
     measure_options = _build_measure_options(measure_options)
 
-    # This will blow up loudly if we remove this tag, at which point we should
-    # also remove the corresponding link from the entity_home_page.html
-    # template
-    assert 'lowpriorityconsultation' in MEASURE_TAGS
-
     context = {
         'measure': extreme_measure,
         'measures_count': measures_count,
