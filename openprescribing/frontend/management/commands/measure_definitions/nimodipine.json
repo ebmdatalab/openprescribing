@@ -1,5 +1,5 @@
 {
-  "name": "Nimodipine",
+  "name": "Prescribing of nimodipine",
   "title": [
     "Nimodipine: Quantity per 1000 patients"
   ],
@@ -34,7 +34,7 @@
     "1 = 1"
   ],
     "date_reviewed": [
-    ""
+    "2019-06-27"
   ],
   "next_review": [
     "2020-06-01"
@@ -43,8 +43,8 @@
     "sebastian.bacon@phc.ox.ac.uk"
   ],
   "checked_by": [
-    ""
+    "richard.croker@phc.ox.ac.uk"
   ],
   "measure_complexity": [
-    "h
+    "low"
 }
