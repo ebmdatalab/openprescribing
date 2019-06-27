@@ -10,10 +10,8 @@
     "<a href='https://www.nice.org.uk/guidance/cg127/evidence'> NICE hypertension guidance states</a> there is insufficient",
     "evidence of its effectiveness to determine its suitability for use in resistant hypertension.",
     "Whilst aliskiren has shown comparable efficacy to other antihypertensive agents in terms of blood ",
-    "pressure reduction, its effects on mortality and long-term morbidity are currently unknown." ,
-    "<br><br><strong>This measure is currently under consultation.  ",
-    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
-   ],
+    "pressure reduction, its effects on mortality and long-term morbidity are currently unknown."
+    ],
   "numerator_short": "Aliskiren cost (£)",
   "denominator_short": "1000 patients",
   "url": null,
@@ -22,7 +20,7 @@
   "low_is_good": true,
   "tags": [
     "cost",
-    "lowpriorityconsultation",
+    "lowpriority",
     "cardiovascular"   
   ],
   "numerator_columns": [
