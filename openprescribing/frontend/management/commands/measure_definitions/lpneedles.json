@@ -9,9 +9,7 @@
   "why_it_matters": [
     "Insulin pen needles range in price between approximately £3.95 to £30.00 per box. There is no evidence that suggests ",
     "that there are any significant differences between brands of needles, although there are reommendations about length of needle. ",
-    "NHS England is promoting the use of lower cost needles, i.e. those under £5 per box, which are already in widespread use across the NHS. ",
-    "<br><br><strong>This measure is currently under consultation.  ",
-    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+    "NHS England is promoting the use of lower cost needles, i.e. those under £5 per box, which are already in widespread use across the NHS. "  
   ],
   "numerator_short": "Higher cost pen needles cost (£)",
   "denominator_short": "1000 patients",
@@ -23,7 +21,7 @@
     "cost",
     "efficacy",
     "diabetes", 
-    "lowpriorityconsultation"
+    "lowpriority"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
