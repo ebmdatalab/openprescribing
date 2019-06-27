@@ -9,7 +9,7 @@ from django.test import TestCase
 
 from dmd2.models import AMP, AMPP, VMP, VMPP
 from dmd2.management.commands.import_dmd2 import get_common_name
-from frontend.models import Presentation
+from frontend.models import Presentation, NCSOConcession
 
 
 class TestImportDmd2(TestCase):
@@ -147,6 +147,21 @@ class TestImportDmd2(TestCase):
         # that the VMP with VPID 22480211000001104 has been updated with a new
         # VPID (12345).  This VMP now has a VPIDPREV field, and all references
         # to the old VPID have been updated to the new VPID.
+        #
+        # Additionally, there is now an NCSOConcession with a FK reference to
+        # an existing VMPP.
+
+        vmpp = VMPP.objects.get(id=22479511000001101)
+        concession = NCSOConcession.objects.create(
+            date='2019-06-01',
+            vmpp=vmpp,
+            drug=vmpp.nm,
+            pack_size=vmpp.qtyval,
+            price_pence=123
+        )
+
+        vmpp.delete()
+
         with patch('gcutils.bigquery.Client.upload_model'):
             call_command(
                 'import_dmd2',
@@ -166,6 +181,9 @@ class TestImportDmd2(TestCase):
 
         amp = AMP.objects.get(id=29915211000001103)
         self.assertEqual(amp.vmp, vmp)
+
+        concession.refresh_from_db()
+        self.assertEqual(concession.vmpp, vmpp)
 
 
 class TestGetCommonName(TestCase):

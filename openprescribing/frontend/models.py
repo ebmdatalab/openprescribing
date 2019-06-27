@@ -1019,12 +1019,12 @@ class PPUSaving(models.Model):
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.PROTECT)
+    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.DO_NOTHING)
     # 1: Category A
     # 3: Category C
     # 11: Category M
     tariff_category = models.ForeignKey(
-        'dmd2.DtPaymentCategory', on_delete=models.PROTECT
+        'dmd2.DtPaymentCategory', on_delete=models.DO_NOTHING
     )
     price_pence = models.IntegerField()
 
@@ -1034,7 +1034,7 @@ class TariffPrice(models.Model):
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.PROTECT)
+    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.DO_NOTHING)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()
