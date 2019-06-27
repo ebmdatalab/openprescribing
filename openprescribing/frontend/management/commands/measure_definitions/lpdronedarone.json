@@ -12,9 +12,7 @@
     "to the maintenance of normal heart rhythm in ‘persistent’ or ‘paroxysmal’ atrial fibrillation after normal heart ",
     "rhythm has been restored.",
     "<a href='https://www.nice.org.uk/guidance/CG180'> NICE clinical guideline on Atrial Fibrillation</a> ",
-    "puts greater emphasis on rate rather than rhythm control and has clarified the place of dronedarone in the treatment pathway.",
-    "<br><br><strong>This measure is currently under consultation.  ",
-    "More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+    "puts greater emphasis on rate rather than rhythm control and has clarified the place of dronedarone in the treatment pathway."
   ],
   "numerator_short": "Dronedarone cost (£)",
   "denominator_short": "1000 patients",
@@ -24,7 +22,7 @@
   "low_is_good": true,
   "tags": [
     "cost",
-    "lowpriorityconsultation",
+    "lowpriority",
     "cardiovascular",
     "safety"
   ],
