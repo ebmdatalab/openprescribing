@@ -62,6 +62,7 @@ class Command(BaseCommand):
 
             for stp_ix in range(2):
                 stp = STP.objects.create(
+                    code='Q{}{}'.format(regtm_ix, stp_ix),
                     ons_code='E000000{}{}'.format(regtm_ix, stp_ix),
                     name='STP {}/{}'.format(regtm_ix, stp_ix),
                 )

@@ -889,31 +889,31 @@ class MeasuresTests(SeleniumTestCase):
         s3_exp_text = u'If it had prescribed in line with the median, this STP would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(s3.cost_saving_50), _humanize(s3.cost_saving_10))
 
         # measure_for_one_stp
-        self._get('/measure/core_0/stp/{}/'.format(s1.ons_code))
+        self._get('/measure/core_0/stp/{}/'.format(s1.code))
         perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
         self.assertIn(s1_exp_text, perf_element.text)
 
-        self._get('/measure/core_0/stp/{}/'.format(s2.ons_code))
+        self._get('/measure/core_0/stp/{}/'.format(s2.code))
         perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
         self.assertIn(s2_exp_text, perf_element.text)
 
-        self._get('/measure/core_0/stp/{}/'.format(s3.ons_code))
+        self._get('/measure/core_0/stp/{}/'.format(s3.code))
         perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
         self.assertIn(s3_exp_text, perf_element.text)
 
         # measures_for_one_stp
-        self._get('/stp/{}/measures/'.format(s1.ons_code))
+        self._get('/stp/{}/measures/'.format(s1.code))
         perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
         self.assertIn(s1_exp_text, perf_element.text)
 
         # measure_for_all_stps
         self._get('/measure/core_0/stp/')
-        panel_element = self._find_measure_panel('stp_{}'.format(s1.ons_code))
+        panel_element = self._find_measure_panel('stp_{}'.format(s1.code))
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(s1_exp_text, perf_element.text)
 
         # stp_home_page
-        self._get('/stp/{}/'.format(s1.ons_code))
+        self._get('/stp/{}/'.format(s1.code))
         panel_element = self._find_measure_panel('top-measure-container')
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(s1_exp_text, perf_element.text)
@@ -1080,7 +1080,7 @@ class MeasuresTests(SeleniumTestCase):
         else:
             assert False, 'Could not find STP with cost saving!'
 
-        self._get('/stp/{}/core_0/'.format(r.ons_code))
+        self._get('/stp/{}/core_0/'.format(r.code))
         perf_summary_element = self.find_by_css('#perfsummary')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1178,7 +1178,7 @@ class MeasuresTests(SeleniumTestCase):
         else:
             assert False, 'Could not find STP with cost saving!'
 
-        self._get('/stp/{}/measures/'.format(r.ons_code))
+        self._get('/stp/{}/measures/'.format(r.code))
         perf_summary_element = self.find_by_css('#perfsummary')
         exp_text = u'Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)

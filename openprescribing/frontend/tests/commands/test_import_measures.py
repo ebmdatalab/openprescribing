@@ -127,8 +127,8 @@ class BigqueryFunctionalTests(TestCase):
     def setUpTestData(cls):
         regional_team_54 = RegionalTeam.objects.create(code='Y54')
         regional_team_55 = RegionalTeam.objects.create(code='Y55')
-        stp_1 = STP.objects.create(ons_code='E00000001')
-        stp_2 = STP.objects.create(ons_code='E00000002')
+        stp_1 = STP.objects.create(code='Q01',ons_code='E00000001')
+        stp_2 = STP.objects.create(code='Q02', ons_code='E00000002')
 
         bassetlaw = PCT.objects.create(code='02Q', org_type='CCG', stp=stp_1,
                                        regional_team=regional_team_54)

@@ -102,15 +102,15 @@ def _get_stps_like_code(q, is_exact=False):
     orgs = STP.objects.all()
     if is_exact:
         orgs = orgs.filter(
-            Q(ons_code=q) | Q(name=q)
+            Q(code=q) | Q(name=q)
         )
     elif q:
         orgs = orgs.filter(
-            Q(ons_code__istartswith=q) | Q(name__icontains=q)
+            Q(code__istartswith=q) | Q(name__icontains=q)
         )
-    org_values = orgs.values('name', 'ons_code')
+    org_values = orgs.values('name', 'code')
     for org in org_values:
-        org['code'] = org.pop('ons_code')
+        org['code'] = org.pop('code')
         org['id'] = org['code']
         org['type'] = 'stp'
     return org_values

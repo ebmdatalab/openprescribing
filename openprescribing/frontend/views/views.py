@@ -231,7 +231,7 @@ def all_stps(request):
 
 
 def stp_home_page(request, stp_code):
-    stp = get_object_or_404(STP, ons_code=stp_code)
+    stp = get_object_or_404(STP, code=stp_code)
     ccgs = PCT.objects.filter(
         stp=stp,
         close_date__isnull=True,
@@ -1560,7 +1560,7 @@ def _get_entity(entity_type, entity_code):
     elif entity_type == 'ccg':
         return get_object_or_404(PCT, code=entity_code)
     elif entity_type == 'stp':
-        return get_object_or_404(STP, ons_code=entity_code)
+        return get_object_or_404(STP, code=entity_code)
     elif entity_type == 'regional_team':
         return get_object_or_404(RegionalTeam, code=entity_code)
     elif entity_type == 'all_england':

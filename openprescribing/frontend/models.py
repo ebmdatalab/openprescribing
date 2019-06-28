@@ -90,8 +90,8 @@ class RegionalTeam(models.Model):
 
 
 class STP(models.Model):
-    ons_code = models.CharField(max_length=9, primary_key=True)
-    code = models.CharField(max_length=3, null=True, unique=True)  # TODO make this the PK
+    ons_code = models.CharField(max_length=9)
+    code = models.CharField(max_length=3, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     regional_team = models.ForeignKey(
         RegionalTeam, null=True, on_delete=models.PROTECT
