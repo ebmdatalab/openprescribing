@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment Consultation - Aliskiren",
+  "name": "NHS England Low Priority Treatment - Aliskiren",
   "title": [
     "Aliskiren cost per 1000 patients"
   ],
@@ -21,7 +21,7 @@
   "tags": [
     "cost",
     "lowpriority",
-    "cardiovascular"   
+    "cardiovascular"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "

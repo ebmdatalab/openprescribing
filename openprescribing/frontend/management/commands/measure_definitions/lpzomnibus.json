@@ -7,7 +7,7 @@
     "Total cost per 1,000 registered patients for all NHS England low priority treatments"
   ],
   "why_it_matters": [
-    "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a>.",
+    "NHS England have recently published a <a href='https://www.england.nhs.uk/medicines/items-which-should-not-be-routinely-prescribed/'>number of areas which should not be routinely prescribed in primary care</a> (updated June 2019).",
     "This is the combined cost per 1000 patients for all of these measures. "
   ],
   "numerator_short": "cost (£)",
