@@ -1,5 +1,5 @@
 {
-  "name": "NHS England Low Priority Treatment Consultation - Silk Garments",
+  "name": "NHS England Low Priority Treatment - Silk Garments",
   "title": [
     "Silk Garments cost per 1000 patients"
   ],
@@ -11,7 +11,7 @@
     "as an adjunct to normal treatment for severe eczema and allergic skin conditions. ",
     "The NIHR commissioned",
     "<a href='https://www.nottingham.ac.uk/research/groups/cebd/projects/clothes/index.aspx'> CLOTHES trial</a> ",
-    "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS."    
+    "concluded that using silk garments for the management of eczema is unlikely to be cost-effective for the NHS."
   ],
   "numerator_short": "Silk Garments (£)",
   "denominator_short": "1000 patients",
