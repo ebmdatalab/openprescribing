@@ -35,12 +35,12 @@ class Command(BaseCommand):
 
                 stp_code = row[1]
                 stp_ons_code = row[3]
-                stp_name = row[4].strip()
+                stp_name = row[4]
                 stp, _ = STP.objects.get_or_create(ons_code=stp_ons_code)
                 stp.code = stp_code
                 if stp_name:
                     # The stp_name is only present in the first row that an STP appears!
-                    stp.name = stp_name
+                    stp.name = stp_name.strip()
                 stp.regional_team = rt
                 stp.save()
 
