@@ -223,7 +223,7 @@ def ccg_home_page(request, ccg_code):
 ##################################################
 
 def all_stps(request):
-    stps = STP.objects.order_by('name')
+    stps = STP.objects.filter(code__isnull=False).order_by('name')
     context = {
         'stps': stps
     }
