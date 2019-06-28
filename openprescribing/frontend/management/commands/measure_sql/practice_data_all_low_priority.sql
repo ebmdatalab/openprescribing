@@ -163,3 +163,66 @@ SELECT
   denominator
 FROM
   {project}.{measures}.practice_data_lptrimipramine
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpaliskerin
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpamiodarone
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpbathshoweremollients
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpdronedarone
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpminocycline
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpneedles
+  
+  UNION ALL
+  SELECT
+  TIMESTAMP(month) AS month,
+  practice_id AS practice,
+  numerator,
+  denominator
+FROM
+  {project}.{measures}.practice_data_lpsilkgarments

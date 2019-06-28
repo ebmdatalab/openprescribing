@@ -40,7 +40,7 @@
       <h3><a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority" class="unstyled-link">NHS low priority measures</a></h3>
       <div class="row">
         <div class="col-md-12">
-          <p class="measure-explanation">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 18 measures...</a></p>
+          <p class="measure-explanation">These are measures about low-value items which NHS England says should not routinely prescribed in primary care. This is the ranking of {{ entity.cased_name }} for all low-value items combined.  <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriority">View the 25 measures...</a></p>
         </div>
         <div class="col-md-12">
           <div id="lpzomnibus-container" class="row">
@@ -56,12 +56,7 @@
 
 <div class="row" >
   <div class="col-md-12">
-    We also have measures for
-    <a href="{% url measures_for_one_entity_url entity.code %}?tags=lowpriorityconsultation">
-      items currently under consultation
-    </a>
-    for inclusion on the low-value list,
-    plus you can browse all of our measures by topic:
+    You can browse all of our measures by topic:
     <small class="js-hide-long-list" data-max-items="7">
       {% for tag, tag_details in measure_tags %}
         <a href="{% url measures_for_one_entity_url entity.code %}?tags={{ tag }}">

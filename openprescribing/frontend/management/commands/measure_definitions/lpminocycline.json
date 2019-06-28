@@ -10,8 +10,7 @@
     "Minocycline is mainly used for acne, however there are various safety risks associated with its use. ",    
     "<a href='https://cks.nice.org.uk/acne-vulgaris#!prescribinginfosub:10'>NICE CKS advises</a> ",
     "Minocycline is not recommended for use in acne as it is associated with an increased risk of adverse effects such as drug-",
-    "induced lupus, skin pigmentation and hepatitis.",
-    "<br><br><strong>This is currently under consultation.  More details can be found on the <a href='https://www.engage.england.nhs.uk/consultation/items-routinely-prescribed-update/'>NHS England website</a>.</strong>"
+    "induced lupus, skin pigmentation and hepatitis."
  ],
   "numerator_short": "Minocycline cost (£)",
   "denominator_short": "1000 patients",
@@ -23,7 +22,7 @@
     "antimicrobial",
     "cost",
     "safety",
-    "lowpriorityconsultation"
+    "lowpriority"
   ],
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
