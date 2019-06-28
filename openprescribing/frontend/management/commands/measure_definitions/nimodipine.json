@@ -1,0 +1,51 @@
+{
+  "name": "Prescribing of nimodipine",
+  "title": [
+    "Nimodipine: Quantity per 1000 patients"
+  ],
+  "description": [
+    "Quantity (number of tablets) of nimodipine per 1000 patients"
+  ],
+  "why_it_matters": [
+    "The only indication in the BNF for the prescription of nimodipine is in the prevention of ischaemic neurological defects following aneurysmal subarachnoid haemorrhage. The course length is 21 days but most patients will complete the course while admitted or be discharged with the remainder. Extension of this course in primary care may be due to error or miscommunication."
+  ],
+  "numerator_short": "Nimodipine quantity",
+  "denominator_short": "1000 Patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "centralnervous",
+    "research"
+  ],
+  "numerator_columns": [
+    "SUM(quantity) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard",
+  "numerator_where": [
+    "bnf_code LIKE '0206020M0%'"
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ],
+    "date_reviewed": [
+    "2019-06-27"
+  ],
+  "next_review": [
+    "2020-06-01"
+  ],
+  "authored_by": [
+    "sebastian.bacon@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ]
+}
