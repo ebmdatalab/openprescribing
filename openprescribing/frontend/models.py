@@ -104,6 +104,10 @@ class STP(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def code(self):
+        return self.ons_code
+
 
 class PCT(models.Model):
     '''
