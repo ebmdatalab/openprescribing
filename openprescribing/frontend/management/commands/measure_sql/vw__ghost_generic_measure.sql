@@ -57,6 +57,10 @@ ON
   rx.month = dt.date
   AND rx.bnf_code = dt.bnf_code
 WHERE
-  -- lantanaprost quantities are broken in data
-  rx.bnf_code <> '1106000L0AAAAAA'
-  -- trivial savings / costs are discounted in the measure definition
+-- These can be prescribed fractionally, but BSA round quantity down,
+-- making quantity unreliable. See #1764
+  rx.bnf_code <> '1106000L0AAAAAA' -- latanoprost
+AND
+  rx.bnf_code <> '1308010Z0AAABAB' -- Ingenol Mebutate_Gel
+
+-- trivial savings / costs are discounted in the measure definition
