@@ -62,5 +62,8 @@ WHERE
   rx.bnf_code <> '1106000L0AAAAAA' -- latanoprost
 AND
   rx.bnf_code <> '1308010Z0AAABAB' -- Ingenol Mebutate_Gel
+-- These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
+AND
+  rx.bnf_code <> '0407020A0AABPBP' -- Fentanyl 400micrograms/dose nasal spray 
 
 -- trivial savings / costs are discounted in the measure definition
