@@ -9,12 +9,21 @@ practices.
 The boundaries are clipped at the national border to stop them extending into
 the sea -- or Wales -- and generally looking ridiculous.
 """
+import os
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Func
 from django.contrib.gis.db.models import Collect, Union
+from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection, transaction
 
 from frontend.models import Practice, PCT
+
+
+NATIONAL_BOUNDARY_FILE = os.path.join(
+    settings.REPO_ROOT, 'openprescribing/media/geojson/england-boundary.geojson'
+)
 
 
 class Command(BaseCommand):
@@ -109,8 +118,27 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
 
 
 def get_national_boundary():
+    # In theory there's a `geos.fromfile` method, but it doesn't work
+    with open(NATIONAL_BOUNDARY_FILE, 'rb') as f:
+        contents = f.read()
+    return GEOSGeometry(contents)
+
+
+# This function is left in place in case we ever want to update the boundary
+# file, which we shouldn't need to under ordinary circumstances.  The reason we
+# use a static file rather than dynamically generating the boundary from CCG
+# data each time is that we can't always guarantee to have complete CCG
+# boundary data and we don't want that to prevent us from importing practice
+# data
+def update_national_boundary_file():
     """
-    Create a national boundary by joining together all CCG boundaries
+    Generate a national boundary by joining together all CCG boundaries and
+    write it to disk
+
+    Run with:
+      echo 'import frontend.management.commands.infer_practice_boundaries as c;' \
+        'c.update_national_boundary_file()' \
+        | ./manage.py shell
     """
     ccgs_without_boundary = PCT.objects.filter(
         org_type='CCG', close_date__isnull=True, boundary__isnull=True
@@ -122,9 +150,11 @@ def get_national_boundary():
             synthesize a national boundary by aggregating CCGs
             """
         )
-    return (
+    boundary = (
         PCT.objects
         .filter(boundary__isnull=False)
         .aggregate(boundary=Union('boundary'))
         ['boundary']
     )
+    with open(NATIONAL_BOUNDARY_FILE, 'wb') as f:
+        f.write(boundary.geojson)
