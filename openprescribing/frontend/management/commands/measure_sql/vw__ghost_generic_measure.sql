@@ -54,7 +54,7 @@ FROM
 INNER JOIN
   {project}.{hscic}.normalised_prescribing_standard rx
 ON
-  rx.month = dt.date
+  rx.month = TIMESTAMP(dt.date)
   AND rx.bnf_code = dt.bnf_code
 WHERE
 -- These can be prescribed fractionally, but BSA round quantity down,
