@@ -205,6 +205,7 @@ class Practice(models.Model):
     address5 = models.CharField(max_length=200, null=True, blank=True)
     postcode = models.CharField(max_length=9, null=True, blank=True)
     location = models.PointField(null=True, blank=True)
+    boundary = models.GeometryField(null=True, blank=True, srid=4326)
     setting = models.IntegerField(choices=PRESCRIBING_SETTINGS,
                                   default=-1)
     objects = models.GeoManager()
