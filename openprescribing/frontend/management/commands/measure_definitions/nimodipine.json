@@ -17,7 +17,7 @@
   "low_is_good": true,
   "tags": [
     "centralnervous",
-    "research"
+    "paper"
   ],
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
