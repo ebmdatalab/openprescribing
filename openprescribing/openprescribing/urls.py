@@ -63,6 +63,9 @@ urlpatterns = [
     url(r'^alert_example/$',
         TemplateView.as_view(template_name='alert_example.html'),
         name="alert_example"),
+    url(r'^research/$',
+        TemplateView.as_view(template_name='research.html'),
+        name="research"),
 
     url(r'^500/$', frontend_views.error, name='error'),
     url(r'^ping/$', frontend_views.ping, name='ping'),
