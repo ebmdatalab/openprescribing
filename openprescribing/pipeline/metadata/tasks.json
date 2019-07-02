@@ -196,6 +196,14 @@
             "import_patient_list_weightings"
         ]
     },
+    "infer_practice_boundaries": {
+        "type": "post_process",
+        "command": "infer_practice_boundaries",
+        "dependencies": [
+            "import_practice_details",
+            "import_nhs_postcode_file"
+        ]
+    },
     "upload_to_bigquery": {
         "type": "post_process",
         "command": "bigquery_upload",
