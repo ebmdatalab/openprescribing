@@ -82,6 +82,8 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
         # then try to do ST_Contains queries on them. Generating a zero-width
         # buffer causes all non-polygons to get dropped. See:
         # https://lists.osgeo.org/pipermail/postgis-users/2008-August/020740.html
+        # (Why clipping would result in non-polygons in some cases is totally
+        # unclear, but somehow it does.)
         clipped = clipped.buffer(0.0)
         if clipped.empty:
             raise RuntimeError(
