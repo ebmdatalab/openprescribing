@@ -46,6 +46,23 @@ class TestGrouper(SimpleTestCase):
         self.assertEqual(row_grouper.ids, ['even', 'odd'])
         self.assertEqual(row_grouper.offsets, {'even': 0, 'odd': 1})
 
+    def test_empty_group_produces_empty_matrix(self):
+        """
+        Test the empty group edge case
+        """
+        group_definition = []
+        rows = [
+          [1, 2, 3, 4],
+          [2, 3, 4, 5],
+          [3, 4, 5, 6],
+          [4, 5, 6, 7],
+        ]
+        matrix = numpy.array(rows)
+        row_grouper = RowGrouper(group_definition)
+        grouped_matrix = row_grouper.sum(matrix)
+        value = to_list_of_lists(grouped_matrix)
+        self.assertEqual(value, [])
+
     def test_all_group_and_matrix_type_combinations(self):
         """
         Tests every combination of group type and matrix type
