@@ -15,7 +15,7 @@ from common.utils import ppu_sql
 from frontend.models import GenericCodeMapping
 from frontend.models import ImportLog
 from frontend.models import Presentation
-from frontend.models import Practice, PCT, STP, RegionalTeam
+from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
 from matrixstore.db import get_db, get_row_grouper
 
 import view_utils as utils
@@ -537,14 +537,16 @@ def spending_by_org(request, format=None, org_type=None):
                 status=400
             )
 
-    # We don't (yet?) have a "proper" code field for STPs so we're using their
-    # ONS code
-    code_field = 'code' if org_type != 'stp' else 'ons_code'
+    # We don't (yet?) have a "proper" code field for PCNs or STPs so we're
+    # using their ONS code
+    code_field = 'code' if org_type not in ('pcn', 'stp') else 'ons_code'
 
     if org_type == 'practice':
         orgs = Practice.objects.all()
     elif org_type == 'ccg':
         orgs = PCT.objects.filter(org_type='CCG')
+    elif org_type == 'pcn':
+        orgs = PCN.objects.all()
     elif org_type == 'stp':
         orgs = STP.objects.all()
     elif org_type == 'regional_team':

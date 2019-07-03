@@ -4,7 +4,7 @@ from django.contrib.gis.db.models.aggregates import Union
 
 from rest_framework.decorators import api_view
 
-from frontend.models import PCT, Practice, STP, RegionalTeam
+from frontend.models import PCT, Practice, STP, RegionalTeam, PCN
 from api.geojson_serializer import as_geojson_stream
 import api.view_utils as utils
 
@@ -20,6 +20,8 @@ def org_location(request, format=None):
         results = _get_practices(org_codes, centroids)
     elif org_type == 'ccg':
         results = _get_ccgs(org_codes, centroids)
+    elif org_type == 'pcn':
+        results = _get_pcns(org_codes, centroids)
     elif org_type == 'stp':
         results = _get_stps(org_codes, centroids)
     elif org_type == 'regional_team':
@@ -45,6 +47,16 @@ def _get_ccgs(org_codes, centroids):
     return results.values(
         'name', 'code', 'ons_code', 'org_type',
         geometry=F('centroid' if centroids else 'boundary')
+    )
+
+
+def _get_pcns(org_codes, centroids):
+    results = PCN.objects.active()
+    if org_codes:
+        results = results.filter(ons_code__in=org_codes)
+    return results.values(
+        'name', 'ons_code',
+        geometry=Union('practice__boundary')
     )
 
 
