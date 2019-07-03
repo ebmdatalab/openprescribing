@@ -135,7 +135,7 @@ class PCT(models.Model):
     org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
                                 default='Unknown')
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
-    centroid = models.PointField(null=True, blank=True)
+    centroid = models.PointField(null=True, blank=True, srid=4326)
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=400, null=True, blank=True)
@@ -204,7 +204,8 @@ class Practice(models.Model):
     address4 = models.CharField(max_length=200, null=True, blank=True)
     address5 = models.CharField(max_length=200, null=True, blank=True)
     postcode = models.CharField(max_length=9, null=True, blank=True)
-    location = models.PointField(null=True, blank=True)
+    location = models.PointField(null=True, blank=True, srid=4326)
+    boundary = models.GeometryField(null=True, blank=True, srid=4326)
     setting = models.IntegerField(choices=PRESCRIBING_SETTINGS,
                                   default=-1)
     objects = models.GeoManager()
