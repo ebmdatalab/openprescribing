@@ -5,6 +5,7 @@
     "fields": {
       "code": "P87629",
       "ccg": "03V",
+      "pcn": "PCN0001",
       "name": "1/ST ANDREWS MEDICAL PRACTICE",
       "address1": "ST.ANDREWS MEDICAL CENTRE",
       "address2": "30 RUSSELL STREET ECCLES",
@@ -39,6 +40,7 @@
     "fields": {
       "code": "K83622",
       "ccg": "03V",
+      "pcn": "PCN0002",
       "name": "GREAT OAKLEY MEDICAL CENTRE",
       "address1": "1 BARTH CLOSE",
       "address2": "GREAT OAKLEY",
@@ -56,6 +58,7 @@
     "fields": {
       "code": "N84014",
       "ccg": "03Q",
+      "pcn": "PCN0001",
       "name": "AINSDALE VILLAGE SURGERY",
       "address1": "THE SURGERY",
       "address2": "2 LEAMINGTON RD AINSDALE",
@@ -73,6 +76,7 @@
     "fields": {
       "code": "B82018",
       "ccg": "03Q",
+      "pcn": "PCN0002",
       "name": "ESCRICK SURGERY",
       "address1": "THE ESCRICK SURGERY",
       "address2": "ESCRICK",

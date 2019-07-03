@@ -138,3 +138,28 @@ class TestAPIOrgViews(TestCase):
             content[0]['name'],
             'MIDLANDS AND EAST OF ENGLAND COMMISSIONING REGION'
         )
+
+    def test_pcn_inexact_match(self):
+        url = '{}/org_code?q=transformational&format=json&org_type=pcn'.format(
+            self.api_prefix
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'PCN0001')
+        self.assertEqual(content[0]['name'], 'Transformational Sustainability')
+
+    def test_pcn_exact_match(self):
+        url = '{}/org_code?q=PCN0002&format=json&org_type=pcn&exact=true'.format(
+            self.api_prefix
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]['code'], 'PCN0002')
+        self.assertEqual(
+            content[0]['name'],
+            'Sustainable Transformation'
+        )

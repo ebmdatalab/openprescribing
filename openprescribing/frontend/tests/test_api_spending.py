@@ -648,6 +648,32 @@ class TestSpendingByOrg(ApiTestBase):
             }
         )
 
+    def test_spending_by_all_pcns(self):
+        rows = self._get_rows({'org_type': 'pcn'})
+        self.assertEqual(len(rows), 7)
+        self.assertEqual(
+            rows[1],
+            {
+                'date': '2013-08-01',
+                'actual_cost': '3.22',
+                'items': '2',
+                'quantity': '51',
+                'row_id': 'PCN0001',
+                'row_name': 'Transformational Sustainability'
+            }
+        )
+        self.assertEqual(
+            rows[2],
+            {
+                'date': '2013-10-01',
+                'actual_cost': '1.62',
+                'items': '1',
+                'quantity': '24',
+                'row_id': 'PCN0001',
+                'row_name': 'Transformational Sustainability'
+            }
+        )
+
 
 class TestAPISpendingViewsGhostGenerics(TestCase):
     def setUp(self):

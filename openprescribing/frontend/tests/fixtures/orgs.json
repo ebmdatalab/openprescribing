@@ -85,5 +85,19 @@
       "stp_id": "E54000020",
       "regional_team_id": "Y55"
     }
+  },
+{
+  "model": "frontend.pcn",
+  "pk": "PCN0001",
+  "fields": {
+    "name": "Transformational Sustainability"
   }
+},
+{
+  "model": "frontend.pcn",
+  "pk": "PCN0002",
+  "fields": {
+    "name": "Sustainable Transformation"
+  }
+}
 ]
