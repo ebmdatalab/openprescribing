@@ -184,18 +184,27 @@ Run migrations:
 
     python manage.py migrate
 
-## Sandbox data
+
+## Example data
+
+You can load a small set of example data (which should be enough to get
+the site to run locally) by running:
+
+    ./manage.py load_development_data
+
+
+## Sampling live data
 
 You can copy everything from the production server, if you want, but
 the full set of prescribing data is enormous. To get a sample of that,
 run the following on production:
 
     mkdir /tmp/sample
-    ./manage sample_data dump --dir /tmp/sample
+    ./manage.py sample_data dump --dir /tmp/sample
 
 Copy that to a local location (e.g. `/tmp/sample` again), then run:
 
-    ./manage sample_data load --dir /tmp/sample
+    ./manage.py sample_data load --dir /tmp/sample
 
 By default, the `dump` invocation extracts data relating to the CCG
 `09X`, but you can override that with the `--ccg` switch.
@@ -275,14 +284,25 @@ You can find the combinations we use for our Travis CI in
 
 You should now have a Django application running with no data inside it.
 
+
 # Load the HSCIC data
 
-Check out the `openprescribing-data` repo (which contains data for the
-app, and scripts to update that data):
+The data import process is managed by the [pipeline](./openprescribing/pipeline)
+application. The process is initiated by running the following command:
 
-    git clone git@github.com:ebmdatalab/openprescribing-data.git
+    ./manage.py fetch_and_import <YEAR> <MONTH>
 
-Follow the documentation there to import data.
+This process takes many hours to complete and involves:
+
+ * Downloading data files from many different sources
+ * Uploading data to Google Cloud Storage
+ * Processing data in BigQuery and re-downloading
+ * Importing data into Postgres and SQLite (see the
+   [matrixstore](./openprescribing/matrixstore) app)
+
+You will need your own Google credentials for the stages of the process
+which interact with GCS.
+
 
 # Editing JS and CSS
 
