@@ -4,6 +4,7 @@ import view_utils as utils
 from django.db.models import Q
 from frontend.models import PCT, Practice, STP, RegionalTeam
 
+
 @api_view(['GET'])
 def org_codes(request, format=None):
     org_codes = utils.param_to_list(request.query_params.get('q', None))
@@ -21,41 +22,70 @@ def org_codes(request, format=None):
 
 
 def _get_org_from_code(q, is_exact, org_type):
+    org_type = _normalise_org_type(q, is_exact, org_type)
     if is_exact:
-        # Both regional teams and CCGs have 3 character codes, but I don't want
-        # to change the API to require org_type because I don't know what else
-        # might break
-        if len(q) == 3 and org_type != 'regional_team':
-            results = PCT.objects.filter(Q(code=q) | Q(name=q)) \
-                                 .filter(org_type='CCG')
-            values = results.values('name', 'code')
-            for v in values:
-                v['id'] = v['code']
-                v['type'] = 'CCG'
-        elif org_type == 'stp':
-            values = _get_stps_like_code(q, is_exact=True)
-        elif org_type == 'regional_team':
-            values = _get_regional_teams_like_code(q, is_exact=True)
-        else:
-            results = Practice.objects.filter(Q(code=q) | Q(name=q))
-            values = results.values('name', 'code', 'ccg')
-            for v in values:
-                v['id'] = v['code']
-                v['type'] = 'practice'
+        return _get_org_from_code_exact(q, org_type)
     else:
-        values = []
-        if org_type == 'practice':
-            values += _get_practices_like_code(q)
-        elif org_type == 'CCG':
-            values += _get_pcts_like_code(q)
-        elif org_type == 'stp':
-            values += _get_stps_like_code(q)
-        elif org_type == 'regional_team':
-            values += _get_regional_teams_like_code(q)
+        return _get_org_from_code_inexact(q, org_type)
+
+
+def _get_org_from_code_exact(q, org_type):
+    if org_type == 'practice':
+        results = Practice.objects.filter(Q(code=q) | Q(name=q))
+        values = results.values('name', 'code', 'ccg')
+        for v in values:
+            v['id'] = v['code']
+            v['type'] = 'practice'
+        return values
+    elif org_type == 'ccg':
+        results = PCT.objects.filter(Q(code=q) | Q(name=q)) \
+                             .filter(org_type='CCG')
+        values = results.values('name', 'code')
+        for v in values:
+            v['id'] = v['code']
+            v['type'] = 'CCG'
+        return values
+    elif org_type == 'stp':
+        return _get_stps_like_code(q, is_exact=True)
+    elif org_type == 'regional_team':
+        return _get_regional_teams_like_code(q, is_exact=True)
+    else:
+        raise ValueError('Unknown org_type: {}'.format(org_type))
+
+
+def _get_org_from_code_inexact(q, org_type):
+    if org_type == 'practice':
+        return _get_practices_like_code(q)
+    elif org_type == 'ccg':
+        return _get_pcts_like_code(q)
+    elif org_type == 'practice_or_ccg':
+        return list(_get_pcts_like_code(q)) + _get_practices_like_code(q)
+    elif org_type == 'stp':
+        return _get_stps_like_code(q)
+    elif org_type == 'regional_team':
+        return _get_regional_teams_like_code(q)
+    else:
+        raise ValueError('Unknown org_type: {}'.format(org_type))
+
+
+def _normalise_org_type(q, is_exact, org_type):
+    """
+    Replicate the vagaries of the old API implementation with respect to
+    org_types
+    """
+    # If an org_type is supplied just use that (correcting the case for CCG)
+    if org_type:
+        if org_type == 'CCG':
+            org_type = 'ccg'
+        return org_type
+    # Otherwise we determine the default based on the behaviour of the old API
+    if is_exact:
+        if len(q) == 3:
+            return 'ccg'
         else:
-            values += _get_pcts_like_code(q)
-            values += _get_practices_like_code(q)
-    return values
+            return 'practice'
+    else:
+        return 'practice_or_ccg'
 
 
 def _get_practices_like_code(q):
