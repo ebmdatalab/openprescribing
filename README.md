@@ -285,7 +285,7 @@ You can find the combinations we use for our Travis CI in
 You should now have a Django application running with no data inside it.
 
 
-# Load the HSCIC data
+# Load a full month of real data
 
 The data import process is managed by the [pipeline](./openprescribing/pipeline)
 application. The process is initiated by running the following command:
