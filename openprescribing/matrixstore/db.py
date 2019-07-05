@@ -50,6 +50,8 @@ def get_row_grouper(org_type):
         }
     elif org_type == 'ccg':
         mapping = _practice_to_ccg_map()
+    elif org_type == 'pcn':
+        mapping = _practice_to_pcn_map()
     elif org_type == 'stp':
         mapping = _practice_to_stp_map()
     elif org_type == 'regional_team':
@@ -70,6 +72,14 @@ def _practice_to_ccg_map():
         Practice.objects
         .filter(ccg__org_type='CCG')
         .values_list('code', 'ccg_id')
+    )
+
+
+def _practice_to_pcn_map():
+    return dict(
+        Practice.objects
+        .filter(pcn_id__isnull=False)
+        .values_list('code', 'pcn_id')
     )
 
 

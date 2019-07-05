@@ -210,3 +210,19 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
                          '45.3')
         self.assertEqual(float(rows[0]['total_list_size']), 648)
+
+    def test_api_view_org_details_one_pcn(self):
+        url = self.api_prefix
+        url += '/org_details?format=csv&org_type=pcn&org=PCN0001'
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        rows = list(csv.DictReader(response.content.splitlines()))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]['row_id'], 'PCN0001')
+        self.assertEqual(rows[0]['row_name'], 'Transformational Sustainability')
+        self.assertEqual(rows[0]['date'], '2015-01-01')
+        self.assertEqual(rows[0]['astro_pu_cost'], '262.2')
+        self.assertEqual(rows[0]['astro_pu_items'], '342.2')
+        self.assertEqual(rows[0]['star_pu.oral_antibacterials_item'],
+                         '34.2')
+        self.assertEqual(float(rows[0]['total_list_size']), 468)

@@ -10,6 +10,10 @@ var ORG_TYPES = {
     'name': 'CCG',
     'title': 'CCG'
   },
+  'pcn': {
+    'name': 'PCN',
+    'title': 'PCN'
+  },
   'stp': {
     'name': 'STP',
     'title': 'STP'

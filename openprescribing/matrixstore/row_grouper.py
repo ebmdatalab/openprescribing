@@ -56,8 +56,9 @@ class RowGrouper(object):
         # Where each group contains only one row (which is the case whenever
         # we're working with practice level data) there's a much faster path we
         # can take where we just pull out the relevant rows using a single
-        # selector
-        if all(len(group) == 1 for group in self._group_selectors):
+        # selector. (We need the `groups` check to ensure there is at least one
+        # group as this selector can't handle the empty case.)
+        if groups and all(len(group) == 1 for group in self._group_selectors):
             self._single_row_groups_selector = numpy.array(
                 [rows[0] for rows in self._group_selectors]
             )

@@ -371,7 +371,11 @@ def analyse(request):
         # page load (see `alertForm` in `chart.js`)
         form = SearchBookmarkForm(
             initial={'email': getattr(request.user, 'email', '')})
-    return render(request, 'analyse.html', {'form': form})
+    context = {
+        'form': form,
+        'pcns_enabled': Practice.objects.filter(pcn_id__isnull=False).exists()
+    }
+    return render(request, 'analyse.html', context)
 
 
 ##################################################

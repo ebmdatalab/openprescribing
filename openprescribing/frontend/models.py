@@ -109,6 +109,33 @@ class STP(models.Model):
         return self.ons_code
 
 
+class PCNManager(models.Manager):
+
+    def active(self):
+        return self.exclude(practice=None)
+
+
+class PCN(models.Model):
+    """
+    Primary Care Network
+    """
+    ons_code = models.CharField(max_length=9, primary_key=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+
+    objects = PCNManager()
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
+    @property
+    def code(self):
+        return self.ons_code
+
+
 class PCT(models.Model):
     '''
     PCTs or CCGs (depending on date).
@@ -195,6 +222,7 @@ class Practice(models.Model):
         ('P', 'Proposed')
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
+    pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.PROTECT)
     code = models.CharField(max_length=6, primary_key=True,
                             help_text='Practice code')
     name = models.CharField(max_length=200)
