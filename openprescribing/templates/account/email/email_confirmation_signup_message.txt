@@ -2,8 +2,6 @@
 
 You've been subscribed to alerts about {{ user.profile.most_recent_bookmark.topic }}.
 
-Please confirm your email address by visiting {{ activate_url }}
-
 You can unsubscribe from this service at any time using the "Unsubscribe" link provided in each email we send.
 
 {% endautoescape %}
