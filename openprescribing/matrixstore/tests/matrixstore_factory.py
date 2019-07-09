@@ -84,6 +84,7 @@ class _DatabaseFixtures(object):
                 # import doesn't use them
                 'bnf_name': None,
                 'sha': None,
+                'pcn': None,
                 'pct': None,
                 'stp': None,
                 'regional_team': None,
