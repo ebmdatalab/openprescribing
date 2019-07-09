@@ -427,6 +427,30 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
     return render(request, 'measure_for_one_entity.html', context)
 
 
+def measure_for_all_england(request, measure):
+    measure = get_object_or_404(Measure, pk=measure)
+    entity_type = request.GET.get("entity_type", "ccg")
+    measure_options = {
+        "orgType": entity_type.lower(),
+        'measure': measure,
+        "orgName": "All {}s in England".format(entity_type),
+        "aggregate": True,
+        "rollUpBy": "measure_id",
+    }
+
+    measure_options = _build_measure_options(measure_options)
+    entity_type_human = _entity_type_human(entity_type)
+    context = {
+        "entity_type": entity_type,
+        "entity_type_human": entity_type_human,
+        "measures_url_name": "measures_for_one_{}".format(entity_type),
+        "measure": measure,
+        "measure_options": measure_options,
+        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+    }
+    return render(request, "measure_for_one_entity.html", context)
+
+
 # Note that we cannot have a single view function for measures_for_one_entity or
 # measure_for_children_in_entity (as we do for eg measure_for_one_entity)
 # because the parameter names are used for building URLs by _url_template()

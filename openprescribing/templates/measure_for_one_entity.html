@@ -12,20 +12,22 @@
 {% block content %}
   <h1>
     {{ measure.name }}
-    <br><small>{{ entity.name }}</small>
+    {% if entity %}<br><small>{{ entity.name }}</small>{% endif %}
   </h1>
-  {% if entity_type == 'practice' %}
-    <p class="text-muted" style="margin-top: -8px">
-      {{ entity.address_pretty_minus_firstline }}
+  {% if entity %}
+    {% if entity_type == 'practice' %}
+      <p class="text-muted" style="margin-top: -8px">
+        {{ entity.address_pretty_minus_firstline }}
+      </p>
+    {% endif %}
+    <p>
+      <a href="{% url measures_url_name entity.code %}" class="btn btn-default">
+        View all measures for this {{ entity_type_human }} &rarr;
+      </a>
     </p>
-  {% endif %}
-  <p>
-    <a href="{% url measures_url_name entity.code %}" class="btn btn-default">
-      View all measures for this {{ entity_type_human }} &rarr;
-    </a>
-  </p>
 
-  <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+    <p>This measure shows how this organisation compares with its peers across NHS England. This is indicative only, and should be approached with caution. <a href='{% url 'faq' %}#measureinterpret'>Read more about measures</a>.</p>
+  {% endif %}
 
   {% include '_measures_heading.html' with entity_type=entity_type %}
   {% include '_measures_panel.html' %}

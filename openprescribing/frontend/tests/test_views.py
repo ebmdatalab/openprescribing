@@ -594,6 +594,11 @@ class TestFrontendViews(TestCase):
         self.assertContains(response, 'Cerazette')
         self.assertNotContains(response, 'This list is filtered')
 
+    def test_call_single_measure_for_all_england(self):
+        response = self.client.get("/measure/cerazette/all-england/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "measure_for_one_entity.html")
+
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
