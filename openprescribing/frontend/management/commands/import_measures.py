@@ -41,6 +41,7 @@ MEASURE_FIELDNAMES = [
     'regional_team_id',
     'stp_id',
     'pct_id',
+    'pcn_id',
     'practice_id',
     'month',
     'numerator',
@@ -398,6 +399,7 @@ class MeasureCalculation(object):
 
     def calculate(self, bigquery_only=False):
         self.calculate_practices(bigquery_only=bigquery_only)
+        self.calculate_orgs('pcn', bigquery_only=bigquery_only)
         self.calculate_orgs('ccg', bigquery_only=bigquery_only)
         self.calculate_orgs('stp', bigquery_only=bigquery_only)
         self.calculate_orgs('regtm', bigquery_only=bigquery_only)  # Regional Team
@@ -661,10 +663,11 @@ class MeasureCalculation(object):
             regtm_cost_savings = {}
             stp_cost_savings = {}
             ccg_cost_savings = {}
+            pcn_cost_savings = {}
             practice_cost_savings = {}
             d['measure_id'] = self.measure.id
             # The cost-savings calculations prepend columns with
-            # global_. There is probably a better way of contstructing
+            # global_. There is probably a better way of constructing
             # the query so this clean-up doesn't have to happen...
             new_d = {}
             for attr, value in d.iteritems():
@@ -680,6 +683,8 @@ class MeasureCalculation(object):
             if self.measure.is_cost_based:
                 practice_cost_savings = convertSavingsToDict(
                     d, prefix='practice')
+                pcn_cost_savings = convertSavingsToDict(
+                    d, prefix='pcn')
                 ccg_cost_savings = convertSavingsToDict(
                     d, prefix='ccg')
                 stp_cost_savings = convertSavingsToDict(
@@ -690,9 +695,11 @@ class MeasureCalculation(object):
                     'regional_team': regtm_cost_savings,
                     'stp': stp_cost_savings,
                     'ccg': ccg_cost_savings,
+                    'pcn': pcn_cost_savings,
                     'practice': practice_cost_savings
                 }
             practice_deciles = convertDecilesToDict(d, prefix='practice')
+            pcn_deciles = convertDecilesToDict(d, prefix='pcn')
             ccg_deciles = convertDecilesToDict(d, prefix='ccg')
             stp_deciles = convertDecilesToDict(d, prefix='stp')
             regtm_deciles = convertDecilesToDict(d, prefix='regtm')
@@ -700,6 +707,7 @@ class MeasureCalculation(object):
                 'regional_team': regtm_deciles,
                 'stp': stp_deciles,
                 'ccg': ccg_deciles,
+                'pcn': pcn_deciles,
                 'practice': practice_deciles,
             }
 

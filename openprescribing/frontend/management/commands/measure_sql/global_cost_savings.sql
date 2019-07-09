@@ -14,6 +14,22 @@ WITH practice AS (
     {measures}.practice_data_{measure_id} GROUP BY month
 ),
 
+pcn AS (
+  SELECT
+    month AS pcn_month,
+    SUM(IF(cost_savings_10 > 0, cost_savings_10, 0)) AS pcn_cost_savings_10,
+    SUM(IF(cost_savings_20 > 0, cost_savings_20, 0)) AS pcn_cost_savings_20,
+    SUM(IF(cost_savings_30 > 0, cost_savings_30, 0)) AS pcn_cost_savings_30,
+    SUM(IF(cost_savings_40 > 0, cost_savings_40, 0)) AS pcn_cost_savings_40,
+    SUM(IF(cost_savings_50 > 0, cost_savings_50, 0)) AS pcn_cost_savings_50,
+    SUM(IF(cost_savings_60 > 0, cost_savings_60, 0)) AS pcn_cost_savings_60,
+    SUM(IF(cost_savings_70 > 0, cost_savings_70, 0)) AS pcn_cost_savings_70,
+    SUM(IF(cost_savings_80 > 0, cost_savings_80, 0)) AS pcn_cost_savings_80,
+    SUM(IF(cost_savings_90 > 0, cost_savings_90, 0)) AS pcn_cost_savings_90
+  FROM
+    {measures}.pcn_data_{measure_id} GROUP BY month
+),
+
 ccg AS (
   SELECT
     month AS ccg_month,
@@ -94,6 +110,15 @@ global AS (
     ccg_70th AS global_ccg_70th,
     ccg_80th AS global_ccg_80th,
     ccg_90th AS global_ccg_90th,
+    pcn_10th AS global_pcn_10th,
+    pcn_20th AS global_pcn_20th,
+    pcn_30th AS global_pcn_30th,
+    pcn_40th AS global_pcn_40th,
+    pcn_50th AS global_pcn_50th,
+    pcn_60th AS global_pcn_60th,
+    pcn_70th AS global_pcn_70th,
+    pcn_80th AS global_pcn_80th,
+    pcn_90th AS global_pcn_90th,
     practice_10th AS global_practice_10th,
     practice_20th AS global_practice_20th,
     practice_30th AS global_practice_30th,
@@ -109,6 +134,8 @@ global AS (
 
 SELECT *
 FROM practice
+INNER JOIN pcn
+  ON practice_month = pcn_month
 INNER JOIN ccg
   ON practice_month = ccg_month
 INNER JOIN stp
