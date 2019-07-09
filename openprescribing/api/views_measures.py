@@ -79,32 +79,44 @@ def measure_global(request, format=None):
     return Response(d)
 
 
-@api_view(['GET'])
-def measure_numerators_by_org(request, format=None):
-    measure = request.query_params.get('measure', None)
-    org = utils.param_to_list(request.query_params.get('org', []))[0]
+def _get_org_id_and_type_from_request(request):
+    """Return an (org_id, org_type) tuple from the request, normalised
+    for various backward-compatibilities.
+
+    Returns (None, None) if no org is specified in the request.
+
+    """
+    org_id = utils.param_to_list(request.query_params.get('org', []))
+    org_id = org_id and org_id[0]
+    org_type = None
     if 'org_type' in request.query_params:
-        org_selector = request.query_params['org_type'] + '_id'
-        if org_selector == 'ccg_id':
-            org_selector = 'pct_id'
-    else:
+        org_type = request.query_params['org_type'] + '_id'
+        if org_type == 'ccg_id':
+            org_type = 'pct_id'
+    elif org_id:
         # This is here for backwards compatibility, in case anybody else is
         # using the API.  Now we have measures for regional teams, we cannot
         # guess the type of an org by the length of its code, as both CCGs and
         # regional teams have codes of length 3.
-        if len(org) == 3:
-            org_selector = 'pct_id'
-        elif len(org) == 6:
-            org_selector = 'practice_id'
+        if len(org_id) == 3:
+            org_type = 'pct_id'
+        elif len(org_id) == 6:
+            org_type = 'practice_id'
         else:
-            assert False, 'Unexpected org: {}'.format(org)
+            assert False, 'Unexpected org: {}'.format(org_id)
+    return (org_id, org_type)
 
+
+@api_view(['GET'])
+def measure_numerators_by_org(request, format=None):
+    measure = request.query_params.get('measure', None)
+    org_id, org_type = _get_org_id_and_type_from_request(request)
     this_month = ImportLog.objects.latest_in_category('prescribing').current_at
     three_months_ago = (
         this_month - relativedelta(months=2)).strftime('%Y-%m-01')
     m = Measure.objects.get(pk=measure)
     if m.numerator_is_list_of_bnf_codes:
-        if org_selector in ['stp_id', 'regional_team_id']:
+        if org_type in ['stp_id', 'regional_team_id']:
             extra_join = '''
             INNER JOIN frontend_pct
             ON frontend_pct.code = p.pct_id
@@ -140,9 +152,22 @@ def measure_numerators_by_org(request, format=None):
         # support various flavours of `WHERE` clause from the measure
         # definitions that may use a subset of any of these column
         # names
-        query = '''
+        focus_on_org = org_id and org_type
+        params = {
+            "numerator_bnf_codes": m.numerator_bnf_codes,
+            "three_months_ago": three_months_ago,
+        }
+        if focus_on_org:
+            org_condition = "{org_type} = %(org_id)s AND ".format(
+                org_type=org_type)
+            org_group = "{org_type}, ".format(
+                org_type=org_type)
+            params["org_id"] = org_id
+        else:
+            org_condition = ""
+            org_group = ""
+        query = """
             SELECT
-              {org_selector} AS entity,
               presentation_code AS bnf_code,
               pn.name AS presentation_name,
               SUM(total_items) AS total_items,
@@ -155,31 +180,28 @@ def measure_numerators_by_org(request, format=None):
             ON p.presentation_code = pn.bnf_code
             {extra_join}
             WHERE
-              {org_selector} = %(org)s
-              AND
+              {org_condition}
               processing_date >= %(three_months_ago)s
               AND
               pn.bnf_code = ANY(%(numerator_bnf_codes)s)
             GROUP BY
-              {org_selector}, presentation_code, pn.name
+              {org_group}
+              presentation_code, pn.name
             ORDER BY {order_col} DESC
             LIMIT 50
-        '''.format(
-             org_selector=org_selector,
-             three_months_ago=three_months_ago,
-             extra_join=extra_join,
-             order_col=order_col,
+        """.format(
+            org_condition=org_condition,
+            org_group=org_group,
+            org_type=org_type,
+            three_months_ago=three_months_ago,
+            extra_join=extra_join,
+            order_col=order_col,
         )
-        params = {
-            'numerator_bnf_codes': m.numerator_bnf_codes,
-            'org': org,
-            'three_months_ago': three_months_ago,
-        }
         data = utils.execute_query(query, params)
     else:
         data = []
     response = Response(data)
-    filename = "%s-%s-breakdown.csv" % (measure, org)
+    filename = "%s-%s-breakdown.csv" % (measure, org_id)
     if request.accepted_renderer.format == 'csv':
         response['content-disposition'] = "attachment; filename=%s" % filename
     return response

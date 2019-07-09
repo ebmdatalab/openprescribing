@@ -88,6 +88,17 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d['denominator'], 181500)
         self.assertEqual("%.4f" % d['calc_value'], '0.4711')
 
+    def test_api_measure_numerators_by_all(self):
+        url = '/api/1.0/measure_numerators_by_org/'
+        url += '?measure=cerazette&format=json'
+        data = self._get_json(url)
+        self.assertEqual(data, [
+            {u'total_items': 1,
+             u'bnf_code': u'0205010F0AAAAAA',
+             u'presentation_name': u'Thing 2',
+             u'cost': 1.0,
+             u'quantity': 100.0}])
+
     def test_api_measure_numerators_by_regional_team(self):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=Y01&format=json&org_type=regional_team'
@@ -96,7 +107,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'Y01',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
@@ -108,7 +118,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'E00000001',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
@@ -120,7 +129,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'02Q',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
@@ -132,7 +140,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'N84014',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
@@ -150,7 +157,6 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'N84014',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
