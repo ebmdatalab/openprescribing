@@ -636,6 +636,7 @@ class MeasureValue(models.Model):
     )
     stp = models.ForeignKey(STP, null=True, blank=True, on_delete=models.CASCADE)
     pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.CASCADE)
+    pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.CASCADE)
     practice = models.ForeignKey(
         Practice, null=True, blank=True, on_delete=models.CASCADE
     )
