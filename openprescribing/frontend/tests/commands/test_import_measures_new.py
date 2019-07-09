@@ -239,13 +239,7 @@ class ImportMeasuresTests(TestCase):
             Practice.objects.values_list('code', flat=True),
         )
         self.validate_measure_global(mg, practices, 'practice')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=False,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
+        mvs = MeasureValue.objects.filter_by_org_type('practice').filter(month=month)
         self.assertEqual(mvs.count(), Practice.objects.count())
         for mv in mvs:
             self.validate_measure_value(mv, practices.loc[mv.practice_id])
@@ -257,14 +251,7 @@ class ImportMeasuresTests(TestCase):
             PCN.objects.values_list('ons_code', flat=True),
         )
         self.validate_measure_global(mg, pcns, 'pcn')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pcn_id__isnull=False,
-            pct_id__isnull=True,
-            stp_id__isnull=True,
-            regional_team_id__isnull=True,
-        )
+        mvs = MeasureValue.objects.filter_by_org_type('pcn').filter(month=month)
         self.assertEqual(mvs.count(), PCN.objects.count())
         for mv in mvs:
             self.validate_measure_value(mv, pcns.loc[mv.pcn_id])
@@ -273,13 +260,7 @@ class ImportMeasuresTests(TestCase):
             numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
         self.validate_measure_global(mg, ccgs, 'ccg')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=False,
-            stp_id__isnull=False,
-            regional_team_id__isnull=False,
-        )
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(month=month)
         self.assertEqual(mvs.count(), PCT.objects.count())
         for mv in mvs:
             self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
@@ -291,13 +272,7 @@ class ImportMeasuresTests(TestCase):
             STP.objects.values_list('ons_code', flat=True),
         )
         self.validate_measure_global(mg, stps, 'stp')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=False,
-            regional_team_id__isnull=True,
-        )
+        mvs = MeasureValue.objects.filter_by_org_type('stp').filter(month=month)
         self.assertEqual(mvs.count(), STP.objects.count())
         for mv in mvs:
             self.validate_measure_value(mv, stps.loc[mv.stp_id])
@@ -309,12 +284,10 @@ class ImportMeasuresTests(TestCase):
             RegionalTeam.objects.values_list('code', flat=True),
         )
         self.validate_measure_global(mg, regtms, 'regional_team')
-        mvs = MeasureValue.objects.filter(
-            month=month,
-            practice_id__isnull=True,
-            pct_id__isnull=True,
-            stp_id__isnull=True,
-            regional_team_id__isnull=False,
+        mvs = (
+            MeasureValue.objects
+            .filter_by_org_type('regional_team')
+            .filter(month=month)
         )
         self.assertEqual(mvs.count(), RegionalTeam.objects.count())
         for mv in mvs:
