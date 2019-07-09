@@ -1,6 +1,5 @@
 from mock import Mock, patch
 import datetime
-import re
 from urlparse import parse_qs, urlparse
 
 from pyquery import PyQuery as pq
@@ -127,16 +126,6 @@ class TestAlertViews(TestCase):
             response,
             "You have successfully signed up for the newsletter")
 
-    def test_search_follow_email_link(self):
-        self._post_search_signup('stuff', 'mysearch')
-        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
-                               mail.outbox[0].body, re.DOTALL).groups()[0]
-        response = self.client.get(confirm_url, follow=True)
-        self.assertTemplateUsed(response, 'analyse.html')
-        self.assertContains(
-            response, "subscribed to alerts about <em>mysearch</em>")
-        self.assertTrue(response.context['user'].is_active)
-
     def test_ccg_email_invalid(self):
         response = self._post_org_signup('03V', email='boo')
         self.assertContains(
@@ -245,10 +234,8 @@ class TestAlertViews(TestCase):
         self._create_user_and_login('a@a.com')
         response = self._post_org_signup('03V', email='b@b.com')
         self.assertTrue(response.context['user'].is_anonymous())
-        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
-                               mail.outbox[0].body, re.DOTALL).groups()[0]
-        response = self.client.get(confirm_url, follow=True)
-        self.assertEqual(response.context['user'].email, 'b@b.com')
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, '03V')
 
     def test_ccg_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
@@ -272,17 +259,6 @@ class TestAlertViews(TestCase):
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, '03V')
 
-    def test_ccg_follow_email_link(self):
-        self._post_org_signup('03V', 'f@frog.com')
-        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
-                               mail.outbox[0].body, re.DOTALL).groups()[0]
-        response = self.client.get(confirm_url, follow=True)
-        self.assertEqual(response.context['user'].email, 'f@frog.com')
-        self.assertContains(
-            response, "subscribed to alerts about "
-            "<em>prescribing in NHS Corby")
-        self.assertTrue(response.context['user'].is_active)
-
     def test_practice_email_invalid(self):
         response = self._post_org_signup('P87629', email='boo')
         self.assertContains(
@@ -301,16 +277,6 @@ class TestAlertViews(TestCase):
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.practice.code, 'P87629')
-
-    def test_practice_follow_email_link(self):
-        self._post_org_signup('P87629')
-        confirm_url = re.match(r".*http://.*(/accounts/confirm-email/.*?)\s",
-                               mail.outbox[0].body, re.DOTALL).groups()[0]
-        response = self.client.get(confirm_url, follow=True)
-        self.assertContains(
-            response, "subscribed to alerts about "
-            "<em>prescribing in 1/ST Andrews")
-        self.assertTrue(response.context['user'].is_active)
 
     def test_all_england_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
