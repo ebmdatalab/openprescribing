@@ -38,7 +38,7 @@ easyprocess==0.2.3        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
-flake8==3.7.7
+flake8==3.7.8
 google-api-core==1.11.1   # via google-cloud-core
 google-api-python-client==1.7.9
 google-auth-httplib2==0.0.3  # via google-api-python-client
