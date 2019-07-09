@@ -9,6 +9,11 @@ from openpyxl import load_workbook
 
 
 class Command(BaseCommand):
+    help = '''
+This command imports STPs and STP mappings from the spreadsheet linked to from
+https://digital.nhs.uk/services/organisation-data-service/data-downloads/other-nhs-organisations
+    '''.strip()
+
     def add_arguments(self, parser):
         parser.add_argument('--filename')
 
