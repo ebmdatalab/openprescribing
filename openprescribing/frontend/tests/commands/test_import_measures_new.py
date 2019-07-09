@@ -17,6 +17,7 @@ from frontend.models import (
     MeasureGlobal,
     MeasureValue,
     Practice,
+    PCN,
     PCT,
     STP,
     RegionalTeam,
@@ -37,7 +38,7 @@ class ImportMeasuresTests(TestCase):
         random.seed(1980)
 
         set_up_bq()
-        create_organisations()
+        create_organisations(random)
         upload_ccgs_and_practices()
         cls.prescriptions = upload_prescribing(random.randint)
         cls.practice_stats = upload_practice_statistics(random.randint)
@@ -249,6 +250,25 @@ class ImportMeasuresTests(TestCase):
         for mv in mvs:
             self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
+        pcns = calculator(
+            numerators,
+            denominators,
+            'pcn',
+            PCN.objects.values_list('ons_code', flat=True),
+        )
+        self.validate_measure_global(mg, pcns, 'pcn')
+        mvs = MeasureValue.objects.filter(
+            month=month,
+            practice_id__isnull=True,
+            pcn_id__isnull=False,
+            pct_id__isnull=True,
+            stp_id__isnull=True,
+            regional_team_id__isnull=True,
+        )
+        self.assertEqual(mvs.count(), PCN.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, pcns.loc[mv.pcn_id])
+
         ccgs = calculator(
             numerators, denominators, 'ccg', PCT.objects.values_list('code', flat=True)
         )
@@ -345,8 +365,8 @@ def set_up_bq():
     )
 
 
-def create_organisations():
-    '''Create RegionalTeams, STPs, CCGs, Practices in local DB.'''
+def create_organisations(random):
+    '''Create RegionalTeams, STPs, CCGs, PCNs, Practices in local DB.'''
 
     for regtm_ix in range(5):
         regtm = RegionalTeam.objects.create(
@@ -356,8 +376,16 @@ def create_organisations():
         for stp_ix in range(5):
             stp = STP.objects.create(
                 ons_code='E000000{}{}'.format(regtm_ix, stp_ix),
-                name='STP {}'.format(regtm_ix, stp_ix),
+                name='STP {}/{}'.format(regtm_ix, stp_ix),
             )
+
+            pcns = []
+            for pcn_ix in range(5):
+                pcn = PCN.objects.create(
+                    ons_code='E00000{}{}{}'.format(regtm_ix, stp_ix, pcn_ix),
+                    name='PCN {}/{}/{}'.format(regtm_ix, stp_ix, pcn_ix),
+                )
+                pcns.append(pcn)
 
             for ccg_ix in range(5):
                 ccg = PCT.objects.create(
@@ -373,6 +401,7 @@ def create_organisations():
                 for prac_ix in range(5):
                     Practice.objects.create(
                         ccg=ccg,
+                        pcn=random.choice(pcns),
                         code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
                         name='Practice {}/{}/{}/{}'.format(
                             regtm_ix, stp_ix, ccg_ix, prac_ix
@@ -442,6 +471,7 @@ def upload_prescribing(randint):
                     practice.ccg.regional_team_id,
                     practice.ccg.stp_id,
                     practice.ccg_id,
+                    practice.pcn_id,
                     practice.code,
                     bnf_code,
                     bnf_name,
@@ -483,6 +513,7 @@ def upload_prescribing(randint):
                     practice.ccg.regional_team_id,
                     practice.ccg.stp_id,
                     practice.ccg_id,
+                    practice.pcn_id,
                     practice.code,
                     bnf_code,
                     bnf_name,
@@ -511,6 +542,7 @@ def upload_prescribing(randint):
             'regional_team_id',
             'stp_id',
             'ccg_id',
+            'pcn_id',
             'practice_id',
             'bnf_code',
             'bnf_name',
@@ -536,6 +568,7 @@ def upload_practice_statistics(randint):
         'regional_team_id',
         'stp_id',
         'ccg_id',
+        'pcn_id',
         'practice_id',
         'total_list_size',
     ]
@@ -584,6 +617,7 @@ def upload_practice_statistics(randint):
                 {
                     'month': timestamp[:10],
                     'practice_id': practice.code,
+                    'pcn_id': practice.pcn_id,
                     'ccg_id': practice.ccg_id,
                     'stp_id': practice.ccg.stp_id,
                     'regional_team_id': practice.ccg.regional_team_id,
