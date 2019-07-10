@@ -3,6 +3,7 @@
  -- there is no denominator value
   SELECT prescribing.month AS month,
          practices.code AS practice_id,
+         pcn_id,
          ccg_id,
          stp_id,
          regional_team_id
@@ -49,6 +50,7 @@ SELECT
   numerator,
   denominator,
   practice_id,
+  pcn_id,
   pct_id,
   stp_id,
   regional_team_id,
@@ -68,6 +70,7 @@ FROM (
         COALESCE(num.numerator, 0) AS numerator,
         COALESCE(denom.denominator, 0) AS denominator,
         practices_with_months.practice_id,
+        practices_with_months.pcn_id,
         practices_with_months.ccg_id AS pct_id,
         practices_with_months.stp_id,
         practices_with_months.regional_team_id,

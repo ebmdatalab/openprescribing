@@ -27,6 +27,12 @@ class MeasureValueQuerySet(models.QuerySet):
             return self.filter(
                 practice_id__isnull=False,
             )
+        elif org_type == 'pcn':
+            return self.filter(
+                pcn_id__isnull=False,
+                practice_id__isnull=True,
+                pct_id__isnull=True,
+            )
         elif org_type == 'ccg':
             return self.filter(
                 practice_id__isnull=True,
