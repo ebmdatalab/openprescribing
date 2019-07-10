@@ -85,15 +85,15 @@ def measure_numerators_by_org(request, format=None):
     org = utils.param_to_list(request.query_params.get('org', []))[0]
     if 'org_type' in request.query_params:
         org_selector = request.query_params['org_type'] + '_id'
-        if org_selector == 'ccg_id':
-            org_selector = 'pct_id'
+        if org_selector in ['pct_id', 'ccg_id']:
+            org_selector = 'pr.ccg_id'
     else:
         # This is here for backwards compatibility, in case anybody else is
         # using the API.  Now we have measures for regional teams, we cannot
         # guess the type of an org by the length of its code, as both CCGs and
         # regional teams have codes of length 3.
         if len(org) == 3:
-            org_selector = 'pct_id'
+            org_selector = 'pr.ccg_id'
         elif len(org) == 6:
             org_selector = 'practice_id'
         else:
@@ -106,8 +106,15 @@ def measure_numerators_by_org(request, format=None):
     if m.numerator_is_list_of_bnf_codes:
         if org_selector in ['stp_id', 'regional_team_id']:
             extra_join = '''
+            INNER JOIN frontend_practice pr
+            ON p.practice_id = pr.code
             INNER JOIN frontend_pct
-            ON frontend_pct.code = p.pct_id
+            ON frontend_pct.code = pr.ccg_id
+            '''
+        elif org_selector == 'pr.ccg_id':
+            extra_join = '''
+            INNER JOIN frontend_practice pr
+            ON p.practice_id = pr.code
             '''
         else:
             extra_join = ''

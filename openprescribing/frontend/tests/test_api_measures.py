@@ -126,19 +126,19 @@ class TestAPIMeasureViews(TestCase):
 
     def test_api_measure_numerators_by_practice(self):
         url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=N84014&format=json'
+        url += '?measure=cerazette&org=A85017&format=json'
         data = self._get_json(url)
         self.assertEqual(data, [
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'N84014',
+             u'entity': u'A85017',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
     def test_api_measure_numerators_by_practice_3_month_window(self):
         url = '/api/1.0/measure_numerators_by_org/'
-        url += '?measure=cerazette&org=N84014&format=json'
+        url += '?measure=cerazette&org=A85017&format=json'
         from frontend.models import ImportLog
         ImportLog.objects.create(
             category='prescribing',
@@ -150,7 +150,7 @@ class TestAPIMeasureViews(TestCase):
             {u'total_items': 1,
              u'bnf_code': u'0205010F0AAAAAA',
              u'presentation_name': u'Thing 2',
-             u'entity': u'N84014',
+             u'entity': u'A85017',
              u'cost': 1.0,
              u'quantity': 100.0}])
 
