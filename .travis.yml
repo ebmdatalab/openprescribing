@@ -35,7 +35,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - openssl aes-256-cbc -K $encrypted_ef2af4a5c304_key -iv $encrypted_ef2af4a5c304_iv -in google-credentials.json.enc -out google-credentials.json -d
+  - openssl aes-256-cbc -K $encrypted_c3e391f06205_key -iv $encrypted_c3e391f06205_iv -in google-credentials-ebmdatalabtest-1ad80daf5cc1.json.enc -out google-credentials.json -d
 install:
   - docker pull dockette/jessie
   - docker pull ebmdatalab/openprescribing-base:latest
