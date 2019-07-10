@@ -478,7 +478,7 @@ class AMP(models.Model):
 
 class ApIng(models.Model):
     class Meta:
-        verbose_name = "TODO"
+        verbose_name = "Actual Product Excipients"
 
     amp = models.ForeignKey(
         db_column="apid",
@@ -744,7 +744,7 @@ class AMPP(models.Model):
 
 class PackInfo(models.Model):
     class Meta:
-        verbose_name = "TODO"
+        verbose_name = "Appliance Pack Information"
 
     ampp = models.OneToOneField(
         db_column="appid",
@@ -891,7 +891,7 @@ class ReimbInfo(models.Model):
 
 class Ing(models.Model):
     class Meta:
-        verbose_name = "TODO"
+        verbose_name = "Ingredients"
 
     id = models.BigIntegerField(
         primary_key=True,
