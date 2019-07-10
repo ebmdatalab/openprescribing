@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}All PCNs{% endblock %}
+{% block active_class %}pcn{% endblock %}
+
+{% block content %}
+
+<h1>All PCNs</h1>
+
+<ul class="list-unstyled" id="all-results">
+{% for pcn in pcns %}
+<li><a href="{% url 'pcn_home_page' pcn.code %}">{{ pcn.cased_name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

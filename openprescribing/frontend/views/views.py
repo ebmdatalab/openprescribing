@@ -51,6 +51,7 @@ from frontend.models import MeasureGlobal
 from frontend.models import OrgBookmark
 from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
+from frontend.models import PCN
 from frontend.models import Presentation
 from frontend.models import RegionalTeam
 from frontend.models import STP
@@ -187,6 +188,27 @@ def practice_home_page(request, practice_code):
         return form
     context = _home_page_context_for_entity(request, practice)
     context['form'] = form
+    request.session['came_from'] = request.path
+    return render(request, 'entity_home_page.html', context)
+
+
+##################################################
+# PCNs
+##################################################
+
+def all_pcns(request):
+    pcns = PCN.objects.active().order_by('name')
+    context = {
+        'pcns': pcns
+    }
+    return render(request, 'all_pcns.html', context)
+
+
+def pcn_home_page(request, pcn_code):
+    pcn = get_object_or_404(PCN, ons_code=pcn_code)
+    practices = Practice.objects.filter(pcn=pcn, setting=4).order_by('name')
+    context = _home_page_context_for_entity(request, pcn)
+    context['practices'] = practices
     request.session['came_from'] = request.path
     return render(request, 'entity_home_page.html', context)
 
@@ -434,6 +456,11 @@ def measures_for_one_practice(request, practice_code):
 
 
 @handle_bad_request
+def measures_for_one_pcn(request, pcn_code):
+    return _measures_for_one_entity(request, pcn_code, 'pcn')
+
+
+@handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
     return _measures_for_one_entity(request, ccg_code, 'ccg')
 
@@ -474,7 +501,7 @@ def _measures_for_one_entity(request, entity_code, entity_type):
         'measure_options': measure_options,
     }
 
-    if entity_type == 'ccg':
+    if entity_type in ['pcn', 'ccg']:
         context['practices'] = entity.practice_set.filter(setting=4).order_by('name')
     elif entity_type in ['stp', 'regional_team']:
         context['ccgs'] = entity.pct_set.filter(
@@ -487,6 +514,10 @@ def _measures_for_one_entity(request, entity_code, entity_type):
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):
     return _measure_for_children_in_entity(request, measure, ccg_code, 'ccg')
+
+
+def measure_for_practices_in_pcn(request, pcn_code, measure):
+    return _measure_for_children_in_entity(request, measure, pcn_code, 'pcn')
 
 
 def measure_for_ccgs_in_stp(request, stp_code, measure):
@@ -506,6 +537,7 @@ def _measure_for_children_in_entity(
         request, measure, parent_entity_code, parent_entity_type):
     parent = _get_entity(parent_entity_type, parent_entity_code)
     child_entity_type = {
+        'pcn': 'practice',
         'ccg': 'practice',
         'stp': 'ccg',
         'regional_team': 'ccg',
@@ -1070,6 +1102,9 @@ def _home_page_context_for_entity(request, entity):
     if isinstance(entity, Practice):
         mv_filter['practice_id'] = entity.code
         entity_type = 'practice'
+    elif isinstance(entity, PCN):
+        mv_filter['pcn_id'] = entity.code
+        entity_type = 'pcn'
     elif isinstance(entity, PCT):
         mv_filter['pct_id'] = entity.code
         entity_type = 'ccg'
@@ -1171,6 +1206,7 @@ def _url_template(view_name):
 def _org_type_for_entity(entity):
     return {
         Practice: 'practice',
+        PCN: 'pcn',
         PCT: 'ccg',
         STP: 'stp',
         RegionalTeam: 'regional_team',
@@ -1231,6 +1267,8 @@ def _build_measure_options(options):
             options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_regional_team')
         elif options['orgType'] == 'stp':
             options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_stp')
+        elif options['orgType'] == 'pcn':
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_pcn')
         else:
             options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
     else:
@@ -1557,6 +1595,8 @@ def _get_entity(entity_type, entity_code):
 
     if entity_type == 'practice':
         return get_object_or_404(Practice, code=entity_code)
+    elif entity_type == 'pcn':
+        return get_object_or_404(PCN, ons_code=entity_code)
     elif entity_type == 'ccg':
         return get_object_or_404(PCT, code=entity_code)
     elif entity_type == 'stp':
@@ -1572,6 +1612,7 @@ def _get_entity(entity_type, entity_code):
 def _entity_type_human(entity_type):
     return {
         'practice': 'practice',
+        'pcn': 'PCN',
         'ccg': 'CCG',
         'stp': 'STP',
         'regional_team': 'Regional Team',
