@@ -49,7 +49,7 @@ google-cloud-core==1.0.1  # via google-cloud-bigquery, google-cloud-storage
 google-cloud-storage==1.16.1
 google-resumable-media==0.3.2  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.6.0  # via google-api-core
-graphviz==0.11
+graphviz==0.11.1
 gunicorn==19.9.0
 hiredis==1.0.0
 html2text==2018.1.9
