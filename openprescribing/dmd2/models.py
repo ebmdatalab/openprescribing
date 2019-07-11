@@ -478,7 +478,7 @@ class AMP(models.Model):
 
 class ApIng(models.Model):
     class Meta:
-        verbose_name = "Actual Product Excipients"
+        verbose_name = "Excipients"
 
     amp = models.ForeignKey(
         db_column="apid",
