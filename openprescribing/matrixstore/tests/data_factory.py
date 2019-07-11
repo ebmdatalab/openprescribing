@@ -114,6 +114,7 @@ class DataFactory(object):
             'net_cost': self.random.randint(1, 10000) / 100,
             'actual_cost': self.random.randint(1, 10000) / 100,
             'sha': None,
+            'pcn': None,
             'pct': None,
             'stp': None,
             'regional_team': None
