@@ -38,7 +38,7 @@ def finalise_matrix(matrix):
     return matrix
 
 
-def zeros_like(matrix):
+def zeros_like(matrix, order=None):
     """
     Return a zero-valued matrix of the same shape as `matrix` and with
     equivalent integer or floating point type
@@ -49,7 +49,7 @@ def zeros_like(matrix):
     matrices together.
     """
     dtype = numpy.int_ if is_integer(matrix) else numpy.float_
-    return numpy.zeros(matrix.shape, dtype=dtype)
+    return numpy.zeros(matrix.shape, dtype=dtype, order=order)
 
 
 def is_integer(matrix):
