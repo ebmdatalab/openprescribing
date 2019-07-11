@@ -439,10 +439,8 @@ def measure_for_all_england(request, measure):
     }
 
     measure_options = _build_measure_options(measure_options)
-    entity_type_human = _entity_type_human(entity_type)
     context = {
         "entity_type": entity_type,
-        "entity_type_human": entity_type_human,
         "measures_url_name": "measures_for_one_{}".format(entity_type),
         "measure": measure,
         "measure_options": measure_options,
