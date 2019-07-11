@@ -1283,12 +1283,15 @@ def _build_measure_options(options):
         options['measureUrlTemplate'] = _url_template(view_name)
 
     # oneEntityUrlTemplate
-    if not options.get('aggregate') and not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
+    if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
         # If we're rolling up by measure and a measure is provided in the
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
-        view_name = 'measure_for_one_{}'.format(options['orgType'])
-        options['oneEntityUrlTemplate'] = _url_template(view_name)
+        if options.get('aggregate'):
+            options['oneEntityUrlTemplate'] = _url_template('measure_for_all_england')
+        else:
+            view_name = 'measure_for_one_{}'.format(options['orgType'])
+            options['oneEntityUrlTemplate'] = _url_template(view_name)
 
     # tagsFocusUrlTemplate
     if options.get('aggregate'):

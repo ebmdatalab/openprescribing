@@ -75,6 +75,12 @@ class MeasuresTests(SeleniumTestCase):
             'Compare all CCGs in England on this measure',
             '/measure/core_0/'
         )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/all-england/'
+        )
         self._verify_num_elements(panel_element, '.inner li', 1)
 
     def test_all_england_low_priority(self):
