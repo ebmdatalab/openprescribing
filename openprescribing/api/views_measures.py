@@ -111,7 +111,7 @@ def measure_numerators_by_org(request, format=None):
             INNER JOIN frontend_pct
             ON frontend_pct.code = pr.ccg_id
             '''
-        elif org_selector == 'pr.ccg_id':
+        elif org_selector in ['pr.ccg_id', 'pcn_id']:
             extra_join = '''
             INNER JOIN frontend_practice pr
             ON p.practice_id = pr.code
