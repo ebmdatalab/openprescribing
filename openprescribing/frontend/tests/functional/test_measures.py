@@ -579,6 +579,23 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.explanation li', 2)
 
+    def test_measure_for_all_england(self):
+        self._get('/measure/lp_2/all-england/')
+        panel_element = self._find_measure_panel('measure_lp_2')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP measure 2',
+            '/measure/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Compare all CCGs in England on this measure',
+            '/measure/lp_2/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 1)
+
     def test_measure_for_one_practice(self):
         self._get('/measure/lp_2/practice/P00000/')
 
