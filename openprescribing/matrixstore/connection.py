@@ -1,7 +1,7 @@
 import os.path
 import sqlite3
 
-from .matrix_ops import zero_like
+from .matrix_ops import zeros_like
 from .serializer import serialize, deserialize
 
 
@@ -71,7 +71,7 @@ class MatrixSum(object):
             return
         matrix = deserialize(value)
         if self.accumulator is None:
-            self.accumulator = zero_like(matrix)
+            self.accumulator = zeros_like(matrix)
         self.accumulator += matrix
 
     def finalize(self):

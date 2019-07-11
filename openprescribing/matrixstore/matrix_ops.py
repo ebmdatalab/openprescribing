@@ -38,15 +38,15 @@ def finalise_matrix(matrix):
     return matrix
 
 
-def zero_like(matrix):
+def zeros_like(matrix):
     """
     Return a zero-valued matrix of the same shape as `matrix` and with
     equivalent integer or floating point type
 
-    Note this differs from `numpy.zero_like` in that it always uses the largest
-    integer type (int_) even if the source matrix uses a smaller type (e.g.
-    uint8). This is so that we have sufficient headroom to sum many matrices
-    together.
+    Note this differs from `numpy.zeros_like` in that it always uses the
+    largest integer type (int_) even if the source matrix uses a smaller type
+    (e.g.  uint8). This is so that we have sufficient headroom to sum many
+    matrices together.
     """
     dtype = numpy.int_ if is_integer(matrix) else numpy.float_
     return numpy.zeros(matrix.shape, dtype=dtype)
