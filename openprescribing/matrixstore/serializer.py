@@ -1,7 +1,7 @@
 import struct
 
 import pyarrow
-import scipy.sparse
+from scipy.sparse import csc_matrix
 import zstandard
 
 
@@ -28,13 +28,23 @@ def deserialize_csc(args):
     """
     Reconstruct a Compressed Sparse Column matrix from its decomposed parts
     """
-    return scipy.sparse.csc_matrix(*args)
+    # We construct a `csc_matrix` instance by directly assigning its members,
+    # rather than using `__init__` which runs additional checks that
+    # significantly slow down deserialization. Because we know these values
+    # came from properly constructed matrices we can skip these checks
+    (data, indices, indptr), shape = args
+    matrix = csc_matrix.__new__(csc_matrix)
+    matrix.data = data
+    matrix.indices = indices
+    matrix.indptr = indptr
+    matrix._shape = shape
+    return matrix
 
 
 # Register a custom PyArrow serialization context which knows how to handle
 # Compressed Sparse Column (csc) matrices
 context.register_type(
-    scipy.sparse.csc_matrix,
+    csc_matrix,
     'csc',
     custom_serializer=serialize_csc,
     custom_deserializer=deserialize_csc
