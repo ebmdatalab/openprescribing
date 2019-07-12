@@ -1278,6 +1278,8 @@ def _build_measure_options(options):
     # measureForAllPracticesUrlTemplate
     if not options.get('aggregate') and options['orgType'] == 'ccg':
         options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
+    elif options['orgType'] == 'pcn':
+        options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_pcn')
 
     # measureForAllCCGsUrlTemplate
     if options['orgType'] in ['stp', 'regional_team']:
