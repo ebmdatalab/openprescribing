@@ -6,12 +6,25 @@
 
 {% block content %}
 
-<h1>All PCNs</h1>
+<h1>Find a PCN</h1>
 
+<p>Search for a Primary Care Network by name or ONS code</p>
+
+<input class="form-control" id="search" placeholder="Search by PCN name or code" data-min-search-length="3" />
 <ul class="list-unstyled" id="all-results">
-{% for pcn in pcns %}
-<li><a href="{% url 'pcn_home_page' pcn.code %}">{{ pcn.cased_name }}</a></li>
-{% endfor %}
 </ul>
 
+{% endblock %}
+
+
+{% block extra_js %}
+{{ pcn_data|json_script:"js-pcn-data" }}
+<script>
+  var inputSearch = '#search';
+  var resultsList = '#all-results';
+  var allItems = JSON.parse(
+    document.getElementById('js-pcn-data').innerHTML
+  );
+</script>
+{% conditional_js 'list-filter' %}
 {% endblock %}

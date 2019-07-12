@@ -198,8 +198,16 @@ def practice_home_page(request, practice_code):
 
 def all_pcns(request):
     pcns = PCN.objects.active().order_by('name')
+    pcn_data = [
+        {
+            'name': pcn.cased_name,
+            'code': pcn.code,
+            'url': reverse('pcn_home_page', args=[pcn.code])
+        }
+        for pcn in pcns
+    ]
     context = {
-        'pcns': pcns
+        'pcn_data': pcn_data
     }
     return render(request, 'all_pcns.html', context)
 
