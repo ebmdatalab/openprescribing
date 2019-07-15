@@ -12,6 +12,7 @@
 from collections import defaultdict
 
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.core.management import call_command
 import requests
 from selenium_base import SeleniumTestCase
 
@@ -22,6 +23,26 @@ class MeasuresTests(SeleniumTestCase):
     maxDiff = None
 
     fixtures = ['functional-measures']
+
+    # These methods override the default behaviour of loading and flushing
+    # fixtures for each test method and instead load them once for the test
+    # class. This is safe as none of the tests involve mutating data, and
+    # increases the run speed by a factor of nearly 4 (311s to 78s).
+    @classmethod
+    def setUpClass(cls):
+        call_command('loaddata', *cls.fixtures, **{'verbosity': 0})
+        super(MeasuresTests, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        call_command('flush', verbosity=0, interactive=False, reset_sequences=False)
+        super(MeasuresTests, cls).tearDownClass()
+
+    def _fixture_setup(self):
+        pass
+
+    def _fixture_teardown(self):
+        pass
 
     def _get(self, path):
         url = self.live_server_url + path
