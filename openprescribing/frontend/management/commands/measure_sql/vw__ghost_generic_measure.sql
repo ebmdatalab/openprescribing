@@ -39,7 +39,7 @@ WITH
       vmps_with_one_ppu
     ON
       vw.bnf_code = vmps_with_one_ppu.bnf_code
-      AND vw.date = vmps_with_one_ppu.date
+      AND vw.date = TIMESTAMP(vmps_with_one_ppu.date)
   )
 
 -- now calculate possible savings against the median price
@@ -54,7 +54,7 @@ FROM
 INNER JOIN
   {project}.{hscic}.normalised_prescribing_standard rx
 ON
-  rx.month = TIMESTAMP(dt.date)
+  rx.month = dt.date
   AND rx.bnf_code = dt.bnf_code
 WHERE
 -- These can be prescribed fractionally, but BSA round quantity down,
@@ -64,6 +64,6 @@ AND
   rx.bnf_code <> '1308010Z0AAABAB' -- Ingenol Mebutate_Gel
 -- These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
 AND
-  rx.bnf_code <> '0407020A0AABPBP' -- Fentanyl 400micrograms/dose nasal spray 
+  rx.bnf_code <> '0407020A0AABPBP' -- Fentanyl 400micrograms/dose nasal spray
 
 -- trivial savings / costs are discounted in the measure definition
