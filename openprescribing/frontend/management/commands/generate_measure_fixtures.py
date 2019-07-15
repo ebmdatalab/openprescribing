@@ -28,6 +28,7 @@
 from __future__ import print_function
 
 import csv
+import itertools
 import json
 import os
 import tempfile
@@ -37,7 +38,10 @@ from django.conf import settings
 from django.core.management import BaseCommand, call_command
 
 from frontend import bq_schemas as schemas
-from frontend.models import ImportLog, Measure, MeasureGlobal, MeasureValue, Practice, PCT, STP, RegionalTeam
+from frontend.models import (
+    ImportLog, Measure, MeasureGlobal, MeasureValue, Practice, PCN, PCT, STP,
+    RegionalTeam
+)
 from gcutils.bigquery import Client
 
 
@@ -66,6 +70,16 @@ class Command(BaseCommand):
                     name='STP {}/{}'.format(regtm_ix, stp_ix),
                 )
 
+                pcns = []
+                for pcn_ix in range(2):
+                    pcn = PCN.objects.create(
+                        ons_code='E00000{}{}{}'.format(regtm_ix, stp_ix, pcn_ix),
+                        name='PCN {}/{}/{}'.format(regtm_ix, stp_ix, pcn_ix),
+                    )
+                    pcns.append(pcn)
+                # Function to return next PCN, looping round forever
+                get_next_pcn = itertools.cycle(pcns).next
+
                 for ccg_ix in range(2):
                     ccg = PCT.objects.create(
                         regional_team=regtm,
@@ -78,6 +92,7 @@ class Command(BaseCommand):
                     for prac_ix in range(2):
                         Practice.objects.create(
                             ccg=ccg,
+                            pcn=get_next_pcn(),
                             code='P0{}{}{}{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
                             name='Practice {}/{}/{}/{}'.format(regtm_ix, stp_ix, ccg_ix, prac_ix),
                             setting=4,
@@ -218,6 +233,7 @@ class Command(BaseCommand):
                         practice.ccg.regional_team_id,
                         practice.ccg.stp_id,
                         practice.ccg_id,
+                        practice.pcn_id,
                         practice.code,
                         bnf_code,
                         'bnf_name',  # This value doesn't matter
