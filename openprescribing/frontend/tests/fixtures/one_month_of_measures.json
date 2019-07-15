@@ -76,10 +76,18 @@
     }
   },
   {
+    "model": "frontend.pcn",
+    "pk": "PCN001",
+    "fields": {
+      "name": "PCN A"
+    }
+  },
+  {
     "model": "frontend.practice",
     "pk": "A85017",
     "fields": {
       "ccg": "02Q",
+      "pcn": "PCN001",
       "name": "BEWICK ROAD SURGERY",
       "address1": null,
       "address2": null,
@@ -101,6 +109,7 @@
     "pk": "A86030",
     "fields": {
       "ccg": "02Q",
+      "pcn": "PCN001",
       "name": "BETTS AVENUE MEDICAL GROUP",
       "address1": null,
       "address2": null,
@@ -122,6 +131,7 @@
     "pk": "B82005",
     "fields": {
       "ccg": "02Q",
+      "pcn": "PCN001",
       "name": "PRIORY MEDICAL GROUP",
       "address1": null,
       "address2": null,
@@ -143,6 +153,7 @@
     "pk": "B82008",
     "fields": {
       "ccg": "02Q",
+      "pcn": "PCN001",
       "name": "NORTH SURGERY",
       "address1": null,
       "address2": null,
@@ -206,6 +217,7 @@
     "pk": "C83051",
     "fields": {
       "ccg": "04D",
+      "pcn": "PCN001",
       "name": "ABBEY MEDICAL PRACTICE",
       "address1": null,
       "address2": null,

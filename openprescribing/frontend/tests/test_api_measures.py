@@ -121,6 +121,18 @@ class TestAPIMeasureViews(TestCase):
              u'cost': 1.0,
              u'quantity': 100.0}])
 
+    def test_api_measure_numerators_by_pcn(self):
+        url = '/api/1.0/measure_numerators_by_org/'
+        url += '?measure=cerazette&org=PCN001&format=json&org_type=pcn'
+        data = self._get_json(url)
+        self.assertEqual(data, [
+            {u'bnf_code': u'0205010F0AAAAAA',
+             u'cost': 1.0,
+             u'entity': u'PCN001',
+             u'presentation_name': u'Thing 2',
+             u'quantity': 100.0,
+             u'total_items': 1}])
+
     def test_api_measure_numerators_by_ccg(self):
         url = '/api/1.0/measure_numerators_by_org/'
         url += '?measure=cerazette&org=02Q&format=json'
