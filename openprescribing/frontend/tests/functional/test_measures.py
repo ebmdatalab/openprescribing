@@ -1007,7 +1007,8 @@ class MeasuresTests(SeleniumTestCase):
                 cost_saving += ccg_cost_saving
 
         self._get('/measure/core_0/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1026,7 +1027,8 @@ class MeasuresTests(SeleniumTestCase):
                 cost_saving += stp_cost_saving
 
         self._get('/measure/core_0/stp/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1045,7 +1047,8 @@ class MeasuresTests(SeleniumTestCase):
                 cost_saving += regional_team_cost_saving
 
         self._get('/measure/core_0/regional-team/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all Regional Teams had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1073,7 +1076,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find CCG with cost saving!'
 
         self._get('/ccg/{}/core_0/'.format(c.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1102,7 +1106,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find STP with cost saving!'
 
         self._get('/stp/{}/core_0/'.format(r.ons_code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1131,7 +1136,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find RegionalTeam with cost saving!'
 
         self._get('/regional-team/{}/core_0/'.format(r.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1154,7 +1160,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find CCG with cost saving!'
 
         self._get('/ccg/{}/measures/'.format(c.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this CCG had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1176,7 +1183,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find practice with cost saving!'
 
         self._get('/practice/{}/measures/'.format(p.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1200,7 +1208,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find STP with cost saving!'
 
         self._get('/stp/{}/measures/'.format(r.ons_code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1224,7 +1233,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find RegionalTeam with cost saving!'
 
         self._get('/regional-team/{}/measures/'.format(r.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this Regional Team had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
