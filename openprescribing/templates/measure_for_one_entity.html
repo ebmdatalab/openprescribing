@@ -12,11 +12,10 @@
 {% block content %}
   {% if entity %}
 
-  <h1>
-    {{ measure.name }}
-    <br><small>{{ entity.name }}</small>
-  </h1>
-  {% if entity %}
+    <h1>
+      {{ measure.name }}
+      <br><small>{{ entity.name }}</small>
+    </h1>
     {% if entity_type == 'practice' %}
       <p class="text-muted" style="margin-top: -8px">
         {{ entity.address_pretty_minus_firstline }}
@@ -36,7 +35,7 @@
 
   {% else %}
 
-  <h1>{{ measure.name }}</h1>
+    <h1>{{ measure.name }}</h1>
 
   {% endif %}
 
