@@ -991,16 +991,11 @@ class MeasuresTests(SeleniumTestCase):
         self.assertIn(r1_exp_text, perf_element.text)
 
     def test_performance_summary_for_measure_for_all_ccgs(self):
-        cost_saving = 0
-        for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
-                pct=c,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            ccg_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if ccg_cost_saving > 0:
-                cost_saving += ccg_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='pct_id')
 
         self._get('/measure/core_0/')
         # Use `contains()` to ensure that loading has finished by the time we access the element
@@ -1009,16 +1004,11 @@ class MeasuresTests(SeleniumTestCase):
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_all_stps(self):
-        cost_saving = 0
-        for r in STP.objects.all():
-            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
-                stp=r,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            stp_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if stp_cost_saving > 0:
-                cost_saving += stp_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='stp_id')
 
         self._get('/measure/core_0/stp/')
         # Use `contains()` to ensure that loading has finished by the time we access the element
@@ -1027,16 +1017,11 @@ class MeasuresTests(SeleniumTestCase):
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_all_regional_teams(self):
-        cost_saving = 0
-        for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
-                regional_team=r,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            regional_team_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if regional_team_cost_saving > 0:
-                cost_saving += regional_team_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='regional_team_id')
 
         self._get('/measure/core_0/regional-team/')
         # Use `contains()` to ensure that loading has finished by the time we access the element
@@ -1058,9 +1043,7 @@ class MeasuresTests(SeleniumTestCase):
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1087,9 +1070,7 @@ class MeasuresTests(SeleniumTestCase):
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1116,9 +1097,7 @@ class MeasuresTests(SeleniumTestCase):
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1142,7 +1121,7 @@ class MeasuresTests(SeleniumTestCase):
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
@@ -1165,7 +1144,7 @@ class MeasuresTests(SeleniumTestCase):
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
@@ -1188,7 +1167,7 @@ class MeasuresTests(SeleniumTestCase):
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
@@ -1211,7 +1190,7 @@ class MeasuresTests(SeleniumTestCase):
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
@@ -1243,3 +1222,26 @@ def _get_extreme_measure(mvs):
     measure_id = max(avg_percentile_by_measure_id, key=avg_percentile_by_measure_id.get)
 
     return Measure.objects.get(id=measure_id)
+
+
+def _get_cost_savings(measure_values, rollup_by=None, target_percentile=50):
+    """
+    This duplicates the cost-saving logic in `measure_utils.js` (specifically
+    the logic found in the functions `_getSavingAndPercentilePerItem` and
+    `getPerformanceSummary`). This means that we roll-up the values by measure
+    or by org and then only include those who mean percentile has been greater
+    than the target percentile over the period.
+    """
+    all_percentiles = defaultdict(list)
+    all_savings = defaultdict(list)
+    cost_saving_key = str(target_percentile)
+    for mv in measure_values:
+        rollup_id = getattr(mv, rollup_by) if rollup_by else None
+        all_percentiles[rollup_id].append(mv.percentile)
+        all_savings[rollup_id].append(mv.cost_savings[cost_saving_key])
+    total_savings = 0
+    for rollup_id, percentiles in all_percentiles.items():
+        mean_percentile = round(sum(percentiles) / len(percentiles), 2)
+        if mean_percentile > target_percentile:
+            total_savings += sum(all_savings[rollup_id])
+    return total_savings
