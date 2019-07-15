@@ -114,7 +114,9 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/practice/P00000/')
 
         practice = Practice.objects.get(code='P00000')
-        mvs = MeasureValue.objects.filter(practice=practice)
+        mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
+            practice=practice
+        )
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -137,7 +139,7 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/ccg/AAA/')
 
         ccg = PCT.objects.get(code='AAA')
-        mvs = MeasureValue.objects.filter(pct=ccg, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(pct=ccg)
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -160,7 +162,7 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/stp/E00000000/')
 
         stp = STP.objects.get(ons_code='E00000000')
-        mvs = MeasureValue.objects.filter(stp=stp, pct=None, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('stp').filter(stp=stp)
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -183,7 +185,9 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/regional-team/Y01/')
 
         rt = RegionalTeam.objects.get(code='Y01')
-        mvs = MeasureValue.objects.filter(regional_team=rt, pct=None, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
+            regional_team=rt
+        )
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -739,9 +743,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, '.explanation li', 1)
 
     def test_explanation_for_all_england(self):
-        mvs = MeasureValue.objects.filter(
-            pct__isnull=False,
-            practice__isnull=True,
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
             measure_id='core_0',
             month__gte='2018-03-01',
         )
@@ -767,7 +769,7 @@ class MeasuresTests(SeleniumTestCase):
         pp = []
 
         for p in Practice.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                 practice=p,
                 measure_id='core_0',
                 month__gte='2018-03-01',
@@ -831,9 +833,8 @@ class MeasuresTests(SeleniumTestCase):
         cc = []
 
         for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                 pct=c,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -887,10 +888,8 @@ class MeasuresTests(SeleniumTestCase):
         ss = []
 
         for s in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
                 stp=s,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -947,10 +946,8 @@ class MeasuresTests(SeleniumTestCase):
         rr = []
 
         for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
                 regional_team=r,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -996,9 +993,8 @@ class MeasuresTests(SeleniumTestCase):
     def test_performance_summary_for_measure_for_all_ccgs(self):
         cost_saving = 0
         for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                 pct=c,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -1015,10 +1011,8 @@ class MeasuresTests(SeleniumTestCase):
     def test_performance_summary_for_measure_for_all_stps(self):
         cost_saving = 0
         for r in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
                 stp=r,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -1035,10 +1029,8 @@ class MeasuresTests(SeleniumTestCase):
     def test_performance_summary_for_measure_for_all_regional_teams(self):
         cost_saving = 0
         for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
                 regional_team=r,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -1061,7 +1053,7 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for p in c.practice_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                     practice=p,
                     measure_id='core_0',
                     month__gte='2018-03-01',
@@ -1090,9 +1082,8 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for c in r.pct_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                     pct=c,
-                    practice=None,
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
@@ -1120,9 +1111,8 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for c in r.pct_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                     pct=c,
-                    practice=None,
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
@@ -1147,9 +1137,8 @@ class MeasuresTests(SeleniumTestCase):
         # data.
 
         for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                 pct=c,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
@@ -1171,7 +1160,7 @@ class MeasuresTests(SeleniumTestCase):
         # with the test data.
 
         for p in Practice.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                 practice=p,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
@@ -1194,10 +1183,8 @@ class MeasuresTests(SeleniumTestCase):
         # case with the test data.
 
         for r in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
                 stp=r,
-                pct=None,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
@@ -1219,10 +1206,8 @@ class MeasuresTests(SeleniumTestCase):
         # case with the test data.
 
         for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
                 regional_team=r,
-                pct=None,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
