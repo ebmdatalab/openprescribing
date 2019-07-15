@@ -128,7 +128,6 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(data, [
             {u'bnf_code': u'0205010F0AAAAAA',
              u'cost': 1.0,
-             u'entity': u'PCN001',
              u'presentation_name': u'Thing 2',
              u'quantity': 100.0,
              u'total_items': 1}])
