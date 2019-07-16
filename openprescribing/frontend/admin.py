@@ -79,11 +79,38 @@ class OrgBookmarkResource(resources.ModelResource):
         model = OrgBookmark
 
 
+# See Django documentation for SimpleListFilter:
+# https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#django.contrib.admin.ModelAdmin.list_filter
+class OrgBookmarkTypeFilter(admin.SimpleListFilter):
+    title = 'organisation type'
+    parameter_name = 'org_bookmark_type'
+
+    # Defines what options appear in the right-hand filter panel
+    def lookups(self, request, model_admin):
+        return (
+            ('practice', 'Practice'),
+            ('ccg', 'CCG'),
+            ('all_england', 'All England'),
+        )
+
+    # Defines how the selected option is used to filter the queryset
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'practice':
+            return queryset.filter(practice__isnull=False)
+        elif value == 'ccg':
+            return queryset.filter(practice__isnull=True, pct__isnull=False)
+        elif value == 'all_england':
+            return queryset.filter(practice__isnull=True, pct__isnull=True)
+        else:
+            return queryset
+
+
 @admin.register(OrgBookmark)
 class OrgBookmarkAdmin(ImportExportModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
-    list_filter = ('approved', 'created_at')
+    list_filter = ('approved', 'created_at', OrgBookmarkTypeFilter)
     readonly_fields = ('dashboard_link',)
     search_fields = ('user__email',)
     resource_class = OrgBookmarkResource
