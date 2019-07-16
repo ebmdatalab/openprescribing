@@ -1530,8 +1530,8 @@ def _get_cost_savings(measure_values, rollup_by=None, target_percentile=50):
     This duplicates the cost-saving logic in `measure_utils.js` (specifically
     the logic found in the functions `_getSavingAndPercentilePerItem` and
     `getPerformanceSummary`). This means that we roll-up the values by measure
-    or by org and then only include those who mean percentile has been greater
-    than the target percentile over the period.
+    or by org and then only include those whose mean percentile has been
+    greater than the target percentile over the period.
     """
     all_percentiles = defaultdict(list)
     all_savings = defaultdict(list)
