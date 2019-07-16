@@ -18,7 +18,7 @@ coverage==4.5.3
 cryptography==2.3.1       # via paramiko, pyopenssl, requests
 cssselect==1.0.1          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
-decorator==4.3.2          # via networkx
+decorator==4.4.0          # via networkx
 defusedxml==0.6.0         # via python3-openid
 diff-match-patch==20121119  # via django-import-export
 django-allauth==0.39.1
