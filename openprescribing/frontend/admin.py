@@ -79,10 +79,13 @@ class OrgBookmarkResource(resources.ModelResource):
         model = OrgBookmark
 
 
+# See Django documentation for SimpleListFilter:
+# https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#django.contrib.admin.ModelAdmin.list_filter
 class OrgBookmarkTypeFilter(admin.SimpleListFilter):
     title = 'organisation type'
     parameter_name = 'org_bookmark_type'
 
+    # Defines what options appear in the right-hand filter panel
     def lookups(self, request, model_admin):
         return (
             ('practice', 'Practice'),
@@ -90,6 +93,7 @@ class OrgBookmarkTypeFilter(admin.SimpleListFilter):
             ('all_england', 'All England'),
         )
 
+    # Defines how the selected option is used to filter the queryset
     def queryset(self, request, queryset):
         value = self.value()
         if value == 'practice':
