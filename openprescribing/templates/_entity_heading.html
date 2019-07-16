@@ -29,6 +29,29 @@
     <small>Practice locations are approximate, based on postcode.</small>
   </div>
 
+
+{% elif entity_type == 'pcn' %}
+
+  <div class="col-md-6">
+    <h1>
+      {{ entity.cased_name }}
+    </h1>
+    <p>There are {{ practices.count }} practices currently in this PCN. <a id="showall" href="#">&raquo; show them...</a></p>
+    <ul class="list-unstyled" id="child-entities">
+    {% for p in practices %}
+      <li class="hidden">
+        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
+        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+  <div class="col-md-6" id="map-container">
+    <div id="map-measure"></div>
+    <small>Boundary is illustrative only</small>
+  </div>
+
 {% elif entity_type == 'ccg' %}
   <div class="col-md-6">
     <h1>

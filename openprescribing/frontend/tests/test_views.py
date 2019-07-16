@@ -318,6 +318,14 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context['entity_type'], 'ccg')
         self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
 
+    def test_call_view_pcn_homepage(self):
+        response = self.client.get('/pcn/PCN001/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entity_home_page.html')
+        self.assertEqual(response.context['entity'].code, 'PCN001')
+        self.assertEqual(response.context['entity_type'], 'pcn')
+        self.assertEqual(response.context['date'], datetime.date(2014, 11, 1))
+
     def test_call_view_practice_homepage(self):
         response = self.client.get('/practice/C84001/')
         self.assertEqual(response.status_code, 200)
@@ -472,6 +480,11 @@ class TestFrontendViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'measure_for_one_entity.html')
 
+    def test_call_single_measure_for_pcn(self):
+        response = self.client.get('/measure/cerazette/pcn/PCN0001/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_one_entity.html')
+
     def test_call_view_practice_all(self):
         response = self.client.get('/practice/')
         self.assertEqual(response.status_code, 200)
@@ -481,6 +494,11 @@ class TestFrontendViews(TestCase):
         self.assertEqual(title.text(), 'Find a practice')
         practices = doc('#all-results a.practice')
         self.assertEqual(len(practices), 0)
+
+    def test_call_view_pcn_all(self):
+        response = self.client.get('/pcn/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'all_pcns.html')
 
     def test_call_view_practice_section(self):
         MeasureValue.objects.create(
@@ -524,6 +542,16 @@ class TestFrontendViews(TestCase):
         practices = doc('#child-entities li')
         self.assertEqual(len(practices), 2)
 
+    def test_call_view_measure_pcn(self):
+        response = self.client.get('/pcn/PCN0001/measures/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measures_for_one_entity.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        self.assertEqual(title.text(), 'Transformational Sustainability')
+        practices = doc('#child-entities li')
+        self.assertEqual(len(practices), 2)
+
     def test_call_view_measure_practice(self):
         response = self.client.get('/practice/P87629/measures/')
         self.assertEqual(response.status_code, 200)
@@ -539,6 +567,15 @@ class TestFrontendViews(TestCase):
         doc = pq(response.content)
         title = doc('h1')
         t = 'Cerazette vs. Desogestrel by practices in NHS Corby'
+        self.assertEqual(title.text(), t)
+
+    def test_call_view_measure_practices_in_pcn(self):
+        response = self.client.get('/pcn/PCN0001/cerazette/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'measure_for_children_in_entity.html')
+        doc = pq(response.content)
+        title = doc('h1')
+        t = 'Cerazette vs. Desogestrel by practices in Transformational Sustainability'
         self.assertEqual(title.text(), t)
 
     def test_all_measures(self):

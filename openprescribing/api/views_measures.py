@@ -208,6 +208,11 @@ def measure_by_ccg(request, format=None):
 
 
 @api_view(['GET'])
+def measure_by_pcn(request, format=None):
+    return _measure_by_org(request, 'pcn')
+
+
+@api_view(['GET'])
 def measure_by_practice(request, format=None):
     return _measure_by_org(request, 'practice')
 
@@ -280,6 +285,12 @@ def _roll_up_measure_values(measure_values, org_type):
                 measure_value_data.update({
                     'practice_id': measure_value.practice_id,
                     'practice_name': measure_value.practice.name,
+                })
+        elif org_type == 'pcn':
+            if measure_value.pcn_id:
+                measure_value_data.update({
+                    'pcn_id': measure_value.pcn_id,
+                    'pcn_name': measure_value.pcn.name,
                 })
         elif org_type == 'ccg':
             if measure_value.pct_id:

@@ -29,6 +29,8 @@ urlpatterns = [
         name='measure_by_regional_team'),
     url(r'^measure_by_ccg/$', views_measures.measure_by_ccg,
         name='measure_by_ccg'),
+    url(r'^measure_by_pcn/$', views_measures.measure_by_pcn,
+        name='measure_by_pcn'),
     url(r'^measure_numerators_by_org/$',
         views_measures.measure_numerators_by_org,
         name='measure_numerators_by_org'),

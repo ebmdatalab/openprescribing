@@ -1,4 +1,5 @@
 import os
+import random
 import subprocess
 import unittest
 
@@ -15,7 +16,11 @@ from django.conf import settings
 # Django 1.11 removes the ability to supply a port range for liveserver tests,
 # so we replicate that here.  See: https://code.djangoproject.com/ticket/28212
 # and https://code.djangoproject.com/ticket/26011
-available_test_ports = iter(range(6080, 6580))
+test_port_range = range(6080, 6580)
+# Shuffle the ports so that repeated runs locally are unlikely to try to reopen
+# a port in the TIME_WAIT state
+random.shuffle(test_port_range)
+available_test_ports = iter(test_port_range)
 
 
 def use_saucelabs():

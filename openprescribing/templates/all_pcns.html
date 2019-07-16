@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load template_extras %}
+
+{% block title %}All PCNs{% endblock %}
+{% block active_class %}pcn{% endblock %}
+
+{% block content %}
+
+<h1>Find a PCN</h1>
+
+<p>Search for a Primary Care Network by name or code</p>
+
+<input class="form-control" id="search" placeholder="Search by PCN name or code" data-min-search-length="3" />
+<ul class="list-unstyled" id="all-results">
+</ul>
+
+{% endblock %}
+
+
+{% block extra_js %}
+{{ pcn_data|json_script:"js-pcn-data" }}
+<script>
+  var inputSearch = '#search';
+  var resultsList = '#all-results';
+  var allItems = JSON.parse(
+    document.getElementById('js-pcn-data').innerHTML
+  );
+</script>
+{% conditional_js 'list-filter' %}
+{% endblock %}

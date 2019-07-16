@@ -183,6 +183,14 @@ var utils = {
     var perf = {};
     var potentialSavings50th = 0;
 
+    // Calculate the 50th percentile potential savings. Note that the logic
+    // here is not completely obvious: We only include svaings from
+    // organisations or measures where the mean percentile over the last 6
+    // months is greater than 50. But when we do include an organisation or
+    // measure we just sum its 50th percentile savings over the period, even in
+    // months where that saving is actually negative (i.e. it dipped below the
+    // 50th percentile for that month). This logic is replicated in:
+    // `frontend.tests.functional.test_measures._get_cost_savings`
     if (orderedData.length) {
       _.each(orderedData, function(d) {
         if (d.meanPercentile !== null) {
