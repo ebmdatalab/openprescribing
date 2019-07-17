@@ -61,7 +61,7 @@ mock==3.0.5
 networkx==2.2
 newrelic==4.20.1.121
 numpy==1.16.4
-oauthlib==2.0.4           # via requests-oauthlib
+oauthlib==3.0.2           # via requests-oauthlib
 openpyxl==2.6.2
 pandas-gbq==0.10.0
 pandas==0.24.2
@@ -89,7 +89,7 @@ pyyaml==5.1               # via watchdog
 raven==6.10.0
 redis==3.2.1              # via django-redis
 requests-futures==1.0.0
-requests-oauthlib==0.8.0  # via django-allauth, google-auth-oauthlib
+requests-oauthlib==1.2.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
 rsa==3.4.2                # via google-auth
 scipy==1.2.1
