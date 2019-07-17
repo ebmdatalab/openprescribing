@@ -61,7 +61,7 @@ mock==3.0.5
 networkx==2.2
 newrelic==4.20.1.121
 numpy==1.16.4
-oauthlib==2.0.4           # via requests-oauthlib
+oauthlib==3.0.2           # via requests-oauthlib
 openpyxl==2.6.2
 pandas-gbq==0.10.0
 pandas==0.24.2
