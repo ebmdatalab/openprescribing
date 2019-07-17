@@ -19,6 +19,8 @@
 
 <p>High-level prescribing trends for {{ section.name }} (BNF section {{ section.number_str }}) across all GP practices in NHS England for the last five years. You can <a href="{% url 'analyse' %}#numIds={{ section.number_str }}">explore prescribing trends for this section by CCG</a>, or learn more <a href="{% url 'about' %}#sources">about this site</a>.</p>
 
+<p><a href="{% url 'dmd_search' %}?q={{ chemical.bnf_code }}">View all matching dm+d items.</a></p>
+
 {% include '_chart.html' %}
 
 {% include '_get_in_touch.html' %}
