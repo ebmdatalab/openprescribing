@@ -71,6 +71,14 @@
 <hr>
 <a href="{% url 'tariff_api' %}?format=csv">Download complete tariff data</a>
 
+<hr>
+<p>View dm+d data about:</p>
+<ul>
+  {% for vmp in vmps %}
+  <li><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></li>
+  {% endfor %}
+</ul>
+
 {% endblock %}
 
 {% block extra_js %}
