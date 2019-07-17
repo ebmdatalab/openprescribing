@@ -19,6 +19,12 @@ class TestSearch(TestCase):
             {AMP: [632811000001105], AMPP: [1389011000001108]}
         )
 
+    def test_by_bnf_code(self):
+        self.assertSearchResults(
+            {'q': '0204000C0BB'},
+            {AMP: [632811000001105], AMPP: [1389011000001108]}
+        )
+
     def test_with_obj_types(self):
         self.assertSearchResults(
             {'q': 'acebutolol', 'obj_types': ['vmp']},
