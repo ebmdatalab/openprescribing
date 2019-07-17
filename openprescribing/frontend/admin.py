@@ -13,8 +13,6 @@ from .models import OrgBookmark
 from .models import SearchBookmark
 from .models import User
 from allauth.account.models import EmailAddress
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
 
 admin.site.unregister(User)
 admin.site.unregister(EmailAddress)
@@ -55,28 +53,17 @@ class UserVerifiedFilter(admin.SimpleListFilter):
             return queryset.filter(emailaddress__verified=False)
 
 
-class SearchBookmarkResource(resources.ModelResource):
-    class Meta:
-        model = SearchBookmark
-
-
 @admin.register(SearchBookmark)
-class SearchBookmarkAdmin(ImportExportModelAdmin):
+class SearchBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at')
     readonly_fields = ('dashboard_link',)
     search_fields = ('user__email',)
-    resource_class = SearchBookmarkResource
 
     def dashboard_link(self, obj):
         return format_html(
             '<a href="{}">view in site</a>', obj.dashboard_url())
-
-
-class OrgBookmarkResource(resources.ModelResource):
-    class Meta:
-        model = OrgBookmark
 
 
 # See Django documentation for SimpleListFilter:
@@ -107,13 +94,12 @@ class OrgBookmarkTypeFilter(admin.SimpleListFilter):
 
 
 @admin.register(OrgBookmark)
-class OrgBookmarkAdmin(ImportExportModelAdmin):
+class OrgBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at', 'approved')
     list_filter = ('approved', 'created_at', OrgBookmarkTypeFilter)
     readonly_fields = ('dashboard_link',)
     search_fields = ('user__email',)
-    resource_class = OrgBookmarkResource
 
     def dashboard_link(self, obj):
         return format_html(
