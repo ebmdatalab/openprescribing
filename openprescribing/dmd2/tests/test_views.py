@@ -91,6 +91,14 @@ class TestSearchView(TestCase):
         # We don't expect to see that a search has happened.
         self.assertNotContains(rsp, 'No results found.')
 
+    def test_with_no_obj_types(self):
+        rsp = self.client.get('/dmd/', {'q': 'acebutolol'})
+
+        # We expect to see lists of the matching objects.
+        self.assertContains(rsp, 'Virtual Medicinal Products (1)')
+        self.assertContains(rsp, 'Acebutolol 100mg capsules')
+        self.assertContains(rsp, 'Virtual Medicinal Product Packs (1)')
+        self.assertContains(rsp, 'Acebutolol 100mg capsules 84 capsule')
 
     def _get(self, q, **extra_params):
         params = {

@@ -25,6 +25,12 @@ class TestSearch(TestCase):
             {VMP: [318412000]}
         )
 
+    def test_with_no_obj_types(self):
+        self.assertSearchResults(
+            {'q': 'sanofi', 'obj_types': []},
+            {AMP: [632811000001105], AMPP: [1389011000001108]}
+        )
+
     def test_include_invalid(self):
         # In our test data, all invalid AMPs are also unavailable and have no
         # BNF code, so we need to include those objects here.
