@@ -45,14 +45,12 @@ class Command(BaseCommand):
         log_path = os.path.join(settings.CHECK_NUMBERS_BASE_PATH, timestamp)
         mkdir_p(log_path)
 
+        numbers = {}
         with webdriver.Firefox() as browser:
-            numbers = {
-                name: {
-                    'path': path,
-                    'numbers': extract_numbers(browser, path, name, log_path),
-                }
-                for name, path in get_paths_to_scrape()
-            } 
+            for name, path in paths_to_scrape():
+                source = get_page_source(browser, path, name, log_path)
+                numbers_list = extract_numbers(source)
+                numbers[name] = {'path': path, 'numbers': numbers_list}
 
         write_numbers(numbers, log_path)
 
@@ -72,7 +70,7 @@ class Command(BaseCommand):
             notify_slack(msg)
 
 
-def get_paths_to_scrape():
+def paths_to_scrape():
     '''Yield paths that should be scraped.
 
     We're interested in a sample of all pages for organisations.  Rather than
@@ -155,9 +153,8 @@ def build_path(pattern, keys):
     return path
 
 
-def extract_numbers(browser, path, name, log_path):
-    '''Request URL, write copy of response to log_path, and return list of
-    anything that looks like an interesting number in the response.
+def get_page_source(browser, path, name, log_path):
+    '''Request URL, write copy of response to log_path, and return page source.
     '''
 
     url = 'https://openprescribing.net/' + path
@@ -171,6 +168,14 @@ def extract_numbers(browser, path, name, log_path):
 
     with open(os.path.join(log_path, name + '.html'), 'w') as f:
         f.write(source.encode('utf8'))
+
+    return source
+
+
+def extract_numbers(source):
+    '''Parse page source to return anything that looks like an interesting
+    number.
+    '''
 
     doc = BeautifulSoup(source, 'html.parser')
     body = doc.find('body')
