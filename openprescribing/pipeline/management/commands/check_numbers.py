@@ -16,9 +16,9 @@ deletes old records of numbers.
 import json
 import os
 import re
+import time
 from datetime import datetime
 from glob import glob
-from time import sleep
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -47,6 +47,8 @@ class Command(BaseCommand):
 
         numbers = {}
         with webdriver.Firefox() as browser:
+            browser.set_page_load_timeout(60)
+
             for name, path in paths_to_scrape():
                 source = get_page_source(browser, path, name, log_path)
                 numbers_list = extract_numbers(source)
@@ -161,8 +163,10 @@ def get_page_source(browser, path, name, log_path):
     browser.get(url)
 
     # Wait until all AJAX requests are complete.
+    t0 = time.time()
     while browser.execute_script('return jQuery.active > 0'):
-        sleep(0.1)
+        time.sleep(0.1)
+        assert time.time() - t0 < 60, 'Timed out checking numbers on {}'.format(path)
 
     source = browser.page_source
 
