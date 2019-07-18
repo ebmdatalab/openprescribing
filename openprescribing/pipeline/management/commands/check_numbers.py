@@ -183,6 +183,8 @@ def extract_numbers(browser, path, name, log_path):
     rx = re.compile(u'''
         £[\d,\.]+           # Anything that looks like a cost
         |                   # ...or...
+        &pound;[\d,\.]+     # anything that looks like a cost with an HTML entity
+        |                   # ...or...
         \d{1,3}(?:,\d{3})+  # anything that looks like a humanized number
         ''',
         re.VERBOSE
