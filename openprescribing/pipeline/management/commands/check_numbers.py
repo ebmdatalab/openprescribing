@@ -79,7 +79,8 @@ def paths_to_scrape():
     specify pages we're interested in, we ignore pages we're not interested in.
     '''
 
-    # Don't scrape URLs beginning with these prefixes.
+    # Don't scrape URLs beginning with these prefixes.  They are either static
+    # pages, admin pages, or are unlikely to change in an interesting way.
     prefixes_to_ignore = [
         'accounts',
         'admin',
@@ -108,7 +109,8 @@ def paths_to_scrape():
         if any(pattern.startswith(prefix) for prefix in prefixes_to_ignore):
             continue
 
-        # Ignore any URLs that 
+        # Ignore any URLs that are not either parameterisable (these static
+        # pages or lists of entities) or for All England.
         if '%' not in pattern and 'all-england' not in pattern:
             continue
 
