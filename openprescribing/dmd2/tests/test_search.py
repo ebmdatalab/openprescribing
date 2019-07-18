@@ -5,7 +5,7 @@ from dmd2.search import search
 
 
 class TestSearch(TestCase):
-    fixtures = ['dmd-search-fixtures']
+    fixtures = ['dmd-objs']
 
     def test_by_snomed_code(self):
         self.assertSearchResults(

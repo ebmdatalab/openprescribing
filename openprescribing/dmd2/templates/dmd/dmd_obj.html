@@ -4,10 +4,18 @@
 
 {% if obj_type != 'VTM' %}
   <p>
-    {% if obj.bnf_code %}
-      Click <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">here</a> to analyse prescribing.
+    {% if has_prescribing %}
+      <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">Analyse prescribing</a>
     {% else %}
       This {{ obj_type }} cannot be matched against our prescribing data.
+    {% endif %}
+
+    {% if has_ppu %}
+      | <a href="{% url 'all_england_price_per_unit_by_presentation' obj.bnf_code %}">View PPU cost savings</a>
+    {% endif %}
+
+    {% if has_dt %}
+      | <a href="{% url 'tariff' obj.bnf_code %}">View Drug Tariff history</a>
     {% endif %}
   </p>
 {% endif %}

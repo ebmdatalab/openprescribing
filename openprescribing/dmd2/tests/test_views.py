@@ -1,8 +1,88 @@
 from django.test import TestCase
 
+from dmd2.models import DtPaymentCategory
+from frontend.models import PPUSaving, Presentation, TariffPrice
+from frontend.tests.data_factory import DataFactory
+
+
+class TestDMDObjView(TestCase):
+    fixtures = ['dmd-objs']
+
+    def test_vtm(self):
+        rsp = self.client.get('/dmd/vtm/68088000/')
+        self.assertContains(rsp, '<td>Name</td><td>Acebutolol</td>', html=True)
+        self.assertNotContains(rsp, 'This VTM cannot be matched')
+
+    def test_vmp(self):
+        rsp = self.client.get('/dmd/vmp/318412000/')
+        self.assertContains(
+            rsp,
+            '<td>Name</td><td>Acebutolol 100mg capsules</td>',
+            html=True
+        )
+        self.assertContains(rsp, 'Analyse prescribing')
+        self.assertNotContains(rsp, 'View PPU cost savings')
+
+        factory = DataFactory()
+        ccg = factory.create_ccg()
+        presentation = Presentation.objects.create(
+            bnf_code='0204000C0AAAAAA',
+            name='Acebut HCl_Cap 100mg'
+        )
+        PPUSaving.objects.create(
+            presentation=presentation,
+            pct=ccg,
+            date='2019-07-01',
+            lowest_decile=0.1,
+            quantity=10,
+            price_per_unit=20,
+            possible_savings=10,
+        )
+
+        rsp = self.client.get('/dmd/vmp/318412000/')
+        self.assertContains(rsp, 'View PPU cost savings')
+
+    def test_amp(self):
+        rsp = self.client.get('/dmd/amp/632811000001105/')
+        self.assertContains(
+            rsp,
+            '<td>Description</td><td>Sectral 100mg capsules (Sanofi)</td>',
+            html=True
+        )
+        self.assertContains(rsp, 'Analyse prescribing')
+
+    def test_vmpp(self):
+        rsp = self.client.get('/dmd/vmpp/1098611000001105/')
+        self.assertContains(
+            rsp,
+            '<td>Description</td><td>Acebutolol 100mg capsules 84 capsule</td>',
+            html=True
+        )
+        self.assertContains(rsp, 'Analyse prescribing')
+        self.assertNotContains(rsp, 'View Drug Tariff history')
+
+        TariffPrice.objects.create(
+            date='2019-07-01',
+            vmpp_id=1098611000001105,
+            tariff_category=DtPaymentCategory.objects.create(cd=1, descr='Cat A'),
+            price_pence=100,
+        )
+
+        rsp = self.client.get('/dmd/vmpp/1098611000001105/')
+        self.assertContains(rsp, 'View Drug Tariff history')
+
+    def test_ampp(self):
+        rsp = self.client.get('/dmd/ampp/9703311000001100/')
+        self.assertContains(
+            rsp,
+            '<td>Description</td><td>Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd) 84 capsule</td>',
+            html=True
+        )
+        self.assertContains(rsp, 'This AMPP cannot be matched against our prescribing data')
+
 
 class TestSearchView(TestCase):
-    fixtures = ['dmd-search-fixtures']
+    fixtures = ['dmd-objs']
 
     def test_search_returning_no_results(self):
         rsp = self._get('bananas')
