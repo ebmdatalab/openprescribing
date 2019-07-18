@@ -432,7 +432,7 @@ def run_all(year, month, under_test=False):
             settings.CHECK_NUMBERS_BASE_PATH, '*', 'numbers.json'
     )
     for path in glob.glob(check_numbers_glob):
-        os.unlink(path)
+        os.remove(path)
 
     TaskLog.objects.create(
         year=year, month=month, task_name="fetch_and_import", status=TaskLog.SUCCESSFUL
