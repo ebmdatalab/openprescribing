@@ -112,11 +112,11 @@ def get_paths_to_scrape():
         if '%' not in pattern and 'all-england' not in pattern:
             continue
 
-        path = bulid_path(pattern, keys)
+        path = build_path(pattern, keys)
         yield name, path
 
 
-def bulid_path(pattern, keys):
+def build_path(pattern, keys):
     '''Replace placeholders in `pattern` to build path to be scraped.
 
     `pattern` will be a string like "measure/%(measure)s/ccg/%(entity_code)s/".
