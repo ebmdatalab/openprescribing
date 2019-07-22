@@ -580,7 +580,7 @@ def _measure_for_children_in_entity(
             'measure_for_one_' + parent_entity_type,
             kwargs={'measure': measure.id, 'entity_code': parent_entity_code}
         ),
-        'other_measures_url': reverse(
+        'all_measures_url': reverse(
             'measures_for_one_' + parent_entity_type,
             kwargs={parent_entity_type + '_code': parent_entity_code}
         ),
@@ -613,7 +613,7 @@ def measure_for_all_entities(request, measure, entity_type):
         'entity_type': entity_type,
         'entity_type_human': entity_type_human,
         'measure_tags': _get_tags_with_names(measure.tags),
-        'other_measures_url': reverse('all_measures'),
+        'all_measures_url': reverse('all_measures'),
     }
     return render(request, 'measure_for_all_entities.html', context)
 
