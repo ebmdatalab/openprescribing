@@ -580,8 +580,13 @@ def _measure_for_children_in_entity(
             'measure_for_one_' + parent_entity_type,
             kwargs={'measure': measure.id, 'entity_code': parent_entity_code}
         ),
+        'other_measures_url': reverse(
+            'measures_for_one_' + parent_entity_type,
+            kwargs={parent_entity_type + '_code': parent_entity_code}
+        ),
         'measure': measure,
         'measure_options': measure_options,
+        'measure_tags': _get_tags_with_names(measure.tags),
     }
     return render(request, 'measure_for_children_in_entity.html', context)
 
@@ -607,6 +612,8 @@ def measure_for_all_entities(request, measure, entity_type):
         'measure_options': measure_options,
         'entity_type': entity_type,
         'entity_type_human': entity_type_human,
+        'measure_tags': _get_tags_with_names(measure.tags),
+        'other_measures_url': reverse('all_measures'),
     }
     return render(request, 'measure_for_all_entities.html', context)
 
@@ -1072,6 +1079,13 @@ def _get_tags_select_options(selected_tags, show_all_by_default):
             'selected': (len(selected_tags) == 0)
         })
     return options
+
+
+def _get_tags_with_names(tags):
+    return [
+        {'tag': tag, 'name': MEASURE_TAGS[tag]['name']}
+        for tag in tags
+    ]
 
 
 def _sort_core_tag_first(option):
