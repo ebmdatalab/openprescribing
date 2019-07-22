@@ -16,6 +16,12 @@
             {% endfor %}
           </dl>
         {% endif %}
+        {% if 'lowpriority' in tag_filter.tags and low_priority_url %}
+          <p>
+            See also our measure showing the combined total of
+            <a href="{{ low_priority_url }}">all low-priority prescribing</a>.
+          </p>
+        {% endif %}
         <p>
           <a href="?">View all standard measures instead</a>.
         </p>

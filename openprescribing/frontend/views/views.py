@@ -506,6 +506,10 @@ def _measures_for_one_entity(request, entity_code, entity_type):
         'entity_type_human': _entity_type_human(entity_type),
         'page_id': entity_code,
         'tag_filter': tag_filter,
+        'low_priority_url': reverse(
+            'measure_for_one_' + entity_type,
+            kwargs={'measure': 'lpzomnibus', 'entity_code': entity.code}
+        ),
         'measure_options': measure_options,
     }
 
