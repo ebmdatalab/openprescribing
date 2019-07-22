@@ -88,6 +88,12 @@ class RegionalTeam(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    def get_absolute_url(self):
+        return reverse(
+            'regional_team_home_page',
+            kwargs={'regional_team_code': self.code}
+        )
+
 
 class STP(models.Model):
     ons_code = models.CharField(max_length=9, primary_key=True)
@@ -107,6 +113,12 @@ class STP(models.Model):
     @property
     def code(self):
         return self.ons_code
+
+    def get_absolute_url(self):
+        return reverse(
+            'stp_home_page',
+            kwargs={'stp_code': self.code}
+        )
 
 
 class PCNManager(models.Manager):
@@ -134,6 +146,12 @@ class PCN(models.Model):
     @property
     def code(self):
         return self.ons_code
+
+    def get_absolute_url(self):
+        return reverse(
+            'pcn_home_page',
+            kwargs={'pcn_code': self.code}
+        )
 
 
 class PCT(models.Model):
@@ -176,6 +194,12 @@ class PCT(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    def get_absolute_url(self):
+        return reverse(
+            'ccg_home_page',
+            kwargs={'ccg_code': self.code}
+        )
 
 
 class Practice(models.Model):
@@ -292,6 +316,12 @@ class Practice(models.Model):
 
     class Meta:
         app_label = 'frontend'
+
+    def get_absolute_url(self):
+        return reverse(
+            'practice_home_page',
+            kwargs={'practice_code': self.code}
+        )
 
 
 class PracticeIsDispensing(models.Model):
