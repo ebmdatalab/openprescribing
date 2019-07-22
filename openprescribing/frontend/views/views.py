@@ -1272,13 +1272,17 @@ def _build_measure_options(options):
         if options.get('aggregate'):
             options['chartTitleUrlTemplate'] = _url_template('measure_for_all_ccgs')
         elif options['orgType'] == 'regional_team':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_regional_team')
+            options['chartTitleUrlTemplate'] = _url_template(
+                'measure_for_one_regional_team'
+            )
         elif options['orgType'] == 'stp':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_stp')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_stp')
         elif options['orgType'] == 'pcn':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_pcn')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_pcn')
+        elif options['orgType'] == 'ccg':
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_ccg')
         else:
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_practice')
     else:
         view_name = 'measures_for_one_{}'.format(options['orgType'])
         options['chartTitleUrlTemplate'] = _url_template(view_name)
