@@ -12,7 +12,7 @@
   {% include '_measure_header.html' %}
 
   <p>
-    {{ child_entity_type_human }}s are ordered by mean percentile over the
+    {{ child_entity_type_human|capfirst }}s are ordered by mean percentile over the
     past six months, with the worst-performing at the top. Each chart shows the
     results for the individual {{ child_entity_type_human }}, plus deciles
     across all {{ child_entity_type_human }}s in the NHS in England.
