@@ -126,7 +126,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/ccg/AAA/{}/'.format(extreme_measure.id)
+            '/measure/{}/practice/P00000/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -134,7 +134,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/practice/P00000/'
         )
 
     def test_pcn_home_page(self):
@@ -149,7 +149,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/pcn/E00000000/{}/'.format(extreme_measure.id)
+            '/measure/{}/pcn/E00000000/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -157,7 +157,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/pcn/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/pcn/E00000000/'
         )
 
     def test_ccg_home_page(self):
@@ -172,7 +172,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/ccg/AAA/{}/'.format(extreme_measure.id)
+            '/measure/{}/ccg/AAA/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -180,7 +180,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/ccg/AAA/'
         )
 
     def test_stp_home_page(self):
@@ -195,7 +195,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/stp/E00000000/{}/'.format(extreme_measure.id)
+            '/measure/{}/stp/E00000000/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -203,7 +203,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/stp/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/stp/E00000000/'
         )
 
     def test_regional_team_home_page(self):
@@ -220,7 +220,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/regional-team/Y01/{}/'.format(extreme_measure.id)
+            '/measure/{}/regional-team/Y01/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -228,7 +228,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/regional-team/Y01/lpzomnibus/'
+            '/measure/lpzomnibus/regional-team/Y01/'
         )
 
     def test_measures_for_one_practice(self):
@@ -239,7 +239,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/ccg/AAA/core_0/'
+            '/measure/core_0/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -250,6 +250,12 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(2)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
             '/measure/core_0/'
         )
@@ -259,7 +265,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -276,10 +282,16 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(3)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
             'Compare all CCGs in England on this measure',
             '/measure/lpzomnibus/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 3)
+        self._verify_num_elements(panel_element, '.inner li', 4)
 
     def test_measures_for_one_practice_low_priority(self):
         self._get('/practice/P00000/measures/?tags=lowpriority')
@@ -289,7 +301,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -300,10 +312,16 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(2)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
             '/measure/lp_2/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 2)
+        self._verify_num_elements(panel_element, '.inner li', 3)
 
     def test_measures_for_one_ccg(self):
         self._get('/ccg/AAA/measures/')
@@ -313,7 +331,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/ccg/AAA/core_0/'
+            '/measure/core_0/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -339,7 +357,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -375,7 +393,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -405,7 +423,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/pcn/E00000000/core_0/'
+            '/measure/core_0/pcn/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -431,7 +449,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/pcn/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/pcn/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -467,7 +485,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/pcn/E00000000/lp_2/'
+            '/measure/lp_2/pcn/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -497,7 +515,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/stp/E00000000/core_0/'
+            '/measure/core_0/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -523,7 +541,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/stp/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -559,7 +577,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/regional-team/Y01/core_0/'
+            '/measure/core_0/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
@@ -585,7 +603,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/regional-team/Y01/lpzomnibus/'
+            '/measure/lpzomnibus/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
@@ -747,15 +765,21 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/practice/P00000/'
         )
         self._verify_link(
             panel_element,
             '.inner li:nth-child(1)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
             '/measure/lp_2/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 1)
+        self._verify_num_elements(panel_element, '.inner li', 2)
 
     def test_measure_for_one_ccg(self):
         self._get('/measure/lp_2/ccg/AAA/')
@@ -765,7 +789,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -789,7 +813,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/pcn/E00000000/lp_2/'
+            '/measure/lp_2/pcn/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -813,7 +837,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/stp/E00000000/lp_2/'
+            '/measure/lp_2/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -837,7 +861,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/regional-team/Y01/lp_2/'
+            '/measure/lp_2/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
