@@ -506,6 +506,10 @@ def _measures_for_one_entity(request, entity_code, entity_type):
         'entity_type_human': _entity_type_human(entity_type),
         'page_id': entity_code,
         'tag_filter': tag_filter,
+        'low_priority_url': reverse(
+            'measure_for_one_' + entity_type,
+            kwargs={'measure': 'lpzomnibus', 'entity_code': entity.code}
+        ),
         'measure_options': measure_options,
     }
 
@@ -572,8 +576,17 @@ def _measure_for_children_in_entity(
         'child_entity_type_human': _entity_type_human(child_entity_type),
         'parent': parent,
         'page_id': parent_entity_code,
+        'parent_entity_measure_url': reverse(
+            'measure_for_one_' + parent_entity_type,
+            kwargs={'measure': measure.id, 'entity_code': parent_entity_code}
+        ),
+        'all_measures_url': reverse(
+            'measures_for_one_' + parent_entity_type,
+            kwargs={parent_entity_type + '_code': parent_entity_code}
+        ),
         'measure': measure,
         'measure_options': measure_options,
+        'measure_tags': _get_tags_with_names(measure.tags),
     }
     return render(request, 'measure_for_children_in_entity.html', context)
 
@@ -599,6 +612,8 @@ def measure_for_all_entities(request, measure, entity_type):
         'measure_options': measure_options,
         'entity_type': entity_type,
         'entity_type_human': entity_type_human,
+        'measure_tags': _get_tags_with_names(measure.tags),
+        'all_measures_url': reverse('all_measures'),
     }
     return render(request, 'measure_for_all_entities.html', context)
 
@@ -1066,6 +1081,13 @@ def _get_tags_select_options(selected_tags, show_all_by_default):
     return options
 
 
+def _get_tags_with_names(tags):
+    return [
+        {'tag': tag, 'name': MEASURE_TAGS[tag]['name']}
+        for tag in tags
+    ]
+
+
 def _sort_core_tag_first(option):
     return (0 if option['id'] == CORE_TAG else 1, option['name'])
 
@@ -1272,13 +1294,17 @@ def _build_measure_options(options):
         if options.get('aggregate'):
             options['chartTitleUrlTemplate'] = _url_template('measure_for_all_ccgs')
         elif options['orgType'] == 'regional_team':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_regional_team')
+            options['chartTitleUrlTemplate'] = _url_template(
+                'measure_for_one_regional_team'
+            )
         elif options['orgType'] == 'stp':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_ccgs_in_stp')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_stp')
         elif options['orgType'] == 'pcn':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_pcn')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_pcn')
+        elif options['orgType'] == 'ccg':
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_ccg')
         else:
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
+            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_practice')
     else:
         view_name = 'measures_for_one_{}'.format(options['orgType'])
         options['chartTitleUrlTemplate'] = _url_template(view_name)
@@ -1293,6 +1319,18 @@ def _build_measure_options(options):
     if options['orgType'] in ['stp', 'regional_team']:
         view_name = 'measure_for_ccgs_in_{}'.format(options['orgType'])
         options['measureForAllCCGsUrlTemplate'] = _url_template(view_name)
+
+    # In theory this could be made generic for more than just the practice/CCG
+    # relationship but the refactoring in the JS and measures API needed to
+    # support this is too great to do right now so we only show this link for
+    # practices and only when they're not being shown in the context of their
+    # CCG (which would make the links redundant) or their PCN (because we won't
+    # have the ccg_code parameter available on that page)
+    if (options['orgType'] == 'practice'
+            and options.get('parentOrgType') not in ['ccg', 'pcn']):
+        options['measureForSiblingsUrlTemplate'] = _url_template(
+            'measure_for_practices_in_ccg'
+        )
 
     # measureUrlTemplate
     if options['rollUpBy'] == 'measure_id':

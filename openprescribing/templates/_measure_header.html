@@ -27,3 +27,13 @@
     </ul>
   </p>
 {% endif %}
+
+<p>
+  <strong>Tagged as</strong>:
+    {% for tag in measure_tags %}
+      <a href="{{ all_measures_url }}?tags={{ tag.tag }}">
+        {{ tag.name }}{% if not forloop.last %},{% endif %}
+      </a>
+    {% endfor %}
+    (or browse <a href="{{ all_measures_url }}">all measures{% if parent_entity_type_human %} for this {{ parent_entity_type_human }}{% endif %}</a>)
+</p>
