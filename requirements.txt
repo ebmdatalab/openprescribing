@@ -9,7 +9,7 @@ asn1crypto==0.24.0        # via cryptography
 backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.0
-cachetools==2.0.1         # via google-auth, premailer
+cachetools==3.1.1         # via google-auth, premailer
 certifi==2019.6.16        # via requests
 cffi==1.12.3              # via bcrypt, cryptography, pynacl, zstandard
 chardet==3.0.4            # via requests
