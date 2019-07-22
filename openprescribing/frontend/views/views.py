@@ -576,6 +576,10 @@ def _measure_for_children_in_entity(
         'child_entity_type_human': _entity_type_human(child_entity_type),
         'parent': parent,
         'page_id': parent_entity_code,
+        'parent_entity_measure_url': reverse(
+            'measure_for_one_' + parent_entity_type,
+            kwargs={'measure': measure.id, 'entity_code': parent_entity_code}
+        ),
         'measure': measure,
         'measure_options': measure_options,
     }
