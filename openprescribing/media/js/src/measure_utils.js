@@ -328,6 +328,7 @@ var utils = {
     var tagsFocusUrl;
     var measureForAllPracticesUrl;
     var measureForAllCCGsUrl;
+    var measureForSiblingsUrl;
     var context = {};
     var _this = this;
 
@@ -360,6 +361,10 @@ var utils = {
     );
     measureForAllCCGsUrl = _this._buildUrl(
       options.measureForAllCCGsUrlTemplate,
+      context
+    );
+    measureForSiblingsUrl = _this._buildUrl(
+      options.measureForSiblingsUrlTemplate,
       context
     );
     tagsFocusUrl = _this._buildUrl(
@@ -433,6 +438,7 @@ var utils = {
       tagsFocusUrl: tagsFocusUrl,
       measureForAllPracticesUrl: measureForAllPracticesUrl,
       measureForAllCCGsUrl: measureForAllCCGsUrl,
+      measureForSiblingsUrl: measureForSiblingsUrl,
       chartExplanation: chartExplanation,
       tags: d.tags,
       tagsForDisplay: (d.tags || []).filter(function(t) { return t.id !== 'core'; })

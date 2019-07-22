@@ -1306,6 +1306,18 @@ def _build_measure_options(options):
         view_name = 'measure_for_ccgs_in_{}'.format(options['orgType'])
         options['measureForAllCCGsUrlTemplate'] = _url_template(view_name)
 
+    # In theory this could be made generic for more than just the practice/CCG
+    # relationship but the refactoring in the JS and measures API needed to
+    # support this is too great to do right now so we only show this link for
+    # practices and only when they're not being shown in the context of their
+    # CCG (which would make the links redundant) or their PCN (because we won't
+    # have the ccg_code parameter available on that page)
+    if (options['orgType'] == 'practice'
+            and options.get('parentOrgType') not in ['ccg', 'pcn']):
+        options['measureForSiblingsUrlTemplate'] = _url_template(
+            'measure_for_practices_in_ccg'
+        )
+
     # measureUrlTemplate
     if options['rollUpBy'] == 'measure_id':
         if options['orgType'] == 'practice':
