@@ -75,10 +75,16 @@ class TestDMDObjView(TestCase):
         rsp = self.client.get('/dmd/ampp/9703311000001100/')
         self.assertContains(
             rsp,
-            '<td>Description</td><td>Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd) 84 capsule</td>',
+            '''
+            <td>Description</td>
+            <td>Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd) 84 capsule</td>
+            ''',
             html=True
         )
-        self.assertContains(rsp, 'This AMPP cannot be matched against our prescribing data')
+        self.assertContains(
+            rsp,
+            'This AMPP cannot be matched against our prescribing data'
+        )
 
 
 class TestSearchView(TestCase):
