@@ -304,6 +304,13 @@ You will need your own Google credentials for the stages of the process
 which interact with GCS.
 
 
+# Google credentials
+
+To interact with GCS, you will need to install [`gcloud`](https://cloud.google.com/sdk/gcloud/), and then run:
+
+    gcloud auth application-default login
+
+
 # Editing JS and CSS
 
 Source JavaScript is in `/media`, compiled JavaScript is in `/static`.
