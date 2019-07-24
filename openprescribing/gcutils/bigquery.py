@@ -240,7 +240,6 @@ class Client(object):
         sql = interpolate_sql(sql)
         kwargs = {
             'project_id': self.project,
-            'verbose': False,
             'dialect': 'legacy' if legacy else 'standard',
         }
         with exception_sql_printer(sql):
