@@ -5,6 +5,7 @@ import string
 import subprocess
 import sys
 import tempfile
+import warnings
 
 from google.cloud import bigquery as gcbq
 from google.cloud.exceptions import Conflict, NotFound
@@ -65,9 +66,15 @@ class Client(object):
 
         # If this raises a DefaultCredentialsError:
         #  * on a developer's machine, run `gcloud auth application-default login`
+        #   to use OAuth
         #  * elsewhere, ensure that GOOGLE_APPLICATION_CREDENTIALS is set and
         #    points to a valid set of credentials for a service account
-        self.gcbq_client = gcbq.Client(project=self.project)
+        #
+        # A warning is raised when authenticating with OAuth, recommending that
+        # server applications use a service account.  We can ignore this.
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.gcbq_client = gcbq.Client(project=self.project)
 
         self.dataset_key = dataset_key
 
