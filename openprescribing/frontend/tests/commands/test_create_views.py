@@ -47,12 +47,10 @@ class CommandsTestCase(SimpleTestCase):
             table.insert_rows_from_csv(prescribing_fixture_path)
 
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
-            columns = [field.name for field in CCG_SCHEMA]
-            table.insert_rows_from_pg(PCT, columns, ccgs_transform)
+            table.insert_rows_from_pg(PCT, CCG_SCHEMA, transformer=ccgs_transform)
 
             table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
-            columns = [field.name for field in PRACTICE_SCHEMA]
-            table.insert_rows_from_pg(Practice, columns)
+            table.insert_rows_from_pg(Practice, PRACTICE_SCHEMA)
 
             table = client.get_or_create_table(
                 'practice_statistics',
@@ -63,8 +61,9 @@ class CommandsTestCase(SimpleTestCase):
             columns[-1] = 'practice_id'
             table.insert_rows_from_pg(
                 PracticeStatistics,
-                columns,
-                statistics_transform
+                PRACTICE_STATISTICS_SCHEMA,
+                columns=columns,
+                transformer=statistics_transform
             )
 
             sql = """

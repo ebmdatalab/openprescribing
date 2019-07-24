@@ -33,15 +33,13 @@ class Command(BaseCommand):
         client = BQClient('hscic')
 
         table = client.get_table('practices')
-        columns = [field.name for field in schemas.PRACTICE_SCHEMA]
-        table.insert_rows_from_pg(models.Practice, columns)
+        table.insert_rows_from_pg(models.Practice, schemas.PRACTICE_SCHEMA)
 
         table = client.get_table('presentation')
-        columns = [field.name for field in schemas.PRESENTATION_SCHEMA]
         table.insert_rows_from_pg(
             models.Presentation,
-            columns,
-            schemas.presentation_transform
+            schemas.PRESENTATION_SCHEMA,
+            transformer=schemas.presentation_transform
         )
 
         table = client.get_table('practice_statistics')
@@ -50,8 +48,9 @@ class Command(BaseCommand):
         columns[-1] = 'practice_id'
         table.insert_rows_from_pg(
             models.PracticeStatistics,
-            columns,
-            schemas.statistics_transform
+            schema=schema.PRACTICE_STATISTICS_SCHEMA,
+            columns=columns,
+            transformer=schemas.statistics_transform
         )
 
         sql = 'SELECT MAX(month) FROM {hscic}.practice_statistics_all_years'
@@ -73,11 +72,10 @@ class Command(BaseCommand):
         )
 
         table = client.get_table('ccgs')
-        columns = [field.name for field in schemas.CCG_SCHEMA]
         table.insert_rows_from_pg(
             models.PCT,
-            columns,
-            schemas.ccgs_transform
+            schemas.CCG_SCHEMA,
+            transformer=schemas.ccgs_transform
         )
 
         table = client.get_table('prescribing_' + date.strftime('%Y_%m'))

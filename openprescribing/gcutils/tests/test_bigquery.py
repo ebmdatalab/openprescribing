@@ -164,7 +164,11 @@ class BQClientTest(TestCase):
 
         def transformer(row):
             return [ord(row[0][0]), row[1]]
-        t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
+        t1.insert_rows_from_pg(
+            PCT,
+            build_schema(('code', 'INTEGER'), ('name', 'STRING')),
+            transformer=transformer
+        )
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
 

@@ -274,7 +274,7 @@ class Client(object):
                 record[ix] = record[ix] + ' 00:00:00'
             return record
 
-        table.insert_rows_from_pg(model, columns, transformer)
+        table.insert_rows_from_pg(model, schema, columns, transformer)
 
 
 class Table(object):
@@ -362,13 +362,15 @@ class Table(object):
             self.run_job('load_table_from_file', args, options,
                          default_options)
 
-    def insert_rows_from_pg(self, model, columns, transformer=None):
+    def insert_rows_from_pg(self, model, schema, columns=None, transformer=None):
+        if columns is None:
+            columns = [field.name for field in schema]
         table_dumper = TableDumper(model, columns, transformer)
 
         with tempfile.NamedTemporaryFile() as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
-            self.insert_rows_from_csv(f.name, foo='bar')
+            self.insert_rows_from_csv(f.name, schema=schema)
 
     def insert_rows_from_storage(self, gcs_path, **options):
         default_options = {
