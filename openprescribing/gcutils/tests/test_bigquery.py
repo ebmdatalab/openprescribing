@@ -39,6 +39,11 @@ class BQClientTest(TestCase):
         client = Client('test')
         archive_client = Client('archive')
 
+        orig_schema = build_schema(
+            ('a', 'STRING'),
+            ('b', 'INTEGER'),
+        )
+
         schema = build_schema(
             ('a', 'INTEGER'),
             ('b', 'STRING'),
@@ -51,11 +56,11 @@ class BQClientTest(TestCase):
             (3, 'coconut'),
         ]
 
-        t1 = client.get_or_create_table('t1', schema)
+        t1 = client.get_or_create_table('t1', orig_schema)
         t1_qname = t1.qualified_name
 
         # Test Table.insert_rows_from_csv
-        t1.insert_rows_from_csv('gcutils/tests/test_table.csv')
+        t1.insert_rows_from_csv('gcutils/tests/test_table.csv', schema=schema)
 
         self.assertEqual(sorted(t1.get_rows()), rows)
 

@@ -351,6 +351,12 @@ class Table(object):
             'write_disposition': 'WRITE_TRUNCATE',
         }
 
+        if 'schema' in options:
+            # When we send a schema with a load_table_from_file job, our copy
+            # of the table metadata doesn't get updated, so we need to do this
+            # ourselves.
+            self.gcbq_table.schema = options['schema']
+
         with open(csv_path, 'rb') as f:
             args = [f, self.gcbq_table_ref]
             self.run_job('load_table_from_file', args, options,
