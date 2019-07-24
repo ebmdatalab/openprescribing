@@ -80,18 +80,21 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
             '"Alice Apple, NHS England" <feedback@openprescribing.net>'
         )
 
-    def test_send_feedback_mail_name_encoded(self):
+    def test_send_feedback_mail_nonascii_encoded(self):
         mail.outbox = []
 
         send_feedback_mail(
             user_name=u"Alicé Apple",
             user_email_addr="alice@example.com",
-            subject="",
-            message="",
-            url="",
+            subject=u"Test ✓",
+            message=u"All Good ✓",
+            url=u"http://example.com/?p=✓",
         )
         email = mail.outbox[0]
         self.assertEqual(
             email.from_email,
             u'Alicé Apple <feedback@openprescribing.net>'
         )
+        self.assertEqual(email.subject, u'OpenPrescribing Feedback: Test ✓')
+        self.assertIn(u"All Good ✓", email.body)
+        self.assertIn(u"http://example.com/?p=✓", email.body)
