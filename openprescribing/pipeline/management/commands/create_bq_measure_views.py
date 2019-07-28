@@ -17,12 +17,14 @@ class Command(BaseCommand):
         client = Client("measures")
 
         for table_name in [
-            'gaba_total_ddd',
             'opioid_total_ome',
             'practice_data_all_low_priority',
             'pregabalin_total_mg',
             'vw__median_price_per_unit',
             'vw__ghost_generic_measure',
+
+            # This references pregabalin_total_mg, so must come afterwards
+            'gaba_total_ddd',
         ]:
             path = os.path.join(base_path, table_name + '.sql')
             with open(path, "r") as sql_file:
