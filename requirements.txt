@@ -38,6 +38,7 @@ et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.8
 google-api-core==1.14.0   # via google-cloud-core
+future==0.17.1            # via lz4
 google-api-python-client==1.7.10
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth-oauthlib==0.4.0  # via pandas-gbq, pydata-google-auth
@@ -55,6 +56,7 @@ httplib2==0.13.1          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.4.0
+lz4==2.1.10
 mailchimp3==3.0.7
 mccabe==0.6.1             # via flake8
 mock==3.0.5
