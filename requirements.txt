@@ -60,7 +60,7 @@ mccabe==0.6.1             # via flake8
 mock==3.0.5
 networkx==2.2
 newrelic==4.20.1.121
-numpy==1.16.4
+numpy==1.17.0
 oauthlib==3.0.2           # via requests-oauthlib
 openpyxl==2.6.2
 pandas-gbq==0.10.0
