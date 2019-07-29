@@ -109,7 +109,7 @@ class TestSpendingViews(TestCase):
 
     def test_alert_signup(self):
         factory = DataFactory()
-        user = factory.create_user(email='alice@example.com')
+        factory.create_user(email='alice@example.com')
         factory.create_ncso_concessions_bookmark(None)
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
@@ -132,7 +132,7 @@ class TestSpendingViews(TestCase):
 
     def test_all_england_alert_signup(self):
         factory = DataFactory()
-        user = factory.create_user(email='alice@example.com')
+        factory.create_user(email='alice@example.com')
         factory.create_ncso_concessions_bookmark(self.practice)
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
