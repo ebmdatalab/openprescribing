@@ -50,7 +50,7 @@ FROM (
     END
       )/1800 AS gaba_ddd -- and divides all by 1800 to get DDD (https://www.whocc.no/atc_ddd_index/?code=N03AX12)
   FROM
-    {project}.hscic.normalised_prescribing_standard
+    {project}.{hscic}.normalised_prescribing_standard
   WHERE
     bnf_code LIKE '0408010G0%' --gabapentin
   GROUP BY
@@ -64,7 +64,7 @@ FROM (
     pct,
     (SUM(lyrica_mg)/300) AS gaba_ddd
   FROM
-    {project}.measures.pregabalin_total_mg AS rx --this is from the existing pregabalinmg query, so divide by 300 to get DDD for pregabalin https://www.whocc.no/atc_ddd_index/?code=N03AX16
+    {project}.{measures}.pregabalin_total_mg AS rx --this is from the existing pregabalinmg query, so divide by 300 to get DDD for pregabalin https://www.whocc.no/atc_ddd_index/?code=N03AX16
   GROUP BY
     month,
     practice,
