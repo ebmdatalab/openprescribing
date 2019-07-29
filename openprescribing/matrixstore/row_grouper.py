@@ -100,6 +100,23 @@ class RowGrouper(object):
             numpy.sum(row_group, axis=0, out=output_view[group_offset])
         return grouped_output
 
+    def sum_one_group(self, matrix, group_id):
+        """
+        Sum the rows of matrix (column-wise) which belong to the specified
+        group
+
+        Returns a 1-dimensional array of size: columns_in_original_matrix
+        """
+        row_selector = self._group_selectors[self.offsets[group_id]]
+        row_group = matrix[row_selector]
+        group_sum = numpy.sum(row_group, axis=0)
+        # As above, there's complexity around whether our input value is a
+        # `numpy.matrix` or `numpy.ndarray`
+        if has_type_matrix(group_sum):
+            return group_sum.A[0]
+        else:
+            return group_sum
+
 
 def has_type_matrix(value):
     """

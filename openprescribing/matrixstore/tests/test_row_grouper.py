@@ -46,6 +46,23 @@ class TestGrouper(SimpleTestCase):
         self.assertEqual(row_grouper.ids, ['even', 'odd'])
         self.assertEqual(row_grouper.offsets, {'even': 0, 'odd': 1})
 
+    def test_basic_sum_one_group(self):
+        """
+        Test summing for a single group on a matrix which is small enough to
+        verify the results by hand
+        """
+        group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
+        rows = [
+          [1, 2, 3, 4],
+          [2, 3, 4, 5],
+          [3, 4, 5, 6],
+          [4, 5, 6, 7],
+        ]
+        matrix = numpy.array(rows)
+        row_grouper = RowGrouper(group_definition)
+        group_sum = row_grouper.sum_one_group(matrix, 'even')
+        self.assertEqual(group_sum.tolist(), [4, 6, 8, 10])
+
     def test_empty_group_produces_empty_matrix(self):
         """
         Test the empty group edge case
@@ -80,6 +97,13 @@ class TestGrouper(SimpleTestCase):
             # numpy and Python float rounding
             self.assertEqual(
                 round_floats(values), round_floats(expected_values)
+            )
+            # Test summing a single group (we pick the first as that's easiest)
+            group_id = row_grouper.ids[0]
+            expected_value = expected_values[0]
+            value = row_grouper.sum_one_group(matrix, group_id)
+            self.assertEqual(
+                round_floats(value.tolist()), round_floats(expected_value)
             )
 
     def sum_rows_by_group(self, group_definition, matrix):
