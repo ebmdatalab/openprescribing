@@ -67,7 +67,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
     {% block extra_css %}{% endblock extra_css %}
   </head>
 
-  <body>
+  <body{% if request.GET.embed %} class="embed"{% endif %}>
 
     <nav class="navbar navbar-inverse">
       <div class="container">

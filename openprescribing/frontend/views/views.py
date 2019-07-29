@@ -453,6 +453,28 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
     return render(request, 'measure_for_one_entity.html', context)
 
 
+def measure_for_all_england(request, measure):
+    measure = get_object_or_404(Measure, pk=measure)
+    entity_type = request.GET.get("entity_type", "ccg")
+    measure_options = {
+        "orgType": entity_type.lower(),
+        'measure': measure,
+        "orgName": "All {}s in England".format(entity_type),
+        "aggregate": True,
+        "rollUpBy": "measure_id",
+    }
+
+    measure_options = _build_measure_options(measure_options)
+    context = {
+        "entity_type": entity_type,
+        "measures_url_name": "measures_for_one_{}".format(entity_type),
+        "measure": measure,
+        "measure_options": measure_options,
+        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+    }
+    return render(request, "measure_for_one_entity.html", context)
+
+
 # Note that we cannot have a single view function for measures_for_one_entity or
 # measure_for_children_in_entity (as we do for eg measure_for_one_entity)
 # because the parameter names are used for building URLs by _url_template()
@@ -1341,12 +1363,15 @@ def _build_measure_options(options):
         options['measureUrlTemplate'] = _url_template(view_name)
 
     # oneEntityUrlTemplate
-    if not options.get('aggregate') and not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
+    if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
         # If we're rolling up by measure and a measure is provided in the
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
-        view_name = 'measure_for_one_{}'.format(options['orgType'])
-        options['oneEntityUrlTemplate'] = _url_template(view_name)
+        if options.get('aggregate'):
+            options['oneEntityUrlTemplate'] = _url_template('measure_for_all_england')
+        else:
+            view_name = 'measure_for_one_{}'.format(options['orgType'])
+            options['oneEntityUrlTemplate'] = _url_template(view_name)
 
     # tagsFocusUrlTemplate
     if options.get('aggregate'):

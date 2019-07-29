@@ -203,6 +203,9 @@ urlpatterns = [
         frontend_views.measure_for_one_entity,
         name='measure_for_one_regional_team',
         kwargs={'entity_type': 'regional_team'}),
+    url(r'^measure/(?P<measure>[A-Za-z\d_]+)/all-england/$',
+        frontend_views.measure_for_all_england,
+        name='measure_for_all_england'),
 
     url(r'^practice/(?P<practice_code>[A-Z\d]+)/measures/$',
         frontend_views.measures_for_one_practice,
