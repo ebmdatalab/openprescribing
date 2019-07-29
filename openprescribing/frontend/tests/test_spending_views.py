@@ -37,7 +37,7 @@ class TestSpendingViews(TestCase):
             for _ in range(2):
                 cls.practices.append(factory.create_practice(ccg=ccg))
         # Create some presentations
-        cls.presentations = factory.create_presentations(6)
+        cls.presentations = factory.create_presentations(6, vmpp_per_presentation=2)
         # Create drug tariff and price concessions costs for these presentations
         factory.create_tariff_and_ncso_costings_for_presentations(
             cls.presentations,
@@ -242,6 +242,7 @@ def recalculate_ncso_spending_for_entity(entity, entity_type, num_months,
     )
     concessions = filter_zero_prescribing_quantities(concessions)
     concessions = calculate_costs_for_concessions(concessions)
+    concessions = filter_duplicate_concessions(concessions)
     results = []
     for row in aggregate_by_date(concessions):
         result = {
@@ -268,6 +269,7 @@ def recalculate_ncso_spending_breakdown_for_entity(entity, entity_type, month):
     )
     concessions = filter_zero_prescribing_quantities(concessions)
     concessions = calculate_costs_for_concessions(concessions)
+    concessions = filter_duplicate_concessions(concessions)
     results = []
     for row in concessions:
         results.append((
@@ -347,6 +349,27 @@ def add_quantities_to_concessions(concessions, quantities, last_prescribing_date
         concession['quantity'] = quantities[key]
         concession['is_estimate'] = is_estimate
     return concessions
+
+
+def filter_duplicate_concessions(concessions):
+    """
+    Because concessions are made at the product-pack level but we only have
+    prescribing data at the product level, we sometimes end up with multiple
+    concessions matching to a single product on the same date. In this case we
+    use only the highest priced concession.
+    """
+    costs = []
+    for index, concession in enumerate(concessions):
+        key = '{}:{}'.format(concession['bnf_code'], concession['date'])
+        costs.append(
+            (key, concession['additional_cost'], index)
+        )
+    selected = {key: index for (key, cost, index) in sorted(costs)}
+    selected = set(selected.values())
+    return [
+        concession for (index, concession) in enumerate(concessions)
+        if index in selected
+    ]
 
 
 def filter_zero_prescribing_quantities(concessions):
