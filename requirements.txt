@@ -51,7 +51,7 @@ graphviz==0.11.1
 gunicorn==19.9.0
 hiredis==1.0.0
 html2text==2018.1.9
-httplib2==0.13.0          # via google-api-python-client, google-auth-httplib2
+httplib2==0.13.1          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.3.4
