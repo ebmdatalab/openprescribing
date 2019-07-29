@@ -71,10 +71,10 @@ class TestSpendingViews(TestCase):
                 current_month=parse_date(self.months[-1]).date()
             )
             self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, self.months[0]
+                entity, entity_type, parse_date(self.months[0]).date()
             )
             self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, self.months[-1]
+                entity, entity_type, parse_date(self.months[-1]).date()
             )
 
     def validate_ncso_spending_for_entity(self, *args, **kwargs):
