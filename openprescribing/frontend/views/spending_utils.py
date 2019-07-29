@@ -1,11 +1,17 @@
+from __future__ import division
+
+from collections import namedtuple
+
 from django.db import connection
 from django.db.models import Max
-from datetime import date
+from django.db.models.functions import Coalesce
 
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse as parse_date
+import numpy
 
-from api.view_utils import dictfetchall
-from frontend.models import ImportLog, NCSOConcession
+from frontend.models import NCSOConcession, Presentation
+from matrixstore.db import get_db, get_row_grouper
 
 
 # The tariff (or concession) price is not what actually gets paid as each CCG
@@ -14,228 +20,351 @@ from frontend.models import ImportLog, NCSOConcession
 NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
 
 
+ConcessionPriceMatrices = namedtuple(
+    'ConcessionPriceMatrices',
+    'bnf_code_offsets date_offsets tariff_prices price_increases'
+)
+
+
+ConcessionCostMatrices = namedtuple(
+    'ConcessionCostMatrices',
+    'bnf_code_offsets date_offsets quantities tariff_costs extra_costs'
+)
+
+
 def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
-    if entity_type.lower() == 'ccg':
-        prescribing_table = 'vw__presentation_summary_by_ccg'
-        entity_field = 'pct_id'
-        entity_condition = entity.code
-    elif entity_type == 'practice':
-        prescribing_table = 'frontend_prescription'
-        entity_field = 'practice_id'
-        entity_condition = entity.code
-    elif entity_type == 'all_england':
-        prescribing_table = 'vw__presentation_summary_by_ccg'
-        entity_field = 'frontend_pct.org_type'
-        entity_condition = 'CCG'
-    else:
-        raise ValueError('Unknown entity_type: '+entity_type)
+    org_type, org_id = _get_org_type_and_id(entity, entity_type)
     end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
     # In practice, we always have at least one NCSOConcession object but we
     # need to handle the empty case in testing
     if not end_date:
         return []
-    start_date = end_date + relativedelta(months=-num_months)
-    with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query(prescribing_table, start_date, end_date)
-        params.update(
-            entity_condition=entity_condition
-        )
-        cursor.execute("""
-            SELECT
-              month,
-              SUM(tariff_cost) AS tariff_cost,
-              SUM(additional_cost) AS additional_cost,
-              is_estimate,
-              %(last_prescribing_date)s AS last_prescribing_date
-            FROM
-              ({sql}) AS subquery
-            JOIN
-              frontend_pct ON frontend_pct.code = pct_id
-            WHERE
-              month > %(start_date)s AND month <= %(end_date)s
-              AND {entity_field} = %(entity_condition)s
-            GROUP BY
-              month, is_estimate
-            ORDER BY
-              month
-            """.format(
-                sql=sql, entity_field=entity_field),
-            params)
-        results = dictfetchall(cursor)
-    # Price concessions are released gradually over the course of the month.
-    # This means that the numbers for the current month will start off looking
-    # low and then gradually increase as more concessions are granted. We want
-    # to flag this to the user.
-    if current_month is not None:
-        for row in results:
-            row['is_incomplete_month'] = row['month'] >= current_month
+    start_date = end_date + relativedelta(months=-(num_months-1))
+    max_prescribing_date_str = max(get_db().date_offsets.keys())
+    last_prescribing_date = parse_date(max_prescribing_date_str).date()
+    costs = _get_concession_cost_matrices(
+        start_date, end_date, org_type, org_id
+    )
+    # Sum together costs over all presentations (i.e. all rows)
+    tariff_costs = numpy.sum(costs.tariff_costs, axis=0)
+    extra_costs = numpy.sum(costs.extra_costs, axis=0)
+    results = []
+    for date_str, offset in sorted(costs.date_offsets.items()):
+        date = parse_date(date_str).date()
+        if extra_costs[offset] == 0:
+            continue
+        entry = {
+            'month': date,
+            'tariff_cost': float(tariff_costs[offset]),
+            'additional_cost': float(extra_costs[offset]),
+            'is_estimate': date > last_prescribing_date,
+            'last_prescribing_date': last_prescribing_date
+        }
+        if current_month is not None:
+            entry['is_incomplete_month'] = date >= current_month
+        results.append(entry)
     return results
 
 
 def ncso_spending_breakdown_for_entity(entity, entity_type, month):
+    org_type, org_id = _get_org_type_and_id(entity, entity_type)
+    costs = _get_concession_cost_matrices(month, month, org_type, org_id)
+    # As we're only fetching costs for a single month we get matrices with just
+    # a single column, which we slice out below. It would be perfectly possible
+    # to generate a breakdown for a range of months, in which case we would use
+    # `numpy.sum(tariff_costs, axis=1)` to sum across dates. However, if we do
+    # this then we also need to alter the `_get_concession_prices` function to
+    # fetch tariff costs for all dates in the range, not just those dates on
+    # which there is a price concession.
+    tariff_costs = costs.tariff_costs[:, 0]
+    extra_costs = costs.extra_costs[:, 0]
+    quantities = costs.quantities[:, 0]
+    names = _get_names_for_bnf_codes(costs.bnf_code_offsets.keys())
+    results = []
+    for bnf_code, offset in costs.bnf_code_offsets.items():
+        results.append((
+            bnf_code,
+            names[bnf_code],
+            int(quantities[offset]),
+            float(tariff_costs[offset]),
+            float(extra_costs[offset])
+        ))
+    # Sort by "additional cost" column, descending
+    results.sort(key=lambda i: i[4], reverse=True)
+    return results
+
+
+def _get_org_type_and_id(entity, entity_type):
     if entity_type == 'all_england':
-        return _ncso_spending_breakdown_for_all_england(month)
-    elif entity_type == 'CCG':
-        prescribing_table = 'vw__presentation_summary_by_ccg'
-        entity_field = 'pct_id'
-    elif entity_type == 'practice':
-        prescribing_table = 'frontend_prescription'
-        entity_field = 'practice_id'
+        org_type = 'all_practices'
+        org_id = None
     else:
-        raise ValueError('Unknown entity_type: '+entity_type)
-    with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query(prescribing_table, month, month)
-        params.update(
-            entity_id=entity.code,
-            month=month
-        )
-        cursor.execute("""
-            SELECT
-              bnf_code,
-              product_name,
-              quantity,
-              tariff_cost,
-              additional_cost
-            FROM
-              ({sql}) AS subquery
-            WHERE
-              month=%(month)s AND {entity_field} = %(entity_id)s
-            ORDER BY
-              additional_cost DESC, tariff_cost DESC
-            """.format(
-                sql=sql, entity_field=entity_field),
-            params)
-        return cursor.fetchall()
+        org_type = entity_type if entity_type != 'CCG' else 'ccg'
+        org_id = entity.code
+    return org_type, org_id
 
 
-def _ncso_spending_breakdown_for_all_england(month):
-    with connection.cursor() as cursor:
-        sql, params = _ncso_spending_query(
-            'vw__presentation_summary_by_ccg', month, month)
-        params.update(month=month)
-        cursor.execute("""
-            SELECT
-              bnf_code,
-              product_name,
-              SUM(quantity) AS quantity,
-              SUM(tariff_cost) AS tariff_cost,
-              SUM(additional_cost) AS additional_cost
-            FROM
-              ({sql}) AS subquery
-            JOIN
-              frontend_pct ON frontend_pct.code = pct_id
-            WHERE
-              month=%(month)s AND frontend_pct.org_type = 'CCG'
-            GROUP BY
-              bnf_code, product_name
-            ORDER BY
-              additional_cost DESC, tariff_cost DESC
-            """.format(
-                sql=sql),
-            params)
-        return cursor.fetchall()
+def _get_names_for_bnf_codes(bnf_codes):
+    """
+    Given a list of BNF codes return a dictionary mapping those codes to their
+    DM&D names
+    """
+    name_map = (
+        Presentation.objects
+        .filter(bnf_code__in=bnf_codes)
+        .values_list('bnf_code', Coalesce('dmd_name', 'name'))
+    )
+    return dict(name_map)
 
 
-def _date_as_str(d):
-    # Necessary because the prescribing table uses a DATE field for
-    # storing the date, but the view vw__presentation_summary_by_ccg
-    # uses a VARCHAR
-    if isinstance(d, date):
-        return d.strftime('%Y-%m-%d')
-    return d
+def _get_concession_cost_matrices(min_date, max_date, org_type, org_id):
+    """
+    Given a date range (inclusive) and an organisation return a set of matrices
+    detailing all spending affected by price concessons during the period.
 
+    Returns a ConcessionCostMatrices object with the following attributes:
 
-def _ncso_spending_query(
-        prescribing_table,
-        start_date,
-        end_date):
-    """Return a query with params that joins all NCSO (i.e. price concession) items
-    with the spending on those items.
+        bnf_code_offsets: Maps BNF codes which have a price concession to their
+                          row offset in the matrices
 
-    Where our NCSO data is more recent than our prescribing data we use the
-    latest prescribing data and flag the results as estimates.
+            date_offsets: Maps date strings to their column offset in the
+                          matrices
 
-    The prescribing table is parameterised as sometimes we want to use the table
-    with prescribing pre-aggregated by CCG.
+              quantities: Matrix giving, for each BNF code and date, the
+                          quantity prescribed of that presentation by the
+                          specified organisation
+
+            tariff_costs: Matrix giving, for each BNF code and date, the cost
+                          of the above prescriptions at standard Drug Tariff
+                          prices
+
+             extra_costs: Matrix giving, for each BNF code and date, the cost
+                          increase due to price concessions
 
     """
-    sql_template = """
-        SELECT
-          ncso.date AS month,
-          presentation.bnf_code AS bnf_code,
-          COALESCE(presentation.dmd_name, presentation.name) AS product_name,
-          dt.price_pence
-            * rx.quantity
-            * CASE WHEN
-                presentation.quantity_means_pack
-              THEN
-                1
-              ELSE
-                1 / vmpp.qtyval::float
-              END
-            * %(discount_factor)s
-            AS tariff_cost,
-          COALESCE(ncso.price_pence - dt.price_pence, 0)
-            * rx.quantity
-            * CASE WHEN
-                presentation.quantity_means_pack
-              THEN
-                1
-              ELSE
-                1 / vmpp.qtyval::float
-              END
-            * %(discount_factor)s
-            AS additional_cost,
-          ncso.date != rx.processing_date AS is_estimate,
-          rx.*
-        FROM
-          frontend_ncsoconcession AS ncso
-        JOIN
-          frontend_tariffprice AS dt
-        ON
-          ncso.vmpp_id = dt.vmpp_id AND ncso.date = dt.date
-        JOIN
-          dmd2_vmpp AS vmpp
-        ON
-          vmpp.vppid=ncso.vmpp_id
-        JOIN
-          frontend_presentation AS presentation
-        ON
-          presentation.bnf_code = vmpp.bnf_code
-        JOIN
-          {prescribing_table} AS rx
-        ON
-          rx.presentation_code = vmpp.bnf_code
-        AND
-          rx.processing_date >= %(earliest_date)s
-        AND
-          rx.processing_date <= %(end_date)s
-        AND
-          -- Where we have prescribing data for the corresponding month we use
-          -- that, otherwise we use the latest month of prescribing data to
-          -- produce an estimate
-          (
-            rx.processing_date = ncso.date
-            OR
-            (
-              rx.processing_date = %(last_prescribing_date)s
-              AND
-              ncso.date > rx.processing_date
-            )
-          )
-        """
-    sql = sql_template.format(prescribing_table=prescribing_table)
-    last_prescribing_date = (
-        ImportLog.objects.latest_in_category('prescribing').current_at
+    prices = _get_concession_price_matrices(min_date, max_date)
+    quantities = _get_prescribed_quantity_matrix(
+        prices.bnf_code_offsets,
+        prices.date_offsets,
+        org_type,
+        org_id
     )
-    params = {
-        'last_prescribing_date': last_prescribing_date,
-        'start_date': start_date,
-        'end_date': end_date,
-        'earliest_date': min(
-            _date_as_str(start_date), _date_as_str(last_prescribing_date)),
-        # We discount by an additional factor of 100 to convert the figures
-        # from pence to pounds
-        'discount_factor': (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)
+    return ConcessionCostMatrices(
+        bnf_code_offsets=prices.bnf_code_offsets,
+        date_offsets=prices.date_offsets,
+        quantities=quantities,
+        tariff_costs=prices.tariff_prices * quantities,
+        extra_costs=prices.price_increases * quantities
+    )
+
+
+def _get_prescribed_quantity_matrix(bnf_code_offsets, date_offsets, org_type, org_id):
+    """
+    Given a mapping of BNF codes to row offsets and dates to column offsets,
+    return a matrix giving the quantity of those presentations prescribed on
+    those dates by the specified organisation (given by its type and ID).
+
+    If the dates extend beyond the latest date for which we have prescribing
+    data then we just project the last month forwards (e.g. if we only have
+    prescriptions up to March but have price concessions up to May then
+    we just assume the same quantities as for March were prescribed in April
+    and May).
+    """
+    db = get_db()
+    group_by_org = get_row_grouper(org_type)
+    shape = (len(bnf_code_offsets), len(date_offsets))
+    quantities = numpy.zeros(shape, dtype=numpy.int_)
+    # Find the columns corresponding to the dates we're interested in
+    columns_selector = _get_date_columns_selector(db.date_offsets, date_offsets)
+    prescribing = _get_quantities_for_bnf_codes(db, bnf_code_offsets.keys())
+    for bnf_code, quantity in prescribing:
+        # Remap the date columns to just the dates we want
+        quantity = quantity[columns_selector]
+        # Sum the prescribing for the given organisation
+        quantity = group_by_org.sum_one_group(quantity, org_id)
+        # Write that sum into the quantities matrix at the correct offset for
+        # the current BNF code
+        row_offset = bnf_code_offsets[bnf_code]
+        quantities[row_offset] = quantity
+    return quantities
+
+
+def _get_date_columns_selector(available_date_offsets, required_date_offsets):
+    """
+    Return a numpy "fancy index" which maps one set of matrix columns to
+    another. Specifically, it will take a matrix with the "available" date
+    columns and transform it to one with the "required" columns.
+
+    If any of the required dates are greater than the latest available date
+    then the last available date will be used in its place.
+
+    Example:
+
+    >>> available = {'2019-01': 0, '2019-02': 1, '2019-03': 2}
+    >>> required  = {'2019-02': 0, '2019-03': 1, '2019-04': 2}
+
+    >>> index = _get_date_columns_selector(available, required)
+
+    >>> matrix = numpy.array([
+    ...   [1, 2, 3],
+    ...   [4, 5, 6],
+    ... ])
+
+    >>> matrix[index]
+    array([[2, 3, 3],
+           [5, 6, 6]])
+    """
+    max_available_date = max(available_date_offsets)
+    columns = []
+    for date in sorted(required_date_offsets):
+        if date > max_available_date:
+            date = max_available_date
+        columns.append(available_date_offsets[date])
+    # We want all rows
+    rows = slice(None, None, None)
+    return rows, columns
+
+
+def _get_quantities_for_bnf_codes(db, bnf_codes):
+    """
+    Return the prescribed quantity matrices for the given list of BNF codes
+    """
+    return db.query(
+        """
+        SELECT
+          bnf_code, quantity
+        FROM
+          presentation
+        WHERE
+          quantity IS NOT NULL AND bnf_code IN ({})
+        """
+        .format(','.join(['?'] * len(bnf_codes))),
+        bnf_codes
+    )
+
+
+def _get_concession_price_matrices(min_date, max_date):
+    """
+    Return details of NCSO price concessions in the given date range
+    (inclusive)
+
+    Returns a ConcessionPriceMatrices object with the following attributes:
+
+        bnf_code_offsets: Maps BNF codes which have a price concession to their
+                          row offset in the matrices
+
+            date_offsets: Maps date strings to their column offset in the
+                          matrices
+
+           tariff_prices: Matrix giving, for each BNF code and date, the
+                          standard Drug Tariff price for that presentation (in
+                          pounds-per-unit)
+
+         price_increases: Matrix giving, for each BNF code and date, the price
+                          increase due to concessions (in pounds-per-unit)
+
+    """
+    # Fetch list of concessions and associated tariff prices from Postgres
+    concessions = _get_concession_prices(min_date, max_date)
+    # Construct the BNF code and date indices we need to store these prices in
+    # matrix form
+    date_offsets = {
+        str(date): i
+        for (i, date) in enumerate(_get_dates_in_range(min_date, max_date))
     }
-    return sql, params
+    bnf_codes = {concession[1] for concession in concessions}
+    bnf_code_offsets = {bnf_code: i for (i, bnf_code) in enumerate(bnf_codes)}
+    # Construct the matrices we need
+    shape = (len(bnf_code_offsets), len(date_offsets))
+    tariff_prices = numpy.zeros(shape, dtype=numpy.float_)
+    price_increases = numpy.zeros(shape, dtype=numpy.float_)
+    # Loop over the concessions and write them into the matrices
+    for date, bnf_code, tariff_price, price_increase, quantity_per_pack in concessions:
+        index = (bnf_code_offsets[bnf_code], date_offsets[str(date)])
+        # Convert prices from per-pack into per-unit
+        tariff_price = tariff_price / quantity_per_pack
+        price_increase = price_increase / quantity_per_pack
+        # Price concessions are defined at the product-pack level but we only
+        # have prescribing data at product level. Occasionally there are
+        # multiple simultaneous concessions for a given product with different
+        # implied prices-per-unit for different pack sizes. As we can't know
+        # from our data which pack size was dispensed we just use the highest
+        # per-unit price.
+        if price_increase > price_increases[index]:
+            price_increases[index] = price_increase
+            tariff_prices[index] = tariff_price
+    # Convert prices from pence to pounds and apply the national average
+    # discount to get a better approximation of the actual price paid
+    discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)
+    tariff_prices *= discount_factor
+    price_increases *= discount_factor
+    return ConcessionPriceMatrices(
+        bnf_code_offsets=bnf_code_offsets,
+        date_offsets=date_offsets,
+        tariff_prices=tariff_prices,
+        price_increases=price_increases
+    )
+
+
+def _get_dates_in_range(date_start, date_end):
+    date = date_start
+    while date <= date_end:
+        yield date
+        date = date + relativedelta(months=1)
+
+
+def _get_concession_prices(min_date, max_date):
+    """
+    Gets all NCSO price concessions in the given period (where both min and max
+    are inclusive), returning an iterable of tuples of the form:
+
+                     date: Datetime instance giving the month of the concession
+
+                 bnf_code: Presentation to which concession is applied
+
+             tariff_price: Standard drug tariff price in pence-per-pack
+
+           price_increase: The *extra* cost of the price concession (i.e. the
+                           cost above the tariff price) in pence-per-pack
+
+        quantity_per_pack: Divide prescribed quantity by this to get number of
+                           packs
+
+    Note that because concessions are defined at the product-pack level and BNF
+    codes refer to products it's possible to have multiple different concession
+    prices for the same (BNF code, date) pair.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+              ncso.date AS date,
+              vmpp.bnf_code AS bnf_code,
+              tariff.price_pence AS tariff_price,
+              COALESCE(ncso.price_pence - tariff.price_pence, 0) AS price_increase,
+              CASE WHEN presentation.quantity_means_pack THEN
+                  1
+                ELSE
+                  vmpp.qtyval
+                END
+              AS quantity_per_pack
+            FROM
+              frontend_ncsoconcession AS ncso
+            JOIN
+              frontend_tariffprice AS tariff
+            ON
+              ncso.vmpp_id = tariff.vmpp_id AND ncso.date = tariff.date
+            JOIN
+              dmd2_vmpp AS vmpp
+            ON
+              vmpp.vppid=ncso.vmpp_id
+            JOIN
+              frontend_presentation AS presentation
+            ON
+              presentation.bnf_code = vmpp.bnf_code
+            WHERE
+              ncso.date >= %(min_date)s AND ncso.date <= %(max_date)s
+            """,
+            {'min_date': min_date, 'max_date': max_date}
+        )
+        return cursor.fetchall()
