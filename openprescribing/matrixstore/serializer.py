@@ -1,17 +1,17 @@
 import struct
 
+import lz4.frame
 import pyarrow
 from scipy.sparse import csc_matrix
 import zstandard
 
 
-# The magic intial bytes which tell us that a given binary chunk is ZStandard
-# compressed data
+# The magic intial bytes which tell us whether a given binary chunk is
+# ZStandard or LZ4 compressed data
 ZSTD_MAGIC_NUMBER = struct.pack('<I', 0xFD2FB528)
+LZ4_MAGIC_NUMBER = struct.pack('<I', 0x184D2204)
 
-
-compressor = zstandard.ZstdCompressor(level=16)
-decompressor = zstandard.ZstdDecompressor()
+zstd_decompressor = zstandard.ZstdDecompressor()
 
 context = pyarrow.SerializationContext()
 
@@ -61,10 +61,11 @@ def serialize(obj):
 def serialize_compressed(obj):
     """
     Serialize an arbitrary Python object using our custom PyArrow context and
-    compress the result using ZStandard
+    compress the result using LZ4
     """
     data = context.serialize(obj).to_buffer()
-    return compressor.compress(data)
+    # See commit comments for details of how this compression level was chosen
+    return lz4.frame.compress(data, compression_level=10, return_bytearray=True)
 
 
 def deserialize(data):
@@ -72,6 +73,9 @@ def deserialize(data):
     Deserialize binary data using our custom PyArrow context, automatically
     detecting compressed data and decompressing if necessary
     """
-    if memoryview(data)[:4] == ZSTD_MAGIC_NUMBER:
-        data = decompressor.decompress(data)
+    magic_number = memoryview(data)[:4]
+    if magic_number == LZ4_MAGIC_NUMBER:
+        data = lz4.frame.decompress(data, return_bytearray=True)
+    elif magic_number == ZSTD_MAGIC_NUMBER:
+        data = zstd_decompressor.decompress(data)
     return context.deserialize(data)
