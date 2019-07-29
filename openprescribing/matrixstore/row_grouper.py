@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import numpy
+import scipy.sparse
 
 
 class RowGrouper(object):
@@ -76,10 +77,34 @@ class RowGrouper(object):
         # Fast path for the "each group contains only one row" case
         if self._single_row_groups_selector is not None:
             return matrix[self._single_row_groups_selector]
+        # Initialise an array to contain the output
         rows = len(self._group_selectors)
         columns = matrix.shape[1]
-        grouped = numpy.empty((rows, columns), dtype=matrix.dtype)
+        grouped_output = numpy.empty((rows, columns), dtype=matrix.dtype)
+        # There's some complexity here depending on whether `matrix` is an
+        # ndarray (which it usually will be as the result of `MATRIX_SUM()` is
+        # always an ndarry) or the older-style matrix class (which it will be
+        # if we call this function directly with a sparse matrix). If our input
+        # is a matrix, then we can only write sum results into a matrix so we
+        # use the `asmatrix` method below to create a compatible view onto the
+        # underlying output array.  In either case, our return value is always
+        # an ndarray.
+        if has_type_matrix(matrix):
+            output_view = numpy.asmatrix(grouped_output)
+        else:
+            output_view = grouped_output
         for group_offset, rows_selector in enumerate(self._group_selectors):
+            # Get the rows to be summed
             row_group = matrix[rows_selector]
-            grouped[group_offset] = numpy.sum(row_group, axis=0)
-        return grouped
+            # Sum them and write the result into the output array
+            numpy.sum(row_group, axis=0, out=output_view[group_offset])
+        return grouped_output
+
+
+def has_type_matrix(value):
+    """
+    Return whether `value` is a numpy array or a numpy matrix
+    """
+    # This is harder than it ought to be because `numpy.matrix` inherits from
+    # `numpy.ndarray`, but the scipy sparse type doesn't inherit from either
+    return isinstance(value, (numpy.matrix, scipy.sparse.compressed._cs_matrix))
