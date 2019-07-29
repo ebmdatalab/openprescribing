@@ -63,9 +63,10 @@ class Client(object):
     def __init__(self, dataset_key=None):
         self.project = settings.BQ_PROJECT
 
-        # gcbq expects an environment variable called
-        # GOOGLE_APPLICATION_CREDENTIALS whose value is the path of a JSON file
-        # containing the credentials to access Google Cloud Services.
+        # If this raises a DefaultCredentialsError:
+        #  * on a developer's machine, run `gcloud auth application-default login`
+        #  * elsewhere, ensure that GOOGLE_APPLICATION_CREDENTIALS is set and
+        #    points to a valid set of credentials for a service account
         self.gcbq_client = gcbq.Client(project=self.project)
 
         self.dataset_key = dataset_key

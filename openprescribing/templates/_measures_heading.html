@@ -16,6 +16,12 @@
             {% endfor %}
           </dl>
         {% endif %}
+        {% if 'lowpriority' in tag_filter.tags and low_priority_url %}
+          <p>
+            See also our measure showing the combined total of
+            <a href="{{ low_priority_url }}">all low-priority prescribing</a>.
+          </p>
+        {% endif %}
         <p>
           <a href="?">View all standard measures instead</a>.
         </p>
@@ -25,11 +31,7 @@
       <p>
         We have brought together various prescribing measures to show how this organisation compares with its peers across NHS England.
         These are indicative only, and should be approached with caution.
-        {% if entity_type == 'practice' %}
-          Each chart shows the results for the individual practice, plus deciles across all practices in the NHS in England.
-        {% else %}
-          Each chart shows the results for the CCG, plus deciles across all CCGs in the NHS in England.
-        {% endif %}
+        Each chart shows the results for the individual {{ entity_type_human }}, plus deciles across all {{ entity_type_human }}s in the NHS in England.
         <a href="{% url 'faq' %}#measureinterpret">Read more about measures</a>.
       </p>
     {% endif %}

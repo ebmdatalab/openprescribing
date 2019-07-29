@@ -155,6 +155,7 @@ TEMPLATES = [
                 'frontend.context_processors.google_tracking_id',
                 'frontend.context_processors.api_host',
                 'frontend.context_processors.debug',
+                'frontend.context_processors.pcns_enabled',
                 'pipeline.context_processors.import_in_progress'
             ],
             'debug': DEBUG
@@ -224,7 +225,6 @@ CONTRIB_APPS = (
     'anymail',
     'crispy_forms',
     'raven.contrib.django.raven_compat',
-    'import_export'
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -22,6 +22,9 @@ class Command(BaseCommand):
             'pregabalin_total_mg',
             'vw__median_price_per_unit',
             'vw__ghost_generic_measure',
+
+            # This references pregabalin_total_mg, so must come afterwards
+            'gaba_total_ddd',
         ]:
             path = os.path.join(base_path, table_name + '.sql')
             with open(path, "r") as sql_file:

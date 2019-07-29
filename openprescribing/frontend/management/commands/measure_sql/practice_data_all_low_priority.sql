@@ -171,7 +171,7 @@ FROM
   numerator,
   denominator
 FROM
-  {project}.{measures}.practice_data_lpaliskerin
+  {project}.{measures}.practice_data_lpaliskiren
   
   UNION ALL
   SELECT

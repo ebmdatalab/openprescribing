@@ -14,16 +14,6 @@ matrix:
       script:
         - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/jessie /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
       env: LANG=en_US.UTF-8
-  allow_failures:
-    # The SauceLabs browser tests are very flaky such that we get frequent
-    # failures which disappear if the tests are re-run. At present, we're not
-    # touching the frontend code much at all and so these failures are just
-    # useless noise and promote the bad habit of ignoring CI results. As a
-    # quick improvement on this situation we now ignore failures in the browser
-    # tests when determining the overall test status, but we still run them so
-    # that the results can be checked manually if you're making frontend
-    # changes.
-    - env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
 cache:
   directories:
     docker
@@ -35,7 +25,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - openssl aes-256-cbc -K $encrypted_ef2af4a5c304_key -iv $encrypted_ef2af4a5c304_iv -in google-credentials.json.enc -out google-credentials.json -d
+  - openssl aes-256-cbc -K $encrypted_c3e391f06205_key -iv $encrypted_c3e391f06205_iv -in google-credentials-ebmdatalabtest-1ad80daf5cc1.json.enc -out google-credentials.json -d
 install:
   - docker pull dockette/jessie
   - docker pull ebmdatalab/openprescribing-base:latest

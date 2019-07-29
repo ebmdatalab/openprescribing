@@ -12,16 +12,39 @@
 from collections import defaultdict
 
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.core.management import call_command
 import requests
 from selenium_base import SeleniumTestCase
 
-from frontend.models import RegionalTeam, STP, PCT, Practice, Measure, MeasureValue
+from frontend.models import (
+    RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
+)
 
 
 class MeasuresTests(SeleniumTestCase):
     maxDiff = None
 
     fixtures = ['functional-measures']
+
+    # These methods override the default behaviour of loading and flushing
+    # fixtures for each test method and instead load them once for the test
+    # class. This is safe as none of the tests involve mutating data, and
+    # increases the run speed by a factor of nearly 4 (311s to 78s).
+    @classmethod
+    def setUpClass(cls):
+        call_command('loaddata', *cls.fixtures, **{'verbosity': 0})
+        super(MeasuresTests, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        call_command('flush', verbosity=0, interactive=False, reset_sequences=False)
+        super(MeasuresTests, cls).tearDownClass()
+
+    def _fixture_setup(self):
+        pass
+
+    def _fixture_teardown(self):
+        pass
 
     def _get(self, path):
         url = self.live_server_url + path
@@ -99,7 +122,9 @@ class MeasuresTests(SeleniumTestCase):
         self._get('/practice/P00000/')
 
         practice = Practice.objects.get(code='P00000')
-        mvs = MeasureValue.objects.filter(practice=practice)
+        mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
+            practice=practice
+        )
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -107,7 +132,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/ccg/AAA/{}/'.format(extreme_measure.id)
+            '/measure/{}/practice/P00000/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -115,14 +140,37 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/practice/P00000/'
+        )
+
+    def test_pcn_home_page(self):
+        self._get('/pcn/E00000000/')
+
+        pcn = PCN.objects.get(ons_code='E00000000')
+        mvs = MeasureValue.objects.filter_by_org_type('pcn').filter(pcn=pcn)
+        extreme_measure = _get_extreme_measure(mvs)
+
+        panel_element = self._find_measure_panel('top-measure-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            extreme_measure.name,
+            '/measure/{}/pcn/E00000000/'.format(extreme_measure.id)
+        )
+
+        panel_element = self._find_measure_panel('lpzomnibus-container')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/measure/lpzomnibus/pcn/E00000000/'
         )
 
     def test_ccg_home_page(self):
         self._get('/ccg/AAA/')
 
         ccg = PCT.objects.get(code='AAA')
-        mvs = MeasureValue.objects.filter(pct=ccg, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(pct=ccg)
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -130,7 +178,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/ccg/AAA/{}/'.format(extreme_measure.id)
+            '/measure/{}/ccg/AAA/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -138,14 +186,14 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/ccg/AAA/'
         )
 
     def test_stp_home_page(self):
         self._get('/stp/E00000000/')
 
         stp = STP.objects.get(ons_code='E00000000')
-        mvs = MeasureValue.objects.filter(stp=stp, pct=None, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('stp').filter(stp=stp)
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -153,7 +201,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/stp/E00000000/{}/'.format(extreme_measure.id)
+            '/measure/{}/stp/E00000000/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -161,14 +209,16 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/stp/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/stp/E00000000/'
         )
 
     def test_regional_team_home_page(self):
         self._get('/regional-team/Y01/')
 
         rt = RegionalTeam.objects.get(code='Y01')
-        mvs = MeasureValue.objects.filter(regional_team=rt, pct=None, practice=None)
+        mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
+            regional_team=rt
+        )
         extreme_measure = _get_extreme_measure(mvs)
 
         panel_element = self._find_measure_panel('top-measure-container')
@@ -176,7 +226,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             extreme_measure.name,
-            '/regional-team/Y01/{}/'.format(extreme_measure.id)
+            '/measure/{}/regional-team/Y01/'.format(extreme_measure.id)
         )
 
         panel_element = self._find_measure_panel('lpzomnibus-container')
@@ -184,7 +234,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/regional-team/Y01/lpzomnibus/'
+            '/measure/lpzomnibus/regional-team/Y01/'
         )
 
     def test_measures_for_one_practice(self):
@@ -195,7 +245,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/ccg/AAA/core_0/'
+            '/measure/core_0/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -206,6 +256,12 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(2)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
             '/measure/core_0/'
         )
@@ -215,7 +271,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -232,10 +288,16 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(3)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
             'Compare all CCGs in England on this measure',
             '/measure/lpzomnibus/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 3)
+        self._verify_num_elements(panel_element, '.inner li', 4)
 
     def test_measures_for_one_practice_low_priority(self):
         self._get('/practice/P00000/measures/?tags=lowpriority')
@@ -245,7 +307,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/practice/P00000/'
         )
         self._verify_link(
             panel_element,
@@ -256,10 +318,16 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_link(
             panel_element,
             '.inner li:nth-child(2)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
             'Compare all CCGs in England on this measure',
             '/measure/lp_2/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 2)
+        self._verify_num_elements(panel_element, '.inner li', 3)
 
     def test_measures_for_one_ccg(self):
         self._get('/ccg/AAA/measures/')
@@ -269,7 +337,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/ccg/AAA/core_0/'
+            '/measure/core_0/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -295,7 +363,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/ccg/AAA/lpzomnibus/'
+            '/measure/lpzomnibus/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -331,7 +399,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -353,6 +421,98 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.inner li', 3)
 
+    def test_measures_for_one_pcn(self):
+        self._get('/pcn/E00000000/measures/')
+
+        panel_element = self._find_measure_panel('measure_core_0')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'Core measure 0',
+            '/measure/core_0/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Split the measure into charts for individual practices',
+            '/pcn/E00000000/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Compare all PCNs in England on this measure',
+            '/measure/core_0/pcn/'
+        )
+
+        panel_element = self._find_measure_panel('measure_lpzomnibus')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP omnibus measure',
+            '/measure/lpzomnibus/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break it down into its constituent measures.',
+            '/pcn/E00000000/measures/?tags=lowpriority'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/lpzomnibus/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Split the measure into charts for individual practices',
+            '/pcn/E00000000/lpzomnibus/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(4)',
+            'Compare all PCNs in England on this measure',
+            '/measure/lpzomnibus/pcn/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 4)
+
+    def test_measures_for_one_pcn_low_priority(self):
+        self._get('/pcn/E00000000/measures/?tags=lowpriority')
+
+        panel_element = self._find_measure_panel('measure_lp_2')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP measure 2',
+            '/measure/lp_2/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/lp_2/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Split the measure into charts for individual practices',
+            '/pcn/E00000000/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(3)',
+            'Compare all PCNs in England on this measure',
+            '/measure/lp_2/pcn/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 3)
+
     def test_measures_for_one_stp(self):
         self._get('/stp/E00000000/measures/')
 
@@ -361,7 +521,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/stp/E00000000/core_0/'
+            '/measure/core_0/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -387,7 +547,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/stp/E00000000/lpzomnibus/'
+            '/measure/lpzomnibus/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -423,7 +583,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'Core measure 0',
-            '/regional-team/Y01/core_0/'
+            '/measure/core_0/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
@@ -449,7 +609,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP omnibus measure',
-            '/regional-team/Y01/lpzomnibus/'
+            '/measure/lpzomnibus/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
@@ -531,6 +691,30 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.explanation li', 3)
 
+    def test_measure_for_all_pcns(self):
+        self._get('/measure/core_0/pcn/')
+
+        panel_element = self._find_measure_panel('pcn_E00000000')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'E00000000: PCN 0/0/0',
+            '/pcn/E00000000/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Split the measure into charts for individual practices',
+            '/pcn/E00000000/core_0/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(2)',
+            'Break the overall score down into individual presentations',
+            '/measure/core_0/pcn/E00000000/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 2)
+
     def test_measure_for_all_stps(self):
         self._get('/measure/core_0/stp/')
 
@@ -604,15 +788,21 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/practice/P00000/'
         )
         self._verify_link(
             panel_element,
             '.inner li:nth-child(1)',
+            'Compare all practices in this CCG on this measure',
+            '/ccg/AAA/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
             'Compare all CCGs in England on this measure',
             '/measure/lp_2/'
         )
-        self._verify_num_elements(panel_element, '.inner li', 1)
+        self._verify_num_elements(panel_element, '.inner li', 2)
 
     def test_measure_for_one_ccg(self):
         self._get('/measure/lp_2/ccg/AAA/')
@@ -622,7 +812,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/ccg/AAA/lp_2/'
+            '/measure/lp_2/ccg/AAA/'
         )
         self._verify_link(
             panel_element,
@@ -638,6 +828,30 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_num_elements(panel_element, '.inner li', 2)
 
+    def test_measure_for_one_pcn(self):
+        self._get('/measure/lp_2/pcn/E00000000/')
+
+        panel_element = self._find_measure_panel('measure_lp_2')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'LP measure 2',
+            '/measure/lp_2/pcn/E00000000/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(1)',
+            'Split the measure into charts for individual practices',
+            '/pcn/E00000000/lp_2/'
+        )
+        self._verify_link(
+            panel_element,
+            '.inner li:nth-child(2)',
+            'Compare all PCNs in England on this measure',
+            '/measure/lp_2/pcn/'
+        )
+        self._verify_num_elements(panel_element, '.inner li', 2)
+
     def test_measure_for_one_stp(self):
         self._get('/measure/lp_2/stp/E00000000/')
 
@@ -646,7 +860,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/stp/E00000000/lp_2/'
+            '/measure/lp_2/stp/E00000000/'
         )
         self._verify_link(
             panel_element,
@@ -670,7 +884,7 @@ class MeasuresTests(SeleniumTestCase):
             panel_element,
             '.measure-panel-title',
             'LP measure 2',
-            '/regional-team/Y01/lp_2/'
+            '/measure/lp_2/regional-team/Y01/'
         )
         self._verify_link(
             panel_element,
@@ -688,6 +902,24 @@ class MeasuresTests(SeleniumTestCase):
 
     def test_measure_for_practices_in_ccg(self):
         self._get('/ccg/AAA/lp_2/')
+
+        panel_element = self._find_measure_panel('practice_P00000')
+        self._verify_link(
+            panel_element,
+            '.measure-panel-title',
+            'P00000: Practice 0/0/0/0',
+            '/practice/P00000/measures/'
+        )
+        self._verify_link(
+            panel_element,
+            '.explanation li:nth-child(1)',
+            'Break the overall score down into individual presentations',
+            '/measure/lp_2/practice/P00000/'
+        )
+        self._verify_num_elements(panel_element, '.explanation li', 1)
+
+    def test_measure_for_practices_in_pcn(self):
+        self._get('/pcn/E00000000/lp_2/')
 
         panel_element = self._find_measure_panel('practice_P00000')
         self._verify_link(
@@ -741,9 +973,7 @@ class MeasuresTests(SeleniumTestCase):
         self._verify_num_elements(panel_element, '.explanation li', 1)
 
     def test_explanation_for_all_england(self):
-        mvs = MeasureValue.objects.filter(
-            pct__isnull=False,
-            practice__isnull=True,
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
             measure_id='core_0',
             month__gte='2018-03-01',
         )
@@ -769,7 +999,7 @@ class MeasuresTests(SeleniumTestCase):
         pp = []
 
         for p in Practice.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                 practice=p,
                 measure_id='core_0',
                 month__gte='2018-03-01',
@@ -828,14 +1058,68 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(p1_exp_text, perf_element.text)
 
+    def test_explanation_for_pcn(self):
+        # See comments in test_explanation_for_practice for details.
+        pp = []
+
+        for p in PCN.objects.all():
+            mvs = MeasureValue.objects.filter_by_org_type('pcn').filter(
+                pcn=p,
+                measure_id='core_0',
+                month__gte='2018-03-01',
+            )
+
+            p.cost_saving_10 = sum(mv.cost_savings['10'] for mv in mvs)
+            p.cost_saving_50 = sum(mv.cost_savings['50'] for mv in mvs)
+
+            pp.append(p)
+
+        assert [p for p in pp if p.cost_saving_10 < 0 and p.cost_saving_50 > 0] == []
+        p2 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 < 0][0]
+        p1 = [p for p in pp if p.cost_saving_10 < 0 and p.cost_saving_50 < 0][0]
+        p3 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 > 0][0]
+
+        p1_exp_text = u'By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months.'.format(_humanize(p1.cost_saving_50))
+        p2_exp_text = u'By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(p2.cost_saving_50), _humanize(p2.cost_saving_10))
+        p3_exp_text = u'If it had prescribed in line with the median, this PCN would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.'.format(_humanize(p3.cost_saving_50), _humanize(p3.cost_saving_10))
+
+        # measure_for_one_pcn
+        self._get('/measure/core_0/pcn/{}/'.format(p1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/pcn/{}/'.format(p2.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p2_exp_text, perf_element.text)
+
+        self._get('/measure/core_0/pcn/{}/'.format(p3.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p3_exp_text, perf_element.text)
+
+        # measures_for_one_pcn
+        self._get('/pcn/{}/measures/'.format(p1.code))
+        perf_element = self.find_by_xpath("//*[@id='measure_core_0']//strong[text()='Performance:']/..")
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        # measure_for_all_pcns
+        self._get('/measure/core_0/pcn/')
+        panel_element = self._find_measure_panel('pcn_{}'.format(p1.code))
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(p1_exp_text, perf_element.text)
+
+        # pcn_home_page
+        self._get('/pcn/{}/'.format(p1.code))
+        panel_element = self._find_measure_panel('top-measure-container')
+        perf_element = panel_element.find_element_by_class_name('explanation')
+        self.assertIn(p1_exp_text, perf_element.text)
+
     def test_explanation_for_ccg(self):
         # See comments in test_explanation_for_practice for details.
         cc = []
 
         for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                 pct=c,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -889,10 +1173,8 @@ class MeasuresTests(SeleniumTestCase):
         ss = []
 
         for s in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
                 stp=s,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -949,10 +1231,8 @@ class MeasuresTests(SeleniumTestCase):
         rr = []
 
         for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
                 regional_team=r,
-                pct=None,
-                practice=None,
                 measure_id='core_0',
                 month__gte='2018-03-01',
             )
@@ -995,60 +1275,83 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = panel_element.find_element_by_class_name('explanation')
         self.assertIn(r1_exp_text, perf_element.text)
 
+    def test_performance_summary_for_measure_for_all_pcns(self):
+        mvs = MeasureValue.objects.filter_by_org_type('pcn').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='pcn_id')
+
+        self._get('/measure/core_0/pcn/')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
+        exp_text = u'Over the past 6 months, if all PCNs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
     def test_performance_summary_for_measure_for_all_ccgs(self):
-        cost_saving = 0
-        for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
-                pct=c,
-                practice=None,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            ccg_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if ccg_cost_saving > 0:
-                cost_saving += ccg_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='pct_id')
 
         self._get('/measure/core_0/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_all_stps(self):
-        cost_saving = 0
-        for r in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
-                stp=r,
-                pct=None,
-                practice=None,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            stp_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if stp_cost_saving > 0:
-                cost_saving += stp_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='stp_id')
 
         self._get('/measure/core_0/stp/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_all_regional_teams(self):
-        cost_saving = 0
-        for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
-                regional_team=r,
-                pct=None,
-                practice=None,
-                measure_id='core_0',
-                month__gte='2018-03-01',
-            )
-            regional_team_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-            if regional_team_cost_saving > 0:
-                cost_saving += regional_team_cost_saving
+        mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
+            measure_id='core_0',
+            month__gte='2018-03-01',
+        )
+        cost_saving = _get_cost_savings(mvs, rollup_by='regional_team_id')
 
         self._get('/measure/core_0/regional-team/')
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all Regional Teams had prescribed at the median ratio or better, then NHS England would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measure_for_practices_in_pcn(self):
+        # First we need to find a PCN with a cost saving!  In reality, almost
+        # every PCN has a cost saving, but this is not the case with the test
+        # data.
+
+        for c in PCN.objects.all():
+            cost_saving = 0
+
+            for p in c.practice_set.all():
+                mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
+                    practice=p,
+                    measure_id='core_0',
+                    month__gte='2018-03-01',
+                )
+                cost_saving += _get_cost_savings(mvs)
+
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find PCN with cost saving!'
+
+        self._get('/pcn/{}/core_0/'.format(c.code))
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
+        exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this PCN would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measure_for_practices_in_ccg(self):
@@ -1060,14 +1363,12 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for p in c.practice_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                     practice=p,
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1075,7 +1376,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find CCG with cost saving!'
 
         self._get('/ccg/{}/core_0/'.format(c.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1088,15 +1390,12 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for c in r.pct_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                     pct=c,
-                    practice=None,
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1104,7 +1403,8 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find STP with cost saving!'
 
         self._get('/stp/{}/core_0/'.format(r.ons_code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1117,15 +1417,12 @@ class MeasuresTests(SeleniumTestCase):
             cost_saving = 0
 
             for c in r.pct_set.all():
-                mvs = MeasureValue.objects.filter(
+                mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                     pct=c,
-                    practice=None,
                     measure_id='core_0',
                     month__gte='2018-03-01',
                 )
-                practice_cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
-                if practice_cost_saving > 0:
-                    cost_saving += practice_cost_saving
+                cost_saving += _get_cost_savings(mvs)
 
             if cost_saving > 0:
                 break
@@ -1133,8 +1430,32 @@ class MeasuresTests(SeleniumTestCase):
             assert False, 'Could not find RegionalTeam with cost saving!'
 
         self._get('/regional-team/{}/core_0/'.format(r.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.'.format(_humanize(cost_saving))
+        self.assertIn(exp_text, perf_summary_element.text)
+
+    def test_performance_summary_for_measures_for_one_pcn(self):
+        # First we need to find a PCN with a cost saving!  In reality, almost
+        # every PCN has a cost saving, but this is not the case with the test
+        # data.
+
+        for c in PCN.objects.all():
+            mvs = MeasureValue.objects.filter_by_org_type('pcn').filter(
+                pcn=c,
+                measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
+                month__gte='2018-03-01',
+            )
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
+            if cost_saving > 0:
+                break
+        else:
+            assert False, 'Could not find PCN with cost saving!'
+
+        self._get('/pcn/{}/measures/'.format(c.code))
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
+        exp_text = u'Over the past 6 months, if this PCN had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
     def test_performance_summary_for_measures_for_one_ccg(self):
@@ -1143,20 +1464,20 @@ class MeasuresTests(SeleniumTestCase):
         # data.
 
         for c in PCT.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('ccg').filter(
                 pct=c,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
             assert False, 'Could not find CCG with cost saving!'
 
         self._get('/ccg/{}/measures/'.format(c.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this CCG had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1166,19 +1487,20 @@ class MeasuresTests(SeleniumTestCase):
         # with the test data.
 
         for p in Practice.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('practice').filter(
                 practice=p,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
             assert False, 'Could not find practice with cost saving!'
 
         self._get('/practice/{}/measures/'.format(p.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1188,21 +1510,20 @@ class MeasuresTests(SeleniumTestCase):
         # case with the test data.
 
         for r in STP.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('stp').filter(
                 stp=r,
-                pct=None,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
             assert False, 'Could not find STP with cost saving!'
 
         self._get('/stp/{}/measures/'.format(r.ons_code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1212,21 +1533,20 @@ class MeasuresTests(SeleniumTestCase):
         # case with the test data.
 
         for r in RegionalTeam.objects.all():
-            mvs = MeasureValue.objects.filter(
+            mvs = MeasureValue.objects.filter_by_org_type('regional_team').filter(
                 regional_team=r,
-                pct=None,
-                practice=None,
                 measure_id__in=['core_0', 'core_1', 'lpzomnibus'],
                 month__gte='2018-03-01',
             )
-            cost_saving = sum(mv.cost_savings['50'] for mv in mvs)
+            cost_saving = _get_cost_savings(mvs, rollup_by='measure_id')
             if cost_saving > 0:
                 break
         else:
             assert False, 'Could not find RegionalTeam with cost saving!'
 
         self._get('/regional-team/{}/measures/'.format(r.code))
-        perf_summary_element = self.find_by_css('#perfsummary')
+        # Use `contains()` to ensure that loading has finished by the time we access the element
+        perf_summary_element = self.find_by_xpath('//*[@id="perfsummary"][not(contains(text(), "Loading..."))]')
         exp_text = u'Over the past 6 months, if this Regional Team had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.'.format(_humanize(cost_saving))
         self.assertIn(exp_text, perf_summary_element.text)
 
@@ -1250,3 +1570,26 @@ def _get_extreme_measure(mvs):
     measure_id = max(avg_percentile_by_measure_id, key=avg_percentile_by_measure_id.get)
 
     return Measure.objects.get(id=measure_id)
+
+
+def _get_cost_savings(measure_values, rollup_by=None, target_percentile=50):
+    """
+    This duplicates the cost-saving logic in `measure_utils.js` (specifically
+    the logic found in the functions `_getSavingAndPercentilePerItem` and
+    `getPerformanceSummary`). This means that we roll-up the values by measure
+    or by org and then only include those whose mean percentile has been
+    greater than the target percentile over the period.
+    """
+    all_percentiles = defaultdict(list)
+    all_savings = defaultdict(list)
+    cost_saving_key = str(target_percentile)
+    for mv in measure_values:
+        rollup_id = getattr(mv, rollup_by) if rollup_by else None
+        all_percentiles[rollup_id].append(mv.percentile)
+        all_savings[rollup_id].append(mv.cost_savings[cost_saving_key])
+    total_savings = 0
+    for rollup_id, percentiles in all_percentiles.items():
+        mean_percentile = round(sum(percentiles) / len(percentiles), 2)
+        if mean_percentile > target_percentile:
+            total_savings += sum(all_savings[rollup_id])
+    return total_savings

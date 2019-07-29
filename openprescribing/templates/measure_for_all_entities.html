@@ -16,10 +16,15 @@
   {% include '_measure_header.html' %}
 
   <p>
-    {{ entity_type_human}}s are ordered by mean percentile over the past six
+    {{ entity_type_human|capfirst}}s are ordered by mean percentile over the past six
     months. Each chart shows the results for the individual {{ entity_type_human}},
     plus deciles across all {{ entity_type_human }}s in the
     NHS in England.
+  </p>
+  <p>
+    <a href="{% url 'all_england' %}#{{ measure.id }}" class="btn btn-default">
+      View measure for NHS England combined &rarr;
+    </a>
   </p>
 
   <div id="measures">

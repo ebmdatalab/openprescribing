@@ -140,15 +140,12 @@ var measures = {
   setUpMap: function(options) {
     var _this = this;
     if ($('#' + _this.el.mapPanel).length) {
+      var maxZoom = _this.zoomLevelForOrgType(options.orgType);
       var map = L.mapbox.map(
         _this.el.mapPanel,
         'mapbox.streets',
-        {zoomControl: false}).setView([52.905, -1.79], 6);
+        {zoomControl: false}).setView([52.905, -1.79], maxZoom);
       map.scrollWheelZoom.disable();
-      var maxZoom = 5;
-      if (options.orgType === 'practice') {
-        maxZoom = 12;
-      }
       var layer = L.mapbox.featureLayer()
           .loadURL(options['orgLocationUrl'])
           .on('ready', function() {
@@ -164,6 +161,17 @@ var measures = {
             }
           })
           .addTo(map);
+    }
+  },
+
+  zoomLevelForOrgType: function(orgType) {
+    switch(orgType) {
+      case 'practice':
+        return 12;
+      case 'pcn':
+        return 7;
+      default:
+        return 5;
     }
   },
 
