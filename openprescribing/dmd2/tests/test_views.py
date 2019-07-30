@@ -154,7 +154,7 @@ class TestSearchView(TestCase):
         self.assertRedirects(rsp, '/dmd/vmp/318412000/')
 
     def test_search_by_snomed_code_returning_no_results(self):
-        rsp = self._get('12345')
+        rsp = self._get('12345678')
 
         # We expect to see "No results found".
         self.assertContains(rsp, 'No results found.')

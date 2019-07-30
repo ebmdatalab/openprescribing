@@ -22,7 +22,7 @@ include_choices = [
 class SearchForm(forms.Form):
     q = forms.CharField(
         label='Query, SNOMED code, or BNF code/prefix',
-        min_length=3,
+        min_length=6,
     )
     obj_types = forms.MultipleChoiceField(
         label='Search...',
