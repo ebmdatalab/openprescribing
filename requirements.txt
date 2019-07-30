@@ -38,7 +38,6 @@ et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.8
 google-api-core==1.14.0   # via google-cloud-core
-future==0.17.1            # via lz4
 google-api-python-client==1.7.10
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth-oauthlib==0.4.0  # via pandas-gbq, pydata-google-auth
@@ -65,7 +64,7 @@ newrelic==4.20.1.121
 numpy==1.16.4
 oauthlib==3.0.2           # via requests-oauthlib
 openpyxl==2.6.2
-pandas-gbq==0.10.0
+pandas-gbq==0.11.0
 pandas==0.24.2
 paramiko==2.6.0           # via fabric
 pathtools==0.1.2          # via watchdog
