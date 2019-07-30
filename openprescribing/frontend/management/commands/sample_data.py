@@ -40,8 +40,6 @@ copy_all = [
     'frontend_tariffprice',
     'pipeline_tasklog',
     'spatial_ref_sys',
-    'vw__practice_summary',
-    'vw__presentation_summary',
 ]
 
 for m in apps.get_app_config('dmd2').get_models():
@@ -53,12 +51,6 @@ copy_sample = {
     'frontend_prescription': "pct_id = '{}'",
     'frontend_practicestatistics': "pct_id = '{}'",
     'frontend_ppusaving': "pct_id = '{}'",
-    'vw__ccgstatistics': "pct_id = '{}'",
-    'vw__chemical_summary_by_ccg': "pct_id = '{}'",
-    'vw__chemical_summary_by_practice': (
-        "practice_id IN "
-        "(SELECT code FROM frontend_practice WHERE ccg_id = '{}')"),
-    'vw__presentation_summary_by_ccg': "pct_id = '{}'",
 }
 
 tables_to_sample = ['frontend_prescription']
@@ -111,11 +103,6 @@ class Command(BaseCommand):
 
     def load(self, path):
         with connection.cursor() as cursor:
-            # Create empty views
-            view_sql = os.path.join(
-                'frontend', 'management', 'commands', 'replace_matviews.sql')
-            with open(view_sql, 'rb') as f:
-                cursor.execute(f.read())
             # Create DMD tables
             view_sql = os.path.join(
                 'dmd', 'dmd_structure.sql')

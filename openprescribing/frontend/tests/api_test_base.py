@@ -1,6 +1,5 @@
 import csv
 
-from django.db import connection
 from django.http import Http404
 from django.test import TestCase
 
@@ -25,15 +24,6 @@ class ApiTestBase(TestCase):
         # Create an ImportLog entry for the latest prescribing date we have
         date = Prescription.objects.latest('processing_date').processing_date
         ImportLog.objects.create(current_at=date, category='prescribing')
-        view_create = 'frontend/management/commands/replace_matviews.sql'
-        fixture = 'frontend/tests/fixtures/populate_matviews.sql'
-        with connection.cursor() as cursor:
-            with open(view_create, 'r') as f:
-                # Creates the view tables
-                cursor.execute(f.read())
-            with open(fixture, 'r') as f:
-                # Fills them with test data
-                cursor.execute(f.read())
         matrixstore = matrixstore_from_postgres()
         stop_patching = patch_global_matrixstore(matrixstore)
         # Have to wrap this in a staticmethod decorator otherwise Python thinks
