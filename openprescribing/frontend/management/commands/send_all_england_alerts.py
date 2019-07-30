@@ -52,7 +52,7 @@ def send_alerts(recipient_email=None):
                 date
             )
 
-    print('Sent {} alerts'.format(len(bookmarks)))
+    print('Sent {} All England alerts'.format(len(bookmarks)))
 
 
 def make_dummy_bookmark(email_address):

@@ -14,6 +14,7 @@ from frontend.models import User
 
 from common.alert_utils import EmailErrorDeferrer
 from frontend.views import bookmark_utils
+from .send_all_england_alerts import send_alerts as send_all_england_alerts
 
 logger = logging.getLogger(__name__)
 
@@ -165,6 +166,27 @@ class Command(BaseCommand):
         except bookmark_utils.BadAlertImageError as e:
             logger.exception(e)
 
+    def send_all_england_alerts(self, options):
+        # The `send_all_england_alerts` command doesn't respect the same set of
+        # options that this command does, so we only invoke it for certain
+        # limited sets of options
+        set_options = {k: v for (k, v) in options.items() if v is not None}
+        # We can ignore all these options
+        for key in ['pythonpath', 'verbosity', 'traceback', 'settings',
+                    'no_color', 'max_errors']:
+            set_options.pop(key, None)
+        # We do understand this one, so keep a record of its value
+        recipient_email = set_options.pop('recipient_email', None)
+        if not set_options:
+            logger.info('Sending All England alerts')
+            send_all_england_alerts(recipient_email)
+        else:
+            logger.info(
+                'Not sending All England alerts as found unhandled option: {}'.format(
+                    ', '.join(set_options.keys())
+                )
+            )
+
     def handle(self, *args, **options):
         self.validate_options(**options)
         now_month = ImportLog.objects.latest_in_category(
@@ -184,3 +206,4 @@ class Command(BaseCommand):
                     search_bookmark,
                     now_month
                 )
+        self.send_all_england_alerts(options)
