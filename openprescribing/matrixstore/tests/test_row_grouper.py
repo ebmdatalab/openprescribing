@@ -80,9 +80,10 @@ class TestGrouper(SimpleTestCase):
         value = to_list_of_lists(grouped_matrix)
         self.assertEqual(value, [])
 
-    def test_all_group_and_matrix_type_combinations(self):
+    def test_sum_with_all_group_and_matrix_type_combinations(self):
         """
-        Tests every combination of group type and matrix type
+        Tests the `sum` method with every combination of group type and matrix
+        type
         """
         test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
@@ -98,13 +99,28 @@ class TestGrouper(SimpleTestCase):
             self.assertEqual(
                 round_floats(values), round_floats(expected_values)
             )
-            # Test summing a single group (we pick the first as that's easiest)
-            group_id = row_grouper.ids[0]
-            expected_value = expected_values[0]
-            value = row_grouper.sum_one_group(matrix, group_id)
-            self.assertEqual(
-                round_floats(value.tolist()), round_floats(expected_value)
-            )
+
+    def test_sum_one_group_with_all_group_and_matrix_type_combinations(self):
+        """
+        Tests the `sum_one_group` method with every combination of group type
+        and matrix type
+        """
+        test_cases = product(self.get_group_definitions(), self.get_matrices())
+        for (group_name, group_definition), (matrix_name, matrix) in test_cases:
+            # Use `subTest` when we upgrade to Python 3
+            # with self.subTest(matrix=matrix_name, group=group_name):
+            row_grouper = RowGrouper(group_definition)
+            # Calculate sums for all groups the boring way using pure Python
+            expected_values = self.sum_rows_by_group(group_definition, matrix)
+            # Check the `sum_one_group` gives the expected answer for all groups
+            for offset, group_id in enumerate(row_grouper.ids):
+                expected_value = expected_values[offset]
+                value = row_grouper.sum_one_group(matrix, group_id)
+                # We need to round floats to account for differences between
+                # numpy and Python float rounding
+                self.assertEqual(
+                    round_floats(value.tolist()), round_floats(expected_value)
+                )
 
     def sum_rows_by_group(self, group_definition, matrix):
         """
