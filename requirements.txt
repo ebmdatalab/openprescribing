@@ -38,7 +38,6 @@ et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.8
 google-api-core==1.14.0   # via google-cloud-core
-future==0.17.1            # via lz4
 google-api-python-client==1.7.10
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth-oauthlib==0.4.0  # via pandas-gbq, pydata-google-auth
@@ -89,7 +88,7 @@ pytz==2019.1
 pyvirtualdisplay==0.2.4
 pyyaml==5.1.1             # via watchdog
 raven==6.10.0
-redis==3.3.0              # via django-redis
+redis==3.3.2              # via django-redis
 requests-futures==1.0.0
 requests-oauthlib==1.2.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
