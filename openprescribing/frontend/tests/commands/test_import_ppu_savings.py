@@ -65,7 +65,10 @@ class BigqueryFunctionalTests(TestCase):
             'normalised_prescribing_standard',
             bq_schemas.PRESCRIBING_SCHEMA
         )
-        table.insert_rows_from_csv(prescribing_fixture_path)
+        table.insert_rows_from_csv(
+            prescribing_fixture_path,
+            bq_schemas.PRESCRIBING_SCHEMA
+        )
 
         practices_fixture_path = os.path.join(
             fixtures_base_path,
@@ -75,18 +78,18 @@ class BigqueryFunctionalTests(TestCase):
             'practices',
             bq_schemas.PRACTICE_SCHEMA
         )
-        table.insert_rows_from_csv(practices_fixture_path)
+        table.insert_rows_from_csv(practices_fixture_path, bq_schemas.PRACTICE_SCHEMA)
 
         tariff_path = os.path.join(fixtures_base_path, 'tariff_fixture.csv')
         table = client.get_or_create_table('tariff', bq_schemas.TARIFF_SCHEMA)
-        table.insert_rows_from_csv(tariff_path)
+        table.insert_rows_from_csv(tariff_path, bq_schemas.TARIFF_SCHEMA)
 
         bnf_path = os.path.join(
             fixtures_base_path,
             'bnf_codes_for_ppu_savings.csv'
         )
         table = client.get_or_create_table('bnf', bq_schemas.BNF_SCHEMA)
-        table.insert_rows_from_csv(bnf_path)
+        table.insert_rows_from_csv(bnf_path, bq_schemas.BNF_SCHEMA)
 
         month = date(2015, 9, 1)
         dummy_substitutions = pd.read_csv(

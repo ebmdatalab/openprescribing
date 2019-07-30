@@ -261,7 +261,7 @@ class Command(BaseCommand):
             for row in prescribing_rows:
                 writer.writerow(row)
             f.seek(0)
-            table.insert_rows_from_csv(f.name)
+            table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
         # Do the work.
         call_command('import_measures', measure='core_0,core_1,lp_2,lp_3,lpzomnibus')

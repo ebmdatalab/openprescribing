@@ -345,17 +345,17 @@ class Table(object):
                 self.client.create_dataset()
                 self.run_job('query', args, options, default_options)
 
-    def insert_rows_from_csv(self, csv_path, **options):
+    def insert_rows_from_csv(self, csv_path, schema, **options):
         default_options = {
             'source_format': 'text/csv',
             'write_disposition': 'WRITE_TRUNCATE',
+            'schema': schema,
         }
 
-        if 'schema' in options:
-            # When we send a schema with a load_table_from_file job, our copy
-            # of the table metadata doesn't get updated, so we need to do this
-            # ourselves.
-            self.gcbq_table.schema = options['schema']
+        # When we send a schema with a load_table_from_file job, our copy
+        # of the table metadata doesn't get updated, so we need to do this
+        # ourselves.
+        self.gcbq_table.schema = schema
 
         with open(csv_path, 'rb') as f:
             args = [f, self.gcbq_table_ref]
@@ -370,7 +370,7 @@ class Table(object):
         with tempfile.NamedTemporaryFile() as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
-            self.insert_rows_from_csv(f.name, schema=schema)
+            self.insert_rows_from_csv(f.name, schema)
 
     def insert_rows_from_storage(self, gcs_path, **options):
         default_options = {

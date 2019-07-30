@@ -224,7 +224,7 @@ class BigqueryFunctionalTests(TestCase):
                 'normalised_prescribing_legacy',
                 PRESCRIBING_SCHEMA
             )
-            table.insert_rows_from_csv(prescribing_fixture_path)
+            table.insert_rows_from_csv(prescribing_fixture_path, PRESCRIBING_SCHEMA)
 
             practices_fixture_path = os.path.join(
                 fixtures_path,
@@ -232,14 +232,14 @@ class BigqueryFunctionalTests(TestCase):
             )
             client = Client('hscic')
             table = client.get_or_create_table('practices', PRACTICE_SCHEMA)
-            table.insert_rows_from_csv(practices_fixture_path)
+            table.insert_rows_from_csv(practices_fixture_path, PRACTICE_SCHEMA)
 
             ccgs_fixture_path = os.path.join(
                 fixtures_path,
                 'ccgs.csv'
             )
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
-            table.insert_rows_from_csv(ccgs_fixture_path)
+            table.insert_rows_from_csv(ccgs_fixture_path, CCG_SCHEMA)
 
         opts = {
             'month': '2015-09-01',

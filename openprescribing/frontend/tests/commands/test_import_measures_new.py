@@ -510,7 +510,7 @@ def upload_prescribing(randint):
         for row in prescribing_rows:
             writer.writerow(row)
         f.seek(0)
-        table.insert_rows_from_csv(f.name)
+        table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
         headers = [
             'sha',
@@ -611,6 +611,6 @@ def upload_practice_statistics(randint):
         for row in practice_statistics_rows:
             writer.writerow(row)
         f.seek(0)
-        table.insert_rows_from_csv(f.name)
+        table.insert_rows_from_csv(f.name, schemas.PRACTICE_STATISTICS_SCHEMA)
 
     return practice_stats

@@ -60,7 +60,7 @@ class BQClientTest(TestCase):
         t1_qname = t1.qualified_name
 
         # Test Table.insert_rows_from_csv
-        t1.insert_rows_from_csv('gcutils/tests/test_table.csv', schema=schema)
+        t1.insert_rows_from_csv('gcutils/tests/test_table.csv', schema)
 
         self.assertEqual(sorted(t1.get_rows()), rows)
 

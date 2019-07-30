@@ -44,7 +44,7 @@ class CommandsTestCase(SimpleTestCase):
                 'frontend', 'tests', 'fixtures', 'commands',
                 'prescribing_bigquery_views_fixture.csv'
             )
-            table.insert_rows_from_csv(prescribing_fixture_path)
+            table.insert_rows_from_csv(prescribing_fixture_path, PRESCRIBING_SCHEMA)
 
             table = client.get_or_create_table('ccgs', CCG_SCHEMA)
             table.insert_rows_from_pg(PCT, CCG_SCHEMA, transformer=ccgs_transform)
