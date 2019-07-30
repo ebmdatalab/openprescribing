@@ -19,6 +19,8 @@ class MatrixStore(object):
         self.practice_offsets = dict(
             self.connection.execute('SELECT code, offset FROM practice')
         )
+        self.dates = sorted_keys(self.date_offsets)
+        self.practices = sorted_keys(self.practice_offsets)
         self.connection.create_aggregate('MATRIX_SUM', 1, MatrixSum)
 
     @classmethod
@@ -49,6 +51,14 @@ class MatrixStore(object):
 
     def close(self):
         self.connection.close()
+
+
+def sorted_keys(dictionary):
+    sorted_items = sorted(
+        dictionary.items(),
+        key=lambda (key, value): value
+    )
+    return [key for (key, value) in sorted_items]
 
 
 def convert_row_types(row):

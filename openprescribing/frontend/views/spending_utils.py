@@ -40,8 +40,7 @@ def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None
     if not end_date:
         return []
     start_date = end_date + relativedelta(months=-(num_months-1))
-    max_prescribing_date_str = max(get_db().date_offsets.keys())
-    last_prescribing_date = parse_date(max_prescribing_date_str).date()
+    last_prescribing_date = parse_date(get_db().dates[-1]).date()
     costs = _get_concession_cost_matrices(
         start_date, end_date, org_type, org_id
     )
