@@ -21,7 +21,7 @@ var analyseMap = {
 
     var _this = this;
     _this.activeNames = _.pluck(options.orgIds, 'name');
-    L.mapbox.accessToken = 'pk.eyJ1IjoiYW5uYXBvd2VsbHNtaXRoIiwiYSI6ImNzY1VpYkkifQ.LC_IcHpHfOvWOQCuo5t7Hw';
+    L.mapbox.accessToken = window.MAPBOX_PUBLIC_TOKEN;
     if (typeof _this.map === 'undefined') {
       _this.map = L.mapbox.map('map', 'mapbox.streets');
       _this.map.scrollWheelZoom.disable();
