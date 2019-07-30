@@ -21,7 +21,7 @@ class TestDMDObjView(TestCase):
             html=True
         )
         self.assertNotContains(rsp, 'Analyse prescribing')
-        self.assertNotContains(rsp, 'View PPU cost savings')
+        self.assertNotContains(rsp, 'See prices paid')
 
         factory = DataFactory()
         practice = factory.create_practice()
@@ -33,7 +33,7 @@ class TestDMDObjView(TestCase):
 
         rsp = self.client.get('/dmd/vmp/318412000/')
         self.assertContains(rsp, 'Analyse prescribing')
-        self.assertContains(rsp, 'View PPU cost savings')
+        self.assertContains(rsp, 'See prices paid')
 
     def test_amp(self):
         rsp = self.client.get('/dmd/amp/632811000001105/')
