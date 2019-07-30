@@ -10,6 +10,8 @@ The boundaries are clipped at the national border to stop them extending into
 the sea -- or Wales -- and generally looking ridiculous.
 """
 import os
+import random
+import string
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -71,8 +73,17 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
     Return a dict mapping practice codes to the region in `regions` in which
     they're located, with returned regions clipped to `clip_boundary`
     """
-    cursor.execute(
-        'CREATE TEMPORARY TABLE regions (original GEOMETRY, clipped GEOMETRY)'
+    # Temporary tables are automatically deleted when the connection closes,
+    # but during testing we can sometimes have multiple process trying to
+    # create the same temporary table so we make the name unique
+    random_str = ''.join([random.choice(string.ascii_lowercase) for _ in range(8)])
+    temporary_table_name = 'regions_{}'.format(random_str)
+
+    def cursor_execute(sql, *params):
+        cursor.execute(sql.format(regions=temporary_table_name), *params)
+
+    cursor_execute(
+        'CREATE TEMPORARY TABLE {regions} (original GEOMETRY, clipped GEOMETRY)'
     )
     for region in regions:
         clipped = region.intersection(clip_boundary)
@@ -94,16 +105,16 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
                 data somewhere.
                 """
             )
-        cursor.execute(
-            'INSERT INTO regions (original, clipped) VALUES (%s, %s)',
+        cursor_execute(
+            'INSERT INTO {regions} (original, clipped) VALUES (%s, %s)',
             [region.ewkb, clipped.ewkb]
         )
-    cursor.execute('CREATE INDEX regions_idx ON regions USING GIST (original)')
-    cursor.execute('ANALYSE regions')
+    cursor_execute('CREATE INDEX {regions}_idx ON {regions} USING GIST (original)')
+    cursor_execute('ANALYSE {regions}')
     # We match practices to regions using the original, unclipped boundary.
     # This allows us to handle the case that a practice lies just outside its
     # clipped boundary due to imprecision in the geographic data.
-    cursor.execute(
+    cursor_execute(
         """
         SELECT
           p.code,
@@ -111,7 +122,7 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
         FROM
           frontend_practice AS p
         JOIN
-          regions AS r
+          {regions} AS r
         ON
           ST_Contains(r.original, p.location)
         """
