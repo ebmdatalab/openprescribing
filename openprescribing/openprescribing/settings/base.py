@@ -427,3 +427,7 @@ if ENABLE_CACHING and (not redis_url or not source_commit_id):
     raise ImproperlyConfigured(
         'If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set'
     )
+
+# For downloading data from TRUD
+TRUD_USERNAME=utils.get_env_setting('TRUD_USERNAME', default='')
+TRUD_PASSWORD=utils.get_env_setting('TRUD_PASSWORD', default='')
