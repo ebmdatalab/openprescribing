@@ -14,7 +14,7 @@ certifi==2019.6.16        # via requests
 cffi==1.12.3              # via bcrypt, cryptography, pynacl, zstandard
 chardet==3.0.4            # via requests
 click==7.0                # via pip-tools
-coverage==4.5.3
+coverage==4.5.4
 cryptography==2.7         # via paramiko, pyopenssl, requests
 cssselect==1.0.3          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
@@ -38,7 +38,6 @@ et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
 flake8==3.7.8
 google-api-core==1.14.0   # via google-cloud-core
-future==0.17.1            # via lz4
 google-api-python-client==1.7.10
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth-oauthlib==0.4.0  # via pandas-gbq, pydata-google-auth
