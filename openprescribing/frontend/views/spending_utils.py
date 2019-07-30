@@ -39,7 +39,7 @@ def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None
     # need to handle the empty case in testing
     if not end_date:
         return []
-    start_date = end_date + relativedelta(months=-(num_months-1))
+    start_date = end_date - relativedelta(months=num_months - 1)
     last_prescribing_date = parse_date(get_db().dates[-1]).date()
     costs = _get_concession_cost_matrices(
         start_date, end_date, org_type, org_id
@@ -119,7 +119,7 @@ def _get_names_for_bnf_codes(bnf_codes):
 def _get_concession_cost_matrices(min_date, max_date, org_type, org_id):
     """
     Given a date range (inclusive) and an organisation return a set of matrices
-    detailing all spending affected by price concessons during the period.
+    detailing all spending affected by price concessions during the period.
 
     Returns a ConcessionCostMatrices object with the following attributes:
 
@@ -292,8 +292,9 @@ def _get_concession_price_matrices(min_date, max_date):
         if price_increase > price_increases[index]:
             price_increases[index] = price_increase
             tariff_prices[index] = tariff_price
-    # Convert prices from pence to pounds and apply the national average
-    # discount to get a better approximation of the actual price paid
+    # Apply the national average discount to get a better approximation of the
+    # actual price paid, and while we're at it convert from pence to pounds to
+    # make later calcuations easier
     discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)
     tariff_prices *= discount_factor
     price_increases *= discount_factor
