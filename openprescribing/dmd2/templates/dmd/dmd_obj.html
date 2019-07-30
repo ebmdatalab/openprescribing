@@ -6,12 +6,9 @@
   <p>
     {% if has_prescribing %}
       <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">Analyse prescribing</a>
+      | <a href="{% url 'all_england_price_per_unit_by_presentation' obj.bnf_code %}">View PPU cost savings</a>
     {% else %}
       This {{ obj_type }} cannot be matched against our prescribing data.
-    {% endif %}
-
-    {% if has_ppu %}
-      | <a href="{% url 'all_england_price_per_unit_by_presentation' obj.bnf_code %}">View PPU cost savings</a>
     {% endif %}
 
     {% if has_dt %}

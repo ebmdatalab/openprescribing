@@ -10,7 +10,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from frontend.models import Presentation, PPUSaving, TariffPrice
+from frontend.models import Presentation, Prescription, TariffPrice
 
 from .forms import SearchForm
 from .models import VTM, VMP, VMPP, AMP, AMPP
@@ -127,11 +127,11 @@ def dmd_obj_view(request, obj_type, id):
             rows.append({"value": related_instance.title(), "link": link})
 
     if isinstance(obj, (VMP, AMP, VMPP, AMPP)) and obj.bnf_code is not None:
-        has_prescribing = True
-        has_ppu = PPUSaving.objects.exists_for_bnf_code(obj.bnf_code)
+        has_prescribing = Prescription.objects.filter(
+            presentation_code=obj.bnf_code
+        ).exists()
     else:
         has_prescribing = False
-        has_ppu = False
 
     if isinstance(obj, VMPP):
         has_dt = TariffPrice.objects.filter(vmpp_id=id).exists()
@@ -144,7 +144,6 @@ def dmd_obj_view(request, obj_type, id):
         "obj_type": obj_type_human,
         "rows": rows,
         "has_prescribing": has_prescribing,
-        "has_ppu": has_ppu,
         "has_dt": has_dt,
     }
     return render(request, "dmd/dmd_obj.html", ctx)

@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from dmd2.models import DtPaymentCategory
-from frontend.models import PPUSaving, Presentation, TariffPrice
+from frontend.models import Presentation, TariffPrice
 from frontend.tests.data_factory import DataFactory
 
 
@@ -20,26 +20,19 @@ class TestDMDObjView(TestCase):
             '<td>Name</td><td>Acebutolol 100mg capsules</td>',
             html=True
         )
-        self.assertContains(rsp, 'Analyse prescribing')
+        self.assertNotContains(rsp, 'Analyse prescribing')
         self.assertNotContains(rsp, 'View PPU cost savings')
 
         factory = DataFactory()
-        ccg = factory.create_ccg()
+        practice = factory.create_practice()
         presentation = Presentation.objects.create(
             bnf_code='0204000C0AAAAAA',
             name='Acebut HCl_Cap 100mg'
         )
-        PPUSaving.objects.create(
-            presentation=presentation,
-            pct=ccg,
-            date='2019-07-01',
-            lowest_decile=0.1,
-            quantity=10,
-            price_per_unit=20,
-            possible_savings=10,
-        )
+        factory.create_prescribing_for_practice(practice, [presentation])
 
         rsp = self.client.get('/dmd/vmp/318412000/')
+        self.assertContains(rsp, 'Analyse prescribing')
         self.assertContains(rsp, 'View PPU cost savings')
 
     def test_amp(self):
@@ -49,7 +42,6 @@ class TestDMDObjView(TestCase):
             '<td>Description</td><td>Sectral 100mg capsules (Sanofi)</td>',
             html=True
         )
-        self.assertContains(rsp, 'Analyse prescribing')
 
     def test_vmpp(self):
         rsp = self.client.get('/dmd/vmpp/1098611000001105/')
@@ -58,7 +50,6 @@ class TestDMDObjView(TestCase):
             '<td>Description</td><td>Acebutolol 100mg capsules 84 capsule</td>',
             html=True
         )
-        self.assertContains(rsp, 'Analyse prescribing')
         self.assertNotContains(rsp, 'View Drug Tariff history')
 
         TariffPrice.objects.create(
