@@ -417,7 +417,11 @@ def total_spending(request, format=None):
     codes = utils.param_to_list(request.query_params.get('code', []))
     codes = utils.get_bnf_codes_from_number_str(codes)
     data = _get_total_prescribing_entries(codes)
-    return Response(list(data))
+    response = Response(list(data))
+    if request.accepted_renderer.format == 'csv':
+        filename = "spending-{}.csv".format('-'.join(codes))
+        response['content-disposition'] = "attachment; filename={}".format(filename)
+    return response
 
 
 def _get_total_prescribing_entries(bnf_code_prefixes):
@@ -566,7 +570,11 @@ def spending_by_org(request, format=None, org_type=None):
         orgs = orgs.only(code_field, 'name')
 
     data = _get_prescribing_entries(codes, orgs, org_type, date=date)
-    return Response(list(data))
+    response = Response(list(data))
+    if request.accepted_renderer.format == 'csv':
+        filename = "spending-by-{}-{}.csv".format(org_type, '-'.join(codes))
+        response['content-disposition'] = "attachment; filename={}".format(filename)
+    return response
 
 
 def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
