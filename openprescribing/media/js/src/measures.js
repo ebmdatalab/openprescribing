@@ -11,8 +11,7 @@ var config = require('./config');
 Highcharts.setOptions({
   global: {useUTC: false},
 });
-L.mapbox.accessToken = 'pk.eyJ1IjoiYW5uYXBvd2VsbHNta' +
-  'XRoIiwiYSI6ImNzY1VpYkkifQ.LC_IcHpHfOvWOQCuo5t7Hw';
+L.mapbox.accessToken = window.MAPBOX_PUBLIC_TOKEN;
 
 var measures = {
   el: {
