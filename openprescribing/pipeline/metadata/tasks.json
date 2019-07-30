@@ -237,7 +237,7 @@
     },
     "refresh_views": {
         "type": "post_process",
-        "command": "create_views",
+        "command": "refresh_views",
         "dependencies": [
             "upload_to_bigquery"
         ]
