@@ -803,10 +803,12 @@ def tariff(request, code=None):
         presentations = Presentation.objects.filter(bnf_code__in=codes)
     else:
         presentations = []
+    selected_vmps = VMP.objects.filter(bnf_code__in=codes)
     context = {
         'bnf_codes': codes,
         'presentations': presentations,
         'vmps': vmps,
+        'selected_vmps': selected_vmps,
         'chart_title': 'Tariff prices for ' + ', '.join(
             [x.product_name for x in presentations])
     }

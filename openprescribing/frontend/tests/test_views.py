@@ -619,6 +619,15 @@ class TestTariffView(TestCase):
             response,
             '<option value="0202010F0AAAAAA" selected>Chlortalidone 50mg tablets</option>'
         )
+        self.assertContains(
+            response,
+            '''
+            <ul>
+              <li><a href="/dmd/vmp/317935006/">Chlortalidone 50mg tablets</a></li>
+            </ul>
+            ''',
+            html=True
+        )
 
 class TestPPUViews(TestCase):
     fixtures = ['orgs', 'importlog', 'practices', 'prescriptions', 'presentations']
