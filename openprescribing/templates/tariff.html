@@ -74,7 +74,7 @@
 <hr>
 <p>View dm+d data about:</p>
 <ul>
-  {% for vmp in vmps %}
+  {% for vmp in selected_vmps %}
   <li><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></li>
   {% endfor %}
 </ul>
