@@ -74,7 +74,7 @@ def create_and_populate_bq_table(client, name, schema, table_data):
         for item in table_data:
             writer.writerow(dict_to_row(item, schema))
         f.seek(0)
-        table.insert_rows_from_csv(f.name)
+        table.insert_rows_from_csv(f.name, schema)
 
 
 def dict_to_row(dictionary, schema):

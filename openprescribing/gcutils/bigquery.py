@@ -5,6 +5,7 @@ import string
 import subprocess
 import sys
 import tempfile
+import warnings
 
 from google.cloud import bigquery as gcbq
 from google.cloud.exceptions import Conflict, NotFound
@@ -65,9 +66,15 @@ class Client(object):
 
         # If this raises a DefaultCredentialsError:
         #  * on a developer's machine, run `gcloud auth application-default login`
+        #   to use OAuth
         #  * elsewhere, ensure that GOOGLE_APPLICATION_CREDENTIALS is set and
         #    points to a valid set of credentials for a service account
-        self.gcbq_client = gcbq.Client(project=self.project)
+        #
+        # A warning is raised when authenticating with OAuth, recommending that
+        # server applications use a service account.  We can ignore this.
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.gcbq_client = gcbq.Client(project=self.project)
 
         self.dataset_key = dataset_key
 
@@ -233,7 +240,6 @@ class Client(object):
         sql = interpolate_sql(sql)
         kwargs = {
             'project_id': self.project,
-            'verbose': False,
             'dialect': 'legacy' if legacy else 'standard',
         }
         with exception_sql_printer(sql):
@@ -268,7 +274,7 @@ class Client(object):
                 record[ix] = record[ix] + ' 00:00:00'
             return record
 
-        table.insert_rows_from_pg(model, columns, transformer)
+        table.insert_rows_from_pg(model, schema, columns, transformer)
 
 
 class Table(object):
@@ -339,24 +345,32 @@ class Table(object):
                 self.client.create_dataset()
                 self.run_job('query', args, options, default_options)
 
-    def insert_rows_from_csv(self, csv_path, **options):
+    def insert_rows_from_csv(self, csv_path, schema, **options):
         default_options = {
             'source_format': 'text/csv',
             'write_disposition': 'WRITE_TRUNCATE',
+            'schema': schema,
         }
+
+        # When we send a schema with a load_table_from_file job, our copy
+        # of the table metadata doesn't get updated, so we need to do this
+        # ourselves.
+        self.gcbq_table.schema = schema
 
         with open(csv_path, 'rb') as f:
             args = [f, self.gcbq_table_ref]
             self.run_job('load_table_from_file', args, options,
                          default_options)
 
-    def insert_rows_from_pg(self, model, columns, transformer=None):
+    def insert_rows_from_pg(self, model, schema, columns=None, transformer=None):
+        if columns is None:
+            columns = [field.name for field in schema]
         table_dumper = TableDumper(model, columns, transformer)
 
         with tempfile.NamedTemporaryFile() as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
-            self.insert_rows_from_csv(f.name, foo='bar')
+            self.insert_rows_from_csv(f.name, schema)
 
     def insert_rows_from_storage(self, gcs_path, **options):
         default_options = {

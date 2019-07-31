@@ -53,7 +53,11 @@ class CommandsFunctionalTestCase(TestCase):
         self.client = Client('tmp_eu')
         t1 = self.client.get_or_create_table(
             self.table_name, RAW_PRESCRIBING_SCHEMA)
-        t1.insert_rows_from_csv(raw_data_path, skip_leading_rows=1)
+        t1.insert_rows_from_csv(
+            raw_data_path,
+            RAW_PRESCRIBING_SCHEMA,
+            skip_leading_rows=1
+        )
 
         call_command('import_adqs')
 

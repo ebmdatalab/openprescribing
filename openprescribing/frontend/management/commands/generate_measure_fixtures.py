@@ -122,11 +122,13 @@ class Command(BaseCommand):
         Client('measures').create_dataset()
         client = Client('hscic')
         table = client.get_or_create_table('ccgs', schemas.CCG_SCHEMA)
-        columns = [field.name for field in schemas.CCG_SCHEMA]
-        table.insert_rows_from_pg(PCT, columns, schemas.ccgs_transform)
+        table.insert_rows_from_pg(
+            PCT,
+            schemas.CCG_SCHEMA,
+            transformer=schemas.ccgs_transform
+        )
         table = client.get_or_create_table('practices', schemas.PRACTICE_SCHEMA)
-        columns = [field.name for field in schemas.PRACTICE_SCHEMA]
-        table.insert_rows_from_pg(Practice, columns)
+        table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
 
         # Create measures definitions and record the BNF codes used
         measure_definitions_path = os.path.join(
@@ -259,7 +261,7 @@ class Command(BaseCommand):
             for row in prescribing_rows:
                 writer.writerow(row)
             f.seek(0)
-            table.insert_rows_from_csv(f.name)
+            table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
         # Do the work.
         call_command('import_measures', measure='core_0,core_1,lp_2,lp_3,lpzomnibus')

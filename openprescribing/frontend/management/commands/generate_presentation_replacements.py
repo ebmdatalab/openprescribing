@@ -179,7 +179,7 @@ def create_bigquery_table():
         csv_file.seek(0)
         client = Client('hscic')
         table = client.get_or_create_table('bnf_map', schemas.BNF_MAP_SCHEMA)
-        table.insert_rows_from_csv(csv_file.name)
+        table.insert_rows_from_csv(csv_file.name, schemas.BNF_MAP_SCHEMA)
 
 
 def write_zero_prescribing_codes_table(level):

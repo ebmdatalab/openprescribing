@@ -242,9 +242,8 @@ class Command(BaseCommand):
 
         client = Client('hscic')
         table = client.get_or_create_table('ppu_savings', PPU_SAVING_SCHEMA)
-        columns = [field.name for field in PPU_SAVING_SCHEMA]
         table.insert_rows_from_pg(
             PPUSaving,
-            columns,
-            ppu_savings_transform
+            PPU_SAVING_SCHEMA,
+            transformer=ppu_savings_transform
         )

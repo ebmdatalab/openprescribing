@@ -39,6 +39,11 @@ class BQClientTest(TestCase):
         client = Client('test')
         archive_client = Client('archive')
 
+        orig_schema = build_schema(
+            ('a', 'STRING'),
+            ('b', 'INTEGER'),
+        )
+
         schema = build_schema(
             ('a', 'INTEGER'),
             ('b', 'STRING'),
@@ -51,11 +56,11 @@ class BQClientTest(TestCase):
             (3, 'coconut'),
         ]
 
-        t1 = client.get_or_create_table('t1', schema)
+        t1 = client.get_or_create_table('t1', orig_schema)
         t1_qname = t1.qualified_name
 
         # Test Table.insert_rows_from_csv
-        t1.insert_rows_from_csv('gcutils/tests/test_table.csv')
+        t1.insert_rows_from_csv('gcutils/tests/test_table.csv', schema)
 
         self.assertEqual(sorted(t1.get_rows()), rows)
 
@@ -159,7 +164,11 @@ class BQClientTest(TestCase):
 
         def transformer(row):
             return [ord(row[0][0]), row[1]]
-        t1.insert_rows_from_pg(PCT, ['code', 'name'], transformer)
+        t1.insert_rows_from_pg(
+            PCT,
+            build_schema(('code', 'INTEGER'), ('name', 'STRING')),
+            transformer=transformer
+        )
 
         self.assertEqual(sorted(t1.get_rows()), [(65, 'CCG 1'), (88, 'CCG 2')])
 

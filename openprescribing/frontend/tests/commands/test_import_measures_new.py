@@ -387,11 +387,13 @@ def upload_ccgs_and_practices():
     '''Upload CCGs and Practices to BQ.'''
 
     table = Client('hscic').get_table('ccgs')
-    columns = [field.name for field in schemas.CCG_SCHEMA]
-    table.insert_rows_from_pg(PCT, columns, schemas.ccgs_transform)
+    table.insert_rows_from_pg(
+        PCT,
+        schemas.CCG_SCHEMA,
+        transformer=schemas.ccgs_transform
+    )
     table = Client('hscic').get_table('practices')
-    columns = [field.name for field in schemas.PRACTICE_SCHEMA]
-    table.insert_rows_from_pg(Practice, columns)
+    table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
 
 
 def upload_prescribing(randint):
@@ -508,7 +510,7 @@ def upload_prescribing(randint):
         for row in prescribing_rows:
             writer.writerow(row)
         f.seek(0)
-        table.insert_rows_from_csv(f.name)
+        table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
         headers = [
             'sha',
@@ -609,6 +611,6 @@ def upload_practice_statistics(randint):
         for row in practice_statistics_rows:
             writer.writerow(row)
         f.seek(0)
-        table.insert_rows_from_csv(f.name)
+        table.insert_rows_from_csv(f.name, schemas.PRACTICE_STATISTICS_SCHEMA)
 
     return practice_stats
