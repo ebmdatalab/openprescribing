@@ -68,7 +68,7 @@ class TestFinaliseMatrix(SimpleTestCase):
 
     def test_sufficiently_sparse_matrices_remain_sparse(self):
         matrix = sparse_matrix((4, 4))
-        for coords in self._random_coords(matrix.shape, sample_density=0.3):
+        for coords in self._random_coords(matrix.shape, sample_density=0.1):
             matrix[coords] = self.random.random()
         finalised = finalise_matrix(matrix)
         self.assertIsInstance(finalised, SparseMatrixBase)
@@ -82,7 +82,7 @@ class TestFinaliseMatrix(SimpleTestCase):
 
     def test_integer_matrices_are_converted_to_smallest_type(self):
         matrix = sparse_matrix((4, 4), integer=True)
-        for coords in self._random_coords(matrix.shape, sample_density=0.4):
+        for coords in self._random_coords(matrix.shape, sample_density=0.5):
             matrix[coords] = self.random.randint(1, 127)
         finalised = finalise_matrix(matrix)
         self.assertEqual(finalised.dtype, numpy.uint8)

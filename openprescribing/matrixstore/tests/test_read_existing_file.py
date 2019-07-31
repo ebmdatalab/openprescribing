@@ -71,7 +71,7 @@ class TestReadExistingFile(SimpleTestCase):
 
     @classmethod
     def make_matrix(self, random, sparse, integer):
-        shape = (4, 4)
+        shape = (16, 4)
         if sparse:
             matrix = sparse_matrix(shape, integer=integer)
         else:
@@ -82,6 +82,8 @@ class TestReadExistingFile(SimpleTestCase):
         matrix[coords] = value
         if sparse:
             matrix = finalise_matrix(matrix)
+        # Check we've got the type of matrix we're expecting
+        assert hasattr(matrix, 'todense') == sparse
         return matrix
 
     @classmethod

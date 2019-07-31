@@ -111,11 +111,13 @@ class TestGrouper(SimpleTestCase):
 
     def make_matrix(self, sparse, integer):
         matrix = sparse_matrix(self.shape, integer=integer)
-        sample_density = 0.4 if sparse else 1
+        sample_density = 0.1 if sparse else 1
         for coords in self._random_coords(self.shape, sample_density):
             value = self.random.randrange(1024) if integer else random.random()
             matrix[coords] = value
         matrix = finalise_matrix(matrix)
+        # Make sure we get back the type of matrix we're expecting
+        assert hasattr(matrix, 'todense') == sparse
         return matrix
 
     def _random_coords(self, shape, sample_density):
