@@ -1,7 +1,9 @@
 """Production settings and globals."""
 
 from __future__ import absolute_import
+import logging
 import os
+import time
 from .base import *
 from common import utils
 
@@ -46,6 +48,9 @@ GOOGLE_OPTIMIZE_CONTAINER_ID = 'GTM-5PX77GZ'
 
 ANYMAIL["MAILGUN_SENDER_DOMAIN"] = "openprescribing.net"
 
+# This causes logging to be in UTC everywhere.  See
+# https://stackoverflow.com/a/26453979
+logging.Formatter.converter = time.gmtime
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -65,7 +70,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': "%s/logs/gunicorn.log" % REPO_ROOT,
+            'filename': "%s/logs/django.log" % REPO_ROOT,
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
         'signals': {
