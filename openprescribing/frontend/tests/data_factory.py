@@ -27,6 +27,8 @@ class DataFactory(object):
         self.next_id = lambda: next(counter)
 
     def create_months_array(self, start_date=None, num_months=1):
+        if start_date is None:
+            start_date = '2019-07-01'
         date = parse_date(start_date)
         return [
             (date + relativedelta(months=i)).strftime('%Y-%m-%d')
@@ -123,6 +125,10 @@ class DataFactory(object):
             practice,
             presentations=None,
             months=None):
+
+        if months is None:
+            months = self.create_months_array()
+
         for date in months:
             self.create_import_log(date)
             for i, presentation in enumerate(presentations):

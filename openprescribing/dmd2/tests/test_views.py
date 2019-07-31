@@ -1,8 +1,85 @@
 from django.test import TestCase
 
+from dmd2.models import DtPaymentCategory
+from frontend.models import Presentation, TariffPrice
+from frontend.tests.data_factory import DataFactory
+
+
+class TestDMDObjView(TestCase):
+    fixtures = ['dmd-objs']
+
+    def test_vtm(self):
+        rsp = self.client.get('/dmd/vtm/68088000/')
+        self.assertContains(rsp, '<td>Name</td><td>Acebutolol</td>', html=True)
+        self.assertNotContains(rsp, 'This VTM cannot be matched')
+
+    def test_vmp(self):
+        rsp = self.client.get('/dmd/vmp/318412000/')
+        self.assertContains(
+            rsp,
+            '<td>Name</td><td>Acebutolol 100mg capsules</td>',
+            html=True
+        )
+        self.assertNotContains(rsp, 'Analyse prescribing')
+        self.assertNotContains(rsp, 'See prices paid')
+
+        factory = DataFactory()
+        practice = factory.create_practice()
+        presentation = Presentation.objects.create(
+            bnf_code='0204000C0AAAAAA',
+            name='Acebut HCl_Cap 100mg'
+        )
+        factory.create_prescribing_for_practice(practice, [presentation])
+
+        rsp = self.client.get('/dmd/vmp/318412000/')
+        self.assertContains(rsp, 'Analyse prescribing')
+        self.assertContains(rsp, 'See prices paid')
+
+    def test_amp(self):
+        rsp = self.client.get('/dmd/amp/632811000001105/')
+        self.assertContains(
+            rsp,
+            '<td>Description</td><td>Sectral 100mg capsules (Sanofi)</td>',
+            html=True
+        )
+
+    def test_vmpp(self):
+        rsp = self.client.get('/dmd/vmpp/1098611000001105/')
+        self.assertContains(
+            rsp,
+            '<td>Description</td><td>Acebutolol 100mg capsules 84 capsule</td>',
+            html=True
+        )
+        self.assertNotContains(rsp, 'View Drug Tariff history')
+
+        TariffPrice.objects.create(
+            date='2019-07-01',
+            vmpp_id=1098611000001105,
+            tariff_category=DtPaymentCategory.objects.create(cd=1, descr='Cat A'),
+            price_pence=100,
+        )
+
+        rsp = self.client.get('/dmd/vmpp/1098611000001105/')
+        self.assertContains(rsp, 'View Drug Tariff history')
+
+    def test_ampp(self):
+        rsp = self.client.get('/dmd/ampp/9703311000001100/')
+        self.assertContains(
+            rsp,
+            '''
+            <td>Description</td>
+            <td>Acebutolol 100mg capsules (A A H Pharmaceuticals Ltd) 84 capsule</td>
+            ''',
+            html=True
+        )
+        self.assertContains(
+            rsp,
+            'This AMPP cannot be matched against our prescribing data'
+        )
+
 
 class TestSearchView(TestCase):
-    fixtures = ['dmd-search-fixtures']
+    fixtures = ['dmd-objs']
 
     def test_search_returning_no_results(self):
         rsp = self._get('bananas')
@@ -77,7 +154,7 @@ class TestSearchView(TestCase):
         self.assertRedirects(rsp, '/dmd/vmp/318412000/')
 
     def test_search_by_snomed_code_returning_no_results(self):
-        rsp = self._get('12345')
+        rsp = self._get('12345678')
 
         # We expect to see "No results found".
         self.assertContains(rsp, 'No results found.')
@@ -91,6 +168,14 @@ class TestSearchView(TestCase):
         # We don't expect to see that a search has happened.
         self.assertNotContains(rsp, 'No results found.')
 
+    def test_with_no_obj_types(self):
+        rsp = self.client.get('/dmd/', {'q': 'acebutolol'})
+
+        # We expect to see lists of the matching objects.
+        self.assertContains(rsp, 'Virtual Medicinal Products (1)')
+        self.assertContains(rsp, 'Acebutolol 100mg capsules')
+        self.assertContains(rsp, 'Virtual Medicinal Product Packs (1)')
+        self.assertContains(rsp, 'Acebutolol 100mg capsules 84 capsule')
 
     def _get(self, q, **extra_params):
         params = {

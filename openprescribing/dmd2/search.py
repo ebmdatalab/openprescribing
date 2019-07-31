@@ -17,7 +17,7 @@ def search_by_term(q, obj_types, include):
     results = []
 
     for cls in [VTM, VMP, VMPP, AMP, AMPP]:
-        if cls.obj_type not in obj_types:
+        if obj_types and cls.obj_type not in obj_types:
             continue
 
         qs = cls.objects

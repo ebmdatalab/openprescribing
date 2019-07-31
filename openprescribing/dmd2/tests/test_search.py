@@ -5,7 +5,7 @@ from dmd2.search import search
 
 
 class TestSearch(TestCase):
-    fixtures = ['dmd-search-fixtures']
+    fixtures = ['dmd-objs']
 
     def test_by_snomed_code(self):
         self.assertSearchResults(
@@ -19,10 +19,22 @@ class TestSearch(TestCase):
             {AMP: [632811000001105], AMPP: [1389011000001108]}
         )
 
+    def test_by_bnf_code(self):
+        self.assertSearchResults(
+            {'q': '0204000C0BB'},
+            {AMP: [632811000001105], AMPP: [1389011000001108]}
+        )
+
     def test_with_obj_types(self):
         self.assertSearchResults(
             {'q': 'acebutolol', 'obj_types': ['vmp']},
             {VMP: [318412000]}
+        )
+
+    def test_with_no_obj_types(self):
+        self.assertSearchResults(
+            {'q': 'sanofi', 'obj_types': []},
+            {AMP: [632811000001105], AMPP: [1389011000001108]}
         )
 
     def test_include_invalid(self):

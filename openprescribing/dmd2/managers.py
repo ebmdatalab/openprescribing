@@ -1,10 +1,11 @@
 from django.db import models
+from django.db.models import Q
 
 
 class DMDObjectQuerySet(models.QuerySet):
     def search(self, q):
         kwargs = {"{}__icontains".format(self.model.name_field): q}
-        return self.filter(**kwargs)
+        return self.filter(Q(**kwargs) | Q(bnf_code__startswith=q.upper()))
 
     def valid(self):
         return self.exclude(invalid=True)
@@ -20,6 +21,9 @@ class DMDObjectQuerySet(models.QuerySet):
 
 
 class VTMQuerySet(DMDObjectQuerySet):
+    def search(self, q):
+        return self.filter(nm__icontains=q)
+
     def available(self):
         # There are no fields on VTM relating to availability
         return self
