@@ -429,9 +429,8 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
     across all practices for all presentations matching the supplied BNF code
     prefixes
     """
-    db = get_db()
     items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
-        db, bnf_code_prefixes
+        bnf_code_prefixes
     )
     # If no data at all was found, return early which results in an empty
     # iterator
@@ -442,20 +441,17 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
     # powered by the `vw__presentation_summary` table which summed over all
     # practice types)
     group_all = get_row_grouper("all_practices")
-    items_matrix = group_all.sum(items_matrix)
-    quantity_matrix = group_all.sum(quantity_matrix)
-    actual_cost_matrix = group_all.sum(actual_cost_matrix)
+    items_matrix = group_all.sum_one_group(items_matrix)
+    quantity_matrix = group_all.sum_one_group(quantity_matrix)
+    actual_cost_matrix = group_all.sum_one_group(actual_cost_matrix)
     # Yield entries for each date (unlike _get_prescribing_entries below we
     # return a value for each date even if it's zero as this is what the
     # original API did)
-    for date, col_offset in sorted(db.date_offsets.items()):
-        # The grouped matrices only ever have one row (which represents the
-        # total over all practices) so we always want row 0 in our index
-        index = (0, col_offset)
+    for date in items_matrix.labels:
         yield {
-            "items": items_matrix[index],
-            "quantity": quantity_matrix[index],
-            "actual_cost": round(actual_cost_matrix[index], 2),
+            "items": items_matrix[date],
+            "quantity": quantity_matrix[date],
+            "actual_cost": round(actual_cost_matrix[date], 2),
             "date": date,
         }
 
@@ -584,9 +580,8 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
     If a date is supplied then data for just that date is returned, otherwise
     all available dates are returned.
     """
-    db = get_db()
     items_matrix, quantity_matrix, actual_cost_matrix = _get_prescribing_for_codes(
-        db, bnf_code_prefixes
+        bnf_code_prefixes
     )
     # If no data at all was found, return early which results in an empty
     # iterator
@@ -597,25 +592,17 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
     items_matrix = group_by_org.sum(items_matrix)
     quantity_matrix = group_by_org.sum(quantity_matrix)
     actual_cost_matrix = group_by_org.sum(actual_cost_matrix)
-    # `group_by_org.offsets` maps each organisation's primary key to its row
-    # offset within the matrices. We pair each organisation with its row
-    # offset, ignoring those organisations which aren't in the mapping (which
-    # implies that they did not prescribe in this period)
-    org_offsets = [
-        (org, group_by_org.offsets[org.pk])
-        for org in orgs
-        if org.pk in group_by_org.offsets
-    ]
-    # Pair each date with its column offset (either all available dates or just
-    # the specified one)
+    # We either want all available dates or just the specified one
     if date:
-        date_offsets = [(date, db.date_offsets[date])]
+        dates = [date] if date in items_matrix.column_labels else []
     else:
-        date_offsets = sorted(db.date_offsets.items())
+        dates = items_matrix.column_labels
+    # Filter out organisations which don't appear at all in the matrix
+    orgs = [org for org in orgs if org.pk in items_matrix.row_labels]
     # Yield entries for each organisation on each date
-    for date, col_offset in date_offsets:
-        for org, row_offset in org_offsets:
-            index = (row_offset, col_offset)
+    for date in dates:
+        for org in orgs:
+            index = (date, org.pk)
             items = items_matrix[index]
             # Mimicking the behaviour of the existing API, we don't return
             # entries where there was no prescribing
@@ -636,7 +623,7 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
             yield entry
 
 
-def _get_prescribing_for_codes(db, bnf_code_prefixes):
+def _get_prescribing_for_codes(bnf_code_prefixes):
     """
     Return items, quantity and actual_cost matrices giving the totals for all
     prescribing which matches any of the supplied BNF code prefixes. If no
@@ -663,7 +650,7 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
         # precalculated results table
         sql = "SELECT items, quantity, actual_cost FROM all_presentations"
         params = []
-    items, quantity, actual_cost = db.query_one(sql, params)
+    items, quantity, actual_cost = get_db().query_one(sql, params)
     # Convert from pence to pounds
     if actual_cost is not None:
         actual_cost = actual_cost / 100.0
