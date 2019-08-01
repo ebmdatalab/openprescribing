@@ -4,17 +4,6 @@ import numpy
 import scipy.sparse
 
 
-# Above a certain level of density it becomes more efficient to use a normal
-# dense matrix instead of a sparse one. This threshold was determined through a
-# not particularly scientific process of trial and error.  Due to the
-# compression we apply there's very little difference in storage requirements
-# between sparse and dense matrices, but the difference comes in the time take
-# to perform operations (e.g summing) using these matrices and that's harder to
-# measure. At some point we can profile and optimise the performance of the
-# MatrixStore, but for now it's fast enough.
-DENSITY_THRESHOLD = 0.5
-
-
 def sparse_matrix(shape, integer=False):
     """
     Create a new sparse matrix (either integer or floating point) in a form
@@ -28,13 +17,11 @@ def finalise_matrix(matrix):
     """
     Return a copy of a sparse matrix in a form suitable for storage
     """
-    if get_density(matrix) < DENSITY_THRESHOLD:
-        matrix = matrix.tocsc()
-        matrix.sort_indices()
-    else:
-        matrix = matrix.toarray()
+    matrix = matrix.tocsc()
+    matrix.sort_indices()
     if is_integer(matrix):
         matrix = convert_to_smallest_int_type(matrix)
+    matrix = convert_to_dense_if_smaller(matrix)
     return matrix
 
 
@@ -59,11 +46,34 @@ def is_integer(matrix):
     return numpy.issubdtype(matrix.dtype, numpy.integer)
 
 
-def get_density(matrix):
+def convert_to_dense_if_smaller(matrix):
     """
-    Return the density of a sparse matrix
+    Convert a sparse matrix to a dense one if that would result in less overall
+    memory usage
+
+    This isn't primarily about storage space as once compressed there isn't
+    much difference between the two forms, but the smaller representations are
+    faster to work with when summing.
     """
-    return matrix.getnnz() / (matrix.shape[0] * matrix.shape[1])
+    if get_dense_memory_usage(matrix) < get_sparse_memory_usage(matrix):
+        return matrix.toarray()
+    else:
+        return matrix
+
+
+def get_sparse_memory_usage(matrix):
+    """
+    Return the number of bytes need to store a sparse matrix
+    """
+    return matrix.data.nbytes + matrix.indices.nbytes + matrix.indptr.nbytes
+
+
+def get_dense_memory_usage(matrix):
+    """
+    Return the number of bytes need to store the equivalent dense
+    representation of a sparse matrix
+    """
+    return matrix.dtype.itemsize * matrix.shape[0] * matrix.shape[1]
 
 
 def convert_to_smallest_int_type(matrix):
