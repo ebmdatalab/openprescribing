@@ -26,6 +26,10 @@ def update_bnf_map(sqlite_path):
     bnf_map = get_old_to_new_bnf_codes(bigquery_connection)
     for old_code, new_code in bnf_map:
         move_values_from_old_code_to_new(cursor, old_code, new_code)
+    # Until we've completed the BNF code update we don't know which
+    # presentations actually have prescribing data, so we have to wait until
+    # now to do this cleanup
+    delete_presentations_with_no_prescribing(cursor)
     connection.commit()
     connection.close()
 
@@ -128,3 +132,7 @@ def format_values_for_sqlite(row):
         sqlite3.Binary(serialize_compressed(value))
         for value in row
     ]
+
+
+def delete_presentations_with_no_prescribing(cursor):
+    cursor.execute('DELETE FROM presentation WHERE items IS NULL')
