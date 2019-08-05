@@ -61,6 +61,17 @@
 </form>
 
 
+{% if selected_vmps %}
+<hr>
+<p>View dm+d data about:</p>
+<ul>
+  {% for vmp in selected_vmps %}
+  <li><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></li>
+  {% endfor %}
+</ul>
+<hr>
+{% endif %}
+
 <div id="tariff" style="clear: both; display: none">
 
 
@@ -70,14 +81,6 @@
 </div>
 <hr>
 <a href="{% url 'tariff_api' %}?format=csv">Download complete tariff data</a>
-
-<hr>
-<p>View dm+d data about:</p>
-<ul>
-  {% for vmp in selected_vmps %}
-  <li><a href="{% url 'dmd_obj' 'vmp' vmp.id %}">{{ vmp.nm }}</a></li>
-  {% endfor %}
-</ul>
 
 {% endblock %}
 
