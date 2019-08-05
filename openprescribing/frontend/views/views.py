@@ -891,8 +891,13 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     if entity_type in ('practice', 'ccg', 'CCG', 'all_england'):
         form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
+        signed_up_for_alert = _signed_up_for_alert(
+            request, entity, NCSOConcessionBookmark
+        )
     else:
         form = None
+        signed_up_for_alert = False
+
     if isinstance(form, HttpResponseRedirect):
         return form
 
@@ -950,7 +955,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
         'breakdown_is_incomplete_month': breakdown_metadata['is_incomplete_month'],
         'last_prescribing_date': last_prescribing_date,
         'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-        'signed_up_for_alert': _signed_up_for_alert(request, entity, NCSOConcessionBookmark),
+        'signed_up_for_alert': signed_up_for_alert,
         'form': form,
     }
     request.session['came_from'] = request.path
