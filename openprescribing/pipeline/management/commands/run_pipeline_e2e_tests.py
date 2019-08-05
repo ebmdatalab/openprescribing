@@ -113,12 +113,6 @@ def run_end_to_end():
 
     call_command('generate_presentation_replacements')
 
-    path = os.path.join(settings.APPS_ROOT, 'frontend', 'management',
-                        'commands', 'replace_matviews.sql')
-    with open(path) as f:
-        with connection.cursor() as c:
-            c.execute(f.read())
-
     copy_tree(
         os.path.join(e2e_path, 'data-1'),
         os.path.join(e2e_path, 'data'),
@@ -133,28 +127,6 @@ def run_end_to_end():
     # (There are 4 practices, 2 CCGs, 2 STPs, and 2 regional teams).
     assert_count_equal(10 * num_measures, MeasureValue)
 
-    # We expect one statistic per CCG per month
-    assert_raw_count_equal(2, 'vw__ccgstatistics')
-
-    # We expect one chemical summary per CCG per month
-    assert_raw_count_equal(2, 'vw__chemical_summary_by_ccg',
-                           "chemical_id = '1001030C0'")
-
-    # We expect one chemical summary per practice per month
-    assert_raw_count_equal(4, 'vw__chemical_summary_by_practice',
-                           "chemical_id = '1001030C0'")
-
-    # We expect one summary per practice per month
-    assert_raw_count_equal(4, 'vw__practice_summary')
-
-    # We expect one presentation summary per month
-    assert_raw_count_equal(1, 'vw__presentation_summary',
-                           "presentation_code = '1001030C0AAAAAA'")
-
-    # We expect one presentation summary per CCG per month
-    assert_raw_count_equal(2, 'vw__presentation_summary_by_ccg',
-                           "presentation_code = '1001030C0AAAAAA'")
-
     copy_tree(
         os.path.join(e2e_path, 'data-2'),
         os.path.join(e2e_path, 'data'),
@@ -168,48 +140,10 @@ def run_end_to_end():
     # We expect one MeasureValue for each organisation per measure per month
     assert_count_equal(20 * num_measures, MeasureValue)
 
-    # We expect one statistic per CCG per month
-    assert_raw_count_equal(4, 'vw__ccgstatistics')
-
-    # We expect one chemical summary per CCG per month
-    assert_raw_count_equal(4, 'vw__chemical_summary_by_ccg',
-                           "chemical_id = '1001030C0'")
-
-    # We expect one chemical summary per practice per month
-    assert_raw_count_equal(8, 'vw__chemical_summary_by_practice',
-                           "chemical_id = '1001030C0'")
-
-    # We expect one summary per practice per month
-    assert_raw_count_equal(8, 'vw__practice_summary')
-
-    # We expect one presentation summary per month
-    assert_raw_count_equal(2, 'vw__presentation_summary',
-                           "presentation_code = '1001030C0AAAAAA'")
-
-    # We expect one presentation summary per CCG per month
-    assert_raw_count_equal(4, 'vw__presentation_summary_by_ccg',
-                           "presentation_code = '1001030C0AAAAAA'")
-
 
 def assert_count_equal(expected, model):
     actual = model.objects.count()
     if actual != expected:
         msg = 'Expected {} {} objects, found {}'.format(
             expected, model, actual)
-        raise CommandError(msg)
-
-
-def assert_raw_count_equal(expected, table_name, where_condition=None):
-    sql = 'SELECT COUNT(*) FROM {}'.format(table_name)
-    if where_condition is not None:
-        sql += ' WHERE {}'.format(where_condition)
-
-    with connection.cursor() as c:
-        c.execute(sql)
-        results = c.fetchall()
-
-    actual = results[0][0]
-
-    if actual != expected:
-        msg = 'Expected {} to return {}, got {}'.format(sql, expected, actual)
         raise CommandError(msg)

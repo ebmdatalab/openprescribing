@@ -1,7 +1,6 @@
 import itertools
 import random
 
-from django.db import connection
 from django.contrib.auth.models import User
 
 from dateutil.relativedelta import relativedelta
@@ -172,13 +171,6 @@ class DataFactory(object):
             current_at=date,
             category='prescribing'
         )
-
-    def populate_materialised_views(self):
-        with connection.cursor() as cursor:
-            with open('frontend/management/commands/replace_matviews.sql', 'r') as f:
-                cursor.execute(f.read())
-            with open('frontend/tests/fixtures/populate_matviews.sql', 'r') as f:
-                cursor.execute(f.read())
 
     def create_user(self, email=None):
         index = self.next_id()
