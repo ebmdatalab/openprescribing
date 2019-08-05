@@ -138,11 +138,10 @@ def import_presentations(bq_conn, sqlite_conn):
     Query BigQuery for BNF codes and metadata on all presentations and insert
     into SQLite
     """
-    # Unlike with practices above, we make no attempt to determine which
-    # presentations have prescribing data during the period: it costs very
-    # little to have presentations in the database which are not prescribed
-    # against; and we don't actually know which codes are and aren't used until
-    # we apply the "BNF map" which translates old codes into new codes.
+    # We initially pull in metadata for all presentations. After we have
+    # imported prescribing data and applied the "BNF map" to apply any changed
+    # to codes we can delete entries for presentations that don't have
+    # associated prescribing.
     logger.info('Querying all presentation metadata')
     result = bq_conn.query(
         """

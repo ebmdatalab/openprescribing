@@ -69,6 +69,9 @@ class TestMatrixStoreBuild(SimpleTestCase):
         cls.prescribing_with_new_code = factory.create_prescribing(
             [cls.updated_presentation], cls.active_practices, cls.months
         )
+        # Create a presenation without creating any prescribing for it so we can
+        # check it doesn't appear in the final file
+        cls.presentation_without_prescribing = factory.create_presentation()
         # We deliberately import data for fewer months than we've created so we
         # can test that only the right data is included
         cls.months_to_import = cls.months[1:]
@@ -143,6 +146,7 @@ class TestMatrixStoreBuild(SimpleTestCase):
         results = [dict(row) for row in results]
         self.assertEqual(results, expected)
         self.assertNotIn(self.presentation_to_update, results)
+        self.assertNotIn(self.presentation_without_prescribing, results)
 
     def test_practice_statistics_are_correct(self):
         get_value = MatrixValueFetcher(

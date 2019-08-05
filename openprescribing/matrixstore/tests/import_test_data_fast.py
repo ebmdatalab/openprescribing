@@ -10,7 +10,7 @@ from matrixstore.build.import_prescribing import (
     write_prescribing, parse_prescribing_csv
 )
 from matrixstore.build.update_bnf_map import (
-    move_values_from_old_code_to_new
+    move_values_from_old_code_to_new, delete_presentations_with_no_prescribing
 )
 from matrixstore.build.precalculate_totals import (
     precalculate_totals_for_db
@@ -89,6 +89,7 @@ def update_bnf_map(sqlite_conn, data_factory):
             item['former_bnf_code'],
             item['current_bnf_code']
         )
+    delete_presentations_with_no_prescribing(cursor)
 
 
 def _get_active_practice_codes(data_factory, dates):
