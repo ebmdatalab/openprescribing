@@ -896,10 +896,11 @@ def spending_for_one_entity(request, entity_code, entity_type):
     if isinstance(form, HttpResponseRedirect):
         return form
 
+    current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
-        num_months=12,
-        current_month=_get_current_month()
+        num_months=30,
+        current_month=current_month
     )
     # In the very rare cases where we don't have data we just return a 404
     # rather than triggering an error
@@ -907,7 +908,11 @@ def spending_for_one_entity(request, entity_code, entity_type):
         raise Http404('No data available')
     end_date = max(row['month'] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
-    rolling_annual_total = sum(row['additional_cost'] for row in monthly_totals)
+    one_year_ago = current_month.replace(year=current_month.year - 1)
+    rolling_annual_total = sum(
+        row['additional_cost'] for row in monthly_totals
+        if row['month'] > one_year_ago
+    )
     financial_ytd_total = _financial_ytd_total(monthly_totals)
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
