@@ -1,31 +1,33 @@
 import csv
 import glob
 import os
-from lxml import etree
+from datetime import datetime
 
+from lxml import etree
 from openpyxl import load_workbook
 
 from django.apps import apps
-from django.core.management import BaseCommand
+from django.conf import settings
+from django.core.management import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.db.models import fields as django_fields
 
 from dmd2 import models
 from dmd2.models import AMP, AMPP, VMP, VMPP
-from frontend.models import Presentation
+from frontend.models import ImportLog, Presentation
 from gcutils.bigquery import Client
+from openprescribing.slack import notify_slack
+from openprescribing.utils import mkdir_p
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument('dmd_data_path')
-        parser.add_argument('mapping_path')
-        parser.add_argument('logs_path')
-
     def handle(self, *args, **kwargs):
-        self.dmd_data_path = kwargs['dmd_data_path']
-        self.mapping_path = kwargs['mapping_path']
-        self.logs_path = kwargs['logs_path']
+        self.dmd_data_path = self.get_dmd_data_path()
+        self.mapping_path = self.get_mapping_path()
+        self.logs_path = self.get_logs_path()
+
+        if self.already_imported():
+            return
 
         self.log_keys = [
             'dmd-objs-present-in-mapping-only',
@@ -43,10 +45,12 @@ class Command(BaseCommand):
             self.import_bnf_code_mapping()
             self.set_vmp_bnf_codes()
             self.set_dmd_names()
+            self.create_import_log()
 
         self.upload_to_bq()
         self.log_other_oddities()
         self.write_logs()
+        self.notify_slack()
 
     def import_dmd(self):
         # dm+d data is provided in several XML files:
@@ -265,18 +269,17 @@ class Command(BaseCommand):
 
     def import_bnf_code_mapping(self):
         type_to_model = {
-            ('Presentation', 'VMP'): VMP,
-            ('Presentation', 'AMP'): AMP,
-            ('Pack', 'VMP'): VMPP,
-            ('Pack', 'AMP'): AMPP,
+            'VMP': VMP,
+            'AMP': AMP,
+            'VMPP': VMPP,
+            'AMPP': AMPP,
         }
 
         wb = load_workbook(filename=self.mapping_path)
         rows = wb.active.rows
 
         headers = next(rows)
-        assert headers[0].value == 'Presentation / Pack Level'
-        assert headers[1].value == 'VMP / AMP'
+        assert headers[1].value == 'VMP / VMPP/ AMP / AMPP'
         assert headers[2].value == 'BNF Code'
         assert headers[4].value == 'SNOMED Code'
 
@@ -285,8 +288,8 @@ class Command(BaseCommand):
         VMPP.objects.update(bnf_code=None)
         AMPP.objects.update(bnf_code=None)
 
-        for ix, row in enumerate(rows):
-            model = type_to_model[(row[0].value, row[1].value)]
+        for row in rows:
+            model = type_to_model[row[1].value]
 
             bnf_code = row[2].value
             snomed_id = row[4].value
@@ -471,7 +474,7 @@ class Command(BaseCommand):
         We also log summaries of the number of objects imported.
         '''
 
-        os.mkdir(self.logs_path)
+        mkdir_p(self.logs_path)
 
         for key in self.log_keys:
             with open(os.path.join(self.logs_path, key + '.csv'), 'w') as f:
@@ -485,6 +488,83 @@ class Command(BaseCommand):
             for key in self.log_keys:
                 writer.writerow([key, len(self.logs[key])])
 
+    @property
+    def release(self):
+        '''Return string identifying the dm+d release.
+
+        This is derived from the directory containing the data, which is
+        derived from the name of the zip file that we downloaded.
+
+        Eg if the zip file is called nhsbsa_dmd_7.4.0_20190729000001.zip, the
+        release is "7.4.0_20190729000001".
+        .'''
+
+        dirname = self.dmd_data_path.split('/')[-1]
+        n = len('nhsbsa_dmd_')
+        assert dirname[:n] == 'nhsbsa_dmd_'
+        return dirname[n:]
+
+    @property
+    def release_date(self):
+        '''Return date of release.
+
+        Eg if the release is "7.4.0_20190729000001", the date is date(2019, 7, 29).
+        '''
+        datestamp = self.release.split('_')[1][:8]
+        return datetime.strptime(datestamp, '%Y%m%d').date()
+
+    def get_dmd_data_path(self):
+        '''Return path to most recent directory of unzipped dm+d data, without
+        the trailing slash.
+
+        It expects to find this at data/dmd/[datestamp]/nhsbsa_dmd_[release].
+        '''
+
+        # The extra slash ('') at the end of glob_pattern is to ensure we don't
+        # capture any .zip files.
+        glob_pattern = os.path.join(
+            settings.PIPELINE_DATA_BASEDIR, 'dmd', '*', 'nhsbsa_dmd_*', ''
+        )
+        paths = sorted(glob.glob(glob_pattern))
+        if not paths:
+            raise CommandError('No dmd data found')
+
+        # Remove the extra slash.
+        return paths[-1][:-1]
+
+    def get_mapping_path(self):
+        '''Return path to mapping spreadsheet.
+
+        It expects to find this at data/snomed_mapping/[datestamp]/XXX.xlsx
+        '''
+        glob_pattern = os.path.join(
+            settings.PIPELINE_DATA_BASEDIR, 'snomed_mapping', '*', '*.xlsx'
+        )
+
+        paths = sorted(glob.glob(glob_pattern))
+        if not paths:
+            raise CommandError('No mapping data found')
+
+        return paths[-1]
+
+    def get_logs_path(self):
+        return os.path.join(
+            settings.PIPELINE_DATA_BASEDIR, 'dmd', 'logs', self.release
+        )
+
+    def already_imported(self):
+        return ImportLog.objects.filter(category='dmd', filename=self.release).exists()
+
+    def create_import_log(self):
+        ImportLog.objects.create(
+            category='dmd',
+            filename=self.release,
+            current_at=self.release_date,
+        )
+
+    def notify_slack(self):
+        msg = 'Imported dm+d data, release ' + self.release
+        notify_slack(msg)
 
 def get_common_name(names):
     '''Find left substring common to all names, by splitting names on spaces,

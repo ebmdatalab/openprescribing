@@ -9,7 +9,8 @@ from django.test import TestCase
 
 from dmd2.models import AMP, AMPP, VMP, VMPP
 from dmd2.management.commands.import_dmd2 import get_common_name
-from frontend.models import Presentation, NCSOConcession
+from frontend.models import ImportLog, Presentation, NCSOConcession
+from openprescribing.utils import mkdir_p
 
 
 class TestImportDmd2(TestCase):
@@ -25,21 +26,34 @@ class TestImportDmd2(TestCase):
         ]:
             Presentation.objects.create(bnf_code=bnf_code, name=name)
 
-        cls.logs_path = tempfile.mkdtemp()
+        shutil.copytree(
+            'dmd2/tests/data/dmd/1',
+            'pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001'
+        )
+
+        mkdir_p('pipeline/test-data/data/snomed_mapping/2019_07_01')
+
+        shutil.copyfile(
+            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
+            'pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx'
+        )
 
         # Import the data.  See dmd2/tests/data/README.txt for details of what
         # objects will be created.
         with patch('gcutils.bigquery.Client.upload_model'):
-            call_command(
-                'import_dmd2',
-                'dmd2/tests/data/dmd/1/',
-                'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
-                cls.logs_path + '/1',
-            )
+            call_command('import_dmd2')
+
+        # Copy another, later, dataset into the data directory, for tests that
+        # call the command again.
+        shutil.copytree(
+            'dmd2/tests/data/dmd/2',
+            'pipeline/test-data/data/dmd/2019_07_08/nhsbsa_dmd_7.4.0_20190708000001'
+        )
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(cls.logs_path)
+        shutil.rmtree('pipeline/test-data/data/dmd')
+        shutil.rmtree('pipeline/test-data/data/snomed_mapping')
         super(TestImportDmd2, cls).tearDownClass()
 
     def test_objects_created(self):
@@ -123,7 +137,8 @@ class TestImportDmd2(TestCase):
         _assert_dmd_name('090402000BBHCA0', 'Nutrison liquid (Nutricia Ltd)')
 
     def test_logs(self):
-        with open(self.logs_path + '/1/summary.csv') as f:
+        path = 'pipeline/test-data/data/dmd/logs/7.4.0_20190701000001/summary.csv'
+        with open(path) as f:
             summary = list(csv.reader(f))
 
         exp_summary = [
@@ -132,9 +147,9 @@ class TestImportDmd2(TestCase):
             ['VMPP', '14'],
             ['AMPP', '26'],
             ['dmd-objs-present-in-mapping-only', '0'],
-            ['vmps-with-inferred-bnf-code', '2'],
+            ['vmps-with-inferred-bnf-code', '0'],
             ['vmps-with-no-bnf-code', '1'],
-            ['bnf-codes-with-multiple-dmd-objs', '3'],
+            ['bnf-codes-with-multiple-dmd-objs', '2'],
             ['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name', '1'],
             ['vmpps-with-different-bnf-code-to-vmp', '0'],
             ['ampps-with-different-bnf-code-to-amp', '3'],
@@ -163,12 +178,7 @@ class TestImportDmd2(TestCase):
         vmpp.delete()
 
         with patch('gcutils.bigquery.Client.upload_model'):
-            call_command(
-                'import_dmd2',
-                'dmd2/tests/data/dmd/2/',
-                'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
-                self.logs_path + '/2',
-            )
+            call_command('import_dmd2')
 
         # Check that no VMP present with old VPID, that a new VMP has been
         # created, and that references to VMP have been updated.
@@ -184,6 +194,24 @@ class TestImportDmd2(TestCase):
 
         concession.refresh_from_db()
         self.assertEqual(concession.vmpp, vmpp)
+
+    def test_notify_slack(self):
+        with patch('gcutils.bigquery.Client.upload_model'):
+            with patch('dmd2.management.commands.import_dmd2.notify_slack') as ns:
+                call_command('import_dmd2')
+                ns.assert_called()
+
+    def test_already_imported(self):
+        ImportLog.objects.create(
+            category='dmd',
+            filename='7.4.0_20190708000001',
+            current_at='2019-07-08',
+        )
+
+        with patch('gcutils.bigquery.Client.upload_model'):
+            with patch('dmd2.management.commands.import_dmd2.notify_slack') as ns:
+                call_command('import_dmd2')
+                ns.assert_not_called()
 
 
 class TestGetCommonName(TestCase):
