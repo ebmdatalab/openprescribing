@@ -32,16 +32,16 @@ cursor = connection.cursor()
 keys = set()
 
 cursor.execute('SELECT vpid FROM dmd2_vmp')
-keys |= {('Presentation', 'VMP', row[0]) for row in cursor.fetchall()}
+keys |= {('VMP', row[0]) for row in cursor.fetchall()}
 
 cursor.execute('SELECT vppid FROM dmd2_vmpp')
-keys |= {('Pack', 'VMP', row[0]) for row in cursor.fetchall()}
+keys |= {('VMPP', row[0]) for row in cursor.fetchall()}
 
 cursor.execute('SELECT apid FROM dmd2_amp')
-keys |= {('Presentation', 'AMP', row[0]) for row in cursor.fetchall()}
+keys |= {('AMP', row[0]) for row in cursor.fetchall()}
 
 cursor.execute('SELECT appid FROM dmd2_ampp')
-keys |= {('Pack', 'AMP', row[0]) for row in cursor.fetchall()}
+keys |= {('AMPP', row[0]) for row in cursor.fetchall()}
 
 wb_in = load_workbook(inp_path)
 wb_out = Workbook()
@@ -49,8 +49,7 @@ wb_out = Workbook()
 rows = wb_in.active.rows
 
 headers = next(rows)
-assert headers[0].value == 'Presentation / Pack Level'
-assert headers[1].value == 'VMP / AMP'
+assert headers[1].value == 'VMP / VMPP/ AMP / AMPP'
 assert headers[2].value == 'BNF Code'
 assert headers[4].value == 'SNOMED Code'
 
@@ -69,7 +68,7 @@ for row in rows:
         if not snomed_code:
             continue
 
-    key = (row[0].value, row[1].value, int(snomed_code))
+    key = (row[1].value, int(snomed_code))
 
     if key in keys:
         row_values = [cell.value for cell in row]

@@ -269,18 +269,17 @@ class Command(BaseCommand):
 
     def import_bnf_code_mapping(self):
         type_to_model = {
-            ('Presentation', 'VMP'): VMP,
-            ('Presentation', 'AMP'): AMP,
-            ('Pack', 'VMP'): VMPP,
-            ('Pack', 'AMP'): AMPP,
+            'VMP': VMP,
+            'AMP': AMP,
+            'VMPP': VMPP,
+            'AMPP': AMPP,
         }
 
         wb = load_workbook(filename=self.mapping_path)
         rows = wb.active.rows
 
         headers = next(rows)
-        assert headers[0].value == 'Presentation / Pack Level'
-        assert headers[1].value == 'VMP / AMP'
+        assert headers[1].value == 'VMP / VMPP/ AMP / AMPP'
         assert headers[2].value == 'BNF Code'
         assert headers[4].value == 'SNOMED Code'
 
@@ -289,8 +288,8 @@ class Command(BaseCommand):
         VMPP.objects.update(bnf_code=None)
         AMPP.objects.update(bnf_code=None)
 
-        for ix, row in enumerate(rows):
-            model = type_to_model[(row[0].value, row[1].value)]
+        for row in rows:
+            model = type_to_model[row[1].value]
 
             bnf_code = row[2].value
             snomed_id = row[4].value
