@@ -5,6 +5,9 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.matrixstore_factory import (
+    matrixstore_from_postgres, patch_global_matrixstore
+)
 
 
 @patch('frontend.views.bookmark_utils.attach_image')
@@ -43,6 +46,19 @@ class CommandTestCase(TestCase):
         # Pull out an individual practice and CCG to use in our tests
         cls.practice = cls.practices[0]
         cls.ccg = cls.ccgs[0]
+        # Copy all test data from the database into a MatrixStore instance.
+        # This allows us to reuse the existing test setup with
+        # matrixstore-powered functions.
+        matrixstore = matrixstore_from_postgres()
+        stop_patching = patch_global_matrixstore(matrixstore)
+        # Have to wrap this in a staticmethod decorator otherwise Python thinks
+        # we're trying to create a new class method
+        cls._stop_patching = staticmethod(stop_patching)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._stop_patching()
+        super(CommandTestCase, cls).tearDownClass()
 
     def test_send_alerts(self, attach_image):
         factory = DataFactory()

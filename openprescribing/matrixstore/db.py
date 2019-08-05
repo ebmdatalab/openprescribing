@@ -108,6 +108,6 @@ def _all_practices_map():
     return {
         code: None
         for code in Practice.objects
-        .filter(ccg_id__isnull=False)
+        .filter(ccg__org_type='CCG')
         .values_list('code', flat=True)
     }

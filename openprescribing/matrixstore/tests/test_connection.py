@@ -30,6 +30,14 @@ class TestMatrixStoreConnection(SimpleTestCase):
         expected_offsets = dict(zip(dates, range(len(dates))))
         self.assertEqual(self.matrixstore.date_offsets, expected_offsets)
 
+    def test_practices(self):
+        expected_practices = sorted(p['code'] for p in self.factory.practices)
+        self.assertEqual(self.matrixstore.practices, expected_practices)
+
+    def test_dates(self):
+        expected_dates = sorted(m[:10] for m in self.factory.months)
+        self.assertEqual(self.matrixstore.dates, expected_dates)
+
     def test_query(self):
         excluded_code = self.factory.presentations[0]['bnf_code']
         results = self.matrixstore.query(

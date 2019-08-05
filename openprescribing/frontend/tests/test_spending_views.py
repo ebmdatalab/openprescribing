@@ -15,6 +15,9 @@ from frontend.views.spending_utils import (
     ncso_spending_breakdown_for_entity
 )
 from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.matrixstore_factory import (
+    matrixstore_from_postgres, patch_global_matrixstore
+)
 
 
 class TestSpendingViews(TestCase):
@@ -37,7 +40,7 @@ class TestSpendingViews(TestCase):
             for _ in range(2):
                 cls.practices.append(factory.create_practice(ccg=ccg))
         # Create some presentations
-        cls.presentations = factory.create_presentations(6)
+        cls.presentations = factory.create_presentations(6, vmpp_per_presentation=2)
         # Create drug tariff and price concessions costs for these presentations
         factory.create_tariff_and_ncso_costings_for_presentations(
             cls.presentations,
@@ -54,6 +57,19 @@ class TestSpendingViews(TestCase):
         # Pull out an individual practice and CCG to use in our tests
         cls.practice = cls.practices[0]
         cls.ccg = cls.ccgs[0]
+        # Copy all test data from the database into a MatrixStore instance.
+        # This allows us to reuse the existing test setup with
+        # matrixstore-powered functions.
+        matrixstore = matrixstore_from_postgres()
+        stop_patching = patch_global_matrixstore(matrixstore)
+        # Have to wrap this in a staticmethod decorator otherwise Python thinks
+        # we're trying to create a new class method
+        cls._stop_patching = staticmethod(stop_patching)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._stop_patching()
+        super(TestSpendingViews, cls).tearDownClass()
 
     def test_ncso_spending_methods(self):
         entities = [
@@ -71,10 +87,10 @@ class TestSpendingViews(TestCase):
                 current_month=parse_date(self.months[-1]).date()
             )
             self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, self.months[0]
+                entity, entity_type, parse_date(self.months[0]).date()
             )
             self.validate_ncso_spending_breakdown_for_entity(
-                entity, entity_type, self.months[-1]
+                entity, entity_type, parse_date(self.months[-1]).date()
             )
 
     def validate_ncso_spending_for_entity(self, *args, **kwargs):
@@ -109,7 +125,7 @@ class TestSpendingViews(TestCase):
 
     def test_alert_signup(self):
         factory = DataFactory()
-        user = factory.create_user(email='alice@example.com')
+        factory.create_user(email='alice@example.com')
         factory.create_ncso_concessions_bookmark(None)
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
@@ -132,7 +148,7 @@ class TestSpendingViews(TestCase):
 
     def test_all_england_alert_signup(self):
         factory = DataFactory()
-        user = factory.create_user(email='alice@example.com')
+        factory.create_user(email='alice@example.com')
         factory.create_ncso_concessions_bookmark(self.practice)
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
@@ -242,6 +258,7 @@ def recalculate_ncso_spending_for_entity(entity, entity_type, num_months,
     )
     concessions = filter_zero_prescribing_quantities(concessions)
     concessions = calculate_costs_for_concessions(concessions)
+    concessions = filter_duplicate_concessions(concessions)
     results = []
     for row in aggregate_by_date(concessions):
         result = {
@@ -268,6 +285,7 @@ def recalculate_ncso_spending_breakdown_for_entity(entity, entity_type, month):
     )
     concessions = filter_zero_prescribing_quantities(concessions)
     concessions = calculate_costs_for_concessions(concessions)
+    concessions = filter_duplicate_concessions(concessions)
     results = []
     for row in concessions:
         results.append((
@@ -347,6 +365,27 @@ def add_quantities_to_concessions(concessions, quantities, last_prescribing_date
         concession['quantity'] = quantities[key]
         concession['is_estimate'] = is_estimate
     return concessions
+
+
+def filter_duplicate_concessions(concessions):
+    """
+    Because concessions are made at the product-pack level but we only have
+    prescribing data at the product level, we sometimes end up with multiple
+    concessions matching to a single product on the same date. In this case we
+    use only the highest priced concession.
+    """
+    costs = []
+    for index, concession in enumerate(concessions):
+        key = '{}:{}'.format(concession['bnf_code'], concession['date'])
+        costs.append(
+            (key, concession['additional_cost'], index)
+        )
+    selected = {key: index for (key, cost, index) in sorted(costs)}
+    selected = set(selected.values())
+    return [
+        concession for (index, concession) in enumerate(concessions)
+        if index in selected
+    ]
 
 
 def filter_zero_prescribing_quantities(concessions):

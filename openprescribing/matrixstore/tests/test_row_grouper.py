@@ -46,6 +46,23 @@ class TestGrouper(SimpleTestCase):
         self.assertEqual(row_grouper.ids, ['even', 'odd'])
         self.assertEqual(row_grouper.offsets, {'even': 0, 'odd': 1})
 
+    def test_basic_sum_one_group(self):
+        """
+        Test summing for a single group on a matrix which is small enough to
+        verify the results by hand
+        """
+        group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
+        rows = [
+          [1, 2, 3, 4],
+          [2, 3, 4, 5],
+          [3, 4, 5, 6],
+          [4, 5, 6, 7],
+        ]
+        matrix = numpy.array(rows)
+        row_grouper = RowGrouper(group_definition)
+        group_sum = row_grouper.sum_one_group(matrix, 'even')
+        self.assertEqual(group_sum.tolist(), [4, 6, 8, 10])
+
     def test_empty_group_produces_empty_matrix(self):
         """
         Test the empty group edge case
@@ -63,9 +80,10 @@ class TestGrouper(SimpleTestCase):
         value = to_list_of_lists(grouped_matrix)
         self.assertEqual(value, [])
 
-    def test_all_group_and_matrix_type_combinations(self):
+    def test_sum_with_all_group_and_matrix_type_combinations(self):
         """
-        Tests every combination of group type and matrix type
+        Tests the `sum` method with every combination of group type and matrix
+        type
         """
         test_cases = product(self.get_group_definitions(), self.get_matrices())
         for (group_name, group_definition), (matrix_name, matrix) in test_cases:
@@ -81,6 +99,28 @@ class TestGrouper(SimpleTestCase):
             self.assertEqual(
                 round_floats(values), round_floats(expected_values)
             )
+
+    def test_sum_one_group_with_all_group_and_matrix_type_combinations(self):
+        """
+        Tests the `sum_one_group` method with every combination of group type
+        and matrix type
+        """
+        test_cases = product(self.get_group_definitions(), self.get_matrices())
+        for (group_name, group_definition), (matrix_name, matrix) in test_cases:
+            # Use `subTest` when we upgrade to Python 3
+            # with self.subTest(matrix=matrix_name, group=group_name):
+            row_grouper = RowGrouper(group_definition)
+            # Calculate sums for all groups the boring way using pure Python
+            expected_values = self.sum_rows_by_group(group_definition, matrix)
+            # Check the `sum_one_group` gives the expected answer for all groups
+            for offset, group_id in enumerate(row_grouper.ids):
+                expected_value = expected_values[offset]
+                value = row_grouper.sum_one_group(matrix, group_id)
+                # We need to round floats to account for differences between
+                # numpy and Python float rounding
+                self.assertEqual(
+                    round_floats(value.tolist()), round_floats(expected_value)
+                )
 
     def sum_rows_by_group(self, group_definition, matrix):
         """
