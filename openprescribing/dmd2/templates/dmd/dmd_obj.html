@@ -2,20 +2,21 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
-{% if obj_type != 'VTM' %}
-  <p>
+<p>
+  <a href="{% url 'dmd_search' %}">Search dm+d</a>
+  {% if obj_type != 'VTM' %}
     {% if has_prescribing %}
-      <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">Analyse prescribing for this drug</a>
+      | <a href="{% url 'analyse' %}#numIds={{ obj.bnf_code }}">Analyse prescribing for this drug</a>
       | <a href="{% url 'all_england_price_per_unit_by_presentation' obj.bnf_code %}">See prices paid for this drug and its variants</a>
     {% else %}
-      This {{ obj_type }} cannot be matched against our prescribing data.
+      | This {{ obj_type }} cannot be matched against our prescribing data.
     {% endif %}
 
     {% if has_dt %}
       | <a href="{% url 'tariff' obj.bnf_code %}">View Drug Tariff history</a>
     {% endif %}
+    {% endif %}
   </p>
-{% endif %}
 
 <table class="table table-condensed">
   {% for row in rows %}
