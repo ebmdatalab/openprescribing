@@ -173,6 +173,10 @@ def _get_prescribed_quantity_matrix(bnf_code_offsets, date_offsets, org_type, or
     group_by_org = get_row_grouper(org_type)
     shape = (len(bnf_code_offsets), len(date_offsets))
     quantities = numpy.zeros(shape, dtype=numpy.int_)
+    # If this organisation is not in the set of available groups (because it
+    # has no prescribing data) then return the zero-valued quantity matrix
+    if org_id not in group_by_org.offsets:
+        return quantities
     # Find the columns corresponding to the dates we're interested in
     columns_selector = _get_date_columns_selector(db.date_offsets, date_offsets)
     prescribing = _get_quantities_for_bnf_codes(db, bnf_code_offsets.keys())
