@@ -31,14 +31,24 @@ class TestSpendingViews(TestCase):
         # Our NCSO and tariff data extends further than our prescribing data by
         # a couple of months
         cls.prescribing_months = cls.months[:-2]
+        # Create some high level orgs
+        cls.regional_team = factory.create_regional_team()
+        cls.stp = factory.create_stp()
         # Create some CCGs (we need more than one so we can test aggregation
         # across CCGs at the All England level)
-        cls.ccgs = [factory.create_ccg() for _ in range(2)]
+        cls.ccgs = [
+            factory.create_ccg(stp=cls.stp, regional_team=cls.regional_team)
+            for _ in range(2)
+        ]
+        # Create a PCN (one will do)
+        cls.pcn = factory.create_pcn()
         # Populate those CCGs with practices
         cls.practices = []
         for ccg in cls.ccgs:
             for _ in range(2):
-                cls.practices.append(factory.create_practice(ccg=ccg))
+                cls.practices.append(
+                    factory.create_practice(ccg=ccg, pcn=cls.pcn)
+                )
         # Create some presentations
         cls.presentations = factory.create_presentations(6, vmpp_per_presentation=2)
         # Create drug tariff and price concessions costs for these presentations
@@ -110,7 +120,10 @@ class TestSpendingViews(TestCase):
         # something we expect in it
         urls = [
             '/practice/{}/concessions/'.format(self.practice.code),
+            '/pcn/{}/concessions/'.format(self.pcn.code),
             '/ccg/{}/concessions/'.format(self.ccg.code),
+            '/stp/{}/concessions/'.format(self.stp.code),
+            '/regional-team/{}/concessions/'.format(self.regional_team.code),
             '/all-england/concessions/'
         ]
         for url in urls:

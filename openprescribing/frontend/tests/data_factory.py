@@ -8,9 +8,9 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    ImportLog, Practice, PCT, Prescription, Presentation,
-    NCSOConcessionBookmark, OrgBookmark, Measure,
-    NCSOConcession, TariffPrice
+    ImportLog, Practice, PCN, PCT, STP, RegionalTeam, Prescription,
+    Presentation, NCSOConcessionBookmark, OrgBookmark, Measure, NCSOConcession,
+    TariffPrice
 )
 from dmd2 import models as dmd2_models
 
@@ -35,22 +35,46 @@ class DataFactory(object):
             for i in range(0, num_months)
         ]
 
-    def create_practice(self, ccg=None):
+    def create_practice(self, ccg=None, pcn=None):
         if ccg is None:
             ccg = self.create_ccg()
         index = self.next_id()
         return Practice.objects.create(
             name='Practice {}'.format(index),
             code='ABC{:03}'.format(index),
-            ccg=ccg
+            ccg=ccg,
+            pcn=pcn
         )
 
-    def create_ccg(self):
+    def create_ccg(self, stp=None, regional_team=None):
         index = self.next_id()
         return PCT.objects.create(
             name='CCG {}'.format(index),
             code='A{:02}'.format(index),
-            org_type='CCG'
+            org_type='CCG',
+            stp=stp,
+            regional_team=regional_team
+        )
+
+    def create_pcn(self):
+        index = self.next_id()
+        return PCN.objects.create(
+            name='PCN {}'.format(index),
+            ons_code='E000{:02}'.format(index),
+        )
+
+    def create_stp(self):
+        index = self.next_id()
+        return STP.objects.create(
+            name='STP {}'.format(index),
+            ons_code='E000{:02}'.format(index),
+        )
+
+    def create_regional_team(self):
+        index = self.next_id()
+        return RegionalTeam.objects.create(
+            name='Regional Team {}'.format(index),
+            code='R{:02}'.format(index),
         )
 
     def create_presentations(self, num_presentations, vmpp_per_presentation=1):

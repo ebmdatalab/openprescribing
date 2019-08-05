@@ -69,30 +69,47 @@
 
 <hr>
 
-{% if entity_type == 'practice' or entity_type == 'ccg' %}
 <div class="row" >
   <div class="col-md-6">
     <div class="landing-panel">
-      <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
-      <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
-      {% if possible_savings %}
-      <div class="col-md-4 ppu-on-landing-page bigtext">
-        <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
-      </div>
-      <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type_human }} could have saved
-        this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
-      </div>
+
+      {% if entity_price_per_unit_url %}
+
+        <h3><a href="{% url entity_price_per_unit_url entity.code %}" class="unstyled-link">Savings on individual presentations</a></h3>
+        <p>Every month, we identify the biggest cost saving opportunities for {{ entity.cased_name }}. We also indicate cheaper options, based on what others have prescribed.</p>
+        {% if possible_savings %}
+        <div class="col-md-4 ppu-on-landing-page bigtext">
+          <span>&pound;{{ possible_savings|floatformat:"0"|intcomma }}</span>
+        </div>
+        <div class="col-md-8">The <strong>theoretical maximum</strong> of savings this {{ entity_type_human }} could have saved
+          this month through prescription switches. <a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a>
+        </div>
+        {% else %}
+        <div class="bigtext">
+          <span>
+            ☺ No savings this month!
+          </span>
+        </div>
+        <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
+        {% endif %}
+
       {% else %}
-      <div class="bigtext">
-        <span>
-          ☺ No savings this month!
-        </span>
-      </div>
-      <p><a href="{% url entity_price_per_unit_url entity.code %}">Read more...</a></p>
+
+        <p>
+          This {{ entity_type_human }} page is a new feature. We have more data
+          for individual <a href="{% url 'all_ccgs' %}">CCGs</a> and
+          <a href="{% url 'all_practices' %}">practices</a>, and for
+          the <a href="{% url 'all_england' %}">whole of England</a>
+          (such as email alerts, our price-per-unit tool, ghost-branded generics, etc).
+        </p>
+
       {% endif %}
+
     </div>
   </div>
+
   <hr class="visible-sm">
+
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>
@@ -131,6 +148,7 @@
 
 <hr>
 
+{% if entity_ghost_generics_url %}
 <div class="row" >
   <div class="col-md-6">
     <div class="landing-panel">
@@ -158,20 +176,10 @@
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Looking for more data?</h3>
-      {% if entity_type == 'practice' or entity_type == 'ccg' %}
       <p>
         Try our <a href="{% url 'analyse' %}">Analyse form</a> which allows you
         run custom analyses on prescribing data for this {{ entity_type_human }}.
       </p>
-      {% else %}
-      <p>
-        This {{ entity_type_human }} page is a new feature. We have more data
-        for individual <a href="{% url 'all_ccgs' %}">CCGs</a> and
-        <a href="{% url 'all_practices' %}">practices</a>, and for
-        the <a href="{% url 'all_england' %}">whole of England</a>
-        (such as email alerts, our price-per-unit tool, ghost-branded generics, etc).
-      </p>
-      {% endif %}
       <p>
         We can often provide one-off custom extracts from our prescribing data for free.
         <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show">Get in touch</a>

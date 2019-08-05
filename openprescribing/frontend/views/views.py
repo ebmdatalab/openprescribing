@@ -889,14 +889,18 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
+    if entity_type in ('practice', 'ccg', 'CCG', 'all_england'):
+        form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
+    else:
+        form = None
     if isinstance(form, HttpResponseRedirect):
         return form
 
+    current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type,
-        num_months=12,
-        current_month=_get_current_month()
+        num_months=30,
+        current_month=current_month
     )
     # In the very rare cases where we don't have data we just return a 404
     # rather than triggering an error
@@ -904,7 +908,11 @@ def spending_for_one_entity(request, entity_code, entity_type):
         raise Http404('No data available')
     end_date = max(row['month'] for row in monthly_totals)
     last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
-    rolling_annual_total = sum(row['additional_cost'] for row in monthly_totals)
+    one_year_ago = current_month.replace(year=current_month.year - 1)
+    rolling_annual_total = sum(
+        row['additional_cost'] for row in monthly_totals
+        if row['month'] > one_year_ago
+    )
     financial_ytd_total = _financial_ytd_total(monthly_totals)
     breakdown_date = request.GET.get('breakdown_date')
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
@@ -1229,7 +1237,13 @@ def _home_page_context_for_entity(request, entity):
         'measure_tags': [
             (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
             if k != 'core'
-        ]
+        ],
+        'ncso_spending': first_or_none(
+            ncso_spending_for_entity(entity, entity_type, num_months=1)
+        ),
+        'spending_for_one_entity_url': 'spending_for_one_{}'.format(
+            entity_type.lower()
+        )
     }
 
     if entity_type in ['practice', 'ccg']:
@@ -1237,12 +1251,7 @@ def _home_page_context_for_entity(request, entity):
             entity_type.lower())
         context['date'] = _specified_or_last_date(request, 'ppu')
         context['possible_savings'] = _total_savings(entity, context['date'])
-        context['ncso_spending'] = first_or_none(
-            ncso_spending_for_entity(entity, entity_type, num_months=1)
-        )
         context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
-            entity_type.lower())
-        context['spending_for_one_entity_url'] = 'spending_for_one_{}'.format(
             entity_type.lower())
         context['signed_up_for_alert'] = _signed_up_for_alert(
             request, entity, OrgBookmark)
