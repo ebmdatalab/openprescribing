@@ -48,7 +48,7 @@ class Command(BaseCommand):
         columns[-1] = 'practice_id'
         table.insert_rows_from_pg(
             models.PracticeStatistics,
-            schema=schema.PRACTICE_STATISTICS_SCHEMA,
+            schema=schemas.PRACTICE_STATISTICS_SCHEMA,
             columns=columns,
             transformer=schemas.statistics_transform
         )
