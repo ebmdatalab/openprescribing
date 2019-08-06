@@ -81,15 +81,13 @@ class RowGrouper(object):
         rows = len(self._group_selectors)
         columns = matrix.shape[1]
         grouped_output = numpy.empty((rows, columns), dtype=matrix.dtype)
-        # There's some complexity here depending on whether `matrix` is an
-        # ndarray (which it usually will be as the result of `MATRIX_SUM()` is
-        # always an ndarry) or the older-style matrix class (which it will be
-        # if we call this function directly with a sparse matrix). If our input
-        # is a matrix, then we can only write sum results into a matrix so we
-        # use the `asmatrix` method below to create a compatible view onto the
-        # underlying output array.  In either case, our return value is always
-        # an ndarray.
-        if has_type_matrix(matrix):
+        # This is awkward. We always want to return an `ndarray` even if the
+        # input type is `matrix`. But where the input is a `matrix` the `out`
+        # argument to `numpy.sum` below must be a `matrix` also. So we need a
+        # view on our output array which matches the type of the input array,
+        # while leaving the actual `grouped_output` return value always of type
+        # `ndarray`.  See the `is_matrix` docstring for more detail.
+        if is_matrix(matrix):
             output_view = numpy.asmatrix(grouped_output)
         else:
             output_view = grouped_output
@@ -110,17 +108,30 @@ class RowGrouper(object):
         row_selector = self._group_selectors[self.offsets[group_id]]
         row_group = matrix[row_selector]
         group_sum = numpy.sum(row_group, axis=0)
-        # As above, there's complexity around whether our input value is a
-        # `numpy.matrix` or `numpy.ndarray`
-        if has_type_matrix(group_sum):
+        # See `is_matrix` docstring for more detail here
+        if is_matrix(group_sum):
             return group_sum.A[0]
         else:
             return group_sum
 
 
-def has_type_matrix(value):
+def is_matrix(value):
     """
-    Return whether `value` is a numpy array or a numpy matrix
+    Return whether `value` is a numpy ndarray or a numpy matrix
+
+    Numpy has two classes for representing two-dimensional arrays: `matrix` and
+    `ndarray`. They are very similar but not equivalent, and the docs now
+    recommend only using `ndarray` as it's more powerful and more general than
+    `matrix`. However, the only sparse representions available are of `matrix`
+    type rather than `ndarray` so we're forced to still deal with the `matrix`
+    type. (Though it's possible that in future there'll be a sparse `ndarray`:
+    https://github.com/scipy/scipy/issues/8162)
+
+    Our strategy is to ensure that whenever we move from a sparse to a dense
+    representation we end up with an `ndarray` rather than a `matrix`.
+    Fortunately, it's possible to convert between the types without having to
+    modify the underlying data, so one can simultaneousy have a `matrix` and
+    `ndarray` view on the same set of data in memory.
     """
     # This is harder than it ought to be because `numpy.matrix` inherits from
     # `numpy.ndarray`, but the scipy sparse type doesn't inherit from either
