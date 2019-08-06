@@ -25,19 +25,7 @@ class MatrixSum(object):
 
     def finalize(self):
         if self.accumulator is not None:
-            # Operations on SciPy sparse matrices sometimes return matrix
-            # objects rather than the standard 2-dimensional numpy array. See:
-            # https://github.com/scipy/scipy/issues/7510
-            # We always want array values (for one thing, pyarrow can't
-            # serialize matrix instances out of the box) and so we convert them
-            # here by grabbing the underlying array from the matrix object, if
-            # that's what we've got. (Note: this is the documented conversion
-            # method; we're not using a private API)
-            try:
-                value = self.accumulator.A
-            except AttributeError:
-                value = self.accumulator
-            return sqlite3.Binary(serialize(value))
+            return sqlite3.Binary(serialize(self.accumulator))
 
 
 def fast_in_place_add(ndarray, matrix):
