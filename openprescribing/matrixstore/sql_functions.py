@@ -18,9 +18,9 @@ class MatrixSum(object):
             # We need this to be in Fortran (i.e. column-major) order for the
             # fast addition path below to work
             self.accumulator = zeros_like(matrix, order='F')
-        try:
+        if isinstance(matrix, csc_matrix):
             fast_in_place_add(self.accumulator, matrix)
-        except FastInPlaceAddError:
+        else:
             self.accumulator += matrix
 
     def finalize(self):
@@ -40,32 +40,27 @@ class MatrixSum(object):
             return sqlite3.Binary(serialize(value))
 
 
-class FastInPlaceAddError(Exception):
-    pass
-
-
-def fast_in_place_add(accumulator, matrix):
+def fast_in_place_add(ndarray, matrix):
     """
-    Attempt fast in-place addition of `matrix` (a sparse CSC matrix) to
-    `accumulator` (an ndarray of the same size)
-
-    Raises FastInPlaceAddError if the operation can't be performed and standard
-    addition should be used instead
+    Performs fast in-place addition of a sparse CSC matrix to an ndarray of the
+    same size
 
     This is based on the code found in:
         scipy/sparse/compressed.py:_cs_matrix._add_dense
     """
-    if not isinstance(matrix, csc_matrix):
-        raise FastInPlaceAddError()
-    if accumulator.shape != matrix.shape:
-        raise FastInPlaceAddError()
-    if not accumulator.flags.f_contiguous:
-        raise FastInPlaceAddError()
+    if ndarray.shape != matrix.shape:
+        raise ValueError(
+            'Shapes do not match: {} vs {}'.format(
+                ndarray.shape, matrix.shape
+            )
+        )
+    if not ndarray.flags.f_contiguous:
+        raise ValueError('ndarray must be in Fortran order')
     # In order to use Compressed Sparse Row (csr) operations with Compressed
     # Sparse Column (csc) matrices we need to transpose the matrix
     # we're adding into. This is a fast operation which just returns a new view
     # on the underlying data.
-    transposed = accumulator.transpose()
+    transposed = ndarray.transpose()
     rows, columns = transposed.shape
     _sparsetools.csr_todense(
         rows, columns, matrix.indptr, matrix.indices, matrix.data, transposed
