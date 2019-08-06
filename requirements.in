@@ -16,7 +16,7 @@ django-anymail[mailgun]==6.1.0
 django-cors-headers==3.0.2
 django-crispy-forms==1.7.2
 django-dotenv
-django>=1.11,<2.0
+django>=1.11.23,<2.0
 djangorestframework-csv==2.1.0
 djangorestframework>=3.3.2
 google-api-python-client
