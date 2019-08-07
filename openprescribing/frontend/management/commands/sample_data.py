@@ -95,8 +95,8 @@ class Command(BaseCommand):
                         sample = 'TABLESAMPLE SYSTEM (1)'
                     else:
                         sample = ''
-                    sql = ("copy (SELECT * FROM {} {} WHERE {}) "
-                           "TO STDOUT WITH NULL '\N'")
+                    sql = (r"copy (SELECT * FROM {} {} WHERE {}) "
+                           r"TO STDOUT WITH NULL '\N'")
                     sql = sql.format(table, sample, where)
                     dump_create_table(table, path)
                     cursor.copy_expert(sql, f)
@@ -115,14 +115,14 @@ class Command(BaseCommand):
                     with open(os.path.join(path, table + '.json'), 'rb') as f2:
                         cols = json.load(f2)
                     cursor.copy_from(
-                        f, table, null='\N', columns=quote_cols(cols))
+                        f, table, null=r'\N', columns=quote_cols(cols))
             for table, where in copy_sample.items():
                 with open(os.path.join(path, table), 'rb') as f:
                     cursor.execute("TRUNCATE TABLE {} CASCADE".format(table))
                     with open(os.path.join(path, table + '.json'), 'rb') as f2:
                         cols = json.load(f2)
                     cursor.copy_from(
-                        f, table, null='\N', columns=quote_cols(cols))
+                        f, table, null=r'\N', columns=quote_cols(cols))
 
     def add_arguments(self, parser):
         parser.add_argument('operation', nargs=1, choices=['load', 'dump'])
