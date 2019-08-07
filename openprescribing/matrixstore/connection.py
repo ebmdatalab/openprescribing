@@ -56,7 +56,7 @@ class MatrixStore(object):
 def sorted_keys(dictionary):
     sorted_items = sorted(
         dictionary.items(),
-        key=lambda (key, value): value
+        key=lambda item: item[1]
     )
     return [key for (key, value) in sorted_items]
 
