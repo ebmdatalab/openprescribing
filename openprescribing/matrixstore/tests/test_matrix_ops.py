@@ -6,12 +6,13 @@ from scipy.sparse import spmatrix as SparseMatrixBase
 from django.test import SimpleTestCase
 
 from matrixstore.matrix_ops import (
-    convert_to_smallest_int_type, finalise_matrix, sparse_matrix
+    convert_to_smallest_int_type,
+    finalise_matrix,
+    sparse_matrix,
 )
 
 
 class TestConvertToSmallestIntType(SimpleTestCase):
-
     def setUp(self):
         self.random = random.Random()
         self.random.seed(90)
@@ -28,7 +29,7 @@ class TestConvertToSmallestIntType(SimpleTestCase):
                 numpy.uint32,
                 numpy.uint64,
             ],
-            key=lambda t: numpy.iinfo(t).max
+            key=lambda t: numpy.iinfo(t).max,
         )
         previous_max = 0
         for numpy_type in int_types:
@@ -61,7 +62,6 @@ class TestConvertToSmallestIntType(SimpleTestCase):
 
 
 class TestFinaliseMatrix(SimpleTestCase):
-
     def setUp(self):
         self.random = random.Random()
         self.random.seed(14)

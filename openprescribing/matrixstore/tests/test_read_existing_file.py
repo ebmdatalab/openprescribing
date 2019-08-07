@@ -11,9 +11,7 @@ from django.test import SimpleTestCase
 import numpy
 
 from matrixstore.matrix_ops import sparse_matrix, finalise_matrix
-from matrixstore.serializer import (
-    deserialize, serialize, serialize_compressed
-)
+from matrixstore.serializer import deserialize, serialize, serialize_compressed
 
 
 class TestReadExistingFile(SimpleTestCase):
@@ -26,17 +24,15 @@ class TestReadExistingFile(SimpleTestCase):
     `create_fixture` class method on this class.
     """
 
-    fixture_path = 'matrixstore/tests/fixtures/read_existing_file.sqlite'
+    fixture_path = "matrixstore/tests/fixtures/read_existing_file.sqlite"
 
     def test_values_can_be_read_correctly(self):
         connection = self.get_fixture_connection()
         for key, expected_value in self.get_expected_values():
-            result = connection.execute(
-                'SELECT value FROM data WHERE key=?', [key]
-            )
+            result = connection.execute("SELECT value FROM data WHERE key=?", [key])
             value = deserialize(result.fetchone()[0])
             self.assertIsInstance(value, type(expected_value))
-            if hasattr(value, 'todense'):
+            if hasattr(value, "todense"):
                 value = value.todense()
                 expected_value = expected_value.todense()
             self.assertEqual(value.tolist(), expected_value.tolist())
@@ -44,14 +40,13 @@ class TestReadExistingFile(SimpleTestCase):
     def get_fixture_connection(self):
         if not os.path.exists(self.fixture_path):
             raise RuntimeError(
-                'No SQLite file at: {fixture_path}\n\n'
-                'To create the fixture, run:\n'
-                '  ./manage.py shell -c'
-                '  "from {module} import {cls}; {cls}.create_fixture()"'
-                .format(
+                "No SQLite file at: {fixture_path}\n\n"
+                "To create the fixture, run:\n"
+                "  ./manage.py shell -c"
+                '  "from {module} import {cls}; {cls}.create_fixture()"'.format(
                     fixture_path=self.fixture_path,
                     module=__name__,
-                    cls=self.__class__.__name__
+                    cls=self.__class__.__name__,
                 )
             )
         return sqlite3.connect(self.fixture_path)
@@ -62,10 +57,10 @@ class TestReadExistingFile(SimpleTestCase):
         random.seed(1204)
         for sparse, integer, compressed in product([True, False], repeat=3):
             matrix = cls.make_matrix(random, sparse, integer)
-            key = '{structure}.{type}.{format}'.format(
-                structure='sparse' if sparse else 'dense',
-                type='integer' if integer else 'float',
-                format='compressed' if compressed else 'uncompressed'
+            key = "{structure}.{type}.{format}".format(
+                structure="sparse" if sparse else "dense",
+                type="integer" if integer else "float",
+                format="compressed" if compressed else "uncompressed",
             )
             yield key, matrix
 
@@ -83,12 +78,12 @@ class TestReadExistingFile(SimpleTestCase):
         if sparse:
             matrix = finalise_matrix(matrix)
         # Check we've got the type of matrix we're expecting
-        assert hasattr(matrix, 'todense') == sparse
+        assert hasattr(matrix, "todense") == sparse
         return matrix
 
     @classmethod
     def create_fixture(cls):
-        temp_file = cls.fixture_path + '.tmp'
+        temp_file = cls.fixture_path + ".tmp"
         if os.path.exists(temp_file):
             os.unlink(temp_file)
         connection = sqlite3.connect(temp_file)
@@ -99,20 +94,18 @@ class TestReadExistingFile(SimpleTestCase):
             """
         )
         for key, value in cls.get_expected_values():
-            if '.uncompressed' in key:
+            if ".uncompressed" in key:
                 data = serialize(value)
-            elif '.compressed' in key:
+            elif ".compressed" in key:
                 data = serialize_compressed(value)
             else:
-                raise RuntimeError('Invalid key')
+                raise RuntimeError("Invalid key")
             connection.execute(
-                'INSERT INTO data VALUES (?, ?)',
-                [key, sqlite3.Binary(data)]
+                "INSERT INTO data VALUES (?, ?)", [key, sqlite3.Binary(data)]
             )
         for key, value in cls.get_environment_metadata():
             connection.execute(
-                'INSERT INTO environment_metadata VALUES (?, ?)',
-                [key, value]
+                "INSERT INTO environment_metadata VALUES (?, ?)", [key, value]
             )
         connection.commit()
         connection.close()
@@ -125,9 +118,9 @@ class TestReadExistingFile(SimpleTestCase):
         version, installed package versions etc) which might be useful in
         debugging failures
         """
-        yield 'python_version', platform.python_version()
-        yield 'platform', platform.platform()
+        yield "python_version", platform.python_version()
+        yield "platform", platform.platform()
         installed_packages = subprocess.check_output(
-            [sys.executable, '-m', 'pip', 'freeze', '-qqq']
+            [sys.executable, "-m", "pip", "freeze", "-qqq"]
         )
-        yield 'installed_packages', installed_packages
+        yield "installed_packages", installed_packages

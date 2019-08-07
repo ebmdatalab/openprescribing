@@ -75,12 +75,12 @@ SCHEMA_SQL = """
 
 def init_db(end_date, sqlite_path, months=None):
     if os.path.exists(sqlite_path):
-        raise RuntimeError('File already exists at: ' + sqlite_path)
-    logger.info('Initialising SQLite database at %s', sqlite_path)
+        raise RuntimeError("File already exists at: " + sqlite_path)
+    logger.info("Initialising SQLite database at %s", sqlite_path)
     sqlite_path = os.path.abspath(sqlite_path)
     temp_filename = get_temp_filename(sqlite_path)
     sqlite_conn = sqlite3.connect(temp_filename)
-    bq_conn = Client('hscic')
+    bq_conn = Client("hscic")
     sqlite_conn.executescript(SCHEMA_SQL)
     dates = generate_dates(end_date, months=months)
     import_dates(sqlite_conn, dates)
@@ -93,8 +93,7 @@ def init_db(end_date, sqlite_path, months=None):
 
 def import_dates(sqlite_conn, dates):
     sqlite_conn.executemany(
-        'INSERT INTO date (offset, date) VALUES (?, ?)',
-        enumerate(dates)
+        "INSERT INTO date (offset, date) VALUES (?, ?)", enumerate(dates)
     )
 
 
@@ -110,12 +109,9 @@ def import_practices(bq_conn, sqlite_conn, dates):
     date_start = min(dates)
     date_end = max(dates)
     logger.info(
-        'Querying for active practice codes between %s and %s',
-        date_start,
-        date_end
+        "Querying for active practice codes between %s and %s", date_start, date_end
     )
-    sql = (
-        """
+    sql = """
         SELECT DISTINCT practice FROM {hscic}.prescribing
           WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
         UNION DISTINCT
@@ -123,13 +119,11 @@ def import_practices(bq_conn, sqlite_conn, dates):
           WHERE month BETWEEN TIMESTAMP('%(start)s') AND TIMESTAMP('%(end)s')
         ORDER BY practice
         """
-    )
-    result = bq_conn.query(sql % {'start': date_start, 'end': date_end})
+    result = bq_conn.query(sql % {"start": date_start, "end": date_end})
     practice_codes = [row[0] for row in result.rows]
-    logger.info('Writing %s practice codes to SQLite', len(practice_codes))
+    logger.info("Writing %s practice codes to SQLite", len(practice_codes))
     sqlite_conn.executemany(
-        'INSERT INTO practice (offset, code) VALUES (?, ?)',
-        enumerate(practice_codes)
+        "INSERT INTO practice (offset, code) VALUES (?, ?)", enumerate(practice_codes)
     )
 
 
@@ -142,7 +136,7 @@ def import_presentations(bq_conn, sqlite_conn):
     # imported prescribing data and applied the "BNF map" to apply any changed
     # to codes we can delete entries for presentations that don't have
     # associated prescribing.
-    logger.info('Querying all presentation metadata')
+    logger.info("Querying all presentation metadata")
     result = bq_conn.query(
         """
         SELECT bnf_code, is_generic, adq_per_quantity, name
@@ -151,12 +145,12 @@ def import_presentations(bq_conn, sqlite_conn):
         """
     )
     rows = result.rows
-    logger.info('Writing %s presentations to SQLite', len(rows))
+    logger.info("Writing %s presentations to SQLite", len(rows))
     sqlite_conn.executemany(
         """
         INSERT INTO presentation
           (bnf_code, is_generic, adq_per_quantity, name)
           VALUES (?, ?, ?, ?)
         """,
-        rows
+        rows,
     )

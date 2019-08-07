@@ -36,34 +36,31 @@ def log_email_event(event):
         reject_reason=event.reject_reason,
         message_id=event.message_id,
         event_type=event.event_type,
-        timestamp=event.timestamp
+        timestamp=event.timestamp,
     )
 
 
 def send_ga_event(event, user):
     session = FuturesSession()
     payload = {
-        'v': 1,
-        'tid': settings.GOOGLE_TRACKING_ID,
-        't': 'event',
-        'ec': 'email',
-        'ea': event.event_type,
-        'cm': 'email',
+        "v": 1,
+        "tid": settings.GOOGLE_TRACKING_ID,
+        "t": "event",
+        "ec": "email",
+        "ea": event.event_type,
+        "cm": "email",
     }
     if event.esp_event:
-        payload['ua'] = event.esp_event.get('user-agent')
-        payload['dt'] = event.esp_event.get('subject', [None])[0]
-        payload['cn'] = event.esp_event.get('campaign_name', None)
-        payload['cs'] = event.esp_event.get('campaign_source', None)
-        payload['cc'] = payload['el'] = event.esp_event.get(
-            'email_id', None)
-        payload['dp'] = "%s/%s" % (
-            payload['cc'], event.event_type)
+        payload["ua"] = event.esp_event.get("user-agent")
+        payload["dt"] = event.esp_event.get("subject", [None])[0]
+        payload["cn"] = event.esp_event.get("campaign_name", None)
+        payload["cs"] = event.esp_event.get("campaign_source", None)
+        payload["cc"] = payload["el"] = event.esp_event.get("email_id", None)
+        payload["dp"] = "%s/%s" % (payload["cc"], event.event_type)
     else:
         logger.warn("No ESP event found for event: %s" % event.__dict__)
     logger.info("Sending mail event data Analytics: %s" % payload)
-    session.post(
-        'https://www.google-analytics.com/collect', data=payload)
+    session.post("https://www.google-analytics.com/collect", data=payload)
 
 
 @receiver(tracking)
@@ -71,17 +68,16 @@ def handle_anymail_webhook(sender, event, esp_name, **kwargs):
     log_email_event(event)
     user = get_user_by_email(event.recipient)
     send_ga_event(event, user)
-    if event.tags and 'monthly_update' in event.tags:
-        logger.debug("Handling webhook from %s: %s" % (
-            esp_name, event.__dict__))
+    if event.tags and "monthly_update" in event.tags:
+        logger.debug("Handling webhook from %s: %s" % (esp_name, event.__dict__))
         if user:
-            if event.event_type == 'delivered':
+            if event.event_type == "delivered":
                 user.profile.emails_received += 1
                 user.profile.save()
-            elif event.event_type == 'opened':
+            elif event.event_type == "opened":
                 user.profile.emails_opened += 1
                 user.profile.save()
-            elif event.event_type == 'clicked':
+            elif event.event_type == "clicked":
                 user.profile.emails_clicked += 1
                 user.profile.save()
 

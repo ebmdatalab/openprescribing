@@ -22,49 +22,50 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports a CSV of historic tariff prices'
+    args = ""
+    help = "Imports a CSV of historic tariff prices"
 
     def add_arguments(self, parser):
-        parser.add_argument('--csv')
+        parser.add_argument("--csv")
 
     def handle(self, *args, **options):
-        with open(options['csv']) as f:
+        with open(options["csv"]) as f:
             with transaction.atomic():
                 month = None
                 counter = 0
                 for row in csv.DictReader(f):
-                    month = datetime.strptime(row['Month'], '%d/%m/%Y')
+                    month = datetime.strptime(row["Month"], "%d/%m/%Y")
                     counter += 1
-                    if 'Category A' in row['DT Cat']:
+                    if "Category A" in row["DT Cat"]:
                         tariff_category = 1
-                    elif 'Category C' in row['DT Cat']:
+                    elif "Category C" in row["DT Cat"]:
                         tariff_category = 3
-                    elif 'Category M' in row['DT Cat']:
+                    elif "Category M" in row["DT Cat"]:
                         tariff_category = 11
                     else:
                         raise
                     try:
-                        vpid = DMDVmpp.objects.get(pk=row['VMPP']).vpid
-                        product = DMDProduct.objects.get(
-                            vpid=vpid, concept_class=1)
+                        vpid = DMDVmpp.objects.get(pk=row["VMPP"]).vpid
+                        product = DMDProduct.objects.get(vpid=vpid, concept_class=1)
                     except DMDVmpp.DoesNotExist:
                         logger.error(
-                            "Could not find VMPP with id %s",
-                            row['VMPP'], exc_info=True)
+                            "Could not find VMPP with id %s", row["VMPP"], exc_info=True
+                        )
                         continue
                     except DMDProduct.DoesNotExist:
                         logger.error(
                             "Could not find DMDProduct with vpid %s",
-                            vpid, exc_info=True)
+                            vpid,
+                            exc_info=True,
+                        )
                         continue
                     TariffPrice.objects.get_or_create(
                         date=month,
                         product=product,
-                        vmpp_id=row['VMPP'],
+                        vmpp_id=row["VMPP"],
                         tariff_category_id=tariff_category,
-                        price_pence=int(row['DT Price']))
+                        price_pence=int(row["DT Price"]),
+                    )
                 ImportLog.objects.create(
-                    category='tariff',
-                    filename=options['csv'],
-                    current_at=month)
+                    category="tariff", filename=options["csv"], current_at=month
+                )

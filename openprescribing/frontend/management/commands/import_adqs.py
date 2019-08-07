@@ -39,20 +39,17 @@ WHERE
 
 
 class Command(BaseCommand):
-    help = 'Imports ADQ codes from current raw prescribing data in BigQuery'
+    help = "Imports ADQ codes from current raw prescribing data in BigQuery"
 
     def handle(self, *args, **options):
-        client = Client('tmp_eu')
+        client = Client("tmp_eu")
         year_and_month = ImportLog.objects.latest_in_category(
-            'prescribing').current_at.strftime("%Y_%m")
-        raw_data_table_name = 'raw_prescribing_data_{}'.format(
-            year_and_month)
-        sql = SQL.format(
-            detailed_raw_data_table="{tmp_eu}.%s" % raw_data_table_name
-        )
+            "prescribing"
+        ).current_at.strftime("%Y_%m")
+        raw_data_table_name = "raw_prescribing_data_{}".format(year_and_month)
+        sql = SQL.format(detailed_raw_data_table="{tmp_eu}.%s" % raw_data_table_name)
         with transaction.atomic():
             for row in client.query(sql).rows:
                 bnf_code_regex, adq_per_quantity = row
-                matches = Presentation.objects.filter(
-                    bnf_code__regex=bnf_code_regex)
+                matches = Presentation.objects.filter(bnf_code__regex=bnf_code_regex)
                 matches.update(adq_per_quantity=adq_per_quantity)

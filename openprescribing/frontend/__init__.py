@@ -1,1 +1,1 @@
-default_app_config = 'frontend.apps.FrontendConfig'
+default_app_config = "frontend.apps.FrontendConfig"

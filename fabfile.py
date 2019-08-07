@@ -12,18 +12,15 @@ import os
 import dotenv
 
 basedir = os.path.dirname(os.path.abspath(__file__))
-dotenv.read_dotenv(os.path.join(basedir, 'environment'))
+dotenv.read_dotenv(os.path.join(basedir, "environment"))
 
 
-env.hosts = ['web2.openprescribing.net']
+env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
 env.colorize_errors = True
-env.user = 'hello'
+env.user = "hello"
 
-environments = {
-    'production': 'openprescribing',
-    'staging': 'openprescribing_staging'
-}
+environments = {"production": "openprescribing", "staging": "openprescribing_staging"}
 
 
 def sudo_script(script, www_user=False):
@@ -36,13 +33,10 @@ def sudo_script(script, www_user=False):
 
     """
     if www_user:
-        sudo_cmd = 'sudo -u www-data '
+        sudo_cmd = "sudo -u www-data "
     else:
-        sudo_cmd = 'sudo '
-    return run(sudo_cmd +
-               os.path.join(
-                   env.path,
-                   'deploy/fab_scripts/%s' % script))
+        sudo_cmd = "sudo "
+    return run(sudo_cmd + os.path.join(env.path, "deploy/fab_scripts/%s" % script))
 
 
 def setup_sudo():
@@ -50,120 +44,134 @@ def setup_sudo():
     root without passwords
 
     """
-    sudoer_file_test = '/tmp/openprescribing_fabric_{}'.format(
-        env.app)
-    sudoer_file_real = '/etc/sudoers.d/openprescribing_fabric_{}'.format(
-        env.app)
+    sudoer_file_test = "/tmp/openprescribing_fabric_{}".format(env.app)
+    sudoer_file_real = "/etc/sudoers.d/openprescribing_fabric_{}".format(env.app)
     # Raise an exception if not set up
     check_setup = run(
         "/usr/bin/sudo -n {}/deploy/fab_scripts/test.sh".format(env.path),
-        warn_only=True)
+        warn_only=True,
+    )
     if check_setup.failed:
         # Test the format of the file, to prevent locked-out-disasters
         run(
             'echo "%fabric ALL = (root) '
-            'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(
-                env.path, sudoer_file_test))
-        run('/usr/sbin/visudo -cf {}'.format(sudoer_file_test))
+            'NOPASSWD: {}/deploy/fab_scripts/" > {}'.format(env.path, sudoer_file_test)
+        )
+        run("/usr/sbin/visudo -cf {}".format(sudoer_file_test))
         # Copy it to the right place
-        sudo('cp {} {}'.format(sudoer_file_test, sudoer_file_real))
+        sudo("cp {} {}".format(sudoer_file_test, sudoer_file_real))
 
 
 def git_init():
-    run('git init . && '
-        'git remote add origin '
-        'https://github.com/ebmdatalab/openprescribing.git && '
-        'git fetch origin && '
-        'git branch --set-upstream master origin/master')
+    run(
+        "git init . && "
+        "git remote add origin "
+        "https://github.com/ebmdatalab/openprescribing.git && "
+        "git fetch origin && "
+        "git branch --set-upstream master origin/master"
+    )
 
 
 def venv_init():
-    run('virtualenv .venv')
+    run("virtualenv .venv")
 
 
 def git_pull():
-    run('git fetch --all')
-    run('git checkout --force origin/%s' % env.branch)
+    run("git fetch --all")
+    run("git checkout --force origin/%s" % env.branch)
 
 
 def pip_install():
-    if 'requirements.txt' in env.changed_files:
-        with prefix('source .venv/bin/activate'):
-            run('pip install -r requirements.txt')
+    if "requirements.txt" in env.changed_files:
+        with prefix("source .venv/bin/activate"):
+            run("pip install -r requirements.txt")
 
 
 def npm_install():
     installed = run("if [[ -n $(which npm) ]]; then echo 1; fi")
     if not installed:
-        sudo('curl -sL https://deb.nodesource.com/setup_6.x |'
-             'bash - && apt-get install -y  '
-             'nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1;',
-             user=env.local_user)
-        sudo('npm install -g browserify && npm install -g eslint',
-             user=env.local_user)
+        sudo(
+            "curl -sL https://deb.nodesource.com/setup_6.x |"
+            "bash - && apt-get install -y  "
+            "nodejs binutils libproj-dev gdal-bin libgeoip1 libgeos-c1;",
+            user=env.local_user,
+        )
+        sudo("npm install -g browserify && npm install -g eslint", user=env.local_user)
 
 
 def npm_install_deps(force=False):
-    if force or 'openprescribing/media/js/package.json' in env.changed_files:
-        run('cd openprescribing/media/js && npm install')
+    if force or "openprescribing/media/js/package.json" in env.changed_files:
+        run("cd openprescribing/media/js && npm install")
 
 
 def npm_build_js():
-    run('cd openprescribing/media/js && npm run build')
+    run("cd openprescribing/media/js && npm run build")
 
 
 def npm_build_css(force=False):
-    if force or filter(lambda x: x.startswith('openprescribing/media/css'),
-                       [x for x in env.changed_files]):
-        run('cd openprescribing/media/js && npm run build-css')
+    if force or filter(
+        lambda x: x.startswith("openprescribing/media/css"),
+        [x for x in env.changed_files],
+    ):
+        run("cd openprescribing/media/js && npm run build-css")
 
 
 def log_deploy():
     current_commit = run("git rev-parse --verify HEAD")
-    url = ("https://github.com/ebmdatalab/openprescribing/compare/%s...%s"
-           % (env.previous_commit, current_commit))
-    log_line = json.dumps({'started_at': str(env.started_at),
-                           'ended_at': str(datetime.utcnow()),
-                           'changes_url': url})
+    url = "https://github.com/ebmdatalab/openprescribing/compare/%s...%s" % (
+        env.previous_commit,
+        current_commit,
+    )
+    log_line = json.dumps(
+        {
+            "started_at": str(env.started_at),
+            "ended_at": str(datetime.utcnow()),
+            "changes_url": url,
+        }
+    )
     run("echo '%s' >> deploy-log.json" % log_line)
-    with prefix('source .venv/bin/activate'):
-        run("python deploy/notify_deploy.py {revision} {url} {fab_env}".format(
-            revision=current_commit, url=url, fab_env=env.environment))
+    with prefix("source .venv/bin/activate"):
+        run(
+            "python deploy/notify_deploy.py {revision} {url} {fab_env}".format(
+                revision=current_commit, url=url, fab_env=env.environment
+            )
+        )
 
 
 def checkpoint(force_build):
     env.started_at = datetime.utcnow()
     with settings(warn_only=True):
-        inited = run('git status').return_code == 0
+        inited = run("git status").return_code == 0
         if not inited:
             git_init()
-        if run('file .venv').return_code > 0:
+        if run("file .venv").return_code > 0:
             venv_init()
-    env.previous_commit = run('git rev-parse --verify HEAD')
-    run('git fetch')
-    env.next_commit = run('git rev-parse --verify origin/%s' % env.branch)
+    env.previous_commit = run("git rev-parse --verify HEAD")
+    run("git fetch")
+    env.next_commit = run("git rev-parse --verify origin/%s" % env.branch)
     env.changed_files = set(
-        run("git diff --name-only %s %s" %
-            (env.previous_commit, env.next_commit), pty=False)
-        .split())
+        run(
+            "git diff --name-only %s %s" % (env.previous_commit, env.next_commit),
+            pty=False,
+        ).split()
+    )
     if not force_build and env.next_commit == env.previous_commit:
         abort("No changes to pull from origin!")
 
 
 def deploy_static():
-    bootstrap_environ = {
-        'MAILGUN_WEBHOOK_USER': 'foo',
-        'MAILGUN_WEBHOOK_PASS': 'foo'}
+    bootstrap_environ = {"MAILGUN_WEBHOOK_USER": "foo", "MAILGUN_WEBHOOK_PASS": "foo"}
     with shell_env(**bootstrap_environ):
-        with prefix('source .venv/bin/activate'):
-            run('cd openprescribing/ && '
-                'python manage.py collectstatic -v0 --noinput')
+        with prefix("source .venv/bin/activate"):
+            run(
+                "cd openprescribing/ && " "python manage.py collectstatic -v0 --noinput"
+            )
 
 
 def run_migrations():
-    if env.environment == 'production':
-        with prefix('source .venv/bin/activate'):
-            run('cd openprescribing/ && python manage.py migrate')
+    if env.environment == "production":
+        with prefix("source .venv/bin/activate"):
+            run("cd openprescribing/ && python manage.py migrate")
     else:
         warn("Refusing to run migrations in staging environment")
 
@@ -173,19 +181,23 @@ def build_measures(environment=None, measures=None):
     setup_env_from_environment(environment)
 
     with cd(env.path):
-        with prefix('source .venv/bin/activate'):
+        with prefix("source .venv/bin/activate"):
             # First we `--check` measures. This option validates all
             # the measures, rather than exiting at the first error,
             # which makes the debugging cycle shorter when dealing
             # with more than one
-            run("cd openprescribing/ && "
+            run(
+                "cd openprescribing/ && "
                 "python manage.py import_measures --check "
-                "--measure {}".format(measures))
-            print("Checks of measures passed")
-            run("cd openprescribing/ && "
+                "--measure {}".format(measures)
+            )
+            print ("Checks of measures passed")
+            run(
+                "cd openprescribing/ && "
                 "python manage.py import_measures "
-                "--measure {}".format(measures))
-            print("Rebuild of measures completed")
+                "--measure {}".format(measures)
+            )
+            print ("Rebuild of measures completed")
 
 
 def build_changed_measures():
@@ -193,7 +205,7 @@ def build_changed_measures():
     `import_measures`.
     """
     measures = []
-    if env.environment == 'production':
+    if env.environment == "production":
         # Production deploys are always one-off operations of tested
         # branches, so we can just check all the newly-changed files
         changed_files = env.changed_files
@@ -210,19 +222,20 @@ def build_changed_measures():
             "$(diff --old-line-format='' --new-line-format='' "
             '<(git rev-list --first-parent "${1:-master}") '
             '<(git rev-list --first-parent "${2:-HEAD}") | head -1)',
-            pty=False).splitlines()
+            pty=False,
+        ).splitlines()
 
     for f in changed_files:
-        if 'commands/measure_definitions' in f:
+        if "commands/measure_definitions" in f:
             measures.append(os.path.splitext(os.path.basename(f))[0])
     if measures:
         measures = ",".join(measures)
-        print("Rebuilding measures {}".format(measures))
+        print ("Rebuilding measures {}".format(measures))
         build_measures(environment=env.environment, measures=measures)
 
 
 def graceful_reload():
-    result = sudo_script('graceful_reload.sh %s' % env.app)
+    result = sudo_script("graceful_reload.sh %s" % env.app)
     if result.failed:
         # Use the error from the bash command(s) rather than rely on
         # noisy (and hard-to-interpret) output from fabric
@@ -231,21 +244,21 @@ def graceful_reload():
 
 def find_changed_static_files():
     changed = run(
-        "find %s/openprescribing/static -type f -newermt '%s'" %
-        (env.path, env.started_at.strftime('%Y-%m-%d %H:%M:%S'))).split()
-    return map(lambda x: x.replace(env.path + '/', ''), [x for x in changed])
+        "find %s/openprescribing/static -type f -newermt '%s'"
+        % (env.path, env.started_at.strftime("%Y-%m-%d %H:%M:%S"))
+    ).split()
+    return map(lambda x: x.replace(env.path + "/", ""), [x for x in changed])
 
 
 def setup_cron():
-    crontab_path = '%s/deploy/crontab-%s' % (env.path, env.app)
+    crontab_path = "%s/deploy/crontab-%s" % (env.path, env.app)
     if exists(crontab_path):
-        sudo_script('setup_cron.sh %s' % crontab_path)
+        sudo_script("setup_cron.sh %s" % crontab_path)
 
 
 def setup_env_from_environment(environment):
     if environment not in environments:
-        abort("Specified environment must be one of %s" %
-              ",".join(environments.keys()))
+        abort("Specified environment must be one of %s" % ",".join(environments.keys()))
     env.app = environments[environment]
     env.environment = environment
     env.path = "/webapps/%s" % env.app
@@ -253,15 +266,15 @@ def setup_env_from_environment(environment):
 
 @task
 def clear_cloudflare():
-    setup_env_from_environment('production')
+    setup_env_from_environment("production")
 
     with cd(env.path):
-        with prefix('source .venv/bin/activate'):
+        with prefix("source .venv/bin/activate"):
             result = run("python deploy/clear_cache.py")
 
 
 @task
-def deploy(environment, force_build=False, branch='master'):
+def deploy(environment, force_build=False, branch="master"):
     setup_env_from_environment(environment)
     env.branch = branch
     setup_sudo()
@@ -284,15 +297,15 @@ def deploy(environment, force_build=False, branch='master'):
 
 @task
 def call_management_command(command_name, environment, args, kwargs):
-    '''Invokes management command in environment.
+    """Invokes management command in environment.
 
     Returns output of command.
 
     args and kwargs are passed to the command, with some best-effort shell
     quoting.  (When we upgrade to Python 3, we can use shlex.quote.)
-    '''
+    """
 
-    cmd = 'python openprescribing/manage.py {}'.format(command_name)
+    cmd = "python openprescribing/manage.py {}".format(command_name)
 
     for arg in args:
         assert '"' not in arg
@@ -304,7 +317,7 @@ def call_management_command(command_name, environment, args, kwargs):
 
     setup_env_from_environment(environment)
     with cd(env.path):
-        with prefix('source .venv/bin/activate'):
+        with prefix("source .venv/bin/activate"):
             output = run(cmd)
 
     return output

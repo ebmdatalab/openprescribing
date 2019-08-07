@@ -28,23 +28,21 @@ class Command(BaseCommand):
     help = __doc__
 
     def add_arguments(self, parser):
-        parser.add_argument('end_date', help='YYYY-MM format')
+        parser.add_argument("end_date", help="YYYY-MM format")
         parser.add_argument(
-            '--months',
-            help='Number of months of data to include (default: {})'.format(
+            "--months",
+            help="Number of months of data to include (default: {})".format(
                 DEFAULT_NUM_MONTHS
             ),
-            default=DEFAULT_NUM_MONTHS
+            default=DEFAULT_NUM_MONTHS,
         )
         parser.add_argument(
-            '--quiet',
-            help="Don't emit logging output",
-            action='store_true'
+            "--quiet", help="Don't emit logging output", action="store_true"
         )
 
     def handle(self, end_date, months=None, quiet=False, **kwargs):
-        log_level = 'INFO' if not quiet else 'ERROR'
-        with LogToStream('matrixstore', self.stdout, log_level):
+        log_level = "INFO" if not quiet else "ERROR"
+        with LogToStream("matrixstore", self.stdout, log_level):
             return build(end_date, months=months)
 
 
@@ -63,8 +61,7 @@ class LogToStream(object):
         self.logger = logging.getLogger(self.logger_name)
         self.handler = logging.StreamHandler(self.stream)
         formatter = logging.Formatter(
-            fmt='[%(asctime)s] %(message)s',
-            datefmt='%H:%M:%S'
+            fmt="[%(asctime)s] %(message)s", datefmt="%H:%M:%S"
         )
         self.handler.setFormatter(formatter)
         self.previous_level = self.logger.level
@@ -78,9 +75,7 @@ class LogToStream(object):
 
 def build(end_date, months=None):
     directory = settings.MATRIXSTORE_BUILD_DIR
-    sqlite_temp = get_temp_filename(
-        os.path.join(directory, 'matrixstore.sqlite')
-    )
+    sqlite_temp = get_temp_filename(os.path.join(directory, "matrixstore.sqlite"))
     init_db(end_date, sqlite_temp, months=months)
     download_practice_stats(end_date, months=months)
     import_practice_stats(sqlite_temp)
@@ -91,7 +86,7 @@ def build(end_date, months=None):
     vacuum_database(sqlite_temp)
     basename = generate_filename(sqlite_temp)
     filename = os.path.join(directory, basename)
-    logger.info('Moving file to final location: %s', filename)
+    logger.info("Moving file to final location: %s", filename)
     os.rename(sqlite_temp, filename)
     return filename
 
@@ -105,8 +100,8 @@ def vacuum_database(sqlite_path):
     byte-for-byte identical, regardless of the order in which data was
     processed.
     """
-    logger.info('Vacuuming database file')
+    logger.info("Vacuuming database file")
     connection = sqlite3.connect(sqlite_path)
-    connection.execute('VACUUM')
+    connection.execute("VACUUM")
     connection.commit()
     connection.close()

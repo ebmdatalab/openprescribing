@@ -7,18 +7,18 @@ from mailchimp3.mailchimpclient import MailChimpError
 from frontend.views.mailchimp_utils import mailchimp_subscribe
 
 
-@patch('frontend.views.mailchimp_utils.MailChimp')
+@patch("frontend.views.mailchimp_utils.MailChimp")
 class MailChimpSubscribeTests(TestCase):
     def setUp(self):
         request = HttpRequest()
-        request.session = {'newsletter_email': 'alice@example.com'}
+        request.session = {"newsletter_email": "alice@example.com"}
         self.args = (
             request,
-            'alice@example.com',
-            'Alice',
-            'Apple',
-            'The Orchard',
-            'Chief Juicer',
+            "alice@example.com",
+            "Alice",
+            "Apple",
+            "The Orchard",
+            "Chief Juicer",
         )
 
     def test_mailchimp_subscribe_with_existing_subscriber(self, MailChimp):

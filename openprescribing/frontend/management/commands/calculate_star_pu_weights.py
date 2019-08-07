@@ -10,39 +10,38 @@ import sys
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Calculate STAR-PU weights from HSCIC Excel file. '
-    help += 'Save weights into frontend app, in preparation for '
-    help += 'calculating STAR-PUs on PracticeStatistics save method. '
-    help += 'Re-run when the HSCIC updates its file. '
+    args = ""
+    help = "Calculate STAR-PU weights from HSCIC Excel file. "
+    help += "Save weights into frontend app, in preparation for "
+    help += "calculating STAR-PUs on PracticeStatistics save method. "
+    help += "Re-run when the HSCIC updates its file. "
 
     def add_arguments(self, parser):
-        parser.add_argument('--filename')
+        parser.add_argument("--filename")
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
+        if options["verbosity"] > 1:
             self.IS_VERBOSE = True
-        if not options['filename']:
-            print('Please supply a filename')
+        if not options["filename"]:
+            print ("Please supply a filename")
             sys.exit()
-        fname = options['filename']
+        fname = options["filename"]
         f = op.load_workbook(fname)
-        sheet = f['STAR-PUs']
-        idxs = self.get_sect_cells('A6')
+        sheet = f["STAR-PUs"]
+        idxs = self.get_sect_cells("A6")
         ranges = []
         for ix in idxs:
             ranges.append(self.get_cells_range(ix))
         weights = {}
         for idx, cell_range in ranges:
-            m = re.sub(r'\(.+?\)\s*', '', str(sheet[idx].value))
-            m = m.replace(' based STAR PU', '').replace('  ', ' ').strip()
-            m = m.replace(' ', '_').replace('&', 'and').lower()
+            m = re.sub(r"\(.+?\)\s*", "", str(sheet[idx].value))
+            m = m.replace(" based STAR PU", "").replace("  ", " ").strip()
+            m = m.replace(" ", "_").replace("&", "and").lower()
             weights[m] = self.parse_weight(sheet, cell_range)
 
-        path = os.path.join(settings.APPS_ROOT, 'frontend',
-                            'star_pu_weights.json')
-        with open(path, 'w') as outfile:
+        path = os.path.join(settings.APPS_ROOT, "frontend", "star_pu_weights.json")
+        with open(path, "w") as outfile:
             json.dump(weights, outfile, sort_keys=True, indent=4)
 
     def get_sect_cells(self, first_cell):
@@ -57,13 +56,13 @@ class Command(BaseCommand):
         return sectionlist
 
     def get_cells_range(self, idx):
-        '''
+        """
         For each title cell, find the range of cells containing weights.
-        '''
+        """
         res = re.match(r"([A-Z])([0-9]+)$", idx)
         first = chr(ord(res.group(1)) + 2) + str(int(res.group(2)) + 3)
         last = chr(ord(res.group(1)) + 4) + str(int(res.group(2)) + 11)
-        return (idx, first + ':' + last)
+        return (idx, first + ":" + last)
 
     def parse_weight(self, sheet, cell_range):
         weight = {}

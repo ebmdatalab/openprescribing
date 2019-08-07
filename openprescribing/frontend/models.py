@@ -47,17 +47,17 @@ class Section(models.Model):
         s4 = self.strip_zeros(id[6:8])
         number = str(s1)
         if s2:
-            number += '.%s' % s2
+            number += ".%s" % s2
         if s3:
-            number += '.%s' % s3
+            number += ".%s" % s3
         if s4:
-            number += '.%s' % s4
+            number += ".%s" % s4
         return number
 
     def strip_zeros(self, str):
-        if not str or str == '0' or str == '00':
+        if not str or str == "0" or str == "00":
             return None
-        if len(str) > 1 and str[0] == '0':
+        if len(str) > 1 and str[0] == "0":
             str = str[1:]
         return int(str)
 
@@ -66,7 +66,6 @@ class Section(models.Model):
 
 
 class RegionalTeamManager(models.Manager):
-
     def active(self):
         return self.exclude(close_date__isnull=False).exclude(pct=None)
 
@@ -90,18 +89,17 @@ class RegionalTeam(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            'regional_team_home_page',
-            kwargs={'regional_team_code': self.code}
+            "regional_team_home_page", kwargs={"regional_team_code": self.code}
         )
 
 
 class STP(models.Model):
     ons_code = models.CharField(max_length=9, primary_key=True)
-    code = models.CharField(max_length=3, null=True, unique=True)  # TODO make this the PK
+    code = models.CharField(
+        max_length=3, null=True, unique=True
+    )  # TODO make this the PK
     name = models.CharField(max_length=200, null=True, blank=True)
-    regional_team = models.ForeignKey(
-        RegionalTeam, null=True, on_delete=models.PROTECT
-    )
+    regional_team = models.ForeignKey(RegionalTeam, null=True, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.name
@@ -115,14 +113,10 @@ class STP(models.Model):
         return self.ons_code
 
     def get_absolute_url(self):
-        return reverse(
-            'stp_home_page',
-            kwargs={'stp_code': self.code}
-        )
+        return reverse("stp_home_page", kwargs={"stp_code": self.code})
 
 
 class PCNManager(models.Manager):
-
     def active(self):
         return self.exclude(practice=None)
 
@@ -131,6 +125,7 @@ class PCN(models.Model):
     """
     Primary Care Network
     """
+
     ons_code = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
 
@@ -148,37 +143,33 @@ class PCN(models.Model):
         return self.ons_code
 
     def get_absolute_url(self):
-        return reverse(
-            'pcn_home_page',
-            kwargs={'pcn_code': self.code}
-        )
+        return reverse("pcn_home_page", kwargs={"pcn_code": self.code})
 
 
 class PCT(models.Model):
-    '''
+    """
     PCTs or CCGs (depending on date).
-    '''
+    """
+
     PCT_ORG_TYPES = (
-        ('CCG', 'CCG'),
-        ('PCT', 'PCT'),
-        ('H', 'Hub'),
-        ('Unknown', 'Unknown')
+        ("CCG", "CCG"),
+        ("PCT", "PCT"),
+        ("H", "Hub"),
+        ("Unknown", "Unknown"),
     )
-    code = models.CharField(max_length=3, primary_key=True,
-                            help_text='Primary care trust code')
+    code = models.CharField(
+        max_length=3, primary_key=True, help_text="Primary care trust code"
+    )
 
     # These are NULLable, because not every PCT belongs to either a
     # RegionalTeam or an STP.  Specifically, we create PCT objects when
     # importing prescribing data if the PCT is not otherwise in our database.
-    regional_team = models.ForeignKey(
-        RegionalTeam, null=True, on_delete=models.PROTECT
-    )
+    regional_team = models.ForeignKey(RegionalTeam, null=True, on_delete=models.PROTECT)
     stp = models.ForeignKey(STP, null=True, on_delete=models.PROTECT)
 
     ons_code = models.CharField(max_length=9, null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
-    org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES,
-                                default='Unknown')
+    org_type = models.CharField(max_length=9, choices=PCT_ORG_TYPES, default="Unknown")
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
     centroid = models.PointField(null=True, blank=True, srid=4326)
     open_date = models.DateField(null=True, blank=True)
@@ -196,59 +187,56 @@ class PCT(models.Model):
         return nhs_titlecase(self.name)
 
     def get_absolute_url(self):
-        return reverse(
-            'ccg_home_page',
-            kwargs={'ccg_code': self.code}
-        )
+        return reverse("ccg_home_page", kwargs={"ccg_code": self.code})
 
 
 class Practice(models.Model):
-    '''
+    """
     GP practices. HSCIC practice status is from:
     http://systems.hscic.gov.uk/data/ods/datadownloads/gppractice/index_html
-    '''
+    """
+
     PRESCRIBING_SETTINGS = (
-        (-1, 'Unknown'),
-        (0, 'Other'),
-        (1, 'WIC Practice'),
-        (2, 'OOH Practice'),
-        (3, 'WIC + OOH Practice'),
-        (4, 'GP Practice'),
-        (8, 'Public Health Service'),
-        (9, 'Community Health Service'),
-        (10, 'Hospital Service'),
-        (11, 'Optometry Service'),
-        (12, 'Urgent & Emergency Care'),
-        (13, 'Hospice'),
-        (14, 'Care Home / Nursing Home'),
-        (15, 'Border Force'),
-        (16, 'Young Offender Institution'),
-        (17, 'Secure Training Centre'),
+        (-1, "Unknown"),
+        (0, "Other"),
+        (1, "WIC Practice"),
+        (2, "OOH Practice"),
+        (3, "WIC + OOH Practice"),
+        (4, "GP Practice"),
+        (8, "Public Health Service"),
+        (9, "Community Health Service"),
+        (10, "Hospital Service"),
+        (11, "Optometry Service"),
+        (12, "Urgent & Emergency Care"),
+        (13, "Hospice"),
+        (14, "Care Home / Nursing Home"),
+        (15, "Border Force"),
+        (16, "Young Offender Institution"),
+        (17, "Secure Training Centre"),
         (18, "Secure Children's Home"),
         (19, "Immigration Removal Centre"),
         (20, "Court"),
         (21, "Police Custody"),
         (22, "Sexual Assault Referral Centre (SARC)"),
         (24, "Other - Justice Estate"),
-        (25, "Prison")
+        (25, "Prison"),
     )
 
-    STATUS_RETIRED = 'B'
-    STATUS_CLOSED = 'C'
-    STATUS_DORMANT = 'D'
+    STATUS_RETIRED = "B"
+    STATUS_CLOSED = "C"
+    STATUS_DORMANT = "D"
 
     STATUS_SETTINGS = (
-        ('U', 'Unknown'),
-        ('A', 'Active'),
-        (STATUS_RETIRED, 'Retired'),
-        (STATUS_CLOSED, 'Closed'),
-        (STATUS_DORMANT, 'Dormant'),
-        ('P', 'Proposed')
+        ("U", "Unknown"),
+        ("A", "Active"),
+        (STATUS_RETIRED, "Retired"),
+        (STATUS_CLOSED, "Closed"),
+        (STATUS_DORMANT, "Dormant"),
+        ("P", "Proposed"),
     )
     ccg = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.PROTECT)
-    code = models.CharField(max_length=6, primary_key=True,
-                            help_text='Practice code')
+    code = models.CharField(max_length=6, primary_key=True, help_text="Practice code")
     name = models.CharField(max_length=200)
     address1 = models.CharField(max_length=200, null=True, blank=True)
     address2 = models.CharField(max_length=200, null=True, blank=True)
@@ -258,16 +246,15 @@ class Practice(models.Model):
     postcode = models.CharField(max_length=9, null=True, blank=True)
     location = models.PointField(null=True, blank=True, srid=4326)
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
-    setting = models.IntegerField(choices=PRESCRIBING_SETTINGS,
-                                  default=-1)
+    setting = models.IntegerField(choices=PRESCRIBING_SETTINGS, default=-1)
     objects = models.GeoManager()
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     join_provider_date = models.DateField(null=True, blank=True)
     leave_provider_date = models.DateField(null=True, blank=True)
-    status_code = models.CharField(max_length=1,
-                                   choices=STATUS_SETTINGS,
-                                   null=True, blank=True)
+    status_code = models.CharField(
+        max_length=1, choices=STATUS_SETTINGS, null=True, blank=True
+    )
     ccg_change_reason = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -279,69 +266,70 @@ class Practice(models.Model):
 
     def is_inactive(self):
         return self.status_code in (
-            self.STATUS_RETIRED, self.STATUS_DORMANT, self.STATUS_CLOSED
+            self.STATUS_RETIRED,
+            self.STATUS_DORMANT,
+            self.STATUS_CLOSED,
         )
 
     def inactive_status_suffix(self):
         if self.is_inactive():
-            return ' - {}'.format(self.get_status_code_display())
+            return " - {}".format(self.get_status_code_display())
         else:
-            return ''
+            return ""
 
     def address_pretty(self):
-        address = self.address1 + ', '
+        address = self.address1 + ", "
         if self.address2:
-            address += self.address2 + ', '
+            address += self.address2 + ", "
         if self.address3:
-            address += self.address3 + ', '
+            address += self.address3 + ", "
         if self.address4:
-            address += self.address4 + ', '
+            address += self.address4 + ", "
         if self.address5:
-            address += self.address5 + ', '
+            address += self.address5 + ", "
         address += self.postcode
         return address
 
     def address_pretty_minus_firstline(self):
-        address = ''
+        address = ""
         if self.address2:
-            address += self.address2 + ', '
+            address += self.address2 + ", "
         if self.address3:
-            address += self.address3 + ', '
+            address += self.address3 + ", "
         if self.address4:
-            address += self.address4 + ', '
+            address += self.address4 + ", "
         if self.address5:
-            address += self.address5 + ', '
+            address += self.address5 + ", "
         address += self.postcode
         return address
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
     def get_absolute_url(self):
-        return reverse(
-            'practice_home_page',
-            kwargs={'practice_code': self.code}
-        )
+        return reverse("practice_home_page", kwargs={"practice_code": self.code})
 
 
 class PracticeIsDispensing(models.Model):
-    '''
+    """
     Dispensing status, from
     https://www.report.ppa.org.uk/ActProd1/getfolderitems.do?volume=actprod&userid=ciruser&password=foicir
-    '''
+    """
+
     practice = models.ForeignKey(Practice, on_delete=models.PROTECT)
     date = models.DateField()
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
         unique_together = ("practice", "date")
 
 
 class PracticeStatistics(models.Model):
-    '''
+    """
     Statistics for a practice in a particular month, including
     list sizes and derived values such as ASTRO-PUs and STAR-PUs.
-    '''
+    """
+
     # We use ON DELETE CASCADE rather than PROTECT on this model simply because
     # that was the previous default and the table is large enough that running
     # the migration will take careful planning at some later stage
@@ -378,13 +366,14 @@ class PracticeStatistics(models.Model):
         super(PracticeStatistics, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
 
 class QOFPrevalence(models.Model):
-    '''
+    """
     TODO: Handle denormalization?
-    '''
+    """
+
     pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     practice = models.ForeignKey(
         Practice, null=True, blank=True, on_delete=models.PROTECT
@@ -396,49 +385,53 @@ class QOFPrevalence(models.Model):
 
 
 class Chemical(models.Model):
-    '''
+    """
     GP prescribing chemical substances (aka chemicals)
     TODO: Add 'date added' field, populate from data file.
-    '''
-    bnf_code = models.CharField(max_length=9, primary_key=True,
-                                validators=[isAlphaNumeric])
+    """
+
+    bnf_code = models.CharField(
+        max_length=9, primary_key=True, validators=[isAlphaNumeric]
+    )
     chem_name = models.CharField(max_length=200)
     is_current = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s: %s' % (self.bnf_code, self.chem_name)
+        return "%s: %s" % (self.bnf_code, self.chem_name)
 
     def bnf_section(self):
         code = self.bnf_code
-        section = Section.objects.get(bnf_chapter=int(code[:2]),
-                                      bnf_section=int(code[2:4]),
-                                      bnf_para=None)
+        section = Section.objects.get(
+            bnf_chapter=int(code[:2]), bnf_section=int(code[2:4]), bnf_para=None
+        )
         return "%s: %s" % (section.number_str, section.name)
 
     class Meta:
-        app_label = 'frontend'
-        unique_together = (('bnf_code', 'chem_name'),)
+        app_label = "frontend"
+        unique_together = (("bnf_code", "chem_name"),)
 
 
 class Product(models.Model):
-    '''
+    """
     GP prescribing products. Import from BNF codes file from BSA.
-    '''
-    bnf_code = models.CharField(max_length=11, primary_key=True,
-                                validators=[isAlphaNumeric])
+    """
+
+    bnf_code = models.CharField(
+        max_length=11, primary_key=True, validators=[isAlphaNumeric]
+    )
     name = models.CharField(max_length=200)
     is_generic = models.BooleanField()
     is_current = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s: %s' % (self.bnf_code, self.name)
+        return "%s: %s" % (self.bnf_code, self.name)
 
     def save(self, *args, **kwargs):
-        self.is_generic = (self.bnf_code[-2:] == 'AA')
+        self.is_generic = self.bnf_code[-2:] == "AA"
         super(Product, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
 
 class PresentationManager(models.Manager):
@@ -447,20 +440,22 @@ class PresentationManager(models.Manager):
 
 
 class Presentation(models.Model):
-    '''GP prescribing products. Import from BNF codes file from BSA.
+    """GP prescribing products. Import from BNF codes file from BSA.
     ADQs imported from BSA data.
 
     Where codes have changed or otherwise been mapped, the
     `replaced_by` field has a value.
 
-    '''
-    bnf_code = models.CharField(max_length=15, primary_key=True,
-                                validators=[isAlphaNumeric])
+    """
+
+    bnf_code = models.CharField(
+        max_length=15, primary_key=True, validators=[isAlphaNumeric]
+    )
     name = models.CharField(max_length=200)
     is_generic = models.NullBooleanField(default=None)
     is_current = models.BooleanField(default=True)
     replaced_by = models.ForeignKey(
-        'self', null=True, blank=True, on_delete=models.PROTECT
+        "self", null=True, blank=True, on_delete=models.PROTECT
     )
 
     # An ADQ is the assumed average maintenance dose per day for a
@@ -491,12 +486,12 @@ class Presentation(models.Model):
     objects = PresentationManager()
 
     def __str__(self):
-        return '%s: %s' % (self.bnf_code, self.product_name)
+        return "%s: %s" % (self.bnf_code, self.product_name)
 
     def save(self, *args, **kwargs):
         if len(self.bnf_code) > 10:
             code = self.bnf_code[9:11]
-            is_generic = (code == 'AA')
+            is_generic = code == "AA"
         else:
             is_generic = None
         self.is_generic = is_generic
@@ -521,49 +516,49 @@ class Presentation(models.Model):
         return version
 
     def tariff_categories(self):
-        '''Return all tariff categories for this presentation.'''
+        """Return all tariff categories for this presentation."""
         vmpps = VMPP.objects.filter(bnf_code=self.bnf_code)
         return DtPaymentCategory.objects.filter(dtinfo__vmpp__in=vmpps).distinct()
 
     def tariff_categories_descr(self):
-        '''Return a description of the presentation's tariff category/ies.'''
-        return ', '.join(tc.descr for tc in self.tariff_categories())
+        """Return a description of the presentation's tariff category/ies."""
+        return ", ".join(tc.descr for tc in self.tariff_categories())
 
     def availability_restrictions(self):
-        '''Return all availability restrictions for this presentation.'''
+        """Return all availability restrictions for this presentation."""
         amps = AMP.objects.filter(bnf_code=self.bnf_code)
         return AvailabilityRestriction.objects.filter(amp__in=amps).distinct()
 
     def availability_restrictions_descr(self):
-        '''Return a description of the presentation's availabilty restriction/s.
+        """Return a description of the presentation's availabilty restriction/s.
 
         If any AMPs have "None" as their availability restriction, we
         consider that the presentation itself has no availability restriction.
-        '''
+        """
         descrs = [ar.descr for ar in self.availability_restrictions()]
-        if 'None' in descrs:
-            return 'None'
+        if "None" in descrs:
+            return "None"
         else:
-            return ', '.join(descrs)
+            return ", ".join(descrs)
 
     def prescribability_statuses(self):
-        '''Return all prescribability statuses for this presentation.
-        '''
+        """Return all prescribability statuses for this presentation.
+        """
         vmps = VMP.objects.filter(bnf_code=self.bnf_code)
         return VirtualProductPresStatus.objects.filter(vmp__in=vmps).distinct()
 
     def prescribability_statuses_descr(self):
-        '''Return a description of the presentation's prescribability status/es.'''
-        return ', '.join(ps.descr for ps in self.prescribability_statuses())
+        """Return a description of the presentation's prescribability status/es."""
+        return ", ".join(ps.descr for ps in self.prescribability_statuses())
 
     def dmd_info(self):
-        '''Return dictionary of information about this presentation extracted
-        from the dm+d data.'''
+        """Return dictionary of information about this presentation extracted
+        from the dm+d data."""
 
         info = {
-            'tariff_categories': self.tariff_categories_descr(),
-            'availability_restrictions': self.availability_restrictions_descr(),
-            'prescribability_statuses': self.prescribability_statuses_descr(),
+            "tariff_categories": self.tariff_categories_descr(),
+            "availability_restrictions": self.availability_restrictions_descr(),
+            "prescribability_statuses": self.prescribability_statuses_descr(),
         }
         return {k: v for k, v in info.items() if v}
 
@@ -572,11 +567,11 @@ class Presentation(models.Model):
         return self.dmd_name or self.name
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
 
 class Prescription(models.Model):
-    '''
+    """
     Prescription items
     Characters
     -- 1 & 2 show the BNF Chapter,
@@ -587,7 +582,8 @@ class Prescription(models.Model):
     -- 10 & 11 show the Product
     -- 12 & 13 show the Strength and Formulation
     -- 14 & 15 show the equivalent generic code (always used)
-    '''
+    """
+
     # We use ON DELETE CASCADE rather than PROTECT on this model simply because
     # that was the previous default and the table is large enough that running
     # the migration will take careful planning at some later stage
@@ -597,8 +593,7 @@ class Prescription(models.Model):
     practice = models.ForeignKey(
         Practice, db_constraint=False, null=True, on_delete=models.CASCADE
     )
-    presentation_code = models.CharField(max_length=15,
-                                         validators=[isAlphaNumeric])
+    presentation_code = models.CharField(max_length=15, validators=[isAlphaNumeric])
     total_items = models.IntegerField()
     # XXX change this post-deploy; in fact we should not allow blanks
     net_cost = models.FloatField(blank=True, null=True)
@@ -607,7 +602,7 @@ class Prescription(models.Model):
     processing_date = models.DateField()
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
 
 class Measure(models.Model):
@@ -622,9 +617,14 @@ class Measure(models.Model):
     numerator_short = models.CharField(max_length=100, null=True, blank=True)
     tags = ArrayField(models.CharField(max_length=30), blank=True)
     tags_focus = ArrayField(
-        models.CharField(max_length=30), null=True, blank=True,
-        help_text=("Indicates that this measure is an aggregate made up of "
-                   "all measures with the listed tags"))
+        models.CharField(max_length=30),
+        null=True,
+        blank=True,
+        help_text=(
+            "Indicates that this measure is an aggregate made up of "
+            "all measures with the listed tags"
+        ),
+    )
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
@@ -646,17 +646,18 @@ class Measure(models.Model):
         return self.name
 
     class Meta:
-        app_label = 'frontend'
+        app_label = "frontend"
 
 
 class MeasureValue(models.Model):
-    '''
+    """
     An instance of a measure for a particular organisation,
     on a particular date.
     If it's a measure for a CCG, the practice field will be null.
     Otherwise, it's a measure for a practice, and the pct field
     indicates the parent CCG, if it exists.
-    '''
+    """
+
     # We use ON DELETE CASCADE rather than PROTECT on this model simply because
     # that was the previous default and the table is large enough that running
     # the migration will take careful planning at some later stage
@@ -683,19 +684,20 @@ class MeasureValue(models.Model):
     cost_savings = JSONField(null=True, blank=True)
 
     class Meta:
-        app_label = 'frontend'
-        unique_together = (('measure', 'pct', 'practice', 'month'),)
+        app_label = "frontend"
+        unique_together = (("measure", "pct", "practice", "month"),)
 
     objects = MeasureValueQuerySet.as_manager()
 
 
 class MeasureGlobal(models.Model):
-    '''
+    """
     An instance of the global values for a measure,
     on a particular date.
     Percentile values may or may not be required. We
     include them as placeholders for now.
-    '''
+    """
+
     # We use ON DELETE CASCADE rather than PROTECT on this model simply because
     # that was the previous default and the table is large enough that running
     # the migration will take careful planning at some later stage
@@ -725,21 +727,22 @@ class MeasureGlobal(models.Model):
         super(MeasureGlobal, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'frontend'
-        unique_together = (('measure', 'month'),)
+        app_label = "frontend"
+        unique_together = (("measure", "month"),)
 
 
 class TruncatingCharField(models.CharField):
     def get_prep_value(self, value):
         value = super(TruncatingCharField, self).get_prep_value(value)
         if value:
-            return value[:self.max_length]
+            return value[: self.max_length]
         return value
 
 
 class SearchBookmark(models.Model):
-    '''A bookmark for an individual analyse search made by a user.
-    '''
+    """A bookmark for an individual analyse search made by a user.
+    """
+
     name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=200)
@@ -747,7 +750,7 @@ class SearchBookmark(models.Model):
     approved = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return 'Bookmark: ' + self.name
+        return "Bookmark: " + self.name
 
     def topic(self):
         """Sentence snippet describing the bookmark
@@ -758,11 +761,11 @@ class SearchBookmark(models.Model):
         """The 'home page' for this bookmark
 
         """
-        return "%s#%s" % (reverse('analyse'), self.url)
+        return "%s#%s" % (reverse("analyse"), self.url)
 
 
 class OrgBookmark(models.Model):
-    '''
+    """
     A bookmark for an organistion a user is interested in.
 
     If a bookmark for a CCG, the practice field will be null. If the practice
@@ -773,7 +776,8 @@ class OrgBookmark(models.Model):
     (This is very much not ideal, but it has the benefit of consistency with
     the pattern already set in NCSOConcessionBookmark which should make
     refactoring easier, when it comes.)
-    '''
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     pct = models.ForeignKey(PCT, null=True, blank=True, on_delete=models.PROTECT)
     practice = models.ForeignKey(
@@ -789,27 +793,27 @@ class OrgBookmark(models.Model):
         fragment = None
         if self.pct is not None and self.practice is None:
             if measure:
-                view = 'measure_for_one_ccg'
-                kwargs = {'measure': measure, 'entity_code': self.pct.code}
+                view = "measure_for_one_ccg"
+                kwargs = {"measure": measure, "entity_code": self.pct.code}
             else:
-                view = 'measures_for_one_ccg'
-                kwargs = {'ccg_code': self.pct.code}
+                view = "measures_for_one_ccg"
+                kwargs = {"ccg_code": self.pct.code}
         elif self.practice is not None:
             if measure:
-                view = 'measure_for_one_practice'
-                kwargs = {'measure': measure, 'entity_code': self.practice.code}
+                view = "measure_for_one_practice"
+                kwargs = {"measure": measure, "entity_code": self.practice.code}
             else:
-                view = 'measures_for_one_practice'
-                kwargs = {'practice_code': self.practice.code}
+                view = "measures_for_one_practice"
+                kwargs = {"practice_code": self.practice.code}
         else:
             if measure:
                 fragment = measure
-            view = 'all_england'
+            view = "all_england"
             kwargs = {}
 
         url = reverse(view, kwargs=kwargs)
         if fragment:
-            url = '{}#{}'.format(url, fragment)
+            url = "{}#{}".format(url, fragment)
         return url
 
     @property
@@ -819,15 +823,15 @@ class OrgBookmark(models.Model):
         elif self.practice is not None:
             return self.practice.cased_name
         else:
-            return 'the NHS in England'
+            return "the NHS in England"
 
     def org_type(self):
         if self.pct is not None and self.practice is None:
-            return 'CCG'
+            return "CCG"
         elif self.practice is not None:
-            return 'practice'
+            return "practice"
         else:
-            return 'all_england'
+            return "all_england"
 
     def topic(self):
         """Sentence snippet describing the bookmark
@@ -838,7 +842,7 @@ class OrgBookmark(models.Model):
         return self.dashboard_url()
 
     def __unicode__(self):
-        return 'Org Bookmark: ' + self.name
+        return "Org Bookmark: " + self.name
 
 
 class NCSOConcessionBookmark(models.Model):
@@ -863,32 +867,32 @@ class NCSOConcessionBookmark(models.Model):
     @property
     def entity_type(self):
         if self.pct is not None:
-            return 'CCG'
+            return "CCG"
         elif self.practice is not None:
-            return 'practice'
+            return "practice"
         else:
-            return 'all_england'
+            return "all_england"
 
     @property
     def entity_cased_name(self):
         if self.entity is None:
-            return 'the NHS in England'
+            return "the NHS in England"
         else:
             return self.entity.cased_name
 
     @property
     def name(self):
-        return 'NCSO concessions for {}'.format(self.entity_cased_name)
+        return "NCSO concessions for {}".format(self.entity_cased_name)
 
     def dashboard_url(self):
-        if self.entity_type == 'CCG':
-            kwargs = {'entity_code': self.entity.code}
-            return reverse('spending_for_one_ccg', kwargs=kwargs)
-        elif self.entity_type == 'practice':
-            kwargs = {'entity_code': self.entity.code}
-            return reverse('spending_for_one_practice', kwargs=kwargs)
+        if self.entity_type == "CCG":
+            kwargs = {"entity_code": self.entity.code}
+            return reverse("spending_for_one_ccg", kwargs=kwargs)
+        elif self.entity_type == "practice":
+            kwargs = {"entity_code": self.entity.code}
+            return reverse("spending_for_one_practice", kwargs=kwargs)
         else:
-            return reverse('spending_for_all_england')
+            return reverse("spending_for_all_england")
 
     def topic(self):
         return self.name
@@ -900,9 +904,10 @@ class ImportLogManager(models.Manager):
 
 
 class ImportLog(models.Model):
-    '''
+    """
     Keep track of when things have been imported
-    '''
+    """
+
     imported_at = models.DateTimeField(auto_now_add=True)
     current_at = models.DateField(db_index=True)
     filename = models.CharField(max_length=200)
@@ -919,19 +924,18 @@ def _makeKey():
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    key = models.CharField(max_length=32,
-                           default=_makeKey,
-                           unique=True)
+    key = models.CharField(max_length=32, default=_makeKey, unique=True)
     emails_received = models.IntegerField(default=0)
     emails_opened = models.IntegerField(default=0)
     emails_clicked = models.IntegerField(default=0)
 
     def most_recent_bookmark(self):
         bookmarks = [
-            bookmark for bookmark in [
-                 self.user.orgbookmark_set.last(),
-                 self.user.searchbookmark_set.last(),
-                 self.user.ncsoconcessionbookmark_set.last(),
+            bookmark
+            for bookmark in [
+                self.user.orgbookmark_set.last(),
+                self.user.searchbookmark_set.last(),
+                self.user.ncsoconcessionbookmark_set.last(),
             ]
             if bookmark
         ]
@@ -942,17 +946,18 @@ class EmailMessageManager(models.Manager):
     def create_from_message(self, msg):
         user = User.objects.filter(email=msg.to[0])
         user = user and user[0] or None
-        if 'message-id' not in msg.extra_headers:
+        if "message-id" not in msg.extra_headers:
             raise StandardError(
                 "Messages stored as frontend.EmailMessage"
-                "must have a message-id header")
+                "must have a message-id header"
+            )
         m = self.create(
-            message_id=msg.extra_headers['message-id'],
+            message_id=msg.extra_headers["message-id"],
             to=msg.to,
             subject=msg.subject,
             tags=msg.tags,
             user=user,
-            message=msg
+            message=msg,
         )
         return m
 
@@ -960,14 +965,9 @@ class EmailMessageManager(models.Manager):
 class EmailMessage(models.Model):
     message_id = models.CharField(max_length=998, primary_key=True)
     pickled_message = models.BinaryField()
-    to = ArrayField(
-        models.CharField(max_length=254, db_index=True)
-    )
+    to = ArrayField(models.CharField(max_length=254, db_index=True))
     subject = models.CharField(max_length=200)
-    tags = ArrayField(
-        models.CharField(max_length=100, db_index=True),
-        null=True
-    )
+    tags = ArrayField(models.CharField(max_length=100, db_index=True), null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     send_count = models.SmallIntegerField(default=0)
@@ -994,35 +994,31 @@ class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
         (value, value)
         for name, value in vars(EventType).iteritems()
-        if not name.startswith('_')]
+        if not name.startswith("_")
+    ]
     # delievered, accepted (by mailgun), error, warn
     metadata = JSONField(null=True, blank=True)
     recipient = models.CharField(max_length=254, db_index=True)
-    tags = ArrayField(
-        models.CharField(max_length=100, db_index=True),
-        null=True
-    )
+    tags = ArrayField(models.CharField(max_length=100, db_index=True), null=True)
     reject_reason = models.CharField(max_length=15, null=True, blank=True)
     event_type = models.CharField(
-        max_length=15,
-        choices=EVENT_TYPE_CHOICES,
-        db_index=True)
+        max_length=15, choices=EVENT_TYPE_CHOICES, db_index=True
+    )
     timestamp = models.DateTimeField(null=True, blank=True)
     message = models.ForeignKey(
         EmailMessage, null=True, db_constraint=False, on_delete=models.PROTECT
     )
 
     def subject_from_metadata(self):
-        subject = 'n/a'
-        if 'subject' in self.metadata:
-            subject = self.metadata['subject']
-        elif 'message-headers' in self.metadata:
-                headers = json.loads(self.metadata['message-headers'])
-                subject_header = next(
-                    (h for h in headers if h[0] == 'Subject'),
-                    ['', 'n/a']
-                )
-                subject = subject_header[1]
+        subject = "n/a"
+        if "subject" in self.metadata:
+            subject = self.metadata["subject"]
+        elif "message-headers" in self.metadata:
+            headers = json.loads(self.metadata["message-headers"])
+            subject_header = next(
+                (h for h in headers if h[0] == "Subject"), ["", "n/a"]
+            )
+            subject = subject_header[1]
         else:
             # e.g. "clicked" or "bounced" event_type
             try:
@@ -1044,10 +1040,13 @@ class GenericCodeMapping(models.Model):
     should be treated as a stem against which to search for generics.
 
     """
-    from_code = models.CharField(max_length=15, primary_key=True,
-                                 validators=[isAlphaNumeric], db_index=True)
-    to_code = models.CharField(max_length=15,
-                               validators=[isAlphaNumeric], db_index=True)
+
+    from_code = models.CharField(
+        max_length=15, primary_key=True, validators=[isAlphaNumeric], db_index=True
+    )
+    to_code = models.CharField(
+        max_length=15, validators=[isAlphaNumeric], db_index=True
+    )
 
 
 class PPUSaving(models.Model):
@@ -1058,6 +1057,7 @@ class PPUSaving(models.Model):
     those with a practice_id are for data at a practice level.
 
     """
+
     # We use ON DELETE CASCADE rather than PROTECT on this model simply because
     # that was the previous default and the table is large enough that running
     # the migration will take careful planning at some later stage
@@ -1065,8 +1065,10 @@ class PPUSaving(models.Model):
     # Sometimes we there are codes in prescribing data which are not
     # present in our presentations
     presentation = models.ForeignKey(
-        Presentation, db_column='bnf_code', db_constraint=False,
-        on_delete=models.CASCADE
+        Presentation,
+        db_column="bnf_code",
+        db_constraint=False,
+        on_delete=models.CASCADE,
     )
     lowest_decile = models.FloatField()
     quantity = models.IntegerField()
@@ -1083,28 +1085,28 @@ class PPUSaving(models.Model):
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd2.VMPP", on_delete=models.DO_NOTHING)
     # 1: Category A
     # 3: Category C
     # 11: Category M
     tariff_category = models.ForeignKey(
-        'dmd2.DtPaymentCategory', on_delete=models.DO_NOTHING
+        "dmd2.DtPaymentCategory", on_delete=models.DO_NOTHING
     )
     price_pence = models.IntegerField()
 
     class Meta:
-        unique_together = ('date', 'vmpp')
+        unique_together = ("date", "vmpp")
 
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey('dmd2.VMPP', null=True, on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd2.VMPP", null=True, on_delete=models.DO_NOTHING)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()
 
     class Meta:
-        unique_together = ('date', 'vmpp')
+        unique_together = ("date", "vmpp")
 
     class Manager(models.Manager):
         def unreconciled(self):
@@ -1114,4 +1116,4 @@ class NCSOConcession(models.Model):
 
     @property
     def drug_and_pack_size(self):
-        return u'{} {}'.format(self.drug, self.pack_size)
+        return u"{} {}".format(self.drug, self.pack_size)

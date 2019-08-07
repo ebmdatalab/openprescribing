@@ -16,10 +16,11 @@ from frontend.models import Presentation
 from frontend.bq_schemas import PPU_SAVING_SCHEMA, ppu_savings_transform
 
 SUBSTITUTIONS_SPREADSHEET = (
-    'https://docs.google.com/spreadsheets/d/e/'
-    '2PACX-1vSsTrjEdRekkcR0H8myL8RwP3XKg2YvTgQwGb5ypNei0IYn4ofr'
-    'ayVZJibLfN_lnpm6Q9qu_t0yXU5Z/pub?gid=1784930737&single=true'
-    '&output=csv')
+    "https://docs.google.com/spreadsheets/d/e/"
+    "2PACX-1vSsTrjEdRekkcR0H8myL8RwP3XKg2YvTgQwGb5ypNei0IYn4ofr"
+    "ayVZJibLfN_lnpm6Q9qu_t0yXU5Z/pub?gid=1784930737&single=true"
+    "&output=csv"
+)
 
 
 def make_merged_table_for_month(month):
@@ -47,7 +48,7 @@ def make_merged_table_for_month(month):
     cases = []
     seen = set()
     df = pd.read_csv(SUBSTITUTIONS_SPREADSHEET)
-    df = df[df['Really equivalent?'] == 'Y']
+    df = df[df["Really equivalent?"] == "Y"]
     for row in df.iterrows():
         data = row[1]
         source_code = data[1].strip()
@@ -56,7 +57,7 @@ def make_merged_table_for_month(month):
             cases.append((code_to_merge, source_code))
         seen.add(source_code)
         seen.add(code_to_merge)
-    prescribing_table = 'normalised_prescribing_standard'
+    prescribing_table = "normalised_prescribing_standard"
     sql = """
       SELECT
         practice,
@@ -72,15 +73,19 @@ def make_merged_table_for_month(month):
       FROM
         {hscic}.%s
       WHERE month = TIMESTAMP('%s')
-    """ % (' '.join(
-        ["WHEN '%s' THEN '%s'" % (when_code, then_code)
-         for (when_code, then_code) in cases]),
-           prescribing_table,
-           month)
-    target_table_name = (
-        'prescribing_with_merged_codes_%s' % month.strftime('%Y_%m'))
+    """ % (
+        " ".join(
+            [
+                "WHEN '%s' THEN '%s'" % (when_code, then_code)
+                for (when_code, then_code) in cases
+            ]
+        ),
+        prescribing_table,
+        month,
+    )
+    target_table_name = "prescribing_with_merged_codes_%s" % month.strftime("%Y_%m")
 
-    client = Client('hscic')
+    client = Client("hscic")
     table = client.get_table(target_table_name)
     table.insert_rows_from_query(sql)
     return target_table_name
@@ -94,9 +99,7 @@ def get_savings(entity_type, month):
     https://github.com/ebmdatalab/price-per-dose/issues
 
     """
-    prescribing_table = "{hscic}.%s" % (
-        make_merged_table_for_month(month)
-    )
+    prescribing_table = "{hscic}.%s" % (make_merged_table_for_month(month))
 
     # This is interpolated into the SQL template as it is used multiple times.
     restricting_condition = (
@@ -126,18 +129,18 @@ def get_savings(entity_type, month):
 
     # Generate variable SQL based on if we're interested in CCG or
     # practice-level data
-    if entity_type == 'pct':
-        select = 'savings.presentations.pct AS pct,'
-        inner_select = 'presentations.pct, '
-        group_by = 'presentations.pct, '
+    if entity_type == "pct":
+        select = "savings.presentations.pct AS pct,"
+        inner_select = "presentations.pct, "
+        group_by = "presentations.pct, "
         min_saving = 1000
-    elif entity_type == 'practice':
-        select = ('savings.presentations.practice AS practice,'
-                  'savings.presentations.pct AS pct,')
-        inner_select = ('presentations.pct, '
-                        'presentations.practice,')
-        group_by = ('presentations.practice, '
-                    'presentations.pct,')
+    elif entity_type == "practice":
+        select = (
+            "savings.presentations.practice AS practice,"
+            "savings.presentations.pct AS pct,"
+        )
+        inner_select = "presentations.pct, " "presentations.practice,"
+        group_by = "presentations.practice, " "presentations.pct,"
         min_saving = 50
     else:
         # 7d21f9c6 (#769) removed 'product'` as a possible entity_type.  We may
@@ -151,13 +154,13 @@ def get_savings(entity_type, month):
         sql = f.read()
 
     substitutions = (
-        ('{{ restricting_condition }}', restricting_condition),
-        ('{{ month }}', month.strftime('%Y-%m-%d')),
-        ('{{ group_by }}', group_by),
-        ('{{ select }}', select),
-        ('{{ prescribing_table }}', prescribing_table),
-        ('{{ inner_select }}', inner_select),
-        ('{{ min_saving }}', min_saving)
+        ("{{ restricting_condition }}", restricting_condition),
+        ("{{ month }}", month.strftime("%Y-%m-%d")),
+        ("{{ group_by }}", group_by),
+        ("{{ select }}", select),
+        ("{{ prescribing_table }}", prescribing_table),
+        ("{{ inner_select }}", inner_select),
+        ("{{ min_saving }}", min_saving),
     )
     for key, value in substitutions:
         sql = sql.replace(key, str(value))
@@ -165,85 +168,80 @@ def get_savings(entity_type, month):
     client = Client()
     df = client.query_into_dataframe(sql, legacy=True)
     # Rename null values in category, so we can group by it
-    df.loc[df['category'].isnull(), 'category'] = 'NP8'
-    df = df.set_index(
-        'generic_presentation')
-    df.index.name = 'bnf_code'
+    df.loc[df["category"].isnull(), "category"] = "NP8"
+    df = df.set_index("generic_presentation")
+    df.index.name = "bnf_code"
     # Add in substitutions column
-    subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index('Code')
-    subs = subs[subs['Really equivalent?'] == 'Y'].copy()
-    subs['formulation_swap'] = (
-        subs['Formulation'] +
-        ' / ' +
-        subs['Alternative formulation'])
-    df = df.join(
-        subs[['formulation_swap']], how='left')
+    subs = pd.read_csv(SUBSTITUTIONS_SPREADSHEET).set_index("Code")
+    subs = subs[subs["Really equivalent?"] == "Y"].copy()
+    subs["formulation_swap"] = (
+        subs["Formulation"] + " / " + subs["Alternative formulation"]
+    )
+    df = df.join(subs[["formulation_swap"]], how="left")
     # Convert nans to Nones
     df = df.where((pd.notnull(df)), None)
     return df
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports cost savings for a month'
+    args = ""
+    help = "Imports cost savings for a month"
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--month',
-            type=valid_date)
+        parser.add_argument("--month", type=valid_date)
 
     def handle(self, *args, **options):
-        '''
+        """
         Compute and store cost savings for the specified month.
 
         Deletes any existing data for that month.
-        '''
-        if not options['month']:
+        """
+        if not options["month"]:
             last_prescribing = ImportLog.objects.latest_in_category(
-                'prescribing').current_at
-            options['month'] = last_prescribing
+                "prescribing"
+            ).current_at
+            options["month"] = last_prescribing
 
-            log = ImportLog.objects.latest_in_category('ppu')
+            log = ImportLog.objects.latest_in_category("ppu")
             if log is not None:
-                if options['month'] <= log.current_at:
+                if options["month"] <= log.current_at:
                     raise argparse.ArgumentTypeError("Couldn't infer date")
         with transaction.atomic():
             # Create custom presentations for our overrides, if they don't exist.
             # See https://github.com/ebmdatalab/price-per-dose/issues/1.
             Presentation.objects.get_or_create(
-                bnf_code='0601060D0AAA0A0',
-                name='Glucose Blood Testing Reagents',
-                is_generic=True)
+                bnf_code="0601060D0AAA0A0",
+                name="Glucose Blood Testing Reagents",
+                is_generic=True,
+            )
             Presentation.objects.get_or_create(
-                bnf_code='0601060U0AAA0A0',
-                name='Urine Testing Reagents',
-                is_generic=True)
-            PPUSaving.objects.filter(date=options['month']).delete()
-            for entity_type in ['pct', 'practice']:
-                result = get_savings(entity_type, options['month'])
+                bnf_code="0601060U0AAA0A0",
+                name="Urine Testing Reagents",
+                is_generic=True,
+            )
+            PPUSaving.objects.filter(date=options["month"]).delete()
+            for entity_type in ["pct", "practice"]:
+                result = get_savings(entity_type, options["month"])
                 for row in result.itertuples():
                     d = row._asdict()
-                    if d['price_per_unit']:
+                    if d["price_per_unit"]:
                         PPUSaving.objects.create(
-                            date=options['month'],
-                            presentation_id=d['Index'],
-                            lowest_decile=d['lowest_decile'],
-                            quantity=d['quantity'],
-                            price_per_unit=d['price_per_unit'],
-                            possible_savings=d['possible_savings'],
-                            formulation_swap=d['formulation_swap'] or None,
-                            pct_id=d.get('pct', None),
-                            practice_id=d.get('practice', None)
+                            date=options["month"],
+                            presentation_id=d["Index"],
+                            lowest_decile=d["lowest_decile"],
+                            quantity=d["quantity"],
+                            price_per_unit=d["price_per_unit"],
+                            possible_savings=d["possible_savings"],
+                            formulation_swap=d["formulation_swap"] or None,
+                            pct_id=d.get("pct", None),
+                            practice_id=d.get("practice", None),
                         )
             ImportLog.objects.create(
-                category='ppu',
-                filename='n/a',
-                current_at=options['month'])
+                category="ppu", filename="n/a", current_at=options["month"]
+            )
 
-        client = Client('hscic')
-        table = client.get_or_create_table('ppu_savings', PPU_SAVING_SCHEMA)
+        client = Client("hscic")
+        table = client.get_or_create_table("ppu_savings", PPU_SAVING_SCHEMA)
         table.insert_rows_from_pg(
-            PPUSaving,
-            PPU_SAVING_SCHEMA,
-            transformer=ppu_savings_transform
+            PPUSaving, PPU_SAVING_SCHEMA, transformer=ppu_savings_transform
         )

@@ -20,30 +20,27 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--date',
+            "--date",
             help=(
-                'Find the most recent file whose timestamp (in the filename) '
-                'matches this date (YYYY-MM format)'
-            )
+                "Find the most recent file whose timestamp (in the filename) "
+                "matches this date (YYYY-MM format)"
+            ),
         )
         parser.add_argument(
-            '--filename',
-            help="Don't search for files; just use this one"
+            "--filename", help="Don't search for files; just use this one"
         )
 
     def handle(self, date=None, filename=None, **kwargs):
         symlink = settings.MATRIXSTORE_LIVE_FILE
         if os.path.exists(symlink) and not os.path.islink(symlink):
             raise RuntimeError(
-                'MATRIXSTORE_LIVE_FILE is not a symlink: {}'.format(symlink)
+                "MATRIXSTORE_LIVE_FILE is not a symlink: {}".format(symlink)
             )
         if filename:
             target_file = get_target_file(filename)
         else:
             target_file = get_most_recent_file(date)
-        self.stdout.write(
-            "Updating live symlink to: {}".format(target_file)
-        )
+        self.stdout.write("Updating live symlink to: {}".format(target_file))
         temp_file = get_temp_filename(symlink)
         os.symlink(target_file, temp_file)
         os.rename(temp_file, symlink)
@@ -56,7 +53,7 @@ class Command(BaseCommand):
 def get_target_file(filename):
     target_file = os.path.join(settings.MATRIXSTORE_BUILD_DIR, filename)
     if not os.path.exists(target_file):
-        raise RuntimeError('No such file: {}'.format(target_file))
+        raise RuntimeError("No such file: {}".format(target_file))
     # We want relative symlinks so they remain valid if we move the directory
     target_file = os.path.relpath(target_file, settings.MATRIXSTORE_BUILD_DIR)
     return target_file
@@ -64,15 +61,15 @@ def get_target_file(filename):
 
 def get_most_recent_file(date):
     candidates = [
-        p for p in os.listdir(settings.MATRIXSTORE_BUILD_DIR)
-        if re.match('matrixstore_\d{4}-\d{2}_.+\.sqlite', p)
+        p
+        for p in os.listdir(settings.MATRIXSTORE_BUILD_DIR)
+        if re.match("matrixstore_\d{4}-\d{2}_.+\.sqlite", p)
     ]
     if date:
-        date = date.replace('_', '-')
+        date = date.replace("_", "-")
         candidates = [
-            p for p in candidates
-            if p.startswith('matrixstore_{}_'.format(date))
+            p for p in candidates if p.startswith("matrixstore_{}_".format(date))
         ]
     if len(candidates) == 0:
-        raise RuntimeError('No matching files found')
+        raise RuntimeError("No matching files found")
     return sorted(candidates)[-1]

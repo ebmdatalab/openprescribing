@@ -13,8 +13,8 @@ class TaskLog(models.Model):
     status = models.CharField(max_length=100, null=True)
     formatted_tb = models.TextField(null=True)
 
-    SUCCESSFUL = 'successful'
-    FAILED = 'failed'
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
 
     def mark_succeeded(self):
         assert self.status is None

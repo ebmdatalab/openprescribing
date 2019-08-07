@@ -1,20 +1,19 @@
 import csv
 
-from matrixstore.build.init_db import (
-    SCHEMA_SQL, generate_dates, import_dates
-)
+from matrixstore.build.init_db import SCHEMA_SQL, generate_dates, import_dates
 from matrixstore.build.import_practice_stats import (
-    write_practice_stats, parse_practice_statistics_csv
+    write_practice_stats,
+    parse_practice_statistics_csv,
 )
 from matrixstore.build.import_prescribing import (
-    write_prescribing, parse_prescribing_csv
+    write_prescribing,
+    parse_prescribing_csv,
 )
 from matrixstore.build.update_bnf_map import (
-    move_values_from_old_code_to_new, delete_presentations_with_no_prescribing
+    move_values_from_old_code_to_new,
+    delete_presentations_with_no_prescribing,
 )
-from matrixstore.build.precalculate_totals import (
-    precalculate_totals_for_db
-)
+from matrixstore.build.precalculate_totals import precalculate_totals_for_db
 
 
 def import_test_data_fast(sqlite_conn, data_factory, end_date, months=None):
@@ -46,11 +45,10 @@ def init_db(sqlite_conn, data_factory, dates):
     import_dates(sqlite_conn, dates)
     practice_codes = _get_active_practice_codes(data_factory, dates)
     sqlite_conn.executemany(
-        'INSERT INTO practice (offset, code) VALUES (?, ?)',
-        enumerate(practice_codes)
+        "INSERT INTO practice (offset, code) VALUES (?, ?)", enumerate(practice_codes)
     )
     presentations = (
-        (p['bnf_code'], p['is_generic'], p['adq_per_quantity'], p['name'])
+        (p["bnf_code"], p["is_generic"], p["adq_per_quantity"], p["name"])
         for p in data_factory.presentations
     )
     sqlite_conn.executemany(
@@ -59,7 +57,7 @@ def init_db(sqlite_conn, data_factory, dates):
           (bnf_code, is_generic, adq_per_quantity, name)
           VALUES (?, ?, ?, ?)
         """,
-        presentations
+        presentations,
     )
 
 
@@ -73,8 +71,7 @@ def import_practice_stats(sqlite_conn, data_factory, dates):
 def import_prescribing(sqlite_conn, data_factory, dates):
     filtered_prescribing = _filter_by_date(data_factory.prescribing, dates)
     sorted_prescribing = sorted(
-        filtered_prescribing,
-        key=lambda p: (p['bnf_code'], p['practice'], p['month'])
+        filtered_prescribing, key=lambda p: (p["bnf_code"], p["practice"], p["month"])
     )
     prescribing_csv = _dicts_to_csv(sorted_prescribing)
     prescribing = parse_prescribing_csv(prescribing_csv)
@@ -85,9 +82,7 @@ def update_bnf_map(sqlite_conn, data_factory):
     cursor = sqlite_conn.cursor()
     for item in data_factory.bnf_map:
         move_values_from_old_code_to_new(
-            cursor,
-            item['former_bnf_code'],
-            item['current_bnf_code']
+            cursor, item["former_bnf_code"], item["current_bnf_code"]
         )
     delete_presentations_with_no_prescribing(cursor)
 
@@ -95,15 +90,15 @@ def update_bnf_map(sqlite_conn, data_factory):
 def _get_active_practice_codes(data_factory, dates):
     practice_codes = set()
     for prescription in _filter_by_date(data_factory.prescribing, dates):
-        practice_codes.add(prescription['practice'])
+        practice_codes.add(prescription["practice"])
     for practice_stat in _filter_by_date(data_factory.practice_statistics, dates):
-        practice_codes.add(practice_stat['practice'])
+        practice_codes.add(practice_stat["practice"])
     return sorted(practice_codes)
 
 
 def _filter_by_date(items, dates):
     for item in items:
-        if item['month'][:10] in dates:
+        if item["month"][:10] in dates:
             yield item
 
 

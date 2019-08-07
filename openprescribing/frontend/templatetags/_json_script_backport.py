@@ -9,9 +9,9 @@ from django.utils.safestring import mark_safe
 
 
 _json_script_escapes = {
-    ord(u'>'): u'\\u003E',
-    ord(u'<'): u'\\u003C',
-    ord(u'&'): u'\\u0026',
+    ord(u">"): u"\\u003E",
+    ord(u"<"): u"\\u003C",
+    ord(u"&"): u"\\u0026",
 }
 
 
@@ -25,5 +25,6 @@ def json_script(value, element_id):
     json_str = json_str.translate(_json_script_escapes)
     return format_html(
         u'<script id="{}" type="application/json">{}</script>',
-        element_id, mark_safe(json_str)
+        element_id,
+        mark_safe(json_str),
     )

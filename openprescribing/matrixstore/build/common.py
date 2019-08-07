@@ -10,14 +10,14 @@ def get_practice_stats_filename(date):
     """
     Return the full path to the practice statistics CSV file for this date
     """
-    return _get_filename(date, 'practice_stats')
+    return _get_filename(date, "practice_stats")
 
 
 def get_prescribing_filename(date):
     """
     Return the full path to the prescribing CSV file this date
     """
-    return _get_filename(date, 'prescribing')
+    return _get_filename(date, "prescribing")
 
 
 def get_filename_for_download(remote_filename):
@@ -27,8 +27,8 @@ def get_filename_for_download(remote_filename):
     """
     return os.path.join(
         settings.MATRIXSTORE_IMPORT_DIR,
-        'temporary_downloads',
-        os.path.basename(remote_filename)
+        "temporary_downloads",
+        os.path.basename(remote_filename),
     )
 
 
@@ -42,17 +42,16 @@ def get_temp_filename(filename):
     # We want to return the name of the file without actually creating it as
     # sometimes we use this to create a new SQLite file and SQLite will
     # complain if the file already exists
-    return '{directory}/.tmp.{random}.{basename}'.format(
+    return "{directory}/.tmp.{random}.{basename}".format(
         directory=directory,
         basename=basename,
-        random=next(tempfile._get_candidate_names())
+        random=next(tempfile._get_candidate_names()),
     )
 
 
 def _get_filename(date, type_name):
     return os.path.join(
-        settings.MATRIXSTORE_IMPORT_DIR,
-        '{}_{}.csv.gz'.format(date, type_name)
+        settings.MATRIXSTORE_IMPORT_DIR, "{}_{}.csv.gz".format(date, type_name)
     )
 
 

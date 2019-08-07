@@ -14,7 +14,7 @@ class CustomAdapter(DefaultAccountAdapter):
         """Take a copy of an email before sending it
         """
         msg = self.render_mail(template_prefix, email, context)
-        msg.extra_headers = {'message-id': msg.message()['message-id']}
-        msg.tags = ['allauth']
+        msg.extra_headers = {"message-id": msg.message()["message-id"]}
+        msg.tags = ["allauth"]
         msg = EmailMessage.objects.create_from_message(msg)
         msg.send()

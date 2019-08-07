@@ -6,7 +6,7 @@ from frontend.models import Practice, Section
 def convert_get_param_to_list(param_string):
     params = []
     if param_string:
-        params = param_string.split(',')
+        params = param_string.split(",")
         params = filter(None, params)
     return params
 
@@ -30,7 +30,7 @@ def get_bnf_codes_from_number_str(bnf_string):
     code_params = convert_get_param_to_list(bnf_string)
     codes = []
     for code in code_params:
-        if '.' in code:
+        if "." in code:
             section = Section.objects.get(number_str=code)
             codes.append(section.bnf_id)
         elif len(code) < 3:
@@ -49,40 +49,40 @@ def check_code_params_are_same_type(code_params):
         for c in code_params:
             if len(c) != code_len:
                 return False
-        return 'chemical'
+        return "chemical"
     elif code_len == 11:
         for c in code_params:
             if len(c) != code_len:
                 return False
-        return 'product'
+        return "product"
     elif code_len == 15:
         for c in code_params:
             if len(c) != code_len:
                 return False
-        return 'presentation'
+        return "presentation"
     elif code_len < 9:
         for c in code_params:
             if len(c) >= 9:
                 return False
-        return 'bnf-section'
+        return "bnf-section"
     else:
         return False
 
 
 def write_csv_response(cursor, filename):
-    '''
+    """
     Writes a cursor to a CSV file.
     NB: Use StreamingHTTPResponse instead to handle big files?
     https://docs.djangoproject.com/en/1.7/howto/outputting-csv/
-    '''
-    response = HttpResponse(content_type='text/csv')
+    """
+    response = HttpResponse(content_type="text/csv")
     csv_name = "%s.csv" % filename  # TODO: Include date here
-    response['Content-Disposition'] = 'attachment; filename="%s"' % csv_name
+    response["Content-Disposition"] = 'attachment; filename="%s"' % csv_name
     writer = csv.writer(response)
     cursor_copy = []
     for c in cursor:
-        c = [unicode(item).encode('utf8') for item in c]
+        c = [unicode(item).encode("utf8") for item in c]
         cursor_copy.append(c)
-    writer.writerow([unicode(i[0]).encode('utf8') for i in cursor.description])
+    writer.writerow([unicode(i[0]).encode("utf8") for i in cursor.description])
     writer.writerows(cursor_copy)
     return response

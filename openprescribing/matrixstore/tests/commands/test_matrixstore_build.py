@@ -41,7 +41,7 @@ class TestMatrixStoreBuild(SimpleTestCase):
     @classmethod
     def setUpClass(cls):
         factory = DataFactory()
-        cls.months = factory.create_months('2019-01-01', 3)
+        cls.months = factory.create_months("2019-01-01", 3)
         # This practice won't do any prescribing but it will have practice
         # statistics so it should still show up in our data
         cls.non_prescribing_practice = factory.create_practice()
@@ -92,12 +92,9 @@ class TestMatrixStoreBuild(SimpleTestCase):
 
     @classmethod
     def create_matrixstore(cls, data_factory, end_date, number_of_months):
-        cls.connection = sqlite3.connect(':memory:')
+        cls.connection = sqlite3.connect(":memory:")
         import_test_data_fast(
-            cls.connection,
-            data_factory,
-            end_date,
-            months=number_of_months
+            cls.connection, data_factory, end_date, months=number_of_months
         )
 
     @classmethod
@@ -110,27 +107,29 @@ class TestMatrixStoreBuild(SimpleTestCase):
 
     def test_dates_are_correct(self):
         dates = [
-            row[0] for row in
-            self.connection.execute('SELECT date FROM date ORDER BY offset')
+            row[0]
+            for row in self.connection.execute("SELECT date FROM date ORDER BY offset")
         ]
         expected_dates = [date[:10] for date in self.months_to_import]
         self.assertEqual(dates, expected_dates)
 
     def test_practices_are_correct(self):
         practice_codes = [
-            row[0] for row in
-            self.connection.execute('SELECT code FROM practice ORDER BY code')
+            row[0]
+            for row in self.connection.execute(
+                "SELECT code FROM practice ORDER BY code"
+            )
         ]
         expected_codes = sorted(
-            [practice['code'] for practice in self.active_practices]
+            [practice["code"] for practice in self.active_practices]
         )
         self.assertEqual(practice_codes, expected_codes)
-        self.assertNotIn(self.closed_practice['code'], practice_codes)
+        self.assertNotIn(self.closed_practice["code"], practice_codes)
 
     def test_presentations_are_correct(self):
         expected = list(self.presentations)
         expected.append(self.updated_presentation)
-        expected.sort(key=lambda i: i['bnf_code'])
+        expected.sort(key=lambda i: i["bnf_code"])
         # Allow us to get results as dicts
         self.connection.row_factory = sqlite3.Row
         results = self.connection.execute(
@@ -150,39 +149,39 @@ class TestMatrixStoreBuild(SimpleTestCase):
 
     def test_practice_statistics_are_correct(self):
         get_value = MatrixValueFetcher(
-            self.connection, 'practice_statistic', 'name', 'value'
+            self.connection, "practice_statistic", "name", "value"
         )
         expected_entries = 0
         for entry in self.practice_statistics:
-            practice = entry['practice']
-            month = entry['month']
+            practice = entry["practice"]
+            month = entry["month"]
             if month not in self.months_to_import:
                 continue
             for field, expected_value in entry.items():
-                if field in ('month', 'practice', 'pct_id', 'star_pu'):
+                if field in ("month", "practice", "pct_id", "star_pu"):
                     continue
                 expected_entries += 1
                 value = get_value(field, practice, month)
                 self.assertEqual(value, expected_value)
-            for name, expected_value in json.loads(entry['star_pu']).items():
+            for name, expected_value in json.loads(entry["star_pu"]).items():
                 expected_entries += 1
-                value = get_value('star_pu.' + name, practice, month)
+                value = get_value("star_pu." + name, practice, month)
                 self.assertEqual(value, expected_value)
         # Check there are no additional values that we weren't expecting
         self.assertEqual(get_value.nonzero_values, expected_entries)
 
     def test_prescribing_values_are_correct(self):
-        for field in ['items', 'quantity', 'net_cost', 'actual_cost']:
+        for field in ["items", "quantity", "net_cost", "actual_cost"]:
             # Cost figures are originally in pounds but we store them in pence
             # as ints
-            multiplier = 100 if field.endswith('_cost') else 1
+            multiplier = 100 if field.endswith("_cost") else 1
             get_value = MatrixValueFetcher(
-                self.connection, 'presentation', 'bnf_code', field
+                self.connection, "presentation", "bnf_code", field
             )
             expected_entries = 0
             for entry in self._expected_prescribing_values():
                 expected_entries += 1
-                value = get_value(entry['bnf_code'], entry['practice'], entry['month'])
+                value = get_value(entry["bnf_code"], entry["practice"], entry["month"])
                 expected_value = round(entry[field] * multiplier)
                 self.assertEqual(value, expected_value)
             # Check there are no additional values that we weren't expecting
@@ -191,41 +190,44 @@ class TestMatrixStoreBuild(SimpleTestCase):
     def _expected_prescribing_values(self):
         # First we yield the standard prescribing, filtered by month
         for entry in self.prescribing:
-            if entry['month'] in self.months_to_import:
+            if entry["month"] in self.months_to_import:
                 yield entry
         # Next we sum together prescribing done under both our old and new BNF
         # code and yield the results under the new BNF code
         summed_values = defaultdict(dict)
         for entry in self.prescribing_with_old_code + self.prescribing_with_new_code:
-            current_value = summed_values[entry['practice'], entry['month']]
+            current_value = summed_values[entry["practice"], entry["month"]]
             sum_dicts(current_value, entry)
         for (practice, month), values in summed_values.items():
             if month in self.months_to_import:
                 yield {
-                    'bnf_code': self.updated_presentation['bnf_code'],
-                    'practice': practice,
-                    'month': month,
-                    'items': values['items'],
-                    'quantity': values['quantity'],
-                    'net_cost': values['net_cost'],
-                    'actual_cost': values['actual_cost'],
+                    "bnf_code": self.updated_presentation["bnf_code"],
+                    "practice": practice,
+                    "month": month,
+                    "items": values["items"],
+                    "quantity": values["quantity"],
+                    "net_cost": values["net_cost"],
+                    "actual_cost": values["actual_cost"],
                 }
 
     def test_precalculated_totals(self):
-        for field in ['items', 'quantity', 'net_cost', 'actual_cost']:
+        for field in ["items", "quantity", "net_cost", "actual_cost"]:
             # Cost figures are originally in pounds but we store them in pence
             # as ints
-            multiplier = 100 if field.endswith('_cost') else 1
+            multiplier = 100 if field.endswith("_cost") else 1
             get_value = MatrixValueFetcher(
                 # This table doesn't have a key column as it only has one row,
                 # so we just use 1 as a pseudo-column
-                self.connection, 'all_presentations', 1, field
+                self.connection,
+                "all_presentations",
+                1,
+                field,
             )
             # Calculate totals over all presentations
             totals = defaultdict(int)
             for entry in self._expected_prescribing_values():
                 value = round(entry[field] * multiplier)
-                totals[entry['practice'], entry['month']] += value
+                totals[entry["practice"], entry["month"]] += value
             # Check they match the stored values
             for (practice, month), expected_value in totals.items():
                 value = get_value(1, practice, month)
@@ -246,10 +248,7 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
         cls.tempdir = tempfile.mkdtemp()
         # Upload data to BigQuery and build file
         cls.data_file = import_test_data_full(
-            cls.tempdir,
-            data_factory,
-            end_date,
-            months=number_of_months
+            cls.tempdir, data_factory, end_date, months=number_of_months
         )
 
     @classmethod
@@ -260,19 +259,16 @@ class TestMatrixStoreBuildEndToEnd(TestMatrixStoreBuild):
         # We have to check this because the `sqlite3.connect` call will
         # implicitly create the file if it doesn't exist
         if not os.path.exists(self.data_file):
-            raise RuntimeError('No SQLite file created')
+            raise RuntimeError("No SQLite file created")
         self.connection = sqlite3.connect(self.data_file)
 
     def tearDown(self):
         self.connection.close()
 
     def test_same_file_produced_by_import_test_data_fast(self):
-        other_connection = sqlite3.connect(':memory:')
+        other_connection = sqlite3.connect(":memory:")
         import_test_data_fast(
-            other_connection,
-            self.data_factory,
-            self.end_date,
-            self.number_of_months
+            other_connection, self.data_factory, self.end_date, self.number_of_months
         )
         db_dump = list(self.connection.iterdump())
         other_db_dump = list(other_connection.iterdump())
@@ -286,21 +282,21 @@ class MatrixValueFetcher(object):
 
     def __init__(self, connection, table, key_field, value_field):
         results = connection.execute(
-            'SELECT {}, {} FROM {}'.format(key_field, value_field, table)
+            "SELECT {}, {} FROM {}".format(key_field, value_field, table)
         )
         self.matrices = {}
         self.nonzero_values = 0
         for key, value in results:
             matrix = deserialize(value)
             self.matrices[key] = matrix
-            if hasattr(matrix, 'count_nonzero'):
+            if hasattr(matrix, "count_nonzero"):
                 self.nonzero_values += matrix.count_nonzero()
             else:
                 self.nonzero_values += numpy.count_nonzero(matrix)
-        self.practices = dict(connection.execute('SELECT code, offset FROM practice'))
-        self.dates = dict(connection.execute('SELECT date, offset FROM date'))
+        self.practices = dict(connection.execute("SELECT code, offset FROM practice"))
+        self.dates = dict(connection.execute("SELECT date, offset FROM date"))
         for date, offset in list(self.dates.items()):
-            self.dates[date + ' 00:00:00 UTC'] = offset
+            self.dates[date + " 00:00:00 UTC"] = offset
 
     def __call__(self, key, practice, date):
         """

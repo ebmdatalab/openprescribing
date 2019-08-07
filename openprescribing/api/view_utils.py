@@ -6,17 +6,14 @@ from django.shortcuts import get_object_or_404
 def param_to_list(str):
     params = []
     if str:
-        params = str.split(',')
+        params = str.split(",")
         params = filter(None, params)
     return params
 
 
 def dictfetchall(cursor):
     desc = cursor.description
-    return [
-        dict(zip([col[0] for col in desc], row))
-        for row in cursor.fetchall()
-    ]
+    return [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]
 
 
 def execute_query(query, params):
@@ -35,6 +32,7 @@ def execute_query(query, params):
 def get_practice_ids_from_org(org_codes):
     # Convert CCG codes to lists of practices.
     from frontend.models import Practice
+
     practices = []
     for i, org in enumerate(org_codes):
         if len(org) == 3:
@@ -49,14 +47,14 @@ def get_practice_ids_from_org(org_codes):
 def get_bnf_codes_from_number_str(codes):
     # Convert BNF strings (3.4, 3) to BNF codes (0304, 03).
     from frontend.models import Section
+
     converted = []
     for code in codes:
-        if '.' in code:
+        if "." in code:
             section = get_object_or_404(Section, number_str=code)
             converted.append(section.bnf_id)
         elif len(code) < 3:
-            section = get_object_or_404(
-                Section, bnf_chapter=code, bnf_section=None)
+            section = get_object_or_404(Section, bnf_chapter=code, bnf_section=None)
             converted.append(section.bnf_id)
         else:
             # it's a presentation, not a section

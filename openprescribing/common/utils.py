@@ -17,23 +17,34 @@ logger = logging.getLogger(__name__)
 
 def nhs_abbreviations(word, **kwargs):
     if len(word) == 2 and word.lower() not in [
-            'at', 'of', 'in', 'on', 'to', 'is', 'me', 'by', 'dr', 'st']:
+        "at",
+        "of",
+        "in",
+        "on",
+        "to",
+        "is",
+        "me",
+        "by",
+        "dr",
+        "st",
+    ]:
         return word.upper()
-    elif word.lower() in ['dr', 'st']:
+    elif word.lower() in ["dr", "st"]:
         return word.title()
-    elif word.upper() in ('NHS', 'CCG', 'PMS', 'SMA', 'PWSI', 'OOH', 'HIV'):
+    elif word.upper() in ("NHS", "CCG", "PMS", "SMA", "PWSI", "OOH", "HIV"):
         return word.upper()
-    elif '&' in word:
+    elif "&" in word:
         return word.upper()
-    elif ((word.lower() not in ['ptnrs', 'by', 'ccgs']) and
-          (not re.match(r'.*[aeiou]{1}', word.lower()))):
+    elif (word.lower() not in ["ptnrs", "by", "ccgs"]) and (
+        not re.match(r".*[aeiou]{1}", word.lower())
+    ):
         return word.upper()
 
 
 def nhs_titlecase(words):
     if words:
         title_cased = titlecase(words, callback=nhs_abbreviations)
-        words = re.sub(r'Dr ([a-z]{2})', 'Dr \1', title_cased)
+        words = re.sub(r"Dr ([a-z]{2})", "Dr \1", title_cased)
     return words
 
 
@@ -72,20 +83,20 @@ def get_env_setting_bool(setting, default=None):
     if value is default:
         return value
     normalised = value.lower().strip()
-    if normalised == 'true':
+    if normalised == "true":
         return True
-    elif normalised == 'false':
+    elif normalised == "false":
         return False
     else:
         raise ImproperlyConfigured(
-            'Value for env variable {} is not a valid boolean: {}'.format(
+            "Value for env variable {} is not a valid boolean: {}".format(
                 setting, value
             )
         )
 
 
 def under_test():
-    return db.connections.databases['default']['NAME'].startswith("test_")
+    return db.connections.databases["default"]["NAME"].startswith("test_")
 
 
 @contextmanager
@@ -116,19 +127,22 @@ def constraint_and_index_reconstructor(table_name):
             "ON n.oid = c.connamespace "
             "WHERE contype IN ('f', 'p','c','u') "
             "AND conrelid = '%s'::regclass "
-            "ORDER BY contype;" % table_name)
+            "ORDER BY contype;" % table_name
+        )
         for name, definition in cursor.fetchall():
             constraints[name] = definition
         cursor.execute(
             "SELECT indexname, indexdef "
             "FROM pg_indexes "
-            "WHERE tablename = '%s';" % table_name)
+            "WHERE tablename = '%s';" % table_name
+        )
         for name, definition in cursor.fetchall():
             if name not in constraints.keys():
                 # UNIQUE constraints actuall create indexes, so
                 # we mustn't attempt to handle them twice
                 indexes[name] = definition
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
               i.relname AS index_for_cluster
             FROM
@@ -140,16 +154,16 @@ def constraint_and_index_reconstructor(table_name):
             WHERE
               idx.indisclustered
               AND idx.indrelid::regclass = '%s'::regclass;
-        """ % table_name)
+        """
+            % table_name
+        )
         row = cursor.fetchone()
         if row:
             cluster = row[0]
 
         # drop foreign key constraints
         for name in constraints.keys():
-            cursor.execute(
-                "ALTER TABLE %s DROP CONSTRAINT %s"
-                % (table_name, name))
+            cursor.execute("ALTER TABLE %s DROP CONSTRAINT %s" % (table_name, name))
 
         # drop indexes
         logger.info("Dropping indexes")
@@ -171,8 +185,7 @@ def constraint_and_index_reconstructor(table_name):
             logger.info("Recreating constraints")
             # restore foreign key constraints
             for name, cmd in constraints.items():
-                cmd = ("ALTER TABLE %s "
-                       "ADD CONSTRAINT %s %s" % (table_name, name, cmd))
+                cmd = "ALTER TABLE %s " "ADD CONSTRAINT %s %s" % (table_name, name, cmd)
                 cursor.execute(cmd)
                 logger.info("Recreated constraint %s" % name)
             if cluster:
@@ -198,7 +211,7 @@ def valid_date(s):
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
     desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
+    nt_result = namedtuple("Result", [col[0] for col in desc])
     return [nt_result(*row) for row in cursor.fetchall()]
 
 
@@ -216,7 +229,7 @@ def ppu_sql(conditions=""):
     # See https://github.com/ebmdatalab/price-per-dose/issues/1 for an
     # explanation of the extra BNF codes in vmp_bnf_codes below.
 
-    sql = '''
+    sql = """
     WITH vmp_bnf_codes AS (
         SELECT DISTINCT bnf_code FROM {vmp_table}
         UNION ALL
@@ -256,7 +269,7 @@ def ppu_sql(conditions=""):
     WHERE
         {ppusavings_table}.date = %(date)s
         AND {ppusavings_table}.bnf_code IN (SELECT bnf_code FROM vmp_bnf_codes)
-    '''
+    """
 
     sql += conditions
     return sql.format(

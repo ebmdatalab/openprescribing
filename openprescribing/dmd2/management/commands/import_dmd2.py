@@ -30,13 +30,13 @@ class Command(BaseCommand):
             return
 
         self.log_keys = [
-            'dmd-objs-present-in-mapping-only',
-            'vmps-with-inferred-bnf-code',
-            'vmps-with-no-bnf-code',
-            'bnf-codes-with-multiple-dmd-objs',
-            'bnf-codes-with-multiple-dmd-objs-and-no-inferred-name',
-            'vmpps-with-different-bnf-code-to-vmp',
-            'ampps-with-different-bnf-code-to-amp',
+            "dmd-objs-present-in-mapping-only",
+            "vmps-with-inferred-bnf-code",
+            "vmps-with-no-bnf-code",
+            "bnf-codes-with-multiple-dmd-objs",
+            "bnf-codes-with-multiple-dmd-objs-and-no-inferred-name",
+            "vmpps-with-different-bnf-code-to-vmp",
+            "ampps-with-different-bnf-code-to-amp",
         ]
         self.logs = {key: list() for key in self.log_keys}
 
@@ -121,28 +121,28 @@ class Command(BaseCommand):
         # because the IDs of some SNOMED objects can change.
 
         # lookup
-        for elements in self.load_elements('lookup'):
+        for elements in self.load_elements("lookup"):
             model_name = self.make_model_name(elements.tag)
             model = getattr(models, model_name)
             self.import_model(model, elements)
 
         # ingredient
-        elements = self.load_elements('ingredient')
+        elements = self.load_elements("ingredient")
         self.import_model(models.Ing, elements)
 
         # vtm
-        elements = self.load_elements('vtm')
+        elements = self.load_elements("vtm")
         self.import_model(models.VTM, elements)
 
         # vmp
-        for elements in self.load_elements('vmp'):
+        for elements in self.load_elements("vmp"):
             model_name = self.make_model_name(elements[0].tag)
             model = getattr(models, model_name)
             self.import_model(model, elements)
 
         # vmpp
-        for elements in self.load_elements('vmpp'):
-            if elements[0].tag == 'CCONTENT':
+        for elements in self.load_elements("vmpp"):
+            if elements[0].tag == "CCONTENT":
                 # We don't yet handle the CCONTENT tag, which indicates that a
                 # VMPP is part of a combination pack, where two VMPPs are
                 # always prescribed together.
@@ -153,7 +153,7 @@ class Command(BaseCommand):
             self.import_model(model, elements)
 
         # amp
-        for elements in self.load_elements('amp'):
+        for elements in self.load_elements("amp"):
             if len(elements) == 0:
                 # For test data, some lists of elements are empty (eg
                 # AP_INFORMATION), and so we can't look at the first element of
@@ -165,7 +165,7 @@ class Command(BaseCommand):
             self.import_model(model, elements)
 
         # ampp
-        for elements in self.load_elements('ampp'):
+        for elements in self.load_elements("ampp"):
             if len(elements) == 0:
                 # For test data, some lists of elements are empty (eg
                 # APPLIANCE_PACK_INFO), and so we can't look at the first
@@ -173,7 +173,7 @@ class Command(BaseCommand):
                 # model.
                 continue
 
-            if elements[0].tag == 'CCONTENT':
+            if elements[0].tag == "CCONTENT":
                 # We don't yet handle the CCONTENT tag, which indicates that a
                 # AMPP is part of a combination pack, where two AMPPs are
                 # always prescribed together.
@@ -184,22 +184,22 @@ class Command(BaseCommand):
             self.import_model(model, elements)
 
         # gtin
-        elements = self.load_elements('gtin')[0]
+        elements = self.load_elements("gtin")[0]
         for element in elements:
-            assert element[0].tag == 'AMPPID'
-            assert element[1].tag == 'GTINDATA'
+            assert element[0].tag == "AMPPID"
+            assert element[1].tag == "GTINDATA"
 
-            element[0].tag = 'APPID'
+            element[0].tag = "APPID"
             for gtinelt in element[1]:
                 element.append(gtinelt)
             element.remove(element[1])
         self.import_model(models.GTIN, elements)
 
     def load_elements(self, filename_fragment):
-        '''Return list of non-comment top-level elements in given file.'''
+        """Return list of non-comment top-level elements in given file."""
 
         paths = glob.glob(
-            os.path.join(self.dmd_data_path, 'f_{}2_*.xml'.format(filename_fragment))
+            os.path.join(self.dmd_data_path, "f_{}2_*.xml".format(filename_fragment))
         )
         assert len(paths) == 1
 
@@ -212,7 +212,7 @@ class Command(BaseCommand):
         return elements[1:]
 
     def import_model(self, model, elements):
-        '''Import model instances from list of XML elements.'''
+        """Import model instances from list of XML elements."""
 
         model.objects.all().delete()
 
@@ -228,8 +228,8 @@ class Command(BaseCommand):
             for f in model._meta.fields
             if not isinstance(f, django_fields.AutoField)
         ]
-        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(
-            table_name, ', '.join(column_names), ', '.join(['%s'] * len(column_names))
+        sql = "INSERT INTO {} ({}) VALUES ({})".format(
+            table_name, ", ".join(column_names), ", ".join(["%s"] * len(column_names))
         )
 
         values = []
@@ -239,14 +239,14 @@ class Command(BaseCommand):
 
             for field_element in element:
                 name = field_element.tag.lower()
-                if name == 'desc':
+                if name == "desc":
                     # "desc" is a really unhelpful field name if you're writing
                     # SQL!
-                    name = 'descr'
-                elif name == 'dnd':
+                    name = "descr"
+                elif name == "dnd":
                     # For consistency with the rest of the data, we rename
                     # "dnd" to "dndcd", as it is a foreign key field.
-                    name = 'dndcd'
+                    name = "dndcd"
 
                 value = field_element.text
                 row[name] = value
@@ -260,28 +260,23 @@ class Command(BaseCommand):
             cursor.executemany(sql, values)
 
     def make_model_name(self, tag_name):
-        '''Construct name of Django model from XML tag name.'''
+        """Construct name of Django model from XML tag name."""
 
-        if tag_name in ['VTM', 'VPI', 'VMP', 'VMPP', 'AMP', 'AMPP', 'GTIN']:
+        if tag_name in ["VTM", "VPI", "VMP", "VMPP", "AMP", "AMPP", "GTIN"]:
             return tag_name
         else:
-            return ''.join(tok.title() for tok in tag_name.split('_'))
+            return "".join(tok.title() for tok in tag_name.split("_"))
 
     def import_bnf_code_mapping(self):
-        type_to_model = {
-            'VMP': VMP,
-            'AMP': AMP,
-            'VMPP': VMPP,
-            'AMPP': AMPP,
-        }
+        type_to_model = {"VMP": VMP, "AMP": AMP, "VMPP": VMPP, "AMPP": AMPP}
 
         wb = load_workbook(filename=self.mapping_path)
         rows = wb.active.rows
 
         headers = next(rows)
-        assert headers[1].value == 'VMP / VMPP/ AMP / AMPP'
-        assert headers[2].value == 'BNF Code'
-        assert headers[4].value == 'SNOMED Code'
+        assert headers[1].value == "VMP / VMPP/ AMP / AMPP"
+        assert headers[2].value == "BNF Code"
+        assert headers[4].value == "SNOMED Code"
 
         VMP.objects.update(bnf_code=None)
         AMP.objects.update(bnf_code=None)
@@ -307,19 +302,19 @@ class Command(BaseCommand):
                 obj = model.objects.get(id=snomed_id)
             except model.DoesNotExist:
                 key = (model.__name__, snomed_id)
-                self.logs['dmd-objs-present-in-mapping-only'].append(key)
+                self.logs["dmd-objs-present-in-mapping-only"].append(key)
                 continue
 
             obj.bnf_code = bnf_code
             obj.save()
 
     def set_vmp_bnf_codes(self):
-        '''There are many VMPs that do not have BNF codes set in the mapping,
+        """There are many VMPs that do not have BNF codes set in the mapping,
         but whose VMPPs all have the same BNF code.  In these cases, we think
         that the VMPPs' BNF code can be applied to the VMP too.
-        '''
+        """
 
-        vmps = VMP.objects.filter(bnf_code__isnull=True).prefetch_related('vmpp_set')
+        vmps = VMP.objects.filter(bnf_code__isnull=True).prefetch_related("vmpp_set")
 
         for vmp in vmps:
             vmpp_bnf_codes = {
@@ -327,14 +322,14 @@ class Command(BaseCommand):
             }
 
             if len(vmpp_bnf_codes) == 1:
-                self.logs['vmps-with-inferred-bnf-code'].append([vmp.id])
+                self.logs["vmps-with-inferred-bnf-code"].append([vmp.id])
                 vmp.bnf_code = list(vmpp_bnf_codes)[0]
                 vmp.save()
             else:
-                self.logs['vmps-with-no-bnf-code'].append([vmp.id])
+                self.logs["vmps-with-no-bnf-code"].append([vmp.id])
 
     def set_dmd_names(self):
-        '''Sets Presentation.dmd_name by finding linked dm+d objects with the
+        """Sets Presentation.dmd_name by finding linked dm+d objects with the
         same BNF code.  We look for matching VMPs first, then AMPs, then VMPPs,
         then AMPPs.  We look at VMPs and AMPs first, since BNF codes are
         supposed to correspond to products.  We prefer VMPs to AMPs (and VMPPs
@@ -356,7 +351,7 @@ class Command(BaseCommand):
         When there are multiple linked objects of the same type, we try to
         infer a name for the presentation by looking at the common left
         substring of all the linked objects' names.
-        '''
+        """
 
         # First, we clear all existing dmd_names.
         Presentation.objects.update(dmd_name=None)
@@ -418,13 +413,13 @@ class Command(BaseCommand):
                     presentation.save()
                     break
                 elif len(names) > 1:
-                    self.logs['bnf-codes-with-multiple-dmd-objs'].append(
+                    self.logs["bnf-codes-with-multiple-dmd-objs"].append(
                         [presentation.bnf_code]
                     )
                     common_name = get_common_name(list(names))
                     if common_name is None:
                         self.logs[
-                            'bnf-codes-with-multiple-dmd-objs-and-no-inferred-name'
+                            "bnf-codes-with-multiple-dmd-objs-and-no-inferred-name"
                         ].append([presentation.bnf_code])
                     else:
                         presentation.dmd_name = common_name
@@ -432,34 +427,34 @@ class Command(BaseCommand):
                     break
 
     def upload_to_bq(self):
-        client = Client('dmd')
-        for model in apps.get_app_config('dmd2').get_models():
+        client = Client("dmd")
+        for model in apps.get_app_config("dmd2").get_models():
             client.upload_model(model)
 
     def log_other_oddities(self):
-        '''Log oddities in the data that are not captured elsewhere.'''
+        """Log oddities in the data that are not captured elsewhere."""
 
-        sql = '''
+        sql = """
         SELECT vmpp.vppid
         FROM dmd2_vmp vmp
         INNER JOIN dmd2_vmpp vmpp
             ON vmp.vpid = vmpp.vpid
         WHERE vmp.bnf_code IS NOT NULL
           AND vmp.bnf_code != vmpp.bnf_code
-        '''
+        """
 
         with connection.cursor() as cursor:
             cursor.execute(sql)
-            self.logs['vmpps-with-different-bnf-code-to-vmp'] = cursor.fetchall()
+            self.logs["vmpps-with-different-bnf-code-to-vmp"] = cursor.fetchall()
 
-        sql = sql.replace('v', 'a')
+        sql = sql.replace("v", "a")
 
         with connection.cursor() as cursor:
             cursor.execute(sql)
-            self.logs['ampps-with-different-bnf-code-to-amp'] = cursor.fetchall()
+            self.logs["ampps-with-different-bnf-code-to-amp"] = cursor.fetchall()
 
     def write_logs(self):
-        '''Record summary and details of oddities we've found in the data.
+        """Record summary and details of oddities we've found in the data.
 
         We log (summary and details) the following things:
          * dm+d objects only present in mapping
@@ -472,16 +467,16 @@ class Command(BaseCommand):
          * AMPPs that have different BNF code to their AMP
 
         We also log summaries of the number of objects imported.
-        '''
+        """
 
         mkdir_p(self.logs_path)
 
         for key in self.log_keys:
-            with open(os.path.join(self.logs_path, key + '.csv'), 'w') as f:
+            with open(os.path.join(self.logs_path, key + ".csv"), "w") as f:
                 writer = csv.writer(f)
                 writer.writerows(self.logs[key])
 
-        with open(os.path.join(self.logs_path, 'summary.csv'), 'w') as f:
+        with open(os.path.join(self.logs_path, "summary.csv"), "w") as f:
             writer = csv.writer(f)
             for model in [VMP, AMP, VMPP, AMPP]:
                 writer.writerow([model.__name__, model.objects.count()])
@@ -490,84 +485,81 @@ class Command(BaseCommand):
 
     @property
     def release(self):
-        '''Return string identifying the dm+d release.
+        """Return string identifying the dm+d release.
 
         This is derived from the directory containing the data, which is
         derived from the name of the zip file that we downloaded.
 
         Eg if the zip file is called nhsbsa_dmd_7.4.0_20190729000001.zip, the
         release is "7.4.0_20190729000001".
-        .'''
+        ."""
 
-        dirname = self.dmd_data_path.split('/')[-1]
-        n = len('nhsbsa_dmd_')
-        assert dirname[:n] == 'nhsbsa_dmd_'
+        dirname = self.dmd_data_path.split("/")[-1]
+        n = len("nhsbsa_dmd_")
+        assert dirname[:n] == "nhsbsa_dmd_"
         return dirname[n:]
 
     @property
     def release_date(self):
-        '''Return date of release.
+        """Return date of release.
 
         Eg if the release is "7.4.0_20190729000001", the date is date(2019, 7, 29).
-        '''
-        datestamp = self.release.split('_')[1][:8]
-        return datetime.strptime(datestamp, '%Y%m%d').date()
+        """
+        datestamp = self.release.split("_")[1][:8]
+        return datetime.strptime(datestamp, "%Y%m%d").date()
 
     def get_dmd_data_path(self):
-        '''Return path to most recent directory of unzipped dm+d data, without
+        """Return path to most recent directory of unzipped dm+d data, without
         the trailing slash.
 
         It expects to find this at data/dmd/[datestamp]/nhsbsa_dmd_[release].
-        '''
+        """
 
         # The extra slash ('') at the end of glob_pattern is to ensure we don't
         # capture any .zip files.
         glob_pattern = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, 'dmd', '*', 'nhsbsa_dmd_*', ''
+            settings.PIPELINE_DATA_BASEDIR, "dmd", "*", "nhsbsa_dmd_*", ""
         )
         paths = sorted(glob.glob(glob_pattern))
         if not paths:
-            raise CommandError('No dmd data found')
+            raise CommandError("No dmd data found")
 
         # Remove the extra slash.
         return paths[-1][:-1]
 
     def get_mapping_path(self):
-        '''Return path to mapping spreadsheet.
+        """Return path to mapping spreadsheet.
 
         It expects to find this at data/snomed_mapping/[datestamp]/XXX.xlsx
-        '''
+        """
         glob_pattern = os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, 'snomed_mapping', '*', '*.xlsx'
+            settings.PIPELINE_DATA_BASEDIR, "snomed_mapping", "*", "*.xlsx"
         )
 
         paths = sorted(glob.glob(glob_pattern))
         if not paths:
-            raise CommandError('No mapping data found')
+            raise CommandError("No mapping data found")
 
         return paths[-1]
 
     def get_logs_path(self):
-        return os.path.join(
-            settings.PIPELINE_DATA_BASEDIR, 'dmd', 'logs', self.release
-        )
+        return os.path.join(settings.PIPELINE_DATA_BASEDIR, "dmd", "logs", self.release)
 
     def already_imported(self):
-        return ImportLog.objects.filter(category='dmd', filename=self.release).exists()
+        return ImportLog.objects.filter(category="dmd", filename=self.release).exists()
 
     def create_import_log(self):
         ImportLog.objects.create(
-            category='dmd',
-            filename=self.release,
-            current_at=self.release_date,
+            category="dmd", filename=self.release, current_at=self.release_date
         )
 
     def notify_slack(self):
-        msg = 'Imported dm+d data, release ' + self.release
+        msg = "Imported dm+d data, release " + self.release
         notify_slack(msg)
 
+
 def get_common_name(names):
-    '''Find left substring common to all names, by splitting names on spaces,
+    """Find left substring common to all names, by splitting names on spaces,
     and possibly ignoring certain common words.
 
     >>> get_common_name([
@@ -592,7 +584,7 @@ def get_common_name(names):
 
     * Taurolidine 5g/250ml intraperitoneal solution bottles
     * Taurolidine 2g/100ml intraperitoneal solution bottles
-    '''
+    """
 
     common_name = names[0]
 
@@ -606,7 +598,7 @@ def get_common_name(names):
         if not words:
             return None
 
-        if words[-1] in ['with', 'in', 'size']:
+        if words[-1] in ["with", "in", "size"]:
             # If the common substring ends in one of these words, we want to
             # ignore it.
             #
@@ -623,7 +615,7 @@ def get_common_name(names):
             #   * Genesis 3H constrictor ring size 4
             words = words[:-1]
 
-        if words[-1] == 'oral':
+        if words[-1] == "oral":
             # If the common substring ends with 'oral', it probably means that
             # there are two names corresponding to products with the same BNF
             # code where one is a solution and the other is a suspension.
@@ -634,7 +626,7 @@ def get_common_name(names):
             #  * Acetazolamide 350mg/5ml oral suspension
             words = words[:-1]
 
-        common_name = ' '.join(words)
+        common_name = " ".join(words)
 
     if len(common_name.split()) < len(names[0].split()) / 2:
         return None

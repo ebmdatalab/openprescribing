@@ -6,7 +6,8 @@ from django.test import TestCase
 from frontend.models import Prescription, ImportLog
 
 from matrixstore.tests.matrixstore_factory import (
-    matrixstore_from_postgres, patch_global_matrixstore
+    matrixstore_from_postgres,
+    patch_global_matrixstore,
 )
 
 
@@ -15,15 +16,24 @@ class ApiTestBase(TestCase):
     API tests.
 
     """
-    fixtures = ['orgs', 'practices', 'practice_listsizes', 'products',
-                'presentations', 'sections', 'prescriptions', 'chemicals']
-    api_prefix = '/api/1.0'
+
+    fixtures = [
+        "orgs",
+        "practices",
+        "practice_listsizes",
+        "products",
+        "presentations",
+        "sections",
+        "prescriptions",
+        "chemicals",
+    ]
+    api_prefix = "/api/1.0"
 
     @classmethod
     def setUpTestData(cls):
         # Create an ImportLog entry for the latest prescribing date we have
-        date = Prescription.objects.latest('processing_date').processing_date
-        ImportLog.objects.create(current_at=date, category='prescribing')
+        date = Prescription.objects.latest("processing_date").processing_date
+        ImportLog.objects.create(current_at=date, category="prescribing")
         matrixstore = matrixstore_from_postgres()
         stop_patching = patch_global_matrixstore(matrixstore)
         # Have to wrap this in a staticmethod decorator otherwise Python thinks

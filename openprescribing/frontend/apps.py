@@ -8,7 +8,8 @@ class FrontendConfig(AppConfig):
     https://docs.djangoproject.com/en/1.8/topics/signals/#connecting-receiver-functions
 
     """
-    name = 'frontend'
+
+    name = "frontend"
 
     def ready(self):
         import admin

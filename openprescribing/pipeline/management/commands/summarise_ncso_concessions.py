@@ -50,4 +50,4 @@ class Command(BaseCommand):
             lines.append(u"Drug: {}".format(c.drug))
             lines.append(u"Pack size: {}".format(c.pack_size))
 
-        print("\n".join(lines))
+        print ("\n".join(lines))

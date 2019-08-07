@@ -6,26 +6,26 @@ from frontend.models import Practice, PracticeIsDispensing as PID
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports practice dispensing status.'
+    args = ""
+    help = "Imports practice dispensing status."
 
     def add_arguments(self, parser):
-        parser.add_argument('--filename')
-        parser.add_argument('--date')
+        parser.add_argument("--filename")
+        parser.add_argument("--date")
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
+        if options["verbosity"] > 1:
             self.IS_VERBOSE = True
 
-        if not options['filename']:
-            raise CommandError('Please supply a filename')
+        if not options["filename"]:
+            raise CommandError("Please supply a filename")
 
-        if not options['date']:
-            raise CommandError('Please supply a date')
+        if not options["date"]:
+            raise CommandError("Please supply a date")
 
-        workbook = xlrd.open_workbook(options['filename'])
-        worksheet = workbook.sheet_by_name('Sheet1')
+        workbook = xlrd.open_workbook(options["filename"])
+        worksheet = workbook.sheet_by_name("Sheet1")
         num_rows = worksheet.nrows - 1
         curr_row = -1
         name_and_postcode_matches = 0
@@ -38,34 +38,34 @@ class Command(BaseCommand):
         while curr_row < num_rows:
             curr_row += 1
             address = worksheet.cell_value(curr_row, 1).strip()
-            if address == 'Dispensing Practices Address Details' or \
-               address == 'Primary Care Trust:' or \
-               address == 'Report For:' or \
-               address == 'Practice Name and Address':
+            if (
+                address == "Dispensing Practices Address Details"
+                or address == "Primary Care Trust:"
+                or address == "Report For:"
+                or address == "Practice Name and Address"
+            ):
                 continue
             useful_rows += 1
-            addresses = address.split(',')
+            addresses = address.split(",")
             name = addresses[0].strip().upper()
-            postcode = addresses[-1].strip().replace('\n', ' ')
+            postcode = addresses[-1].strip().replace("\n", " ")
 
             # Deal with addresses with missing postcode.
-            addr_with_no_postcode = 'Old School Surgery, Church Street, '
-            addr_with_no_postcode += 'Seaford, East Sussex'
+            addr_with_no_postcode = "Old School Surgery, Church Street, "
+            addr_with_no_postcode += "Seaford, East Sussex"
             if address == addr_with_no_postcode:
-                postcode = 'BN25 1HH'
-            if ' ' not in postcode or len(postcode) > 8:
-                print('POSTCODE ISSUE', address)
+                postcode = "BN25 1HH"
+            if " " not in postcode or len(postcode) > 8:
+                print ("POSTCODE ISSUE", address)
 
             p = None
             try:
-                p = Practice.objects.get(name=name,
-                                         postcode=postcode)
+                p = Practice.objects.get(name=name, postcode=postcode)
                 name_and_postcode_matches += 1
             except Practice.DoesNotExist:
                 # No match on name and postcode. Try other strategies.
                 try:
-                    p = Practice.objects.get(address1=name,
-                                             postcode=postcode)
+                    p = Practice.objects.get(address1=name, postcode=postcode)
                     address1_and_postcode_matches += 1
                 except Practice.DoesNotExist:
                     ps = Practice.objects.filter(postcode=postcode)
@@ -93,8 +93,9 @@ class Command(BaseCommand):
                 multiple_matches_found += 1
 
             if p:
-                pds, created = PID.objects.get_or_create(practice=p,
-                                                         date=options['date'])
+                pds, created = PID.objects.get_or_create(
+                    practice=p, date=options["date"]
+                )
 
         # print useful_rows, 'rows'
         # print address1_and_postcode_matches, 'address1_and_postcode_matches'

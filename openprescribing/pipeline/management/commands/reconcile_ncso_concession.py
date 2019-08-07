@@ -8,22 +8,25 @@ from frontend.models import NCSOConcession
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('concession_id')
-        parser.add_argument('vmpp_id')
+        parser.add_argument("concession_id")
+        parser.add_argument("vmpp_id")
 
     def handle(self, *args, **kwargs):
         try:
-            concession = NCSOConcession.objects.get(id=kwargs['concession_id'])
+            concession = NCSOConcession.objects.get(id=kwargs["concession_id"])
         except NCSOConcession.DoesNotExist:
-            raise CommandError('Could not find concession')
+            raise CommandError("Could not find concession")
 
         try:
-            vmpp = VMPP.objects.get(id=kwargs['vmpp_id'])
+            vmpp = VMPP.objects.get(id=kwargs["vmpp_id"])
         except VMPP.DoesNotExist:
-            raise CommandError('Could not find VMPP')
+            raise CommandError("Could not find VMPP")
 
         concession.vmpp = vmpp
         concession.save()
 
-        print('Reconciled `{}` against `{}`'.format(
-            concession.drug_and_pack_size, vmpp.nm))
+        print (
+            "Reconciled `{}` against `{}`".format(
+                concession.drug_and_pack_size, vmpp.nm
+            )
+        )

@@ -1,6 +1,6 @@
-'''
+"""
 Send alerts about all of NHS England
-'''
+"""
 
 from __future__ import print_function
 
@@ -20,8 +20,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--recipient-email',
-            help='Send example email to this address'
+            "--recipient-email", help="Send example email to this address"
         )
 
     def handle(self, recipient_email=None, **options):
@@ -29,13 +28,11 @@ class Command(BaseCommand):
 
 
 def send_alerts(recipient_email=None):
-    '''Send unsent alerts for the current month'''
+    """Send unsent alerts for the current month"""
 
     date = (
-        ImportLog.objects
-        .latest_in_category('prescribing')
-        .current_at
-        .strftime('%Y-%m-%d')
+        ImportLog.objects.latest_in_category("prescribing")
+        .current_at.strftime("%Y-%m-%d")
         .lower()
     )
 
@@ -46,48 +43,35 @@ def send_alerts(recipient_email=None):
 
     for bookmark in bookmarks:
         with EmailErrorDeferrer() as error_deferrer:
-            error_deferrer.try_email(
-                send_alert,
-                bookmark,
-                date
-            )
+            error_deferrer.try_email(send_alert, bookmark, date)
 
-    print('Sent {} All England alerts'.format(len(bookmarks)))
+    print ("Sent {} All England alerts".format(len(bookmarks)))
 
 
 def make_dummy_bookmark(email_address):
-    '''Make a dummy bookmark with this email address for testing purposes'''
-    dummy_user = User(email=email_address, id='dummyid')
-    dummy_user.profile = Profile(key='dummykey')
-    return OrgBookmark(
-        user=dummy_user,
-        pct_id=None,
-        practice_id=None
-    )
+    """Make a dummy bookmark with this email address for testing purposes"""
+    dummy_user = User(email=email_address, id="dummyid")
+    dummy_user.profile = Profile(key="dummykey")
+    return OrgBookmark(user=dummy_user, pct_id=None, practice_id=None)
 
 
 def get_unsent_bookmarks(date):
-    '''Find unsent bookmarks for given date.
+    """Find unsent bookmarks for given date.
 
     Alerts should only be sent to active users who have an approved bookmark.
-    '''
+    """
 
     return OrgBookmark.objects.filter(
-        practice__isnull=True,
-        pct__isnull=True,
-        approved=True,
-        user__is_active=True
-    ).exclude(
-        user__emailmessage__tags__contains=['all_england', date]
-    )
+        practice__isnull=True, pct__isnull=True, approved=True, user__is_active=True
+    ).exclude(user__emailmessage__tags__contains=["all_england", date])
 
 
 def send_alert(bookmark, date):
-    '''Send alert for bookmark for given date.'''
+    """Send alert for bookmark for given date."""
     try:
         message = bookmark_utils.make_all_england_email(bookmark, tag=date)
         email_message = EmailMessage.objects.create_from_message(message)
         email_message.send()
-        logger.info('Sent alert to %s about %s', email_message.to, bookmark.name)
+        logger.info("Sent alert to %s about %s", email_message.to, bookmark.name)
     except bookmark_utils.BadAlertImageError as e:
         logger.exception(e)

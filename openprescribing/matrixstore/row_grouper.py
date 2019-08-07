@@ -47,13 +47,9 @@ class RowGrouper(object):
         self.ids = sorted(groups.keys())
         # Maps group ID to offset
         self.offsets = {
-            group_id: group_offset
-            for (group_offset, group_id) in enumerate(self.ids)
+            group_id: group_offset for (group_offset, group_id) in enumerate(self.ids)
         }
-        self._group_selectors = [
-            numpy.array(groups[group_id])
-            for group_id in self.ids
-        ]
+        self._group_selectors = [numpy.array(groups[group_id]) for group_id in self.ids]
         # Where each group contains only one row (which is the case whenever
         # we're working with practice level data) there's a much faster path we
         # can take where we just pull out the relevant rows using a single

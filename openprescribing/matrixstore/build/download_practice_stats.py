@@ -28,9 +28,9 @@ def ensure_stats_downloaded_for_date(date):
     filename = get_practice_stats_filename(date)
     if os.path.exists(filename):
         return
-    logger.info('Downloading practice statistics for %s', date)
+    logger.info("Downloading practice statistics for %s", date)
     temp_name = get_temp_filename(filename)
-    result = Client('hscic').query(
+    result = Client("hscic").query(
         """
         SELECT *
         FROM {hscic}.practice_statistics_all_years
@@ -38,7 +38,7 @@ def ensure_stats_downloaded_for_date(date):
         """
         % (date,)
     )
-    with gzip.open(temp_name, 'wb') as f:
+    with gzip.open(temp_name, "wb") as f:
         writer = csv.writer(f)
         writer.writerow(result.field_names)
         for row in result.rows:

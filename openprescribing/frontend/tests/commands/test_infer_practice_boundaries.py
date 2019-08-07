@@ -6,7 +6,7 @@ from frontend.models import Practice
 
 class InferPracticeBoundariesTestCase(TestCase):
 
-    fixtures = ['orgs', 'practices']
+    fixtures = ["orgs", "practices"]
 
     def test_basic_smoketest(self):
         should_have_boundary = Practice.objects.filter(
@@ -15,5 +15,5 @@ class InferPracticeBoundariesTestCase(TestCase):
         has_boundary = Practice.objects.filter(boundary__isnull=False)
         self.assertGreater(should_have_boundary.count(), 0)
         self.assertEqual(has_boundary.count(), 0)
-        call_command('infer_practice_boundaries')
+        call_command("infer_practice_boundaries")
         self.assertEqual(has_boundary.count(), should_have_boundary.count())

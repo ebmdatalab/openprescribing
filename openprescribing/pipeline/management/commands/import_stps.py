@@ -10,24 +10,24 @@ from openpyxl import load_workbook
 
 
 class Command(BaseCommand):
-    help = '''
+    help = """
 This command imports STPs and STP mappings from the spreadsheet linked to from
 https://digital.nhs.uk/services/organisation-data-service/data-downloads/other-nhs-organisations
-    '''.strip()
+    """.strip()
 
     def add_arguments(self, parser):
-        parser.add_argument('--filename')
+        parser.add_argument("--filename")
 
     def handle(self, *args, **kwargs):
-        wb = load_workbook(kwargs['filename'])
-        sheet = wb.get_sheet_by_name('Current STPs')
+        wb = load_workbook(kwargs["filename"])
+        sheet = wb.get_sheet_by_name("Current STPs")
 
-        assert sheet['A5'].value == 'NHS England Region', sheet['A5'].value
-        assert sheet['B5'].value == 'ODS STP Code', sheet['B5'].value
-        assert sheet['D5'].value == 'ONS STP Code', sheet['D5'].value
-        assert sheet['E5'].value == 'STP Name', sheet['E5'].value
-        assert sheet['J5'].value == 'CCG', sheet['J5'].value
-        assert sheet['K5'].value == 'ODS CCG Code', sheet['K5'].value
+        assert sheet["A5"].value == "NHS England Region", sheet["A5"].value
+        assert sheet["B5"].value == "ODS STP Code", sheet["B5"].value
+        assert sheet["D5"].value == "ONS STP Code", sheet["D5"].value
+        assert sheet["E5"].value == "STP Name", sheet["E5"].value
+        assert sheet["J5"].value == "CCG", sheet["J5"].value
+        assert sheet["K5"].value == "ODS CCG Code", sheet["K5"].value
 
         data = [[cell.value for cell in row] for row in sheet.rows]
 
@@ -36,7 +36,7 @@ https://digital.nhs.uk/services/organisation-data-service/data-downloads/other-n
                 if not row[10]:
                     continue
 
-                rt_code = re.search('\((\w{3})\)', row[0]).groups()[0]
+                rt_code = re.search("\((\w{3})\)", row[0]).groups()[0]
                 rt = RegionalTeam.objects.get(code=rt_code)
 
                 stp_code = row[1]
@@ -53,6 +53,6 @@ https://digital.nhs.uk/services/organisation-data-service/data-downloads/other-n
                 ccg_code = row[10]
                 ccg = PCT.objects.get(code=ccg_code)
                 assert ccg.regional_team == rt
-                print(ccg.name, 'is in STP', stp.name)
+                print (ccg.name, "is in STP", stp.name)
                 ccg.stp = stp
                 ccg.save()

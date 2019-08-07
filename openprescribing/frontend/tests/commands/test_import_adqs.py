@@ -13,60 +13,56 @@ from frontend.models import ImportLog
 
 
 class CommandsTestCase(TestCase):
-    fixtures = ['presentations', 'importlog']
+    fixtures = ["presentations", "importlog"]
 
-    @patch('frontend.management.commands.import_adqs.Client')
+    @patch("frontend.management.commands.import_adqs.Client")
     def test_import_adqs(self, mock_client):
-        mock_query = MagicMock(name='query')
-        mock_query.query.return_value.rows = [
-            ('0202010F0.*AA', 0.333),
-        ]
+        mock_query = MagicMock(name="query")
+        mock_query.query.return_value.rows = [("0202010F0.*AA", 0.333)]
         mock_client.return_value = mock_query
-        call_command('import_adqs')
+        call_command("import_adqs")
 
         # check we called bigquery with the right source table
         mock_query.query.assert_called_once()
-        self.assertIn(
-            "raw_prescribing_data_2014_11",
-            mock_query.query.call_args[0][0])
+        self.assertIn("raw_prescribing_data_2014_11", mock_query.query.call_args[0][0])
 
         # Check we set adq_per_quantity according to the bigquery results
-        p = Presentation.objects.get(bnf_code='0202010F0AAAAAA')
+        p = Presentation.objects.get(bnf_code="0202010F0AAAAAA")
         self.assertEqual(p.adq_per_quantity, 0.333)
-        p = Presentation.objects.get(bnf_code='0204000I0JKKKAL')
+        p = Presentation.objects.get(bnf_code="0204000I0JKKKAL")
         self.assertEqual(p.adq_per_quantity, None)
 
 
 class CommandsFunctionalTestCase(TestCase):
-    fixtures = ['presentations', 'importlog']
+    fixtures = ["presentations", "importlog"]
 
     def setUp(self):
         """Create a raw_prescribing_data table such as is expected to exist by
         ADQ calculation code.
         """
-        raw_data_path = 'frontend/tests/fixtures/commands/' +\
-                        'convert_hscic_prescribing/2016_01/' +\
-                        'Detailed_Prescribing_Information.csv'
+        raw_data_path = (
+            "frontend/tests/fixtures/commands/"
+            + "convert_hscic_prescribing/2016_01/"
+            + "Detailed_Prescribing_Information.csv"
+        )
         year_and_month = ImportLog.objects.latest_in_category(
-            'prescribing').current_at.strftime("%Y_%m")
-        self.table_name = 'raw_prescribing_data_{}'.format(year_and_month)
-        self.client = Client('tmp_eu')
-        t1 = self.client.get_or_create_table(
-            self.table_name, RAW_PRESCRIBING_SCHEMA)
+            "prescribing"
+        ).current_at.strftime("%Y_%m")
+        self.table_name = "raw_prescribing_data_{}".format(year_and_month)
+        self.client = Client("tmp_eu")
+        t1 = self.client.get_or_create_table(self.table_name, RAW_PRESCRIBING_SCHEMA)
         t1.insert_rows_from_csv(
-            raw_data_path,
-            RAW_PRESCRIBING_SCHEMA,
-            skip_leading_rows=1
+            raw_data_path, RAW_PRESCRIBING_SCHEMA, skip_leading_rows=1
         )
 
-        call_command('import_adqs')
+        call_command("import_adqs")
 
     def test_import_adqs_functional(self):
         # These all have ADQs in the raw data
-        for p in Presentation.objects.filter(bnf_code__regex='0202010B0.*AB'):
+        for p in Presentation.objects.filter(bnf_code__regex="0202010B0.*AB"):
             self.assertEqual(p.adq_per_quantity, 1.0)
         # This doesn't exist in the raw data
-        p = Presentation.objects.get(bnf_code='0204000I0AAAZAZ')
+        p = Presentation.objects.get(bnf_code="0204000I0AAAZAZ")
         self.assertEqual(p.adq_per_quantity, None)
 
     def tearDown(self):

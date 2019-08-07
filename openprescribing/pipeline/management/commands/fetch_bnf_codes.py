@@ -15,7 +15,7 @@ from openprescribing.utils import mkdir_p
 
 
 class Command(BaseCommand):
-    help = '''
+    help = """
 This command downloads the latest BNF codes.
 
 The BNF codes are in a compressed CSV file that is on a site that is protected
@@ -30,7 +30,7 @@ Specifically, you should:
     * Copy the value of the JSESSIONID cookie
       * In Chrome, this can be found in the Application tab of Developer Tools
     * Run `./manage.py fetch_bnf_codes [cookie]`
-    '''.strip()
+    """.strip()
 
     def create_parser(self, *args, **kwargs):
         parser = super(Command, self).create_parser(*args, **kwargs)
@@ -38,22 +38,22 @@ Specifically, you should:
         return parser
 
     def add_arguments(self, parser):
-        parser.add_argument('jsessionid')
+        parser.add_argument("jsessionid")
 
     def handle(self, *args, **kwargs):
-        path = os.path.join(settings.PIPELINE_DATA_BASEDIR, 'bnf_codes')
-        year_and_month = datetime.date.today().strftime('%Y_%m')
+        path = os.path.join(settings.PIPELINE_DATA_BASEDIR, "bnf_codes")
+        year_and_month = datetime.date.today().strftime("%Y_%m")
         dir_path = os.path.join(path, year_and_month)
         mkdir_p(dir_path)
-        zip_path = os.path.join(dir_path, 'download.zip')
+        zip_path = os.path.join(dir_path, "download.zip")
 
-        base_url = 'https://apps.nhsbsa.nhs.uk/infosystems/data/'
+        base_url = "https://apps.nhsbsa.nhs.uk/infosystems/data/"
 
         session = requests.Session()
-        session.cookies['JSESSIONID'] = kwargs['jsessionid']
+        session.cookies["JSESSIONID"] = kwargs["jsessionid"]
 
-        url = base_url + 'showDataSelector.do'
-        params = {'reportId': '126'}
+        url = base_url + "showDataSelector.do"
+        params = {"reportId": "126"}
         rsp = session.get(url, params=params)
 
         tree = html.fromstring(rsp.content)
@@ -61,41 +61,36 @@ Specifically, you should:
 
         year_to_bnf_version = {}
         for option in options:
-            datestamp, version = option.text.split(' : ')
-            date = datetime.datetime.strptime(datestamp, '%d-%m-%Y')
+            datestamp, version = option.text.split(" : ")
+            date = datetime.datetime.strptime(datestamp, "%d-%m-%Y")
             year_to_bnf_version[date.year] = version
 
         year = max(year_to_bnf_version)
         version = year_to_bnf_version[year]
 
-        url = base_url + 'requestSelectedDownload.do'
+        url = base_url + "requestSelectedDownload.do"
         params = {
-            'bnfVersion': version,
-            'filePath': '',
-            'dataView': '260',
-            'format': '',
-            'defaultReportIdDataSel': '',
-            'reportId': '126',
-            'action': 'checkForAvailableDownload',
+            "bnfVersion": version,
+            "filePath": "",
+            "dataView": "260",
+            "format": "",
+            "defaultReportIdDataSel": "",
+            "reportId": "126",
+            "action": "checkForAvailableDownload",
         }
         rsp = session.get(url, params=params)
 
-        request_id = rsp.json()['requestNo']
+        request_id = rsp.json()["requestNo"]
 
-        url = base_url + 'downloadAvailableReport.zip'
-        params = {
-            'requestId': request_id,
-        }
+        url = base_url + "downloadAvailableReport.zip"
+        params = {"requestId": request_id}
         rsp = session.post(url, params=params, stream=True)
 
-        total_size = int(rsp.headers['content-length'])
+        total_size = int(rsp.headers["content-length"])
 
-        with open(zip_path, 'wb') as f:
+        with open(zip_path, "wb") as f:
             tqdm_iterator = tqdm(
-                rsp.iter_content(32 * 1024),
-                total=total_size,
-                unit='B',
-                unit_scale=True
+                rsp.iter_content(32 * 1024), total=total_size, unit="B", unit_scale=True
             )
             for block in tqdm_iterator:
                 f.write(block)
@@ -103,8 +98,8 @@ Specifically, you should:
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(dir_path)
 
-        csv_paths = glob.glob(os.path.join(dir_path, '*.csv'))
+        csv_paths = glob.glob(os.path.join(dir_path, "*.csv"))
 
         assert len(csv_paths) == 1
 
-        os.rename(csv_paths[0], os.path.join(dir_path, 'bnf_codes.csv'))
+        os.rename(csv_paths[0], os.path.join(dir_path, "bnf_codes.csv"))

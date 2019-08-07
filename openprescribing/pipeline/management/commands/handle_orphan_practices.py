@@ -56,10 +56,7 @@ class Command(BaseCommand):
                 msg = "Must either provide two paths, or no paths"
                 raise CommandError(msg)
             pattern = os.path.join(
-                settings.PIPELINE_DATA_BASEDIR,
-                "practice_details",
-                "*",
-                "epraccur.csv",
+                settings.PIPELINE_DATA_BASEDIR, "practice_details", "*", "epraccur.csv"
             )
             paths = sorted(glob.glob(pattern))
             if len(paths) < 2:
@@ -71,13 +68,9 @@ class Command(BaseCommand):
                 msg = "Must either provide two paths, or no paths"
                 raise CommandError(msg)
 
-        self.ccg_to_name = {
-            c.code: c.name for c in PCT.objects.filter(org_type="CCG")
-        }
+        self.ccg_to_name = {c.code: c.name for c in PCT.objects.filter(org_type="CCG")}
 
-        closed_practices = [
-            p.code for p in Practice.objects.exclude(status_code="A")
-        ]
+        closed_practices = [p.code for p in Practice.objects.exclude(status_code="A")]
 
         practice_to_curr_ccg = {}
         ccg_to_prev_practices = defaultdict(list)
@@ -125,9 +118,7 @@ class Command(BaseCommand):
                     "Current practice count: {}".format(len(curr_practices))
                 )
 
-            if all(
-                practice in closed_practices for practice in curr_practices
-            ):
+            if all(practice in closed_practices for practice in curr_practices):
                 # This is a Counter whose keys are the CCGs that practices
                 # which were previously in this CCG are currently in, excluding
                 # this CCG.
@@ -151,9 +142,7 @@ class Command(BaseCommand):
         new_ccg_name = self.ccg_to_name[new_ccg]
 
         if self.dry_run:
-            self.stdout.write(
-                "All practices currently in CCG are closed or dormant"
-            )
+            self.stdout.write("All practices currently in CCG are closed or dormant")
             self.stdout.write(
                 "All active practices previously in CCG are now in {} ({})".format(
                     new_ccg, new_ccg_name
@@ -165,9 +154,7 @@ class Command(BaseCommand):
                 )
             )
         else:
-            practices = Practice.objects.filter(ccg_id=ccg).exclude(
-                status_code="A"
-            )
+            practices = Practice.objects.filter(ccg_id=ccg).exclude(status_code="A")
             reason = "CCG set by handle_orphan_practices"
             practices.update(ccg_id=new_ccg, ccg_change_reason=reason)
 
@@ -176,17 +163,13 @@ class Command(BaseCommand):
         name = self.ccg_to_name[ccg]
 
         if self.dry_run:
-            self.stdout.write(
-                "All practices currently in CCG are closed or dormant"
-            )
+            self.stdout.write("All practices currently in CCG are closed or dormant")
             self.stdout.write(
                 "Active practices previously in CCG are now in multiple CCGs:"
             )
             for new_ccg, count in new_ccgs.most_common():
                 new_ccg_name = self.ccg_to_name[new_ccg]
-                self.stdout.write(
-                    "{:3} {} ({})".format(count, new_ccg, new_ccg_name)
-                )
+                self.stdout.write("{:3} {} ({})".format(count, new_ccg, new_ccg_name))
 
         else:
             msg = """
