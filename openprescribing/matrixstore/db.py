@@ -40,7 +40,7 @@ def get_row_grouper(org_type):
     changes.
     """
     # Get the mapping from practice codes to IDs of groups
-    if org_type == 'practice':
+    if org_type == "practice":
         # For practice level data we just map each practice code to itself. The
         # means that we're not really doing any "grouping" in a meaningful
         # sense, but it simplifies the code by keeping things consistent
@@ -48,18 +48,18 @@ def get_row_grouper(org_type):
             practice_code: practice_code
             for practice_code in get_db().practice_offsets.keys()
         }
-    elif org_type == 'ccg':
+    elif org_type == "ccg":
         mapping = _practice_to_ccg_map()
-    elif org_type == 'pcn':
+    elif org_type == "pcn":
         mapping = _practice_to_pcn_map()
-    elif org_type == 'stp':
+    elif org_type == "stp":
         mapping = _practice_to_stp_map()
-    elif org_type == 'regional_team':
+    elif org_type == "regional_team":
         mapping = _practice_to_regional_team_map()
-    elif org_type == 'all_practices':
+    elif org_type == "all_practices":
         mapping = _all_practices_map()
     else:
-        raise ValueError('Unhandled org_type: ' + org_type)
+        raise ValueError("Unhandled org_type: " + org_type)
     return RowGrouper(
         (offset, mapping[practice_code])
         for practice_code, offset in get_db().practice_offsets.items()
@@ -69,33 +69,29 @@ def get_row_grouper(org_type):
 
 def _practice_to_ccg_map():
     return dict(
-        Practice.objects
-        .filter(ccg__org_type='CCG')
-        .values_list('code', 'ccg_id')
+        Practice.objects.filter(ccg__org_type="CCG").values_list("code", "ccg_id")
     )
 
 
 def _practice_to_pcn_map():
     return dict(
-        Practice.objects
-        .filter(pcn_id__isnull=False)
-        .values_list('code', 'pcn_id')
+        Practice.objects.filter(pcn_id__isnull=False).values_list("code", "pcn_id")
     )
 
 
 def _practice_to_stp_map():
     return dict(
-        Practice.objects
-        .filter(ccg__stp_id__isnull=False)
-        .values_list('code', 'ccg__stp_id')
+        Practice.objects.filter(ccg__stp_id__isnull=False).values_list(
+            "code", "ccg__stp_id"
+        )
     )
 
 
 def _practice_to_regional_team_map():
     return dict(
-        Practice.objects
-        .filter(ccg__regional_team_id__isnull=False)
-        .values_list('code', 'ccg__regional_team_id')
+        Practice.objects.filter(ccg__regional_team_id__isnull=False).values_list(
+            "code", "ccg__regional_team_id"
+        )
     )
 
 
@@ -107,7 +103,7 @@ def _all_practices_map():
     """
     return {
         code: None
-        for code in Practice.objects
-        .filter(ccg__org_type='CCG')
-        .values_list('code', flat=True)
+        for code in Practice.objects.filter(ccg__org_type="CCG").values_list(
+            "code", flat=True
+        )
     }

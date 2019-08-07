@@ -9,11 +9,11 @@ from frontend.models import User, OrgBookmark
 
 
 class BookmarksTest(SeleniumTestCase):
-    fixtures = ['bookmark_alerts', 'bookmark_alerts_extra']
+    fixtures = ["bookmark_alerts", "bookmark_alerts_extra"]
 
-    def _get_bookmark_url_for_user(self, username='bookmarks-user'):
+    def _get_bookmark_url_for_user(self, username="bookmarks-user"):
         key = User.objects.get(username=username).profile.key
-        return reverse('bookmark-login', kwargs={'key': key})
+        return reverse("bookmark-login", kwargs={"key": key})
 
     def test_unsubscribe_from_one_alert(self):
         url = self._get_bookmark_url_for_user()
@@ -36,7 +36,7 @@ class BookmarksTest(SeleniumTestCase):
         # The form used if you have only a single subscription is different
         # from the form for multliple subscriptions so we have to test it
         # separately
-        url = self._get_bookmark_url_for_user(username='single-bookmark-user')
+        url = self._get_bookmark_url_for_user(username="single-bookmark-user")
         bookmark_count = OrgBookmark.objects.count()
         self.browser.get(self.live_server_url + url)
         self.find_by_xpath("//input[@value='Unsubscribe']").click()
@@ -44,5 +44,5 @@ class BookmarksTest(SeleniumTestCase):
         self.assertEqual(OrgBookmark.objects.count(), bookmark_count - 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

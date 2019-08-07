@@ -24,29 +24,29 @@ This data is therefore worth updating every month.
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--ccg', action='store_true')
-        parser.add_argument('--practice', action='store_true')
-        parser.add_argument('--postcode', action='store_true')
-        parser.add_argument('--region', action='store_true')
+        parser.add_argument("--ccg", action="store_true")
+        parser.add_argument("--practice", action="store_true")
+        parser.add_argument("--postcode", action="store_true")
+        parser.add_argument("--region", action="store_true")
 
     def handle(self, *args, **kwargs):
-        self.verbose = (kwargs['verbosity'] > 1)
+        self.verbose = kwargs["verbosity"] > 1
 
-        if kwargs['practice']:
-            self.fetch_and_extract_zipped_csv('epraccur', 'practice_details')
-        if kwargs['ccg']:
-            self.fetch_and_extract_zipped_csv('eccg', 'ccg_details')
-        if kwargs['postcode']:
-            self.fetch_and_extract_zipped_csv('gridall', 'nhs_postcode_file')
-        if kwargs['region']:
-            self.fetch_and_extract_zipped_csv('eauth', 'region_details')
+        if kwargs["practice"]:
+            self.fetch_and_extract_zipped_csv("epraccur", "practice_details")
+        if kwargs["ccg"]:
+            self.fetch_and_extract_zipped_csv("eccg", "ccg_details")
+        if kwargs["postcode"]:
+            self.fetch_and_extract_zipped_csv("gridall", "nhs_postcode_file")
+        if kwargs["region"]:
+            self.fetch_and_extract_zipped_csv("eauth", "region_details")
 
     def fetch_and_extract_zipped_csv(self, base_filename, dest_dirname):
         """Grab a zipfile from a url, and extract a CSV.
         """
 
-        zip_filename = base_filename + '.zip'
-        url = 'https://files.digital.nhs.uk/assets/ods/current/' + zip_filename
+        zip_filename = base_filename + ".zip"
+        url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
 
         buf = StringIO()
         buf.write(requests.get(url).content)
@@ -56,8 +56,8 @@ class Command(BaseCommand):
         dest_dir = os.path.join(
             settings.PIPELINE_DATA_BASEDIR,
             dest_dirname,
-            datetime.datetime.today().strftime('%Y_%m'),
+            datetime.datetime.today().strftime("%Y_%m"),
         )
 
-        csv_filename = base_filename + '.csv'
+        csv_filename = base_filename + ".csv"
         zipfile.extract(csv_filename, dest_dir)

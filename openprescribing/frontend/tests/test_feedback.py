@@ -30,14 +30,9 @@ class FeedbackTests(TestCase):
 """
 
         self.assertEqual(email.to, [settings.SUPPORT_TO_EMAIL])
-        self.assertEqual(
-            email.from_email,
-            "Alice Apple <feedback@openprescribing.net>"
-        )
+        self.assertEqual(email.from_email, "Alice Apple <feedback@openprescribing.net>")
         self.assertEqual(email.reply_to, ["alice@example.com"])
-        self.assertEqual(
-            email.subject,
-            "OpenPrescribing Feedback: An apple a day...")
+        self.assertEqual(email.subject, "OpenPrescribing Feedback: An apple a day...")
         self.assertEqual(email.body, expected_body)
         self.assertEqual(email.extra_headers["X-Mailgun-Track"], "no")
 
@@ -53,14 +48,9 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
 """
 
         self.assertEqual(email.to, ["alice@example.com"])
-        self.assertEqual(
-            email.from_email,
-            settings.DEFAULT_FROM_EMAIL
-        )
+        self.assertEqual(email.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email.reply_to, [])
-        self.assertEqual(
-            email.subject,
-            "OpenPrescribing Feedback: An apple a day...")
+        self.assertEqual(email.subject, "OpenPrescribing Feedback: An apple a day...")
         self.assertEqual(email.body, expected_body)
         self.assertEqual(email.extra_headers["X-Mailgun-Track"], "no")
 
@@ -77,7 +67,7 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
         email = mail.outbox[0]
         self.assertEqual(
             email.from_email,
-            '"Alice Apple, NHS England" <feedback@openprescribing.net>'
+            '"Alice Apple, NHS England" <feedback@openprescribing.net>',
         )
 
     def test_send_feedback_mail_nonascii_encoded(self):
@@ -92,9 +82,8 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
         )
         email = mail.outbox[0]
         self.assertEqual(
-            email.from_email,
-            u'Alicé Apple <feedback@openprescribing.net>'
+            email.from_email, u"Alicé Apple <feedback@openprescribing.net>"
         )
-        self.assertEqual(email.subject, u'OpenPrescribing Feedback: Test ✓')
+        self.assertEqual(email.subject, u"OpenPrescribing Feedback: Test ✓")
         self.assertIn(u"All Good ✓", email.body)
         self.assertIn(u"http://example.com/?p=✓", email.body)

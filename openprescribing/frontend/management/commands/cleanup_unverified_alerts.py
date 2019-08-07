@@ -13,22 +13,29 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Remove stale bookmarks and users. Should be run daily.'
+    args = ""
+    help = "Remove stale bookmarks and users. Should be run daily."
 
     def handle(self, *args, **options):
         now = timezone.now()
         one_month_ago = now + relativedelta(months=-1)
         OrgBookmark.objects.filter(
-            created_at__lte=one_month_ago, approved=False).delete()
+            created_at__lte=one_month_ago, approved=False
+        ).delete()
         SearchBookmark.objects.filter(
-            created_at__lte=one_month_ago, approved=False).delete()
-        deleted_users = User.objects.annotate(
-            num_bookmarks=Count('orgbookmark', distinct=True) +
-            Count('searchbookmark', distinct=True)
-            ).filter(num_bookmarks=0,
-                     emailaddress__verified=False,
-                     is_superuser=False,
-                     date_joined__lte=one_month_ago).delete()
-        logger.info("Deleted %s user accounts & associated models" %
-                     deleted_users[0])
+            created_at__lte=one_month_ago, approved=False
+        ).delete()
+        deleted_users = (
+            User.objects.annotate(
+                num_bookmarks=Count("orgbookmark", distinct=True)
+                + Count("searchbookmark", distinct=True)
+            )
+            .filter(
+                num_bookmarks=0,
+                emailaddress__verified=False,
+                is_superuser=False,
+                date_joined__lte=one_month_ago,
+            )
+            .delete()
+        )
+        logger.info("Deleted %s user accounts & associated models" % deleted_users[0])

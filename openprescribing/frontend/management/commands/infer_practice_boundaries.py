@@ -24,7 +24,7 @@ from frontend.models import Practice, PCT
 
 
 NATIONAL_BOUNDARY_FILE = os.path.join(
-    settings.REPO_ROOT, 'openprescribing/media/geojson/england-boundary.geojson'
+    settings.REPO_ROOT, "openprescribing/media/geojson/england-boundary.geojson"
 )
 
 
@@ -37,30 +37,22 @@ class Command(BaseCommand):
 
 
 def infer_practice_boundaries():
-    practices = (
-        Practice.objects
-        .filter(location__isnull=False, setting=4)
-        .exclude(
-            status_code__in=(
-                Practice.STATUS_RETIRED,
-                Practice.STATUS_DORMANT,
-                Practice.STATUS_CLOSED
-            )
+    practices = Practice.objects.filter(location__isnull=False, setting=4).exclude(
+        status_code__in=(
+            Practice.STATUS_RETIRED,
+            Practice.STATUS_DORMANT,
+            Practice.STATUS_CLOSED,
         )
     )
-    partition = (
-        practices
-        .aggregate(
-            voronoi=Func(Collect('location'), function='ST_VoronoiPolygons')
-        )
-        ['voronoi']
-    )
+    partition = practices.aggregate(
+        voronoi=Func(Collect("location"), function="ST_VoronoiPolygons")
+    )["voronoi"]
     national_boundary = get_national_boundary()
     practice_regions = get_practice_code_to_region_map(partition, national_boundary)
     with transaction.atomic():
         for practice in practices:
             practice.boundary = practice_regions[practice.code]
-            practice.save(update_fields=['boundary'])
+            practice.save(update_fields=["boundary"])
 
 
 def get_practice_code_to_region_map(regions, clip_boundary):
@@ -76,14 +68,14 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
     # Temporary tables are automatically deleted when the connection closes,
     # but during testing we can sometimes have multiple process trying to
     # create the same temporary table so we make the name unique
-    random_str = ''.join([random.choice(string.ascii_lowercase) for _ in range(8)])
-    temporary_table_name = 'regions_{}'.format(random_str)
+    random_str = "".join([random.choice(string.ascii_lowercase) for _ in range(8)])
+    temporary_table_name = "regions_{}".format(random_str)
 
     def cursor_execute(sql, *params):
         cursor.execute(sql.format(regions=temporary_table_name), *params)
 
     cursor_execute(
-        'CREATE TEMPORARY TABLE {regions} (original GEOMETRY, clipped GEOMETRY)'
+        "CREATE TEMPORARY TABLE {regions} (original GEOMETRY, clipped GEOMETRY)"
     )
     for region in regions:
         clipped = region.intersection(clip_boundary)
@@ -106,11 +98,11 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
                 """
             )
         cursor_execute(
-            'INSERT INTO {regions} (original, clipped) VALUES (%s, %s)',
-            [region.ewkb, clipped.ewkb]
+            "INSERT INTO {regions} (original, clipped) VALUES (%s, %s)",
+            [region.ewkb, clipped.ewkb],
         )
-    cursor_execute('CREATE INDEX {regions}_idx ON {regions} USING GIST (original)')
-    cursor_execute('ANALYSE {regions}')
+    cursor_execute("CREATE INDEX {regions}_idx ON {regions} USING GIST (original)")
+    cursor_execute("ANALYSE {regions}")
     # We match practices to regions using the original, unclipped boundary.
     # This allows us to handle the case that a practice lies just outside its
     # clipped boundary due to imprecision in the geographic data.
@@ -132,7 +124,7 @@ def _get_practice_code_to_region_map(cursor, regions, clip_boundary):
 
 def get_national_boundary():
     # In theory there's a `geos.fromfile` method, but it doesn't work
-    with open(NATIONAL_BOUNDARY_FILE, 'rb') as f:
+    with open(NATIONAL_BOUNDARY_FILE, "rb") as f:
         contents = f.read()
     return GEOSGeometry(contents)
 
@@ -154,7 +146,7 @@ def update_national_boundary_file():
         | ./manage.py shell
     """
     ccgs_without_boundary = PCT.objects.filter(
-        org_type='CCG', close_date__isnull=True, boundary__isnull=True
+        org_type="CCG", close_date__isnull=True, boundary__isnull=True
     )
     if ccgs_without_boundary.exists():
         raise RuntimeError(
@@ -163,11 +155,8 @@ def update_national_boundary_file():
             synthesize a national boundary by aggregating CCGs
             """
         )
-    boundary = (
-        PCT.objects
-        .filter(boundary__isnull=False)
-        .aggregate(boundary=Union('boundary'))
-        ['boundary']
-    )
-    with open(NATIONAL_BOUNDARY_FILE, 'wb') as f:
+    boundary = PCT.objects.filter(boundary__isnull=False).aggregate(
+        boundary=Union("boundary")
+    )["boundary"]
+    with open(NATIONAL_BOUNDARY_FILE, "wb") as f:
         f.write(boundary.geojson)

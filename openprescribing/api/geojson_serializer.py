@@ -12,7 +12,7 @@ import json
 from django.contrib.gis.gdal import CoordTransform, SpatialReference
 
 
-def as_geojson_stream(dicts, geometry_field='geometry', srid=4326):
+def as_geojson_stream(dicts, geometry_field="geometry", srid=4326):
     """
     Convert an iterable of dictionaries into an iterable of strings giving
     their GeoJSON representation
@@ -25,12 +25,7 @@ def as_geojson_stream(dicts, geometry_field='geometry', srid=4326):
     to_geojson = GeoJSONConvertor(srid)
     header = {
         "type": "FeatureCollection",
-        "crs": {
-            "type": "name",
-            "properties": {
-                "name": "EPSG:{}".format(srid)
-            }
-        }
+        "crs": {"type": "name", "properties": {"name": "EPSG:{}".format(srid)}},
     }
     # Output header omitting closing brace
     yield json.dumps(header)[:-1]
@@ -38,34 +33,32 @@ def as_geojson_stream(dicts, geometry_field='geometry', srid=4326):
     yield ', "features": ['
     for n, dictionary in enumerate(dicts):
         # Output separator
-        yield ',\n' if n > 0 else '\n'
+        yield ",\n" if n > 0 else "\n"
         geometry = dictionary.pop(geometry_field, None)
-        feature = {
-            'type': 'Feature',
-            'properties': dictionary
-        }
+        feature = {"type": "Feature", "properties": dictionary}
         # Output feature omitting closing brace and newline
         yield json.dumps(feature, indent=2)[:-2]
         # Output geometry field, which is already a JSON string
         yield ',\n  "geometry": '
         yield to_geojson(geometry)
         # Close feature
-        yield '\n}'
+        yield "\n}"
     # Close features array and header object
-    yield '\n]}'
+    yield "\n]}"
 
 
 class GeoJSONConvertor(object):
     """
     Convert geometry object to GeoJSON string in the required SRID
     """
+
     def __init__(self, srid):
         self.srid = srid
         self._transforms = {}
 
     def __call__(self, geometry):
         if geometry is None:
-            return 'null'
+            return "null"
         if geometry.srid != self.srid:
             if geometry.srid not in self._transforms:
                 srs = SpatialReference(self.srid)

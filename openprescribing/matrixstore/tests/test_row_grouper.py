@@ -27,40 +27,27 @@ class TestGrouper(SimpleTestCase):
         Test grouping and summing on a matrix which is small enough to verify
         the results by hand
         """
-        group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
-        rows = [
-          [1, 2, 3, 4],
-          [2, 3, 4, 5],
-          [3, 4, 5, 6],
-          [4, 5, 6, 7],
-        ]
+        group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
+        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
         grouped_matrix = row_grouper.sum(matrix)
         value = to_list_of_lists(grouped_matrix)
-        expected_value = [
-            [4, 6, 8, 10],
-            [6, 8, 10, 12],
-        ]
+        expected_value = [[4, 6, 8, 10], [6, 8, 10, 12]]
         self.assertEqual(value, expected_value)
-        self.assertEqual(row_grouper.ids, ['even', 'odd'])
-        self.assertEqual(row_grouper.offsets, {'even': 0, 'odd': 1})
+        self.assertEqual(row_grouper.ids, ["even", "odd"])
+        self.assertEqual(row_grouper.offsets, {"even": 0, "odd": 1})
 
     def test_basic_sum_one_group(self):
         """
         Test summing for a single group on a matrix which is small enough to
         verify the results by hand
         """
-        group_definition = [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd')]
-        rows = [
-          [1, 2, 3, 4],
-          [2, 3, 4, 5],
-          [3, 4, 5, 6],
-          [4, 5, 6, 7],
-        ]
+        group_definition = [(0, "even"), (1, "odd"), (2, "even"), (3, "odd")]
+        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
-        group_sum = row_grouper.sum_one_group(matrix, 'even')
+        group_sum = row_grouper.sum_one_group(matrix, "even")
         self.assertEqual(group_sum.tolist(), [4, 6, 8, 10])
 
     def test_empty_group_produces_empty_matrix(self):
@@ -68,12 +55,7 @@ class TestGrouper(SimpleTestCase):
         Test the empty group edge case
         """
         group_definition = []
-        rows = [
-          [1, 2, 3, 4],
-          [2, 3, 4, 5],
-          [3, 4, 5, 6],
-          [4, 5, 6, 7],
-        ]
+        rows = [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]]
         matrix = numpy.array(rows)
         row_grouper = RowGrouper(group_definition)
         grouped_matrix = row_grouper.sum(matrix)
@@ -96,9 +78,7 @@ class TestGrouper(SimpleTestCase):
             expected_values = self.sum_rows_by_group(group_definition, matrix)
             # We need to round floats to account for differences between
             # numpy and Python float rounding
-            self.assertEqual(
-                round_floats(values), round_floats(expected_values)
-            )
+            self.assertEqual(round_floats(values), round_floats(expected_values))
 
     def test_sum_one_group_with_all_group_and_matrix_type_combinations(self):
         """
@@ -137,15 +117,13 @@ class TestGrouper(SimpleTestCase):
                 value = matrix[row_offset, column_offset]
                 group_totals[group_id][column_offset] += value
         # Return the group totals as a list of lists, sorted by group_id
-        return [
-            row for (group_id, row) in sorted(group_totals.items())
-        ]
+        return [row for (group_id, row) in sorted(group_totals.items())]
 
     def get_matrices(self):
         for sparse, integer in product([True, False], repeat=2):
-            name = '{structure}.{type}'.format(
-                structure='sparse' if sparse else 'dense',
-                type='integer' if integer else 'float'
+            name = "{structure}.{type}".format(
+                structure="sparse" if sparse else "dense",
+                type="integer" if integer else "float",
             )
             yield name, self.make_matrix(sparse, integer)
 
@@ -157,7 +135,7 @@ class TestGrouper(SimpleTestCase):
             matrix[coords] = value
         matrix = finalise_matrix(matrix)
         # Make sure we get back the type of matrix we're expecting
-        assert hasattr(matrix, 'todense') == sparse
+        assert hasattr(matrix, "todense") == sparse
         return matrix
 
     def _random_coords(self, shape, sample_density):
@@ -172,29 +150,29 @@ class TestGrouper(SimpleTestCase):
     def get_group_definitions(self):
         return [
             (
-                'basic_partition',
-                [(row, 'odd' if row % 2 else 'even') for row in range(self.rows)]
+                "basic_partition",
+                [(row, "odd" if row % 2 else "even") for row in range(self.rows)],
             ),
             (
-                'one_group_with_all_rows',
-                [(row, 'everything') for row in range(self.rows)]
+                "one_group_with_all_rows",
+                [(row, "everything") for row in range(self.rows)],
             ),
             (
-                'some_rows_not_in_any_groups',
-                [(row, 'odd' if row % 2 else 'even') for row in range(self.rows // 2)]
+                "some_rows_not_in_any_groups",
+                [(row, "odd" if row % 2 else "even") for row in range(self.rows // 2)],
             ),
             (
-                'some_rows_in_multiple_groups',
-                [(row, 'small') for row in range(self.rows // 2)]
-                + [(row, 'odd' if row % 2 else 'even') for row in range(self.rows)]
+                "some_rows_in_multiple_groups",
+                [(row, "small") for row in range(self.rows // 2)]
+                + [(row, "odd" if row % 2 else "even") for row in range(self.rows)],
             ),
             (
-                'each_row_in_exactly_one_group',
-                [(row, 'row_%s' % row) for row in range(self.rows)]
+                "each_row_in_exactly_one_group",
+                [(row, "row_%s" % row) for row in range(self.rows)],
             ),
             (
-                'some_rows_in_exactly_one_group',
-                [(row, 'row_%s' % row) for row in range(self.rows) if row % 2]
+                "some_rows_in_exactly_one_group",
+                [(row, "row_%s" % row) for row in range(self.rows) if row % 2],
             ),
         ]
 
@@ -204,8 +182,7 @@ def to_list_of_lists(matrix):
     Convert a 2D matrix into a list of lists
     """
     return [
-        [matrix[i, j] for j in range(matrix.shape[1])]
-        for i in range(matrix.shape[0])
+        [matrix[i, j] for j in range(matrix.shape[1])] for i in range(matrix.shape[0])
     ]
 
 

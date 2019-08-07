@@ -21,41 +21,39 @@ from frontend.models import PracticeStatistics
 
 
 class Command(BaseCommand):
-    args = ''
+    args = ""
 
     def add_arguments(self, parser):
-        parser.add_argument('--filename', required=True)
+        parser.add_argument("--filename", required=True)
 
     def _date_from_filename(self, filename):
-        match = re.match(r'.*/([0-9]{4}_[0-9]{2})/', filename)
-        year, month = match.groups()[0].split('_')
+        match = re.match(r".*/([0-9]{4}_[0-9]{2})/", filename)
+        year, month = match.groups()[0].split("_")
         return datetime.date(int(year), int(month), 1)
 
     def handle(self, *args, **options):
-        filename = options['filename']
+        filename = options["filename"]
         month = self._date_from_filename(filename)
         self.process_practices(filename, month)
         ImportLog.objects.create(
-            current_at=month,
-            filename=filename,
-            category='patient_list_size'
+            current_at=month, filename=filename, category="patient_list_size"
         )
 
     def process_practices(self, filename, month):
         df = pd.read_csv(filename)
-        df = df[df.ORG_TYPE == 'GP']
-        by_practice = df.groupby('ORG_CODE')
-        genders = ['male', 'female']
+        df = df[df.ORG_TYPE == "GP"]
+        by_practice = df.groupby("ORG_CODE")
+        genders = ["male", "female"]
         age_groups = {
-            '0_4': ['0_4'],
-            '5_14': ['5_9', '10_14'],
-            '15_24': ['15_19', '20_24'],
-            '25_34': ['25_29', '30_34'],
-            '35_44': ['35_39', '40_44'],
-            '45_54': ['45_49', '50_54'],
-            '55_64': ['55_59', '60_64'],
-            '65_74': ['65_69', '70_74'],
-            '75_plus': ['75_79', '80_84', '85_89', '90_94', '95+']
+            "0_4": ["0_4"],
+            "5_14": ["5_9", "10_14"],
+            "15_24": ["15_19", "20_24"],
+            "25_34": ["25_29", "30_34"],
+            "35_44": ["35_39", "40_44"],
+            "45_54": ["45_49", "50_54"],
+            "55_64": ["55_59", "60_64"],
+            "65_74": ["65_69", "70_74"],
+            "75_plus": ["75_79", "80_84", "85_89", "90_94", "95+"],
         }
 
         for code, group in by_practice:
@@ -68,22 +66,21 @@ class Command(BaseCommand):
                 for age_group, quintiles in age_groups.items():
                     val = 0
                     for quintile in quintiles:
-                        val += int(group[
-                            (group.SEX == gender.upper()) &
-                            (group.AGE_GROUP_5 == quintile)
-                        ].NUMBER_OF_PATIENTS)
+                        val += int(
+                            group[
+                                (group.SEX == gender.upper())
+                                & (group.AGE_GROUP_5 == quintile)
+                            ].NUMBER_OF_PATIENTS
+                        )
                         data["%s_%s" % (gender, age_group)] = val
             try:
-                prac_list = PracticeStatistics.objects.get(
-                    practice=code,
-                    date=month
-                )
+                prac_list = PracticeStatistics.objects.get(practice=code, date=month)
                 for k, v in data:
                     setattr(prac_list, k, v)
                 prac_list.pct = practice.ccg  # Reset CCG to current membership
                 prac_list.save()
             except ObjectDoesNotExist:
-                data['practice'] = practice
-                data['pct'] = practice.ccg
-                data['date'] = month
+                data["practice"] = practice
+                data["pct"] = practice.ccg
+                data["date"] = month
                 prac_list = PracticeStatistics.objects.create(**data)

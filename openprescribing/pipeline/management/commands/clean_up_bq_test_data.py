@@ -4,12 +4,11 @@ from gcutils.bigquery import Client
 
 
 class Command(BaseCommand):
-    help = 'Removes any datasets whose tables have all expired'
+    help = "Removes any datasets whose tables have all expired"
 
     def handle(self, *args, **kwargs):
-        if os.environ['DJANGO_SETTINGS_MODULE'] != \
-                'openprescribing.settings.test':
-            raise CommandError('Command must run with test settings')
+        if os.environ["DJANGO_SETTINGS_MODULE"] != "openprescribing.settings.test":
+            raise CommandError("Command must run with test settings")
 
         gcbq_client = Client().gcbq_client
 

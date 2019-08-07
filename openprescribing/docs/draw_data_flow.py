@@ -1,4 +1,4 @@
-'''
+"""
 This script produces graphs to show how data flows through the openprescribing
 app.  It reads data from the .yml files in this directory, and currently shows
 tables, API endpoints, and pages.  In the future it should include BQ tables,
@@ -17,7 +17,7 @@ endpoints and pages that use MeasureValue:
 
 Output is produced in a file called openp-data-flow.svg.  (This could be made
 configurable.)
-'''
+"""
 
 from __future__ import print_function
 
@@ -31,22 +31,22 @@ from networkx.algorithms.dag import ancestors, descendants
 import yaml
 
 
-CATEGORIES = ['tables', 'api_endpoints', 'pages']
+CATEGORIES = ["tables", "api_endpoints", "pages"]
 
 
 def build_graph():
     G = nx.DiGraph()
 
     for category in CATEGORIES:
-        with open(category + '.yml') as f:
+        with open(category + ".yml") as f:
             records = yaml.load(f)
 
         for record in records:
-            full_label = '{}.{}'.format(category, record['label'])
+            full_label = "{}.{}".format(category, record["label"])
             G.add_node(full_label)
 
-            for dependency_label in record.get('dependencies') or []:
-                dependency_category, _ = dependency_label.split('.')
+            for dependency_label in record.get("dependencies") or []:
+                dependency_category, _ = dependency_label.split(".")
 
                 # We can remove this `if` once all .yml files are complete.
                 if dependency_category not in CATEGORIES:
@@ -67,26 +67,26 @@ def filter_graph(G, nodes):
 
 
 def draw_graph(G):
-    graph = Digraph(format='svg')
-    graph.graph_attr['rankdir'] = 'LR'
+    graph = Digraph(format="svg")
+    graph.graph_attr["rankdir"] = "LR"
 
     nodes_by_category = defaultdict(list)
     for node in G.nodes():
-        category, label = node.split('.')
+        category, label = node.split(".")
         nodes_by_category[category].append(node)
 
     for category in CATEGORIES:
-        with graph.subgraph(name=category, graph_attr={'rank': 'same'}) as subgraph:
+        with graph.subgraph(name=category, graph_attr={"rank": "same"}) as subgraph:
             for node in nodes_by_category[category]:
                 subgraph.node(node)
 
     for node1, node2 in G.edges():
         graph.edge(node1, node2)
 
-    graph.render('openp-data-flow', cleanup=True)
+    graph.render("openp-data-flow", cleanup=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     G = build_graph()
 
     if len(sys.argv) > 1:

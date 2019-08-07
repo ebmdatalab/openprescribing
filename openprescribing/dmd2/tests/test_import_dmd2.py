@@ -17,43 +17,43 @@ class TestImportDmd2(TestCase):
     @classmethod
     def setUpTestData(cls):
         for bnf_code, name in [
-            ('0203020C0AAAAAA', 'Adenosine_I/V Inf 3mg/ml 2ml Vl'),
-            ('1003020U0AAAIAI', 'Diclofenac Sod_Gel 2.32%'),
-            ('1003020U0BBADAI', 'Voltarol 12 Hour Emulgel P_Gel 2.32%'),
-            ('1305020C0AAFVFV', 'Coal Tar 10%/Salic Acid 5%/Aq_Crm'),
-            ('1106000X0AAAIAI', 'Piloc HCl_Eye Dps 6%'),
-            ('090402000BBHCA0', 'Nutrison Pack_Stnd'),
+            ("0203020C0AAAAAA", "Adenosine_I/V Inf 3mg/ml 2ml Vl"),
+            ("1003020U0AAAIAI", "Diclofenac Sod_Gel 2.32%"),
+            ("1003020U0BBADAI", "Voltarol 12 Hour Emulgel P_Gel 2.32%"),
+            ("1305020C0AAFVFV", "Coal Tar 10%/Salic Acid 5%/Aq_Crm"),
+            ("1106000X0AAAIAI", "Piloc HCl_Eye Dps 6%"),
+            ("090402000BBHCA0", "Nutrison Pack_Stnd"),
         ]:
             Presentation.objects.create(bnf_code=bnf_code, name=name)
 
         shutil.copytree(
-            'dmd2/tests/data/dmd/1',
-            'pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001'
+            "dmd2/tests/data/dmd/1",
+            "pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001",
         )
 
-        mkdir_p('pipeline/test-data/data/snomed_mapping/2019_07_01')
+        mkdir_p("pipeline/test-data/data/snomed_mapping/2019_07_01")
 
         shutil.copyfile(
-            'dmd2/tests/data/bnf_code_mapping/mapping.xlsx',
-            'pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx'
+            "dmd2/tests/data/bnf_code_mapping/mapping.xlsx",
+            "pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx",
         )
 
         # Import the data.  See dmd2/tests/data/README.txt for details of what
         # objects will be created.
-        with patch('gcutils.bigquery.Client.upload_model'):
-            call_command('import_dmd2')
+        with patch("gcutils.bigquery.Client.upload_model"):
+            call_command("import_dmd2")
 
         # Copy another, later, dataset into the data directory, for tests that
         # call the command again.
         shutil.copytree(
-            'dmd2/tests/data/dmd/2',
-            'pipeline/test-data/data/dmd/2019_07_08/nhsbsa_dmd_7.4.0_20190708000001'
+            "dmd2/tests/data/dmd/2",
+            "pipeline/test-data/data/dmd/2019_07_08/nhsbsa_dmd_7.4.0_20190708000001",
         )
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree('pipeline/test-data/data/dmd')
-        shutil.rmtree('pipeline/test-data/data/snomed_mapping')
+        shutil.rmtree("pipeline/test-data/data/dmd")
+        shutil.rmtree("pipeline/test-data/data/snomed_mapping")
         super(TestImportDmd2, cls).tearDownClass()
 
     def test_objects_created(self):
@@ -65,51 +65,51 @@ class TestImportDmd2(TestCase):
 
         # Check that a selection of fields have been set correctly.
         vmp = VMP.objects.get(id=22480211000001104)
-        self.assertEqual(vmp.nm, 'Diclofenac 2.32% gel')
-        self.assertEqual(vmp.pres_stat.descr, 'Valid as a prescribable product')
+        self.assertEqual(vmp.nm, "Diclofenac 2.32% gel")
+        self.assertEqual(vmp.pres_stat.descr, "Valid as a prescribable product")
         self.assertEqual(vmp.vmpp_set.count(), 3)
         self.assertEqual(vmp.amp_set.count(), 3)
-        self.assertEqual(vmp.bnf_code, '1003020U0AAAIAI')
+        self.assertEqual(vmp.bnf_code, "1003020U0AAAIAI")
 
         vmpp = VMPP.objects.get(id=22479511000001101)
-        self.assertEqual(vmpp.nm, 'Diclofenac 2.32% gel 30 gram')
+        self.assertEqual(vmpp.nm, "Diclofenac 2.32% gel 30 gram")
         self.assertEqual(vmpp.vmp, vmp)
-        self.assertEqual(vmpp.qty_uom.descr, 'gram')
+        self.assertEqual(vmpp.qty_uom.descr, "gram")
         self.assertEqual(vmpp.ampp_set.count(), 3)
-        self.assertEqual(vmpp.bnf_code, '1003020U0AAAIAI')
+        self.assertEqual(vmpp.bnf_code, "1003020U0AAAIAI")
 
         amp = AMP.objects.get(id=29915211000001103)
-        self.assertEqual(amp.nm, 'Diclofenac 2.32% gel')
+        self.assertEqual(amp.nm, "Diclofenac 2.32% gel")
         self.assertEqual(
-            amp.descr, 'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd)'
+            amp.descr, "Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd)"
         )
         self.assertEqual(amp.vmp, vmp)
-        self.assertEqual(amp.supp.descr, 'Colorama Pharmaceuticals Ltd')
+        self.assertEqual(amp.supp.descr, "Colorama Pharmaceuticals Ltd")
         self.assertEqual(amp.ampp_set.count(), 2)
         self.assertIsNone(amp.bnf_code)
 
         ampp = AMPP.objects.get(id=29915311000001106)
         self.assertEqual(
-            ampp.nm, 'Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd) 30 gram'
+            ampp.nm, "Diclofenac 2.32% gel (Colorama Pharmaceuticals Ltd) 30 gram"
         )
         self.assertEqual(ampp.vmpp, vmpp)
         self.assertEqual(ampp.amp, amp)
-        self.assertEqual(ampp.legal_cat.descr, 'P')
+        self.assertEqual(ampp.legal_cat.descr, "P")
         self.assertIsNone(amp.bnf_code)
 
         # The following AMP and AMPP do have BNF codes.
         self.assertEqual(
-            AMP.objects.get(id=22479611000001102).bnf_code, '1003020U0BBADAI'
+            AMP.objects.get(id=22479611000001102).bnf_code, "1003020U0BBADAI"
         )
         self.assertEqual(
-            AMPP.objects.get(id=22479911000001108).bnf_code, '1003020U0BBADAI'
+            AMPP.objects.get(id=22479911000001108).bnf_code, "1003020U0BBADAI"
         )
 
     def test_vmp_bnf_codes_set(self):
         # This VMP does not have a BNF code in the mapping, but all its VMPPs
         # have the same BNF code, so we assign this to the VMP.
         self.assertEqual(
-            VMP.objects.get(id=35894711000001106).bnf_code, '0203020C0AAAAAA'
+            VMP.objects.get(id=35894711000001106).bnf_code, "0203020C0AAAAAA"
         )
 
     def test_dmd_names(self):
@@ -119,40 +119,40 @@ class TestImportDmd2(TestCase):
             )
 
         # This BNF code corresponds to a single VMP.
-        _assert_dmd_name('1003020U0AAAIAI', 'Diclofenac 2.32% gel')
+        _assert_dmd_name("1003020U0AAAIAI", "Diclofenac 2.32% gel")
 
         # This BNF code corresponds to a single AMP.
-        _assert_dmd_name('1003020U0BBADAI', 'Voltarol 12 Hour Emulgel P 2.32% gel')
+        _assert_dmd_name("1003020U0BBADAI", "Voltarol 12 Hour Emulgel P 2.32% gel")
 
         # This BNF code corresponds to multiple VMPs and a common name can be
         # inferred.
-        _assert_dmd_name('1106000X0AAAIAI', 'Pilocarpine hydrochloride 6% eye drops')
+        _assert_dmd_name("1106000X0AAAIAI", "Pilocarpine hydrochloride 6% eye drops")
 
         # This BNF code corresponds to multiple VMPs and a common name cannot
         # be inferred.
-        _assert_dmd_name('1305020C0AAFVFV', None)
+        _assert_dmd_name("1305020C0AAFVFV", None)
 
         # This BNF code corresponds to multiple AMPPs and a common name can be
         # inferred.
-        _assert_dmd_name('090402000BBHCA0', 'Nutrison liquid (Nutricia Ltd)')
+        _assert_dmd_name("090402000BBHCA0", "Nutrison liquid (Nutricia Ltd)")
 
     def test_logs(self):
-        path = 'pipeline/test-data/data/dmd/logs/7.4.0_20190701000001/summary.csv'
+        path = "pipeline/test-data/data/dmd/logs/7.4.0_20190701000001/summary.csv"
         with open(path) as f:
             summary = list(csv.reader(f))
 
         exp_summary = [
-            ['VMP', '7'],
-            ['AMP', '15'],
-            ['VMPP', '14'],
-            ['AMPP', '26'],
-            ['dmd-objs-present-in-mapping-only', '0'],
-            ['vmps-with-inferred-bnf-code', '0'],
-            ['vmps-with-no-bnf-code', '1'],
-            ['bnf-codes-with-multiple-dmd-objs', '2'],
-            ['bnf-codes-with-multiple-dmd-objs-and-no-inferred-name', '1'],
-            ['vmpps-with-different-bnf-code-to-vmp', '0'],
-            ['ampps-with-different-bnf-code-to-amp', '3'],
+            ["VMP", "7"],
+            ["AMP", "15"],
+            ["VMPP", "14"],
+            ["AMPP", "26"],
+            ["dmd-objs-present-in-mapping-only", "0"],
+            ["vmps-with-inferred-bnf-code", "0"],
+            ["vmps-with-no-bnf-code", "1"],
+            ["bnf-codes-with-multiple-dmd-objs", "2"],
+            ["bnf-codes-with-multiple-dmd-objs-and-no-inferred-name", "1"],
+            ["vmpps-with-different-bnf-code-to-vmp", "0"],
+            ["ampps-with-different-bnf-code-to-amp", "3"],
         ]
 
         self.assertEqual(summary, exp_summary)
@@ -168,17 +168,17 @@ class TestImportDmd2(TestCase):
 
         vmpp = VMPP.objects.get(id=22479511000001101)
         concession = NCSOConcession.objects.create(
-            date='2019-06-01',
+            date="2019-06-01",
             vmpp=vmpp,
             drug=vmpp.nm,
             pack_size=vmpp.qtyval,
-            price_pence=123
+            price_pence=123,
         )
 
         vmpp.delete()
 
-        with patch('gcutils.bigquery.Client.upload_model'):
-            call_command('import_dmd2')
+        with patch("gcutils.bigquery.Client.upload_model"):
+            call_command("import_dmd2")
 
         # Check that no VMP present with old VPID, that a new VMP has been
         # created, and that references to VMP have been updated.
@@ -196,21 +196,19 @@ class TestImportDmd2(TestCase):
         self.assertEqual(concession.vmpp, vmpp)
 
     def test_notify_slack(self):
-        with patch('gcutils.bigquery.Client.upload_model'):
-            with patch('dmd2.management.commands.import_dmd2.notify_slack') as ns:
-                call_command('import_dmd2')
+        with patch("gcutils.bigquery.Client.upload_model"):
+            with patch("dmd2.management.commands.import_dmd2.notify_slack") as ns:
+                call_command("import_dmd2")
                 ns.assert_called()
 
     def test_already_imported(self):
         ImportLog.objects.create(
-            category='dmd',
-            filename='7.4.0_20190708000001',
-            current_at='2019-07-08',
+            category="dmd", filename="7.4.0_20190708000001", current_at="2019-07-08"
         )
 
-        with patch('gcutils.bigquery.Client.upload_model'):
-            with patch('dmd2.management.commands.import_dmd2.notify_slack') as ns:
-                call_command('import_dmd2')
+        with patch("gcutils.bigquery.Client.upload_model"):
+            with patch("dmd2.management.commands.import_dmd2.notify_slack") as ns:
+                call_command("import_dmd2")
                 ns.assert_not_called()
 
 
@@ -218,22 +216,22 @@ class TestGetCommonName(TestCase):
     def test_common_name(self):
         self._test_get_common_name(
             [
-                'Zoledronic acid 4mg/100ml infusion bags',
-                'Zoledronic acid 4mg/100ml infusion bottles',
+                "Zoledronic acid 4mg/100ml infusion bags",
+                "Zoledronic acid 4mg/100ml infusion bottles",
             ],
-            'Zoledronic acid 4mg/100ml infusion',
+            "Zoledronic acid 4mg/100ml infusion",
         )
 
     def test_no_common_name(self):
         self._test_get_common_name(
-            ["Lassar's paste", 'Zinc and Salicylic acid paste'], None
+            ["Lassar's paste", "Zinc and Salicylic acid paste"], None
         )
 
     def test_common_name_too_short(self):
         self._test_get_common_name(
             [
-                'Coal tar 10% / Salicylic acid 5% in Aqueous cream',
-                'Coal tar solution 10% / Salicylic acid 5% in Aqueous cream',
+                "Coal tar 10% / Salicylic acid 5% in Aqueous cream",
+                "Coal tar solution 10% / Salicylic acid 5% in Aqueous cream",
             ],
             None,
         )
@@ -241,20 +239,20 @@ class TestGetCommonName(TestCase):
     def test_trailing_with_removed(self):
         self._test_get_common_name(
             [
-                'Polyfield Soft Vinyl Patient Pack with small gloves',
-                'Polyfield Soft Vinyl Patient Pack with medium gloves',
-                'Polyfield Soft Vinyl Patient Pack with large gloves',
+                "Polyfield Soft Vinyl Patient Pack with small gloves",
+                "Polyfield Soft Vinyl Patient Pack with medium gloves",
+                "Polyfield Soft Vinyl Patient Pack with large gloves",
             ],
-            'Polyfield Soft Vinyl Patient Pack',
+            "Polyfield Soft Vinyl Patient Pack",
         )
 
     def test_trailing_oral_removed(self):
         self._test_get_common_name(
             [
-                'Acetazolamide 350mg/5ml oral solution',
-                'Acetazolamide 350mg/5ml oral suspension',
+                "Acetazolamide 350mg/5ml oral solution",
+                "Acetazolamide 350mg/5ml oral suspension",
             ],
-            'Acetazolamide 350mg/5ml',
+            "Acetazolamide 350mg/5ml",
         )
 
     def _test_get_common_name(self, names, exp_common_name):

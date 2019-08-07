@@ -31,9 +31,7 @@ class CommandTests(TestCase):
         call_command("import_practices", "--epraccur", cls.path1)
         call_command("import_practices", "--epraccur", cls.path2)
 
-    @mock.patch(
-        "pipeline.management.commands.handle_orphan_practices.notify_slack"
-    )
+    @mock.patch("pipeline.management.commands.handle_orphan_practices.notify_slack")
     def test_wet_run(self, notify_slack):
         ccg_id_to_closed_practices = {
             ccg.code: list(ccg.practice_set.exclude(status_code="A"))
@@ -64,8 +62,7 @@ class CommandTests(TestCase):
             practice.refresh_from_db()
             self.assertEqual(practice.ccg_id, "C06")
             self.assertEqual(
-                practice.ccg_change_reason,
-                "CCG set by handle_orphan_practices",
+                practice.ccg_change_reason, "CCG set by handle_orphan_practices"
             )
 
         self.assertEqual(notify_slack.call_count, 2)
@@ -73,9 +70,7 @@ class CommandTests(TestCase):
         self.assertIn("Practices have left CCG C01", msgs[0])
         self.assertIn("All active practices previously in CCG C04", msgs[1])
 
-    @mock.patch(
-        "pipeline.management.commands.handle_orphan_practices.notify_slack"
-    )
+    @mock.patch("pipeline.management.commands.handle_orphan_practices.notify_slack")
     def test_dry_run(self, notify_slack):
         # This is just exercising the code
         try:

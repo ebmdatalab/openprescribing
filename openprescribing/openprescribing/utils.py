@@ -6,6 +6,7 @@ def mkdir_p(path):
         os.makedirs(path)
     except OSError as exc:
         import errno
+
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
@@ -21,4 +22,4 @@ def find_files(path):
 
 
 def get_input():
-    return raw_input('> ')
+    return raw_input("> ")

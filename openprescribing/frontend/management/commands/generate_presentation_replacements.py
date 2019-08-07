@@ -127,34 +127,30 @@ def create_code_mapping(filenames):
     Presentation.objects.filter(replaced_by__isnull=False).delete()
     for f in filenames:
         with transaction.atomic():
-            for line in open(f, 'r'):
+            for line in open(f, "r"):
                 if not line.strip():
                     continue  # skip blank lines
                 if "\t" not in line:
-                    raise CommandError(
-                        "Input lines must be tab delimited: %s" % line)
+                    raise CommandError("Input lines must be tab delimited: %s" % line)
                 prev_code, next_code = line.split("\t")
                 prev_code = prev_code.strip()
                 next_code = next_code.strip()
-                if not re.match(r'^[0-9A-Z]+$', next_code):
+                if not re.match(r"^[0-9A-Z]+$", next_code):
                     # Skip 'withdrawn' &c
                     continue
 
                 if len(prev_code) <= 7:  # section, subsection, paragraph
-                    Section.objects.filter(
-                        bnf_id__startswith=prev_code).update(
-                            is_current=False)
+                    Section.objects.filter(bnf_id__startswith=prev_code).update(
+                        is_current=False
+                    )
                 elif len(prev_code) == 9:
-                    Chemical.objects.filter(
-                        bnf_code=prev_code).update(is_current=False)
+                    Chemical.objects.filter(bnf_code=prev_code).update(is_current=False)
                 elif len(prev_code) == 11:
-                    Product.objects.filter(
-                        bnf_code=prev_code).update(is_current=False)
-                matches = Presentation.objects.filter(
-                    bnf_code__startswith=next_code)
+                    Product.objects.filter(bnf_code=prev_code).update(is_current=False)
+                matches = Presentation.objects.filter(bnf_code__startswith=next_code)
                 for row in matches:
                     replaced_by_id = row.pk
-                    old_bnf_code = prev_code + replaced_by_id[len(prev_code):]
+                    old_bnf_code = prev_code + replaced_by_id[len(prev_code) :]
                     try:
                         old_version = Presentation.objects.get(pk=old_bnf_code)
                     except Presentation.DoesNotExist:
@@ -172,13 +168,13 @@ def create_bigquery_table():
 
     """
     # output a row for each presentation and its ultimate replacement
-    with tempfile.NamedTemporaryFile(mode='r+b') as csv_file:
+    with tempfile.NamedTemporaryFile(mode="r+b") as csv_file:
         writer = csv.writer(csv_file)
         for p in Presentation.objects.filter(replaced_by__isnull=False):
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
         csv_file.seek(0)
-        client = Client('hscic')
-        table = client.get_or_create_table('bnf_map', schemas.BNF_MAP_SCHEMA)
+        client = Client("hscic")
+        table = client.get_or_create_table("bnf_map", schemas.BNF_MAP_SCHEMA)
         table.insert_rows_from_csv(csv_file.name, schemas.BNF_MAP_SCHEMA)
 
 
@@ -206,9 +202,12 @@ def write_zero_prescribing_codes_table(level):
       bnf.%s
     HAVING
       COUNT(prescribing.bnf_code) = 0
-    """ % (level, level)
-    client = Client('tmp_eu')
-    table = client.get_table('unused_codes_%s' % level)
+    """ % (
+        level,
+        level,
+    )
+    client = Client("tmp_eu")
+    table = client.get_table("unused_codes_%s" % level)
     table.insert_rows_from_query(sql)
     return table
 
@@ -221,7 +220,7 @@ def get_csv_of_empty_classes_for_level(level):
 
     """
     temp_table = write_zero_prescribing_codes_table(level)
-    storage_prefix = 'tmp/{}'.format(temp_table.table_id)
+    storage_prefix = "tmp/{}".format(temp_table.table_id)
     exporter = TableExporter(temp_table, storage_prefix)
 
     logger.info("Copying %s to %s" % (temp_table.table_id, storage_prefix))
@@ -229,7 +228,7 @@ def get_csv_of_empty_classes_for_level(level):
 
     path = "/%s/%s.csv" % (tempfile.gettempdir(), temp_table.table_id)
     logger.info("Downloading %s to %s" % (storage_prefix, path))
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         exporter.download_from_storage_and_unzip(f)
     return path
 
@@ -241,27 +240,17 @@ def cleanup_empty_classes():
 
     """
     classes = [
-        ('section_code',
-         Section,
-         'bnf_id'),
-        ('para_code',
-         Section,
-         'bnf_id'),
-        ('chemical_code',
-         Chemical,
-         'bnf_code'),
-        ('product_code',
-         Product,
-         'bnf_code'),
-        ('presentation_code',
-         Presentation,
-         'bnf_code'),
+        ("section_code", Section, "bnf_id"),
+        ("para_code", Section, "bnf_id"),
+        ("chemical_code", Chemical, "bnf_code"),
+        ("product_code", Product, "bnf_code"),
+        ("presentation_code", Presentation, "bnf_code"),
     ]
     for class_column, model, bnf_field in classes:
         csv_path = get_csv_of_empty_classes_for_level(class_column)
         logger.info("Marking all classes in %s as not current" % csv_path)
         with transaction.atomic():
-            with open(csv_path, 'r') as f:
+            with open(csv_path, "r") as f:
                 reader = csv.reader(f)
                 reader.next()  # skip header
                 for row in reader:
@@ -279,8 +268,7 @@ def cleanup_empty_classes():
                         #   their section;
                         #
                         #  * We don't currently import appliances and similar
-                        logger.warn("Couldn't find %s(pk=%s)" % (
-                            model.__name__, code))
+                        logger.warn("Couldn't find %s(pk=%s)" % (model.__name__, code))
 
 
 def update_existing_prescribing():
@@ -309,40 +297,39 @@ def update_existing_prescribing():
         for row in cursor.fetchall():
             table_name = row[0]
             with transaction.atomic():
-                for p in Presentation.objects.filter(
-                        replaced_by__isnull=False):
+                for p in Presentation.objects.filter(replaced_by__isnull=False):
                     cursor.execute(
-                        update_sql % (
-                            table_name,
-                            p.current_version.bnf_code,
-                            p.bnf_code)
+                        update_sql
+                        % (table_name, p.current_version.bnf_code, p.bnf_code)
                     )
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports presentation replacements.'
+    args = ""
+    help = "Imports presentation replacements."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'filenames',
-            nargs='*',
-            help='This argument only exists for tests. Normally the command '
-            'is expected to work on the contents of `presentation_commands/`'
+            "filenames",
+            nargs="*",
+            help="This argument only exists for tests. Normally the command "
+            "is expected to work on the contents of `presentation_commands/`",
         )
 
     def handle(self, *args, **options):
-        if options['filenames']:
-            filenames = reversed(sorted(options['filenames']))
+        if options["filenames"]:
+            filenames = reversed(sorted(options["filenames"]))
         else:
             filenames = reversed(
-                sorted(glob.glob(
-                    'frontend/management/commands/'
-                    'presentation_replacements/*.txt')
+                sorted(
+                    glob.glob(
+                        "frontend/management/commands/"
+                        "presentation_replacements/*.txt"
+                    )
                 )
             )
         create_code_mapping(filenames)
         create_bigquery_table()
-        call_command('create_normalised_prescribing_view')
+        call_command("create_normalised_prescribing_view")
         update_existing_prescribing()
         cleanup_empty_classes()

@@ -18,7 +18,8 @@ class Command(BaseCommand):
         model. We don't yet have a reliable source for this so we have to rely
         on various heuristics. This command should be the *only* way these
         flags get set so don't be tempted to modify the table by hand.
-        """)
+        """
+    )
 
     @transaction.atomic
     def handle(self, *args, **options):

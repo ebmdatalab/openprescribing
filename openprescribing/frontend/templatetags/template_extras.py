@@ -15,18 +15,20 @@ try:
     from django.utils.html import json_script
 except ImportError:
     from ._json_script_backport import json_script
-    register.filter('json_script', json_script, is_safe=True)
+
+    register.filter("json_script", json_script, is_safe=True)
 else:
     raise RuntimeError(
-        'Please remove the `_json_script_backport` module now that we are '
-        'using a version of Django which provides the `json_script` '
-        'template tag by default')
+        "Please remove the `_json_script_backport` module now that we are "
+        "using a version of Django which provides the `json_script` "
+        "template tag by default"
+    )
 
 
 @register.simple_tag(takes_context=True)
 def conditional_js(context, script_name):
-    suffix = '' if context.get('DEBUG', True) else '.min'
-    filename = 'js/{}{}.js'.format(script_name, suffix)
+    suffix = "" if context.get("DEBUG", True) else ".min"
+    filename = "js/{}{}.js".format(script_name, suffix)
     url = staticfiles_storage.url(filename)
     tag = '<script src="{}"></script>'.format(url)
     return mark_safe(tag)
@@ -60,7 +62,7 @@ def deltawords(num, arg):
 def roundpound(num):
     order = 10 ** math.floor(math.log10(num))
     if order > 0:
-        return intcomma(int(round(num/order) * order))
+        return intcomma(int(round(num / order) * order))
     else:
         return str(int(round(num)))
 
@@ -80,7 +82,7 @@ def sigfigs(value, figures=3):
         order = int(math.floor(math.log10(math.fabs(value))))
 
     places = figures - order - 1
-    format_string = '{:.%df}' % max(0, places)
+    format_string = "{:.%df}" % max(0, places)
     return format_string.format(round(value, places))
 
 
@@ -88,7 +90,7 @@ def sigfigs(value, figures=3):
 def url_toggle(request, field):
     dict_ = request.GET.copy()
     if field in dict_:
-        del(dict_[field])
+        del dict_[field]
     else:
         dict_[field] = 1
     return dict_.urlencode()
@@ -100,7 +102,7 @@ def current_time(format_string):
 
 
 @register.filter
-def fancy_join(lst, sep=', ', final_sep=' and '):
+def fancy_join(lst, sep=", ", final_sep=" and "):
     """
     Join a list using a different separator for the final element
     """

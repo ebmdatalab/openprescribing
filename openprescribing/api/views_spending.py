@@ -26,22 +26,22 @@ MIN_GHOST_GENERIC_DELTA = 2
 
 class NotValid(APIException):
     status_code = 400
-    default_detail = 'The code you provided is not valid'
+    default_detail = "The code you provided is not valid"
 
 
 def _valid_or_latest_date(date):
     if date:
         try:
-            date = datetime.datetime.strptime(date, '%Y-%m-%d')
+            date = datetime.datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
             raise NotValid("%s is not a valid date" % date)
     else:
-        date = ImportLog.objects.latest_in_category('prescribing').current_at
+        date = ImportLog.objects.latest_in_category("prescribing").current_at
     return date
 
 
 def _build_conditions_and_patterns(code, focus):
-    if not re.match(r'[A-Z0-9]{15}', code):
+    if not re.match(r"[A-Z0-9]{15}", code):
         raise NotValid("%s is not a valid code" % code)
 
     # flatten and uniquify the list of codes
@@ -54,7 +54,7 @@ def _build_conditions_and_patterns(code, focus):
 
     patterns = ["%s____%s" % (code[:9], code[13:15])]
     for extra_code in extra_codes:
-        if extra_code.endswith('%'):
+        if extra_code.endswith("%"):
             pattern = extra_code
         else:
             pattern = "%s____%s" % (extra_code[:9], extra_code[13:15])
@@ -72,27 +72,27 @@ def _build_conditions_and_patterns(code, focus):
 
 def _get_org_or_404(org_code, org_type=None):
     if not org_type and org_code:
-        org_type = 'ccg' if len(org_code) == 3 else 'practice'
-    if org_type.lower() == 'ccg':
+        org_type = "ccg" if len(org_code) == 3 else "practice"
+    if org_type.lower() == "ccg":
         org = get_object_or_404(PCT, pk=org_code)
-    elif org_type == 'practice':
+    elif org_type == "practice":
         org = get_object_or_404(Practice, pk=org_code)
     else:
         raise ValueError(org_type)
     return org
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def bubble(request, format=None):
     """Returns data relating to price-per-unit, in a format suitable for
     use in Highcharts bubble chart.
 
     """
-    code = request.query_params.get('bnf_code', '')
-    trim = request.query_params.get('trim', '')
-    date = _valid_or_latest_date(request.query_params.get('date', None))
-    highlight = request.query_params.get('highlight', None)
-    focus = request.query_params.get('focus', None) and highlight
+    code = request.query_params.get("bnf_code", "")
+    trim = request.query_params.get("trim", "")
+    date = _valid_or_latest_date(request.query_params.get("date", None))
+    highlight = request.query_params.get("highlight", None)
+    focus = request.query_params.get("focus", None) and highlight
     conditions, patterns = _build_conditions_and_patterns(code, focus)
     rounded_ppus_cte_sql = (
         "WITH rounded_ppus AS (SELECT presentation_code, "
@@ -106,9 +106,7 @@ def bubble(request, format=None):
         "frontend_presentation.bnf_code "
         "LEFT JOIN frontend_practice ON frontend_practice.code = practice_id "
         "WHERE processing_date = %s "
-        "AND setting = 4 " +
-        conditions +
-        ") "
+        "AND setting = 4 " + conditions + ") "
     )
     binned_ppus_sql = rounded_ppus_cte_sql + (
         ", binned_ppus AS (SELECT presentation_code, presentation_name, ppu, "
@@ -155,24 +153,24 @@ def bubble(request, format=None):
         categories = []
         pos = 0
         for result in namedtuplefetchall(cursor):
-            if result.presentation_name not in [x['name'] for x in categories]:
+            if result.presentation_name not in [x["name"] for x in categories]:
                 pos += 1
                 is_generic = False
-                if result.presentation_code[9:11] == 'AA':
+                if result.presentation_code[9:11] == "AA":
                     is_generic = True
                 categories.append(
-                    {
-                        'name': result.presentation_name,
-                        'is_generic': is_generic
-                    }
+                    {"name": result.presentation_name, "is_generic": is_generic}
                 )
 
-            series.append({
-                'x': pos,
-                'y': result.ppu,
-                'z': result.quantity,
-                'mean_ppu': result.mean_ppu,
-                'name': result.presentation_name})
+            series.append(
+                {
+                    "x": pos,
+                    "y": result.ppu,
+                    "z": result.quantity,
+                    "mean_ppu": result.mean_ppu,
+                    "name": result.presentation_name,
+                }
+            )
         if highlight:
             params.append(highlight)
             if len(highlight) == 3:
@@ -182,20 +180,21 @@ def bubble(request, format=None):
         cursor.execute(mean_ppu_for_entity_sql, params)
         plotline = cursor.fetchone()[0]
         return Response(
-            {'plotline': plotline, 'series': series, 'categories': categories})
+            {"plotline": plotline, "series": series, "categories": categories}
+        )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def price_per_unit(request, format=None):
     """Returns price per unit data for presentations and practices or
     CCGs
 
     """
-    entity_code = request.query_params.get('entity_code')
-    entity_type = request.query_params.get('entity_type')
-    date = request.query_params.get('date')
-    bnf_code = request.query_params.get('bnf_code')
-    aggregate = bool(request.query_params.get('aggregate'))
+    entity_code = request.query_params.get("entity_code")
+    entity_type = request.query_params.get("entity_type")
+    date = request.query_params.get("date")
+    bnf_code = request.query_params.get("bnf_code")
+    aggregate = bool(request.query_params.get("aggregate"))
     if not date:
         raise NotValid("You must supply a date")
     if not (entity_code or bnf_code or aggregate):
@@ -204,51 +203,51 @@ def price_per_unit(request, format=None):
             "aggregate flag"
         )
 
-    params = {'date': date}
+    params = {"date": date}
     filename = date
 
     if bnf_code:
-        params['bnf_code'] = bnf_code
+        params["bnf_code"] = bnf_code
         get_object_or_404(Presentation, pk=bnf_code)
         filename += "-%s" % bnf_code
 
     if entity_code:
         entity = _get_org_or_404(entity_code, entity_type)
-        params['entity_code'] = entity_code
+        params["entity_code"] = entity_code
         filename += "-%s" % entity_code
         if not entity_type:
             if isinstance(entity, PCT):
-                entity_type = 'CCG'
+                entity_type = "CCG"
             else:
-                entity_type = 'practice'
+                entity_type = "practice"
 
     extra_conditions = ""
 
     if bnf_code:
-        extra_conditions += '''
-        AND {ppusavings_table}.bnf_code = %(bnf_code)s'''
+        extra_conditions += """
+        AND {ppusavings_table}.bnf_code = %(bnf_code)s"""
 
     if entity_code:
         if isinstance(entity, Practice):
-            extra_conditions += '''
-        AND {ppusavings_table}.practice_id = %(entity_code)s'''
+            extra_conditions += """
+        AND {ppusavings_table}.practice_id = %(entity_code)s"""
         else:
-            extra_conditions += '''
-        AND {ppusavings_table}.pct_id = %(entity_code)s'''
+            extra_conditions += """
+        AND {ppusavings_table}.pct_id = %(entity_code)s"""
 
             if bnf_code:
-                extra_conditions += '''
-        AND {ppusavings_table}.practice_id IS NOT NULL'''
+                extra_conditions += """
+        AND {ppusavings_table}.practice_id IS NOT NULL"""
             else:
-                extra_conditions += '''
-        AND {ppusavings_table}.practice_id IS NULL'''
+                extra_conditions += """
+        AND {ppusavings_table}.practice_id IS NULL"""
     else:
-        if entity_type == 'practice':
-            extra_conditions += '''
-                AND {ppusavings_table}.practice_id IS NOT NULL'''
-        elif entity_type == 'CCG':
-            extra_conditions += '''
-                AND {ppusavings_table}.practice_id IS NULL'''
+        if entity_type == "practice":
+            extra_conditions += """
+                AND {ppusavings_table}.practice_id IS NOT NULL"""
+        elif entity_type == "CCG":
+            extra_conditions += """
+                AND {ppusavings_table}.practice_id IS NULL"""
 
     sql = ppu_sql(conditions=extra_conditions)
 
@@ -260,19 +259,19 @@ def price_per_unit(request, format=None):
         results = utils.dictfetchall(cursor)
 
     for result in results:
-        if result['practice_name'] is not None:
-            result['practice_name'] = nhs_titlecase(result['practice_name'])
-        if result['pct_name'] is not None:
-            result['pct_name'] = nhs_titlecase(result['pct_name'])
+        if result["practice_name"] is not None:
+            result["practice_name"] = nhs_titlecase(result["practice_name"])
+        if result["pct_name"] is not None:
+            result["pct_name"] = nhs_titlecase(result["pct_name"])
 
     response = Response(results)
-    if request.accepted_renderer.format == 'csv':
+    if request.accepted_renderer.format == "csv":
         filename = "%s-ppd.csv" % (filename)
-        response['content-disposition'] = "attachment; filename=%s" % filename
+        response["content-disposition"] = "attachment; filename=%s" % filename
     return response
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def ghost_generics(request, format=None):
     """Returns price per unit data for presentations and practices or
     CCGs
@@ -291,21 +290,21 @@ def ghost_generics(request, format=None):
     #
     # We exclude trivial amounts of saving on the grounds these should
     # be actionable savings.
-    date = request.query_params.get('date')
-    entity_code = request.query_params.get('entity_code')
-    entity_type = request.query_params.get('entity_type')
-    group_by = request.query_params.get('group_by')
+    date = request.query_params.get("date")
+    entity_code = request.query_params.get("entity_code")
+    entity_type = request.query_params.get("entity_type")
+    group_by = request.query_params.get("group_by")
     entity = _get_org_or_404(entity_code, org_type=entity_type)
     if not date:
         raise NotValid("You must supply a date")
 
-    params = {'date': date, 'entity_code': entity_code}
+    params = {"date": date, "entity_code": entity_code}
     filename = "ghost-generics-%s-%s" % (entity_code, date)
     extra_conditions = ""
     if isinstance(entity, Practice):
-        extra_conditions += '  AND practice_id = %(entity_code)s'
+        extra_conditions += "  AND practice_id = %(entity_code)s"
     elif isinstance(entity, PCT):
-        extra_conditions += '  AND ccg_id = %(entity_code)s'
+        extra_conditions += "  AND ccg_id = %(entity_code)s"
     else:
         assert False, "Not implemented for {}".format(entity)
     sql = """
@@ -337,10 +336,9 @@ def ghost_generics(request, format=None):
         AND (s.possible_savings >= {min_delta} OR s.possible_savings <= -{min_delta})
     ORDER BY possible_savings DESC
     """.format(
-        min_delta=MIN_GHOST_GENERIC_DELTA,
-        extra_conditions=extra_conditions
+        min_delta=MIN_GHOST_GENERIC_DELTA, extra_conditions=extra_conditions
     )
-    if group_by == 'presentation':
+    if group_by == "presentation":
         grouping = """
           SELECT
             date, pct, bnf_code,
@@ -352,7 +350,7 @@ def ghost_generics(request, format=None):
           FROM ({}) s
           GROUP BY date, pct, bnf_code"""
         sql = grouping.format(sql)
-    elif group_by == 'all':
+    elif group_by == "all":
         grouping = """
           SELECT
             SUM(possible_savings) AS possible_savings
@@ -363,9 +361,9 @@ def ghost_generics(request, format=None):
         cursor.execute(sql, params)
         results = utils.dictfetchall(cursor)
     response = Response(results)
-    if request.accepted_renderer.format == 'csv':
+    if request.accepted_renderer.format == "csv":
         filename = "%s.csv" % (filename)
-        response['content-disposition'] = "attachment; filename=%s" % filename
+        response["content-disposition"] = "attachment; filename=%s" % filename
     return response
 
 
@@ -407,20 +405,21 @@ def _aggregate_ppu_sql(original_sql, entity_type):
         FROM cte
         GROUP BY date, presentation
         """.format(
-            original_sql=original_sql,
-            pct_name=entity_name if entity_type == 'CCG' else 'NULL',
-            practice_name="NULL" if entity_type == 'CCG' else entity_name)
+        original_sql=original_sql,
+        pct_name=entity_name if entity_type == "CCG" else "NULL",
+        practice_name="NULL" if entity_type == "CCG" else entity_name,
+    )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def total_spending(request, format=None):
-    codes = utils.param_to_list(request.query_params.get('code', []))
+    codes = utils.param_to_list(request.query_params.get("code", []))
     codes = utils.get_bnf_codes_from_number_str(codes)
     data = _get_total_prescribing_entries(codes)
     response = Response(list(data))
-    if request.accepted_renderer.format == 'csv':
-        filename = "spending-{}.csv".format('-'.join(codes))
-        response['content-disposition'] = "attachment; filename={}".format(filename)
+    if request.accepted_renderer.format == "csv":
+        filename = "spending-{}.csv".format("-".join(codes))
+        response["content-disposition"] = "attachment; filename={}".format(filename)
     return response
 
 
@@ -442,7 +441,7 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
     # not seem like what we want but is what the original API did (it was
     # powered by the `vw__presentation_summary` table which summed over all
     # practice types)
-    group_all = get_row_grouper('all_practices')
+    group_all = get_row_grouper("all_practices")
     items_matrix = group_all.sum(items_matrix)
     quantity_matrix = group_all.sum(quantity_matrix)
     actual_cost_matrix = group_all.sum(actual_cost_matrix)
@@ -454,18 +453,18 @@ def _get_total_prescribing_entries(bnf_code_prefixes):
         # total over all practices) so we always want row 0 in our index
         index = (0, col_offset)
         yield {
-            'items': items_matrix[index],
-            'quantity': quantity_matrix[index],
-            'actual_cost': round(actual_cost_matrix[index], 2),
-            'date': date,
+            "items": items_matrix[index],
+            "quantity": quantity_matrix[index],
+            "actual_cost": round(actual_cost_matrix[index], 2),
+            "date": date,
         }
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def tariff(request, format=None):
     # This view uses raw SQL as we cannot produce the LEFT OUTER JOIN using the
     # ORM.
-    codes = utils.param_to_list(request.query_params.get('codes', []))
+    codes = utils.param_to_list(request.query_params.get("codes", []))
 
     # On 2019-05-14 someone set up a job on Zapier which requests the entire
     # (35MB) drug tariff every 10 minutes. We'd like Cloudflare to cache this
@@ -476,7 +475,7 @@ def tariff(request, format=None):
     # case that the request doesn't specify any BNF codes.
     response_should_be_cached = not codes
 
-    query = '''
+    query = """
     SELECT tariffprice.date AS date,
            tariffprice.price_pence AS price_pence,
            vmpp.nm AS vmpp,
@@ -493,87 +492,87 @@ def tariff(request, format=None):
         LEFT OUTER JOIN frontend_ncsoconcession ncso_concession
             ON (tariffprice.date = ncso_concession.date
                 AND tariffprice.vmpp_id = ncso_concession.vmpp_id)
-    '''
+    """
 
     if codes:
-        query += ' WHERE vmpp.bnf_code IN ('
-        query += ','.join('%s' for _ in range(len(codes)))
-        query += ')'
+        query += " WHERE vmpp.bnf_code IN ("
+        query += ",".join("%s" for _ in range(len(codes)))
+        query += ")"
         params = [codes]
     else:
         params = None
 
-    query += ' ORDER BY date'
+    query += " ORDER BY date"
 
     data = utils.execute_query(query, params)
     response = Response(data)
-    if request.accepted_renderer.format == 'csv':
+    if request.accepted_renderer.format == "csv":
         filename = "tariff.csv"
-        response['content-disposition'] = "attachment; filename=%s" % filename
+        response["content-disposition"] = "attachment; filename=%s" % filename
     if response_should_be_cached:
-        response['cache-control'] = 'max-age={}, public'.format(60 * 60 * 8)
+        response["cache-control"] = "max-age={}, public".format(60 * 60 * 8)
     return response
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def spending_by_org(request, format=None, org_type=None):
-    codes = utils.param_to_list(request.query_params.get('code', []))
+    codes = utils.param_to_list(request.query_params.get("code", []))
     codes = utils.get_bnf_codes_from_number_str(codes)
-    org_ids = utils.param_to_list(request.query_params.get('org', []))
-    org_type = request.query_params.get('org_type', org_type)
-    date = request.query_params.get('date', None)
+    org_ids = utils.param_to_list(request.query_params.get("org", []))
+    org_type = request.query_params.get("org_type", org_type)
+    date = request.query_params.get("date", None)
 
     # Accept both cases of CCG (better to fix this specific string rather than
     # make the whole API case-insensitive)
-    if org_type == 'CCG':
-        org_type = 'ccg'
+    if org_type == "CCG":
+        org_type = "ccg"
 
     # Some special case handling for practices
-    if org_type == 'practice':
+    if org_type == "practice":
         # Translate any CCG codes into the codes of all practices in that CCG
         org_ids = utils.get_practice_ids_from_org(org_ids)
         # Due to the number of practices we only return data for all practices
         # if a single date is specified
         if not date and not org_ids:
             return Response(
-                'Error: You must supply either a list of practice IDs or a date '
-                'parameter, e.g. date=2015-04-01',
-                status=400
+                "Error: You must supply either a list of practice IDs or a date "
+                "parameter, e.g. date=2015-04-01",
+                status=400,
             )
 
     # We don't (yet?) have a "proper" code field for PCNs or STPs so we're
     # using their ONS code
-    code_field = 'code' if org_type not in ('pcn', 'stp') else 'ons_code'
+    code_field = "code" if org_type not in ("pcn", "stp") else "ons_code"
 
-    if org_type == 'practice':
+    if org_type == "practice":
         orgs = Practice.objects.all()
-    elif org_type == 'ccg':
-        orgs = PCT.objects.filter(org_type='CCG')
-    elif org_type == 'pcn':
+    elif org_type == "ccg":
+        orgs = PCT.objects.filter(org_type="CCG")
+    elif org_type == "pcn":
         orgs = PCN.objects.all()
-    elif org_type == 'stp':
+    elif org_type == "stp":
         orgs = STP.objects.all()
-    elif org_type == 'regional_team':
+    elif org_type == "regional_team":
         orgs = RegionalTeam.objects.all()
     else:
-        return Response('Error: unrecognised org_type parameter', status=400)
+        return Response("Error: unrecognised org_type parameter", status=400)
 
     # Filter and sort
     if org_ids:
-        orgs = orgs.filter(**{code_field + '__in': org_ids})
+        orgs = orgs.filter(**{code_field + "__in": org_ids})
     orgs = orgs.order_by(code_field)
 
     # For most orgs we just want the code and name but for practices we want
     # the entire object because, for compatibility with the existing API, we
     # return extra data for practices
-    if org_type != 'practice':
-        orgs = orgs.only(code_field, 'name')
+    if org_type != "practice":
+        orgs = orgs.only(code_field, "name")
 
     data = _get_prescribing_entries(codes, orgs, org_type, date=date)
     response = Response(list(data))
-    if request.accepted_renderer.format == 'csv':
-        filename = "spending-by-{}-{}.csv".format(org_type, '-'.join(codes))
-        response['content-disposition'] = "attachment; filename={}".format(filename)
+    if request.accepted_renderer.format == "csv":
+        filename = "spending-by-{}-{}.csv".format(org_type, "-".join(codes))
+        response["content-disposition"] = "attachment; filename={}".format(filename)
     return response
 
 
@@ -623,17 +622,17 @@ def _get_prescribing_entries(bnf_code_prefixes, orgs, org_type, date=None):
             if items == 0:
                 continue
             entry = {
-                'items': items,
-                'quantity': quantity_matrix[index],
-                'actual_cost': round(actual_cost_matrix[index], 2),
-                'date': date,
-                'row_id': org.pk,
-                'row_name': org.name,
+                "items": items,
+                "quantity": quantity_matrix[index],
+                "actual_cost": round(actual_cost_matrix[index], 2),
+                "date": date,
+                "row_id": org.pk,
+                "row_name": org.name,
             }
             # Practices get some extra attributes in the existing API
-            if org_type == 'practice':
-                entry['ccg'] = org.ccg_id
-                entry['setting'] = org.setting
+            if org_type == "practice":
+                entry["ccg"] = org.ccg_id
+                entry["setting"] = org.setting
             yield entry
 
 
@@ -645,10 +644,9 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
     presentations.
     """
     if bnf_code_prefixes:
-        where_clause = ' OR '.join(['bnf_code LIKE ?'] * len(bnf_code_prefixes))
-        params = [code + '%' for code in bnf_code_prefixes]
-        sql = (
-            """
+        where_clause = " OR ".join(["bnf_code LIKE ?"] * len(bnf_code_prefixes))
+        params = [code + "%" for code in bnf_code_prefixes]
+        sql = """
             SELECT
                 matrix_sum(items) AS items,
                 matrix_sum(quantity) AS quantity,
@@ -658,13 +656,12 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
             WHERE
                 items IS NOT NULL AND ({})
             """.format(
-                where_clause
-            )
+            where_clause
         )
     else:
         # As summing over all presentations can be quite slow we use the
         # precalculated results table
-        sql = 'SELECT items, quantity, actual_cost FROM all_presentations'
+        sql = "SELECT items, quantity, actual_cost FROM all_presentations"
         params = []
     items, quantity, actual_cost = db.query_one(sql, params)
     # Convert from pence to pounds

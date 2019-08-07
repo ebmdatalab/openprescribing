@@ -18,37 +18,20 @@ class VTM(models.Model):
         return str(self.id)
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="vtmid",
-        help_text="Identifier",
+        primary_key=True, db_column="vtmid", help_text="Identifier"
     )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    nm = models.CharField(
-        max_length=255,
-        help_text="Name",
-    )
-    abbrevnm = models.CharField(
-        max_length=60,
-        null=True,
-        help_text="Abbreviated name",
-    )
-    vtmidprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous identifier",
-    )
-    vtmiddt = models.DateField(
-        null=True,
-        help_text="VTM identifier date",
-    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    vtmidprev = models.BigIntegerField(null=True, help_text="Previous identifier")
+    vtmiddt = models.DateField(null=True, help_text="VTM identifier date")
 
     def title(self):
         return self.nm
 
     def status(self):
         if self.invalid:
-            return 'invalid'
+            return "invalid"
         else:
             return None
 
@@ -67,17 +50,11 @@ class VMP(models.Model):
         return str(self.id)
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="vpid",
-        help_text="Identifier",
+        primary_key=True, db_column="vpid", help_text="Identifier"
     )
-    vpiddt = models.DateField(
-        null=True,
-        help_text="Date identifier became valid",
-    )
+    vpiddt = models.DateField(null=True, help_text="Date identifier became valid")
     vpidprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous product identifier",
+        null=True, help_text="Previous product identifier"
     )
     vtm = models.ForeignKey(
         db_column="vtmid",
@@ -86,33 +63,17 @@ class VMP(models.Model):
         null=True,
         help_text="VTM",
     )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    nm = models.CharField(
-        max_length=255,
-        help_text="Name",
-    )
-    abbrevnm = models.CharField(
-        max_length=60,
-        null=True,
-        help_text="Abbreviated name",
-    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
     basis = models.ForeignKey(
         db_column="basiscd",
         to="BasisOfName",
         on_delete=models.CASCADE,
         help_text="Basis of preferred name",
     )
-    nmdt = models.DateField(
-        null=True,
-        help_text="Date of name applicability",
-    )
-    nmprev = models.CharField(
-        max_length=255,
-        null=True,
-        help_text="Previous name",
-    )
+    nmdt = models.DateField(null=True, help_text="Date of name applicability")
+    nmprev = models.CharField(max_length=255, null=True, help_text="Previous name")
     basis_prev = models.ForeignKey(
         db_column="basis_prevcd",
         to="BasisOfName",
@@ -141,18 +102,10 @@ class VMP(models.Model):
         on_delete=models.CASCADE,
         help_text="Prescribing status",
     )
-    sug_f = models.BooleanField(
-        help_text="Sugar free",
-    )
-    glu_f = models.BooleanField(
-        help_text="Gluten free",
-    )
-    pres_f = models.BooleanField(
-        help_text="Preservative free",
-    )
-    cfc_f = models.BooleanField(
-        help_text="CFC free",
-    )
+    sug_f = models.BooleanField(help_text="Sugar free")
+    glu_f = models.BooleanField(help_text="Gluten free")
+    pres_f = models.BooleanField(help_text="Preservative free")
+    cfc_f = models.BooleanField(help_text="CFC free")
     non_avail = models.ForeignKey(
         db_column="non_availcd",
         to="VirtualProductNonAvail",
@@ -160,10 +113,7 @@ class VMP(models.Model):
         null=True,
         help_text="Non-availability",
     )
-    non_availdt = models.DateField(
-        null=True,
-        help_text="Non-availability status date",
-    )
+    non_availdt = models.DateField(null=True, help_text="Non-availability status date")
     df_ind = models.ForeignKey(
         db_column="df_indcd",
         to="DfIndicator",
@@ -172,10 +122,7 @@ class VMP(models.Model):
         help_text="Dose form",
     )
     udfs = models.DecimalField(
-        max_digits=10,
-        decimal_places=3,
-        null=True,
-        help_text="Unit dose form size",
+        max_digits=10, decimal_places=3, null=True, help_text="Unit dose form size"
     )
     udfs_uom = models.ForeignKey(
         db_column="udfs_uomcd",
@@ -202,13 +149,13 @@ class VMP(models.Model):
         tokens = []
 
         if self.invalid:
-            tokens.append('invalid')
+            tokens.append("invalid")
         if not self.bnf_code:
-            tokens.append('no BNF code')
+            tokens.append("no BNF code")
         if self.non_avail_id == 1:
-            tokens.append('not available')
+            tokens.append("not available")
 
-        return ', '.join(tokens) or None
+        return ", ".join(tokens) or None
 
 
 class VPI(models.Model):
@@ -216,16 +163,10 @@ class VPI(models.Model):
         verbose_name = "Virtual Product Ingredient"
 
     vmp = models.ForeignKey(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     ing = models.ForeignKey(
-        db_column="isid",
-        to="Ing",
-        on_delete=models.CASCADE,
-        help_text="Ingredient",
+        db_column="isid", to="Ing", on_delete=models.CASCADE, help_text="Ingredient"
     )
     basis_strnt = models.ForeignKey(
         db_column="basis_strntcd",
@@ -235,14 +176,10 @@ class VPI(models.Model):
         help_text="Basis of pharmaceutical strength",
     )
     bs_subid = models.BigIntegerField(
-        null=True,
-        help_text="Basis of strength substance identifier",
+        null=True, help_text="Basis of strength substance identifier"
     )
     strnt_nmrtr_val = models.DecimalField(
-        max_digits=10,
-        decimal_places=3,
-        null=True,
-        help_text="Strength value numerator",
+        max_digits=10, decimal_places=3, null=True, help_text="Strength value numerator"
     )
     strnt_nmrtr_uom = models.ForeignKey(
         db_column="strnt_nmrtr_uomcd",
@@ -273,10 +210,7 @@ class Ont(models.Model):
         verbose_name = "Ontology Drug Form & Route"
 
     vmp = models.ForeignKey(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     form = models.ForeignKey(
         db_column="formcd",
@@ -291,16 +225,10 @@ class Dform(models.Model):
         verbose_name = "Dose Form"
 
     vmp = models.OneToOneField(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     form = models.ForeignKey(
-        db_column="formcd",
-        to="Form",
-        on_delete=models.CASCADE,
-        help_text="Formulation",
+        db_column="formcd", to="Form", on_delete=models.CASCADE, help_text="Formulation"
     )
 
 
@@ -309,16 +237,10 @@ class Droute(models.Model):
         verbose_name = "Drug Route"
 
     vmp = models.ForeignKey(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     route = models.ForeignKey(
-        db_column="routecd",
-        to="Route",
-        on_delete=models.CASCADE,
-        help_text="Route",
+        db_column="routecd", to="Route", on_delete=models.CASCADE, help_text="Route"
     )
 
 
@@ -327,10 +249,7 @@ class ControlInfo(models.Model):
         verbose_name = "Controlled Drug Prescribing Information"
 
     vmp = models.OneToOneField(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     cat = models.ForeignKey(
         db_column="catcd",
@@ -338,10 +257,7 @@ class ControlInfo(models.Model):
         on_delete=models.CASCADE,
         help_text="Controlled Drug category",
     )
-    catdt = models.DateField(
-        null=True,
-        help_text="Date of applicability",
-    )
+    catdt = models.DateField(null=True, help_text="Date of applicability")
     cat_prev = models.ForeignKey(
         db_column="cat_prevcd",
         to="ControlDrugCategory",
@@ -366,41 +282,17 @@ class AMP(models.Model):
         return str(self.id)
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="apid",
-        help_text="Identifier",
+        primary_key=True, db_column="apid", help_text="Identifier"
     )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
+    invalid = models.BooleanField(help_text="Invalid")
     vmp = models.ForeignKey(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
-    nm = models.CharField(
-        max_length=255,
-        help_text="Name",
-    )
-    abbrevnm = models.CharField(
-        max_length=60,
-        null=True,
-        help_text="Abbreviated name",
-    )
-    descr = models.CharField(
-        max_length=700,
-        help_text="Description",
-    )
-    nmdt = models.DateField(
-        null=True,
-        help_text="Date of name applicability",
-    )
-    nm_prev = models.CharField(
-        max_length=255,
-        null=True,
-        help_text="Previous name",
-    )
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    descr = models.CharField(max_length=700, help_text="Description")
+    nmdt = models.DateField(null=True, help_text="Date of name applicability")
+    nm_prev = models.CharField(max_length=255, null=True, help_text="Previous name")
     supp = models.ForeignKey(
         db_column="suppcd",
         to="Supplier",
@@ -429,8 +321,7 @@ class AMP(models.Model):
         help_text="Reason for change of licensing authority",
     )
     lic_authchangedt = models.DateField(
-        null=True,
-        help_text="Date of change of licensing authority",
+        null=True, help_text="Date of change of licensing authority"
     )
     combprod = models.ForeignKey(
         db_column="combprodcd",
@@ -446,12 +337,8 @@ class AMP(models.Model):
         null=True,
         help_text="Flavour",
     )
-    ema = models.BooleanField(
-        help_text="EMA additional monitoring",
-    )
-    parallel_import = models.BooleanField(
-        help_text="Parallel import",
-    )
+    ema = models.BooleanField(help_text="EMA additional monitoring")
+    parallel_import = models.BooleanField(help_text="Parallel import")
     avail_restrict = models.ForeignKey(
         db_column="avail_restrictcd",
         to="AvailabilityRestriction",
@@ -467,13 +354,13 @@ class AMP(models.Model):
         tokens = []
 
         if self.invalid:
-            tokens.append('invalid')
+            tokens.append("invalid")
         if not self.bnf_code:
-            tokens.append('no BNF code')
+            tokens.append("no BNF code")
         if self.avail_restrict_id == 9:
-            tokens.append('not available')
+            tokens.append("not available")
 
-        return ', '.join(tokens) or None
+        return ", ".join(tokens) or None
 
 
 class ApIng(models.Model):
@@ -481,16 +368,10 @@ class ApIng(models.Model):
         verbose_name = "Excipients"
 
     amp = models.ForeignKey(
-        db_column="apid",
-        to="AMP",
-        on_delete=models.CASCADE,
-        help_text="AMP",
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
     )
     ing = models.ForeignKey(
-        db_column="isid",
-        to="Ing",
-        on_delete=models.CASCADE,
-        help_text="Ingredient",
+        db_column="isid", to="Ing", on_delete=models.CASCADE, help_text="Ingredient"
     )
     strnth = models.DecimalField(
         max_digits=10,
@@ -513,10 +394,7 @@ class LicRoute(models.Model):
         verbose_name = "Licensed Route"
 
     amp = models.ForeignKey(
-        db_column="apid",
-        to="AMP",
-        on_delete=models.CASCADE,
-        help_text="AMP",
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
     )
     route = models.ForeignKey(
         db_column="routecd",
@@ -531,16 +409,9 @@ class ApInfo(models.Model):
         verbose_name = "Appliance Product Information"
 
     amp = models.OneToOneField(
-        db_column="apid",
-        to="AMP",
-        on_delete=models.CASCADE,
-        help_text="AMP",
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
     )
-    sz_weight = models.CharField(
-        max_length=100,
-        null=True,
-        help_text="Size / weight",
-    )
+    sz_weight = models.CharField(max_length=100, null=True, help_text="Size / weight")
     colour = models.ForeignKey(
         db_column="colourcd",
         to="Colour",
@@ -549,9 +420,7 @@ class ApInfo(models.Model):
         help_text="Colour",
     )
     prod_order_no = models.CharField(
-        max_length=20,
-        null=True,
-        help_text="Product order number",
+        max_length=20, null=True, help_text="Product order number"
     )
 
 
@@ -569,28 +438,15 @@ class VMPP(models.Model):
         return str(self.id)
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="vppid",
-        help_text="Identifier",
+        primary_key=True, db_column="vppid", help_text="Identifier"
     )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    nm = models.CharField(
-        max_length=420,
-        help_text="Description",
-    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=420, help_text="Description")
     vmp = models.ForeignKey(
-        db_column="vpid",
-        to="VMP",
-        on_delete=models.CASCADE,
-        help_text="VMP",
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
     )
     qtyval = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        null=True,
-        help_text="Quantity value",
+        max_digits=10, decimal_places=2, null=True, help_text="Quantity value"
     )
     qty_uom = models.ForeignKey(
         db_column="qty_uomcd",
@@ -616,11 +472,11 @@ class VMPP(models.Model):
         tokens = []
 
         if self.invalid:
-            tokens.append('invalid')
+            tokens.append("invalid")
         if not self.bnf_code:
-            tokens.append('no BNF code')
+            tokens.append("no BNF code")
 
-        return ', '.join(tokens) or None
+        return ", ".join(tokens) or None
 
 
 class Dtinfo(models.Model):
@@ -628,10 +484,7 @@ class Dtinfo(models.Model):
         verbose_name = "Drug Tariff Category Information"
 
     vmpp = models.OneToOneField(
-        db_column="vppid",
-        to="VMPP",
-        on_delete=models.CASCADE,
-        help_text="VMPP",
+        db_column="vppid", to="VMPP", on_delete=models.CASCADE, help_text="VMPP"
     )
     pay_cat = models.ForeignKey(
         db_column="pay_catcd",
@@ -639,18 +492,9 @@ class Dtinfo(models.Model):
         on_delete=models.CASCADE,
         help_text="Drug Tariff payment category",
     )
-    price = models.IntegerField(
-        null=True,
-        help_text="Drug Tariff price",
-    )
-    dt = models.DateField(
-        null=True,
-        help_text="Date from which applicable",
-    )
-    prevprice = models.IntegerField(
-        null=True,
-        help_text="Previous price",
-    )
+    price = models.IntegerField(null=True, help_text="Drug Tariff price")
+    dt = models.DateField(null=True, help_text="Date from which applicable")
+    prevprice = models.IntegerField(null=True, help_text="Previous price")
 
 
 class AMPP(models.Model):
@@ -667,33 +511,16 @@ class AMPP(models.Model):
         return str(self.id)
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="appid",
-        help_text="Identifier",
+        primary_key=True, db_column="appid", help_text="Identifier"
     )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    nm = models.CharField(
-        max_length=774,
-        help_text="Description",
-    )
-    abbrevnm = models.CharField(
-        max_length=60,
-        null=True,
-        help_text="Abbreviated name",
-    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=774, help_text="Description")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
     vmpp = models.ForeignKey(
-        db_column="vppid",
-        to="VMPP",
-        on_delete=models.CASCADE,
-        help_text="VMPP",
+        db_column="vppid", to="VMPP", on_delete=models.CASCADE, help_text="VMPP"
     )
     amp = models.ForeignKey(
-        db_column="apid",
-        to="AMP",
-        on_delete=models.CASCADE,
-        help_text="AMP",
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
     )
     combpack = models.ForeignKey(
         db_column="combpackcd",
@@ -708,11 +535,7 @@ class AMPP(models.Model):
         on_delete=models.CASCADE,
         help_text="Legal category",
     )
-    subp = models.CharField(
-        max_length=30,
-        null=True,
-        help_text="Sub pack info",
-    )
+    subp = models.CharField(max_length=30, null=True, help_text="Sub pack info")
     disc = models.ForeignKey(
         db_column="disccd",
         to="DiscontinuedInd",
@@ -720,10 +543,7 @@ class AMPP(models.Model):
         null=True,
         help_text="Discontinued",
     )
-    discdt = models.DateField(
-        null=True,
-        help_text="Discontinued change date",
-    )
+    discdt = models.DateField(null=True, help_text="Discontinued change date")
     bnf_code = models.CharField(max_length=15, null=True)
 
     def title(self):
@@ -733,13 +553,13 @@ class AMPP(models.Model):
         tokens = []
 
         if self.invalid:
-            tokens.append('invalid')
+            tokens.append("invalid")
         if not self.bnf_code:
-            tokens.append('no BNF code')
+            tokens.append("no BNF code")
         if self.disc_id == 1:
-            tokens.append('not available')
+            tokens.append("not available")
 
-        return ', '.join(tokens) or None
+        return ", ".join(tokens) or None
 
 
 class PackInfo(models.Model):
@@ -747,10 +567,7 @@ class PackInfo(models.Model):
         verbose_name = "Appliance Pack Information"
 
     ampp = models.OneToOneField(
-        db_column="appid",
-        to="AMPP",
-        on_delete=models.CASCADE,
-        help_text="AMPP",
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
     reimb_stat = models.ForeignKey(
         db_column="reimb_statcd",
@@ -759,8 +576,7 @@ class PackInfo(models.Model):
         help_text="Appliance reimbursement status",
     )
     reimb_statdt = models.DateField(
-        null=True,
-        help_text="Date appliance reimbursement status became effective",
+        null=True, help_text="Date appliance reimbursement status became effective"
     )
     reimb_statprev = models.ForeignKey(
         db_column="reimb_statprevcd",
@@ -771,9 +587,7 @@ class PackInfo(models.Model):
         help_text="Appliance reimbursement previous status",
     )
     pack_order_no = models.CharField(
-        max_length=20,
-        null=True,
-        help_text="Pack order number",
+        max_length=20, null=True, help_text="Pack order number"
     )
 
 
@@ -782,38 +596,17 @@ class PrescribInfo(models.Model):
         verbose_name = "Product Prescribing Information"
 
     ampp = models.OneToOneField(
-        db_column="appid",
-        to="AMPP",
-        on_delete=models.CASCADE,
-        help_text="AMPP",
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    sched_2 = models.BooleanField(
-        help_text="Schedule 2",
-    )
-    acbs = models.BooleanField(
-        help_text="ACBS",
-    )
-    padm = models.BooleanField(
-        help_text="Personally administered",
-    )
-    fp10_mda = models.BooleanField(
-        help_text="FP10 MDA Prescription",
-    )
-    sched_1 = models.BooleanField(
-        help_text="Schedule 1",
-    )
-    hosp = models.BooleanField(
-        help_text="Hospital",
-    )
-    nurse_f = models.BooleanField(
-        help_text="Nurse formulary",
-    )
-    enurse_f = models.BooleanField(
-        help_text="Nurse extended formulary",
-    )
-    dent_f = models.BooleanField(
-        help_text="Dental formulary",
-    )
+    sched_2 = models.BooleanField(help_text="Schedule 2")
+    acbs = models.BooleanField(help_text="ACBS")
+    padm = models.BooleanField(help_text="Personally administered")
+    fp10_mda = models.BooleanField(help_text="FP10 MDA Prescription")
+    sched_1 = models.BooleanField(help_text="Schedule 1")
+    hosp = models.BooleanField(help_text="Hospital")
+    nurse_f = models.BooleanField(help_text="Nurse formulary")
+    enurse_f = models.BooleanField(help_text="Nurse extended formulary")
+    dent_f = models.BooleanField(help_text="Dental formulary")
 
 
 class PriceInfo(models.Model):
@@ -821,23 +614,11 @@ class PriceInfo(models.Model):
         verbose_name = "Medicinal Product Price"
 
     ampp = models.OneToOneField(
-        db_column="appid",
-        to="AMPP",
-        on_delete=models.CASCADE,
-        help_text="AMPP",
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    price = models.IntegerField(
-        null=True,
-        help_text="Price",
-    )
-    pricedt = models.DateField(
-        null=True,
-        help_text="Date of price validity",
-    )
-    price_prev = models.IntegerField(
-        null=True,
-        help_text="Price prior to change date",
-    )
+    price = models.IntegerField(null=True, help_text="Price")
+    pricedt = models.DateField(null=True, help_text="Date of price validity")
+    price_prev = models.IntegerField(null=True, help_text="Price prior to change date")
     price_basis = models.ForeignKey(
         db_column="price_basiscd",
         to="PriceBasis",
@@ -851,25 +632,12 @@ class ReimbInfo(models.Model):
         verbose_name = "Reimbursement Information"
 
     ampp = models.OneToOneField(
-        db_column="appid",
-        to="AMPP",
-        on_delete=models.CASCADE,
-        help_text="AMPP",
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    px_chrgs = models.IntegerField(
-        null=True,
-        help_text="Prescription charges",
-    )
-    disp_fees = models.IntegerField(
-        null=True,
-        help_text="Dispensing fees",
-    )
-    bb = models.BooleanField(
-        help_text="Broken bulk",
-    )
-    cal_pack = models.BooleanField(
-        help_text="Calendar pack",
-    )
+    px_chrgs = models.IntegerField(null=True, help_text="Prescription charges")
+    disp_fees = models.IntegerField(null=True, help_text="Dispensing fees")
+    bb = models.BooleanField(help_text="Broken bulk")
+    cal_pack = models.BooleanField(help_text="Calendar pack")
     spec_cont = models.ForeignKey(
         db_column="spec_contcd",
         to="SpecCont",
@@ -884,9 +652,7 @@ class ReimbInfo(models.Model):
         null=True,
         help_text="Discount not deducted",
     )
-    fp34d = models.BooleanField(
-        help_text="FP34D prescription item",
-    )
+    fp34d = models.BooleanField(help_text="FP34D prescription item")
 
 
 class Ing(models.Model):
@@ -894,346 +660,151 @@ class Ing(models.Model):
         verbose_name = "Ingredients"
 
     id = models.BigIntegerField(
-        primary_key=True,
-        db_column="isid",
-        help_text="Identifier",
+        primary_key=True, db_column="isid", help_text="Identifier"
     )
-    isiddt = models.DateField(
-        null=True,
-        help_text="Date identifier became valid",
-    )
-    isidprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous identifier",
-    )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    nm = models.CharField(
-        max_length=255,
-        help_text="Name",
-    )
+    isiddt = models.DateField(null=True, help_text="Date identifier became valid")
+    isidprev = models.BigIntegerField(null=True, help_text="Previous identifier")
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
 
 
 class CombinationPackInd(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class CombinationProdInd(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class BasisOfName(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=150,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
 
 
 class NamechangeReason(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=150,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
 
 
 class VirtualProductPresStatus(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class ControlDrugCategory(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class LicensingAuthority(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class UnitOfMeasure(models.Model):
-    cd = models.BigIntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    cddt = models.DateField(
-        null=True,
-        help_text="Date code is applicable from",
-    )
-    cdprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous code",
-    )
-    descr = models.CharField(
-        max_length=150,
-        help_text="Description",
-    )
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=150, help_text="Description")
 
 
 class Form(models.Model):
-    cd = models.BigIntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    cddt = models.DateField(
-        null=True,
-        help_text="Date code is applicable from",
-    )
-    cdprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class OntFormRoute(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class Route(models.Model):
-    cd = models.BigIntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    cddt = models.DateField(
-        null=True,
-        help_text="Date code is applicable from",
-    )
-    cdprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class DtPaymentCategory(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class Supplier(models.Model):
-    cd = models.BigIntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    cddt = models.DateField(
-        null=True,
-        help_text="Date code is applicable from",
-    )
-    cdprev = models.BigIntegerField(
-        null=True,
-        help_text="Previous code",
-    )
-    invalid = models.BooleanField(
-        help_text="Invalid",
-    )
-    descr = models.CharField(
-        max_length=80,
-        help_text="Description",
-    )
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    invalid = models.BooleanField(help_text="Invalid")
+    descr = models.CharField(max_length=80, help_text="Description")
 
 
 class Flavour(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class Colour(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class BasisOfStrnth(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=150,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
 
 
 class ReimbursementStatus(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class SpecCont(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class Dnd(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class VirtualProductNonAvail(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class DiscontinuedInd(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class DfIndicator(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=20,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=20, help_text="Description")
 
 
 class PriceBasis(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class LegalCategory(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class AvailabilityRestriction(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class LicensingAuthorityChangeReason(models.Model):
-    cd = models.IntegerField(
-        primary_key=True,
-        help_text="Code",
-    )
-    descr = models.CharField(
-        max_length=60,
-        help_text="Description",
-    )
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class GTIN(models.Model):
@@ -1241,18 +812,8 @@ class GTIN(models.Model):
         verbose_name = "Global Trade Item Number"
 
     ampp = models.OneToOneField(
-        db_column="appid",
-        to="AMPP",
-        on_delete=models.CASCADE,
-        help_text="AMPP",
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    gtin = models.BigIntegerField(
-        help_text="GTIN",
-    )
-    startdt = models.DateField(
-        help_text="GTIN date",
-    )
-    enddt = models.DateField(
-        null=True,
-        help_text="The date the GTIN became invalid",
-    )
+    gtin = models.BigIntegerField(help_text="GTIN")
+    startdt = models.DateField(help_text="GTIN date")
+    enddt = models.DateField(null=True, help_text="The date the GTIN became invalid")

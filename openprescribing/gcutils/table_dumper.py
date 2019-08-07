@@ -14,7 +14,9 @@ class TableDumper(object):
         table_name = self.model._meta.db_table
 
         sql = "COPY %s(%s) TO STDOUT (FORMAT CSV, NULL '')" % (
-            table_name, ",".join(self.columns))
+            table_name,
+            ",".join(self.columns),
+        )
 
         with tempfile.NamedTemporaryFile() as tmp_f:
             with connection.cursor() as c:

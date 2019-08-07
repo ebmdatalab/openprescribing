@@ -31,7 +31,7 @@ class AvailabilityRestriction(models.Model):
         return self.desc
 
     class Meta:
-        db_table = 'dmd_lookup_availability_restriction'
+        db_table = "dmd_lookup_availability_restriction"
 
 
 class Prescribability(models.Model):
@@ -42,7 +42,7 @@ class Prescribability(models.Model):
         return self.desc
 
     class Meta:
-        db_table = 'dmd_lookup_virtual_product_pres_status'
+        db_table = "dmd_lookup_virtual_product_pres_status"
 
 
 class VMPNonAvailability(models.Model):
@@ -53,7 +53,7 @@ class VMPNonAvailability(models.Model):
         return self.desc
 
     class Meta:
-        db_table = 'dmd_lookup_virtual_product_non_avail'
+        db_table = "dmd_lookup_virtual_product_non_avail"
 
 
 class ControlledDrugCategory(models.Model):
@@ -64,7 +64,7 @@ class ControlledDrugCategory(models.Model):
         return self.desc
 
     class Meta:
-        db_table = 'dmd_lookup_control_drug_category'
+        db_table = "dmd_lookup_control_drug_category"
 
 
 class TariffCategory(models.Model):
@@ -75,14 +75,15 @@ class TariffCategory(models.Model):
         return self.desc
 
     class Meta:
-        db_table = 'dmd_lookup_dt_payment_category'
+        db_table = "dmd_lookup_dt_payment_category"
 
 
 class DMDProduct(models.Model):
-    '''A model that combines AMPs and VPMs to make mapping to legacy BNF
+    """A model that combines AMPs and VPMs to make mapping to legacy BNF
     codes easier, and to cache lookups on commonly-useful relations.
 
-    '''
+    """
+
     dmdid = models.BigIntegerField(primary_key=True)
     bnf_code = models.CharField(max_length=15, null=True, db_index=True)
     vpid = models.BigIntegerField(db_index=True)
@@ -92,64 +93,66 @@ class DMDProduct(models.Model):
     # Medicines Agency Additional Monitoring Scheme
     ema = models.CharField(max_length=15, null=True)
     prescribability = models.ForeignKey(
-        Prescribability, db_column='pres_statcd', null=True)
+        Prescribability, db_column="pres_statcd", null=True
+    )
     availability_restrictions = models.ForeignKey(
-        AvailabilityRestriction, db_column='avail_restrictcd', null=True)
+        AvailabilityRestriction, db_column="avail_restrictcd", null=True
+    )
     vmp_non_availability = models.ForeignKey(
-        VMPNonAvailability, db_column='non_availcd', null=True)
+        VMPNonAvailability, db_column="non_availcd", null=True
+    )
     # 1 = VMP, 2 = AMP
     concept_class = models.IntegerField(db_index=True, null=True)
     # 1 = Generic, 2 = brand, 3 = Mannufactured Generic
     product_type = models.IntegerField(null=True)
     # in the nurse prescribers' formulary?
-    is_in_nurse_formulary = models.NullBooleanField(db_column='nurse_f')
-    is_in_dentist_formulary = models.NullBooleanField(db_column='dent_f')
+    is_in_nurse_formulary = models.NullBooleanField(db_column="nurse_f")
+    is_in_dentist_formulary = models.NullBooleanField(db_column="dent_f")
     # Product order number - Order number of product within Drug Tariff
-    product_order_no = models.TextField(db_column='prod_order_no', null=True)
+    product_order_no = models.TextField(db_column="prod_order_no", null=True)
     # indicates AMPs listed in part XVIIIA of the Drug Tariff
-    is_blacklisted = models.NullBooleanField(db_column='sched_1')
+    is_blacklisted = models.NullBooleanField(db_column="sched_1")
     # Indicates items that are part of the Selected List Scheme
-    is_schedule_2 = models.NullBooleanField(db_column='sched_2')
+    is_schedule_2 = models.NullBooleanField(db_column="sched_2")
     # This flag indicates where a prescriber will receive a fee for
     # administering an item. This is only applicable to NHS primary
     # medical services contractors.
-    can_have_personal_administration_fee = models.NullBooleanField(
-        db_column='padm')
+    can_have_personal_administration_fee = models.NullBooleanField(db_column="padm")
     # Indicates items that can be prescribed in instalments on a FP10
     # MDA form.
-    is_fp10 = models.NullBooleanField(db_column='fp10_mda')
+    is_fp10 = models.NullBooleanField(db_column="fp10_mda")
     # Borderline substances: foodstuffs and toiletries which can be
     # prescribed
-    is_borderline_substance = models.NullBooleanField(db_column='acbs')
-    has_assorted_flavours = models.NullBooleanField(db_column='assort_flav')
+    is_borderline_substance = models.NullBooleanField(db_column="acbs")
+    has_assorted_flavours = models.NullBooleanField(db_column="assort_flav")
     controlled_drug_category = models.ForeignKey(
-        ControlledDrugCategory, db_column='catcd', null=True)
+        ControlledDrugCategory, db_column="catcd", null=True
+    )
     tariff_category = models.ForeignKey(
-        TariffCategory, db_column='tariff_category', null=True)
-    is_imported = models.NullBooleanField(db_column='flag_imported')
-    is_broken_bulk = models.NullBooleanField(db_column='flag_broken_bulk')
-    is_non_bioequivalent = models.NullBooleanField(
-        db_column='flag_non_bioequivalence')
-    is_special_container = models.NullBooleanField(
-        db_column='flag_special_containers')
+        TariffCategory, db_column="tariff_category", null=True
+    )
+    is_imported = models.NullBooleanField(db_column="flag_imported")
+    is_broken_bulk = models.NullBooleanField(db_column="flag_broken_bulk")
+    is_non_bioequivalent = models.NullBooleanField(db_column="flag_non_bioequivalence")
+    is_special_container = models.NullBooleanField(db_column="flag_special_containers")
 
     class Meta:
-        db_table = 'dmd_product'
+        db_table = "dmd_product"
 
     def __str__(self):
         return self.full_name
 
     @property
     def amps(self):
-        return DMDProduct.objects.filter(
-            vpid=self.dmdid).filter(concept_class=2)
+        return DMDProduct.objects.filter(vpid=self.dmdid).filter(concept_class=2)
 
     @property
     def vmp(self):
         if self.concept_class == 1:
             raise DMDProduct.DoesNotExist("You can't find a VMP of a VMP")
-        vmp = DMDProduct.objects.filter(
-            dmdid=self.vpid, concept_class=1).exclude(vpid=self.dmdid)
+        vmp = DMDProduct.objects.filter(dmdid=self.vpid, concept_class=1).exclude(
+            vpid=self.dmdid
+        )
         assert len(vmp) < 2, "An AMP should only ever have one VMP"
         return vmp[0]
 
@@ -164,9 +167,8 @@ class DMDVmpp(models.Model):
     qty_uomcd = models.BigIntegerField(blank=True, null=True)
     combpackcd = models.BigIntegerField(blank=True, null=True)
 
-
     class Meta:
-        db_table = 'dmd_vmpp'
+        db_table = "dmd_vmpp"
 
     def __str__(self):
         return self.nm
@@ -180,7 +182,7 @@ class NCSOConcession(models.Model):
     price_concession_pence = models.IntegerField()
 
     class Meta:
-        unique_together = ('date', 'vmpp')
+        unique_together = ("date", "vmpp")
 
     class Manager(models.Manager):
         def unreconciled(self):
@@ -190,12 +192,13 @@ class NCSOConcession(models.Model):
 
     @property
     def drug_and_pack_size(self):
-        return u'{} {}'.format(self.drug, self.pack_size)
+        return "{} {}".format(self.drug, self.pack_size)
 
 
 class TariffPrice(models.Model):
     """Price
     """
+
     date = models.DateField(db_index=True)
     vmpp = models.ForeignKey(DMDVmpp)
     product = models.ForeignKey(DMDProduct)
@@ -208,11 +211,10 @@ class TariffPrice(models.Model):
     @property
     def concession(self):
         try:
-            concession = NCSOConcession.objects.get(
-                date=self.date, vmpp=self.vmpp)
+            concession = NCSOConcession.objects.get(date=self.date, vmpp=self.vmpp)
         except NCSOConcession.DoesNotExist:
             concession = None
         return concession
 
     class Meta:
-        unique_together = ('date', 'vmpp',)
+        unique_together = ("date", "vmpp")

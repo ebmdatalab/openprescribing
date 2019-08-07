@@ -11,14 +11,12 @@ class Command(BaseCommand):
     "A command to refresh our materialized views in Postgres"
 
     def handle(self, *args, **options):
-        log = logger.warn if options['verbosity'] > 1 else logger.info
+        log = logger.warn if options["verbosity"] > 1 else logger.info
 
-        materialized_views = [
-            'vw__medians_for_tariff',
-        ]
+        materialized_views = ["vw__medians_for_tariff"]
 
         with connection.cursor() as cursor:
             for view_id in materialized_views:
-                log('Refreshing view: {}'.format(view_id))
+                log("Refreshing view: {}".format(view_id))
                 # This is quite slow! up to 10 mins.
                 cursor.execute("REFRESH MATERIALIZED VIEW %s" % view_id)

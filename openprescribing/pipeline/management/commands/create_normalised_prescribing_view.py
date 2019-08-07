@@ -6,8 +6,9 @@ from google.cloud.exceptions import Conflict, NotFound
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
-            '--recreate', action='store_true',
-            help='Delete views before recreating them'
+            "--recreate",
+            action="store_true",
+            help="Delete views before recreating them",
         )
 
     def handle(self, *args, **kwargs):
@@ -40,14 +41,14 @@ class Command(BaseCommand):
         ON practices.ccg_id = ccgs.code
         """
 
-        client = Client('hscic')
+        client = Client("hscic")
 
         for table_name, legacy in [
-            ('normalised_prescribing_legacy', True),
-            ('normalised_prescribing_standard', False),
+            ("normalised_prescribing_legacy", True),
+            ("normalised_prescribing_standard", False),
         ]:
 
-            if kwargs['recreate']:
+            if kwargs["recreate"]:
                 try:
                     client.delete_table(table_name)
                 except NotFound:

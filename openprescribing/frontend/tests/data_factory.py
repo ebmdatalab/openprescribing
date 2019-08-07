@@ -7,9 +7,19 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
 
 from frontend.models import (
-    ImportLog, Practice, PCN, PCT, STP, RegionalTeam, Prescription,
-    Presentation, NCSOConcessionBookmark, OrgBookmark, Measure, NCSOConcession,
-    TariffPrice
+    ImportLog,
+    Practice,
+    PCN,
+    PCT,
+    STP,
+    RegionalTeam,
+    Prescription,
+    Presentation,
+    NCSOConcessionBookmark,
+    OrgBookmark,
+    Measure,
+    NCSOConcession,
+    TariffPrice,
 )
 from dmd2 import models as dmd2_models
 
@@ -27,10 +37,10 @@ class DataFactory(object):
 
     def create_months_array(self, start_date=None, num_months=1):
         if start_date is None:
-            start_date = '2019-07-01'
+            start_date = "2019-07-01"
         date = parse_date(start_date)
         return [
-            (date + relativedelta(months=i)).strftime('%Y-%m-%d')
+            (date + relativedelta(months=i)).strftime("%Y-%m-%d")
             for i in range(0, num_months)
         ]
 
@@ -39,62 +49,59 @@ class DataFactory(object):
             ccg = self.create_ccg()
         index = self.next_id()
         return Practice.objects.create(
-            name='Practice {}'.format(index),
-            code='ABC{:03}'.format(index),
+            name="Practice {}".format(index),
+            code="ABC{:03}".format(index),
             ccg=ccg,
-            pcn=pcn
+            pcn=pcn,
         )
 
     def create_ccg(self, stp=None, regional_team=None):
         index = self.next_id()
         return PCT.objects.create(
-            name='CCG {}'.format(index),
-            code='A{:02}'.format(index),
-            org_type='CCG',
+            name="CCG {}".format(index),
+            code="A{:02}".format(index),
+            org_type="CCG",
             stp=stp,
-            regional_team=regional_team
+            regional_team=regional_team,
         )
 
     def create_pcn(self):
         index = self.next_id()
         return PCN.objects.create(
-            name='PCN {}'.format(index),
-            ons_code='E000{:02}'.format(index),
+            name="PCN {}".format(index), ons_code="E000{:02}".format(index)
         )
 
     def create_stp(self):
         index = self.next_id()
         return STP.objects.create(
-            name='STP {}'.format(index),
-            ons_code='E000{:02}'.format(index),
+            name="STP {}".format(index), ons_code="E000{:02}".format(index)
         )
 
     def create_regional_team(self):
         index = self.next_id()
         return RegionalTeam.objects.create(
-            name='Regional Team {}'.format(index),
-            code='R{:02}'.format(index),
+            name="Regional Team {}".format(index), code="R{:02}".format(index)
         )
 
     def create_presentations(self, num_presentations, vmpp_per_presentation=1):
         presentations = []
         vmp_basis, _ = dmd2_models.BasisOfName.objects.get_or_create(
-            cd=1, descr='rINN - Recommended International Non-proprietary'
+            cd=1, descr="rINN - Recommended International Non-proprietary"
         )
         vmp_pres_stat, _ = dmd2_models.VirtualProductPresStatus.objects.get_or_create(
-            cd=1, descr='Valid as a prescribable product'
+            cd=1, descr="Valid as a prescribable product"
         )
         for i in range(num_presentations):
             presentation = Presentation.objects.create(
-                bnf_code='0123456789ABCD{}'.format(i),
-                name='Foo Tablet {}'.format(i),
-                dmd_name='VMP Foo Tablet {}'.format(i),
-                quantity_means_pack=self.random.choice([True, False, None])
+                bnf_code="0123456789ABCD{}".format(i),
+                name="Foo Tablet {}".format(i),
+                dmd_name="VMP Foo Tablet {}".format(i),
+                quantity_means_pack=self.random.choice([True, False, None]),
             )
             vmp = dmd2_models.VMP.objects.create(
                 id=i,
                 invalid=False,
-                nm='VMP ' + presentation.name,
+                nm="VMP " + presentation.name,
                 basis=vmp_basis,
                 pres_stat=vmp_pres_stat,
                 sug_f=False,
@@ -110,7 +117,7 @@ class DataFactory(object):
                     id=vppid,
                     vmp=vmp,
                     invalid=False,
-                    nm='VMPP %s (%s)' % (presentation.name, vppid),
+                    nm="VMPP %s (%s)" % (presentation.name, vppid),
                     qtyval=qtyval,
                     bnf_code=presentation.bnf_code,
                 )
@@ -118,36 +125,37 @@ class DataFactory(object):
         return presentations
 
     def create_tariff_and_ncso_costings_for_presentations(
-            self, presentations, months=None):
+        self, presentations, months=None
+    ):
         tariff_category, _ = dmd2_models.DtPaymentCategory.objects.get_or_create(
-            cd=1, descr='TariffCategory VIIIA Category A'
+            cd=1, descr="TariffCategory VIIIA Category A"
         )
         for presentation in presentations:
             for date in months:
                 price_pence = self.random.randint(10, 100)
-                for vmpp in dmd2_models.VMPP.objects.filter(bnf_code=presentation.bnf_code):
+                for vmpp in dmd2_models.VMPP.objects.filter(
+                    bnf_code=presentation.bnf_code
+                ):
                     tariff_price = TariffPrice.objects.create(
                         date=date,
                         vmpp=vmpp,
                         tariff_category=tariff_category,
-                        price_pence=price_pence
+                        price_pence=price_pence,
                     )
                     if self.random.choice([True, False]):
                         NCSOConcession.objects.create(
                             vmpp=vmpp,
                             date=date,
-                            drug='',
-                            pack_size='',
+                            drug="",
+                            pack_size="",
                             price_pence=(
                                 tariff_price.price_pence + self.random.randint(10, 100)
-                            )
+                            ),
                         )
 
     def create_prescribing_for_practice(
-            self,
-            practice,
-            presentations=None,
-            months=None):
+        self, practice, presentations=None, months=None
+    ):
 
         if months is None:
             months = self.create_months_array()
@@ -167,50 +175,38 @@ class DataFactory(object):
                 )
 
     def create_import_log(self, date):
-        ImportLog.objects.create(
-            current_at=date,
-            category='prescribing'
-        )
+        ImportLog.objects.create(current_at=date, category="prescribing")
 
     def create_user(self, email=None):
         index = self.next_id()
-        email = email or 'user-{}@example.com'.format(index)
-        return User.objects.create_user(
-            username='User {}'.format(index),
-            email=email,
-        )
+        email = email or "user-{}@example.com".format(index)
+        return User.objects.create_user(username="User {}".format(index), email=email)
 
     def create_ncso_concessions_bookmark(self, org, user=None):
-        kwargs = {
-            'user': user or self.create_user(),
-            'approved': True,
-        }
+        kwargs = {"user": user or self.create_user(), "approved": True}
 
         if org is None:
             # All England
             pass
         elif isinstance(org, PCT):
-            kwargs['pct'] = org
+            kwargs["pct"] = org
         elif isinstance(org, Practice):
-            kwargs['practice'] = org
+            kwargs["practice"] = org
         else:
             assert False
 
         return NCSOConcessionBookmark.objects.create(**kwargs)
 
     def create_org_bookmark(self, org, user=None):
-        kwargs = {
-            'user': user or self.create_user(),
-            'approved': True,
-        }
+        kwargs = {"user": user or self.create_user(), "approved": True}
 
         if org is None:
             # All England
             pass
         elif isinstance(org, PCT):
-            kwargs['pct'] = org
+            kwargs["pct"] = org
         elif isinstance(org, Practice):
-            kwargs['practice'] = org
+            kwargs["practice"] = org
         else:
             assert False
 
@@ -219,15 +215,15 @@ class DataFactory(object):
     def create_measure(self, tags=None):
         index = self.next_id()
         return Measure.objects.create(
-            id='measure_{}'.format(index),
-            name='Measure {}'.format(index),
-            title='Measure {}'.format(index),
+            id="measure_{}".format(index),
+            name="Measure {}".format(index),
+            title="Measure {}".format(index),
             tags=tags,
-            numerator_from='',
-            numerator_where='',
-            numerator_columns='',
-            denominator_from='',
-            denominator_where='',
-            denominator_columns='',
+            numerator_from="",
+            numerator_where="",
+            numerator_columns="",
+            denominator_from="",
+            denominator_where="",
+            denominator_columns="",
             numerator_bnf_codes=[],
         )

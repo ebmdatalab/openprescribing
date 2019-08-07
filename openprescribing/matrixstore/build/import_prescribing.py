@@ -19,10 +19,7 @@ from .common import get_prescribing_filename
 logger = logging.getLogger(__name__)
 
 
-MatrixRow = namedtuple(
-    'MatrixRow',
-    'bnf_code items quantity actual_cost net_cost'
-)
+MatrixRow = namedtuple("MatrixRow", "bnf_code items quantity actual_cost net_cost")
 
 
 class MissingHeaderError(Exception):
@@ -31,11 +28,11 @@ class MissingHeaderError(Exception):
 
 def import_prescribing(filename):
     if not os.path.exists(filename):
-        raise RuntimeError('No SQLite file at: {}'.format(filename))
+        raise RuntimeError("No SQLite file at: {}".format(filename))
     connection = sqlite3.connect(filename)
     # Trade crash-safety for insert speed
-    connection.execute('PRAGMA synchronous=OFF')
-    dates = [date for (date,) in connection.execute('SELECT date FROM date')]
+    connection.execute("PRAGMA synchronous=OFF")
+    dates = [date for (date,) in connection.execute("SELECT date FROM date")]
     prescriptions = get_prescriptions_for_dates(dates)
     write_prescribing(connection, prescriptions)
     connection.commit()
@@ -46,8 +43,8 @@ def write_prescribing(connection, prescriptions):
     cursor = connection.cursor()
     # Map practice codes and date strings to their corresponding row/column
     # offset in the matrix
-    practices = dict(cursor.execute('SELECT code, offset FROM practice'))
-    dates = dict(cursor.execute('SELECT date, offset FROM date'))
+    practices = dict(cursor.execute("SELECT code, offset FROM practice"))
+    dates = dict(cursor.execute("SELECT date, offset FROM date"))
     matrices = build_matrices(prescriptions, practices, dates)
     rows = format_as_sql_rows(matrices, connection)
     cursor.executemany(
@@ -55,7 +52,7 @@ def write_prescribing(connection, prescriptions):
         UPDATE presentation SET items=?, quantity=?, actual_cost=?, net_cost=?
         WHERE bnf_code=?
         """,
-        rows
+        rows,
     )
 
 
@@ -72,8 +69,8 @@ def get_prescriptions_for_dates(dates):
     missing_files = [f for f in filenames if not os.path.exists(f)]
     if missing_files:
         raise RuntimeError(
-            'Some required CSV files were missing:\n  {}'.format(
-                '\n  '.join(missing_files)
+            "Some required CSV files were missing:\n  {}".format(
+                "\n  ".join(missing_files)
             )
         )
     prescribing_streams = [read_gzipped_prescribing_csv(f) for f in filenames]
@@ -84,7 +81,7 @@ def get_prescriptions_for_dates(dates):
 
 
 def read_gzipped_prescribing_csv(filename):
-    with gzip.open(filename, 'rb') as f:
+    with gzip.open(filename, "rb") as f:
         for row in parse_prescribing_csv(f):
             yield row
 
@@ -98,13 +95,13 @@ def parse_prescribing_csv(input_stream):
     reader = csv.reader(input_stream)
     headers = next(reader)
     try:
-        bnf_code_col = headers.index('bnf_code')
-        practice_col = headers.index('practice')
-        date_col = headers.index('month')
-        items_col = headers.index('items')
-        quantity_col = headers.index('quantity')
-        actual_cost_col = headers.index('actual_cost')
-        net_cost_col = headers.index('net_cost')
+        bnf_code_col = headers.index("bnf_code")
+        practice_col = headers.index("practice")
+        date_col = headers.index("month")
+        items_col = headers.index("items")
+        quantity_col = headers.index("quantity")
+        actual_cost_col = headers.index("actual_cost")
+        net_cost_col = headers.index("net_cost")
     except ValueError as e:
         raise MissingHeaderError(str(e))
     for row in reader:
@@ -117,7 +114,7 @@ def parse_prescribing_csv(input_stream):
             int(row[items_col]),
             int(row[quantity_col]),
             pounds_to_pence(row[actual_cost_col]),
-            pounds_to_pence(row[net_cost_col])
+            pounds_to_pence(row[net_cost_col]),
         )
 
 
@@ -157,7 +154,7 @@ def build_matrices(prescriptions, practices, dates):
             finalise_matrix(items_matrix),
             finalise_matrix(quantity_matrix),
             finalise_matrix(actual_cost_matrix),
-            finalise_matrix(net_cost_matrix)
+            finalise_matrix(net_cost_matrix),
         )
 
 
@@ -168,7 +165,7 @@ def format_as_sql_rows(matrices, connection):
     insertion into SQLite
     """
     cursor = connection.cursor()
-    num_presentations = next(cursor.execute('SELECT COUNT(*) FROM presentation'))[0]
+    num_presentations = next(cursor.execute("SELECT COUNT(*) FROM presentation"))[0]
     count = 0
     for row in matrices:
         count += 1
@@ -176,23 +173,20 @@ def format_as_sql_rows(matrices, connection):
         # we didn't know about previously. This is a hack that we won't need
         # once we can use SQLite v3.24.0 which has proper UPSERT support.
         cursor.execute(
-            'INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)',
-            [row.bnf_code])
+            "INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)", [row.bnf_code]
+        )
         if should_log_message(count):
             logger.info(
-                'Writing data for %s (%s/%s)',
-                row.bnf_code,
-                count,
-                num_presentations
+                "Writing data for %s (%s/%s)", row.bnf_code, count, num_presentations
             )
         yield (
             sqlite3.Binary(serialize_compressed(row.items)),
             sqlite3.Binary(serialize_compressed(row.quantity)),
             sqlite3.Binary(serialize_compressed(row.actual_cost)),
             sqlite3.Binary(serialize_compressed(row.net_cost)),
-            row.bnf_code
+            row.bnf_code,
         )
-    logger.info('Finished writing data for %s presentations', count)
+    logger.info("Finished writing data for %s presentations", count)
 
 
 def should_log_message(n):

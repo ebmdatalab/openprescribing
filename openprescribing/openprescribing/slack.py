@@ -14,11 +14,11 @@ def notify_slack(message):
         return
 
     webhook_url = settings.SLACK_GENERAL_POST_KEY
-    slack_data = {'text': message}
+    slack_data = {"text": message}
 
     response = requests.post(webhook_url, json=slack_data)
     if response.status_code != 200:
         raise ValueError(
-            'Request to slack returned an error %s, the response is:\n%s'
+            "Request to slack returned an error %s, the response is:\n%s"
             % (response.status_code, response.text)
         )

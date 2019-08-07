@@ -14,13 +14,13 @@ class IgnoreAcceptsContentNegotiation(DefaultContentNegotiation):
         (renderer, media type).
         """
         # Allow URL style format override.  eg. "?format=json
-        requested_format = format_suffix or request.query_params.get('format')
+        requested_format = format_suffix or request.query_params.get("format")
         found_html = False
         if requested_format:
             renderers = self.filter_renderers(renderers, requested_format)
         else:
             for renderer in renderers:
-                if 'html' in renderer.media_type.lower():
+                if "html" in renderer.media_type.lower():
                     found_html = True
                     break
         if not found_html:

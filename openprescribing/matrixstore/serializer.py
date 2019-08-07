@@ -8,8 +8,8 @@ import zstandard
 
 # The magic intial bytes which tell us whether a given binary chunk is
 # ZStandard or LZ4 compressed data
-ZSTD_MAGIC_NUMBER = struct.pack('<I', 0xFD2FB528)
-LZ4_MAGIC_NUMBER = struct.pack('<I', 0x184D2204)
+ZSTD_MAGIC_NUMBER = struct.pack("<I", 0xFD2FB528)
+LZ4_MAGIC_NUMBER = struct.pack("<I", 0x184D2204)
 
 zstd_decompressor = zstandard.ZstdDecompressor()
 
@@ -45,9 +45,9 @@ def deserialize_csc(args):
 # Compressed Sparse Column (csc) matrices
 context.register_type(
     csc_matrix,
-    'csc',
+    "csc",
     custom_serializer=serialize_csc,
-    custom_deserializer=deserialize_csc
+    custom_deserializer=deserialize_csc,
 )
 
 

@@ -17,7 +17,7 @@ class MatrixSum(object):
         if self.accumulator is None:
             # We need this to be in Fortran (i.e. column-major) order for the
             # fast addition path below to work
-            self.accumulator = zeros_like(matrix, order='F')
+            self.accumulator = zeros_like(matrix, order="F")
         if isinstance(matrix, csc_matrix):
             fast_in_place_add(self.accumulator, matrix)
         else:
@@ -38,12 +38,10 @@ def fast_in_place_add(ndarray, matrix):
     """
     if ndarray.shape != matrix.shape:
         raise ValueError(
-            'Shapes do not match: {} vs {}'.format(
-                ndarray.shape, matrix.shape
-            )
+            "Shapes do not match: {} vs {}".format(ndarray.shape, matrix.shape)
         )
     if not ndarray.flags.f_contiguous:
-        raise ValueError('ndarray must be in Fortran order')
+        raise ValueError("ndarray must be in Fortran order")
     # In order to use Compressed Sparse Row (csr) operations with Compressed
     # Sparse Column (csc) matrices we need to transpose the matrix
     # we're adding into. This is a fast operation which just returns a new view

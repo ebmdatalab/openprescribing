@@ -7,37 +7,37 @@ from frontend.models import Practice, PCT
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports practice data either from epraccur.csv, or from HSCIC '
-    help += 'address files, depending on options. '
+    args = ""
+    help = "Imports practice data either from epraccur.csv, or from HSCIC "
+    help += "address files, depending on options. "
 
     def add_arguments(self, parser):
-        parser.add_argument('--hscic_address')
-        parser.add_argument('--epraccur')
+        parser.add_argument("--hscic_address")
+        parser.add_argument("--epraccur")
 
     def handle(self, *args, **options):
         self.IS_VERBOSE = False
-        if options['verbosity'] > 1:
+        if options["verbosity"] > 1:
             self.IS_VERBOSE = True
 
-        if options['epraccur']:
-            self.import_practices_from_epraccur(options['epraccur'])
+        if options["epraccur"]:
+            self.import_practices_from_epraccur(options["epraccur"])
         else:
             practice_files = []
-            if options['hscic_address']:
-                practice_files = [options['hscic_address']]
+            if options["hscic_address"]:
+                practice_files = [options["hscic_address"]]
             else:
-                practice_files = glob.glob('./data/raw_data/T*ADDR*')
+                practice_files = glob.glob("./data/raw_data/T*ADDR*")
             for f in practice_files:
                 self.import_practices_from_hscic(f)
 
     def parse_date(self, d):
-        return '-'.join([d[:4], d[4:6], d[6:]])
+        return "-".join([d[:4], d[4:6], d[6:]])
 
     def _strip_dict(self, row):
-        '''
+        """
         Strip whitespace from keys and values in dictionary.
-        '''
+        """
         for k in row:
             if row[k]:
                 row[k] = row[k].strip()
@@ -45,13 +45,11 @@ class Command(BaseCommand):
         return row
 
     def import_practices_from_epraccur(self, filename):
-        entries = csv.reader(open(filename, 'rU'))
+        entries = csv.reader(open(filename, "rU"))
         count = 0
         for row in entries:
             row = [r.strip() for r in row]
-            practice, created = Practice.objects.get_or_create(
-                code=row[0]
-            )
+            practice, created = Practice.objects.get_or_create(code=row[0])
 
             practice.name = row[1]
             practice.address1 = row[4]
@@ -75,7 +73,7 @@ class Command(BaseCommand):
                     practice.ccg = ccg
                 except PCT.DoesNotExist:
                     if self.IS_VERBOSE:
-                        print('ccg not found with code', pco_code)
+                        print ("ccg not found with code", pco_code)
 
             if row[15]:
                 practice.join_provider_date = self.parse_date(row[15])
@@ -88,18 +86,16 @@ class Command(BaseCommand):
                 count += 1
 
         if self.IS_VERBOSE:
-            print('%s Practice objects created from epraccur' % count)
+            print ("%s Practice objects created from epraccur" % count)
 
     def import_practices_from_hscic(self, filename):
         if self.IS_VERBOSE:
-            print('Importing practices from %s' % filename)
+            print ("Importing practices from %s" % filename)
         count = 0
-        practices = csv.reader(open(filename, 'rU'))
+        practices = csv.reader(open(filename, "rU"))
         for row in practices:
             row = [i.strip() for i in row]
-            p, created = Practice.objects.get_or_create(
-                code=row[1]
-            )
+            p, created = Practice.objects.get_or_create(code=row[1])
             if created:
                 p.name = row[2]
                 p.address1 = row[3]
@@ -112,4 +108,4 @@ class Command(BaseCommand):
                     count += 1
 
         if self.IS_VERBOSE:
-            print('%s Practice objects created from HSCIC' % count)
+            print ("%s Practice objects created from HSCIC" % count)

@@ -11,10 +11,9 @@ import psycopg2
 import dotenv
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     env_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        '..', 'environment'
+        os.path.dirname(os.path.realpath(__file__)), "..", "environment"
     )
 
     dotenv.read_dotenv(env_path)
@@ -22,13 +21,14 @@ if __name__ == '__main__':
     while elapsed < 30:
         try:
             psycopg2.connect(
-                host=os.environ['DB_HOST'],
-                user=os.environ['DB_USER'],
-                password=os.environ['DB_PASS'],
-                database=os.environ['DB_NAME'])
+                host=os.environ["DB_HOST"],
+                user=os.environ["DB_USER"],
+                password=os.environ["DB_PASS"],
+                database=os.environ["DB_NAME"],
+            )
             break
         except (psycopg2.OperationalError):
             if elapsed == 0:
-                print("Waiting for postgres to start...")
+                print ("Waiting for postgres to start...")
             time.sleep(1)
             elapsed += 1

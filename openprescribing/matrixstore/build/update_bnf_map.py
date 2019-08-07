@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 
 def update_bnf_map(sqlite_path):
     if not os.path.exists(sqlite_path):
-        raise RuntimeError('No SQLite file at: {}'.format(sqlite_path))
+        raise RuntimeError("No SQLite file at: {}".format(sqlite_path))
     connection = sqlite3.connect(sqlite_path)
     # Disable the sqlite module's magical transaction handling features because
     # we want to use our own transactions below
     connection.isolation_level = None
     cursor = connection.cursor()
-    bigquery_connection = Client('hscic')
+    bigquery_connection = Client("hscic")
     bnf_map = get_old_to_new_bnf_codes(bigquery_connection)
     for old_code, new_code in bnf_map:
         move_values_from_old_code_to_new(cursor, old_code, new_code)
@@ -36,10 +36,10 @@ def update_bnf_map(sqlite_path):
 
 def get_old_to_new_bnf_codes(bigquery_connection):
     result = bigquery_connection.query(
-        'SELECT former_bnf_code, current_bnf_code FROM {hscic}.bnf_map'
+        "SELECT former_bnf_code, current_bnf_code FROM {hscic}.bnf_map"
     )
     rows = result.rows
-    logger.info('Applying %s BNF code updates', len(rows))
+    logger.info("Applying %s BNF code updates", len(rows))
     return rows
 
 
@@ -56,39 +56,35 @@ def move_values_from_old_code_to_new(cursor, old_code, new_code):
     new_values = get_values_for_bnf_code(cursor, new_code)
     if not new_values:
         logger.info(
-            'Moving prescribing data from %s to %s (new code had no existing data)',
+            "Moving prescribing data from %s to %s (new code had no existing data)",
             old_code,
-            new_code
+            new_code,
         )
         new_values = old_values
     else:
         logger.info(
-            'Merging prescribing data for %s with %s (both codes have existing data)',
+            "Merging prescribing data for %s with %s (both codes have existing data)",
             old_code,
-            new_code
+            new_code,
         )
         new_values = sum_rows([new_values, old_values])
     # We want saving the new value and deleting the old to be an atomic
     # operation. We use savepoints for this which are equivalent to
     # transactions except they're allowed to nest so it doesn't matter if
     # we're already inside a transaction when we get here.
-    cursor.execute('SAVEPOINT bnf_code_update')
+    cursor.execute("SAVEPOINT bnf_code_update")
     cursor.execute(
-        'INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)',
-        [new_code]
+        "INSERT OR IGNORE INTO presentation (bnf_code) VALUES (?)", [new_code]
     )
     cursor.execute(
         """
         UPDATE presentation SET items=?, quantity=?, actual_cost=?, net_cost=?
         WHERE bnf_code=?
         """,
-        format_values_for_sqlite(new_values) + [new_code]
+        format_values_for_sqlite(new_values) + [new_code],
     )
-    cursor.execute(
-        'DELETE FROM presentation WHERE bnf_code=?',
-        [old_code]
-    )
-    cursor.execute('RELEASE bnf_code_update')
+    cursor.execute("DELETE FROM presentation WHERE bnf_code=?", [old_code])
+    cursor.execute("RELEASE bnf_code_update")
 
 
 def get_values_for_bnf_code(cursor, code):
@@ -102,7 +98,7 @@ def get_values_for_bnf_code(cursor, code):
         FROM presentation
         WHERE bnf_code=? AND items IS NOT NULL
         """,
-        [code]
+        [code],
     )
     rows = list(result)
     if rows:
@@ -115,8 +111,7 @@ def sum_rows(rows):
     """
     first_row = rows[0]
     accumulators = [
-        sparse_matrix(matrix.shape, integer=is_integer(matrix))
-        for matrix in first_row
+        sparse_matrix(matrix.shape, integer=is_integer(matrix)) for matrix in first_row
     ]
     for row in rows:
         for accumulator, matrix in zip(accumulators, row):
@@ -128,11 +123,8 @@ def format_values_for_sqlite(row):
     """
     Accepts a list of matrices and formats them ready for insertion into SQLite
     """
-    return [
-        sqlite3.Binary(serialize_compressed(value))
-        for value in row
-    ]
+    return [sqlite3.Binary(serialize_compressed(value)) for value in row]
 
 
 def delete_presentations_with_no_prescribing(cursor):
-    cursor.execute('DELETE FROM presentation WHERE items IS NULL')
+    cursor.execute("DELETE FROM presentation WHERE items IS NULL")

@@ -4,7 +4,7 @@ from django.conf import settings
 
 
 class Client(object):
-    '''A dumb proxy for gcs.Client'''
+    """A dumb proxy for gcs.Client"""
 
     def __init__(self):
         self.gcs_client = gcs.Client(project=settings.BQ_PROJECT)

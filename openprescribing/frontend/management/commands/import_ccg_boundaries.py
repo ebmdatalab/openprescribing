@@ -59,30 +59,26 @@ from frontend.models import PCT
 
 def set_centroids():
     for pct in PCT.objects.filter(boundary__isnull=False).annotate(
-            centroid_annotation=Centroid('boundary')):
+        centroid_annotation=Centroid("boundary")
+    ):
         pct.centroid = pct.centroid_annotation
         pct.save()
 
 
 class Command(BaseCommand):
-    args = ''
-    help = 'Imports CCG boundaries from mapinfo. Note that you should '
-    help += 'run this BEFORE importing CCG names, as this creates new '
-    help += 'records in the database rather than updating existing ones.'
-    help += 'Read notes in the source code before proceeding'
+    args = ""
+    help = "Imports CCG boundaries from mapinfo. Note that you should "
+    help += "run this BEFORE importing CCG names, as this creates new "
+    help += "records in the database rather than updating existing ones."
+    help += "Read notes in the source code before proceeding"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--filename',
-            help='Should point to a filename like `CCG_BSC_Apr2015.TAB`'
+            "--filename", help="Should point to a filename like `CCG_BSC_Apr2015.TAB`"
         )
 
     def handle(self, *args, **options):
-        layer_mapping = {
-            'code': 'Lower_Laye',
-            'boundary': 'Unknown',
-        }
-        lm = LayerMapping(PCT, options['filename'],
-                          layer_mapping, transform=True)
+        layer_mapping = {"code": "Lower_Laye", "boundary": "Unknown"}
+        lm = LayerMapping(PCT, options["filename"], layer_mapping, transform=True)
         lm.save(strict=True)
         set_centroids()

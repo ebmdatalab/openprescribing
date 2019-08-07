@@ -21,20 +21,17 @@ def search_by_term(q, obj_types, include):
             continue
 
         qs = cls.objects
-        if 'invalid' not in include:
+        if "invalid" not in include:
             qs = qs.valid()
-        if 'unavailable' not in include:
+        if "unavailable" not in include:
             qs = qs.available()
-        if 'no_bnf_code' not in include:
+        if "no_bnf_code" not in include:
             qs = qs.with_bnf_code()
         qs = qs.search(q)
 
         objs = list(qs)
         if objs:
-            results.append({
-                'cls': cls,
-                'objs': objs,
-            })
+            results.append({"cls": cls, "objs": objs})
 
     return results
 
@@ -46,9 +43,6 @@ def search_by_snomed_code(q):
         except cls.DoesNotExist:
             continue
 
-        return [{
-            'cls': cls,
-            'objs': [obj],
-        }]
+        return [{"cls": cls, "objs": [obj]}]
 
     return []

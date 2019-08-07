@@ -17,15 +17,9 @@ from .models import VTM, VMP, VMPP, AMP, AMPP
 from .search import search
 from .view_schema import schema
 
-obj_types = ['vtm', 'vmp', 'vmpp', 'amp', 'ampp']
+obj_types = ["vtm", "vmp", "vmpp", "amp", "ampp"]
 
-obj_type_to_cls = {
-    "vtm": VTM,
-    "vmp": VMP,
-    "vmpp": VMPP,
-    "amp": AMP,
-    "ampp": AMPP,
-}
+obj_type_to_cls = {"vtm": VTM, "vmp": VMP, "vmpp": VMPP, "amp": AMP, "ampp": AMPP}
 
 cls_to_obj_type = {cls: obj_type for obj_type, cls in obj_type_to_cls.items()}
 
@@ -47,7 +41,7 @@ def _build_row(obj, field):
             return {
                 "key": related_model._meta.verbose_name,
                 "value": text,
-                "link": link
+                "link": link,
             }
 
         try:
@@ -155,31 +149,30 @@ def vmp_relationships_view(request, vmp_id):
     vmp = get_object_or_404(VMP, id=vmp_id)
     bnf_codes.add(vmp.bnf_code)
 
-    vmpps = vmp.vmpp_set.order_by('nm')
+    vmpps = vmp.vmpp_set.order_by("nm")
     vmpp_ids = [vmpp.id for vmpp in vmpps]
     bnf_codes |= {vmpp.bnf_code for vmpp in vmpps}
 
-    amps = vmp.amp_set.order_by('descr')
+    amps = vmp.amp_set.order_by("descr")
     amp_ids = [amp.id for amp in amps]
     bnf_codes |= {amp.bnf_code for amp in amps}
 
     ampps = AMPP.objects.filter(vmpp__vmp=vmp)
     bnf_codes |= {ampp.bnf_code for ampp in ampps}
 
-    presentations = Presentation.objects.filter(bnf_code__in=bnf_codes).order_by('bnf_code')
+    presentations = Presentation.objects.filter(bnf_code__in=bnf_codes).order_by(
+        "bnf_code"
+    )
     num_presentations = len(presentations)
 
     colours_hls = [
-        ((ix * 1.0 / num_presentations), 0.85, 0.75)
-        for ix in range(num_presentations)
+        ((ix * 1.0 / num_presentations), 0.85, 0.75) for ix in range(num_presentations)
     ]
 
     colours_rgb = [colorsys.hls_to_rgb(*hls) for hls in colours_hls]
     colours_hex = [
         "#{0:02x}{1:02x}{2:02x}".format(
-            int(rgb[0] * 256),
-            int(rgb[1] * 256),
-            int(rgb[2] * 256),
+            int(rgb[0] * 256), int(rgb[1] * 256), int(rgb[2] * 256)
         )
         for rgb in colours_rgb
     ]
@@ -191,23 +184,23 @@ def vmp_relationships_view(request, vmp_id):
         presentation.colour = colours_hex[ix]
 
     # We can remove this if we're only showing objects with BNF codes
-    bnf_code_to_colour[None] = '#FFFFFF'
+    bnf_code_to_colour[None] = "#FFFFFF"
 
-    table = [
-        [None for _ in range(len(vmpps) + 1)]
-        for _ in range(len(amps) + 1)
-    ]
+    table = [[None for _ in range(len(vmpps) + 1)] for _ in range(len(amps) + 1)]
 
     for ix, vmpp in enumerate(vmpps):
-        table[0][ix + 1] = {'obj': vmpp, 'colour': bnf_code_to_colour[vmpp.bnf_code]}
+        table[0][ix + 1] = {"obj": vmpp, "colour": bnf_code_to_colour[vmpp.bnf_code]}
 
     for ix, amp in enumerate(amps):
-        table[ix + 1][0] = {'obj': amp, 'colour': bnf_code_to_colour[amp.bnf_code]}
+        table[ix + 1][0] = {"obj": amp, "colour": bnf_code_to_colour[amp.bnf_code]}
 
     for ampp in ampps:
         row_ix = amp_ids.index(ampp.amp_id) + 1
         col_ix = vmpp_ids.index(ampp.vmpp_id) + 1
-        table[row_ix][col_ix] = {'obj': ampp, 'colour': bnf_code_to_colour[ampp.bnf_code]}
+        table[row_ix][col_ix] = {
+            "obj": ampp,
+            "colour": bnf_code_to_colour[ampp.bnf_code],
+        }
 
     if vmp.bnf_code:
         vmp_presentation = Presentation.objects.get(bnf_code=vmp.bnf_code)
@@ -216,13 +209,13 @@ def vmp_relationships_view(request, vmp_id):
     vmp_colour = bnf_code_to_colour[vmp.bnf_code]
 
     ctx = {
-        'vmp': vmp,
-        'num_vmpps': len(vmpps),
-        'num_amps': len(amps),
-        'table': table,
-        'presentations': presentations,
-        'vmp_presentation': vmp_presentation,
-        'vmp_colour': vmp_colour,
+        "vmp": vmp,
+        "num_vmpps": len(vmpps),
+        "num_amps": len(amps),
+        "table": table,
+        "presentations": presentations,
+        "vmp_presentation": vmp_presentation,
+        "vmp_colour": vmp_colour,
     }
 
     return render(request, "dmd/vmp_relationships.html", ctx)
@@ -234,38 +227,40 @@ def bnf_code_relationships_view(request, bnf_code):
     vmps = VMP.objects.filter(bnf_code=bnf_code)
     vmpps = VMPP.objects.filter(bnf_code=bnf_code)
     amps = AMP.objects.filter(bnf_code=bnf_code)
-    ampps = AMPP.objects.filter(bnf_code=bnf_code).select_related('amp')
+    ampps = AMPP.objects.filter(bnf_code=bnf_code).select_related("amp")
 
     ctx = {
-        'bnf_code': bnf_code,
-        'presentation': presentation,
-        'vmps': vmps,
-        'vmpps': vmpps,
-        'amps': amps,
-        'ampps': ampps,
+        "bnf_code": bnf_code,
+        "presentation": presentation,
+        "vmps": vmps,
+        "vmpps": vmpps,
+        "amps": amps,
+        "ampps": ampps,
     }
 
-    return render(request, 'dmd/bnf_code_relationships.html', ctx)
+    return render(request, "dmd/bnf_code_relationships.html", ctx)
 
 
 def search_view(request):
-    if 'q' in request.GET:
+    if "q" in request.GET:
         # This is a request with a search query.
         form = SearchForm(request.GET)
 
         if form.is_valid():
             # Do the search and annotate the results.
             search_params = form.cleaned_data
-            max_results_per_obj_type = search_params.pop('max_results_per_obj_type') or 10
+            max_results_per_obj_type = (
+                search_params.pop("max_results_per_obj_type") or 10
+            )
             results = search(**search_params)
             _annotate_search_results(results, search_params, max_results_per_obj_type)
 
             if len(results) == 1:
                 # There are only results for one type of object.
-                if len(results[0]['objs']) == 1:
+                if len(results[0]["objs"]) == 1:
                     # There's only one object in these results, so we redirect
                     # to that object.
-                    obj = results[0]['objs'][0]
+                    obj = results[0]["objs"][0]
                     link = reverse("dmd_obj", args=[obj.obj_type, obj.id])
                     return redirect(link)
 
@@ -279,28 +274,25 @@ def search_view(request):
         form = SearchForm()
         results = None
 
-    ctx = {
-        "form": form,
-        "results": results
-    }
+    ctx = {"form": form, "results": results}
 
     return render(request, "dmd/search.html", ctx)
 
 
 def _annotate_search_results(results, search_params, max_results_per_obj_type):
-    '''Add extra information to search results to be displayed to user.
+    """Add extra information to search results to be displayed to user.
 
     Additionally, if there are results for more than one type of object, the
     results are truncated, per object type.
-    '''
+    """
     for result in results:
-        result['obj_type_human_plural'] = result['cls']._meta.verbose_name_plural
-        result['num_hits'] = len(result['objs'])
+        result["obj_type_human_plural"] = result["cls"]._meta.verbose_name_plural
+        result["num_hits"] = len(result["objs"])
 
         if len(results) > 1:
-            if len(result['objs']) > max_results_per_obj_type:
-                result['objs'] = result['objs'][:max_results_per_obj_type]
+            if len(result["objs"]) > max_results_per_obj_type:
+                result["objs"] = result["objs"][:max_results_per_obj_type]
                 new_search_params = copy(search_params)
-                new_search_params['obj_types'] = [result['cls'].obj_type]
+                new_search_params["obj_types"] = [result["cls"].obj_type]
                 querystring = urlencode(new_search_params, doseq=True)
-                result['link_to_more'] = reverse('dmd_search') + '?' + querystring
+                result["link_to_more"] = reverse("dmd_search") + "?" + querystring

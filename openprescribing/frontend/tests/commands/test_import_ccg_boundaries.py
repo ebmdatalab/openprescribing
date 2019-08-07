@@ -5,15 +5,12 @@ from frontend.models import PCT
 
 class CommandsTestCase(TestCase):
 
-    fixtures = ['orgs']
+    fixtures = ["orgs"]
 
     def test_import_ccg_boundaries(self):
         args = []
-        opts = {
-            'filename': ('frontend/tests/fixtures/commands/'
-                         'CCG_BSC_Apr2015.TAB')
-        }
-        call_command('import_ccg_boundaries', *args, **opts)
+        opts = {"filename": ("frontend/tests/fixtures/commands/" "CCG_BSC_Apr2015.TAB")}
+        call_command("import_ccg_boundaries", *args, **opts)
 
-        pct = PCT.objects.get(code='03Q')
+        pct = PCT.objects.get(code="03Q")
         self.assertAlmostEqual(pct.boundary.centroid.x, -1.0307530606980588)

@@ -21,29 +21,27 @@ NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE = 7.2
 
 
 ConcessionPriceMatrices = namedtuple(
-    'ConcessionPriceMatrices',
-    'bnf_code_offsets date_offsets tariff_prices price_increases'
+    "ConcessionPriceMatrices",
+    "bnf_code_offsets date_offsets tariff_prices price_increases",
 )
 
 
 ConcessionCostMatrices = namedtuple(
-    'ConcessionCostMatrices',
-    'bnf_code_offsets date_offsets quantities tariff_costs extra_costs'
+    "ConcessionCostMatrices",
+    "bnf_code_offsets date_offsets quantities tariff_costs extra_costs",
 )
 
 
 def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None):
     org_type, org_id = _get_org_type_and_id(entity, entity_type)
-    end_date = NCSOConcession.objects.aggregate(Max('date'))['date__max']
+    end_date = NCSOConcession.objects.aggregate(Max("date"))["date__max"]
     # In practice, we always have at least one NCSOConcession object but we
     # need to handle the empty case in testing
     if not end_date:
         return []
     start_date = end_date - relativedelta(months=num_months - 1)
     last_prescribing_date = parse_date(get_db().dates[-1]).date()
-    costs = _get_concession_cost_matrices(
-        start_date, end_date, org_type, org_id
-    )
+    costs = _get_concession_cost_matrices(start_date, end_date, org_type, org_id)
     # Sum together costs over all presentations (i.e. all rows)
     tariff_costs = numpy.sum(costs.tariff_costs, axis=0)
     extra_costs = numpy.sum(costs.extra_costs, axis=0)
@@ -53,14 +51,14 @@ def ncso_spending_for_entity(entity, entity_type, num_months, current_month=None
         if extra_costs[offset] == 0:
             continue
         entry = {
-            'month': date,
-            'tariff_cost': float(tariff_costs[offset]),
-            'additional_cost': float(extra_costs[offset]),
-            'is_estimate': date > last_prescribing_date,
-            'last_prescribing_date': last_prescribing_date
+            "month": date,
+            "tariff_cost": float(tariff_costs[offset]),
+            "additional_cost": float(extra_costs[offset]),
+            "is_estimate": date > last_prescribing_date,
+            "last_prescribing_date": last_prescribing_date,
         }
         if current_month is not None:
-            entry['is_incomplete_month'] = date >= current_month
+            entry["is_incomplete_month"] = date >= current_month
         results.append(entry)
     return results
 
@@ -81,24 +79,26 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
     names = _get_names_for_bnf_codes(costs.bnf_code_offsets.keys())
     results = []
     for bnf_code, offset in costs.bnf_code_offsets.items():
-        results.append((
-            bnf_code,
-            names[bnf_code],
-            int(quantities[offset]),
-            float(tariff_costs[offset]),
-            float(extra_costs[offset])
-        ))
+        results.append(
+            (
+                bnf_code,
+                names[bnf_code],
+                int(quantities[offset]),
+                float(tariff_costs[offset]),
+                float(extra_costs[offset]),
+            )
+        )
     # Sort by "additional cost" column, descending
     results.sort(key=lambda i: i[4], reverse=True)
     return results
 
 
 def _get_org_type_and_id(entity, entity_type):
-    if entity_type == 'all_england':
-        org_type = 'all_practices'
+    if entity_type == "all_england":
+        org_type = "all_practices"
         org_id = None
     else:
-        org_type = entity_type if entity_type != 'CCG' else 'ccg'
+        org_type = entity_type if entity_type != "CCG" else "ccg"
         org_id = entity.code
     return org_type, org_id
 
@@ -108,10 +108,8 @@ def _get_names_for_bnf_codes(bnf_codes):
     Given a list of BNF codes return a dictionary mapping those codes to their
     DM&D names
     """
-    name_map = (
-        Presentation.objects
-        .filter(bnf_code__in=bnf_codes)
-        .values_list('bnf_code', Coalesce('dmd_name', 'name'))
+    name_map = Presentation.objects.filter(bnf_code__in=bnf_codes).values_list(
+        "bnf_code", Coalesce("dmd_name", "name")
     )
     return dict(name_map)
 
@@ -143,17 +141,14 @@ def _get_concession_cost_matrices(min_date, max_date, org_type, org_id):
     """
     prices = _get_concession_price_matrices(min_date, max_date)
     quantities = _get_prescribed_quantity_matrix(
-        prices.bnf_code_offsets,
-        prices.date_offsets,
-        org_type,
-        org_id
+        prices.bnf_code_offsets, prices.date_offsets, org_type, org_id
     )
     return ConcessionCostMatrices(
         bnf_code_offsets=prices.bnf_code_offsets,
         date_offsets=prices.date_offsets,
         quantities=quantities,
         tariff_costs=prices.tariff_prices * quantities,
-        extra_costs=prices.price_increases * quantities
+        extra_costs=prices.price_increases * quantities,
     )
 
 
@@ -240,9 +235,10 @@ def _get_quantities_for_bnf_codes(db, bnf_codes):
           presentation
         WHERE
           quantity IS NOT NULL AND bnf_code IN ({})
-        """
-        .format(','.join(['?'] * len(bnf_codes))),
-        bnf_codes
+        """.format(
+            ",".join(["?"] * len(bnf_codes))
+        ),
+        bnf_codes,
     )
 
 
@@ -272,8 +268,7 @@ def _get_concession_price_matrices(min_date, max_date):
     # Construct the BNF code and date indices we need to store these prices in
     # matrix form
     date_offsets = {
-        str(date): i
-        for (i, date) in enumerate(_get_dates_in_range(min_date, max_date))
+        str(date): i for (i, date) in enumerate(_get_dates_in_range(min_date, max_date))
     }
     bnf_codes = {concession[1] for concession in concessions}
     bnf_code_offsets = {bnf_code: i for (i, bnf_code) in enumerate(bnf_codes)}
@@ -299,14 +294,14 @@ def _get_concession_price_matrices(min_date, max_date):
     # Apply the national average discount to get a better approximation of the
     # actual price paid, and while we're at it convert from pence to pounds to
     # make later calcuations easier
-    discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100*100)
+    discount_factor = (100 - NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE) / (100 * 100)
     tariff_prices *= discount_factor
     price_increases *= discount_factor
     return ConcessionPriceMatrices(
         bnf_code_offsets=bnf_code_offsets,
         date_offsets=date_offsets,
         tariff_prices=tariff_prices,
-        price_increases=price_increases
+        price_increases=price_increases,
     )
 
 
@@ -369,6 +364,6 @@ def _get_concession_prices(min_date, max_date):
             WHERE
               ncso.date >= %(min_date)s AND ncso.date <= %(max_date)s
             """,
-            {'min_date': min_date, 'max_date': max_date}
+            {"min_date": min_date, "max_date": max_date},
         )
         return cursor.fetchall()

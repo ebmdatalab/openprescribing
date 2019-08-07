@@ -22,17 +22,17 @@ from gcutils.table_dumper import TableDumper
 
 
 DATASETS = {
-    'hscic': settings.BQ_HSCIC_DATASET,
-    'measures': settings.BQ_MEASURES_DATASET,
-    'tmp_eu': settings.BQ_TMP_EU_DATASET,
-    'dmd': settings.BQ_DMD_DATASET,
-    'archive': settings.BQ_ARCHIVE_DATASET,
-    'prescribing_export': settings.BQ_PRESCRIBING_EXPORT_DATASET
+    "hscic": settings.BQ_HSCIC_DATASET,
+    "measures": settings.BQ_MEASURES_DATASET,
+    "tmp_eu": settings.BQ_TMP_EU_DATASET,
+    "dmd": settings.BQ_DMD_DATASET,
+    "archive": settings.BQ_ARCHIVE_DATASET,
+    "prescribing_export": settings.BQ_PRESCRIBING_EXPORT_DATASET,
 }
 
 
 try:
-    DATASETS['test'] = settings.BQ_TEST_DATASET
+    DATASETS["test"] = settings.BQ_TEST_DATASET
 except AttributeError:
     pass
 
@@ -54,10 +54,7 @@ def exception_sql_printer(sql):
             msg.append("{:>4}: {}".format(n + 1, line))
         msg = "\n".join(msg)
         msg = str(e) + "\n\n" + msg
-        reraise(
-            type(e),
-            type(e)(msg),
-            sys.exc_info()[2])
+        reraise(type(e), type(e)(msg), sys.exc_info()[2])
 
 
 class Client(object):
@@ -73,7 +70,7 @@ class Client(object):
         # A warning is raised when authenticating with OAuth, recommending that
         # server applications use a service account.  We can ignore this.
         with warnings.catch_warnings():
-            warnings.simplefilter('ignore')
+            warnings.simplefilter("ignore")
             self.gcbq_client = gcbq.Client(project=self.project)
 
         self.dataset_key = dataset_key
@@ -88,11 +85,11 @@ class Client(object):
 
     def run_job(self, method_name, args, config_opts, config_default_opts):
         job_config = {
-            'copy_table': gcbq.CopyJobConfig,
-            'extract_table': gcbq.ExtractJobConfig,
-            'load_table_from_file': gcbq.LoadJobConfig,
-            'load_table_from_uri': gcbq.LoadJobConfig,
-            'query': gcbq.QueryJobConfig,
+            "copy_table": gcbq.CopyJobConfig,
+            "extract_table": gcbq.ExtractJobConfig,
+            "load_table_from_file": gcbq.LoadJobConfig,
+            "load_table_from_uri": gcbq.LoadJobConfig,
+            "query": gcbq.QueryJobConfig,
         }[method_name]()
 
         for k, v in config_default_opts.items():
@@ -103,7 +100,7 @@ class Client(object):
         method = getattr(self.gcbq_client, method_name)
 
         job = method(*args, job_config=job_config)
-        if getattr(job_config, 'dry_run', False):
+        if getattr(job_config, "dry_run", False):
             return []
         else:
             return job.result()
@@ -126,8 +123,9 @@ class Client(object):
 
     def create_dataset(self):
         self.dataset.location = settings.BQ_LOCATION
-        self.dataset.default_table_expiration_ms =\
+        self.dataset.default_table_expiration_ms = (
             settings.BQ_DEFAULT_TABLE_EXPIRATION_MS
+        )
         self.gcbq_client.create_dataset(self.dataset)
 
     def delete_dataset(self):
@@ -168,45 +166,40 @@ class Client(object):
         gcs_client = StorageClient()
         bucket = gcs_client.bucket()
         if bucket.get_blob(gcs_path) is None:
-            raise RuntimeError('Could not find blob at {}'.format(gcs_path))
+            raise RuntimeError("Could not find blob at {}".format(gcs_path))
 
-        gcs_uri = 'gs://{}/{}'.format(self.project, gcs_path)
-        schema_as_dict = [{'name': s.name, 'type': s.field_type.lower()} for s in schema]
+        gcs_uri = "gs://{}/{}".format(self.project, gcs_path)
+        schema_as_dict = [
+            {"name": s.name, "type": s.field_type.lower()} for s in schema
+        ]
         resource = {
-            'tableReference': {'tableId': table_id},
-            'externalDataConfiguration': {
-                'csvOptions': {'skipLeadingRows': '1'},
-                'sourceFormat': 'CSV',
-                'sourceUris': [gcs_uri],
-                'schema': {'fields': schema_as_dict}
-            }
+            "tableReference": {"tableId": table_id},
+            "externalDataConfiguration": {
+                "csvOptions": {"skipLeadingRows": "1"},
+                "sourceFormat": "CSV",
+                "sourceUris": [gcs_uri],
+                "schema": {"fields": schema_as_dict},
+            },
         }
 
-        path = '/projects/{}/datasets/{}/tables'.format(
-            self.project,
-            self.dataset_id
-        )
+        path = "/projects/{}/datasets/{}/tables".format(self.project, self.dataset_id)
 
         try:
             self.gcbq_client._connection.api_request(
-                method='POST',
-                path=path,
-                data=resource
+                method="POST", path=path, data=resource
             )
         except NotFound as e:
             if not dataset_is_missing(e):
                 raise
             self.create_dataset()
             self.gcbq_client._connection.api_request(
-                method='POST',
-                path=path,
-                data=resource
+                method="POST", path=path, data=resource
             )
 
         return self.get_table(table_id)
 
     def create_table_with_view(self, table_id, sql, legacy):
-        assert '{project}' in sql
+        assert "{project}" in sql
         sql = interpolate_sql(sql, project=self.project)
         table_ref = self.dataset.table(table_id)
         table = gcbq.Table(table_ref)
@@ -224,23 +217,21 @@ class Client(object):
         return Table(table_ref, self)
 
     def query(self, sql, substitutions=None, legacy=False, **options):
-        default_options = {
-            'use_legacy_sql': legacy,
-        }
+        default_options = {"use_legacy_sql": legacy}
 
         substitutions = substitutions or {}
         sql = interpolate_sql(sql, **substitutions)
 
         args = [sql]
         with exception_sql_printer(sql):
-            iterator = self.run_job('query', args, options, default_options)
+            iterator = self.run_job("query", args, options, default_options)
         return Results(iterator)
 
     def query_into_dataframe(self, sql, legacy=False):
         sql = interpolate_sql(sql)
         kwargs = {
-            'project_id': self.project,
-            'dialect': 'legacy' if legacy else 'standard',
+            "project_id": self.project,
+            "dialect": "legacy" if legacy else "standard",
         }
         with exception_sql_printer(sql):
             return pd.read_gbq(sql, **kwargs)
@@ -248,8 +239,8 @@ class Client(object):
     def upload_model(self, model, table_id=None):
         if table_id is None:
             table_id = model._meta.db_table
-            if self.dataset_key == 'dmd':
-                table_id = table_id.split('_', 1)[1]
+            if self.dataset_key == "dmd":
+                table_id = table_id.split("_", 1)[1]
         schema = build_schema_from_model(model)
         table = self.get_or_create_table(table_id, schema)
         # We reload the schema here, as when older BQ tables were created,
@@ -258,20 +249,16 @@ class Client(object):
         schema = table.gcbq_table.schema
 
         columns = [
-            f.db_column or f.attname
-            for f in model._meta.fields
-            if not f.auto_created
+            f.db_column or f.attname for f in model._meta.fields if not f.auto_created
         ]
 
         timestamp_ixs = [
-            ix
-            for ix, field in enumerate(schema)
-            if field.field_type == 'TIMESTAMP'
+            ix for ix, field in enumerate(schema) if field.field_type == "TIMESTAMP"
         ]
 
         def transformer(record):
             for ix in timestamp_ixs:
-                record[ix] = record[ix] + ' 00:00:00'
+                record[ix] = record[ix] + " 00:00:00"
             return record
 
         table.insert_rows_from_pg(model, schema, columns, transformer)
@@ -294,7 +281,7 @@ class Table(object):
 
     @property
     def qualified_name(self):
-        return '{}.{}'.format(self.dataset_id, self.table_id)
+        return "{}.{}".format(self.dataset_id, self.table_id)
 
     def run_job(self, *args):
         return self.client.run_job(*args)
@@ -318,18 +305,15 @@ class Table(object):
         for row in self.get_rows():
             yield row_to_dict(row, field_names)
 
-    def insert_rows_from_query(self,
-                               sql,
-                               substitutions=None,
-                               legacy=False,
-                               dry_run=False,
-                               **options):
+    def insert_rows_from_query(
+        self, sql, substitutions=None, legacy=False, dry_run=False, **options
+    ):
         default_options = {
-            'use_legacy_sql': legacy,
-            'dry_run': dry_run,
-            'allow_large_results': True,
-            'write_disposition': 'WRITE_TRUNCATE',
-            'destination': self.gcbq_table_ref,
+            "use_legacy_sql": legacy,
+            "dry_run": dry_run,
+            "allow_large_results": True,
+            "write_disposition": "WRITE_TRUNCATE",
+            "destination": self.gcbq_table_ref,
         }
 
         substitutions = substitutions or {}
@@ -338,18 +322,18 @@ class Table(object):
         args = [sql]
         with exception_sql_printer(sql):
             try:
-                self.run_job('query', args, options, default_options)
+                self.run_job("query", args, options, default_options)
             except NotFound as e:
                 if not dataset_is_missing(e):
                     raise
                 self.client.create_dataset()
-                self.run_job('query', args, options, default_options)
+                self.run_job("query", args, options, default_options)
 
     def insert_rows_from_csv(self, csv_path, schema, **options):
         default_options = {
-            'source_format': 'text/csv',
-            'write_disposition': 'WRITE_TRUNCATE',
-            'schema': schema,
+            "source_format": "text/csv",
+            "write_disposition": "WRITE_TRUNCATE",
+            "schema": schema,
         }
 
         # When we send a schema with a load_table_from_file job, our copy
@@ -357,10 +341,9 @@ class Table(object):
         # ourselves.
         self.gcbq_table.schema = schema
 
-        with open(csv_path, 'rb') as f:
+        with open(csv_path, "rb") as f:
             args = [f, self.gcbq_table_ref]
-            self.run_job('load_table_from_file', args, options,
-                         default_options)
+            self.run_job("load_table_from_file", args, options, default_options)
 
     def insert_rows_from_pg(self, model, schema, columns=None, transformer=None):
         if columns is None:
@@ -373,57 +356,45 @@ class Table(object):
             self.insert_rows_from_csv(f.name, schema)
 
     def insert_rows_from_storage(self, gcs_path, **options):
-        default_options = {
-            'write_disposition': 'WRITE_TRUNCATE',
-        }
+        default_options = {"write_disposition": "WRITE_TRUNCATE"}
 
-        gcs_uri = 'gs://{}/{}'.format(self.project, gcs_path)
+        gcs_uri = "gs://{}/{}".format(self.project, gcs_path)
 
         args = [gcs_uri, self.gcbq_table_ref]
-        self.run_job('load_table_from_uri', args, options, default_options)
+        self.run_job("load_table_from_uri", args, options, default_options)
 
     def export_to_storage(self, storage_prefix, **options):
         self.get_gcbq_table()
 
-        default_options = {
-            'compression': 'GZIP',
-        }
+        default_options = {"compression": "GZIP"}
 
-        destination_uri = 'gs://{}/{}*.csv.gz'.format(
-            self.project,
-            storage_prefix,
-        )
+        destination_uri = "gs://{}/{}*.csv.gz".format(self.project, storage_prefix)
 
         args = [self.gcbq_table, destination_uri]
-        result = self.run_job('extract_table', args, options, default_options)
-        if result.state != 'DONE' or result.error_result:
+        result = self.run_job("extract_table", args, options, default_options)
+        if result.state != "DONE" or result.error_result:
             raise BigQueryExportError(
-                'Export job failed with state {state}: {error}'.format(
-                    state=result.state,
-                    error=result.error_result
+                "Export job failed with state {state}: {error}".format(
+                    state=result.state, error=result.error_result
                 )
             )
 
     def delete_all_rows(self, **options):
-        default_options = {
-            'use_legacy_sql': False,
-        }
+        default_options = {"use_legacy_sql": False}
 
-        sql = 'DELETE FROM {} WHERE true'.format(self.qualified_name)
+        sql = "DELETE FROM {} WHERE true".format(self.qualified_name)
 
         args = [sql]
-        self.run_job('query', args, options, default_options)
+        self.run_job("query", args, options, default_options)
 
     def copy_to_new_dataset(self, new_dataset_key, **options):
-        default_options = {
-            'location': settings.BQ_LOCATION,
-        }
+        default_options = {"location": settings.BQ_LOCATION}
 
         dataset_ref = self.gcbq_client.dataset(DATASETS[new_dataset_key])
         new_table_ref = dataset_ref.table(self.table_id)
 
         args = [self.gcbq_table_ref, new_table_ref]
-        self.run_job('copy_table', args, options, default_options)
+        self.run_job("copy_table", args, options, default_options)
 
     def move_to_new_dataset(self, new_dataset_id):
         self.copy_to_new_dataset(new_dataset_id)
@@ -451,8 +422,7 @@ class Results(object):
         """
         field_to_index = self._gcbq_row_iterator._field_to_index
         sorted_fields = sorted(
-            field_to_index.items(),
-            key=lambda field_and_index: field_and_index[1]
+            field_to_index.items(), key=lambda field_and_index: field_and_index[1]
         )
         return [field for (field, index) in sorted_fields]
 
@@ -473,7 +443,7 @@ class TableExporter(object):
 
     def download_from_storage(self):
         for blob in self.storage_blobs():
-            with tempfile.NamedTemporaryFile(mode='rb+') as f:
+            with tempfile.NamedTemporaryFile(mode="rb+") as f:
                 blob.download_to_file(f)
                 f.flush()
                 f.seek(0)
@@ -489,8 +459,7 @@ class TableExporter(object):
                 # puts a header on every file, so we have to skip that
                 # header on all except the first shard.
                 cmd = "gunzip -c -f %s | tail -n +2 >> %s"
-            subprocess.check_call(
-                cmd % (f_zipped.name, f_out.name), shell=True)
+            subprocess.check_call(cmd % (f_zipped.name, f_out.name), shell=True)
 
     def delete_from_storage(self):
         for blob in self.storage_blobs():
@@ -504,7 +473,7 @@ def row_to_dict(row, field_names):
     """
     dict_row = {}
     for value, field_name in zip(row, field_names):
-        if value and str(value).lower() == 'nan':
+        if value and str(value).lower() == "nan":
             value = None
         dict_row[field_name] = value
     return dict_row
@@ -520,17 +489,17 @@ def build_schema(*fields):
 
 def build_schema_from_model(model):
     field_mappings = {
-        model_fields.BigIntegerField: 'INTEGER',
-        model_fields.CharField: 'STRING',
-        model_fields.DateField: 'DATE',
-        model_fields.FloatField: 'FLOAT',
-        model_fields.DecimalField: 'NUMERIC',
-        model_fields.IntegerField: 'INTEGER',
-        model_fields.BooleanField: 'BOOLEAN',
-        model_fields.NullBooleanField: 'BOOLEAN',
-        model_fields.TextField: 'STRING',
-        related_fields.ForeignKey: 'INTEGER',
-        related_fields.OneToOneField: 'INTEGER',
+        model_fields.BigIntegerField: "INTEGER",
+        model_fields.CharField: "STRING",
+        model_fields.DateField: "DATE",
+        model_fields.FloatField: "FLOAT",
+        model_fields.DecimalField: "NUMERIC",
+        model_fields.IntegerField: "INTEGER",
+        model_fields.BooleanField: "BOOLEAN",
+        model_fields.NullBooleanField: "BOOLEAN",
+        model_fields.TextField: "STRING",
+        related_fields.ForeignKey: "INTEGER",
+        related_fields.OneToOneField: "INTEGER",
     }
 
     fields = [
@@ -544,11 +513,11 @@ def build_schema_from_model(model):
 
 class InterpolationDict(dict):
     def __missing__(self, key):
-        return '{' + key + '}'
+        return "{" + key + "}"
 
 
 def interpolate_sql(sql, **substitutions):
-    '''Interpolates substitutions (plus datasets defined in DATASETS) into
+    """Interpolates substitutions (plus datasets defined in DATASETS) into
     given SQL.
 
     Many of our SQL queries contain template variables, because the names of
@@ -566,7 +535,7 @@ def interpolate_sql(sql, **substitutions):
     Use of the InterpolationDict allows us to do interpolation when the SQL
     contains things in curly braces that shoudn't be interpolated (for
     instance, JS functions defined in SQL).
-    '''
+    """
     substitutions.update(DATASETS)
     substitutions = InterpolationDict(**substitutions)
     sql = string.Formatter().vformat(sql, (), substitutions)
@@ -575,4 +544,4 @@ def interpolate_sql(sql, **substitutions):
 
 
 def dataset_is_missing(exception):
-    return isinstance(exception, NotFound) and 'Not found: Dataset' in str(exception)
+    return isinstance(exception, NotFound) and "Not found: Dataset" in str(exception)

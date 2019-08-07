@@ -58,8 +58,9 @@ from frontend.models import STP
 from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
 from frontend.views.spending_utils import (
-    ncso_spending_for_entity, ncso_spending_breakdown_for_entity,
-    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE
+    ncso_spending_for_entity,
+    ncso_spending_breakdown_for_entity,
+    NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
 from frontend.views.mailchimp_utils import mailchimp_subscribe
 
@@ -76,8 +77,9 @@ def handle_bad_request(view_function):
         try:
             return view_function(request, *args, **kwargs)
         except BadRequestError as e:
-            context = {'error_code': 400, 'reason': unicode(e)}
-            return render(request, '500.html', context, status=400)
+            context = {"error_code": 400, "reason": unicode(e)}
+            return render(request, "500.html", context, status=400)
+
     return wrapper
 
 
@@ -93,10 +95,8 @@ def first_or_none(lst):
 ##################################################
 def all_bnf(request):
     sections = Section.objects.filter(is_current=True)
-    context = {
-        'sections': sections
-    }
-    return render(request, 'all_bnf.html', context)
+    context = {"sections": sections}
+    return render(request, "all_bnf.html", context)
 
 
 def bnf_section(request, section_id):
@@ -113,38 +113,32 @@ def bnf_section(request, section_id):
         pass
     chemicals = None
     subsections = Section.objects.filter(
-        bnf_id__startswith=section_id,
-        is_current=True
-    ).extra(
-        where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
+        bnf_id__startswith=section_id, is_current=True
+    ).extra(where=["CHAR_LENGTH(bnf_id)=%s" % (id_len + 2)])
     if not subsections:
         chemicals = Chemical.objects.filter(
-            bnf_code__startswith=section_id,
-            is_current=True
-        ).order_by('chem_name')
+            bnf_code__startswith=section_id, is_current=True
+        ).order_by("chem_name")
     context = {
-        'section': section,
-        'bnf_chapter': bnf_chapter,
-        'bnf_section': bnf_section,
-        'subsections': subsections,
-        'chemicals': chemicals,
-        'page_id': section_id
+        "section": section,
+        "bnf_chapter": bnf_chapter,
+        "bnf_section": bnf_section,
+        "subsections": subsections,
+        "chemicals": chemicals,
+        "page_id": section_id,
     }
-    return render(request, 'bnf_section.html', context)
+    return render(request, "bnf_section.html", context)
 
 
 ##################################################
 # Chemicals
 ##################################################
 
+
 def all_chemicals(request):
-    chemicals = Chemical.objects.filter(
-        is_current=True
-    ).order_by('bnf_code')
-    context = {
-        'chemicals': chemicals
-    }
-    return render(request, 'all_chemicals.html', context)
+    chemicals = Chemical.objects.filter(is_current=True).order_by("bnf_code")
+    context = {"chemicals": chemicals}
+    return render(request, "all_chemicals.html", context)
 
 
 def chemical(request, bnf_code):
@@ -159,150 +153,139 @@ def chemical(request, bnf_code):
         bnf_para = None
 
     context = {
-        'page_id': bnf_code,
-        'chemical': c,
-        'bnf_chapter': bnf_chapter,
-        'bnf_section': bnf_section,
-        'bnf_para': bnf_para
+        "page_id": bnf_code,
+        "chemical": c,
+        "bnf_chapter": bnf_chapter,
+        "bnf_section": bnf_section,
+        "bnf_para": bnf_para,
     }
-    return render(request, 'chemical.html', context)
+    return render(request, "chemical.html", context)
 
 
 ##################################################
 # GP practices
 ##################################################
 
+
 def all_practices(request):
-    practices = Practice.objects.filter(setting=4).order_by('name')
-    context = {
-        'practices': practices
-    }
-    return render(request, 'all_practices.html', context)
+    practices = Practice.objects.filter(setting=4).order_by("name")
+    context = {"practices": practices}
+    return render(request, "all_practices.html", context)
 
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_and_newsletter_form(
-        request, practice)
+    form = _monthly_bookmark_and_newsletter_form(request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
     context = _home_page_context_for_entity(request, practice)
-    context['form'] = form
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
+    context["form"] = form
+    request.session["came_from"] = request.path
+    return render(request, "entity_home_page.html", context)
 
 
 ##################################################
 # PCNs
 ##################################################
 
+
 def all_pcns(request):
-    pcns = PCN.objects.active().order_by('name')
+    pcns = PCN.objects.active().order_by("name")
     pcn_data = [
         {
-            'name': pcn.cased_name,
-            'code': pcn.code,
-            'url': reverse('pcn_home_page', args=[pcn.code])
+            "name": pcn.cased_name,
+            "code": pcn.code,
+            "url": reverse("pcn_home_page", args=[pcn.code]),
         }
         for pcn in pcns
     ]
-    context = {
-        'pcn_data': pcn_data
-    }
-    return render(request, 'all_pcns.html', context)
+    context = {"pcn_data": pcn_data}
+    return render(request, "all_pcns.html", context)
 
 
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, ons_code=pcn_code)
-    practices = Practice.objects.filter(pcn=pcn, setting=4).order_by('name')
+    practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
     context = _home_page_context_for_entity(request, pcn)
-    context['practices'] = practices
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
+    context["practices"] = practices
+    request.session["came_from"] = request.path
+    return render(request, "entity_home_page.html", context)
 
 
 ##################################################
 # CCGs
 ##################################################
 
+
 def all_ccgs(request):
-    ccgs = PCT.objects.filter(
-        close_date__isnull=True, org_type="CCG").order_by('name')
-    context = {
-        'ccgs': ccgs
-    }
-    return render(request, 'all_ccgs.html', context)
+    ccgs = PCT.objects.filter(close_date__isnull=True, org_type="CCG").order_by("name")
+    context = {"ccgs": ccgs}
+    return render(request, "all_ccgs.html", context)
 
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_and_newsletter_form(
-        request, ccg)
+    form = _monthly_bookmark_and_newsletter_form(request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
-    practices = Practice.objects.filter(ccg=ccg, setting=4).order_by('name')
+    practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
     context = _home_page_context_for_entity(request, ccg)
-    context['form'] = form
-    context['practices'] = practices
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
+    context["form"] = form
+    context["practices"] = practices
+    request.session["came_from"] = request.path
+    return render(request, "entity_home_page.html", context)
 
 
 ##################################################
 # STPs
 ##################################################
 
+
 def all_stps(request):
-    stps = STP.objects.order_by('name')
-    context = {
-        'stps': stps
-    }
-    return render(request, 'all_stps.html', context)
+    stps = STP.objects.order_by("name")
+    context = {"stps": stps}
+    return render(request, "all_stps.html", context)
 
 
 def stp_home_page(request, stp_code):
     stp = get_object_or_404(STP, ons_code=stp_code)
     ccgs = PCT.objects.filter(
-        stp=stp,
-        close_date__isnull=True,
-        org_type='CCG'
-    ).order_by('name')
+        stp=stp, close_date__isnull=True, org_type="CCG"
+    ).order_by("name")
     context = _home_page_context_for_entity(request, stp)
-    context['ccgs'] = ccgs
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
+    context["ccgs"] = ccgs
+    request.session["came_from"] = request.path
+    return render(request, "entity_home_page.html", context)
 
 
 ##################################################
 # Regional teams
 ##################################################
 
+
 def all_regional_teams(request):
     # NHS reorganisations sometimes include regions before CCGs have
     # been assigned, hence the filter on an aggregation here:
-    regional_teams = RegionalTeam.objects.active().order_by('name')
-    context = {
-        'regional_teams': regional_teams
-    }
-    return render(request, 'all_regional_teams.html', context)
+    regional_teams = RegionalTeam.objects.active().order_by("name")
+    context = {"regional_teams": regional_teams}
+    return render(request, "all_regional_teams.html", context)
 
 
 def regional_team_home_page(request, regional_team_code):
     regional_team = get_object_or_404(RegionalTeam, code=regional_team_code)
     ccgs = PCT.objects.filter(
-        regional_team=regional_team,
-        close_date__isnull=True,
-        org_type='CCG'
-    ).order_by('name')
+        regional_team=regional_team, close_date__isnull=True, org_type="CCG"
+    ).order_by("name")
     context = _home_page_context_for_entity(request, regional_team)
-    context['ccgs'] = ccgs
-    request.session['came_from'] = request.path
-    return render(request, 'entity_home_page.html', context)
+    context["ccgs"] = ccgs
+    request.session["came_from"] = request.path
+    return render(request, "entity_home_page.html", context)
 
 
 ##################################################
 # All England
 ##################################################
+
 
 def cached(function, *args):
     """
@@ -317,7 +300,7 @@ def cached(function, *args):
         return function(*args)
     key_parts = [settings.SOURCE_COMMIT_ID, __name__, function.__name__]
     key_parts.extend(map(str, args))
-    key = ':'.join(key_parts)
+    key = ":".join(key_parts)
     result = cache.get(key)
     if result is None:
         result = function(*args)
@@ -325,20 +308,19 @@ def cached(function, *args):
         # of these values, given that they are invalidated on every deploy. (We
         # don't need to worry about stale data after an import as the functions
         # we're caching include a date in their arguments)
-        cache.set(key, result, timeout=60*60*24*7)
+        cache.set(key, result, timeout=60 * 60 * 24 * 7)
     return result
 
 
 @handle_bad_request
 def all_england(request):
-    form = _monthly_bookmark_and_newsletter_form(
-        request, None)
+    form = _monthly_bookmark_and_newsletter_form(request, None)
     if isinstance(form, HttpResponseRedirect):
         return form
 
     tag_filter = _get_measure_tag_filter(request.GET)
-    entity_type = request.GET.get('entity_type', 'CCG')
-    date = _specified_or_last_date(request, 'ppu')
+    entity_type = request.GET.get("entity_type", "CCG")
+    date = _specified_or_last_date(request, "ppu")
     # We cache the results of these expensive function calls which only change
     # when `date` changes
     ppu_savings = cached(all_england_ppu_savings, entity_type, date)
@@ -348,78 +330,73 @@ def all_england(request):
     # We deliberately DON'T cache the NCSO spending query as this can change
     # whenever new concession data comes in, which can happen at any time
     ncso_spending = first_or_none(
-        ncso_spending_for_entity(None, 'all_england', num_months=1)
+        ncso_spending_for_entity(None, "all_england", num_months=1)
     )
-    other_entity_type = 'practice' if entity_type == 'CCG' else 'CCG'
+    other_entity_type = "practice" if entity_type == "CCG" else "CCG"
     other_entity_query = request.GET.copy()
-    other_entity_query['entity_type'] = other_entity_type
+    other_entity_query["entity_type"] = other_entity_type
 
     measure_options = {
-       'tags': ','.join(tag_filter['tags']),
-       'orgType': entity_type.lower(),
-       'orgName': 'All {}s in England'.format(entity_type),
-       'aggregate': True,
-       'rollUpBy': 'measure_id',
+        "tags": ",".join(tag_filter["tags"]),
+        "orgType": entity_type.lower(),
+        "orgName": "All {}s in England".format(entity_type),
+        "aggregate": True,
+        "rollUpBy": "measure_id",
     }
     measure_options = _build_measure_options(measure_options)
 
     context = {
-        'tag_filter': tag_filter,
-        'entity_type': entity_type,
-        'other_entity_type': other_entity_type,
-        'other_entity_url': '?' + other_entity_query.urlencode(),
-        'ppu_savings': ppu_savings,
-        'measure_savings': measure_savings,
-        'low_priority_savings': low_priority_savings,
-        'low_priority_total': low_priority_total,
-        'ncso_spending': ncso_spending,
-        'date': date,
-        'measure_options': measure_options,
-        'form': form,
-        'signed_up_for_alert': _signed_up_for_alert(request, None, OrgBookmark),
+        "tag_filter": tag_filter,
+        "entity_type": entity_type,
+        "other_entity_type": other_entity_type,
+        "other_entity_url": "?" + other_entity_query.urlencode(),
+        "ppu_savings": ppu_savings,
+        "measure_savings": measure_savings,
+        "low_priority_savings": low_priority_savings,
+        "low_priority_total": low_priority_total,
+        "ncso_spending": ncso_spending,
+        "date": date,
+        "measure_options": measure_options,
+        "form": form,
+        "signed_up_for_alert": _signed_up_for_alert(request, None, OrgBookmark),
     }
-    return render(request, 'all_england.html', context)
+    return render(request, "all_england.html", context)
 
 
 ##################################################
 # Analyse
 ##################################################
 
+
 def analyse(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         # should this be the _bookmark_and_newsletter_form?
         form = _handle_bookmark_and_newsletter_post(
-            request,
-            SearchBookmark,
-            SearchBookmarkForm,
-            'url', 'name'
+            request, SearchBookmark, SearchBookmarkForm, "url", "name"
         )
         if isinstance(form, HttpResponseRedirect):
             return form
     else:
         # Note that the (hidden) URL field is filled via javascript on
         # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(
-            initial={'email': getattr(request.user, 'email', '')})
-    return render(request, 'analyse.html', {'form': form})
+        form = SearchBookmarkForm(initial={"email": getattr(request.user, "email", "")})
+    return render(request, "analyse.html", {"form": form})
 
 
 ##################################################
 # Measures
 ##################################################
 
+
 @handle_bad_request
 def all_measures(request):
     tag_filter = _get_measure_tag_filter(request.GET, show_all_by_default=True)
     query = {}
-    if tag_filter['tags']:
-        query['tags__overlap'] = tag_filter['tags']
-    measures = Measure.objects.filter(**query).order_by('name')
-    context = {
-        'tag_filter': tag_filter,
-        'measures': measures
-    }
-    return render(request, 'all_measures.html', context)
+    if tag_filter["tags"]:
+        query["tags__overlap"] = tag_filter["tags"]
+    measures = Measure.objects.filter(**query).order_by("name")
+    context = {"tag_filter": tag_filter, "measures": measures}
+    return render(request, "all_measures.html", context)
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
@@ -427,30 +404,29 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
     measure = get_object_or_404(Measure, pk=measure)
 
     measure_options = {
-        'rollUpBy': 'measure_id',
-        'measure': measure,
-        'orgId': entity.code,
-        'orgName': entity.name,
-        'orgType': _org_type_for_entity(entity),
+        "rollUpBy": "measure_id",
+        "measure": measure,
+        "orgId": entity.code,
+        "orgName": entity.name,
+        "orgType": _org_type_for_entity(entity),
     }
 
     if isinstance(entity, Practice):
-        measure_options['parentOrgId'] = entity.ccg_id
+        measure_options["parentOrgId"] = entity.ccg_id
 
     measure_options = _build_measure_options(measure_options)
 
     entity_type_human = _entity_type_human(entity_type)
     context = {
-        'entity': entity,
-        'entity_type': entity_type,
-        'entity_type_human': entity_type_human,
-        'measures_url_name': 'measures_for_one_{}'.format(entity_type),
-        'measure': measure,
-        'measure_options': measure_options,
-        'current_at': ImportLog.objects.latest_in_category(
-            'prescribing').current_at
+        "entity": entity,
+        "entity_type": entity_type,
+        "entity_type_human": entity_type_human,
+        "measures_url_name": "measures_for_one_{}".format(entity_type),
+        "measure": measure,
+        "measure_options": measure_options,
+        "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
     }
-    return render(request, 'measure_for_one_entity.html', context)
+    return render(request, "measure_for_one_entity.html", context)
 
 
 def measure_for_all_england(request, measure):
@@ -458,7 +434,7 @@ def measure_for_all_england(request, measure):
     entity_type = request.GET.get("entity_type", "ccg")
     measure_options = {
         "orgType": entity_type.lower(),
-        'measure': measure,
+        "measure": measure,
         "orgName": "All {}s in England".format(entity_type),
         "aggregate": True,
         "rollUpBy": "measure_id",
@@ -480,29 +456,30 @@ def measure_for_all_england(request, measure):
 # because the parameter names are used for building URLs by _url_template()
 # below and _buildUrl() in measure_utils.js.
 
+
 @handle_bad_request
 def measures_for_one_practice(request, practice_code):
-    return _measures_for_one_entity(request, practice_code, 'practice')
+    return _measures_for_one_entity(request, practice_code, "practice")
 
 
 @handle_bad_request
 def measures_for_one_pcn(request, pcn_code):
-    return _measures_for_one_entity(request, pcn_code, 'pcn')
+    return _measures_for_one_entity(request, pcn_code, "pcn")
 
 
 @handle_bad_request
 def measures_for_one_ccg(request, ccg_code):
-    return _measures_for_one_entity(request, ccg_code, 'ccg')
+    return _measures_for_one_entity(request, ccg_code, "ccg")
 
 
 @handle_bad_request
 def measures_for_one_stp(request, stp_code):
-    return _measures_for_one_entity(request, stp_code, 'stp')
+    return _measures_for_one_entity(request, stp_code, "stp")
 
 
 @handle_bad_request
 def measures_for_one_regional_team(request, regional_team_code):
-    return _measures_for_one_entity(request, regional_team_code, 'regional_team')
+    return _measures_for_one_entity(request, regional_team_code, "regional_team")
 
 
 def _measures_for_one_entity(request, entity_code, entity_type):
@@ -510,187 +487,181 @@ def _measures_for_one_entity(request, entity_code, entity_type):
     tag_filter = _get_measure_tag_filter(request.GET)
 
     measure_options = {
-        'rollUpBy': 'measure_id',
-        'tags': ','.join(tag_filter['tags']),
-        'orgId': entity.code,
-        'orgName': entity.name,
-        'orgType': _org_type_for_entity(entity),
+        "rollUpBy": "measure_id",
+        "tags": ",".join(tag_filter["tags"]),
+        "orgId": entity.code,
+        "orgName": entity.name,
+        "orgType": _org_type_for_entity(entity),
     }
 
     if isinstance(entity, Practice):
-        measure_options['parentOrgId'] = entity.ccg_id
+        measure_options["parentOrgId"] = entity.ccg_id
 
     measure_options = _build_measure_options(measure_options)
 
     context = {
-        'entity': entity,
-        'entity_type': entity_type,
-        'entity_type_human': _entity_type_human(entity_type),
-        'page_id': entity_code,
-        'tag_filter': tag_filter,
-        'low_priority_url': reverse(
-            'measure_for_one_' + entity_type,
-            kwargs={'measure': 'lpzomnibus', 'entity_code': entity.code}
+        "entity": entity,
+        "entity_type": entity_type,
+        "entity_type_human": _entity_type_human(entity_type),
+        "page_id": entity_code,
+        "tag_filter": tag_filter,
+        "low_priority_url": reverse(
+            "measure_for_one_" + entity_type,
+            kwargs={"measure": "lpzomnibus", "entity_code": entity.code},
         ),
-        'measure_options': measure_options,
+        "measure_options": measure_options,
     }
 
-    if entity_type in ['pcn', 'ccg']:
-        context['practices'] = entity.practice_set.filter(setting=4).order_by('name')
-    elif entity_type in ['stp', 'regional_team']:
-        context['ccgs'] = entity.pct_set.filter(
-            close_date__isnull=True,
-            org_type='CCG'
-        ).order_by('name')
+    if entity_type in ["pcn", "ccg"]:
+        context["practices"] = entity.practice_set.filter(setting=4).order_by("name")
+    elif entity_type in ["stp", "regional_team"]:
+        context["ccgs"] = entity.pct_set.filter(
+            close_date__isnull=True, org_type="CCG"
+        ).order_by("name")
 
-    return render(request, 'measures_for_one_entity.html', context)
+    return render(request, "measures_for_one_entity.html", context)
 
 
 def measure_for_practices_in_ccg(request, ccg_code, measure):
-    return _measure_for_children_in_entity(request, measure, ccg_code, 'ccg')
+    return _measure_for_children_in_entity(request, measure, ccg_code, "ccg")
 
 
 def measure_for_practices_in_pcn(request, pcn_code, measure):
-    return _measure_for_children_in_entity(request, measure, pcn_code, 'pcn')
+    return _measure_for_children_in_entity(request, measure, pcn_code, "pcn")
 
 
 def measure_for_ccgs_in_stp(request, stp_code, measure):
-    return _measure_for_children_in_entity(request, measure, stp_code, 'stp')
+    return _measure_for_children_in_entity(request, measure, stp_code, "stp")
 
 
 def measure_for_ccgs_in_regional_team(request, regional_team_code, measure):
     return _measure_for_children_in_entity(
-        request,
-        measure,
-        regional_team_code,
-        'regional_team'
+        request, measure, regional_team_code, "regional_team"
     )
 
 
 def _measure_for_children_in_entity(
-        request, measure, parent_entity_code, parent_entity_type):
+    request, measure, parent_entity_code, parent_entity_type
+):
     parent = _get_entity(parent_entity_type, parent_entity_code)
     child_entity_type = {
-        'pcn': 'practice',
-        'ccg': 'practice',
-        'stp': 'ccg',
-        'regional_team': 'ccg',
+        "pcn": "practice",
+        "ccg": "practice",
+        "stp": "ccg",
+        "regional_team": "ccg",
     }[parent_entity_type]
     measure = get_object_or_404(Measure, pk=measure)
 
     measure_options = {
-        'rollUpBy': 'org_id',
-        'measure': measure,
-        'orgType': child_entity_type,
-        'orgId': parent.code,
-        'orgName': parent.name,
-        'parentOrgType': _org_type_for_entity(parent),
+        "rollUpBy": "org_id",
+        "measure": measure,
+        "orgType": child_entity_type,
+        "orgId": parent.code,
+        "orgName": parent.name,
+        "parentOrgType": _org_type_for_entity(parent),
     }
 
     if measure.tags_focus:
-        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+        measure_options["tagsFocus"] = ",".join(measure.tags_focus)
 
     measure_options = _build_measure_options(measure_options)
 
     context = {
-        'parent_entity_type': parent_entity_type,
-        'parent_entity_type_human': _entity_type_human(parent_entity_type),
-        'child_entity_type_human': _entity_type_human(child_entity_type),
-        'parent': parent,
-        'page_id': parent_entity_code,
-        'parent_entity_measure_url': reverse(
-            'measure_for_one_' + parent_entity_type,
-            kwargs={'measure': measure.id, 'entity_code': parent_entity_code}
+        "parent_entity_type": parent_entity_type,
+        "parent_entity_type_human": _entity_type_human(parent_entity_type),
+        "child_entity_type_human": _entity_type_human(child_entity_type),
+        "parent": parent,
+        "page_id": parent_entity_code,
+        "parent_entity_measure_url": reverse(
+            "measure_for_one_" + parent_entity_type,
+            kwargs={"measure": measure.id, "entity_code": parent_entity_code},
         ),
-        'all_measures_url': reverse(
-            'measures_for_one_' + parent_entity_type,
-            kwargs={parent_entity_type + '_code': parent_entity_code}
+        "all_measures_url": reverse(
+            "measures_for_one_" + parent_entity_type,
+            kwargs={parent_entity_type + "_code": parent_entity_code},
         ),
-        'measure': measure,
-        'measure_options': measure_options,
-        'measure_tags': _get_tags_with_names(measure.tags),
+        "measure": measure,
+        "measure_options": measure_options,
+        "measure_tags": _get_tags_with_names(measure.tags),
     }
-    return render(request, 'measure_for_children_in_entity.html', context)
+    return render(request, "measure_for_children_in_entity.html", context)
 
 
 def measure_for_all_entities(request, measure, entity_type):
     measure = get_object_or_404(Measure, id=measure)
 
-    measure_options = {
-        'rollUpBy': 'org_id',
-        'measure': measure,
-        'orgType': entity_type,
-    }
+    measure_options = {"rollUpBy": "org_id", "measure": measure, "orgType": entity_type}
 
     if measure.tags_focus:
-        measure_options['tagsFocus'] = ','.join(measure.tags_focus)
+        measure_options["tagsFocus"] = ",".join(measure.tags_focus)
 
     measure_options = _build_measure_options(measure_options)
 
     entity_type_human = _entity_type_human(entity_type)
 
     context = {
-        'measure': measure,
-        'measure_options': measure_options,
-        'entity_type': entity_type,
-        'entity_type_human': entity_type_human,
-        'measure_tags': _get_tags_with_names(measure.tags),
-        'all_measures_url': reverse('all_measures'),
+        "measure": measure,
+        "measure_options": measure_options,
+        "entity_type": entity_type,
+        "entity_type_human": entity_type_human,
+        "measure_tags": _get_tags_with_names(measure.tags),
+        "all_measures_url": reverse("all_measures"),
     }
-    return render(request, 'measure_for_all_entities.html', context)
+    return render(request, "measure_for_all_entities.html", context)
 
 
 ##################################################
 # Price per unit
 ##################################################
 
+
 @handle_bad_request
 def practice_price_per_unit(request, code):
-    date = _specified_or_last_date(request, 'ppu')
+    date = _specified_or_last_date(request, "ppu")
     practice = get_object_or_404(Practice, code=code)
     context = {
-        'entity': practice,
-        'entity_name': practice.cased_name,
-        'highlight': practice.code,
-        'highlight_name': practice.cased_name,
-        'date': date,
-        'by_practice': True
+        "entity": practice,
+        "entity_name": practice.cased_name,
+        "highlight": practice.code,
+        "highlight_name": practice.cased_name,
+        "date": date,
+        "by_practice": True,
     }
-    return render(request, 'price_per_unit.html', context)
+    return render(request, "price_per_unit.html", context)
 
 
 @handle_bad_request
 def ccg_price_per_unit(request, code):
-    date = _specified_or_last_date(request, 'ppu')
+    date = _specified_or_last_date(request, "ppu")
     ccg = get_object_or_404(PCT, code=code)
     context = {
-        'entity': ccg,
-        'entity_name': ccg.cased_name,
-        'highlight': ccg.code,
-        'highlight_name': ccg.cased_name,
-        'date': date,
-        'by_ccg': True
+        "entity": ccg,
+        "entity_name": ccg.cased_name,
+        "highlight": ccg.code,
+        "highlight_name": ccg.cased_name,
+        "date": date,
+        "by_ccg": True,
     }
-    return render(request, 'price_per_unit.html', context)
+    return render(request, "price_per_unit.html", context)
 
 
 @handle_bad_request
 def all_england_price_per_unit(request):
-    date = _specified_or_last_date(request, 'ppu')
+    date = _specified_or_last_date(request, "ppu")
     context = {
-        'entity_name': 'NHS England',
-        'highlight_name': 'NHS England',
-        'date': date,
-        'by_ccg': True,
-        'entity_type': 'CCG',
-        'aggregate': True
+        "entity_name": "NHS England",
+        "highlight_name": "NHS England",
+        "date": date,
+        "by_ccg": True,
+        "entity_type": "CCG",
+        "aggregate": True,
     }
-    return render(request, 'price_per_unit.html', context)
+    return render(request, "price_per_unit.html", context)
 
 
 @handle_bad_request
 def price_per_unit_by_presentation(request, entity_code, bnf_code):
-    date = _specified_or_last_date(request, 'ppu')
+    date = _specified_or_last_date(request, "ppu")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
     if len(entity_code) == 3:
         entity = get_object_or_404(PCT, code=entity_code)
@@ -698,126 +669,130 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         entity = get_object_or_404(Practice, code=entity_code)
 
     params = {
-        'format': 'json',
-        'bnf_code': presentation.bnf_code,
-        'highlight': entity.code,
-        'date': date.strftime('%Y-%m-%d'),
+        "format": "json",
+        "bnf_code": presentation.bnf_code,
+        "highlight": entity.code,
+        "date": date.strftime("%Y-%m-%d"),
     }
 
-    if 'trim' in request.GET:
-        params['trim'] = request.GET['trim']
+    if "trim" in request.GET:
+        params["trim"] = request.GET["trim"]
 
-    bubble_data_url = _build_api_url('bubble', params)
+    bubble_data_url = _build_api_url("bubble", params)
 
     context = {
-        'entity': entity,
-        'entity_name': entity.cased_name,
-        'highlight': entity.code,
-        'highlight_name': entity.cased_name,
-        'name': presentation.product_name,
-        'bnf_code': presentation.bnf_code,
-        'presentation': presentation,
-        'dmd_info': presentation.dmd_info(),
-        'date': date,
-        'by_presentation': True,
-        'bubble_data_url': bubble_data_url,
+        "entity": entity,
+        "entity_name": entity.cased_name,
+        "highlight": entity.code,
+        "highlight_name": entity.cased_name,
+        "name": presentation.product_name,
+        "bnf_code": presentation.bnf_code,
+        "presentation": presentation,
+        "dmd_info": presentation.dmd_info(),
+        "date": date,
+        "by_presentation": True,
+        "bubble_data_url": bubble_data_url,
     }
-    return render(request, 'price_per_unit.html', context)
+    return render(request, "price_per_unit.html", context)
 
 
 @handle_bad_request
 def all_england_price_per_unit_by_presentation(request, bnf_code):
-    date = _specified_or_last_date(request, 'ppu')
+    date = _specified_or_last_date(request, "ppu")
     presentation = get_object_or_404(Presentation, pk=bnf_code)
 
     params = {
-        'format': 'json',
-        'bnf_code': presentation.bnf_code,
-        'date': date.strftime('%Y-%m-%d'),
+        "format": "json",
+        "bnf_code": presentation.bnf_code,
+        "date": date.strftime("%Y-%m-%d"),
     }
 
-    if 'trim' in request.GET:
-        params['trim'] = request.GET['trim']
+    if "trim" in request.GET:
+        params["trim"] = request.GET["trim"]
 
-    bubble_data_url = _build_api_url('bubble', params)
+    bubble_data_url = _build_api_url("bubble", params)
 
     context = {
-        'name': presentation.product_name,
-        'bnf_code': presentation.bnf_code,
-        'presentation': presentation,
-        'dmd_info': presentation.dmd_info(),
-        'date': date,
-        'by_presentation': True,
-        'bubble_data_url': bubble_data_url,
-        'entity_name': 'NHS England',
-        'entity_type': 'CCG',
+        "name": presentation.product_name,
+        "bnf_code": presentation.bnf_code,
+        "presentation": presentation,
+        "dmd_info": presentation.dmd_info(),
+        "date": date,
+        "by_presentation": True,
+        "bubble_data_url": bubble_data_url,
+        "entity_name": "NHS England",
+        "entity_type": "CCG",
     }
-    return render(request, 'price_per_unit.html', context)
+    return render(request, "price_per_unit.html", context)
 
 
 ##################################################
 # Ghost generics
 ##################################################
 
+
 @handle_bad_request
 def ghost_generics_for_entity(request, code, entity_type):
-    date = _specified_or_last_date(request, 'prescribing')
+    date = _specified_or_last_date(request, "prescribing")
     entity = _get_entity(entity_type, code)
     measure_for_entity_url = reverse(
-        'measure_for_one_{}'.format(entity_type.lower()),
-        kwargs={'measure': 'ghost_generic_measure', 'entity_code': code}
+        "measure_for_one_{}".format(entity_type.lower()),
+        kwargs={"measure": "ghost_generic_measure", "entity_code": code},
     )
     context = {
-        'entity': entity,
-        'entity_name': entity.cased_name,
-        'entity_type': entity_type,
-        'highlight': entity.code,
-        'highlight_name': entity.cased_name,
-        'date': date,
-        'measure_for_entity_url': measure_for_entity_url,
+        "entity": entity,
+        "entity_name": entity.cased_name,
+        "entity_type": entity_type,
+        "highlight": entity.code,
+        "highlight_name": entity.cased_name,
+        "date": date,
+        "measure_for_entity_url": measure_for_entity_url,
     }
-    if entity_type == 'practice':
-        context['by_practice'] = True
-    elif entity_type == 'CCG':
-        context['by_ccg'] = True
+    if entity_type == "practice":
+        context["by_practice"] = True
+    elif entity_type == "CCG":
+        context["by_ccg"] = True
     else:
-        raise ValueError('Unhandled entity_type: {}'.format(entity_type))
-    return render(request, 'ghost_generics.html', context)
+        raise ValueError("Unhandled entity_type: {}".format(entity_type))
+    return render(request, "ghost_generics.html", context)
 
 
 ##################################################
 # Tariffs
 ##################################################
 
+
 def tariff(request, code=None):
-    vmps = VMP.objects.filter(
-        vmpp__tariffprice__isnull=False,
-        bnf_code__isnull=False
-    ).distinct().order_by('nm')
+    vmps = (
+        VMP.objects.filter(vmpp__tariffprice__isnull=False, bnf_code__isnull=False)
+        .distinct()
+        .order_by("nm")
+    )
     codes = []
     if code:
         codes = [code]
-    if 'codes' in request.GET:
-        codes.extend(request.GET.getlist('codes'))
+    if "codes" in request.GET:
+        codes.extend(request.GET.getlist("codes"))
     if codes:
         presentations = Presentation.objects.filter(bnf_code__in=codes)
     else:
         presentations = []
     selected_vmps = VMP.objects.filter(bnf_code__in=codes)
     context = {
-        'bnf_codes': codes,
-        'presentations': presentations,
-        'vmps': vmps,
-        'selected_vmps': selected_vmps,
-        'chart_title': 'Tariff prices for ' + ', '.join(
-            [x.product_name for x in presentations])
+        "bnf_codes": codes,
+        "presentations": presentations,
+        "vmps": vmps,
+        "selected_vmps": selected_vmps,
+        "chart_title": "Tariff prices for "
+        + ", ".join([x.product_name for x in presentations]),
     }
-    return render(request, 'tariff.html', context)
+    return render(request, "tariff.html", context)
 
 
 ##################################################
 # Bookmarks
 ##################################################
+
 
 def finalise_signup(request):
     """Handle mailchimp signups.
@@ -834,36 +809,37 @@ def finalise_signup(request):
     # Users who are logged in are *REDIRECTED* here, which means the
     # form is never shown.
     next_url = None
-    if 'newsletter_email' in request.session:
+    if "newsletter_email" in request.session:
         if request.POST:
             success = mailchimp_subscribe(
                 request,
-                request.POST['email'], request.POST['first_name'],
-                request.POST['last_name'], request.POST['organisation'],
-                request.POST['job_title']
+                request.POST["email"],
+                request.POST["first_name"],
+                request.POST["last_name"],
+                request.POST["organisation"],
+                request.POST["job_title"],
             )
             if success:
                 messages.success(
-                    request,
-                    'You have successfully signed up for the newsletter.')
+                    request, "You have successfully signed up for the newsletter."
+                )
             else:
                 messages.error(
-                    request,
-                    'There was a problem signing you up for the newsletter.')
+                    request, "There was a problem signing you up for the newsletter."
+                )
 
         else:
             # Show the signup form
-            return render(request, 'newsletter_signup.html')
+            return render(request, "newsletter_signup.html")
     if not request.user.is_authenticated():
-        if 'alerts_requested' in request.session:
+        if "alerts_requested" in request.session:
             # Their first alert bookmark signup
-            del(request.session['alerts_requested'])
-            messages.success(
-                request, "Thanks, you're now subscribed to alerts.")
+            del request.session["alerts_requested"]
+            messages.success(request, "Thanks, you're now subscribed to alerts.")
         if next_url:
             return redirect(next_url)
         else:
-            return redirect(request.session.get('came_from', 'home'))
+            return redirect(request.session.get("came_from", "home"))
     else:
         # The user is signing up to at least the second bookmark
         # in this session.
@@ -871,14 +847,18 @@ def finalise_signup(request):
         next_url = last_bookmark.dashboard_url()
         messages.success(
             request,
-            mark_safe("You're now subscribed to alerts about <em>%s</em>." %
-                      last_bookmark.topic()))
+            mark_safe(
+                "You're now subscribed to alerts about <em>%s</em>."
+                % last_bookmark.topic()
+            ),
+        )
         return redirect(next_url)
 
 
 ##################################################
 # Spending
 ##################################################
+
 
 def spending_for_one_entity(request, entity_code, entity_type):
     # Temporary hack as this page is very expensive to render and brings the
@@ -889,7 +869,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    if entity_type in ('practice', 'ccg', 'CCG', 'all_england'):
+    if entity_type in ("practice", "ccg", "CCG", "all_england"):
         form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
         signed_up_for_alert = _signed_up_for_alert(
             request, entity, NCSOConcessionBookmark
@@ -903,70 +883,65 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
-        entity, entity_type,
-        num_months=30,
-        current_month=current_month
+        entity, entity_type, num_months=30, current_month=current_month
     )
     # In the very rare cases where we don't have data we just return a 404
     # rather than triggering an error
     if not monthly_totals:
-        raise Http404('No data available')
-    end_date = max(row['month'] for row in monthly_totals)
-    last_prescribing_date = monthly_totals[-1]['last_prescribing_date']
+        raise Http404("No data available")
+    end_date = max(row["month"] for row in monthly_totals)
+    last_prescribing_date = monthly_totals[-1]["last_prescribing_date"]
     one_year_ago = current_month.replace(year=current_month.year - 1)
     rolling_annual_total = sum(
-        row['additional_cost'] for row in monthly_totals
-        if row['month'] > one_year_ago
+        row["additional_cost"] for row in monthly_totals if row["month"] > one_year_ago
     )
     financial_ytd_total = _financial_ytd_total(monthly_totals)
-    breakdown_date = request.GET.get('breakdown_date')
+    breakdown_date = request.GET.get("breakdown_date")
     breakdown_date = parse_date(breakdown_date).date() if breakdown_date else end_date
     breakdown = ncso_spending_breakdown_for_entity(entity, entity_type, breakdown_date)
-    breakdown_metadata = [i for i in monthly_totals if i['month'] == breakdown_date][0]
-    url_template = (
-        reverse('tariff', kwargs={'code': 'AAA'})
-        .replace('AAA', '{bnf_code}')
+    breakdown_metadata = [i for i in monthly_totals if i["month"] == breakdown_date][0]
+    url_template = reverse("tariff", kwargs={"code": "AAA"}).replace(
+        "AAA", "{bnf_code}"
     )
-    if entity_type == 'all_england':
-        entity_name = 'NHS England'
-        title = 'Impact of price concessions across {}'.format(entity_name)
-        entity_short_desc = 'nhs-england'
+    if entity_type == "all_england":
+        entity_name = "NHS England"
+        title = "Impact of price concessions across {}".format(entity_name)
+        entity_short_desc = "nhs-england"
     else:
         entity_name = entity.cased_name
-        title = 'Impact of price concessions on {}'.format(entity_name)
-        entity_short_desc = '{}-{}'.format(entity_type, entity.code)
+        title = "Impact of price concessions on {}".format(entity_name)
+        entity_short_desc = "{}-{}".format(entity_type, entity.code)
     context = {
-        'title': title,
-        'entity_name': entity_name,
-        'monthly_totals': monthly_totals,
-        'rolling_annual_total': rolling_annual_total,
-        'financial_ytd_total': financial_ytd_total,
-        'available_dates': [row['month'] for row in reversed(monthly_totals)],
-        'breakdown': {
-            'table': breakdown,
-            'url_template': url_template,
-            'filename': 'price-concessions-cost-{}-{}'.format(
-                entity_short_desc,
-                breakdown_date
-            )
+        "title": title,
+        "entity_name": entity_name,
+        "monthly_totals": monthly_totals,
+        "rolling_annual_total": rolling_annual_total,
+        "financial_ytd_total": financial_ytd_total,
+        "available_dates": [row["month"] for row in reversed(monthly_totals)],
+        "breakdown": {
+            "table": breakdown,
+            "url_template": url_template,
+            "filename": "price-concessions-cost-{}-{}".format(
+                entity_short_desc, breakdown_date
+            ),
         },
-        'breakdown_date': breakdown_date,
-        'breakdown_is_estimate': breakdown_metadata['is_estimate'],
-        'breakdown_is_incomplete_month': breakdown_metadata['is_incomplete_month'],
-        'last_prescribing_date': last_prescribing_date,
-        'national_average_discount_percentage': NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-        'signed_up_for_alert': signed_up_for_alert,
-        'form': form,
+        "breakdown_date": breakdown_date,
+        "breakdown_is_estimate": breakdown_metadata["is_estimate"],
+        "breakdown_is_incomplete_month": breakdown_metadata["is_incomplete_month"],
+        "last_prescribing_date": last_prescribing_date,
+        "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
+        "signed_up_for_alert": signed_up_for_alert,
+        "form": form,
     }
-    request.session['came_from'] = request.path
-    return render(request, 'spending_for_one_entity.html', context)
+    request.session["came_from"] = request.path
+    return render(request, "spending_for_one_entity.html", context)
 
 
 def _user_is_bot(request):
-    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    user_agent = request.META.get("HTTP_USER_AGENT", "")
     # Despite appearances this is actually a fairly robust way of detecting bots
     # See: https://webmasters.stackexchange.com/a/64805
-    match = re.search('(bot|crawl|spider)', user_agent.lower())
+    match = re.search("(bot|crawl|spider)", user_agent.lower())
     return bool(match)
 
 
@@ -975,12 +950,13 @@ def _get_current_month():
 
 
 def _financial_ytd_total(monthly_totals):
-    end_date = max(row['month'] for row in monthly_totals)
+    end_date = max(row["month"] for row in monthly_totals)
     financial_year = end_date.year if end_date.month >= 4 else end_date.year - 1
     financial_year_start = end_date.replace(year=financial_year, month=4)
     return sum(
-        row['additional_cost'] for row in monthly_totals
-        if row['month'] >= financial_year_start
+        row["additional_cost"]
+        for row in monthly_totals
+        if row["month"] >= financial_year_start
     )
 
 
@@ -988,62 +964,62 @@ def _financial_ytd_total(monthly_totals):
 # Misc.
 ##################################################
 
+
 def gdoc_view(request, doc_id):
     try:
         gdoc_id = settings.GDOC_DOCS[doc_id]
     except KeyError:
         raise Http404("No doc named %s" % doc_id)
-    url = 'https://docs.google.com/document/d/%s/pub?embedded=true' % gdoc_id
+    url = "https://docs.google.com/document/d/%s/pub?embedded=true" % gdoc_id
     page = requests.get(url)
     tree = html.fromstring(page.text)
 
-    content = '<style>' + ''.join(
-        [html.tostring(child)
-         for child in tree.head.xpath('//style')]) + '</style>'
-    content += ''.join(
-        [html.tostring(child)
-         for child in tree.body])
-    context = {
-        'content': content
-    }
-    return render(request, 'gdoc.html', context)
+    content = (
+        "<style>"
+        + "".join([html.tostring(child) for child in tree.head.xpath("//style")])
+        + "</style>"
+    )
+    content += "".join([html.tostring(child) for child in tree.body])
+    context = {"content": content}
+    return render(request, "gdoc.html", context)
 
 
 def feedback_view(request):
-    url = request.GET.get('from_url', '/')
+    url = request.GET.get("from_url", "/")
     if request.POST:
         form = FeedbackForm(request.POST)
         if form.is_valid():
-            user_name = form.cleaned_data['name'].strip()
-            user_email_addr = form.cleaned_data['email'].strip()
+            user_name = form.cleaned_data["name"].strip()
+            user_email_addr = form.cleaned_data["email"].strip()
             send_feedback_mail(
                 user_name=user_name,
                 user_email_addr=user_email_addr,
-                subject=form.cleaned_data['subject'].strip(),
-                message=form.cleaned_data['message'],
+                subject=form.cleaned_data["subject"].strip(),
+                message=form.cleaned_data["message"],
                 url=url,
             )
 
-            msg = ("Thanks for sending your feedback/query! A copy of the "
-                   "message has been sent to you at {}. Please check your spam "
-                   "folder for our reply.".format(user_email_addr))
+            msg = (
+                "Thanks for sending your feedback/query! A copy of the "
+                "message has been sent to you at {}. Please check your spam "
+                "folder for our reply.".format(user_email_addr)
+            )
             messages.success(request, msg)
 
             if is_safe_url(url, allowed_hosts=[request.get_host()]):
                 redirect_url = url
             else:
-                logger.error(u'Unsafe redirect URL: {}'.format(url))
-                redirect_url = '/'
+                logger.error(u"Unsafe redirect URL: {}".format(url))
+                redirect_url = "/"
             return HttpResponseRedirect(redirect_url)
     else:
         form = FeedbackForm()
 
-    show_warning = '/practice/' in url
+    show_warning = "/practice/" in url
 
-    return render(request, 'feedback.html', {
-        'form': form,
-        'show_warning': show_warning
-    })
+    return render(
+        request, "feedback.html", {"form": form, "show_warning": show_warning}
+    )
 
 
 ##################################################
@@ -1051,27 +1027,27 @@ def feedback_view(request):
 ##################################################
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
-    reason = 'Server error'
-    if 'canceling statement due to statement timeout' in unicode(value):
+    reason = "Server error"
+    if "canceling statement due to statement timeout" in unicode(value):
         reason = (
             "The database took too long to respond.  If you were running an"
             "analysis with multiple codes, try again with fewer."
         )
-    if request.is_ajax() or 'application/json' in request.META.get('HTTP_ACCEPT', ''):
+    if request.is_ajax() or "application/json" in request.META.get("HTTP_ACCEPT", ""):
         return HttpResponse(reason, status=500)
     else:
-        return render(request, '500.html', {'reason': reason}, status=500)
+        return render(request, "500.html", {"reason": reason}, status=500)
 
 
 # This view deliberately triggers an error
 def error(request):
-    raise RuntimeError('Deliberate error triggered for testing purposes')
+    raise RuntimeError("Deliberate error triggered for testing purposes")
 
 
 # This view is for uptime monitoring
 def ping(request):
     num_practices = Practice.objects.count()
-    rsp = 'Pong: there are {} practices'.format(num_practices)
+    rsp = "Pong: there are {} practices".format(num_practices)
     return HttpResponse(rsp)
 
 
@@ -1079,13 +1055,13 @@ def ping(request):
 # Helpers
 ##################################################
 
-CORE_TAG = 'core'
+CORE_TAG = "core"
 
 
 def _get_measure_tag_filter(params, show_all_by_default=False):
-    tags = params.getlist('tags')
+    tags = params.getlist("tags")
     # Support passing a single "tags" param with a comma separated list
-    tags = sum([tag.split(',') for tag in tags], [])
+    tags = sum([tag.split(",") for tag in tags], [])
     tags = filter(None, tags)
     default_tags = [] if show_all_by_default else [CORE_TAG]
     if not tags:
@@ -1093,173 +1069,170 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
     try:
         tag_details = [MEASURE_TAGS[tag] for tag in tags]
     except KeyError as e:
-        raise BadRequestError(u'Unrecognised tag: {}'.format(e.args[0]))
+        raise BadRequestError(u"Unrecognised tag: {}".format(e.args[0]))
     return {
-        'tags': tags,
-        'names': [tag['name'] for tag in tag_details],
-        'details': [tag for tag in tag_details if tag['description']],
-        'show_message': (tags != default_tags),
-        'all_tags': _get_tags_select_options(tags, show_all_by_default)
+        "tags": tags,
+        "names": [tag["name"] for tag in tag_details],
+        "details": [tag for tag in tag_details if tag["description"]],
+        "show_message": (tags != default_tags),
+        "all_tags": _get_tags_select_options(tags, show_all_by_default),
     }
 
 
 def _get_tags_select_options(selected_tags, show_all_by_default):
     options = [
-        {'id': key, 'name': tag['name'], 'selected': (key in selected_tags)}
+        {"id": key, "name": tag["name"], "selected": (key in selected_tags)}
         for (key, tag) in MEASURE_TAGS.items()
     ]
     options.sort(key=_sort_core_tag_first)
     if show_all_by_default:
-        options.insert(0, {
-            'id': '',
-            'name': 'All Measures',
-            'selected': (len(selected_tags) == 0)
-        })
+        options.insert(
+            0, {"id": "", "name": "All Measures", "selected": (len(selected_tags) == 0)}
+        )
     return options
 
 
 def _get_tags_with_names(tags):
-    return [
-        {'tag': tag, 'name': MEASURE_TAGS[tag]['name']}
-        for tag in tags
-    ]
+    return [{"tag": tag, "name": MEASURE_TAGS[tag]["name"]} for tag in tags]
 
 
 def _sort_core_tag_first(option):
-    return (0 if option['id'] == CORE_TAG else 1, option['name'])
+    return (0 if option["id"] == CORE_TAG else 1, option["name"])
 
 
 def _specified_or_last_date(request, category):
-    date = request.GET.get('date', None)
+    date = request.GET.get("date", None)
     if date:
         try:
             date = parse_date(date)
         except ValueError:
-            raise BadRequestError(u'Date not in valid YYYY-MM-DD format: %s' % date)
+            raise BadRequestError(u"Date not in valid YYYY-MM-DD format: %s" % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
 
 
 def _total_savings(entity, date):
-    conditions = ' '
+    conditions = " "
     if isinstance(entity, PCT):
-        conditions += 'AND {ppusavings_table}.pct_id = %(entity_code)s '
-        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
+        conditions += "AND {ppusavings_table}.pct_id = %(entity_code)s "
+        conditions += "AND {ppusavings_table}.practice_id IS NULL "
     elif isinstance(entity, Practice):
-        conditions += 'AND {ppusavings_table}.practice_id = %(entity_code)s '
+        conditions += "AND {ppusavings_table}.practice_id = %(entity_code)s "
     sql = ppu_sql(conditions=conditions)
-    sql = ("SELECT SUM(possible_savings) "
-           "AS total_savings FROM ({}) all_savings").format(sql)
-    params = {'date': date, 'entity_code': entity.pk}
+    sql = (
+        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
+    ).format(sql)
+    params = {"date": date, "entity_code": entity.pk}
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
-        return dictfetchall(cursor)[0]['total_savings']
+        return dictfetchall(cursor)[0]["total_savings"]
 
 
 def _home_page_context_for_entity(request, entity):
-    prescribing_date = ImportLog.objects.latest_in_category(
-        'prescribing').current_at
+    prescribing_date = ImportLog.objects.latest_in_category("prescribing").current_at
     six_months_ago = prescribing_date - relativedelta(months=6)
     mv_filter = {
-        'month__gte': six_months_ago,
-        'measure__tags__contains': ['core'],
-        'percentile__isnull': False
+        "month__gte": six_months_ago,
+        "measure__tags__contains": ["core"],
+        "percentile__isnull": False,
     }
     if isinstance(entity, Practice):
-        mv_filter['practice_id'] = entity.code
-        entity_type = 'practice'
+        mv_filter["practice_id"] = entity.code
+        entity_type = "practice"
     elif isinstance(entity, PCN):
-        mv_filter['pcn_id'] = entity.code
-        entity_type = 'pcn'
+        mv_filter["pcn_id"] = entity.code
+        entity_type = "pcn"
     elif isinstance(entity, PCT):
-        mv_filter['pct_id'] = entity.code
-        entity_type = 'ccg'
+        mv_filter["pct_id"] = entity.code
+        entity_type = "ccg"
     elif isinstance(entity, STP):
-        mv_filter['stp_id'] = entity.code
-        entity_type = 'stp'
+        mv_filter["stp_id"] = entity.code
+        entity_type = "stp"
     elif isinstance(entity, RegionalTeam):
-        mv_filter['regional_team_id'] = entity.code
-        entity_type = 'regional_team'
+        mv_filter["regional_team_id"] = entity.code
+        entity_type = "regional_team"
     else:
         raise RuntimeError("Can't handle type: {!r}".format(entity))
     # find the core measurevalue that is most outlierish
     extreme_measurevalue = (
-        MeasureValue.objects
-        .filter_by_org_type(entity_type)
+        MeasureValue.objects.filter_by_org_type(entity_type)
         .filter(**mv_filter)
-        .exclude(measure_id='lpzomnibus')
+        .exclude(measure_id="lpzomnibus")
         .exclude(measure__low_is_good__isnull=True)
-        .values('measure_id')
-        .annotate(average_percentile=Avg('percentile'))
-        .order_by('-average_percentile')
+        .values("measure_id")
+        .annotate(average_percentile=Avg("percentile"))
+        .order_by("-average_percentile")
         .first()
     )
     if extreme_measurevalue:
-        extreme_measure = Measure.objects.get(
-            pk=extreme_measurevalue['measure_id'])
+        extreme_measure = Measure.objects.get(pk=extreme_measurevalue["measure_id"])
     else:
         extreme_measure = None
-    ppu_date = _specified_or_last_date(request, 'ppu')
+    ppu_date = _specified_or_last_date(request, "ppu")
     total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
 
-    specific_measures = [{
-          'measure': 'lpzomnibus',
-          'chartContainerId': '#lpzomnibus-container',
-    }]
+    specific_measures = [
+        {"measure": "lpzomnibus", "chartContainerId": "#lpzomnibus-container"}
+    ]
 
     if extreme_measure:
         # extreme_measure will be None for new practices (and in tests)
-        specific_measures.append({
-          'measure': extreme_measure.id,
-          'chartContainerId': '#top-measure-container',
-        })
+        specific_measures.append(
+            {
+                "measure": extreme_measure.id,
+                "chartContainerId": "#top-measure-container",
+            }
+        )
 
     measure_options = {
-        'rollUpBy': 'measure_id',
-        'specificMeasures': specific_measures,
-        'orgId': entity.code,
-        'orgType': _org_type_for_entity(entity),
+        "rollUpBy": "measure_id",
+        "specificMeasures": specific_measures,
+        "orgId": entity.code,
+        "orgType": _org_type_for_entity(entity),
     }
 
     if isinstance(entity, Practice):
-        measure_options['parentOrgId'] = entity.ccg_id
+        measure_options["parentOrgId"] = entity.ccg_id
 
     measure_options = _build_measure_options(measure_options)
 
     context = {
-        'measure': extreme_measure,
-        'measures_count': measures_count,
-        'entity': entity,
-        'entity_type': entity_type,
-        'entity_type_human': _entity_type_human(entity_type),
-        'measures_for_one_entity_url': 'measures_for_one_{}'.format(
-            entity_type.lower().replace(' ', '_')),
-        'possible_savings': total_possible_savings,
-        'date': ppu_date,
-        'measure_options': measure_options,
-        'measure_tags': [
-            (k, v) for (k, v) in sorted(MEASURE_TAGS.items())
-            if k != 'core'
+        "measure": extreme_measure,
+        "measures_count": measures_count,
+        "entity": entity,
+        "entity_type": entity_type,
+        "entity_type_human": _entity_type_human(entity_type),
+        "measures_for_one_entity_url": "measures_for_one_{}".format(
+            entity_type.lower().replace(" ", "_")
+        ),
+        "possible_savings": total_possible_savings,
+        "date": ppu_date,
+        "measure_options": measure_options,
+        "measure_tags": [
+            (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
         ],
-        'ncso_spending': first_or_none(
+        "ncso_spending": first_or_none(
             ncso_spending_for_entity(entity, entity_type, num_months=1)
         ),
-        'spending_for_one_entity_url': 'spending_for_one_{}'.format(
+        "spending_for_one_entity_url": "spending_for_one_{}".format(
             entity_type.lower()
-        )
+        ),
     }
 
-    if entity_type in ['practice', 'ccg']:
-        context['entity_price_per_unit_url'] = '{}_price_per_unit'.format(
-            entity_type.lower())
-        context['date'] = _specified_or_last_date(request, 'ppu')
-        context['possible_savings'] = _total_savings(entity, context['date'])
-        context['entity_ghost_generics_url'] = '{}_ghost_generics'.format(
-            entity_type.lower())
-        context['signed_up_for_alert'] = _signed_up_for_alert(
-            request, entity, OrgBookmark)
+    if entity_type in ["practice", "ccg"]:
+        context["entity_price_per_unit_url"] = "{}_price_per_unit".format(
+            entity_type.lower()
+        )
+        context["date"] = _specified_or_last_date(request, "ppu")
+        context["possible_savings"] = _total_savings(entity, context["date"])
+        context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
+            entity_type.lower()
+        )
+        context["signed_up_for_alert"] = _signed_up_for_alert(
+            request, entity, OrgBookmark
+        )
 
     return context
 
@@ -1267,96 +1240,94 @@ def _home_page_context_for_entity(request, entity):
 def _url_template(view_name):
     resolver = get_resolver()
     pattern = resolver.reverse_dict[view_name][1]
-    pattern = '/' + pattern.rstrip('$')
-    return re.sub('\(\?P<(\w+)>\[.*?]\+\)', '{\\1}', pattern)
+    pattern = "/" + pattern.rstrip("$")
+    return re.sub("\(\?P<(\w+)>\[.*?]\+\)", "{\\1}", pattern)
 
 
 def _org_type_for_entity(entity):
     return {
-        Practice: 'practice',
-        PCN: 'pcn',
-        PCT: 'ccg',
-        STP: 'stp',
-        RegionalTeam: 'regional_team',
+        Practice: "practice",
+        PCN: "pcn",
+        PCT: "ccg",
+        STP: "stp",
+        RegionalTeam: "regional_team",
     }[type(entity)]
 
 
 def _build_measure_options(options):
     # measure etc
-    if 'measure' in options:
-        measure = options['measure']
-        options['measure'] = measure.id
-        options['numerator'] = measure.numerator_short
-        options['denominator'] = measure.denominator_short
-        options['isCostBasedMeasure'] = measure.is_cost_based
-        options['lowIsGood'] = measure.low_is_good
+    if "measure" in options:
+        measure = options["measure"]
+        options["measure"] = measure.id
+        options["numerator"] = measure.numerator_short
+        options["denominator"] = measure.denominator_short
+        options["isCostBasedMeasure"] = measure.is_cost_based
+        options["lowIsGood"] = measure.low_is_good
 
     # globalMeasuresUrl & panelMeasuresUrl
-    params = {'format': 'json'}
-    if 'measure' in options:
-        params['measure'] = options['measure']
-    if 'specificMeasures' in options:
-        params['measure'] = ','.join(
-            specific_measure['measure']
-            for specific_measure in options['specificMeasures']
+    params = {"format": "json"}
+    if "measure" in options:
+        params["measure"] = options["measure"]
+    if "specificMeasures" in options:
+        params["measure"] = ",".join(
+            specific_measure["measure"]
+            for specific_measure in options["specificMeasures"]
         )
-    if 'tags' in options:
-        params['tags'] = options['tags']
+    if "tags" in options:
+        params["tags"] = options["tags"]
 
-    options['globalMeasuresUrl'] = _build_api_url('measure', params)
+    options["globalMeasuresUrl"] = _build_api_url("measure", params)
 
-    if 'orgId' in options:
-        params['org'] = options['orgId']
-    if 'aggregate' in options:
-        params['aggregate'] = options['aggregate']
-    if 'parentOrgType' in options:
-        params['parent_org_type'] = options['parentOrgType'].lower().replace(' ', '_')
+    if "orgId" in options:
+        params["org"] = options["orgId"]
+    if "aggregate" in options:
+        params["aggregate"] = options["aggregate"]
+    if "parentOrgType" in options:
+        params["parent_org_type"] = options["parentOrgType"].lower().replace(" ", "_")
 
-    view_name = 'measure_by_' + options['orgType']
-    options['panelMeasuresUrl'] = _build_api_url(view_name, params)
+    view_name = "measure_by_" + options["orgType"]
+    options["panelMeasuresUrl"] = _build_api_url(view_name, params)
 
     # orgLocationUrl
-    if 'orgId' in options:
-        org_location_params = {
-            'org_type': options['orgType'],
-            'q': options['orgId'],
-        }
+    if "orgId" in options:
+        org_location_params = {"org_type": options["orgType"], "q": options["orgId"]}
 
-        options['orgLocationUrl'] = _build_api_url(
-            'org_location',
-            org_location_params
-        )
+        options["orgLocationUrl"] = _build_api_url("org_location", org_location_params)
 
     # chartTitleUrlTemplate
-    if options['rollUpBy'] == 'measure_id':
-        if options.get('aggregate'):
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_all_ccgs')
-        elif options['orgType'] == 'regional_team':
-            options['chartTitleUrlTemplate'] = _url_template(
-                'measure_for_one_regional_team'
+    if options["rollUpBy"] == "measure_id":
+        if options.get("aggregate"):
+            options["chartTitleUrlTemplate"] = _url_template("measure_for_all_ccgs")
+        elif options["orgType"] == "regional_team":
+            options["chartTitleUrlTemplate"] = _url_template(
+                "measure_for_one_regional_team"
             )
-        elif options['orgType'] == 'stp':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_stp')
-        elif options['orgType'] == 'pcn':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_pcn')
-        elif options['orgType'] == 'ccg':
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_ccg')
+        elif options["orgType"] == "stp":
+            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_stp")
+        elif options["orgType"] == "pcn":
+            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_pcn")
+        elif options["orgType"] == "ccg":
+            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_ccg")
         else:
-            options['chartTitleUrlTemplate'] = _url_template('measure_for_one_practice')
+            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_practice")
     else:
-        view_name = 'measures_for_one_{}'.format(options['orgType'])
-        options['chartTitleUrlTemplate'] = _url_template(view_name)
+        view_name = "measures_for_one_{}".format(options["orgType"])
+        options["chartTitleUrlTemplate"] = _url_template(view_name)
 
     # measureForAllPracticesUrlTemplate
-    if not options.get('aggregate') and options['orgType'] == 'ccg':
-        options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_ccg')
-    elif options['orgType'] == 'pcn':
-        options['measureForAllPracticesUrlTemplate'] = _url_template('measure_for_practices_in_pcn')
+    if not options.get("aggregate") and options["orgType"] == "ccg":
+        options["measureForAllPracticesUrlTemplate"] = _url_template(
+            "measure_for_practices_in_ccg"
+        )
+    elif options["orgType"] == "pcn":
+        options["measureForAllPracticesUrlTemplate"] = _url_template(
+            "measure_for_practices_in_pcn"
+        )
 
     # measureForAllCCGsUrlTemplate
-    if options['orgType'] in ['stp', 'regional_team']:
-        view_name = 'measure_for_ccgs_in_{}'.format(options['orgType'])
-        options['measureForAllCCGsUrlTemplate'] = _url_template(view_name)
+    if options["orgType"] in ["stp", "regional_team"]:
+        view_name = "measure_for_ccgs_in_{}".format(options["orgType"])
+        options["measureForAllCCGsUrlTemplate"] = _url_template(view_name)
 
     # In theory this could be made generic for more than just the practice/CCG
     # relationship but the refactoring in the JS and measures API needed to
@@ -1364,41 +1335,43 @@ def _build_measure_options(options):
     # practices and only when they're not being shown in the context of their
     # CCG (which would make the links redundant) or their PCN (because we won't
     # have the ccg_code parameter available on that page)
-    if (options['orgType'] == 'practice'
-            and options.get('parentOrgType') not in ['ccg', 'pcn']):
-        options['measureForSiblingsUrlTemplate'] = _url_template(
-            'measure_for_practices_in_ccg'
+    if options["orgType"] == "practice" and options.get("parentOrgType") not in [
+        "ccg",
+        "pcn",
+    ]:
+        options["measureForSiblingsUrlTemplate"] = _url_template(
+            "measure_for_practices_in_ccg"
         )
 
     # measureUrlTemplate
-    if options['rollUpBy'] == 'measure_id':
-        if options['orgType'] == 'practice':
-            view_name = 'measure_for_all_ccgs'
+    if options["rollUpBy"] == "measure_id":
+        if options["orgType"] == "practice":
+            view_name = "measure_for_all_ccgs"
         else:
-            view_name = 'measure_for_all_{}s'.format(options['orgType'])
-        options['measureUrlTemplate'] = _url_template(view_name)
+            view_name = "measure_for_all_{}s".format(options["orgType"])
+        options["measureUrlTemplate"] = _url_template(view_name)
 
     # oneEntityUrlTemplate
-    if not (options['rollUpBy'] == 'measure_id' and 'measure' in options):
+    if not (options["rollUpBy"] == "measure_id" and "measure" in options):
         # If we're rolling up by measure and a measure is provided in the
         # options, then we are already on the measure_for_one_xxx page, so we
         # shouldn't set oneEntityUrlTemplate.
-        if options.get('aggregate'):
-            options['oneEntityUrlTemplate'] = _url_template('measure_for_all_england')
+        if options.get("aggregate"):
+            options["oneEntityUrlTemplate"] = _url_template("measure_for_all_england")
         else:
-            view_name = 'measure_for_one_{}'.format(options['orgType'])
-            options['oneEntityUrlTemplate'] = _url_template(view_name)
+            view_name = "measure_for_one_{}".format(options["orgType"])
+            options["oneEntityUrlTemplate"] = _url_template(view_name)
 
     # tagsFocusUrlTemplate
-    if options.get('aggregate'):
-        options['tagsFocusUrlTemplate'] = reverse('all_england')
+    if options.get("aggregate"):
+        options["tagsFocusUrlTemplate"] = reverse("all_england")
     else:
-        view_name = 'measures_for_one_{}'.format(options['orgType'])
-        options['tagsFocusUrlTemplate'] = _url_template(view_name)
+        view_name = "measures_for_one_{}".format(options["orgType"])
+        options["tagsFocusUrlTemplate"] = _url_template(view_name)
 
-    options['orgTypeHuman'] = _entity_type_human(options['orgType'])
-    if 'parentOrgType' in options:
-        options['parentOrgTypeHuman'] = _entity_type_human(options['parentOrgType'])
+    options["orgTypeHuman"] = _entity_type_human(options["orgType"])
+    if "parentOrgType" in options:
+        options["parentOrgTypeHuman"] = _entity_type_human(options["parentOrgType"])
 
     return options
 
@@ -1409,32 +1382,35 @@ def _build_api_url(view_name, params):
 
     parsed_url = urlparse(settings.API_HOST)
 
-    return urlunparse((
-        parsed_url.scheme, # scheme
-        parsed_url.netloc, # host
-        path,              # path
-        '',                # params
-        querystring,       # query
-        '',                # fragment
-    ))
+    return urlunparse(
+        (
+            parsed_url.scheme,  # scheme
+            parsed_url.netloc,  # host
+            path,  # path
+            "",  # params
+            querystring,  # query
+            "",  # fragment
+        )
+    )
 
 
 def all_england_ppu_savings(entity_type, date):
-    conditions = ' '
-    if entity_type == 'CCG':
-        conditions += 'AND {ppusavings_table}.pct_id IS NOT NULL '
-        conditions += 'AND {ppusavings_table}.practice_id IS NULL '
-    elif entity_type == 'practice':
-        conditions += 'AND {ppusavings_table}.practice_id IS NOT NULL '
+    conditions = " "
+    if entity_type == "CCG":
+        conditions += "AND {ppusavings_table}.pct_id IS NOT NULL "
+        conditions += "AND {ppusavings_table}.practice_id IS NULL "
+    elif entity_type == "practice":
+        conditions += "AND {ppusavings_table}.practice_id IS NOT NULL "
     else:
-        raise BadRequestError(u'Unknown entity type: {}'.format(entity_type))
+        raise BadRequestError(u"Unknown entity type: {}".format(entity_type))
     sql = ppu_sql(conditions=conditions)
-    sql = ("SELECT SUM(possible_savings) "
-           "AS total_savings FROM ({}) all_savings").format(sql)
-    params = {'date': date}
+    sql = (
+        "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"
+    ).format(sql)
+    params = {"date": date}
     with connection.cursor() as cursor:
         cursor.execute(sql, params)
-        savings = dictfetchall(cursor)[0]['total_savings']
+        savings = dictfetchall(cursor)[0]["total_savings"]
 
     if savings is None:
         # This might happen when testing.
@@ -1445,44 +1421,38 @@ def all_england_ppu_savings(entity_type, date):
 
 def all_england_measure_savings(entity_type, date):
     return (
-        MeasureValue.objects
-        .filter_by_org_type(entity_type.lower())
+        MeasureValue.objects.filter_by_org_type(entity_type.lower())
         .filter(month=date)
-        .exclude(measure_id='lpzomnibus')
+        .exclude(measure_id="lpzomnibus")
         .aggregate_cost_savings()
     )
 
 
 def all_england_low_priority_savings(entity_type, date):
-    target_costs = (
-        MeasureGlobal.objects
-        .get(month=date, measure_id='lpzomnibus')
-        .percentiles[entity_type.lower()]
-    )
+    target_costs = MeasureGlobal.objects.get(
+        month=date, measure_id="lpzomnibus"
+    ).percentiles[entity_type.lower()]
     return (
-        MeasureValue.objects
-        .filter_by_org_type(entity_type.lower())
-        .filter(month=date, measure_id='lpzomnibus')
+        MeasureValue.objects.filter_by_org_type(entity_type.lower())
+        .filter(month=date, measure_id="lpzomnibus")
         .calculate_cost_savings(target_costs)
     )
 
 
 def all_england_low_priority_total(entity_type, date):
     result = (
-        MeasureValue.objects
-        .filter_by_org_type(entity_type.lower())
-        .filter(month=date, measure_id='lpzomnibus')
-        .aggregate(total=Sum('numerator'))
+        MeasureValue.objects.filter_by_org_type(entity_type.lower())
+        .filter(month=date, measure_id="lpzomnibus")
+        .aggregate(total=Sum("numerator"))
     )
-    return result['total']
+    return result["total"]
 
 
 def _authenticate_possibly_new_user(email):
     try:
         user = User.objects.get(username=email)
     except User.DoesNotExist:
-        user = User.objects.create_user(
-            username=email, email=email)
+        user = User.objects.create_user(username=email, email=email)
     return authenticate(key=user.profile.key)
 
 
@@ -1512,7 +1482,7 @@ def _force_login_and_redirect(request, user):
         Django's LOGIN_REDIRECT_URL setting).
 
     """
-    if hasattr(request, 'user'):
+    if hasattr(request, "user"):
         # Log the user out. We don't use Django's built-in logout
         # mechanism because that clears the entire session, too,
         # and we want to know if someone's logged in previously in
@@ -1520,26 +1490,25 @@ def _force_login_and_redirect(request, user):
         request.user = AnonymousUser()
         for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
             if k in request.session:
-                del(request.session[k])
+                del request.session[k]
     return perform_login(
-        request, user,
-        app_settings.EmailVerificationMethod.MANDATORY,
-        signup=True)
+        request, user, app_settings.EmailVerificationMethod.MANDATORY, signup=True
+    )
 
 
 def _make_bookmark_args(user, form, subject_field_ids):
     """Construct a dict of cleaned keyword args suitable for creating a
     new bookmark
     """
-    form_args = {'user': user}
+    form_args = {"user": user}
 
     for field in subject_field_ids:
         form_args[field] = form.cleaned_data[field]
 
     if not subject_field_ids:
         # There is no practice or PCT.
-        form_args['practice'] = None
-        form_args['pct'] = None
+        form_args["practice"] = None
+        form_args["pct"] = None
 
     return form_args
 
@@ -1551,9 +1520,9 @@ def _entity_type_from_object(entity):
 
     """
     if isinstance(entity, PCT):
-        return 'pct'
+        return "pct"
     elif isinstance(entity, Practice):
-        return 'practice'
+        return "practice"
     else:
         raise RuntimeError("Entity must be Practice or PCT")
 
@@ -1565,7 +1534,7 @@ def _signed_up_for_alert(request, entity, subject_class):
             q = {_entity_type_from_object(entity): entity}
         else:
             # Entity is "All England"
-            q = {'practice_id__isnull': True, 'pct_id__isnull': True}
+            q = {"practice_id__isnull": True, "pct_id__isnull": True}
         return subject_class.objects.filter(user=request.user, **q).exists()
     else:
         return False
@@ -1579,16 +1548,17 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
         return _monthly_bookmark_and_newsletter_form_for_all_england(request)
 
     entity_type = _entity_type_from_object(entity)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = _handle_bookmark_and_newsletter_post(
-            request,
-            OrgBookmark,
-            MonthlyOrgBookmarkForm,
-            entity_type)
+            request, OrgBookmark, MonthlyOrgBookmarkForm, entity_type
+        )
     else:
         form = MonthlyOrgBookmarkForm(
-            initial={entity_type: entity.pk,
-                     'email': getattr(request.user, 'email', '')})
+            initial={
+                entity_type: entity.pk,
+                "email": getattr(request.user, "email", ""),
+            }
+        )
 
     return form
 
@@ -1597,14 +1567,14 @@ def _monthly_bookmark_and_newsletter_form_for_all_england(request):
     """Build a form for newsletter/alert signups, and handle user login
     for POSTs to that form.
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = _handle_bookmark_and_newsletter_post(
-            request,
-            OrgBookmark,
-            MonthlyOrgBookmarkForm)
+            request, OrgBookmark, MonthlyOrgBookmarkForm
+        )
     else:
         form = MonthlyOrgBookmarkForm(
-            initial={'email': getattr(request.user, 'email', '')})
+            initial={"email": getattr(request.user, "email", "")}
+        )
 
     return form
 
@@ -1617,37 +1587,37 @@ def _ncso_concession_bookmark_and_newsletter_form(request, entity):
         return _ncso_concession_bookmark_and_newsletter_form_for_all_england(request)
 
     entity_type = _entity_type_from_object(entity)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = _handle_bookmark_and_newsletter_post(
-            request,
-            NCSOConcessionBookmark,
-            NonMonthlyOrgBookmarkForm,
-            entity_type)
+            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm, entity_type
+        )
     else:
         form = NonMonthlyOrgBookmarkForm(
-            initial={entity_type: entity.pk,
-                     'email': getattr(request.user, 'email', '')})
+            initial={
+                entity_type: entity.pk,
+                "email": getattr(request.user, "email", ""),
+            }
+        )
 
     return form
 
 
 def _ncso_concession_bookmark_and_newsletter_form_for_all_england(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = _handle_bookmark_and_newsletter_post(
-            request,
-            NCSOConcessionBookmark,
-            NonMonthlyOrgBookmarkForm)
+            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm
+        )
     else:
         form = NonMonthlyOrgBookmarkForm(
-            initial={'email': getattr(request.user, 'email', '')})
+            initial={"email": getattr(request.user, "email", "")}
+        )
 
     return form
 
 
 def _handle_bookmark_and_newsletter_post(
-        request, subject_class,
-        subject_form_class,
-        *subject_field_ids):
+    request, subject_class, subject_form_class, *subject_field_ids
+):
     """Handle search/org bookmark and newsletter signup form:
 
     * create a search or org bookmark
@@ -1658,51 +1628,51 @@ def _handle_bookmark_and_newsletter_post(
     """
     form = subject_form_class(request.POST)
     if form.is_valid():
-        email = form.cleaned_data['email']
-        if 'newsletter' in form.cleaned_data['newsletters']:
+        email = form.cleaned_data["email"]
+        if "newsletter" in form.cleaned_data["newsletters"]:
             # add a session variable. Then handle it in the next page,
             # which is either the verification page, or a dedicated
             # "tell us a bit more" page.
-            request.session['newsletter_email'] = email
-        if 'alerts' in form.cleaned_data['newsletters']:
-            request.session['alerts_requested'] = 1
+            request.session["newsletter_email"] = email
+        if "alerts" in form.cleaned_data["newsletters"]:
+            request.session["alerts_requested"] = 1
             user = _authenticate_possibly_new_user(email)
             form_args = _make_bookmark_args(user, form, subject_field_ids)
             _unverify_email_address_when_different_user(user, request)
             # We're automatically approving all alert signups from now on
             # without waiting for the email address to be verified
-            form_args['approved'] = True
+            form_args["approved"] = True
             subject_class.objects.get_or_create(**form_args)
             return _force_login_and_redirect(request, user)
         else:
-            return redirect('newsletter-signup')
+            return redirect("newsletter-signup")
     return form
 
 
 def _get_entity(entity_type, entity_code):
     entity_type = entity_type.lower()
 
-    if entity_type == 'practice':
+    if entity_type == "practice":
         return get_object_or_404(Practice, code=entity_code)
-    elif entity_type == 'pcn':
+    elif entity_type == "pcn":
         return get_object_or_404(PCN, ons_code=entity_code)
-    elif entity_type == 'ccg':
+    elif entity_type == "ccg":
         return get_object_or_404(PCT, code=entity_code)
-    elif entity_type == 'stp':
+    elif entity_type == "stp":
         return get_object_or_404(STP, ons_code=entity_code)
-    elif entity_type == 'regional_team':
+    elif entity_type == "regional_team":
         return get_object_or_404(RegionalTeam, code=entity_code)
-    elif entity_type == 'all_england':
+    elif entity_type == "all_england":
         return None
     else:
-        raise ValueError('Unknown entity_type: '+entity_type)
+        raise ValueError("Unknown entity_type: " + entity_type)
 
 
 def _entity_type_human(entity_type):
     return {
-        'practice': 'practice',
-        'pcn': 'PCN',
-        'ccg': 'CCG',
-        'stp': 'STP',
-        'regional_team': 'Regional Team',
+        "practice": "practice",
+        "pcn": "PCN",
+        "ccg": "CCG",
+        "stp": "STP",
+        "regional_team": "Regional Team",
     }[entity_type]
