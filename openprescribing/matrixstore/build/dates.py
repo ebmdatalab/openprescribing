@@ -29,11 +29,12 @@ def parse_date(date_str):
     return int(year_str), int(month_str)
 
 
-def increment_months((year, month), months):
+def increment_months(year_month, months):
     """
     Given a pair of (year, month) integers return the (year, month) pair N
     months in the future
     """
+    year, month = year_month
     i = (year*12) + (month - 1)
     i += months
     return int(i/12), (i % 12) + 1
