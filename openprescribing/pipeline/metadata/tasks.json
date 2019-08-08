@@ -249,6 +249,13 @@
             "upload_to_bigquery"
         ]
     },
+    "import_generic_mappings": {
+        "type": "post_process",
+        "command": "import_generic_mappings",
+        "dependencies": [
+            "import_bnf_codes"
+        ]
+    },
     "backup_bq_tables": {
         "type": "post_process",
         "command": "backup_bq_tables",
