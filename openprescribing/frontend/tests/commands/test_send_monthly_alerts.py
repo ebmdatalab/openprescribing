@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
 import re
 import unittest
 
@@ -12,7 +11,6 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from common.alert_utils import BatchedEmailErrors
 from frontend.models import EmailMessage
-from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError

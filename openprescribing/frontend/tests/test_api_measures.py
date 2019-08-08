@@ -3,9 +3,6 @@ import json
 
 from django.test import TestCase
 
-from rest_framework.exceptions import APIException
-
-from frontend.models import Measure
 from frontend.models import PCT
 
 

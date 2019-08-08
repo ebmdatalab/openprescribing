@@ -7,7 +7,6 @@ from django.core.management import call_command
 from django.db import InternalError
 from django.test import TestCase
 
-from common import utils
 from frontend.management.commands.import_hscic_prescribing import Command
 from frontend.models import Chemical
 from frontend.models import ImportLog
