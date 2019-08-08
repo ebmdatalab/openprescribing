@@ -1,0 +1,45 @@
+{
+  "name": "Probiotics that have been removed from the drug tariff",
+  "title": [
+    "Cost of VSL#3 and Vivomixx per 1000 patients"
+  ],
+  "description": [
+    "Cost of VSL#3 and Vivomixx per 1000 patients"
+  ],
+  "why_it_matters": [
+    "The Advisory Committee on Borderline Substances (ACBS) is responsible for assessing and recommending products applying for listing in Part XV of the Drug Tariff. The ACBS recently reviewed some products listed in Part XV to ensure they are still clinically effective and appropriate to be listed here. They considered the probiotics VSL#3 and Vivomixx and advised the Secretary of State for Health and Social Care to remove these products. The Secretary of State accepted this recommendation and removed the products from the drug tariff in November 2018.",
+    "The Committee concluded that the evidence did not sufficiently demonstrate that the products are clinically effective. Additionally",
+    "the ACBS & MHRA consider the presentation of a product to prevent a clinical condition such as pouchitis as a specific medicinal claim.",
+    "Therefore these products now fall within the definition of a medicine (not a borderline substance)",
+    "and should be regulated as such. Importantly this means that they are also allowed on prescription, despite them not currently",
+    "being licnsed as a medicine and having been removed from the drug tariff as the evidence does not support them meeting the threshold",
+    "for Part XV of the Drug Tariff."
+    ],
+  "numerator_short": "Probiotics cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "nutrition"
+  ],
+  "numerator_columns": [
+    "SUM(actual_cost) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_where": [
+   "bnf_code IN (\n",
+   "'091104000BBNMA0', -- vsl \n",
+   "'091104000BBNVAO', --vivomix caps \n",
+   "'091104000BBNUAO') --vivomix powder sachet \n"
+  ],
+  "denominator_columns": [
+    "SUM(total_list_size / 1000.0) AS denominator, "
+  ],
+  "denominator_from": "{hscic}.practice_statistics ",
+  "denominator_where": [
+    "1 = 1"
+  ]
+}
