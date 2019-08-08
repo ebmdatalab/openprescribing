@@ -36,7 +36,7 @@
     "1 = 1"
   ],
   "numerator_bnf_codes_query": [
-    "SELECT DISTINCT bnf_code",
+    "SELECT DISTINCT bnf.presentation_code",
     "FROM {hscic}.bnf",
     "JOIN ebmdatalab.richard.opioid_measure",
     "ON CONCAT(",
