@@ -16,7 +16,7 @@ chardet==3.0.4            # via requests
 click==7.0                # via pip-tools
 coverage==4.5.4
 cryptography==2.7         # via paramiko, pyopenssl, requests
-cssselect==1.0.3          # via premailer, pyquery
+cssselect==1.1.0          # via premailer, pyquery
 cssutils==1.0.2           # via premailer
 decorator==4.4.0          # via networkx
 defusedxml==0.6.0         # via python3-openid
