@@ -8,12 +8,10 @@ The `load` operation truncates all existing data.
 import json
 import os
 import tempfile
-import subprocess
 
 from django.apps import apps
 from django.core.management import BaseCommand
 from django.db import connection
-from django.template import Context, Engine, Template
 
 # Tables for which we should copy all the data
 copy_all = [
@@ -68,7 +66,7 @@ def dump_create_table(table, dest_dir):
             "SELECT column_name FROM information_schema.columns "
             "WHERE table_schema = 'public' AND table_name = '{}'".format(table)
         )
-        res = cursor.execute(sql)
+        cursor.execute(sql)
         fields = cursor.fetchall()
         with open(dest, "wb") as f:
             json.dump([x[0] for x in fields], f)

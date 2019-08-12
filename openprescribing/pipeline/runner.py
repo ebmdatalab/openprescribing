@@ -385,7 +385,7 @@ def run_task(task, year, month, **kwargs):
     try:
         task.run(year, month, **kwargs)
         task_log.mark_succeeded()
-    except:
+    except BaseException:
         # We want to catch absolutely every error here, including things that
         # wouldn't be caught by `except Exception` (like `KeyboardInterrupt`),
         # since we want to log that the task didn't complete.

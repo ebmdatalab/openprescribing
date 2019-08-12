@@ -1,7 +1,6 @@
 import csv
 import os
 
-from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -82,7 +81,7 @@ class ConvertHscicPrescribingTests(TestCase):
 
     def setUp(self):
         client = BQClient("hscic")
-        table = client.get_or_create_table("prescribing", PRESCRIBING_SCHEMA)
+        client.get_or_create_table("prescribing", PRESCRIBING_SCHEMA)
 
     def tearDown(self):
         table_name = "raw_prescribing_data_2016_01"

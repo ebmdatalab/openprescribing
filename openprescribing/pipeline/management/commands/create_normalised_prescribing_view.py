@@ -1,6 +1,6 @@
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand
 from gcutils.bigquery import Client
-from google.cloud.exceptions import Conflict, NotFound
+from google.cloud.exceptions import NotFound
 
 
 class Command(BaseCommand):

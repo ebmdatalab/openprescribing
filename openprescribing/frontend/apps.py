@@ -12,5 +12,8 @@ class FrontendConfig(AppConfig):
     name = "frontend"
 
     def ready(self):
-        import admin
-        import frontend.signals.handlers
+        # Importing this to run the @admin.register decorators
+        import admin  # noqa: F401
+
+        # Importing this to run the signal handler decorators
+        import frontend.signals.handlers  # noqa: F401

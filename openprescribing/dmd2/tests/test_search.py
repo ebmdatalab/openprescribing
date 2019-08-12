@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from dmd2.models import AMP, AMPP, VMP, VMPP
+from dmd2.models import AMP, AMPP, VMP
 from dmd2.search import search
 
 

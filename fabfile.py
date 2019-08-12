@@ -270,7 +270,7 @@ def clear_cloudflare():
 
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
-            result = run("python deploy/clear_cache.py")
+            run("python deploy/clear_cache.py")
 
 
 @task
