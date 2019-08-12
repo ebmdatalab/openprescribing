@@ -27,11 +27,6 @@ domready(function() {
       subtitle: {
         text: null,
       },
-      plotOptions: {
-        bubble: {
-          minSize: 3,
-        },
-      },
       yAxis: {
         type: 'category',
         gridLineWidth: 1,
@@ -121,6 +116,21 @@ domready(function() {
             // Translate from 1-index to 0-index
             d.y = tmp - 1;
           });
+
+          // By default, the size (radius) of largest bubble is 20% the height
+          // of the chart, and the smallest is 8 pixels.  The sizes of the
+          // other bubbles are determined so that they fall between these two
+          // sizes appropriately.  This is usually fine, when some of our
+          // bubbles are for many prescriptions (big bubbles) and some are for
+          // fewer (small bubbles).  But it breaks down when all bubbles are
+          // for a similar number of prescriptions, when we need all bubbles to
+          // be a similar size.  We want the size of the smallest bubble to be
+          // in proportion to the size of the largest.
+          var sizes = data.series.map(function(d) {return d['z']});
+          var ratio = Math.min.apply(null, sizes) / Math.max.apply(null, sizes);
+          var maxSize = '20%';
+          var minSize = (20 * ratio) + '%';
+
           var options = $.extend(true, {}, highchartsOptions);
           options.chart.width = $('.tab-content').width();
           options.chart.height = Math.max(400, data.categories.length * 20 + 200);
@@ -128,6 +138,12 @@ domready(function() {
           options.series[0].data = data.series;
           options.xAxis.plotLines[0].value = data.plotline;
           options.yAxis.categories = data.categories;
+          options.plotOptions = {
+            bubble: {
+              minSize: minSize,
+              maxSize: maxSize,
+            }
+          };
           $(elementSelector).highcharts(options);
         }
       );
