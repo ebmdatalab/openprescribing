@@ -1,0 +1,9 @@
+[Service]
+User=www-data
+ExecStart=/webapps/openprescribing/bin/gunicorn_start staging
+SyslogIdentifier=app.openprescribing.web
+Restart=always
+RestartSec=4
+
+[Install]
+WantedBy=multi-user.target

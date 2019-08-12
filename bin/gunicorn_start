@@ -58,10 +58,21 @@ export $(grep -v '^\s*#' "$REPO_ROOT/environment" | xargs)
 # Activate the virtual environment
 source "$VIRTUALENV_PATH/bin/activate"
 
+# If we're running under systemd then it handles opening the socket and passes
+# a file descriptor for the socket through to gunicorn (which knows how to
+# handle this without any extra configuration).  While we're transitioning to
+# this setup we check for the presence of the file descriptor environment
+# variable and fall back to the traditional bind argument if it's not there.
+if [[ -z "$LISTEN_FDS" ]]; then
+  bind_arg="--bind=unix:$SOCKFILE"
+else
+  bind_arg=''
+fi
+
 # Start gunicorn via newrelic-admin
 cmd="newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --name $NAME \
-  --bind=unix:$SOCKFILE \
+  $bind_arg \
   --pid=$PIDFILE \
   --workers $GUNICORN_NUM_WORKERS \
   --timeout $GUNICORN_TIMEOUT \
