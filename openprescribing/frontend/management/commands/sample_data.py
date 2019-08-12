@@ -66,7 +66,7 @@ def dump_create_table(table, dest_dir):
             "SELECT column_name FROM information_schema.columns "
             "WHERE table_schema = 'public' AND table_name = '{}'".format(table)
         )
-        res = cursor.execute(sql)
+        cursor.execute(sql)
         fields = cursor.fetchall()
         with open(dest, "wb") as f:
             json.dump([x[0] for x in fields], f)
