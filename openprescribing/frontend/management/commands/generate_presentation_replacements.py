@@ -95,7 +95,6 @@ import logging
 import re
 import tempfile
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 from django.core.management import call_command
@@ -108,7 +107,7 @@ from frontend.models import Product
 from frontend.models import Section
 from frontend import bq_schemas as schemas
 
-from gcutils.bigquery import Client, TableExporter, build_schema
+from gcutils.bigquery import Client, TableExporter
 
 
 logger = logging.getLogger(__name__)

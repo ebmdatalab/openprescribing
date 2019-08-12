@@ -8,12 +8,10 @@ The `load` operation truncates all existing data.
 import json
 import os
 import tempfile
-import subprocess
 
 from django.apps import apps
 from django.core.management import BaseCommand
 from django.db import connection
-from django.template import Context, Engine, Template
 
 # Tables for which we should copy all the data
 copy_all = [

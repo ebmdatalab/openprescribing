@@ -18,7 +18,6 @@ from django.core.management import BaseCommand
 from django.db import transaction
 
 from gcutils.bigquery import Client
-from dmd2.models import VMPP
 from frontend.models import TariffPrice
 from frontend.models import ImportLog
 from openprescribing.slack import notify_slack
