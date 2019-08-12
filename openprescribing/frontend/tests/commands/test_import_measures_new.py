@@ -439,7 +439,7 @@ def upload_prescribing(randint):
                 net_cost = actual_cost
 
                 row = [
-                    "sha",  #  This value doesn't matter.
+                    "sha",  # This value doesn't matter.
                     practice.ccg.regional_team_id,
                     practice.ccg.stp_id,
                     practice.ccg_id,
@@ -481,7 +481,7 @@ def upload_prescribing(randint):
                 net_cost = actual_cost
 
                 row = [
-                    "sha",  #  This value doesn't matter.
+                    "sha",  # This value doesn't matter.
                     practice.ccg.regional_team_id,
                     practice.ccg.stp_id,
                     practice.ccg_id,
@@ -557,31 +557,31 @@ def upload_practice_statistics(randint):
             total_list_size = randint(100, 200)
 
             row = [
-                timestamp,  #  month
-                0,  #  male_0_4
-                0,  #  female_0_4
-                0,  #  male_5_14
-                0,  #  male_15_24
-                0,  #  male_25_34
-                0,  #  male_35_44
-                0,  #  male_45_54
-                0,  #  male_55_64
-                0,  #  male_65_74
-                0,  #  male_75_plus
-                0,  #  female_5_14
-                0,  #  female_15_24
-                0,  #  female_25_34
-                0,  #  female_35_44
-                0,  #  female_45_54
-                0,  #  female_55_64
-                0,  #  female_65_74
-                0,  #  female_75_plus
-                total_list_size,  #  total_list_size
-                0,  #  astro_pu_cost
-                0,  #  astro_pu_items
-                "{}",  #  star_pu
-                practice.ccg_id,  #  pct_id
-                practice.code,  #  practice
+                timestamp,  # month
+                0,  # male_0_4
+                0,  # female_0_4
+                0,  # male_5_14
+                0,  # male_15_24
+                0,  # male_25_34
+                0,  # male_35_44
+                0,  # male_45_54
+                0,  # male_55_64
+                0,  # male_65_74
+                0,  # male_75_plus
+                0,  # female_5_14
+                0,  # female_15_24
+                0,  # female_25_34
+                0,  # female_35_44
+                0,  # female_45_54
+                0,  # female_55_64
+                0,  # female_65_74
+                0,  # female_75_plus
+                total_list_size,  # total_list_size
+                0,  # astro_pu_cost
+                0,  # astro_pu_items
+                "{}",  # star_pu
+                practice.ccg_id,  # pct_id
+                practice.code,  # practice
             ]
 
             practice_statistics_rows.append(row)
