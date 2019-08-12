@@ -1,4 +1,9 @@
 [flake8]
 exclude = *migrations*,*settings*
-ignore = E501
+ignore = \
+    E203, \  # whitespace before ',' (black inserts a space after `print` when targetting 2.7)
+    E741,\   # do not use variables named ‘l’, ‘O’, or ‘I’ (use a better font if this is a problem?)
+    E501,\   # line too long (black fixes long lines, except for long strings which may benefit from being long (eg URLs))
+    W50, \   # line break before/after binary operator (black disagrees)
+    W605     # invalid escape sequence ‘x’ (false positives with regex patters in non-raw strings, eg "\w+")
 statistics = true
