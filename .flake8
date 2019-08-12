@@ -1,5 +1,5 @@
 [flake8]
-exclude = *migrations*,*settings*
+exclude = *migrations*,*settings*,tmp/
 ignore = \
     E203, \  # whitespace before ',' (black inserts a space after `print` when targetting 2.7)
     E741,\   # do not use variables named ‘l’, ‘O’, or ‘I’ (use a better font if this is a problem?)
