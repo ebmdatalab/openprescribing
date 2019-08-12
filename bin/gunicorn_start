@@ -23,8 +23,6 @@ LOGDIR="$REPO_ROOT/logs"
 mkdir -p $RUNDIR
 mkdir -p $LOGDIR
 
-SOCKFILE="$RUNDIR/gunicorn.sock"
-PIDFILE="$RUNDIR/gunicorn.pid"
 LOGFILE="$LOGDIR/gunicorn-error.log"
 ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
@@ -58,22 +56,18 @@ export $(grep -v '^\s*#' "$REPO_ROOT/environment" | xargs)
 # Activate the virtual environment
 source "$VIRTUALENV_PATH/bin/activate"
 
-# If we're running under systemd then it handles opening the socket and passes
-# a file descriptor for the socket through to gunicorn (which knows how to
-# handle this without any extra configuration).  While we're transitioning to
-# this setup we check for the presence of the file descriptor environment
-# variable and fall back to the traditional bind argument if it's not there.
-if [[ -z "$LISTEN_FDS" ]]; then
-  bind_arg="--bind=unix:$SOCKFILE"
-else
-  bind_arg=''
+# LISTEN_FDS is the systemd-specific way of passing in an already open socket.
+# PORT is the more generic 12-factor way of telling an application where to
+# listen.
+if [[ -z "$PORT" && -z "$LISTEN_FDS" ]]; then
+  echo 'Neither the PORT nor LISTEN_FDS environment variables is set'
+  echo 'so gunicorn does not know what to bind to.'
+  exit 1
 fi
 
 # Start gunicorn via newrelic-admin
 cmd="newrelic-admin run-program gunicorn openprescribing.wsgi:application \
   --name $NAME \
-  $bind_arg \
-  --pid=$PIDFILE \
   --workers $GUNICORN_NUM_WORKERS \
   --timeout $GUNICORN_TIMEOUT \
   --log-level=$GUNICORN_LOG_LEVEL \

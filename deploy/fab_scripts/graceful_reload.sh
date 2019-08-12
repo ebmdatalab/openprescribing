@@ -40,22 +40,4 @@ esac
 # app".
 service_name="app.$app_name.web.service"
 
-service_enabled=false
-if systemctl list-unit-files --type service --state enabled | grep -Fq "$service_name"; then
-  service_enabled=true
-fi
-
-# Vary the restart behaviour depending on whether or not the corresponding
-# systemd service is enabled
-if $service_enabled; then
-  systemctl restart "$service_name"
-else
-  pid_file="$script_dir/../../run/gunicorn.pid"
-  PID=$(cat "$pid_file")
-  if [[ -n "$PID" ]]; then
-      kill -HUP $PID;
-  else
-      echo "Error: server $1 not running, so could not reload";
-      exit 1;
-  fi
-fi
+systemctl restart "$service_name"
