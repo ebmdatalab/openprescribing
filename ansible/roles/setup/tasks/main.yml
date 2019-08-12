@@ -3,7 +3,7 @@
   become: yes
   apt:
     pkg: apt-transport-https
-    state: installed
+    state: present
 
 - name: Add NodeSource apt signing key
   become: yes
@@ -20,7 +20,7 @@
   become: yes
   apt:
     pkg: "{{ item }}"
-    state: installed
+    state: present
   with_items:
     - apt-transport-https
     - ca-certificates
@@ -68,7 +68,7 @@
   become: yes
   apt:
     pkg: "{{item}}"
-    state: installed
+    state: present
   with_items:
     - nodejs
 
@@ -87,7 +87,7 @@
   become: yes
   apt:
     pkg: "{{ item }}"
-    state: installed
+    state: present
   with_items:
     - postgresql-9.5-postgis-2.2
     - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
