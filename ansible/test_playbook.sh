@@ -18,4 +18,4 @@ sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 SKIP_NPM_BUILD=1 /openprescribing/venv/bin/python /openprescribing/openprescribing/manage.py test frontend.tests.test_models.SearchBookmarkTestCase
 
 # Check that gunicorn can start
-CHECK_CONFIG=1 /openprescribing/bin/gunicorn_start production
+CHECK_CONFIG=1 PORT=8000 /openprescribing/bin/gunicorn_start production
