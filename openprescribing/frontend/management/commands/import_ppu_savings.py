@@ -133,7 +133,7 @@ def get_savings(entity_type, month):
         select = "savings.presentations.pct AS pct,"
         inner_select = "presentations.pct, "
         group_by = "presentations.pct, "
-        min_saving = 200 #changed from 1000
+        min_saving = 200  # changed from 1000
     elif entity_type == "practice":
         select = (
             "savings.presentations.practice AS practice,"
@@ -141,7 +141,7 @@ def get_savings(entity_type, month):
         )
         inner_select = "presentations.pct, " "presentations.practice,"
         group_by = "presentations.practice, " "presentations.pct,"
-        min_saving = 10 #changed from 50
+        min_saving = 10  # changed from 50
     else:
         # 7d21f9c6 (#769) removed 'product'` as a possible entity_type.  We may
         # want to revisit this.
