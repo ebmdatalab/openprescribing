@@ -6,10 +6,7 @@
 status=0
 
 echo 'Running Black ...'
-python3 -m black --check --diff \
-  --target-version py27 \
-  --exclude '/migrations/' \
-  .
+python3 -m black --check --diff .
 status=$(( $status + $? ))
 
 echo
