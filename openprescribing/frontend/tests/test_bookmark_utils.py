@@ -26,10 +26,7 @@ from frontend.models import NCSOConcessionBookmark
 from frontend.templatetags.template_extras import deltawords
 from frontend.views import bookmark_utils
 from frontend.tests.data_factory import DataFactory
-from matrixstore.tests.matrixstore_factory import (
-    matrixstore_from_postgres,
-    patch_global_matrixstore,
-)
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 class IntroTextTest(unittest.TestCase):
@@ -752,6 +749,7 @@ def _makeContext(**kwargs):
 
 
 @patch("frontend.views.bookmark_utils.attach_image")
+@copy_fixtures_to_matrixstore
 class TestNCSOConcessions(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -784,19 +782,6 @@ class TestNCSOConcessions(TestCase):
         cls.ccg = cls.ccgs[0]
         # Create user to own a bookmark
         cls.user = factory.create_user()
-        # Copy all test data from the database into a MatrixStore instance.
-        # This allows us to reuse the existing test setup with
-        # matrixstore-powered functions.
-        matrixstore = matrixstore_from_postgres()
-        stop_patching = patch_global_matrixstore(matrixstore)
-        # Have to wrap this in a staticmethod decorator otherwise Python thinks
-        # we're trying to create a new class method
-        cls._stop_patching = staticmethod(stop_patching)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls._stop_patching()
-        super(TestNCSOConcessions, cls).tearDownClass()
 
     def test_make_ncso_concessions_email_for_practice(self, attach_image):
         bookmark = NCSOConcessionBookmark.objects.create(

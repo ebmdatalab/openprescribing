@@ -16,12 +16,10 @@ from frontend.views.spending_utils import (
     ncso_spending_breakdown_for_entity,
 )
 from frontend.tests.data_factory import DataFactory
-from matrixstore.tests.matrixstore_factory import (
-    matrixstore_from_postgres,
-    patch_global_matrixstore,
-)
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
+@copy_fixtures_to_matrixstore
 class TestSpendingViews(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -61,19 +59,6 @@ class TestSpendingViews(TestCase):
         # Pull out an individual practice and CCG to use in our tests
         cls.practice = cls.practices[0]
         cls.ccg = cls.ccgs[0]
-        # Copy all test data from the database into a MatrixStore instance.
-        # This allows us to reuse the existing test setup with
-        # matrixstore-powered functions.
-        matrixstore = matrixstore_from_postgres()
-        stop_patching = patch_global_matrixstore(matrixstore)
-        # Have to wrap this in a staticmethod decorator otherwise Python thinks
-        # we're trying to create a new class method
-        cls._stop_patching = staticmethod(stop_patching)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls._stop_patching()
-        super(TestSpendingViews, cls).tearDownClass()
 
     def test_ncso_spending_methods(self):
         entities = [
