@@ -88,7 +88,7 @@ pytz==2019.2
 pyvirtualdisplay==0.2.4
 pyyaml==5.1.2             # via watchdog
 raven==6.10.0
-redis==3.3.6              # via django-redis
+redis==3.3.7              # via django-redis
 requests-futures==1.0.0
 requests-oauthlib==1.2.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
@@ -109,4 +109,4 @@ xlrd==1.2.0
 zstandard==0.11.1
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.1.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
