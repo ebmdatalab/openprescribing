@@ -409,4 +409,4 @@ TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
 # check_numbers.py will write copies of scraped pages here.  By writing to a
 # location in /tmp/, we benefit from tmpreaper, which is run by cron to delete
 # temporary files older than a week.
-CHECK_NUMBERS_BASE_PATH =  '/tmp/numbers-checker/'
+CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"

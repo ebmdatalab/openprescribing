@@ -139,8 +139,8 @@ def log_deploy():
 
 
 def check_numbers():
-    with prefix('source .venv/bin/activate'):
-        run('cd openprescribing/ && python manage.py check_numbers')
+    with prefix("source .venv/bin/activate"):
+        run("cd openprescribing/ && python manage.py check_numbers")
 
 
 def checkpoint(force_build):

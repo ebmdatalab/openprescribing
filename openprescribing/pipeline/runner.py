@@ -429,7 +429,7 @@ def run_all(year, month, under_test=False):
 
     # See check_numbers.py.
     check_numbers_glob = os.path.join(
-            settings.CHECK_NUMBERS_BASE_PATH, '*', 'numbers.json'
+        settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
     )
     for path in glob.glob(check_numbers_glob):
         os.remove(path)
