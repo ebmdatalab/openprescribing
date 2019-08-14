@@ -159,7 +159,7 @@ def build_path(pattern, keys):
 
         path = path.replace("%({})s".format(key), substitutions[subst_key])
 
-    assert "%" not in path, "Could not interpolate " + name
+    assert "%" not in path, "Could not interpolate " + pattern
 
     return path
 
