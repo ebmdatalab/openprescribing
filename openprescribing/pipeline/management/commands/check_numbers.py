@@ -28,6 +28,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
+from openprescribing.slack import notify_slack
 from openprescribing.utils import mkdir_p
 from pipeline.runner import in_progress as import_in_progress
 
