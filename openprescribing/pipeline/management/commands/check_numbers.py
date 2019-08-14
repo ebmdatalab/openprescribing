@@ -26,6 +26,7 @@ from django.core.urlresolvers import get_resolver
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 from openprescribing.utils import mkdir_p
 from pipeline.runner import in_progress as import_in_progress
@@ -46,7 +47,9 @@ class Command(BaseCommand):
         mkdir_p(log_path)
 
         numbers = {}
-        with webdriver.Firefox() as browser:
+        options = Options()
+        options.headless = True
+        with webdriver.Firefox(options=options) as browser:
             browser.set_page_load_timeout(60)
 
             for name, path in paths_to_scrape():
