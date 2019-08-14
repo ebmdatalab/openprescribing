@@ -22,7 +22,7 @@ decorator==4.4.0          # via networkx
 defusedxml==0.6.0         # via python3-openid
 django-allauth==0.39.1
 django-anymail[mailgun]==6.1.0
-django-cors-headers==3.0.2
+django-cors-headers==3.1.0
 django-crispy-forms==1.7.2
 django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==1.11
@@ -109,4 +109,4 @@ xlrd==1.2.0
 zstandard==0.11.1
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.1.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
