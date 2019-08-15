@@ -48,7 +48,7 @@ def matrixstore_from_postgres():
     This provides an easy way of using existing test fixtures with the
     MatrixStore.
     """
-    latest_date = ImportLog.objects.latest("current_at").current_at
+    latest_date = ImportLog.objects.latest_in_category("prescribing").current_at
     end_date = str(latest_date)[:7]
     return matrixstore_from_data_factory(
         _DatabaseFixtures(), end_date=end_date, months=60
