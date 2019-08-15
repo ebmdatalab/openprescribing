@@ -44,6 +44,7 @@ from frontend.models import (
     MeasureGlobal,
     MeasureValue,
     Practice,
+    Prescription,
     PCN,
     PCT,
     STP,
@@ -63,6 +64,7 @@ class Command(BaseCommand):
             MeasureGlobal,
             MeasureValue,
             Practice,
+            Prescription,
             PCT,
             STP,
             RegionalTeam,
@@ -209,8 +211,10 @@ class Command(BaseCommand):
             bnf_codes.append("0{}0000000000000".format(ix))
             bnf_codes.append("0{}0100000000000".format(ix))
 
-        # Generate random prescribing data.  This data is never saved to the
-        # database.
+        # Generate random prescribing data. We don't currently save this all to
+        # the database as it would make the fixture too big and isn't needed.
+        # But we do save a single row because the MatrixStore gets unhappy if
+        # it has no data at all to work with.
         prescribing_rows = []
 
         for practice_ix, practice in enumerate(Practice.objects.all()):
@@ -254,6 +258,20 @@ class Command(BaseCommand):
                     ]
 
                     prescribing_rows.append(row)
+
+        # We only import the first row into Postgres for now as we just need
+        # someting to keep the MatrixStore happy
+        for row in prescribing_rows[:1]:
+            Prescription.objects.create(
+                practice_id=row[5],
+                pct_id=row[3],
+                presentation_code=row[6],
+                total_items=row[8],
+                net_cost=row[9],
+                actual_cost=row[10],
+                quantity=row[11],
+                processing_date=row[12][:10],
+            )
 
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
