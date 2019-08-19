@@ -96,7 +96,7 @@ rsa==4.0                  # via google-auth
 scipy==1.2.1
 selenium==3.141.0
 six==1.12.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
-soupsieve==1.9.2          # via beautifulsoup4
+soupsieve==1.9.3          # via beautifulsoup4
 sqlparse==0.3.0           # via django-debug-toolbar
 titlecase==0.12.0
 tqdm==4.33.0
