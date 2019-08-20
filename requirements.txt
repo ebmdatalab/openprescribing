@@ -63,7 +63,7 @@ networkx==2.2
 newrelic==5.0.2.126
 numpy==1.16.4
 oauthlib==3.1.0           # via requests-oauthlib
-openpyxl==2.6.2
+openpyxl==2.6.3
 pandas-gbq==0.10.0
 pandas==0.24.2
 paramiko==2.6.0           # via fabric
