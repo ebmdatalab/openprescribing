@@ -405,3 +405,8 @@ if ENABLE_CACHING and (not redis_url or not source_commit_id):
 # For downloading data from TRUD
 TRUD_USERNAME = utils.get_env_setting("TRUD_USERNAME", default="")
 TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
+
+# check_numbers.py will write copies of scraped pages here.  By writing to a
+# location in /tmp/, we benefit from tmpreaper, which is run by cron to delete
+# temporary files older than a week.
+CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"

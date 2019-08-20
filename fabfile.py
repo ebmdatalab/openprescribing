@@ -138,6 +138,11 @@ def log_deploy():
         )
 
 
+def check_numbers():
+    with prefix("source .venv/bin/activate"):
+        run("cd openprescribing/ && python manage.py check_numbers")
+
+
 def checkpoint(force_build):
     env.started_at = datetime.utcnow()
     with settings(warn_only=True):
@@ -293,6 +298,7 @@ def deploy(environment, force_build=False, branch="master"):
         clear_cloudflare()
         setup_cron()
         log_deploy()
+        check_numbers()
 
 
 @task
