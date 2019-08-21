@@ -21,7 +21,7 @@ include_choices = [
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(label="Query, SNOMED code, or BNF code/prefix", min_length=6)
+    q = forms.CharField(label="Query, SNOMED code, or BNF code/prefix", min_length=3)
     obj_types = forms.MultipleChoiceField(
         label="Search...",
         choices=obj_types_choices,
