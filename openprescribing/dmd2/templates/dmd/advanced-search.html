@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% load template_extras %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block extra_css %}
+<link href="{% static 'vendor/query-builder/query-builder.default.min.css' %}" rel="stylesheet" />
+<link href="{% static 'vendor/bootstrap-select/bootstrap-select.min.css' %}" rel="stylesheet" />
+<link href="{% static 'vendor/bootstrap-select/bootstrap-datepicker3.min.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<h1>dm+d search: {{ obj_type_human_plural }}</h1>
+
+<p>
+  This feature is is new and incomplete!  Several dm+d fields are not
+  searchable, and searching across dm+d object types is not possible.  If you
+  have any feedback, we'd love to
+  <a href="mailto:{{ SUPPORT_TO_EMAIL }}" class="feedback-show" style="text-decoration: underline">hear from you</a>.
+</p>
+
+<p>
+  Search:
+  {% for ot in obj_types %}
+  {% if forloop.counter0 > 0 %}|{% endif %}
+  {% if ot != obj_type %}
+  <a href="{% url 'dmd_advanced_search' ot %}">{{ ot|upper }}s</a>
+  {% else %}
+  {{ ot|upper }}s
+  {% endif %}
+  {% endfor %}
+</p>
+<hr />
+
+<div id="dmd-search-builder"></div>
+
+{% crispy form %}
+
+<div class="btn-group">
+  <button id="dmd-search" class="btn btn-primary">Search</button>
+</div>
+
+{% if objs != None %}
+<hr />
+{% if too_many_results %}
+<h2>Found more than {{ objs|length }} {{ obj_type_human_plural }}</h2>
+<p>Please refine your search.</p>
+{% else %}
+<h2>Found {{ objs|length }} {{ obj_type_human_plural }}</h2>
+{% endif %}
+
+<ul>
+  {% for obj in objs %}
+    <li>
+      <a href="{% url 'dmd_obj' obj.obj_type obj.id %}">{{ obj.title }}</a>
+      {% if obj.status %}({{ obj.status }}){% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{# Hack: this hr pushes the footer down so that the Search button is visible on mobile. #}
+<hr />
+{% endblock %}
+
+{% block extra_js %}
+  {# query-builder is not available on npm in an easily-usable form #}
+  <script src="{% static 'vendor/query-builder/query-builder.standalone.js' %}"></script>
+
+  {{ obj_type|json_script:"obj-type" }}
+  {{ rules|json_script:"search-rules" }}
+  {% conditional_js 'dmd-advanced-search' %}
+{% endblock %}

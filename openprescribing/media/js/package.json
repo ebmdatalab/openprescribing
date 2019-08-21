@@ -54,6 +54,8 @@
     "@sentry/browser": "^4.5.1",
     "bigtext": "^1.0.1",
     "bootstrap": "^3.3.4",
+    "bootstrap-datepicker": "^1.8.0",
+    "bootstrap-select": "^1.13.1",
     "chroma-js": "^1.2",
     "clipboard": "^1.5.12",
     "cookies-js": "1.2.3",

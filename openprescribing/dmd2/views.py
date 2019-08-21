@@ -5,23 +5,18 @@ from copy import copy
 from urllib import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import BooleanField, ForeignKey
-from django.http import Http404
+from django.db.models import fields, ForeignKey
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from frontend.models import Presentation, Prescription, TariffPrice
 
-from .forms import SearchForm
-from .models import VTM, VMP, VMPP, AMP, AMPP
-from .search import search
-from .view_schema import schema
-
-obj_types = ["vtm", "vmp", "vmpp", "amp", "ampp"]
-
-obj_type_to_cls = {"vtm": VTM, "vmp": VMP, "vmpp": VMPP, "amp": AMP, "ampp": AMPP}
-
-cls_to_obj_type = {cls: obj_type for obj_type, cls in obj_type_to_cls.items()}
+from .forms import AdvancedSearchForm, SearchForm
+from .models import VMP, VMPP, AMP, AMPP
+from .obj_types import obj_type_to_cls, cls_to_obj_type
+from .search import search, advanced_search, build_search_filters
+from .view_schema import schema as view_schema
 
 
 def _build_row(obj, field):
@@ -49,7 +44,7 @@ def _build_row(obj, field):
         except AttributeError:
             value = value.nm
 
-    elif isinstance(field, BooleanField):
+    elif isinstance(field, fields.BooleanField):
         value = {True: "✓", False: "✗"}.get(value)
 
     return {"key": field.help_text, "value": value}
@@ -70,7 +65,7 @@ def dmd_obj_view(request, obj_type, id):
     rows = []
 
     # Fields for the object
-    for field_name in schema[obj_type]["fields"]:
+    for field_name in view_schema[obj_type]["fields"]:
         field = fields_by_name[field_name]
 
         row = _build_row(obj, field)
@@ -78,7 +73,7 @@ def dmd_obj_view(request, obj_type, id):
             rows.append(row)
 
     # Related objects (eg VPIs for a VMP)
-    for rel_name in schema[obj_type]["other_relations"]:
+    for rel_name in view_schema[obj_type]["other_relations"]:
         relname = rel_name.replace("_", "")
         rel = rels_by_name[relname]
         model = rel.related_model
@@ -96,7 +91,7 @@ def dmd_obj_view(request, obj_type, id):
 
         for related_instance in related_instances:
             rows.append({"title": model._meta.verbose_name})
-            for field_name in schema[rel_name]["fields"]:
+            for field_name in view_schema[rel_name]["fields"]:
                 if field_name == obj_type:
                     continue
                 field = rel_fields_by_name[field_name]
@@ -105,7 +100,7 @@ def dmd_obj_view(request, obj_type, id):
                     rows.append(row)
 
     # Related child dm+d objects (for a VMP, these will be VMPPs and AMPs)
-    for rel_name in schema[obj_type]["dmd_obj_relations"]:
+    for rel_name in view_schema[obj_type]["dmd_obj_relations"]:
         relname = rel_name.replace("_", "")
         rel = rels_by_name[relname]
         assert rel.multiple
@@ -296,3 +291,44 @@ def _annotate_search_results(results, search_params, max_results_per_obj_type):
                 new_search_params["obj_types"] = [result["cls"].obj_type]
                 querystring = urlencode(new_search_params, doseq=True)
                 result["link_to_more"] = reverse("dmd_search") + "?" + querystring
+
+
+def advanced_search_view(request, obj_type):
+    cls = obj_type_to_cls[obj_type]
+
+    objs = None
+    rules = None
+    too_many_results = False
+
+    if "search" in request.GET:
+        form = AdvancedSearchForm(request.GET)
+        if form.is_valid():
+            results = advanced_search(cls, form.cleaned_data)
+            objs = results["objs"]
+            rules = results["rules"]
+            too_many_results = results["too_many_results"]
+    else:
+        form = AdvancedSearchForm()
+
+    ctx = {
+        "obj_type": obj_type,
+        "obj_type_human_plural": cls._meta.verbose_name_plural,
+        "form": form,
+        "objs": objs,
+        "rules": rules,
+        "too_many_results": too_many_results,
+        "obj_types": ["vmp", "amp", "vmpp", "ampp"],
+    }
+    return render(request, "dmd/advanced-search.html", ctx)
+
+
+def search_filters_view(request, obj_type):
+    """Return filters to build a QueryBuilder form for given obj_type.
+
+    See https://querybuilder.js.org/#filters for details.
+
+    This returns quite quickly (<100ms) but would be a good candidate to cache.
+    """
+
+    cls = obj_type_to_cls[obj_type]
+    return JsonResponse({"filters": build_search_filters(cls)})
