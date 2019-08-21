@@ -112,8 +112,10 @@ def measure_numerators_by_org(request, format=None):
     org_type, org_id = _get_org_type_and_id_from_request(request)
     group_by_org = get_row_grouper(org_type)
 
-    # Closure over `group_by_org` and `org_id` which takes a prescribing matrix
-    # and returns the total value for that organisation over the last N months
+    # Nested function which takes a prescribing matrix and returns the total
+    # value for the current organisation over the last 3 months (where the
+    # current organisation is defined by the `group_by_org` and `org_id`
+    # variables)
     def get_total(matrix):
         latest_three_months = matrix[:, -3:]
         values_for_org = group_by_org.sum_one_group(latest_three_months, org_id)
