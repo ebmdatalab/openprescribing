@@ -252,7 +252,7 @@ def write_numbers(numbers, log_path):
     """Write scraped numbers from this run."""
 
     with open(os.path.join(log_path, "numbers.json"), "w") as f:
-        json.dump(numbers, f, indent=2)
+        json.dump(numbers, f, indent=2, sort_keys=True)
 
 
 def load_previous_numbers(previous_log_path):
