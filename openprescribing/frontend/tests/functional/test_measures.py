@@ -17,8 +17,10 @@ import requests
 from selenium_base import SeleniumTestCase
 
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
+@copy_fixtures_to_matrixstore
 class MeasuresTests(SeleniumTestCase):
     maxDiff = None
 

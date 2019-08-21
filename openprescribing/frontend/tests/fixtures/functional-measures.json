@@ -630,6 +630,20 @@
   }
 },
 {
+  "model": "frontend.prescription",
+  "pk": 1,
+  "fields": {
+    "pct": "AAA",
+    "practice": "P00000",
+    "presentation_code": "000000000000000",
+    "total_items": 223,
+    "net_cost": 6244.0,
+    "actual_cost": 6244.0,
+    "quantity": 6244.0,
+    "processing_date": "2018-01-01"
+  }
+},
+{
   "model": "frontend.measure",
   "pk": "core_0",
   "fields": {

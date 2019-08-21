@@ -1,16 +1,16 @@
 import re
 
-from dateutil.relativedelta import relativedelta
-
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from frontend.measure_tags import MEASURE_TAGS
-from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureGlobal
 from frontend.models import MeasureValue
+from frontend.models import Presentation
+
+from matrixstore.db import get_db, get_row_grouper
 
 import view_utils as utils
 
@@ -79,139 +79,132 @@ def measure_global(request, format=None):
     return Response(d)
 
 
-def _get_org_id_and_field_from_request(request):
-    """Return an (org_id, org_type) tuple from the request, normalised
+def _get_org_type_and_id_from_request(request):
+    """Return an (org_type, org_id) tuple from the request, normalised
     for various backward-compatibilities.
-
-    Returns (None, None) if no org is specified in the request.
-
     """
     org_id = utils.param_to_list(request.query_params.get("org", []))
     org_id = org_id and org_id[0]
-    org_field = None
-    org_types_whitelist = ["practice", "pcn", "pct", "ccg", "stp", "regional_team"]
-    if "org_type" in request.query_params:
-        org_type = request.query_params["org_type"]
-        if org_type not in org_types_whitelist:
-            raise ValueError("Unknown org_type: {}".format(org_type))
-        org_field = org_type + "_id"
-        if org_field in ["pct_id", "ccg_id"]:
-            org_field = "pr.ccg_id"
-    elif org_id:
+    org_type = request.query_params.get("org_type")
+    if org_type == "pct":
+        org_type = "ccg"
+    if org_id and not org_type:
         # This is here for backwards compatibility, in case anybody else is
         # using the API.  Now we have measures for regional teams, we cannot
         # guess the type of an org by the length of its code, as both CCGs and
         # regional teams have codes of length 3.
         if len(org_id) == 3:
-            org_field = "pr.ccg_id"
+            org_type = "ccg"
         elif len(org_id) == 6:
-            org_field = "practice_id"
+            org_type = "practice"
         else:
-            assert False, "Unexpected org: {}".format(org_id)
-    return (org_id, org_field)
+            raise ValueError("Unexpected org: {}".format(org_id))
+    if not org_id:
+        org_type = "all_practices"
+        org_id = None
+    return org_type, org_id
 
 
 @api_view(["GET"])
 def measure_numerators_by_org(request, format=None):
-    measure = request.query_params.get("measure", None)
-    org_id, org_field = _get_org_id_and_field_from_request(request)
-    this_month = ImportLog.objects.latest_in_category("prescribing").current_at
-    three_months_ago = (this_month - relativedelta(months=2)).strftime("%Y-%m-01")
-    m = Measure.objects.get(pk=measure)
-    if m.numerator_is_list_of_bnf_codes:
-        if org_field in ["stp_id", "regional_team_id"]:
-            extra_join = """
-            INNER JOIN frontend_practice pr
-            ON p.practice_id = pr.code
-            INNER JOIN frontend_pct
-            ON frontend_pct.code = pr.ccg_id
-            """
-        elif org_field in ["pr.ccg_id", "pcn_id"]:
-            extra_join = """
-            INNER JOIN frontend_practice pr
-            ON p.practice_id = pr.code
-            """
-        else:
-            extra_join = ""
+    measure_id = request.query_params.get("measure", None)
+    measure = Measure.objects.get(pk=measure_id)
+    org_type, org_id = _get_org_type_and_id_from_request(request)
+    group_by_org = get_row_grouper(org_type)
 
-        # For measures whose numerator sums one of the columns in the
-        # prescribing table, we order the presentations by that column.
-        # For other measures, the columns used to calculate the numerator is
-        # not available here (it's in BQ) so we order by total_items, which is
-        # the best we can do.
-        #
-        # But because the columns in BQ don't match the columns in PG (items vs
-        # total_items), and because we alias a column in the query below
-        # (actual_cost vs cost) we need to translate the name of the column we
-        # use for ordering the results.
-        match = re.match(
-            "SUM\((items|quantity|actual_cost)\) AS numerator", m.numerator_columns
+    # Nested function which takes a prescribing matrix and returns the total
+    # value for the current organisation over the last 3 months (where the
+    # current organisation is defined by the `group_by_org` and `org_id`
+    # variables)
+    def get_total(matrix):
+        latest_three_months = matrix[:, -3:]
+        values_for_org = group_by_org.sum_one_group(latest_three_months, org_id)
+        return values_for_org.sum()
+
+    bnf_codes, sort_field = _get_bnf_codes_and_sort_field_for_measure(measure)
+    prescribing = _get_prescribing_for_bnf_codes(bnf_codes)
+    results = []
+    for bnf_code, items_matrix, quantity_matrix, actual_cost_matrix in prescribing:
+        items = get_total(items_matrix)
+        if items == 0:
+            continue
+        quantity = get_total(quantity_matrix)
+        actual_cost = get_total(actual_cost_matrix)
+        results.append(
+            {
+                "bnf_code": bnf_code,
+                "total_items": int(items),
+                "quantity": int(quantity),
+                # Pence to pounds
+                "cost": actual_cost / 100.0,
+            }
         )
-
-        if match:
-            order_col = {
-                "items": "total_items",
-                "actual_cost": "cost",
-                "quantity": "quantity",
-            }[match.groups()[0]]
-        else:
-            order_col = "total_items"
-
-        # The redundancy in the following column names is so we can
-        # support various flavours of `WHERE` clause from the measure
-        # definitions that may use a subset of any of these column
-        # names
-        focus_on_org = org_id and org_field
-        params = {
-            "numerator_bnf_codes": m.numerator_bnf_codes,
-            "three_months_ago": three_months_ago,
-        }
-        if focus_on_org:
-            org_condition = "{org_field} = %(org_id)s AND ".format(org_field=org_field)
-            org_group = "{org_field}, ".format(org_field=org_field)
-            params["org_id"] = org_id
-        else:
-            org_condition = ""
-            org_group = ""
-        query = """
-            SELECT
-              presentation_code AS bnf_code,
-              pn.name AS presentation_name,
-              SUM(total_items) AS total_items,
-              SUM(actual_cost) AS cost,
-              SUM(quantity) AS quantity
-            FROM
-              frontend_prescription p
-            INNER JOIN
-              frontend_presentation pn
-            ON p.presentation_code = pn.bnf_code
-            {extra_join}
-            WHERE
-              {org_condition}
-              processing_date >= %(three_months_ago)s
-              AND
-              pn.bnf_code = ANY(%(numerator_bnf_codes)s)
-            GROUP BY
-              {org_group}
-              presentation_code, pn.name
-            ORDER BY {order_col} DESC
-            LIMIT 50
-        """.format(
-            org_condition=org_condition,
-            org_group=org_group,
-            org_field=org_field,
-            three_months_ago=three_months_ago,
-            extra_join=extra_join,
-            order_col=order_col,
-        )
-        data = utils.execute_query(query, params)
-    else:
-        data = []
-    response = Response(data)
+    # Equivalent to ORDER BY and LIMIT
+    results.sort(key=lambda i: i[sort_field], reverse=True)
+    results = results[:50]
+    # Fetch names after truncating results so we have fewer to look up
+    names = Presentation.names_for_bnf_codes([i["bnf_code"] for i in results])
+    for item in results:
+        item["presentation_name"] = names[item["bnf_code"]]
+    response = Response(results)
     filename = "%s-%s-breakdown.csv" % (measure, org_id)
     if request.accepted_renderer.format == "csv":
         response["content-disposition"] = "attachment; filename=%s" % filename
     return response
+
+
+def _get_bnf_codes_and_sort_field_for_measure(measure):
+    """
+    Return `(bnf_codes, sort_field)` for a measure where `bnf_codes` is a list
+    of BNF codes in the measure numerator (which may be empty for measures
+    where this is not supported) and `sort_field` is the field in the API
+    response by which results should be sorted
+    """
+    # For measures whose numerator sums one of the columns in the prescribing
+    # table, we order the presentations by that column.  For other measures,
+    # the columns used to calculate the numerator is not available here (it's
+    # in BQ) so we order by total_items, which is the best we can do.
+    #
+    # Because the columns in BQ don't match the field names in our API (for
+    # historical reasons) we need to pass them through a translation
+    # dictionary.
+    match = re.match(
+        "SUM\((items|quantity|actual_cost)\) AS numerator", measure.numerator_columns
+    )
+
+    if match:
+        sort_field = {
+            "items": "total_items",
+            "actual_cost": "cost",
+            "quantity": "quantity",
+        }[match.groups()[0]]
+    else:
+        sort_field = "total_items"
+    if measure.numerator_is_list_of_bnf_codes:
+        bnf_codes = measure.numerator_bnf_codes
+    else:
+        bnf_codes = []
+    return bnf_codes, sort_field
+
+
+def _get_prescribing_for_bnf_codes(bnf_codes):
+    """
+    Return the items, quantity and actual cost matrices for the given list of
+    BNF codes
+    """
+    return get_db().query(
+        """
+        SELECT
+          bnf_code, items, quantity, actual_cost
+        FROM
+          presentation
+        WHERE
+          items IS NOT NULL AND bnf_code IN ({})
+        """.format(
+            ",".join(["?"] * len(bnf_codes))
+        ),
+        bnf_codes,
+    )
 
 
 @api_view(["GET"])

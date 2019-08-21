@@ -11,7 +11,9 @@ def matrixstore_from_data_factory(data_factory, end_date=None, months=None):
     Returns a new in-memory MatrixStore instance using the data from the
     supplied DataFactory
     """
-    connection = sqlite3.connect(":memory:")
+    # We need this connection to be sharable across threads because
+    # LiveServerTestCase runs in a separate thread from the main test code
+    connection = sqlite3.connect(":memory:", check_same_thread=False)
     end_date = max(data_factory.months)[:7] if end_date is None else end_date
     months = len(data_factory.months) if months is None else months
     import_test_data_fast(connection, data_factory, end_date, months=months)

@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models.functions import Coalesce
 
 from anymail.signals import EventType
 
@@ -568,6 +569,17 @@ class Presentation(models.Model):
 
     class Meta:
         app_label = "frontend"
+
+    @classmethod
+    def names_for_bnf_codes(cls, bnf_codes):
+        """
+        Given a list of BNF codes return a dictionary mapping those codes to their
+        DM&D names
+        """
+        name_map = cls.objects.filter(bnf_code__in=bnf_codes).values_list(
+            "bnf_code", Coalesce("dmd_name", "name")
+        )
+        return dict(name_map)
 
 
 class Prescription(models.Model):
