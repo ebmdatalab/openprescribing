@@ -7,10 +7,8 @@ import requests
 FILES = {
     "datatables/datatables-bs.css": "https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css",
     "datatables/datatables-bs.js": "https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js",
-
     "query-builder/query-builder.standalone.js": "https://querybuilder.js.org/node_modules/jQuery-QueryBuilder/dist/js/query-builder.standalone.js",
     "query-builder/query-builder.default.min.css": "https://querybuilder.js.org/node_modules/jQuery-QueryBuilder/dist/css/query-builder.default.min.css",
-
     "bootstrap-select/bootstrap-select.min.css": "https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css",
     "bootstrap-select/bootstrap-datepicker3.min.css": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.min.css",
 }
