@@ -7,6 +7,7 @@ schema = {
     "vmp": {
         "fields": [
             "nm",
+            "bnf_code",
             "vtm",
             "vpiddt",
             "vpidprev",
@@ -66,6 +67,7 @@ schema = {
     "amp": {
         "fields": [
             "descr",
+            "bnf_code",
             "vmp",
             "invalid",
             "nm",
@@ -102,7 +104,7 @@ schema = {
         "other_relations": [],
     },
     "vmpp": {
-        "fields": ["nm", "vmp", "invalid", "qtyval", "qty_uom", "combpack"],
+        "fields": ["nm", "bnf_code", "vmp", "invalid", "qtyval", "qty_uom", "combpack"],
         "dmd_obj_relations": ["ampp"],
         "other_relations": ["dtinfo"],
     },
@@ -114,6 +116,7 @@ schema = {
     "ampp": {
         "fields": [
             "nm",
+            "bnf_code",
             "vmpp",
             "amp",
             "invalid",
