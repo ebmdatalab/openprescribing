@@ -8,7 +8,7 @@ from frontend.tests.data_factory import DataFactory
 
 
 class TestDMDObjView(TestCase):
-    fixtures = ["dmd-objs"]
+    fixtures = ["dmd-objs", "dmd-import-log"]
 
     def test_vtm(self):
         rsp = self.client.get("/dmd/vtm/68088000/")
@@ -77,7 +77,7 @@ class TestDMDObjView(TestCase):
 
 
 class TestSearchView(TestCase):
-    fixtures = ["dmd-objs"]
+    fixtures = ["dmd-objs", "dmd-import-log"]
 
     def test_search_returning_no_results(self):
         rsp = self._get("bananas")
@@ -188,7 +188,7 @@ class TestSearchView(TestCase):
 class TestAdvancedSearchView(TestCase):
     # These tests just kick the tyres.
 
-    fixtures = ["dmd-objs"]
+    fixtures = ["dmd-objs", "dmd-import-log"]
 
     def test_search_returning_no_results(self):
         search = ["nm", "contains", "banana"]

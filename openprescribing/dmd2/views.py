@@ -10,7 +10,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from frontend.models import Presentation, Prescription, TariffPrice
+from frontend.models import ImportLog, Presentation, Prescription, TariffPrice
 
 from .forms import AdvancedSearchForm, SearchForm
 from .models import VMP, VMPP, AMP, AMPP
@@ -135,6 +135,7 @@ def dmd_obj_view(request, obj_type, id):
         "has_prescribing": has_prescribing,
         "has_dt": has_dt,
     }
+    ctx.update(_release_metadata())
     return render(request, "dmd/dmd_obj.html", ctx)
 
 
@@ -271,6 +272,7 @@ def search_view(request):
 
     ctx = {"form": form, "results": results}
 
+    ctx.update(_release_metadata())
     return render(request, "dmd/search.html", ctx)
 
 
@@ -319,6 +321,7 @@ def advanced_search_view(request, obj_type):
         "too_many_results": too_many_results,
         "obj_types": ["vmp", "amp", "vmpp", "ampp"],
     }
+    ctx.update(_release_metadata())
     return render(request, "dmd/advanced-search.html", ctx)
 
 
@@ -332,3 +335,12 @@ def search_filters_view(request, obj_type):
 
     cls = obj_type_to_cls[obj_type]
     return JsonResponse({"filters": build_search_filters(cls)})
+
+
+def _release_metadata():
+    import_log = ImportLog.objects.latest_in_category("dmd")
+
+    return {
+        "trud_release": "NHSBSA_" + import_log.filename,
+        "import_datetime": import_log.imported_at,
+    }
