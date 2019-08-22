@@ -206,8 +206,15 @@ def all_pcns(request):
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, ons_code=pcn_code)
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
+    num_open_practices = len([p for p in practices if p.status_code == "A"])
+    num_non_open_practices = len([p for p in practices if p.status_code != "A"])
     context = _home_page_context_for_entity(request, pcn)
-    context["practices"] = practices
+    extra_context = {
+        "practices": practices,
+        "num_open_practices": num_open_practices,
+        "num_non_open_practices": num_non_open_practices,
+    }
+    context.update(extra_context)
     request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
@@ -229,9 +236,16 @@ def ccg_home_page(request, ccg_code):
     if isinstance(form, HttpResponseRedirect):
         return form
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
+    num_open_practices = len([p for p in practices if p.status_code == "A"])
+    num_non_open_practices = len([p for p in practices if p.status_code != "A"])
     context = _home_page_context_for_entity(request, ccg)
-    context["form"] = form
-    context["practices"] = practices
+    extra_context = {
+        "form": form,
+        "practices": practices,
+        "num_open_practices": num_open_practices,
+        "num_non_open_practices": num_non_open_practices,
+    }
+    context.update(extra_context)
     request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
