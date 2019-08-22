@@ -17,6 +17,7 @@ var modules = [
   'tariff-charts',
   'measures',
   'spending-chart',
+  'dmd-advanced-search',
 ];
 
 var files = modules.map((x) => `./src/${x}.js`);

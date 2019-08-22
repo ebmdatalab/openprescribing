@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 
 from dmd2.models import DtPaymentCategory
@@ -6,7 +8,7 @@ from frontend.tests.data_factory import DataFactory
 
 
 class TestDMDObjView(TestCase):
-    fixtures = ["dmd-objs"]
+    fixtures = ["dmd-objs", "dmd-import-log"]
 
     def test_vtm(self):
         rsp = self.client.get("/dmd/vtm/68088000/")
@@ -75,7 +77,7 @@ class TestDMDObjView(TestCase):
 
 
 class TestSearchView(TestCase):
-    fixtures = ["dmd-objs"]
+    fixtures = ["dmd-objs", "dmd-import-log"]
 
     def test_search_returning_no_results(self):
         rsp = self._get("bananas")
@@ -181,3 +183,35 @@ class TestSearchView(TestCase):
         }
         params.update(extra_params)
         return self.client.get("/dmd/", params)
+
+
+class TestAdvancedSearchView(TestCase):
+    # These tests just kick the tyres.
+
+    fixtures = ["dmd-objs", "dmd-import-log"]
+
+    def test_search_returning_no_results(self):
+        search = ["nm", "contains", "banana"]
+        rsp = self._get(search)
+        self.assertContains(rsp, "Found 0 Actual Medicinal Products")
+
+    def test_simple_search(self):
+        search = ["nm", "contains", "acebutolol"]
+        rsp = self._get(search, ["unavailable"])
+        self.assertContains(rsp, "Found 2 Actual Medicinal Products")
+
+    def test_compound_search(self):
+        search = [
+            "and",
+            [
+                ["bnf_code", "begins_with", "0204000C0"],
+                ["bnf_code", "not_begins_with", "0204000C0BB"],
+                ["supp", "equal", 2073701000001100],
+            ],
+        ]
+        rsp = self._get(search, ["unavailable"])
+        self.assertContains(rsp, "Found 1 Actual Medicinal Product")
+
+    def _get(self, search, include=None):
+        params = {"search": json.dumps(search), "include": include or []}
+        return self.client.get("/dmd/advanced-search/amp/", params)

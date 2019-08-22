@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -29,4 +30,13 @@
     <p>No results found.</p>
   {% endfor %}
 {% endif %}
+
+<hr />
+<p>
+  <img src="{% static 'img/bang.jpg' %}">
+  Try our new <a href="{% url 'dmd_advanced_search' 'vmp' %}">advanced dm+d search</a>.
+</p>
+
+<hr />
+{% include 'dmd/_release_metadata.html' %}
 {% endblock %}
