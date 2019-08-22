@@ -47,7 +47,7 @@ google-cloud-core==1.0.3  # via google-cloud-bigquery, google-cloud-storage
 google-cloud-storage==1.18.0
 google-resumable-media==0.3.2  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.6.0  # via google-api-core
-graphviz==0.11.1
+graphviz==0.12
 gunicorn==19.9.0
 hiredis==1.0.0
 html2text==2019.8.11
@@ -109,4 +109,4 @@ xlrd==1.2.0
 zstandard==0.11.1
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.2.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
