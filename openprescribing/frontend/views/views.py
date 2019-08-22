@@ -622,6 +622,7 @@ def practice_price_per_unit(request, code):
     context = {
         "entity": practice,
         "entity_name": practice.cased_name,
+        "entity_name_and_status": practice.name_and_status,
         "highlight": practice.code,
         "highlight_name": practice.cased_name,
         "date": date,
@@ -637,6 +638,7 @@ def ccg_price_per_unit(request, code):
     context = {
         "entity": ccg,
         "entity_name": ccg.cased_name,
+        "entity_name_and_status": ccg.name_and_status,
         "highlight": ccg.code,
         "highlight_name": ccg.cased_name,
         "date": date,
@@ -650,6 +652,7 @@ def all_england_price_per_unit(request):
     date = _specified_or_last_date(request, "ppu")
     context = {
         "entity_name": "NHS England",
+        "entity_name_and_status": "NHS England",
         "highlight_name": "NHS England",
         "date": date,
         "by_ccg": True,
@@ -683,6 +686,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     context = {
         "entity": entity,
         "entity_name": entity.cased_name,
+        "entity_name_and_status": entity.name_and_status,
         "highlight": entity.code,
         "highlight_name": entity.cased_name,
         "name": presentation.product_name,
@@ -721,6 +725,7 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         "by_presentation": True,
         "bubble_data_url": bubble_data_url,
         "entity_name": "NHS England",
+        "entity_name_and_status": "NHS England",
         "entity_type": "CCG",
     }
     return render(request, "price_per_unit.html", context)
