@@ -3,12 +3,12 @@
 {% load humanize %}
 {% load staticfiles %}
 
-{% block title %}PPU savings for {{ entity_name }}{% endblock %}
+{% block title %}Ghost-branded generics savings for {{ entity_name }}{% endblock %}
 {% block active_class %}{% if entity %}ccg{% else %}all_england{% endif %}{% endblock %}
 
 {% block content %}
 
-<h1>Top ghost-branded generics for {{entity_name }} in {{ date|date:"F Y"}}</h1>
+<h1>Top ghost-branded generics for {{ entity_name_and_status }} in {{ date|date:"F Y"}}</h1>
 
 <div class="row">
   <div class="col-md-7">
@@ -27,7 +27,7 @@
     <p>
       This is a list of all generic items where the price paid has differed
       significantly from the Drug Tariff price. We estimate
-      <strong>{{entity_name }} could have saved at least
+      <strong>{{ entity_name }} could have saved at least
       £<span id="total-savings"></span> in {{ date|date:"F Y"}} by avoiding
       ghost-branded generics.</strong>
     </p>

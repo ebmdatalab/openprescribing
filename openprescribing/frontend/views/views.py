@@ -747,6 +747,7 @@ def ghost_generics_for_entity(request, code, entity_type):
     context = {
         "entity": entity,
         "entity_name": entity.cased_name,
+        "entity_name_and_status": entity.name_and_status,
         "entity_type": entity_type,
         "highlight": entity.code,
         "highlight_name": entity.cased_name,
