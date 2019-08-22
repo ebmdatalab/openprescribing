@@ -12,10 +12,11 @@ from django.urls import reverse
 
 from frontend.models import ImportLog, Presentation, Prescription, TariffPrice
 
+from .build_search_filters import build_search_filters
 from .forms import AdvancedSearchForm, SearchForm
 from .models import VMP, VMPP, AMP, AMPP
 from .obj_types import obj_type_to_cls, cls_to_obj_type
-from .search import search, advanced_search, build_search_filters
+from .search import search, advanced_search
 from .view_schema import schema as view_schema
 
 
