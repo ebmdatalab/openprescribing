@@ -88,6 +88,13 @@ class RegionalTeam(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
+
     def get_absolute_url(self):
         return reverse(
             "regional_team_home_page", kwargs={"regional_team_code": self.code}
@@ -108,6 +115,10 @@ class STP(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -138,6 +149,10 @@ class PCN(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -186,6 +201,13 @@ class PCT(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
 
     def get_absolute_url(self):
         return reverse("ccg_home_page", kwargs={"ccg_code": self.code})
@@ -264,6 +286,13 @@ class Practice(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        if self.is_inactive():
+            return "{} ({})".format(self.cased_name, self.get_status_code_display())
+        else:
+            return self.cased_name
 
     def is_inactive(self):
         return self.status_code in (
