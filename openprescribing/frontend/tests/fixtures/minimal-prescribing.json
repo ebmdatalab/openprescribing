@@ -1,0 +1,52 @@
+[
+{
+  "model": "frontend.pct",
+  "pk": "X00",
+  "fields": {
+    "name": "CCG 0",
+    "org_type": "CCG"
+  }
+},
+{
+  "model": "frontend.practice",
+  "pk": "XYZ001",
+  "fields": {
+    "ccg": "X00",
+    "name": "Practice X",
+    "setting": 4
+  }
+},
+{
+  "model": "frontend.presentation",
+  "pk": "0407010F0AAACAC",
+  "fields": {
+    "name": "Co-Codamol Eff_Tab 8mg/500mg",
+    "is_generic": true,
+    "is_current": true
+  }
+},
+{
+  "model": "frontend.prescription",
+  "pk": 3300009,
+  "fields": {
+    "pct": "X00",
+    "practice": "XYZ001",
+    "presentation_code": "0407010F0AAACAC",
+    "total_items": 0,
+    "net_cost": 256.0,
+    "actual_cost": 0.0,
+    "quantity": 764.0,
+    "processing_date": "2019-07-01"
+  }
+},
+{
+  "model": "frontend.importlog",
+  "pk": 74,
+  "fields": {
+    "imported_at": "2019-08-21T14:16:36.478Z",
+    "current_at": "2019-07-01",
+    "filename": "",
+    "category": "prescribing"
+  }
+}
+]

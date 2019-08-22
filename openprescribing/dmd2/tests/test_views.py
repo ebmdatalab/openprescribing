@@ -5,10 +5,16 @@ from django.test import TestCase
 from dmd2.models import DtPaymentCategory
 from frontend.models import Presentation, TariffPrice
 from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.decorators import (
+    copy_fixtures_to_matrixstore,
+    patch_global_matrixstore,
+    matrixstore_from_postgres,
+)
 
 
+@copy_fixtures_to_matrixstore
 class TestDMDObjView(TestCase):
-    fixtures = ["dmd-objs", "dmd-import-log"]
+    fixtures = ["dmd-objs", "dmd-import-log", "minimal-prescribing"]
 
     def test_vtm(self):
         rsp = self.client.get("/dmd/vtm/68088000/")
@@ -29,10 +35,13 @@ class TestDMDObjView(TestCase):
             bnf_code="0204000C0AAAAAA", name="Acebut HCl_Cap 100mg"
         )
         factory.create_prescribing_for_practice(practice, [presentation])
-
-        rsp = self.client.get("/dmd/vmp/318412000/")
-        self.assertContains(rsp, "Analyse prescribing")
-        self.assertContains(rsp, "See prices paid")
+        stop_patching = patch_global_matrixstore(matrixstore_from_postgres())
+        try:
+            rsp = self.client.get("/dmd/vmp/318412000/")
+            self.assertContains(rsp, "Analyse prescribing")
+            self.assertContains(rsp, "See prices paid")
+        finally:
+            stop_patching()
 
     def test_amp(self):
         rsp = self.client.get("/dmd/amp/632811000001105/")
@@ -76,8 +85,9 @@ class TestDMDObjView(TestCase):
         )
 
 
+@copy_fixtures_to_matrixstore
 class TestSearchView(TestCase):
-    fixtures = ["dmd-objs", "dmd-import-log"]
+    fixtures = ["dmd-objs", "dmd-import-log", "minimal-prescribing"]
 
     def test_search_returning_no_results(self):
         rsp = self._get("bananas")

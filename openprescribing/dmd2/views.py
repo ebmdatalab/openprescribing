@@ -10,7 +10,8 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from frontend.models import ImportLog, Presentation, Prescription, TariffPrice
+from frontend.models import ImportLog, Presentation, TariffPrice
+from matrixstore.db import get_db
 
 from .build_search_filters import build_search_filters
 from .forms import AdvancedSearchForm, SearchForm
@@ -117,9 +118,14 @@ def dmd_obj_view(request, obj_type, id):
             rows.append({"value": related_instance.title(), "link": link})
 
     if isinstance(obj, (VMP, AMP, VMPP, AMPP)) and obj.bnf_code is not None:
-        has_prescribing = Prescription.objects.filter(
-            presentation_code=obj.bnf_code
-        ).exists()
+        has_prescribing = get_db().query_one(
+            """
+            SELECT EXISTS(
+                SELECT 1 FROM presentation WHERE bnf_code=? AND items IS NOT NULL
+            )
+            """,
+            [obj.bnf_code],
+        )[0]
     else:
         has_prescribing = False
 
