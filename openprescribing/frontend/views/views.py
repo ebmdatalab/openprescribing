@@ -914,7 +914,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
         entity_short_desc = "nhs-england"
     else:
         entity_name = entity.cased_name
-        title = "Impact of price concessions on {}".format(entity_name)
+        title = "Impact of price concessions on {}".format(entity.name_and_status)
         entity_short_desc = "{}-{}".format(entity_type, entity.code)
     context = {
         "title": title,
