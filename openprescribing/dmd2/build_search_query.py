@@ -5,16 +5,46 @@ from .obj_types import clss
 
 def build_query_obj(cls, search):
     """Return Q object to filter dm+d objects based on search.
+
+    Parameters:
+
+      cls: class of dm+d object to search
+      search: a tree describing the search to be performed
+
+    See TestAdvancedSearchHelpers.test_build_query_obj for an example.
+
+    _build_query_obj_helper is a nested function to allow easier use of `map()`.
     """
 
     def _build_query_obj_helper(search):
+        """Do the work.
+
+        A branch node like:
+
+            ["and", [node1, node2]]
+
+        will be transformed, recursively, into:
+
+        _build_query_obj_helper(node1) & _build_query_obj_helper(node2)
+
+        A leaf node like:
+
+            ["nm", "contains", "paracetamol"]
+
+        will be transformed into:
+
+            Q(nm__icontains="paracetamol")
+        """
+
         assert len(search) in [2, 3]
 
         if len(search) == 2:
+            # branch node
             fn = {"and": Q.__and__, "or": Q.__or__}[search[0]]
             clauses = map(_build_query_obj_helper, search[1])
-            return reduce(fn, clauses, Q())
+            return reduce(fn, clauses[1:], clauses[0])
         else:
+            # leaf node
             field_name, operator, value = search
             if field_name == "bnf_code":
                 if operator == "begins_with":

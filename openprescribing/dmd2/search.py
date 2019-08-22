@@ -53,6 +53,24 @@ def search_by_snomed_code(q):
 
 
 def advanced_search(cls, search_params):
+    """Perform a search against all dm+d objects of a particular type.
+
+    Parameters:
+
+      cls: class of dm+d object to search
+      search_params: a dict with the following keys:
+        search: a tree describing the search to be performed, submitted when user
+                performs the search (see TestAdvancedSearchHelpers for an example)
+        include: a list of strings taken from: ["invalid", "unavailable", "no_bnf_code"]
+
+    Returns dict with the following keys:
+
+      objs: queryset of results
+      rules: structure used to populate a QueryBuilder instance (see
+             https://querybuilder.js.org/#method-setRules)
+      too_many_results: flag indicating whether more than 10,000 results were returned
+    """
+
     search = json.loads(search_params["search"])
     include = search_params["include"]
 
