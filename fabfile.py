@@ -139,6 +139,9 @@ def log_deploy():
 
 
 def check_numbers():
+    if env.environment != "production":
+        return
+
     with prefix("source .venv/bin/activate"):
         run("cd openprescribing/ && python manage.py check_numbers")
 
