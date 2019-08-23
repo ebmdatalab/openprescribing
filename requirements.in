@@ -32,7 +32,7 @@ newrelic
 numpy==1.16.4
 openpyxl==2.6.3
 pandas-gbq
-pandas==0.24.2
+pandas==0.25.1
 premailer==3.6.0
 psycopg2-binary==2.8.3
 pyarrow==0.14.1

@@ -65,7 +65,7 @@ numpy==1.16.4
 oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.3
 pandas-gbq==0.10.0
-pandas==0.24.2
+pandas==0.25.1
 paramiko==2.6.0           # via fabric
 pathtools==0.1.2          # via watchdog
 pip-tools==4.0.0
