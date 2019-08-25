@@ -427,12 +427,16 @@ def run_all(year, month, under_test=False):
             continue
         run_task(task, year, month, last_imported=last_imported)
 
-    # See check_numbers.py.
-    check_numbers_glob = os.path.join(
-        settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
-    )
-    for path in glob.glob(check_numbers_glob):
-        os.remove(path)
+    if not under_test:
+        # Remove numbers.json files.  These are created by check_numbers, and we want to
+        # remove them after each import, since all numbers on the site will change with
+        # the new data.  We only want to remove these files after importing real data,
+        # and not during an end-to-end run.
+        check_numbers_glob = os.path.join(
+            settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
+        )
+        for path in glob.glob(check_numbers_glob):
+            os.remove(path)
 
     TaskLog.objects.create(
         year=year, month=month, task_name="fetch_and_import", status=TaskLog.SUCCESSFUL
