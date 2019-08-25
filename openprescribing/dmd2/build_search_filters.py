@@ -52,8 +52,17 @@ def _build_search_filter_fk(field):
     values = field.related_model.objects.values_list("cd", "descr").order_by("descr")
     values = [{r[0]: r[1]} for r in values]
 
+    # The type is "string", even though the values are actually integers.  This is
+    # because the QueryBuilder library calls parseInt on any values produced by a filter
+    # of type "integer" (see call to Utils.changeType in getRuleInputValue).  It turns
+    # out that parseInt cannot actually parse integers larger than
+    # Number.MAX_SAFE_INTEGER, which is (2 ** 53) - 1, or 9007199254740991, and loses
+    # precision when it tries.  This is a problem, because certain dm+d models have
+    # identifiers larger than Number.MAX_SAFE_INTEGER.  Fortunately, Django is able to
+    # deal with query parameters for integer fields that are submitted as strings.
+
     return {
-        "type": "integer",
+        "type": "string",
         "label": field.help_text,
         "input": "select",
         "values": values,
