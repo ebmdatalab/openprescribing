@@ -36,15 +36,7 @@
     <h1>
       <a href="{{ entity.get_absolute_url }}" class="unstyled-link">{{ entity.cased_name }}</a>
     </h1>
-    <p>There are {{ practices.count }} practices currently in this PCN. <a id="showall" href="#">&raquo; show them...</a></p>
-    <ul class="list-unstyled" id="child-entities">
-    {% for p in practices %}
-      <li class="hidden">
-        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
-      </li>
-    {% endfor %}
-    </ul>
+    {% include '_practice_list.html' %}
   </div>
 
   <div class="col-md-6" id="map-container">
@@ -63,15 +55,7 @@
     {% if entity.close_date %}
     <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
     {% endif %}
-    <p>There are {{ practices.count }} practices currently in this CCG. <a id="showall" href="#">&raquo; show them...</a></p>
-    <ul class="list-unstyled" id="child-entities">
-    {% for p in practices %}
-      <li class="hidden">
-        <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
-        ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
-      </li>
-    {% endfor %}
-    </ul>
+    {% include '_practice_list.html' %}
   </div>
 
   <div class="col-md-6" id="map-container">
