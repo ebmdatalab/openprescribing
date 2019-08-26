@@ -69,7 +69,7 @@ pandas==0.24.2
 paramiko==2.6.0           # via fabric
 pathtools==0.1.2          # via watchdog
 pip-tools==4.0.0
-premailer==3.6.0
+premailer==3.6.1
 protobuf==3.9.1           # via google-api-core, google-cloud-bigquery, googleapis-common-protos
 psycopg2-binary==2.8.3
 pyarrow==0.14.1
