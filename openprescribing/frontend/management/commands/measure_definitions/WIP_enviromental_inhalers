@@ -22,16 +22,15 @@
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
-  "numerator_from": "{hscic}.brian.enviromental_inhalers",
+  "numerator_from": "{measures}.vw__enviromental_inhalers",
   "numerator_where": [
-   "(form_route='pressurizedinhalation.inhalation')",
-    "1 = 1"
+   "(form_route='pressurizedinhalation.inhalation')"
   ],
   "numerator_is_list_of_bnf_codes": false,
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
-  "denominator_from": "{hscic}.brian.enviromental_inhalers",
+  "denominator_from": "{measures}.vw__enviromental_inhalers",
   "denominator_where": [
     "1 = 1"
   ]
