@@ -65,5 +65,10 @@ AND
 -- These are sometimes recorded by dose, and sometimes by pack (of 8) see #937
 AND
   rx.bnf_code <> '0407020A0AABPBP' -- Fentanyl 400micrograms/dose nasal spray
+-- These are sometimes recorded as bottles, sometimes in litres
+AND
+  rx.bnf_code <> '0902021S0AAAXAX' -- Sodium chloride 0.9% infusion 1litre polyethylene bottles
+
+
 
 -- trivial savings / costs are discounted in the measure definition
