@@ -12,7 +12,7 @@ ENV=$(echo $DJANGO_SETTINGS_MODULE | cut -d \. -f 3)
 
 if [[ $ENV != "production" && $ENV != "staging" ]]
 then
-  echo '$ENV must be "production" or "staging"'
+  echo "\$ENV must be 'production' or 'staging', got '$ENV'"
   exit 1
 fi
 
