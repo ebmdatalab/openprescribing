@@ -2,7 +2,13 @@
 
 set -eo pipefail
 
-ENV=$1
+# Export each variable in the environment file, ignoring comments. Sourcing the
+# file is insufficient as it sets the vars in the current environment but
+# doesn't flag them for export to child processes.
+export $(grep -v '^\s*#' "$REPO_ROOT/environment" | xargs)
+
+# Extract the environment name from the path to the settings file.
+ENV=$(echo $DJANGO_SETTINGS_MODULE | cut -d \. -f 3)
 
 if [[ $ENV != "production" && $ENV != "staging" ]]
 then
@@ -27,7 +33,6 @@ LOGFILE="$LOGDIR/gunicorn-error.log"
 ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
 # Export environment variables that depend on $ENV
-export DJANGO_SETTINGS_MODULE="openprescribing.settings.$ENV"
 export PYTHONPATH=$APPS_ROOT:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENV
@@ -47,11 +52,6 @@ echo "ENV: $ENV"
 echo "REPO_ROOT: $REPO_ROOT"
 echo "APPS_ROOT: $APPS_ROOT"
 echo "PYTHONPATH: $PYTHONPATH"
-
-# Export each variable in the environment file, ignoring comments. Sourcing the
-# file is insufficient as it sets the vars in the current environment but
-# doesn't flag them for export to child processes.
-export $(grep -v '^\s*#' "$REPO_ROOT/environment" | xargs)
 
 # Activate the virtual environment
 source "$VIRTUALENV_PATH/bin/activate"
