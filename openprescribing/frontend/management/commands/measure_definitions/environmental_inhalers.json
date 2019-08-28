@@ -1,0 +1,48 @@
+{
+  "name": "Environmental Impact of Inhalers",
+  "title": [
+    "MDIs prescribed as a proprotion of all inhalers"
+  ],
+  "description": [
+    "MDIs prescribed as a proprotion of all inhalers in BNF Chapter 3"
+  ],
+  "why_it_matters": [
+    "The NHS 10 year plan commits the NHS to reduce harmful environmental emissions. One way of doing this is to shift from",
+    "Metered Dose Inhalers (MDI) to Dry Powdered Inhalers (DPI)."
+  ],
+  "numerator_short": "MDI (Total Items)",
+  "denominator_short": "Total Inhalers",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "respiratory"
+  ],
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": [
+    "{hscic}.normalised_prescribing_standard"
+  ],
+  "numerator_where": [
+    "bnf_code IN (",
+    "  SELECT DISTINCT(bnf_code)",
+    "  FROM {measures}.vw__chapter_3_dmd_objs_with_form_route",
+    "  WHERE form_route = 'pressurizedinhalation.inhalation'",
+    ")"
+  ],
+  "denominator_columns": [
+    "SUM(items) AS denominator, "
+  ],
+  "denominator_from": [
+    "{hscic}.normalised_prescribing_standard"
+  ],
+  "denominator_where": [
+    "bnf_code IN (",
+    "  SELECT DISTINCT(bnf_code)",
+    "  FROM {measures}.vw__chapter_3_dmd_objs_with_form_route",
+    "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
+    ")"
+  ]
+}
