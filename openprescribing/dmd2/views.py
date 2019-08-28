@@ -117,17 +117,31 @@ def dmd_obj_view(request, obj_type, id):
             link = reverse("dmd_obj", args=[rel_name, related_instance.id])
             rows.append({"value": related_instance.title(), "link": link})
 
-    if isinstance(obj, (VMP, AMP, VMPP, AMPP)) and obj.bnf_code is not None:
-        has_prescribing = get_db().query_one(
-            """
-            SELECT EXISTS(
+    reason = None
+    if isinstance(obj, (VMP, AMP, VMPP, AMPP)):
+        if obj.bnf_code is None:
+            reason = "NHS BSA have not specified its BNF code"
+        else:
+            has_prescribing = get_db().query_one(
+                """
+                SELECT EXISTS(
                 SELECT 1 FROM presentation WHERE bnf_code=? AND items IS NOT NULL
-            )
-            """,
-            [obj.bnf_code],
-        )[0]
+                )
+                """,
+                [obj.bnf_code],
+            )[0]
+            if not has_prescribing:
+                reason = "there has been no prescribing recorded in the last 5 years".format(
+                    obj_type
+                )
     else:
-        has_prescribing = False
+        reason = "we currently don't have a way to match a {} to BNF codes".format(
+            obj_type
+        )
+    if reason:
+        prescribing_match_error = (
+            "We are unable to show prescribing data for this item, because " + reason
+        )
 
     if isinstance(obj, VMPP):
         has_dt = TariffPrice.objects.filter(vmpp_id=id).exists()
@@ -139,7 +153,7 @@ def dmd_obj_view(request, obj_type, id):
         "obj": obj,
         "obj_type": obj_type_human,
         "rows": rows,
-        "has_prescribing": has_prescribing,
+        "prescribing_match_error": prescribing_match_error,
         "has_dt": has_dt,
     }
     ctx.update(_release_metadata())
