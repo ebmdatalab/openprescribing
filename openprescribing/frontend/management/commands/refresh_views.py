@@ -18,5 +18,5 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             for view_id in materialized_views:
                 log("Refreshing view: {}".format(view_id))
-                # This is quite slow! up to 10 mins.
-                cursor.execute("REFRESH MATERIALIZED VIEW %s" % view_id)
+                # This is very slow! up to 2 hours
+                cursor.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY %s" % view_id)
