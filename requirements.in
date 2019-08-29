@@ -29,7 +29,7 @@ lz4
 mailchimp3>=2.0.18
 networkx==2.2
 newrelic
-numpy==1.16.4
+numpy==1.16.5
 openpyxl==2.6.3
 pandas-gbq
 pandas==0.24.2
