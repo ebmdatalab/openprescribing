@@ -9,12 +9,10 @@ NUM_RESULTS_PER_OBJ_TYPE = 10
 
 
 def search(q, obj_types, include):
-    try:
-        int(q)
-    except ValueError:
-        return search_by_term(q, obj_types, include)
-
-    return search_by_snomed_code(q)
+    results = search_by_term(q, obj_types, include)
+    if not results:
+        results = search_by_snomed_code(q)
+    return results
 
 
 def search_by_term(q, obj_types, include):
@@ -41,6 +39,11 @@ def search_by_term(q, obj_types, include):
 
 
 def search_by_snomed_code(q):
+    try:
+        int(q)
+    except ValueError:
+        return []
+
     for cls in [VTM, VMP, VMPP, AMP, AMPP]:
         try:
             obj = cls.objects.get(pk=q)

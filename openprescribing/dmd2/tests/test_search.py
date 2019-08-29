@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from dmd2.build_search_query import build_query_obj
 from dmd2.build_rules import build_rules
-from dmd2.models import AMP, AMPP, VMP
+from dmd2.models import AMP, AMPP, VMP, VMPP
 from dmd2.search import search
 
 
@@ -21,6 +21,17 @@ class TestSearch(TestCase):
     def test_by_bnf_code(self):
         self.assertSearchResults(
             {"q": "0204000C0BB"}, {AMP: [632811000001105], AMPP: [1389011000001108]}
+        )
+
+    def test_by_integer_bnf_code(self):
+        self.assertSearchResults(
+            {"q": "0204"},
+            {
+                VMP: [318412000],
+                AMP: [632811000001105],
+                VMPP: [1098611000001105],
+                AMPP: [1389011000001108],
+            },
         )
 
     def test_with_obj_types(self):
