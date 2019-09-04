@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+# REPO_ROOT matches definitions in settings
+REPO_ROOT=$(dirname $(dirname $0))
+
 # Export each variable in the environment file, ignoring comments. Sourcing the
 # file is insufficient as it sets the vars in the current environment but
 # doesn't flag them for export to child processes.
@@ -18,10 +21,6 @@ fi
 
 NAME="openprescribing_$ENV"
 
-# REPO_ROOT and APPS_ROOT match definitions in settings
-REPO_ROOT=$(dirname $(dirname $0))
-APPS_ROOT="$REPO_ROOT/openprescribing"
-
 RUNDIR="$REPO_ROOT/run"
 LOGDIR="$REPO_ROOT/logs"
 
@@ -32,8 +31,8 @@ mkdir -p $LOGDIR
 LOGFILE="$LOGDIR/gunicorn-error.log"
 ACCESS_LOGFILE="$LOGDIR/gunicorn-access.log"
 
-# Export environment variables that depend on $ENV
-export PYTHONPATH=$APPS_ROOT:$PYTHONPATH
+# Export environment variables that depend on $ENV or $REPO_ROOT
+export PYTHONPATH=$REPO_ROOT/openprescribing:$PYTHONPATH
 export NEW_RELIC_CONFIG_FILE="$REPO_ROOT/newrelic.ini"
 export NEW_RELIC_ENVIRONMENT=$ENV
 
@@ -50,7 +49,6 @@ echo "Starting $NAME"
 echo "whoami: $(whoami)"
 echo "ENV: $ENV"
 echo "REPO_ROOT: $REPO_ROOT"
-echo "APPS_ROOT: $APPS_ROOT"
 echo "PYTHONPATH: $PYTHONPATH"
 
 # Activate the virtual environment
