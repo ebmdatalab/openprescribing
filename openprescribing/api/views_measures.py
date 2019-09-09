@@ -199,7 +199,7 @@ def _get_prescribing_for_bnf_codes(bnf_codes):
         FROM
           presentation
         WHERE
-          items IS NOT NULL AND bnf_code IN ({})
+          bnf_code IN ({})
         """.format(
             ",".join(["?"] * len(bnf_codes))
         ),

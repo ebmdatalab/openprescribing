@@ -121,7 +121,7 @@ def dmd_obj_view(request, obj_type, id):
         has_prescribing = get_db().query_one(
             """
             SELECT EXISTS(
-                SELECT 1 FROM presentation WHERE bnf_code=? AND items IS NOT NULL
+                SELECT 1 FROM presentation WHERE bnf_code=?
             )
             """,
             [obj.bnf_code],

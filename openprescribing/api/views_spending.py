@@ -654,7 +654,7 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
             FROM
                 presentation
             WHERE
-                items IS NOT NULL AND ({})
+                {}
             """.format(
             where_clause
         )

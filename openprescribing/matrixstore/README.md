@@ -108,7 +108,7 @@ from matrixstore.serializer import deserialize
 
 conn = sqlite3.connect('matrixstore_file.sqlite')
 results = conn.execute(
-    'SELECT items FROM presentation WHERE items IS NOT NULL LIMIT 1'
+    'SELECT items FROM presentation LIMIT 1'
 )
 value = list(results)[0][0]
 matrix = deserialize(value)
