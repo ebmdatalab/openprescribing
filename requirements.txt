@@ -11,7 +11,7 @@ bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.0
 cachetools==3.1.1         # via google-auth, premailer
 certifi==2019.6.16        # via requests
-cffi==1.12.3              # via bcrypt, cryptography, pynacl, zstandard
+cffi==1.12.3              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
 click==7.0                # via pip-tools
 coverage==4.5.4
@@ -106,7 +106,6 @@ urllib3==1.25.3           # via requests, selenium
 watchdog==0.9.0           # via when-changed
 when-changed==0.3.0
 xlrd==1.2.0
-zstandard==0.11.1
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools==41.2.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
