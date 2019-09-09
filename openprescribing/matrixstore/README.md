@@ -29,8 +29,8 @@ The [PyArrow](https://arrow.apache.org/docs/python/) library provides
 very fast serialization and deserialization of numpy objects. We use
 [SciPy sparse matrices](https://docs.scipy.org/doc/scipy/reference/sparse.html)
 to reduce storage requirements where data is sparse. And we use the
-[zstandard](https://github.com/indygreg/python-zstandard) compression
-library to further reduce space on disk.
+[LZ4](https://python-lz4.readthedocs.io/en/stable/intro.html)
+compression library to further reduce space on disk.
 
 
 ## How data is structured
@@ -108,7 +108,7 @@ from matrixstore.serializer import deserialize
 
 conn = sqlite3.connect('matrixstore_file.sqlite')
 results = conn.execute(
-    'SELECT items FROM presentation WHERE items IS NOT NULL LIMIT 1'
+    'SELECT items FROM presentation LIMIT 1'
 )
 value = list(results)[0][0]
 matrix = deserialize(value)

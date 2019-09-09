@@ -222,7 +222,7 @@ def _get_quantities_for_bnf_codes(db, bnf_codes):
         FROM
           presentation
         WHERE
-          quantity IS NOT NULL AND bnf_code IN ({})
+          bnf_code IN ({})
         """.format(
             ",".join(["?"] * len(bnf_codes))
         ),
