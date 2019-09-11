@@ -29,6 +29,7 @@ from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+from frontend.utils.bnf_hierarchy import simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
 
@@ -382,7 +383,8 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
         substitutions = None
 
     results = Client().query(sql, substitutions=substitutions)
-    return [row[0] for row in results.rows]
+    bnf_codes = [row[0] for row in results.rows]
+    return simplify_bnf_codes(bnf_codes)
 
 
 def build_num_or_denom_fields(measure, num_or_denom):
