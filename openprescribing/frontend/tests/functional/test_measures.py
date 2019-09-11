@@ -19,6 +19,10 @@ from selenium_base import SeleniumTestCase
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
+MEASURE_CORE_0_ANALYSE_URL = "/analyse/#numIds=000100000000000&denomIds=000000000000000%2C000100000000000&measure=core_0"
+MEASURE_LPZOMNIBUS_ANALYSE_URL = "/analyse/#numIds=020100000000000%2C030100000000000&denomIds=020000000000000%2C020100000000000%2C030000000000000%2C030100000000000&measure=lpzomnibus"
+MEASURE_LP_2_ANALYSE_URL = "/analyse/#numIds=020100000000000&denomIds=020000000000000%2C020100000000000&measure=lp_2"
+
 
 @copy_fixtures_to_matrixstore
 class MeasuresTests(SeleniumTestCase):
@@ -92,11 +96,17 @@ class MeasuresTests(SeleniumTestCase):
         )
         self._verify_link(
             panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_link(
+            panel_element,
             ".measure-panel-title",
             "LP omnibus measure",
             "/measure/lpzomnibus/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 3)
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_core_0")
         self._verify_link(
@@ -111,7 +121,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/core_0/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_all_england_low_priority(self):
         self._get("/all-england/?tags=lowpriority")
@@ -129,7 +145,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_practice_home_page(self):
         self._get("/practice/P00000/")
@@ -278,6 +300,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/core_0/",
         )
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -310,7 +339,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lpzomnibus/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(5)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 5)
 
     def test_measures_for_one_practice_low_priority(self):
         self._get("/practice/P00000/measures/?tags=lowpriority")
@@ -340,7 +375,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 3)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_measures_for_one_ccg(self):
         self._get("/ccg/AAA/measures/")
@@ -370,6 +411,7 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/core_0/",
         )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -402,7 +444,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lpzomnibus/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(5)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 5)
 
     def test_measures_for_one_ccg_low_priority(self):
         self._get("/ccg/AAA/measures/?tags=lowpriority")
@@ -432,7 +480,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 3)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_measures_for_one_pcn(self):
         self._get("/pcn/E00000000/measures/")
@@ -462,6 +516,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all PCNs in England on this measure",
             "/measure/core_0/pcn/",
         )
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -494,7 +555,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all PCNs in England on this measure",
             "/measure/lpzomnibus/pcn/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(5)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 5)
 
     def test_measures_for_one_pcn_low_priority(self):
         self._get("/pcn/E00000000/measures/?tags=lowpriority")
@@ -524,7 +591,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all PCNs in England on this measure",
             "/measure/lp_2/pcn/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 3)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_measures_for_one_stp(self):
         self._get("/stp/E00000000/measures/")
@@ -554,6 +627,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all STPs in England on this measure",
             "/measure/core_0/stp/",
         )
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -586,7 +666,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all STPs in England on this measure",
             "/measure/lpzomnibus/stp/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(5)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 5)
 
     def test_measures_for_one_regional_team(self):
         self._get("/regional-team/Y01/measures/")
@@ -616,6 +702,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all Regional Teams in England on this measure",
             "/measure/core_0/regional-team/",
         )
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -648,7 +741,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all Regional Teams in England on this measure",
             "/measure/lpzomnibus/regional-team/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(5)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 5)
 
     def test_measure_for_all_ccgs(self):
         self._get("/measure/core_0/")
@@ -672,7 +771,13 @@ class MeasuresTests(SeleniumTestCase):
             "Break the overall score down into individual presentations",
             "/measure/core_0/ccg/AAA/",
         )
-        self._verify_num_elements(panel_element, ".explanation li", 2)
+        self._verify_link(
+            panel_element,
+            ".explanation li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".explanation li", 3)
 
     def test_measure_for_all_ccgs_with_tags_focus(self):
         self._get("/measure/lpzomnibus/")
@@ -702,7 +807,13 @@ class MeasuresTests(SeleniumTestCase):
             "Break the overall score down into individual presentations",
             "/measure/lpzomnibus/ccg/AAA/",
         )
-        self._verify_num_elements(panel_element, ".explanation li", 3)
+        self._verify_link(
+            panel_element,
+            ".explanation li:nth-child(4)",
+            "View this measure on the analyse page",
+            MEASURE_LPZOMNIBUS_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".explanation li", 4)
 
     def test_measure_for_all_pcns(self):
         self._get("/measure/core_0/pcn/")
@@ -726,7 +837,13 @@ class MeasuresTests(SeleniumTestCase):
             "Break the overall score down into individual presentations",
             "/measure/core_0/pcn/E00000000/",
         )
-        self._verify_num_elements(panel_element, ".explanation li", 2)
+        self._verify_link(
+            panel_element,
+            ".explanation li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".explanation li", 3)
 
     def test_measure_for_all_stps(self):
         self._get("/measure/core_0/stp/")
@@ -750,7 +867,13 @@ class MeasuresTests(SeleniumTestCase):
             "Break the overall score down into individual presentations",
             "/measure/core_0/stp/E00000000/",
         )
-        self._verify_num_elements(panel_element, ".explanation li", 2)
+        self._verify_link(
+            panel_element,
+            ".explanation li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".explanation li", 3)
 
     def test_measure_for_all_regional_teams(self):
         self._get("/measure/core_0/regional-team/")
@@ -774,7 +897,13 @@ class MeasuresTests(SeleniumTestCase):
             "Break the overall score down into individual presentations",
             "/measure/core_0/regional-team/Y01/",
         )
-        self._verify_num_elements(panel_element, ".explanation li", 2)
+        self._verify_link(
+            panel_element,
+            ".explanation li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_CORE_0_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".explanation li", 3)
 
     def test_measure_for_all_england(self):
         self._get("/measure/lp_2/all-england/")
@@ -788,7 +917,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 1)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(2)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 2)
 
     def test_measure_for_one_practice(self):
         self._get("/measure/lp_2/practice/P00000/")
@@ -812,7 +947,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_one_ccg(self):
         self._get("/measure/lp_2/ccg/AAA/")
@@ -836,7 +977,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all CCGs in England on this measure",
             "/measure/lp_2/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_one_pcn(self):
         self._get("/measure/lp_2/pcn/E00000000/")
@@ -860,7 +1007,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all PCNs in England on this measure",
             "/measure/lp_2/pcn/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_one_stp(self):
         self._get("/measure/lp_2/stp/E00000000/")
@@ -884,7 +1037,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all STPs in England on this measure",
             "/measure/lp_2/stp/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_one_regional_team(self):
         self._get("/measure/lp_2/regional-team/Y01/")
@@ -908,7 +1067,13 @@ class MeasuresTests(SeleniumTestCase):
             "Compare all Regional Teams in England on this measure",
             "/measure/lp_2/regional-team/",
         )
-        self._verify_num_elements(panel_element, ".inner li", 2)
+        self._verify_link(
+            panel_element,
+            ".inner li:nth-child(3)",
+            "View this measure on the analyse page",
+            MEASURE_LP_2_ANALYSE_URL,
+        )
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measure_for_practices_in_ccg(self):
         self._get("/ccg/AAA/lp_2/")

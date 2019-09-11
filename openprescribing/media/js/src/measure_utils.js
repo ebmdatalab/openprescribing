@@ -259,6 +259,7 @@ var utils = {
           d.lowIsGood = series.low_is_good;
           d.tagsFocus = series.tags_focus;
           d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
+          d.analyseUrl = series.analyse_url;
         }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
@@ -274,6 +275,7 @@ var utils = {
         series = _.findWhere(globalData, {id: options.measure});
         if (typeof series !== 'undefined') {
           d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
+          d.analyseUrl = series.analyse_url;
         }
       }
       d.chartId = d.id;
