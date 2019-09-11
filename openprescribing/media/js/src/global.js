@@ -1,6 +1,6 @@
 var Sentry = require('@sentry/browser');
 if (window.SENTRY_PUBLIC_DSN && SENTRY_PUBLIC_DSN !== '') {
-  Sentry.init({dsn: SENTRY_PUBLIC_DSN});
+  Sentry.init({dsn: SENTRY_PUBLIC_DSN, release: SOURCE_COMMIT_ID});
 }
 
 var $ = require('jquery');
