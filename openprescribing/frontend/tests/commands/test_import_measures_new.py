@@ -7,6 +7,7 @@ from mock import patch
 from random import Random
 
 from google.api_core.exceptions import BadRequest
+from google.cloud.exceptions import Conflict
 import numpy as np
 import pandas as pd
 
@@ -403,10 +404,38 @@ class LoadMeasureDefsTests(TestCase):
         self.assertEqual(len(measure_defs), 2)
 
 
+class ConstraintsTests(TestCase):
+    @patch("common.utils.db")
+    def test_reconstructor_not_called_when_measures_specified(self, db):
+        from frontend.management.commands.import_measures import (
+            conditional_constraint_and_index_reconstructor,
+        )
+
+        with conditional_constraint_and_index_reconstructor({"measure": "thingy"}):
+            pass
+        execute = db.connection.cursor.return_value.__enter__.return_value.execute
+        execute.assert_not_called()
+
+    @patch("common.utils.db")
+    def test_reconstructor_called_when_no_measures_specified(self, db):
+        from frontend.management.commands.import_measures import (
+            conditional_constraint_and_index_reconstructor,
+        )
+
+        with conditional_constraint_and_index_reconstructor({"measure": None}):
+            pass
+        execute = db.connection.cursor.return_value.__enter__.return_value.execute
+        execute.assert_called()
+
+
 def set_up_bq():
     """Set up BQ datasets and tables."""
 
-    Client("measures").create_dataset()
+    try:
+        Client("measures").create_dataset()
+    except Conflict:
+        pass
+
     client = Client("hscic")
     client.get_or_create_table("ccgs", schemas.CCG_SCHEMA)
     client.get_or_create_table("practices", schemas.PRACTICE_SCHEMA)
