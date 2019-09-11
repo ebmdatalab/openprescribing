@@ -44,6 +44,7 @@ class ImportMeasuresTests(TestCase):
 
         set_up_bq()
         create_import_log()
+        create_old_measure_value()
         create_organisations(random)
         upload_ccgs_and_practices()
         cls.prescriptions = upload_prescribing(random.randint)
@@ -58,6 +59,10 @@ class ImportMeasuresTests(TestCase):
 
         # Do the work.
         call_command("import_measures", measure="desogestrel")
+
+        # Check that old MeasureValue and MeasureGlobal objects have been deleted.
+        self.assertFalse(MeasureValue.objects.filter(month__lt="2011-01-01").exists())
+        self.assertFalse(MeasureGlobal.objects.filter(month__lt="2011-01-01").exists())
 
         # Check that numerator_bnf_codes has been set
         m = Measure.objects.get(id="desogestrel")
@@ -394,6 +399,15 @@ def create_import_log():
     """Create ImportLog used by import_measures to work out which months is should
     import data."""
     ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
+
+
+def create_old_measure_value():
+    """Create MeasureValue and MeasureGlobal that are to be deleted because they are
+    more than five years old."""
+    call_command("import_measures", definitions_only=True, measure="desogestrel")
+    m = Measure.objects.get(id="desogestrel")
+    m.measurevalue_set.create(month="2010-01-01")
+    m.measureglobal_set.create(month="2010-01-01")
 
 
 def create_organisations(random):
