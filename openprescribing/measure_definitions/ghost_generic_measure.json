@@ -18,6 +18,7 @@
   "tags": [
     "cost", "core", "generic"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(possible_savings) AS numerator, "
   ],
@@ -26,6 +27,7 @@
     "(possible_savings >= 2 OR possible_savings <=-2)"
   ],
   "numerator_is_list_of_bnf_codes": false,
+  "denominator_type": "custom",
   "denominator_columns": [
     "SUM(net_cost) AS denominator, "
   ],

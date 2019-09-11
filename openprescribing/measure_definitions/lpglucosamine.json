@@ -21,6 +21,7 @@
     "efficacy",
     "lowpriority"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -83,6 +84,7 @@
     "bnf_code = '091200000BFSUA0' OR --Quest_Glucosamine,MSM & Chondroitin Tab \n",
     "bnf_code = '091200000BFSXDY'    --Lamb_Glucosamine Sulf Tab 1g (brands and generic)"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

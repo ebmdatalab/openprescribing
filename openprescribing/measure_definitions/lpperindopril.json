@@ -23,6 +23,7 @@
     "efficacy",
     "lowpriority"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -31,6 +32,7 @@
     "bnf_code LIKE '0205051Y0%' OR --Perindopril Arginine \n",
     "bnf_code LIKE '0205051Z0%'    --Perindopril Arginine with Diuretic"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

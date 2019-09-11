@@ -22,6 +22,7 @@
     "efficacy",
     "lowpriority"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -30,6 +31,7 @@
     "1 = 1"
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT bnf_code FROM ebmdatalab.richard.herbal_list",
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

@@ -24,6 +24,7 @@
     "core",
     "efficacy"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -49,6 +50,7 @@
     "'0212000Y0AH',  --Simvastatin_Tab 80mg (brand, generic) \n",
     "'0212000ACAC')) --Simvastatin/Ezetimibe_Tab 80mg/10mg (brand, generic) \n"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

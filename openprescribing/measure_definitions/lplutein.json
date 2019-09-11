@@ -21,6 +21,7 @@
     "eye",
     "lowpriority"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -49,6 +50,7 @@
     "'091200000BEXXA0', --Equazen Eye Q_Liq (Citrus) \n",
     "'091200000BFLHA0') --Ocuvite_Lutein Cap \n"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

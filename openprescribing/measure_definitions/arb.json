@@ -25,6 +25,7 @@
     "core",
     "cost"
   ],
+  "numerator_type": "bnf_quantity",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -71,6 +72,7 @@
     "'0205052W0BBACAC' --Teveten_Tab 600mg \n",
     ")"
   ],
+  "denominator_type": "bnf_quantity",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

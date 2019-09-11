@@ -24,6 +24,7 @@
     "cost",
     "generic"
   ],
+  "numerator_type": "bnf_quantity",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -35,6 +36,7 @@
     "'0408010A0BBACAC', --Keppra_Tab 1g \n",
     "'0408010A0BBAEAI') --Keppra_Tab 750mg"
   ],
+  "denominator_type": "bnf_quantity",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

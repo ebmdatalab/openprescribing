@@ -24,6 +24,7 @@
     "cost",
     "generic"
   ],
+  "numerator_type": "bnf_quantity",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -78,6 +79,7 @@
     "'0205051Y0BBACAC'  --Coversyl Arginine_Tab 10mg \n",
     ")"
   ],
+  "denominator_type": "bnf_quantity",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

@@ -24,6 +24,7 @@
     "pain",
     "safety"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -66,6 +67,7 @@
     "bnf_code LIKE '0407020A0%BY' OR --Fentanyl_Tab Sublingual 533mcg S/F (brands and generic) \n",
     "bnf_code LIKE '0407020A0%BZ'    --Fentanyl_Tab Sublingual 267mcg S/F (brands and generic)"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

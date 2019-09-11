@@ -22,6 +22,7 @@
     "cost",
     "lowpriority"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -36,6 +37,7 @@
     "'1404000U0', --Yellow Fever \n",
     "'1404000X0') --Meningococcal A + C + W135 + Y Vaccine"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

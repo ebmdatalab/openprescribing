@@ -27,6 +27,7 @@
     "pain",
     "safety"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -38,6 +39,7 @@
     "'1001010P0') --Naproxen \n",
     ")"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

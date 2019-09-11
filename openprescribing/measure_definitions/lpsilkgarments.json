@@ -24,6 +24,7 @@
     "lowpriority",
     "efficacy"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -31,6 +32,7 @@
   "numerator_where": [
     "bnf_code LIKE '2020%' --Silk Garments"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],
