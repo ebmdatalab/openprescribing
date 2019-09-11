@@ -17,7 +17,7 @@ FROM (
       AVG(brand_count) AS avg_brand_count_per_practice,
       MAX(category) AS category,
       SUM(quantity) AS quantity,
-      AVG(price_per_unit) AS price_per_unit,
+      SUM(net_cost) / SUM(quantity) AS price_per_unit,
       SUM(possible_savings) AS possible_savings
     FROM (
     -- Always select per-practice initially, so we can apply "diode"
@@ -30,7 +30,7 @@ FROM (
       MAX(presentations.category) AS category,
       deciles.lowest_decile,
       SUM(presentations.quantity) AS quantity,
-      SUM(presentations.net_cost)/SUM(presentations.quantity) AS price_per_unit,
+      SUM(presentations.net_cost) AS net_cost,
       GREATEST((SUM(presentations.net_cost) - (SUM(presentations.quantity) * deciles.lowest_decile)), 0) AS possible_savings -- the "diode"
     FROM (
       SELECT
@@ -81,7 +81,7 @@ FROM (
                   OR SUBSTR(bnf_code, 1, 9) == '0601060U0' OR SUBSTR(bnf_code, 1, 9) == '0601060D0'), -- unless they're one of our two exceptions -- see issue #1
               CONCAT(SUBSTR(bnf_code, 1, 9), 'AA', SUBSTR(bnf_code, 14, 2), SUBSTR(bnf_code, 14, 2)),
               NULL) AS generic_presentation,
-            AVG(net_cost/quantity) AS price_per_unit
+            SUM(net_cost) / SUM(quantity) AS price_per_unit
           FROM
             {{ prescribing_table }} AS p
           LEFT JOIN {hscic}.practices practices
