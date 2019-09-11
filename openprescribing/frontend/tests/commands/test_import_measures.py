@@ -26,30 +26,6 @@ from frontend.models import RegionalTeam
 MODULE = "frontend.management.commands.import_measures"
 
 
-def parse_args(*opts_args):
-    """Duplicate what Django does to parse arguments.
-
-    See `django.core.management.__init__.call_command` for details
-
-    """
-    parser = argparse.ArgumentParser()
-    cmd = Command()
-    parser = cmd.create_parser("import_measures", "")
-    options = parser.parse_args(opts_args)
-    return cmd.parse_options(options.__dict__)
-
-
-class ArgumentTestCase(TestCase):
-    def test_start_and_end_dates(self):
-        with self.assertRaises(CommandError):
-            parse_args("--start_date", "1999-01-01")
-        with self.assertRaises(CommandError):
-            parse_args("--end_date", "1999-01-01")
-        result = parse_args("--start_date", "1998-01-01", "--end_date", "1999-01-01")
-        self.assertEqual(result["start_date"], "1998-01-01")
-        self.assertEqual(result["end_date"], "1999-01-01")
-
-
 class UnitTests(TestCase):
     """Unit tests with mocked bigquery. Many of the functional
     tests could be moved hree.
