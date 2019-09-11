@@ -183,20 +183,14 @@ class Command(BaseCommand):
         return options
 
 
-def get_measure_definition_paths():
-    fpath = os.path.dirname(__file__)
-    return sorted(
-        glob.glob(os.path.join(settings.APPS_ROOT, "./measure_definitions/*.json"))
-    )
-
-
 def parse_measures():
     """Deserialise JSON measures definition into dict
     """
     measures = OrderedDict()
     errors = []
 
-    for path in get_measure_definition_paths():
+    glob_path = os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")
+    for path in sorted(glob.glob(glob_path)):
         measure_id = re.match(r".*/([^/.]+)\.json", path).groups()[0]
         with open(path) as f:
             try:
