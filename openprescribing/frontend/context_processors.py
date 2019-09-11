@@ -35,6 +35,10 @@ def google_tracking_id(request):
     }
 
 
+def source_commit_id(request):
+    return {"SOURCE_COMMIT_ID": getattr(settings, "SOURCE_COMMIT_ID", None)}
+
+
 _pcns_enabled = None
 
 
