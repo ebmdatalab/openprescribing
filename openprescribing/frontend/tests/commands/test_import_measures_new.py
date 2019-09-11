@@ -391,8 +391,8 @@ def set_up_bq():
 
 
 def create_import_log():
-    # import_measures uses this ImportLog to work out which months it
-    # should import data.
+    """Create ImportLog used by import_measures to work out which months is should
+    import data."""
     ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
 
 
