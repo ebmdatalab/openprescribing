@@ -8,7 +8,6 @@ most of the logic now lives in SQL which is harder to read and test
 clearly.
 """
 
-from collections import OrderedDict
 from contextlib import contextmanager
 import csv
 from datetime import datetime
@@ -54,20 +53,22 @@ MEASURE_FIELDNAMES = [
 
 
 class Command(BaseCommand):
-    """Specify a measure with a single string argument to `--measure`, and more than one
-    with a comma-delimited list.
+    """
+    Specify a measure with a single string argument to `--measure`,
+    and more than one with a comma-delimited list.
     """
 
-    def check_definition(self, options, start_date, end_date, verbose):
-        """Checks SQL definition for measures.
+    def check_definitions(self, measure_defs, start_date, end_date, verbose):
+        """Checks SQL definitions for measures.
         """
 
         # We don't validate JSON here, as this is already done as a
         # side-effect of parsing the command options.
         errors = []
-        for measure_id in options["measure_ids"]:
+        for measure_def in measure_defs:
+            measure_id = measure_def["id"]
             try:
-                measure = create_or_update_measure(measure_id, end_date)
+                measure = create_or_update_measure(measure_def, end_date)
                 calculation = MeasureCalculation(
                     measure, start_date=start_date, end_date=end_date, verbose=verbose
                 )
@@ -79,14 +80,15 @@ class Command(BaseCommand):
         if errors:
             raise BadRequest("\n".join(errors))
 
-    def build_measures(self, options, start_date, end_date, verbose):
+    def build_measures(self, measure_defs, start_date, end_date, verbose, options):
         with conditional_constraint_and_index_reconstructor(options):
-            for measure_id in options["measure_ids"]:
+            for measure_def in measure_defs:
+                measure_id = measure_def["id"]
                 logger.info("Updating measure: %s" % measure_id)
                 measure_start = datetime.now()
 
                 with transaction.atomic():
-                    measure = create_or_update_measure(measure_id, end_date)
+                    measure = create_or_update_measure(measure_def, end_date)
 
                     if options["definitions_only"]:
                         continue
@@ -111,21 +113,23 @@ class Command(BaseCommand):
                 )
 
     def handle(self, *args, **options):
-        if options["measure"]:
-            options["measure_ids"] = options["measure"].split(",")
-        else:
-            options["measure_ids"] = [
-                k for k, v in parse_measures().items() if "skip" not in v
-            ]
         start = datetime.now()
+
+        if options["measure"]:
+            measure_ids = options["measure"].split(",")
+            measure_defs = load_measure_defs(measure_ids)
+        else:
+            measure_defs = load_measure_defs()
+
         end_date = ImportLog.objects.latest_in_category("prescribing").current_at
         start_date = end_date - relativedelta(years=5)
+
         verbose = options["verbosity"] > 1
         if options["check"]:
-            action = self.check_definition
+            self.check_definitions(measure_defs, start_date, end_date, verbose)
         else:
-            action = self.build_measures
-        action(options, start_date, end_date, verbose)
+            self.build_measures(measure_defs, start_date, end_date, verbose, options)
+
         logger.warning("Total elapsed time: %s" % (datetime.now() - start))
 
     def add_arguments(self, parser):
@@ -135,21 +139,38 @@ class Command(BaseCommand):
         parser.add_argument("--check", action="store_true")
 
 
-def parse_measures():
-    """Deserialise JSON measures definition into dict
+def load_measure_defs(measure_ids=None):
+    """Load measure definitions from JSON files.
+
+    Since the lpzomnibus measure depends on other LP measures having already been
+    calculated, it is important that the measures are returned in alphabetical order.
+    (This is a bit of a hack...)
     """
-    measures = OrderedDict()
+    measures = []
     errors = []
 
     glob_path = os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")
     for path in sorted(glob.glob(glob_path)):
-        measure_id = re.match(r".*/([^/.]+)\.json", path).groups()[0]
+        measure_id = os.path.basename(path).split(".")[0]
+
         with open(path) as f:
             try:
-                measures[measure_id] = json.load(f)
+                measure_def = json.load(f)
             except ValueError as e:
                 # Add the measure_id to the exception
                 errors.append("* {}: {}".format(measure_id, e.message))
+                continue
+
+            if measure_ids is None:
+                if "skip" in measure_def:
+                    continue
+            else:
+                if measure_id not in measure_ids:
+                    continue
+
+            measure_def["id"] = measure_id
+            measures.append(measure_def)
+
     if errors:
         raise ValueError("Problems parsing JSON:\n" + "\n".join(errors))
     return measures
@@ -214,7 +235,7 @@ def normalisePercentile(percentile):
     return percentile
 
 
-def arrays_to_strings(measure_json):
+def arrays_to_strings(measure_def):
     """To facilitate readability via newlines, we express some JSON
     strings as arrays, but store them as strings.
 
@@ -233,19 +254,19 @@ def arrays_to_strings(measure_json):
     ]
 
     for field in fields_to_convert:
-        if field not in measure_json:
+        if field not in measure_def:
             continue
-        if isinstance(measure_json[field], list):
-            measure_json[field] = " ".join(measure_json[field])
-    return measure_json
+        if isinstance(measure_def[field], list):
+            measure_def[field] = " ".join(measure_def[field])
+    return measure_def
 
 
-def create_or_update_measure(measure_id, end_date):
+def create_or_update_measure(measure_def, end_date):
     """Create a measure object based on a measure definition
 
     """
-    measure_json = parse_measures()[measure_id]
-    v = arrays_to_strings(measure_json)
+    measure_id = measure_def["id"]
+    v = arrays_to_strings(measure_def)
 
     try:
         measure = Measure.objects.get(id=measure_id)
