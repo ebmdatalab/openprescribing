@@ -13,7 +13,6 @@ from django.test import TestCase, override_settings
 
 from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
 from frontend.management.commands.import_measures import Command
-from frontend.management.commands.import_measures import parse_measures
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue, MeasureGlobal, Chemical
@@ -55,16 +54,3 @@ class UnitTests(TestCase):
             pass
         execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_called()
-
-
-class TestParseMeasures(TestCase):
-    def test_parse_measures(self):
-        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
-        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
-            measures = parse_measures()
-        lpzomnibus_ix = list(measures).index("lpzomnibus")
-        lptrimipramine_ix = list(measures).index("lptrimipramine")
-        # The order of these specific measures matters, as the SQL for
-        # the omnibus measure relies on the other LP measures having
-        # been calculated first
-        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)

@@ -26,6 +26,7 @@ from frontend.models import (
     STP,
     RegionalTeam,
 )
+from frontend.management.commands.import_measures import load_measure_defs
 from gcutils.bigquery import Client
 
 
@@ -378,6 +379,28 @@ class CheckMeasureDefinitionsTests(TestCase):
         with self.assertRaises(BadRequest) as command_error:
             call_command("import_measures", check=True)
         self.assertIn("SQL error", str(command_error.exception))
+
+
+class LoadMeasureDefsTests(TestCase):
+    def test_order(self):
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
+            measure_defs = load_measure_defs()
+        measure_ids = [measure_def["id"] for measure_def in measure_defs]
+        lpzomnibus_ix = list(measure_ids).index("lpzomnibus")
+        lptrimipramine_ix = list(measure_ids).index("lptrimipramine")
+        # The order of these specific measures matters, as the SQL for
+        # the omnibus measure relies on the other LP measures having
+        # been calculated first
+        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
+
+    def test_with_no_measure_ids_loads_all_definitions(self):
+        measure_defs = load_measure_defs()
+        self.assertEqual(len(measure_defs), 3)
+
+    def test_with_measure_ids_loads_some_definitions(self):
+        measure_defs = load_measure_defs(["coproxamol", "desogestrel"])
+        self.assertEqual(len(measure_defs), 2)
 
 
 def set_up_bq():
