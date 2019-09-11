@@ -111,7 +111,12 @@ class Command(BaseCommand):
                 )
 
     def handle(self, *args, **options):
-        options = self.parse_options(options)
+        if options["measure"]:
+            options["measure_ids"] = options["measure"].split(",")
+        else:
+            options["measure_ids"] = [
+                k for k, v in parse_measures().items() if "skip" not in v
+            ]
         start = datetime.now()
         end_date = ImportLog.objects.latest_in_category("prescribing").current_at
         start_date = end_date - relativedelta(years=5)
@@ -128,17 +133,6 @@ class Command(BaseCommand):
         parser.add_argument("--definitions_only", action="store_true")
         parser.add_argument("--bigquery_only", action="store_true")
         parser.add_argument("--check", action="store_true")
-
-    def parse_options(self, options):
-        """Parse command line options
-        """
-        if options["measure"]:
-            options["measure_ids"] = options["measure"].split(",")
-        else:
-            options["measure_ids"] = [
-                k for k, v in parse_measures().items() if "skip" not in v
-            ]
-        return options
 
 
 def parse_measures():
