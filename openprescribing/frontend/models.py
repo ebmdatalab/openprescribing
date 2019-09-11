@@ -1,6 +1,7 @@
 import cPickle
 import json
 import uuid
+from urllib import urlencode
 
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
@@ -673,6 +674,30 @@ class Measure(models.Model):
 
     def __str__(self):
         return self.name
+
+    def analyse_url(self):
+        params = {"measure": self.id}
+
+        if self.numerator_is_list_of_bnf_codes:
+            if not self.numerator_bnf_codes:
+                return
+            params["numIds"] = ",".join(self.numerator_bnf_codes)
+        else:
+            return
+
+        if self.denominator_is_list_of_bnf_codes:
+            if not self.denominator_bnf_codes:
+                return
+            params["denomIds"] = ",".join(self.denominator_bnf_codes)
+        elif self.denominator_type == "list_size":
+            params["denom"] = "total_list_size"
+        elif self.denominator_type == "star_pu_antibiotics":
+            params["denom"] = "star_pu.oral_antibacterials_item"
+        else:
+            return
+
+        querystring = urlencode(params)
+        return "{}#{}".format(reverse("analyse"), querystring)
 
 
 class MeasureValue(models.Model):
