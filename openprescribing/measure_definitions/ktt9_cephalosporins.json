@@ -27,20 +27,12 @@
     "infections"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '0501013K0%' OR --Co-Amoxiclav \n",
     "bnf_code LIKE '0501021%' OR --Cephalosporins \n",
     "bnf_code LIKE '050112%'     --Quinolones"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '050101%' OR  --Penicillins \n",
     "bnf_code LIKE '0501021%' OR --Cephalosporins \n",

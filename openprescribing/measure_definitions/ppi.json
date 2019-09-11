@@ -26,10 +26,6 @@
     "generic"
   ],
   "numerator_type": "bnf_quantity",
-  "numerator_columns": [
-    "SUM(quantity) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code IN ( \n",
     "'0103050E0BBAAAA', --Nexium_Tab 20mg \n",
@@ -62,10 +58,6 @@
     "'0103050T0BBABAB') --Pariet_Tab E/C 20mg"
 ],
   "denominator_type": "bnf_quantity",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '0103050E0%AA' OR --Esomeprazole_Tab E/C 20mg (brands and generic) \n",
     "bnf_code LIKE '0103050E0%AB' OR --Esomeprazole_Tab E/C 40mg (brands and generic) \n",

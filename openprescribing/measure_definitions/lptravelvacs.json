@@ -23,10 +23,6 @@
     "lowpriority"
   ],
   "numerator_type": "bnf_cost",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
     "'0802040X0', --Bacillus Calmette-Guerin (B.C.G.) \n",
@@ -37,12 +33,5 @@
     "'1404000U0', --Yellow Fever \n",
     "'1404000X0') --Meningococcal A + C + W135 + Y Vaccine"
   ],
-  "denominator_type": "list_size",
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }

@@ -24,8 +24,8 @@
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
-"numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
-"numerator_where": [
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
+  "numerator_where": [
     "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
   ],
   "denominator_type": "custom",
@@ -36,7 +36,7 @@
   "denominator_where": [
     "1 = 1"
   ],
-"date_reviewed": [
+  "date_reviewed": [
     "2019-03-25"
   ],
   "next_review": [

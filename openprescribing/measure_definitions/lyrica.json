@@ -28,18 +28,10 @@
     "pain"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '0408010AEBB%' --Lyrica"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '0408010AE%' --Pregabablin (brands and generic)"
   ]

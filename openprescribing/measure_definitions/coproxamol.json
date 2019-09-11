@@ -28,21 +28,10 @@
     "safety"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "(",
     "bnf_code LIKE '0407010Q0%' -- Co-Proxamol (Dextroprop HCl/Paracet) (brand and generic) \n",
     ")"
   ],
-  "denominator_type": "list_size",
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }

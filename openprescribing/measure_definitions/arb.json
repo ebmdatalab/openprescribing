@@ -26,10 +26,6 @@
     "cost"
   ],
   "numerator_type": "bnf_quantity",
-  "numerator_columns": [
-    "SUM(quantity) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code IN (",
     "'0205052ADAAAAAA', --Azilsartan Medoxomil_Tab 20mg \n",
@@ -73,10 +69,6 @@
     ")"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code IN (",
     "'0205052ADAAAAAA', --Azilsartan Medoxomil_Tab 20mg \n",

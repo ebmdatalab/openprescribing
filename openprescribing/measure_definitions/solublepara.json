@@ -26,10 +26,6 @@
     "pain"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '0407010F0%AC' OR --Co-Codamol Eff_Tab 8mg/500mg (brands and generic) \n",
     "bnf_code LIKE '0407010F0%AF' OR --Co-Codamol Eff_Tab 30mg/500mg (brands and generic) \n",
@@ -37,10 +33,6 @@
 
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '0407010F0%AA' OR --Co-Codamol_Tab 8mg/500mg (brands and generic) \n",
     "bnf_code LIKE '0407010F0%AB' OR --Co-Codamol_Cap 8mg/500mg (brands and generic) \n",

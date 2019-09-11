@@ -27,8 +27,8 @@
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
-"numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
-"numerator_where": [
+  "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
+  "numerator_where": [
     "r.type = 'AAF' --this filters to only products listed as 'AAF' in the products table"
   ],
   "denominator_type": "custom",

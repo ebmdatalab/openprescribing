@@ -25,10 +25,6 @@
     "diabetes"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
     "'0601012V0', --Insulin Glargine \n",
@@ -37,10 +33,6 @@
     ")"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
     "'060101200', --Other Intermed&Long-Acting Insulin Preps \n",

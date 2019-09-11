@@ -27,10 +27,6 @@
     "nutrition"
   ],
   "numerator_type": "bnf_cost",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "(",
     "bnf_code LIKE '0904010AU%' OR --Gluten Free/Wheat Free Snacks \n",
@@ -51,12 +47,5 @@
     "bnf_code LIKE '0904010I0%'    --Gluten Free Biscuits \n",
     ")"
   ],
-  "denominator_type": "list_size",
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }

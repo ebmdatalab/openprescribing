@@ -23,10 +23,6 @@
     "generic"
   ],
   "numerator_type": "bnf_quantity",
-  "numerator_columns": [
-    "SUM(quantity) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '1106000__B%' --Treatment of Glaucoma (branded) \n",
     "AND (",
@@ -34,10 +30,6 @@
     "bnf_code NOT LIKE '1106000C0B%') --Diamox (Parent)"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '1106000%' --Treatment of Glaucoma (branded and generic) \n",
     "AND ",
