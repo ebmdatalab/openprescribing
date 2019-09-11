@@ -226,4 +226,5 @@ class DataFactory(object):
             denominator_where="",
             denominator_columns="",
             numerator_bnf_codes=[],
+            denominator_bnf_codes=[],
         )
