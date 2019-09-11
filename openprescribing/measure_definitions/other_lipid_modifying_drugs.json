@@ -1,5 +1,9 @@
 {
   "name": "Other lipid-modifying drugs",
+  "title": [
+    "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
+    "per 1000 registered patients"
+  ],
   "description": [
     "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
     "per 1000 registered patients"
@@ -8,10 +12,6 @@
     "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'>NICE guidance suggests</a> that, for the vast ",
     "majority of people who need treatment for high cholesterol, these drugs should not be used. ",
     "There is no evidence that omega 3 fatty acids reduce the chances of patients getting cardiovascular disease."
-  ],
-  "title": [
-    "Total cost of prescriptions for bile acid sequestrants, fibrates, nicotinic acid, and omega-3 fatty acid compounds ",
-    "per 1000 registered patients"
   ],
   "numerator_short": "Cost of selected items (£)",
   "denominator_short": "100 patients",
