@@ -30,6 +30,10 @@ from frontend.models import (
 )
 from frontend.management.commands.import_measures import load_measure_defs
 from gcutils.bigquery import Client
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
+from matrixstore.tests.data_factory import DataFactory
 
 
 # These tests test import_measures by repeating the measure calculations with
@@ -47,11 +51,12 @@ class ImportMeasuresTests(TestCase):
 
         set_up_bq()
         create_import_log()
-        create_old_measure_value()
         create_organisations(random)
         upload_ccgs_and_practices()
         cls.prescriptions = upload_prescribing(random.randint)
         cls.practice_stats = upload_practice_statistics(random.randint)
+        cls.factory = build_factory()
+        create_old_measure_value()
 
     def test_cost_based_percentage_measure(self):
         # This test verifies the behaviour of import_measures for a cost-based
@@ -61,7 +66,8 @@ class ImportMeasuresTests(TestCase):
         #      generic equivalent (denominator)
 
         # Do the work.
-        call_command("import_measures", measure="desogestrel")
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="desogestrel")
 
         # Check that old MeasureValue and MeasureGlobal objects have been deleted.
         self.assertFalse(MeasureValue.objects.filter(month__lt="2011-01-01").exists())
@@ -69,10 +75,8 @@ class ImportMeasuresTests(TestCase):
 
         # Check that numerator_bnf_codes and denominator_bnf_codes have been set.
         m = Measure.objects.get(id="desogestrel")
-        self.assertEqual(m.numerator_bnf_codes, ["0703021Q0BBAAAA"])
-        self.assertEqual(
-            m.denominator_bnf_codes, ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
-        )
+        self.assertEqual(m.numerator_bnf_codes, ["0703021Q0B"])
+        self.assertEqual(m.denominator_bnf_codes, ["0703021Q"])
 
         # Check that analyse_url can be derived correctly.
         url = m.analyse_url()
@@ -82,8 +86,8 @@ class ImportMeasuresTests(TestCase):
             params,
             {
                 "measure": ["desogestrel"],
-                "numIds": ["0703021Q0BBAAAA"],
-                "denomIds": ["0703021Q0AAAAAA,0703021Q0BBAAAA"],
+                "numIds": ["0703021Q0B"],
+                "denomIds": ["0703021Q"],
             },
         )
 
@@ -114,12 +118,13 @@ class ImportMeasuresTests(TestCase):
         # a given practice in a given month.  See #1520.
 
         # Do the work.
-        call_command("import_measures", measure="coproxamol")
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="coproxamol")
 
         # Check that numerator_bnf_codes has, and denominator_bnf_codes has not, been
         # set.
         m = Measure.objects.get(id="coproxamol")
-        self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
+        self.assertEqual(m.numerator_bnf_codes, ["0407010Q"])
         self.assertEqual(m.denominator_bnf_codes, [])
 
         # Check that analyse_url can be derived correctly.
@@ -130,7 +135,7 @@ class ImportMeasuresTests(TestCase):
             params,
             {
                 "measure": ["coproxamol"],
-                "numIds": ["0407010Q0AAAAAA"],
+                "numIds": ["0407010Q"],
                 "denom": ["total_list_size"],
             },
         )
@@ -152,7 +157,8 @@ class ImportMeasuresTests(TestCase):
         #  * patients / 1000 (denominator)
 
         # Do the work.
-        call_command("import_measures", measure="glutenfree")
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="glutenfree")
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
@@ -401,7 +407,10 @@ class CheckMeasureDefinitionsTests(TestCase):
         set_up_bq()
 
     def test_check_definition(self):
-        call_command("import_measures", measure="desogestrel", check=True)
+        upload_dummy_prescribing(["0703021Q0AAAAAA", "0703021Q0BBAAAA"])
+
+        with patched_global_matrixstore_from_data_factory(build_factory()):
+            call_command("import_measures", measure="desogestrel", check=True)
 
     @override_settings(
         MEASURE_DEFINITIONS_PATH=os.path.join(
@@ -489,6 +498,38 @@ def set_up_bq():
     )
 
 
+def upload_dummy_prescribing(bnf_codes):
+    """Upload enough dummy prescribing data to BQ to allow the BNF code simplification
+    to be meaningful."""
+
+    prescribing_rows = []
+    for bnf_code in bnf_codes:
+        row = [
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            bnf_code,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ]
+        prescribing_rows.append(row)
+
+    table = Client("hscic").get_table("normalised_prescribing_standard")
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in prescribing_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
+
+
 def create_import_log():
     """Create ImportLog used by import_measures to work out which months is should
     import data."""
@@ -498,7 +539,8 @@ def create_import_log():
 def create_old_measure_value():
     """Create MeasureValue and MeasureGlobal that are to be deleted because they are
     more than five years old."""
-    call_command("import_measures", definitions_only=True, measure="desogestrel")
+    with patched_global_matrixstore_from_data_factory(build_factory()):
+        call_command("import_measures", definitions_only=True, measure="desogestrel")
     m = Measure.objects.get(id="desogestrel")
     m.measurevalue_set.create(month="2010-01-01")
     m.measureglobal_set.create(month="2010-01-01")
@@ -776,3 +818,25 @@ def upload_practice_statistics(randint):
         table.insert_rows_from_csv(f.name, schemas.PRACTICE_STATISTICS_SCHEMA)
 
     return practice_stats
+
+
+def build_factory():
+    """Build a MatrixStore DataFactory with prescriptions for several different
+    presentations, to allow the BNF code simplification to be meaningful."""
+
+    bnf_codes = [
+        "0407010Q0AAAAAA",  # Co-Proxamol_Tab 32.5mg/325mg
+        "0407010P0AAAAAA",  # Nefopam HCl_Inj 20mg/ml 1ml Amp
+        "0703021Q0AAAAAA",  # Desogestrel_Tab 75mcg
+        "0703021Q0BBAAAA",  # Cerazette_Tab 75mcg
+        "0703021P0AAAAAA",  # Norgestrel_Tab 75mcg
+        "0904010AUBBAAAA",  # Mrs Crimble's_G/F W/F Cheese Bites Orig
+        "0904010AVBBAAAA",  # Mrs Crimble's_W/F Dutch Apple Cake
+    ]
+    factory = DataFactory()
+    month = factory.create_months("2018-10-01", 1)[0]
+    practice = factory.create_practices(1)[0]
+    for bnf_code in bnf_codes:
+        presentation = factory.create_presentation(bnf_code)
+        factory.create_prescription(presentation, practice, month)
+    return factory
