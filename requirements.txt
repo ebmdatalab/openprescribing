@@ -56,7 +56,7 @@ idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.4.1
 lz4==2.1.10
-mailchimp3==3.0.7
+mailchimp3==3.0.9
 mccabe==0.6.1             # via flake8
 mock==3.0.5
 networkx==2.2
