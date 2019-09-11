@@ -22,8 +22,6 @@ from frontend.models import Practice
 from frontend.models import STP
 from frontend.models import RegionalTeam
 
-from google.api_core.exceptions import BadRequest
-
 
 MODULE = "frontend.management.commands.import_measures"
 
@@ -211,26 +209,6 @@ class BigqueryFunctionalTests(TestCase):
 
         opts = {"month": "2015-09-01", "measure": "cerazette", "v": 3}
         call_command("import_measures", **opts)
-
-    @override_settings(
-        MEASURE_DEFINITIONS_PATH=os.path.join(
-            settings.MEASURE_DEFINITIONS_PATH, "bad", "json"
-        )
-    )
-    def test_check_definition_bad_json(self):
-        with self.assertRaises(ValueError) as command_error:
-            call_command("import_measures", check=True)
-        self.assertIn("Problems parsing JSON", str(command_error.exception))
-
-    @override_settings(
-        MEASURE_DEFINITIONS_PATH=os.path.join(
-            settings.MEASURE_DEFINITIONS_PATH, "bad", "sql"
-        )
-    )
-    def test_check_definition_bad_sql(self):
-        with self.assertRaises(BadRequest) as command_error:
-            call_command("import_measures", check=True)
-        self.assertIn("SQL error", str(command_error.exception))
 
     def test_import_measurevalue_by_practice_with_different_payments(self):
         month = "2015-10-01"
