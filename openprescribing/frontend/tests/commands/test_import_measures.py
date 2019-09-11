@@ -5,6 +5,7 @@ import os
 import tempfile
 from mock import patch
 from random import Random
+from urlparse import parse_qs
 
 from google.api_core.exceptions import BadRequest
 from google.cloud.exceptions import Conflict
@@ -73,6 +74,19 @@ class ImportMeasuresTests(TestCase):
             m.denominator_bnf_codes, ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
         )
 
+        # Check that analyse_url can be derived correctly.
+        url = m.analyse_url()
+        querystring = url.split("#")[1]
+        params = parse_qs(querystring)
+        self.assertEqual(
+            params,
+            {
+                "measure": ["desogestrel"],
+                "numIds": ["0703021Q0BBAAAA"],
+                "denomIds": ["0703021Q0AAAAAA,0703021Q0BBAAAA"],
+            },
+        )
+
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
         month = "2018-08-01"
@@ -107,6 +121,19 @@ class ImportMeasuresTests(TestCase):
         m = Measure.objects.get(id="coproxamol")
         self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
         self.assertEqual(m.denominator_bnf_codes, [])
+
+        # Check that analyse_url can be derived correctly.
+        url = m.analyse_url()
+        querystring = url.split("#")[1]
+        params = parse_qs(querystring)
+        self.assertEqual(
+            params,
+            {
+                "measure": ["coproxamol"],
+                "numIds": ["0407010Q0AAAAAA"],
+                "denom": ["total_list_size"],
+            },
+        )
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
@@ -361,6 +388,10 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
+
+        # Test that analyse_url can be constructed for every measure.
+        for measure in Measure.objects.all():
+            measure.analyse_url()
 
 
 class CheckMeasureDefinitionsTests(TestCase):
