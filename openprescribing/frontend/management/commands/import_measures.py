@@ -21,6 +21,7 @@ import tempfile
 
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db import transaction
@@ -184,7 +185,9 @@ class Command(BaseCommand):
 
 def get_measure_definition_paths():
     fpath = os.path.dirname(__file__)
-    return sorted(glob.glob(os.path.join(fpath, "./measure_definitions/*.json")))
+    return sorted(
+        glob.glob(os.path.join(settings.APPS_ROOT, "./measure_definitions/*.json"))
+    )
 
 
 def parse_measures():
