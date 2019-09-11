@@ -16,13 +16,16 @@
       "is_percentage": true,
       "is_cost_based": true,
       "low_is_good": false,
+      "numerator_type": "bnf_quantity",
       "numerator_columns": "SUM(quantity) AS numerator, ",
       "numerator_from": "{hscic}.normalised_prescribing_standard ",
       "numerator_where": "(bnf_code LIKE '0703021Q0BB%%')  ",
       "numerator_bnf_codes": ["0703021Q0BBAAAA"],
+      "denominator_type": "bnf_quantity",
       "denominator_columns": "SUM(quantity) AS denominator, ",
       "denominator_from": "{hscic}.normalised_prescribing_standard ",
-      "denominator_where": "(bnf_code LIKE '0703021Q0%%')  "
+      "denominator_where": "(bnf_code LIKE '0703021Q0%%')  ",
+      "denominator_bnf_codes": ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
     }
   }
 ]
