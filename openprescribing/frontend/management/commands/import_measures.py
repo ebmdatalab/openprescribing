@@ -297,30 +297,36 @@ def create_or_update_measure(measure_def, end_date):
     measure.numerator_is_list_of_bnf_codes = v.get(
         "numerator_is_list_of_bnf_codes", True
     )
-    measure.numerator_bnf_codes = get_numerator_bnf_codes(measure, end_date)
+    measure.numerator_bnf_codes = get_num_or_denom_bnf_codes(
+        measure, "numerator", end_date
+    )
     measure.save()
 
     return measure
 
 
-def get_numerator_bnf_codes(measure, end_date):
-    # For most measures, we are able to work out which presentations contribute
-    # to variation in the numerator by constructing a query using the
-    # numerator_from and numerator_where attributes of the measure.  In a
-    # handful of cases this cannot be done, and the creator of the measure must
-    # provide a query (numerator_bnf_codes_query) that can be used for this.
-    #
-    # For the lpzomnibus query, numerator_bnf_codes_query was produced with
-    # help from:
-    #
-    # >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
-    # ...   print '"' + m.numerator_where.strip() + ' OR",'
+def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
+    """Return list of BNF codes used in calculation of numerator or denominator.  For
+    most measures, this can be computed by constructing a query using the
+    [num_or_denom]_from and [num_or_denom]_where attributes of the measure.  In a
+    handful of cases this cannot be done, and the creator of the measure must provide a
+    query ([num_or_denom]_bnf_codes_query) that can be used for this.
 
-    if not measure.numerator_is_list_of_bnf_codes:
+    For the lpzomnibus query, numerator_bnf_codes_query was produced with help from:
+
+    >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
+    ...   print '"' + m.numerator_where.strip() + ' OR",'
+    """
+
+    def get_measure_attr(name):
+        full_name = num_or_denom + "_" + name
+        return getattr(measure, full_name)
+
+    if not get_measure_attr("is_list_of_bnf_codes"):
         return []
 
-    if measure.numerator_bnf_codes_query is not None:
-        sql = measure.numerator_bnf_codes_query
+    if get_measure_attr("bnf_codes_query") is not None:
+        sql = get_measure_attr("bnf_codes_query")
         three_months_ago = datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(
             months=2
         )
@@ -335,20 +341,20 @@ def get_numerator_bnf_codes(measure, end_date):
         #
         # but BQ doesn't let you refer to an aliased table by its original
         # name, so we have to mess around like this.
-        if "{hscic}.normalised_prescribing_standard p" in measure.numerator_from:
+        if "{hscic}.normalised_prescribing_standard p" in get_measure_attr("from"):
             col_name = "p.bnf_code"
         else:
             col_name = "bnf_code"
 
         sql = """
         SELECT DISTINCT {col_name}
-        FROM {numerator_from}
-        WHERE {numerator_where}
+        FROM {from_}
+        WHERE {where}
         ORDER BY bnf_code
         """.format(
             col_name=col_name,
-            numerator_from=measure.numerator_from,
-            numerator_where=measure.numerator_where,
+            from_=get_measure_attr("from"),
+            where=get_measure_attr("where"),
         )
         substitutions = None
 
