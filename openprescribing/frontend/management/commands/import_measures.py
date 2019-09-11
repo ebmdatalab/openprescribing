@@ -300,6 +300,16 @@ def create_or_update_measure(measure_def, end_date):
     measure.numerator_bnf_codes = get_num_or_denom_bnf_codes(
         measure, "numerator", end_date
     )
+    measure.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+    if "normalised_prescribing_standard" in measure.denominator_from:
+        measure.denominator_is_list_of_bnf_codes = v.get(
+            "denominator_is_list_of_bnf_codes", True
+        )
+    else:
+        measure.denominator_is_list_of_bnf_codes = False
+    measure.denominator_bnf_codes = get_num_or_denom_bnf_codes(
+        measure, "denominator", end_date
+    )
     measure.save()
 
     return measure
