@@ -21,7 +21,7 @@ cssutils==1.0.2           # via premailer
 decorator==4.4.0          # via networkx
 defusedxml==0.6.0         # via python3-openid
 django-allauth==0.40.0
-django-anymail[mailgun]==6.1.0
+django-anymail[mailgun]==7.0.0
 django-cors-headers==3.0.2
 django-crispy-forms==1.7.2
 django-debug-toolbar-template-timings==0.9
