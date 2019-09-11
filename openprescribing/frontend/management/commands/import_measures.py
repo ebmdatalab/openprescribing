@@ -22,7 +22,7 @@ import tempfile
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management import BaseCommand
 from django.db import connection
 from django.db import transaction
 
@@ -54,16 +54,8 @@ MEASURE_FIELDNAMES = [
 
 
 class Command(BaseCommand):
-    """Supply either --end_date to load data for all months
-    up to that date, or --month to load data for just one
-    month.
-
-    You can also supply --start_date, or supply a file path that
-    includes a timestamp with --month_from_prescribing_filename
-
-    Specify a measure with a single string argument to `--measure`,
-    and more than one with a comma-delimited list.
-
+    """Specify a measure with a single string argument to `--measure`, and more than one
+    with a comma-delimited list.
     """
 
     def check_definition(self, options, start_date, end_date, verbose):
@@ -121,8 +113,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         options = self.parse_options(options)
         start = datetime.now()
-        start_date = options["start_date"]
-        end_date = options["end_date"]
+        end_date = ImportLog.objects.latest_in_category("prescribing").current_at
+        start_date = end_date - relativedelta(years=5)
         verbose = options["verbosity"] > 1
         if options["check"]:
             action = self.check_definition
@@ -132,9 +124,6 @@ class Command(BaseCommand):
         logger.warning("Total elapsed time: %s" % (datetime.now() - start))
 
     def add_arguments(self, parser):
-        parser.add_argument("--month")
-        parser.add_argument("--start_date")
-        parser.add_argument("--end_date")
         parser.add_argument("--measure")
         parser.add_argument("--definitions_only", action="store_true")
         parser.add_argument("--bigquery_only", action="store_true")
@@ -143,27 +132,12 @@ class Command(BaseCommand):
     def parse_options(self, options):
         """Parse command line options
         """
-        if bool(options["start_date"]) != bool(options["end_date"]):
-            raise CommandError("--start_date and --end_date must be given together")
-
         if options["measure"]:
             options["measure_ids"] = options["measure"].split(",")
         else:
             options["measure_ids"] = [
                 k for k, v in parse_measures().items() if "skip" not in v
             ]
-
-        if not options["start_date"]:
-            if options["month"]:
-                options["start_date"] = options["end_date"] = options["month"]
-            else:
-                l = ImportLog.objects.latest_in_category("prescribing")
-                start_date = l.current_at - relativedelta(years=5)
-                options["start_date"] = start_date.strftime("%Y-%m-%d")
-                options["end_date"] = l.current_at.strftime("%Y-%m-%d")
-        # validate the date format
-        datetime.strptime(options["start_date"], "%Y-%m-%d")
-        datetime.strptime(options["end_date"], "%Y-%m-%d")
         return options
 
 
