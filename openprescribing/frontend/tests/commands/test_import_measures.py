@@ -238,22 +238,6 @@ class BigqueryFunctionalTests(TestCase):
         self.assertEqual(m.why_it_matters[:10], "This is th")
         self.assertEqual(m.low_is_good, True)
 
-    def test_old_measure_value_deleted(self):
-        self.assertEqual(
-            MeasureValue.objects.filter(
-                measure="cerazette", pct="02Q", month="2000-01-01"
-            ).count(),
-            0,
-        )
-
-    def test_not_so_old_measure_value_not_deleted(self):
-        self.assertEqual(
-            MeasureValue.objects.filter(
-                measure="cerazette", pct="02Q", month="2015-08-01"
-            ).count(),
-            1,
-        )
-
     def test_practice_general(self):
         month = "2015-09-01"
         measure = Measure.objects.get(id="cerazette")

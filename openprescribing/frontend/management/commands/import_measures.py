@@ -107,24 +107,8 @@ class Command(BaseCommand):
                     )
 
                     if not options["bigquery_only"]:
-                        # Delete any existing measures data older than five years ago.
-                        l = ImportLog.objects.latest_in_category("prescribing")
-                        five_years_ago = l.current_at - relativedelta(years=5)
-                        MeasureValue.objects.filter(month__lte=five_years_ago).filter(
-                            measure=measure
-                        ).delete()
-                        MeasureGlobal.objects.filter(month__lte=five_years_ago).filter(
-                            measure=measure
-                        ).delete()
-
-                        # Delete any existing measures data relating to the
-                        # current month(s)
-                        MeasureValue.objects.filter(month__gte=start_date).filter(
-                            month__lte=end_date
-                        ).filter(measure=measure).delete()
-                        MeasureGlobal.objects.filter(month__gte=start_date).filter(
-                            month__lte=end_date
-                        ).filter(measure=measure).delete()
+                        MeasureValue.objects.filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(measure=measure).delete()
 
                     # Compute the measures
                     calcuation.calculate(options["bigquery_only"])
