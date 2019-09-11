@@ -23,6 +23,7 @@
     "nutrition",
     "core"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -30,6 +31,7 @@
 "numerator_where": [
     "r.type = 'AAF' --this filters to only products listed as 'AAF' in the products table"
   ],
+  "denominator_type": "custom",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

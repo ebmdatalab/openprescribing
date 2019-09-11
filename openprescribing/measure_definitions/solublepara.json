@@ -25,6 +25,7 @@
     "cost",
     "pain"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -35,6 +36,7 @@
     "bnf_code LIKE '0407010H0%AQ'    --Paracet_Tab Solb 500mg (brands and generic)"
 
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

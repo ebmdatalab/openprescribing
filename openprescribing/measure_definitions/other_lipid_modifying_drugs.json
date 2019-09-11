@@ -24,6 +24,7 @@
     "core",
     "efficacy"
   ],
+  "numerator_type": "bnf_cost",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -43,6 +44,7 @@
     "'0212000U0', --Nicotinic Acid \n",
     "'0212000V0') --Omega-3 Marine Triglycerides"
  ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

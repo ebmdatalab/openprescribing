@@ -30,6 +30,7 @@
     "core",
     "infections"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(p.quantity * r.adq_per_quantity) AS numerator, "
   ],
@@ -41,6 +42,7 @@
     "p.bnf_code LIKE '0501130R0%AD' OR --Nitrofurantoin_Tab 50mg (brands and generic) \n",
     "p.bnf_code LIKE '0501130R0%AG%' --Nitrofurantoin_Cap 100mg M/R (brands and generic)"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

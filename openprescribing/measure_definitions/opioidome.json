@@ -28,6 +28,7 @@
     "pain",
     "safety"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(total_ome) AS numerator, "
   ],
@@ -48,6 +49,7 @@
     "    SUBSTR(opioid_measure.bnf_code,-2,2)",
     "  )"
   ],
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

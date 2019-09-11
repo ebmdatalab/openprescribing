@@ -22,6 +22,7 @@
     "core",
     "infections"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -29,6 +30,7 @@
   "numerator_where": [
     "bnf_code LIKE '0501080W0%' --Trimethoprim"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

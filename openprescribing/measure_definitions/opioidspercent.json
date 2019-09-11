@@ -32,6 +32,7 @@
     "pain",
     "safety"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -63,7 +64,8 @@
     "bnf_code LIKE '0407020Q0%EH' OR --Morph Sulf_Cap 60mg M/R (brands and generic) \n",
     "bnf_code LIKE '0407020Q0%EI'    --Morph Sulf_Cap 200mg M/R (brands and generic)"
   ],
-    "denominator_columns": [
+  "denominator_type": "bnf_items",
+  "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard ",

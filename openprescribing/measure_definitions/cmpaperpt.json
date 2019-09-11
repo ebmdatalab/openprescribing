@@ -20,6 +20,7 @@
     "nutrition",
     "core"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(actual_cost) AS numerator, "
   ],
@@ -27,6 +28,7 @@
 "numerator_where": [
     "r.type != 'exclude' --this filters to all products not listed as 'excluded' in the products table'"
   ],
+  "denominator_type": "custom",
   "denominator_columns": [
     "SUM(male_0_4 + female_0_4) AS denominator, "
   ],

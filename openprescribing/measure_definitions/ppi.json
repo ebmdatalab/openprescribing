@@ -25,6 +25,7 @@
     "gastrointestinal",
     "generic"
   ],
+  "numerator_type": "bnf_quantity",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -60,6 +61,7 @@
     "'0103050T0BBAAAA', --Pariet_Tab E/C 10mg \n",
     "'0103050T0BBABAB') --Pariet_Tab E/C 20mg"
 ],
+  "denominator_type": "bnf_quantity",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

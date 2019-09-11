@@ -28,6 +28,7 @@
     "pain",
     "safety"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(gaba_ddd) AS numerator, "
   ],
@@ -36,6 +37,7 @@
     "1 = 1"
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%' or presentation_code LIKE '0408010G0%'",
+  "denominator_type": "list_size",
   "denominator_columns": [
     "SUM(total_list_size / 1000.0) AS denominator, "
   ],

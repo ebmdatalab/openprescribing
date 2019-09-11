@@ -24,6 +24,7 @@
     "generic",
     "reproductive"
   ],
+  "numerator_type": "bnf_quantity",
   "numerator_columns": [
     "SUM(quantity) AS numerator, "
   ],
@@ -31,6 +32,7 @@
   "numerator_where": [
     "bnf_code LIKE '0703021Q0B%' --Desogestrel (all brands)"
   ],
+  "denominator_type": "bnf_quantity",
   "denominator_columns": [
     "SUM(quantity) AS denominator, "
   ],

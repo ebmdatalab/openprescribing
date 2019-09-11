@@ -24,6 +24,7 @@
     "cost",
     "diabetes"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -35,6 +36,7 @@
     "'0601012Z0' --Insulin Degludec \n",
     ")"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

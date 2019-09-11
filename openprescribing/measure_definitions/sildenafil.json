@@ -26,6 +26,7 @@
     "erectiledysfunction",
     "reproductive"
   ],
+  "numerator_type": "custom",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -67,6 +68,7 @@
     "AND bnf_code NOT LIKE '0704050R0AAADAD%'",
     "AND month >= '{three_months_ago}'"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

@@ -26,6 +26,7 @@
     "cardiovascular",
     "core"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -38,6 +39,7 @@
     "bnf_code LIKE '0208020Z0%' --Apixaban \n",
      ")"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],

@@ -29,6 +29,7 @@
     "respiratory",
     "safety"
   ],
+  "numerator_type": "bnf_items",
   "numerator_columns": [
     "SUM(items) AS numerator, "
   ],
@@ -54,6 +55,7 @@
     "bnf_code LIKE '0302000V0%AA'    --Fluticasone/Vilanterol_Inha 184/22mcg30D (brands and generic) \n",
     ")"
   ],
+  "denominator_type": "bnf_items",
   "denominator_columns": [
     "SUM(items) AS denominator, "
   ],
