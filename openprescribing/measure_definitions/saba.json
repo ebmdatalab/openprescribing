@@ -25,10 +25,6 @@
     "safety"
   ],
   "numerator_type": "bnf_quantity",
-  "numerator_columns": [
-    "SUM(quantity) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '0301011R0%AA' OR --Salbutamol_Inha 100mcg (200 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AC' OR --Salbutamol_Inha 100mcg (80 D) (brands and generic) \n",
@@ -65,10 +61,6 @@
     "bnf_code LIKE '0301011V0%BB'    --Terbut Sulf_B/A Inha 500mcg (120 D) (brands and generic)"
   ],
   "denominator_type": "bnf_quantity",
-  "denominator_columns": [
-    "SUM(quantity) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "(bnf_code LIKE '0301011R0%AA' OR --Salbutamol_Inha 100mcg (200 D) (brands and generic) \n",
     "bnf_code LIKE '0301011R0%AC' OR --Salbutamol_Inha 100mcg (80 D) (brands and generic) \n",

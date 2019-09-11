@@ -27,10 +27,7 @@ from frontend.models import (
     STP,
     RegionalTeam,
 )
-from frontend.management.commands.import_measures import (
-    build_num_or_denom_fields,
-    load_measure_defs,
-)
+from frontend.management.commands.import_measures import load_measure_defs
 from gcutils.bigquery import Client
 
 
@@ -364,30 +361,6 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
-
-    def test_build_num_or_denom_fields(self):
-        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
-        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
-            with patch(
-                "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
-            ) as get_num_or_denom_bnf_codes:
-                get_num_or_denom_bnf_codes.return_value = []
-                call_command("import_measures", definitions_only=True)
-
-        for m in Measure.objects.all():
-            numerator_fields = build_num_or_denom_fields(m, "numerator")
-            for k, v in numerator_fields.items():
-                msg = "{} does not match for {} ({!r} != {!r})".format(
-                    k, m.id, getattr(m, k), v
-                )
-                self.assertEqual(getattr(m, k), v, msg)
-
-            denominator_fields = build_num_or_denom_fields(m, "denominator")
-            for k, v in denominator_fields.items():
-                msg = "{} does not match for {} ({!r} != {!r})".format(
-                    k, m.id, getattr(m, k), v
-                )
-                self.assertEqual(getattr(m, k), v, msg)
 
 
 class CheckMeasureDefinitionsTests(TestCase):

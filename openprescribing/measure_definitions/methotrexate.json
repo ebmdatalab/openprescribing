@@ -26,18 +26,10 @@
     "safety"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '1001030U0%AC' --Methotrexate_Tab 10mg"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '1001030U0%AB' OR --Methotrexate_Tab 10mg \n",
     "bnf_code LIKE '1001030U0%AC'    --Methotrexate_Tab 2.5mg"

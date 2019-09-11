@@ -69,10 +69,6 @@
     "AND month >= '{three_months_ago}'"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction"
   ]

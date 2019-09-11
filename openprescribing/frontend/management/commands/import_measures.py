@@ -288,13 +288,13 @@ def create_or_update_measure(measure_def, end_date):
     measure.numerator_short = v["numerator_short"]
     measure.denominator_short = v["denominator_short"]
     measure.numerator_type = v["numerator_type"]
-    measure.numerator_from = v["numerator_from"]
-    measure.numerator_where = v["numerator_where"]
-    measure.numerator_columns = v["numerator_columns"]
+    measure.numerator_from = v.get("numerator_from")
+    measure.numerator_where = v.get("numerator_where")
+    measure.numerator_columns = v.get("numerator_columns")
     measure.denominator_type = v["denominator_type"]
-    measure.denominator_from = v["denominator_from"]
-    measure.denominator_where = v["denominator_where"]
-    measure.denominator_columns = v["denominator_columns"]
+    measure.denominator_from = v.get("denominator_from")
+    measure.denominator_where = v.get("denominator_where")
+    measure.denominator_columns = v.get("denominator_columns")
     measure.url = v["url"]
     measure.is_cost_based = v["is_cost_based"]
     measure.is_percentage = v["is_percentage"]
@@ -303,19 +303,26 @@ def create_or_update_measure(measure_def, end_date):
     measure.numerator_is_list_of_bnf_codes = v.get(
         "numerator_is_list_of_bnf_codes", True
     )
-    measure.numerator_bnf_codes = get_num_or_denom_bnf_codes(
-        measure, "numerator", end_date
-    )
     measure.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
-    if "normalised_prescribing_standard" in measure.denominator_from:
+    if (
+        measure.denominator_from
+        and "normalised_prescribing_standard" in measure.denominator_from
+    ):
         measure.denominator_is_list_of_bnf_codes = v.get(
             "denominator_is_list_of_bnf_codes", True
         )
     else:
         measure.denominator_is_list_of_bnf_codes = False
-    measure.denominator_bnf_codes = get_num_or_denom_bnf_codes(
-        measure, "denominator", end_date
-    )
+
+    for num_or_denom in ["numerator", "denominator"]:
+        for k, val in build_num_or_denom_fields(measure, num_or_denom).items():
+            setattr(measure, k, val)
+        setattr(
+            measure,
+            "{}_bnf_codes".format(num_or_denom),
+            get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
+        )
+
     measure.save()
 
     return measure

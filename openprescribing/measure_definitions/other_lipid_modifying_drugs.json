@@ -25,10 +25,6 @@
     "efficacy"
   ],
   "numerator_type": "bnf_cost",
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",    
     "'021200010', --Ciprofibrate \n",
@@ -44,12 +40,5 @@
     "'0212000U0', --Nicotinic Acid \n",
     "'0212000V0') --Omega-3 Marine Triglycerides"
  ],
-  "denominator_type": "list_size",
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }

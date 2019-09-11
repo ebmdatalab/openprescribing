@@ -27,10 +27,6 @@
     "safety"
   ],
   "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
     "bnf_code LIKE '0103050E0%AA' OR --Esomeprazole_Tab E/C 20mg (brands and generic) \n",
     "bnf_code LIKE '0103050E0%AB' OR --Esomeprazole_Tab E/C 40mg (brands and generic) \n",
@@ -55,10 +51,6 @@
     "bnf_code LIKE '0103050T0%AB'    --Rabeprazole Sod_Tab E/C 20mg (brands and generic)"
   ],
   "denominator_type": "bnf_items",
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.normalised_prescribing_standard ",
   "denominator_where": [
     "bnf_code LIKE '0103050E0%AA' OR --Esomeprazole_Tab E/C 20mg (brands and generic) \n",
     "bnf_code LIKE '0103050E0%AB' OR --Esomeprazole_Tab E/C 40mg (brands and generic) \n",

@@ -49,12 +49,5 @@
     "    SUBSTR(opioid_measure.bnf_code,-2,2)",
     "  )"
   ],
-  "denominator_type": "list_size",
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }
