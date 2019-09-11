@@ -1,14 +1,17 @@
 from __future__ import print_function
 
 import csv
+import os
 import tempfile
+from mock import patch
 from random import Random
 
 import numpy as np
 import pandas as pd
 
+from django.conf import settings
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from frontend import bq_schemas as schemas
 from frontend.models import (
@@ -39,14 +42,11 @@ class ImportMeasuresTests(TestCase):
         random.seed(1980)
 
         set_up_bq()
+        create_import_log()
         create_organisations(random)
         upload_ccgs_and_practices()
         cls.prescriptions = upload_prescribing(random.randint)
         cls.practice_stats = upload_practice_statistics(random.randint)
-
-        # import_measures uses this ImportLog to work out which months it
-        # should import data.
-        ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
 
     def test_cost_based_percentage_measure(self):
         # This test verifies the behaviour of import_measures for a cost-based
@@ -324,6 +324,26 @@ class ImportMeasuresTests(TestCase):
             self.assertAlmostEqual(mv.cost_savings["10"], series["cost_saving_10"])
 
 
+class ImportMeasuresDefinitionsOnlyTests(TestCase):
+    def test_all_definitions(self):
+        # Test that all production measure definitions can be imported.  We don't test
+        # get_numerator_bnf_codes(), since it requires a lot of setup in BQ, and is
+        # exercised properly in the end-to-end tests.
+
+        create_import_log()
+
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
+            with patch(
+                "frontend.management.commands.import_measures.get_numerator_bnf_codes"
+            ) as get_numerator_bnf_codes:
+                get_numerator_bnf_codes.return_value = []
+                call_command("import_measures", definitions_only=True)
+
+        measure = Measure.objects.get(id="desogestrel")
+        self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
+
+
 def set_up_bq():
     """Set up BQ datasets and tables."""
 
@@ -337,6 +357,12 @@ def set_up_bq():
     client.get_or_create_table(
         "practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA
     )
+
+
+def create_import_log():
+    # import_measures uses this ImportLog to work out which months it
+    # should import data.
+    ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
 
 
 def create_organisations(random):
