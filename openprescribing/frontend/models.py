@@ -333,9 +333,6 @@ class Practice(models.Model):
         address += self.postcode
         return address
 
-    class Meta:
-        app_label = "frontend"
-
     def get_absolute_url(self):
         return reverse("practice_home_page", kwargs={"practice_code": self.code})
 
@@ -350,7 +347,6 @@ class PracticeIsDispensing(models.Model):
     date = models.DateField()
 
     class Meta:
-        app_label = "frontend"
         unique_together = ("practice", "date")
 
 
@@ -395,9 +391,6 @@ class PracticeStatistics(models.Model):
         self = model_prescribing_units.set_units(self)
         super(PracticeStatistics, self).save(*args, **kwargs)
 
-    class Meta:
-        app_label = "frontend"
-
 
 class QOFPrevalence(models.Model):
     """
@@ -437,7 +430,6 @@ class Chemical(models.Model):
         return "%s: %s" % (section.number_str, section.name)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("bnf_code", "chem_name"),)
 
 
@@ -459,9 +451,6 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.is_generic = self.bnf_code[-2:] == "AA"
         super(Product, self).save(*args, **kwargs)
-
-    class Meta:
-        app_label = "frontend"
 
 
 class PresentationManager(models.Manager):
@@ -596,9 +585,6 @@ class Presentation(models.Model):
     def product_name(self):
         return self.dmd_name or self.name
 
-    class Meta:
-        app_label = "frontend"
-
     @classmethod
     def names_for_bnf_codes(cls, bnf_codes):
         """
@@ -642,9 +628,6 @@ class Prescription(models.Model):
     quantity = models.FloatField()
     processing_date = models.DateField()
 
-    class Meta:
-        app_label = "frontend"
-
 
 class Measure(models.Model):
     # Some of these fields are documented in
@@ -686,9 +669,6 @@ class Measure(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        app_label = "frontend"
-
 
 class MeasureValue(models.Model):
     """
@@ -725,7 +705,6 @@ class MeasureValue(models.Model):
     cost_savings = JSONField(null=True, blank=True)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "pct", "practice", "month"),)
 
     objects = MeasureValueQuerySet.as_manager()
@@ -768,7 +747,6 @@ class MeasureGlobal(models.Model):
         super(MeasureGlobal, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "month"),)
 
 
