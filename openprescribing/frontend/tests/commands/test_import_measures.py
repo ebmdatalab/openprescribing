@@ -66,9 +66,12 @@ class ImportMeasuresTests(TestCase):
         self.assertFalse(MeasureValue.objects.filter(month__lt="2011-01-01").exists())
         self.assertFalse(MeasureGlobal.objects.filter(month__lt="2011-01-01").exists())
 
-        # Check that numerator_bnf_codes has been set
+        # Check that numerator_bnf_codes and denominator_bnf_codes have been set.
         m = Measure.objects.get(id="desogestrel")
         self.assertEqual(m.numerator_bnf_codes, ["0703021Q0BBAAAA"])
+        self.assertEqual(
+            m.denominator_bnf_codes, ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
+        )
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.
@@ -98,6 +101,12 @@ class ImportMeasuresTests(TestCase):
 
         # Do the work.
         call_command("import_measures", measure="coproxamol")
+
+        # Check that numerator_bnf_codes has, and denominator_bnf_codes has not, been
+        # set.
+        m = Measure.objects.get(id="coproxamol")
+        self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
+        self.assertEqual(m.denominator_bnf_codes, [])
 
         # Check calculations by redoing calculations with Pandas, and asserting
         # that results match.

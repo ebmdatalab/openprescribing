@@ -665,6 +665,9 @@ class Measure(models.Model):
     numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
     numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
     numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
