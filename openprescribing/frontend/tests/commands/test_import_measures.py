@@ -335,7 +335,7 @@ class ImportMeasuresTests(TestCase):
 class ImportMeasuresDefinitionsOnlyTests(TestCase):
     def test_all_definitions(self):
         # Test that all production measure definitions can be imported.  We don't test
-        # get_numerator_bnf_codes(), since it requires a lot of setup in BQ, and is
+        # get_num_or_denom_bnf_codes(), since it requires a lot of setup in BQ, and is
         # exercised properly in the end-to-end tests.
 
         create_import_log()
@@ -343,9 +343,9 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
         measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
         with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
             with patch(
-                "frontend.management.commands.import_measures.get_numerator_bnf_codes"
-            ) as get_numerator_bnf_codes:
-                get_numerator_bnf_codes.return_value = []
+                "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
+            ) as get_num_or_denom_bnf_codes:
+                get_num_or_denom_bnf_codes.return_value = []
                 call_command("import_measures", definitions_only=True)
 
         measure = Measure.objects.get(id="desogestrel")
