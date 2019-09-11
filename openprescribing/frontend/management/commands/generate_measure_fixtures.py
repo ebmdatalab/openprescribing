@@ -143,21 +143,6 @@ class Command(BaseCommand):
         table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
 
         # Create measures definitions and record the BNF codes used
-        measure_definitions_path = os.path.join(
-            settings.APPS_ROOT,
-            "frontend",
-            "management",
-            "commands",
-            "measure_definitions",
-        )
-
-        # lpzomnibus is a real measure, and we don't want to overwrite its
-        # definition.
-        os.rename(
-            os.path.join(measure_definitions_path, "lpzomnibus.json"),
-            os.path.join(measure_definitions_path, "lpzomnibus.json.bak"),
-        )
-
         bnf_codes = []
 
         for ix in range(5):
@@ -190,13 +175,11 @@ class Command(BaseCommand):
                 "why_it_matters": "Why {} matters".format(name),
                 "url": "http://example.com/measure-{}".format(measure_id),
                 "numerator_short": "Numerator for {}".format(measure_id),
-                "numerator_from": "{hscic}.normalised_prescribing_standard",
+                "numerator_type": "bnf_quantity",
                 "numerator_where": numerator_where,
-                "numerator_columns": "SUM(quantity) AS numerator",
                 "denominator_short": "Denominator for {}".format(measure_id),
-                "denominator_from": "{hscic}.normalised_prescribing_standard",
+                "denominator_type": "bnf_quantity",
                 "denominator_where": denominator_where,
-                "denominator_columns": "SUM(quantity) AS denominator",
                 "is_cost_based": True,
                 "is_percentage": True,
                 "low_is_good": True,
@@ -204,7 +187,9 @@ class Command(BaseCommand):
                 "tags_focus": tags_focus,
             }
 
-            path = os.path.join(measure_definitions_path, "{}.json".format(measure_id))
+            path = os.path.join(
+                settings.MEASURE_DEFINITIONS_PATH, "{}.json".format(measure_id)
+            )
             with open(path, "w") as f:
                 json.dump(measure_definition, f, indent=2)
 
@@ -292,9 +277,6 @@ class Command(BaseCommand):
 
         # Clean up.
         for ix in range(5):
-            numerator_where = ("bnf_code LIKE '0{}01%'".format(ix),)
-            denominator_where = ("bnf_code LIKE '0{}%'".format(ix),)
-
             if ix in [0, 1]:
                 measure_id = "core_{}".format(ix)
             elif ix in [2, 3]:
@@ -303,13 +285,10 @@ class Command(BaseCommand):
                 assert ix == 4
                 measure_id = "lpzomnibus"
 
-            path = os.path.join(measure_definitions_path, "{}.json".format(measure_id))
+            path = os.path.join(
+                settings.MEASURE_DEFINITIONS_PATH, "{}.json".format(measure_id)
+            )
             os.remove(path)
-
-        os.rename(
-            os.path.join(measure_definitions_path, "lpzomnibus.json.bak"),
-            os.path.join(measure_definitions_path, "lpzomnibus.json"),
-        )
 
         # Dump the fixtures.
         fixture_path = os.path.join(
