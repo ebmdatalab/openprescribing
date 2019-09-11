@@ -6,6 +6,7 @@ import tempfile
 from mock import patch
 from random import Random
 
+from google.api_core.exceptions import BadRequest
 import numpy as np
 import pandas as pd
 
@@ -342,6 +343,36 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
+
+
+class CheckMeasureDefinitionsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        create_import_log()
+        set_up_bq()
+
+    def test_check_definition(self):
+        call_command("import_measures", measure="desogestrel", check=True)
+
+    @override_settings(
+        MEASURE_DEFINITIONS_PATH=os.path.join(
+            settings.MEASURE_DEFINITIONS_PATH, "bad", "json"
+        )
+    )
+    def test_check_definition_bad_json(self):
+        with self.assertRaises(ValueError) as command_error:
+            call_command("import_measures", check=True)
+        self.assertIn("Problems parsing JSON", str(command_error.exception))
+
+    @override_settings(
+        MEASURE_DEFINITIONS_PATH=os.path.join(
+            settings.MEASURE_DEFINITIONS_PATH, "bad", "sql"
+        )
+    )
+    def test_check_definition_bad_sql(self):
+        with self.assertRaises(BadRequest) as command_error:
+            call_command("import_measures", check=True)
+        self.assertIn("SQL error", str(command_error.exception))
 
 
 def set_up_bq():
