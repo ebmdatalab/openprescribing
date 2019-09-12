@@ -6,12 +6,17 @@ def simplify_bnf_codes(bnf_codes):
 
         1. every BNF code that belongs to one of these prefixes is in the original list,
         2. every code in the original list belongs to exactly one prefix,
-        3. no prefix is a prefix of another prefix (I think this follows from 2).
+        3. no prefix is a prefix of another prefix (I think this follows from 2),
+        4. every prefix is present in the prescribing data.
 
     A BNF prefix may actually be a full BNF code.
     """
 
     all_bnf_codes = get_all_bnf_codes()
+
+    # Drop any BNF codes for which we don't have prescribing.
+    bnf_codes = set(bnf_codes) & all_bnf_codes
+
     return _prune_paths(bnf_codes, all_bnf_codes)
 
 
@@ -19,7 +24,7 @@ def get_all_bnf_codes():
     """Return list of all BNF codes for which we have prescribing."""
 
     db = get_db()
-    return [r[0] for r in db.query("SELECT bnf_code FROM presentation")]
+    return {r[0] for r in db.query("SELECT bnf_code FROM presentation")}
 
 
 def _prune_paths(paths, all_paths):

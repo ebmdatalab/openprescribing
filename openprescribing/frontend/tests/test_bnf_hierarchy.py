@@ -50,7 +50,6 @@ class TestSimplifyBnfCodes(TestCase):
             "0101010C0BBAAAA",
             "0101010C0BCAAAH",
             "0101010C0BDAAAC",
-            "0101010C0BDABAC",
         ]
 
         factory = DataFactory()
@@ -64,7 +63,7 @@ class TestSimplifyBnfCodes(TestCase):
             "0101010C0BBAAAA",
             "0101010C0BCAAAH",
             "0101010C0BDAAAC",
-            "0101010C0BDABAC",
+            "0101010C0BDABAC",  # This is missing from all_bnf_codes.
         ]
 
         with patched_global_matrixstore_from_data_factory(factory):
