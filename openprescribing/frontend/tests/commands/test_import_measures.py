@@ -75,19 +75,20 @@ class ImportMeasuresTests(TestCase):
 
         # Check that numerator_bnf_codes and denominator_bnf_codes have been set.
         m = Measure.objects.get(id="desogestrel")
-        self.assertEqual(m.numerator_bnf_codes, ["0703021Q0B"])
-        self.assertEqual(m.denominator_bnf_codes, ["0703021Q"])
+        self.assertEqual(m.numerator_bnf_codes, ["0703021Q0BBAAAA"])
+        self.assertEqual(
+            m.denominator_bnf_codes, ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
+        )
 
-        # Check that analyse_url can be derived correctly.
-        url = m.analyse_url()
-        querystring = url.split("#")[1]
+        # Check that analyse_url has been set.
+        querystring = m.analyse_url.split("#")[1]
         params = parse_qs(querystring)
         self.assertEqual(
             params,
             {
                 "measure": ["desogestrel"],
-                "numIds": ["0703021Q0B"],
-                "denomIds": ["0703021Q"],
+                "numIds": ["0703021Q0BB"],
+                "denomIds": ["0703021Q0"],
             },
         )
 
@@ -124,18 +125,17 @@ class ImportMeasuresTests(TestCase):
         # Check that numerator_bnf_codes has, and denominator_bnf_codes has not, been
         # set.
         m = Measure.objects.get(id="coproxamol")
-        self.assertEqual(m.numerator_bnf_codes, ["0407010Q"])
+        self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
         self.assertEqual(m.denominator_bnf_codes, [])
 
-        # Check that analyse_url can be derived correctly.
-        url = m.analyse_url()
-        querystring = url.split("#")[1]
+        # Check that analyse_url has been set.
+        querystring = m.analyse_url.split("#")[1]
         params = parse_qs(querystring)
         self.assertEqual(
             params,
             {
                 "measure": ["coproxamol"],
-                "numIds": ["0407010Q"],
+                "numIds": ["0407010Q0"],
                 "denom": ["total_list_size"],
             },
         )
@@ -394,10 +394,6 @@ class ImportMeasuresDefinitionsOnlyTests(TestCase):
 
         measure = Measure.objects.get(id="desogestrel")
         self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
-
-        # Test that analyse_url can be constructed for every measure.
-        for measure in Measure.objects.all():
-            measure.analyse_url()
 
 
 class CheckMeasureDefinitionsTests(TestCase):

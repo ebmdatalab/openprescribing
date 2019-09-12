@@ -17,11 +17,13 @@ import logging
 import os
 import re
 import tempfile
+from urllib import urlencode
 
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.core.management import BaseCommand
+from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db import transaction
 
@@ -324,9 +326,41 @@ def create_or_update_measure(measure_def, end_date):
             get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
         )
 
+    measure.analyse_url = build_analyse_url(measure)
+
     measure.save()
 
     return measure
+
+
+def build_analyse_url(measure):
+    params = {"measure": measure.id}
+
+    if measure.numerator_is_list_of_bnf_codes:
+        if not measure.numerator_bnf_codes:
+            return
+        params["numIds"] = ",".join(simplify_bnf_codes(measure.numerator_bnf_codes))
+    else:
+        return
+
+    if measure.denominator_is_list_of_bnf_codes:
+        if not measure.denominator_bnf_codes:
+            return
+        params["denomIds"] = ",".join(simplify_bnf_codes(measure.denominator_bnf_codes))
+    elif measure.denominator_type == "list_size":
+        params["denom"] = "total_list_size"
+    elif measure.denominator_type == "star_pu_antibiotics":
+        params["denom"] = "star_pu.oral_antibacterials_item"
+    else:
+        return
+
+    querystring = urlencode(params)
+    url = "{}#{}".format(reverse("analyse"), querystring)
+
+    if len(url) > 1000:
+        return
+
+    return url
 
 
 def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
@@ -383,8 +417,7 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
         substitutions = None
 
     results = Client().query(sql, substitutions=substitutions)
-    bnf_codes = [row[0] for row in results.rows]
-    return simplify_bnf_codes(bnf_codes)
+    return [row[0] for row in results.rows]
 
 
 def build_num_or_denom_fields(measure, num_or_denom):
