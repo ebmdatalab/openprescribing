@@ -71,7 +71,7 @@ def measure_global(request, format=None):
                 "low_is_good": measure.low_is_good,
                 "tags_focus": tags_focus,
                 "numerator_is_list_of_bnf_codes": measure.numerator_is_list_of_bnf_codes,
-                "analyse_url": measure.analyse_url(),
+                "analyse_url": measure.analyse_url,
                 "tags": _hydrate_tags(measure.tags),
                 "data": [d_copy],
             }
