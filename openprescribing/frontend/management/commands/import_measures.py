@@ -385,9 +385,7 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
 
     if get_measure_attr("bnf_codes_query") is not None:
         sql = get_measure_attr("bnf_codes_query")
-        three_months_ago = datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(
-            months=2
-        )
+        three_months_ago = end_date - relativedelta(months=2)
         substitutions = {
             "three_months_ago": three_months_ago.strftime("%Y-%m-01 00:00:00")
         }
