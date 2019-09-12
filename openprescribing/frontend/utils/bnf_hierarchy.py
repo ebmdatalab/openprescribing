@@ -2,7 +2,8 @@ from matrixstore.db import get_db
 
 
 def simplify_bnf_codes(bnf_codes):
-    """Given list of BNF codes, return list of BNF prefixes such that:
+    """Given list of BNF codes, return list of BNF prefixes for BNF subsections such
+    that:
 
         1. every BNF code that belongs to one of these prefixes is in the original list,
         2. every code in the original list belongs to exactly one prefix,
@@ -17,7 +18,12 @@ def simplify_bnf_codes(bnf_codes):
     # Drop any BNF codes for which we don't have prescribing.
     bnf_codes = set(bnf_codes) & all_bnf_codes
 
-    return _prune_paths(bnf_codes, all_bnf_codes)
+    prefixes = []
+
+    for prefix in _prune_paths(bnf_codes, all_bnf_codes):
+        prefixes.extend(get_subsection_prefixes(prefix))
+
+    return sorted(prefixes)
 
 
 def get_all_bnf_codes():
@@ -25,6 +31,31 @@ def get_all_bnf_codes():
 
     db = get_db()
     return {r[0] for r in db.query("SELECT bnf_code FROM presentation")}
+
+
+def get_subsection_prefixes(prefix):
+    """Return BNF codes/prefixes of BNF subsections that begin with `prefix`.
+
+    For instance, if `prefix` is "0703021", we find all prefixes corresponding to
+    chemicals beginning 0703021.
+    """
+
+    for length in [
+        2,  # Chapter
+        4,  # Section
+        6,  # Paragraph
+        9,  # Chemical
+        11,  # Product
+        15,  # Presentation
+    ]:
+        if len(prefix) <= length:
+            break
+
+    db = get_db()
+    sql = (
+        "SELECT DISTINCT substr(bnf_code, 1, ?) FROM presentation WHERE bnf_code LIKE ?"
+    )
+    return {r[0] for r in db.query(sql, [length, prefix + "%"])}
 
 
 def _prune_paths(paths, all_paths):

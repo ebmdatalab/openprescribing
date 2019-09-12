@@ -34,22 +34,22 @@ class TestPrunePaths(TestCase):
 
 class TestSimplifyBnfCodes(TestCase):
     def test_simplify_bnf_codes(self):
-        # These are all BNF codes for Aluminium Hydroxide.
+        # These are BNF codes for some of the presentations for two different products,
+        # Co-Careldopa (generic, 0409010N0AA) and Sinemet (branded, 0409010N0BB).
+        #
+        # We check that simplifying a list of BNF codes for the branded presentations
+        # returns the BNF prefix of the branded product.
+
         all_bnf_codes = [
-            "0101010C0AAAAAA",
-            "0101010C0AAACAC",
-            "0101010C0AAADAD",
-            "0101010C0AAAFAF",
-            "0101010C0AAAGAG",
-            "0101010C0AAAHAH",
-            "0101010C0AAAIAI",
-            "0101010C0AAAJAJ",
-            "0101010C0AAAKAK",
-            "0101010C0AAALAL",
-            "0101010C0AAAMAM",
-            "0101010C0BBAAAA",
-            "0101010C0BCAAAH",
-            "0101010C0BDAAAC",
+            "0409010N0AAAAAA",
+            "0409010N0AAABAB",
+            "0409010N0AAACAC",
+            "0409010N0AAADAD",
+            "0409010N0AAAEAE",
+            "0409010N0BBAAAA",
+            "0409010N0BBABAC",
+            "0409010N0BBACAB",
+            "0409010N0BBADAD",
         ]
 
         factory = DataFactory()
@@ -60,11 +60,12 @@ class TestSimplifyBnfCodes(TestCase):
             factory.create_prescription(presentation, practice, month)
 
         branded_bnf_codes = [
-            "0101010C0BBAAAA",
-            "0101010C0BCAAAH",
-            "0101010C0BDAAAC",
-            "0101010C0BDABAC",  # This is missing from all_bnf_codes.
+            "0409010N0BBAAAA",
+            "0409010N0BBABAC",
+            "0409010N0BBACAB",
+            "0409010N0BBADAD",
+            "0409010N0BBAEAE",  # This is missing from all_bnf_codes.
         ]
 
         with patched_global_matrixstore_from_data_factory(factory):
-            self.assertEqual(simplify_bnf_codes(branded_bnf_codes), ["0101010C0B"])
+            self.assertEqual(simplify_bnf_codes(branded_bnf_codes), ["0409010N0BB"])
