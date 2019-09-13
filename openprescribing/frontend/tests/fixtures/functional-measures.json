@@ -674,7 +674,8 @@
     "numerator_is_list_of_bnf_codes": true,
     "denominator_bnf_codes": "[\"000000000000000\", \"000100000000000\"]",
     "denominator_bnf_codes_query": null,
-    "denominator_is_list_of_bnf_codes": true
+    "denominator_is_list_of_bnf_codes": true,
+    "analyse_url": "/analyse/#numIds=0001&denomIds=00&measure=core_0"
   }
 },
 {
@@ -708,7 +709,8 @@
     "numerator_is_list_of_bnf_codes": true,
     "denominator_bnf_codes": "[\"010000000000000\", \"010100000000000\"]",
     "denominator_bnf_codes_query": null,
-    "denominator_is_list_of_bnf_codes": true
+    "denominator_is_list_of_bnf_codes": true,
+    "analyse_url": "/analyse/#numIds=0101&denomIds=01&measure=core_1"
   }
 },
 {
@@ -742,7 +744,8 @@
     "numerator_is_list_of_bnf_codes": true,
     "denominator_bnf_codes": "[\"020000000000000\", \"020100000000000\"]",
     "denominator_bnf_codes_query": null,
-    "denominator_is_list_of_bnf_codes": true
+    "denominator_is_list_of_bnf_codes": true,
+    "analyse_url": "/analyse/#numIds=0201&denomIds=02&measure=lp_2"
   }
 },
 {
@@ -776,7 +779,8 @@
     "numerator_is_list_of_bnf_codes": true,
     "denominator_bnf_codes": "[\"030000000000000\", \"030100000000000\"]",
     "denominator_bnf_codes_query": null,
-    "denominator_is_list_of_bnf_codes": true
+    "denominator_is_list_of_bnf_codes": true,
+    "analyse_url": "/analyse/#numIds=0301&denomIds=03&measure=lp_3"
   }
 },
 {
@@ -810,7 +814,8 @@
     "numerator_is_list_of_bnf_codes": true,
     "denominator_bnf_codes": "[\"020000000000000\", \"020100000000000\", \"030000000000000\", \"030100000000000\"]",
     "denominator_bnf_codes_query": null,
-    "denominator_is_list_of_bnf_codes": true
+    "denominator_is_list_of_bnf_codes": true,
+    "analyse_url": "/analyse/#numIds=0201%2C0301&denomIds=02%2C03&measure=lpzomnibus"
   }
 },
 {

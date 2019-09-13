@@ -51,6 +51,10 @@ from frontend.models import (
     RegionalTeam,
 )
 from gcutils.bigquery import Client
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
+from matrixstore.tests.data_factory import DataFactory
 
 
 class Command(BaseCommand):
@@ -272,8 +276,19 @@ class Command(BaseCommand):
             f.seek(0)
             table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
+        # Create some dummy prescribing data in the MatrixStore.
+        factory = DataFactory()
+        month = factory.create_months("2018-10-01", 1)[0]
+        practice = factory.create_practices(1)[0]
+        for bnf_code in bnf_codes:
+            presentation = factory.create_presentation(bnf_code)
+            factory.create_prescription(presentation, practice, month)
+
         # Do the work.
-        call_command("import_measures", measure="core_0,core_1,lp_2,lp_3,lpzomnibus")
+        with patched_global_matrixstore_from_data_factory(factory):
+            call_command(
+                "import_measures", measure="core_0,core_1,lp_2,lp_3,lpzomnibus"
+            )
 
         # Clean up.
         for ix in range(5):

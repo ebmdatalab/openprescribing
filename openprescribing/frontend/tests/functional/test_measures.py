@@ -19,9 +19,11 @@ from selenium_base import SeleniumTestCase
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
-MEASURE_CORE_0_ANALYSE_URL = "/analyse/#numIds=000100000000000&denomIds=000000000000000%2C000100000000000&measure=core_0"
-MEASURE_LPZOMNIBUS_ANALYSE_URL = "/analyse/#numIds=020100000000000%2C030100000000000&denomIds=020000000000000%2C020100000000000%2C030000000000000%2C030100000000000&measure=lpzomnibus"
-MEASURE_LP_2_ANALYSE_URL = "/analyse/#numIds=020100000000000&denomIds=020000000000000%2C020100000000000&measure=lp_2"
+MEASURE_CORE_0_ANALYSE_URL = "/analyse/#numIds=0001&denomIds=00&measure=core_0"
+MEASURE_LPZOMNIBUS_ANALYSE_URL = (
+    "/analyse/#numIds=0201%2C0301&denomIds=02%2C03&measure=lpzomnibus"
+)
+MEASURE_LP_2_ANALYSE_URL = "/analyse/#numIds=0201&denomIds=02&measure=lp_2"
 
 
 @copy_fixtures_to_matrixstore
