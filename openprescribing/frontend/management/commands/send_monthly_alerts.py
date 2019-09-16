@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
 import logging
 
@@ -206,14 +207,16 @@ class Command(BaseCommand):
         # We do understand this one, so keep a record of its value
         recipient_email = set_options.pop("recipient_email", None)
         if not set_options:
-            logger.info("Sending All England alerts")
+            message = "Sending All England alerts"
+            logger.info(message)
+            print (message)
             send_all_england_alerts(recipient_email)
         else:
-            logger.info(
-                "Not sending All England alerts as found unhandled option: {}".format(
-                    ", ".join(set_options.keys())
-                )
+            message = "Not sending All England alerts as found unhandled option: {}".format(
+                ", ".join(set_options.keys())
             )
+            logger.info(message)
+            print (message)
 
     def handle(self, *args, **options):
         self.validate_options(**options)
