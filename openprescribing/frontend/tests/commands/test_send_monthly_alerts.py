@@ -15,6 +15,8 @@ from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
+from frontend.tests.data_factory import DataFactory
+from frontend.tests.test_api_spending import ApiTestBase
 
 
 CMD_NAME = "send_monthly_alerts"
@@ -451,6 +453,21 @@ class SearchEmailTestCase(TestCase):
         self.assertIn("**Hello!**", text)
         self.assertIn("/bookmarks/dummykey", text)
         self.assertRegexpMatches(text, "http://localhost/analyse/.*#%s" % "something")
+
+
+class AllEnglandAlertTestCase(ApiTestBase):
+
+    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+
+    def test_all_england_alerts_sent(self):
+        factory = DataFactory()
+
+        # Create an All England bookmark, send alerts, and make sure one email
+        # is sent to correct user
+        bookmark = factory.create_org_bookmark(None)
+        call_command(CMD_NAME)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
 
 
 def call_mocked_command(context, mock_finder, **opts):

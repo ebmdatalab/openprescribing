@@ -200,6 +200,7 @@ class Command(BaseCommand):
             "settings",
             "no_color",
             "max_errors",
+            "skip_checks",
         ]:
             set_options.pop(key, None)
         # We do understand this one, so keep a record of its value
