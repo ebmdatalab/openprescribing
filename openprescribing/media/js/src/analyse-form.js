@@ -258,7 +258,7 @@ var queryForm = {
       _.each(this.globalOptions.orgIds, function(d) {
         url += d.id + ',';
       });
-      url += '&org_type=' + this.globalOptions.org;
+      url += '&org_type=' + this.getOrgTypeForQuery();
       return $.ajax({
         type: 'GET',
         url: url,
@@ -383,15 +383,21 @@ var queryForm = {
     $(this.el.denominatorIds).select2(optionsDenom);
     var optionsOrg = $.extend(true, {}, select2Options);
     optionsOrg.ajax.url = function() {
-      var orgType = _this.globalOptions.org;
-      if (orgType === 'practice') {
-        orgType = 'CCG,practice';
-      }
+      var orgType = _this.getOrgTypeForQuery();
       return config.apiHost + '/api/1.0/org_code/?org_type=' + orgType + '&format=json';
     };
     $(this.el.orgIds).select2(optionsOrg);
     _this.globalOptions.selectOrgOptions = optionsOrg;
   },
+
+  getOrgTypeForQuery: function() {
+    var orgType = this.globalOptions.org;
+    // Support selecting all practices in a CCG by supplying the CCG code
+    if (orgType === 'practice') {
+      orgType = 'CCG,practice';
+    }
+    return orgType;
+  }
 
 };
 
