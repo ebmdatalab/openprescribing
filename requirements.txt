@@ -55,7 +55,7 @@ httplib2==0.13.1          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.4.1
-lz4==2.1.10
+lz4==2.2.1
 mailchimp3==3.0.9
 mccabe==0.6.1             # via flake8
 mock==3.0.5
