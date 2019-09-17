@@ -67,7 +67,7 @@ Specifically, you should:
             """.strip()
             )
 
-            jsessionid = raw_input()
+            jsessionid = input()
         else:
             jsessionid = kwargs["jsessionid"]
 

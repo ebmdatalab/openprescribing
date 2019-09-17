@@ -22,4 +22,4 @@ def find_files(path):
 
 
 def get_input():
-    return raw_input("> ")
+    return input("> ")
