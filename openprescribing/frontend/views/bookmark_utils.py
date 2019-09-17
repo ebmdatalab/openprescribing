@@ -61,7 +61,7 @@ class CUSUM(object):
     """
 
     def __init__(self, data, window_size=12, sensitivity=5, name=""):
-        data = np.array(map(lambda x: np.nan if x is None else x, data))
+        data = np.array([np.nan if x is None else x for x in data])
         # Remove sufficient leading nulls to ensure we can start with
         # any value
         self.start_index = 0

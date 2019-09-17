@@ -72,7 +72,7 @@ class TestReadExistingFile(SimpleTestCase):
         else:
             dtype = numpy.int_ if integer else numpy.float_
             matrix = numpy.zeros(shape, dtype=dtype)
-        coords = map(random.randrange, shape)
+        coords = list(map(random.randrange, shape))
         value = random.randrange(128) if integer else random.random()
         matrix[coords] = value
         if sparse:
