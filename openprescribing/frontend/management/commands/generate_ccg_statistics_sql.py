@@ -8,7 +8,6 @@ When the keys in the JSON change, replace
 """
 
 
-
 from django.core.management import BaseCommand
 from django.template import Context, Template
 
@@ -87,4 +86,4 @@ GROUP BY
             {"keys": keys, "safe_keys": safe_keys, "zipped_keys": zipped_keys},
             autoescape=False,
         )
-        print (template.render(ctx))
+        print(template.render(ctx))

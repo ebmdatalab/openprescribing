@@ -20,7 +20,6 @@ configurable.)
 """
 
 
-
 from collections import defaultdict
 import sys
 

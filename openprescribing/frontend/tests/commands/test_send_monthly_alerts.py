@@ -316,10 +316,7 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "These add up to around <b>£10</b> of " "potential savings",
-            html,
-        )
+        self.assertIn("These add up to around <b>£10</b> of " "potential savings", html)
         self.assertRegex(
             html,
             '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
@@ -438,9 +435,7 @@ class SearchEmailTestCase(TestCase):
         self.assertEqual(mime_type, "text/html")
 
         self.assertIn("/bookmarks/dummykey", html)
-        self.assertRegex(
-            html, '<a href="http://localhost/analyse/.*#%s' % "something"
-        )
+        self.assertRegex(html, '<a href="http://localhost/analyse/.*#%s' % "something")
 
     def test_email_body_text(self, attach_image):
         opts = {

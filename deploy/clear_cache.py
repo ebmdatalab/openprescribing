@@ -19,7 +19,7 @@ def list_cloudflare_zones():
     }
     result = json.loads(requests.get(url, headers=headers).text)
     zones = [{"name": x["name"], "id": x["id"]} for x in result["result"]]
-    print (zones)
+    print(zones)
 
 
 def clear_cloudflare():
@@ -36,7 +36,7 @@ def clear_cloudflare():
         ).text
     )
     if result["success"]:
-        print ("Cloudflare clearing succeeded")
+        print("Cloudflare clearing succeeded")
     else:
         raise ValueError(
             "Cloudflare clearing failed: %s" % json.dumps(result, indent=2)

@@ -1,5 +1,3 @@
-
-
 from collections import defaultdict
 import datetime
 import fnmatch
@@ -145,19 +143,19 @@ class Task(object):
 
 class ManualFetchTask(Task):
     def run(self, year, month):
-        print ("Running manual fetch task {}".format(self.name))
+        print("Running manual fetch task {}".format(self.name))
         instructions = self.manual_fetch_instructions()
-        print (instructions)
+        print(instructions)
         paths_before = find_files(self.source.data_dir)
         input("Press return when done, or to skip this step")
         paths_after = find_files(self.source.data_dir)
         new_paths = [path for path in paths_after if path not in paths_before]
         if new_paths:
-            print ("The following files have been manually fetched:")
+            print("The following files have been manually fetched:")
             for path in new_paths:
-                print (" * {}".format(path))
+                print(" * {}".format(path))
         else:
-            print ("No new files were found at {}".format(self.source.data_dir))
+            print("No new files were found at {}".format(self.source.data_dir))
         input(
             "Press return to confirm, or Ctrl+C to cancel " "and resolve any problems"
         )
@@ -207,7 +205,7 @@ class ManualFetchTask(Task):
 
 class AutoFetchTask(Task):
     def run(self, year, month):
-        print ("Running auto fetch task {}".format(self.name))
+        print("Running auto fetch task {}".format(self.name))
         command = self.command.format(year=year, month=month)
         tokens = shlex.split(command)
         call_command(*tokens)
@@ -216,7 +214,7 @@ class AutoFetchTask(Task):
 class ConvertTask(Task):
     def run(self, year, month):
         # For now, year and month are ignored
-        print ("Running convert task {}".format(self.name))
+        print("Running convert task {}".format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_pattern(), path)
@@ -228,7 +226,7 @@ class ConvertTask(Task):
 class ImportTask(Task):
     def run(self, year, month):
         # For now, year and month are ignored
-        print ("Running import task {}".format(self.name))
+        print("Running import task {}".format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_pattern(), path)
@@ -357,9 +355,9 @@ def upload_task_input_files(task):
         name = "hscic" + path.replace(settings.PIPELINE_DATA_BASEDIR, "/")
         blob = bucket.blob(name)
         if blob.exists():
-            print ("Skipping %s, already uploaded" % name)
+            print("Skipping %s, already uploaded" % name)
             continue
-        print ("Uploading %s to %s" % (path, name))
+        print("Uploading %s to %s" % (path, name))
         with open(path) as f:
             blob.upload_from_file(f)
 
@@ -369,7 +367,7 @@ def path_matches_pattern(path, pattern):
 
 
 def call_command(*args):
-    print ("call_command {}".format(args))
+    print("call_command {}".format(args))
     return django_call_command(*args)
 
 

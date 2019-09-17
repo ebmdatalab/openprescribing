@@ -14,7 +14,6 @@
 #   vpids is a comma-separated list of IDs of VMPs
 
 
-
 import os
 import sys
 
@@ -22,7 +21,7 @@ from openpyxl import Workbook, load_workbook
 import psycopg2
 
 if len(sys.argv) != 4:
-    print ("Usage: python gen_test_snomed_mapping.py [inp_path] [outp_path] [vpids]")
+    print("Usage: python gen_test_snomed_mapping.py [inp_path] [outp_path] [vpids]")
     sys.exit(1)
 
 inp_path = sys.argv[1]
@@ -78,7 +77,7 @@ for row in rows[1:]:
 
     if int(snomed_code) in snomed_codes:
         row_values = [cell.value for cell in row]
-        print (snomed_code)
+        print(snomed_code)
         ws.append(row_values)
 
 wb_out.save(outp_path)

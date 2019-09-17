@@ -18,7 +18,7 @@ with open("schema.csv") as f:
     lines = list(csv.DictReader(f))
 
 
-print ("from django.db import models")
+print("from django.db import models")
 
 table = None
 
@@ -28,12 +28,12 @@ for line in lines:
 
     if line["table"] != table:
         table = line["table"]
-        print ()
-        print ()
-        print (f"class {model_name(table)}(models.Model):")
-        print ("#    class Meta:")
-        print ('#        verbose_name = "TODO"')
-        print ()
+        print()
+        print()
+        print(f"class {model_name(table)}(models.Model):")
+        print("#    class Meta:")
+        print('#        verbose_name = "TODO"')
+        print()
 
     if line["type"] == "retired":
         continue
@@ -66,9 +66,9 @@ for line in lines:
 
     options.append(("help_text", quote(line["descr"])))
 
-    print (f'    {line["field"]} = models.{line["type"]}(')
+    print(f'    {line["field"]} = models.{line["type"]}(')
 
     for k, v in options:
-        print (f"        {k}={v},")
+        print(f"        {k}={v},")
 
-    print ("    )")
+    print("    )")

@@ -1,5 +1,3 @@
-
-
 from django.core.management import BaseCommand
 
 from openprescribing.utils import get_input

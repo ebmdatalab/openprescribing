@@ -47,4 +47,4 @@ class Command(BaseCommand):
                         if related_obj not in objs:
                             objs.append(related_obj)
 
-        print (serializers.serialize("json", objs, indent=2))
+        print(serializers.serialize("json", objs, indent=2))

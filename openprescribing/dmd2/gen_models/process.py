@@ -111,9 +111,9 @@ for line in lines:
         line["type"] = "retired"
 
     else:
-        print ("-" * 80)
-        print (line["table"], line["field"])
-        print (line["orig_descr"])
+        print("-" * 80)
+        print(line["table"], line["field"])
+        print(line["orig_descr"])
         assert False
 
     if line["field"] == "cd":

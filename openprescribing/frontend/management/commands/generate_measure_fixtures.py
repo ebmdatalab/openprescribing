@@ -26,7 +26,6 @@
 # BigQuery and is available for BQ_DEFAULT_TABLE_EXPIRATION_MS.
 
 
-
 import csv
 import itertools
 import json

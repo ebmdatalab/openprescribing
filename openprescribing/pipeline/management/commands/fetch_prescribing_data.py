@@ -1,5 +1,3 @@
-
-
 from argparse import RawTextHelpFormatter
 import datetime
 import os
@@ -51,7 +49,7 @@ Specifically, you should:
         if kwargs["jsessionid"] is None:
             # Note that this is mostly-duplicated above, but I can't see a nice
             # way of avoiding this.
-            print (
+            print(
                 """
 The data is on a site that is protected by a captcha.  To download it, you will
 need to solve the captcha in your browser.  This will set a cookie in your
@@ -82,7 +80,7 @@ Specifically, you should:
         datestr = date.strftime("%b, %Y").upper()  # eg JAN, 2017
 
         if self.already_downloaded(year_and_month):
-            print ("Already downloaded data for", year_and_month)
+            print("Already downloaded data for", year_and_month)
             return
 
         period_id = self.period_id(session, datestr)

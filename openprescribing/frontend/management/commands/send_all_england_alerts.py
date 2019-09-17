@@ -3,7 +3,6 @@ Send alerts about all of NHS England
 """
 
 
-
 import logging
 
 from django.core.management import BaseCommand
@@ -45,7 +44,7 @@ def send_alerts(recipient_email=None):
         with EmailErrorDeferrer() as error_deferrer:
             error_deferrer.try_email(send_alert, bookmark, date)
 
-    print ("Sent {} All England alerts".format(len(bookmarks)))
+    print("Sent {} All England alerts".format(len(bookmarks)))
 
 
 def make_dummy_bookmark(email_address):

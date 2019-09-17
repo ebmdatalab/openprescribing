@@ -1,5 +1,3 @@
-
-
 from datetime import date
 
 from django.core.management import BaseCommand
@@ -50,4 +48,4 @@ class Command(BaseCommand):
             lines.append("Drug: {}".format(c.drug))
             lines.append("Pack size: {}".format(c.pack_size))
 
-        print ("\n".join(lines))
+        print("\n".join(lines))

@@ -1,5 +1,3 @@
-
-
 from collections import namedtuple
 
 from django.db import connection

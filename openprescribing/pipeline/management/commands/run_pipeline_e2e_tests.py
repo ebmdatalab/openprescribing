@@ -1,5 +1,3 @@
-
-
 from distutils.dir_util import copy_tree
 import glob
 import os
@@ -40,7 +38,7 @@ class Command(BaseCommand):
 
 
 def run_end_to_end():
-    print ("BQ_NONCE: {}".format(settings.BQ_NONCE))
+    print("BQ_NONCE: {}".format(settings.BQ_NONCE))
 
     call_command("migrate")
 

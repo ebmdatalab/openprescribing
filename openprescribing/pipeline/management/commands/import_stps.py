@@ -1,4 +1,3 @@
-
 import re
 
 from django.core.management import BaseCommand
@@ -52,6 +51,6 @@ https://digital.nhs.uk/services/organisation-data-service/data-downloads/other-n
                 ccg_code = row[10]
                 ccg = PCT.objects.get(code=ccg_code)
                 assert ccg.regional_team == rt
-                print (ccg.name, "is in STP", stp.name)
+                print(ccg.name, "is in STP", stp.name)
                 ccg.stp = stp
                 ccg.save()

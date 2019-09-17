@@ -1,5 +1,3 @@
-
-
 from contextlib import contextmanager
 import string
 import subprocess
@@ -350,7 +348,7 @@ class Table(object):
             columns = [field.name for field in schema]
         table_dumper = TableDumper(model, columns, transformer)
 
-        with tempfile.NamedTemporaryFile('w+t') as f:
+        with tempfile.NamedTemporaryFile("w+t") as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
             self.insert_rows_from_csv(f.name, schema)

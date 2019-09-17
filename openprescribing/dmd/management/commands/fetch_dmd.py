@@ -1,5 +1,3 @@
-
-
 from argparse import RawTextHelpFormatter
 import datetime
 import os
@@ -49,7 +47,7 @@ Specifically, you should:
         if kwargs["jsessionid"] is None:
             # Note that this is mostly-duplicated above, but I can't see a nice
             # way of avoiding this.
-            print (
+            print(
                 """
 The files are on a site that requires you to log in.  To download the files,
 you will need to visit the site in your browser and log in.  This will set a
@@ -79,7 +77,7 @@ Specifically, you should:
         zip_path = os.path.join(dir_path, "download.zip")
 
         if os.path.exists(dir_path):
-            print ("Data already downloaded for", year_and_month)
+            print("Data already downloaded for", year_and_month)
             return
 
         mkdir_p(dir_path)
