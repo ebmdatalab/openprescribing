@@ -98,7 +98,7 @@ class Command(BaseCommand):
                     )
                     pcns.append(pcn)
                 # Function to return next PCN, looping round forever
-                get_next_pcn = itertools.cycle(pcns).next
+                get_next_pcn = itertools.cycle(pcns).__next__
 
                 for ccg_ix in range(2):
                     ccg = PCT.objects.create(
