@@ -101,7 +101,7 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("access-control-allow-origin", "*")
         self.end_headers()
-        self.wfile.write(data)
+        self.wfile.write(data.encode("utf8"))
         return
 
 
