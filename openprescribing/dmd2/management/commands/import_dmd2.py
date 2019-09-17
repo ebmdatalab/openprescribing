@@ -628,7 +628,7 @@ def get_common_name(names):
 
         common_name = " ".join(words)
 
-    if len(common_name.split()) < len(names[0].split()) / 2:
+    if len(common_name.split()) < len(names[0].split()) // 2:
         return None
 
     return common_name.strip()
