@@ -549,7 +549,7 @@ class GenerateImageTestCase(unittest.TestCase):
             # Attachments in emails are base64 *with line breaks*, so
             # we remove those.
             self.assertEqual(
-                attachment.get_payload().replace("\n", ""),
+                attachment.get_payload().replace("\n", "").encode("utf8"),
                 base64.b64encode(expected.read()),
             )
 
@@ -567,7 +567,7 @@ class GenerateImageTestCase(unittest.TestCase):
         ) as expected:
             attachment = self.msg.attachments[0]
             self.assertEqual(
-                attachment.get_payload().replace("\n", ""),
+                attachment.get_payload().replace("\n", "").encode("utf8"),
                 base64.b64encode(expected.read()),
             )
 
