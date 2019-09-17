@@ -2,7 +2,7 @@
 Send alerts about about NCSO concessions.
 """
 
-from __future__ import print_function
+
 
 import logging
 

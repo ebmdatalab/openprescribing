@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import logging
 
 from django.core.management.base import BaseCommand

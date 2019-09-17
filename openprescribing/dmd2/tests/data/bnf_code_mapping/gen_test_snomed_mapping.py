@@ -6,7 +6,7 @@
 #
 #   python gen_test_snomed_mapping.py [inp_path] [outp_path]
 
-from __future__ import print_function
+
 
 import os
 import sys

@@ -2,7 +2,7 @@
 Send alerts about all of NHS England
 """
 
-from __future__ import print_function
+
 
 import logging
 

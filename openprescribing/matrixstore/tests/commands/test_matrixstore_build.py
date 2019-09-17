@@ -13,7 +13,7 @@ The end-to-end test contains an additional check whereby it builds a file using
 the fast process and checks that the resulting SQL dump is identical to that
 produced by the full end-to-end process.
 """
-from __future__ import print_function
+
 
 from collections import defaultdict
 import os

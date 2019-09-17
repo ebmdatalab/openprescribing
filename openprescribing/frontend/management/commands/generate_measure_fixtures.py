@@ -25,7 +25,7 @@
 # this task expects that databsae to be empty.  Intermediate data is written to
 # BigQuery and is available for BQ_DEFAULT_TABLE_EXPIRATION_MS.
 
-from __future__ import print_function
+
 
 import csv
 import itertools

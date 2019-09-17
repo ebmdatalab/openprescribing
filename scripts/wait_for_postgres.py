@@ -4,7 +4,7 @@ This is useful when running in docker, as the first time we create a
 postgres volume it takes a few seconds to become ready.
 
 """
-from __future__ import print_function
+
 import time
 import os
 import psycopg2
