@@ -459,7 +459,7 @@ class InterestingMeasureFinder(object):
 
         """
         for measure in from_list[:]:
-            if type(measure) == dict:
+            if isinstance(measure, dict):
                 # As returned by most_changing function
                 m = measure["measure"]
             else:
