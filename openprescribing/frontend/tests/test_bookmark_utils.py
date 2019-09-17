@@ -643,11 +643,11 @@ class TestContextForOrgEmail(unittest.TestCase):
         ]
         finder = bookmark_utils.InterestingMeasureFinder(pct="foo")
         context = finder.context_for_org_email()
-        self.assertItemsEqual(
+        self.assertCountEqual(
             context["most_changing_interesting"],
             [{"measure": non_ordinal_measure_1}, {"measure": non_ordinal_measure_2}],
         )
-        self.assertItemsEqual(
+        self.assertCountEqual(
             context["interesting"], [non_ordinal_measure_1, non_ordinal_measure_2]
         )
         self.assertEqual(context["best"], [ordinal_measure_1])
