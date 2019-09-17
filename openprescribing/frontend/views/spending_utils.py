@@ -75,7 +75,7 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
     tariff_costs = costs.tariff_costs[:, 0]
     extra_costs = costs.extra_costs[:, 0]
     quantities = costs.quantities[:, 0]
-    names = Presentation.names_for_bnf_codes(costs.bnf_code_offsets.keys())
+    names = Presentation.names_for_bnf_codes(list(costs.bnf_code_offsets.keys()))
     results = []
     for bnf_code, offset in costs.bnf_code_offsets.items():
         results.append(
