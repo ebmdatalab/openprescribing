@@ -996,10 +996,15 @@ def gdoc_view(request, doc_id):
 
     content = (
         "<style>"
-        + "".join([html.tostring(child) for child in tree.head.xpath("//style")])
+        + "".join(
+            [
+                html.tostring(child).decode("utf8")
+                for child in tree.head.xpath("//style")
+            ]
+        )
         + "</style>"
     )
-    content += "".join([html.tostring(child) for child in tree.body])
+    content += "".join([html.tostring(child).decode("utf8") for child in tree.body])
     context = {"content": content}
     return render(request, "gdoc.html", context)
 
