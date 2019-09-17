@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load template_extras %}
 
 {% block title %}All PCNs{% endblock %}
@@ -6,16 +7,53 @@
 
 {% block content %}
 
-<h1>Find a PCN</h1>
+{% if pcns_enabled %}
 
-<p>Search for a Primary Care Network by name or code</p>
+  <h1>Find a PCN</h1>
 
-<input class="form-control" id="search" placeholder="Search by PCN name or code" data-min-search-length="3" />
-<ul class="list-unstyled" id="all-results">
-</ul>
+  <p>Search for a Primary Care Network by name or code</p>
+
+  <input class="form-control" id="search" placeholder="Search by PCN name or code" data-min-search-length="3" />
+  <ul class="list-unstyled" id="all-results">
+  </ul>
+
+{% else %}
+
+  <h1>Primary Care Networks</h1>
+
+  <p>
+    We would love to be able to show you a list of PCN dashboards here, just
+    like we do for all practices, CCGs, STPs and Regional Teams. We have all
+    the necessary code and infrastructure for this built already. However,
+    there is currently <strong>no publicly available list of PCNs and their
+      members</strong> so we&rsquo;re unable to provide this.
+  </p>
+
+  <p>
+    {# Delete this file when we remove this text #}
+    <img src="{% static 'img/pcn-flowchart.png' %}" class="img-responsive center-block" style="max-width: 600px">
+  </p>
+
+  <p>
+    We have written a more detailed blog <a
+      href="https://ebmdatalab.net/custom-organisation-groupings-openprescribing-plan-for-organisations-like-primary-care-networks/">here</a>
+    about custom organisations and you can also contact <a
+      href="https://www.england.nhs.uk/contact-us/">NHS England</a> and the <a
+      href="https://digital.nhs.uk/services/organisation-data-service">NHS
+      Organisation Data Service</a> to let them know that this list is
+    important to support your work locally.
+  </p>
+
+  <p>
+    We have received several offers of PCN lists for specific areas of the
+    country. However, OpenPrescribing is built around the concept of peer
+    comparison, and without a comprehensive set of PCN memberships we&rsquo;re
+    unable to provide meaningful comparisons between PCNs.
+  </p>
+
+{% endif %}
 
 {% endblock %}
-
 
 {% block extra_js %}
 {{ pcn_data|json_script:"js-pcn-data" }}
