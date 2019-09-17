@@ -81,7 +81,7 @@ GROUP BY
 
         template = Template(sql)
         safe_keys = [key.replace("-", "_") for key in keys]
-        zipped_keys = zip(keys, safe_keys)
+        zipped_keys = list(zip(keys, safe_keys))
 
         ctx = Context(
             {"keys": keys, "safe_keys": safe_keys, "zipped_keys": zipped_keys},
