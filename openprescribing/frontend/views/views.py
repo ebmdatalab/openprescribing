@@ -1,7 +1,7 @@
 import datetime
 from lxml import html
 import re
-from urllib import urlencode
+from urllib.parse import urlencode
 from urllib.parse import urlparse, urlunparse
 import functools
 import logging

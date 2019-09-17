@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from urllib import quote_plus
+from urllib.parse import quote_plus
 
 from mock import patch
 from mock import PropertyMock
