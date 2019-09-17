@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import csv
+import itertools
 import os
 import tempfile
 from mock import patch
@@ -564,6 +565,9 @@ def create_organisations(random):
                 )
                 pcns.append(pcn)
 
+            # Function to return next PCN, looping round forever
+            get_next_pcn = itertools.cycle(pcns).__next__
+
             for ccg_ix in range(5):
                 ccg = PCT.objects.create(
                     regional_team=regtm,
@@ -576,7 +580,7 @@ def create_organisations(random):
                 for prac_ix in range(5):
                     Practice.objects.create(
                         ccg=ccg,
-                        pcn=random.choice(pcns),
+                        pcn=get_next_pcn(),
                         code="P0{}{}{}{}".format(regtm_ix, stp_ix, ccg_ix, prac_ix),
                         name="Practice {}/{}/{}/{}".format(
                             regtm_ix, stp_ix, ccg_ix, prac_ix
