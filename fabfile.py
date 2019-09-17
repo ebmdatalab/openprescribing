@@ -255,7 +255,7 @@ def find_changed_static_files():
         "find %s/openprescribing/static -type f -newermt '%s'"
         % (env.path, env.started_at.strftime("%Y-%m-%d %H:%M:%S"))
     ).split()
-    return map(lambda x: x.replace(env.path + "/", ""), [x for x in changed])
+    return [x.replace(env.path + "/", "") for x in changed]
 
 
 def setup_cron():

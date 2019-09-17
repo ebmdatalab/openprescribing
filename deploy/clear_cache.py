@@ -18,9 +18,7 @@ def list_cloudflare_zones():
         "X-Auth-Email": os.environ["CF_API_EMAIL"],
     }
     result = json.loads(requests.get(url, headers=headers).text)
-    zones = map(
-        lambda x: {"name": x["name"], "id": x["id"]}, [x for x in result["result"]]
-    )
+    zones = [{"name": x["name"], "id": x["id"]} for x in result["result"]]
     print (zones)
 
 
