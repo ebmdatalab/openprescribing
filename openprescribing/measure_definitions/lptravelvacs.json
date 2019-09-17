@@ -1,0 +1,37 @@
+{
+  "name": "NHS England Low Priority Treatment - travel vaccines",
+  "title": [
+    "Travel vaccines cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of travel vaccines per 1000 patients"
+  ],
+  "why_it_matters": [
+    "There are seven vaccines - Hepatitis B, Japanese Encephalitis, Meningitis ACWY, Yellow Fever, Tick-borne encephalitis, ",
+    "Rabies and Bacillus Calmette–Guérin (BCG) - which are not supposed to be prescribed by practices on the NHS when exclusively ",
+    "given for travel purposes. ",
+    "Sometimes GP practices supply them in error for travel"
+  ],
+  "numerator_short": "Travel vaccines cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriority"
+  ],
+  "numerator_type": "bnf_cost",
+  "numerator_where": [
+    "SUBSTR(bnf_code,1,9) IN ( --look at chemical codes \n",
+    "'0802040X0', --Bacillus Calmette-Guerin (B.C.G.) \n",
+    "'1404000AA', --Tick-Borne Encephalitis Vaccine \n",
+    "'1404000AB', --Japanese Encephalitis Vaccine \n",
+    "'1404000G0', --Hepatitis B \n",
+    "'1404000N0', --Rabies \n",
+    "'1404000U0', --Yellow Fever \n",
+    "'1404000X0') --Meningococcal A + C + W135 + Y Vaccine"
+  ],
+  "denominator_type": "list_size"
+}

@@ -1,0 +1,30 @@
+{
+  "name": "NHS England Low Priority Treatment - trimipramine",
+  "title": [
+    "Trimipramine cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of trimipramine per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Trimipramine is an older tricyclic antidepressant. The cost has increased significantly recently, ",
+    "and there are newer, cheaper alternatives are available, which are ",
+    "<a href='https://www.nice.org.uk/Guidance/CG90'> recommended by NICE in preference to tricyclic antidepressants</a>. "
+  ],
+  "numerator_short": "Trimipramine cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cost",
+    "lowpriority",
+    "mentalhealth"
+  ],
+  "numerator_type": "bnf_cost",
+  "numerator_where": [
+    "bnf_code LIKE '0403010Y0%' --Trimipramine Maleate"
+  ],
+  "denominator_type": "list_size"
+}

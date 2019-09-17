@@ -8,7 +8,6 @@ most of the logic now lives in SQL which is harder to read and test
 clearly.
 """
 
-from collections import OrderedDict
 from contextlib import contextmanager
 import csv
 from datetime import datetime
@@ -18,10 +17,13 @@ import logging
 import os
 import re
 import tempfile
+from urllib import urlencode
 
 from dateutil.relativedelta import relativedelta
 
-from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
+from django.core.management import BaseCommand
+from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db import transaction
 
@@ -29,6 +31,7 @@ from gcutils.bigquery import Client
 
 from common import utils
 from frontend.models import MeasureGlobal, MeasureValue, Measure, ImportLog
+from frontend.utils.bnf_hierarchy import simplify_bnf_codes
 
 from google.api_core.exceptions import BadRequest
 
@@ -53,28 +56,22 @@ MEASURE_FIELDNAMES = [
 
 
 class Command(BaseCommand):
-    """Supply either --end_date to load data for all months
-    up to that date, or --month to load data for just one
-    month.
-
-    You can also supply --start_date, or supply a file path that
-    includes a timestamp with --month_from_prescribing_filename
-
+    """
     Specify a measure with a single string argument to `--measure`,
     and more than one with a comma-delimited list.
-
     """
 
-    def check_definition(self, options, start_date, end_date, verbose):
-        """Checks SQL definition for measures.
+    def check_definitions(self, measure_defs, start_date, end_date, verbose):
+        """Checks SQL definitions for measures.
         """
 
         # We don't validate JSON here, as this is already done as a
         # side-effect of parsing the command options.
         errors = []
-        for measure_id in options["measure_ids"]:
+        for measure_def in measure_defs:
+            measure_id = measure_def["id"]
             try:
-                measure = create_or_update_measure(measure_id, end_date)
+                measure = create_or_update_measure(measure_def, end_date)
                 calculation = MeasureCalculation(
                     measure, start_date=start_date, end_date=end_date, verbose=verbose
                 )
@@ -86,14 +83,15 @@ class Command(BaseCommand):
         if errors:
             raise BadRequest("\n".join(errors))
 
-    def build_measures(self, options, start_date, end_date, verbose):
+    def build_measures(self, measure_defs, start_date, end_date, verbose, options):
         with conditional_constraint_and_index_reconstructor(options):
-            for measure_id in options["measure_ids"]:
+            for measure_def in measure_defs:
+                measure_id = measure_def["id"]
                 logger.info("Updating measure: %s" % measure_id)
                 measure_start = datetime.now()
 
                 with transaction.atomic():
-                    measure = create_or_update_measure(measure_id, end_date)
+                    measure = create_or_update_measure(measure_def, end_date)
 
                     if options["definitions_only"]:
                         continue
@@ -106,24 +104,8 @@ class Command(BaseCommand):
                     )
 
                     if not options["bigquery_only"]:
-                        # Delete any existing measures data older than five years ago.
-                        l = ImportLog.objects.latest_in_category("prescribing")
-                        five_years_ago = l.current_at - relativedelta(years=5)
-                        MeasureValue.objects.filter(month__lte=five_years_ago).filter(
-                            measure=measure
-                        ).delete()
-                        MeasureGlobal.objects.filter(month__lte=five_years_ago).filter(
-                            measure=measure
-                        ).delete()
-
-                        # Delete any existing measures data relating to the
-                        # current month(s)
-                        MeasureValue.objects.filter(month__gte=start_date).filter(
-                            month__lte=end_date
-                        ).filter(measure=measure).delete()
-                        MeasureGlobal.objects.filter(month__gte=start_date).filter(
-                            month__lte=end_date
-                        ).filter(measure=measure).delete()
+                        MeasureValue.objects.filter(measure=measure).delete()
+                        MeasureGlobal.objects.filter(measure=measure).delete()
 
                     # Compute the measures
                     calcuation.calculate(options["bigquery_only"])
@@ -134,73 +116,64 @@ class Command(BaseCommand):
                 )
 
     def handle(self, *args, **options):
-        options = self.parse_options(options)
         start = datetime.now()
-        start_date = options["start_date"]
-        end_date = options["end_date"]
+
+        if options["measure"]:
+            measure_ids = options["measure"].split(",")
+            measure_defs = load_measure_defs(measure_ids)
+        else:
+            measure_defs = load_measure_defs()
+
+        end_date = ImportLog.objects.latest_in_category("prescribing").current_at
+        start_date = end_date - relativedelta(years=5)
+
         verbose = options["verbosity"] > 1
         if options["check"]:
-            action = self.check_definition
+            self.check_definitions(measure_defs, start_date, end_date, verbose)
         else:
-            action = self.build_measures
-        action(options, start_date, end_date, verbose)
+            self.build_measures(measure_defs, start_date, end_date, verbose, options)
+
         logger.warning("Total elapsed time: %s" % (datetime.now() - start))
 
     def add_arguments(self, parser):
-        parser.add_argument("--month")
-        parser.add_argument("--start_date")
-        parser.add_argument("--end_date")
         parser.add_argument("--measure")
         parser.add_argument("--definitions_only", action="store_true")
         parser.add_argument("--bigquery_only", action="store_true")
         parser.add_argument("--check", action="store_true")
 
-    def parse_options(self, options):
-        """Parse command line options
-        """
-        if bool(options["start_date"]) != bool(options["end_date"]):
-            raise CommandError("--start_date and --end_date must be given together")
 
-        if options["measure"]:
-            options["measure_ids"] = options["measure"].split(",")
-        else:
-            options["measure_ids"] = [
-                k for k, v in parse_measures().items() if "skip" not in v
-            ]
+def load_measure_defs(measure_ids=None):
+    """Load measure definitions from JSON files.
 
-        if not options["start_date"]:
-            if options["month"]:
-                options["start_date"] = options["end_date"] = options["month"]
-            else:
-                l = ImportLog.objects.latest_in_category("prescribing")
-                start_date = l.current_at - relativedelta(years=5)
-                options["start_date"] = start_date.strftime("%Y-%m-%d")
-                options["end_date"] = l.current_at.strftime("%Y-%m-%d")
-        # validate the date format
-        datetime.strptime(options["start_date"], "%Y-%m-%d")
-        datetime.strptime(options["end_date"], "%Y-%m-%d")
-        return options
-
-
-def get_measure_definition_paths():
-    fpath = os.path.dirname(__file__)
-    return sorted(glob.glob(os.path.join(fpath, "./measure_definitions/*.json")))
-
-
-def parse_measures():
-    """Deserialise JSON measures definition into dict
+    Since the lpzomnibus measure depends on other LP measures having already been
+    calculated, it is important that the measures are returned in alphabetical order.
+    (This is a bit of a hack...)
     """
-    measures = OrderedDict()
+    measures = []
     errors = []
 
-    for path in get_measure_definition_paths():
-        measure_id = re.match(r".*/([^/.]+)\.json", path).groups()[0]
+    glob_path = os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")
+    for path in sorted(glob.glob(glob_path)):
+        measure_id = os.path.basename(path).split(".")[0]
+
         with open(path) as f:
             try:
-                measures[measure_id] = json.load(f)
+                measure_def = json.load(f)
             except ValueError as e:
                 # Add the measure_id to the exception
                 errors.append("* {}: {}".format(measure_id, e.message))
+                continue
+
+            if measure_ids is None:
+                if "skip" in measure_def:
+                    continue
+            else:
+                if measure_id not in measure_ids:
+                    continue
+
+            measure_def["id"] = measure_id
+            measures.append(measure_def)
+
     if errors:
         raise ValueError("Problems parsing JSON:\n" + "\n".join(errors))
     return measures
@@ -265,7 +238,7 @@ def normalisePercentile(percentile):
     return percentile
 
 
-def arrays_to_strings(measure_json):
+def arrays_to_strings(measure_def):
     """To facilitate readability via newlines, we express some JSON
     strings as arrays, but store them as strings.
 
@@ -284,19 +257,23 @@ def arrays_to_strings(measure_json):
     ]
 
     for field in fields_to_convert:
-        if field not in measure_json:
+        if field not in measure_def:
             continue
-        if isinstance(measure_json[field], list):
-            measure_json[field] = " ".join(measure_json[field])
-    return measure_json
+        if isinstance(measure_def[field], list):
+            measure_def[field] = " ".join(measure_def[field])
+    return measure_def
 
 
-def create_or_update_measure(measure_id, end_date):
+def create_or_update_measure(measure_def, end_date):
     """Create a measure object based on a measure definition
 
     """
-    measure_json = parse_measures()[measure_id]
-    v = arrays_to_strings(measure_json)
+    measure_id = measure_def["id"]
+    v = arrays_to_strings(measure_def)
+
+    for k, val in v.items():
+        if isinstance(val, (str, unicode)):
+            v[k] = val.strip()
 
     try:
         measure = Measure.objects.get(id=measure_id)
@@ -313,12 +290,14 @@ def create_or_update_measure(measure_id, end_date):
     measure.description = v["description"]
     measure.numerator_short = v["numerator_short"]
     measure.denominator_short = v["denominator_short"]
-    measure.numerator_from = v["numerator_from"]
-    measure.numerator_where = v["numerator_where"]
-    measure.numerator_columns = v["numerator_columns"]
-    measure.denominator_from = v["denominator_from"]
-    measure.denominator_where = v["denominator_where"]
-    measure.denominator_columns = v["denominator_columns"]
+    measure.numerator_type = v["numerator_type"]
+    measure.numerator_from = v.get("numerator_from")
+    measure.numerator_where = v.get("numerator_where")
+    measure.numerator_columns = v.get("numerator_columns")
+    measure.denominator_type = v["denominator_type"]
+    measure.denominator_from = v.get("denominator_from")
+    measure.denominator_where = v.get("denominator_where")
+    measure.denominator_columns = v.get("denominator_columns")
     measure.url = v["url"]
     measure.is_cost_based = v["is_cost_based"]
     measure.is_percentage = v["is_percentage"]
@@ -327,33 +306,86 @@ def create_or_update_measure(measure_id, end_date):
     measure.numerator_is_list_of_bnf_codes = v.get(
         "numerator_is_list_of_bnf_codes", True
     )
-    measure.numerator_bnf_codes = get_numerator_bnf_codes(measure, end_date)
+    measure.denominator_bnf_codes_query = v.get("denominator_bnf_codes_query")
+    if (
+        measure.denominator_from
+        and "normalised_prescribing_standard" in measure.denominator_from
+    ):
+        measure.denominator_is_list_of_bnf_codes = v.get(
+            "denominator_is_list_of_bnf_codes", True
+        )
+    else:
+        measure.denominator_is_list_of_bnf_codes = False
+
+    for num_or_denom in ["numerator", "denominator"]:
+        for k, val in build_num_or_denom_fields(measure, num_or_denom).items():
+            setattr(measure, k, val)
+        setattr(
+            measure,
+            "{}_bnf_codes".format(num_or_denom),
+            get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
+        )
+
+    measure.analyse_url = build_analyse_url(measure)
+
     measure.save()
 
     return measure
 
 
-def get_numerator_bnf_codes(measure, end_date):
-    # For most measures, we are able to work out which presentations contribute
-    # to variation in the numerator by constructing a query using the
-    # numerator_from and numerator_where attributes of the measure.  In a
-    # handful of cases this cannot be done, and the creator of the measure must
-    # provide a query (numerator_bnf_codes_query) that can be used for this.
-    #
-    # For the lpzomnibus query, numerator_bnf_codes_query was produced with
-    # help from:
-    #
-    # >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
-    # ...   print '"' + m.numerator_where.strip() + ' OR",'
+def build_analyse_url(measure):
+    params = {"measure": measure.id}
 
-    if not measure.numerator_is_list_of_bnf_codes:
+    if measure.numerator_is_list_of_bnf_codes:
+        if not measure.numerator_bnf_codes:
+            return
+        params["numIds"] = ",".join(simplify_bnf_codes(measure.numerator_bnf_codes))
+    else:
+        return
+
+    if measure.denominator_is_list_of_bnf_codes:
+        if not measure.denominator_bnf_codes:
+            return
+        params["denomIds"] = ",".join(simplify_bnf_codes(measure.denominator_bnf_codes))
+    elif measure.denominator_type == "list_size":
+        params["denom"] = "total_list_size"
+    elif measure.denominator_type == "star_pu_antibiotics":
+        params["denom"] = "star_pu.oral_antibacterials_item"
+    else:
+        return
+
+    querystring = urlencode(params)
+    url = "{}#{}".format(reverse("analyse"), querystring)
+
+    if len(url) > 1000:
+        return
+
+    return url
+
+
+def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
+    """Return list of BNF codes used in calculation of numerator or denominator.  For
+    most measures, this can be computed by constructing a query using the
+    [num_or_denom]_from and [num_or_denom]_where attributes of the measure.  In a
+    handful of cases this cannot be done, and the creator of the measure must provide a
+    query ([num_or_denom]_bnf_codes_query) that can be used for this.
+
+    For the lpzomnibus query, numerator_bnf_codes_query was produced with help from:
+
+    >>> for m in Measure.objects.filter(tags__contains=['lowpriority']):
+    ...   print '"' + m.numerator_where.strip() + ' OR",'
+    """
+
+    def get_measure_attr(name):
+        full_name = num_or_denom + "_" + name
+        return getattr(measure, full_name)
+
+    if not get_measure_attr("is_list_of_bnf_codes"):
         return []
 
-    if measure.numerator_bnf_codes_query is not None:
-        sql = measure.numerator_bnf_codes_query
-        three_months_ago = datetime.strptime(end_date, "%Y-%m-%d") - relativedelta(
-            months=2
-        )
+    if get_measure_attr("bnf_codes_query") is not None:
+        sql = get_measure_attr("bnf_codes_query")
+        three_months_ago = end_date - relativedelta(months=2)
         substitutions = {
             "three_months_ago": three_months_ago.strftime("%Y-%m-01 00:00:00")
         }
@@ -365,25 +397,90 @@ def get_numerator_bnf_codes(measure, end_date):
         #
         # but BQ doesn't let you refer to an aliased table by its original
         # name, so we have to mess around like this.
-        if "{hscic}.normalised_prescribing_standard p" in measure.numerator_from:
+        if "{hscic}.normalised_prescribing_standard p" in get_measure_attr("from"):
             col_name = "p.bnf_code"
         else:
             col_name = "bnf_code"
 
         sql = """
         SELECT DISTINCT {col_name}
-        FROM {numerator_from}
-        WHERE {numerator_where}
+        FROM {from_}
+        WHERE {where}
         ORDER BY bnf_code
         """.format(
             col_name=col_name,
-            numerator_from=measure.numerator_from,
-            numerator_where=measure.numerator_where,
+            from_=get_measure_attr("from"),
+            where=get_measure_attr("where"),
         )
         substitutions = None
 
     results = Client().query(sql, substitutions=substitutions)
     return [row[0] for row in results.rows]
+
+
+def build_num_or_denom_fields(measure, num_or_denom):
+    def full_attr_name(attr):
+        return num_or_denom + "_" + attr
+
+    def get_measure_attr(attr):
+        return getattr(measure, full_attr_name(attr))
+
+    type_ = getattr(measure, num_or_denom + "_type")
+
+    if type_ == "custom":
+        columns = get_measure_attr("columns")
+        from_ = get_measure_attr("from")
+        where = get_measure_attr("where")
+        is_list_of_bnf_codes = get_measure_attr("is_list_of_bnf_codes")
+        bnf_codes_query = get_measure_attr("bnf_codes_query")
+
+    elif type_ == "bnf_items":
+        columns = "SUM(items) AS {},".format(num_or_denom)
+        from_ = "{hscic}.normalised_prescribing_standard"
+        where = get_measure_attr("where")
+        is_list_of_bnf_codes = True
+        bnf_codes_query = None
+
+    elif type_ == "bnf_quantity":
+        columns = "SUM(quantity) AS {},".format(num_or_denom)
+        from_ = "{hscic}.normalised_prescribing_standard"
+        where = get_measure_attr("where")
+        is_list_of_bnf_codes = True
+        bnf_codes_query = None
+
+    elif type_ == "bnf_cost":
+        columns = "SUM(actual_cost) AS {},".format(num_or_denom)
+        from_ = "{hscic}.normalised_prescribing_standard"
+        where = get_measure_attr("where")
+        is_list_of_bnf_codes = True
+        bnf_codes_query = None
+
+    elif type_ == "list_size":
+        assert num_or_denom == "denominator"
+        columns = "SUM(total_list_size / 1000.0) AS denominator,"
+        from_ = "{hscic}.practice_statistics"
+        where = "1 = 1"
+        is_list_of_bnf_codes = False
+        bnf_codes_query = None
+
+    elif type_ == "star_pu_antibiotics":
+        assert num_or_denom == "denominator"
+        columns = "CAST(JSON_EXTRACT(MAX(star_pu), '$.oral_antibacterials_item') AS FLOAT64) AS denominator"
+        from_ = "{hscic}.practice_statistics"
+        where = "1 = 1"
+        is_list_of_bnf_codes = False
+        bnf_codes_query = None
+
+    else:
+        assert False, type_
+
+    return {
+        full_attr_name("columns"): columns,
+        full_attr_name("from"): from_,
+        full_attr_name("where"): where,
+        full_attr_name("bnf_codes_query"): bnf_codes_query,
+        full_attr_name("is_list_of_bnf_codes"): is_list_of_bnf_codes,
+    }
 
 
 class MeasureCalculation(object):

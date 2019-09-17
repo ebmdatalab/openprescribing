@@ -1,0 +1,53 @@
+{
+  "name": "Prescribing of opioids (total oral morphine equivalence)",
+  "title": [
+    "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
+  ],
+  "description": [
+    "Total opioid prescribing (as oral morphine equivalence) per 1000 patients"
+  ],
+  "why_it_matters": [
+    "The <a href='https://www.rcoa.ac.uk/faculty-of-pain-medicine/opioids-aware'> Opioids Aware</a> project seeks to ",
+    "improve prescribing of opioid analgesia.  There is little evidence that opioids are helpful in long term pain, ",
+    "and the risk of harm increases significantly above 120mg morphine (or equivalent) per day, without much increase in benefit. ",
+    "This measure describes the total Oral Morphine Equivalence (OME) in ALL opioid prescribing (excluding prescribing for addiction) ",
+    "including low-dose opioids in drugs such as co-codamol and co-dydramol.  This measure is experimental and should be used ",
+    "with caution, as OME conversions vary in different reference sources.  A list of the dose conversions and references used ",
+    "can be found <a href='https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing'>here</a>.  ",
+    "Our paper on this measure will be available shortly."
+  ],
+  "numerator_short": "Total opioids prescribed (in OME mg)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "core",
+    "opioids",
+    "pain",
+    "safety"
+  ],
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(total_ome) AS numerator, "
+  ],
+  "numerator_from": "{measures}.opioid_total_ome ",
+  "numerator_where": [
+    "1 = 1"
+  ],
+  "numerator_bnf_codes_query": [
+    "SELECT DISTINCT bnf.presentation_code",
+    "FROM {hscic}.bnf",
+    "JOIN ebmdatalab.richard.opioid_measure",
+    "ON CONCAT(",
+    "    SUBSTR(bnf.presentation_code,0,9),",
+    "    'AA',",
+    "    SUBSTR(bnf.presentation_code,-2,2)",
+    "  ) = CONCAT(",
+    "    SUBSTR(opioid_measure.bnf_code,0,11),",
+    "    SUBSTR(opioid_measure.bnf_code,-2,2)",
+    "  )"
+  ],
+  "denominator_type": "list_size"
+}

@@ -1,99 +1,457 @@
-from numbers import Number
-import argparse
-import json
-import os
+from __future__ import print_function
 
-from gcutils.bigquery import Client
+import csv
+import os
+import tempfile
 from mock import patch
-from mock import MagicMock
+from random import Random
+from urlparse import parse_qs
+
+from google.api_core.exceptions import BadRequest
+from google.cloud.exceptions import Conflict
+import numpy as np
+import pandas as pd
 
 from django.conf import settings
 from django.core.management import call_command
-from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from frontend.bq_schemas import CCG_SCHEMA, PRACTICE_SCHEMA, PRESCRIBING_SCHEMA
-from frontend.management.commands.import_measures import Command
-from frontend.management.commands.import_measures import parse_measures
-from frontend.models import ImportLog
-from frontend.models import Measure
-from frontend.models import MeasureValue, MeasureGlobal, Chemical
-from frontend.models import PCT
-from frontend.models import Practice
-from frontend.models import STP
-from frontend.models import RegionalTeam
-
-from google.api_core.exceptions import BadRequest
-
-
-MODULE = "frontend.management.commands.import_measures"
-
-
-def isclose(a, b, rel_tol=0.001, abs_tol=0.0):
-    if isinstance(a, Number) and isinstance(b, Number):
-        return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
-    else:
-        return a == b
+from frontend import bq_schemas as schemas
+from frontend.models import (
+    ImportLog,
+    Measure,
+    MeasureGlobal,
+    MeasureValue,
+    Practice,
+    PCN,
+    PCT,
+    STP,
+    RegionalTeam,
+)
+from frontend.management.commands.import_measures import load_measure_defs
+from gcutils.bigquery import Client
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
+from matrixstore.tests.data_factory import DataFactory
 
 
-def _get_measure_fixture(name):
-    fpath = settings.REPO_ROOT
-    fname = os.path.join(
-        fpath,
-        (
-            "openprescribing/frontend/tests/fixtures/measure_definitions/"
-            "{}.json".format(name)
-        ),
+# These tests test import_measures by repeating the measure calculations with
+# Pandas, and asserting that the values stored on MeasureValue and
+# MeasureGlobal objects match those calculated with Pandas.  See
+# notebooks/measure-calculations.ipynb for an explanation of these
+# calculations.
+
+
+class ImportMeasuresTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        random = Random()
+        random.seed(1980)
+
+        set_up_bq()
+        create_import_log()
+        create_organisations(random)
+        upload_ccgs_and_practices()
+        cls.prescriptions = upload_prescribing(random.randint)
+        cls.practice_stats = upload_practice_statistics(random.randint)
+        cls.factory = build_factory()
+        create_old_measure_value()
+
+    def test_cost_based_percentage_measure(self):
+        # This test verifies the behaviour of import_measures for a cost-based
+        # measure that calculates the ratio between:
+        #  * quantity prescribed of a branded presentation (numerator)
+        #  * total quantity prescribed of the branded presentation and its
+        #      generic equivalent (denominator)
+
+        # Do the work.
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="desogestrel")
+
+        # Check that old MeasureValue and MeasureGlobal objects have been deleted.
+        self.assertFalse(MeasureValue.objects.filter(month__lt="2011-01-01").exists())
+        self.assertFalse(MeasureGlobal.objects.filter(month__lt="2011-01-01").exists())
+
+        # Check that numerator_bnf_codes and denominator_bnf_codes have been set.
+        m = Measure.objects.get(id="desogestrel")
+        self.assertEqual(m.numerator_bnf_codes, ["0703021Q0BBAAAA"])
+        self.assertEqual(
+            m.denominator_bnf_codes, ["0703021Q0AAAAAA", "0703021Q0BBAAAA"]
+        )
+
+        # Check that analyse_url has been set.
+        querystring = m.analyse_url.split("#")[1]
+        params = parse_qs(querystring)
+        self.assertEqual(
+            params,
+            {
+                "measure": ["desogestrel"],
+                "numIds": ["0703021Q0BB"],
+                "denomIds": ["0703021Q0"],
+            },
+        )
+
+        # Check calculations by redoing calculations with Pandas, and asserting
+        # that results match.
+        month = "2018-08-01"
+        prescriptions = self.prescriptions[self.prescriptions["month"] == month]
+        numerators = prescriptions[
+            prescriptions["bnf_code"].str.startswith("0703021Q0B")
+        ]
+        denominators = prescriptions[
+            prescriptions["bnf_code"].str.startswith("0703021Q0")
+        ]
+        self.validate_calculations(
+            self.calculate_cost_based_percentage_measure,
+            numerators,
+            denominators,
+            month,
+        )
+
+    def test_practice_statistics_measure(self):
+        # This test verifies the behaviour of import_measures for a measure
+        # that calculates the ratio between:
+        #  * items prescribed of a particular presentation (numerator)
+        #  * patients / 1000 (denominator)
+        #
+        # Of interest is the case where the number of patients may be null for
+        # a given practice in a given month.  See #1520.
+
+        # Do the work.
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="coproxamol")
+
+        # Check that numerator_bnf_codes has, and denominator_bnf_codes has not, been
+        # set.
+        m = Measure.objects.get(id="coproxamol")
+        self.assertEqual(m.numerator_bnf_codes, ["0407010Q0AAAAAA"])
+        self.assertEqual(m.denominator_bnf_codes, [])
+
+        # Check that analyse_url has been set.
+        querystring = m.analyse_url.split("#")[1]
+        params = parse_qs(querystring)
+        self.assertEqual(
+            params,
+            {
+                "measure": ["coproxamol"],
+                "numIds": ["0407010Q0"],
+                "denom": ["total_list_size"],
+            },
+        )
+
+        # Check calculations by redoing calculations with Pandas, and asserting
+        # that results match.
+        month = "2018-08-01"
+        prescriptions = self.prescriptions[self.prescriptions["month"] == month]
+        numerators = prescriptions[prescriptions["bnf_code"] == "0407010Q0AAAAAA"]
+        denominators = self.practice_stats[self.practice_stats["month"] == month]
+        self.validate_calculations(
+            self.calculate_practice_statistics_measure, numerators, denominators, month
+        )
+
+    def test_cost_based_practice_statistics_measure(self):
+        # This test verifies the behaviour of import_measures for a cost-based
+        # measure that calculates the ratio between:
+        #  * cost of prescribing of a particular presentation (numerator)
+        #  * patients / 1000 (denominator)
+
+        # Do the work.
+        with patched_global_matrixstore_from_data_factory(self.factory):
+            call_command("import_measures", measure="glutenfree")
+
+        # Check calculations by redoing calculations with Pandas, and asserting
+        # that results match.
+        month = "2018-08-01"
+        prescriptions = self.prescriptions[self.prescriptions["month"] == month]
+        numerators = prescriptions[prescriptions["bnf_code"] == "0904010AUBBAAAA"]
+        denominators = self.practice_stats[self.practice_stats["month"] == month]
+        self.validate_calculations(
+            self.calculate_cost_based_practice_statistics_measure,
+            numerators,
+            denominators,
+            month,
+        )
+
+    def calculate_cost_based_percentage_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
+        org_column = org_type + "_id"
+        df = pd.DataFrame(index=org_codes)
+
+        df["quantity_total"] = denominators.groupby(org_column)["quantity"].sum()
+        df["cost_total"] = denominators.groupby(org_column)["actual_cost"].sum()
+        df["quantity_branded"] = numerators.groupby(org_column)["quantity"].sum()
+        df["cost_branded"] = numerators.groupby(org_column)["actual_cost"].sum()
+        df = df.fillna(0)
+        df["quantity_total"] = df["quantity_total"].astype("int")
+        df["quantity_branded"] = df["quantity_branded"].astype("int")
+        df["quantity_generic"] = df["quantity_total"] - df["quantity_branded"]
+        df["cost_generic"] = df["cost_total"] - df["cost_branded"]
+        df["quantity_ratio"] = df["quantity_branded"] / df["quantity_total"]
+        ranks = df["quantity_ratio"].rank(method="min")
+        num_non_nans = df["quantity_ratio"].count()
+        df["quantity_ratio_percentile"] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
+        global_unit_cost_branded = (
+            df["cost_branded"].sum() / df["quantity_branded"].sum()
+        )
+        global_unit_cost_generic = (
+            df["cost_generic"].sum() / df["quantity_generic"].sum()
+        )
+        df["unit_cost_branded"] = df["cost_branded"] / df["quantity_branded"]
+        df["unit_cost_generic"] = df["cost_generic"] / df["quantity_generic"]
+        df["unit_cost_branded"] = df["unit_cost_branded"].fillna(
+            global_unit_cost_branded
+        )
+        df["unit_cost_generic"] = df["unit_cost_generic"].fillna(
+            global_unit_cost_generic
+        )
+        quantity_ratio_10 = df["quantity_ratio"].quantile(0.1)
+        df["quantity_branded_10"] = df["quantity_total"] * quantity_ratio_10
+        df["quantity_generic_10"] = df["quantity_total"] - df["quantity_branded_10"]
+        df["target_cost_10"] = (
+            df["unit_cost_branded"] * df["quantity_branded_10"]
+            + df["unit_cost_generic"] * df["quantity_generic_10"]
+        )
+        df["cost_saving_10"] = df["cost_total"] - df["target_cost_10"]
+
+        return pd.DataFrame.from_dict(
+            {
+                "numerator": df["quantity_branded"],
+                "denominator": df["quantity_total"],
+                "ratio": df["quantity_ratio"],
+                "ratio_percentile": df["quantity_ratio_percentile"],
+                "cost_saving_10": df["cost_saving_10"],
+            }
+        )
+
+    def calculate_practice_statistics_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
+        org_column = org_type + "_id"
+        df = pd.DataFrame(index=org_codes)
+
+        df["items"] = numerators.groupby(org_column)["items"].sum()
+        df["thousand_patients"] = denominators.groupby(org_column)[
+            "thousand_patients"
+        ].sum()
+        df["ratio"] = df["items"] / df["thousand_patients"]
+        df["items"] = df["items"].fillna(0)
+        df["thousand_patients"] = df["thousand_patients"].fillna(0)
+        ranks = df["ratio"].rank(method="min")
+        num_non_nans = df["ratio"].count()
+        df["ratio_percentile"] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
+
+        return pd.DataFrame.from_dict(
+            {
+                "numerator": df["items"],
+                "denominator": df["thousand_patients"],
+                "ratio": df["ratio"],
+                "ratio_percentile": df["ratio_percentile"],
+            }
+        )
+
+    def calculate_cost_based_practice_statistics_measure(
+        self, numerators, denominators, org_type, org_codes
+    ):
+        org_column = org_type + "_id"
+        df = pd.DataFrame(index=org_codes)
+
+        df["cost"] = numerators.groupby(org_column)["actual_cost"].sum()
+        df["thousand_patients"] = denominators.groupby(org_column)[
+            "thousand_patients"
+        ].sum()
+        df["ratio"] = df["cost"] / df["thousand_patients"]
+        df["cost"] = df["cost"].fillna(0)
+        df["thousand_patients"] = df["thousand_patients"].fillna(0)
+        ranks = df["ratio"].rank(method="min")
+        num_non_nans = df["ratio"].count()
+        df["ratio_percentile"] = (ranks - 1) / ((num_non_nans - 1) / 100.0)
+        ratio_10 = df["ratio"].quantile(0.1)
+        df["target_cost_10"] = ratio_10 * df["thousand_patients"]
+        df["cost_saving_10"] = df["cost"] - df["target_cost_10"]
+
+        return pd.DataFrame.from_dict(
+            {
+                "numerator": df["cost"],
+                "denominator": df["thousand_patients"],
+                "ratio": df["ratio"],
+                "ratio_percentile": df["ratio_percentile"],
+                "cost_saving_10": df["cost_saving_10"],
+            }
+        )
+
+    def validate_calculations(self, calculator, numerators, denominators, month):
+        """Validate measure calculations by redoing calculations with Pandas."""
+
+        mg = MeasureGlobal.objects.get(month=month)
+
+        practices = calculator(
+            numerators,
+            denominators,
+            "practice",
+            Practice.objects.values_list("code", flat=True),
+        )
+        self.validate_measure_global(mg, practices, "practice")
+        mvs = MeasureValue.objects.filter_by_org_type("practice").filter(month=month)
+        self.assertEqual(mvs.count(), Practice.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, practices.loc[mv.practice_id])
+
+        pcns = calculator(
+            numerators,
+            denominators,
+            "pcn",
+            PCN.objects.values_list("ons_code", flat=True),
+        )
+        self.validate_measure_global(mg, pcns, "pcn")
+        mvs = MeasureValue.objects.filter_by_org_type("pcn").filter(month=month)
+        self.assertEqual(mvs.count(), PCN.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, pcns.loc[mv.pcn_id])
+
+        ccgs = calculator(
+            numerators, denominators, "ccg", PCT.objects.values_list("code", flat=True)
+        )
+        self.validate_measure_global(mg, ccgs, "ccg")
+        mvs = MeasureValue.objects.filter_by_org_type("ccg").filter(month=month)
+        self.assertEqual(mvs.count(), PCT.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, ccgs.loc[mv.pct_id])
+
+        stps = calculator(
+            numerators,
+            denominators,
+            "stp",
+            STP.objects.values_list("ons_code", flat=True),
+        )
+        self.validate_measure_global(mg, stps, "stp")
+        mvs = MeasureValue.objects.filter_by_org_type("stp").filter(month=month)
+        self.assertEqual(mvs.count(), STP.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, stps.loc[mv.stp_id])
+
+        regtms = calculator(
+            numerators,
+            denominators,
+            "regional_team",
+            RegionalTeam.objects.values_list("code", flat=True),
+        )
+        self.validate_measure_global(mg, regtms, "regional_team")
+        mvs = MeasureValue.objects.filter_by_org_type("regional_team").filter(
+            month=month
+        )
+        self.assertEqual(mvs.count(), RegionalTeam.objects.count())
+        for mv in mvs:
+            self.validate_measure_value(mv, regtms.loc[mv.regional_team_id])
+
+    def validate_measure_global(self, mg, df, org_type):
+        numerator = df["numerator"].sum()
+        denominator = df["denominator"].sum()
+        self.assertAlmostEqual(mg.numerator, numerator)
+        self.assertAlmostEqual(mg.denominator, denominator)
+        self.assertAlmostEqual(mg.calc_value, 1.0 * numerator / denominator)
+        self.assertAlmostEqual(
+            mg.percentiles[org_type]["10"], df["ratio"].quantile(0.1)
+        )
+        if mg.measure.is_cost_based:
+            self.assertAlmostEqual(
+                mg.cost_savings[org_type]["10"],
+                df[df["cost_saving_10"] > 0]["cost_saving_10"].sum(),
+            )
+
+    def validate_measure_value(self, mv, series):
+        self.assertAlmostEqual(mv.numerator, series["numerator"])
+        self.assertAlmostEqual(mv.denominator, series["denominator"])
+        if mv.percentile is None:
+            self.assertTrue(np.isnan(series["ratio"]))
+            self.assertTrue(np.isnan(series["ratio_percentile"]))
+        else:
+            self.assertAlmostEqual(mv.calc_value, series["ratio"])
+            self.assertAlmostEqual(mv.percentile, series["ratio_percentile"])
+
+        if mv.measure.is_cost_based:
+            self.assertAlmostEqual(mv.cost_savings["10"], series["cost_saving_10"])
+
+
+class ImportMeasuresDefinitionsOnlyTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        create_import_log()
+
+    def test_all_definitions(self):
+        # Test that all production measure definitions can be imported.  We don't test
+        # get_num_or_denom_bnf_codes(), since it requires a lot of setup in BQ, and is
+        # exercised properly in the end-to-end tests.
+
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
+            with patch(
+                "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
+            ) as get_num_or_denom_bnf_codes:
+                get_num_or_denom_bnf_codes.return_value = []
+                call_command("import_measures", definitions_only=True)
+
+        measure = Measure.objects.get(id="desogestrel")
+        self.assertEqual(measure.name, "Desogestrel prescribed as a branded product")
+
+
+class CheckMeasureDefinitionsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        create_import_log()
+        set_up_bq()
+
+    def test_check_definition(self):
+        upload_dummy_prescribing(["0703021Q0AAAAAA", "0703021Q0BBAAAA"])
+
+        with patched_global_matrixstore_from_data_factory(build_factory()):
+            call_command("import_measures", measure="desogestrel", check=True)
+
+    @override_settings(
+        MEASURE_DEFINITIONS_PATH=os.path.join(
+            settings.MEASURE_DEFINITIONS_PATH, "bad", "json"
+        )
     )
-    return [fname]
+    def test_check_definition_bad_json(self):
+        with self.assertRaises(ValueError) as command_error:
+            call_command("import_measures", check=True)
+        self.assertIn("Problems parsing JSON", str(command_error.exception))
+
+    @override_settings(
+        MEASURE_DEFINITIONS_PATH=os.path.join(
+            settings.MEASURE_DEFINITIONS_PATH, "bad", "sql"
+        )
+    )
+    def test_check_definition_bad_sql(self):
+        with self.assertRaises(BadRequest) as command_error:
+            call_command("import_measures", check=True)
+        self.assertIn("SQL error", str(command_error.exception))
 
 
-def working_measure_files():
-    return _get_measure_fixture("cerazette")
+class LoadMeasureDefsTests(TestCase):
+    def test_order(self):
+        measure_defs_path = os.path.join(settings.APPS_ROOT, "measure_definitions")
+        with override_settings(MEASURE_DEFINITIONS_PATH=measure_defs_path):
+            measure_defs = load_measure_defs()
+        measure_ids = [measure_def["id"] for measure_def in measure_defs]
+        lpzomnibus_ix = list(measure_ids).index("lpzomnibus")
+        lptrimipramine_ix = list(measure_ids).index("lptrimipramine")
+        # The order of these specific measures matters, as the SQL for
+        # the omnibus measure relies on the other LP measures having
+        # been calculated first
+        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
+
+    def test_with_no_measure_ids_loads_all_definitions(self):
+        measure_defs = load_measure_defs()
+        self.assertEqual(len(measure_defs), 3)
+
+    def test_with_measure_ids_loads_some_definitions(self):
+        measure_defs = load_measure_defs(["coproxamol", "desogestrel"])
+        self.assertEqual(len(measure_defs), 2)
 
 
-def broken_json_measure_files():
-    return _get_measure_fixture("bad_json")
-
-
-def broken_sql_measure_files():
-    return _get_measure_fixture("bad_sql")
-
-
-def parse_args(*opts_args):
-    """Duplicate what Django does to parse arguments.
-
-    See `django.core.management.__init__.call_command` for details
-
-    """
-    parser = argparse.ArgumentParser()
-    cmd = Command()
-    parser = cmd.create_parser("import_measures", "")
-    options = parser.parse_args(opts_args)
-    return cmd.parse_options(options.__dict__)
-
-
-@patch(MODULE + ".get_measure_definition_paths", new=working_measure_files)
-class ArgumentTestCase(TestCase):
-    def test_start_and_end_dates(self):
-        with self.assertRaises(CommandError):
-            parse_args("--start_date", "1999-01-01")
-        with self.assertRaises(CommandError):
-            parse_args("--end_date", "1999-01-01")
-        result = parse_args("--start_date", "1998-01-01", "--end_date", "1999-01-01")
-        self.assertEqual(result["start_date"], "1998-01-01")
-        self.assertEqual(result["end_date"], "1999-01-01")
-
-
-@patch(MODULE + ".get_measure_definition_paths", new=working_measure_files)
-class UnitTests(TestCase):
-    """Unit tests with mocked bigquery. Many of the functional
-    tests could be moved hree.
-
-    """
-
-    fixtures = ["measures"]
-
+class ConstraintsTests(TestCase):
     @patch("common.utils.db")
     def test_reconstructor_not_called_when_measures_specified(self, db):
         from frontend.management.commands.import_measures import (
@@ -117,434 +475,364 @@ class UnitTests(TestCase):
         execute.assert_called()
 
 
-class BigqueryFunctionalTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        regional_team_54 = RegionalTeam.objects.create(code="Y54")
-        regional_team_55 = RegionalTeam.objects.create(code="Y55")
-        stp_1 = STP.objects.create(ons_code="E00000001")
-        stp_2 = STP.objects.create(ons_code="E00000002")
+def set_up_bq():
+    """Set up BQ datasets and tables."""
 
-        bassetlaw = PCT.objects.create(
-            code="02Q", org_type="CCG", stp=stp_1, regional_team=regional_team_54
-        )
-        lincs_west = PCT.objects.create(
-            code="04D", org_type="CCG", stp=stp_2, regional_team=regional_team_55
-        )
-        lincs_east = PCT.objects.create(
-            code="03T",
-            org_type="CCG",
-            open_date="2013-04-01",
-            close_date="2015-01-01",
-            stp=stp_2,
-            regional_team=regional_team_55,
-        )
-        Chemical.objects.create(bnf_code="0703021Q0", chem_name="Desogestrel")
-        Chemical.objects.create(bnf_code="0408010A0", chem_name="Levetiracetam")
-        Practice.objects.create(
-            code="C84001", ccg=bassetlaw, name="LARWOOD SURGERY", setting=4
-        )
-        Practice.objects.create(
-            code="C84024", ccg=bassetlaw, name="NEWGATE MEDICAL GROUP", setting=4
-        )
-        Practice.objects.create(
-            code="B82005",
-            ccg=bassetlaw,
-            name="PRIORY MEDICAL GROUP",
-            setting=4,
-            open_date="2015-01-01",
-        )
-        Practice.objects.create(
-            code="B82010", ccg=bassetlaw, name="RIPON SPA SURGERY", setting=4
-        )
-        Practice.objects.create(
-            code="A85017", ccg=bassetlaw, name="BEWICK ROAD SURGERY", setting=4
-        )
-        Practice.objects.create(
-            code="A86030", ccg=bassetlaw, name="BETTS AVENUE MEDICAL GROUP", setting=4
-        )
-        Practice.objects.create(
-            code="C83051", ccg=lincs_west, name="ABBEY MEDICAL PRACTICE", setting=4
-        )
-        Practice.objects.create(
-            code="C83019", ccg=lincs_east, name="BEACON MEDICAL PRACTICE", setting=4
-        )
-        # Ensure we only include open practices in our calculations.
-        Practice.objects.create(
-            code="B82008",
-            ccg=bassetlaw,
-            name="NORTH SURGERY",
-            setting=4,
-            open_date="2010-04-01",
-            close_date="2012-01-01",
-        )
-        # Ensure we only include standard practices in our calculations.
-        Practice.objects.create(
-            code="Y00581",
-            ccg=bassetlaw,
-            name="BASSETLAW DRUG & ALCOHOL SERVICE",
-            setting=1,
-        )
+    try:
+        Client("measures").create_dataset()
+    except Conflict:
+        pass
 
-        measure = Measure.objects.create(
-            id="cerazette",
-            name="Cerazette vs. Desogestrel",
-            title="Prescribing of...",
-            tags=["core"],
-            numerator_bnf_codes=[],
+    client = Client("hscic")
+    client.get_or_create_table("ccgs", schemas.CCG_SCHEMA)
+    client.get_or_create_table("practices", schemas.PRACTICE_SCHEMA)
+    client.get_or_create_table(
+        "normalised_prescribing_standard", schemas.PRESCRIBING_SCHEMA
+    )
+    client.get_or_create_table(
+        "practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA
+    )
+
+
+def upload_dummy_prescribing(bnf_codes):
+    """Upload enough dummy prescribing data to BQ to allow the BNF code simplification
+    to be meaningful."""
+
+    prescribing_rows = []
+    for bnf_code in bnf_codes:
+        row = [
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            bnf_code,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ]
+        prescribing_rows.append(row)
+
+    table = Client("hscic").get_table("normalised_prescribing_standard")
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in prescribing_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
+
+
+def create_import_log():
+    """Create ImportLog used by import_measures to work out which months is should
+    import data."""
+    ImportLog.objects.create(category="prescribing", current_at="2018-08-01")
+
+
+def create_old_measure_value():
+    """Create MeasureValue and MeasureGlobal that are to be deleted because they are
+    more than five years old."""
+    with patched_global_matrixstore_from_data_factory(build_factory()):
+        call_command("import_measures", definitions_only=True, measure="desogestrel")
+    m = Measure.objects.get(id="desogestrel")
+    m.measurevalue_set.create(month="2010-01-01")
+    m.measureglobal_set.create(month="2010-01-01")
+
+
+def create_organisations(random):
+    """Create RegionalTeams, STPs, CCGs, PCNs, Practices in local DB."""
+
+    for regtm_ix in range(5):
+        regtm = RegionalTeam.objects.create(
+            code="Y0{}".format(regtm_ix), name="Region {}".format(regtm_ix)
         )
 
-        # We expect this MeasureValue to be deleted because it is older than
-        # five years.
-        MeasureValue.objects.create(measure=measure, pct_id="02Q", month="2000-01-01")
-
-        # We expect this MeasureValue to be unchanged
-        MeasureValue.objects.create(measure=measure, pct_id="02Q", month="2015-08-01")
-
-        # We expect this MeasureValue to be updated
-        MeasureValue.objects.create(measure=measure, pct_id="02Q", month="2015-09-01")
-
-        ImportLog.objects.create(
-            category="prescribing",
-            current_at="2018-04-01",
-            filename="/tmp/prescribing.csv",
-        )
-        if "SKIP_BQ_LOAD" in os.environ:
-            assert "BQ_NONCE" in os.environ, "Specify BQ_NONCE to reuse fixtures"
-
-        if "SKIP_BQ_LOAD" not in os.environ:
-            fixtures_path = os.path.join("frontend", "tests", "fixtures", "commands")
-
-            prescribing_fixture_path = os.path.join(
-                fixtures_path, "prescribing_bigquery_fixture.csv"
+        for stp_ix in range(5):
+            stp = STP.objects.create(
+                ons_code="E000000{}{}".format(regtm_ix, stp_ix),
+                name="STP {}/{}".format(regtm_ix, stp_ix),
             )
-            # TODO Make this a table with a view (see
-            # generate_presentation_replacements), and put it in the correct
-            # dataset ('hscic', not 'measures').
-            client = Client("measures")
-            table = client.get_or_create_table(
-                "normalised_prescribing_legacy", PRESCRIBING_SCHEMA
-            )
-            table.insert_rows_from_csv(prescribing_fixture_path, PRESCRIBING_SCHEMA)
 
-            practices_fixture_path = os.path.join(fixtures_path, "practices.csv")
-            client = Client("hscic")
-            table = client.get_or_create_table("practices", PRACTICE_SCHEMA)
-            table.insert_rows_from_csv(practices_fixture_path, PRACTICE_SCHEMA)
-
-            ccgs_fixture_path = os.path.join(fixtures_path, "ccgs.csv")
-            table = client.get_or_create_table("ccgs", CCG_SCHEMA)
-            table.insert_rows_from_csv(ccgs_fixture_path, CCG_SCHEMA)
-
-        opts = {"month": "2015-09-01", "measure": "cerazette", "v": 3}
-        with patch(MODULE + ".get_measure_definition_paths", new=working_measure_files):
-            call_command("import_measures", **opts)
-
-    @patch(MODULE + ".get_measure_definition_paths", new=broken_json_measure_files)
-    def test_check_definition_bad_json(self):
-        with self.assertRaises(ValueError) as command_error:
-            call_command("import_measures", check=True)
-        self.assertIn("Problems parsing JSON", str(command_error.exception))
-
-    @patch(MODULE + ".get_measure_definition_paths", new=broken_sql_measure_files)
-    def test_check_definition_bad_sql(self):
-        with self.assertRaises(BadRequest) as command_error:
-            call_command("import_measures", check=True)
-        self.assertIn("SQL error", str(command_error.exception))
-
-    def test_import_measurevalue_by_practice_with_different_payments(self):
-        month = "2015-10-01"
-        measure_id = "cerazette"
-        args = []
-        opts = {"month": month, "measure": measure_id, "v": 3}
-        with patch(
-            MODULE + ".get_measure_definition_paths",
-            new=MagicMock(return_value=working_measure_files()),
-        ):
-            call_command("import_measures", *args, **opts)
-
-        m = Measure.objects.get(id="cerazette")
-        month = "2015-10-01"
-        p = Practice.objects.get(code="C83051")
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings["50"], "0.00")
-
-        p = Practice.objects.get(code="C83019")
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings["50"], "325.58")
-
-        p = Practice.objects.get(code="A86030")
-        mv = MeasureValue.objects.get(measure=m, month=month, practice=p)
-        self.assertEqual("%.2f" % mv.cost_savings["50"], "-42.86")
-
-    def test_measure_is_updated(self):
-        m = Measure.objects.get(id="cerazette")
-        self.assertEqual(m.name, "Cerazette vs. Desogestrel")
-        self.assertEqual(m.description[:10], "Total quan")
-        self.assertEqual(m.why_it_matters[:10], "This is th")
-        self.assertEqual(m.low_is_good, True)
-
-    def test_old_measure_value_deleted(self):
-        self.assertEqual(
-            MeasureValue.objects.filter(
-                measure="cerazette", pct="02Q", month="2000-01-01"
-            ).count(),
-            0,
-        )
-
-    def test_not_so_old_measure_value_not_deleted(self):
-        self.assertEqual(
-            MeasureValue.objects.filter(
-                measure="cerazette", pct="02Q", month="2015-08-01"
-            ).count(),
-            1,
-        )
-
-    def test_practice_general(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "C84001": {
-                "numerator": 1000,
-                "denominator": 11000,
-                "calc_value": 0.0909,
-                "percentile": 33.33,
-                "pct.code": "02Q",
-                "cost_savings": {
-                    "10": 485.58,
-                    "20": 167.44,
-                    "50": -264.71,
-                    "70": -3126.00,
-                    "90": -7218.00,
-                },
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_practice_with_no_prescribing(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "B82010": {
-                "numerator": 0,
-                "denominator": 0,
-                "calc_value": None,
-                "percentile": None,
-                "cost_savings": {"10": 0, "90": 0},
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_practice_with_positive_cost_savings(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "A85017": {
-                "numerator": 1000,
-                "denominator": 1000,
-                "calc_value": 1,
-                "percentile": 100,
-                "cost_savings": {"10": 862.33, "90": 162.00},
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_practice_with_negative_cost_savings(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "A86030": {
-                "numerator": 0,
-                "denominator": 1000,
-                "calc_value": 0,
-                "percentile": 0,
-                "cost_savings": {"10": -37.67, "90": -738.00},
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_practice_in_top_quartile(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "C83051": {
-                "numerator": 1500,
-                "denominator": 21500,
-                "calc_value": 0.0698,
-                "percentile": 16.67,
-                "cost_savings": {"10": 540.00, "90": -14517.00},
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_practice_at_median(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "C83019": {
-                "numerator": 2000,
-                "denominator": 17000,
-                "calc_value": 0.1176,
-                "percentile": 50,
-                "cost_savings": {"10": 1159.53, "90": -10746.00},
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_ccg_at_0th_centile(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "04D": {
-                "numerator": 1500,
-                "denominator": 21500,
-                "calc_value": 0.0698,
-                "percentile": 0,
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_ccg_at_100th_centile(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "02Q": {
-                "numerator": 82000,
-                "denominator": 143000,
-                "calc_value": 0.5734,
-                "percentile": 100,
-                "cost_savings": {
-                    "10": 63588.51,
-                    "30": 61123.67,
-                    "50": 58658.82,
-                    "80": 23463.53,
-                    "90": 11731.76,
-                },
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_ccg_at_50th_centile(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "03T": {
-                "numerator": 2000,
-                "denominator": 17000,
-                "calc_value": 0.1176,
-                "percentile": 50,
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def test_import_measureglobal(self):
-        month = "2015-09-01"
-        measure = Measure.objects.get(id="cerazette")
-        expected = {
-            "_global_": {
-                "numerator": 85500,
-                "denominator": 181500,
-                "calc_value": 0.4711,
-                "percentiles": {
-                    "practice": {
-                        "10": 0.0419,
-                        "20": 0.0740,
-                        "50": 0.1176,
-                        "70": 0.4067,
-                        "90": 0.8200,
-                    },
-                    "ccg": {
-                        "10": 0.0793,
-                        "30": 0.0985,
-                        "50": 0.1176,
-                        "80": 0.3911,
-                        "90": 0.4823,
-                    },
-                },
-                "cost_savings": {
-                    "practice": {
-                        "10": 70149.77,
-                        "20": 65011.21,
-                        "50": 59029.41,
-                        "70": 26934.00,
-                        "90": 162.00,
-                    },
-                    "ccg": {
-                        "10": 64174.56,  # this one got 62795.62
-                        "30": 61416.69,
-                        "50": 58658.82,
-                        "80": 23463.53,
-                        "90": 11731.76,
-                    },
-                },
-            }
-        }
-        self._assertExpectedMeasureValue(measure, month, expected)
-
-    def _walk(self, mv, data):
-        for k, v in data.items():
-            if "." in k:
-                relation, attr = k.split(".")
-                model = getattr(mv, relation)
-                actual = getattr(model, attr)
-                expected = v
-                identifier = k
-            elif isinstance(v, dict):
-                field = getattr(mv, k)
-                for k2, v2 in v.items():
-                    actual = field.get(k2)
-                    expected = v2
-                    identifier = "%s[%s]" % (k, k2)
-                    if isinstance(v2, dict):
-                        # BQ returns strings:
-                        try:
-                            actual = json.loads(actual)
-                        except TypeError:
-                            # Already decoded it
-                            pass
-                        for k3, v3 in v2.items():
-                            yield actual.get(k3), v3, "[%s]" % k3
-                    else:
-                        yield actual, expected, identifier
-
-            else:
-                actual = getattr(mv, k)
-                expected = v
-                identifier = k
-                yield actual, expected, identifier
-
-    def _assertExpectedMeasureValue(self, measure, month, expected):
-        for entity_id, data in expected.items():
-            if entity_id == "_global_":
-                mv = MeasureGlobal.objects.get(measure=measure, month=month)
-            elif len(entity_id) == 3:
-                ccg = PCT.objects.get(code=entity_id)
-                mv = MeasureValue.objects.get(
-                    measure=measure, month=month, pct=ccg, practice=None
+            pcns = []
+            for pcn_ix in range(5):
+                pcn = PCN.objects.create(
+                    ons_code="E00000{}{}{}".format(regtm_ix, stp_ix, pcn_ix),
+                    name="PCN {}/{}/{}".format(regtm_ix, stp_ix, pcn_ix),
                 )
-            else:
+                pcns.append(pcn)
 
-                p = Practice.objects.get(code=entity_id)
-                mv = MeasureValue.objects.get(measure=measure, month=month, practice=p)
-            for actual, expected, identifier in self._walk(mv, data):
-                if isinstance(expected, Number):
-                    self.assert_(
-                        isclose(actual, expected),
-                        "got %s for %s, expected ~ %s" % (actual, identifier, expected),
+            for ccg_ix in range(5):
+                ccg = PCT.objects.create(
+                    regional_team=regtm,
+                    stp=stp,
+                    code="{}{}{}".format(regtm_ix, stp_ix, ccg_ix).replace("0", "A"),
+                    name="CCG {}/{}/{}".format(regtm_ix, stp_ix, ccg_ix),
+                    org_type="CCG",
+                )
+
+                for prac_ix in range(5):
+                    Practice.objects.create(
+                        ccg=ccg,
+                        pcn=random.choice(pcns),
+                        code="P0{}{}{}{}".format(regtm_ix, stp_ix, ccg_ix, prac_ix),
+                        name="Practice {}/{}/{}/{}".format(
+                            regtm_ix, stp_ix, ccg_ix, prac_ix
+                        ),
+                        setting=4,
                     )
-                else:
-                    self.assert_(
-                        actual == expected,
-                        "got %s for %s, expected %s" % (actual, identifier, expected),
-                    )
 
 
-class TestParseMeasures(TestCase):
-    def test_parse_measures(self):
-        measures = parse_measures()
-        lpzomnibus_ix = list(measures).index("lpzomnibus")
-        lptrimipramine_ix = list(measures).index("lptrimipramine")
-        # The order of these specific measures matters, as the SQL for
-        # the omnibus measure relies on the other LP measures having
-        # been calculated first
-        self.assertTrue(lptrimipramine_ix < lpzomnibus_ix)
+def upload_ccgs_and_practices():
+    """Upload CCGs and Practices to BQ."""
+
+    table = Client("hscic").get_table("ccgs")
+    table.insert_rows_from_pg(
+        PCT, schemas.CCG_SCHEMA, transformer=schemas.ccgs_transform
+    )
+    table = Client("hscic").get_table("practices")
+    table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
+
+
+def upload_prescribing(randint):
+    """Generate prescribing data, and upload to BQ."""
+
+    prescribing_rows = []
+
+    # These are for the desogestrel measure
+    presentations = [
+        ("0703021Q0AAAAAA", "Desogestrel_Tab 75mcg"),  # generic
+        ("0703021Q0BBAAAA", "Cerazette_Tab 75mcg"),  # branded
+        ("076543210AAAAAA", "Etynodiol Diacet_Tab 500mcg"),  # irrelevant
+    ]
+
+    seen_practice_with_no_prescribing = False
+    seen_practice_with_no_relevant_prescribing = False
+    seen_practice_with_no_generic_prescribing = False
+    seen_practice_with_no_branded_prescribing = False
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = "2018-0{}-01 00:00:00 UTC".format(month)
+
+            for ix, (bnf_code, bnf_name) in enumerate(presentations):
+                if practice.code == "P00000":
+                    seen_practice_with_no_prescribing = True
+                    continue
+                elif practice.code == "P00010" and "0703021Q" in bnf_code:
+                    seen_practice_with_no_relevant_prescribing = True
+                    continue
+                elif practice.code == "P00020" and bnf_code == "0703021Q0AAAAAA":
+                    seen_practice_with_no_generic_prescribing = True
+                    continue
+                elif practice.code == "P00030" and bnf_code == "0703021Q0BBAAAA":
+                    seen_practice_with_no_branded_prescribing = True
+                    continue
+
+                items = randint(0, 100)
+                quantity = randint(6, 28) * items
+
+                # Multiplying by (1 + ix) ensures that the branded cost is
+                # always higher than the generic cost.
+                actual_cost = (1 + ix) * randint(100, 200) * quantity * 0.01
+
+                # We don't care about net_cost.
+                net_cost = actual_cost
+
+                row = [
+                    "sha",  # This value doesn't matter.
+                    practice.ccg.regional_team_id,
+                    practice.ccg.stp_id,
+                    practice.ccg_id,
+                    practice.pcn_id,
+                    practice.code,
+                    bnf_code,
+                    bnf_name,
+                    items,
+                    net_cost,
+                    actual_cost,
+                    quantity,
+                    timestamp,
+                ]
+
+                prescribing_rows.append(row)
+
+    assert seen_practice_with_no_prescribing
+    assert seen_practice_with_no_relevant_prescribing
+    assert seen_practice_with_no_generic_prescribing
+    assert seen_practice_with_no_branded_prescribing
+
+    # These are for the coproxamol and glutenfree measures
+    presentations = [
+        ("0407010Q0AAAAAA", "Co-Proxamol_Tab 32.5mg/325mg"),
+        ("0904010AUBBAAAA", "Mrs Crimble's_G/F W/F Cheese Bites Orig"),
+    ]
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = "2018-0{}-01 00:00:00 UTC".format(month)
+
+            for bnf_code, bnf_name in presentations:
+                items = randint(0, 100)
+                quantity = randint(6, 28) * items
+
+                actual_cost = randint(100, 200) * quantity * 0.01
+
+                # We don't care about net_cost.
+                net_cost = actual_cost
+
+                row = [
+                    "sha",  # This value doesn't matter.
+                    practice.ccg.regional_team_id,
+                    practice.ccg.stp_id,
+                    practice.ccg_id,
+                    practice.pcn_id,
+                    practice.code,
+                    bnf_code,
+                    bnf_name,
+                    items,
+                    net_cost,
+                    actual_cost,
+                    quantity,
+                    timestamp,
+                ]
+
+                prescribing_rows.append(row)
+
+    # In production, normalised_prescribing_standard is actually a view,
+    # but for the tests it's much easier to set it up as a normal table.
+    table = Client("hscic").get_table("normalised_prescribing_standard")
+
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in prescribing_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
+
+        headers = [
+            "sha",
+            "regional_team_id",
+            "stp_id",
+            "ccg_id",
+            "pcn_id",
+            "practice_id",
+            "bnf_code",
+            "bnf_name",
+            "items",
+            "net_cost",
+            "actual_cost",
+            "quantity",
+            "month",
+        ]
+        prescriptions = pd.read_csv(f.name, names=headers)
+        prescriptions["month"] = prescriptions["month"].str[:10]
+
+    return prescriptions
+
+
+def upload_practice_statistics(randint):
+    """Generate practice statistics data, and upload to BQ."""
+
+    practice_statistics_rows = []
+    seen_practice_with_no_statistics = False
+    columns = [
+        "month",
+        "regional_team_id",
+        "stp_id",
+        "ccg_id",
+        "pcn_id",
+        "practice_id",
+        "total_list_size",
+    ]
+    practice_stats = pd.DataFrame(columns=columns)
+
+    for practice in Practice.objects.all():
+        for month in [7, 8]:
+            timestamp = "2018-0{}-01 00:00:00 UTC".format(month)
+
+            if month == 8 and practice.code == "P00000":
+                seen_practice_with_no_statistics = True
+                continue
+
+            total_list_size = randint(100, 200)
+
+            row = [
+                timestamp,  # month
+                0,  # male_0_4
+                0,  # female_0_4
+                0,  # male_5_14
+                0,  # male_15_24
+                0,  # male_25_34
+                0,  # male_35_44
+                0,  # male_45_54
+                0,  # male_55_64
+                0,  # male_65_74
+                0,  # male_75_plus
+                0,  # female_5_14
+                0,  # female_15_24
+                0,  # female_25_34
+                0,  # female_35_44
+                0,  # female_45_54
+                0,  # female_55_64
+                0,  # female_65_74
+                0,  # female_75_plus
+                total_list_size,  # total_list_size
+                0,  # astro_pu_cost
+                0,  # astro_pu_items
+                "{}",  # star_pu
+                practice.ccg_id,  # pct_id
+                practice.code,  # practice
+            ]
+
+            practice_statistics_rows.append(row)
+            practice_stats = practice_stats.append(
+                {
+                    "month": timestamp[:10],
+                    "practice_id": practice.code,
+                    "pcn_id": practice.pcn_id,
+                    "ccg_id": practice.ccg_id,
+                    "stp_id": practice.ccg.stp_id,
+                    "regional_team_id": practice.ccg.regional_team_id,
+                    "thousand_patients": total_list_size / 1000.0,
+                },
+                ignore_index=True,
+            )
+
+    assert seen_practice_with_no_statistics
+
+    # Upload practice_statistics_rows to BigQuery.
+    table = Client("hscic").get_table("practice_statistics")
+
+    with tempfile.NamedTemporaryFile() as f:
+        writer = csv.writer(f)
+        for row in practice_statistics_rows:
+            writer.writerow(row)
+        f.seek(0)
+        table.insert_rows_from_csv(f.name, schemas.PRACTICE_STATISTICS_SCHEMA)
+
+    return practice_stats
+
+
+def build_factory():
+    """Build a MatrixStore DataFactory with prescriptions for several different
+    presentations, to allow the BNF code simplification to be meaningful."""
+
+    bnf_codes = [
+        "0407010Q0AAAAAA",  # Co-Proxamol_Tab 32.5mg/325mg
+        "0407010P0AAAAAA",  # Nefopam HCl_Inj 20mg/ml 1ml Amp
+        "0703021Q0AAAAAA",  # Desogestrel_Tab 75mcg
+        "0703021Q0BBAAAA",  # Cerazette_Tab 75mcg
+        "0703021P0AAAAAA",  # Norgestrel_Tab 75mcg
+        "0904010AUBBAAAA",  # Mrs Crimble's_G/F W/F Cheese Bites Orig
+        "0904010AVBBAAAA",  # Mrs Crimble's_W/F Dutch Apple Cake
+    ]
+    factory = DataFactory()
+    month = factory.create_months("2018-10-01", 1)[0]
+    practice = factory.create_practices(1)[0]
+    for bnf_code in bnf_codes:
+        presentation = factory.create_presentation(bnf_code)
+        factory.create_prescription(presentation, practice, month)
+    return factory

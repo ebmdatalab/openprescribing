@@ -415,3 +415,6 @@ TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
 # location in /tmp/, we benefit from tmpreaper, which is run by cron to delete
 # temporary files older than a week.
 CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"
+
+# Path of directory containing measure definitions.
+MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")
