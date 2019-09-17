@@ -109,7 +109,7 @@ def npm_build_js():
 
 
 def npm_build_css(force=False):
-    if force or filter(
+    if force or any(
         lambda x: x.startswith("openprescribing/media/css"),
         [x for x in env.changed_files],
     ):
