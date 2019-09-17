@@ -77,9 +77,9 @@ class Command(BaseCommand):
                 )
                 calculation.check_definition()
             except BadRequest as e:
-                errors.append("* SQL error in `{}`: {}".format(measure_id, e.message))
+                errors.append("* SQL error in `{}`: {}".format(measure_id, e.args[0]))
             except TypeError as e:
-                errors.append("* JSON error in `{}`: {}".format(measure_id, e.message))
+                errors.append("* JSON error in `{}`: {}".format(measure_id, e.args[0]))
         if errors:
             raise BadRequest("\n".join(errors))
 
@@ -161,7 +161,7 @@ def load_measure_defs(measure_ids=None):
                 measure_def = json.load(f)
             except ValueError as e:
                 # Add the measure_id to the exception
-                errors.append("* {}: {}".format(measure_id, e.message))
+                errors.append("* {}: {}".format(measure_id, e.args[0]))
                 continue
 
             if measure_ids is None:
