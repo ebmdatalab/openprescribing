@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import tempfile
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from dateutil.relativedelta import relativedelta
 
