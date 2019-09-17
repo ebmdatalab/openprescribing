@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import string
 import subprocess
 import sys
 import tempfile
