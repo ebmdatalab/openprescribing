@@ -62,7 +62,7 @@ def convert_row_types(row):
 
 
 def convert_value(value):
-    if isinstance(value, (bytes, buffer)):
+    if isinstance(value, (bytes, memoryview)):
         return deserialize(value)
     else:
         return value
