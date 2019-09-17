@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 import json
 import uuid
 
@@ -1000,11 +1000,11 @@ class EmailMessage(models.Model):
 
     @property
     def message(self):
-        return cPickle.loads(str(self.pickled_message))
+        return pickle.loads(str(self.pickled_message))
 
     @message.setter
     def message(self, value):
-        self.pickled_message = cPickle.dumps(value)
+        self.pickled_message = pickle.dumps(value)
 
     def send(self):
         self.message.send()

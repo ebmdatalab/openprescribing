@@ -1,9 +1,9 @@
-from BaseHTTPServer import BaseHTTPRequestHandler
-from BaseHTTPServer import HTTPServer
+from http.server import BaseHTTPRequestHandler
+from http.server import HTTPServer
 import logging
 import requests
 from threading import Thread
-import urlparse
+import urllib.parse
 import os
 
 
@@ -28,8 +28,8 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
         logger.info(format % args)
 
     def do_GET(self):
-        o = urlparse.urlparse(self.path)
-        q = urlparse.parse_qs(o.query)
+        o = urllib.parse.urlparse(self.path)
+        q = urllib.parse.parse_qs(o.query)
         data = {}
         if "/spending_by_org" in o.path and "ccg" in q.get("org_type"):
             code = q.get("code")[0]
@@ -108,7 +108,7 @@ class MockApiRequestHandler(BaseHTTPRequestHandler):
 class MockApiServer(object):
     def __init__(self, port=None):
         if port is None:
-            port = urlparse.urlparse(os.environ["API_HOST"]).port
+            port = urllib.parse.urlparse(os.environ["API_HOST"]).port
         self.port = port
 
     def start(self):
