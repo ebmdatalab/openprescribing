@@ -12,7 +12,7 @@ from frontend.models import Presentation
 
 from matrixstore.db import get_db, get_row_grouper
 
-import view_utils as utils
+from . import view_utils as utils
 
 
 class MissingParameter(APIException):

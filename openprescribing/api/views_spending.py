@@ -18,7 +18,7 @@ from frontend.models import Presentation
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
 from matrixstore.db import get_db, get_row_grouper
 
-import view_utils as utils
+from . import view_utils as utils
 
 
 MIN_GHOST_GENERIC_DELTA = 2

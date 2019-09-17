@@ -4,7 +4,7 @@ from urllib import quote_plus
 
 from mock import patch
 from mock import PropertyMock
-from selenium_base import SeleniumTestCase
+from .selenium_base import SeleniumTestCase
 
 
 class GeneralFrontendTest(SeleniumTestCase):

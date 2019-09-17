@@ -3,7 +3,7 @@ import unittest
 
 from django.core.urlresolvers import reverse
 
-from selenium_base import SeleniumTestCase
+from .selenium_base import SeleniumTestCase
 
 from frontend.models import User, OrgBookmark
 

@@ -14,7 +14,7 @@ from collections import defaultdict
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.management import call_command
 import requests
-from selenium_base import SeleniumTestCase
+from .selenium_base import SeleniumTestCase
 
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
