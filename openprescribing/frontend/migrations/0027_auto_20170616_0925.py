@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ppusaving',
             name='presentation',
-            field=models.ForeignKey(db_column=b'bnf_code', db_constraint=False, on_delete=django.db.models.deletion.CASCADE, to='frontend.Presentation'),
+            field=models.ForeignKey(db_column='bnf_code', db_constraint=False, on_delete=django.db.models.deletion.CASCADE, to='frontend.Presentation'),
         ),
     ]
