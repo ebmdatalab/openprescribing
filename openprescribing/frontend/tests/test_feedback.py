@@ -81,7 +81,10 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
             url="http://example.com/?p=✓",
         )
         email = mail.outbox[0]
-        self.assertEqual(email.from_email, "Alicé Apple <feedback@openprescribing.net>")
+        self.assertEqual(
+            email.from_email,
+            "=?utf-8?q?Alic=C3=A9_Apple?= <feedback@openprescribing.net>",
+        )
         self.assertEqual(email.subject, "OpenPrescribing Feedback: Test ✓")
         self.assertIn("All Good ✓", email.body)
         self.assertIn("http://example.com/?p=✓", email.body)
