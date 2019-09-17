@@ -5,7 +5,7 @@ import os
 import tempfile
 from mock import patch
 from random import Random
-from urlparse import parse_qs
+from urllib.parse import parse_qs
 
 from google.api_core.exceptions import BadRequest
 from google.cloud.exceptions import Conflict
