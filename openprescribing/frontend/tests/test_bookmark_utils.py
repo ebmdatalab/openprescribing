@@ -25,6 +25,7 @@ from frontend.models import Practice
 from frontend.models import NCSOConcessionBookmark
 from frontend.templatetags.template_extras import deltawords
 from frontend.views import bookmark_utils
+from frontend.views.spending_utils import ncso_spending_for_entity
 from frontend.tests.data_factory import DataFactory
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
@@ -794,7 +795,10 @@ class TestNCSOConcessions(TestCase):
         )
         self.assertIn("published for **July 2018**", msg.body)
         self.assertIn("prescribed at Practice 2", msg.body)
-        self.assertIn("an additional **\xa3206**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(self.practice, "practice", 1)[0]["additional_cost"]
+        )
+        self.assertIn("an additional **\xa3{:,}**".format(additional_cost), msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -806,7 +810,12 @@ class TestNCSOConcessions(TestCase):
 
         self.assertEqual(msg.subject, "Your update about NCSO Concessions for CCG 0")
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn("cost CCG 0 an additional **\xa3654**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(self.ccg, "ccg", 1)[0]["additional_cost"]
+        )
+        self.assertIn(
+            "cost CCG 0 an additional **\xa3{:,}**".format(additional_cost), msg.body
+        )
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -820,7 +829,15 @@ class TestNCSOConcessions(TestCase):
             msg.subject, "Your update about NCSO Concessions for the NHS in England"
         )
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn("cost the NHS in England an additional **\xa31,269**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(None, "all_england", 1)[0]["additional_cost"]
+        )
+        self.assertIn(
+            "cost the NHS in England an additional **\xa3{:,}**".format(
+                additional_cost
+            ),
+            msg.body,
+        )
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
