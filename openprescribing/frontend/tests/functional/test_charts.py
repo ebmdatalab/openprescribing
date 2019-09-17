@@ -79,18 +79,18 @@ class AnalyseSummaryTotalsTest(SeleniumTestCase):
         self.browser.get(self.live_server_url + "/analyse/#org=CCG&numIds=0212000AA")
         expected = {
             "panel-heading": (
-                u"Total prescribing for Rosuvastatin Calcium across all "
-                u"CCGs in NHS England"
+                "Total prescribing for Rosuvastatin Calcium across all "
+                "CCGs in NHS England"
             ),
-            "js-selected-month": u"Sep '16",
-            "js-financial-year-range": u"Apr—Sep '16",
-            "js-year-range": u"Oct '15—Sep '16",
-            "js-cost-month-total": u"29,720",
-            "js-cost-financial-year-total": u"178,726",
-            "js-cost-year-total": u"379,182",
-            "js-items-month-total": u"1,669",
-            "js-items-financial-year-total": u"9,836",
-            "js-items-year-total": u"20,622",
+            "js-selected-month": "Sep '16",
+            "js-financial-year-range": "Apr—Sep '16",
+            "js-year-range": "Oct '15—Sep '16",
+            "js-cost-month-total": "29,720",
+            "js-cost-financial-year-total": "178,726",
+            "js-cost-year-total": "379,182",
+            "js-items-month-total": "1,669",
+            "js-items-financial-year-total": "9,836",
+            "js-items-year-total": "20,622",
         }
         for classname, value in expected.items():
             selector = (

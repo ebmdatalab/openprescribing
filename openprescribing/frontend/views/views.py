@@ -77,7 +77,7 @@ def handle_bad_request(view_function):
         try:
             return view_function(request, *args, **kwargs)
         except BadRequestError as e:
-            context = {"error_code": 400, "reason": unicode(e)}
+            context = {"error_code": 400, "reason": str(e)}
             return render(request, "500.html", context, status=400)
 
     return wrapper
@@ -1029,7 +1029,7 @@ def feedback_view(request):
             if is_safe_url(url, allowed_hosts=[request.get_host()]):
                 redirect_url = url
             else:
-                logger.error(u"Unsafe redirect URL: {}".format(url))
+                logger.error("Unsafe redirect URL: {}".format(url))
                 redirect_url = "/"
             return HttpResponseRedirect(redirect_url)
     else:
@@ -1048,7 +1048,7 @@ def feedback_view(request):
 def custom_500(request):
     type_, value, traceback = sys.exc_info()
     reason = "Server error"
-    if "canceling statement due to statement timeout" in unicode(value):
+    if "canceling statement due to statement timeout" in str(value):
         reason = (
             "The database took too long to respond.  If you were running an"
             "analysis with multiple codes, try again with fewer."
@@ -1089,7 +1089,7 @@ def _get_measure_tag_filter(params, show_all_by_default=False):
     try:
         tag_details = [MEASURE_TAGS[tag] for tag in tags]
     except KeyError as e:
-        raise BadRequestError(u"Unrecognised tag: {}".format(e.args[0]))
+        raise BadRequestError("Unrecognised tag: {}".format(e.args[0]))
     return {
         "tags": tags,
         "names": [tag["name"] for tag in tag_details],
@@ -1126,7 +1126,7 @@ def _specified_or_last_date(request, category):
         try:
             date = parse_date(date)
         except ValueError:
-            raise BadRequestError(u"Date not in valid YYYY-MM-DD format: %s" % date)
+            raise BadRequestError("Date not in valid YYYY-MM-DD format: %s" % date)
     else:
         date = ImportLog.objects.latest_in_category(category).current_at
     return date
@@ -1422,7 +1422,7 @@ def all_england_ppu_savings(entity_type, date):
     elif entity_type == "practice":
         conditions += "AND {ppusavings_table}.practice_id IS NOT NULL "
     else:
-        raise BadRequestError(u"Unknown entity type: {}".format(entity_type))
+        raise BadRequestError("Unknown entity type: {}".format(entity_type))
     sql = ppu_sql(conditions=conditions)
     sql = (
         "SELECT SUM(possible_savings) " "AS total_savings FROM ({}) all_savings"

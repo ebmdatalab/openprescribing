@@ -795,7 +795,7 @@ class TestNCSOConcessions(TestCase):
         )
         self.assertIn("published for **July 2018**", msg.body)
         self.assertIn("prescribed at Practice 2", msg.body)
-        self.assertIn(u"an additional **\xa3206**", msg.body)
+        self.assertIn("an additional **\xa3206**", msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -807,7 +807,7 @@ class TestNCSOConcessions(TestCase):
 
         self.assertEqual(msg.subject, "Your update about NCSO Concessions for CCG 0")
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn(u"cost CCG 0 an additional **\xa3654**", msg.body)
+        self.assertIn("cost CCG 0 an additional **\xa3654**", msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -821,7 +821,7 @@ class TestNCSOConcessions(TestCase):
             msg.subject, "Your update about NCSO Concessions for the NHS in England"
         )
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn(u"cost the NHS in England an additional **\xa31,269**", msg.body)
+        self.assertIn("cost the NHS in England an additional **\xa31,269**", msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)

@@ -1141,4 +1141,4 @@ class NCSOConcession(models.Model):
 
     @property
     def drug_and_pack_size(self):
-        return u"{} {}".format(self.drug, self.pack_size)
+        return "{} {}".format(self.drug, self.pack_size)

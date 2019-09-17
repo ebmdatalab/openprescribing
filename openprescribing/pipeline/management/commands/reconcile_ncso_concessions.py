@@ -22,8 +22,8 @@ class Command(BaseCommand):
     def handle_concession(self, concession):
         self.stdout.write("~" * 10)
         self.stdout.write("Unreconciled concession:")
-        self.stdout.write(u"   drug: {}".format(concession.drug))
-        self.stdout.write(u"   pack size: {}".format(concession.pack_size))
+        self.stdout.write("   drug: {}".format(concession.drug))
+        self.stdout.write("   pack size: {}".format(concession.pack_size))
 
         while True:
             self.stdout.write("")
