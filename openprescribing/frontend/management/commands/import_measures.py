@@ -272,7 +272,7 @@ def create_or_update_measure(measure_def, end_date):
     v = arrays_to_strings(measure_def)
 
     for k, val in v.items():
-        if isinstance(val, (str, unicode)):
+        if isinstance(val, str):
             v[k] = val.strip()
 
     try:
