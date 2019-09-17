@@ -93,7 +93,9 @@ def get_header_line(filenames):
     pipeline = "({read_files}) 2>/dev/null".format(
         read_files=read_files(filenames, max_lines=1)
     )
-    header_lines = subprocess.check_output(pipeline, shell=True).splitlines()
+    header_lines = (
+        subprocess.check_output(pipeline, shell=True).decode("utf8").splitlines()
+    )
     header_line = header_lines[0]
     for n, filename in enumerate(filenames):
         other_line = header_lines[n]
