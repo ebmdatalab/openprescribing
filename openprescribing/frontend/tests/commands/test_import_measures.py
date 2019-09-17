@@ -518,7 +518,7 @@ def upload_dummy_prescribing(bnf_codes):
         prescribing_rows.append(row)
 
     table = Client("hscic").get_table("normalised_prescribing_standard")
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
             writer.writerow(row)
@@ -705,7 +705,7 @@ def upload_prescribing(randint):
     # but for the tests it's much easier to set it up as a normal table.
     table = Client("hscic").get_table("normalised_prescribing_standard")
 
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
             writer.writerow(row)
@@ -806,7 +806,7 @@ def upload_practice_statistics(randint):
     # Upload practice_statistics_rows to BigQuery.
     table = Client("hscic").get_table("practice_statistics")
 
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in practice_statistics_rows:
             writer.writerow(row)
