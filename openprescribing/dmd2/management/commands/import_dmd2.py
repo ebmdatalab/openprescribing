@@ -407,7 +407,7 @@ class Command(BaseCommand):
                 continue
 
             for cls in VMP, AMP, VMPP, AMPP:
-                names = cls_to_names[cls]
+                names = sorted(cls_to_names[cls])
                 if len(names) == 1:
                     presentation.dmd_name = list(names)[0]
                     presentation.save()
