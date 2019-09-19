@@ -34,10 +34,10 @@
       - screen
       - supervisor
       - libpq-dev
-      - python-dev
-      - python-pip
-      - python-virtualenv
-      - python-gdal
+      - python3-dev
+      - python3-pip
+      - python3-virtualenv
+      - python3-gdal
       - emacs
       - nginx
       - build-essential
@@ -89,7 +89,7 @@
       - postgresql-9.5-postgis-2.2
       - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
       - libpq-dev # Required for Ansible to interact with postgres
-      - python-psycopg2 # Required for Ansible to interact with postgres
+      - python3-psycopg2 # Required for Ansible to interact with postgres
 
 - name: Create fabric group for automation
   become: yes
