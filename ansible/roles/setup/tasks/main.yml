@@ -60,7 +60,7 @@
 - name: Add NodeSource 10.x apt repository
   become: yes
   apt_repository:
-    repo: 'deb https://deb.nodesource.com/node_10.x jessie main'
+    repo: 'deb https://deb.nodesource.com/node_10.x stretch main'
     update_cache: yes
 
 - name: Install nodejs
@@ -78,7 +78,7 @@
 - name: ensure postgres apt repository exists
   become: yes
   apt_repository:
-    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main'
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main'
     update_cache: yes
 
 - name: Install database packages

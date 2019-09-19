@@ -12,7 +12,7 @@ matrix:
       env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
     - name: "Ansible buildout test"
       script:
-        - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/jessie /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
+        - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/stretch /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
       env: LANG=en_US.UTF-8
     - name: "Linting"
       script:
@@ -34,7 +34,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - openssl aes-256-cbc -K $encrypted_c3e391f06205_key -iv $encrypted_c3e391f06205_iv -in google-credentials-ebmdatalabtest-1ad80daf5cc1.json.enc -out google-credentials.json -d
 install:
-  - docker pull dockette/jessie
+  - docker pull dockette/stretch
   - docker pull ebmdatalab/openprescribing-base:latest
   - docker pull mdillon/postgis:latest
 before_script:
