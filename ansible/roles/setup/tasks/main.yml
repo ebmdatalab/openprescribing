@@ -27,7 +27,7 @@
       - libproj-dev
       - gdal-bin
       - libgeoip1
-      - libgeos-c1
+      - libgeos-c1v5
       - git-core
       - vim
       - sudo
@@ -86,8 +86,8 @@
   apt:
     state: present
     pkg:
-      - postgresql-9.5-postgis-2.2
-      - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
+      - postgresql-11-postgis-2.5
+      - postgresql-server-dev-11  # required for building pyscopg against correct postgres
       - libpq-dev # Required for Ansible to interact with postgres
       - python3-psycopg2 # Required for Ansible to interact with postgres
 
@@ -112,7 +112,7 @@
   become: yes
   copy:
     src: "{{ item }}"
-    dest: /etc/postgresql/9.5/main/{{ item }}
+    dest: /etc/postgresql/11/main/{{ item }}
     force: yes
   with_items:
     - pg_hba.conf
@@ -126,7 +126,7 @@
 
 - name: Allow password authentication for local socket users
   become: yes
-  copy: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf force=yes
+  copy: src=pg_hba.conf dest=/etc/postgresql/11/main/pg_hba.conf force=yes
   notify:
       - Restart Postgres
 

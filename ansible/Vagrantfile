@@ -39,6 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # ansible provisioning
     config.vm.provision "ansible_local" do |ansible|
+      ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/get-pip.py | sudo python"
       ansible.install_mode = "pip_args_only"
       ansible.pip_args = "-r /openprescribing/ansible/vagrant_requirements.txt"
       ansible.playbook = "vagrant.yml"
