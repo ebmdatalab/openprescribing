@@ -88,7 +88,7 @@ def run_end_to_end():
         ("denominator", "INTEGER"),
     )
 
-    for path in glob.glob(settings.MEASURE_DEFINITIONS_PATH):
+    for path in glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")):
         measure_id = os.path.splitext(os.path.basename(path))[0]
         client.create_table("practice_data_" + measure_id, measures_schema)
         client.create_table("ccg_data_" + measure_id, measures_schema)
