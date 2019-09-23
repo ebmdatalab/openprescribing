@@ -11,29 +11,29 @@
 
 backports.csv
 beautifulsoup4
-django-allauth==0.39.1
-django-anymail[mailgun]==6.1.0
+django-allauth==0.40.0
+django-anymail[mailgun]==7.0.0
 django-cors-headers==3.0.2
 django-crispy-forms==1.7.2
 django-dotenv
-django>=1.11.23,<2.0
+django>=1.11.24,<2.0
 djangorestframework-csv==2.1.0
 djangorestframework>=3.3.2
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
 gunicorn>=19.5.0
-html2text==2018.1.9
-lxml==4.4.0
+html2text==2019.8.11
+lxml==4.4.1
 lz4
 mailchimp3>=2.0.18
 networkx==2.2
 newrelic
-numpy==1.16.4
-openpyxl==2.6.2
+numpy==1.16.5
+openpyxl==2.6.3
 pandas-gbq
 pandas==0.24.2
-premailer==3.6.0
+premailer==3.6.1
 psycopg2-binary==2.8.3
 pyarrow==0.14.1
 python-dateutil==2.8.0
@@ -43,9 +43,8 @@ requests-futures==1.0.0
 requests[security]==2.22.0
 scipy==1.2.1
 titlecase==0.12.0
-tqdm==4.32.2
+tqdm==4.36.1
 xlrd==1.2.0
-zstandard==0.11.1
 
 # redis
 django-redis

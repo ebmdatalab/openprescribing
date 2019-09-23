@@ -3,7 +3,7 @@
   become: yes
   apt:
     pkg: apt-transport-https
-    state: installed
+    state: present
 
 - name: Add NodeSource apt signing key
   become: yes
@@ -19,44 +19,43 @@
 - name: Install system packages
   become: yes
   apt:
-    pkg: "{{ item }}"
-    state: installed
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - binutils
-    - libproj-dev
-    - gdal-bin
-    - libgeoip1
-    - libgeos-c1
-    - git-core
-    - vim
-    - sudo
-    - screen
-    - supervisor
-    - libpq-dev
-    - python-dev
-    - python-pip
-    - python-virtualenv
-    - python-gdal
-    - emacs
-    - nginx
-    - build-essential
-    - libssl-dev
-    - libffi-dev
-    - unattended-upgrades
-    - libblas-dev
-    - liblapack-dev
-    - libatlas-base-dev
-    - gfortran
-    - libxml2-dev
-    - libxslt1-dev
-    - git
-    - virtualenvwrapper
-    - libfontconfig1  # for phantomjs
-    - libfontconfig1-dev
-    - firefox-esr
-    - xvfb
+    state: present
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - binutils
+      - libproj-dev
+      - gdal-bin
+      - libgeoip1
+      - libgeos-c1
+      - git-core
+      - vim
+      - sudo
+      - screen
+      - supervisor
+      - libpq-dev
+      - python-dev
+      - python-pip
+      - python-virtualenv
+      - python-gdal
+      - emacs
+      - nginx
+      - build-essential
+      - libssl-dev
+      - libffi-dev
+      - unattended-upgrades
+      - libblas-dev
+      - liblapack-dev
+      - libatlas-base-dev
+      - gfortran
+      - libxml2-dev
+      - libxslt1-dev
+      - git
+      - virtualenvwrapper
+      - libfontconfig1  # for phantomjs
+      - libfontconfig1-dev
+      - firefox-esr
+      - xvfb
 
 - name: Add NodeSource 10.x apt repository
   become: yes
@@ -67,10 +66,9 @@
 - name: Install nodejs
   become: yes
   apt:
-    pkg: "{{item}}"
-    state: installed
-  with_items:
-    - nodejs
+    state: present
+    pkg:
+      - nodejs
 
 - name: Add postgres apt key
   become: yes
@@ -86,13 +84,12 @@
 - name: Install database packages
   become: yes
   apt:
-    pkg: "{{ item }}"
-    state: installed
-  with_items:
-    - postgresql-9.5-postgis-2.2
-    - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
-    - libpq-dev # Required for Ansible to interact with postgres
-    - python-psycopg2 # Required for Ansible to interact with postgres
+    state: present
+    pkg:
+      - postgresql-9.5-postgis-2.2
+      - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
+      - libpq-dev # Required for Ansible to interact with postgres
+      - python-psycopg2 # Required for Ansible to interact with postgres
 
 - name: Create fabric group for automation
   become: yes

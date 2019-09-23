@@ -138,6 +138,14 @@ def log_deploy():
         )
 
 
+def check_numbers():
+    if env.environment != "production":
+        return
+
+    with prefix("source .venv/bin/activate"):
+        run("cd openprescribing/ && python manage.py check_numbers")
+
+
 def checkpoint(force_build):
     env.started_at = datetime.utcnow()
     with settings(warn_only=True):
@@ -270,7 +278,7 @@ def clear_cloudflare():
 
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
-            result = run("python deploy/clear_cache.py")
+            run("python deploy/clear_cache.py")
 
 
 @task
@@ -293,6 +301,7 @@ def deploy(environment, force_build=False, branch="master"):
         clear_cloudflare()
         setup_cron()
         log_deploy()
+        check_numbers()
 
 
 @task

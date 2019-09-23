@@ -385,7 +385,7 @@ def run_task(task, year, month, **kwargs):
     try:
         task.run(year, month, **kwargs)
         task_log.mark_succeeded()
-    except:
+    except BaseException:
         # We want to catch absolutely every error here, including things that
         # wouldn't be caught by `except Exception` (like `KeyboardInterrupt`),
         # since we want to log that the task didn't complete.
@@ -426,6 +426,17 @@ def run_all(year, month, under_test=False):
             # under test
             continue
         run_task(task, year, month, last_imported=last_imported)
+
+    if not under_test:
+        # Remove numbers.json files.  These are created by check_numbers, and we want to
+        # remove them after each import, since all numbers on the site will change with
+        # the new data.  We only want to remove these files after importing real data,
+        # and not during an end-to-end run.
+        check_numbers_glob = os.path.join(
+            settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
+        )
+        for path in glob.glob(check_numbers_glob):
+            os.remove(path)
 
     TaskLog.objects.create(
         year=year, month=month, task_name="fetch_and_import", status=TaskLog.SUCCESSFUL

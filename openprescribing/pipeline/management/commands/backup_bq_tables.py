@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import re
 
-from django.conf import settings
 from django.core.management import BaseCommand
 
 from gcutils.bigquery import Client, TableExporter

@@ -11,6 +11,7 @@ from .models import EmailMessage
 from .models import MailLog
 from .models import OrgBookmark
 from .models import SearchBookmark
+from .models import NCSOConcessionBookmark
 from .models import User
 from allauth.account.models import EmailAddress
 
@@ -91,6 +92,18 @@ class OrgBookmarkTypeFilter(admin.SimpleListFilter):
 
 @admin.register(OrgBookmark)
 class OrgBookmarkAdmin(admin.ModelAdmin):
+    date_hierarchy = "created_at"
+    list_display = ("name", "user", "created_at", "approved")
+    list_filter = ("approved", "created_at", OrgBookmarkTypeFilter)
+    readonly_fields = ("dashboard_link",)
+    search_fields = ("user__email",)
+
+    def dashboard_link(self, obj):
+        return format_html('<a href="{}">view in site</a>', obj.dashboard_url())
+
+
+@admin.register(NCSOConcessionBookmark)
+class NCSOConcessionBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
     list_display = ("name", "user", "created_at", "approved")
     list_filter = ("approved", "created_at", OrgBookmarkTypeFilter)

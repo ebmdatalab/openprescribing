@@ -98,7 +98,7 @@ $(function() {
     {name: 'Estimated cost', data: actualCosts, color: 'rgba(0, 0, 255, .8)'},
     {name: 'Projected cost', data: estimatedCosts, color: 'rgba(255, 0, 0, .8)'},
     {
-      name: 'Projected cost (basd on concessions so far this month)',
+      name: 'Projected cost (based on concessions so far this month)',
       data: incompleteCosts,
       color: 'rgba(255, 128, 0, .8)'}
   ];

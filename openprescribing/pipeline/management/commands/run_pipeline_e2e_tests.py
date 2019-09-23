@@ -9,7 +9,6 @@ from django.core.management import BaseCommand, CommandError
 from django.conf import settings
 
 from django.core.management import call_command
-from django.db import connection
 
 from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
@@ -45,15 +44,11 @@ def run_end_to_end():
 
     call_command("migrate")
 
-    path = os.path.join(
-        settings.APPS_ROOT, "frontend", "management", "commands", "measure_definitions"
-    )
-
     # No MeasureGlobals or MeasureValues are generated for the ghost branded
     # generics measure, because both numerator and denominator are computed
     # from a view (vw__ghost_generic_measure) which has no data.  Rather than
     # populate this view, it is simpler to pretend it doesn't exist.
-    num_measures = len(os.listdir(path)) - 1
+    num_measures = len(os.listdir(settings.MEASURE_DEFINITIONS_PATH)) - 1
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
@@ -92,15 +87,8 @@ def run_end_to_end():
         ("numerator", "INTEGER"),
         ("denominator", "INTEGER"),
     )
-    path = os.path.join(
-        settings.APPS_ROOT,
-        "frontend",
-        "management",
-        "commands",
-        "measure_definitions",
-        "*.json",
-    )
-    for path in glob.glob(path):
+
+    for path in glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")):
         measure_id = os.path.splitext(os.path.basename(path))[0]
         client.create_table("practice_data_" + measure_id, measures_schema)
         client.create_table("ccg_data_" + measure_id, measures_schema)

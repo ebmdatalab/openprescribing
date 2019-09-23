@@ -140,7 +140,7 @@ class VMP(models.Model):
         null=True,
         help_text="Unit dose unit of measure",
     )
-    bnf_code = models.CharField(max_length=15, null=True)
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
 
     def title(self):
         return self.nm
@@ -345,7 +345,7 @@ class AMP(models.Model):
         on_delete=models.CASCADE,
         help_text="Restrictions on availability",
     )
-    bnf_code = models.CharField(max_length=15, null=True)
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
 
     def title(self):
         return self.descr
@@ -463,7 +463,7 @@ class VMPP(models.Model):
         null=True,
         help_text="Combination pack",
     )
-    bnf_code = models.CharField(max_length=15, null=True)
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
 
     def title(self):
         return self.nm
@@ -544,7 +544,7 @@ class AMPP(models.Model):
         help_text="Discontinued",
     )
     discdt = models.DateField(null=True, help_text="Discontinued change date")
-    bnf_code = models.CharField(max_length=15, null=True)
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
 
     def title(self):
         return self.nm

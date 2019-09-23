@@ -49,21 +49,6 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[3]["name"], "Chloroth")
         self.assertEqual(content[3]["type"], "product")
 
-        url = "%s/bnf_code?q=0202&format=json" % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(len(content), 9)
-        self.assertEqual(content[0]["id"], "0202010B0")
-        self.assertEqual(content[0]["name"], "Bendroflumethiazide")
-        self.assertEqual(content[0]["section"], "2.2: Diuretics")
-
-        url = "%s/bnf_code?q=0202&exact=true&format=json" % self.api_prefix
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        content = json.loads(response.content)
-        self.assertEqual(len(content), 0)
-
         url = "%s/bnf_code?q=0202010D0BD&exact=true&format=json" % self.api_prefix
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -112,6 +97,15 @@ class TestAPIBNFCodeViews(ApiTestBase):
         self.assertEqual(content[0]["type"], "BNF chapter")
 
         url = "%s/bnf_code?q=2.2&exact=true&format=json" % self.api_prefix
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(content[0]["id"], "2.2")
+        self.assertEqual(content[0]["name"], "Diuretics")
+        self.assertEqual(content[0]["type"], "BNF section")
+
+        url = "%s/bnf_code?q=0202&exact=true&format=json" % self.api_prefix
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)

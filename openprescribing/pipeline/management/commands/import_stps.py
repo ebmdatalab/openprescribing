@@ -1,5 +1,4 @@
 from __future__ import print_function
-import csv
 import re
 
 from django.core.management import BaseCommand

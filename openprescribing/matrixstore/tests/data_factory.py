@@ -89,10 +89,11 @@ class DataFactory(object):
             for month in months
         ]
 
-    def create_presentation(self):
+    def create_presentation(self, bnf_code=None):
         index = self.next_id()
+        bnf_code = bnf_code or self.create_bnf_code(index)
         presentation = {
-            "bnf_code": self.create_bnf_code(index),
+            "bnf_code": bnf_code,
             "name": "Foo Tablet {}".format(index),
             "is_generic": self.random.choice([True, False]),
             "adq_per_quantity": self.random.choice([None, self.random.random() * 30]),

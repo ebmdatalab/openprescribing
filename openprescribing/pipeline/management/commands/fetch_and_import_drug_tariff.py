@@ -18,7 +18,6 @@ from django.core.management import BaseCommand
 from django.db import transaction
 
 from gcutils.bigquery import Client
-from dmd2.models import VMPP
 from frontend.models import TariffPrice
 from frontend.models import ImportLog
 from openprescribing.slack import notify_slack
@@ -33,7 +32,6 @@ class Command(BaseCommand):
         rsp = requests.get(url)
         doc = bs4.BeautifulSoup(rsp.content, "html.parser")
 
-        month_names = [x.lower() for x in calendar.month_name]
         month_abbrs = [x.lower() for x in calendar.month_abbr]
 
         imported_months = []
@@ -56,10 +54,9 @@ class Command(BaseCommand):
             if len(year) == 2:
                 year = "20" + year
 
-            try:
-                month = month_names.index(month_name.lower())
-            except ValueError:
-                month = month_abbrs.index(month_name.lower())
+            # We have seen the month be `September`, `Sept`, and `Sep`.
+            month_abbr = month_name.lower()[:3]
+            month = month_abbrs.index(month_abbr)
 
             date = datetime.date(int(year), month, 1)
 

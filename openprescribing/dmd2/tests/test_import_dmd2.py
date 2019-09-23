@@ -1,10 +1,9 @@
 import csv
 import shutil
-import tempfile
 
 from mock import patch
 
-from django.core.management import call_command, CommandError
+from django.core.management import call_command
 from django.test import TestCase
 
 from dmd2.models import AMP, AMPP, VMP, VMPP

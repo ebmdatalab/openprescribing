@@ -4,7 +4,6 @@ from collections import namedtuple
 
 from django.db import connection
 from django.db.models import Max
-from django.db.models.functions import Coalesce
 
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse as parse_date
@@ -76,7 +75,7 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
     tariff_costs = costs.tariff_costs[:, 0]
     extra_costs = costs.extra_costs[:, 0]
     quantities = costs.quantities[:, 0]
-    names = _get_names_for_bnf_codes(costs.bnf_code_offsets.keys())
+    names = Presentation.names_for_bnf_codes(costs.bnf_code_offsets.keys())
     results = []
     for bnf_code, offset in costs.bnf_code_offsets.items():
         results.append(
@@ -101,17 +100,6 @@ def _get_org_type_and_id(entity, entity_type):
         org_type = entity_type if entity_type != "CCG" else "ccg"
         org_id = entity.code
     return org_type, org_id
-
-
-def _get_names_for_bnf_codes(bnf_codes):
-    """
-    Given a list of BNF codes return a dictionary mapping those codes to their
-    DM&D names
-    """
-    name_map = Presentation.objects.filter(bnf_code__in=bnf_codes).values_list(
-        "bnf_code", Coalesce("dmd_name", "name")
-    )
-    return dict(name_map)
 
 
 def _get_concession_cost_matrices(min_date, max_date, org_type, org_id):
@@ -234,7 +222,7 @@ def _get_quantities_for_bnf_codes(db, bnf_codes):
         FROM
           presentation
         WHERE
-          quantity IS NOT NULL AND bnf_code IN ({})
+          bnf_code IN ({})
         """.format(
             ",".join(["?"] * len(bnf_codes))
         ),

@@ -16,7 +16,8 @@
       "is_percentage": true,
       "is_cost_based": true,
       "low_is_good": true,
-      "numerator_bnf_codes": []
+      "numerator_bnf_codes": [],
+      "denominator_bnf_codes": []
     }
   },
   {
@@ -36,7 +37,8 @@
       "is_percentage": true,
       "is_cost_based": true,
       "low_is_good": true,
-      "numerator_bnf_codes": []
+      "numerator_bnf_codes": [],
+      "denominator_bnf_codes": []
     }
   },
   {

@@ -21,7 +21,7 @@ include_choices = [
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(label="Query, SNOMED code, or BNF code/prefix", min_length=6)
+    q = forms.CharField(label="Query, SNOMED code, or BNF code/prefix", min_length=3)
     obj_types = forms.MultipleChoiceField(
         label="Search...",
         choices=obj_types_choices,
@@ -50,3 +50,19 @@ class SearchForm(forms.Form):
             InlineCheckboxes("include"),
             ButtonHolder(Submit("submit", "Search")),
         )
+
+
+class AdvancedSearchForm(forms.Form):
+    search = forms.CharField(required=True, widget=forms.HiddenInput())
+    include = forms.MultipleChoiceField(
+        label="Include...",
+        choices=include_choices,
+        required=False,
+        help_text="Unavailable items are not available to be prescribed and/or have been discontinued.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AdvancedSearchForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "GET"
+        self.helper.layout = Layout(Field("search"), InlineCheckboxes("include"))

@@ -3,12 +3,11 @@ import json
 
 from django.test import TestCase
 
-from rest_framework.exceptions import APIException
-
-from frontend.models import Measure
 from frontend.models import PCT
+from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
+@copy_fixtures_to_matrixstore
 class TestAPIMeasureViews(TestCase):
     fixtures = ["one_month_of_measures"]
     api_prefix = "/api/1.0"

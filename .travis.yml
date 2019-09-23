@@ -17,6 +17,7 @@ matrix:
     - name: "Linting"
       script:
         - pip3 install black==19.3b0
+        - pip2 install --user flake8==3.7.8
         - scripts/lint.sh
 cache:
   directories:

@@ -5,14 +5,18 @@
 # manually.
 status=0
 
-black --check --diff \
-  --target-version py27 \
-  --exclude '/migrations/' \
-  .
+echo 'Running Black ...'
+python3 -m black --check --diff .
 status=$(( $status + $? ))
 
-# We should add a pyflakes check here and probably something like jshint for
-# our JavaScript as well
+echo
+echo
+
+echo 'Running flake8 ...'
+python2 -m flake8 --show-source
+status=$(( $status + $? ))
+
+# We should add something like jshint for our JavaScript as well
 
 # We add up all the exit statuses of the lint commands. If the total is
 # greater than zero then at least one command failed so we exit with an error

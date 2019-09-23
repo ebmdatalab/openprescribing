@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models.functions import Coalesce
 
 from anymail.signals import EventType
 
@@ -87,6 +88,13 @@ class RegionalTeam(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
+
     def get_absolute_url(self):
         return reverse(
             "regional_team_home_page", kwargs={"regional_team_code": self.code}
@@ -107,6 +115,10 @@ class STP(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -137,6 +149,10 @@ class PCN(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -185,6 +201,13 @@ class PCT(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
 
     def get_absolute_url(self):
         return reverse("ccg_home_page", kwargs={"ccg_code": self.code})
@@ -264,6 +287,13 @@ class Practice(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def name_and_status(self):
+        if self.is_inactive():
+            return "{} ({})".format(self.cased_name, self.get_status_code_display())
+        else:
+            return self.cased_name
+
     def is_inactive(self):
         return self.status_code in (
             self.STATUS_RETIRED,
@@ -303,9 +333,6 @@ class Practice(models.Model):
         address += self.postcode
         return address
 
-    class Meta:
-        app_label = "frontend"
-
     def get_absolute_url(self):
         return reverse("practice_home_page", kwargs={"practice_code": self.code})
 
@@ -320,7 +347,6 @@ class PracticeIsDispensing(models.Model):
     date = models.DateField()
 
     class Meta:
-        app_label = "frontend"
         unique_together = ("practice", "date")
 
 
@@ -365,9 +391,6 @@ class PracticeStatistics(models.Model):
         self = model_prescribing_units.set_units(self)
         super(PracticeStatistics, self).save(*args, **kwargs)
 
-    class Meta:
-        app_label = "frontend"
-
 
 class QOFPrevalence(models.Model):
     """
@@ -407,7 +430,6 @@ class Chemical(models.Model):
         return "%s: %s" % (section.number_str, section.name)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("bnf_code", "chem_name"),)
 
 
@@ -429,9 +451,6 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.is_generic = self.bnf_code[-2:] == "AA"
         super(Product, self).save(*args, **kwargs)
-
-    class Meta:
-        app_label = "frontend"
 
 
 class PresentationManager(models.Manager):
@@ -566,8 +585,16 @@ class Presentation(models.Model):
     def product_name(self):
         return self.dmd_name or self.name
 
-    class Meta:
-        app_label = "frontend"
+    @classmethod
+    def names_for_bnf_codes(cls, bnf_codes):
+        """
+        Given a list of BNF codes return a dictionary mapping those codes to their
+        DM&D names
+        """
+        name_map = cls.objects.filter(bnf_code__in=bnf_codes).values_list(
+            "bnf_code", Coalesce("dmd_name", "name")
+        )
+        return dict(name_map)
 
 
 class Prescription(models.Model):
@@ -601,9 +628,6 @@ class Prescription(models.Model):
     quantity = models.FloatField()
     processing_date = models.DateField()
 
-    class Meta:
-        app_label = "frontend"
-
 
 class Measure(models.Model):
     # Some of these fields are documented in
@@ -628,9 +652,11 @@ class Measure(models.Model):
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    numerator_type = models.CharField(max_length=20)
     numerator_from = models.TextField()
     numerator_where = models.TextField()
     numerator_columns = models.TextField()
+    denominator_type = models.CharField(max_length=20)
     denominator_from = models.TextField()
     denominator_where = models.TextField()
     denominator_columns = models.TextField()
@@ -641,12 +667,13 @@ class Measure(models.Model):
     numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
     numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
     numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    analyse_url = models.CharField(max_length=1000, null=True)
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        app_label = "frontend"
 
 
 class MeasureValue(models.Model):
@@ -684,7 +711,6 @@ class MeasureValue(models.Model):
     cost_savings = JSONField(null=True, blank=True)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "pct", "practice", "month"),)
 
     objects = MeasureValueQuerySet.as_manager()
@@ -727,7 +753,6 @@ class MeasureGlobal(models.Model):
         super(MeasureGlobal, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "month"),)
 
 
@@ -745,7 +770,7 @@ class SearchBookmark(models.Model):
 
     name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    url = models.CharField(max_length=200)
+    url = models.CharField(max_length=1200)
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 

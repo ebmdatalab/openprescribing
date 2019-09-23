@@ -206,8 +206,15 @@ def all_pcns(request):
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, ons_code=pcn_code)
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
+    num_open_practices = len([p for p in practices if p.status_code == "A"])
+    num_non_open_practices = len([p for p in practices if p.status_code != "A"])
     context = _home_page_context_for_entity(request, pcn)
-    context["practices"] = practices
+    extra_context = {
+        "practices": practices,
+        "num_open_practices": num_open_practices,
+        "num_non_open_practices": num_non_open_practices,
+    }
+    context.update(extra_context)
     request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
@@ -229,9 +236,16 @@ def ccg_home_page(request, ccg_code):
     if isinstance(form, HttpResponseRedirect):
         return form
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
+    num_open_practices = len([p for p in practices if p.status_code == "A"])
+    num_non_open_practices = len([p for p in practices if p.status_code != "A"])
     context = _home_page_context_for_entity(request, ccg)
-    context["form"] = form
-    context["practices"] = practices
+    extra_context = {
+        "form": form,
+        "practices": practices,
+        "num_open_practices": num_open_practices,
+        "num_non_open_practices": num_non_open_practices,
+    }
+    context.update(extra_context)
     request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
@@ -622,6 +636,7 @@ def practice_price_per_unit(request, code):
     context = {
         "entity": practice,
         "entity_name": practice.cased_name,
+        "entity_name_and_status": practice.name_and_status,
         "highlight": practice.code,
         "highlight_name": practice.cased_name,
         "date": date,
@@ -637,6 +652,7 @@ def ccg_price_per_unit(request, code):
     context = {
         "entity": ccg,
         "entity_name": ccg.cased_name,
+        "entity_name_and_status": ccg.name_and_status,
         "highlight": ccg.code,
         "highlight_name": ccg.cased_name,
         "date": date,
@@ -650,6 +666,7 @@ def all_england_price_per_unit(request):
     date = _specified_or_last_date(request, "ppu")
     context = {
         "entity_name": "NHS England",
+        "entity_name_and_status": "NHS England",
         "highlight_name": "NHS England",
         "date": date,
         "by_ccg": True,
@@ -683,6 +700,7 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
     context = {
         "entity": entity,
         "entity_name": entity.cased_name,
+        "entity_name_and_status": entity.name_and_status,
         "highlight": entity.code,
         "highlight_name": entity.cased_name,
         "name": presentation.product_name,
@@ -721,6 +739,7 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         "by_presentation": True,
         "bubble_data_url": bubble_data_url,
         "entity_name": "NHS England",
+        "entity_name_and_status": "NHS England",
         "entity_type": "CCG",
     }
     return render(request, "price_per_unit.html", context)
@@ -742,6 +761,7 @@ def ghost_generics_for_entity(request, code, entity_type):
     context = {
         "entity": entity,
         "entity_name": entity.cased_name,
+        "entity_name_and_status": entity.name_and_status,
         "entity_type": entity_type,
         "highlight": entity.code,
         "highlight_name": entity.cased_name,
@@ -909,7 +929,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
         entity_short_desc = "nhs-england"
     else:
         entity_name = entity.cased_name
-        title = "Impact of price concessions on {}".format(entity_name)
+        title = "Impact of price concessions on {}".format(entity.name_and_status)
         entity_short_desc = "{}-{}".format(entity_type, entity.code)
     context = {
         "title": title,

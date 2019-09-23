@@ -1,0 +1,16 @@
+<p>
+  There are {{ num_open_practices }} practices currently active in this {{ entity_type_human }}
+  {% if num_non_open_practices > 0 %}
+  (plus {{ num_non_open_practices }} closed/dormant practices)
+  {% endif %}
+  <a id="showall" href="#">&raquo; show them...</a>
+</p>
+
+<ul class="list-unstyled" id="child-entities">
+{% for p in practices %}
+  <li class="hidden">
+    <a href="{% url 'practice_home_page' p.code %}">{{ p }}</a>
+    ({{ p.get_setting_display }}{{ p.inactive_status_suffix }})
+  </li>
+{% endfor %}
+</ul>

@@ -6,17 +6,16 @@ from frontend.models import GenericCodeMapping
 from frontend.models import Presentation
 
 
-class Command(BaseCommand):
-    args = ""
-    help = "Imports code substitutions for PPU calculations"
+SUBSTITUTIONS_SPREADSHEET = (
+    "https://docs.google.com/spreadsheets/d/e/"
+    "2PACX-1vSsTrjEdRekkcR0H8myL8RwP3XKg2YvTgQwGb5ypNei0IYn4ofr"
+    "ayVZJibLfN_lnpm6Q9qu_t0yXU5Z/pub?gid=1784930737&single=true"
+    "&output=csv"
+)
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--substitutions-csv",
-            help="Path to CSV detailing Tab/Cap substitutions etc",
-            type=str,
-            required=True,
-        )
+
+class Command(BaseCommand):
+    help = "Imports code substitutions for PPU calculations"
 
     def handle(self, *args, **options):
         """Handle code substitutions.
@@ -34,7 +33,7 @@ class Command(BaseCommand):
         """
         cases = []
         seen = set()
-        df = pd.read_csv(options["substitutions_csv"])
+        df = pd.read_csv(SUBSTITUTIONS_SPREADSHEET)
         df = df[df["Really equivalent?"] == "Y"]
         GenericCodeMapping.objects.all().delete()
         for row in df.iterrows():

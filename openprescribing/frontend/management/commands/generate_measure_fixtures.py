@@ -44,12 +44,17 @@ from frontend.models import (
     MeasureGlobal,
     MeasureValue,
     Practice,
+    Prescription,
     PCN,
     PCT,
     STP,
     RegionalTeam,
 )
 from gcutils.bigquery import Client
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
+)
+from matrixstore.tests.data_factory import DataFactory
 
 
 class Command(BaseCommand):
@@ -63,6 +68,7 @@ class Command(BaseCommand):
             MeasureGlobal,
             MeasureValue,
             Practice,
+            Prescription,
             PCT,
             STP,
             RegionalTeam,
@@ -141,21 +147,6 @@ class Command(BaseCommand):
         table.insert_rows_from_pg(Practice, schemas.PRACTICE_SCHEMA)
 
         # Create measures definitions and record the BNF codes used
-        measure_definitions_path = os.path.join(
-            settings.APPS_ROOT,
-            "frontend",
-            "management",
-            "commands",
-            "measure_definitions",
-        )
-
-        # lpzomnibus is a real measure, and we don't want to overwrite its
-        # definition.
-        os.rename(
-            os.path.join(measure_definitions_path, "lpzomnibus.json"),
-            os.path.join(measure_definitions_path, "lpzomnibus.json.bak"),
-        )
-
         bnf_codes = []
 
         for ix in range(5):
@@ -188,13 +179,11 @@ class Command(BaseCommand):
                 "why_it_matters": "Why {} matters".format(name),
                 "url": "http://example.com/measure-{}".format(measure_id),
                 "numerator_short": "Numerator for {}".format(measure_id),
-                "numerator_from": "{hscic}.normalised_prescribing_standard",
+                "numerator_type": "bnf_quantity",
                 "numerator_where": numerator_where,
-                "numerator_columns": "SUM(quantity) AS numerator",
                 "denominator_short": "Denominator for {}".format(measure_id),
-                "denominator_from": "{hscic}.normalised_prescribing_standard",
+                "denominator_type": "bnf_quantity",
                 "denominator_where": denominator_where,
-                "denominator_columns": "SUM(quantity) AS denominator",
                 "is_cost_based": True,
                 "is_percentage": True,
                 "low_is_good": True,
@@ -202,15 +191,19 @@ class Command(BaseCommand):
                 "tags_focus": tags_focus,
             }
 
-            path = os.path.join(measure_definitions_path, "{}.json".format(measure_id))
+            path = os.path.join(
+                settings.MEASURE_DEFINITIONS_PATH, "{}.json".format(measure_id)
+            )
             with open(path, "w") as f:
                 json.dump(measure_definition, f, indent=2)
 
             bnf_codes.append("0{}0000000000000".format(ix))
             bnf_codes.append("0{}0100000000000".format(ix))
 
-        # Generate random prescribing data.  This data is never saved to the
-        # database.
+        # Generate random prescribing data. We don't currently save this all to
+        # the database as it would make the fixture too big and isn't needed.
+        # But we do save a single row because the MatrixStore gets unhappy if
+        # it has no data at all to work with.
         prescribing_rows = []
 
         for practice_ix, practice in enumerate(Practice.objects.all()):
@@ -255,6 +248,20 @@ class Command(BaseCommand):
 
                     prescribing_rows.append(row)
 
+        # We only import the first row into Postgres for now as we just need
+        # someting to keep the MatrixStore happy
+        for row in prescribing_rows[:1]:
+            Prescription.objects.create(
+                practice_id=row[5],
+                pct_id=row[3],
+                presentation_code=row[6],
+                total_items=row[8],
+                net_cost=row[9],
+                actual_cost=row[10],
+                quantity=row[11],
+                processing_date=row[12][:10],
+            )
+
         # In production, normalised_prescribing_standard is actually a view,
         # but for the tests it's much easier to set it up as a normal table.
         table = client.get_or_create_table(
@@ -269,14 +276,22 @@ class Command(BaseCommand):
             f.seek(0)
             table.insert_rows_from_csv(f.name, schemas.PRESCRIBING_SCHEMA)
 
+        # Create some dummy prescribing data in the MatrixStore.
+        factory = DataFactory()
+        month = factory.create_months("2018-10-01", 1)[0]
+        practice = factory.create_practices(1)[0]
+        for bnf_code in bnf_codes:
+            presentation = factory.create_presentation(bnf_code)
+            factory.create_prescription(presentation, practice, month)
+
         # Do the work.
-        call_command("import_measures", measure="core_0,core_1,lp_2,lp_3,lpzomnibus")
+        with patched_global_matrixstore_from_data_factory(factory):
+            call_command(
+                "import_measures", measure="core_0,core_1,lp_2,lp_3,lpzomnibus"
+            )
 
         # Clean up.
         for ix in range(5):
-            numerator_where = ("bnf_code LIKE '0{}01%'".format(ix),)
-            denominator_where = ("bnf_code LIKE '0{}%'".format(ix),)
-
             if ix in [0, 1]:
                 measure_id = "core_{}".format(ix)
             elif ix in [2, 3]:
@@ -285,13 +300,10 @@ class Command(BaseCommand):
                 assert ix == 4
                 measure_id = "lpzomnibus"
 
-            path = os.path.join(measure_definitions_path, "{}.json".format(measure_id))
+            path = os.path.join(
+                settings.MEASURE_DEFINITIONS_PATH, "{}.json".format(measure_id)
+            )
             os.remove(path)
-
-        os.rename(
-            os.path.join(measure_definitions_path, "lpzomnibus.json.bak"),
-            os.path.join(measure_definitions_path, "lpzomnibus.json"),
-        )
 
         # Dump the fixtures.
         fixture_path = os.path.join(
