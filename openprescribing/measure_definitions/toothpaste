@@ -1,0 +1,40 @@
+{
+  "name": "Toothpaste Prescribing",
+  "title": [
+    "Prescribing of toothpaste items cost per 1000 patients"
+  ],
+  "description": [
+    "Prescribing of toothpaste items cost per 1000 patient"
+  ],
+  "why_it_matters": [
+    "OpenPrescribing currently has data on GP prescriptions and does not have information on dentists prescribing. ",
+    "Dentists are best placed to assess, prescribe and monitor dental problems and it is recommended that they should ",
+    "issue any prescriptions such as tootpastes for dental conditions. Additionally ",
+    "NHS England [recommends](https://www.england.nhs.uk/wp-content/uploads/2018/03/otc-guidance-for-ccgs.pdf) that there should ",
+    " be no routine prescribing for the treatment of dental caries. Therefore there should be limited if any prescribing of toothpastes ",
+    " in general practice. Please note that this is an experimental measure. We would be grateful for any feedback at hello@ebmdatalab.net."
+  ],
+  "numerator_short": "Toothpaste items",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cost"
+  ],
+  "numerator_type": "bnf_items",
+  "numerator_columns": [
+    "SUM(items) AS numerator, "
+  ],
+  "numerator_from": "{hscic}.normalised_prescribing_standard",
+  "numerator_where": [
+    "bnf_code IN (",
+    " SELECT DISTINCT(bnf_code)",
+    " FROM {hscic}.ebmdatalab.dmd.form_dose",
+    " WHERE  form_route = 'paste.dental')",
+    ")"
+      ],
+
+  "denominator_type": "list_size"
+}
