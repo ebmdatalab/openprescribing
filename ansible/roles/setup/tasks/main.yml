@@ -5,6 +5,12 @@
     pkg: apt-transport-https
     state: present
 
+- name: Install gpg
+  become: yes
+  apt:
+    pkg: gpg
+    state: present
+
 - name: Add NodeSource apt signing key
   become: yes
   apt_key:
