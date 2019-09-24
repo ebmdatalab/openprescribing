@@ -23,15 +23,11 @@
   "tags": [
     "cost"
   ],
-  "numerator_type": "bnf_items",
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard",
+  "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code IN (",
     " SELECT DISTINCT(bnf_code)",
-    " FROM {hscic}.ebmdatalab.dmd.form_dose",
+    " FROM {measures}.dmd_objs_with_form_route",
     " WHERE  form_route = 'paste.dental')",
     ")"
       ],
