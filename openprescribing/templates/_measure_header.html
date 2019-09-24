@@ -23,7 +23,9 @@
       <li><a href="{% url 'measure_for_one_ccg' measure.id ccg.code %}">Break the overall score down into individual presentations</a>.</li>
     {% endif %}
 
-    <li><a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all CCGs in England on this measure</a>.</li>
+    {% if entity_type != 'ccg' %}
+      <li><a href="{% url 'measure_for_all_ccgs' measure.id %}">Compare all CCGs in England on this measure</a>.</li>
+    {% endif %}
 
     {% if ccg %}
       <li>See <a href="{% url 'measures_for_one_ccg' ccg.code %}">how this CCG is doing on other standard measures</a>.</li>

@@ -13,7 +13,7 @@
     <p>Read <a href="{{ measure.url }}">more about this measure</a>.</p>
   {% endif %}
 
-  {% include '_measure_header.html' %}
+  {% include '_measure_header.html' with entity_type=entity_type %}
 
   <p>
     {{ entity_type_human|capfirst}}s are ordered by mean percentile over the past six
