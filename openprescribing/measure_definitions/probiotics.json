@@ -22,24 +22,20 @@
   "is_cost_based": true,
   "low_is_good": true,
   "tags": [
+    "core",
     "cost",
+    "efficacy",
     "nutrition"
   ],
-  "numerator_columns": [
-    "SUM(actual_cost) AS numerator, "
-  ],
-  "numerator_from": "{hscic}.normalised_prescribing_standard ",
+  "numerator_type": "bnf_cost",
   "numerator_where": [
    "bnf_code IN (\n",
    "'091104000BBNMA0', -- vsl \n",
    "'091104000BBNVAO', --vivomix caps \n",
    "'091104000BBNUAO') --vivomix powder sachet \n"
   ],
-  "denominator_columns": [
-    "SUM(total_list_size / 1000.0) AS denominator, "
-  ],
-  "denominator_from": "{hscic}.practice_statistics ",
-  "denominator_where": [
-    "1 = 1"
-  ]
+  "denominator_type": "list_size"
 }
+  
+  
+ 
