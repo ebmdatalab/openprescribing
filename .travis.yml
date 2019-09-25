@@ -36,7 +36,7 @@ before_install:
 install:
   - docker pull dockette/stretch
   - docker pull ebmdatalab/openprescribing-base:latest
-  - docker pull mdillon/postgis:latest
+  - docker pull mdillon/postgis:11
 before_script:
   - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
 notifications:
