@@ -1,0 +1,65 @@
+{
+	"name": "Seven Day Prescribing for Long Term Conditions",
+	"title": [
+		"Seven Day Prescribing for Long Term Conditions"
+	],
+	"description": [
+		"Total quantity where a prescritpion is for seven tablets or",
+		"capsules of common LTC medicines as a proportion of all tablets or capsules for common LTC medicines "
+	],
+	"why_it_matters": [
+		"The [British Medical Association reports](https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice)",
+		"growing requests to prescribe seven day quantities of medicines to fund supply of medicine compliance aids (MCAs) ",
+		"However the price of the generic has now fallen and is the cheapest option to prescribe.",
+		"As well as increasing safety concerns, The Royal Pharmaceutical Society has issued",
+		"[guidance](https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf) stating that while",
+		"some may think of MCAs as a pancea, there is limited eveidence base to support their use, the",
+		"use of original packs of medicines with appropriate support is the preferred option of supplying medicines and every patient identified as having medicines adherence",
+		"issues should have a robust individual assessment to identify the best intervention based on ",
+		"their needs and the evidence currently available. We propose a measure of seven day prescriptions",
+		" for long-term conditions as a surrogate measure for MCAs. Caveats include; a seven day prescription may be clinically",
+		"relevant even for long-term conditions in certain circumstances,  some pharmacies will supply a MCA without a seven day prescritpion after making",
+		" an individual assessement and some local areas may fund provision of MCAs via a seperate payment. Please note that this is an experimental measure.",
+		"We would be grateful for any feedback at [feedback@openprescribing.net](mailto:feedback@openprescribing.net).  You can read ",
+		"more detail on the measure definition/notebook [here](insert Github/notebook def)"
+	],
+	"numerator_short": "seven day quantities",
+	"denominator_short": "total quantities",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": true,
+	"low_is_good": true,
+	"tags": [
+		"core",
+		"cost",
+		"safety"
+	],
+	"numerator_type": "ustom",
+	"numerator_columns": "insert",
+	"numerator_where": [
+		"(",
+		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
+		"AND",
+		"(",
+		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+		")"
+	],
+	"denominator_type": "custom",
+  "denominator_columns": "insert",
+	"denominator_where": [
+		"(",
+		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
+		"AND",
+		"(",
+		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+		")"
+	]
+}
