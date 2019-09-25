@@ -1843,7 +1843,7 @@ def _get_extreme_measure(mvs):
             percentiles_by_measure_id[mv.measure_id].append(mv.percentile)
 
     avg_percentile_by_measure_id = {
-        measure_id: sum(percentiles) / len(percentiles)
+        measure_id: [sum(percentiles) / len(percentiles), measure_id]
         for measure_id, percentiles in percentiles_by_measure_id.items()
     }
 

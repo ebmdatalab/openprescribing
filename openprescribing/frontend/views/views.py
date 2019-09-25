@@ -1187,7 +1187,7 @@ def _home_page_context_for_entity(request, entity):
         .exclude(measure__low_is_good__isnull=True)
         .values("measure_id")
         .annotate(average_percentile=Avg("percentile"))
-        .order_by("-average_percentile")
+        .order_by("-average_percentile", "-measure_id")
         .first()
     )
     if extreme_measurevalue:
