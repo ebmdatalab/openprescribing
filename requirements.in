@@ -30,7 +30,7 @@ mailchimp3>=2.0.18
 networkx==2.2
 newrelic
 numpy==1.16.5
-openpyxl==2.6.3
+openpyxl==3.0.0
 pandas-gbq
 pandas==0.24.2
 premailer==3.6.1
