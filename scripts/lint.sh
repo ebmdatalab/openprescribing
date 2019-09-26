@@ -6,14 +6,14 @@
 status=0
 
 echo 'Running Black ...'
-python3 -m black --check --diff .
+python -m black --check --diff .
 status=$(( $status + $? ))
 
 echo
 echo
 
 echo 'Running flake8 ...'
-python2 -m flake8 --show-source
+python -m flake8 --show-source
 status=$(( $status + $? ))
 
 # We should add something like jshint for our JavaScript as well
