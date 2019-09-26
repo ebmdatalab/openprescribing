@@ -8,11 +8,11 @@
 		"capsules of common LTC medicines as a proportion of all tablets or capsules for common LTC medicines "
 	],
 	"why_it_matters": [
-		"The [British Medical Association reports](https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice)",
+		"The <a href='https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice'> British Medical Association reports</a>",
 		"growing requests to prescribe seven day quantities of medicines to fund supply of medicine compliance aids (MCAs) ",
 		"However the price of the generic has now fallen and is the cheapest option to prescribe.",
 		"As well as increasing safety concerns, The Royal Pharmaceutical Society has issued",
-		"[guidance](https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf) stating that while",
+		"<a href='https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf'> guidance</a> stating that while",
 		"some may think of MCAs as a pancea, there is limited eveidence base to support their use, the",
 		"use of original packs of medicines with appropriate support is the preferred option of supplying medicines and every patient identified as having medicines adherence",
 		"issues should have a robust individual assessment to identify the best intervention based on ",
@@ -20,23 +20,27 @@
 		" for long-term conditions as a surrogate measure for MCAs. Caveats include; a seven day prescription may be clinically",
 		"relevant even for long-term conditions in certain circumstances,  some pharmacies will supply a MCA without a seven day prescritpion after making",
 		" an individual assessement and some local areas may fund provision of MCAs via a seperate payment. Please note that this is an experimental measure.",
-		"We would be grateful for any feedback at [feedback@openprescribing.net](mailto:feedback@openprescribing.net).  You can read ",
-		"more detail on the measure definition/notebook [here](insert Github/notebook def)"
+		"We would be grateful for any feedback at <a href='mailto:feedback@openprescribing.net'> feedback@openprescribing.net.</a>.  You can read ",
+		"more detail on the measure definition/notebook/blog"
 	],
 	"numerator_short": "seven day quantities",
 	"denominator_short": "total quantities",
 	"url": null,
 	"is_percentage": true,
-	"is_cost_based": true,
+	"is_cost_based": false,
 	"low_is_good": true,
 	"tags": [
 		"core",
-		"cost",
 		"safety"
 	],
-	"numerator_type": "ustom",
-	"numerator_columns": "insert",
+	"numerator_type": "custom",
+	"numerator_columns": [
+		"SUM(total_quantity) AS numerator ,"
+	],
+	"numerator_from": "{hscic}.raw_prescribing_normalised",
 	"numerator_where": [
+		"quantity_per_item=7",
+		"AND",
 		"(",
 		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
 		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
@@ -49,7 +53,10 @@
 		")"
 	],
 	"denominator_type": "custom",
-  "denominator_columns": "insert",
+	"denominator_columns": [
+		"SUM(total_quantity) AS denominator , "
+	],
+	"denominator_from": "{hscic}.raw_prescribing_normalised",
 	"denominator_where": [
 		"(",
 		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
