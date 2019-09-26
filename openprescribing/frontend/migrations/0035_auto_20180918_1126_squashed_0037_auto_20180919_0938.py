@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'frontend', '0035_auto_20180918_1126'), (b'frontend', '0036_auto_20180919_0929'), (b'frontend', '0037_auto_20180919_0938')]
+    replaces = [('frontend', '0035_auto_20180918_1126'), ('frontend', '0036_auto_20180919_0929'), ('frontend', '0037_auto_20180919_0938')]
 
     dependencies = [
         ('frontend', '0034_practice_ccg_change_reason'),

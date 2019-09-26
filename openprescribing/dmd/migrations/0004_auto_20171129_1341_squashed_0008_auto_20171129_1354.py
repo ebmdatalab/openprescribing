@@ -8,7 +8,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'dmd', '0004_auto_20171129_1341'), (b'dmd', '0005_auto_20171129_1345'), (b'dmd', '0006_auto_20171129_1348'), (b'dmd', '0007_auto_20171129_1353'), (b'dmd', '0008_auto_20171129_1354')]
+    replaces = [('dmd', '0004_auto_20171129_1341'), ('dmd', '0005_auto_20171129_1345'), ('dmd', '0006_auto_20171129_1348'), ('dmd', '0007_auto_20171129_1353'), ('dmd', '0008_auto_20171129_1354')]
 
     dependencies = [
         ('dmd', '0003_ncsoconcession'),

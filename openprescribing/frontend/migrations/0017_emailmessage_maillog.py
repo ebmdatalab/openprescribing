@@ -11,7 +11,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'frontend', '0017_emailmessage_maillog_squashed_0021_auto_20170301_1627'), (b'frontend', '0018_auto_20170302_1533')]
+    replaces = [('frontend', '0017_emailmessage_maillog_squashed_0021_auto_20170301_1627'), ('frontend', '0018_auto_20170302_1533')]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
