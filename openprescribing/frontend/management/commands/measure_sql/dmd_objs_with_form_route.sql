@@ -15,9 +15,9 @@ WITH vmps AS (
     bnf_code,
     nm AS name,
     ontformroute.descr AS form_route
-  FROM ebmdatalab.dmd.vmp
-  INNER JOIN ebmdatalab.dmd.ont ON vmp.id = ont.vmp
-  INNER JOIN ebmdatalab.dmd.ontformroute ON ont.form = ontformroute.cd
+  FROM {project}.{dmd}.vmp
+  INNER JOIN {project}.{dmd}.ont ON vmp.id = ont.vmp
+  INNER JOIN {project}.{dmd}.ontformroute ON ont.form = ontformroute.cd
 ),
 
 amps AS (
@@ -30,7 +30,7 @@ amps AS (
     amp.bnf_code,
     amp.descr AS name,
     form_route
-  FROM ebmdatalab.dmd.amp
+  FROM {project}.{dmd}.amp
   INNER JOIN vmps ON amp.vmp = vmps.vpid
   WHERE vmp in (SELECT vpid FROM vmps) AND amp.bnf_code IS NOT NULL
 ),
@@ -45,7 +45,7 @@ vmpps AS (
     vmpp.bnf_code,
     vmpp.nm AS name,
     form_route
-  FROM ebmdatalab.dmd.vmpp
+  FROM {project}.{dmd}.vmpp
   INNER JOIN vmps ON vmpp.vmp = vmps.vpid
   WHERE vmp in (SELECT vpid FROM vmps) AND vmpp.bnf_code IS NOT NULL
 ),
@@ -61,7 +61,7 @@ ampps AS (
     ampp.bnf_code,
     ampp.nm AS name,
     vmpps.form_route
-  FROM ebmdatalab.dmd.ampp
+  FROM {project}.{dmd}.ampp
   INNER JOIN vmpps ON ampp.vmpp = vmpps.snomed_id
   WHERE vmpp in (SELECT snomed_id FROM vmpps) AND ampp.bnf_code IS NOT NULL
 ),
