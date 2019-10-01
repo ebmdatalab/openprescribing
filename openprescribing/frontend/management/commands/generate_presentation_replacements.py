@@ -167,7 +167,7 @@ def create_bigquery_table():
 
     """
     # output a row for each presentation and its ultimate replacement
-    with tempfile.NamedTemporaryFile(mode="r+b") as csv_file:
+    with tempfile.NamedTemporaryFile(mode="r+") as csv_file:
         writer = csv.writer(csv_file)
         for p in Presentation.objects.filter(replaced_by__isnull=False):
             writer.writerow([p.bnf_code, p.current_version.bnf_code])

@@ -358,7 +358,7 @@ def upload_task_input_files(task):
             print("Skipping %s, already uploaded" % name)
             continue
         print("Uploading %s to %s" % (path, name))
-        with open(path) as f:
+        with open(path, "rb") as f:
             blob.upload_from_file(f)
 
 
