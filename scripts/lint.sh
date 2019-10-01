@@ -5,9 +5,9 @@
 # manually.
 status=0
 
-# echo 'Running Black ...'
-# python -m black --check --diff .
-# status=$(( $status + $? ))
+echo 'Running Black ...'
+python3 -m black --check --diff .
+status=$(( $status + $? ))
 
 echo
 echo

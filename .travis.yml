@@ -16,7 +16,7 @@ matrix:
       env: LANG=en_US.UTF-8
     - name: "Linting"
       script:
-        # - pip install black==19.3b0
+        - pip install black==19.3b0
         - pip install flake8==3.7.8
         - scripts/lint.sh
 cache:
@@ -26,7 +26,10 @@ services:
   docker
 language: python
 python:
-  - "3.5"
+  # The application runs against 3.5, which is set in the Dockerfile that is used to
+  # create the docker image that runs the tests.  This Python version is used for
+  # running the Travis jobs.  3.6 is required to run black in lint.sh.
+  - "3.6"
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
