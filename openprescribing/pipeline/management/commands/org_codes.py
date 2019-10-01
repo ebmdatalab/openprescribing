@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 import requests
 from zipfile import ZipFile
 import datetime
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         zip_filename = base_filename + ".zip"
         url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
 
-        buf = StringIO()
+        buf = BytesIO()
         buf.write(requests.get(url).content)
         buf.flush()
         zipfile = ZipFile(buf)
