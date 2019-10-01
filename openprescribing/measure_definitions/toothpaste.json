@@ -10,11 +10,11 @@
     "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing. ",
     "Dentists are best placed to assess, prescribe and monitor dental problems, and it is recommended that they should ",
     "issue any prescriptions for dental conditions.",
-    "<p>Additionally, NHS England <a href='https://www.england.nhs.uk/wp-content/uploads/2018/03/otc-guidance-for-ccgs.pdf'>",
-    "recommends that</a> <i>there should be no routine prescribing for the treatment of dental caries. Therefore there should be limited ",
-    "if any prescribing of toothpastes in general practice. </i>",
-    "<p>Please note that this is an experimental measure. We would be grateful for any feedback at ",
-    "<a href='mailto:hello@ebmdatalab.net?Subject=Toothpaste%20Measure'> hello@ebmdatalab.net</a>."
+    "<p>NHS England <a href='https://www.england.nhs.uk/wp-content/uploads/2018/03/otc-guidance-for-ccgs.pdf'>",
+    "recommends that</a> <i>there should be no routine prescribing for the treatment of dental caries. Therefore there should be limited, ",
+    "if any, prescribing of toothpastes in general practice. </i>",
+    "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at ",
+    "<a href='mailto:hello@ebmdatalab.net?Subject=Toothpaste%20Measure'> feedback@ebmdatalab.net</a>.</b>"
   ],
   "numerator_short": "Toothpaste cost (£)",
   "denominator_short": "1000 patients",
