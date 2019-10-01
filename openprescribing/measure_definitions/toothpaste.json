@@ -4,17 +4,17 @@
     "Toothpaste prescribing cost per 1000 patients"
   ],
   "description": [
-    "Toothpaste prescribing cost per 1000 patient"
+    "Toothpaste prescribing cost per 1000 patients"
   ],
   "why_it_matters": [
-    "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing. ",
-    "Dentists are best placed to assess, prescribe and monitor dental problems, and it is recommended that they should ",
+    "OpenPrescribing currently has data on GP prescriptions and does not have information on NHS dentists' prescribing.",
+    "Dentists are best placed to assess, prescribe and monitor dental problems, and it is recommended that they should",
     "issue any prescriptions for dental conditions.",
     "<p>NHS England <a href='https://www.england.nhs.uk/wp-content/uploads/2018/03/otc-guidance-for-ccgs.pdf'>",
-    "recommends that</a> <i>there should be no routine prescribing for the treatment of dental caries. Therefore there should be limited, ",
-    "if any, prescribing of toothpastes in general practice. </i>",
-    "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at ",
-    "<a href='mailto:hello@ebmdatalab.net?Subject=Toothpaste%20Measure'> feedback@ebmdatalab.net</a>.</b>"
+    "recommends that</a> <i>there should be no routine prescribing for the treatment of dental caries. Therefore there should be limited,",
+    "if any, prescribing of toothpastes in general practice. </i></p>",
+    "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at",
+    "<a href='mailto:hello@ebmdatalab.net?Subject=Toothpaste%20Measure'>feedback@ebmdatalab.net</a>.</b></p>"
   ],
   "numerator_short": "Toothpaste cost (£)",
   "denominator_short": "1000 patients",
@@ -28,15 +28,13 @@
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code IN (",
-    " SELECT DISTINCT(bnf_code)",
-    " FROM {measures}.dmd_objs_with_form_route",
-    " WHERE  form_route = 'paste.dental'",
+    "  SELECT DISTINCT(bnf_code)",
+    "  FROM {measures}.dmd_objs_with_form_route",
+    "  WHERE form_route = 'paste.dental'",
     ")"
       ],
-
   "denominator_type": "list_size",
-    
- "date_reviewed": [
+  "date_reviewed": [
     "2019-09-30"
   ],
   "next_review": [
