@@ -16,11 +16,17 @@ def simplify_bnf_codes(bnf_codes):
     all_bnf_codes = get_all_bnf_codes()
 
     # Drop any BNF codes for which we don't have prescribing.
-    bnf_codes = set(bnf_codes) & all_bnf_codes
+    bnf_codes_with_prescribing = set(bnf_codes) & all_bnf_codes
+
+    # In end-to-end tests there may be no prescribing for certain measures.  Rather than
+    # adding new test prescribing data whenever a new measure is added, we return early
+    # here.
+    if not bnf_codes_with_prescribing:
+        return sorted(bnf_codes)
 
     prefixes = []
 
-    for prefix in _prune_paths(bnf_codes, all_bnf_codes):
+    for prefix in _prune_paths(bnf_codes_with_prescribing, all_bnf_codes):
         prefixes.extend(get_subsection_prefixes(prefix))
 
     return sorted(prefixes)
