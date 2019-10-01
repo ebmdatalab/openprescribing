@@ -48,7 +48,9 @@ def run_end_to_end():
     # generics measure, because both numerator and denominator are computed
     # from a view (vw__ghost_generic_measure) which has no data.  Rather than
     # populate this view, it is simpler to pretend it doesn't exist.
-    num_measures = len(os.listdir(settings.MEASURE_DEFINITIONS_PATH)) - 1
+    num_measures = (
+        len(glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json"))) - 1
+    )
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
