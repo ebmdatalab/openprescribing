@@ -29,7 +29,7 @@ django-debug-toolbar==1.11
 django-dotenv==1.4.2
 django-extensions==2.2.1
 django-redis==4.10.0
-django==1.11.24
+django==2.2.6
 djangorestframework-csv==2.1.0
 djangorestframework==3.9.4
 easyprocess==0.2.7        # via pyvirtualdisplay
@@ -97,7 +97,7 @@ scipy==1.2.1
 selenium==3.141.0
 six==1.12.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
 soupsieve==1.9.4          # via beautifulsoup4
-sqlparse==0.3.0           # via django-debug-toolbar
+sqlparse==0.3.0           # via django, django-debug-toolbar
 titlecase==0.12.0
 tqdm==4.36.1
 unicodecsv==0.14.1        # via djangorestframework-csv
