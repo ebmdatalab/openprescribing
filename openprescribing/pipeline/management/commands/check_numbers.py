@@ -180,7 +180,7 @@ def get_page_source(browser, path, name, log_path):
     source = browser.page_source
 
     with open(os.path.join(log_path, name + ".html"), "w") as f:
-        f.write(source.encode("utf8"))
+        f.write(source)
 
     return source
 
