@@ -1,5 +1,3 @@
-from __future__ import division
-
 from collections import namedtuple
 
 from django.db import connection
@@ -75,7 +73,7 @@ def ncso_spending_breakdown_for_entity(entity, entity_type, month):
     tariff_costs = costs.tariff_costs[:, 0]
     extra_costs = costs.extra_costs[:, 0]
     quantities = costs.quantities[:, 0]
-    names = Presentation.names_for_bnf_codes(costs.bnf_code_offsets.keys())
+    names = Presentation.names_for_bnf_codes(list(costs.bnf_code_offsets.keys()))
     results = []
     for bnf_code, offset in costs.bnf_code_offsets.items():
         results.append(
@@ -162,7 +160,7 @@ def _get_prescribed_quantity_matrix(bnf_code_offsets, date_offsets, org_type, or
         return quantities
     # Find the columns corresponding to the dates we're interested in
     columns_selector = _get_date_columns_selector(db.date_offsets, date_offsets)
-    prescribing = _get_quantities_for_bnf_codes(db, bnf_code_offsets.keys())
+    prescribing = _get_quantities_for_bnf_codes(db, list(bnf_code_offsets.keys()))
     for bnf_code, quantity in prescribing:
         # Remap the date columns to just the dates we want
         quantity = quantity[columns_selector]

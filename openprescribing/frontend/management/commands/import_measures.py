@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import tempfile
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from dateutil.relativedelta import relativedelta
 
@@ -77,9 +77,9 @@ class Command(BaseCommand):
                 )
                 calculation.check_definition()
             except BadRequest as e:
-                errors.append("* SQL error in `{}`: {}".format(measure_id, e.message))
+                errors.append("* SQL error in `{}`: {}".format(measure_id, e.args[0]))
             except TypeError as e:
-                errors.append("* JSON error in `{}`: {}".format(measure_id, e.message))
+                errors.append("* JSON error in `{}`: {}".format(measure_id, e.args[0]))
         if errors:
             raise BadRequest("\n".join(errors))
 
@@ -161,7 +161,7 @@ def load_measure_defs(measure_ids=None):
                 measure_def = json.load(f)
             except ValueError as e:
                 # Add the measure_id to the exception
-                errors.append("* {}: {}".format(measure_id, e.message))
+                errors.append("* {}: {}".format(measure_id, e.args[0]))
                 continue
 
             if measure_ids is None:
@@ -272,7 +272,7 @@ def create_or_update_measure(measure_def, end_date):
     v = arrays_to_strings(measure_def)
 
     for k, val in v.items():
-        if isinstance(val, (str, unicode)):
+        if isinstance(val, str):
             v[k] = val.strip()
 
     try:
@@ -749,7 +749,7 @@ class MeasureCalculation(object):
             # global_. There is probably a better way of constructing
             # the query so this clean-up doesn't have to happen...
             new_d = {}
-            for attr, value in d.iteritems():
+            for attr, value in d.items():
                 new_d[attr.replace("global_", "")] = value
             d = new_d
 
@@ -786,7 +786,7 @@ class MeasureCalculation(object):
 
             # Set the rest of the data returned from bigquery directly
             # on the model
-            for attr, value in d.iteritems():
+            for attr, value in d.items():
                 setattr(mg, attr, value)
             mg.save()
 

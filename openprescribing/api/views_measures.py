@@ -12,7 +12,7 @@ from frontend.models import Presentation
 
 from matrixstore.db import get_db, get_row_grouper
 
-import view_utils as utils
+from . import view_utils as utils
 
 
 class MissingParameter(APIException):
@@ -344,7 +344,7 @@ def _roll_up_measure_values(measure_values, org_type):
                 "data": [measure_value_data],
             }
 
-    return rolled.values()
+    return list(rolled.values())
 
 
 def _hydrate_tags(tag_ids):

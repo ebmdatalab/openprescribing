@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 import json
 import uuid
 
@@ -972,7 +972,7 @@ class EmailMessageManager(models.Manager):
         user = User.objects.filter(email=msg.to[0])
         user = user and user[0] or None
         if "message-id" not in msg.extra_headers:
-            raise StandardError(
+            raise Exception(
                 "Messages stored as frontend.EmailMessage"
                 "must have a message-id header"
             )
@@ -1000,11 +1000,11 @@ class EmailMessage(models.Model):
 
     @property
     def message(self):
-        return cPickle.loads(str(self.pickled_message))
+        return pickle.loads(self.pickled_message)
 
     @message.setter
     def message(self, value):
-        self.pickled_message = cPickle.dumps(value)
+        self.pickled_message = pickle.dumps(value)
 
     def send(self):
         self.message.send()
@@ -1018,7 +1018,7 @@ class EmailMessage(models.Model):
 class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
         (value, value)
-        for name, value in vars(EventType).iteritems()
+        for name, value in vars(EventType).items()
         if not name.startswith("_")
     ]
     # delievered, accepted (by mailgun), error, warn
@@ -1141,4 +1141,4 @@ class NCSOConcession(models.Model):
 
     @property
     def drug_and_pack_size(self):
-        return u"{} {}".format(self.drug, self.pack_size)
+        return "{} {}".format(self.drug, self.pack_size)

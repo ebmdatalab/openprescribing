@@ -209,14 +209,14 @@ class Command(BaseCommand):
         if not set_options:
             message = "Sending All England alerts"
             logger.info(message)
-            print (message)
+            print(message)
             send_all_england_alerts(recipient_email)
         else:
             message = "Not sending All England alerts as found unhandled option: {}".format(
                 ", ".join(set_options.keys())
             )
             logger.info(message)
-            print (message)
+            print(message)
 
     def handle(self, *args, **options):
         self.validate_options(**options)

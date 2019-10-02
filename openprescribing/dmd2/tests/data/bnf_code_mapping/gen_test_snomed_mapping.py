@@ -6,7 +6,6 @@
 #
 #   python gen_test_snomed_mapping.py [inp_path] [outp_path]
 
-from __future__ import print_function
 
 import os
 import sys
@@ -15,7 +14,7 @@ from openpyxl import Workbook, load_workbook
 import psycopg2
 
 if len(sys.argv) != 3:
-    print ("Usage: python gen_test_snomed_mapping.py [inp_path] [outp_path]")
+    print("Usage: python gen_test_snomed_mapping.py [inp_path] [outp_path]")
     sys.exit(1)
 
 inp_path = sys.argv[1]

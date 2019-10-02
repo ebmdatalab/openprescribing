@@ -2,7 +2,7 @@
 
 import colorsys
 from copy import copy
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import fields, ForeignKey

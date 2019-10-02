@@ -4,7 +4,7 @@ This is useful when running in docker, as the first time we create a
 postgres volume it takes a few seconds to become ready.
 
 """
-from __future__ import print_function
+
 import time
 import os
 import psycopg2
@@ -29,6 +29,6 @@ if __name__ == "__main__":
             break
         except (psycopg2.OperationalError):
             if elapsed == 0:
-                print ("Waiting for postgres to start...")
+                print("Waiting for postgres to start...")
             time.sleep(1)
             elapsed += 1

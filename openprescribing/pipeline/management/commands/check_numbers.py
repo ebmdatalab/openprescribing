@@ -199,7 +199,7 @@ def extract_numbers(source):
         tag.decompose()
 
     rx = re.compile(
-        u"""
+        """
         £[\d,\.]+           # Anything that looks like a cost
         |                   # ...or...
         &pound;[\d,\.]+     # anything that looks like a cost with an HTML entity

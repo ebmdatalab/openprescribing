@@ -1,6 +1,7 @@
 from django.db.models import fields, ForeignKey, ManyToOneRel, OneToOneRel, Q
 
 from .obj_types import clss
+from functools import reduce
 
 
 def build_query_obj(cls, search):
@@ -41,7 +42,7 @@ def build_query_obj(cls, search):
         if len(search) == 2:
             # branch node
             fn = {"and": Q.__and__, "or": Q.__or__}[search[0]]
-            clauses = map(_build_query_obj_helper, search[1])
+            clauses = list(map(_build_query_obj_helper, search[1]))
             return reduce(fn, clauses[1:], clauses[0])
         else:
             # leaf node

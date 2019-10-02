@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 from contextlib import contextmanager
-import string
 import subprocess
 import sys
 import tempfile
@@ -350,7 +347,7 @@ class Table(object):
             columns = [field.name for field in schema]
         table_dumper = TableDumper(model, columns, transformer)
 
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile("w+t") as f:
             table_dumper.dump_to_file(f)
             f.seek(0)
             self.insert_rows_from_csv(f.name, schema)
@@ -519,27 +516,23 @@ class InterpolationDict(dict):
 def interpolate_sql(sql, **substitutions):
     """Interpolates substitutions (plus datasets defined in DATASETS) into
     given SQL.
-
     Many of our SQL queries contain template variables, because the names of
     certain tables or fields are generated at runtime, and because each test
     run uses different dataset names.  This function replaces template
     variables with the corresponding values in substitutions, or with the
     dataset name.
-
     >>> interpolate_sql('SELECT {col} from {hscic}.table', col='c')
     'SELECT c from hscic_12345.table'
-
-    Since the values of some substitutions (esp. those from import_measures)
+    Since the values of some substitutions (those from import_measures)
     themselves contain template variables, we do the interpolation twice.
-
-    Use of the InterpolationDict allows us to do interpolation when the SQL
-    contains things in curly braces that shoudn't be interpolated (for
-    instance, JS functions defined in SQL).
+    The '{}' argument to `sql.format()` will replace the zeroth positional
+    field in `sql` with curly braces.  In practice, this means that the empty
+    JS object in ccgstatistics.sql can be passed through unchanged.
     """
+
     substitutions.update(DATASETS)
-    substitutions = InterpolationDict(**substitutions)
-    sql = string.Formatter().vformat(sql, (), substitutions)
-    sql = string.Formatter().vformat(sql, (), substitutions)
+    sql = sql.format("{}", **substitutions)
+    sql = sql.format("{}", **substitutions)
     return sql
 
 

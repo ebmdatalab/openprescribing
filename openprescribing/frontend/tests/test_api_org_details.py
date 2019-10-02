@@ -9,7 +9,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["date"], "2015-01-01")
         self.assertEqual(float(rows[0]["total_list_size"]), 1260)
@@ -22,7 +22,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=ccg"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[1]["row_id"], "03V")
         self.assertEqual(rows[1]["row_name"], "NHS Corby")
@@ -37,7 +37,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=ccg&keys=total_list_size"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 4)
         self.assertEqual(rows[1]["row_id"], "03V")
         self.assertEqual(rows[1]["row_name"], "NHS Corby")
@@ -50,14 +50,14 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=ccg&keys=nothing"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        list(csv.DictReader(response.content.splitlines()))
+        list(csv.DictReader(response.content.decode("utf8").splitlines()))
 
     def test_api_view_org_details_all_ccgs_with_unpermitted_key(self):
         url = self.api_prefix
         url += "/org_details?format=csv&org_type=ccg&keys=borg"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 400)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(rows[0]["detail"], "borg is not a valid key")
 
     def test_api_view_org_details_all_ccgs_with_json_key(self):
@@ -68,7 +68,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         )
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(rows[1]["row_id"], "03V")
         self.assertEqual(rows[1]["row_name"], "NHS Corby")
         self.assertEqual(rows[1]["date"], "2015-01-01")
@@ -79,7 +79,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=ccg&org=03V"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["row_id"], "03V")
         self.assertEqual(rows[0]["row_name"], "NHS Corby")
@@ -94,7 +94,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=practice"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 10)  # 5 practices, 2 months
         self.assertEqual(rows[0]["row_id"], "B82018")
         self.assertEqual(rows[0]["row_name"], "ESCRICK SURGERY")
@@ -111,7 +111,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=practice&org=03V"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 6)  # 3 practices, 2 months
         self.assertIn("K83622", [row["row_id"] for row in rows])
         self.assertEqual(rows[0]["row_id"], "K83059")
@@ -126,7 +126,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=practice&org=03Q"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 4)  # 2 practices, 2 months
         self.assertNotIn("K83622", [row["row_id"] for row in rows])
 
@@ -135,7 +135,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=practice&org=N84014"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)  # 2 months
         self.assertEqual(rows[0]["row_id"], "N84014")
         self.assertEqual(rows[0]["row_name"], "AINSDALE VILLAGE SURGERY")
@@ -153,7 +153,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         )
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)  # 2 months
         self.assertEqual(rows[0]["row_id"], "N84014")
         self.assertEqual(rows[0]["row_name"], "AINSDALE VILLAGE SURGERY")
@@ -170,7 +170,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         )
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["date"], "2015-01-01")
         self.assertEqual(float(rows[0]["total_list_size"]), 1260)
@@ -182,7 +182,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=stp&org=E54000020"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["row_id"], "E54000020")
         self.assertEqual(rows[0]["row_name"], "Northamptonshire")
@@ -197,7 +197,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=regional_team&org=Y55"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["row_id"], "Y55")
         self.assertEqual(
@@ -214,7 +214,7 @@ class TestAPIOrgDetailsViews(ApiTestBase):
         url += "/org_details?format=csv&org_type=pcn&org=PCN0001"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        rows = list(csv.DictReader(response.content.splitlines()))
+        rows = list(csv.DictReader(response.content.decode("utf8").splitlines()))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["row_id"], "PCN0001")
         self.assertEqual(rows[0]["row_name"], "Transformational Sustainability")

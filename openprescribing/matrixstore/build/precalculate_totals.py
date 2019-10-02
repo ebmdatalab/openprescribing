@@ -63,7 +63,7 @@ def precalculate_totals_for_db(connection):
         VALUES
           (?, ?, ?, ?)
         """,
-        map(prepare_matrix_value, values),
+        list(map(prepare_matrix_value, values)),
     )
     cursor.execute("RELEASE update_totals")
 

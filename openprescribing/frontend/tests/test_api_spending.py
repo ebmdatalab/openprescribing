@@ -41,7 +41,7 @@ class TestAPISpendingViewsTariff(ApiTestBase):
     def test_tariff_hits(self):
         url = "/tariff?format=csv&codes=0202010F0AAAAAA,0206020T0AAAGAG"
         rows = self._rows_from_api(url)
-        self.assertItemsEqual(
+        self.assertCountEqual(
             rows,
             [
                 {
@@ -96,7 +96,7 @@ class TestSpending(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode("utf8").splitlines()))
 
     def test_404_returned_for_unknown_short_code(self):
         params = {"code": "0"}
@@ -174,7 +174,7 @@ class TestSpendingByCCG(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode("utf8").splitlines()))
 
     def test_total_spending_by_ccg(self):
         rows = self._get_rows({})
@@ -325,7 +325,7 @@ class TestSpendingByPractice(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode("utf8").splitlines()))
 
     def test_spending_by_all_practices_on_product_without_date(self):
         response = self._get({"code": "0204000I0BC"})
@@ -510,7 +510,7 @@ class TestSpendingByOrg(ApiTestBase):
 
     def _get_rows(self, params):
         rsp = self._get(params)
-        return list(csv.DictReader(rsp.content.splitlines()))
+        return list(csv.DictReader(rsp.content.decode("utf8").splitlines()))
 
     def test_spending_by_all_stps(self):
         rows = self._get_rows({"org_type": "stp"})

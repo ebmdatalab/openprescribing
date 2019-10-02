@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from datetime import date
 
 from django.core.management import BaseCommand
@@ -47,7 +45,7 @@ class Command(BaseCommand):
         for c in unmatched_concessions:
             lines.append("-" * 80)
             lines.append("ID: {}".format(c.id))
-            lines.append(u"Drug: {}".format(c.drug))
-            lines.append(u"Pack size: {}".format(c.pack_size))
+            lines.append("Drug: {}".format(c.drug))
+            lines.append("Pack size: {}".format(c.pack_size))
 
-        print ("\n".join(lines))
+        print("\n".join(lines))

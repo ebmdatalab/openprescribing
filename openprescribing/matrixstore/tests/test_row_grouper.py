@@ -142,7 +142,7 @@ class TestGrouper(SimpleTestCase):
         rows, cols = shape
         size = rows * cols
         samples = max(1, int(size * sample_density))
-        for n in self.random.sample(xrange(size), samples):
+        for n in self.random.sample(range(size), samples):
             i = int(n / cols)
             j = n % cols
             yield i, j

@@ -38,7 +38,7 @@ def ensure_stats_downloaded_for_date(date):
         """
         % (date,)
     )
-    with gzip.open(temp_name, "wb") as f:
+    with gzip.open(temp_name, "wt") as f:
         writer = csv.writer(f)
         writer.writerow(result.field_names)
         for row in result.rows:

@@ -38,7 +38,7 @@ class ApiTestBase(TestCase):
         response = self.client.get(url, follow=True)
         if response.status_code == 404:
             raise Http404("URL %s does not exist" % url)
-        reader = csv.DictReader(response.content.splitlines())
+        reader = csv.DictReader(response.content.decode("utf8").splitlines())
         rows = []
         for row in reader:
             rows.append(row)

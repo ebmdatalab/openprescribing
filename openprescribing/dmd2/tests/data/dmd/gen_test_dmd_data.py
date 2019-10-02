@@ -21,8 +21,6 @@
 #   vpids is a comma-separated list of IDs of VMPs
 
 
-from __future__ import print_function
-
 from glob import glob
 import os
 import shutil
@@ -31,7 +29,7 @@ import sys
 from lxml import etree
 
 if len(sys.argv) != 4:
-    print ("Usage: python gen_test_dmd_data.py [inp_dir] [outp_dir] [vpids]")
+    print("Usage: python gen_test_dmd_data.py [inp_dir] [outp_dir] [vpids]")
     sys.exit(1)
 
 inp_dir = sys.argv[1]
@@ -60,7 +58,7 @@ for obj_type in ["vmp", "vmpp", "amp", "ampp"]:
     assert len(paths) == 1
     path = paths[0]
     filename = os.path.basename(path)
-    print (filename)
+    print(filename)
 
     with open(path) as f:
         tree = etree.parse(f)
@@ -127,7 +125,7 @@ for obj_type in ["ingredient", "lookup", "vtm"]:
     assert len(paths) == 1
     path = paths[0]
     filename = os.path.basename(path)
-    print (filename)
+    print(filename)
 
     with open(path) as f:
         tree = etree.parse(f)
@@ -141,7 +139,7 @@ paths = glob(os.path.join(inp_dir, "f_gtin2_*"))
 assert len(paths) == 1
 path = paths[0]
 filename = os.path.basename(path)
-print (filename)
+print(filename)
 
 with open(path) as f:
     tree = etree.parse(f)

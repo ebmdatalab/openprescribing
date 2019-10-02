@@ -13,7 +13,7 @@ The end-to-end test contains an additional check whereby it builds a file using
 the fast process and checks that the resulting SQL dump is identical to that
 produced by the full end-to-end process.
 """
-from __future__ import print_function
+
 
 from collections import defaultdict
 import os
@@ -40,7 +40,7 @@ class TestMatrixStoreBuild(SimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        factory = DataFactory()
+        factory = DataFactory(seed=37)
         cls.months = factory.create_months("2019-01-01", 3)
         # This practice won't do any prescribing but it will have practice
         # statistics so it should still show up in our data

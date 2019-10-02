@@ -4,8 +4,8 @@ set -e -o pipefail
 
 # Install ansible dependencies
 cd /openprescribing/ansible
-apt-get update && apt-get -qq -y install locales curl python
-curl https://bootstrap.pypa.io/get-pip.py | python
+apt-get update && apt-get -qq -y install locales curl python3
+curl https://bootstrap.pypa.io/get-pip.py | python3
 /usr/local/bin/pip install -r vagrant_requirements.txt
 
 # Set up the locale we use in postgres

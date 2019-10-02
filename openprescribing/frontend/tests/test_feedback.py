@@ -74,16 +74,17 @@ This is a copy of the feedback you sent to the OpenPrescribing.net team.
         mail.outbox = []
 
         send_feedback_mail(
-            user_name=u"Alicé Apple",
+            user_name="Alicé Apple",
             user_email_addr="alice@example.com",
-            subject=u"Test ✓",
-            message=u"All Good ✓",
-            url=u"http://example.com/?p=✓",
+            subject="Test ✓",
+            message="All Good ✓",
+            url="http://example.com/?p=✓",
         )
         email = mail.outbox[0]
         self.assertEqual(
-            email.from_email, u"Alicé Apple <feedback@openprescribing.net>"
+            email.from_email,
+            "=?utf-8?q?Alic=C3=A9_Apple?= <feedback@openprescribing.net>",
         )
-        self.assertEqual(email.subject, u"OpenPrescribing Feedback: Test ✓")
-        self.assertIn(u"All Good ✓", email.body)
-        self.assertIn(u"http://example.com/?p=✓", email.body)
+        self.assertEqual(email.subject, "OpenPrescribing Feedback: Test ✓")
+        self.assertIn("All Good ✓", email.body)
+        self.assertIn("http://example.com/?p=✓", email.body)

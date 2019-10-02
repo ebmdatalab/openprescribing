@@ -1,5 +1,6 @@
 from itertools import product
 from random import Random
+import json
 import os
 import platform
 import sqlite3
@@ -24,35 +25,37 @@ class TestReadExistingFile(SimpleTestCase):
     `create_fixture` class method on this class.
     """
 
-    fixture_path = "matrixstore/tests/fixtures/read_existing_file.sqlite"
+    fixture_db_path = "matrixstore/tests/fixtures/read_existing_file.sqlite"
+    fixture_json_path = "matrixstore/tests/fixtures/read_existing_file.json"
 
     def test_values_can_be_read_correctly(self):
         connection = self.get_fixture_connection()
-        for key, expected_value in self.get_expected_values():
+        with open(self.fixture_json_path) as f:
+            expected_values = json.load(f)
+        for key, expected_value in expected_values.items():
             result = connection.execute("SELECT value FROM data WHERE key=?", [key])
             value = deserialize(result.fetchone()[0])
-            self.assertIsInstance(value, type(expected_value))
+            self.assertEqual(type(value).__name__, expected_value["type"])
             if hasattr(value, "todense"):
                 value = value.todense()
-                expected_value = expected_value.todense()
-            self.assertEqual(value.tolist(), expected_value.tolist())
+            self.assertEqual(value.tolist(), expected_value["value"])
 
     def get_fixture_connection(self):
-        if not os.path.exists(self.fixture_path):
+        if not os.path.exists(self.fixture_db_path):
             raise RuntimeError(
-                "No SQLite file at: {fixture_path}\n\n"
+                "No SQLite file at: {fixture_db_path}\n\n"
                 "To create the fixture, run:\n"
                 "  ./manage.py shell -c"
                 '  "from {module} import {cls}; {cls}.create_fixture()"'.format(
-                    fixture_path=self.fixture_path,
+                    fixture_db_path=self.fixture_db_path,
                     module=__name__,
                     cls=self.__class__.__name__,
                 )
             )
-        return sqlite3.connect(self.fixture_path)
+        return sqlite3.connect(self.fixture_db_path)
 
     @classmethod
-    def get_expected_values(cls):
+    def generate_test_values(cls):
         random = Random()
         random.seed(1204)
         for sparse, integer, compressed in product([True, False], repeat=3):
@@ -72,7 +75,7 @@ class TestReadExistingFile(SimpleTestCase):
         else:
             dtype = numpy.int_ if integer else numpy.float_
             matrix = numpy.zeros(shape, dtype=dtype)
-        coords = map(random.randrange, shape)
+        coords = list(map(random.randrange, shape))
         value = random.randrange(128) if integer else random.random()
         matrix[coords] = value
         if sparse:
@@ -83,17 +86,25 @@ class TestReadExistingFile(SimpleTestCase):
 
     @classmethod
     def create_fixture(cls):
-        temp_file = cls.fixture_path + ".tmp"
-        if os.path.exists(temp_file):
-            os.unlink(temp_file)
-        connection = sqlite3.connect(temp_file)
+        temp_db_path = cls.fixture_db_path + ".tmp"
+        if os.path.exists(temp_db_path):
+            os.unlink(temp_db_path)
+        connection = sqlite3.connect(temp_db_path)
         connection.executescript(
             """
             CREATE TABLE data (key TEXT, value BLOB);
             CREATE TABLE environment_metadata (key TEXT, value TEXT);
             """
         )
-        for key, value in cls.get_expected_values():
+        json_data = {}
+        for key, value in cls.generate_test_values():
+            json_value = value
+            if hasattr(value, "todense"):
+                json_value = json_value.todense()
+            json_data[key] = {
+                "type": type(value).__name__,
+                "value": json_value.tolist(),
+            }
             if ".uncompressed" in key:
                 data = serialize(value)
             elif ".compressed" in key:
@@ -109,7 +120,9 @@ class TestReadExistingFile(SimpleTestCase):
             )
         connection.commit()
         connection.close()
-        os.rename(temp_file, cls.fixture_path)
+        os.rename(temp_db_path, cls.fixture_db_path)
+        with open(cls.fixture_json_path, "w") as f:
+            json.dump(json_data, f, indent=2)
 
     @classmethod
     def get_environment_metadata(cls):

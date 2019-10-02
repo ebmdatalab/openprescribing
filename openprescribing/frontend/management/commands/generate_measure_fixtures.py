@@ -25,7 +25,6 @@
 # this task expects that databsae to be empty.  Intermediate data is written to
 # BigQuery and is available for BQ_DEFAULT_TABLE_EXPIRATION_MS.
 
-from __future__ import print_function
 
 import csv
 import itertools
@@ -98,7 +97,7 @@ class Command(BaseCommand):
                     )
                     pcns.append(pcn)
                 # Function to return next PCN, looping round forever
-                get_next_pcn = itertools.cycle(pcns).next
+                get_next_pcn = itertools.cycle(pcns).__next__
 
                 for ccg_ix in range(2):
                     ccg = PCT.objects.create(

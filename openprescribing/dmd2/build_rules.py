@@ -43,7 +43,7 @@ def _build_rules_helper(search):
         # branch node
         return {
             "condition": search[0].upper(),
-            "rules": map(_build_rules_helper, search[1]),
+            "rules": list(map(_build_rules_helper, search[1])),
         }
     else:
         # leaf node

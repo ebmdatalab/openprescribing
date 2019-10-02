@@ -71,7 +71,7 @@ def get_practice_statistics_for_dates(dates):
         )
     for filename in filenames:
         logger.info("Reading practice statistics from %s", filename)
-        with gzip.open(filename, "rb") as f:
+        with gzip.open(filename, "rt") as f:
             for row in parse_practice_statistics_csv(f):
                 yield row
 

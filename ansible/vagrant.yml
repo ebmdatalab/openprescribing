@@ -1,8 +1,8 @@
 ---
 - hosts: all
   pre_tasks:
-  - name: 'install python2'
-    raw: sudo apt-get -y install python-simplejson
+  - name: 'install python3'
+    raw: sudo apt-get -y install python3-simplejson
   roles:
     - roles/setup
     - roles/app

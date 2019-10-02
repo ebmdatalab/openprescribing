@@ -90,11 +90,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -107,11 +107,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -124,11 +124,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -141,11 +141,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"cost": 1.0,
-                    u"presentation_name": u"Thing 2",
-                    u"quantity": 100.0,
-                    u"total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "cost": 1.0,
+                    "presentation_name": "Thing 2",
+                    "quantity": 100.0,
+                    "total_items": 1,
                 }
             ],
         )
@@ -158,11 +158,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -175,11 +175,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -199,11 +199,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )

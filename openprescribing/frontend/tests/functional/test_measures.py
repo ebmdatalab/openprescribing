@@ -14,7 +14,7 @@ from collections import defaultdict
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.management import call_command
 import requests
-from selenium_base import SeleniumTestCase
+from .selenium_base import SeleniumTestCase
 
 from frontend.models import RegionalTeam, STP, PCT, PCN, Practice, Measure, MeasureValue
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
@@ -1165,7 +1165,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_element = self.find_by_xpath(
             "//*[@id='measure_core_0']//strong[text()='Performance:']/.."
         )
-        exp_text = u"Performance: If all CCGs in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        exp_text = "Performance: If all CCGs in England had prescribed in line with the median, the NHS would have spent £{} less over the past 6 months. If they had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(cost_saving_50), _humanize(cost_saving_10)
         )
         self.assertEqual(perf_element.text, exp_text)
@@ -1205,13 +1205,13 @@ class MeasuresTests(SeleniumTestCase):
         p2 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 < 0][0]
         p3 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 > 0][0]
 
-        p1_exp_text = u"By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months.".format(
+        p1_exp_text = "By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months.".format(
             _humanize(p1.cost_saving_50)
         )
-        p2_exp_text = u"By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        p2_exp_text = "By prescribing better than the median, this practice has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(p2.cost_saving_50), _humanize(p2.cost_saving_10)
         )
-        p3_exp_text = u"If it had prescribed in line with the median, this practice would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        p3_exp_text = "If it had prescribed in line with the median, this practice would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(p3.cost_saving_50), _humanize(p3.cost_saving_10)
         )
 
@@ -1273,13 +1273,13 @@ class MeasuresTests(SeleniumTestCase):
         p1 = [p for p in pp if p.cost_saving_10 < 0 and p.cost_saving_50 < 0][0]
         p3 = [p for p in pp if p.cost_saving_10 > 0 and p.cost_saving_50 > 0][0]
 
-        p1_exp_text = u"By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months.".format(
+        p1_exp_text = "By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months.".format(
             _humanize(p1.cost_saving_50)
         )
-        p2_exp_text = u"By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        p2_exp_text = "By prescribing better than the median, this PCN has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(p2.cost_saving_50), _humanize(p2.cost_saving_10)
         )
-        p3_exp_text = u"If it had prescribed in line with the median, this PCN would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        p3_exp_text = "If it had prescribed in line with the median, this PCN would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(p3.cost_saving_50), _humanize(p3.cost_saving_10)
         )
 
@@ -1340,13 +1340,13 @@ class MeasuresTests(SeleniumTestCase):
         c2 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 < 0][0]
         c3 = [c for c in cc if c.cost_saving_10 > 0 and c.cost_saving_50 > 0][0]
 
-        c1_exp_text = u"By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months.".format(
+        c1_exp_text = "By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months.".format(
             _humanize(c1.cost_saving_50)
         )
-        c2_exp_text = u"By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        c2_exp_text = "By prescribing better than the median, this CCG has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(c2.cost_saving_50), _humanize(c2.cost_saving_10)
         )
-        c3_exp_text = u"If it had prescribed in line with the median, this CCG would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        c3_exp_text = "If it had prescribed in line with the median, this CCG would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(c3.cost_saving_50), _humanize(c3.cost_saving_10)
         )
 
@@ -1407,13 +1407,13 @@ class MeasuresTests(SeleniumTestCase):
         s2 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 < 0][0]
         s3 = [s for s in ss if s.cost_saving_10 > 0 and s.cost_saving_50 > 0][0]
 
-        s1_exp_text = u"By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months.".format(
+        s1_exp_text = "By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months.".format(
             _humanize(s1.cost_saving_50)
         )
-        s2_exp_text = u"By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        s2_exp_text = "By prescribing better than the median, this STP has saved the NHS £{} over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(s2.cost_saving_50), _humanize(s2.cost_saving_10)
         )
-        s3_exp_text = u"If it had prescribed in line with the median, this STP would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        s3_exp_text = "If it had prescribed in line with the median, this STP would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(s3.cost_saving_50), _humanize(s3.cost_saving_10)
         )
 
@@ -1476,10 +1476,10 @@ class MeasuresTests(SeleniumTestCase):
         r1 = [r for r in rr if r.cost_saving_10 < 0 and r.cost_saving_50 < 0][0]
         r3 = [r for r in rr if r.cost_saving_10 > 0 and r.cost_saving_50 > 0][0]
 
-        r1_exp_text = u"By prescribing better than the median, this Regional Team has saved the NHS £{} over the past 6 months.".format(
+        r1_exp_text = "By prescribing better than the median, this Regional Team has saved the NHS £{} over the past 6 months.".format(
             _humanize(r1.cost_saving_50)
         )
-        r3_exp_text = u"If it had prescribed in line with the median, this Regional Team would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
+        r3_exp_text = "If it had prescribed in line with the median, this Regional Team would have spent £{} less over the past 6 months. If it had prescribed in line with the best 10%, it would have spent £{} less.".format(
             _humanize(r3.cost_saving_50), _humanize(r3.cost_saving_10)
         )
 
@@ -1526,7 +1526,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all PCNs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all PCNs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1542,7 +1542,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1558,7 +1558,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all STPs had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1574,7 +1574,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all Regional Teams had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all Regional Teams had prescribed at the median ratio or better, then NHS England would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1603,7 +1603,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all practices had prescribed at the median ratio or better, then this PCN would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all practices had prescribed at the median ratio or better, then this PCN would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1632,7 +1632,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all practices had prescribed at the median ratio or better, then this CCG would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1661,7 +1661,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this STP would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1690,7 +1690,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if all CCGs had prescribed at the median ratio or better, then this Regional Team would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1717,7 +1717,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if this PCN had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this PCN had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1744,7 +1744,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if this CCG had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this CCG had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1771,7 +1771,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this practice had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1798,7 +1798,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this STP had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1825,7 +1825,7 @@ class MeasuresTests(SeleniumTestCase):
         perf_summary_element = self.find_by_xpath(
             '//*[@id="perfsummary"][not(contains(text(), "Loading..."))]'
         )
-        exp_text = u"Over the past 6 months, if this Regional Team had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
+        exp_text = "Over the past 6 months, if this Regional Team had prescribed at the median ratio or better on all cost-saving measures below, then it would have spent £{} less.".format(
             _humanize(cost_saving)
         )
         self.assertIn(exp_text, perf_summary_element.text)
@@ -1843,7 +1843,7 @@ def _get_extreme_measure(mvs):
             percentiles_by_measure_id[mv.measure_id].append(mv.percentile)
 
     avg_percentile_by_measure_id = {
-        measure_id: sum(percentiles) / len(percentiles)
+        measure_id: [sum(percentiles) / len(percentiles), measure_id]
         for measure_id, percentiles in percentiles_by_measure_id.items()
     }
 

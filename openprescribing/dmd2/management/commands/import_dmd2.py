@@ -407,7 +407,7 @@ class Command(BaseCommand):
                 continue
 
             for cls in VMP, AMP, VMPP, AMPP:
-                names = cls_to_names[cls]
+                names = sorted(cls_to_names[cls])
                 if len(names) == 1:
                     presentation.dmd_name = list(names)[0]
                     presentation.save()
@@ -628,7 +628,7 @@ def get_common_name(names):
 
         common_name = " ".join(words)
 
-    if len(common_name.split()) < len(names[0].split()) / 2:
+    if len(common_name.split()) < len(names[0].split()) // 2:
         return None
 
     return common_name.strip()

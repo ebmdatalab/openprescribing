@@ -5,6 +5,12 @@
     pkg: apt-transport-https
     state: present
 
+- name: Install gpg
+  become: yes
+  apt:
+    pkg: gpg
+    state: present
+
 - name: Add NodeSource apt signing key
   become: yes
   apt_key:
@@ -27,17 +33,17 @@
       - libproj-dev
       - gdal-bin
       - libgeoip1
-      - libgeos-c1
+      - libgeos-c1v5
       - git-core
       - vim
       - sudo
       - screen
       - supervisor
       - libpq-dev
-      - python-dev
-      - python-pip
-      - python-virtualenv
-      - python-gdal
+      - python3-dev
+      - python3-pip
+      - python3-virtualenv
+      - python3-gdal
       - emacs
       - nginx
       - build-essential
@@ -60,7 +66,7 @@
 - name: Add NodeSource 10.x apt repository
   become: yes
   apt_repository:
-    repo: 'deb https://deb.nodesource.com/node_10.x jessie main'
+    repo: 'deb https://deb.nodesource.com/node_10.x stretch main'
     update_cache: yes
 
 - name: Install nodejs
@@ -78,7 +84,7 @@
 - name: ensure postgres apt repository exists
   become: yes
   apt_repository:
-    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main'
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main'
     update_cache: yes
 
 - name: Install database packages
@@ -86,10 +92,10 @@
   apt:
     state: present
     pkg:
-      - postgresql-9.5-postgis-2.2
-      - postgresql-server-dev-9.5  # required for building pyscopg against correct postgres
+      - postgresql-11-postgis-2.5
+      - postgresql-server-dev-11  # required for building pyscopg against correct postgres
       - libpq-dev # Required for Ansible to interact with postgres
-      - python-psycopg2 # Required for Ansible to interact with postgres
+      - python3-psycopg2 # Required for Ansible to interact with postgres
 
 - name: Create fabric group for automation
   become: yes
@@ -112,7 +118,7 @@
   become: yes
   copy:
     src: "{{ item }}"
-    dest: /etc/postgresql/9.5/main/{{ item }}
+    dest: /etc/postgresql/11/main/{{ item }}
     force: yes
   with_items:
     - pg_hba.conf
@@ -126,7 +132,7 @@
 
 - name: Allow password authentication for local socket users
   become: yes
-  copy: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf force=yes
+  copy: src=pg_hba.conf dest=/etc/postgresql/11/main/pg_hba.conf force=yes
   notify:
       - Restart Postgres
 

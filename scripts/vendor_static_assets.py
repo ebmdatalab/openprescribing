@@ -32,10 +32,10 @@ DIRECTORY = os.path.abspath(
 if __name__ == "__main__":
     for filename, url in FILES.items():
         path = os.path.join(DIRECTORY, filename)
-        print ("Downloading {}".format(url))
+        print("Downloading {}".format(url))
         response = requests.get(url)
         response.raise_for_status()
-        print ("    saving to {}".format(path))
+        print("    saving to {}".format(path))
         subdirectory = os.path.dirname(path)
         if not os.path.exists(subdirectory):
             os.makedirs(subdirectory)

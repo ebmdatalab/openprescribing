@@ -1,14 +1,13 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from cStringIO import StringIO
+from io import StringIO
 import datetime
-from urlparse import urljoin
+from urllib.parse import unquote, urljoin
 import logging
 import os
 import re
 import requests
-import urllib
 
 import bs4
 import calendar
@@ -43,7 +42,7 @@ class Command(BaseCommand):
             # We split that into ['Part', 'VIIIA', 'September', '2017']
             words = re.split(
                 r"[ -]+",
-                urllib.unquote(os.path.splitext(os.path.basename(a.attrs["href"]))[0]),
+                unquote(os.path.splitext(os.path.basename(a.attrs["href"]))[0]),
             )
             month_name, year = words[-2:]
 

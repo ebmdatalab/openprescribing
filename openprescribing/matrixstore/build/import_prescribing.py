@@ -81,7 +81,7 @@ def get_prescriptions_for_dates(dates):
 
 
 def read_gzipped_prescribing_csv(filename):
-    with gzip.open(filename, "rb") as f:
+    with gzip.open(filename, "rt") as f:
         for row in parse_prescribing_csv(f):
             yield row
 

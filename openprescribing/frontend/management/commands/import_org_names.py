@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import csv
 import sys
 from django.core.management.base import BaseCommand
@@ -21,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for f in self.filenames:
             if f not in options:
-                print ("Please supply a filename option: ", f)
+                print("Please supply a filename option: ", f)
                 sys.exit
 
         ccgs = csv.reader(open(options["ccg"], "rU"))

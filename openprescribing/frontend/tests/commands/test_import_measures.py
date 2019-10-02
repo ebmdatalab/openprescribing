@@ -1,11 +1,12 @@
 from __future__ import print_function
 
 import csv
+import itertools
 import os
 import tempfile
 from mock import patch
 from random import Random
-from urlparse import parse_qs
+from urllib.parse import parse_qs
 
 from google.api_core.exceptions import BadRequest
 from google.cloud.exceptions import Conflict
@@ -518,7 +519,7 @@ def upload_dummy_prescribing(bnf_codes):
         prescribing_rows.append(row)
 
     table = Client("hscic").get_table("normalised_prescribing_standard")
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
             writer.writerow(row)
@@ -564,6 +565,9 @@ def create_organisations(random):
                 )
                 pcns.append(pcn)
 
+            # Function to return next PCN, looping round forever
+            get_next_pcn = itertools.cycle(pcns).__next__
+
             for ccg_ix in range(5):
                 ccg = PCT.objects.create(
                     regional_team=regtm,
@@ -576,7 +580,7 @@ def create_organisations(random):
                 for prac_ix in range(5):
                     Practice.objects.create(
                         ccg=ccg,
-                        pcn=random.choice(pcns),
+                        pcn=get_next_pcn(),
                         code="P0{}{}{}{}".format(regtm_ix, stp_ix, ccg_ix, prac_ix),
                         name="Practice {}/{}/{}/{}".format(
                             regtm_ix, stp_ix, ccg_ix, prac_ix
@@ -705,7 +709,7 @@ def upload_prescribing(randint):
     # but for the tests it's much easier to set it up as a normal table.
     table = Client("hscic").get_table("normalised_prescribing_standard")
 
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in prescribing_rows:
             writer.writerow(row)
@@ -806,7 +810,7 @@ def upload_practice_statistics(randint):
     # Upload practice_statistics_rows to BigQuery.
     table = Client("hscic").get_table("practice_statistics")
 
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for row in practice_statistics_rows:
             writer.writerow(row)

@@ -1,5 +1,5 @@
 # flake8: noqa
-from __future__ import print_function
+
 
 import csv
 import re
@@ -111,9 +111,9 @@ for line in lines:
         line["type"] = "retired"
 
     else:
-        print ("-" * 80)
-        print (line["table"], line["field"])
-        print (line["orig_descr"])
+        print("-" * 80)
+        print(line["table"], line["field"])
+        print(line["orig_descr"])
         assert False
 
     if line["field"] == "cd":

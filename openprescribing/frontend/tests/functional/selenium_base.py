@@ -16,7 +16,7 @@ from django.conf import settings
 # Django 1.11 removes the ability to supply a port range for liveserver tests,
 # so we replicate that here.  See: https://code.djangoproject.com/ticket/28212
 # and https://code.djangoproject.com/ticket/26011
-test_port_range = range(6080, 6580)
+test_port_range = list(range(6080, 6580))
 # Shuffle the ports so that repeated runs locally are unlikely to try to reopen
 # a port in the TIME_WAIT state
 random.shuffle(test_port_range)

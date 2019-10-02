@@ -13,7 +13,7 @@ class FrontendConfig(AppConfig):
 
     def ready(self):
         # Importing this to run the @admin.register decorators
-        import admin  # noqa: F401
+        from . import admin  # noqa: F401
 
         # Importing this to run the signal handler decorators
         import frontend.signals.handlers  # noqa: F401
