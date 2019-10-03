@@ -25,6 +25,7 @@ DATASETS = {
     "dmd": settings.BQ_DMD_DATASET,
     "archive": settings.BQ_ARCHIVE_DATASET,
     "prescribing_export": settings.BQ_PRESCRIBING_EXPORT_DATASET,
+    "public": settings.BQ_PUBLIC_DATASET,
 }
 
 
