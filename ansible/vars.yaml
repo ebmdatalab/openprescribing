@@ -6,7 +6,7 @@ db_password: sdkjasdalskdax
 db_name: openprescribing_dev
 secret_key: sdjfhasiufqpiasln
 repo_root: /openprescribing
-django_settings_module: openprescribing.settings.staging
+django_settings_module: openprescribing.settings.production
 virtualenv_path: "{{ repo_root }}/venv"
 apps_root: "{{ repo_root }}/openprescribing"
 requirements_path: "{{ repo_root }}/requirements.txt"
