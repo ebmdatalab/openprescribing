@@ -23,8 +23,8 @@
 
 [Service]
 User=www-data
-ExecStart=/webapps/openprescribing/bin/gunicorn_start
-SyslogIdentifier=app.openprescribing.web
+ExecStart=/webapps/openprescribing_staging/bin/gunicorn_start
+SyslogIdentifier=app.openprescribing_staging.web
 Restart=always
 RestartSec=4
 
