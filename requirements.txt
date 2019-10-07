@@ -8,7 +8,7 @@ argh==0.26.2              # via watchdog
 asn1crypto==0.24.0        # via cryptography
 backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
-beautifulsoup4==4.8.0
+beautifulsoup4==4.8.1
 cachetools==3.1.1         # via google-auth, premailer
 certifi==2019.9.11        # via requests
 cffi==1.12.3              # via bcrypt, cryptography, pynacl
@@ -108,4 +108,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.2.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.4.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
