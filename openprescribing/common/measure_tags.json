@@ -1,4 +1,8 @@
 {
+  "alerts": {
+    "name": "Alerts",
+    "description": "The following measures are sent as alerts to practices and CCGs when they are outlying or where there is change."
+  },
   "antimicrobial": {
     "name": "Antimicrobial Stewardship",
     "description": "Antimicrobial Stewardship is when an organisation promotes and monitors the correct use of antibiotics to ensure they remain effective in the future. The following measures are useful for monitoring antibiotic prescribing to support antimicrobial stewardship and reduce the threat of antimicrobial resistance."
