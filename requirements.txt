@@ -40,7 +40,7 @@ flake8==3.7.8
 google-api-core==1.14.2   # via google-cloud-core
 google-api-python-client==1.7.11
 google-auth-httplib2==0.0.3  # via google-api-python-client
-google-auth-oauthlib==0.4.0  # via pandas-gbq, pydata-google-auth
+google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
 google-auth==1.6.3        # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery==1.20.0
 google-cloud-core==1.0.3  # via google-cloud-bigquery, google-cloud-storage
@@ -108,4 +108,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.2.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.4.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
