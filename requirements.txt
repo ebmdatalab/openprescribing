@@ -84,7 +84,7 @@ pyopenssl==19.0.0         # via requests
 pyquery==1.4.0
 python-dateutil==2.8.0
 python3-openid==3.1.0     # via django-allauth
-pytz==2019.2
+pytz==2019.3
 pyvirtualdisplay==0.2.4
 pyyaml==5.1.2             # via watchdog
 raven==6.10.0
@@ -108,4 +108,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.2.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.4.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
