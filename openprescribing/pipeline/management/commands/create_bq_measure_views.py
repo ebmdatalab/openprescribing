@@ -24,7 +24,6 @@ class Command(BaseCommand):
             "pregabalin_total_mg",
             "vw__median_price_per_unit",
             "vw__ghost_generic_measure",
-            "vw__chapter_3_dmd_objs_with_form_route",
             # This references pregabalin_total_mg, so must come afterwards
             "gaba_total_ddd",
         ]:
