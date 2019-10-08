@@ -649,6 +649,7 @@ class Measure(models.Model):
             "all measures with the listed tags"
         ),
     )
+    include_in_alerts = models.BooleanField(default=True)
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
