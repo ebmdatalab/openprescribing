@@ -3,6 +3,7 @@ import glob
 import os
 import shutil
 
+from django.apps import apps
 from django.core.management import BaseCommand, CommandError
 from django.conf import settings
 
@@ -95,11 +96,10 @@ def run_end_to_end():
         client.create_table("global_data_" + measure_id, measures_schema)
 
     # Although there are no model instances, we call upload_model to create the
-    # tables in BQ that are required by certain measure views.
+    # dm+d tables in BQ that are required by certain measure views.
     client = BQClient("dmd")
-    client.upload_model(TariffPrice)
-    client.upload_model(VMPP)
-    client.upload_model(VMP)
+    for model in apps.get_app_config("dmd2").get_models():
+        client.upload_model(model)
 
     call_command("generate_presentation_replacements")
 
