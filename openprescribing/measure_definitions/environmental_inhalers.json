@@ -19,12 +19,7 @@
   "tags": [
     "respiratory"
   ],
-  "numerator_columns": [
-    "SUM(items) AS numerator, "
-  ],
-  "numerator_from": [
-    "{hscic}.normalised_prescribing_standard"
-  ],
+  "numerator_type": "bnf_items",
   "numerator_where": [
     "bnf_code IN (",
     "  SELECT DISTINCT(bnf_code)",
@@ -34,12 +29,7 @@
     "  AND bnf_code NOT LIKE '0301011R0%' ",
     ")"
   ],
-  "denominator_columns": [
-    "SUM(items) AS denominator, "
-  ],
-  "denominator_from": [
-    "{hscic}.normalised_prescribing_standard"
-  ],
+  "denominator_type": "bnf_items",
   "denominator_where": [
     "bnf_code IN (",
     "  SELECT DISTINCT(bnf_code)",
