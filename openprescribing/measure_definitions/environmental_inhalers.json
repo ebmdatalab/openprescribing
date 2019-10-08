@@ -25,7 +25,7 @@
     "  SELECT DISTINCT(bnf_code)",
     "  FROM {measures}.dmd_objs_with_form_route",
     "  WHERE form_route = 'pressurizedinhalation.inhalation'",
-    "  AND bnf_code '03%' ",
+    "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
     ")"
   ],
@@ -35,7 +35,7 @@
     "  SELECT DISTINCT(bnf_code)",
     "  FROM {measures}.dmd_objs_with_form_route",
     "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
-    "  AND bnf_code '03%' ",
+    "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
     ")"
   ]
