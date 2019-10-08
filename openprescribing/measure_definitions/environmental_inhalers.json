@@ -1,14 +1,19 @@
 {
   "name": "Environmental Impact of Inhalers",
   "title": [
-    "MDIs prescribed as a proprotion of all inhalers"
+    "MDIs prescribed as a proportion of all inhalers, excluding salbutamol"
   ],
   "description": [
-    "MDIs prescribed as a proprotion of all inhalers in BNF Chapter 3"
+    "MDIs prescribed as a proportion of all inhalers in BNF Chapter 3, excluding salbutamol"
   ],
   "why_it_matters": [
-    "The NHS 10 year plan commits the NHS to reduce harmful environmental emissions. One way of doing this is to shift from",
-    "Metered Dose Inhalers (MDI) to Dry Powdered Inhalers (DPI)."
+    "The NHS has [committed](https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf)",
+    "to reducing its carbon footprint by 51% by 2025 to meet the target in the Climate Change Act including a shift to dry powdered",
+    "inhalers (DPI) to deliver a reduction of 4%.  DPIs are less harmful  to the enviroment than traditional metered",
+    "dose inhalers (MDIs) and the NHS long term plan supports the use of DPI where it is clinically appropriate.",
+    "an [inhaler decision aid](https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573)",
+    "to faciltiate decisons about inhalers. You can read more about this measure on our blog",
+    " [here](https://docs.google.com/document/d/1OQeuHV0AKB8VG87DUcUSjaj7Dre3jKJ7oIjRokaS-uI/edit), including the rationale for excluding salbutamol" 
   ],
   "numerator_short": "MDI (Total Items)",
   "denominator_short": "Total Inhalers",
