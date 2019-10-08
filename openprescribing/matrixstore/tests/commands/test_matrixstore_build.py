@@ -40,7 +40,7 @@ class TestMatrixStoreBuild(SimpleTestCase):
 
     @classmethod
     def setUpClass(cls):
-        factory = DataFactory(seed=37)
+        factory = DataFactory()
         cls.months = factory.create_months("2019-01-01", 3)
         # This practice won't do any prescribing but it will have practice
         # statistics so it should still show up in our data
