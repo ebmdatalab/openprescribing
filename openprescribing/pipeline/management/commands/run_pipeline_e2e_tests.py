@@ -12,8 +12,7 @@ from django.core.management import call_command
 from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
-from frontend.models import MeasureValue, MeasureGlobal, TariffPrice
-from dmd2.models import VMP, VMPP
+from frontend.models import MeasureValue, MeasureGlobal
 from openprescribing.slack import notify_slack
 from pipeline import runner
 
