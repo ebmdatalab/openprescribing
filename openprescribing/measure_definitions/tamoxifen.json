@@ -27,6 +27,7 @@
   "tags": [
     "paper"
   ],
+  "include_in_alerts": false,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(quantity/ CASE WHEN bnf_name LIKE '%Oral%' THEN 10 ",

@@ -23,6 +23,7 @@
   "tags_focus": [
     "lowpriority"
   ],
+  "include_in_alerts": false,
   "numerator_type": "custom",
   "numerator_columns": [
     "SUM(numerator) AS numerator, "

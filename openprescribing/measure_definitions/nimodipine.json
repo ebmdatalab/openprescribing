@@ -19,6 +19,7 @@
     "centralnervous",
     "paper"
   ],
+  "include_in_alerts": false,
   "numerator_type": "bnf_quantity",
   "numerator_where": [
     "bnf_code LIKE '0206020M0%'"
