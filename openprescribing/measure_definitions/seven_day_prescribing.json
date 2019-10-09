@@ -13,7 +13,7 @@
     "The <a href='https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice'>",
     "British Medical Association reports</a> growing requests to prescribe seven day quantities of medicines to fund supply of ",
     "medicine compliance aids (MCAs), adding to GP workload. The Royal Pharmaceutical Society has issued ",
-    "<a href='https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf' ",
+    "<a href='https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf'>",
     "guidance</a> stating that while some may think of MCAs as a panacea, there is limited evidence base to support their use, ",
     "and safety incidents have been reported to the National Reporting and Learning System.",
     "<p>We propose this measure of seven day prescriptions for long-term conditions as a surrogate measure for MCAs. Caveats ",
@@ -25,7 +25,7 @@
     "simvastatin, levothyroxine, amlodipine and ramipril.",
     "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at",
     "<a href='mailto:feedback@openprescribing.net?Subject=7-day%20prescribing%20measure'>feedback@openprescribing.net</a>.</b></p>",
-    "You can read more detail on the <a href='https://github.com/ebmdatalab/jupyter-  notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb'>",
+    "You can read more detail on the <a href='https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb'>",
     "measure definition notebook</a> and on our [blog]."
   ],
 	"numerator_short": "seven day quantities",
