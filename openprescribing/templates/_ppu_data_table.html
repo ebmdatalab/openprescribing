@@ -45,5 +45,5 @@
 
 </table>
 
-<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
+<a class="btn btn-primary" href="{% url 'price_per_unit_api' %}?entity_code={{ entity.code }}&date={{ date|date:'Y-m-d' }}&bnf_code={{ bnf_code }}&aggregate={{ aggregate }}&entity_type={{ entity_type }}&format=csv"><span class="glyphicon glyphicon-download-alt"></span> Download this data</a>
 <hr>
