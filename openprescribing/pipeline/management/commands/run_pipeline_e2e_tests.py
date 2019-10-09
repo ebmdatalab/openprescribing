@@ -64,6 +64,8 @@ def run_end_to_end():
     client = BQClient("hscic")
     client.create_table("bnf", schemas.BNF_SCHEMA)
     client.create_table("ccgs", schemas.CCG_SCHEMA)
+    client.create_table("stps", schemas.STP_SCHEMA)
+    client.create_table("regional_teams", schemas.REGIONAL_TEAM_SCHEMA)
     client.create_table("ppu_savings", schemas.PPU_SAVING_SCHEMA)
     client.create_table("practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA)
     client.create_table(

@@ -181,6 +181,15 @@ BNF_MAP_SCHEMA = build_schema(
     ("former_bnf_code", "STRING"), ("current_bnf_code", "STRING")
 )
 
+STP_SCHEMA = build_schema(("ons_code", "STRING"), ("name", "STRING"))
+
+REGIONAL_TEAM_SCHEMA = build_schema(
+    ("code", "STRING"),
+    ("name", "STRING"),
+    ("open_date", "DATE"),
+    ("close_date", "DATE"),
+)
+
 
 def statistics_transform(row):
     """Transform a row from the frontend_practicestatistics table so it
