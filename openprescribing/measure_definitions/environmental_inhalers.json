@@ -14,7 +14,7 @@
     "<a href='https://www.nice.org.uk/guidance/ng80/resources/inhalers-for-asthma-patient-decision-aid-pdf-6727144573'>NICE has ",
     "produced a inhaler decision aid</a> to faciltiate discussion about inhaler options. ",
     "<p>You can read more about this measure ",
-    "<a href=\"https://docs.google.com/document/d/1OQeuHV0AKB8VG87DUcUSjaj7Dre3jKJ7oIjRokaS-uI/edit\">on our blog</a>, ",
+    "<a href='https://ebmdatalab.net/new-measure-inhalers-and-the-environment/'>on our blog</a>, ",
     "including the rationale for excluding salbutamol." 
   ],
   "numerator_short": "MDI (Total Items)",
