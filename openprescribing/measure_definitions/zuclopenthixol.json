@@ -14,7 +14,8 @@
     "<p>Any prescribing on this measure could prompt investigation to ascertain if zuclopenthixol <b>acetate<b> was prescribed in error.</p>",
     "<p>Please note that this is an experimental measure to support a new type of alert. We would be grateful for",
     "any feedback at <a href='mailto:feedback@openprescribing.net?Subject=zuclopenthixol%20measure'>feedback@openprescribing.net</a>",
-    "and you can read more about the measure in <a href='https://ebmdatalab.net/#blog' our blog</a>.</p>"
+    "and you can read more about the measure ",
+    "<a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'on our blog</a>.</p>"
   ],
   "numerator_short": "Zuclopenthixol Acetate Items",
   "denominator_short": "All injectable zuclopenthixol items",
