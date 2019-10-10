@@ -1,0 +1,23 @@
+SELECT
+    practice AS practice_id,
+    CAST(month AS DATE) AS month,
+    total_list_size AS total,
+    female_0_4,
+    female_5_14,
+    female_15_24,
+    female_25_34,
+    female_35_44,
+    female_45_54,
+    female_55_64,
+    female_65_74,
+    female_75_plus,
+    male_0_4,
+    male_5_14,
+    male_15_24,
+    male_25_34,
+    male_35_44,
+    male_45_54,
+    male_55_64,
+    male_65_74,
+    male_75_plus
+FROM {hscic}.practice_statistics

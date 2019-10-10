@@ -77,6 +77,12 @@ class Command(BaseCommand):
             models.PCT, schemas.CCG_SCHEMA, transformer=schemas.ccgs_transform
         )
 
+        table = client.get_table("stps")
+        table.insert_rows_from_pg(models.STP, schemas.STP_SCHEMA)
+
+        table = client.get_table("regional_teams")
+        table.insert_rows_from_pg(models.RegionalTeam, schemas.REGIONAL_TEAM_SCHEMA)
+
         table = client.get_table("prescribing_" + date.strftime("%Y_%m"))
         sql = """SELECT * FROM {hscic}.prescribing
         WHERE month = TIMESTAMP('{date}')"""
