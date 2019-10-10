@@ -24,6 +24,7 @@
   "is_cost_based": false,
   "low_is_good": true,
   "tags": [
+    "core",
     "respiratory"
   ],
   "numerator_type": "bnf_items",
@@ -50,7 +51,7 @@
     "2019-10-09"
   ],
   "next_review": [
-    "2019-10-09"
+    "2020-10-09"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
