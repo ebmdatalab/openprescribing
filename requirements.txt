@@ -88,7 +88,7 @@ pytz==2019.3
 pyvirtualdisplay==0.2.4
 pyyaml==5.1.2             # via watchdog
 raven==6.10.0
-redis==3.3.8              # via django-redis
+redis==3.3.10             # via django-redis
 requests-futures==1.0.0
 requests-oauthlib==1.2.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
