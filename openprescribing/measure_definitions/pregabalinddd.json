@@ -30,7 +30,7 @@
   ],
  "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {measures}.dmd_unit_dose_strength r ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2)) ",
   "numerator_where": [
-    "p.bnf_code LIKE '0408010AE%' AND r.vpi = 41560008 --Pregabalin (bnf_code and vpi code)"
+    "p.bnf_code LIKE '0408010AE%' AND r.ing = 41560008 --Pregabalin (bnf_code and ing code)"
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%'",
   "denominator_type": "list_size",
