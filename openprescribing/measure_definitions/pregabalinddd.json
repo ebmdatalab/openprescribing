@@ -26,11 +26,11 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(p.quantity * r.strnt)/300 AS numerator, "
+    "SUM(p.quantity * r.strnt)/300 AS numerator, --divide by 300 to get DDD (https://www.whocc.no/atc_ddd_index/?code=N03AX16) "
   ],
  "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {measures}.measures.dmd_unit_dose_strength r ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2)) ",
   "numerator_where": [
-    "p.bnf_code LIKE '0408010AE%' AND --Pregabalins"
+    "p.bnf_code LIKE '0408010AE%' --Pregabalin"
   ],
   "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%'",
   "denominator_type": "list_size",
