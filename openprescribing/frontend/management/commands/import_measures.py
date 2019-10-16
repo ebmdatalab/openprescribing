@@ -844,14 +844,12 @@ class MeasureCalculation(object):
         assert num_or_denom in ["numerator", "denominator"]
         fieldname = "%s_columns" % num_or_denom
         val = getattr(self.measure, fieldname)
-        # Deal with possible inconsistencies in measure definition
-        # trailing commas
-        if val.strip()[-1] == ",":
-            val = re.sub(r",\s*$", "", val) + " "
         if self.measure.is_cost_based and self.measure.is_percentage:
             # Cost calculations for percentage measures require extra columns.
+            # (Include newline in case previous line ends in a comment)
             val += (
-                ", SUM(items) AS items, "
+                "\n    , "
+                "SUM(items) AS items, "
                 "SUM(actual_cost) AS cost, "
                 "SUM(quantity) AS quantity "
             )
