@@ -1,0 +1,52 @@
+{
+  "name": "Prescribing of pregabalin (total DDD)",
+  "title": [
+    "pregabalin DDD per 1000 patients"
+  ],
+  "description": [
+    "Prescribing of pregabalin (total DDD) per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Pregabalin is a relatively new drug, which is increasingly used in neuropathic and other types of pain. ",
+    "Pregabalin costs have reduced recently, and there is still significant use in the NHS. ",
+    "There are <a href='https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/385791/PHE-NHS_England_pregabalin_and_gabapentin_advice_Dec_2014.pdf'>concerns about the potential for abuse</a>. ",
+    "We are using the <a href='https://www.who.int/medicines/regulation/medicines-safety/toolkit_ddd/en/'>",
+    "Defined Daily Dose</a> (DDD) for this measure."
+  ],
+  "numerator_short": "Total pregabalin prescribed (in DDD)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": null,
+  "tags": [
+    "core",
+    "pain",
+    "safety"
+  ],
+  "numerator_type": "custom",
+  "numerator_columns": [
+    "SUM(p.quantity * r.strnt)/300 AS numerator, "
+  ],
+ "numerator_from": "{hscic}.normalised_prescribing_standard p  LEFT JOIN {measures}.measures.dmd_unit_dose_strength r ON CONCAT(SUBSTR(p.bnf_code,0,9),SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2)) ",
+  "numerator_where": [
+    "p.bnf_code LIKE '0408010AE%' AND --Pregabalins"
+  ],
+  "numerator_bnf_codes_query": "SELECT DISTINCT presentation_code FROM {hscic}.bnf WHERE presentation_code LIKE '0408010AE%'",
+  "denominator_type": "list_size",
+   "date_reviewed": [
+    "2019-10-16"
+  ],
+  "next_review": [
+    "2020-10-16"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    ""
+  ],
+  "measure_complexity": [
+    "low"
+ ]
+}
