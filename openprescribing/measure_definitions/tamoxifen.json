@@ -34,7 +34,7 @@
     "WHEN bnf_name LIKE '%Liq%' THEN 10 ",
     "WHEN RTRIM(bnf_name) LIKE '%10mg' THEN 2 ",
     "WHEN RTRIM(bnf_name) LIKE '%40mg' THEN 0.5 ",
-    "ELSE 1 END) AS numerator, "
+    "ELSE 1 END) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [

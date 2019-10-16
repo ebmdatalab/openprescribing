@@ -435,21 +435,21 @@ def build_num_or_denom_fields(measure, num_or_denom):
         bnf_codes_query = get_measure_attr("bnf_codes_query")
 
     elif type_ == "bnf_items":
-        columns = "SUM(items) AS {},".format(num_or_denom)
+        columns = "SUM(items) AS {}".format(num_or_denom)
         from_ = "{hscic}.normalised_prescribing_standard"
         where = get_measure_attr("where")
         is_list_of_bnf_codes = True
         bnf_codes_query = None
 
     elif type_ == "bnf_quantity":
-        columns = "SUM(quantity) AS {},".format(num_or_denom)
+        columns = "SUM(quantity) AS {}".format(num_or_denom)
         from_ = "{hscic}.normalised_prescribing_standard"
         where = get_measure_attr("where")
         is_list_of_bnf_codes = True
         bnf_codes_query = None
 
     elif type_ == "bnf_cost":
-        columns = "SUM(actual_cost) AS {},".format(num_or_denom)
+        columns = "SUM(actual_cost) AS {}".format(num_or_denom)
         from_ = "{hscic}.normalised_prescribing_standard"
         where = get_measure_attr("where")
         is_list_of_bnf_codes = True
@@ -457,7 +457,7 @@ def build_num_or_denom_fields(measure, num_or_denom):
 
     elif type_ == "list_size":
         assert num_or_denom == "denominator"
-        columns = "SUM(total_list_size / 1000.0) AS denominator,"
+        columns = "SUM(total_list_size / 1000.0) AS denominator"
         from_ = "{hscic}.practice_statistics"
         where = "1 = 1"
         is_list_of_bnf_codes = False
