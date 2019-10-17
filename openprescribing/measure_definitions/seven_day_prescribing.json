@@ -42,7 +42,7 @@
 	],
 	"numerator_type": "custom",
 	"numerator_columns": [
-		"SUM(total_quantity) AS numerator ,"
+		"SUM(total_quantity) AS numerator"
 	],
 	"numerator_from": "{hscic}.raw_prescribing_normalised",
 	"numerator_where": [
@@ -61,7 +61,7 @@
 	],
 	"denominator_type": "custom",
 	"denominator_columns": [
-		"SUM(total_quantity) AS denominator , "
+		"SUM(total_quantity) AS denominator"
 	],
 	"denominator_from": "{hscic}.raw_prescribing_normalised",
 	"denominator_where": [

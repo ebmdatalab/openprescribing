@@ -30,7 +30,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(total_ome) AS numerator, "
+    "SUM(total_ome) AS numerator"
   ],
   "numerator_from": "{measures}.opioid_total_ome ",
   "numerator_where": [

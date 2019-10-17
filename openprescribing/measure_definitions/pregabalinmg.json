@@ -26,7 +26,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(lyrica_mg) AS numerator, "
+    "SUM(lyrica_mg) AS numerator"
   ],
   "numerator_from": "{measures}.pregabalin_total_mg ",
   "numerator_where": [

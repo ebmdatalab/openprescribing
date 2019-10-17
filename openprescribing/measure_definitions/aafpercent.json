@@ -25,7 +25,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(quantity) AS numerator, "
+    "SUM(quantity) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
   "numerator_where": [
@@ -33,7 +33,7 @@
   ],
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(quantity) AS denominator, "
+    "SUM(quantity) AS denominator"
   ],
   "denominator_from": "{hscic}.normalised_prescribing_standard p LEFT JOIN {measures}.cmpa_products r ON p.bnf_code=r.bnf_code ",
   "denominator_where": [

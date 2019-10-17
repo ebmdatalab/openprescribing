@@ -20,7 +20,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(possible_savings) AS numerator, "
+    "SUM(possible_savings) AS numerator"
   ],
   "numerator_from": "{measures}.vw__ghost_generic_measure p",
   "numerator_where": [
@@ -29,7 +29,7 @@
   "numerator_is_list_of_bnf_codes": false,
   "denominator_type": "custom",
   "denominator_columns": [
-    "SUM(net_cost) AS denominator, "
+    "SUM(net_cost) AS denominator"
   ],
   "denominator_from": "{measures}.vw__ghost_generic_measure p",
   "denominator_where": [

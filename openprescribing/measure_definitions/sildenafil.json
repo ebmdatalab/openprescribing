@@ -28,7 +28,7 @@
   ],
   "numerator_type": "custom",
   "numerator_columns": [
-    "SUM(items) AS numerator, "
+    "SUM(items) AS numerator"
   ],
   "numerator_from": "{hscic}.normalised_prescribing_standard ",
   "numerator_where": [
