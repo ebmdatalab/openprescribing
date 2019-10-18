@@ -14,7 +14,7 @@ beautifulsoup4
 django-allauth==0.40.0
 django-anymail[mailgun]==7.0.0
 django-cors-headers==3.0.2
-django-crispy-forms==1.7.2
+django-crispy-forms==1.8.0
 django-dotenv
 django>=1.11.24,<2.0
 djangorestframework-csv==2.1.0
