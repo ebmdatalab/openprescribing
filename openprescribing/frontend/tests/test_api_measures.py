@@ -1,14 +1,14 @@
 import datetime
 import json
 
-from django.test import TestCase
+from .api_test_base import ApiTestBase
 
 from frontend.models import PCT
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 @copy_fixtures_to_matrixstore
-class TestAPIMeasureViews(TestCase):
+class TestAPIMeasureViews(ApiTestBase):
     fixtures = ["one_month_of_measures"]
     api_prefix = "/api/1.0"
 
@@ -264,6 +264,19 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d["denominator"], 143000)
         self.assertEqual(d["percentile"], 100)
         self.assertEqual("%.4f" % d["calc_value"], "0.5734")
+
+    def test_api_all_measures_by_ccg_csv(self):
+        url = "/measure_by_ccg/?org=02Q&format=csv"
+        rows = self._rows_from_api(url)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["measure"], "cerazette")
+        self.assertEqual(rows[0]["org_type"], "ccg")
+        self.assertEqual(rows[0]["org_id"], "02Q")
+        self.assertEqual(rows[0]["numerator"], "82000.0")
+        self.assertEqual(rows[0]["denominator"], "143000.0")
+        self.assertEqual(rows[0]["percentile"], "100.0")
+        print(rows[0])
+        self.assertEqual("%.4f" % float(rows[0]["calc_value"]), "0.5734")
 
     def test_api_measure_by_practice(self):
         url = "/api/1.0/measure_by_practice/"
