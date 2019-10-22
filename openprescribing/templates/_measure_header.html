@@ -34,6 +34,10 @@
     {% if measure.analyse_url %}
       <li><a href="{{ measure.analyse_url }}">View this measure on the analyse page</a>.</li>
     {% endif %}
+
+    {% if csv_download_url %}
+      <li><a href="{{ csv_download_url }}">Download data as CSV</a>.</li>
+    {% endif %}
   </ul>
 </p>
 

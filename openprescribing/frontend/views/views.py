@@ -652,6 +652,13 @@ def _measure_for_children_in_entity(
         "measure_options": measure_options,
         "measure_tags": _get_tags_with_names(measure.tags),
     }
+
+    if not _user_is_bot(request):
+        # Don't show link to bots.  We don't want it crawled.
+        context["csv_download_url"] = measure_options["panelMeasuresUrl"].replace(
+            "format=json", "format=csv"
+        )
+
     return render(request, "measure_for_children_in_entity.html", context)
 
 
@@ -685,6 +692,13 @@ def measure_for_all_entities(request, measure, entity_type):
         "measure_tags": _get_tags_with_names(measure.tags),
         "all_measures_url": reverse("all_measures"),
     }
+
+    if not _user_is_bot(request):
+        # Don't show link to bots.  We don't want it crawled.
+        context["csv_download_url"] = measure_options["panelMeasuresUrl"].replace(
+            "format=json", "format=csv"
+        )
+
     return render(request, "measure_for_all_entities.html", context)
 
 
