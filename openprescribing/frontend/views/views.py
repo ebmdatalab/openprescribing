@@ -351,13 +351,21 @@ def all_england(request):
     other_entity_query["entity_type"] = other_entity_type
 
     measure_options = {
-        "tags": ",".join(tag_filter["tags"]),
-        "orgType": entity_type.lower(),
-        "orgName": "All {}s in England".format(entity_type),
         "aggregate": True,
+        "chartTitleUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "globalMeasuresUrl": _build_global_measures_url(tags=tag_filter["tags"]),
+        "measureUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "oneEntityUrlTemplate": _url_template("measure_for_all_england"),
+        "orgName": "All {}s in England".format(entity_type),
+        "orgType": entity_type.lower(),
+        "orgTypeHuman": _entity_type_human(entity_type.lower()),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type.lower(), tags=tag_filter["tags"], aggregate=True
+        ),
         "rollUpBy": "measure_id",
+        "tags": ",".join(tag_filter["tags"]),
+        "tagsFocusUrlTemplate": reverse("all_england"),
     }
-    measure_options = _build_measure_options(measure_options)
 
     context = {
         "tag_filter": tag_filter,
@@ -417,18 +425,32 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
     measure = get_object_or_404(Measure, pk=measure)
 
+    entity_type = _org_type_for_entity(entity)
+    entity_type_lower = entity_type.lower()
+
     measure_options = {
-        "rollUpBy": "measure_id",
-        "measure": measure,
+        "chartTitleUrlTemplate": _url_template("measure_for_one_" + entity_type_lower),
+        "globalMeasuresUrl": _build_global_measures_url(measure_id=measure.id),
         "orgId": entity.code,
+        "orgLocationUrl": _build_org_location_url(entity),
         "orgName": entity.name,
-        "orgType": _org_type_for_entity(entity),
+        "orgType": entity_type,
+        "orgTypeHuman": _entity_type_human(entity_type_lower),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type_lower, entity_code=entity.code, measure_id=measure.id
+        ),
+        "rollUpBy": "measure_id",
+        "tagsFocusUrlTemplate": _url_template("measures_for_one_" + entity_type),
     }
 
-    if isinstance(entity, Practice):
+    _add_measure_for_children_in_entity_url(measure_options, entity_type)
+    _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_measure_url(measure_options, entity_type)
+
+    if entity_type == "practice":
         measure_options["parentOrgId"] = entity.ccg_id
 
-    measure_options = _build_measure_options(measure_options)
+    _add_measure_details(measure_options, measure)
 
     entity_type_human = _entity_type_human(entity_type)
     context = {
@@ -446,15 +468,24 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
 def measure_for_all_england(request, measure):
     measure = get_object_or_404(Measure, pk=measure)
     entity_type = request.GET.get("entity_type", "ccg")
+
     measure_options = {
-        "orgType": entity_type.lower(),
-        "measure": measure,
-        "orgName": "All {}s in England".format(entity_type),
         "aggregate": True,
+        "chartTitleUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "globalMeasuresUrl": _build_global_measures_url(measure_id=measure.id),
+        "orgName": "All {}s in England".format(entity_type),
+        "orgType": entity_type.lower(),
+        "orgTypeHuman": _entity_type_human(entity_type.lower()),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type.lower(), measure_id=measure.id, aggregate=True
+        ),
         "rollUpBy": "measure_id",
+        "tagsFocusUrlTemplate": reverse("all_england"),
     }
 
-    measure_options = _build_measure_options(measure_options)
+    _add_measure_details(measure_options, measure)
+    _add_measure_url(measure_options, entity_type)
+
     context = {
         "entity_type": entity_type,
         "measures_url_name": "measures_for_one_{}".format(entity_type),
@@ -499,19 +530,31 @@ def measures_for_one_regional_team(request, regional_team_code):
 def _measures_for_one_entity(request, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
     tag_filter = _get_measure_tag_filter(request.GET)
+    entity_type_lower = entity_type.lower()
 
     measure_options = {
+        "chartTitleUrlTemplate": _url_template("measure_for_one_" + entity_type_lower),
+        "globalMeasuresUrl": _build_global_measures_url(tags=tag_filter["tags"]),
+        "oneEntityUrlTemplate": _url_template("measure_for_one_{}".format(entity_type)),
+        "orgId": entity_code,
+        "orgLocationUrl": _build_org_location_url(entity),
+        "orgName": entity.name,
+        "orgType": entity_type,
+        "orgTypeHuman": _entity_type_human(entity_type.lower()),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type.lower(), entity_code=entity.code, tags=tag_filter["tags"]
+        ),
         "rollUpBy": "measure_id",
         "tags": ",".join(tag_filter["tags"]),
-        "orgId": entity.code,
-        "orgName": entity.name,
-        "orgType": _org_type_for_entity(entity),
+        "tagsFocusUrlTemplate": _url_template("measures_for_one_" + entity_type),
     }
 
-    if isinstance(entity, Practice):
-        measure_options["parentOrgId"] = entity.ccg_id
+    _add_measure_for_children_in_entity_url(measure_options, entity_type)
+    _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_measure_url(measure_options, entity_type)
 
-    measure_options = _build_measure_options(measure_options)
+    if entity_type == "practice":
+        measure_options["parentOrgId"] = entity.ccg_id
 
     context = {
         "entity": entity,
@@ -567,18 +610,29 @@ def _measure_for_children_in_entity(
     measure = get_object_or_404(Measure, pk=measure)
 
     measure_options = {
-        "rollUpBy": "org_id",
+        "chartTitleUrlTemplate": _url_template("measures_for_one_" + child_entity_type),
+        "globalMeasuresUrl": _build_global_measures_url(measure_id=measure.id),
         "measure": measure,
-        "orgType": child_entity_type,
+        "oneEntityUrlTemplate": _url_template("measure_for_one_" + child_entity_type),
         "orgId": parent.code,
+        "orgLocationUrl": _build_org_location_url(parent),
         "orgName": parent.name,
+        "orgType": child_entity_type,
+        "orgTypeHuman": _entity_type_human(child_entity_type),
         "parentOrgType": _org_type_for_entity(parent),
+        "parentOrgTypeHuman": _entity_type_human(_org_type_for_entity(parent)),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            child_entity_type,
+            entity_code=parent.code,
+            parent_org_type=_org_type_for_entity(parent),
+            measure_id=measure.id,
+        ),
+        "rollUpBy": "org_id",
+        "tagsFocusUrlTemplate": _url_template("measures_for_one_" + child_entity_type),
     }
 
-    if measure.tags_focus:
-        measure_options["tagsFocus"] = ",".join(measure.tags_focus)
-
-    measure_options = _build_measure_options(measure_options)
+    _add_measure_details(measure_options, measure)
+    _add_measure_for_children_in_entity_url(measure_options, child_entity_type)
 
     context = {
         "parent_entity_type": parent_entity_type,
@@ -604,12 +658,22 @@ def _measure_for_children_in_entity(
 def measure_for_all_entities(request, measure, entity_type):
     measure = get_object_or_404(Measure, id=measure)
 
-    measure_options = {"rollUpBy": "org_id", "measure": measure, "orgType": entity_type}
+    measure_options = {
+        "chartTitleUrlTemplate": _url_template("measures_for_one_" + entity_type),
+        "globalMeasuresUrl": _build_global_measures_url(measure_id=measure.id),
+        "measure": measure,
+        "oneEntityUrlTemplate": _url_template("measure_for_one_{}".format(entity_type)),
+        "orgType": entity_type,
+        "orgTypeHuman": _entity_type_human(entity_type),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type, measure_id=measure.id
+        ),
+        "rollUpBy": "org_id",
+        "tagsFocusUrlTemplate": _url_template("measures_for_one_" + entity_type),
+    }
 
-    if measure.tags_focus:
-        measure_options["tagsFocus"] = ",".join(measure.tags_focus)
-
-    measure_options = _build_measure_options(measure_options)
+    _add_measure_for_children_in_entity_url(measure_options, entity_type)
+    _add_measure_details(measure_options, measure)
 
     entity_type_human = _entity_type_human(entity_type)
 
@@ -1211,17 +1275,34 @@ def _home_page_context_for_entity(request, entity):
             }
         )
 
+    specific_measure_ids = [
+        specific_measure["measure"] for specific_measure in specific_measures
+    ]
+
     measure_options = {
+        "chartTitleUrlTemplate": _url_template("measure_for_one_" + entity_type),
+        "globalMeasuresUrl": _build_global_measures_url(
+            measure_ids=specific_measure_ids
+        ),
+        "oneEntityUrlTemplate": _url_template("measure_for_one_{}".format(entity_type)),
+        "orgId": entity.code,
+        "orgLocationUrl": _build_org_location_url(entity),
+        "orgType": entity_type,
+        "orgTypeHuman": _entity_type_human(entity_type),
+        "panelMeasuresUrl": _build_panel_measures_url(
+            entity_type, measure_ids=specific_measure_ids, entity_code=entity.code
+        ),
         "rollUpBy": "measure_id",
         "specificMeasures": specific_measures,
-        "orgId": entity.code,
-        "orgType": _org_type_for_entity(entity),
+        "tagsFocusUrlTemplate": _url_template("measures_for_one_" + entity_type),
     }
 
-    if isinstance(entity, Practice):
-        measure_options["parentOrgId"] = entity.ccg_id
+    _add_measure_for_children_in_entity_url(measure_options, entity_type)
+    _add_measure_for_siblings_url(measure_options, entity_type)
+    _add_measure_url(measure_options, entity_type)
 
-    measure_options = _build_measure_options(measure_options)
+    if entity_type == "practice":
+        measure_options["parentOrgId"] = entity.ccg_id
 
     context = {
         "measure": extreme_measure,
@@ -1279,126 +1360,49 @@ def _org_type_for_entity(entity):
     }[type(entity)]
 
 
-def _build_measure_options(options):
-    # measure etc
-    if "measure" in options:
-        measure = options["measure"]
-        options["measure"] = measure.id
-        options["numerator"] = measure.numerator_short
-        options["denominator"] = measure.denominator_short
-        options["isCostBasedMeasure"] = measure.is_cost_based
-        options["lowIsGood"] = measure.low_is_good
+def _add_measure_details(options, measure):
+    options["measure"] = measure.id
+    options["numerator"] = measure.numerator_short
+    options["denominator"] = measure.denominator_short
+    options["isCostBasedMeasure"] = measure.is_cost_based
+    options["lowIsGood"] = measure.low_is_good
+    if measure.tags_focus:
+        options["tagsFocus"] = ",".join(measure.tags_focus)
 
-    # globalMeasuresUrl & panelMeasuresUrl
-    params = {"format": "json"}
-    if "measure" in options:
-        params["measure"] = options["measure"]
-    if "specificMeasures" in options:
-        params["measure"] = ",".join(
-            specific_measure["measure"]
-            for specific_measure in options["specificMeasures"]
-        )
-    if "tags" in options:
-        params["tags"] = options["tags"]
 
-    options["globalMeasuresUrl"] = _build_api_url("measure", params)
+def _add_measure_for_children_in_entity_url(options, entity_type):
+    if entity_type == "practice":
+        return
 
-    if "orgId" in options:
-        params["org"] = options["orgId"]
-    if "aggregate" in options:
-        params["aggregate"] = options["aggregate"]
-    if "parentOrgType" in options:
-        params["parent_org_type"] = options["parentOrgType"].lower().replace(" ", "_")
-
-    view_name = "measure_by_" + options["orgType"]
-    options["panelMeasuresUrl"] = _build_api_url(view_name, params)
-
-    # orgLocationUrl
-    if "orgId" in options:
-        org_location_params = {"org_type": options["orgType"], "q": options["orgId"]}
-
-        options["orgLocationUrl"] = _build_api_url("org_location", org_location_params)
-
-    # chartTitleUrlTemplate
-    if options["rollUpBy"] == "measure_id":
-        if options.get("aggregate"):
-            options["chartTitleUrlTemplate"] = _url_template("measure_for_all_ccgs")
-        elif options["orgType"] == "regional_team":
-            options["chartTitleUrlTemplate"] = _url_template(
-                "measure_for_one_regional_team"
-            )
-        elif options["orgType"] == "stp":
-            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_stp")
-        elif options["orgType"] == "pcn":
-            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_pcn")
-        elif options["orgType"] == "ccg":
-            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_ccg")
-        else:
-            options["chartTitleUrlTemplate"] = _url_template("measure_for_one_practice")
+    if entity_type in ["stp", "regional_team"]:
+        key = "measureForAllCCGsUrlTemplate"
+        view_name = "measure_for_ccgs_in_" + entity_type
+    elif entity_type == "ccg":
+        key = "measureForAllPracticesUrlTemplate"
+        view_name = "measure_for_practices_in_ccg"
+    elif entity_type == "pcn":
+        key = "measureForAllPracticesUrlTemplate"
+        view_name = "measure_for_practices_in_pcn"
     else:
-        view_name = "measures_for_one_{}".format(options["orgType"])
-        options["chartTitleUrlTemplate"] = _url_template(view_name)
+        assert False, entity_type
 
-    # measureForAllPracticesUrlTemplate
-    if not options.get("aggregate") and options["orgType"] == "ccg":
-        options["measureForAllPracticesUrlTemplate"] = _url_template(
-            "measure_for_practices_in_ccg"
-        )
-    elif options["orgType"] == "pcn":
-        options["measureForAllPracticesUrlTemplate"] = _url_template(
-            "measure_for_practices_in_pcn"
-        )
+    options[key] = _url_template(view_name)
 
-    # measureForAllCCGsUrlTemplate
-    if options["orgType"] in ["stp", "regional_team"]:
-        view_name = "measure_for_ccgs_in_{}".format(options["orgType"])
-        options["measureForAllCCGsUrlTemplate"] = _url_template(view_name)
 
-    # In theory this could be made generic for more than just the practice/CCG
-    # relationship but the refactoring in the JS and measures API needed to
-    # support this is too great to do right now so we only show this link for
-    # practices and only when they're not being shown in the context of their
-    # CCG (which would make the links redundant) or their PCN (because we won't
-    # have the ccg_code parameter available on that page)
-    if options["orgType"] == "practice" and options.get("parentOrgType") not in [
-        "ccg",
-        "pcn",
-    ]:
+def _add_measure_for_siblings_url(options, entity_type):
+    if entity_type == "practice":
         options["measureForSiblingsUrlTemplate"] = _url_template(
             "measure_for_practices_in_ccg"
         )
 
-    # measureUrlTemplate
-    if options["rollUpBy"] == "measure_id":
-        if options["orgType"] == "practice":
-            view_name = "measure_for_all_ccgs"
-        else:
-            view_name = "measure_for_all_{}s".format(options["orgType"])
-        options["measureUrlTemplate"] = _url_template(view_name)
 
-    # oneEntityUrlTemplate
-    if not (options["rollUpBy"] == "measure_id" and "measure" in options):
-        # If we're rolling up by measure and a measure is provided in the
-        # options, then we are already on the measure_for_one_xxx page, so we
-        # shouldn't set oneEntityUrlTemplate.
-        if options.get("aggregate"):
-            options["oneEntityUrlTemplate"] = _url_template("measure_for_all_england")
-        else:
-            view_name = "measure_for_one_{}".format(options["orgType"])
-            options["oneEntityUrlTemplate"] = _url_template(view_name)
-
-    # tagsFocusUrlTemplate
-    if options.get("aggregate"):
-        options["tagsFocusUrlTemplate"] = reverse("all_england")
+def _add_measure_url(options, entity_type):
+    if entity_type == "practice":
+        options["measureUrlTemplate"] = _url_template("measure_for_all_ccgs")
     else:
-        view_name = "measures_for_one_{}".format(options["orgType"])
-        options["tagsFocusUrlTemplate"] = _url_template(view_name)
-
-    options["orgTypeHuman"] = _entity_type_human(options["orgType"])
-    if "parentOrgType" in options:
-        options["parentOrgTypeHuman"] = _entity_type_human(options["parentOrgType"])
-
-    return options
+        options["measureUrlTemplate"] = _url_template(
+            "measure_for_all_{}s".format(entity_type)
+        )
 
 
 def _build_api_url(view_name, params):
@@ -1417,6 +1421,49 @@ def _build_api_url(view_name, params):
             "",  # fragment
         )
     )
+
+
+def _build_global_measures_url(measure_id=None, measure_ids=None, tags=None):
+    params = {"format": "json"}
+    if measure_id is not None:
+        params["measure"] = measure_id
+    if measure_ids is not None:
+        params["measure"] = ",".join(measure_ids)
+    if tags is not None:
+        params["tags"] = ",".join(tags)
+
+    return _build_api_url("measure", params)
+
+
+def _build_panel_measures_url(
+    entity_type,
+    entity_code=None,
+    parent_org_type=None,
+    measure_id=None,
+    measure_ids=None,
+    tags=None,
+    aggregate=None,
+):
+    params = {"format": "json"}
+    if entity_code is not None:
+        params["org"] = entity_code
+    if parent_org_type is not None:
+        params["parent_org_type"] = parent_org_type
+    if measure_id is not None:
+        params["measure"] = measure_id
+    if measure_ids is not None:
+        params["measure"] = ",".join(measure_ids)
+    if tags is not None:
+        params["tags"] = ",".join(tags)
+    if aggregate is not None:
+        params["aggregate"] = aggregate
+
+    return _build_api_url("measure_by_" + entity_type, params)
+
+
+def _build_org_location_url(entity):
+    params = {"org_type": _org_type_for_entity(entity), "q": entity.code}
+    return _build_api_url("org_location", params)
 
 
 def all_england_ppu_savings(entity_type, date):
