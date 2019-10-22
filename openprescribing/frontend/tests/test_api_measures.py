@@ -15,7 +15,7 @@ class TestAPIMeasureViews(TestCase):
     def _get_json(self, url):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        return json.loads(response.content)
+        return json.loads(response.content.decode("utf8"))
 
     def test_api_measure_global(self):
         url = "/api/1.0/measure/?measure=cerazette&format=json"
@@ -63,13 +63,13 @@ class TestAPIMeasureViews(TestCase):
         url = "/api/1.0/measure/?format=json&tags=core"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode("utf8"))
         self.assertEqual(len(data["measures"]), 1)
 
         url = "/api/1.0/measure/?format=json&tags=core,XYZ"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode("utf8"))
         self.assertEqual(len(data["measures"]), 1)
 
     def test_api_measure_by_all_ccgs(self):
