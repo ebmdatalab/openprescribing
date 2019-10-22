@@ -294,31 +294,45 @@ def _roll_up_measure_values(measure_values, org_type):
             if measure_value.practice_id:
                 measure_value_data.update(
                     {
-                        "practice_id": measure_value.practice_id,
-                        "practice_name": measure_value.practice.name,
+                        "org_type": "practice",
+                        "org_id": measure_value.practice_id,
+                        "org_name": measure_value.practice.name,
                     }
                 )
         elif org_type == "pcn":
             if measure_value.pcn_id:
                 measure_value_data.update(
-                    {"pcn_id": measure_value.pcn_id, "pcn_name": measure_value.pcn.name}
+                    {
+                        "org_type": "pcn",
+                        "org_id": measure_value.pcn_id,
+                        "org_name": measure_value.pcn.name,
+                    }
                 )
         elif org_type == "ccg":
             if measure_value.pct_id:
                 measure_value_data.update(
-                    {"pct_id": measure_value.pct_id, "pct_name": measure_value.pct.name}
+                    {
+                        "org_type": "ccg",
+                        "org_id": measure_value.pct_id,
+                        "org_name": measure_value.pct.name,
+                    }
                 )
         elif org_type == "stp":
             if measure_value.stp_id:
                 measure_value_data.update(
-                    {"stp_id": measure_value.stp_id, "stp_name": measure_value.stp.name}
+                    {
+                        "org_type": "stp",
+                        "org_id": measure_value.stp_id,
+                        "org_name": measure_value.stp.name,
+                    }
                 )
         elif org_type == "regional_team":
             if measure_value.regional_team_id:
                 measure_value_data.update(
                     {
-                        "regional_team_id": measure_value.regional_team_id,
-                        "regional_team_name": measure_value.regional_team.name,
+                        "org_type": "regional_team",
+                        "org_id": measure_value.regional_team_id,
+                        "org_name": measure_value.regional_team.name,
                     }
                 )
         else:

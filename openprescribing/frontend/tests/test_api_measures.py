@@ -222,8 +222,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d["cost_savings"]["10"], "63588.51")
         self.assertEqual("%.2f" % d["cost_savings"]["50"], "58658.82")
         self.assertEqual("%.2f" % d["cost_savings"]["90"], "11731.76")
-        self.assertEqual(d["pct_id"], "02Q")
-        self.assertEqual(d["pct_name"], "NHS BASSETLAW CCG")
+        self.assertEqual(d["org_id"], "02Q")
+        self.assertEqual(d["org_name"], "NHS BASSETLAW CCG")
 
     def test_api_two_ccgs_one_measure(self):
         url = "/api/1.0/measure_by_ccg/"
@@ -279,8 +279,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d["cost_savings"]["10"], "485.58")
         self.assertEqual("%.2f" % d["cost_savings"]["50"], "-264.71")
         self.assertEqual("%.2f" % d["cost_savings"]["90"], "-7218.00")
-        self.assertEqual(d["practice_id"], "C84001")
-        self.assertEqual(d["practice_name"], "LARWOOD SURGERY")
+        self.assertEqual(d["org_id"], "C84001")
+        self.assertEqual(d["org_name"], "LARWOOD SURGERY")
 
         # Practice with only Cerazette prescribing.
         url = "/api/1.0/measure_by_practice/"
