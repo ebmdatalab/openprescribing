@@ -12,7 +12,7 @@ from django.core.management import call_command
 from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
-from frontend.models import MeasureValue, MeasureGlobal
+from frontend.models import MeasureValue, MeasureGlobal, TariffPrice
 from openprescribing.slack import notify_slack
 from pipeline import runner
 
@@ -99,6 +99,7 @@ def run_end_to_end():
     # Although there are no model instances, we call upload_model to create the
     # dm+d tables in BQ that are required by certain measure views.
     client = BQClient("dmd")
+    client.upload_model(TariffPrice)
     for model in apps.get_app_config("dmd2").get_models():
         client.upload_model(model)
 
