@@ -18,6 +18,7 @@ class Command(BaseCommand):
         client = Client("measures")
 
         for table_name in [
+            "raw_prescribing_normalised",
             "dmd_objs_with_form_route",
             "opioid_total_ome",
             "practice_data_all_low_priority",
