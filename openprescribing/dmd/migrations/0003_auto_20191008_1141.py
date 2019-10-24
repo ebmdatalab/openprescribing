@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dmd', '0002_auto_20181007_1443'),
+        ('dmd2', '0002_auto_20181007_1443'),
     ]
 
     operations = [
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='amp',
             name='avail_restrict',
-            field=models.ForeignKey(db_column='avail_restrictcd', help_text='Restrictions on availability', on_delete=django.db.models.deletion.CASCADE, to='dmd.AvailabilityRestriction'),
+            field=models.ForeignKey(db_column='avail_restrictcd', help_text='Restrictions on availability', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AvailabilityRestriction'),
         ),
         migrations.AlterField(
             model_name='amp',
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='amp',
             name='combprod',
-            field=models.ForeignKey(db_column='combprodcd', help_text='Combination product', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.CombinationProdInd'),
+            field=models.ForeignKey(db_column='combprodcd', help_text='Combination product', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.CombinationProdInd'),
         ),
         migrations.AlterField(
             model_name='amp',
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='amp',
             name='flavour',
-            field=models.ForeignKey(db_column='flavourcd', help_text='Flavour', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.Flavour'),
+            field=models.ForeignKey(db_column='flavourcd', help_text='Flavour', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.Flavour'),
         ),
         migrations.AlterField(
             model_name='amp',
@@ -73,17 +73,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='amp',
             name='lic_auth',
-            field=models.ForeignKey(db_column='lic_authcd', help_text='Current licensing authority', on_delete=django.db.models.deletion.CASCADE, to='dmd.LicensingAuthority'),
+            field=models.ForeignKey(db_column='lic_authcd', help_text='Current licensing authority', on_delete=django.db.models.deletion.CASCADE, to='dmd2.LicensingAuthority'),
         ),
         migrations.AlterField(
             model_name='amp',
             name='lic_auth_prev',
-            field=models.ForeignKey(db_column='lic_auth_prevcd', help_text='Previous licensing authority', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.LicensingAuthority'),
+            field=models.ForeignKey(db_column='lic_auth_prevcd', help_text='Previous licensing authority', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.LicensingAuthority'),
         ),
         migrations.AlterField(
             model_name='amp',
             name='lic_authchange',
-            field=models.ForeignKey(db_column='lic_authchangecd', help_text='Reason for change of licensing authority', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.LicensingAuthorityChangeReason'),
+            field=models.ForeignKey(db_column='lic_authchangecd', help_text='Reason for change of licensing authority', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.LicensingAuthorityChangeReason'),
         ),
         migrations.AlterField(
             model_name='amp',
@@ -113,12 +113,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='amp',
             name='supp',
-            field=models.ForeignKey(db_column='suppcd', help_text='Supplier', on_delete=django.db.models.deletion.CASCADE, to='dmd.Supplier'),
+            field=models.ForeignKey(db_column='suppcd', help_text='Supplier', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Supplier'),
         ),
         migrations.AlterField(
             model_name='amp',
             name='vmp',
-            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='ampp',
@@ -128,7 +128,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ampp',
             name='amp',
-            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMP'),
+            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMP'),
         ),
         migrations.AlterField(
             model_name='ampp',
@@ -138,12 +138,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ampp',
             name='combpack',
-            field=models.ForeignKey(db_column='combpackcd', help_text='Combination pack', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.CombinationPackInd'),
+            field=models.ForeignKey(db_column='combpackcd', help_text='Combination pack', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.CombinationPackInd'),
         ),
         migrations.AlterField(
             model_name='ampp',
             name='disc',
-            field=models.ForeignKey(db_column='disccd', help_text='Discontinued', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.DiscontinuedInd'),
+            field=models.ForeignKey(db_column='disccd', help_text='Discontinued', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.DiscontinuedInd'),
         ),
         migrations.AlterField(
             model_name='ampp',
@@ -163,7 +163,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ampp',
             name='legal_cat',
-            field=models.ForeignKey(db_column='legal_catcd', help_text='Legal category', on_delete=django.db.models.deletion.CASCADE, to='dmd.LegalCategory'),
+            field=models.ForeignKey(db_column='legal_catcd', help_text='Legal category', on_delete=django.db.models.deletion.CASCADE, to='dmd2.LegalCategory'),
         ),
         migrations.AlterField(
             model_name='ampp',
@@ -178,17 +178,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ampp',
             name='vmpp',
-            field=models.ForeignKey(db_column='vppid', help_text='VMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMPP'),
+            field=models.ForeignKey(db_column='vppid', help_text='VMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMPP'),
         ),
         migrations.AlterField(
             model_name='apinfo',
             name='amp',
-            field=models.OneToOneField(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMP'),
+            field=models.OneToOneField(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMP'),
         ),
         migrations.AlterField(
             model_name='apinfo',
             name='colour',
-            field=models.ForeignKey(db_column='colourcd', help_text='Colour', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.Colour'),
+            field=models.ForeignKey(db_column='colourcd', help_text='Colour', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.Colour'),
         ),
         migrations.AlterField(
             model_name='apinfo',
@@ -203,12 +203,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='aping',
             name='amp',
-            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMP'),
+            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMP'),
         ),
         migrations.AlterField(
             model_name='aping',
             name='ing',
-            field=models.ForeignKey(db_column='isid', help_text='Ingredient', on_delete=django.db.models.deletion.CASCADE, to='dmd.Ing'),
+            field=models.ForeignKey(db_column='isid', help_text='Ingredient', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Ing'),
         ),
         migrations.AlterField(
             model_name='aping',
@@ -218,7 +218,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='aping',
             name='uom',
-            field=models.ForeignKey(db_column='uomcd', help_text='Pharmaceutical Strength Unit of Measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='uomcd', help_text='Pharmaceutical Strength Unit of Measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='availabilityrestriction',
@@ -293,12 +293,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='controlinfo',
             name='cat',
-            field=models.ForeignKey(db_column='catcd', help_text='Controlled Drug category', on_delete=django.db.models.deletion.CASCADE, to='dmd.ControlDrugCategory'),
+            field=models.ForeignKey(db_column='catcd', help_text='Controlled Drug category', on_delete=django.db.models.deletion.CASCADE, to='dmd2.ControlDrugCategory'),
         ),
         migrations.AlterField(
             model_name='controlinfo',
             name='cat_prev',
-            field=models.ForeignKey(db_column='cat_prevcd', help_text='Previous Controlled Drug information', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.ControlDrugCategory'),
+            field=models.ForeignKey(db_column='cat_prevcd', help_text='Previous Controlled Drug information', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.ControlDrugCategory'),
         ),
         migrations.AlterField(
             model_name='controlinfo',
@@ -308,7 +308,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='controlinfo',
             name='vmp',
-            field=models.OneToOneField(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.OneToOneField(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='dfindicator',
@@ -323,12 +323,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dform',
             name='form',
-            field=models.ForeignKey(db_column='formcd', help_text='Formulation', on_delete=django.db.models.deletion.CASCADE, to='dmd.Form'),
+            field=models.ForeignKey(db_column='formcd', help_text='Formulation', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Form'),
         ),
         migrations.AlterField(
             model_name='dform',
             name='vmp',
-            field=models.OneToOneField(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.OneToOneField(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='discontinuedind',
@@ -353,12 +353,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='droute',
             name='route',
-            field=models.ForeignKey(db_column='routecd', help_text='Route', on_delete=django.db.models.deletion.CASCADE, to='dmd.Route'),
+            field=models.ForeignKey(db_column='routecd', help_text='Route', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Route'),
         ),
         migrations.AlterField(
             model_name='droute',
             name='vmp',
-            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='dtinfo',
@@ -368,7 +368,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dtinfo',
             name='pay_cat',
-            field=models.ForeignKey(db_column='pay_catcd', help_text='Drug Tariff payment category', on_delete=django.db.models.deletion.CASCADE, to='dmd.DtPaymentCategory'),
+            field=models.ForeignKey(db_column='pay_catcd', help_text='Drug Tariff payment category', on_delete=django.db.models.deletion.CASCADE, to='dmd2.DtPaymentCategory'),
         ),
         migrations.AlterField(
             model_name='dtinfo',
@@ -383,7 +383,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dtinfo',
             name='vmpp',
-            field=models.OneToOneField(db_column='vppid', help_text='VMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMPP'),
+            field=models.OneToOneField(db_column='vppid', help_text='VMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMPP'),
         ),
         migrations.AlterField(
             model_name='dtpaymentcategory',
@@ -428,7 +428,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='gtin',
             name='ampp',
-            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMPP'),
+            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMPP'),
         ),
         migrations.AlterField(
             model_name='gtin',
@@ -503,12 +503,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='licroute',
             name='amp',
-            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMP'),
+            field=models.ForeignKey(db_column='apid', help_text='AMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMP'),
         ),
         migrations.AlterField(
             model_name='licroute',
             name='route',
-            field=models.ForeignKey(db_column='routecd', help_text='Licenced route', on_delete=django.db.models.deletion.CASCADE, to='dmd.Route'),
+            field=models.ForeignKey(db_column='routecd', help_text='Licenced route', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Route'),
         ),
         migrations.AlterField(
             model_name='namechangereason',
@@ -523,12 +523,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ont',
             name='form',
-            field=models.ForeignKey(db_column='formcd', help_text='Form & Route', on_delete=django.db.models.deletion.CASCADE, to='dmd.OntFormRoute'),
+            field=models.ForeignKey(db_column='formcd', help_text='Form & Route', on_delete=django.db.models.deletion.CASCADE, to='dmd2.OntFormRoute'),
         ),
         migrations.AlterField(
             model_name='ont',
             name='vmp',
-            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='ontformroute',
@@ -543,7 +543,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='packinfo',
             name='ampp',
-            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMPP'),
+            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMPP'),
         ),
         migrations.AlterField(
             model_name='packinfo',
@@ -553,7 +553,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='packinfo',
             name='reimb_stat',
-            field=models.ForeignKey(db_column='reimb_statcd', help_text='Appliance reimbursement status', on_delete=django.db.models.deletion.CASCADE, to='dmd.ReimbursementStatus'),
+            field=models.ForeignKey(db_column='reimb_statcd', help_text='Appliance reimbursement status', on_delete=django.db.models.deletion.CASCADE, to='dmd2.ReimbursementStatus'),
         ),
         migrations.AlterField(
             model_name='packinfo',
@@ -563,7 +563,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='packinfo',
             name='reimb_statprev',
-            field=models.ForeignKey(db_column='reimb_statprevcd', help_text='Appliance reimbursement previous status', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.ReimbursementStatus'),
+            field=models.ForeignKey(db_column='reimb_statprevcd', help_text='Appliance reimbursement previous status', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.ReimbursementStatus'),
         ),
         migrations.AlterField(
             model_name='prescribinfo',
@@ -573,7 +573,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='prescribinfo',
             name='ampp',
-            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMPP'),
+            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMPP'),
         ),
         migrations.AlterField(
             model_name='prescribinfo',
@@ -628,7 +628,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='priceinfo',
             name='ampp',
-            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMPP'),
+            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMPP'),
         ),
         migrations.AlterField(
             model_name='priceinfo',
@@ -638,7 +638,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='priceinfo',
             name='price_basis',
-            field=models.ForeignKey(db_column='price_basiscd', help_text='Price basis', on_delete=django.db.models.deletion.CASCADE, to='dmd.PriceBasis'),
+            field=models.ForeignKey(db_column='price_basiscd', help_text='Price basis', on_delete=django.db.models.deletion.CASCADE, to='dmd2.PriceBasis'),
         ),
         migrations.AlterField(
             model_name='priceinfo',
@@ -653,7 +653,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reimbinfo',
             name='ampp',
-            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd.AMPP'),
+            field=models.OneToOneField(db_column='appid', help_text='AMPP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.AMPP'),
         ),
         migrations.AlterField(
             model_name='reimbinfo',
@@ -673,7 +673,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reimbinfo',
             name='dnd',
-            field=models.ForeignKey(db_column='dndcd', help_text='Discount not deducted', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.Dnd'),
+            field=models.ForeignKey(db_column='dndcd', help_text='Discount not deducted', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.Dnd'),
         ),
         migrations.AlterField(
             model_name='reimbinfo',
@@ -688,7 +688,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reimbinfo',
             name='spec_cont',
-            field=models.ForeignKey(db_column='spec_contcd', help_text='Special container', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.SpecCont'),
+            field=models.ForeignKey(db_column='spec_contcd', help_text='Special container', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.SpecCont'),
         ),
         migrations.AlterField(
             model_name='reimbursementstatus',
@@ -803,12 +803,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='basis',
-            field=models.ForeignKey(db_column='basiscd', help_text='Basis of preferred name', on_delete=django.db.models.deletion.CASCADE, to='dmd.BasisOfName'),
+            field=models.ForeignKey(db_column='basiscd', help_text='Basis of preferred name', on_delete=django.db.models.deletion.CASCADE, to='dmd2.BasisOfName'),
         ),
         migrations.AlterField(
             model_name='vmp',
             name='basis_prev',
-            field=models.ForeignKey(db_column='basis_prevcd', help_text='Basis of previous name', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.BasisOfName'),
+            field=models.ForeignKey(db_column='basis_prevcd', help_text='Basis of previous name', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.BasisOfName'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -823,12 +823,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='combprod',
-            field=models.ForeignKey(db_column='combprodcd', help_text='Combination product', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.CombinationProdInd'),
+            field=models.ForeignKey(db_column='combprodcd', help_text='Combination product', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.CombinationProdInd'),
         ),
         migrations.AlterField(
             model_name='vmp',
             name='df_ind',
-            field=models.ForeignKey(db_column='df_indcd', help_text='Dose form', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.DfIndicator'),
+            field=models.ForeignKey(db_column='df_indcd', help_text='Dose form', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.DfIndicator'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -853,7 +853,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='nmchange',
-            field=models.ForeignKey(db_column='nmchangecd', help_text='Reason for name change', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.NamechangeReason'),
+            field=models.ForeignKey(db_column='nmchangecd', help_text='Reason for name change', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.NamechangeReason'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -868,7 +868,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='non_avail',
-            field=models.ForeignKey(db_column='non_availcd', help_text='Non-availability', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.VirtualProductNonAvail'),
+            field=models.ForeignKey(db_column='non_availcd', help_text='Non-availability', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.VirtualProductNonAvail'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -883,7 +883,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='pres_stat',
-            field=models.ForeignKey(db_column='pres_statcd', help_text='Prescribing status', on_delete=django.db.models.deletion.CASCADE, to='dmd.VirtualProductPresStatus'),
+            field=models.ForeignKey(db_column='pres_statcd', help_text='Prescribing status', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VirtualProductPresStatus'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -898,12 +898,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='udfs_uom',
-            field=models.ForeignKey(db_column='udfs_uomcd', help_text='Unit dose form units', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='udfs_uomcd', help_text='Unit dose form units', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='vmp',
             name='unit_dose_uom',
-            field=models.ForeignKey(db_column='unit_dose_uomcd', help_text='Unit dose unit of measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='unit_dose_uomcd', help_text='Unit dose unit of measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='vmp',
@@ -918,7 +918,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmp',
             name='vtm',
-            field=models.ForeignKey(db_column='vtmid', help_text='VTM', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.VTM'),
+            field=models.ForeignKey(db_column='vtmid', help_text='VTM', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.VTM'),
         ),
         migrations.AlterField(
             model_name='vmpp',
@@ -928,7 +928,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmpp',
             name='combpack',
-            field=models.ForeignKey(db_column='combpackcd', help_text='Combination pack', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.CombinationPackInd'),
+            field=models.ForeignKey(db_column='combpackcd', help_text='Combination pack', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.CombinationPackInd'),
         ),
         migrations.AlterField(
             model_name='vmpp',
@@ -948,7 +948,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmpp',
             name='qty_uom',
-            field=models.ForeignKey(db_column='qty_uomcd', help_text='Quantity unit of measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='qty_uomcd', help_text='Quantity unit of measure', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='vmpp',
@@ -958,12 +958,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vmpp',
             name='vmp',
-            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='vpi',
             name='basis_strnt',
-            field=models.ForeignKey(db_column='basis_strntcd', help_text='Basis of pharmaceutical strength', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.BasisOfStrnth'),
+            field=models.ForeignKey(db_column='basis_strntcd', help_text='Basis of pharmaceutical strength', null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.BasisOfStrnth'),
         ),
         migrations.AlterField(
             model_name='vpi',
@@ -973,12 +973,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vpi',
             name='ing',
-            field=models.ForeignKey(db_column='isid', help_text='Ingredient', on_delete=django.db.models.deletion.CASCADE, to='dmd.Ing'),
+            field=models.ForeignKey(db_column='isid', help_text='Ingredient', on_delete=django.db.models.deletion.CASCADE, to='dmd2.Ing'),
         ),
         migrations.AlterField(
             model_name='vpi',
             name='strnt_dnmtr_uom',
-            field=models.ForeignKey(db_column='strnt_dnmtr_uomcd', help_text='Strength value denominator unit', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='strnt_dnmtr_uomcd', help_text='Strength value denominator unit', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='vpi',
@@ -988,7 +988,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vpi',
             name='strnt_nmrtr_uom',
-            field=models.ForeignKey(db_column='strnt_nmrtr_uomcd', help_text='Strength value numerator unit', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd.UnitOfMeasure'),
+            field=models.ForeignKey(db_column='strnt_nmrtr_uomcd', help_text='Strength value numerator unit', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='dmd2.UnitOfMeasure'),
         ),
         migrations.AlterField(
             model_name='vpi',
@@ -998,7 +998,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vpi',
             name='vmp',
-            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd.VMP'),
+            field=models.ForeignKey(db_column='vpid', help_text='VMP', on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMP'),
         ),
         migrations.AlterField(
             model_name='vtm',

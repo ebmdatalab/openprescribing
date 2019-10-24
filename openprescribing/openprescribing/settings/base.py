@@ -199,7 +199,7 @@ DJANGO_APPS = (
 )
 
 # Apps specific for this project go here.
-LOCAL_APPS = ("frontend", "dmd", "dmd2", "pipeline", "gcutils", "matrixstore")
+LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 
 CONTRIB_APPS = (
     "allauth",
