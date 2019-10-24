@@ -43,7 +43,7 @@ class SmokeTestBase(unittest.TestCase):
             settings.PIPELINE_METADATA_DIR, "smoketests", test_name + ".json"
         )
 
-        with open(path, "rb") as f:
+        with open(path) as f:
             expected = json.load(f)
 
         for i, row in enumerate(all_rows):
