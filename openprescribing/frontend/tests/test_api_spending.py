@@ -11,7 +11,7 @@ from frontend.models import Prescription
 from frontend.models import TariffPrice
 from frontend.tests.data_factory import DataFactory
 from api.views_spending import MIN_GHOST_GENERIC_DELTA
-from dmd2.models import VMPP
+from dmd.models import VMPP
 
 import numpy as np
 

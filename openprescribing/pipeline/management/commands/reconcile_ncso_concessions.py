@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 
 from openprescribing.utils import get_input
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import NCSOConcession
 from gcutils.bigquery import Client
 

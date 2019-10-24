@@ -6,8 +6,8 @@ from mock import patch
 from django.core.management import call_command
 from django.test import TestCase
 
-from dmd2.models import AMP, AMPP, VMP, VMPP
-from dmd2.management.commands.import_dmd2 import get_common_name
+from dmd.models import AMP, AMPP, VMP, VMPP
+from dmd.management.commands.import_dmd import get_common_name
 from frontend.models import ImportLog, Presentation, NCSOConcession
 from openprescribing.utils import mkdir_p
 
@@ -26,26 +26,26 @@ class TestImportDmd2(TestCase):
             Presentation.objects.create(bnf_code=bnf_code, name=name)
 
         shutil.copytree(
-            "dmd2/tests/data/dmd/1",
+            "dmd/tests/data/dmd/1",
             "pipeline/test-data/data/dmd/2019_07_01/nhsbsa_dmd_7.4.0_20190701000001",
         )
 
         mkdir_p("pipeline/test-data/data/snomed_mapping/2019_07_01")
 
         shutil.copyfile(
-            "dmd2/tests/data/bnf_code_mapping/mapping.xlsx",
+            "dmd/tests/data/bnf_code_mapping/mapping.xlsx",
             "pipeline/test-data/data/snomed_mapping/2019_07_01/mapping.xlsx",
         )
 
-        # Import the data.  See dmd2/tests/data/README.txt for details of what
+        # Import the data.  See dmd/tests/data/README.txt for details of what
         # objects will be created.
         with patch("gcutils.bigquery.Client.upload_model"):
-            call_command("import_dmd2")
+            call_command("import_dmd")
 
         # Copy another, later, dataset into the data directory, for tests that
         # call the command again.
         shutil.copytree(
-            "dmd2/tests/data/dmd/2",
+            "dmd/tests/data/dmd/2",
             "pipeline/test-data/data/dmd/2019_07_08/nhsbsa_dmd_7.4.0_20190708000001",
         )
 
@@ -177,7 +177,7 @@ class TestImportDmd2(TestCase):
         vmpp.delete()
 
         with patch("gcutils.bigquery.Client.upload_model"):
-            call_command("import_dmd2")
+            call_command("import_dmd")
 
         # Check that no VMP present with old VPID, that a new VMP has been
         # created, and that references to VMP have been updated.
@@ -196,8 +196,8 @@ class TestImportDmd2(TestCase):
 
     def test_notify_slack(self):
         with patch("gcutils.bigquery.Client.upload_model"):
-            with patch("dmd2.management.commands.import_dmd2.notify_slack") as ns:
-                call_command("import_dmd2")
+            with patch("dmd.management.commands.import_dmd.notify_slack") as ns:
+                call_command("import_dmd")
                 ns.assert_called()
 
     def test_already_imported(self):
@@ -206,8 +206,8 @@ class TestImportDmd2(TestCase):
         )
 
         with patch("gcutils.bigquery.Client.upload_model"):
-            with patch("dmd2.management.commands.import_dmd2.notify_slack") as ns:
-                call_command("import_dmd2")
+            with patch("dmd.management.commands.import_dmd.notify_slack") as ns:
+                call_command("import_dmd")
                 ns.assert_not_called()
 
 

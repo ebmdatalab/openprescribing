@@ -2,7 +2,7 @@ import json
 
 from django.test import TestCase
 
-from dmd2.models import DtPaymentCategory
+from dmd.models import DtPaymentCategory
 from frontend.models import Presentation, TariffPrice
 from frontend.tests.data_factory import DataFactory
 from matrixstore.tests.decorators import (

@@ -1,6 +1,6 @@
 [
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 1079211000001106,
   "fields": {
     "invalid": false,
@@ -13,7 +13,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 23667511000001105,
   "fields": {
     "invalid": false,
@@ -26,7 +26,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 1027111000001105,
   "fields": {
     "invalid": false,
@@ -39,7 +39,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 1259111000001109,
   "fields": {
     "invalid": false,
@@ -52,7 +52,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 4588611000001101,
   "fields": {
     "invalid": false,
@@ -76,7 +76,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 317935006,
   "fields": {
     "vpiddt": null,
@@ -106,7 +106,7 @@
   }
 },
 {
-  "model": "dmd2.unitofmeasure",
+  "model": "dmd.unitofmeasure",
   "pk": 428673006,
   "fields": {
     "cddt": "2008-11-01",
@@ -115,7 +115,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 318248001,
   "fields": {
     "vpiddt": null,
@@ -145,7 +145,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 4598711000001106,
   "fields": {
     "vpiddt": null,
@@ -175,7 +175,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 2084201000001101,
   "fields": {
     "cddt": null,
@@ -185,21 +185,21 @@
   }
 },
 {
-  "model": "dmd2.licensingauthority",
+  "model": "dmd.licensingauthority",
   "pk": 1,
   "fields": {
     "descr": "Medicines - MHRA/EMA"
   }
 },
 {
-  "model": "dmd2.availabilityrestriction",
+  "model": "dmd.availabilityrestriction",
   "pk": 1,
   "fields": {
     "descr": "None"
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 57893000,
   "fields": {
     "invalid": false,
@@ -210,28 +210,28 @@
   }
 },
 {
-  "model": "dmd2.basisofname",
+  "model": "dmd.basisofname",
   "pk": 1,
   "fields": {
     "descr": "rINN - Recommended International Non-proprietary"
   }
 },
 {
-  "model": "dmd2.virtualproductpresstatus",
+  "model": "dmd.virtualproductpresstatus",
   "pk": 1,
   "fields": {
     "descr": "Valid as a prescribable product"
   }
 },
 {
-  "model": "dmd2.dfindicator",
+  "model": "dmd.dfindicator",
   "pk": 1,
   "fields": {
     "descr": "Discrete"
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 47898004,
   "fields": {
     "invalid": false,
@@ -242,28 +242,28 @@
   }
 },
 {
-  "model": "dmd2.basisofname",
+  "model": "dmd.basisofname",
   "pk": 7,
   "fields": {
     "descr": "Other"
   }
 },
 {
-  "model": "dmd2.namechangereason",
+  "model": "dmd.namechangereason",
   "pk": 4,
   "fields": {
     "descr": "Other"
   }
 },
 {
-  "model": "dmd2.virtualproductpresstatus",
+  "model": "dmd.virtualproductpresstatus",
   "pk": 4,
   "fields": {
     "descr": "Never Valid To Prescribe As A VMP"
   }
 },
 {
-  "model": "dmd2.unitofmeasure",
+  "model": "dmd.unitofmeasure",
   "pk": 428641000,
   "fields": {
     "cddt": "2008-11-01",

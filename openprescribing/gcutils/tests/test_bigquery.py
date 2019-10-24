@@ -8,7 +8,7 @@ from django.test import TestCase
 from gcutils.bigquery import Client, TableExporter, build_schema
 from gcutils.storage import Client as StorageClient
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import PCT
 
 

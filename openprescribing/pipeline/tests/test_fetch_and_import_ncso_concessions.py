@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import NCSOConcession
 
 

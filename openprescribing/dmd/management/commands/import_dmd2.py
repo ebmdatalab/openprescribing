@@ -12,8 +12,8 @@ from django.core.management import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.db.models import fields as django_fields
 
-from dmd2 import models
-from dmd2.models import AMP, AMPP, VMP, VMPP
+from dmd import models
+from dmd.models import AMP, AMPP, VMP, VMPP
 from frontend.models import ImportLog, Presentation
 from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack
@@ -428,7 +428,7 @@ class Command(BaseCommand):
 
     def upload_to_bq(self):
         client = Client("dmd")
-        for model in apps.get_app_config("dmd2").get_models():
+        for model in apps.get_app_config("dmd").get_models():
             client.upload_model(model)
 
     def log_other_oddities(self):
@@ -436,8 +436,8 @@ class Command(BaseCommand):
 
         sql = """
         SELECT vmpp.vppid
-        FROM dmd2_vmp vmp
-        INNER JOIN dmd2_vmpp vmpp
+        FROM dmd_vmp vmp
+        INNER JOIN dmd_vmpp vmpp
             ON vmp.vpid = vmpp.vpid
         WHERE vmp.bnf_code IS NOT NULL
           AND vmp.bnf_code != vmpp.bnf_code

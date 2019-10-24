@@ -1,4 +1,4 @@
-This directory contains input data for import_dmd2 tests.  Most of the data is
+This directory contains input data for import_dmd tests.  Most of the data is
 derived from production data.
 
 The files in dmd/1/ contain data about several VMPs, and their associated
@@ -68,7 +68,7 @@ was sent to us by the BSA.
 
 To do this, I imported the data in dmd/1 first:
 
-$ ./manage.py import_dmd2 dmd2/tests/data/dmd/1 'dmd2/tests/data/bnf_code_mapping/Sept18 for Seb.xlsx' /tmp/logs
+$ ./manage.py import_dmd dmd/tests/data/dmd/1 'dmd/tests/data/bnf_code_mapping/Sept18 for Seb.xlsx' /tmp/logs
 
 I then ran:
 

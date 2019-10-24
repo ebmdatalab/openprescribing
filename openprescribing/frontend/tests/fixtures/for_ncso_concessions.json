@@ -1,6 +1,6 @@
 [
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 1191111000001100,
   "fields": {
     "invalid": false,
@@ -13,7 +13,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 975211000001100,
   "fields": {
     "invalid": false,
@@ -26,7 +26,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 940711000001101,
   "fields": {
     "invalid": false,
@@ -39,7 +39,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 8049011000001108,
   "fields": {
     "invalid": false,
@@ -52,7 +52,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 9039011000001105,
   "fields": {
     "invalid": false,
@@ -65,7 +65,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 9039111000001106,
   "fields": {
     "invalid": false,
@@ -78,7 +78,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 318052005,
   "fields": {
     "vpiddt": null,
@@ -108,7 +108,7 @@
   }
 },
 {
-  "model": "dmd2.unitofmeasure",
+  "model": "dmd.unitofmeasure",
   "pk": 428673006,
   "fields": {
     "cddt": "2008-11-01",
@@ -117,7 +117,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 327373002,
   "fields": {
     "vpiddt": null,
@@ -147,7 +147,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 322864007,
   "fields": {
     "vpiddt": null,
@@ -177,7 +177,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 8013211000001106,
   "fields": {
     "vpiddt": null,
@@ -207,7 +207,7 @@
   }
 },
 {
-  "model": "dmd2.unitofmeasure",
+  "model": "dmd.unitofmeasure",
   "pk": 428641000,
   "fields": {
     "cddt": "2008-11-01",
@@ -216,7 +216,7 @@
   }
 },
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 416946001,
   "fields": {
     "vpiddt": "2007-10-23",
@@ -246,7 +246,7 @@
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 87395005,
   "fields": {
     "invalid": false,
@@ -257,28 +257,28 @@
   }
 },
 {
-  "model": "dmd2.basisofname",
+  "model": "dmd.basisofname",
   "pk": 1,
   "fields": {
     "descr": "rINN - Recommended International Non-proprietary"
   }
 },
 {
-  "model": "dmd2.virtualproductpresstatus",
+  "model": "dmd.virtualproductpresstatus",
   "pk": 1,
   "fields": {
     "descr": "Valid as a prescribable product"
   }
 },
 {
-  "model": "dmd2.dfindicator",
+  "model": "dmd.dfindicator",
   "pk": 1,
   "fields": {
     "descr": "Discrete"
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 108774000,
   "fields": {
     "invalid": false,
@@ -289,7 +289,7 @@
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 40820003,
   "fields": {
     "invalid": false,
@@ -300,14 +300,14 @@
   }
 },
 {
-  "model": "dmd2.virtualproductpresstatus",
+  "model": "dmd.virtualproductpresstatus",
   "pk": 6,
   "fields": {
     "descr": "VMP not recommended to prescribe - brands not bioequivalent"
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 407033009,
   "fields": {
     "invalid": false,

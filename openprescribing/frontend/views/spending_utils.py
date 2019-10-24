@@ -340,7 +340,7 @@ def _get_concession_prices(min_date, max_date):
             ON
               ncso.vmpp_id = tariff.vmpp_id AND ncso.date = tariff.date
             JOIN
-              dmd2_vmpp AS vmpp
+              dmd_vmpp AS vmpp
             ON
               vmpp.vppid=ncso.vmpp_id
             JOIN

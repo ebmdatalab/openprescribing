@@ -485,9 +485,9 @@ def tariff(request, format=None):
            dtpaymentcategory.descr AS tariff_category,
            vmpp.qtyval AS pack_size
     FROM frontend_tariffprice tariffprice
-        INNER JOIN dmd2_dtpaymentcategory dtpaymentcategory
+        INNER JOIN dmd_dtpaymentcategory dtpaymentcategory
             ON tariffprice.tariff_category_id = dtpaymentcategory.cd
-        INNER JOIN dmd2_vmpp vmpp
+        INNER JOIN dmd_vmpp vmpp
             ON tariffprice.vmpp_id = vmpp.vppid
         LEFT OUTER JOIN frontend_ncsoconcession ncso_concession
             ON (tariffprice.date = ncso_concession.date

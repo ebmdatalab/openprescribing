@@ -1,6 +1,6 @@
 [
   {
-    "model": "dmd2.dtpaymentcategory",
+    "model": "dmd.dtpaymentcategory",
     "pk": 3,
     "fields": {
       "descr": "Part VIIIA Category C"

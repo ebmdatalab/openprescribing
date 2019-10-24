@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
 
                 vmps_with_one_ppu AS (
                     SELECT vmp.vpid 
-                    FROM dmd2_vmp vmp
-                    INNER JOIN dmd2_vmpp vmpp ON vmp.vpid = vmpp.vpid
+                    FROM dmd_vmp vmp
+                    INNER JOIN dmd_vmpp vmpp ON vmp.vpid = vmpp.vpid
                     INNER JOIN frontend_tariffprice tp ON vmpp.vppid = tp.vmpp_id
                     WHERE tp.date IN (SELECT current_at FROM recent_date)
                     GROUP BY vmp.vpid
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                     )
                 ) AS median_ppu
 
-            FROM dmd2_vmp vmp
+            FROM dmd_vmp vmp
             INNER JOIN frontend_prescription rx
                 ON vmp.bnf_code = rx.presentation_code
 

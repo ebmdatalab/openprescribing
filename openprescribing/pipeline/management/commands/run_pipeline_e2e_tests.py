@@ -100,7 +100,7 @@ def run_end_to_end():
     # dm+d tables in BQ that are required by certain measure views.
     client = BQClient("dmd")
     client.upload_model(TariffPrice)
-    for model in apps.get_app_config("dmd2").get_models():
+    for model in apps.get_app_config("dmd").get_models():
         client.upload_model(model)
 
     call_command("generate_presentation_replacements")

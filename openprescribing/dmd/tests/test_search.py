@@ -1,10 +1,10 @@
 from django.db.models import Q
 from django.test import TestCase
 
-from dmd2.build_search_query import build_query_obj
-from dmd2.build_rules import build_rules
-from dmd2.models import AMP, AMPP, VMP, VMPP
-from dmd2.search import search
+from dmd.build_search_query import build_query_obj
+from dmd.build_rules import build_rules
+from dmd.models import AMP, AMPP, VMP, VMPP
+from dmd.search import search
 
 
 class TestSearch(TestCase):

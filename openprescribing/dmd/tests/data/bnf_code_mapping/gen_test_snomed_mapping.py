@@ -30,16 +30,16 @@ cursor = connection.cursor()
 
 keys = set()
 
-cursor.execute("SELECT vpid FROM dmd2_vmp")
+cursor.execute("SELECT vpid FROM dmd_vmp")
 keys |= {("VMP", row[0]) for row in cursor.fetchall()}
 
-cursor.execute("SELECT vppid FROM dmd2_vmpp")
+cursor.execute("SELECT vppid FROM dmd_vmpp")
 keys |= {("VMPP", row[0]) for row in cursor.fetchall()}
 
-cursor.execute("SELECT apid FROM dmd2_amp")
+cursor.execute("SELECT apid FROM dmd_amp")
 keys |= {("AMP", row[0]) for row in cursor.fetchall()}
 
-cursor.execute("SELECT appid FROM dmd2_ampp")
+cursor.execute("SELECT appid FROM dmd_ampp")
 keys |= {("AMPP", row[0]) for row in cursor.fetchall()}
 
 wb_in = load_workbook(inp_path)

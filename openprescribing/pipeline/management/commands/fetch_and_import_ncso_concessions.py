@@ -10,7 +10,7 @@ import requests
 
 from django.core.management import BaseCommand
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import NCSOConcession
 from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack

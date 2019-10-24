@@ -1,6 +1,6 @@
 [
 {
-  "model": "dmd2.vmp",
+  "model": "dmd.vmp",
   "pk": 318412000,
   "fields": {
     "vpiddt": null,
@@ -30,7 +30,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 9703211000001108,
   "fields": {
     "invalid": true,
@@ -54,7 +54,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 10347111000001100,
   "fields": {
     "invalid": false,
@@ -78,7 +78,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 4814811000001108,
   "fields": {
     "invalid": false,
@@ -102,7 +102,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 17747811000001100,
   "fields": {
     "invalid": true,
@@ -126,7 +126,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 15057611000001104,
   "fields": {
     "invalid": true,
@@ -150,7 +150,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 21735411000001105,
   "fields": {
     "invalid": true,
@@ -174,7 +174,7 @@
   }
 },
 {
-  "model": "dmd2.amp",
+  "model": "dmd.amp",
   "pk": 632811000001105,
   "fields": {
     "invalid": false,
@@ -198,7 +198,7 @@
   }
 },
 {
-  "model": "dmd2.vmpp",
+  "model": "dmd.vmpp",
   "pk": 1098611000001105,
   "fields": {
     "invalid": false,
@@ -211,7 +211,7 @@
   }
 },
 {
-  "model": "dmd2.vtm",
+  "model": "dmd.vtm",
   "pk": 68088000,
   "fields": {
     "invalid": false,
@@ -222,28 +222,28 @@
   }
 },
 {
-  "model": "dmd2.basisofname",
+  "model": "dmd.basisofname",
   "pk": 1,
   "fields": {
     "descr": "rINN - Recommended International Non-proprietary"
   }
 },
 {
-  "model": "dmd2.virtualproductpresstatus",
+  "model": "dmd.virtualproductpresstatus",
   "pk": 1,
   "fields": {
     "descr": "Valid as a prescribable product"
   }
 },
 {
-  "model": "dmd2.dfindicator",
+  "model": "dmd.dfindicator",
   "pk": 1,
   "fields": {
     "descr": "Discrete"
   }
 },
 {
-  "model": "dmd2.unitofmeasure",
+  "model": "dmd.unitofmeasure",
   "pk": 428641000,
   "fields": {
     "cddt": "2008-11-01",
@@ -252,7 +252,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 9703311000001100,
   "fields": {
     "invalid": true,
@@ -269,7 +269,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 3144701000001104,
   "fields": {
     "cddt": null,
@@ -279,21 +279,21 @@
   }
 },
 {
-  "model": "dmd2.licensingauthority",
+  "model": "dmd.licensingauthority",
   "pk": 1,
   "fields": {
     "descr": "Medicines - MHRA/EMA"
   }
 },
 {
-  "model": "dmd2.availabilityrestriction",
+  "model": "dmd.availabilityrestriction",
   "pk": 9,
   "fields": {
     "descr": "Not available"
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 10347211000001106,
   "fields": {
     "invalid": false,
@@ -310,7 +310,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 2089901000001107,
   "fields": {
     "cddt": null,
@@ -320,7 +320,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 4814911000001103,
   "fields": {
     "invalid": false,
@@ -337,7 +337,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 2073701000001100,
   "fields": {
     "cddt": null,
@@ -347,7 +347,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 17747911000001105,
   "fields": {
     "invalid": true,
@@ -364,7 +364,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 17845311000001104,
   "fields": {
     "cddt": null,
@@ -374,7 +374,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 15057711000001108,
   "fields": {
     "invalid": true,
@@ -391,7 +391,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 2087601000001106,
   "fields": {
     "cddt": null,
@@ -401,7 +401,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 21735511000001109,
   "fields": {
     "invalid": true,
@@ -418,7 +418,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 2091401000001103,
   "fields": {
     "cddt": null,
@@ -428,7 +428,7 @@
   }
 },
 {
-  "model": "dmd2.ampp",
+  "model": "dmd.ampp",
   "pk": 1389011000001108,
   "fields": {
     "invalid": false,
@@ -445,7 +445,7 @@
   }
 },
 {
-  "model": "dmd2.supplier",
+  "model": "dmd.supplier",
   "pk": 9190711000001101,
   "fields": {
     "cddt": null,
@@ -455,21 +455,21 @@
   }
 },
 {
-  "model": "dmd2.availabilityrestriction",
+  "model": "dmd.availabilityrestriction",
   "pk": 1,
   "fields": {
     "descr": "None"
   }
 },
 {
-  "model": "dmd2.legalcategory",
+  "model": "dmd.legalcategory",
   "pk": 3,
   "fields": {
     "descr": "POM"
   }
 },
 {
-  "model": "dmd2.discontinuedind",
+  "model": "dmd.discontinuedind",
   "pk": 1,
   "fields": {
     "descr": "Discontinued Flag"
