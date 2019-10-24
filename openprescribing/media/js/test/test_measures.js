@@ -55,43 +55,43 @@ describe('Measures', function() {
       var org_data = [{
         data: [
           {
-            pct_id: '04N',
-            pct_name: 'NHS RUSHCLIFFE CCG',
+            org_id: '04N',
+            org_name: 'NHS RUSHCLIFFE CCG',
             date: '2015-01-01',
             calc_value: 8,
             percentile: 20
           },
           {
-            pct_id: '04N',
-            pct_name: 'NHS RUSHCLIFFE CCG',
+            org_id: '04N',
+            org_name: 'NHS RUSHCLIFFE CCG',
             date: '2015-02-01',
             calc_value: 9,
             percentile: 21
           },
           {
-            pct_id: '03V',
-            pct_name: 'NHS CORBY CCG',
+            org_id: '03V',
+            org_name: 'NHS CORBY CCG',
             date: '2015-01-01',
             calc_value: 10,
             percentile: 40
           },
           {
-            pct_id: '03V',
-            pct_name: 'NHS CORBY CCG',
+            org_id: '03V',
+            org_name: 'NHS CORBY CCG',
             date: '2015-02-01',
             calc_value: 12,
             percentile: 37
           },
           {
-            pct_id: '99P',
-            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            org_id: '99P',
+            org_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
             date: '2015-01-01',
             calc_value: null,
             percentile: null
           },
           {
-            pct_id: '99P',
-            pct_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
+            org_id: '99P',
+            org_name: 'NHS NORTH, EAST AND WEST DEVON CCG',
             date: '2015-02-01',
             calc_value: null,
             percentile: null
@@ -170,26 +170,26 @@ describe('Measures', function() {
       var data = {
         data: [
         {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
+          org_id: '04N',
+          org_name: 'NHS RUSHCLIFFE CCG',
           date: '2015-01-01',
           calc_value: 8
         },
         {
-          pct_id: '04N',
-          pct_name: 'NHS RUSHCLIFFE CCG',
+          org_id: '04N',
+          org_name: 'NHS RUSHCLIFFE CCG',
           date: '2015-02-01',
           calc_value: 9
         },
         {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
+          org_id: '03V',
+          org_name: 'NHS CORBY CCG',
           date: '2015-01-01',
           calc_value: 10
         },
         {
-          pct_id: '03V',
-          pct_name: 'NHS CORBY CCG',
+          org_id: '03V',
+          org_name: 'NHS CORBY CCG',
           date: '2015-02-01',
           calc_value: 12
         }
@@ -210,26 +210,26 @@ describe('Measures', function() {
       var data = {
         data: [
         {
-          practice_id: 'A81001',
-          practice_name: 'foo',
+          org_id: 'A81001',
+          org_name: 'foo',
           date: '2015-01-01',
           calc_value: 8
         },
         {
-          practice_id: 'A81001',
-          practice_name: 'foo',
+          org_id: 'A81001',
+          org_name: 'foo',
           date: '2015-02-01',
           calc_value: 9
         },
         {
-          practice_id: 'A81002',
-          practice_name: 'bar',
+          org_id: 'A81002',
+          org_name: 'bar',
           date: '2015-01-01',
           calc_value: 10
         },
         {
-          practice_id: 'A81002',
-          practice_name: 'bar',
+          org_id: 'A81002',
+          org_name: 'bar',
           date: '2015-02-01',
           calc_value: 12
         }
@@ -575,8 +575,8 @@ describe('Measures', function() {
             "numerator": 11627.8333333333,
             "percentile": 97.5961538461538,
             "calc_value": 6.66733562691132,
-            "pct_id": "99E",
-            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "org_id": "99E",
+            "org_name": "NHS BASILDON AND BRENTWOOD CCG",
             "date": "2017-01-01",
           },
           {
@@ -584,8 +584,8 @@ describe('Measures', function() {
             "numerator": 10641.5,
             "percentile": 97.5961538461538,
             "calc_value": 6.58916408668731,
-            "pct_id": "99E",
-            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "org_id": "99E",
+            "org_name": "NHS BASILDON AND BRENTWOOD CCG",
             "date": "2017-02-01"
           },
           {
@@ -593,8 +593,8 @@ describe('Measures', function() {
             "numerator": 12102.9166666667,
             "percentile": 98.0769230769231,
             "calc_value": 6.64265459202342,
-            "pct_id": "99E",
-            "pct_name": "NHS BASILDON AND BRENTWOOD CCG",
+            "org_id": "99E",
+            "org_name": "NHS BASILDON AND BRENTWOOD CCG",
             "date": "2017-03-01"
           }
         ],

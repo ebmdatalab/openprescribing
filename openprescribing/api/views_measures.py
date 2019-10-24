@@ -1,8 +1,10 @@
 import re
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from rest_framework_csv.renderers import CSVRenderer
 
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Measure
@@ -208,27 +210,46 @@ def _get_prescribing_for_bnf_codes(bnf_codes):
     )
 
 
+class MeasureValueCSVRenderer(CSVRenderer):
+    header = [
+        "measure",
+        "org_type",
+        "org_id",
+        "org_name",
+        "date",
+        "numerator",
+        "denominator",
+        "calc_value",
+        "percentile",
+    ]
+
+
 @api_view(["GET"])
+@renderer_classes([JSONRenderer, BrowsableAPIRenderer, MeasureValueCSVRenderer])
 def measure_by_regional_team(request, format=None):
     return _measure_by_org(request, "regional_team")
 
 
 @api_view(["GET"])
+@renderer_classes([JSONRenderer, BrowsableAPIRenderer, MeasureValueCSVRenderer])
 def measure_by_stp(request, format=None):
     return _measure_by_org(request, "stp")
 
 
 @api_view(["GET"])
+@renderer_classes([JSONRenderer, BrowsableAPIRenderer, MeasureValueCSVRenderer])
 def measure_by_ccg(request, format=None):
     return _measure_by_org(request, "ccg")
 
 
 @api_view(["GET"])
+@renderer_classes([JSONRenderer, BrowsableAPIRenderer, MeasureValueCSVRenderer])
 def measure_by_pcn(request, format=None):
     return _measure_by_org(request, "pcn")
 
 
 @api_view(["GET"])
+@renderer_classes([JSONRenderer, BrowsableAPIRenderer, MeasureValueCSVRenderer])
 def measure_by_practice(request, format=None):
     return _measure_by_org(request, "practice")
 
@@ -272,8 +293,15 @@ def _measure_by_org(request, org_type):
     if aggregate:
         measure_values = measure_values.aggregate_by_measure_and_month()
 
-    rsp_data = {"measures": _roll_up_measure_values(measure_values, org_type)}
-    return Response(rsp_data)
+    if request.accepted_renderer.format == "csv":
+        data = [_measure_value_data(mv, org_type) for mv in measure_values]
+        response = Response(data)
+        response["content-disposition"] = "attachment; filename=measures.csv"
+        return response
+
+    else:
+        rsp_data = {"measures": _roll_up_measure_values(measure_values, org_type)}
+        return Response(rsp_data)
 
 
 def _roll_up_measure_values(measure_values, org_type):
@@ -281,48 +309,7 @@ def _roll_up_measure_values(measure_values, org_type):
 
     for measure_value in measure_values:
         measure_id = measure_value.measure_id
-        measure_value_data = {
-            "date": measure_value.month,
-            "numerator": measure_value.numerator,
-            "denominator": measure_value.denominator,
-            "calc_value": measure_value.calc_value,
-            "percentile": measure_value.percentile,
-            "cost_savings": measure_value.cost_savings,
-        }
-
-        if org_type == "practice":
-            if measure_value.practice_id:
-                measure_value_data.update(
-                    {
-                        "practice_id": measure_value.practice_id,
-                        "practice_name": measure_value.practice.name,
-                    }
-                )
-        elif org_type == "pcn":
-            if measure_value.pcn_id:
-                measure_value_data.update(
-                    {"pcn_id": measure_value.pcn_id, "pcn_name": measure_value.pcn.name}
-                )
-        elif org_type == "ccg":
-            if measure_value.pct_id:
-                measure_value_data.update(
-                    {"pct_id": measure_value.pct_id, "pct_name": measure_value.pct.name}
-                )
-        elif org_type == "stp":
-            if measure_value.stp_id:
-                measure_value_data.update(
-                    {"stp_id": measure_value.stp_id, "stp_name": measure_value.stp.name}
-                )
-        elif org_type == "regional_team":
-            if measure_value.regional_team_id:
-                measure_value_data.update(
-                    {
-                        "regional_team_id": measure_value.regional_team_id,
-                        "regional_team_name": measure_value.regional_team.name,
-                    }
-                )
-        else:
-            assert False
+        measure_value_data = _measure_value_data(measure_value, org_type)
 
         if measure_id in rolled:
             rolled[measure_id]["data"].append(measure_value_data)
@@ -345,6 +332,68 @@ def _roll_up_measure_values(measure_values, org_type):
             }
 
     return list(rolled.values())
+
+
+def _measure_value_data(measure_value, org_type):
+    measure_value_data = {
+        "measure": measure_value.measure_id,
+        "date": measure_value.month,
+        "numerator": measure_value.numerator,
+        "denominator": measure_value.denominator,
+        "calc_value": measure_value.calc_value,
+        "percentile": measure_value.percentile,
+        "cost_savings": measure_value.cost_savings,
+    }
+
+    if org_type == "practice":
+        if measure_value.practice_id:
+            measure_value_data.update(
+                {
+                    "org_type": "practice",
+                    "org_id": measure_value.practice_id,
+                    "org_name": measure_value.practice.name,
+                }
+            )
+    elif org_type == "pcn":
+        if measure_value.pcn_id:
+            measure_value_data.update(
+                {
+                    "org_type": "pcn",
+                    "org_id": measure_value.pcn_id,
+                    "org_name": measure_value.pcn.name,
+                }
+            )
+    elif org_type == "ccg":
+        if measure_value.pct_id:
+            measure_value_data.update(
+                {
+                    "org_type": "ccg",
+                    "org_id": measure_value.pct_id,
+                    "org_name": measure_value.pct.name,
+                }
+            )
+    elif org_type == "stp":
+        if measure_value.stp_id:
+            measure_value_data.update(
+                {
+                    "org_type": "stp",
+                    "org_id": measure_value.stp_id,
+                    "org_name": measure_value.stp.name,
+                }
+            )
+    elif org_type == "regional_team":
+        if measure_value.regional_team_id:
+            measure_value_data.update(
+                {
+                    "org_type": "regional_team",
+                    "org_id": measure_value.regional_team_id,
+                    "org_name": measure_value.regional_team.name,
+                }
+            )
+    else:
+        assert False
+
+    return measure_value_data
 
 
 def _hydrate_tags(tag_ids):
