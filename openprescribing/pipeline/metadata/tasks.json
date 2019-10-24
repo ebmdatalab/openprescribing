@@ -231,7 +231,7 @@
     "create_bq_measure_views": {
         "type": "post_process",
         "command": "create_bq_measure_views",
-        "dependencies": []
+        "dependencies": ["convert_hscic_prescribing"]
     },
     "import_measures": {
         "type": "post_process",
