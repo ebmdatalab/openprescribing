@@ -35,6 +35,7 @@
     "  WHERE form_route = 'pressurizedinhalation.inhalation'",
     "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
+    "  AND bnf_name NOT LIKE '%Respimat%' ",
     ")"
   ],
   "denominator_type": "bnf_items",
