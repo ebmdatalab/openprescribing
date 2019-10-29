@@ -76,6 +76,11 @@ def run_end_to_end():
     client.create_table("presentation", schemas.PRESENTATION_SCHEMA)
     client.create_table("tariff", schemas.TARIFF_SCHEMA)
     client.create_table("bdz_adq", schemas.BDZ_ADQ_SCHEMA)
+    client.create_storage_backed_table(
+        "raw_prescribing",
+        schemas.RAW_PRESCRIBING_SCHEMA,
+        "gs://ebmdatalabtest/hscic/prescribing/20*Detailed_Prescribing_Information.csv",
+    )
 
     client = BQClient("measures")
     # This is enough of a schema to allow the practice_data_all_low_priority
