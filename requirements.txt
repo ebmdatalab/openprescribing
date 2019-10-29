@@ -35,7 +35,7 @@ easyprocess==0.2.7        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
 fabric==1.14.1
-flake8==3.7.8
+flake8==3.7.9
 google-api-core==1.14.3   # via google-cloud-core
 google-api-python-client==1.7.11
 google-auth-httplib2==0.0.3  # via google-api-python-client
@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.5.0        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==41.5.1        # via google-api-core, pandas-gbq, protobuf, pydata-google-auth
