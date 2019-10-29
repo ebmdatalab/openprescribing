@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dmd2', '0002_auto_20181007_1443'),
+        ('dmd', '0002_auto_20181007_1443'),
         ('frontend', '0046_auto_20190514_1412'),
     ]
 
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('drug', models.CharField(max_length=400)),
                 ('pack_size', models.CharField(max_length=40)),
                 ('price_pence', models.IntegerField()),
-                ('vmpp', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMPP')),
+                ('vmpp', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='dmd.VMPP')),
             ],
         ),
         migrations.AlterUniqueTogether(

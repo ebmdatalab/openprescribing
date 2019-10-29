@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dmd2', '0002_auto_20181007_1443'),
+        ('dmd', '0002_auto_20181007_1443'),
         ('frontend', '0045_auto_20190508_2136'),
     ]
 
@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(db_index=True)),
                 ('price_pence', models.IntegerField()),
-                ('tariff_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dmd2.DtPaymentCategory')),
-                ('vmpp', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dmd2.VMPP')),
+                ('tariff_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dmd.DtPaymentCategory')),
+                ('vmpp', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dmd.VMPP')),
             ],
         ),
         migrations.AlterUniqueTogether(

@@ -12,7 +12,7 @@ from django.db.models.functions import Coalesce
 from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
-from dmd2.models import (
+from dmd.models import (
     VMP,
     AMP,
     VMPP,
@@ -1111,12 +1111,12 @@ class PPUSaving(models.Model):
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey("dmd2.VMPP", on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd.VMPP", on_delete=models.DO_NOTHING)
     # 1: Category A
     # 3: Category C
     # 11: Category M
     tariff_category = models.ForeignKey(
-        "dmd2.DtPaymentCategory", on_delete=models.DO_NOTHING
+        "dmd.DtPaymentCategory", on_delete=models.DO_NOTHING
     )
     price_pence = models.IntegerField()
 
@@ -1126,7 +1126,7 @@ class TariffPrice(models.Model):
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey("dmd2.VMPP", null=True, on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd.VMPP", null=True, on_delete=models.DO_NOTHING)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()

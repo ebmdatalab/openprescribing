@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ncsoconcession',
             name='vmpp',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='dmd2.VMPP'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='dmd.VMPP'),
         ),
         migrations.AlterField(
             model_name='ncsoconcessionbookmark',
@@ -81,11 +81,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='tariffprice',
             name='tariff_category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='dmd2.DtPaymentCategory'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='dmd.DtPaymentCategory'),
         ),
         migrations.AlterField(
             model_name='tariffprice',
             name='vmpp',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='dmd2.VMPP'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='dmd.VMPP'),
         ),
     ]

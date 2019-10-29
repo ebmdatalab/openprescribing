@@ -37,7 +37,7 @@ from dateutil.relativedelta import relativedelta
 from common.utils import parse_date
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
-from dmd2.models import VMP
+from dmd.models import VMP
 from frontend.forms import FeedbackForm
 from frontend.forms import MonthlyOrgBookmarkForm
 from frontend.forms import NonMonthlyOrgBookmarkForm

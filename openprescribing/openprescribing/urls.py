@@ -338,7 +338,7 @@ urlpatterns = [
     url(r"^tariff/$", frontend_views.tariff, name="tariff_index"),
     url(r"^tariff/(?P<code>[A-Z\d]+)/$", frontend_views.tariff, name="tariff"),
     # DM+D
-    url(r"^dmd/", include("dmd2.urls")),
+    url(r"^dmd/", include("dmd.urls")),
     # API
     url(r"^api/1.0/", include("api.urls")),
     # Docs

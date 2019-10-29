@@ -1,11 +1,15 @@
 from django.db import models
 
+from . import managers
+
 
 class VTM(models.Model):
     class Meta:
         verbose_name = "Virtual Therapeutic Moiety"
         verbose_name_plural = "Virtual Therapeutic Moieties"
         ordering = ["nm"]
+
+    objects = managers.VTMManager()
 
     obj_type = "vtm"
     name_field = "nm"
@@ -36,6 +40,8 @@ class VMP(models.Model):
     class Meta:
         verbose_name = "Virtual Medicinal Product"
         ordering = ["nm"]
+
+    objects = managers.VMPManager()
 
     obj_type = "vmp"
     name_field = "nm"
@@ -267,6 +273,8 @@ class AMP(models.Model):
         verbose_name = "Actual Medicinal Product"
         ordering = ["descr"]
 
+    objects = managers.AMPManager()
+
     obj_type = "amp"
     name_field = "descr"
 
@@ -421,6 +429,8 @@ class VMPP(models.Model):
         verbose_name = "Virtual Medicinal Product Pack"
         ordering = ["nm"]
 
+    objects = managers.VMPPManager()
+
     obj_type = "vmpp"
     name_field = "nm"
 
@@ -491,6 +501,8 @@ class AMPP(models.Model):
     class Meta:
         verbose_name = "Actual Medicinal Product Pack"
         ordering = ["nm"]
+
+    objects = managers.AMPPManager()
 
     obj_type = "ampp"
     name_field = "nm"

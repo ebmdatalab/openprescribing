@@ -12,7 +12,7 @@ from django.core.management import BaseCommand
 from django.db.models.fields.related import ForeignKey
 from django.db.models.fields.reverse_related import ManyToOneRel
 
-from dmd2.models import VMP, VMPP, AMP, AMPP
+from dmd.models import VMP, VMPP, AMP, AMPP
 
 
 class Command(BaseCommand):

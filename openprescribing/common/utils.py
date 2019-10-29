@@ -219,7 +219,7 @@ def ppu_sql(conditions=""):
     # Model imports here because util module is used in Django's
     # startup, before model registration is complete, leading to
     # errors
-    from dmd2.models import VMP, VMPP
+    from dmd.models import VMP, VMPP
     from frontend.models import NCSOConcession
     from frontend.models import PPUSaving
     from frontend.models import Presentation

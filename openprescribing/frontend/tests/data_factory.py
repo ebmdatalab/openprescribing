@@ -21,7 +21,7 @@ from frontend.models import (
     NCSOConcession,
     TariffPrice,
 )
-from dmd2 import models as dmd2_models
+from dmd import models as dmd_models
 
 
 class DataFactory(object):
@@ -85,10 +85,10 @@ class DataFactory(object):
 
     def create_presentations(self, num_presentations, vmpp_per_presentation=1):
         presentations = []
-        vmp_basis, _ = dmd2_models.BasisOfName.objects.get_or_create(
+        vmp_basis, _ = dmd_models.BasisOfName.objects.get_or_create(
             cd=1, descr="rINN - Recommended International Non-proprietary"
         )
-        vmp_pres_stat, _ = dmd2_models.VirtualProductPresStatus.objects.get_or_create(
+        vmp_pres_stat, _ = dmd_models.VirtualProductPresStatus.objects.get_or_create(
             cd=1, descr="Valid as a prescribable product"
         )
         for i in range(num_presentations):
@@ -98,7 +98,7 @@ class DataFactory(object):
                 dmd_name="VMP Foo Tablet {}".format(i),
                 quantity_means_pack=self.random.choice([True, False, None]),
             )
-            vmp = dmd2_models.VMP.objects.create(
+            vmp = dmd_models.VMP.objects.create(
                 id=i,
                 invalid=False,
                 nm="VMP " + presentation.name,
@@ -113,7 +113,7 @@ class DataFactory(object):
             qtyval = self.random.randint(5, 25)
             for vppid in range(0, vmpp_per_presentation):
                 vppid = i * 10 + vppid
-                dmd2_models.VMPP.objects.create(
+                dmd_models.VMPP.objects.create(
                     id=vppid,
                     vmp=vmp,
                     invalid=False,
@@ -127,13 +127,13 @@ class DataFactory(object):
     def create_tariff_and_ncso_costings_for_presentations(
         self, presentations, months=None
     ):
-        tariff_category, _ = dmd2_models.DtPaymentCategory.objects.get_or_create(
+        tariff_category, _ = dmd_models.DtPaymentCategory.objects.get_or_create(
             cd=1, descr="TariffCategory VIIIA Category A"
         )
         for presentation in presentations:
             for date in months:
                 price_pence = self.random.randint(10, 100)
-                for vmpp in dmd2_models.VMPP.objects.filter(
+                for vmpp in dmd_models.VMPP.objects.filter(
                     bnf_code=presentation.bnf_code
                 ):
                     tariff_price = TariffPrice.objects.create(

@@ -188,7 +188,7 @@ class TestPresentationDMDLinks(TestCase):
     def test_dmd_info(self):
         # Testing dmd_info() thoroughly would require setting up a large amount
         # of test data.  Constructing this manually is a lot of work.  Instead,
-        # I have generated fixtures from the test data in dmd2, which covers a
+        # I have generated fixtures from the test data in dmd, which covers a
         # range of the kinds of relationships between presentations and dm+d
         # objects.
 
