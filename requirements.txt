@@ -34,7 +34,7 @@ djangorestframework==3.9.4
 easyprocess==0.2.7        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
-fabric==1.14.1
+fabric3==1.14.post1
 flake8==3.7.9
 google-api-core==1.14.3   # via google-cloud-core
 google-api-python-client==1.7.11
@@ -65,7 +65,7 @@ oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.3
 pandas-gbq==0.10.0
 pandas==0.24.2
-paramiko==2.6.0           # via fabric
+paramiko==2.6.0           # via fabric3
 pathtools==0.1.2          # via watchdog
 pip-tools==4.2.0
 premailer==3.6.1
@@ -94,7 +94,7 @@ requests[security]==2.22.0
 rsa==4.0                  # via google-auth
 scipy==1.2.1
 selenium==3.141.0
-six==1.12.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
+six==1.12.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
 soupsieve==1.9.4          # via beautifulsoup4
 sqlparse==0.3.0           # via django-debug-toolbar
 titlecase==0.12.0
