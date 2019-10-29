@@ -4,9 +4,8 @@
     "dipyridamole compared with prescribing of clopidogrel"
   ],
   "description": [
-    "Total items for dipyridamole and dipyridamole and aspirin,",
-    "as a proportion of total items of dipyridamole, dipyridamole & aspirin and clopidogrel",
-    "(0703021Q0)."
+    "Total items for dipyridamole (as dipyridamole or dipyridamole/aspirin combination),",
+    "as a proportion of total items of dipyridamole, dipyridamole/aspirin combination and clopidogrel"
   ],
   "why_it_matters": [
     "Although the <a href='https://www.nice.org.uk/guidance/TA210'>2010 NICE Technology Appraisal </a>",
@@ -21,7 +20,7 @@
     "- aspirin 75mg daily should be used if both clopidogrel and modified-release dipyridamole are contraindicated or not tolerated; ",
     "- modified-release dipyridamole 200 mg twice daily should be used if both clopidogrel and aspirin are contraindicated or not tolerated."
   ],
-  "numerator_short": "Dipyridamole items",
+  "numerator_short": "Dipyridamole-containing items",
   "denominator_short": "Total items",
   "url": null,
   "is_percentage": true,
