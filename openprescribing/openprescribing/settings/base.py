@@ -302,6 +302,7 @@ GDOC_DOCS = {
     "analyse-by-practice": "1idnk9yczLLBLbYUbp06dMglfivobTNoKY7pA2zCDPI8",
     "analyse-by-ccg": "1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0",
     "how-to-find-cost-savings": "1QHz4hl_8XklcAULawEPCIS0iMaDURhaPsW1VjdTAuUg",
+    "querying-the-raw-data-yourself": "e/2PACX-1vS_AGRCngeMMIaCuPicia7QVUEyqrnRo8vXI0S6w7cfyzb9IjlxNcOrKcZZ85larUuKOf_mB7dg-Y7S",
 }
 
 API_HOST = utils.get_env_setting("API_HOST", default="")
