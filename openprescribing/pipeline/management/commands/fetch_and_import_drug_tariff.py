@@ -1,7 +1,7 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from io import StringIO
+from io import BytesIO
 import datetime
 from urllib.parse import unquote, urljoin
 import logging
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                 continue
 
             xls_url = urljoin(url, a.attrs["href"])
-            xls_file = StringIO(requests.get(xls_url).content)
+            xls_file = BytesIO(requests.get(xls_url).content)
 
             import_month(xls_file, date)
             imported_months.append((year, month))
