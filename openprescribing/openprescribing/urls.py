@@ -358,7 +358,6 @@ urlpatterns = [
         name="bookmark-login",
     ),
     url(r"^bookmarks/$", bookmark_views.BookmarkList.as_view(), name="bookmark-list"),
-    url(r"^finalise_signup/$", frontend_views.finalise_signup, name="finalise-signup"),
     url(
         r"^newsletter_signup/$",
         TemplateView.as_view(template_name="newsletter_signup.html"),

@@ -23,11 +23,9 @@ from django.db.models import Avg, Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils.http import is_safe_url
-from django.utils.safestring import mark_safe
 
 from allauth.account import app_settings
 from allauth.account.models import EmailAddress
@@ -39,30 +37,23 @@ from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import VMP
 from frontend.forms import FeedbackForm
-from frontend.forms import MonthlyOrgBookmarkForm
-from frontend.forms import NonMonthlyOrgBookmarkForm
-from frontend.forms import SearchBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import MeasureGlobal
-from frontend.models import OrgBookmark
-from frontend.models import NCSOConcessionBookmark
 from frontend.models import Practice, PCT, Section
 from frontend.models import PCN
 from frontend.models import Presentation
 from frontend.models import RegionalTeam
 from frontend.models import STP
-from frontend.models import SearchBookmark
 from frontend.feedback import send_feedback_mail
 from frontend.views.spending_utils import (
     ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
-from frontend.views.mailchimp_utils import mailchimp_subscribe
 
 logger = logging.getLogger(__name__)
 
@@ -175,11 +166,7 @@ def all_practices(request):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_and_newsletter_form(request, practice)
-    if isinstance(form, HttpResponseRedirect):
-        return form
     context = _home_page_context_for_entity(request, practice)
-    context["form"] = form
     request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
@@ -232,15 +219,11 @@ def all_ccgs(request):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_and_newsletter_form(request, ccg)
-    if isinstance(form, HttpResponseRedirect):
-        return form
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
     context = _home_page_context_for_entity(request, ccg)
     extra_context = {
-        "form": form,
         "practices": practices,
         "num_open_practices": num_open_practices,
         "num_non_open_practices": num_non_open_practices,
@@ -328,10 +311,6 @@ def cached(function, *args):
 
 @handle_bad_request
 def all_england(request):
-    form = _monthly_bookmark_and_newsletter_form(request, None)
-    if isinstance(form, HttpResponseRedirect):
-        return form
-
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get("entity_type", "CCG")
     date = _specified_or_last_date(request, "ppu")
@@ -379,8 +358,6 @@ def all_england(request):
         "ncso_spending": ncso_spending,
         "date": date,
         "measure_options": measure_options,
-        "form": form,
-        "signed_up_for_alert": _signed_up_for_alert(request, None, OrgBookmark),
     }
     return render(request, "all_england.html", context)
 
@@ -391,18 +368,7 @@ def all_england(request):
 
 
 def analyse(request):
-    if request.method == "POST":
-        # should this be the _bookmark_and_newsletter_form?
-        form = _handle_bookmark_and_newsletter_post(
-            request, SearchBookmark, SearchBookmarkForm, "url", "name"
-        )
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        # Note that the (hidden) URL field is filled via javascript on
-        # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(initial={"email": getattr(request.user, "email", "")})
-    return render(request, "analyse.html", {"form": form})
+    return render(request, "analyse.html", {})
 
 
 ##################################################
@@ -888,72 +854,6 @@ def tariff(request, code=None):
 
 
 ##################################################
-# Bookmarks
-##################################################
-
-
-def finalise_signup(request):
-    """Handle mailchimp signups.
-
-    Then redirect the logged in user to the CCG they last bookmarked, or if
-    they're not logged in, just go straight to the homepage -- both
-    with a message.
-
-    This method should be configured as the LOGIN_REDIRECT_URL,
-    i.e. the view that is called following any successful login, which
-    in our case is always performed by _handle_bookmark_and_newsletter_post.
-
-    """
-    # Users who are logged in are *REDIRECTED* here, which means the
-    # form is never shown.
-    next_url = None
-    if "newsletter_email" in request.session:
-        if request.POST:
-            success = mailchimp_subscribe(
-                request,
-                request.POST["email"],
-                request.POST["first_name"],
-                request.POST["last_name"],
-                request.POST["organisation"],
-                request.POST["job_title"],
-            )
-            if success:
-                messages.success(
-                    request, "You have successfully signed up for the newsletter."
-                )
-            else:
-                messages.error(
-                    request, "There was a problem signing you up for the newsletter."
-                )
-
-        else:
-            # Show the signup form
-            return render(request, "newsletter_signup.html")
-    if not request.user.is_authenticated():
-        if "alerts_requested" in request.session:
-            # Their first alert bookmark signup
-            del request.session["alerts_requested"]
-            messages.success(request, "Thanks, you're now subscribed to alerts.")
-        if next_url:
-            return redirect(next_url)
-        else:
-            return redirect(request.session.get("came_from", "home"))
-    else:
-        # The user is signing up to at least the second bookmark
-        # in this session.
-        last_bookmark = request.user.profile.most_recent_bookmark()
-        next_url = last_bookmark.dashboard_url()
-        messages.success(
-            request,
-            mark_safe(
-                "You're now subscribed to alerts about <em>%s</em>."
-                % last_bookmark.topic()
-            ),
-        )
-        return redirect(next_url)
-
-
-##################################################
 # Spending
 ##################################################
 
@@ -966,19 +866,6 @@ def spending_for_one_entity(request, entity_code, entity_type):
         raise Http404()
 
     entity = _get_entity(entity_type, entity_code)
-
-    if entity_type in ("practice", "ccg", "CCG", "all_england"):
-        form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
-        signed_up_for_alert = _signed_up_for_alert(
-            request, entity, NCSOConcessionBookmark
-        )
-    else:
-        form = None
-        signed_up_for_alert = False
-
-    if isinstance(form, HttpResponseRedirect):
-        return form
-
     current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
         entity, entity_type, num_months=30, current_month=current_month
@@ -1028,8 +915,6 @@ def spending_for_one_entity(request, entity_code, entity_type):
         "breakdown_is_incomplete_month": breakdown_metadata["is_incomplete_month"],
         "last_prescribing_date": last_prescribing_date,
         "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-        "signed_up_for_alert": signed_up_for_alert,
-        "form": form,
     }
     request.session["came_from"] = request.path
     return render(request, "spending_for_one_entity.html", context)
@@ -1350,9 +1235,6 @@ def _home_page_context_for_entity(request, entity):
         context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
             entity_type.lower()
         )
-        context["signed_up_for_alert"] = _signed_up_for_alert(
-            request, entity, OrgBookmark
-        )
 
     return context
 
@@ -1554,51 +1436,6 @@ def _unverify_email_address_when_different_user(user, request):
         emailaddress.update(verified=False)
 
 
-def _force_login_and_redirect(request, user):
-    """Force a new login.
-
-    This allows us to piggy-back on built-in redirect mechanisms,
-    deriving from both django's built-in auth system, and
-    django-allauth:
-
-      * Users that have never been verified are redirected to
-       `verification_sent.html` (thanks to django-allauth)
-
-      * Verified users are sent to `finalise_signup.html` (per
-        Django's LOGIN_REDIRECT_URL setting).
-
-    """
-    if hasattr(request, "user"):
-        # Log the user out. We don't use Django's built-in logout
-        # mechanism because that clears the entire session, too,
-        # and we want to know if someone's logged in previously in
-        # this session.
-        request.user = AnonymousUser()
-        for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-            if k in request.session:
-                del request.session[k]
-    return perform_login(
-        request, user, app_settings.EmailVerificationMethod.MANDATORY, signup=True
-    )
-
-
-def _make_bookmark_args(user, form, subject_field_ids):
-    """Construct a dict of cleaned keyword args suitable for creating a
-    new bookmark
-    """
-    form_args = {"user": user}
-
-    for field in subject_field_ids:
-        form_args[field] = form.cleaned_data[field]
-
-    if not subject_field_ids:
-        # There is no practice or PCT.
-        form_args["practice"] = None
-        form_args["pct"] = None
-
-    return form_args
-
-
 def _entity_type_from_object(entity):
     """Given either a PCT or Practice, return a string indicating its type
     for use in bookmark query filters that reference pct/practice
@@ -1611,128 +1448,6 @@ def _entity_type_from_object(entity):
         return "practice"
     else:
         raise RuntimeError("Entity must be Practice or PCT")
-
-
-def _signed_up_for_alert(request, entity, subject_class):
-    if request.user.is_authenticated():
-        if entity:
-            # Entity is a Practice or PCT
-            q = {_entity_type_from_object(entity): entity}
-        else:
-            # Entity is "All England"
-            q = {"practice_id__isnull": True, "pct_id__isnull": True}
-        return subject_class.objects.filter(user=request.user, **q).exists()
-    else:
-        return False
-
-
-def _monthly_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _monthly_bookmark_and_newsletter_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm, entity_type
-        )
-    else:
-        form = MonthlyOrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _monthly_bookmark_and_newsletter_form_for_all_england(request):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm
-        )
-    else:
-        form = MonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
-
-    return form
-
-
-def _ncso_concession_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _ncso_concession_bookmark_and_newsletter_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm, entity_type
-        )
-    else:
-        form = NonMonthlyOrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _ncso_concession_bookmark_and_newsletter_form_for_all_england(request):
-    if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm
-        )
-    else:
-        form = NonMonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
-
-    return form
-
-
-def _handle_bookmark_and_newsletter_post(
-    request, subject_class, subject_form_class, *subject_field_ids
-):
-    """Handle search/org bookmark and newsletter signup form:
-
-    * create a search or org bookmark
-    * annotate the user's session (because newsletter signup can be
-      multi-stage)
-    * redirect to confirmation and/or newsletter signup page.
-
-    """
-    form = subject_form_class(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data["email"]
-        if "newsletter" in form.cleaned_data["newsletters"]:
-            # add a session variable. Then handle it in the next page,
-            # which is either the verification page, or a dedicated
-            # "tell us a bit more" page.
-            request.session["newsletter_email"] = email
-        if "alerts" in form.cleaned_data["newsletters"]:
-            request.session["alerts_requested"] = 1
-            user = _authenticate_possibly_new_user(email)
-            form_args = _make_bookmark_args(user, form, subject_field_ids)
-            _unverify_email_address_when_different_user(user, request)
-            # We're automatically approving all alert signups from now on
-            # without waiting for the email address to be verified
-            form_args["approved"] = True
-            subject_class.objects.get_or_create(**form_args)
-            return _force_login_and_redirect(request, user)
-        else:
-            return redirect("newsletter-signup")
-    return form
 
 
 def _get_entity(entity_type, entity_code):
