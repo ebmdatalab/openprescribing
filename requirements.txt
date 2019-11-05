@@ -71,7 +71,7 @@ pip-tools==4.2.0
 premailer==3.6.1
 protobuf==3.10.0          # via google-api-core, google-cloud-bigquery, googleapis-common-protos
 psycopg2-binary==2.8.4
-pyarrow==0.15.0
+pyarrow==0.15.1
 pyasn1-modules==0.2.7     # via google-auth
 pyasn1==0.4.7             # via pyasn1-modules, rsa
 pycodestyle==2.5.0        # via flake8
