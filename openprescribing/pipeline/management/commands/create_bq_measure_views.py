@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from frontend.bq_schemas import RAW_PRESCRIBING_SCHEMA
 from gcutils.bigquery import Client, build_schema
 from google.cloud.exceptions import Conflict
 
@@ -14,6 +15,15 @@ class Command(BaseCommand):
         base_path = os.path.join(
             settings.APPS_ROOT, "frontend", "management", "commands", "measure_sql"
         )
+
+        try:
+            Client("hscic").create_storage_backed_table(
+                "raw_prescribing",
+                RAW_PRESCRIBING_SCHEMA,
+                "gs://ebmdatalabtest/hscic/prescribing/20*Detailed_Prescribing_Information.csv",
+            )
+        except Conflict:
+            pass
 
         client = Client("measures")
 
