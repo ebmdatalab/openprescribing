@@ -94,7 +94,7 @@ requests[security]==2.22.0
 rsa==4.0                  # via google-auth
 scipy==1.2.1
 selenium==3.141.0
-six==1.12.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
+six==1.13.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
 soupsieve==1.9.5          # via beautifulsoup4
 sqlparse==0.3.0           # via django-debug-toolbar
 titlecase==0.12.0
