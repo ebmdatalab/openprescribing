@@ -34,7 +34,7 @@ class Section(models.Model):
     bnf_para = models.IntegerField(null=True, blank=True)
     is_current = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -195,7 +195,7 @@ class PCT(models.Model):
 
     objects = models.GeoManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ""
 
     @property
@@ -775,7 +775,7 @@ class SearchBookmark(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Bookmark: " + self.name
 
     def topic(self):
@@ -867,7 +867,7 @@ class OrgBookmark(models.Model):
     def get_absolute_url(self):
         return self.dashboard_url()
 
-    def __unicode__(self):
+    def __str__(self):
         return "Org Bookmark: " + self.name
 
 
@@ -1012,7 +1012,7 @@ class EmailMessage(models.Model):
         self.send_count += 1
         self.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject
 
 

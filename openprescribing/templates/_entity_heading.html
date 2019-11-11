@@ -77,7 +77,7 @@
     <ul class="list-unstyled" id="child-entities">
     {% for ccg in ccgs %}
       <li class="hidden">
-        <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg }}</a>
+        <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg.cased_name }}</a>
       </li>
     {% endfor %}
     </ul>
