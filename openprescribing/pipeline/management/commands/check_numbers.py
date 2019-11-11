@@ -121,9 +121,8 @@ def paths_to_scrape():
             continue
 
         # We don't have any PCN data yet, but when we do... TODO remove this
-        if "pcn_code" in keys:
+        if re.search(r"(^|/)pcn/", pattern):
             continue
-
         path = build_path(pattern, keys)
         yield name, path
 
