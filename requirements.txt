@@ -89,7 +89,7 @@ pyyaml==5.1.2             # via watchdog
 raven==6.10.0
 redis==3.3.11             # via django-redis
 requests-futures==1.0.0
-requests-oauthlib==1.2.0  # via django-allauth, google-auth-oauthlib
+requests-oauthlib==1.3.0  # via django-allauth, google-auth-oauthlib
 requests[security]==2.22.0
 rsa==4.0                  # via google-auth
 scipy==1.2.1
