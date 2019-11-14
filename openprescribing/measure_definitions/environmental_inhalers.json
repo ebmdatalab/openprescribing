@@ -46,10 +46,15 @@
     "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
     "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
+    "  AND bnf_name NOT LIKE '%Respimat%' ",
+    "  AND bnf_code NOT LIKE '0301040X0AA%' ",
+    "  AND bnf_code NOT LIKE '0301011Z0AA%' ",
+    "  AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
+    "  AND bnf_code NOT LIKE '0301020Q0AAAEAE' ",
     ")"
   ],
   "date_reviewed": [
-    "2019-10-09"
+    "2019-11-14"
   ],
   "next_review": [
     "2020-10-09"
