@@ -48,7 +48,7 @@ google-resumable-media==0.4.1  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.6.0  # via google-api-core
 graphviz==0.13.2
 gunicorn==20.0.0
-hiredis==1.0.0
+hiredis==1.0.1
 html2text==2019.8.11
 httplib2==0.14.0          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
