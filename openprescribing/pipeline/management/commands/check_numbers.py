@@ -26,6 +26,7 @@ from django.core.urlresolvers import get_resolver
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.options import Options
 
 from openprescribing.slack import notify_slack
@@ -169,7 +170,10 @@ def get_page_source(browser, path, name, log_path):
     """
 
     url = "https://openprescribing.net/" + path
-    browser.get(url)
+    try:
+        browser.get(url)
+    except TimeoutException:
+        raise RuntimeError("Timed out requesting " + path)
 
     # Wait until all AJAX requests are complete.
     t0 = time.time()
