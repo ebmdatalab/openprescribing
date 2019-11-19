@@ -36,6 +36,10 @@
     "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
     "  AND bnf_name NOT LIKE '%Respimat%' ",
+    "  AND bnf_code NOT LIKE '0301040X0AA%' ",
+    "  AND bnf_code NOT LIKE '0301011Z0AA%' ",
+    "  AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
+    "  AND bnf_code NOT LIKE '0301020Q0AAAEAE' ",
     ")"
   ],
   "denominator_type": "bnf_items",
@@ -46,18 +50,13 @@
     "  WHERE form_route IN ('pressurizedinhalation.inhalation', 'powderinhalation.inhalation')",
     "  AND bnf_code LIKE '03%' ",
     "  AND bnf_code NOT LIKE '0301011R0%' ",
-    "  AND bnf_name NOT LIKE '%Respimat%' ",
-    "  AND bnf_code NOT LIKE '0301040X0AA%' ",
-    "  AND bnf_code NOT LIKE '0301011Z0AA%' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAACAC' ",
-    "  AND bnf_code NOT LIKE '0301020Q0AAAEAE' ",
     ")"
   ],
   "date_reviewed": [
-    "2019-11-14"
+    "2019-11-19"
   ],
   "next_review": [
-    "2020-10-09"
+    "2020-06-19"
   ],
   "authored_by": [
     "brian.mackenna@phc.ox.ac.uk"
