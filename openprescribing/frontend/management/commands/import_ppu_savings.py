@@ -112,7 +112,7 @@ def get_savings(entity_type, month):
         "AND p.bnf_code NOT LIKE '1311070S0____AA' "  # issue #9
         "AND p.bnf_code NOT LIKE '1311020L0____BS' "  # issue #9
         "AND p.bnf_code NOT LIKE '0301020S0____AA' "  # issue #12
-        "AND p.bnf_code NOT LIKE '190700000BBCJA0' "  # issue #12
+        "AND p.bnf_code NOT LIKE '190700000%' "  # issue #12
         "AND p.bnf_code NOT LIKE '0604011L0BGAAAH' "  # issue #12
         "AND p.bnf_code NOT LIKE '1502010J0____BY' "  # issue #12
         "AND p.bnf_code NOT LIKE '1201010F0AAAAAA' "  # issue #12
