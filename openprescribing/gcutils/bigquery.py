@@ -161,11 +161,6 @@ class Client(object):
         return table
 
     def create_storage_backed_table(self, table_id, schema, gcs_path):
-        gcs_client = StorageClient()
-        bucket = gcs_client.bucket()
-        if bucket.get_blob(gcs_path) is None:
-            raise RuntimeError("Could not find blob at {}".format(gcs_path))
-
         gcs_uri = "gs://{}/{}".format(self.project, gcs_path)
         schema_as_dict = [
             {"name": s.name, "type": s.field_type.lower()} for s in schema
