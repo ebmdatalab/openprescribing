@@ -78,6 +78,15 @@ all_objs AS (
 )
 
 -- Sort them by BNF code, and then by VMP -> AMP -> VMPP -> AMPP
-SELECT obj_type, vpid, snomed_id, bnf_code, name, form_route
+SELECT
+  obj_type,
+  vpid,
+  snomed_id,
+  all_objs.bnf_code,
+  all_objs.name AS dmd_name,
+  presentation.name AS bnf_name,
+  form_route
 FROM all_objs
 ORDER BY bnf_code, obj_type
+INNER JOIN {hscic}.presentation
+  ON all_objs.bnf_code = presentation.bnf_code
