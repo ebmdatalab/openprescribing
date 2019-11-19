@@ -87,6 +87,6 @@ SELECT
   presentation.name AS bnf_name,
   form_route
 FROM all_objs
-INNER JOIN {hscic}.presentation
+INNER JOIN {project}.{hscic}.presentation
   ON all_objs.bnf_code = presentation.bnf_code
 ORDER BY bnf_code, order_key
