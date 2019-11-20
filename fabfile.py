@@ -273,7 +273,8 @@ def setup_env_from_environment(environment):
 
 @task
 def clear_cloudflare():
-    setup_env_from_environment("production")
+    if env.environment != "production":
+        return
 
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
