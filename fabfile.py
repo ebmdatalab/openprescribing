@@ -296,7 +296,7 @@ def deploy(environment, force_build=False, branch="master"):
         npm_build_css(force_build)
         deploy_static()
         run_migrations()
-        build_changed_measures()
+        # build_changed_measures()
         graceful_reload()
         clear_cloudflare()
         setup_cron()
