@@ -37,7 +37,9 @@
     "bnf_code LIKE '0302000C0%BK' OR --Beclomet Diprop_Pdr For Inh 250mcg(100 D (brands and generic) \n",
     "bnf_code LIKE '0302000C0%BW' OR --Beclomet Diprop_Inha 250mcg (200 D) CFF (brands and generic) \n",
     "bnf_code LIKE '0302000C0%BZ' OR --Beclomet/Formoterol_Inh 200/6 (120D) CFF (brands and generic) \n",
+    "bnf_code LIKE '0302000C0%CA' OR --Beclomet/Formoterol_Inh 200/6 (120D) Dry (brands and generic) \n",
     "bnf_code LIKE '0302000K0%AH' OR --Budesonide_Pdr For Inh 400mcg (50 D) (brands and generic) \n",
+    "bnf_code LIKE '0302000K0%AY' OR --Budesonide_Pdr For Inh 400mcg (100 D) (brands and generic) \n",
     "bnf_code LIKE '0302000K0%AU' OR --Budesonide/Formoterol_InhaB/A 400/12(60D (brands and generic) \n",
     "bnf_code LIKE '0302000N0%AF' OR --Fluticasone Prop_Pdr Inh 250mcg Disk Ref (brands and generic) \n",
     "bnf_code LIKE '0302000N0%AP' OR --Fluticasone Prop_Pdr Inh 500mcg Disk+Dev (brands and generic) \n",
@@ -53,13 +55,16 @@
   ],
   "denominator_type": "bnf_items",
   "denominator_where": [
-    "(",
-    "bnf_code LIKE '0302000C0%' OR --Beclometasone Dipropionate \n",
-    "bnf_code LIKE '0302000K0%' OR --Budesonide \n",
-    "bnf_code LIKE '0302000N0%' OR --Fluticasone Propionate (Inh) \n",
-    "bnf_code LIKE '0302000R0%' OR --Mometasone Furoate \n",
-    "bnf_code LIKE '0302000U0%' OR --Ciclesonide \n",
-    "bnf_code LIKE '0302000V0%' --Fluticasone Furoate (Inh) \n",
-    ")"
+    "substr(bnf_code,0,9) IN (",
+      "'0302000C0', --Beclometasone Dipropionate \n",
+      "'0302000K0', --Budesonide \n",
+      "'0302000N0', --Fluticasone Propionate (Inh) \n",
+      "'0302000R0', --Mometasone Furoate \n",
+      "'0302000U0', --Ciclesonide \n",
+      "'0302000V0', --Fluticasone Furoate (Inh) \n",
+      "'0301011AB') --BeclometDiprop/Formoterol/Glycopyrronium \n",
+    "AND ",
+    "bnf_code NOT LIKE '0302000N0%AV' AND --Fluticasone Prop_Inh Soln 500mcg/2ml Ud (brands and generic) \n",
+    "bnf_code NOT LIKE '0302000N0%AW' --Fluticasone Prop_Inh Soln 2mg/2ml Ud (brands and generic)"
   ]
 }
