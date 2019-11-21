@@ -49,5 +49,6 @@
     "bnf_code LIKE '0501130R0%AA' OR --Nitrofurantoin_Cap 50mg (brands and generic) \n",
     "bnf_code LIKE '0501130R0%AD' OR --Nitrofurantoin_Tab 50mg (brands and generic) \n",
     "bnf_code LIKE '0501130R0%AG' --Nitrofurantoin_Cap 100mg M/R (brands and generic)"
-  ]
+  ],
+  "no_analyse_url": true
 }

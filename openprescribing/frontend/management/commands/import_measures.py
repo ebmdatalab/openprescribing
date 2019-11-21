@@ -326,7 +326,8 @@ def create_or_update_measure(measure_def, end_date):
             get_num_or_denom_bnf_codes(measure, num_or_denom, end_date),
         )
 
-    measure.analyse_url = build_analyse_url(measure)
+    if not v.get("no_analyse_url"):
+        measure.analyse_url = build_analyse_url(measure)
 
     measure.save()
 

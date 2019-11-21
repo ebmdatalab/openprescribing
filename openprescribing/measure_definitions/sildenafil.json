@@ -71,5 +71,6 @@
   "denominator_type": "bnf_items",
   "denominator_where": [
     "bnf_code LIKE '070405%' --Drugs For Erectile Dysfunction"
-  ]
+  ],
+  "no_analyse_url": true
 }

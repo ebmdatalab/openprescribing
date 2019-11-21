@@ -39,5 +39,6 @@
     "p.bnf_code NOT LIKE '0401020K0%AE' AND --Diazepam_Soln 10mg/2.5ml Rectal Tube \n",
     "p.bnf_code NOT LIKE '0401020K0%BQ'     --Diazepam_Soln 2.5mg/1.25ml Rectal Tube"
   ],
-  "denominator_type": "list_size"
+  "denominator_type": "list_size",
+  "no_analyse_url": true
 }
