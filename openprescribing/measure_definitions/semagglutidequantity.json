@@ -1,0 +1,61 @@
+{
+"name": "Possible excess quantities of semaglutide",
+	"title": [
+		"Semaglutide prescriptions for quantity of 4 pens or more"
+	],
+	"description": [
+		"Total quantity where a prescription is for four pens per prescription",
+		"as a proportion of all semaglutide prescribing "
+	],
+	"why_it_matters": [
+	  "Semaglutide is a new (glucagon-like peptide-1) GLP-1 agonist, used to treat diabetes. ",
+    "It comes as a pre-filled pen.  Each of these pens contains four doses",
+    "However, there have been some reports that prescribers are requesting four pens per month, which may not be required."
+  ],
+	"numerator_short": "Number of pens on prescription of four or more",
+	"denominator_short": "total number of pens",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"tags": [
+		"core",
+		"safety"
+	],
+	"numerator_type": "custom",
+	"numerator_columns": [
+		"SUM(total_quantity) AS numerator"
+	],
+	"numerator_from": "{hscic}.raw_prescribing_normalised",
+	"numerator_where": [
+		"quantity_per_item>3",
+		"AND",
+		"bnf_code LIKE '0601023AW%' --Semaglutide"
+	],
+	"denominator_type": "custom",
+	"denominator_columns": [
+		"SUM(total_quantity) AS denominator"
+	],
+	"denominator_from": "{hscic}.raw_prescribing_normalised",
+	"denominator_where": [
+		"bnf_code LIKE '0601023AW%' --Semaglutide"
+	],
+"date_reviewed": [
+    "2019-11-21"
+  ],
+  "next_review": [
+    "2019-11-21"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb"
+  ]
+}
