@@ -55,7 +55,7 @@ def create_and_populate_bq_table(client, name, schema, table_data):
     table = client.get_or_create_table(name, schema)
     if not table_data:
         return
-    with tempfile.NamedTemporaryFile() as f:
+    with tempfile.NamedTemporaryFile("wt") as f:
         writer = csv.writer(f)
         for item in table_data:
             writer.writerow(dict_to_row(item, schema))

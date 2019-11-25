@@ -1,5 +1,3 @@
-from __future__ import division
-
 import itertools
 import json
 import random
@@ -89,10 +87,11 @@ class DataFactory(object):
             for month in months
         ]
 
-    def create_presentation(self):
+    def create_presentation(self, bnf_code=None):
         index = self.next_id()
+        bnf_code = bnf_code or self.create_bnf_code(index)
         presentation = {
-            "bnf_code": self.create_bnf_code(index),
+            "bnf_code": bnf_code,
             "name": "Foo Tablet {}".format(index),
             "is_generic": self.random.choice([True, False]),
             "adq_per_quantity": self.random.choice([None, self.random.random() * 30]),
@@ -128,17 +127,22 @@ class DataFactory(object):
 
     def create_prescribing(self, presentations, practices, months):
         prescribing = []
-        for practice in practices:
-            # Make sure each practice prescribes in at least one month, although
-            # probably not every month
-            n = self.random.randint(1, len(months))
-            selected_months = self.random.sample(months, n)
-            for month in selected_months:
-                # Make sure the practice prescribes at least one presentation,
-                # although probably not every one
-                n = self.random.randint(1, len(presentations))
-                selected_presentations = self.random.sample(presentations, n)
-                for presentation in selected_presentations:
+        for month in months:
+            practice_codes_used = set()
+            for presentation in presentations:
+                # For each presentation in each month, choose a random subset
+                # of practices to prescribe it
+                n = self.random.randint(1, len(practices))
+                selected_practices = self.random.sample(practices, n)
+                for practice in selected_practices:
+                    prescribing.append(
+                        self.create_prescription(presentation, practice, month)
+                    )
+                    practice_codes_used.add(practice["code"])
+            # Make sure each practice prescribes at least one thing each month
+            for practice in practices:
+                if practice["code"] not in practice_codes_used:
+                    presentation = self.random.choice(presentations)
                     prescribing.append(
                         self.create_prescription(presentation, practice, month)
                     )

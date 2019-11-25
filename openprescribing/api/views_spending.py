@@ -18,7 +18,7 @@ from frontend.models import Presentation
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
 from matrixstore.db import get_db, get_row_grouper
 
-import view_utils as utils
+from . import view_utils as utils
 
 
 MIN_GHOST_GENERIC_DELTA = 2
@@ -485,9 +485,9 @@ def tariff(request, format=None):
            dtpaymentcategory.descr AS tariff_category,
            vmpp.qtyval AS pack_size
     FROM frontend_tariffprice tariffprice
-        INNER JOIN dmd2_dtpaymentcategory dtpaymentcategory
+        INNER JOIN dmd_dtpaymentcategory dtpaymentcategory
             ON tariffprice.tariff_category_id = dtpaymentcategory.cd
-        INNER JOIN dmd2_vmpp vmpp
+        INNER JOIN dmd_vmpp vmpp
             ON tariffprice.vmpp_id = vmpp.vppid
         LEFT OUTER JOIN frontend_ncsoconcession ncso_concession
             ON (tariffprice.date = ncso_concession.date
@@ -654,7 +654,7 @@ def _get_prescribing_for_codes(db, bnf_code_prefixes):
             FROM
                 presentation
             WHERE
-                items IS NOT NULL AND ({})
+                {}
             """.format(
             where_clause
         )

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from tempfile import NamedTemporaryFile
-import HTMLParser
+import html.parser
 import logging
 import os
 import re
 import subprocess
-import urllib
-import urlparse
+import urllib.parse
 
 from anymail.message import attach_inline_image_file
 from dateutil.relativedelta import relativedelta
@@ -61,7 +60,7 @@ class CUSUM(object):
     """
 
     def __init__(self, data, window_size=12, sensitivity=5, name=""):
-        data = np.array(map(lambda x: np.nan if x is None else x, data))
+        data = np.array([np.nan if x is None else x for x in data])
         # Remove sufficient leading nulls to ensure we can start with
         # any value
         self.start_index = 0
@@ -275,7 +274,7 @@ class InterestingMeasureFinder(object):
         worst = []
         measure_filter = {
             "month__gte": self.months_ago(period),
-            "measure__tags__contains": ["core"],
+            "measure__include_in_alerts": True,
         }
         if self.practice:
             measure_filter["practice"] = self.practice
@@ -337,7 +336,7 @@ class InterestingMeasureFinder(object):
         window_plus = int(round(window * window_multiplier))
         measure_filter = {
             "month__gte": self.months_ago(window_plus),
-            "measure__tags__contains": ["core"],
+            "measure__include_in_alerts": True,
         }
         if self.practice:
             measure_filter["practice"] = self.practice
@@ -406,7 +405,7 @@ class InterestingMeasureFinder(object):
         total_savings = 0
         measure_filter = {
             "month__gte": self.months_ago(period),
-            "measure__tags__contains": ["core"],
+            "measure__include_in_alerts": True,
         }
         if self.practice:
             measure_filter["practice"] = self.practice
@@ -459,7 +458,7 @@ class InterestingMeasureFinder(object):
 
         """
         for measure in from_list[:]:
-            if type(measure) == dict:
+            if isinstance(measure, dict):
                 # As returned by most_changing function
                 m = measure["measure"]
             else:
@@ -619,7 +618,7 @@ def ga_tracking_qs(context):
         "utm_source": context["campaign_source"],
         "utm_content": context["email_id"],
     }
-    return urllib.urlencode(tracking_params)
+    return urllib.parse.urlencode(tracking_params)
 
 
 def truncate_subject(prefix, subject):
@@ -759,7 +758,7 @@ def make_org_email(org_bookmark, stats, tag=None):
 
 def make_search_email(search_bookmark, tag=None):
     msg = initialise_email(search_bookmark, "analyse-alerts")
-    parsed_url = urlparse.urlparse(search_bookmark.dashboard_url())
+    parsed_url = urllib.parse.urlparse(search_bookmark.dashboard_url())
     dashboard_uri = parsed_url.path
     if parsed_url.query:
         qs = "?" + parsed_url.query + "&" + msg.qs
@@ -868,7 +867,7 @@ def unescape_href(text):
     do about it](https://github.com/peterbe/premailer/issues/72).
     Unencode them again."""
     hrefs = re.findall(r'href=["\']([^"\']+)["\']', text)
-    html_parser = HTMLParser.HTMLParser()
+    html_parser = html.parser.HTMLParser()
     for href in hrefs:
         text = text.replace(href, html_parser.unescape(href))
     return text

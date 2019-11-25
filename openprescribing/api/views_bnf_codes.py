@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
-import view_utils as utils
+from . import view_utils as utils
 from frontend.models import Chemical, Section, Product, Presentation
 
 
@@ -56,7 +56,9 @@ def _get_matching_products(codes, is_exact):
     for code in codes:
         if is_exact:
             sections = (
-                Section.objects.filter(Q(number_str=code) | Q(name=code))
+                Section.objects.filter(
+                    Q(bnf_id=code) | Q(number_str=code) | Q(name=code)
+                )
                 .filter(is_current=True)
                 .extra(select={"type": 0})
                 .order_by("number_str")
@@ -83,7 +85,9 @@ def _get_matching_products(codes, is_exact):
         else:
             sections = (
                 Section.objects.filter(
-                    Q(number_str__startswith=code) | Q(name__icontains=code)
+                    Q(bnf_id=code)
+                    | Q(number_str__startswith=code)
+                    | Q(name__icontains=code)
                 )
                 .filter(is_current=True)
                 .extra(select={"type": 0})

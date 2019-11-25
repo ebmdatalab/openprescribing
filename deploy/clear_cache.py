@@ -18,10 +18,8 @@ def list_cloudflare_zones():
         "X-Auth-Email": os.environ["CF_API_EMAIL"],
     }
     result = json.loads(requests.get(url, headers=headers).text)
-    zones = map(
-        lambda x: {"name": x["name"], "id": x["id"]}, [x for x in result["result"]]
-    )
-    print (zones)
+    zones = [{"name": x["name"], "id": x["id"]} for x in result["result"]]
+    print(zones)
 
 
 def clear_cloudflare():
@@ -38,7 +36,7 @@ def clear_cloudflare():
         ).text
     )
     if result["success"]:
-        print ("Cloudflare clearing succeeded")
+        print("Cloudflare clearing succeeded")
     else:
         raise ValueError(
             "Cloudflare clearing failed: %s" % json.dumps(result, indent=2)

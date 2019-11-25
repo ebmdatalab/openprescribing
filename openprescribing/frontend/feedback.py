@@ -19,7 +19,7 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
     body = template.render(ctx)
 
     email = EmailMultiAlternatives(
-        subject=u"OpenPrescribing Feedback: {}".format(subject),
+        subject="OpenPrescribing Feedback: {}".format(subject),
         body=body,
         from_email=formataddr((user_name, settings.SUPPORT_FROM_EMAIL)),
         to=[settings.SUPPORT_TO_EMAIL],
@@ -36,7 +36,7 @@ def send_feedback_mail(user_name, user_email_addr, subject, message, url):
     body = template.render(ctx)
 
     email = EmailMultiAlternatives(
-        subject=u"OpenPrescribing Feedback: {}".format(subject),
+        subject="OpenPrescribing Feedback: {}".format(subject),
         body=body,
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=[user_email_addr],

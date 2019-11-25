@@ -64,7 +64,7 @@ class Command(BaseCommand):
             # this data has already been fetched, we write to a temporary file
             # and then rename it.
             with open(os.path.join(dir_path, tmp_filename), "w") as f:
-                f.write(rsp.content)
+                f.write(rsp.text)
 
             os.rename(
                 os.path.join(dir_path, tmp_filename), os.path.join(dir_path, filename)

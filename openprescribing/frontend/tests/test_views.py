@@ -1,6 +1,6 @@
 from mock import Mock, patch
 import datetime
-from urlparse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse
 
 from pyquery import PyQuery as pq
 

@@ -1,10 +1,9 @@
-from __future__ import print_function
-
 from distutils.dir_util import copy_tree
 import glob
 import os
 import shutil
 
+from django.apps import apps
 from django.core.management import BaseCommand, CommandError
 from django.conf import settings
 
@@ -14,7 +13,6 @@ from gcutils.bigquery import Client as BQClient, DATASETS, build_schema
 from gcutils.storage import Client as StorageClient
 from frontend import bq_schemas as schemas
 from frontend.models import MeasureValue, MeasureGlobal, TariffPrice
-from dmd2.models import VMP, VMPP
 from openprescribing.slack import notify_slack
 from pipeline import runner
 
@@ -40,19 +38,17 @@ class Command(BaseCommand):
 
 
 def run_end_to_end():
-    print ("BQ_NONCE: {}".format(settings.BQ_NONCE))
+    print("BQ_NONCE: {}".format(settings.BQ_NONCE))
 
     call_command("migrate")
-
-    path = os.path.join(
-        settings.APPS_ROOT, "frontend", "management", "commands", "measure_definitions"
-    )
 
     # No MeasureGlobals or MeasureValues are generated for the ghost branded
     # generics measure, because both numerator and denominator are computed
     # from a view (vw__ghost_generic_measure) which has no data.  Rather than
     # populate this view, it is simpler to pretend it doesn't exist.
-    num_measures = len(os.listdir(path)) - 1
+    num_measures = (
+        len(glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json"))) - 1
+    )
 
     shutil.rmtree(settings.PIPELINE_DATA_BASEDIR, ignore_errors=True)
 
@@ -68,6 +64,8 @@ def run_end_to_end():
     client = BQClient("hscic")
     client.create_table("bnf", schemas.BNF_SCHEMA)
     client.create_table("ccgs", schemas.CCG_SCHEMA)
+    client.create_table("stps", schemas.STP_SCHEMA)
+    client.create_table("regional_teams", schemas.REGIONAL_TEAM_SCHEMA)
     client.create_table("ppu_savings", schemas.PPU_SAVING_SCHEMA)
     client.create_table("practice_statistics", schemas.PRACTICE_STATISTICS_SCHEMA)
     client.create_table(
@@ -91,26 +89,19 @@ def run_end_to_end():
         ("numerator", "INTEGER"),
         ("denominator", "INTEGER"),
     )
-    path = os.path.join(
-        settings.APPS_ROOT,
-        "frontend",
-        "management",
-        "commands",
-        "measure_definitions",
-        "*.json",
-    )
-    for path in glob.glob(path):
+
+    for path in glob.glob(os.path.join(settings.MEASURE_DEFINITIONS_PATH, "*.json")):
         measure_id = os.path.splitext(os.path.basename(path))[0]
         client.create_table("practice_data_" + measure_id, measures_schema)
         client.create_table("ccg_data_" + measure_id, measures_schema)
         client.create_table("global_data_" + measure_id, measures_schema)
 
     # Although there are no model instances, we call upload_model to create the
-    # tables in BQ that are required by certain measure views.
+    # dm+d tables in BQ that are required by certain measure views.
     client = BQClient("dmd")
     client.upload_model(TariffPrice)
-    client.upload_model(VMPP)
-    client.upload_model(VMP)
+    for model in apps.get_app_config("dmd").get_models():
+        client.upload_model(model)
 
     call_command("generate_presentation_replacements")
 

@@ -40,7 +40,7 @@ copy_all = [
     "spatial_ref_sys",
 ]
 
-for m in apps.get_app_config("dmd2").get_models():
+for m in apps.get_app_config("dmd").get_models():
     copy_all.append(m._meta.db_table)
 
 # tables with WHERE clauses

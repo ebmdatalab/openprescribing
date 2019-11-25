@@ -4,7 +4,7 @@ from rest_framework.exceptions import APIException
 from django.db.models import Q
 
 from frontend.models import Practice, PCT, STP, RegionalTeam, PCN
-import view_utils as utils
+from . import view_utils as utils
 from matrixstore.db import get_db, get_row_grouper
 
 

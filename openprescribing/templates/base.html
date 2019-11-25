@@ -8,6 +8,7 @@
     <meta charset="utf-8">
     <script>
       var SENTRY_PUBLIC_DSN = '{% sentry_public_dsn "https" %}';
+      var SOURCE_COMMIT_ID = '{{ SOURCE_COMMIT_ID }}';
       var MAPBOX_PUBLIC_TOKEN = 'pk.eyJ1IjoiZWJtZGF0YWxhYiIsImEiOiJjanlwbHltbGcxOTQ2M2xxZmZhN3l0dGt4In0.FKZx7jqZsPdDsJfCVxWQQg';
     </script>
     {% if GOOGLE_TRACKING_ID %}
@@ -93,7 +94,7 @@ h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Area and Practice Dashboards <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'all_practices' %}">Practices</a></li>
-                {% if pcns_enabled %}<li><a href="{% url 'all_pcns' %}">PCNs</a></li>{% endif %}
+                <li><a href="{% url 'all_pcns' %}">PCNs</a></li>
                 <li><a href="{% url 'all_ccgs' %}">CCGs</a></li>
                 <li><a href="{% url 'all_stps' %}">STPs</a></li>
                 <li><a href="{% url 'all_regional_teams' %}">Regional Teams</a></li>

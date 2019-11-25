@@ -1,0 +1,31 @@
+{
+  "name": "NHS England Low Priority Treatment - omega-3 fatty acid compounds",
+  "title": [
+    "Omega-3 fatty acid compounds cost per 1000 patients"
+  ],
+  "description": [
+    "Cost of omega-3 fatty acid compounds per 1000 patients"
+  ],
+  "why_it_matters": [
+    "Omega-3 fatty acid compounds are licensed to treat elevated triglycerides, but evidence of benefit is weak. ",
+    "<a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations'> NICE recommend that they are not prescribed for primary prevention of cardiovascular disease</a>. "
+  ],
+  "numerator_short": "Omega-3 cost (£)",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "cardiovascular",
+    "cost",
+    "efficacy",
+    "lowpriority"
+  ],
+  "numerator_type": "bnf_cost",
+  "numerator_where": [
+    "bnf_code LIKE '0212000AB%' OR --Omega-3-Acid Ethyl Esters \n",
+    "bnf_code LIKE '0212000V0%'    --Omega-3 Marine Triglycerides"
+  ],
+  "denominator_type": "list_size"
+}

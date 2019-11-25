@@ -1,8 +1,6 @@
-from __future__ import print_function
-
 from django.core.management import BaseCommand, CommandError
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import NCSOConcession
 
 
@@ -25,7 +23,7 @@ class Command(BaseCommand):
         concession.vmpp = vmpp
         concession.save()
 
-        print (
+        print(
             "Reconciled `{}` against `{}`".format(
                 concession.drug_and_pack_size, vmpp.nm
             )

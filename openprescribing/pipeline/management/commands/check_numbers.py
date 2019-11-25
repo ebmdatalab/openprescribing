@@ -26,6 +26,7 @@ from django.core.urlresolvers import get_resolver
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.options import Options
 
 from openprescribing.slack import notify_slack
@@ -169,7 +170,10 @@ def get_page_source(browser, path, name, log_path):
     """
 
     url = "https://openprescribing.net/" + path
-    browser.get(url)
+    try:
+        browser.get(url)
+    except TimeoutException:
+        raise RuntimeError("Timed out requesting " + path)
 
     # Wait until all AJAX requests are complete.
     t0 = time.time()
@@ -180,7 +184,7 @@ def get_page_source(browser, path, name, log_path):
     source = browser.page_source
 
     with open(os.path.join(log_path, name + ".html"), "w") as f:
-        f.write(source.encode("utf8"))
+        f.write(source)
 
     return source
 
@@ -199,7 +203,7 @@ def extract_numbers(source):
         tag.decompose()
 
     rx = re.compile(
-        u"""
+        """
         £[\d,\.]+           # Anything that looks like a cost
         |                   # ...or...
         &pound;[\d,\.]+     # anything that looks like a cost with an HTML entity

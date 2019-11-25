@@ -1,7 +1,7 @@
 from datetime import datetime
 import csv
 import json
-import StringIO
+import io
 import os
 import requests
 import unittest
@@ -35,7 +35,7 @@ class SmokeTestBase(unittest.TestCase):
         url = "{}/api/1.0/{}/".format(self.DOMAIN, path_fragment)
         params["format"] = "csv"
         r = requests.get(url, params=params)
-        f = StringIO.StringIO(r.text)
+        f = io.StringIO(r.text)
         all_rows = list(csv.DictReader(f))
         self.assertEqual(len(all_rows), PRESCRIBING_DATA_MONTHS)
 
@@ -43,7 +43,7 @@ class SmokeTestBase(unittest.TestCase):
             settings.PIPELINE_METADATA_DIR, "smoketests", test_name + ".json"
         )
 
-        with open(path, "rb") as f:
+        with open(path) as f:
             expected = json.load(f)
 
         for i, row in enumerate(all_rows):

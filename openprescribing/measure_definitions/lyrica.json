@@ -1,0 +1,38 @@
+{
+  "name": "Pregabalin prescribed as Lyrica",
+  "title": [
+    "Prescribing of branded Lyrica",
+    "compared with prescribing of all pregabalin"
+  ],
+  "description": [
+    "Total items of of Lyrica,",
+    "as a proportion of total items for pregabalin."
+  ],
+  "why_it_matters": [
+    "<a href='https://www.england.nhs.uk/wp-content/uploads/2015/03/pregabalin-guidance.pdf'>In 2015 NHS England were ",
+    "required to recommend to GPs that when used for pain</a> pregabalin should be prescribed as the branded product Lyrica, ",
+    "in order to be in line with the patent. <a href='https://psnc.org.uk/wp-content/uploads/2015/09/Pregabalin-guidance-2017.pdf'>",
+    "In July 2017 this guidance was rescinded</a> as the patent for pain had expired.  Costs of the generic ",
+    "product fell sharply in August 2017, and practices should now follow normal practice for prescribing, i.e. ",
+    "usually prescribe by the generic name."
+  ],
+  "numerator_short": "Lyrica items",
+  "denominator_short": "Pregabalin items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": true,
+  "low_is_good": true,
+  "tags": [
+    "core",
+    "cost",
+    "pain"
+  ],
+  "numerator_type": "bnf_items",
+  "numerator_where": [
+    "bnf_code LIKE '0408010AEBB%' --Lyrica"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_where": [
+    "bnf_code LIKE '0408010AE%' --Pregabablin (brands and generic)"
+  ]
+}

@@ -1,3 +1,2 @@
 [tool.black]
-target-version = ['py27']
 exclude = '/migrations/'

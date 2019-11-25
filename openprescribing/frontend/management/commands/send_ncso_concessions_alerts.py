@@ -2,7 +2,6 @@
 Send alerts about about NCSO concessions.
 """
 
-from __future__ import print_function
 
 import logging
 
@@ -34,7 +33,7 @@ def send_alerts(date):
         with EmailErrorDeferrer() as error_deferrer:
             error_deferrer.try_email(send_alert, bookmark, date)
 
-    print ("Sent {} alerts".format(bookmarks.count()))
+    print("Sent {} alerts".format(bookmarks.count()))
 
 
 def get_unsent_bookmarks(date):

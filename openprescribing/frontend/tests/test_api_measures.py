@@ -1,21 +1,21 @@
 import datetime
 import json
 
-from django.test import TestCase
+from .api_test_base import ApiTestBase
 
 from frontend.models import PCT
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
 
 @copy_fixtures_to_matrixstore
-class TestAPIMeasureViews(TestCase):
+class TestAPIMeasureViews(ApiTestBase):
     fixtures = ["one_month_of_measures"]
     api_prefix = "/api/1.0"
 
     def _get_json(self, url):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        return json.loads(response.content)
+        return json.loads(response.content.decode("utf8"))
 
     def test_api_measure_global(self):
         url = "/api/1.0/measure/?measure=cerazette&format=json"
@@ -63,13 +63,13 @@ class TestAPIMeasureViews(TestCase):
         url = "/api/1.0/measure/?format=json&tags=core"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode("utf8"))
         self.assertEqual(len(data["measures"]), 1)
 
         url = "/api/1.0/measure/?format=json&tags=core,XYZ"
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode("utf8"))
         self.assertEqual(len(data["measures"]), 1)
 
     def test_api_measure_by_all_ccgs(self):
@@ -90,11 +90,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -107,11 +107,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -124,11 +124,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -141,11 +141,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"cost": 1.0,
-                    u"presentation_name": u"Thing 2",
-                    u"quantity": 100.0,
-                    u"total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "cost": 1.0,
+                    "presentation_name": "Thing 2",
+                    "quantity": 100.0,
+                    "total_items": 1,
                 }
             ],
         )
@@ -158,11 +158,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -175,11 +175,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -199,11 +199,11 @@ class TestAPIMeasureViews(TestCase):
             data,
             [
                 {
-                    u"total_items": 1,
-                    u"bnf_code": u"0205010F0AAAAAA",
-                    u"presentation_name": u"Thing 2",
-                    u"cost": 1.0,
-                    u"quantity": 100.0,
+                    "total_items": 1,
+                    "bnf_code": "0205010F0AAAAAA",
+                    "presentation_name": "Thing 2",
+                    "cost": 1.0,
+                    "quantity": 100.0,
                 }
             ],
         )
@@ -222,8 +222,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d["cost_savings"]["10"], "63588.51")
         self.assertEqual("%.2f" % d["cost_savings"]["50"], "58658.82")
         self.assertEqual("%.2f" % d["cost_savings"]["90"], "11731.76")
-        self.assertEqual(d["pct_id"], "02Q")
-        self.assertEqual(d["pct_name"], "NHS BASSETLAW CCG")
+        self.assertEqual(d["org_id"], "02Q")
+        self.assertEqual(d["org_name"], "NHS BASSETLAW CCG")
 
     def test_api_two_ccgs_one_measure(self):
         url = "/api/1.0/measure_by_ccg/"
@@ -265,6 +265,19 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual(d["percentile"], 100)
         self.assertEqual("%.4f" % d["calc_value"], "0.5734")
 
+    def test_api_all_measures_by_ccg_csv(self):
+        url = "/measure_by_ccg/?org=02Q&format=csv"
+        rows = self._rows_from_api(url)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["measure"], "cerazette")
+        self.assertEqual(rows[0]["org_type"], "ccg")
+        self.assertEqual(rows[0]["org_id"], "02Q")
+        self.assertEqual(rows[0]["numerator"], "82000.0")
+        self.assertEqual(rows[0]["denominator"], "143000.0")
+        self.assertEqual(rows[0]["percentile"], "100.0")
+        print(rows[0])
+        self.assertEqual("%.4f" % float(rows[0]["calc_value"]), "0.5734")
+
     def test_api_measure_by_practice(self):
         url = "/api/1.0/measure_by_practice/"
         url += "?org=C84001&measure=cerazette&format=json"
@@ -279,8 +292,8 @@ class TestAPIMeasureViews(TestCase):
         self.assertEqual("%.2f" % d["cost_savings"]["10"], "485.58")
         self.assertEqual("%.2f" % d["cost_savings"]["50"], "-264.71")
         self.assertEqual("%.2f" % d["cost_savings"]["90"], "-7218.00")
-        self.assertEqual(d["practice_id"], "C84001")
-        self.assertEqual(d["practice_name"], "LARWOOD SURGERY")
+        self.assertEqual(d["org_id"], "C84001")
+        self.assertEqual(d["org_name"], "LARWOOD SURGERY")
 
         # Practice with only Cerazette prescribing.
         url = "/api/1.0/measure_by_practice/"

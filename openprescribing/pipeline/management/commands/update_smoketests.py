@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os
 import glob
 import json
@@ -25,9 +23,9 @@ class Command(BaseCommand):
         path = os.path.join(settings.PIPELINE_METADATA_DIR, "smoketests")
         for sql_file in glob.glob(os.path.join(path, "*.sql")):
             test_name = os.path.splitext(os.path.basename(sql_file))[0]
-            with open(sql_file, "rb") as f:
+            with open(sql_file) as f:
                 query = f.read().replace("{{ date_condition }}", date_condition)
-            print (query)
+            print(query)
             client = Client()
             results = client.query(query)
 
@@ -40,8 +38,8 @@ class Command(BaseCommand):
                 cost.append(row["actual_cost"])
                 items.append(row["items"])
 
-            print ("Updating test expectations for %s" % test_name)
+            print("Updating test expectations for %s" % test_name)
             json_path = os.path.join(path, "%s.json" % test_name)
-            with open(json_path, "wb") as f:
+            with open(json_path, "w") as f:
                 obj = {"cost": cost, "items": items, "quantity": quantity}
                 json.dump(obj, f, indent=2)

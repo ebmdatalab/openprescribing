@@ -10,7 +10,7 @@ import requests
 
 from django.core.management import BaseCommand
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import NCSOConcession
 from gcutils.bigquery import Client
 from openprescribing.slack import notify_slack
@@ -118,9 +118,9 @@ class Command(BaseCommand):
         for record in records[1:]:
             drug, pack_size, price_pence = [fix_spaces(item) for item in record]
             drug = drug.replace("(new)", "").strip()
-            match = re.search(u"£(\d+)\.(\d\d)", price_pence)
+            match = re.search("£(\d+)\.(\d\d)", price_pence)
             price_pence = 100 * int(match.groups()[0]) + int(match.groups()[1])
-            drug_and_pack_size = u"{} {}".format(drug, pack_size)
+            drug_and_pack_size = "{} {}".format(drug, pack_size)
             drugs_and_pack_sizes.add(drug_and_pack_size)
 
             _, created = NCSOConcession.objects.get_or_create(
@@ -175,7 +175,7 @@ class Command(BaseCommand):
 def fix_spaces(s):
     """Remove extra spaces and convert non-breaking spaces to normal ones."""
 
-    s = s.replace(u"\xa0", " ")
+    s = s.replace("\xa0", " ")
     s = s.strip()
     s = re.sub(" +", " ", s)
     return s

@@ -1,220 +1,819 @@
-"""These models correspond with a subset of the tables whose schema is
-implied by the raw D+MD XML.
-
-There are no migrations for these models; the tables and their
-contents are generated directly from raw XML files by the `import_dmd`
-management command.
-
-We use the `db_table` attribute to set table names to match the names
-in the original XML.  This allows easier cross-referencing with the
-Data Model and Implementation Guides published by the NHS BSA:
-
- * Data Model: docs/Data_Model_R2_v3.1_May_2015.pdf
- * Implementation: docs/dmd_Implemention_Guide_%28Primary_Care%29_v1.0.pdf
-
-Note that many other tables are imported but not necessarily modelled
-here. For some examples of the kinds of query that are possible, see:
-
-https://github.com/ebmdatalab/price-per-dose/blob/master/snomed-bnf-mapping.ipynb
-
-"""
-from __future__ import unicode_literals
-
 from django.db import models
+
+from . import managers
+
+
+class VTM(models.Model):
+    class Meta:
+        verbose_name = "Virtual Therapeutic Moiety"
+        verbose_name_plural = "Virtual Therapeutic Moieties"
+        ordering = ["nm"]
+
+    objects = managers.VTMManager()
+
+    obj_type = "vtm"
+    name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="vtmid", help_text="Identifier"
+    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    vtmidprev = models.BigIntegerField(null=True, help_text="Previous identifier")
+    vtmiddt = models.DateField(null=True, help_text="VTM identifier date")
+
+    def title(self):
+        return self.nm
+
+    def status(self):
+        if self.invalid:
+            return "invalid"
+        else:
+            return None
+
+
+class VMP(models.Model):
+    class Meta:
+        verbose_name = "Virtual Medicinal Product"
+        ordering = ["nm"]
+
+    objects = managers.VMPManager()
+
+    obj_type = "vmp"
+    name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="vpid", help_text="Identifier"
+    )
+    vpiddt = models.DateField(null=True, help_text="Date identifier became valid")
+    vpidprev = models.BigIntegerField(
+        null=True, help_text="Previous product identifier"
+    )
+    vtm = models.ForeignKey(
+        db_column="vtmid",
+        to="VTM",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="VTM",
+    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    basis = models.ForeignKey(
+        db_column="basiscd",
+        to="BasisOfName",
+        on_delete=models.CASCADE,
+        help_text="Basis of preferred name",
+    )
+    nmdt = models.DateField(null=True, help_text="Date of name applicability")
+    nmprev = models.CharField(max_length=255, null=True, help_text="Previous name")
+    basis_prev = models.ForeignKey(
+        db_column="basis_prevcd",
+        to="BasisOfName",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Basis of previous name",
+    )
+    nmchange = models.ForeignKey(
+        db_column="nmchangecd",
+        to="NamechangeReason",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Reason for name change",
+    )
+    combprod = models.ForeignKey(
+        db_column="combprodcd",
+        to="CombinationProdInd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Combination product",
+    )
+    pres_stat = models.ForeignKey(
+        db_column="pres_statcd",
+        to="VirtualProductPresStatus",
+        on_delete=models.CASCADE,
+        help_text="Prescribing status",
+    )
+    sug_f = models.BooleanField(help_text="Sugar free")
+    glu_f = models.BooleanField(help_text="Gluten free")
+    pres_f = models.BooleanField(help_text="Preservative free")
+    cfc_f = models.BooleanField(help_text="CFC free")
+    non_avail = models.ForeignKey(
+        db_column="non_availcd",
+        to="VirtualProductNonAvail",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Non-availability",
+    )
+    non_availdt = models.DateField(null=True, help_text="Non-availability status date")
+    df_ind = models.ForeignKey(
+        db_column="df_indcd",
+        to="DfIndicator",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Dose form",
+    )
+    udfs = models.DecimalField(
+        max_digits=10, decimal_places=3, null=True, help_text="Unit dose form size"
+    )
+    udfs_uom = models.ForeignKey(
+        db_column="udfs_uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Unit dose form units",
+    )
+    unit_dose_uom = models.ForeignKey(
+        db_column="unit_dose_uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Unit dose unit of measure",
+    )
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
+
+    def title(self):
+        return self.nm
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append("invalid")
+        if not self.bnf_code:
+            tokens.append("no BNF code")
+        if self.non_avail_id == 1:
+            tokens.append("not available")
+
+        return ", ".join(tokens) or None
+
+
+class VPI(models.Model):
+    class Meta:
+        verbose_name = "Virtual Product Ingredient"
+
+    vmp = models.ForeignKey(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    ing = models.ForeignKey(
+        db_column="isid", to="Ing", on_delete=models.CASCADE, help_text="Ingredient"
+    )
+    basis_strnt = models.ForeignKey(
+        db_column="basis_strntcd",
+        to="BasisOfStrnth",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Basis of pharmaceutical strength",
+    )
+    bs_subid = models.BigIntegerField(
+        null=True, help_text="Basis of strength substance identifier"
+    )
+    strnt_nmrtr_val = models.DecimalField(
+        max_digits=10, decimal_places=3, null=True, help_text="Strength value numerator"
+    )
+    strnt_nmrtr_uom = models.ForeignKey(
+        db_column="strnt_nmrtr_uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Strength value numerator unit",
+    )
+    strnt_dnmtr_val = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        null=True,
+        help_text="Strength value denominator",
+    )
+    strnt_dnmtr_uom = models.ForeignKey(
+        db_column="strnt_dnmtr_uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Strength value denominator unit",
+    )
+
+
+class Ont(models.Model):
+    class Meta:
+        verbose_name = "Ontology Drug Form & Route"
+
+    vmp = models.ForeignKey(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    form = models.ForeignKey(
+        db_column="formcd",
+        to="OntFormRoute",
+        on_delete=models.CASCADE,
+        help_text="Form & Route",
+    )
+
+
+class Dform(models.Model):
+    class Meta:
+        verbose_name = "Dose Form"
+
+    vmp = models.OneToOneField(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    form = models.ForeignKey(
+        db_column="formcd", to="Form", on_delete=models.CASCADE, help_text="Formulation"
+    )
+
+
+class Droute(models.Model):
+    class Meta:
+        verbose_name = "Drug Route"
+
+    vmp = models.ForeignKey(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    route = models.ForeignKey(
+        db_column="routecd", to="Route", on_delete=models.CASCADE, help_text="Route"
+    )
+
+
+class ControlInfo(models.Model):
+    class Meta:
+        verbose_name = "Controlled Drug Prescribing Information"
+
+    vmp = models.OneToOneField(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    cat = models.ForeignKey(
+        db_column="catcd",
+        to="ControlDrugCategory",
+        on_delete=models.CASCADE,
+        help_text="Controlled Drug category",
+    )
+    catdt = models.DateField(null=True, help_text="Date of applicability")
+    cat_prev = models.ForeignKey(
+        db_column="cat_prevcd",
+        to="ControlDrugCategory",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Previous Controlled Drug information",
+    )
+
+
+class AMP(models.Model):
+    class Meta:
+        verbose_name = "Actual Medicinal Product"
+        ordering = ["descr"]
+
+    objects = managers.AMPManager()
+
+    obj_type = "amp"
+    name_field = "descr"
+
+    def __str__(self):
+        return str(self.id)
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="apid", help_text="Identifier"
+    )
+    invalid = models.BooleanField(help_text="Invalid")
+    vmp = models.ForeignKey(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    nm = models.CharField(max_length=255, help_text="Name")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    descr = models.CharField(max_length=700, help_text="Description")
+    nmdt = models.DateField(null=True, help_text="Date of name applicability")
+    nm_prev = models.CharField(max_length=255, null=True, help_text="Previous name")
+    supp = models.ForeignKey(
+        db_column="suppcd",
+        to="Supplier",
+        on_delete=models.CASCADE,
+        help_text="Supplier",
+    )
+    lic_auth = models.ForeignKey(
+        db_column="lic_authcd",
+        to="LicensingAuthority",
+        on_delete=models.CASCADE,
+        help_text="Current licensing authority",
+    )
+    lic_auth_prev = models.ForeignKey(
+        db_column="lic_auth_prevcd",
+        to="LicensingAuthority",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Previous licensing authority",
+    )
+    lic_authchange = models.ForeignKey(
+        db_column="lic_authchangecd",
+        to="LicensingAuthorityChangeReason",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Reason for change of licensing authority",
+    )
+    lic_authchangedt = models.DateField(
+        null=True, help_text="Date of change of licensing authority"
+    )
+    combprod = models.ForeignKey(
+        db_column="combprodcd",
+        to="CombinationProdInd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Combination product",
+    )
+    flavour = models.ForeignKey(
+        db_column="flavourcd",
+        to="Flavour",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Flavour",
+    )
+    ema = models.BooleanField(help_text="EMA additional monitoring")
+    parallel_import = models.BooleanField(help_text="Parallel import")
+    avail_restrict = models.ForeignKey(
+        db_column="avail_restrictcd",
+        to="AvailabilityRestriction",
+        on_delete=models.CASCADE,
+        help_text="Restrictions on availability",
+    )
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
+
+    def title(self):
+        return self.descr
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append("invalid")
+        if not self.bnf_code:
+            tokens.append("no BNF code")
+        if self.avail_restrict_id == 9:
+            tokens.append("not available")
+
+        return ", ".join(tokens) or None
+
+
+class ApIng(models.Model):
+    class Meta:
+        verbose_name = "Excipients"
+
+    amp = models.ForeignKey(
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
+    )
+    ing = models.ForeignKey(
+        db_column="isid", to="Ing", on_delete=models.CASCADE, help_text="Ingredient"
+    )
+    strnth = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        null=True,
+        help_text="Pharmaceutical strength numerical value",
+    )
+    uom = models.ForeignKey(
+        db_column="uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Pharmaceutical Strength Unit of Measure",
+    )
+
+
+class LicRoute(models.Model):
+    class Meta:
+        verbose_name = "Licensed Route"
+
+    amp = models.ForeignKey(
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
+    )
+    route = models.ForeignKey(
+        db_column="routecd",
+        to="Route",
+        on_delete=models.CASCADE,
+        help_text="Licenced route",
+    )
+
+
+class ApInfo(models.Model):
+    class Meta:
+        verbose_name = "Appliance Product Information"
+
+    amp = models.OneToOneField(
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
+    )
+    sz_weight = models.CharField(max_length=100, null=True, help_text="Size / weight")
+    colour = models.ForeignKey(
+        db_column="colourcd",
+        to="Colour",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Colour",
+    )
+    prod_order_no = models.CharField(
+        max_length=20, null=True, help_text="Product order number"
+    )
+
+
+class VMPP(models.Model):
+    class Meta:
+        verbose_name = "Virtual Medicinal Product Pack"
+        ordering = ["nm"]
+
+    objects = managers.VMPPManager()
+
+    obj_type = "vmpp"
+    name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="vppid", help_text="Identifier"
+    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=420, help_text="Description")
+    vmp = models.ForeignKey(
+        db_column="vpid", to="VMP", on_delete=models.CASCADE, help_text="VMP"
+    )
+    qtyval = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, help_text="Quantity value"
+    )
+    qty_uom = models.ForeignKey(
+        db_column="qty_uomcd",
+        to="UnitOfMeasure",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Quantity unit of measure",
+    )
+    combpack = models.ForeignKey(
+        db_column="combpackcd",
+        to="CombinationPackInd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Combination pack",
+    )
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
+
+    def title(self):
+        return self.nm
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append("invalid")
+        if not self.bnf_code:
+            tokens.append("no BNF code")
+
+        return ", ".join(tokens) or None
+
+
+class Dtinfo(models.Model):
+    class Meta:
+        verbose_name = "Drug Tariff Category Information"
+
+    vmpp = models.OneToOneField(
+        db_column="vppid", to="VMPP", on_delete=models.CASCADE, help_text="VMPP"
+    )
+    pay_cat = models.ForeignKey(
+        db_column="pay_catcd",
+        to="DtPaymentCategory",
+        on_delete=models.CASCADE,
+        help_text="Drug Tariff payment category",
+    )
+    price = models.IntegerField(null=True, help_text="Drug Tariff price")
+    dt = models.DateField(null=True, help_text="Date from which applicable")
+    prevprice = models.IntegerField(null=True, help_text="Previous price")
+
+
+class AMPP(models.Model):
+    class Meta:
+        verbose_name = "Actual Medicinal Product Pack"
+        ordering = ["nm"]
+
+    objects = managers.AMPPManager()
+
+    obj_type = "ampp"
+    name_field = "nm"
+
+    def __str__(self):
+        return str(self.id)
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="appid", help_text="Identifier"
+    )
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=774, help_text="Description")
+    abbrevnm = models.CharField(max_length=60, null=True, help_text="Abbreviated name")
+    vmpp = models.ForeignKey(
+        db_column="vppid", to="VMPP", on_delete=models.CASCADE, help_text="VMPP"
+    )
+    amp = models.ForeignKey(
+        db_column="apid", to="AMP", on_delete=models.CASCADE, help_text="AMP"
+    )
+    combpack = models.ForeignKey(
+        db_column="combpackcd",
+        to="CombinationPackInd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Combination pack",
+    )
+    legal_cat = models.ForeignKey(
+        db_column="legal_catcd",
+        to="LegalCategory",
+        on_delete=models.CASCADE,
+        help_text="Legal category",
+    )
+    subp = models.CharField(max_length=30, null=True, help_text="Sub pack info")
+    disc = models.ForeignKey(
+        db_column="disccd",
+        to="DiscontinuedInd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Discontinued",
+    )
+    discdt = models.DateField(null=True, help_text="Discontinued change date")
+    bnf_code = models.CharField(help_text="BNF code", max_length=15, null=True)
+
+    def title(self):
+        return self.nm
+
+    def status(self):
+        tokens = []
+
+        if self.invalid:
+            tokens.append("invalid")
+        if not self.bnf_code:
+            tokens.append("no BNF code")
+        if self.disc_id == 1:
+            tokens.append("not available")
+
+        return ", ".join(tokens) or None
+
+
+class PackInfo(models.Model):
+    class Meta:
+        verbose_name = "Appliance Pack Information"
+
+    ampp = models.OneToOneField(
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
+    )
+    reimb_stat = models.ForeignKey(
+        db_column="reimb_statcd",
+        to="ReimbursementStatus",
+        on_delete=models.CASCADE,
+        help_text="Appliance reimbursement status",
+    )
+    reimb_statdt = models.DateField(
+        null=True, help_text="Date appliance reimbursement status became effective"
+    )
+    reimb_statprev = models.ForeignKey(
+        db_column="reimb_statprevcd",
+        to="ReimbursementStatus",
+        on_delete=models.CASCADE,
+        related_name="+",
+        null=True,
+        help_text="Appliance reimbursement previous status",
+    )
+    pack_order_no = models.CharField(
+        max_length=20, null=True, help_text="Pack order number"
+    )
+
+
+class PrescribInfo(models.Model):
+    class Meta:
+        verbose_name = "Product Prescribing Information"
+
+    ampp = models.OneToOneField(
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
+    )
+    sched_2 = models.BooleanField(help_text="Schedule 2")
+    acbs = models.BooleanField(help_text="ACBS")
+    padm = models.BooleanField(help_text="Personally administered")
+    fp10_mda = models.BooleanField(help_text="FP10 MDA Prescription")
+    sched_1 = models.BooleanField(help_text="Schedule 1")
+    hosp = models.BooleanField(help_text="Hospital")
+    nurse_f = models.BooleanField(help_text="Nurse formulary")
+    enurse_f = models.BooleanField(help_text="Nurse extended formulary")
+    dent_f = models.BooleanField(help_text="Dental formulary")
+
+
+class PriceInfo(models.Model):
+    class Meta:
+        verbose_name = "Medicinal Product Price"
+
+    ampp = models.OneToOneField(
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
+    )
+    price = models.IntegerField(null=True, help_text="Price")
+    pricedt = models.DateField(null=True, help_text="Date of price validity")
+    price_prev = models.IntegerField(null=True, help_text="Price prior to change date")
+    price_basis = models.ForeignKey(
+        db_column="price_basiscd",
+        to="PriceBasis",
+        on_delete=models.CASCADE,
+        help_text="Price basis",
+    )
+
+
+class ReimbInfo(models.Model):
+    class Meta:
+        verbose_name = "Reimbursement Information"
+
+    ampp = models.OneToOneField(
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
+    )
+    px_chrgs = models.IntegerField(null=True, help_text="Prescription charges")
+    disp_fees = models.IntegerField(null=True, help_text="Dispensing fees")
+    bb = models.BooleanField(help_text="Broken bulk")
+    cal_pack = models.BooleanField(help_text="Calendar pack")
+    spec_cont = models.ForeignKey(
+        db_column="spec_contcd",
+        to="SpecCont",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Special container",
+    )
+    dnd = models.ForeignKey(
+        db_column="dndcd",
+        to="Dnd",
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Discount not deducted",
+    )
+    fp34d = models.BooleanField(help_text="FP34D prescription item")
+
+
+class Ing(models.Model):
+    class Meta:
+        verbose_name = "Ingredients"
+
+    id = models.BigIntegerField(
+        primary_key=True, db_column="isid", help_text="Identifier"
+    )
+    isiddt = models.DateField(null=True, help_text="Date identifier became valid")
+    isidprev = models.BigIntegerField(null=True, help_text="Previous identifier")
+    invalid = models.BooleanField(help_text="Invalid")
+    nm = models.CharField(max_length=255, help_text="Name")
+
+
+class CombinationPackInd(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class CombinationProdInd(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class BasisOfName(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
+
+
+class NamechangeReason(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
+
+
+class VirtualProductPresStatus(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class ControlDrugCategory(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class LicensingAuthority(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class UnitOfMeasure(models.Model):
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=150, help_text="Description")
+
+
+class Form(models.Model):
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class OntFormRoute(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class Route(models.Model):
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class DtPaymentCategory(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class Supplier(models.Model):
+    cd = models.BigIntegerField(primary_key=True, help_text="Code")
+    cddt = models.DateField(null=True, help_text="Date code is applicable from")
+    cdprev = models.BigIntegerField(null=True, help_text="Previous code")
+    invalid = models.BooleanField(help_text="Invalid")
+    descr = models.CharField(max_length=80, help_text="Description")
+
+
+class Flavour(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class Colour(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class BasisOfStrnth(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=150, help_text="Description")
+
+
+class ReimbursementStatus(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class SpecCont(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class Dnd(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class VirtualProductNonAvail(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class DiscontinuedInd(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class DfIndicator(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=20, help_text="Description")
+
+
+class PriceBasis(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class LegalCategory(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
 
 class AvailabilityRestriction(models.Model):
-    cd = models.IntegerField(primary_key=True)
-    desc = models.TextField()
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
 
-    def __str__(self):
-        return self.desc
 
+class LicensingAuthorityChangeReason(models.Model):
+    cd = models.IntegerField(primary_key=True, help_text="Code")
+    descr = models.CharField(max_length=60, help_text="Description")
+
+
+class GTIN(models.Model):
     class Meta:
-        db_table = "dmd_lookup_availability_restriction"
+        verbose_name = "Global Trade Item Number"
 
-
-class Prescribability(models.Model):
-    cd = models.IntegerField(primary_key=True)
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.desc
-
-    class Meta:
-        db_table = "dmd_lookup_virtual_product_pres_status"
-
-
-class VMPNonAvailability(models.Model):
-    cd = models.IntegerField(primary_key=True)
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.desc
-
-    class Meta:
-        db_table = "dmd_lookup_virtual_product_non_avail"
-
-
-class ControlledDrugCategory(models.Model):
-    cd = models.IntegerField(primary_key=True)
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.desc
-
-    class Meta:
-        db_table = "dmd_lookup_control_drug_category"
-
-
-class TariffCategory(models.Model):
-    cd = models.IntegerField(primary_key=True)
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.desc
-
-    class Meta:
-        db_table = "dmd_lookup_dt_payment_category"
-
-
-class DMDProduct(models.Model):
-    """A model that combines AMPs and VPMs to make mapping to legacy BNF
-    codes easier, and to cache lookups on commonly-useful relations.
-
-    """
-
-    dmdid = models.BigIntegerField(primary_key=True)
-    bnf_code = models.CharField(max_length=15, null=True, db_index=True)
-    vpid = models.BigIntegerField(db_index=True)
-    name = models.CharField(max_length=400)
-    full_name = models.TextField(null=True)
-    # requiring additional monitoring in accordance with the European
-    # Medicines Agency Additional Monitoring Scheme
-    ema = models.CharField(max_length=15, null=True)
-    prescribability = models.ForeignKey(
-        Prescribability, db_column="pres_statcd", null=True
+    ampp = models.OneToOneField(
+        db_column="appid", to="AMPP", on_delete=models.CASCADE, help_text="AMPP"
     )
-    availability_restrictions = models.ForeignKey(
-        AvailabilityRestriction, db_column="avail_restrictcd", null=True
-    )
-    vmp_non_availability = models.ForeignKey(
-        VMPNonAvailability, db_column="non_availcd", null=True
-    )
-    # 1 = VMP, 2 = AMP
-    concept_class = models.IntegerField(db_index=True, null=True)
-    # 1 = Generic, 2 = brand, 3 = Mannufactured Generic
-    product_type = models.IntegerField(null=True)
-    # in the nurse prescribers' formulary?
-    is_in_nurse_formulary = models.NullBooleanField(db_column="nurse_f")
-    is_in_dentist_formulary = models.NullBooleanField(db_column="dent_f")
-    # Product order number - Order number of product within Drug Tariff
-    product_order_no = models.TextField(db_column="prod_order_no", null=True)
-    # indicates AMPs listed in part XVIIIA of the Drug Tariff
-    is_blacklisted = models.NullBooleanField(db_column="sched_1")
-    # Indicates items that are part of the Selected List Scheme
-    is_schedule_2 = models.NullBooleanField(db_column="sched_2")
-    # This flag indicates where a prescriber will receive a fee for
-    # administering an item. This is only applicable to NHS primary
-    # medical services contractors.
-    can_have_personal_administration_fee = models.NullBooleanField(db_column="padm")
-    # Indicates items that can be prescribed in instalments on a FP10
-    # MDA form.
-    is_fp10 = models.NullBooleanField(db_column="fp10_mda")
-    # Borderline substances: foodstuffs and toiletries which can be
-    # prescribed
-    is_borderline_substance = models.NullBooleanField(db_column="acbs")
-    has_assorted_flavours = models.NullBooleanField(db_column="assort_flav")
-    controlled_drug_category = models.ForeignKey(
-        ControlledDrugCategory, db_column="catcd", null=True
-    )
-    tariff_category = models.ForeignKey(
-        TariffCategory, db_column="tariff_category", null=True
-    )
-    is_imported = models.NullBooleanField(db_column="flag_imported")
-    is_broken_bulk = models.NullBooleanField(db_column="flag_broken_bulk")
-    is_non_bioequivalent = models.NullBooleanField(db_column="flag_non_bioequivalence")
-    is_special_container = models.NullBooleanField(db_column="flag_special_containers")
-
-    class Meta:
-        db_table = "dmd_product"
-
-    def __str__(self):
-        return self.full_name
-
-    @property
-    def amps(self):
-        return DMDProduct.objects.filter(vpid=self.dmdid).filter(concept_class=2)
-
-    @property
-    def vmp(self):
-        if self.concept_class == 1:
-            raise DMDProduct.DoesNotExist("You can't find a VMP of a VMP")
-        vmp = DMDProduct.objects.filter(dmdid=self.vpid, concept_class=1).exclude(
-            vpid=self.dmdid
-        )
-        assert len(vmp) < 2, "An AMP should only ever have one VMP"
-        return vmp[0]
-
-
-class DMDVmpp(models.Model):
-    vppid = models.BigIntegerField(primary_key=True)
-    invalid = models.BigIntegerField(blank=True, null=True)
-    nm = models.TextField(blank=True, null=True)
-    abbrevnm = models.TextField(blank=True, null=True)
-    vpid = models.BigIntegerField(blank=True, null=True)
-    qtyval = models.FloatField(blank=True, null=True)
-    qty_uomcd = models.BigIntegerField(blank=True, null=True)
-    combpackcd = models.BigIntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = "dmd_vmpp"
-
-    def __str__(self):
-        return self.nm
-
-
-class NCSOConcession(models.Model):
-    vmpp = models.ForeignKey(DMDVmpp, null=True)
-    date = models.DateField(db_index=True)
-    drug = models.CharField(max_length=400)
-    pack_size = models.CharField(max_length=40)
-    price_concession_pence = models.IntegerField()
-
-    class Meta:
-        unique_together = ("date", "vmpp")
-
-    class Manager(models.Manager):
-        def unreconciled(self):
-            return self.filter(vmpp__isnull=True)
-
-    objects = Manager()
-
-    @property
-    def drug_and_pack_size(self):
-        return "{} {}".format(self.drug, self.pack_size)
-
-
-class TariffPrice(models.Model):
-    """Price
-    """
-
-    date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey(DMDVmpp)
-    product = models.ForeignKey(DMDProduct)
-    # 1: Category A
-    # 3: Category C
-    # 11: Category M
-    tariff_category = models.ForeignKey(TariffCategory)
-    price_pence = models.IntegerField()
-
-    @property
-    def concession(self):
-        try:
-            concession = NCSOConcession.objects.get(date=self.date, vmpp=self.vmpp)
-        except NCSOConcession.DoesNotExist:
-            concession = None
-        return concession
-
-    class Meta:
-        unique_together = ("date", "vmpp")
+    gtin = models.BigIntegerField(help_text="GTIN")
+    startdt = models.DateField(help_text="GTIN date")
+    enddt = models.DateField(null=True, help_text="The date the GTIN became invalid")

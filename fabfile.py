@@ -1,4 +1,3 @@
-from __future__ import print_function
 from fabric.api import run, sudo
 from fabric.api import prefix, warn, abort
 from fabric.api import settings, task, env, shell_env
@@ -109,7 +108,7 @@ def npm_build_js():
 
 
 def npm_build_css(force=False):
-    if force or filter(
+    if force or any(
         lambda x: x.startswith("openprescribing/media/css"),
         [x for x in env.changed_files],
     ):
@@ -199,13 +198,13 @@ def build_measures(environment=None, measures=None):
                 "python manage.py import_measures --check "
                 "--measure {}".format(measures)
             )
-            print ("Checks of measures passed")
+            print("Checks of measures passed")
             run(
                 "cd openprescribing/ && "
                 "python manage.py import_measures "
                 "--measure {}".format(measures)
             )
-            print ("Rebuild of measures completed")
+            print("Rebuild of measures completed")
 
 
 def build_changed_measures():
@@ -238,7 +237,7 @@ def build_changed_measures():
             measures.append(os.path.splitext(os.path.basename(f))[0])
     if measures:
         measures = ",".join(measures)
-        print ("Rebuilding measures {}".format(measures))
+        print("Rebuilding measures {}".format(measures))
         build_measures(environment=env.environment, measures=measures)
 
 
@@ -255,7 +254,7 @@ def find_changed_static_files():
         "find %s/openprescribing/static -type f -newermt '%s'"
         % (env.path, env.started_at.strftime("%Y-%m-%d %H:%M:%S"))
     ).split()
-    return map(lambda x: x.replace(env.path + "/", ""), [x for x in changed])
+    return [x.replace(env.path + "/", "") for x in changed]
 
 
 def setup_cron():
@@ -274,7 +273,8 @@ def setup_env_from_environment(environment):
 
 @task
 def clear_cloudflare():
-    setup_env_from_environment("production")
+    if env.environment != "production":
+        return
 
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
@@ -296,7 +296,7 @@ def deploy(environment, force_build=False, branch="master"):
         npm_build_css(force_build)
         deploy_static()
         run_migrations()
-        build_changed_measures()
+        # build_changed_measures()
         graceful_reload()
         clear_cloudflare()
         setup_cron()

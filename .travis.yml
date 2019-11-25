@@ -12,12 +12,12 @@ matrix:
       env: TEST_SUITE=functional BROWSER="internet explorer:11.0:Windows 7"
     - name: "Ansible buildout test"
       script:
-        - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/jessie /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
+        - docker run -v ${TRAVIS_BUILD_DIR}:/openprescribing/ dockette/stretch /bin/bash -c "cd /openprescribing/ansible && bash test_playbook.sh"
       env: LANG=en_US.UTF-8
     - name: "Linting"
       script:
-        - pip3 install black==19.3b0
-        - pip2 install --user flake8==3.7.8
+        - pip install black==19.3b0
+        - pip install flake8==3.7.8
         - scripts/lint.sh
 cache:
   directories:
@@ -25,6 +25,11 @@ cache:
 services:
   docker
 language: python
+python:
+  # The application runs against 3.5, which is set in the Dockerfile that is used to
+  # create the docker image that runs the tests.  This Python version is used for
+  # running the Travis jobs.  3.6 is required to run black in lint.sh.
+  - "3.6"
 before_install:
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -32,9 +37,9 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - openssl aes-256-cbc -K $encrypted_c3e391f06205_key -iv $encrypted_c3e391f06205_iv -in google-credentials-ebmdatalabtest-1ad80daf5cc1.json.enc -out google-credentials.json -d
 install:
-  - docker pull dockette/jessie
+  - docker pull dockette/stretch
   - docker pull ebmdatalab/openprescribing-base:latest
-  - docker pull mdillon/postgis:latest
+  - docker pull mdillon/postgis:11
 before_script:
   - export SAUCE_HOST=$(ip -4 addr show scope global dev docker0 | grep inet | awk '{print $2}' | cut -d / -f 1)
 notifications:

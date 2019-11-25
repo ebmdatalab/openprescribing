@@ -11,12 +11,12 @@
 
 backports.csv
 beautifulsoup4
-django-allauth==0.39.1
-django-anymail[mailgun]==6.1.0
+django-allauth==0.40.0
+django-anymail[mailgun]==7.0.0
 django-cors-headers==3.0.2
-django-crispy-forms==1.7.2
+django-crispy-forms==1.8.0
 django-dotenv
-django>=1.11.23,<2.0
+django>=1.11.24,<2.0
 djangorestframework-csv==2.1.0
 djangorestframework>=3.3.2
 google-api-python-client
@@ -29,23 +29,22 @@ lz4
 mailchimp3>=2.0.18
 networkx==2.2
 newrelic
-numpy==1.16.4
+numpy==1.16.5
 openpyxl==2.6.3
 pandas-gbq
 pandas==0.24.2
-premailer==3.6.0
-psycopg2-binary==2.8.3
-pyarrow==0.14.1
-python-dateutil==2.8.0
-pytz==2019.2
+premailer==3.6.1
+psycopg2-binary==2.8.4
+pyarrow==0.15.1
+python-dateutil==2.8.1
+pytz==2019.3
 raven
 requests-futures==1.0.0
 requests[security]==2.22.0
 scipy==1.2.1
 titlecase==0.12.0
-tqdm==4.34.0
+tqdm==4.38.0
 xlrd==1.2.0
-zstandard==0.11.1
 
 # redis
 django-redis
@@ -62,7 +61,7 @@ mock
 django-debug-toolbar
 django-debug-toolbar-template-timings
 django-extensions
-fabric==1.14.1
+fabric3
 flake8
 graphviz
 pip-tools

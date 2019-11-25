@@ -16,7 +16,7 @@ def mailchimp_subscribe(request, email, first_name, last_name, organisation, job
     Returns boolean indicating success
     """
     del request.session["newsletter_email"]
-    email_hash = hashlib.md5(email).hexdigest()
+    email_hash = hashlib.md5(email.encode("utf8")).hexdigest()
     data = {
         "email_address": email,
         "status": "subscribed",

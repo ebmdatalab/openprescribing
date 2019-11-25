@@ -15,6 +15,8 @@ from frontend.models import Measure
 from frontend.management.commands.send_monthly_alerts import Command
 from frontend.views.bookmark_utils import BadAlertImageError
 from frontend.tests.test_bookmark_utils import _makeContext
+from frontend.tests.data_factory import DataFactory
+from frontend.tests.test_api_spending import ApiTestBase
 
 
 CMD_NAME = "send_monthly_alerts"
@@ -214,7 +216,7 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(html, '<a href=".*&utm_content=.*#cerazette".*>')
+        self.assertRegex(html, '<a href=".*&utm_content=.*#cerazette".*>')
 
     def test_email_body_declines(self, attach_image, finder):
         attach_image.return_value = "unique-image-id"
@@ -226,7 +228,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("this practice slipped", html)
-        self.assertRegexpMatches(
+        self.assertRegex(
             html,
             "slipped massively on "
             '<a href=".*/practice/P87629/.*#cerazette".*>'
@@ -250,7 +252,7 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(html, "It also slipped considerably")
+        self.assertRegex(html, "It also slipped considerably")
 
     def test_email_body_three_declines(self, attach_image, finder):
         measure = Measure.objects.get(pk="cerazette")
@@ -266,8 +268,8 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(html, "It also slipped:")
-        self.assertRegexpMatches(
+        self.assertRegex(html, "It also slipped:")
+        self.assertRegex(
             html,
             re.compile(
                 "<ul.*<li>considerably on.*" "<li>moderately on.*</ul>", re.DOTALL
@@ -281,7 +283,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("We've found", html)
-        self.assertRegexpMatches(
+        self.assertRegex(
             html,
             re.compile(
                 'the worst 10% on.*<a href=".*/practice/P87629'
@@ -299,8 +301,8 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertRegexpMatches(html, "It was also in the worst 10% on:")
-        self.assertRegexpMatches(
+        self.assertRegex(html, "It was also in the worst 10% on:")
+        self.assertRegex(
             html,
             re.compile(
                 "<ul.*<li>.*Desogestrel.*" "<li>.*Desogestrel.*</ul>", re.DOTALL
@@ -314,15 +316,12 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn(
-            "These add up to around <b>£10</b> of " "potential savings".decode("utf-8"),
-            html,
-        )
-        self.assertRegexpMatches(
+        self.assertIn("These add up to around <b>£10</b> of " "potential savings", html)
+        self.assertRegex(
             html,
             '<li.*>\n<b>£10</b> on <a href=".*/practice/P87629'
             '/.*#cerazette".*>'
-            "Cerazette vs. Desogestrel</a>".decode("utf-8"),
+            "Cerazette vs. Desogestrel</a>",
         )
 
     def test_email_body_one_saving(self, attach_image, finder):
@@ -333,11 +332,11 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
         self.assertIn("if it had prescribed in line with the average practice", html)
-        self.assertRegexpMatches(
+        self.assertRegex(
             html,
             "it could have saved about <b>£10</b> on "
             '<a href=".*/practice/P87629/.*#cerazette".*>'
-            "Cerazette vs. Desogestrel</a>".decode("utf-8"),
+            "Cerazette vs. Desogestrel</a>",
         )
 
     def test_email_body_achieved_saving(self, attach_image, finder):
@@ -347,7 +346,7 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn("this practice saved around <b>£10".decode("utf-8"), html)
+        self.assertIn("this practice saved around <b>£10", html)
 
     def test_email_body_two_achieved_savings(self, attach_image, finder):
         measure = Measure.objects.get(pk="cerazette")
@@ -356,8 +355,8 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn("<li>\n<b>£10</b> on".decode("utf-8"), html)
-        self.assertIn("<li>\n<b>£10</b> on".decode("utf-8"), html)
+        self.assertIn("<li>\n<b>£10</b> on", html)
+        self.assertIn("<li>\n<b>£10</b> on", html)
 
     def test_email_body_total_savings(self, attach_image, finder):
         call_mocked_command_with_defaults(
@@ -365,7 +364,7 @@ class OrgEmailTestCase(TestCase):
         )
         message = mail.outbox[-1].alternatives[0]
         html = message[0]
-        self.assertIn("it could save around <b>£9,000</b>".decode("utf-8"), html)
+        self.assertIn("it could save around <b>£9,000</b>", html)
 
 
 @patch("frontend.views.bookmark_utils.attach_image")
@@ -433,12 +432,10 @@ class SearchEmailTestCase(TestCase):
         html = message[0]
         mime_type = message[1]
         self.assertIn(opts["search_name"], html)
-        self.assertEquals(mime_type, "text/html")
+        self.assertEqual(mime_type, "text/html")
 
         self.assertIn("/bookmarks/dummykey", html)
-        self.assertRegexpMatches(
-            html, '<a href="http://localhost/analyse/.*#%s' % "something"
-        )
+        self.assertRegex(html, '<a href="http://localhost/analyse/.*#%s' % "something")
 
     def test_email_body_text(self, attach_image):
         opts = {
@@ -450,7 +447,22 @@ class SearchEmailTestCase(TestCase):
         text = mail.outbox[-1].body
         self.assertIn("**Hello!**", text)
         self.assertIn("/bookmarks/dummykey", text)
-        self.assertRegexpMatches(text, "http://localhost/analyse/.*#%s" % "something")
+        self.assertRegex(text, "http://localhost/analyse/.*#%s" % "something")
+
+
+class AllEnglandAlertTestCase(ApiTestBase):
+
+    fixtures = ApiTestBase.fixtures + ["ppusavings", "functional-measures"]
+
+    def test_all_england_alerts_sent(self):
+        factory = DataFactory()
+
+        # Create an All England bookmark, send alerts, and make sure one email
+        # is sent to correct user
+        bookmark = factory.create_org_bookmark(None)
+        call_command(CMD_NAME)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [bookmark.user.email])
 
 
 def call_mocked_command(context, mock_finder, **opts):

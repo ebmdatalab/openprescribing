@@ -1,0 +1,79 @@
+{
+  "name": "Low and medium intensity statins",
+  "title": [
+    "Prescribing of low and medium intensity statins ",
+    "as a percentage of prescribing of all statins"
+  ],
+  "description": [
+    "Items of low and medium intensity statins ",
+    "as a percentage of items of all statins."
+  ],
+  "why_it_matters": [
+    "2014 NICE guidance on <a href='https://www.nice.org.uk/guidance/cg181/chapter/1-Recommendations#lipid-modification-therapy-for-the-primary-and-secondary-prevention-of-cvd-2'>primary and secondary lipid modification</a>",
+    "recommends the use of a high-intensity statin (i.e. one that reduces LDL cholesterol by 40% or more) with a low acquisition cost. ",
+    "A table showing the percentage reduction of LDL cholesterol by statin doses can be found ",
+    "<a href='https://www.nice.org.uk/guidance/cg181/chapter/appendix-a-grouping-of-statins'>here</a>.  Please note, we have excluded ",
+    "liquid preparations from this measure."
+  ],
+  "numerator_short": "Low and medium intensity statin items",
+  "denominator_short": "All statins items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "cardiovascular",
+    "core",
+    "efficacy"
+  ],
+  "numerator_type": "bnf_items",
+  "numerator_where": [
+    "SUBSTR(bnf_code,1,9) IN (",
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n",
+    "AND (bnf_name LIKE '%_Tab %' or bnf_name LIKE '%Cap %') --only tabs and caps \n",
+    "AND (concat(SUBSTR(bnf_code,1,9),SUBSTR(bnf_code,-2,2)) NOT IN (\n",
+    "'0212000AAAA',  --Rosuvastatin Calc_Tab 10mg (brand, generic) \n",
+    "'0212000AAAB',  --Rosuvastatin Calc_Tab 20mg (brand, generic) \n",
+    "'0212000AAAC',  --Rosuvastatin Calc_Tab 40mg (brand, generic) \n",
+    "'0212000B0AB',  --Atorvastatin_Tab 20mg (brand, generic) \n",
+    "'0212000B0AC',  --Atorvastatin_Tab 40mg (brand, generic) \n",
+    "'0212000B0AD',  --Atorvastatin_Tab 80mg (brand, generic) \n",
+    "'0212000B0AN',  --Atorvastatin_Tab 30mg (brand, generic) \n",
+    "'0212000B0AP',  --Atorvastatin_Tab 60mg (brand, generic) \n",
+    "'0212000Y0AH',  --Simvastatin_Tab 80mg (brand, generic) \n",
+    "'0212000ACAC')) --Simvastatin/Ezetimibe_Tab 80mg/10mg (brand, generic) \n"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_where": [
+    "SUBSTR(bnf_code,1,9) IN (",
+    "'0212000AA', --Rosuvastatin Calcium \n",
+    "'0212000AC', --Simvastatin & Ezetimibe \n",
+    "'0212000B0', --Atorvastatin \n",
+    "'0212000C0', --Cerivastatin \n",
+    "'0212000M0', --Fluvastatin Sodium \n",
+    "'0212000X0', --Pravastatin Sodium \n",
+    "'0212000Y0') --Simvastatin \n",
+    "AND (bnf_name LIKE '%_Tab %' or bnf_name LIKE '%Cap %') --only tabs and caps \n"
+  ],
+ "date_reviewed": [
+    "2019-07-30"
+  ],
+  "next_review": [
+    "2020-07-30"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+    ]
+}

@@ -47,7 +47,7 @@ var utils = {
     var _this = this;
     if (panelData.length) {
       if (options.rollUpBy !== 'measure_id') {
-        panelData = _this._rollUpByOrg(panelData[0], options.orgType);
+        panelData = _this._rollUpByOrg(panelData[0]);
       }
       panelData = _this._getSavingAndPercentilePerItem(panelData,
                                                        numMonths);
@@ -94,19 +94,11 @@ var utils = {
     return sortedArray;
   },
 
-  _rollUpByOrg: function(data, orgType) {
+  _rollUpByOrg: function(data) {
     var rolled = {};
     _.each(data.data, function(d) {
-      var id;
-      var name;
-
-      if (orgType === 'ccg') {
-        id = d['pct_id'];
-        name = d['pct_name'];
-      } else {
-        id = d[orgType + '_id'];
-        name = d[orgType + '_name'];
-      }
+      var id = d['org_id'];
+      var name = d['org_name'];
 
       if (id in rolled) {
         rolled[id].data.push(d);
@@ -259,6 +251,7 @@ var utils = {
           d.lowIsGood = series.low_is_good;
           d.tagsFocus = series.tags_focus;
           d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
+          d.analyseUrl = series.analyse_url;
         }
         d.globalCentiles = {};
         _.each(centiles, function(i) {
@@ -274,6 +267,7 @@ var utils = {
         series = _.findWhere(globalData, {id: options.measure});
         if (typeof series !== 'undefined') {
           d.numeratorCanBeQueried = series.numerator_is_list_of_bnf_codes;
+          d.analyseUrl = series.analyse_url;
         }
       }
       d.chartId = d.id;
@@ -613,20 +607,10 @@ var utils = {
     var keyPercentiles = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     headers = headers.concat(keyPercentiles.map(function(n) { return n + 'th percentile'; }));
     var percentilesByDate = this.groupPercentilesByDate(chartData.globalCentiles, keyPercentiles);
-    var orgIDColumn;
-    var orgNameColumn;
-
-    if (chartData.orgType == 'ccg') {
-      orgIDColumn = 'pct_id';
-      orgNameColumn = 'pct_name';
-    } else {
-      orgIDColumn = chartData.orgType + '_id';
-      orgNameColumn = chartData.orgType + '_name';
-    }
 
     var table = chartData.data.map(function(d) {
       return [
-          d.date, d[orgIDColumn], d[orgNameColumn], d.numerator, d.denominator,
+          d.date, d.org_id, d.org_name, d.numerator, d.denominator,
           d.calc_value, d.percentile
         ]
         .concat(percentilesByDate[d.date]);

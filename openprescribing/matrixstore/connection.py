@@ -58,11 +58,11 @@ def sorted_keys(dictionary):
 
 
 def convert_row_types(row):
-    return map(convert_value, row)
+    return list(map(convert_value, row))
 
 
 def convert_value(value):
-    if isinstance(value, (bytes, buffer)):
+    if isinstance(value, (bytes, memoryview)):
         return deserialize(value)
     else:
         return value

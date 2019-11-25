@@ -9,6 +9,7 @@
       "why_it_matters": "",
       "numerator_short": "",
       "tags": ["exotic"],
+      "include_in_alerts": false,
       "denominator_short": "",
       "start_date": "2001-01-01",
       "end_date": "2001-01-01",
@@ -16,7 +17,8 @@
       "is_percentage": true,
       "is_cost_based": true,
       "low_is_good": true,
-      "numerator_bnf_codes": []
+      "numerator_bnf_codes": [],
+      "denominator_bnf_codes": []
     }
   },
   {
@@ -29,6 +31,7 @@
       "why_it_matters": "",
       "numerator_short": "",
       "tags": ["core"],
+      "include_in_alerts": true,
       "denominator_short": "",
       "start_date": "2001-01-01",
       "end_date": "2001-01-01",
@@ -36,7 +39,8 @@
       "is_percentage": true,
       "is_cost_based": true,
       "low_is_good": true,
-      "numerator_bnf_codes": []
+      "numerator_bnf_codes": [],
+      "denominator_bnf_codes": []
     }
   },
   {

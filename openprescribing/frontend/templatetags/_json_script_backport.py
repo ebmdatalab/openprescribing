@@ -8,11 +8,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 
-_json_script_escapes = {
-    ord(u">"): u"\\u003E",
-    ord(u"<"): u"\\u003C",
-    ord(u"&"): u"\\u0026",
-}
+_json_script_escapes = {ord(">"): "\\u003E", ord("<"): "\\u003C", ord("&"): "\\u0026"}
 
 
 def json_script(value, element_id):
@@ -21,10 +17,10 @@ def json_script(value, element_id):
     value is safe to be output anywhere except for inside a tag attribute. Wrap
     the escaped JSON in a script tag.
     """
-    json_str = unicode(json.dumps(value, cls=DjangoJSONEncoder))
+    json_str = str(json.dumps(value, cls=DjangoJSONEncoder))
     json_str = json_str.translate(_json_script_escapes)
     return format_html(
-        u'<script id="{}" type="application/json">{}</script>',
+        '<script id="{}" type="application/json">{}</script>',
         element_id,
         mark_safe(json_str),
     )

@@ -145,6 +145,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "frontend.context_processors.support_email",
                 "frontend.context_processors.google_tracking_id",
+                "frontend.context_processors.source_commit_id",
                 "frontend.context_processors.api_host",
                 "frontend.context_processors.debug",
                 "frontend.context_processors.pcns_enabled",
@@ -198,7 +199,7 @@ DJANGO_APPS = (
 )
 
 # Apps specific for this project go here.
-LOCAL_APPS = ("frontend", "dmd", "dmd2", "pipeline", "gcutils", "matrixstore")
+LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 
 CONTRIB_APPS = (
     "allauth",
@@ -301,6 +302,7 @@ GDOC_DOCS = {
     "analyse-by-practice": "1idnk9yczLLBLbYUbp06dMglfivobTNoKY7pA2zCDPI8",
     "analyse-by-ccg": "1izun1jIGW7Wica-eMkUOU1x7RWqCZ9BJrbWNvsCzWm0",
     "how-to-find-cost-savings": "1QHz4hl_8XklcAULawEPCIS0iMaDURhaPsW1VjdTAuUg",
+    "querying-the-raw-data-yourself": "e/2PACX-1vS_AGRCngeMMIaCuPicia7QVUEyqrnRo8vXI0S6w7cfyzb9IjlxNcOrKcZZ85larUuKOf_mB7dg-Y7S",
 }
 
 API_HOST = utils.get_env_setting("API_HOST", default="")
@@ -315,6 +317,7 @@ BQ_TMP_EU_DATASET = "tmp_eu"
 BQ_DMD_DATASET = "dmd"
 BQ_ARCHIVE_DATASET = "archive"
 BQ_PRESCRIBING_EXPORT_DATASET = "prescribing_export"
+BQ_PUBLIC_DATASET = "public_draft"
 
 # Other BQ settings
 BQ_DEFAULT_TABLE_EXPIRATION_MS = None
@@ -359,10 +362,6 @@ SLACK_SENDING_ACTIVE = True
 # Newsletter signup
 MAILCHIMP_LIST_ID = "b2b7873a73"
 
-sentry_raven_dsn = utils.get_env_setting("SENTRY_RAVEN_DSN", default="")
-if sentry_raven_dsn and not SHELL:
-    RAVEN_CONFIG = {"dsn": sentry_raven_dsn}
-
 
 ENABLE_CACHING = utils.get_env_setting_bool("ENABLE_CACHING", default=False)
 
@@ -402,6 +401,14 @@ if ENABLE_CACHING and (not redis_url or not source_commit_id):
         "If ENABLE_CACHING is True then REDIS_URL and SOURCE_COMMIT_ID must be set"
     )
 
+
+sentry_raven_dsn = utils.get_env_setting("SENTRY_RAVEN_DSN", default="")
+if sentry_raven_dsn and not SHELL:
+    RAVEN_CONFIG = {"dsn": sentry_raven_dsn}
+    if source_commit_id:
+        RAVEN_CONFIG["release"] = source_commit_id
+
+
 # For downloading data from TRUD
 TRUD_USERNAME = utils.get_env_setting("TRUD_USERNAME", default="")
 TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
@@ -410,3 +417,6 @@ TRUD_PASSWORD = utils.get_env_setting("TRUD_PASSWORD", default="")
 # location in /tmp/, we benefit from tmpreaper, which is run by cron to delete
 # temporary files older than a week.
 CHECK_NUMBERS_BASE_PATH = "/tmp/numbers-checker/"
+
+# Path of directory containing measure definitions.
+MEASURE_DEFINITIONS_PATH = join(APPS_ROOT, "measure_definitions")

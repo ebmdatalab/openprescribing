@@ -167,7 +167,7 @@ def create_bigquery_table():
 
     """
     # output a row for each presentation and its ultimate replacement
-    with tempfile.NamedTemporaryFile(mode="r+b") as csv_file:
+    with tempfile.NamedTemporaryFile(mode="r+") as csv_file:
         writer = csv.writer(csv_file)
         for p in Presentation.objects.filter(replaced_by__isnull=False):
             writer.writerow([p.bnf_code, p.current_version.bnf_code])
@@ -251,7 +251,7 @@ def cleanup_empty_classes():
         with transaction.atomic():
             with open(csv_path, "r") as f:
                 reader = csv.reader(f)
-                reader.next()  # skip header
+                next(reader)  # skip header
                 for row in reader:
                     code = row[0]
                     kwargs = {bnf_field: code}

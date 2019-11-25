@@ -8,8 +8,8 @@ from django.test import SimpleTestCase
 from django.test import TestCase
 import base64
 from datetime import datetime
-from BaseHTTPServer import BaseHTTPRequestHandler
-from BaseHTTPServer import HTTPServer
+from http.server import BaseHTTPRequestHandler
+from http.server import HTTPServer
 import socket
 from threading import Thread
 import requests
@@ -25,6 +25,7 @@ from frontend.models import Practice
 from frontend.models import NCSOConcessionBookmark
 from frontend.templatetags.template_extras import deltawords
 from frontend.views import bookmark_utils
+from frontend.views.spending_utils import ncso_spending_for_entity
 from frontend.tests.data_factory import DataFactory
 from matrixstore.tests.decorators import copy_fixtures_to_matrixstore
 
@@ -188,8 +189,7 @@ class TestCUSUM(unittest.TestCase):
 
         """
         with open(
-            settings.APPS_ROOT + "/frontend/tests/fixtures/" "alert_test_cases.txt",
-            "rb",
+            settings.APPS_ROOT + "/frontend/tests/fixtures/" "alert_test_cases.txt"
         ) as expected:
             test_cases = expected.readlines()
         for test in each_cusum_test(test_cases):
@@ -455,7 +455,7 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             self.send_response(requests.codes.ok)
             self.send_header("Content-Type", "text/html")
             self.end_headers()
-            response_content = """
+            response_content = b"""
             <html>
              <head>
               <script src='/jquery.min.js'></script>
@@ -478,7 +478,7 @@ class MockServerRequestHandler(BaseHTTPRequestHandler):
             with open(
                 settings.APPS_ROOT + "/media/js/"
                 "node_modules/jquery/dist/jquery.min.js",
-                "r",
+                "rb",
             ) as f:
                 self.wfile.write(f.read())
                 return
@@ -550,7 +550,7 @@ class GenerateImageTestCase(unittest.TestCase):
             # Attachments in emails are base64 *with line breaks*, so
             # we remove those.
             self.assertEqual(
-                attachment.get_payload().replace("\n", ""),
+                attachment.get_payload().replace("\n", "").encode("utf8"),
                 base64.b64encode(expected.read()),
             )
 
@@ -568,7 +568,7 @@ class GenerateImageTestCase(unittest.TestCase):
         ) as expected:
             attachment = self.msg.attachments[0]
             self.assertEqual(
-                attachment.get_payload().replace("\n", ""),
+                attachment.get_payload().replace("\n", "").encode("utf8"),
                 base64.b64encode(expected.read()),
             )
 
@@ -643,11 +643,11 @@ class TestContextForOrgEmail(unittest.TestCase):
         ]
         finder = bookmark_utils.InterestingMeasureFinder(pct="foo")
         context = finder.context_for_org_email()
-        self.assertItemsEqual(
+        self.assertCountEqual(
             context["most_changing_interesting"],
             [{"measure": non_ordinal_measure_1}, {"measure": non_ordinal_measure_2}],
         )
-        self.assertItemsEqual(
+        self.assertCountEqual(
             context["interesting"], [non_ordinal_measure_1, non_ordinal_measure_2]
         )
         self.assertEqual(context["best"], [ordinal_measure_1])
@@ -795,7 +795,10 @@ class TestNCSOConcessions(TestCase):
         )
         self.assertIn("published for **July 2018**", msg.body)
         self.assertIn("prescribed at Practice 2", msg.body)
-        self.assertIn(u"an additional **\xa3206**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(self.practice, "practice", 1)[0]["additional_cost"]
+        )
+        self.assertIn("an additional **\xa3{:,}**".format(additional_cost), msg.body)
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -807,7 +810,12 @@ class TestNCSOConcessions(TestCase):
 
         self.assertEqual(msg.subject, "Your update about NCSO Concessions for CCG 0")
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn(u"cost CCG 0 an additional **\xa3654**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(self.ccg, "ccg", 1)[0]["additional_cost"]
+        )
+        self.assertIn(
+            "cost CCG 0 an additional **\xa3{:,}**".format(additional_cost), msg.body
+        )
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)
@@ -821,7 +829,15 @@ class TestNCSOConcessions(TestCase):
             msg.subject, "Your update about NCSO Concessions for the NHS in England"
         )
         self.assertIn("published for **July 2018**", msg.body)
-        self.assertIn(u"cost the NHS in England an additional **\xa31,269**", msg.body)
+        additional_cost = round(
+            ncso_spending_for_entity(None, "all_england", 1)[0]["additional_cost"]
+        )
+        self.assertIn(
+            "cost the NHS in England an additional **\xa3{:,}**".format(
+                additional_cost
+            ),
+            msg.body,
+        )
 
         html = msg.alternatives[0][0]
         self.assertInHTML("<b>July 2018</b>", html)

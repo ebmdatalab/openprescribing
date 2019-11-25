@@ -8,7 +8,7 @@ from django.test import TestCase
 from gcutils.bigquery import Client, TableExporter, build_schema
 from gcutils.storage import Client as StorageClient
 
-from dmd2.models import VMPP
+from dmd.models import VMPP
 from frontend.models import PCT
 
 
@@ -83,9 +83,9 @@ class BQClientTest(TestCase):
             t1_exporter.download_from_storage_and_unzip(f)
             f.seek(0)
             reader = csv.reader(f)
-            data = [reader.next()] + sorted(reader)
+            data = [next(reader)] + sorted(reader)
 
-        self.assertEqual(data, [map(str, row) for row in [headers] + rows])
+        self.assertEqual(data, [list(map(str, row)) for row in [headers] + rows])
 
         # Test Table.insert_rows_from_storage
         storage_path = self.storage_prefix + "test_table.csv"
@@ -111,7 +111,7 @@ class BQClientTest(TestCase):
 
         results = client.query("SELECT * FROM {}".format(t3.qualified_name))
 
-        self.assertEqual(sorted(results.rows), rows + [(4, u"damson")])
+        self.assertEqual(sorted(results.rows), rows + [(4, "damson")])
 
         # Test Client.create_table_with_view
         sql = "SELECT * FROM {{project}}.{} WHERE a > 1".format(t1_qname)
@@ -159,7 +159,7 @@ class BQClientTest(TestCase):
         client = StorageClient()
         bucket = client.bucket()
         blob = bucket.blob(storage_path)
-        with open(local_path) as f:
+        with open(local_path, "rb") as f:
             blob.upload_from_file(f)
 
     def test_upload_model(self):

@@ -1,4 +1,4 @@
-import cPickle
+import pickle
 import json
 import uuid
 
@@ -12,7 +12,7 @@ from django.db.models.functions import Coalesce
 from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
-from dmd2.models import (
+from dmd.models import (
     VMP,
     AMP,
     VMPP,
@@ -34,7 +34,7 @@ class Section(models.Model):
     bnf_para = models.IntegerField(null=True, blank=True)
     is_current = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -88,6 +88,13 @@ class RegionalTeam(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
+
     def get_absolute_url(self):
         return reverse(
             "regional_team_home_page", kwargs={"regional_team_code": self.code}
@@ -108,6 +115,10 @@ class STP(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -138,6 +149,10 @@ class PCN(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        return self.cased_name
 
     @property
     def code(self):
@@ -180,12 +195,19 @@ class PCT(models.Model):
 
     objects = models.GeoManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ""
 
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    @property
+    def name_and_status(self):
+        if self.close_date:
+            return self.cased_name + " (closed)"
+        else:
+            return self.cased_name
 
     def get_absolute_url(self):
         return reverse("ccg_home_page", kwargs={"ccg_code": self.code})
@@ -265,6 +287,13 @@ class Practice(models.Model):
     def cased_name(self):
         return nhs_titlecase(self.name)
 
+    @property
+    def name_and_status(self):
+        if self.is_inactive():
+            return "{} ({})".format(self.cased_name, self.get_status_code_display())
+        else:
+            return self.cased_name
+
     def is_inactive(self):
         return self.status_code in (
             self.STATUS_RETIRED,
@@ -304,9 +333,6 @@ class Practice(models.Model):
         address += self.postcode
         return address
 
-    class Meta:
-        app_label = "frontend"
-
     def get_absolute_url(self):
         return reverse("practice_home_page", kwargs={"practice_code": self.code})
 
@@ -321,7 +347,6 @@ class PracticeIsDispensing(models.Model):
     date = models.DateField()
 
     class Meta:
-        app_label = "frontend"
         unique_together = ("practice", "date")
 
 
@@ -366,9 +391,6 @@ class PracticeStatistics(models.Model):
         self = model_prescribing_units.set_units(self)
         super(PracticeStatistics, self).save(*args, **kwargs)
 
-    class Meta:
-        app_label = "frontend"
-
 
 class QOFPrevalence(models.Model):
     """
@@ -408,7 +430,6 @@ class Chemical(models.Model):
         return "%s: %s" % (section.number_str, section.name)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("bnf_code", "chem_name"),)
 
 
@@ -430,9 +451,6 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.is_generic = self.bnf_code[-2:] == "AA"
         super(Product, self).save(*args, **kwargs)
-
-    class Meta:
-        app_label = "frontend"
 
 
 class PresentationManager(models.Manager):
@@ -567,9 +585,6 @@ class Presentation(models.Model):
     def product_name(self):
         return self.dmd_name or self.name
 
-    class Meta:
-        app_label = "frontend"
-
     @classmethod
     def names_for_bnf_codes(cls, bnf_codes):
         """
@@ -613,9 +628,6 @@ class Prescription(models.Model):
     quantity = models.FloatField()
     processing_date = models.DateField()
 
-    class Meta:
-        app_label = "frontend"
-
 
 class Measure(models.Model):
     # Some of these fields are documented in
@@ -637,12 +649,15 @@ class Measure(models.Model):
             "all measures with the listed tags"
         ),
     )
+    include_in_alerts = models.BooleanField(default=True)
     denominator_short = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    numerator_type = models.CharField(max_length=20)
     numerator_from = models.TextField()
     numerator_where = models.TextField()
     numerator_columns = models.TextField()
+    denominator_type = models.CharField(max_length=20)
     denominator_from = models.TextField()
     denominator_where = models.TextField()
     denominator_columns = models.TextField()
@@ -653,12 +668,13 @@ class Measure(models.Model):
     numerator_bnf_codes = ArrayField(models.CharField(max_length=15))
     numerator_bnf_codes_query = models.CharField(max_length=10000, null=True)
     numerator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
+    denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
+    denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
+    analyse_url = models.CharField(max_length=1000, null=True)
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        app_label = "frontend"
 
 
 class MeasureValue(models.Model):
@@ -696,7 +712,6 @@ class MeasureValue(models.Model):
     cost_savings = JSONField(null=True, blank=True)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "pct", "practice", "month"),)
 
     objects = MeasureValueQuerySet.as_manager()
@@ -739,7 +754,6 @@ class MeasureGlobal(models.Model):
         super(MeasureGlobal, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = "frontend"
         unique_together = (("measure", "month"),)
 
 
@@ -757,11 +771,11 @@ class SearchBookmark(models.Model):
 
     name = TruncatingCharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    url = models.CharField(max_length=200)
+    url = models.CharField(max_length=1200)
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Bookmark: " + self.name
 
     def topic(self):
@@ -853,7 +867,7 @@ class OrgBookmark(models.Model):
     def get_absolute_url(self):
         return self.dashboard_url()
 
-    def __unicode__(self):
+    def __str__(self):
         return "Org Bookmark: " + self.name
 
 
@@ -959,7 +973,7 @@ class EmailMessageManager(models.Manager):
         user = User.objects.filter(email=msg.to[0])
         user = user and user[0] or None
         if "message-id" not in msg.extra_headers:
-            raise StandardError(
+            raise Exception(
                 "Messages stored as frontend.EmailMessage"
                 "must have a message-id header"
             )
@@ -987,25 +1001,25 @@ class EmailMessage(models.Model):
 
     @property
     def message(self):
-        return cPickle.loads(str(self.pickled_message))
+        return pickle.loads(self.pickled_message)
 
     @message.setter
     def message(self, value):
-        self.pickled_message = cPickle.dumps(value)
+        self.pickled_message = pickle.dumps(value)
 
     def send(self):
         self.message.send()
         self.send_count += 1
         self.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject
 
 
 class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
         (value, value)
-        for name, value in vars(EventType).iteritems()
+        for name, value in sorted(vars(EventType).items())
         if not name.startswith("_")
     ]
     # delievered, accepted (by mailgun), error, warn
@@ -1097,12 +1111,12 @@ class PPUSaving(models.Model):
 
 class TariffPrice(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey("dmd2.VMPP", on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd.VMPP", on_delete=models.DO_NOTHING)
     # 1: Category A
     # 3: Category C
     # 11: Category M
     tariff_category = models.ForeignKey(
-        "dmd2.DtPaymentCategory", on_delete=models.DO_NOTHING
+        "dmd.DtPaymentCategory", on_delete=models.DO_NOTHING
     )
     price_pence = models.IntegerField()
 
@@ -1112,7 +1126,7 @@ class TariffPrice(models.Model):
 
 class NCSOConcession(models.Model):
     date = models.DateField(db_index=True)
-    vmpp = models.ForeignKey("dmd2.VMPP", null=True, on_delete=models.DO_NOTHING)
+    vmpp = models.ForeignKey("dmd.VMPP", null=True, on_delete=models.DO_NOTHING)
     drug = models.CharField(max_length=400)
     pack_size = models.CharField(max_length=40)
     price_pence = models.IntegerField()
@@ -1128,4 +1142,4 @@ class NCSOConcession(models.Model):
 
     @property
     def drug_and_pack_size(self):
-        return u"{} {}".format(self.drug, self.pack_size)
+        return "{} {}".format(self.drug, self.pack_size)

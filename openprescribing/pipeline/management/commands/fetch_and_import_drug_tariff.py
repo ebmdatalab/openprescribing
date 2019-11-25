@@ -1,14 +1,13 @@
 """
 Fetches Drug Tariff from NHSBSA website, and saves to CSV
 """
-from cStringIO import StringIO
+from io import BytesIO
 import datetime
-from urlparse import urljoin
+from urllib.parse import unquote, urljoin
 import logging
 import os
 import re
 import requests
-import urllib
 
 import bs4
 import calendar
@@ -32,7 +31,6 @@ class Command(BaseCommand):
         rsp = requests.get(url)
         doc = bs4.BeautifulSoup(rsp.content, "html.parser")
 
-        month_names = [x.lower() for x in calendar.month_name]
         month_abbrs = [x.lower() for x in calendar.month_abbr]
 
         imported_months = []
@@ -44,7 +42,7 @@ class Command(BaseCommand):
             # We split that into ['Part', 'VIIIA', 'September', '2017']
             words = re.split(
                 r"[ -]+",
-                urllib.unquote(os.path.splitext(os.path.basename(a.attrs["href"]))[0]),
+                unquote(os.path.splitext(os.path.basename(a.attrs["href"]))[0]),
             )
             month_name, year = words[-2:]
 
@@ -55,10 +53,9 @@ class Command(BaseCommand):
             if len(year) == 2:
                 year = "20" + year
 
-            try:
-                month = month_names.index(month_name.lower())
-            except ValueError:
-                month = month_abbrs.index(month_name.lower())
+            # We have seen the month be `September`, `Sept`, and `Sep`.
+            month_abbr = month_name.lower()[:3]
+            month = month_abbrs.index(month_abbr)
 
             date = datetime.date(int(year), month, 1)
 
@@ -66,7 +63,7 @@ class Command(BaseCommand):
                 continue
 
             xls_url = urljoin(url, a.attrs["href"])
-            xls_file = StringIO(requests.get(xls_url).content)
+            xls_file = BytesIO(requests.get(xls_url).content)
 
             import_month(xls_file, date)
             imported_months.append((year, month))

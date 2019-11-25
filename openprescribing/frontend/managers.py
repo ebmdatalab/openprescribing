@@ -119,13 +119,15 @@ class MeasureValueQuerySet(models.QuerySet):
             .annotate(
                 numerator=Sum("numerator"),
                 denominator=Sum("denominator"),
-                calc_value=_divide("numerator", "denominator"),
                 cost_savings=_aggregate_over_json(
                     field="cost_savings",
                     aggregate_function=_sum_positive_values,
                     keys=CENTILES,
                 ),
             )
+            # Note, this needs to be in its own `annotate` call so it's
+            # processed after the definitions of `numerator` and `denominator`
+            .annotate(calc_value=_divide("numerator", "denominator"))
         )
         return (self.model(**row) for row in aggregate_queryset)
 

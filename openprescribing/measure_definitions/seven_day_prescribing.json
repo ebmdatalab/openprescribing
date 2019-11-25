@@ -1,0 +1,97 @@
+{
+"name": "Seven Day Prescribing for Long Term Conditions",
+	"title": [
+		"Seven Day Prescribing for Long Term Conditions"
+	],
+	"description": [
+		"Total quantity where a prescription is for seven tablets or",
+		"capsules of common LTC medicines as a proportion of all tablets or capsules for common LTC medicines "
+	],
+	"why_it_matters": [
+	  "There is no current consensus on durations of prescriptions across the NHS and prescribers are advised that they should write a ",
+    "prescription for a duration that is clinically appropriate. ",
+    "The <a href='https://www.bma.org.uk/advice/employment/gp-practices/service-provision/prescribing/prescribing-in-general-practice'>",
+    "British Medical Association reports</a> growing requests to prescribe seven day quantities of medicines to fund supply of ",
+    "medicine compliance aids (MCAs), adding to GP workload. The Royal Pharmaceutical Society has issued ",
+    "<a href='https://www.rpharms.com/Portals/0/RPS%20document%20library/Open%20access/Support/toolkit/rps-mca-july-2013.pdf'>",
+    "guidance</a> stating that while some may think of MCAs as a panacea, there is limited evidence base to support their use, ",
+    "and safety incidents have been reported to the National Reporting and Learning System.",
+    "<p>We propose this measure of seven day prescriptions for long-term conditions as a surrogate measure for MCAs. Caveats ",
+    "include; a seven day prescription may be clinically relevant even for long-term conditions in certain circumstances, some",
+    "pharmacies will supply a MCA without a seven day prescritpion after making an individual assessement, and some local areas",
+    "may fund provision of MCAs via a seperate payment. Locally you may wish to review presciptions of seven duration for clinical",
+    "appropriateness.",
+    "<p>The medicines we have used for the measure are generally used once daily for longterm conditions: atorvastatin, ",
+    "simvastatin, levothyroxine, amlodipine and ramipril.",
+    "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at",
+    "<a href='mailto:feedback@openprescribing.net?Subject=7-day%20prescribing%20measure'>feedback@openprescribing.net</a>.</b></p>",
+    "You can read more detail on the ",
+    "<a href='https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb'>",
+    "measure definition notebook</a> and <a href='https://ebmdatalab.net/new-measure-seven-day-prescribing-for-long-term-conditions/'>",
+    "on our blog</a>."
+  ],
+	"numerator_short": "seven day quantities",
+	"denominator_short": "total quantities",
+	"url": null,
+	"is_percentage": true,
+	"is_cost_based": false,
+	"low_is_good": true,
+	"tags": [
+		"core",
+		"safety"
+	],
+	"numerator_type": "custom",
+	"numerator_columns": [
+		"SUM(total_quantity) AS numerator"
+	],
+	"numerator_from": "{hscic}.raw_prescribing_normalised",
+	"numerator_where": [
+		"quantity_per_item=7",
+		"AND",
+		"(",
+		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
+		"AND",
+		"(",
+		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+		")"
+	],
+	"denominator_type": "custom",
+	"denominator_columns": [
+		"SUM(total_quantity) AS denominator"
+	],
+	"denominator_from": "{hscic}.raw_prescribing_normalised",
+	"denominator_where": [
+		"(",
+		"bnf_code LIKE '0205051R0%' OR  ##ramipril \n",
+		"bnf_code LIKE '0212000B0%' OR ##atrovastatin \n",
+		"bnf_code LIKE '0212000Y0%' OR ##simvastatin \n",
+		"bnf_code LIKE '0602010V0%' OR ##levothyroxine \n",
+		"bnf_code LIKE '0206020A0%') ##amlodipine \n",
+		"AND",
+		"(",
+		"bnf_name LIKE '%_Tab%' or bnf_name LIKE '%_Cap%' ##this restricts to tablets or capsules \n",
+		")"
+	],
+"date_reviewed": [
+    "2019-10-09"
+  ],
+  "next_review": [
+    "2020-10-09"
+  ],
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions/Seven%20Day%20Prescribing%20for%20Long%20Term%20Conditions.ipynb"
+  ]
+}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1>dm+d browser</h1>
+
+<p>
+  dm+d is the Dictionary of Medicines and Devices, the catalogue of things that can be prescribed in the NHS.
+  <em>Read more in <a href="https://ebmdatalab.net/what-is-the-dmd-the-nhs-dictionary-of-medicines-and-devices/">our dm+d blog</a>.</em>
+</p>
+<hr />
+
+{% crispy form %}
+
+{% if results != None %}
+  <hr />
+
+  {% for result in results %}
+    <h2>{{ result.obj_type_human_plural }} ({{ result.num_hits }})</h2>
+    <ul>
+      {% for obj in result.objs %}
+        <li>
+          <a href="{% url 'dmd_obj' obj.obj_type obj.id %}">{{ obj.title }}</a>
+          {% if obj.status %}({{ obj.status }}){% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if result.link_to_more %}
+    <a href="{{ result.link_to_more }}">Show all {{ result.obj_type_human_plural }}</a>
+    {% endif %}
+  {% empty %}
+    <p>No results found.</p>
+  {% endfor %}
+{% endif %}
+
+<hr />
+<p>
+  <img src="{% static 'img/bang.jpg' %}">
+  Try our new <a href="{% url 'dmd_advanced_search' 'vmp' %}">advanced dm+d search</a>.
+</p>
+
+<hr />
+{% include 'dmd/_release_metadata.html' %}
+{% endblock %}

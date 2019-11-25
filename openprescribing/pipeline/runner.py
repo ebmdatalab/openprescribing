@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from collections import defaultdict
 import datetime
 import fnmatch
@@ -94,7 +92,7 @@ class Task(object):
             "zip_path",
         ]
 
-        cmd_parts = shlex.split(self.command.encode("unicode-escape"))
+        cmd_parts = shlex.split(self.command)
         filename_idx = None
         for flag in filename_flags:
             try:
@@ -145,20 +143,20 @@ class Task(object):
 
 class ManualFetchTask(Task):
     def run(self, year, month):
-        print ("Running manual fetch task {}".format(self.name))
+        print("Running manual fetch task {}".format(self.name))
         instructions = self.manual_fetch_instructions()
-        print (instructions)
+        print(instructions)
         paths_before = find_files(self.source.data_dir)
-        raw_input("Press return when done, or to skip this step")
+        input("Press return when done, or to skip this step")
         paths_after = find_files(self.source.data_dir)
         new_paths = [path for path in paths_after if path not in paths_before]
         if new_paths:
-            print ("The following files have been manually fetched:")
+            print("The following files have been manually fetched:")
             for path in new_paths:
-                print (" * {}".format(path))
+                print(" * {}".format(path))
         else:
-            print ("No new files were found at {}".format(self.source.data_dir))
-        raw_input(
+            print("No new files were found at {}".format(self.source.data_dir))
+        input(
             "Press return to confirm, or Ctrl+C to cancel " "and resolve any problems"
         )
 
@@ -207,7 +205,7 @@ class ManualFetchTask(Task):
 
 class AutoFetchTask(Task):
     def run(self, year, month):
-        print ("Running auto fetch task {}".format(self.name))
+        print("Running auto fetch task {}".format(self.name))
         command = self.command.format(year=year, month=month)
         tokens = shlex.split(command)
         call_command(*tokens)
@@ -216,7 +214,7 @@ class AutoFetchTask(Task):
 class ConvertTask(Task):
     def run(self, year, month):
         # For now, year and month are ignored
-        print ("Running convert task {}".format(self.name))
+        print("Running convert task {}".format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_pattern(), path)
@@ -228,7 +226,7 @@ class ConvertTask(Task):
 class ImportTask(Task):
     def run(self, year, month):
         # For now, year and month are ignored
-        print ("Running import task {}".format(self.name))
+        print("Running import task {}".format(self.name))
         unimported_paths = self.unimported_paths()
         for path in unimported_paths:
             command = self.command.replace(self.filename_pattern(), path)
@@ -292,7 +290,7 @@ class TaskCollection(object):
                 if self._type == task.task_type:
                     yield task
 
-    def __nonzero__(self):
+    def __bool__(self):
         if self._type:
             return any(task for task in self if task.task_type == self._type)
         else:
@@ -357,10 +355,10 @@ def upload_task_input_files(task):
         name = "hscic" + path.replace(settings.PIPELINE_DATA_BASEDIR, "/")
         blob = bucket.blob(name)
         if blob.exists():
-            print ("Skipping %s, already uploaded" % name)
+            print("Skipping %s, already uploaded" % name)
             continue
-        print ("Uploading %s to %s" % (path, name))
-        with open(path) as f:
+        print("Uploading %s to %s" % (path, name))
+        with open(path, "rb") as f:
             blob.upload_from_file(f)
 
 
@@ -369,7 +367,7 @@ def path_matches_pattern(path, pattern):
 
 
 def call_command(*args):
-    print ("call_command {}".format(args))
+    print("call_command {}".format(args))
     return django_call_command(*args)
 
 
@@ -427,12 +425,16 @@ def run_all(year, month, under_test=False):
             continue
         run_task(task, year, month, last_imported=last_imported)
 
-    # See check_numbers.py.
-    check_numbers_glob = os.path.join(
-        settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
-    )
-    for path in glob.glob(check_numbers_glob):
-        os.remove(path)
+    if not under_test:
+        # Remove numbers.json files.  These are created by check_numbers, and we want to
+        # remove them after each import, since all numbers on the site will change with
+        # the new data.  We only want to remove these files after importing real data,
+        # and not during an end-to-end run.
+        check_numbers_glob = os.path.join(
+            settings.CHECK_NUMBERS_BASE_PATH, "*", "numbers.json"
+        )
+        for path in glob.glob(check_numbers_glob):
+            os.remove(path)
 
     TaskLog.objects.create(
         year=year, month=month, task_name="fetch_and_import", status=TaskLog.SUCCESSFUL

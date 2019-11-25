@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import os
 import random
 
@@ -50,7 +49,7 @@ BQ_PROJECT = "ebmdatalabtest"
 
 # Nonce to ensure test runs do not clash
 BQ_NONCE = int(utils.get_env_setting("BQ_NONCE", random.randrange(10000)))
-print ("BQ_NONCE:", BQ_NONCE)
+print("BQ_NONCE:", BQ_NONCE)
 
 # BigQuery dataset names
 BQ_HSCIC_DATASET = "{}_{:04d}".format(BQ_HSCIC_DATASET, BQ_NONCE)
@@ -61,6 +60,7 @@ BQ_ARCHIVE_DATASET = "{}_{:04d}".format(BQ_ARCHIVE_DATASET, BQ_NONCE)
 BQ_PRESCRIBING_EXPORT_DATASET = "{}_{:04d}".format(
     BQ_PRESCRIBING_EXPORT_DATASET, BQ_NONCE
 )
+BQ_PUBLIC_DATASET = "{}_{:04d}".format(BQ_PUBLIC_DATASET, BQ_NONCE)
 BQ_TEST_DATASET = "test_{:04d}".format(BQ_NONCE)
 
 # Other BQ settings
@@ -96,3 +96,8 @@ SLACK_SENDING_ACTIVE = False
 # the Django docs recommend:
 # https://docs.djangoproject.com/en/1.11/ref/contrib/staticfiles/#django.contrib.staticfiles.storage.ManifestStaticFilesStorage.manifest_strict
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+# Path of directory containing measure definitions.
+MEASURE_DEFINITIONS_PATH = os.path.join(
+    APPS_ROOT, "frontend", "tests", "measure_definitions"
+)
