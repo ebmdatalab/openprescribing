@@ -36,8 +36,8 @@
    "{hscic}.normalised_prescribing_standard p ",
    "FULL JOIN {measures}.dmd_unit_dose_strength_missing_fix f ON --as some data missing from DMD, this table maps to suitable alternative \n",
    "CONCAT(SUBSTR(p.bnf_code,0,9), SUBSTR(p.bnf_code,-2)) = CONCAT(SUBSTR(f.original_bnf_code,0,9), SUBSTR(f.original_bnf_code,-2)) --this joins the fix table to data table by chem_sub and generic presentation (allowing for brand and generics) \n",
-   "LEFT JOIN {measures}.dmd_unit_dose_strength r ON --this joins data table to DMD view of strengths",
-   "CONCAT(COALESCE(SUBSTR(f.match_bnf_code,0,9),SUBSTR(p.bnf_code,0,9)),COALESCE(SUBSTR(f.match_bnf_code,-2),SUBSTR(p.bnf_code,-2))) -- if the presentation is in the fix table (f) then it joins to strength on alternate presentation, otherwise it joins direct from bnf_code /n",
+   "LEFT JOIN {measures}.dmd_unit_dose_strength r ON --this joins data table to DMD view of strengths \n",
+   "CONCAT(COALESCE(SUBSTR(f.match_bnf_code,0,9),SUBSTR(p.bnf_code,0,9)),COALESCE(SUBSTR(f.match_bnf_code,-2),SUBSTR(p.bnf_code,-2))) -- if the presentation is in the fix table (f) then it joins to strength on alternate presentation, otherwise it joins direct from bnf_code \n",
    "= CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2))"
   ],
   "numerator_where": [
