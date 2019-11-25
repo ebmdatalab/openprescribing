@@ -32,7 +32,7 @@
   "numerator_columns": [
     "SUM((p.quantity * r.strnt)/CASE WHEN p.bnf_code LIKE '0408010AE%' THEN 300 ELSE 1800 END) AS numerator--divide by 300 (pregab) or 1800 (gaba) to get DDD "
   ],
- "numerator_from": "{hscic}.normalised_prescribing_standard p  FULL JOIN {measures}.dmd_unit_dose_strength_missing_fix f ON p.bnf_code = f.original_bnf_code LEFT JOIN {measures}.dmd_unit_dose_strength r ON CONCAT(COALESCE(SUBSTR(f.match_bnf_code,0,9),SUBSTR(p.bnf_code,0,9)),COALESCE(SUBSTR(f.match_bnf_code,-2),SUBSTR(p.bnf_code,-2))) = CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2))",
+ "numerator_from": "{hscic}.normalised_prescribing_standard p  FULL JOIN {measures}.dmd_unit_dose_strength_missing_fix f   CONCAT(SUBSTR(p.bnf_code,0,9), SUBSTR(p.bnf_code,-2)) = concat(SUBSTR(f.original_bnf_code,0,9), SUBSTR(f.original_bnf_code,-2)) LEFT JOIN {measures}.dmd_unit_dose_strength r ON CONCAT(COALESCE(SUBSTR(f.match_bnf_code,0,9),SUBSTR(p.bnf_code,0,9)),COALESCE(SUBSTR(f.match_bnf_code,-2),SUBSTR(p.bnf_code,-2))) = CONCAT(SUBSTR(r.bnf_code,0,9),SUBSTR(r.bnf_code,-2))",
   "numerator_where": [
     "  substr(p.bnf_code,0,9) IN ('0408010AE','0408010G0') AND r.ing IN (415160008,386845007)--Pregabalin  and gabapentin (bnf_code and ing code)"
   ],
