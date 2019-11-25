@@ -223,6 +223,13 @@
             "upload_to_bigquery"
         ]
     },
+    "create_bq_public_measure_tables": {
+        "type": "post_process",
+        "command": "create_bq_public_measure_tables",
+        "dependencies": [
+            "create_bq_public_tables"
+        ]
+    },
     "import_measure_definitions": {
         "type": "post_process",
         "command": "import_measures --definitions_only",
