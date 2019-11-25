@@ -22,7 +22,7 @@ defusedxml==0.6.0         # via python3-openid
 django-allauth==0.40.0
 django-anymail[mailgun]==7.0.0
 django-cors-headers==3.0.2
-django-crispy-forms==1.8.0
+django-crispy-forms==1.8.1
 django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==1.11
 django-dotenv==1.4.2
@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via google-api-core, google-auth, gunicorn, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==42.0.0        # via google-api-core, google-auth, gunicorn, pandas-gbq, protobuf, pydata-google-auth
