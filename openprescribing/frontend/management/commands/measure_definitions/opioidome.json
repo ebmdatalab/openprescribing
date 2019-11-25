@@ -14,7 +14,7 @@
     "including low-dose opioids in drugs such as co-codamol and co-dydramol.  This measure is experimental and should be used ",
     "with caution, as OME conversions vary in different reference sources.  A list of the dose conversions and references used ",
     "can be found <a href='https://docs.google.com/spreadsheets/d/1IjnHbYVszZKPmVSYydtMVzbDLPOmq8bOFq45QsSu6sE/edit?usp=sharing'>here</a>.  ",
-    "<p> We have written a paper about the increase in opioid prescribing in England since 1999, which can be found in",
+    "We have written a paper about the increase in opioid prescribing in England since 1999, which can be found in",
     "<i><a href= 'https://www.thelancet.com/journals/lanpsy/article/PIIS2215-0366(18)30471-1'>The Lancet Psychiatry</a></i>."
   ],
   "numerator_short": "Total opioids prescribed (in OME mg)",
