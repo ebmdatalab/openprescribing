@@ -46,9 +46,9 @@ def _get_orgs(org_type, org_codes):
         if org_codes:
             orgs = orgs.filter(code__in=org_codes)
     elif org_type == "pcn":
-        orgs = PCN.objects.order_by("ons_code").only("ons_code", "name")
+        orgs = PCN.objects.order_by("code").only("code", "name")
         if org_codes:
-            orgs = orgs.filter(ons_code__in=org_codes)
+            orgs = orgs.filter(code__in=org_codes)
     elif org_type == "stp":
         orgs = STP.objects.order_by("ons_code").only("ons_code", "name")
         if org_codes:

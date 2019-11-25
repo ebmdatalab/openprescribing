@@ -68,7 +68,7 @@ class DataFactory(object):
     def create_pcn(self):
         index = self.next_id()
         return PCN.objects.create(
-            name="PCN {}".format(index), ons_code="E000{:02}".format(index)
+            name="PCN {}".format(index), code="E000{:02}".format(index)
         )
 
     def create_stp(self):

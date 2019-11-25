@@ -540,9 +540,9 @@ def spending_by_org(request, format=None, org_type=None):
                 status=400,
             )
 
-    # We don't (yet?) have a "proper" code field for PCNs or STPs so we're
-    # using their ONS code
-    code_field = "code" if org_type not in ("pcn", "stp") else "ons_code"
+    # We don't (yet?) have a "proper" code field for STPs so we're using their
+    # ONS code
+    code_field = "code" if org_type != "stp" else "ons_code"
 
     if org_type == "practice":
         orgs = Practice.objects.all()

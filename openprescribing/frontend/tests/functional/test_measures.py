@@ -183,7 +183,7 @@ class MeasuresTests(SeleniumTestCase):
     def test_pcn_home_page(self):
         self._get("/pcn/E00000000/")
 
-        pcn = PCN.objects.get(ons_code="E00000000")
+        pcn = PCN.objects.get(code="E00000000")
         mvs = MeasureValue.objects.filter_by_org_type("pcn").filter(pcn=pcn)
         extreme_measure = _get_extreme_measure(mvs)
 

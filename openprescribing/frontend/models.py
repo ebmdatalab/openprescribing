@@ -138,7 +138,7 @@ class PCN(models.Model):
     Primary Care Network
     """
 
-    ons_code = models.CharField(max_length=9, primary_key=True)
+    code = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=200, null=True, blank=True)
 
     objects = PCNManager()
@@ -153,10 +153,6 @@ class PCN(models.Model):
     @property
     def name_and_status(self):
         return self.cased_name
-
-    @property
-    def code(self):
-        return self.ons_code
 
     def get_absolute_url(self):
         return reverse("pcn_home_page", kwargs={"pcn_code": self.code})

@@ -204,7 +204,7 @@ def all_pcns(request):
 
 
 def pcn_home_page(request, pcn_code):
-    pcn = get_object_or_404(PCN, ons_code=pcn_code)
+    pcn = get_object_or_404(PCN, code=pcn_code)
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -1741,7 +1741,7 @@ def _get_entity(entity_type, entity_code):
     if entity_type == "practice":
         return get_object_or_404(Practice, code=entity_code)
     elif entity_type == "pcn":
-        return get_object_or_404(PCN, ons_code=entity_code)
+        return get_object_or_404(PCN, code=entity_code)
     elif entity_type == "ccg":
         return get_object_or_404(PCT, code=entity_code)
     elif entity_type == "stp":
