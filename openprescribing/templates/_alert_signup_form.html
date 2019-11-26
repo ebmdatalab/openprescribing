@@ -1,5 +1,4 @@
 {% load crispy_forms_tags %}
-{% if not signed_up_for_alert %}
 <form method="post" class="form form-inline">
  {% csrf_token %}
  <p>
@@ -22,8 +21,3 @@
   <input class="btn btn-primary" type="submit" value="Subscribe">
   </p>
 </form>
-{% else %}
-<p>
-  You're already signed up for alerts.
-</p>
-{% endif %}
