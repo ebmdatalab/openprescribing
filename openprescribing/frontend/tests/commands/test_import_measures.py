@@ -300,10 +300,7 @@ class ImportMeasuresTests(TestCase):
             self.validate_measure_value(mv, practices.loc[mv.practice_id])
 
         pcns = calculator(
-            numerators,
-            denominators,
-            "pcn",
-            PCN.objects.values_list("ons_code", flat=True),
+            numerators, denominators, "pcn", PCN.objects.values_list("code", flat=True)
         )
         self.validate_measure_global(mg, pcns, "pcn")
         mvs = MeasureValue.objects.filter_by_org_type("pcn").filter(month=month)
@@ -560,7 +557,7 @@ def create_organisations(random):
             pcns = []
             for pcn_ix in range(5):
                 pcn = PCN.objects.create(
-                    ons_code="E00000{}{}{}".format(regtm_ix, stp_ix, pcn_ix),
+                    code="E00000{}{}{}".format(regtm_ix, stp_ix, pcn_ix),
                     name="PCN {}/{}/{}".format(regtm_ix, stp_ix, pcn_ix),
                 )
                 pcns.append(pcn)

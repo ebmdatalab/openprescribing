@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 pcns = []
                 for pcn_ix in range(2):
                     pcn = PCN.objects.create(
-                        ons_code="E00000{}{}{}".format(regtm_ix, stp_ix, pcn_ix),
+                        code="E00000{}{}{}".format(regtm_ix, stp_ix, pcn_ix),
                         name="PCN {}/{}/{}".format(regtm_ix, stp_ix, pcn_ix),
                     )
                     pcns.append(pcn)

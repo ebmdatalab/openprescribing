@@ -53,8 +53,8 @@ def _get_ccgs(org_codes, centroids):
 def _get_pcns(org_codes, centroids):
     results = PCN.objects.active()
     if org_codes:
-        results = results.filter(ons_code__in=org_codes)
-    return results.values("name", "ons_code", geometry=Union("practice__boundary"))
+        results = results.filter(code__in=org_codes)
+    return results.values("name", "code", geometry=Union("practice__boundary"))
 
 
 def _get_stps(org_codes, centroids):
