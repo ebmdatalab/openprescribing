@@ -13,10 +13,8 @@ from .models import OrgBookmark
 from .models import SearchBookmark
 from .models import NCSOConcessionBookmark
 from .models import User
-from allauth.account.models import EmailAddress
 
 admin.site.unregister(User)
-admin.site.unregister(EmailAddress)
 
 
 class UserVerifiedFilter(admin.SimpleListFilter):

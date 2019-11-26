@@ -348,8 +348,6 @@ urlpatterns = [
         r"^robots\.txt/$",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
-    # required by django-allauth
-    url(r"^accounts/", include("allauth.urls")),
     url(r"^admin/", include(admin.site.urls)),
     # bookmarks
     url(r"^bookmarks/(?P<key>[0-9a-z]+)/$", bookmark_views.bookmarks, name="bookmarks"),
@@ -359,7 +357,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="newsletter_signup.html"),
         name="newsletter-signup",
     ),
-    # Custom verification page, overrides allauth view
     url(
         r"^confirm-email/$",
         bookmark_views.email_verification_sent,

@@ -1,4 +1,4 @@
-{% load account %}{% autoescape off %}Hello from OpenPrescribing!
+{% autoescape off %}Hello from OpenPrescribing!
 
 You've been subscribed to alerts about {{ user.profile.most_recent_bookmark.topic }}.
 
