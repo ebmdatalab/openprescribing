@@ -1673,7 +1673,8 @@ def _send_email_confirmation(user):
     msg.attach_alternative(bodies["html"], "text/html")
 
     msg.extra_headers = {"message-id": msg.message()["message-id"]}
-    msg.tags = ["allauth"]
+    # pre-November 2019, these messages were tagged with "allauth"
+    msg.tags = ["alert_signup"]
     msg = EmailMessage.objects.create_from_message(msg)
     msg.send()
 
