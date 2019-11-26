@@ -28,25 +28,32 @@ class Command(BaseCommand):
         parser.add_argument("--practice", action="store_true")
         parser.add_argument("--postcode", action="store_true")
         parser.add_argument("--region", action="store_true")
+        parser.add_argument("--pcn", action="store_true")
 
     def handle(self, *args, **kwargs):
         self.verbose = kwargs["verbosity"] > 1
 
         if kwargs["practice"]:
-            self.fetch_and_extract_zipped_csv("epraccur", "practice_details")
+            self.fetch_and_extract_zipped_file("epraccur", "practice_details")
         if kwargs["ccg"]:
-            self.fetch_and_extract_zipped_csv("eccg", "ccg_details")
+            self.fetch_and_extract_zipped_file("eccg", "ccg_details")
         if kwargs["postcode"]:
-            self.fetch_and_extract_zipped_csv("gridall", "nhs_postcode_file")
+            self.fetch_and_extract_zipped_file("gridall", "nhs_postcode_file")
         if kwargs["region"]:
-            self.fetch_and_extract_zipped_csv("eauth", "region_details")
+            self.fetch_and_extract_zipped_file("eauth", "region_details")
+        if kwargs["pcn"]:
+            self.fetch_and_extract_zipped_file(
+                "ePCN", "pcn_details", filename="ePCN.xlsx"
+            )
 
-    def fetch_and_extract_zipped_csv(self, base_filename, dest_dirname):
-        """Grab a zipfile from a url, and extract a CSV.
+    def fetch_and_extract_zipped_file(self, base_filename, dest_dirname, filename=None):
+        """Grab a zipfile from a url, and extract a single file from it.
         """
 
         zip_filename = base_filename + ".zip"
         url = "https://files.digital.nhs.uk/assets/ods/current/" + zip_filename
+        if filename is None:
+            filename = base_filename + ".csv"
 
         buf = BytesIO()
         buf.write(requests.get(url).content)
@@ -59,5 +66,4 @@ class Command(BaseCommand):
             datetime.datetime.today().strftime("%Y_%m"),
         )
 
-        csv_filename = base_filename + ".csv"
-        zipfile.extract(csv_filename, dest_dir)
+        zipfile.extract(filename, dest_dir)

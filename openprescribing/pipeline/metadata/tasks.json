@@ -39,6 +39,11 @@
         "source_id": "practice_details",
         "command": "org_codes --practice"
     },
+    "fetch_pcn_details": {
+        "type": "auto_fetch",
+        "source_id": "pcn_details",
+        "command": "org_codes --pcn"
+    },
     "fetch_prescribing_metadata_chemicals": {
         "type": "auto_fetch",
         "source_id": "prescribing_metadata",
@@ -120,6 +125,15 @@
         "dependencies": [
             "fetch_practice_details",
             "import_ccg_details"
+        ]
+    },
+    "import_pcn_details": {
+        "type": "import",
+        "source_id": "pcn_details",
+        "command": "import_pcns --filename ePCN.xlsx",
+        "dependencies": [
+            "import_practice_details",
+            "fetch_pcn_details"
         ]
     },
     "handle_orphan_practices": {
