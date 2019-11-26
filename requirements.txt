@@ -63,7 +63,7 @@ newrelic==5.2.3.131
 numpy==1.16.5
 oauthlib==3.1.0           # via requests-oauthlib
 openpyxl==2.6.3
-pandas-gbq==0.10.0
+pandas-gbq==0.12.0
 pandas==0.24.2
 paramiko==2.6.0           # via fabric3
 pathtools==0.1.2          # via watchdog
@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==42.0.0        # via google-api-core, google-auth, gunicorn, pandas-gbq, protobuf, pydata-google-auth
+# setuptools==42.0.1        # via google-api-core, google-auth, gunicorn, pandas-gbq, protobuf, pydata-google-auth
