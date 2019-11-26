@@ -181,6 +181,8 @@ BNF_MAP_SCHEMA = build_schema(
     ("former_bnf_code", "STRING"), ("current_bnf_code", "STRING")
 )
 
+PCN_SCHEMA = build_schema(("code", "STRING"), ("name", "STRING"))
+
 STP_SCHEMA = build_schema(("ons_code", "STRING"), ("name", "STRING"))
 
 REGIONAL_TEAM_SCHEMA = build_schema(

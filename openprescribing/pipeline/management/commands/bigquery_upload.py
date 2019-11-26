@@ -72,6 +72,9 @@ class Command(BaseCommand):
             sql, write_disposition="WRITE_APPEND", substitutions=substitutions
         )
 
+        table = client.get_table("pcns")
+        table.insert_rows_from_pg(models.PCN, schemas.PCN_SCHEMA)
+
         table = client.get_table("ccgs")
         table.insert_rows_from_pg(
             models.PCT, schemas.CCG_SCHEMA, transformer=schemas.ccgs_transform
