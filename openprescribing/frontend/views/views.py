@@ -1652,14 +1652,14 @@ def _handle_bookmark_and_newsletter_post(
             )
             form_args = _make_bookmark_args(user, form, subject_field_ids)
             subject_class.objects.get_or_create(**form_args)
-            _send_email_confirmation(user)
+            _send_alert_signup_confirmation(user)
             return redirect("account_email_verification_sent")
         else:
             return redirect("newsletter-signup")
     return form
 
 
-def _send_email_confirmation(user):
+def _send_alert_signup_confirmation(user):
     subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
 
     bodies = {}
