@@ -1703,9 +1703,6 @@ def _handle_bookmark_and_newsletter_post(
             user = _authenticate_possibly_new_user(email)
             form_args = _make_bookmark_args(user, form, subject_field_ids)
             _unverify_email_address_when_different_user(user, request)
-            # We're automatically approving all alert signups from now on
-            # without waiting for the email address to be verified
-            form_args["approved"] = True
             subject_class.objects.get_or_create(**form_args)
             return _force_login_and_redirect(request, user)
         else:

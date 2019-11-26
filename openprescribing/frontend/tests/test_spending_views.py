@@ -136,7 +136,6 @@ class TestSpendingViews(TestCase):
         bookmark = NCSOConcessionBookmark.objects.last()
         self.assertEqual(bookmark.practice, self.practice)
         self.assertEqual(bookmark.user.email, "alice@example.com")
-        self.assertEqual(bookmark.approved, True)
 
     def test_all_england_alert_signup(self):
         factory = DataFactory()
@@ -157,7 +156,6 @@ class TestSpendingViews(TestCase):
         self.assertEqual(bookmark.practice, None)
         self.assertEqual(bookmark.pct, None)
         self.assertEqual(bookmark.user.email, "alice@example.com")
-        self.assertEqual(bookmark.approved, True)
 
     def test_alert_signup_form(self):
         url = "/practice/{}/concessions/".format(self.practice.code)

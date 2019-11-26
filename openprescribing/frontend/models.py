@@ -769,7 +769,6 @@ class SearchBookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=1200)
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return "Bookmark: " + self.name
@@ -806,7 +805,6 @@ class OrgBookmark(models.Model):
         Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     def dashboard_url(self, measure=None):
         """The 'home page' for a measure for this bookmark, or for all
@@ -874,7 +872,6 @@ class NCSOConcessionBookmark(models.Model):
         Practice, null=True, blank=True, on_delete=models.PROTECT
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
 
     @property
     def entity(self):

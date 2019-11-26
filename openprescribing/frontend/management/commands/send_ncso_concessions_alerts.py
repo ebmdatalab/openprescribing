@@ -39,12 +39,12 @@ def send_alerts(date):
 def get_unsent_bookmarks(date):
     """Find unsent bookmarks for given date.
 
-    Alerts should only be sent to active users who have an approved bookmark.
+    Alerts should only be sent to active users.
     """
 
-    return NCSOConcessionBookmark.objects.filter(
-        approved=True, user__is_active=True
-    ).exclude(user__emailmessage__tags__contains=["ncso_concessions", date])
+    return NCSOConcessionBookmark.objects.filter(user__is_active=True).exclude(
+        user__emailmessage__tags__contains=["ncso_concessions", date]
+    )
 
 
 def send_alert(bookmark, date):
