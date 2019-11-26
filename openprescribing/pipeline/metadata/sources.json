@@ -96,6 +96,14 @@
         "notes": "Quarterly and monthly diffs are also available",
         "core_data": true
     },
+    "pcn_details": {
+        "title": "Primary Care Networks",
+        "description": "Details of all Primary Care Networks and their practice memberships",
+        "publisher": "NHS Digital",
+        "publication_schedule": "end of each month",
+        "index_url": "https://files.digital.nhs.uk/assets/ods/current/ePCN.zip",
+        "core_data": true
+    },
     "prescribing": {
         "title": "GP Practice Prescribing",
         "description": "General practice prescribing data is a list of all medicines, dressings and appliances that are prescribed and dispensed each month.",
