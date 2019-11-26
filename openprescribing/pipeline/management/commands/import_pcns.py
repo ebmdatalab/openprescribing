@@ -24,7 +24,9 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             for code, details in pcn_details.items():
-                PCN.objects.update_or_create(code=code, defaults={"name": name})
+                PCN.objects.update_or_create(
+                    code=code, defaults={"name": details["name"]}
+                )
                 Practice.objects.filter(code__in=details["members"]).update(pcn=code)
 
     def get_pcn_details_from_sheet(self, sheet):
