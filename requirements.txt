@@ -53,7 +53,7 @@ html2text==2019.8.11
 httplib2==0.14.0          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
-lxml==4.4.1
+lxml==4.4.2
 lz4==2.2.1
 mailchimp3==3.0.10
 mccabe==0.6.1             # via flake8
