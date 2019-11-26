@@ -69,7 +69,7 @@ paramiko==2.6.0           # via fabric3
 pathtools==0.1.2          # via watchdog
 pip-tools==4.2.0
 premailer==3.6.1
-protobuf==3.10.0          # via google-api-core, google-cloud-bigquery, googleapis-common-protos
+protobuf==3.11.0          # via google-api-core, google-cloud-bigquery, googleapis-common-protos
 psycopg2-binary==2.8.4
 pyarrow==0.15.1
 pyasn1-modules==0.2.7     # via google-auth
