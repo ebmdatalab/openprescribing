@@ -1,107 +1,81 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.contrib.auth import login
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.views.generic import ListView
+from django.shortcuts import get_object_or_404, redirect, render
 
 from frontend.forms import BookmarkListForm
-from frontend.models import SearchBookmark
-from frontend.models import OrgBookmark
-from frontend.models import NCSOConcessionBookmark
+from frontend.models import Profile
 
 
-class BookmarkList(ListView):
-    # As we're using custom context data, I'm not sure what
-    # benefits using a ListView brings us
-    context_object_name = "bookmark_list"
-    template_name = "bookmarks/bookmark_list.html"
-    model = SearchBookmark
+def bookmarks(request, key):
+    user = _get_user_by_key_or_404(key)
 
-    def post(self, request, *args, **kwargs):
-        count = 0
-        if request.POST.get("unsuball"):
-            org_bookmarks = [x.id for x in self._org_bookmarks()]
-            search_bookmarks = [x.id for x in self._search_bookmarks()]
-            ncso_concessions_bookmarks = [
-                x.id for x in self._ncso_concessions_bookmarks()
-            ]
-        else:
-            org_bookmarks = request.POST.getlist("org_bookmarks")
-            search_bookmarks = request.POST.getlist("search_bookmarks")
-            ncso_concessions_bookmarks = request.POST.getlist(
-                "ncso_concessions_bookmarks"
+    search_bookmarks = user.searchbookmark_set.all()
+    org_bookmarks = user.orgbookmark_set.all()
+    ncso_concessions_bookmarks = user.ncsoconcessionbookmark_set.all()
+
+    if request.method == "POST":
+        if not request.POST.get("unsuball"):
+            org_bookmarks = org_bookmarks.filter(
+                pk__in=request.POST.getlist("org_bookmarks")
             )
-        for b in org_bookmarks:
-            OrgBookmark.objects.get(pk=b).delete()
-            count += 1
-        for b in search_bookmarks:
-            SearchBookmark.objects.get(pk=b).delete()
-            count += 1
-        for b in ncso_concessions_bookmarks:
-            NCSOConcessionBookmark.objects.get(pk=b).delete()
-            count += 1
+            search_bookmarks = search_bookmarks.filter(
+                pk__in=request.POST.getlist("search_bookmarks")
+            )
+            ncso_concessions_bookmarks = ncso_concessions_bookmarks.filter(
+                pk__in=request.POST.getlist("ncso_concessions_bookmarks")
+            )
+
+        # QuerySet.delete() returns a tuple whose first element is the number
+        # of records deleted.
+        count = (
+            org_bookmarks.delete()[0]
+            + search_bookmarks.delete()[0]
+            + ncso_concessions_bookmarks.delete()[0]
+        )
+
         if count > 0:
             msg = "Unsubscribed from %s alert" % count
             if count > 1:
                 msg += "s"
             messages.success(request, msg)
-        return redirect(reverse("bookmark-list"))
 
-    def _search_bookmarks(self):
-        return SearchBookmark.objects.filter(
-            user__id=self.request.user.id, approved=True
+        return redirect(reverse("bookmarks", args=[key]))
+
+    form = BookmarkListForm(
+        org_bookmarks=org_bookmarks,
+        search_bookmarks=search_bookmarks,
+        ncso_concessions_bookmarks=ncso_concessions_bookmarks,
+    )
+    count = (
+        search_bookmarks.count()
+        + org_bookmarks.count()
+        + ncso_concessions_bookmarks.count()
+    )
+
+    if count == 1:
+        single_bookmark = (
+            search_bookmarks.first()
+            or org_bookmarks.first()
+            or ncso_concessions_bookmarks.first()
         )
-
-    def _org_bookmarks(self):
-        return OrgBookmark.objects.filter(user__id=self.request.user.id, approved=True)
-
-    def _ncso_concessions_bookmarks(self):
-        return NCSOConcessionBookmark.objects.filter(
-            user__id=self.request.user.id, approved=True
-        )
-
-    def get_context_data(self):
-        search_bookmarks = self._search_bookmarks()
-        org_bookmarks = self._org_bookmarks()
-        ncso_concessions_bookmarks = self._ncso_concessions_bookmarks()
-        form = BookmarkListForm(
-            org_bookmarks=org_bookmarks,
-            search_bookmarks=search_bookmarks,
-            ncso_concessions_bookmarks=ncso_concessions_bookmarks,
-        )
-        count = (
-            search_bookmarks.count()
-            + org_bookmarks.count()
-            + ncso_concessions_bookmarks.count()
-        )
-        single_bookmark = None
-        if count == 1:
-            single_bookmark = (
-                search_bookmarks.first()
-                or org_bookmarks.first()
-                or ncso_concessions_bookmarks.first()
-            )
-
-        return {
-            "search_bookmarks": search_bookmarks,
-            "org_bookmarks": org_bookmarks,
-            "ncso_concessions_bookmarks": ncso_concessions_bookmarks,
-            "form": form,
-            "count": count,
-            "single_bookmark": single_bookmark,
-        }
-
-
-def login_from_key(request, key):
-    user = authenticate(key=key)
-    if user:
-        login(request, user)
     else:
-        raise PermissionDenied
-    return redirect("bookmark-list")
+        single_bookmark = None
+
+    ctx = {
+        "search_bookmarks": search_bookmarks,
+        "org_bookmarks": org_bookmarks,
+        "ncso_concessions_bookmarks": ncso_concessions_bookmarks,
+        "form": form,
+        "count": count,
+        "single_bookmark": single_bookmark,
+    }
+
+    return render(request, "bookmarks/bookmark_list.html", ctx)
+
+
+def _get_user_by_key_or_404(key):
+    profile = get_object_or_404(Profile, key=key)
+    return profile.user
 
 
 def email_verification_sent(request):
