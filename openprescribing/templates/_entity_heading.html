@@ -15,6 +15,11 @@
         <a href="{% url 'ccg_home_page' entity.ccg.code %}">{{ entity.ccg.name }}</a>
       </p>
     {% endif %}
+    {% if entity.pcn %}
+      <p>Part of PCN:
+        <a href="{% url 'pcn_home_page' entity.pcn.code %}">{{ entity.pcn.name }}</a>
+      </p>
+    {% endif %}
     {% if entity.list_size_13 %}
       <p class="lead">Registered patients in 2013/14: {{ entity.list_size_13|intcomma }}</p>
     {% endif %}
