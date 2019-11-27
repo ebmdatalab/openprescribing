@@ -1417,7 +1417,9 @@ def _add_measure_for_siblings_url(options, entity_type):
 def _add_measure_url(options, entity_type):
     if entity_type == "practice":
         options["measureUrlTemplate"] = _url_template("measure_for_all_ccgs")
-    else:
+    # We're deliberately not showing a link to compare all PCNS for "political"
+    # reasons
+    elif entity_type != "pcn":
         options["measureUrlTemplate"] = _url_template(
             "measure_for_all_{}s".format(entity_type)
         )

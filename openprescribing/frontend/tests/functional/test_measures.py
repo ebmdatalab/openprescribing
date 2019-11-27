@@ -512,19 +512,20 @@ class MeasuresTests(SeleniumTestCase):
             "Split the measure into charts for individual practices",
             "/pcn/E00000000/core_0/",
         )
+        # Disabled for now (see commit message)
+        # self._verify_link(
+        #     panel_element,
+        #     ".inner li:nth-child(3)",
+        #     "Compare all PCNs in England on this measure",
+        #     "/measure/core_0/pcn/",
+        # )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all PCNs in England on this measure",
-            "/measure/core_0/pcn/",
-        )
-        self._verify_link(
-            panel_element,
-            ".inner li:nth-child(4)",
             "View this measure on the analyse page",
             MEASURE_CORE_0_ANALYSE_URL,
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
         panel_element = self._find_measure_panel("measure_lpzomnibus")
         self._verify_link(
@@ -551,19 +552,20 @@ class MeasuresTests(SeleniumTestCase):
             "Split the measure into charts for individual practices",
             "/pcn/E00000000/lpzomnibus/",
         )
+        # Disabled for now (see commit message)
+        # self._verify_link(
+        #     panel_element,
+        #     ".inner li:nth-child(4)",
+        #     "Compare all PCNs in England on this measure",
+        #     "/measure/lpzomnibus/pcn/",
+        # )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(4)",
-            "Compare all PCNs in England on this measure",
-            "/measure/lpzomnibus/pcn/",
-        )
-        self._verify_link(
-            panel_element,
-            ".inner li:nth-child(5)",
             "View this measure on the analyse page",
             MEASURE_LPZOMNIBUS_ANALYSE_URL,
         )
-        self._verify_num_elements(panel_element, ".inner li", 5)
+        self._verify_num_elements(panel_element, ".inner li", 4)
 
     def test_measures_for_one_pcn_low_priority(self):
         self._get("/pcn/E00000000/measures/?tags=lowpriority")
@@ -587,19 +589,20 @@ class MeasuresTests(SeleniumTestCase):
             "Split the measure into charts for individual practices",
             "/pcn/E00000000/lp_2/",
         )
+        # Disabled for now (see commit message)
+        # self._verify_link(
+        #     panel_element,
+        #     ".inner li:nth-child(3)",
+        #     "Compare all PCNs in England on this measure",
+        #     "/measure/lp_2/pcn/",
+        # )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(3)",
-            "Compare all PCNs in England on this measure",
-            "/measure/lp_2/pcn/",
-        )
-        self._verify_link(
-            panel_element,
-            ".inner li:nth-child(4)",
             "View this measure on the analyse page",
             MEASURE_LP_2_ANALYSE_URL,
         )
-        self._verify_num_elements(panel_element, ".inner li", 4)
+        self._verify_num_elements(panel_element, ".inner li", 3)
 
     def test_measures_for_one_stp(self):
         self._get("/stp/E00000000/measures/")
@@ -1003,19 +1006,20 @@ class MeasuresTests(SeleniumTestCase):
             "Split the measure into charts for individual practices",
             "/pcn/E00000000/lp_2/",
         )
+        # Disabled for now (see commit message)
+        # self._verify_link(
+        #     panel_element,
+        #     ".inner li:nth-child(2)",
+        #     "Compare all PCNs in England on this measure",
+        #     "/measure/lp_2/pcn/",
+        # )
         self._verify_link(
             panel_element,
             ".inner li:nth-child(2)",
-            "Compare all PCNs in England on this measure",
-            "/measure/lp_2/pcn/",
-        )
-        self._verify_link(
-            panel_element,
-            ".inner li:nth-child(3)",
             "View this measure on the analyse page",
             MEASURE_LP_2_ANALYSE_URL,
         )
-        self._verify_num_elements(panel_element, ".inner li", 3)
+        self._verify_num_elements(panel_element, ".inner li", 2)
 
     def test_measure_for_one_stp(self):
         self._get("/measure/lp_2/stp/E00000000/")
