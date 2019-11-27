@@ -805,6 +805,7 @@ class OrgBookmark(models.Model):
     practice = models.ForeignKey(
         Practice, null=True, blank=True, on_delete=models.PROTECT
     )
+    pcn = models.ForeignKey(PCN, null=True, blank=True, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
 

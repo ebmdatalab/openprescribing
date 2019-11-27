@@ -320,6 +320,19 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.pct, None)
         self.assertEqual(bookmark.org_type(), "all_england")
 
+    def test_pcn_bookmark_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        form_data = {
+            "email": "foo@baz.com",
+            "newsletters": ["alerts"],
+            "pcn": "PCN0001",
+        }
+        url = "/pcn/{}/".format("PCN0001")
+        response = self.client.post(url, form_data, follow=True)
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pcn.code, "PCN0001")
+
 
 class TestFrontendHomepageViews(TestCase):
     fixtures = [

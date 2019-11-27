@@ -205,6 +205,9 @@ def all_pcns(request):
 
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, code=pcn_code)
+    form = _monthly_bookmark_and_newsletter_form(request, pcn)
+    if isinstance(form, HttpResponseRedirect):
+        return form
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -213,6 +216,7 @@ def pcn_home_page(request, pcn_code):
         "practices": practices,
         "num_open_practices": num_open_practices,
         "num_non_open_practices": num_non_open_practices,
+        "form": form,
     }
     context.update(extra_context)
     request.session["came_from"] = request.path
@@ -1609,6 +1613,8 @@ def _entity_type_from_object(entity):
         return "pct"
     elif isinstance(entity, Practice):
         return "practice"
+    elif isinstance(entity, PCN):
+        return "pcn"
     else:
         raise RuntimeError("Entity must be Practice or PCT")
 

@@ -148,8 +148,8 @@
 
 <hr>
 
-{% if entity_ghost_generics_url %}
 <div class="row" >
+  {% if entity_ghost_generics_url %}
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Ghost-branded generics</h3>
@@ -161,16 +161,18 @@
       </span>
     </div>
   </div>
+  {% endif %}
+  {% if form %}
   <div class="col-md-6">
     <div class="landing-panel">
       <h3>Sign up for alerts or updates</h3>
       {% include '_alert_signup_form.html' %}
     </div>
   </div>
+  {% endif %}
 </div>
 
 <hr>
-{% endif %}
 
 <div class="row" >
   <div class="col-md-6">
