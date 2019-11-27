@@ -50,21 +50,33 @@
   </div>
 
 {% elif entity_type == 'ccg' %}
-  <div class="col-md-6">
-    <h1>
-      <a href="{{ entity.get_absolute_url }}" class="unstyled-link">{{ entity.cased_name }}</a>
+  <div class="row">
+    <div class="col-md-6">
+      <h1>
+        <a href="{{ entity.get_absolute_url }}" class="unstyled-link">{{ entity.cased_name }}</a>
+        {% if entity.close_date %}
+          (Closed)
+        {% endif %}
+      </h1>
       {% if entity.close_date %}
-        (Closed)
+      <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
       {% endif %}
-    </h1>
-    {% if entity.close_date %}
-    <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
-    {% endif %}
-    {% include '_practice_list.html' %}
+    </div>
+
+    <div class="col-md-6" id="map-container">
+      <div id="map-measure"></div>
+    </div>
   </div>
 
-  <div class="col-md-6" id="map-container">
-    <div id="map-measure"></div>
+  <div class="row">
+    <div class="col-md-6">
+      {% include '_practice_list.html' %}
+    </div>
+    {% if pcns %}
+    <div class="col-md-6">
+      {% include '_pcn_list.html' %}
+    </div>
+    {% endif %}
   </div>
 
 {% elif entity_type == 'regional_team' or entity_type == 'stp' %}
@@ -78,14 +90,7 @@
     {% if entity.close_date %}
     <p><span class="text-danger">Closed: {{ entity.close_date }}</span></p>
     {% endif %}
-    <p>There are {{ ccgs.count }} CCGs in this {{ entity_type_human }}.<a id="showall" href="#">&raquo; show them...</a></p>
-    <ul class="list-unstyled" id="child-entities">
-    {% for ccg in ccgs %}
-      <li class="hidden">
-        <a href="{% url 'ccg_home_page' ccg.code %}">{{ ccg.cased_name }}</a>
-      </li>
-    {% endfor %}
-    </ul>
+    {% include '_ccg_list.html' %}
   </div>
 {% endif %}
 </div>

@@ -347,6 +347,18 @@ class TestFrontendHomepageViews(TestCase):
     def setUp(self):
         ImportLog.objects.create(category="prescribing", current_at="2015-09-01")
 
+    def test_call_regional_team_homepage(self):
+        response = self.client.get("/regional-team/Y01/")
+        doc = pq(response.content)
+        ccgs = doc(".ccg-list li")
+        self.assertEqual(len(ccgs), 1)
+
+    def test_call_stp_homepage(self):
+        response = self.client.get("/stp/E00000001/")
+        doc = pq(response.content)
+        ccgs = doc(".ccg-list li")
+        self.assertEqual(len(ccgs), 1)
+
     def test_call_view_ccg_homepage(self):
         response = self.client.get("/ccg/02Q/")
         self.assertEqual(response.status_code, 200)
@@ -357,6 +369,11 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context["entity"].code, "02Q")
         self.assertEqual(response.context["entity_type"], "ccg")
         self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        doc = pq(response.content)
+        practices = doc(".practice-list li")
+        self.assertEqual(len(practices), 7)
+        pcns = doc(".pcn-list li")
+        self.assertEqual(len(pcns), 1)
 
     def test_call_view_pcn_homepage(self):
         response = self.client.get("/pcn/PCN001/")
@@ -365,6 +382,9 @@ class TestFrontendHomepageViews(TestCase):
         self.assertEqual(response.context["entity"].code, "PCN001")
         self.assertEqual(response.context["entity_type"], "pcn")
         self.assertEqual(response.context["date"], datetime.date(2014, 11, 1))
+        doc = pq(response.content)
+        practices = doc(".practice-list li")
+        self.assertEqual(len(practices), 5)
 
     def test_call_view_practice_homepage(self):
         response = self.client.get("/practice/C84001/")
@@ -512,7 +532,7 @@ class TestFrontendViews(TestCase):
         doc = pq(response.content)
         title = doc("h1")
         self.assertEqual(title.text(), "NHS Corby")
-        practices = doc("#child-entities li")
+        practices = doc(".practice-list li")
         self.assertEqual(len(practices), 2)
 
     def test_ccg_homepage_redirects_with_tags_query(self):
@@ -587,7 +607,7 @@ class TestFrontendViews(TestCase):
         doc = pq(response.content)
         title = doc("h1")
         self.assertEqual(title.text(), "NHS Corby")
-        practices = doc("#child-entities li")
+        practices = doc(".practice-list li")
         self.assertEqual(len(practices), 2)
 
     def test_call_view_measure_pcn(self):
@@ -597,7 +617,7 @@ class TestFrontendViews(TestCase):
         doc = pq(response.content)
         title = doc("h1")
         self.assertEqual(title.text(), "Transformational Sustainability")
-        practices = doc("#child-entities li")
+        practices = doc(".practice-list li")
         self.assertEqual(len(practices), 2)
 
     def test_call_view_measure_practice(self):

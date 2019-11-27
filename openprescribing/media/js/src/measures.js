@@ -19,7 +19,7 @@ var measures = {
     charts: '#charts',
     mapPanel: 'map-measure',
     perfSummary: '#perfsummary',
-    showAll: '#showall',
+    showAll: '.showall',
     sortButtons: '.btn-group > .btn',
     summaryTemplate: '#summary-panel',
     panelTemplate: '#measure-panel',
@@ -39,7 +39,7 @@ var measures = {
     _this.allGraphsRendered = false;
     _this.graphsToRenderInitially = 24;
     var options = JSON.parse(document.getElementById('measure-options').innerHTML);
-    _this.setUpShowPractices();
+    _this.setUpShowChildren();
     _this.setUpMap(options);
 
     $.when(
@@ -126,12 +126,11 @@ var measures = {
     });
   },
 
-  setUpShowPractices: function() {
+  setUpShowChildren: function() {
     $(this.el.showAll).on('click', function(e) {
+	    console.log('click');
       e.preventDefault();
-      $('#child-entities li.hidden').each(function(i, item) {
-        $(item).removeClass('hidden');
-      });
+      $(this).closest(".child-entity-list").find(".hidden").removeClass("hidden");
       $(this).hide();
     });
   },
