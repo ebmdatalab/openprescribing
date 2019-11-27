@@ -51,7 +51,7 @@ def make_dummy_bookmark(email_address):
     """Make a dummy bookmark with this email address for testing purposes"""
     dummy_user = User(email=email_address, id="dummyid")
     dummy_user.profile = Profile(key="dummykey")
-    return OrgBookmark(user=dummy_user, pct_id=None, practice_id=None)
+    return OrgBookmark(user=dummy_user, pct_id=None, practice_id=None, pcn_id=None)
 
 
 def get_unsent_bookmarks(date):
@@ -61,7 +61,11 @@ def get_unsent_bookmarks(date):
     """
 
     return OrgBookmark.objects.filter(
-        practice__isnull=True, pct__isnull=True, approved=True, user__is_active=True
+        practice__isnull=True,
+        pct__isnull=True,
+        pcn__isnull=True,
+        approved=True,
+        user__is_active=True,
     ).exclude(user__emailmessage__tags__contains=["all_england", date])
 
 

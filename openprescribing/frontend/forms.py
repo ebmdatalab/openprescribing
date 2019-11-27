@@ -1,7 +1,7 @@
 import urllib.parse
 from django import forms
 from django.utils.safestring import mark_safe
-from frontend.models import PCT, Practice
+from frontend.models import PCT, Practice, PCN
 
 
 def _name_with_url(bookmark):
@@ -91,12 +91,15 @@ class BaseOrgBookmarkForm(forms.Form):
     )
     pct = forms.CharField(widget=forms.HiddenInput(), required=False)
     practice = forms.CharField(widget=forms.HiddenInput(), required=False)
+    pcn = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def clean(self):
-        """Turn entity ids into Practice or PCT instances
+        """Turn entity ids into instances
         """
         pct_id = self.cleaned_data["pct"]
         practice_id = self.cleaned_data["practice"]
+        pcn_id = self.cleaned_data["pcn"]
+
         if pct_id:
             try:
                 self.cleaned_data["pct"] = PCT.objects.get(pk=pct_id)
@@ -106,7 +109,12 @@ class BaseOrgBookmarkForm(forms.Form):
             try:
                 self.cleaned_data["practice"] = Practice.objects.get(pk=practice_id)
             except Practice.DoesNotExist:
-                raise forms.ValidationError("Practice %s does not exist" % pct_id)
+                raise forms.ValidationError("Practice %s does not exist" % practice_id)
+        elif pcn_id:
+            try:
+                self.cleaned_data["pcn"] = PCN.objects.get(pk=pcn_id)
+            except PCN.DoesNotExist:
+                raise forms.ValidationError("PCN %s does not exist" % pcn_id)
 
         return self.cleaned_data
 
