@@ -828,6 +828,13 @@ class OrgBookmark(models.Model):
             else:
                 view = "measures_for_one_practice"
                 kwargs = {"practice_code": self.practice.code}
+        elif self.pcn is not None:
+            if measure:
+                view = "measure_for_one_pcn"
+                kwargs = {"measure": measure, "entity_code": self.pcn.code}
+            else:
+                view = "measures_for_one_pcn"
+                kwargs = {"pcn_code": self.pcn.code}
         else:
             if measure:
                 fragment = measure
@@ -845,6 +852,8 @@ class OrgBookmark(models.Model):
             return self.pct.cased_name
         elif self.practice is not None:
             return self.practice.cased_name
+        elif self.pcn is not None:
+            return self.pcn.cased_name
         else:
             return "the NHS in England"
 
@@ -853,6 +862,8 @@ class OrgBookmark(models.Model):
             return "CCG"
         elif self.practice is not None:
             return "practice"
+        elif self.pcn is not None:
+            return "pcn"
         else:
             return "all_england"
 
