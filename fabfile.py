@@ -301,7 +301,7 @@ def deploy(environment, force_build=False, branch="master"):
         clear_cloudflare()
         setup_cron()
         log_deploy()
-        check_numbers()
+        # check_numbers()
 
 
 @task
