@@ -108,10 +108,10 @@ def npm_build_js():
 
 
 def npm_build_css(force=False):
-    if force or any(
-        lambda x: x.startswith("openprescribing/media/css"),
-        [x for x in env.changed_files],
-    ):
+    changed_css_files = [
+        x for x in env.changed_files if x.startswith("openprescribing/media/css")
+    ]
+    if force or changed_css_files:
         run("cd openprescribing/media/js && npm run build-css")
 
 
