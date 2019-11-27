@@ -328,7 +328,7 @@ class TestAlertViews(TestCase):
             "pcn": "PCN0001",
         }
         url = "/pcn/{}/".format("PCN0001")
-        response = self.client.post(url, form_data, follow=True)
+        self.client.post(url, form_data, follow=True)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pcn.code, "PCN0001")
