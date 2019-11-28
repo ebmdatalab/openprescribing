@@ -351,17 +351,6 @@ urlpatterns = [
     url(r"^admin/", include(admin.site.urls)),
     # bookmarks
     url(r"^bookmarks/(?P<key>[0-9a-z]+)/$", bookmark_views.bookmarks, name="bookmarks"),
-    url(r"^finalise_signup/$", frontend_views.finalise_signup, name="finalise-signup"),
-    url(
-        r"^newsletter_signup/$",
-        TemplateView.as_view(template_name="newsletter_signup.html"),
-        name="newsletter-signup",
-    ),
-    url(
-        r"^confirm-email/$",
-        bookmark_views.email_verification_sent,
-        name="account_email_verification_sent",
-    ),
     # anymail webhooks
     url(r"^anymail/", include("anymail.urls")),
     # Redirects

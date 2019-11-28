@@ -50,12 +50,6 @@ class BookmarkListForm(forms.Form):
             del self.fields["ncso_concessions_bookmarks"]
 
 
-MONTHLY_OPTIONS = (("newsletter", " Newsletter"), ("alerts", " Monthly alerts"))
-
-
-NON_MONTHLY_OPTIONS = (("alerts", " Alerts"), ("newsletter", " Newsletter"))
-
-
 class SearchBookmarkForm(forms.Form):
     email = forms.EmailField(
         label="",
@@ -64,9 +58,6 @@ class SearchBookmarkForm(forms.Form):
             "invalid": "Please enter a valid email address",
         },
         widget=forms.TextInput(attrs={"placeholder": "Email address", "size": "35"}),
-    )
-    newsletters = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple, choices=MONTHLY_OPTIONS, label=""
     )
     url = forms.CharField(widget=forms.HiddenInput(), required=True)
     name = forms.CharField(widget=forms.HiddenInput(), required=True)
@@ -80,7 +71,7 @@ class SearchBookmarkForm(forms.Form):
         return urllib.parse.unquote(url)
 
 
-class BaseOrgBookmarkForm(forms.Form):
+class OrgBookmarkForm(forms.Form):
     email = forms.EmailField(
         label="",
         error_messages={
@@ -117,18 +108,6 @@ class BaseOrgBookmarkForm(forms.Form):
                 raise forms.ValidationError("PCN %s does not exist" % pcn_id)
 
         return self.cleaned_data
-
-
-class MonthlyOrgBookmarkForm(BaseOrgBookmarkForm):
-    newsletters = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple, choices=MONTHLY_OPTIONS, label=""
-    )
-
-
-class NonMonthlyOrgBookmarkForm(BaseOrgBookmarkForm):
-    newsletters = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple, choices=NON_MONTHLY_OPTIONS, label=""
-    )
 
 
 class FeedbackForm(forms.Form):

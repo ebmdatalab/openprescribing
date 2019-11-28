@@ -1,4 +1,4 @@
-from mock import Mock, patch
+from mock import Mock
 import datetime
 from urllib.parse import parse_qs, urlparse
 
@@ -33,16 +33,8 @@ class TestAlertViews(TestCase):
         "importlog",
     ]
 
-    def _post_org_signup(
-        self, entity_id, email="foo@baz.com", alert=True, newsletter=False
-    ):
+    def _post_org_signup(self, entity_id, email="foo@baz.com", follow=True):
         form_data = {"email": email}
-        newsletter_types = []
-        if newsletter:
-            newsletter_types.append("newsletter")
-        if alert:
-            newsletter_types.append("alerts")
-        form_data["newsletters"] = newsletter_types
         if entity_id == "all_england":
             url = "/all-england/"
         elif len(entity_id) == 3:
@@ -51,18 +43,10 @@ class TestAlertViews(TestCase):
         else:
             url = "/practice/%s/" % entity_id
             form_data["practice"] = entity_id
-        return self.client.post(url, form_data, follow=True)
+        return self.client.post(url, form_data, follow=follow)
 
-    def _post_search_signup(
-        self, url, name, email="foo@baz.com", alert=True, newsletter=False
-    ):
+    def _post_search_signup(self, url, name, email="foo@baz.com"):
         form_data = {"email": email}
-        newsletter_types = []
-        if newsletter:
-            newsletter_types.append("newsletter")
-        if alert:
-            newsletter_types.append("alerts")
-        form_data["newsletters"] = newsletter_types
         form_data["url"] = url
         form_data["name"] = name
         return self.client.post("/analyse/", form_data, follow=True)
@@ -73,9 +57,8 @@ class TestAlertViews(TestCase):
 
     def test_search_email_sent(self):
         response = self._post_search_signup("stuff", "mysearch")
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
+        self.assertContains(response, "alerts about mysearch")
+        self.assertRedirects(response, "/analyse/#stuff")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about mysearch", mail.outbox[0].body)
 
@@ -94,33 +77,6 @@ class TestAlertViews(TestCase):
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, "~mysearch")
 
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_search_bookmark_newsletter(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_search_signup(
-            "stuff", "%7Emysearch", email=email, alert=True, newsletter=True
-        )
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-
     def test_ccg_email_invalid(self):
         response = self._post_org_signup("03V", email="boo")
         self.assertContains(response, "Please enter a valid email address")
@@ -128,79 +84,15 @@ class TestAlertViews(TestCase):
     def test_ccg_email_sent(self):
         email = "a@a.com"
         response = self._post_org_signup("03V", email=email)
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertNotContains(
-            response, "optionally tell us a little more"
-        )  # newsletter signup
+        self.assertRedirects(response, "/ccg/03V/measures/")
+        self.assertContains(response, "alerts about prescribing in NHS Corby.")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(email, mail.outbox[0].to)
         self.assertIn("about prescribing in NHS Corby", mail.outbox[0].body)
 
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_with_newsletter(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_org_signup(
-            "03V", email=email, alert=True, newsletter=True
-        )
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-        self.assertEqual(OrgBookmark.objects.count(), 1)
-
-    @patch("frontend.views.views.mailchimp_subscribe")
-    def test_ccg_bookmark_newsletter_without_alert(self, mailchimp):
-        email = "a@a.com"
-        response = self._post_org_signup(
-            "03V", email=email, alert=False, newsletter=True
-        )
-        self.assertContains(response, "optionally tell us a little more")
-        # finish the signup
-        response = self.client.post(
-            "/finalise_signup/",
-            {
-                "email": "foo@baz.com",
-                "first_name": "",
-                "last_name": "",
-                "job_title": "",
-                "organisation": "",
-            },
-            follow=True,
-        )
-        mailchimp.assert_called()
-        self.assertContains(
-            response, "You have successfully signed up for the newsletter"
-        )
-        self.assertEqual(OrgBookmark.objects.count(), 0)
-
     def test_ccg_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
         self._post_org_signup("03V")
-        self.assertEqual(OrgBookmark.objects.count(), 1)
-        bookmark = OrgBookmark.objects.last()
-        self.assertEqual(bookmark.pct.code, "03V")
-
-    def test_ccg_newsletter_signup(self):
-        self.assertEqual(OrgBookmark.objects.count(), 0)
-        self._post_org_signup("03V", newsletter=False)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
@@ -212,8 +104,9 @@ class TestAlertViews(TestCase):
     def test_practice_email_sent(self):
         response = self._post_org_signup("P87629")
         self.assertContains(
-            response, "Check your email and click the confirmation link"
+            response, "alerts about prescribing in 1/ST Andrews Medical Practice"
         )
+        self.assertRedirects(response, "/practice/P87629/measures/")
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("about prescribing in 1/ST Andrews", mail.outbox[0].body)
 
@@ -226,7 +119,10 @@ class TestAlertViews(TestCase):
 
     def test_all_england_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
-        self._post_org_signup("all_england")
+        # We don't follow the redirect, because we don't have the necessary test data for
+        # testing the all-england page.
+        response = self._post_org_signup("all_england", follow=False)
+        self.assertRedirects(response, "/all-england/", fetch_redirect_response=False)
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.practice, None)

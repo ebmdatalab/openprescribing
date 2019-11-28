@@ -24,7 +24,6 @@ from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.http import is_safe_url
-from django.utils.safestring import mark_safe
 
 from dateutil.relativedelta import relativedelta
 
@@ -33,8 +32,7 @@ from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import VMP
 from frontend.forms import FeedbackForm
-from frontend.forms import MonthlyOrgBookmarkForm
-from frontend.forms import NonMonthlyOrgBookmarkForm
+from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
@@ -57,7 +55,6 @@ from frontend.views.spending_utils import (
     ncso_spending_breakdown_for_entity,
     NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
 )
-from frontend.views.mailchimp_utils import mailchimp_subscribe
 
 logger = logging.getLogger(__name__)
 
@@ -170,12 +167,11 @@ def all_practices(request):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_and_newsletter_form(request, practice)
+    form = _monthly_bookmark_form(request, practice)
     if isinstance(form, HttpResponseRedirect):
         return form
     context = _home_page_context_for_entity(request, practice)
     context["form"] = form
-    request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
 
@@ -214,7 +210,6 @@ def pcn_home_page(request, pcn_code):
         "form": form,
     }
     context.update(extra_context)
-    request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
 
@@ -231,7 +226,7 @@ def all_ccgs(request):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_and_newsletter_form(request, ccg)
+    form = _monthly_bookmark_form(request, ccg)
     if isinstance(form, HttpResponseRedirect):
         return form
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
@@ -245,7 +240,6 @@ def ccg_home_page(request, ccg_code):
         "num_non_open_practices": num_non_open_practices,
     }
     context.update(extra_context)
-    request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
 
@@ -267,7 +261,6 @@ def stp_home_page(request, stp_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, stp)
     context["ccgs"] = ccgs
-    request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
 
@@ -291,7 +284,6 @@ def regional_team_home_page(request, regional_team_code):
     ).order_by("name")
     context = _home_page_context_for_entity(request, regional_team)
     context["ccgs"] = ccgs
-    request.session["came_from"] = request.path
     return render(request, "entity_home_page.html", context)
 
 
@@ -327,7 +319,7 @@ def cached(function, *args):
 
 @handle_bad_request
 def all_england(request):
-    form = _monthly_bookmark_and_newsletter_form(request, None)
+    form = _monthly_bookmark_form(request, None)
     if isinstance(form, HttpResponseRedirect):
         return form
 
@@ -390,8 +382,7 @@ def all_england(request):
 
 def analyse(request):
     if request.method == "POST":
-        # should this be the _bookmark_and_newsletter_form?
-        form = _handle_bookmark_and_newsletter_post(
+        form = _handle_bookmark_post(
             request, SearchBookmark, SearchBookmarkForm, "url", "name"
         )
         if isinstance(form, HttpResponseRedirect):
@@ -886,72 +877,6 @@ def tariff(request, code=None):
 
 
 ##################################################
-# Bookmarks
-##################################################
-
-
-def finalise_signup(request):
-    """Handle mailchimp signups.
-
-    Then redirect the logged in user to the CCG they last bookmarked, or if
-    they're not logged in, just go straight to the homepage -- both
-    with a message.
-
-    This method should be configured as the LOGIN_REDIRECT_URL,
-    i.e. the view that is called following any successful login, which
-    in our case is always performed by _handle_bookmark_and_newsletter_post.
-
-    """
-    # Users who are logged in are *REDIRECTED* here, which means the
-    # form is never shown.
-    next_url = None
-    if "newsletter_email" in request.session:
-        if request.POST:
-            success = mailchimp_subscribe(
-                request,
-                request.POST["email"],
-                request.POST["first_name"],
-                request.POST["last_name"],
-                request.POST["organisation"],
-                request.POST["job_title"],
-            )
-            if success:
-                messages.success(
-                    request, "You have successfully signed up for the newsletter."
-                )
-            else:
-                messages.error(
-                    request, "There was a problem signing you up for the newsletter."
-                )
-
-        else:
-            # Show the signup form
-            return render(request, "newsletter_signup.html")
-    if not request.user.is_authenticated():
-        if "alerts_requested" in request.session:
-            # Their first alert bookmark signup
-            del request.session["alerts_requested"]
-            messages.success(request, "Thanks, you're now subscribed to alerts.")
-        if next_url:
-            return redirect(next_url)
-        else:
-            return redirect(request.session.get("came_from", "home"))
-    else:
-        # The user is signing up to at least the second bookmark
-        # in this session.
-        last_bookmark = request.user.profile.most_recent_bookmark()
-        next_url = last_bookmark.dashboard_url()
-        messages.success(
-            request,
-            mark_safe(
-                "You're now subscribed to alerts about <em>%s</em>."
-                % last_bookmark.topic()
-            ),
-        )
-        return redirect(next_url)
-
-
-##################################################
 # Spending
 ##################################################
 
@@ -966,7 +891,7 @@ def spending_for_one_entity(request, entity_code, entity_type):
     entity = _get_entity(entity_type, entity_code)
 
     if entity_type in ("practice", "ccg", "CCG", "all_england"):
-        form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
+        form = _ncso_concession_bookmark_form(request, entity)
     else:
         form = None
 
@@ -1024,7 +949,6 @@ def spending_for_one_entity(request, entity_code, entity_type):
         "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
         "form": form,
     }
-    request.session["came_from"] = request.path
     return render(request, "spending_for_one_entity.html", context)
 
 
@@ -1557,20 +1481,18 @@ def _entity_type_from_object(entity):
         raise RuntimeError("Entity must be Practice or PCT")
 
 
-def _monthly_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
+def _monthly_bookmark_form(request, entity):
+    """Build a form for alert signups, and handle user login
     for POSTs to that form.
     """
     if entity is None:
-        return _monthly_bookmark_and_newsletter_form_for_all_england(request)
+        return _monthly_bookmark_form_for_all_england(request)
 
     entity_type = _entity_type_from_object(entity)
     if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm, entity_type
-        )
+        form = _handle_bookmark_post(request, OrgBookmark, OrgBookmarkForm, entity_type)
     else:
-        form = MonthlyOrgBookmarkForm(
+        form = OrgBookmarkForm(
             initial={
                 entity_type: entity.pk,
                 "email": getattr(request.user, "email", ""),
@@ -1580,36 +1502,32 @@ def _monthly_bookmark_and_newsletter_form(request, entity):
     return form
 
 
-def _monthly_bookmark_and_newsletter_form_for_all_england(request):
-    """Build a form for newsletter/alert signups, and handle user login
+def _monthly_bookmark_form_for_all_england(request):
+    """Build a form for alert signups, and handle user login
     for POSTs to that form.
     """
     if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, OrgBookmark, MonthlyOrgBookmarkForm
-        )
+        form = _handle_bookmark_post(request, OrgBookmark, OrgBookmarkForm)
     else:
-        form = MonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
+        form = OrgBookmarkForm(initial={"email": getattr(request.user, "email", "")})
 
     return form
 
 
-def _ncso_concession_bookmark_and_newsletter_form(request, entity):
-    """Build a form for newsletter/alert signups, and handle user login
+def _ncso_concession_bookmark_form(request, entity):
+    """Build a form for alert signups, and handle user login
     for POSTs to that form.
     """
     if entity is None:
-        return _ncso_concession_bookmark_and_newsletter_form_for_all_england(request)
+        return _ncso_concession_bookmark_form_for_all_england(request)
 
     entity_type = _entity_type_from_object(entity)
     if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm, entity_type
+        form = _handle_bookmark_post(
+            request, NCSOConcessionBookmark, OrgBookmarkForm, entity_type
         )
     else:
-        form = NonMonthlyOrgBookmarkForm(
+        form = OrgBookmarkForm(
             initial={
                 entity_type: entity.pk,
                 "email": getattr(request.user, "email", ""),
@@ -1619,49 +1537,32 @@ def _ncso_concession_bookmark_and_newsletter_form(request, entity):
     return form
 
 
-def _ncso_concession_bookmark_and_newsletter_form_for_all_england(request):
+def _ncso_concession_bookmark_form_for_all_england(request):
     if request.method == "POST":
-        form = _handle_bookmark_and_newsletter_post(
-            request, NCSOConcessionBookmark, NonMonthlyOrgBookmarkForm
-        )
+        form = _handle_bookmark_post(request, NCSOConcessionBookmark, OrgBookmarkForm)
     else:
-        form = NonMonthlyOrgBookmarkForm(
-            initial={"email": getattr(request.user, "email", "")}
-        )
+        form = OrgBookmarkForm(initial={"email": getattr(request.user, "email", "")})
 
     return form
 
 
-def _handle_bookmark_and_newsletter_post(
+def _handle_bookmark_post(
     request, subject_class, subject_form_class, *subject_field_ids
 ):
-    """Handle search/org bookmark and newsletter signup form:
-
-    * create a search or org bookmark
-    * annotate the user's session (because newsletter signup can be
-      multi-stage)
-    * redirect to confirmation and/or newsletter signup page.
-
-    """
     form = subject_form_class(request.POST)
     if form.is_valid():
         email = form.cleaned_data["email"]
-        if "newsletter" in form.cleaned_data["newsletters"]:
-            # add a session variable. Then handle it in the next page,
-            # which is either the verification page, or a dedicated
-            # "tell us a bit more" page.
-            request.session["newsletter_email"] = email
-        if "alerts" in form.cleaned_data["newsletters"]:
-            request.session["alerts_requested"] = 1
-            user, _ = User.objects.get_or_create(
-                username=email, defaults={"email": email}
-            )
-            form_args = _make_bookmark_args(user, form, subject_field_ids)
-            subject_class.objects.get_or_create(**form_args)
-            _send_alert_signup_confirmation(user)
-            return redirect("account_email_verification_sent")
-        else:
-            return redirect("newsletter-signup")
+        user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
+        form_args = _make_bookmark_args(user, form, subject_field_ids)
+        bookmark, _ = subject_class.objects.get_or_create(**form_args)
+        _send_alert_signup_confirmation(user)
+        messages.success(
+            request,
+            "Thanks, you're now subscribed to alerts about {}.".format(
+                bookmark.topic()
+            ),
+        )
+        return redirect(bookmark.dashboard_url())
     return form
 
 

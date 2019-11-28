@@ -76,10 +76,3 @@ def bookmarks(request, key):
 def _get_user_by_key_or_404(key):
     profile = get_object_or_404(Profile, key=key)
     return profile.user
-
-
-def email_verification_sent(request):
-    sent_in_session = request.session.get("sent_in_session", 0)
-    request.session["sent_in_session"] = sent_in_session + 1
-    context = {"sent_in_session": sent_in_session}
-    return render(request, "account/verification_sent.html", context)

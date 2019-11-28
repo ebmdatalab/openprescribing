@@ -11,7 +11,6 @@ from frontend.views.mailchimp_utils import mailchimp_subscribe
 class MailChimpSubscribeTests(TestCase):
     def setUp(self):
         request = HttpRequest()
-        request.session = {"newsletter_email": "alice@example.com"}
         self.args = (
             request,
             "alice@example.com",
