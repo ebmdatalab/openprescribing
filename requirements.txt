@@ -49,7 +49,7 @@ googleapis-common-protos==1.6.0  # via google-api-core
 graphviz==0.13.2
 gunicorn==20.0.4
 hiredis==1.0.1
-html2text==2019.8.11
+html2text==2019.9.26
 httplib2==0.14.0          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==42.0.1        # via google-api-core, google-auth, gunicorn, pandas-gbq, protobuf, pydata-google-auth
+# setuptools
