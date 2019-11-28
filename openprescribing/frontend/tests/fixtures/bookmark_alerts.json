@@ -145,16 +145,6 @@
   }
 },
 {
-  "model": "account.emailaddress",
-  "pk": 1,
-  "fields": {
-    "user": 1,
-    "email": "foo@baz.com",
-    "verified": true,
-    "primary": false
-  }
-},
-{
   "model": "auth.user",
   "pk": 2,
   "fields": {
@@ -170,16 +160,6 @@
     "date_joined": "2016-09-28T15:08:58.446Z",
     "groups": [],
     "user_permissions": []
-  }
-},
-{
-  "model": "account.emailaddress",
-  "pk": 2,
-  "fields": {
-    "user": 2,
-    "email": "foo2@baz.com",
-    "verified": true,
-    "primary": false
   }
 },
 {
