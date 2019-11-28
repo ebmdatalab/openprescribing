@@ -39,10 +39,10 @@ class TestAlertViews(TestCase):
             url = "/all-england/"
         elif len(entity_id) == 3:
             url = "/ccg/%s/" % entity_id
-            form_data["pct"] = entity_id
+            form_data["pct_id"] = entity_id
         else:
             url = "/practice/%s/" % entity_id
-            form_data["practice"] = entity_id
+            form_data["practice_id"] = entity_id
         return self.client.post(url, form_data, follow=follow)
 
     def _post_search_signup(self, url, name, email="foo@baz.com"):
@@ -50,10 +50,6 @@ class TestAlertViews(TestCase):
         form_data["url"] = url
         form_data["name"] = name
         return self.client.post("/analyse/", form_data, follow=True)
-
-    def test_search_email_invalid(self):
-        response = self._post_search_signup("stuff", "mysearch", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
 
     def test_search_email_sent(self):
         response = self._post_search_signup("stuff", "mysearch")
@@ -77,10 +73,6 @@ class TestAlertViews(TestCase):
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, "~mysearch")
 
-    def test_ccg_email_invalid(self):
-        response = self._post_org_signup("03V", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
-
     def test_ccg_email_sent(self):
         email = "a@a.com"
         response = self._post_org_signup("03V", email=email)
@@ -96,10 +88,6 @@ class TestAlertViews(TestCase):
         self.assertEqual(OrgBookmark.objects.count(), 1)
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
-
-    def test_practice_email_invalid(self):
-        response = self._post_org_signup("P87629", email="boo")
-        self.assertContains(response, "Please enter a valid email address")
 
     def test_practice_email_sent(self):
         response = self._post_org_signup("P87629")
@@ -134,7 +122,7 @@ class TestAlertViews(TestCase):
         form_data = {
             "email": "foo@baz.com",
             "newsletters": ["alerts"],
-            "pcn": "PCN0001",
+            "pcn_id": "PCN0001",
         }
         url = "/pcn/{}/".format("PCN0001")
         self.client.post(url, form_data, follow=True)

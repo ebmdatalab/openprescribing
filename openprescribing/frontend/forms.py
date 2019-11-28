@@ -1,7 +1,6 @@
 import urllib.parse
 from django import forms
 from django.utils.safestring import mark_safe
-from frontend.models import PCT, Practice, PCN
 
 
 def _name_with_url(bookmark):
@@ -80,34 +79,9 @@ class OrgBookmarkForm(forms.Form):
         },
         widget=forms.TextInput(attrs={"placeholder": "Email address", "size": "35"}),
     )
-    pct = forms.CharField(widget=forms.HiddenInput(), required=False)
-    practice = forms.CharField(widget=forms.HiddenInput(), required=False)
-    pcn = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    def clean(self):
-        """Turn entity ids into instances
-        """
-        pct_id = self.cleaned_data["pct"]
-        practice_id = self.cleaned_data["practice"]
-        pcn_id = self.cleaned_data["pcn"]
-
-        if pct_id:
-            try:
-                self.cleaned_data["pct"] = PCT.objects.get(pk=pct_id)
-            except PCT.DoesNotExist:
-                raise forms.ValidationError("CCG %s does not exist" % pct_id)
-        elif practice_id:
-            try:
-                self.cleaned_data["practice"] = Practice.objects.get(pk=practice_id)
-            except Practice.DoesNotExist:
-                raise forms.ValidationError("Practice %s does not exist" % practice_id)
-        elif pcn_id:
-            try:
-                self.cleaned_data["pcn"] = PCN.objects.get(pk=pcn_id)
-            except PCN.DoesNotExist:
-                raise forms.ValidationError("PCN %s does not exist" % pcn_id)
-
-        return self.cleaned_data
+    pct_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    practice_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    pcn_id = forms.CharField(widget=forms.HiddenInput(), required=False)
 
 
 class FeedbackForm(forms.Form):

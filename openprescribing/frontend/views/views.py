@@ -168,9 +168,10 @@ def all_practices(request):
 
 def practice_home_page(request, practice_code):
     practice = get_object_or_404(Practice, code=practice_code)
-    form = _monthly_bookmark_form(request, practice)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"practice_id": practice_code})
     context = _home_page_context_for_entity(request, practice)
     context["form"] = form
     return render(request, "entity_home_page.html", context)
@@ -197,9 +198,10 @@ def all_pcns(request):
 
 def pcn_home_page(request, pcn_code):
     pcn = get_object_or_404(PCN, code=pcn_code)
-    form = _monthly_bookmark_and_newsletter_form(request, pcn)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"pcn_id": pcn_code})
     practices = Practice.objects.filter(pcn=pcn, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -227,9 +229,10 @@ def all_ccgs(request):
 
 def ccg_home_page(request, ccg_code):
     ccg = get_object_or_404(PCT, code=ccg_code)
-    form = _monthly_bookmark_form(request, ccg)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {"pct_id": ccg_code})
     practices = Practice.objects.filter(ccg=ccg, setting=4).order_by("name")
     num_open_practices = len([p for p in practices if p.status_code == "A"])
     num_non_open_practices = len([p for p in practices if p.status_code != "A"])
@@ -320,9 +323,10 @@ def cached(function, *args):
 
 @handle_bad_request
 def all_england(request):
-    form = _monthly_bookmark_form(request, None)
-    if isinstance(form, HttpResponseRedirect):
-        return form
+    if request.method == "POST":
+        return _handle_bookmark_post(request, OrgBookmark)
+
+    form = _build_bookmark_form(OrgBookmark, {})
 
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get("entity_type", "CCG")
@@ -383,15 +387,11 @@ def all_england(request):
 
 def analyse(request):
     if request.method == "POST":
-        form = _handle_bookmark_post(
-            request, SearchBookmark, SearchBookmarkForm, "url", "name"
-        )
-        if isinstance(form, HttpResponseRedirect):
-            return form
-    else:
-        # Note that the (hidden) URL field is filled via javascript on
-        # page load (see `alertForm` in `chart.js`)
-        form = SearchBookmarkForm(initial={"email": getattr(request.user, "email", "")})
+        return _handle_bookmark_post(request, SearchBookmark)
+
+    # Note that the (hidden) URL field is filled via javascript on
+    # page load (see `alertForm` in `chart.js`)
+    form = _build_bookmark_form(SearchBookmark, {})
     return render(request, "analyse.html", {"form": form})
 
 
@@ -891,13 +891,17 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     entity = _get_entity(entity_type, entity_code)
 
-    if entity_type in ("practice", "ccg", "CCG", "all_england"):
-        form = _ncso_concession_bookmark_form(request, entity)
+    if request.method == "POST":
+        return _handle_bookmark_post(request, NCSOConcessionBookmark)
+
+    if entity_type == "practice":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {"practice_id": entity.pk})
+    elif entity_type.lower() == "ccg":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {"pct_id": entity.pk})
+    elif entity_type == "all_england":
+        form = _build_bookmark_form(NCSOConcessionBookmark, {})
     else:
         form = None
-
-    if isinstance(form, HttpResponseRedirect):
-        return form
 
     current_month = _get_current_month()
     monthly_totals = ncso_spending_for_entity(
@@ -974,6 +978,90 @@ def _financial_ytd_total(monthly_totals):
         for row in monthly_totals
         if row["month"] >= financial_year_start
     )
+
+
+##################################################
+# Bookmarks.
+##################################################
+
+BOOKMARK_CLS_TO_FORM_CLS = {
+    OrgBookmark: OrgBookmarkForm,
+    SearchBookmark: SearchBookmarkForm,
+    NCSOConcessionBookmark: OrgBookmarkForm,
+}
+
+
+def _build_bookmark_form(bookmark_cls, initial):
+    """Build form for alert signup."""
+
+    form_cls = BOOKMARK_CLS_TO_FORM_CLS[bookmark_cls]
+    return form_cls(initial=initial)
+
+
+def _handle_bookmark_post(request, bookmark_cls):
+    """Create a bookmark, email the user, add confirmation message, and
+    redirect to bookmark's dashboard URL.
+    """
+
+    bookmark = _get_or_create_bookmark(request, bookmark_cls)
+    _send_alert_signup_confirmation(bookmark.user)
+    _add_confirmation_message(request, bookmark)
+    return redirect(bookmark.dashboard_url())
+
+
+def _get_or_create_bookmark(request, bookmark_cls):
+    """Get or create bookmark object.
+
+    Note that this will raise a ValidationError if the email address is invalid
+    (which shouldn't happen because it should be validated by the browser) or
+    or an IntegrityError if the submitted pct_id/practice_id/pcn_id doesn't
+    correspond to an existing PCT/Practice/PCN (which shouldn't happen because
+    the entity id should be set in the initial form by _build_bookmark_form().)
+    """
+
+    form_cls = BOOKMARK_CLS_TO_FORM_CLS[bookmark_cls]
+    form = form_cls(request.POST)
+    form.full_clean()
+    email = form.cleaned_data["email"]
+    user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
+    bookmark_args = {k: v for k, v in form.cleaned_data.items() if k != "email" and v}
+    bookmark, _ = bookmark_cls.objects.get_or_create(user=user, **bookmark_args)
+    return bookmark
+
+
+def _send_alert_signup_confirmation(user):
+    """Send email confirming that user has signed up for alert."""
+
+    subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
+
+    bodies = {}
+    for ext in ["html", "txt"]:
+        template_name = "account/email/email_confirmation_signup_message." + ext
+        bodies[ext] = render_to_string(template_name, {"user": user}).strip()
+
+    msg = EmailMultiAlternatives(
+        subject, bodies["txt"], settings.DEFAULT_FROM_EMAIL, [user.email]
+    )
+    msg.attach_alternative(bodies["html"], "text/html")
+
+    msg.extra_headers = {"message-id": msg.message()["message-id"]}
+    # pre-November 2019, these messages were tagged with "allauth"
+    msg.tags = ["alert_signup"]
+    msg = EmailMessage.objects.create_from_message(msg)
+    msg.send()
+
+
+def _add_confirmation_message(request, bookmark):
+    """Add message indicating success."""
+
+    message_lines = [
+        "Thanks, you're now subscribed to alerts about {}.".format(bookmark.topic()),
+        'Have you <a href="{}">signed up to our newsletter</a>?'.format(
+            reverse("contact")
+        ),
+    ]
+    message = mark_safe("\n".join(message_lines))
+    messages.success(request, message)
 
 
 ##################################################
@@ -1447,148 +1535,6 @@ def all_england_low_priority_total(entity_type, date):
         .aggregate(total=Sum("numerator"))
     )
     return result["total"]
-
-
-def _make_bookmark_args(user, form, subject_field_ids):
-    """Construct a dict of cleaned keyword args suitable for creating a
-    new bookmark
-    """
-    form_args = {"user": user}
-
-    for field in subject_field_ids:
-        form_args[field] = form.cleaned_data[field]
-
-    if not subject_field_ids:
-        # There is no practice or PCT.
-        form_args["practice"] = None
-        form_args["pct"] = None
-
-    return form_args
-
-
-def _entity_type_from_object(entity):
-    """Given either a PCT or Practice, return a string indicating its type
-    for use in bookmark query filters that reference pct/practice
-    foreign keys
-
-    """
-    if isinstance(entity, PCT):
-        return "pct"
-    elif isinstance(entity, Practice):
-        return "practice"
-    elif isinstance(entity, PCN):
-        return "pcn"
-    else:
-        raise RuntimeError("Entity must be Practice or PCT")
-
-
-def _monthly_bookmark_form(request, entity):
-    """Build a form for alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _monthly_bookmark_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_post(request, OrgBookmark, OrgBookmarkForm, entity_type)
-    else:
-        form = OrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _monthly_bookmark_form_for_all_england(request):
-    """Build a form for alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if request.method == "POST":
-        form = _handle_bookmark_post(request, OrgBookmark, OrgBookmarkForm)
-    else:
-        form = OrgBookmarkForm(initial={"email": getattr(request.user, "email", "")})
-
-    return form
-
-
-def _ncso_concession_bookmark_form(request, entity):
-    """Build a form for alert signups, and handle user login
-    for POSTs to that form.
-    """
-    if entity is None:
-        return _ncso_concession_bookmark_form_for_all_england(request)
-
-    entity_type = _entity_type_from_object(entity)
-    if request.method == "POST":
-        form = _handle_bookmark_post(
-            request, NCSOConcessionBookmark, OrgBookmarkForm, entity_type
-        )
-    else:
-        form = OrgBookmarkForm(
-            initial={
-                entity_type: entity.pk,
-                "email": getattr(request.user, "email", ""),
-            }
-        )
-
-    return form
-
-
-def _ncso_concession_bookmark_form_for_all_england(request):
-    if request.method == "POST":
-        form = _handle_bookmark_post(request, NCSOConcessionBookmark, OrgBookmarkForm)
-    else:
-        form = OrgBookmarkForm(initial={"email": getattr(request.user, "email", "")})
-
-    return form
-
-
-def _handle_bookmark_post(
-    request, subject_class, subject_form_class, *subject_field_ids
-):
-    form = subject_form_class(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data["email"]
-        user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
-        form_args = _make_bookmark_args(user, form, subject_field_ids)
-        bookmark, _ = subject_class.objects.get_or_create(**form_args)
-        _send_alert_signup_confirmation(user)
-        message_lines = [
-            "Thanks, you're now subscribed to alerts about {}.".format(
-                bookmark.topic()
-            ),
-            'Have you <a href="{}">signed up to our newsletter</a>?'.format(
-                reverse("contact")
-            ),
-        ]
-        message = mark_safe("\n".join(message_lines))
-        messages.success(request, message)
-        return redirect(bookmark.dashboard_url())
-    return form
-
-
-def _send_alert_signup_confirmation(user):
-    subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
-
-    bodies = {}
-    for ext in ["html", "txt"]:
-        template_name = "account/email/email_confirmation_signup_message." + ext
-        bodies[ext] = render_to_string(template_name, {"user": user}).strip()
-
-    msg = EmailMultiAlternatives(
-        subject, bodies["txt"], settings.DEFAULT_FROM_EMAIL, [user.email]
-    )
-    msg.attach_alternative(bodies["html"], "text/html")
-
-    msg.extra_headers = {"message-id": msg.message()["message-id"]}
-    # pre-November 2019, these messages were tagged with "allauth"
-    msg.tags = ["alert_signup"]
-    msg = EmailMessage.objects.create_from_message(msg)
-    msg.send()
 
 
 def _get_entity(entity_type, entity_code):
