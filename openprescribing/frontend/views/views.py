@@ -24,6 +24,7 @@ from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.http import is_safe_url
+from django.utils.safestring import mark_safe
 
 from dateutil.relativedelta import relativedelta
 
@@ -1556,12 +1557,16 @@ def _handle_bookmark_post(
         form_args = _make_bookmark_args(user, form, subject_field_ids)
         bookmark, _ = subject_class.objects.get_or_create(**form_args)
         _send_alert_signup_confirmation(user)
-        messages.success(
-            request,
+        message_lines = [
             "Thanks, you're now subscribed to alerts about {}.".format(
                 bookmark.topic()
             ),
-        )
+            'Have you <a href="{}">signed up to our newsletter</a>?'.format(
+                reverse("contact")
+            ),
+        ]
+        message = mark_safe("\n".join(message_lines))
+        messages.success(request, message)
         return redirect(bookmark.dashboard_url())
     return form
 
