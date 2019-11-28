@@ -12,10 +12,6 @@ class Command(BaseCommand):
     help = "Creates or updates all BQ views that measures depend on"
 
     def handle(self, *args, **kwargs):
-        base_path = os.path.join(
-            settings.APPS_ROOT, "frontend", "management", "commands", "measure_sql"
-        )
-
         try:
             Client("hscic").create_storage_backed_table(
                 "raw_prescribing",
@@ -38,9 +34,9 @@ class Command(BaseCommand):
             # This references pregabalin_total_mg, so must come afterwards
             "gaba_total_ddd",
         ]:
-            recreate_table(client, table_name))
+            self.recreate_table(client, table_name)
 
-        recreate_table(Client("hscic"), "raw_prescribing_normalised")
+        self.recreate_table(Client("hscic"), "raw_prescribing_normalised")
 
         # cmpa_products is a table that has been created and managed by Rich.
         schema = build_schema(
@@ -49,6 +45,10 @@ class Command(BaseCommand):
         client.get_or_create_table("cmpa_products", schema)
 
     def recreate_table(self, client, table_name):
+        base_path = os.path.join(
+            settings.APPS_ROOT, "frontend", "management", "commands", "measure_sql"
+        )
+
         path = os.path.join(base_path, table_name + ".sql")
         with open(path, "r") as sql_file:
             sql = sql_file.read()
