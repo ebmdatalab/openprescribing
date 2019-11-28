@@ -10,11 +10,6 @@ import sys
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import BACKEND_SESSION_KEY
-from django.contrib.auth import HASH_SESSION_KEY
-from django.contrib.auth import SESSION_KEY
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.urlresolvers import get_resolver
@@ -29,9 +24,7 @@ from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
-from allauth.account import app_settings
-from allauth.account.models import EmailAddress
-from allauth.account.utils import perform_login
+from allauth.account.utils import send_email_confirmation
 from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
@@ -1529,54 +1522,6 @@ def all_england_low_priority_total(entity_type, date):
     return result["total"]
 
 
-def _authenticate_possibly_new_user(email):
-    try:
-        user = User.objects.get(username=email)
-    except User.DoesNotExist:
-        user = User.objects.create_user(username=email, email=email)
-    return authenticate(key=user.profile.key)
-
-
-def _unverify_email_address_when_different_user(user, request):
-    # This is weird. Because entering any email address logs you in as that
-    # user (see force_login function below) we need to prevent accessing
-    # someone's bookmarks just by signing up using their email address. This is
-    # done by unverifying that email address if you're not already logged in as
-    # that user and then forcing a re-verification before you can access
-    # existing bookmarks.
-    emailaddress = EmailAddress.objects.filter(user=user)
-    if user != request.user:
-        emailaddress.update(verified=False)
-
-
-def _force_login_and_redirect(request, user):
-    """Force a new login.
-
-    This allows us to piggy-back on built-in redirect mechanisms,
-    deriving from both django's built-in auth system, and
-    django-allauth:
-
-      * Users that have never been verified are redirected to
-       `verification_sent.html` (thanks to django-allauth)
-
-      * Verified users are sent to `finalise_signup.html` (per
-        Django's LOGIN_REDIRECT_URL setting).
-
-    """
-    if hasattr(request, "user"):
-        # Log the user out. We don't use Django's built-in logout
-        # mechanism because that clears the entire session, too,
-        # and we want to know if someone's logged in previously in
-        # this session.
-        request.user = AnonymousUser()
-        for k in [SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY]:
-            if k in request.session:
-                del request.session[k]
-    return perform_login(
-        request, user, app_settings.EmailVerificationMethod.MANDATORY, signup=True
-    )
-
-
 def _make_bookmark_args(user, form, subject_field_ids):
     """Construct a dict of cleaned keyword args suitable for creating a
     new bookmark
@@ -1706,11 +1651,13 @@ def _handle_bookmark_and_newsletter_post(
             request.session["newsletter_email"] = email
         if "alerts" in form.cleaned_data["newsletters"]:
             request.session["alerts_requested"] = 1
-            user = _authenticate_possibly_new_user(email)
+            user, _ = User.objects.get_or_create(
+                username=email, defaults={"email": email}
+            )
             form_args = _make_bookmark_args(user, form, subject_field_ids)
-            _unverify_email_address_when_different_user(user, request)
             subject_class.objects.get_or_create(**form_args)
-            return _force_login_and_redirect(request, user)
+            send_email_confirmation(request, user, signup=True)
+            return redirect("account_email_verification_sent")
         else:
             return redirect("newsletter-signup")
     return form
