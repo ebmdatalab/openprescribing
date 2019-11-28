@@ -23,7 +23,7 @@ google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
 gunicorn>=19.5.0
-html2text==2019.8.11
+html2text==2019.9.26
 lxml==4.4.2
 lz4
 mailchimp3>=2.0.18
