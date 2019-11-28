@@ -1,50 +1,47 @@
 # This file lists all the packages that openprescribing depends on directly.
-# See instructions at the top of base.txt for how to generate a full list of
-# pinned requirements.
-
-# Note that most of the pinned version numbers here are not essential (they
-# were taken from the versions running in production at the point that this
-# file was created) and many of the `==`s could probably be safely replaced
-# with `>=`s.  If there are new or upgraded dependencies which make dependency
-# resolution impossible, loosening the requirements here should be the first
-# thing we try.
+#
+# To add or remove dependencies, update this file and then run `pip compile` to
+# update requirements.txt.
+#
+# If a particular version (or range of versions) of a dependency is required,
+# that can be specified here (although that will be ignored by Dependabot).
 
 backports.csv
 beautifulsoup4
-django-allauth==0.40.0
-django-anymail[mailgun]==7.0.0
-django-cors-headers==3.2.0
-django-crispy-forms==1.8.1
+django-allauth
+django-anymail[mailgun]
+django-cors-headers
+django-crispy-forms
 django-dotenv
-django>=1.11.24,<2.0
-djangorestframework-csv==2.1.0
-djangorestframework>=3.3.2
+django==1.11.26
+djangorestframework-csv
+djangorestframework
 google-api-python-client
 google-cloud-bigquery
 google-cloud-storage
-gunicorn>=19.5.0
-html2text==2019.9.26
-lxml==4.4.2
+gunicorn
+html2text
+lxml
 lz4
-mailchimp3>=2.0.18
-networkx==2.4
+mailchimp3
+networkx
 newrelic
-numpy==1.17.4
+numpy
 openpyxl==2.6.3
 pandas-gbq
-pandas==0.25.3
-premailer==3.6.1
-psycopg2-binary==2.8.4
-pyarrow==0.15.1
-python-dateutil==2.8.1
-pytz==2019.3
+pandas
+premailer
+psycopg2-binary
+pyarrow
+python-dateutil
+pytz
 raven
-requests-futures==1.0.0
-requests[security]==2.22.0
-scipy==1.3.3
-titlecase==0.12.0
-tqdm==4.39.0
-xlrd==1.2.0
+requests-futures
+requests[security]
+scipy
+titlecase
+tqdm
+xlrd
 
 # redis
 django-redis

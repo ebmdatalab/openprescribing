@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools
+# setuptools==42.0.1
