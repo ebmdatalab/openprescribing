@@ -190,7 +190,7 @@ class OrgEmailTestCase(TestCase):
         # Name of the practice
         self.assertIn("1/ST Andrews Medical Practice", html)
         # Unsubscribe link
-        self.assertIn("/bookmarks/dummykey", html)
+        self.assertIn("/bookmarks/dummykey/", html)
         self.assertIn("We've no new information", html)
 
     def test_email_headers(self, attach_image, finder):
@@ -199,7 +199,7 @@ class OrgEmailTestCase(TestCase):
         message = mail.outbox[-1]
         self.assertIn(
             message.extra_headers["list-unsubscribe"],
-            "<http://localhost/bookmarks/dummykey>",
+            "<http://localhost/bookmarks/dummykey/>",
         )
 
     def test_email_body_text(self, attach_image, finder):
@@ -418,7 +418,7 @@ class SearchEmailTestCase(TestCase):
         )
         self.assertEqual(
             mail_queue.extra_headers["list-unsubscribe"],
-            "<http://localhost/bookmarks/dummykey>",
+            "<http://localhost/bookmarks/dummykey/>",
         )
 
     def test_email_body(self, attach_image):
@@ -434,7 +434,7 @@ class SearchEmailTestCase(TestCase):
         self.assertIn(opts["search_name"], html)
         self.assertEqual(mime_type, "text/html")
 
-        self.assertIn("/bookmarks/dummykey", html)
+        self.assertIn("/bookmarks/dummykey/", html)
         self.assertRegex(html, '<a href="http://localhost/analyse/.*#%s' % "something")
 
     def test_email_body_text(self, attach_image):
@@ -446,7 +446,7 @@ class SearchEmailTestCase(TestCase):
         call_command(CMD_NAME, **opts)
         text = mail.outbox[-1].body
         self.assertIn("**Hello!**", text)
-        self.assertIn("/bookmarks/dummykey", text)
+        self.assertIn("/bookmarks/dummykey/", text)
         self.assertRegex(text, "http://localhost/analyse/.*#%s" % "something")
 
 

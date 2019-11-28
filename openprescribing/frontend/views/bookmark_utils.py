@@ -730,7 +730,7 @@ def make_org_email(org_bookmark, stats, tag=None):
             interesting_img = None
 
     unsubscribe_link = settings.GRAB_HOST + reverse(
-        "bookmark-login", kwargs={"key": org_bookmark.user.profile.key}
+        "bookmarks", kwargs={"key": org_bookmark.user.profile.key}
     )
 
     context = {
@@ -775,7 +775,7 @@ def make_search_email(search_bookmark, tag=None):
         )
 
     unsubscribe_link = settings.GRAB_HOST + reverse(
-        "bookmark-login", kwargs={"key": search_bookmark.user.profile.key}
+        "bookmarks", kwargs={"key": search_bookmark.user.profile.key}
     )
 
     context = {
@@ -829,9 +829,7 @@ def make_ncso_concession_email(bookmark, tag=None):
     dashboard_path = reverse(dashboard_view_name, kwargs=dashboard_kwargs)
     dashboard_url = settings.GRAB_HOST + dashboard_path
 
-    unsubscribe_path = reverse(
-        "bookmark-login", kwargs={"key": bookmark.user.profile.key}
-    )
+    unsubscribe_path = reverse("bookmarks", kwargs={"key": bookmark.user.profile.key})
     unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
 
     with NamedTemporaryFile(suffix=".png") as f:
@@ -891,9 +889,7 @@ def make_all_england_email(bookmark, tag=None):
         ncso_spending_for_entity(None, "all_england", num_months=1)
     )
 
-    unsubscribe_path = reverse(
-        "bookmark-login", kwargs={"key": bookmark.user.profile.key}
-    )
+    unsubscribe_path = reverse("bookmarks", kwargs={"key": bookmark.user.profile.key})
     unsubscribe_link = settings.GRAB_HOST + unsubscribe_path
 
     context = {

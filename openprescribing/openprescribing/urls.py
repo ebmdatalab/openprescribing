@@ -352,12 +352,7 @@ urlpatterns = [
     url(r"^accounts/", include("allauth.urls")),
     url(r"^admin/", include(admin.site.urls)),
     # bookmarks
-    url(
-        r"^bookmarks/(?P<key>[0-9a-z]+)$",
-        bookmark_views.login_from_key,
-        name="bookmark-login",
-    ),
-    url(r"^bookmarks/$", bookmark_views.BookmarkList.as_view(), name="bookmark-list"),
+    url(r"^bookmarks/(?P<key>[0-9a-z]+)/$", bookmark_views.bookmarks, name="bookmarks"),
     url(r"^finalise_signup/$", frontend_views.finalise_signup, name="finalise-signup"),
     url(
         r"^newsletter_signup/$",
