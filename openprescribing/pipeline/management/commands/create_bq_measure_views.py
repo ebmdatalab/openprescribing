@@ -28,7 +28,6 @@ class Command(BaseCommand):
         client = Client("measures")
 
         for table_name in [
-            "raw_prescribing_normalised",
             "dmd_objs_with_form_route",
             "opioid_total_ome",
             "practice_data_all_low_priority",
@@ -39,18 +38,23 @@ class Command(BaseCommand):
             # This references pregabalin_total_mg, so must come afterwards
             "gaba_total_ddd",
         ]:
-            path = os.path.join(base_path, table_name + ".sql")
-            with open(path, "r") as sql_file:
-                sql = sql_file.read()
+            recreate_table(client, table_name))
 
-            try:
-                client.create_table_with_view(table_name, sql, False)
-            except Conflict:
-                client.delete_table(table_name)
-                client.create_table_with_view(table_name, sql, False)
+        recreate_table(Client("hscic"), "raw_prescribing_normalised")
 
         # cmpa_products is a table that has been created and managed by Rich.
         schema = build_schema(
             ("bnf_code", "STRING"), ("bnf_name", "STRING"), ("type", "STRING")
         )
         client.get_or_create_table("cmpa_products", schema)
+
+    def recreate_table(self, client, table_name):
+        path = os.path.join(base_path, table_name + ".sql")
+        with open(path, "r") as sql_file:
+            sql = sql_file.read()
+
+        try:
+            client.create_table_with_view(table_name, sql, False)
+        except Conflict:
+            client.delete_table(table_name)
+            client.create_table_with_view(table_name, sql, False)
