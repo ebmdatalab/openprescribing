@@ -121,10 +121,6 @@ def paths_to_scrape():
         if "%" not in pattern and "all-england" not in pattern:
             continue
 
-        # We don't have any PCN data yet, but when we do... TODO remove this
-        if "pcn_code" in keys:
-            continue
-
         path = build_path(pattern, keys)
         yield name, path
 
