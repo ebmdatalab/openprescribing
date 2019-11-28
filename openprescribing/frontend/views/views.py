@@ -12,6 +12,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import get_resolver
 from django.db import connection
 from django.db.models import Avg, Sum
@@ -20,11 +21,11 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.utils.safestring import mark_safe
 
-from allauth.account.utils import send_email_confirmation
 from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
@@ -37,6 +38,7 @@ from frontend.forms import NonMonthlyOrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
+from frontend.models import EmailMessage
 from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
@@ -1656,11 +1658,30 @@ def _handle_bookmark_and_newsletter_post(
             )
             form_args = _make_bookmark_args(user, form, subject_field_ids)
             subject_class.objects.get_or_create(**form_args)
-            send_email_confirmation(request, user, signup=True)
+            _send_email_confirmation(user)
             return redirect("account_email_verification_sent")
         else:
             return redirect("newsletter-signup")
     return form
+
+
+def _send_email_confirmation(user):
+    subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
+
+    bodies = {}
+    for ext in ["html", "txt"]:
+        template_name = "account/email/email_confirmation_signup_message." + ext
+        bodies[ext] = render_to_string(template_name, {"user": user}).strip()
+
+    msg = EmailMultiAlternatives(
+        subject, bodies["txt"], settings.DEFAULT_FROM_EMAIL, [user.email]
+    )
+    msg.attach_alternative(bodies["html"], "text/html")
+
+    msg.extra_headers = {"message-id": msg.message()["message-id"]}
+    msg.tags = ["allauth"]
+    msg = EmailMessage.objects.create_from_message(msg)
+    msg.send()
 
 
 def _get_entity(entity_type, entity_code):
