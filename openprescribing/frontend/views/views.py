@@ -384,7 +384,6 @@ def all_england(request):
         "date": date,
         "measure_options": measure_options,
         "form": form,
-        "signed_up_for_alert": _signed_up_for_alert(request, None, OrgBookmark),
     }
     return render(request, "all_england.html", context)
 
@@ -973,12 +972,8 @@ def spending_for_one_entity(request, entity_code, entity_type):
 
     if entity_type in ("practice", "ccg", "CCG", "all_england"):
         form = _ncso_concession_bookmark_and_newsletter_form(request, entity)
-        signed_up_for_alert = _signed_up_for_alert(
-            request, entity, NCSOConcessionBookmark
-        )
     else:
         form = None
-        signed_up_for_alert = False
 
     if isinstance(form, HttpResponseRedirect):
         return form
@@ -1032,7 +1027,6 @@ def spending_for_one_entity(request, entity_code, entity_type):
         "breakdown_is_incomplete_month": breakdown_metadata["is_incomplete_month"],
         "last_prescribing_date": last_prescribing_date,
         "national_average_discount_percentage": NATIONAL_AVERAGE_DISCOUNT_PERCENTAGE,
-        "signed_up_for_alert": signed_up_for_alert,
         "form": form,
     }
     request.session["came_from"] = request.path
@@ -1354,9 +1348,6 @@ def _home_page_context_for_entity(request, entity):
         context["entity_ghost_generics_url"] = "{}_ghost_generics".format(
             entity_type.lower()
         )
-        context["signed_up_for_alert"] = _signed_up_for_alert(
-            request, entity, OrgBookmark
-        )
 
     return context
 
@@ -1617,19 +1608,6 @@ def _entity_type_from_object(entity):
         return "pcn"
     else:
         raise RuntimeError("Entity must be Practice or PCT")
-
-
-def _signed_up_for_alert(request, entity, subject_class):
-    if request.user.is_authenticated():
-        if entity:
-            # Entity is a Practice or PCT
-            q = {_entity_type_from_object(entity): entity}
-        else:
-            # Entity is "All England"
-            q = {"practice_id__isnull": True, "pct_id__isnull": True}
-        return subject_class.objects.filter(user=request.user, **q).exists()
-    else:
-        return False
 
 
 def _monthly_bookmark_and_newsletter_form(request, entity):

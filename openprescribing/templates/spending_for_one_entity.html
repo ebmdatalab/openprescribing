@@ -35,7 +35,7 @@
 
 <hr/>
 
-{% if form and not signed_up_for_alert %}
+{% if form %}
 <form method="post" class="form form-inline">
  {% csrf_token %}
  <p>
@@ -49,11 +49,6 @@
   <input class="btn btn-primary" type="submit" value="Subscribe">
   </p>
 </form>
-<hr/>
-{% elif form %}
-<p>
-  You're already signed up for alerts.
-</p>
 <hr/>
 {% endif %}
 
