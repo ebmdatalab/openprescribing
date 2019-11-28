@@ -93,8 +93,6 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.url, "stuff")
         # Check the name is URL-decoded
         self.assertEqual(bookmark.name, "~mysearch")
-        # Check that the bookmark is automatically approved
-        self.assertTrue(bookmark.approved)
 
     @patch("frontend.views.views.mailchimp_subscribe")
     def test_search_bookmark_newsletter(self, mailchimp):

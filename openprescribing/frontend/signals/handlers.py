@@ -1,7 +1,5 @@
 import logging
 
-from allauth.account.signals import user_logged_in
-
 from anymail.signals import tracking
 from requests_futures.sessions import FuturesSession
 
@@ -20,12 +18,6 @@ logger = logging.getLogger(__name__)
 def handle_user_save(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-
-
-@receiver(user_logged_in, sender=User)
-def handle_user_logged_in(sender, request, user, **kwargs):
-    user.searchbookmark_set.update(approved=True)
-    user.orgbookmark_set.update(approved=True)
 
 
 def log_email_event(event):

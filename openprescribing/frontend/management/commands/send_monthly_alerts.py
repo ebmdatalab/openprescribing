@@ -83,12 +83,12 @@ class Command(BaseCommand):
         )
 
     def get_org_bookmarks(self, now_month, **options):
-        """Get approved OrgBookmarks for active users who have not been sent a
+        """Get all OrgBookmarks for active users who have not been sent a
         message tagged with `now_month`
 
         """
         query = (
-            Q(approved=True, user__is_active=True)
+            Q(user__is_active=True)
             & ~Q(user__emailmessage__tags__contains=["measures", now_month])
             &
             # Only include bookmarks for either a practice or pct: when both
@@ -126,7 +126,7 @@ class Command(BaseCommand):
         return bookmarks
 
     def get_search_bookmarks(self, now_month, **options):
-        query = Q(approved=True, user__is_active=True) & ~Q(
+        query = Q(user__is_active=True) & ~Q(
             user__emailmessage__tags__contains=["analyse", now_month]
         )
         if options["recipient_email"] and options["url"]:

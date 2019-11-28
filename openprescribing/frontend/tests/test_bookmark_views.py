@@ -15,7 +15,7 @@ class TestBookmarkViews(TestCase):
     def test_list_bookmarks(self):
         response = self.client.get(self.url, follow=True)
         self.assertContains(
-            response, "You are currently subscribed to 4 monthly alerts"
+            response, "You are currently subscribed to 3 monthly alerts"
         )
 
     def test_list_bookmarks_invalid_key(self):
@@ -30,12 +30,12 @@ class TestBookmarkViews(TestCase):
         }
         response = self.client.post(self.url, data, follow=True)
         self.assertContains(response, "Unsubscribed from 2 alerts")
-        self.assertEqual(self.user.orgbookmark_set.count(), 2)
+        self.assertEqual(self.user.orgbookmark_set.count(), 1)
         self.assertEqual(self.user.searchbookmark_set.count(), 0)
 
     def test_unsubscribe_from_all(self):
         data = {"unsuball": 1}
         response = self.client.post(self.url, data, follow=True)
-        self.assertContains(response, "Unsubscribed from 4 alerts")
+        self.assertContains(response, "Unsubscribed from 3 alerts")
         self.assertEqual(self.user.orgbookmark_set.count(), 0)
         self.assertEqual(self.user.searchbookmark_set.count(), 0)
