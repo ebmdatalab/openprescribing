@@ -248,6 +248,7 @@ def ccg_home_page(request, ccg_code):
         "practices": practices,
         "num_open_practices": num_open_practices,
         "num_non_open_practices": num_non_open_practices,
+        "pcns": ccg.pcns(),
     }
     context.update(extra_context)
     request.session["came_from"] = request.path

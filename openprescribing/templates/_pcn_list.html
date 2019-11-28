@@ -1,0 +1,14 @@
+<div class="child-entity-list pcn-list">
+  <p>
+    There are {{ pcns|length }} PCNs currently active in this {{ entity_type_human }}
+    <a class="showall" href="#">&raquo; show them...</a>
+  </p>
+
+  <ul class="list-unstyled">
+  {% for p in pcns %}
+    <li class="hidden">
+      <a href="{% url 'pcn_home_page' p.code %}">{{ p }}</a>
+    </li>
+  {% endfor %}
+  </ul>
+</div>

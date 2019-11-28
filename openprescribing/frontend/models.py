@@ -208,6 +208,11 @@ class PCT(models.Model):
     def get_absolute_url(self):
         return reverse("ccg_home_page", kwargs={"ccg_code": self.code})
 
+    def pcns(self):
+        "Return all PCNs with at least one practice in this CCG."
+
+        return PCN.objects.filter(practice__ccg_id=self.code).distinct()
+
 
 class Practice(models.Model):
     """
