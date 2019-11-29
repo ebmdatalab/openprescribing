@@ -9,7 +9,7 @@ backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.1
 cachetools==3.1.1         # via google-auth, premailer
-certifi==2019.9.11        # via requests
+certifi==2019.11.28       # via requests
 cffi==1.13.2              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
 click==7.0                # via pip-tools
@@ -107,4 +107,4 @@ when-changed==0.3.0
 xlrd==1.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==42.0.1
+# setuptools
