@@ -89,6 +89,24 @@ class TestAlertViews(TestCase):
         bookmark = OrgBookmark.objects.last()
         self.assertEqual(bookmark.pct.code, "03V")
 
+    def test_ccg_duplicate_bookmark_not_created(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup("03V")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self._post_org_signup("03V")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, "03V")
+
+    def test_ccg_duplicate_bookmark_not_created_when_email_not_lowercase(self):
+        self.assertEqual(OrgBookmark.objects.count(), 0)
+        self._post_org_signup("03V")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        self._post_org_signup("03V", email="FOO@BAZ.COM")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.pct.code, "03V")
+
     def test_practice_email_sent(self):
         response = self._post_org_signup("P87629")
         self.assertContains(
