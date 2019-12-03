@@ -20,6 +20,9 @@ class Command(BaseCommand):
 
         for path in glob.glob(os.path.join(base_path, "*.sql")):
             table_name = os.path.splitext(os.path.basename(path))[0]
+            if table_name == "_measure_template":
+                continue
+
             table = client.get_table(table_name)
 
             with open(path) as f:
