@@ -350,7 +350,7 @@ urlpatterns = [
     ),
     # required by django-allauth
     url(r"^accounts/", include("allauth.urls")),
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^admin/", admin.site.urls),
     # bookmarks
     url(
         r"^bookmarks/(?P<key>[0-9a-z]+)$",
