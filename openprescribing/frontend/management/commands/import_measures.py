@@ -23,7 +23,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import connection
 from django.db import transaction
 

@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models.functions import Coalesce
 
 from anymail.signals import EventType

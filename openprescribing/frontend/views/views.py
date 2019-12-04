@@ -17,7 +17,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.core.urlresolvers import get_resolver
+from django.urls import get_resolver
 from django.db import connection
 from django.db.models import Avg, Sum
 from django.http import Http404

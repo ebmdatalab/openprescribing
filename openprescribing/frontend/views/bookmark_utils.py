@@ -17,7 +17,7 @@ import pandas as pd
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.mail import EmailMultiAlternatives
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
