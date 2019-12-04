@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="post" class="form form-inline">
+<form method="post" class="form form-inline" id="alert-form" {% if alert_type == 'analyse' %}style="display: none"{% endif%}>
  {% csrf_token %}
  <p>
    {% if alert_type == 'analyse' %}

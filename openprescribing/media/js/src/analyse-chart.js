@@ -231,9 +231,9 @@ var analyseChart = {
     var alertForm = $(_this.el.alertForm);
     var title = encodeURIComponent(
       _this.globalOptions.friendly.chartTitle.replace(/<br\/>/g, ''));
-    alertForm.parent().show();
-    $('[name="url"]').val(this.hash);
-    $('[name="name"]').val(title);
+    alertForm.find('[name="url"]').val(this.hash);
+    alertForm.find('[name="name"]').val(title);
+    alertForm.show();
   },
 
   setUpSaveUrlUI: function() {
