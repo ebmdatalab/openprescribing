@@ -183,7 +183,7 @@ class DataFactory(object):
         return User.objects.create_user(username="User {}".format(index), email=email)
 
     def create_ncso_concessions_bookmark(self, org, user=None):
-        kwargs = {"user": user or self.create_user(), "approved": True}
+        kwargs = {"user": user or self.create_user()}
 
         if org is None:
             # All England
@@ -198,7 +198,7 @@ class DataFactory(object):
         return NCSOConcessionBookmark.objects.create(**kwargs)
 
     def create_org_bookmark(self, org, user=None):
-        kwargs = {"user": user or self.create_user(), "approved": True}
+        kwargs = {"user": user or self.create_user()}
 
         if org is None:
             # All England

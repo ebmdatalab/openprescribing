@@ -122,21 +122,14 @@ class TestSpendingViews(TestCase):
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
         url = "/practice/{}/concessions/".format(self.practice.code)
-        data = {
-            "email": "alice@example.com",
-            "practice": self.practice.code,
-            "newsletters": ["alerts"],
-        }
+        data = {"email": "alice@example.com", "practice": self.practice.code}
         response = self.client.post(url, data, follow=True)
-        self.assertContains(
-            response, "Check your email and click the confirmation link"
-        )
+        self.assertContains(response, "alerts about NCSO concessions for Practice 5")
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
         bookmark = NCSOConcessionBookmark.objects.last()
         self.assertEqual(bookmark.practice, self.practice)
         self.assertEqual(bookmark.user.email, "alice@example.com")
-        self.assertEqual(bookmark.approved, True)
 
     def test_all_england_alert_signup(self):
         factory = DataFactory()
@@ -146,10 +139,10 @@ class TestSpendingViews(TestCase):
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 1)
 
         url = "/all-england/concessions/"
-        data = {"email": "alice@example.com", "newsletters": ["alerts"]}
+        data = {"email": "alice@example.com"}
         response = self.client.post(url, data, follow=True)
         self.assertContains(
-            response, "Check your email and click the confirmation link"
+            response, "alerts about NCSO concessions for the NHS in England"
         )
 
         self.assertEqual(NCSOConcessionBookmark.objects.count(), 2)
@@ -157,65 +150,16 @@ class TestSpendingViews(TestCase):
         self.assertEqual(bookmark.practice, None)
         self.assertEqual(bookmark.pct, None)
         self.assertEqual(bookmark.user.email, "alice@example.com")
-        self.assertEqual(bookmark.approved, True)
 
     def test_alert_signup_form(self):
-        factory = DataFactory()
-        user = factory.create_user()
         url = "/practice/{}/concessions/".format(self.practice.code)
-
-        # Check form is displayed when user not loged in.
         response = self.client.get(url)
         self.assertContains(response, "Get email updates")
-
-        # Now log user in.
-        self.client.force_login(user)
-
-        # Check form is displayed when user has no bookmarks.
-        response = self.client.get(url)
-        self.assertContains(response, "Get email updates")
-
-        # Create bookmarks for CCG and All England, and check that form is
-        # still displayed.
-        factory.create_ncso_concessions_bookmark(self.ccg, user)
-        factory.create_ncso_concessions_bookmark(None, user)
-        response = self.client.get(url)
-        self.assertContains(response, "Get email updates")
-
-        # Create bookmark for practice, and check that form is not displayed.
-        factory.create_ncso_concessions_bookmark(self.practice, user)
-        response = self.client.get(url)
-        self.assertNotContains(response, "Get email updates")
-        self.assertContains(response, "already signed up")
 
     def test_all_england_alert_signup_form(self):
-        factory = DataFactory()
-        user = factory.create_user()
         url = "/all-england/concessions/".format(self.practice.code)
-
-        # Check form is displayed when user not loged in.
         response = self.client.get(url)
         self.assertContains(response, "Get email updates")
-
-        # Now log user in.
-        self.client.force_login(user)
-
-        # Check form is displayed when user has no bookmarks.
-        response = self.client.get(url)
-        self.assertContains(response, "Get email updates")
-
-        # Create bookmarks for practice and CCG, and check that form is still
-        # displayed.
-        factory.create_ncso_concessions_bookmark(self.practice, user)
-        factory.create_ncso_concessions_bookmark(self.ccg, user)
-        response = self.client.get(url)
-        self.assertContains(response, "Get email updates")
-
-        # Create bookmark for All England, and check that form is not displayed.
-        factory.create_ncso_concessions_bookmark(None, user)
-        response = self.client.get(url)
-        self.assertNotContains(response, "Get email updates")
-        self.assertContains(response, "already signed up")
 
 
 def round_floats(value):

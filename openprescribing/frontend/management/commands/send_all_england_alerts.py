@@ -57,15 +57,11 @@ def make_dummy_bookmark(email_address):
 def get_unsent_bookmarks(date):
     """Find unsent bookmarks for given date.
 
-    Alerts should only be sent to active users who have an approved bookmark.
+    Alerts should only be sent to active users.
     """
 
     return OrgBookmark.objects.filter(
-        practice__isnull=True,
-        pct__isnull=True,
-        pcn__isnull=True,
-        approved=True,
-        user__is_active=True,
+        practice__isnull=True, pct__isnull=True, pcn__isnull=True, user__is_active=True
     ).exclude(user__emailmessage__tags__contains=["all_england", date])
 
 

@@ -8,14 +8,7 @@ from frontend.models import OrgBookmark
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        fieldnames = [
-            "org_type",
-            "org_code",
-            "org_name",
-            "email_address",
-            "created_at",
-            "approved",
-        ]
+        fieldnames = ["org_type", "org_code", "org_name", "email_address", "created_at"]
         writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -39,6 +32,5 @@ class Command(BaseCommand):
                 "org_name": org_name,
                 "email_address": bookmark.user.email,
                 "created_at": bookmark.created_at,
-                "approved": bookmark.approved,
             }
             writer.writerow(row)

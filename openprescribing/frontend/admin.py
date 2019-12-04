@@ -13,10 +13,8 @@ from .models import OrgBookmark
 from .models import SearchBookmark
 from .models import NCSOConcessionBookmark
 from .models import User
-from allauth.account.models import EmailAddress
 
 admin.site.unregister(User)
-admin.site.unregister(EmailAddress)
 
 
 class UserVerifiedFilter(admin.SimpleListFilter):
@@ -54,8 +52,8 @@ class UserVerifiedFilter(admin.SimpleListFilter):
 @admin.register(SearchBookmark)
 class SearchBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
-    list_display = ("name", "user", "created_at", "approved")
-    list_filter = ("approved", "created_at")
+    list_display = ("name", "user", "created_at")
+    list_filter = ("created_at",)
     readonly_fields = ("dashboard_link",)
     search_fields = ("user__email",)
 
@@ -93,8 +91,8 @@ class OrgBookmarkTypeFilter(admin.SimpleListFilter):
 @admin.register(OrgBookmark)
 class OrgBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
-    list_display = ("name", "user", "created_at", "approved")
-    list_filter = ("approved", "created_at", OrgBookmarkTypeFilter)
+    list_display = ("name", "user", "created_at")
+    list_filter = ("created_at", OrgBookmarkTypeFilter)
     readonly_fields = ("dashboard_link",)
     search_fields = ("user__email",)
 
@@ -105,8 +103,8 @@ class OrgBookmarkAdmin(admin.ModelAdmin):
 @admin.register(NCSOConcessionBookmark)
 class NCSOConcessionBookmarkAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
-    list_display = ("name", "user", "created_at", "approved")
-    list_filter = ("approved", "created_at", OrgBookmarkTypeFilter)
+    list_display = ("name", "user", "created_at")
+    list_filter = ("created_at", OrgBookmarkTypeFilter)
     readonly_fields = ("dashboard_link",)
     search_fields = ("user__email",)
 

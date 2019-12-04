@@ -201,17 +201,7 @@ DJANGO_APPS = (
 # Apps specific for this project go here.
 LOCAL_APPS = ("frontend", "dmd", "pipeline", "gcutils", "matrixstore")
 
-CONTRIB_APPS = (
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.google',
-    "allauth.socialaccount.providers.twitter",
-    "anymail",
-    "crispy_forms",
-    "raven.contrib.django.raven_compat",
-)
+CONTRIB_APPS = ("anymail", "crispy_forms", "raven.contrib.django.raven_compat")
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + CONTRIB_APPS + LOCAL_APPS
@@ -254,16 +244,6 @@ LOGGING = {
     },
 }
 # END LOGGING CONFIGURATION
-
-
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-    # custom backend to support logging in via a hash
-    "frontend.backends.SecretKeyBackend",
-)
 
 
 # WSGI CONFIGURATION
@@ -337,17 +317,6 @@ ANYMAIL = {
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = "errors@openprescribing.net"
-
-# django-allauth configuration
-ACCOUNT_ADAPTER = "frontend.account.adapter.CustomAdapter"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
-
-LOGIN_REDIRECT_URL = "finalise-signup"
-LOGIN_URL = "home"
 
 # Easy bootstrap styling of Django forms
 CRISPY_TEMPLATE_PACK = "bootstrap3"
