@@ -23,6 +23,7 @@ services:
       - SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY}
       - USE_SAUCELABS=${USE_SAUCELABS}
       - GOOGLE_APPLICATION_CREDENTIALS=/code/google-credentials.json
+      - PYTHONWARNINGS=error::DeprecationWarning
     extra_hosts:
       - saucehost:${SAUCE_HOST-127.0.0.1}
     ports:
