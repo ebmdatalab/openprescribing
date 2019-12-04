@@ -189,8 +189,6 @@ class PCT(models.Model):
     address = models.CharField(max_length=400, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
 
-    objects = models.GeoManager()
-
     def __str__(self):
         return self.name or ""
 
@@ -271,7 +269,6 @@ class Practice(models.Model):
     location = models.PointField(null=True, blank=True, srid=4326)
     boundary = models.GeometryField(null=True, blank=True, srid=4326)
     setting = models.IntegerField(choices=PRESCRIBING_SETTINGS, default=-1)
-    objects = models.GeoManager()
     open_date = models.DateField(null=True, blank=True)
     close_date = models.DateField(null=True, blank=True)
     join_provider_date = models.DateField(null=True, blank=True)
