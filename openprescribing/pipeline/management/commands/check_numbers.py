@@ -22,7 +22,7 @@ from glob import glob
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.core.urlresolvers import get_resolver
+from django.urls import get_resolver
 
 from bs4 import BeautifulSoup
 from selenium import webdriver

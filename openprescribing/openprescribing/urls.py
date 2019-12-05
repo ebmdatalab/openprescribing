@@ -331,7 +331,7 @@ urlpatterns = [
         r"^robots\.txt/$",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^admin/", admin.site.urls),
     # bookmarks
     url(r"^bookmarks/(?P<key>[0-9a-z]+)/$", views.bookmarks, name="bookmarks"),
     # anymail webhooks
