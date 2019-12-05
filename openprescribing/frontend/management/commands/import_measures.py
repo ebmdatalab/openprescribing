@@ -358,6 +358,11 @@ def build_analyse_url(measure):
     querystring = urlencode(params)
     url = "{}#{}".format(reverse("analyse"), querystring)
 
+    if len(url) > 5000:
+        # Anything longer than 5000 characters takes too long to load.  In
+        # practice, as of 12/19, only one measure is affected (silver).
+        return
+
     return url
 
 

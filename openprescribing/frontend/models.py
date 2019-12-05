@@ -669,7 +669,7 @@ class Measure(models.Model):
     denominator_bnf_codes = ArrayField(models.CharField(max_length=15))
     denominator_bnf_codes_query = models.CharField(max_length=10000, null=True)
     denominator_is_list_of_bnf_codes = models.BooleanField(default=True)
-    analyse_url = models.CharField(max_length=1000, null=True)
+    analyse_url = models.CharField(max_length=5000, null=True)
 
     def __str__(self):
         return self.name
