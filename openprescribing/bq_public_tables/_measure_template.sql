@@ -10,7 +10,7 @@ month_practice AS (
     SELECT
         m.month,
         p.id AS practice_id
-    FROM public_draft.practice AS p
+    FROM {public}.practice AS p
     CROSS JOIN (
         SELECT DISTINCT month FROM practice_numerator
         UNION DISTINCT
