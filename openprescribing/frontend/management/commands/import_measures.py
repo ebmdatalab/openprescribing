@@ -358,9 +358,6 @@ def build_analyse_url(measure):
     querystring = urlencode(params)
     url = "{}#{}".format(reverse("analyse"), querystring)
 
-    if len(url) > 1000:
-        return
-
     return url
 
 
