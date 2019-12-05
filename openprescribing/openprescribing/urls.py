@@ -59,14 +59,10 @@ urlpatterns = [
         name="price_per_unit_faq",
     ),
     path(
-        r"privacy/",
-        TemplateView.as_view(template_name="privacy.html"),
-        name="privacy",
+        r"privacy/", TemplateView.as_view(template_name="privacy.html"), name="privacy"
     ),
     path(
-        r"contact/",
-        TemplateView.as_view(template_name="contact.html"),
-        name="contact",
+        r"contact/", TemplateView.as_view(template_name="contact.html"), name="contact"
     ),
     path(r"feedback/", views.feedback_view, name="feedback"),
     path(
@@ -145,8 +141,7 @@ urlpatterns = [
         name="all_england_price_per_unit",
     ),
     path(
-        r"practice/<entity_code>/"
-        "<bnf_code>/price_per_unit/",
+        r"practice/<entity_code>/" "<bnf_code>/price_per_unit/",
         views.price_per_unit_by_presentation,
         name="price_per_unit_by_presentation_practice",
     ),
@@ -344,14 +339,11 @@ urlpatterns = [
     path(r"caution/", RedirectView.as_view(pattern_name="faq", permanent=True)),
     # Wrong URL got published
     path(
-        r"measures/",
-        RedirectView.as_view(pattern_name="all_measures", permanent=True),
+        r"measures/", RedirectView.as_view(pattern_name="all_measures", permanent=True)
     ),
     # Temporary, for tracking letter mailouts. Should change to
     # redirect post March 2018
     path(
-        r"<ccg_code>/",
-        views.measures_for_one_ccg,
-        name="measures_for_one_ccg_tracking",
+        r"<ccg_code>/", views.measures_for_one_ccg, name="measures_for_one_ccg_tracking"
     ),
 ]
