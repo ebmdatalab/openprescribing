@@ -5,7 +5,7 @@
   $('#numerator_breakdown').DataTable(
     {
       "ajax": {
-        "url": "{{ API_HOST }}/api/1.0/measure_numerators_by_org/?org={{ entity.code }}&org_type={{ entity_type }}&measure={{ measure.id }}&format=json",
+        "url": "{{ numerator_breakdown_url|escapejs }}&format=json",
         "dataSrc": ""
       },
       "order": [[1, "desc"]],
