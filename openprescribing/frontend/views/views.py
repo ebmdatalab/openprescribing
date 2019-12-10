@@ -1446,10 +1446,18 @@ def _home_page_context_for_entity(request, entity):
 
 
 def _url_template(view_name):
+    """Generate a URL template for a given view, to be interpolated by JS in
+    the browser.
+
+    >>> _url_template("measure_for_one_ccg")
+    '/measure/{measure}/ccg/{entity_code}/'
+    """
+
     resolver = get_resolver()
-    pattern = resolver.reverse_dict[view_name][1]
-    pattern = "/" + pattern.rstrip("$")
-    return re.sub("\(\?P<(\w+)>\[.*?]\+\)", "{\\1}", pattern)
+
+    # For the example above, `pattern` is "measure/%(measure)s/ccg/%(entity_code)s/"
+    pattern = resolver.reverse_dict[view_name][0][0][0]
+    return "/" + pattern.replace("%(", "{").replace(")s", "}")
 
 
 def _org_type_for_entity(entity):
