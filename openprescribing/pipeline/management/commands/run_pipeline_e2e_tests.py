@@ -104,7 +104,7 @@ def run_end_to_end():
     for model in apps.get_app_config("dmd").get_models():
         client.upload_model(model)
 
-    call_command("generate_presentation_replacements")
+    call_command("create_normalised_prescribing_view")
 
     copy_tree(os.path.join(e2e_path, "data-1"), os.path.join(e2e_path, "data"))
 
