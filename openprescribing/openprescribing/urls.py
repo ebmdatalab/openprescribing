@@ -141,12 +141,12 @@ urlpatterns = [
         name="all_england_price_per_unit",
     ),
     path(
-        r"practice/<entity_code>/" "<bnf_code>/price_per_unit/",
+        r"practice/<entity_code>/<bnf_code>/price_per_unit/",
         views.price_per_unit_by_presentation,
         name="price_per_unit_by_presentation_practice",
     ),
     path(
-        r"ccg/<entity_code>/" "<bnf_code>/price_per_unit/",
+        r"ccg/<entity_code>/<bnf_code>/price_per_unit/",
         views.price_per_unit_by_presentation,
         name="price_per_unit_by_presentation",
     ),
@@ -210,7 +210,7 @@ urlpatterns = [
     # Measures
     path(r"measure/", views.all_measures, name="all_measures"),
     path(
-        r"measure/<measure>/" "practice/<entity_code>/",
+        r"measure/<measure>/practice/<entity_code>/",
         views.measure_for_one_entity,
         name="measure_for_one_practice",
         kwargs={"entity_type": "practice"},
