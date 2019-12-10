@@ -1118,11 +1118,16 @@ def _send_alert_signup_confirmation(user):
     """Send email confirming that user has signed up for alert."""
 
     subject = "[OpenPrescribing] Your OpenPrescribing alert subscription"
+    context = {
+        "user": user,
+        "unsubscribe_link": settings.GRAB_HOST
+        + reverse("bookmarks", kwargs={"key": user.profile.key}),
+    }
 
     bodies = {}
     for ext in ["html", "txt"]:
         template_name = "account/email/email_confirmation_signup_message." + ext
-        bodies[ext] = render_to_string(template_name, {"user": user}).strip()
+        bodies[ext] = render_to_string(template_name, context).strip()
 
     msg = EmailMultiAlternatives(
         subject, bodies["txt"], settings.DEFAULT_FROM_EMAIL, [user.email]
