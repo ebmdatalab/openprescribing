@@ -455,6 +455,10 @@ def measure_for_one_entity(request, measure, entity_code, entity_type):
         "measure": measure,
         "measure_options": measure_options,
         "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "numerator_breakdown_url": _build_api_url(
+            "measure_numerators_by_org",
+            {"org": entity.code, "org_type": entity_type, "measure": measure.id},
+        ),
     }
     return render(request, "measure_for_one_entity.html", context)
 
@@ -486,6 +490,10 @@ def measure_for_all_england(request, measure):
         "measure": measure,
         "measure_options": measure_options,
         "current_at": ImportLog.objects.latest_in_category("prescribing").current_at,
+        "numerator_breakdown_url": _build_api_url(
+            "measure_numerators_by_org",
+            {"org": "", "org_type": entity_type, "measure": measure.id},
+        ),
     }
     return render(request, "measure_for_one_entity.html", context)
 
