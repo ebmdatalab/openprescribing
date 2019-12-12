@@ -8,6 +8,7 @@ from django.core.management import BaseCommand
 
 from frontend.models import Measure
 from gcutils.bigquery import Client
+from openprescribing.utils import partially_format
 
 
 class Command(BaseCommand):
@@ -62,8 +63,10 @@ class Command(BaseCommand):
                 denominator_where=measure.denominator_where,
             )
 
-            sql = measure_template_sql.format(
-                numerator_sql=numerator_sql, denominator_sql=denominator_sql
+            sql = partially_format(
+                measure_template_sql,
+                numerator_sql=numerator_sql,
+                denominator_sql=denominator_sql,
             )
 
             table.insert_rows_from_query(sql)
