@@ -21,6 +21,7 @@
     "cost",
     "lowpriority",
     "mentalhealth",
+    "nice",
     "safety"
   ],
   "numerator_type": "bnf_cost",

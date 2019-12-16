@@ -23,7 +23,8 @@
   "tags": [
     "cardiovascular",
     "core",
-    "cost"
+    "cost",
+    "nice"
   ],
   "numerator_type": "bnf_quantity",
   "numerator_where": [

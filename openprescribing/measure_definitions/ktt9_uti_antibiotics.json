@@ -28,7 +28,8 @@
   "tags": [
     "antimicrobial",
     "core",
-    "infections"
+    "infections",
+    "nice"
   ],
   "numerator_type": "custom",
   "numerator_columns": [

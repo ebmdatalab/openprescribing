@@ -25,6 +25,7 @@
   "is_cost_based": false,
   "low_is_good": null,
   "tags": [
+    "nice",
     "paper"
   ],
   "include_in_alerts": false,

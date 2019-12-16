@@ -20,8 +20,9 @@
   "low_is_good": true,
   "tags": [
     "cost",
-    "lowpriority",
-    "cardiovascular"
+    "cardiovascular",
+    "lowpriority",    
+    "nice"
   ],
   "numerator_type": "bnf_cost",
   "numerator_where": [

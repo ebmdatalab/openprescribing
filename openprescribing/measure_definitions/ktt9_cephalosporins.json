@@ -24,7 +24,8 @@
   "tags": [
     "antimicrobial",
     "core",
-    "infections"
+    "infections",
+    "nice"
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [

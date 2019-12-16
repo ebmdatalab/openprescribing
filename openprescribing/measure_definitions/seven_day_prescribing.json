@@ -20,7 +20,9 @@
     "include; a seven day prescription may be clinically relevant even for long-term conditions in certain circumstances, some",
     "pharmacies will supply a MCA without a seven day prescritpion after making an individual assessement, and some local areas",
     "may fund provision of MCAs via a seperate payment. Locally you may wish to review presciptions of seven duration for clinical",
-    "appropriateness.",
+    "appropriateness. Additionally the NHS Long Term Plan has set out targets for the NHS to reduce the negative impact it has on the",
+    "environment. Many MCAs will be single use plastics or cardboards so if they are being supplied inappropriately there will ",
+    "be an oppurtunity to reduce waste in this area.",
     "<p>The medicines we have used for the measure are generally used once daily for longterm conditions: atorvastatin, ",
     "simvastatin, levothyroxine, amlodipine and ramipril.",
     "<p><b>Please note that this is an experimental measure. We would be grateful for any feedback at",
@@ -38,7 +40,8 @@
 	"low_is_good": true,
 	"tags": [
 		"core",
-		"safety"
+		"safety",
+		"greenernhs"
 	],
 	"numerator_type": "custom",
 	"numerator_columns": [
