@@ -23,9 +23,8 @@
     "cost",
     "lowpriority",
     "nice",
-    "safety",
-    
-  ],
+    "safety"
+   ],
   "numerator_type": "bnf_cost",
   "numerator_where": [
     "bnf_code LIKE '0501030P0%' --Minocycline Hydrochloride"
