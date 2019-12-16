@@ -29,7 +29,8 @@
   "tags": [
     "cardiovascular",
     "core",
-    "efficacy"
+    "efficacy",
+    "nice"
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [
