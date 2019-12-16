@@ -63,7 +63,7 @@
     "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions."
   },
-    "NICE": {
+    "nice": {
     "name": "NICE",
     "description": "These measures are derived from guidance from the National Institute for Health and Care Excellence (NICE). This prescribing dashboard can be used to support implementation of NICE's recommendation through open audit and review."
   },
