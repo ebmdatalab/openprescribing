@@ -27,7 +27,7 @@ django-debug-toolbar-template-timings==0.9
 django-debug-toolbar==2.1
 django-dotenv==1.4.2
 django-extensions==2.2.5
-django-redis==4.10.0
+django-redis==4.11.0
 django==2.0.13
 djangorestframework-csv==2.1.0
 djangorestframework==3.10.3
