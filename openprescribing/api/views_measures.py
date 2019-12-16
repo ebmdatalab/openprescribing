@@ -148,7 +148,10 @@ def measure_numerators_by_org(request, format=None):
     # Fetch names after truncating results so we have fewer to look up
     names = Presentation.names_for_bnf_codes([i["bnf_code"] for i in results])
     for item in results:
-        item["presentation_name"] = names[item["bnf_code"]]
+        # Occasional issues with BNF code updates mean we temporarily can't
+        # recognise a BNF code until we get the latest copy of the code mapping
+        # file.
+        item["presentation_name"] = names.get(item["bnf_code"], "<Name unavailable>")
     response = Response(results)
     filename = "%s-%s-breakdown.csv" % (measure, org_id)
     if request.accepted_renderer.format == "csv":
