@@ -43,6 +43,10 @@
     "name": "Generic prescribing",
     "description": "The NHS has a policy of prescribing medicines by their generic name unless there is a clinical reason why the medicine must be prescribed by brand. Generic prescribing has saved the NHS significant amounts of money and is believed to be safer. The following measures identify medicines that should either be prescribed generically, or prescribed by brand for safety reasons."
   },
+    "greenernhs": {
+    "name": "Greener NHS",
+    "description": "These measures support work to reduce the impact of medicines on overall enviromental impact of the NHS."
+  },
   "infections": {
     "name": "Infections",
     "description": "These measures are for treatments commonly used for treating infections, including antibiotics and dressings."
@@ -58,6 +62,10 @@
     "mentalhealth": {
     "name": "Mental Health",
     "description": "These measures are for treatments commonly used for treating mental health conditions."
+  },
+    "NICE": {
+    "name": "NICE",
+    "description": "These measures are derived from guidance from the National Institute for Health and Care Excellence (NICE). This prescribing dashboard can be used to support implementation of NICE's recommendation through open audit and review."
   },
   "nutrition": {
     "name": "Nutrition",
