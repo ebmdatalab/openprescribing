@@ -25,6 +25,8 @@
   "low_is_good": true,
   "tags": [
     "core",
+    "greenernhs",
+    "nice",
     "respiratory"
   ],
   "numerator_type": "bnf_items",
