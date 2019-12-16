@@ -84,7 +84,15 @@ class Command(BaseCommand):
             raise BadRequest("\n".join(errors))
 
     def build_measures(self, measure_defs, start_date, end_date, verbose, options):
-        with conditional_constraint_and_index_reconstructor(options):
+        # This is an optimisation that only makes sense when we're updating the
+        # entire table, any of these supplied options mean we're doing
+        # something else
+        drop_and_rebuild_indices = bool(
+            not options["measure"]
+            and not options["definitions_only"]
+            and not options["bigquery_only"]
+        )
+        with conditional_constraint_and_index_reconstructor(drop_and_rebuild_indices):
             for measure_def in measure_defs:
                 measure_id = measure_def["id"]
                 logger.info("Updating measure: %s" % measure_id)
@@ -860,10 +868,8 @@ class MeasureCalculation(object):
 
 
 @contextmanager
-def conditional_constraint_and_index_reconstructor(options):
-    if options["measure"]:
-        # This is an optimisation that only makes sense when we're
-        # updating the entire table.
+def conditional_constraint_and_index_reconstructor(enabled):
+    if not enabled:
         yield
     else:
         with utils.constraint_and_index_reconstructor("frontend_measurevalue"):
