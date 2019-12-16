@@ -20,7 +20,8 @@
   "tags": [
     "cost",
     "lowpriority",
-    "mentalhealth"
+    "mentalhealth",
+    "nice"
   ],
   "numerator_type": "bnf_cost",
   "numerator_where": [
