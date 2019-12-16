@@ -22,7 +22,8 @@
   "tags": [
     "core",
     "generic",
-    "safety"
+    "safety",
+    "nice"
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [
