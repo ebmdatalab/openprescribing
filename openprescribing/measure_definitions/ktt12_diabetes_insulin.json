@@ -22,7 +22,8 @@
   "tags": [
     "core",
     "cost",
-    "diabetes"
+    "diabetes",
+    "nice"
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [
