@@ -21,8 +21,10 @@
   "tags": [
     "antimicrobial",
     "cost",
+    "lowpriority",
+    "nice",
     "safety",
-    "lowpriority"
+    
   ],
   "numerator_type": "bnf_cost",
   "numerator_where": [
