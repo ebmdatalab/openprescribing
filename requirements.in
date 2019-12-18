@@ -8,7 +8,6 @@
 
 backports.csv
 beautifulsoup4
-django-allauth
 django-anymail[mailgun]
 django-cors-headers
 django-crispy-forms
@@ -23,7 +22,6 @@ gunicorn
 html2text
 lxml
 lz4
-mailchimp3
 networkx
 newrelic
 numpy
