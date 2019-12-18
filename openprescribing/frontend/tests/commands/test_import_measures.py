@@ -451,23 +451,23 @@ class LoadMeasureDefsTests(TestCase):
 
 class ConstraintsTests(TestCase):
     @patch("common.utils.db")
-    def test_reconstructor_not_called_when_measures_specified(self, db):
+    def test_reconstructor_not_called_when_not_enabled(self, db):
         from frontend.management.commands.import_measures import (
             conditional_constraint_and_index_reconstructor,
         )
 
-        with conditional_constraint_and_index_reconstructor({"measure": "thingy"}):
+        with conditional_constraint_and_index_reconstructor(False):
             pass
         execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_not_called()
 
     @patch("common.utils.db")
-    def test_reconstructor_called_when_no_measures_specified(self, db):
+    def test_reconstructor_called_when_enabled(self, db):
         from frontend.management.commands.import_measures import (
             conditional_constraint_and_index_reconstructor,
         )
 
-        with conditional_constraint_and_index_reconstructor({"measure": None}):
+        with conditional_constraint_and_index_reconstructor(True):
             pass
         execute = db.connection.cursor.return_value.__enter__.return_value.execute
         execute.assert_called()
