@@ -30,7 +30,7 @@ django-extensions==2.2.5
 django-redis==4.10.0
 django==2.1.15
 djangorestframework-csv==2.1.0
-djangorestframework==3.10.3
+djangorestframework==3.11.0
 easyprocess==0.2.7        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
