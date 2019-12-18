@@ -327,9 +327,6 @@ GRAB_HOST = "https://openprescribing.net"
 SLACK_GENERAL_POST_KEY = utils.get_env_setting("SLACK_GENERAL_POST_KEY", default="")
 SLACK_SENDING_ACTIVE = True
 
-# Newsletter signup
-MAILCHIMP_LIST_ID = "b2b7873a73"
-
 
 ENABLE_CACHING = utils.get_env_setting_bool("ENABLE_CACHING", default=False)
 
