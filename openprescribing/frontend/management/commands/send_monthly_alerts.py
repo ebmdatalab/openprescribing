@@ -200,6 +200,7 @@ class Command(BaseCommand):
             "traceback",
             "settings",
             "no_color",
+            "force_color",
             "max_errors",
             "skip_checks",
         ]:
