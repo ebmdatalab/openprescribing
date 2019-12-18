@@ -20,8 +20,6 @@ SECRET_KEY=secret_key
 MAILGUN_WEBHOOK_USER=mailgun_webhook_user
 MAILGUN_WEBHOOK_PASS=mailgun_webhook_pass
 MAILGUN_API_KEY=mailgun_api_key
-MAILCHIMP_USER=mailchimp_user
-MAILCHIMP_API_KEY=mailchimp_api_key
 
 # If this is set to True then both REDIS_URL below must also be defined or the
 # application won't start
