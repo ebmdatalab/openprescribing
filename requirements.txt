@@ -5,6 +5,7 @@
 #    pip-compile
 #
 argh==0.26.2              # via watchdog
+asgiref==3.2.3            # via django
 backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.1
@@ -26,7 +27,7 @@ django-debug-toolbar==2.1
 django-dotenv==1.4.2
 django-extensions==2.2.5
 django-redis==4.10.0
-django==2.1.15
+django==3.0.1
 djangorestframework-csv==2.1.0
 djangorestframework==3.11.0
 easyprocess==0.2.8        # via pyvirtualdisplay
@@ -92,7 +93,7 @@ scipy==1.4.0
 selenium==3.141.0
 six==1.13.0               # via bcrypt, cryptography, django-anymail, django-extensions, djangorestframework-csv, fabric3, google-api-core, google-api-python-client, google-auth, google-cloud-bigquery, google-resumable-media, mock, pip-tools, protobuf, pyarrow, pynacl, pyopenssl, python-dateutil
 soupsieve==1.9.5          # via beautifulsoup4
-sqlparse==0.3.0           # via django-debug-toolbar
+sqlparse==0.3.0           # via django, django-debug-toolbar
 titlecase==0.12.0
 tqdm==4.40.2
 unicodecsv==0.14.1        # via djangorestframework-csv
