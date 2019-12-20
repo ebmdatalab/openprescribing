@@ -96,7 +96,7 @@ sqlparse==0.3.0           # via django-debug-toolbar
 titlecase==0.12.0
 tqdm==4.40.2
 unicodecsv==0.14.1        # via djangorestframework-csv
-uritemplate==3.0.0        # via google-api-python-client
+uritemplate==3.0.1        # via google-api-python-client
 urllib3==1.25.7           # via requests, selenium
 watchdog==0.9.0           # via when-changed
 when-changed==0.3.0
