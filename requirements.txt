@@ -7,7 +7,7 @@
 argh==0.26.2              # via watchdog
 backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
-beautifulsoup4==4.8.1
+beautifulsoup4==4.8.2
 cachetools==4.0.0         # via google-auth, premailer
 certifi==2019.11.28       # via requests
 cffi==1.13.2              # via bcrypt, cryptography, pynacl
