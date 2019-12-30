@@ -52,7 +52,7 @@ httplib2==0.15.0          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 jdcal==1.4.1              # via openpyxl
 lxml==4.4.2
-lz4==2.2.1
+lz4==3.0.2
 mccabe==0.6.1             # via flake8
 mock==3.0.5
 networkx==2.4
