@@ -5,6 +5,7 @@
 #    pip-compile
 #
 argh==0.26.2              # via watchdog
+asgiref==3.2.3            # via django
 backports.csv==1.0.5
 bcrypt==3.1.7             # via paramiko
 beautifulsoup4==4.8.2
@@ -26,7 +27,7 @@ django-debug-toolbar==2.1
 django-dotenv==1.4.2
 django-extensions==2.2.5
 django-redis==4.10.0
-django==2.2.9
+django==3.0.2
 djangorestframework-csv==2.1.0
 djangorestframework==3.11.0
 easyprocess==0.2.8        # via pyvirtualdisplay
