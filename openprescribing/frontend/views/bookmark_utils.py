@@ -623,7 +623,7 @@ def ga_tracking_qs(context):
 
 def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
-    max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
+    max_length = 78 - len(prefix)
     ellipsis = "..."
     subject = nhs_titlecase(subject)
     if len(subject) <= max_length:

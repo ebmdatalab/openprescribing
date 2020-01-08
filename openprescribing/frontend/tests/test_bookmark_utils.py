@@ -675,7 +675,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Alverine Citrate + Boceprevir by All CCGs"
                 ),
                 "expected": (
-                    "Your monthly update about Items for Abacavir + Levocaba..."
+                    "Your monthly update about Items for Abacavir + Levocabastine + L..."
                     "by All CCGs"
                 ),
             },
@@ -686,7 +686,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 ),
                 "expected": (
                     "Your monthly update about The Point Is That the Relative "
-                    "Freedom W..."
+                    "Freedom Which WE E..."
                 ),
             },
             {
@@ -698,7 +698,7 @@ class TruncateSubjectTestCase(unittest.TestCase):
                 ),
                 "expected": (
                     "Your monthly update about Items for Zopiclone + Zolpidem "
-                    "Tartrate ..."
+                    "Tartrate + Lorazep..."
                 ),
             },
             {
@@ -709,7 +709,8 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "NHS SUNDERLAND CCG123456789"
                 ),
                 "expected": (
-                    "Your monthly update about Items for Apixaban + Edoxaban + Dabigatr..."
+                    "Your monthly update about Items ...by Practices in NHS "
+                    "SUNDERLAND CCG123456789"
                 ),
             },
         ]
