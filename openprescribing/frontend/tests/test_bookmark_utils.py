@@ -701,6 +701,17 @@ class TruncateSubjectTestCase(unittest.TestCase):
                     "Tartrate ..."
                 ),
             },
+            {
+                "input": (
+                    "Items for Apixaban + Edoxaban + Dabigatran Etexilate + "
+                    "Rivaroxaban vs Warfarin Sodium + Apixaban + Edoxaban + "
+                    "Dabigatran Etexilate + Rivaroxâ\x80¦ by practices in "
+                    "NHS SUNDERLAND CCG123456789"
+                ),
+                "expected": (
+                    "Your monthly update about Items for Apixaban + Edoxaban + Dabigatr..."
+                ),
+            },
         ]
 
         for test_case in data:
