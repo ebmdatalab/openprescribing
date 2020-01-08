@@ -629,9 +629,9 @@ def truncate_subject(prefix, subject):
     if len(subject) <= max_length:
         truncated = subject
     else:
-        if "by" in subject:
-            end_bit = subject.split("by")[-1]
-            end_bit = "by" + end_bit
+        if " by " in subject:
+            end_bit = subject.split(" by ")[-1]
+            end_bit = "by " + end_bit
         else:
             end_bit = ""
         if len(end_bit) + len(ellipsis) > max_length:
