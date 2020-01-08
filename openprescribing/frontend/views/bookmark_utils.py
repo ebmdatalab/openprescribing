@@ -623,18 +623,18 @@ def ga_tracking_qs(context):
 
 def truncate_subject(prefix, subject):
     assert subject, "Subject must not be empty"
-    max_length = 78 - len(prefix) - len(settings.EMAIL_SUBJECT_PREFIX)
+    max_length = 78 - len(prefix)
     ellipsis = "..."
     subject = nhs_titlecase(subject)
     if len(subject) <= max_length:
         truncated = subject
     else:
-        if "by" in subject:
-            end_bit = subject.split("by")[-1]
-            end_bit = "by" + end_bit
+        if " by " in subject:
+            end_bit = subject.split(" by ")[-1]
+            end_bit = "by " + end_bit
         else:
             end_bit = ""
-        if len(end_bit) > max_length:
+        if len(end_bit) + len(ellipsis) > max_length:
             end_bit = ""
         start_bit = subject[: (max_length - len(end_bit) - len(ellipsis))]
         truncated = start_bit + ellipsis + end_bit
