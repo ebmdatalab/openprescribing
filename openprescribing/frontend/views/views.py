@@ -29,6 +29,7 @@ from django.utils.safestring import mark_safe
 from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
+from gcutils.bigquery import interpolate_sql
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import VMP
@@ -437,14 +438,15 @@ def measure_definition(request, measure):
 
 
 def _format_measure_sql(**kwargs):
-    return (
+    return interpolate_sql(
         "SELECT\n"
         "     CAST(month AS DATE) AS month,\n"
         "     practice AS practice_id,\n"
         "     {columns}\n"
         " FROM {from_}\n"
         " WHERE {where}\n"
-        " GROUP BY month, practice_id".format(**kwargs).format(hscic="ebmdatalab.hscic")
+        " GROUP BY month, practice_id",
+        **kwargs
     )
 
 
