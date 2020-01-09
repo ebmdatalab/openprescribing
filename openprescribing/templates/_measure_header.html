@@ -38,6 +38,8 @@
     {% if csv_download_url %}
       <li><a href="{{ csv_download_url }}">Download data as CSV</a>.</li>
     {% endif %}
+
+    <li><a href="{% url 'measure_definition' measure.id %}">View technical details for this measure</a>.</li>
   </ul>
 </p>
 

@@ -355,6 +355,7 @@ def all_england(request):
         "chartTitleUrlTemplate": _url_template("measure_for_all_ccgs"),
         "globalMeasuresUrl": _build_global_measures_url(tags=tag_filter["tags"]),
         "measureUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "measureDefinitionUrlTemplate": _url_template("measure_definition"),
         "oneEntityUrlTemplate": _url_template("measure_for_all_england"),
         "orgName": "All {}s in England".format(entity_type),
         "orgType": entity_type.lower(),
@@ -413,6 +414,38 @@ def all_measures(request):
     measures = Measure.objects.filter(**query).order_by("name")
     context = {"tag_filter": tag_filter, "measures": measures}
     return render(request, "all_measures.html", context)
+
+
+def measure_definition(request, measure):
+    measure = get_object_or_404(Measure, pk=measure)
+
+    context = {
+        "measure": measure,
+        "measure_tags": _get_tags_with_names(measure.tags),
+        "numerator_sql": _format_measure_sql(
+            columns=measure.numerator_columns,
+            from_=measure.numerator_from,
+            where=measure.numerator_where,
+        ),
+        "denominator_sql": _format_measure_sql(
+            columns=measure.denominator_columns,
+            from_=measure.denominator_from,
+            where=measure.denominator_where,
+        ),
+    }
+    return render(request, "measure_definition.html", context)
+
+
+def _format_measure_sql(**kwargs):
+    return (
+        "SELECT\n"
+        "     CAST(month AS DATE) AS month,\n"
+        "     practice AS practice_id,\n"
+        "     {columns}\n"
+        " FROM {from_}\n"
+        " WHERE {where}\n"
+        " GROUP BY month, practice_id".format(**kwargs).format(hscic="ebmdatalab.hscic")
+    )
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
@@ -1520,6 +1553,7 @@ def _add_measure_for_siblings_url(options, entity_type):
 
 
 def _add_measure_url(options, entity_type):
+    options["measureDefinitionUrlTemplate"] = _url_template("measure_definition")
     if entity_type == "practice":
         options["measureUrlTemplate"] = _url_template("measure_for_all_ccgs")
     # We're deliberately not showing a link to compare all PCNS for "political"

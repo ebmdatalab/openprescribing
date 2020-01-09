@@ -498,6 +498,12 @@ class TestFrontendViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
 
+    def test_measure_definition(self):
+        response = self.client.get("/measure/cerazette/definition/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "SUM(quantity)")
+        self.assertTemplateUsed(response, "measure_definition.html")
+
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
