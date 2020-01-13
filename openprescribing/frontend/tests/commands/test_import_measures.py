@@ -2,7 +2,9 @@ from __future__ import print_function
 
 import csv
 import itertools
+import json
 import os
+import re
 import tempfile
 from mock import patch
 from random import Random
@@ -447,6 +449,52 @@ class LoadMeasureDefsTests(TestCase):
     def test_with_measure_ids_loads_some_definitions(self):
         measure_defs = load_measure_defs(["coproxamol", "desogestrel"])
         self.assertEqual(len(measure_defs), 2)
+
+
+class LowPriorityOmnibusTest(TestCase):
+    """
+    The Low Priority Omnibus measure is manually created from the list of Low
+    Priority measures and we want to make sure they don't get out of sync
+    """
+
+    def test_low_priority_omnibus_divisor(self):
+        measure_path = os.path.join(
+            settings.APPS_ROOT, "measure_definitions", "lpzomnibus.json"
+        )
+        with open(measure_path, "r") as f:
+            denominator_columns = "\n".join(json.load(f)["denominator_columns"])
+        divisor_match = re.search(r"/([0-9]+)", denominator_columns)
+        self.assertIsNotNone(divisor_match)
+        divisor_count = int(divisor_match.group(1))
+        self.assertEqual(divisor_count, len(self.get_low_priority_tables()))
+
+    def test_low_priority_tables_match_measures(self):
+        self.assertEqual(
+            sorted(self.get_low_priority_tables()),
+            sorted(self.get_low_priority_measures()),
+        )
+
+    def get_low_priority_tables(self):
+        sql_path = os.path.join(
+            settings.APPS_ROOT,
+            "frontend/management/commands/measure_sql",
+            "practice_data_all_low_priority.sql",
+        )
+        with open(sql_path, "r") as f:
+            all_low_priority_sql = f.read()
+        return re.findall(r"\{measures\}\.practice_data_(\w+)", all_low_priority_sql)
+
+    def get_low_priority_measures(self):
+        files = os.listdir(os.path.join(settings.APPS_ROOT, "measure_definitions"))
+        return [
+            name[: -len(".json")]
+            for name in files
+            if (
+                name.startswith("lp")
+                and name.endswith(".json")
+                and name != "lpzomnibus.json"
+            )
+        ]
 
 
 class ConstraintsTests(TestCase):
