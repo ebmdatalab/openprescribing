@@ -1,5 +1,7 @@
 import datetime
+import json
 from lxml import html
+import os
 import re
 from urllib.parse import urlencode
 from urllib.parse import urlparse, urlunparse
@@ -422,6 +424,7 @@ def measure_definition(request, measure):
 
     context = {
         "measure": measure,
+        "measure_details": _get_measure_details(measure.id),
         "measure_tags": _get_tags_with_names(measure.tags),
         "numerator_sql": _format_measure_sql(
             columns=measure.numerator_columns,
@@ -449,8 +452,27 @@ def _format_measure_sql(**kwargs):
         **kwargs
     )
     # Remove "1 = 1" WHERE conditions to avoid confusion and visual clutter
-    sql = re.sub(r'WHERE\s+1\s*=\s*1\s+GROUP BY', 'GROUP BY', sql)
+    sql = re.sub(r"WHERE\s+1\s*=\s*1\s+GROUP BY", "GROUP BY", sql)
     return sql
+
+
+# We cache these in memory to avoid hitting the disk every time
+@functools.lru_cache(maxsize=None)
+def _get_measure_details(measure_id):
+    """
+    Get extra measure data which is currently only stored in the JSON on disk,
+    not in the database
+    """
+    file = os.path.join(settings.MEASURE_DEFINITIONS_PATH, measure_id + ".json")
+    if not os.path.exists(file):
+        return {}
+    with open(file, "r") as f:
+        details = json.load(f)
+    formatted_details = {
+        key: value if not isinstance(value, list) else "\n".join(value)
+        for key, value in details.items()
+    }
+    return formatted_details
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
