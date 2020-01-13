@@ -2,7 +2,9 @@ from __future__ import print_function
 
 import csv
 import itertools
+import json
 import os
+import re
 import tempfile
 from mock import patch
 from random import Random
@@ -447,6 +449,29 @@ class LoadMeasureDefsTests(TestCase):
     def test_with_measure_ids_loads_some_definitions(self):
         measure_defs = load_measure_defs(["coproxamol", "desogestrel"])
         self.assertEqual(len(measure_defs), 2)
+
+
+class LowPriorityOmnibusCountTest(TestCase):
+    def test_count_of_low_priority_tests(self):
+        sql_path = os.path.join(
+            settings.APPS_ROOT,
+            "frontend/management/commands/measure_sql",
+            "practice_data_all_low_priority.sql",
+        )
+        measure_path = os.path.join(
+            settings.APPS_ROOT, "measure_definitions", "lpzomnibus.json"
+        )
+        with open(sql_path, "r") as f:
+            all_low_priority_sql = f.read()
+        with open(measure_path, "r") as f:
+            denominator_columns = "\n".join(json.load(f)["denominator_columns"])
+        measure_count = len(
+            re.findall(r"\{measures\}\.practice_data_\w+", all_low_priority_sql)
+        )
+        denominator_match = re.search(r"/([0-9]+)", denominator_columns)
+        self.assertIsNotNone(denominator_match)
+        denominator_count = int(denominator_match.group(1))
+        self.assertEqual(denominator_count, measure_count)
 
 
 class ConstraintsTests(TestCase):
