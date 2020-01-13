@@ -438,7 +438,7 @@ def measure_definition(request, measure):
 
 
 def _format_measure_sql(**kwargs):
-    return interpolate_sql(
+    sql = interpolate_sql(
         "SELECT\n"
         "     CAST(month AS DATE) AS month,\n"
         "     practice AS practice_id,\n"
@@ -448,6 +448,9 @@ def _format_measure_sql(**kwargs):
         " GROUP BY month, practice_id",
         **kwargs
     )
+    # Remove "1 = 1" WHERE conditions to avoid confusion and visual clutter
+    sql = re.sub(r'WHERE\s+1\s*=\s*1\s+GROUP BY', 'GROUP BY', sql)
+    return sql
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
