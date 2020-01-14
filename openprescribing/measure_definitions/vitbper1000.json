@@ -8,18 +8,26 @@
   ],
   "why_it_matters": [
     "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
-    "A recent position statment from the Regional Medicines Optimisation Committee (RMOC) states that:</p>",
-    "<p>- Due to a lack of evidence on their efficacy and safety, vitamin B complex preparations (vitamin B compound and ",
-    "vitamin B compound strong tablets) should not be prescribed for prevention of Wernicke’s Encephalopathy (WE) in alcoholism, </p>",
-    "<p>- Vitamin B complex preparations should not be prescribed for preventing deficiency or for maintenance treatment following",
-    "treatment for deficiency. </p>",
-    "<p>- Vitamin B complex preparations should not be prescribed as dietary supplements. Patients who wish to use them for dietary ",
-    "supplementation should be advised to purchase them over the counter.</p>",
-    "<p>- Vitamin B compound strong tablets may be prescribed on a short-term basis (10 days) for patients at risk of refeeding ",
-    "syndrome. This also applies to patients who are not harmful or dependent drinkers.</p>",
-    "<p>- In rare cases where there might be a justifiable reason for prescribing vitamin B complex e.g. medically diagnosed ",
+    "A recent position statment from the Regional Medicines Optimisation Committee (RMOC) ",
+    "<a href='https://www.sps.nhs.uk/wp-content/uploads/2019/12/RMOC-position-statement-oral-vitamin-B-supplementation-in-alcoholism-v1.0-1.pdf'>",
+    "states that:</a></p>",
+    "<ul>",
+    "<li>Due to a lack of evidence on their efficacy and safety, vitamin B complex preparations (vitamin B compound and ",
+    "vitamin B compound strong tablets) should not be prescribed for prevention of Wernicke’s Encephalopathy (WE) in alcoholism</li>",
+    "<li>Vitamin B complex preparations should not be prescribed for preventing deficiency or for maintenance treatment following",
+    "treatment for deficiency.</li>",
+    "<li>Vitamin B complex preparations should not be prescribed as dietary supplements. Patients who wish to use them for dietary ",
+    "supplementation should be advised to purchase them over the counter.</li>",
+    "<li>Vitamin B compound strong tablets may be prescribed on a short-term basis (10 days) for patients at risk of refeeding ",
+    "syndrome. This also applies to patients who are not harmful or dependent drinkers.</li>",
+    "<li>In rare cases where there might be a justifiable reason for prescribing vitamin B complex e.g. medically diagnosed ",
     "deficiency or chronic malabsorption, vitamin B compound strong and not vitamin B compound should be prescribed as it ",
-    "represents better value for money.</p>"
+    "represents better value for money.<li>",
+    "</ul">,
+    "<p>The RMOC advise to Review all existing patients prescribed vitamin B complex preparations with a view to stopping treatment ",
+    "in all but exceptional circumstances, such as in those patients with a medically diagnosed deficiency due to lifelong or ",
+    "chronic condition, or following surgery that results in malabsorption."
+    
   ],
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "1000 patients",
@@ -34,8 +42,7 @@
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [
-    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
-    "bnf_code LIKE '0906027G0%AB'    --Vit B Co Strong_Tab)"
+    "bnf_code LIKE '0906027G0%' --Vit B Compound"
   ],
   "denominator_type": "list_size",
   "date_reviewed": [
