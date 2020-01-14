@@ -1,0 +1,59 @@
+{
+  "name": "Vitamin B complex",
+  "title": [
+    "vitamin B complex prescribing per 1000 patients"
+  ],
+  "description": [
+    "Prescribing of vitamin B complex (normal and strong tablets) per 1000 registered patients"
+  ],
+  "why_it_matters": [
+    "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
+    "A recent position statment from the Regional Medicines Optimisation Committee (RMOC) states that:</p>",
+    "<p>- Due to a lack of evidence on their efficacy and safety, vitamin B complex preparations (vitamin B compound and ",
+    "vitamin B compound strong tablets) should not be prescribed for prevention of Wernicke’s Encephalopathy (WE) in alcoholism, </p>",
+    "<p>- Vitamin B complex preparations should not be prescribed for preventing deficiency or for maintenance treatment following",
+    "treatment for deficiency. </p>",
+    "<p>- Vitamin B complex preparations should not be prescribed as dietary supplements. Patients who wish to use them for dietary ",
+    "supplementation should be advised to purchase them over the counter.</p>",
+    "<p>- Vitamin B compound strong tablets may be prescribed on a short-term basis (10 days) for patients at risk of refeeding ",
+    "syndrome. This also applies to patients who are not harmful or dependent drinkers.</p>",
+    "<p>- In rare cases where there might be a justifiable reason for prescribing vitamin B complex e.g. medically diagnosed ",
+    "deficiency or chronic malabsorption, vitamin B compound strong and not vitamin B compound should be prescribed as it ",
+    "represents better value for money.</p>"
+  ],
+  "numerator_short": "Vitamin B complex items",
+  "denominator_short": "1000 patients",
+  "url": null,
+  "is_percentage": false,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "core",
+    "efficacy",
+    "nice"
+  ],
+  "numerator_type": "bnf_items",
+  "numerator_where": [
+    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
+    "bnf_code LIKE '0906027G0%AB'    --Vit B Co Strong_Tab)"
+  ],
+  "denominator_type": "list_size",
+  "date_reviewed": [
+    ""
+  ],
+  "next_review": [
+    ""
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    ""
+  ],
+  "measure_complexity": [
+    "low"
+  ],
+  "measure_notebook_url": [
+    ""
+  ]
+}
