@@ -44,13 +44,13 @@
     {% if measure_details.authored_by %}
       <tr>
         <th>Authored by</th>
-        <td>{{ measure_details.authored_by }}</td>
+        <td>{{ measure_details.authored_by|username_from_email }}</td>
       </tr>
     {% endif %}
     {% if measure_details.checked_by %}
       <tr>
         <th>Checked by</th>
-        <td>{{ measure_details.checked_by }}</td>
+        <td>{{ measure_details.checked_by|username_from_email }}</td>
       </tr>
     {% endif %}
     {% if measure_details.date_reviewed %}

@@ -95,3 +95,8 @@ def fancy_join(lst, sep=", ", final_sep=" and "):
         head, tail = lst[:-1], lst[-1]
         lst = [sep.join(head), tail]
     return final_sep.join(lst)
+
+
+@register.filter
+def username_from_email(email):
+    return email.split("@")[0]
