@@ -29,7 +29,7 @@ django-redis==4.10.0
 django==2.2.9
 djangorestframework-csv==2.1.0
 djangorestframework==3.11.0
-easyprocess==0.2.8        # via pyvirtualdisplay
+easyprocess==0.2.9        # via pyvirtualdisplay
 entrypoints==0.3          # via flake8
 et-xmlfile==1.0.1         # via openpyxl
 fabric3==1.14.post1
