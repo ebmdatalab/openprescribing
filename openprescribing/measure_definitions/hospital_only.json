@@ -26,10 +26,10 @@
     "numerator_type": "bnf_items",
     "numerator_where": [
         "bnf_code IN (SELECT DISTINCT(bnf_code) FROM {measures}.dmd_objs_hospital_only)",
-        "AND bnf_code NOT LIKE '0406000S0%CAC', -- Ondansetron HCl_Tab 8mg\n",
-        "AND bnf_code NOT LIKE '0408010F0%BAB', -- Clonazepam_Tab 500mcg\n",
-        "AND bnf_code NOT LIKE '0408010F0%CAC', -- Clonazepam_Tab 2mg\n",
-        "AND bnf_code NOT LIKE '0703021Q0%AAAA', -- Desogestrel_Tab 75mcg\n",
+        "AND bnf_code NOT LIKE '0406000S0%CAC' -- Ondansetron HCl_Tab 8mg\n",
+        "AND bnf_code NOT LIKE '0408010F0%BAB' -- Clonazepam_Tab 500mcg\n",
+        "AND bnf_code NOT LIKE '0408010F0%CAC' -- Clonazepam_Tab 2mg\n",
+        "AND bnf_code NOT LIKE '0703021Q0%AAAA' -- Desogestrel_Tab 75mcg\n",
         "AND bnf_code NOT LIKE '0704050R0AAABAB' -- Tadalafil_Tab 20mg\n",
         ")"
     ],
