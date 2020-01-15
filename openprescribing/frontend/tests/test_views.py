@@ -1,4 +1,6 @@
+import mock
 from mock import Mock
+import os
 import datetime
 from urllib.parse import parse_qs, urlparse
 
@@ -6,6 +8,7 @@ from pyquery import PyQuery as pq
 
 from django.conf import settings
 from django.core import mail
+from django.core.management import call_command
 from django.http import QueryDict
 from django.test import TestCase, SimpleTestCase, override_settings
 
@@ -498,10 +501,47 @@ class TestFrontendViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "measure_for_one_entity.html")
 
+    def test_measure_definition(self):
+        response = self.client.get("/measure/cerazette/definition/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "SUM(quantity)")
+        self.assertTemplateUsed(response, "measure_definition.html")
+
     def test_gdoc_inclusion(self):
         for doc_id in settings.GDOC_DOCS.keys():
             response = self.client.get("/docs/%s/" % doc_id)
             self.assertEqual(response.status_code, 200)
+
+
+@override_settings(
+    MEASURE_DEFINITIONS_PATH=os.path.join(settings.APPS_ROOT, "measure_definitions")
+)
+class TestMeasureDefinitionViews(TestCase):
+    """
+    Import all measures and check that their definitions pages load correctly
+    """
+
+    # We need a prescribing import entry in order for the measure import
+    # command to run
+    fixtures = ["importlog"]
+
+    @classmethod
+    def setUpTestData(cls):
+        # We have to patch this function as otherwise the measure import
+        # process tries to query BigQuery to get a list of matching BNF codes
+        fn = "frontend.management.commands.import_measures.get_num_or_denom_bnf_codes"
+        with mock.patch(fn) as get_bnf_codes:
+            get_bnf_codes.return_value = []
+            call_command("import_measures", definitions_only=True)
+
+    def test_can_load_all_measure_definition_pages(self):
+        measure_ids = list(Measure.objects.values_list("id", flat=True))
+        self.assertGreater(len(measure_ids), 1)
+        for measure_id in measure_ids:
+            with self.subTest(measure_id=measure_id):
+                url = "/measure/{}/definition/".format(measure_id)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
 
 
 class TestTariffView(TestCase):

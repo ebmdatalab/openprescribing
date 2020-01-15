@@ -1,5 +1,7 @@
 import datetime
+import json
 from lxml import html
+import os
 import re
 from urllib.parse import urlencode
 from urllib.parse import urlparse, urlunparse
@@ -29,6 +31,7 @@ from django.utils.safestring import mark_safe
 from dateutil.relativedelta import relativedelta
 
 from common.utils import parse_date
+from gcutils.bigquery import interpolate_sql
 from api.view_utils import dictfetchall
 from common.utils import ppu_sql
 from dmd.models import VMP
@@ -355,6 +358,7 @@ def all_england(request):
         "chartTitleUrlTemplate": _url_template("measure_for_all_ccgs"),
         "globalMeasuresUrl": _build_global_measures_url(tags=tag_filter["tags"]),
         "measureUrlTemplate": _url_template("measure_for_all_ccgs"),
+        "measureDefinitionUrlTemplate": _url_template("measure_definition"),
         "oneEntityUrlTemplate": _url_template("measure_for_all_england"),
         "orgName": "All {}s in England".format(entity_type),
         "orgType": entity_type.lower(),
@@ -413,6 +417,62 @@ def all_measures(request):
     measures = Measure.objects.filter(**query).order_by("name")
     context = {"tag_filter": tag_filter, "measures": measures}
     return render(request, "all_measures.html", context)
+
+
+def measure_definition(request, measure):
+    measure = get_object_or_404(Measure, pk=measure)
+
+    context = {
+        "measure": measure,
+        "measure_details": _get_measure_details(measure.id),
+        "measure_tags": _get_tags_with_names(measure.tags),
+        "numerator_sql": _format_measure_sql(
+            columns=measure.numerator_columns,
+            from_=measure.numerator_from,
+            where=measure.numerator_where,
+        ),
+        "denominator_sql": _format_measure_sql(
+            columns=measure.denominator_columns,
+            from_=measure.denominator_from,
+            where=measure.denominator_where,
+        ),
+    }
+    return render(request, "measure_definition.html", context)
+
+
+def _format_measure_sql(**kwargs):
+    sql = interpolate_sql(
+        "SELECT\n"
+        "     CAST(month AS DATE) AS month,\n"
+        "     practice AS practice_id,\n"
+        "     {columns}\n"
+        " FROM {from_}\n"
+        " WHERE {where}\n"
+        " GROUP BY month, practice_id",
+        **kwargs
+    )
+    # Remove "1 = 1" WHERE conditions to avoid confusion and visual clutter
+    sql = re.sub(r"WHERE\s+1\s*=\s*1\s+GROUP BY", "GROUP BY", sql)
+    return sql
+
+
+# We cache these in memory to avoid hitting the disk every time
+@functools.lru_cache(maxsize=None)
+def _get_measure_details(measure_id):
+    """
+    Get extra measure data which is currently only stored in the JSON on disk,
+    not in the database
+    """
+    file = os.path.join(settings.MEASURE_DEFINITIONS_PATH, measure_id + ".json")
+    if not os.path.exists(file):
+        return {}
+    with open(file, "r") as f:
+        details = json.load(f)
+    formatted_details = {
+        key: value if not isinstance(value, list) else "\n".join(value)
+        for key, value in details.items()
+    }
+    return formatted_details
 
 
 def measure_for_one_entity(request, measure, entity_code, entity_type):
@@ -1520,6 +1580,7 @@ def _add_measure_for_siblings_url(options, entity_type):
 
 
 def _add_measure_url(options, entity_type):
+    options["measureDefinitionUrlTemplate"] = _url_template("measure_definition")
     if entity_type == "practice":
         options["measureUrlTemplate"] = _url_template("measure_for_all_ccgs")
     # We're deliberately not showing a link to compare all PCNS for "political"

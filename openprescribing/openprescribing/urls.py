@@ -296,6 +296,11 @@ urlpatterns = [
         kwargs={"entity_type": "ccg"},
     ),
     path(
+        r"measure/<measure>/definition/",
+        views.measure_definition,
+        name="measure_definition",
+    ),
+    path(
         r"measure/<measure>/pcn/",
         views.measure_for_all_entities,
         name="measure_for_all_pcns",
