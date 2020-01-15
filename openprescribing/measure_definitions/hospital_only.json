@@ -18,7 +18,6 @@
     "url": null,
     "is_percentage": false,
     "is_cost_based": false,
-    "low_is_good": false,
     "tags": [
         "core",
         "safety"
