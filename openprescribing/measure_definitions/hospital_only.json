@@ -1,0 +1,33 @@
+{
+    "name": "Hospital Only Prescribing",
+    "title": [
+        "Hospital Only Prescribing"
+    ],
+    "description": [
+        "Hospital Only Prescribing"
+    ],
+    "why_it_matters": [
+        "Hospital Only Prescribing"
+    ],
+    "numerator_short": "Items",
+    "denominator_short": "1000 Patients",
+    "url": null,
+    "is_percentage": false,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "tags": [
+        "core"
+    ],
+    "numerator_type": "bnf_items",
+    "numerator_where": [
+        "bnf_code IN (SELECT DISTINCT(bnf_code) FROM {measures}.dmd_objs_hospital_only)",
+        "AND bnf_code NOT IN (",
+        "'0406000S0AAACAC', -- Ondansetron HCl_Tab 8mg\n",
+        "'0408010F0AAABAB', -- Clonazepam_Tab 500mcg\n",
+        "'0408010F0AAACAC', -- Clonazepam_Tab 2mg\n",
+        "'0703021Q0AAAAAA', -- Desogestrel_Tab 75mcg\n",
+        "'0704050R0AAABAB' -- Tadalafil_Tab 20mg\n",
+        ")"
+    ],
+    "denominator_type": "list_size"
+}
