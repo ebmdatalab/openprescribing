@@ -25,6 +25,7 @@ class Command(BaseCommand):
 
         for table_name in [
             "dmd_objs_with_form_route",
+            "dmd_objs_hospital_only",
             "opioid_total_ome",
             "practice_data_all_low_priority",
             "pregabalin_total_mg",

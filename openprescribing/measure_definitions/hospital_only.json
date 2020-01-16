@@ -1,0 +1,54 @@
+{
+    "name": "Hospital Only Prescribing",
+    "title": [
+        "Hospital Only Prescribing"
+    ],
+    "description": [
+        "Primary care prescribing of Hospital Only medicines as designated by the NHS Dictionary of Medicines and Devices per 1000 patients"
+    ],
+    "why_it_matters": [
+        "The <a href='https://ebmdatalab.net/what-is-the-dmd-the-nhs-dictionary-of-medicines-and-devices/'> NHS Dictionary of Medicines and Devices </a> designates certain",
+        "medicines as <b>hospital only</b> as the manufacturer has specified it should generally be used in hospitals. This measure suports review and audit",
+        " of appropriateness as sometimes they may be selected in error for example <a href='https://ebmdatalab.net/zuclopenthixol-acetate-a-new-kind-of-measure-on-openprescribing/'> zuclopenthixol acetate (blog here) </a>.",
+        "<p>Please note that this is an experimental measure. We would be grateful for",
+    "any feedback at <a href='mailto:feedback@openprescribing.net?Subject=hospital%20only'>feedback@openprescribing.net</a>"
+     ],
+    "numerator_short": "Items",
+    "denominator_short": "1000 Patients",
+    "url": null,
+    "is_percentage": false,
+    "is_cost_based": false,
+    "low_is_good": true,
+    "tags": [
+        "core",
+        "safety"
+    ],
+    "numerator_type": "bnf_items",
+    "numerator_where": [
+        "bnf_code IN (SELECT DISTINCT(bnf_code) FROM {measures}.dmd_objs_hospital_only)",
+        "AND bnf_code NOT LIKE '0406000S0%CAC' -- Ondansetron HCl_Tab 8mg\n",
+        "AND bnf_code NOT LIKE '0408010F0%BAB' -- Clonazepam_Tab 500mcg\n",
+        "AND bnf_code NOT LIKE '0408010F0%CAC' -- Clonazepam_Tab 2mg\n",
+        "AND bnf_code NOT LIKE '0703021Q0%AAAA' -- Desogestrel_Tab 75mcg\n",
+        "AND bnf_code NOT LIKE '0704050R0AAABAB' -- Tadalafil_Tab 20mg\n"
+    ],
+    "denominator_type": "list_size",
+    "date_reviewed": [
+    "2020-01-16"
+  ],
+  "next_review": [
+    "2021-01-16"
+  ],
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/dmd.hosp.only/Measure.dmd.hosp.only.ipynb"
+  ]
+}
