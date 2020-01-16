@@ -32,5 +32,23 @@
         "AND bnf_code NOT LIKE '0703021Q0%AAAA' -- Desogestrel_Tab 75mcg\n",
         "AND bnf_code NOT LIKE '0704050R0AAABAB' -- Tadalafil_Tab 20mg\n"
     ],
-    "denominator_type": "list_size"
+    "denominator_type": "list_size",
+    "date_reviewed": [
+    "2020-01-16"
+  ],
+  "next_review": [
+    "2021-01-16"
+  ],
+  "authored_by": [
+    "brian.mackenna@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "measure_complexity": [
+    "low"
+  ],
+  "measure_notebook_url": [
+    "https://github.com/ebmdatalab/jupyter-notebooks/blob/master/new_measures/dmd.hosp.only/Measure.dmd.hosp.only.ipynb"
+  ]
 }
