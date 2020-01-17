@@ -41,7 +41,7 @@ google-auth-oauthlib==0.4.1  # via pandas-gbq, pydata-google-auth
 google-auth==1.10.1       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib, google-cloud-storage, pandas-gbq, pydata-google-auth
 google-cloud-bigquery==1.23.1
 google-cloud-core==1.2.0  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.24.1
+google-cloud-storage==1.25.0
 google-resumable-media==0.5.0  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.51.0  # via google-api-core
 graphviz==0.13.2
