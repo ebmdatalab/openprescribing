@@ -875,7 +875,7 @@ def make_all_england_email(bookmark, tag=None):
     msg = initialise_email(bookmark, "all-england-alerts")
     msg.subject = "Your monthly update on prescribing across NHS England"
 
-    date = ImportLog.objects.latest_in_category("ppu").current_at
+    date = ImportLog.objects.latest_in_category("measures").current_at
 
     # This allows us to switch between calculating savings at the practice or
     # CCG level. We use CCG at present for performance reasons but we may want

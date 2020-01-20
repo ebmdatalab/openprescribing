@@ -14,7 +14,7 @@ class CommandTestCase(ApiTestBase):
     def setUpTestData(cls):
         super(CommandTestCase, cls).setUpTestData()
         max_ppu_date = PPUSaving.objects.order_by("-date")[0].date
-        ImportLog.objects.create(current_at=max_ppu_date, category="ppu")
+        ImportLog.objects.create(current_at=max_ppu_date, category="measures")
 
     def test_send_alerts(self):
         factory = DataFactory()

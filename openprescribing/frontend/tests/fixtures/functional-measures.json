@@ -48397,5 +48397,15 @@
     "filename": "",
     "category": "ppu"
   }
+},
+{
+  "model": "frontend.importlog",
+  "pk": 71,
+  "fields": {
+    "imported_at": "2019-09-10T14:03:23.256Z",
+    "current_at": "2018-08-01",
+    "filename": "",
+    "category": "measures"
+  }
 }
 ]
