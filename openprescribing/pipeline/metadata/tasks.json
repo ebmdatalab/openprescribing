@@ -277,9 +277,9 @@
             "upload_to_bigquery"
         ]
     },
-    "create_importlog_for_measures": {
+    "create_importlog_for_dashboard_data": {
         "type": "post_process",
-        "command": "create_importlog_for_measures",
+        "command": "create_importlog_for_dashboard_data",
         "dependencies": [
             "import_measures",
             "generate_ppu"

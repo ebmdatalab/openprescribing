@@ -1558,7 +1558,7 @@
   {"imported_at": "2016-06-23T13:25:15.003Z",
    "current_at": "2015-09-01",
    "filename": "/tmp/foo",
-   "category": "measures"
+   "category": "dashboard_data"
   }
 }
 ]

@@ -337,7 +337,7 @@ def all_england(request):
 
     tag_filter = _get_measure_tag_filter(request.GET)
     entity_type = request.GET.get("entity_type", "CCG")
-    date = _specified_or_last_date(request, "measures")
+    date = _specified_or_last_date(request, "dashboard_data")
     # We cache the results of these expensive function calls which only change
     # when `date` changes
     ppu_savings = cached(all_england_ppu_savings, entity_type, date)
