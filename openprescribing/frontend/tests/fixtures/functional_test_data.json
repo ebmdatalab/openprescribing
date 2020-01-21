@@ -1541,15 +1541,24 @@
     "category": "prescribing"
   }
 },
-  {
-    "model":"frontend.importlog",
-    "pk": 3,
-    "fields":
-    {"imported_at": "2016-06-23T13:25:15.003Z",
-     "current_at": "2015-09-01",
-     "filename": "/tmp/foo",
-     "category": "ppu"
-    }
+{
+  "model":"frontend.importlog",
+  "pk": 3,
+  "fields":
+  {"imported_at": "2016-06-23T13:25:15.003Z",
+   "current_at": "2015-09-01",
+   "filename": "/tmp/foo",
+   "category": "ppu"
   }
-
+},
+{
+  "model":"frontend.importlog",
+  "pk": 4,
+  "fields":
+  {"imported_at": "2016-06-23T13:25:15.003Z",
+   "current_at": "2015-09-01",
+   "filename": "/tmp/foo",
+   "category": "dashboard_data"
+  }
+}
 ]

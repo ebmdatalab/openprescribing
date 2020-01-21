@@ -277,6 +277,14 @@
             "upload_to_bigquery"
         ]
     },
+    "create_importlog_for_dashboard_data": {
+        "type": "post_process",
+        "command": "create_importlog_for_dashboard_data",
+        "dependencies": [
+            "import_measures",
+            "generate_ppu"
+        ]
+    },
     "import_generic_mappings": {
         "type": "post_process",
         "command": "import_generic_mappings",
