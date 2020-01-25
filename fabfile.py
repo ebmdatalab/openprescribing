@@ -8,11 +8,6 @@ from datetime import datetime
 import json
 import os
 
-import dotenv
-
-basedir = os.path.dirname(os.path.abspath(__file__))
-dotenv.read_dotenv(os.path.join(basedir, "environment"))
-
 
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
