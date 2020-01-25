@@ -304,7 +304,7 @@ def deploy(environment, force_build=False, branch="master"):
 def call_management_command(command_name, environment, *args, **kwargs):
     """Invokes management command in environment.
 
-    Returns output of command.
+    Prints output of command.
     """
 
     cmd = "python openprescribing/manage.py {}".format(command_name)
@@ -318,6 +318,4 @@ def call_management_command(command_name, environment, *args, **kwargs):
     setup_env_from_environment(environment)
     with cd(env.path):
         with prefix("source .venv/bin/activate"):
-            output = run(cmd)
-
-    return output
+            print(run(cmd))
