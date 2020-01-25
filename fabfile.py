@@ -300,7 +300,7 @@ def deploy(environment, force_build=False, branch="master"):
 
 
 @task
-def call_management_command(command_name, environment, args, kwargs):
+def call_management_command(command_name, environment, *args, **kwargs):
     """Invokes management command in environment.
 
     Returns output of command.
