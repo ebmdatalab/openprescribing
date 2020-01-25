@@ -7,6 +7,7 @@ from fabric.contrib.files import exists
 from datetime import datetime
 import json
 import os
+import shlex
 
 
 env.hosts = ["web2.openprescribing.net"]
@@ -304,20 +305,15 @@ def call_management_command(command_name, environment, *args, **kwargs):
     """Invokes management command in environment.
 
     Returns output of command.
-
-    args and kwargs are passed to the command, with some best-effort shell
-    quoting.  (When we upgrade to Python 3, we can use shlex.quote.)
     """
 
     cmd = "python openprescribing/manage.py {}".format(command_name)
 
     for arg in args:
-        assert '"' not in arg
-        cmd += ' "{}"'.format(arg)
+        cmd += " {}".format(shlex.quote(arg))
 
     for k, v in kwargs.items():
-        assert '"' not in v
-        cmd += ' --{}="{}"'.format(k, v)
+        cmd += " --{}={}".format(shlex.quote(k), shlex.quote(v))
 
     setup_env_from_environment(environment)
     with cd(env.path):
