@@ -18,6 +18,10 @@ PIPELINE_IMPORT_LOG_PATH = os.path.join(
     APPS_ROOT, "pipeline", "e2e-test-data", "log.json"
 )
 
+MATRIXSTORE_IMPORT_DIR = os.path.join(PIPELINE_DATA_BASEDIR, "matrixstore_import")
+MATRIXSTORE_BUILD_DIR = os.path.join(PIPELINE_DATA_BASEDIR, "matrixstore_build")
+MATRIXSTORE_LIVE_FILE = os.path.join(MATRIXSTORE_BUILD_DIR, "matrixstore_live.sqlite")
+
 SLACK_SENDING_ACTIVE = True
 
 BQ_DEFAULT_TABLE_EXPIRATION_MS = 24 * 60 * 60 * 1000  # 24 hours
