@@ -13,7 +13,7 @@ import shlex
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
 env.colorize_errors = True
-env.user = "hello"
+env.user = "ebmbot"
 
 environments = {"production": "openprescribing", "staging": "openprescribing_staging"}
 
