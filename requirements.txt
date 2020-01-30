@@ -97,7 +97,7 @@ titlecase==0.12.0
 tqdm==4.42.0
 unicodecsv==0.14.1        # via djangorestframework-csv
 uritemplate==3.0.1        # via google-api-python-client
-urllib3==1.25.7           # via requests, selenium
+urllib3==1.25.8           # via requests, selenium
 watchdog==0.9.0           # via when-changed
 when-changed==0.3.0
 xlrd==1.2.0
