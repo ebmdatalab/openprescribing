@@ -3,6 +3,7 @@ Send alerts about about NCSO concessions.
 """
 
 
+import datetime
 import logging
 
 from django.core.management import BaseCommand
@@ -18,10 +19,11 @@ class Command(BaseCommand):
     help = __doc__
 
     def add_arguments(self, parser):
-        parser.add_argument("date", help="Date that concessions were imported")
+        parser.add_argument("--date", help="Date that concessions were imported")
 
     def handle(self, *args, **options):
-        send_alerts(options["date"])
+        date = options["date"] or datetime.date.today().strftime('%Y-%m-%d')
+        send_alerts(date)
 
 
 def send_alerts(date):
