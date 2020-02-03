@@ -22,7 +22,7 @@ class Command(BaseCommand):
         parser.add_argument("--date", help="Date that concessions were imported")
 
     def handle(self, *args, **options):
-        date = options["date"] or datetime.date.today().strftime('%Y-%m-%d')
+        date = options["date"] or datetime.date.today().strftime("%Y-%m-%d")
         send_alerts(date)
 
 
