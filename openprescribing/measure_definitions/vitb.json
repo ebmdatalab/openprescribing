@@ -35,7 +35,7 @@
     "<li>Patients who require continued treatment with thiamine should be reviewed at appropriate intervals depending on individual ",
     "circumstances. </li>",
     "</ul>",
-    "<p>Please see our other measure: <a href='https://openprescribing.net/measure/vitbper1000/' Vitamin B per 1000 patients.</a></p>"
+    "<p>Please see our other measure: <a href='https://openprescribing.net/measure/vitbper1000/'> Vitamin B per 1000 patients.</a></p>"
   ],
   "numerator_short": "Vitamin B complex items",
   "denominator_short": "Vitamin B complex and thiamine items",
