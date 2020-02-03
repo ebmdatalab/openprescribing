@@ -1,0 +1,42 @@
+{
+  "name": "Vitamin B vs thiamine",
+  "title": [
+    "vitamin B complex ",
+    "as a percentage of prescribing of vitamin B and thiamine tablets"
+  ],
+  "description": [
+    "Prescribing of vitamin B complex (normal and strong tablets)",
+    "as a percentage of prescribing of vitamin B and thiamine tablets"
+  ],
+  "why_it_matters": [
+    "One of the most common reasons why vitamin B has been prescribed is to prevent Wernicke's encephalopathy in chronic alcohol disorders. ",
+    "<a href='https://www.nice.org.uk/guidance/cg100/chapter/1-Guidance#wernickes-encephalopathy'>2010 NICE guidance</a> states: ",
+    "thiamine should be given in doses toward the upper end of the British national formulary range.  ",
+    "This range is: <a href='https://bnf.nice.org.uk/drug/thiamine.html#indicationsAndDoses'>Mild deficiency, by mouth, 25–100 mg daily; severe deficiency, 200–300 mg daily in divided dose</a>. ",
+    "Vitamin B compound tablets and compound strong tablets have 1mg and 5mg of thiamine respectively, ",
+    "and therefore do not meet these minimum recommended dosage levels."
+  ],
+  "numerator_short": "Vitamin B complex items",
+  "denominator_short": "Vitamin B complex and thiamine items",
+  "url": null,
+  "is_percentage": true,
+  "is_cost_based": false,
+  "low_is_good": true,
+  "tags": [
+    "core",
+    "efficacy",
+    "nice"
+  ],
+  "numerator_type": "bnf_items",
+  "numerator_where": [
+    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
+    "bnf_code LIKE '0906027G0%AB'    --Vit B Co Strong_Tab)"
+  ],
+  "denominator_type": "bnf_items",
+  "denominator_where": [
+    "bnf_code LIKE '0906027G0%AA' OR --Vit B Co_Tab \n",
+    "bnf_code LIKE '0906027G0%AB' OR --Vit B Co Strong_Tab) \n",
+    "bnf_code LIKE '0906026M0%AF' OR --Thiamine HCl_Tab 50mg \n",
+    "bnf_code LIKE '0906026M0%AG'    --Thiamine HCl_tab 100mg"
+  ]
+}
