@@ -58,5 +58,20 @@
     "bnf_code LIKE '0906027G0%AB' OR --Vit B Co Strong_Tab) \n",
     "bnf_code LIKE '0906026M0%AF' OR --Thiamine HCl_Tab 50mg \n",
     "bnf_code LIKE '0906026M0%AG'    --Thiamine HCl_tab 100mg"
+  ],
+  "date_reviewed": [
+    "2020-02-03"
+  ],
+  "next_review": [
+    "2022-02-03"
+  ],
+  "authored_by": [
+    "richard.croker@phc.ox.ac.uk"
+  ],
+  "checked_by": [
+    ""
+  ],
+  "measure_complexity": [
+    "low"
   ]
 }
