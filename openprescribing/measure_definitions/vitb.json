@@ -45,7 +45,8 @@
   "low_is_good": true,
   "tags": [
     "efficacy",
-    "nice"
+    "nice",
+    "cost"
   ],
   "numerator_type": "bnf_items",
   "numerator_where": [
@@ -69,7 +70,7 @@
     "richard.croker@phc.ox.ac.uk"
   ],
   "checked_by": [
-    ""
+    "brian.mackenna@phc.ox.ac.uk"
   ],
   "measure_complexity": [
     "low"
