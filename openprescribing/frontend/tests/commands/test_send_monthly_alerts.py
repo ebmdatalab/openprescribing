@@ -136,7 +136,7 @@ class FailingEmailTestCase(TestCase):
         test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
-            call_mocked_command(test_context, finder, max_errors=4)
+            call_mocked_command(test_context, finder, max_errors="4")
         self.assertEqual(EmailMessage.objects.count(), 3)
         self.assertEqual(len(mail.outbox), 2)
 
@@ -145,7 +145,7 @@ class FailingEmailTestCase(TestCase):
         measure = MagicMock()
         measure.id = "measureid"
         test_context = _makeContext(worst=[measure])
-        call_mocked_command(test_context, finder, max_errors=0)
+        call_mocked_command(test_context, finder, max_errors="0")
         self.assertEqual(len(mail.outbox), 0)
 
     def test_max_errors(self, attach_image, finder):
@@ -155,7 +155,7 @@ class FailingEmailTestCase(TestCase):
         test_context = _makeContext(worst=[measure])
         self.assertEqual(EmailMessage.objects.count(), 1)
         with self.assertRaises(BatchedEmailErrors):
-            call_mocked_command(test_context, finder, max_errors=0)
+            call_mocked_command(test_context, finder, max_errors="0")
         self.assertEqual(EmailMessage.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 0)
 
