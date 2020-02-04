@@ -226,7 +226,7 @@ class Command(BaseCommand):
             .current_at.strftime("%Y-%m-%d")
             .lower()
         )
-        with EmailErrorDeferrer(options["max_errors"]) as error_deferrer:
+        with EmailErrorDeferrer(int(options["max_errors"])) as error_deferrer:
             for org_bookmark in self.get_org_bookmarks(now_month, **options):
                 error_deferrer.try_email(
                     self.send_org_bookmark_email, org_bookmark, now_month, options
