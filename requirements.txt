@@ -26,7 +26,7 @@ django-debug-toolbar==2.1
 django-dotenv==1.4.2
 django-extensions==2.2.6
 django-redis==4.10.0
-django==2.2.9
+django==2.2.10
 djangorestframework-csv==2.1.0
 djangorestframework==3.11.0
 easyprocess==0.2.9        # via pyvirtualdisplay
