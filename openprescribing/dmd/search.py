@@ -1,3 +1,9 @@
+from urllib.parse import urlencode
+
+from django.urls import reverse
+
+from frontend.utils.bnf_hierarchy import simplify_bnf_codes
+
 from .build_search_query import build_query_obj
 from .build_rules import build_rules
 from .models import VTM, VMP, VMPP, AMP, AMPP
@@ -89,7 +95,32 @@ def advanced_search(cls, search, include):
     if len(objs) == 10001:
         too_many_results = True
         objs = objs[:10000]
+        analyse_url = None
     else:
         too_many_results = False
+        analyse_url = _build_analyse_url(objs)
 
-    return {"objs": objs, "rules": rules, "too_many_results": too_many_results}
+    return {
+        "objs": objs,
+        "rules": rules,
+        "too_many_results": too_many_results,
+        "analyse_url": analyse_url,
+    }
+
+
+def _build_analyse_url(objs):
+    bnf_codes = [obj.bnf_code for obj in objs if obj.bnf_code]
+    params = {
+        "numIds": ",".join(simplify_bnf_codes(bnf_codes)),
+        "denom": "total_list_size",
+    }
+
+    querystring = urlencode(params)
+    url = "{}#{}".format(reverse("analyse"), querystring)
+
+    if len(url) > 5000:
+        # Anything longer than 5000 characters takes too long to load.  This
+        # matches the behaviour of import_measures.build_analyse_url().
+        return
+
+    return url
