@@ -309,6 +309,7 @@ def advanced_search_view(request, obj_type):
     objs = None
     rules = None
     too_many_results = False
+    analyse_url = None
 
     if "search" in request.GET:
         form = AdvancedSearchForm(request.GET)
@@ -319,6 +320,7 @@ def advanced_search_view(request, obj_type):
             objs = results["objs"]
             rules = results["rules"]
             too_many_results = results["too_many_results"]
+            analyse_url = results["analyse_url"]
     else:
         form = AdvancedSearchForm()
 
@@ -329,6 +331,7 @@ def advanced_search_view(request, obj_type):
         "objs": objs,
         "rules": rules,
         "too_many_results": too_many_results,
+        "analyse_url": analyse_url,
         "obj_types": ["vmp", "amp", "vmpp", "ampp"],
     }
     ctx.update(_release_metadata())

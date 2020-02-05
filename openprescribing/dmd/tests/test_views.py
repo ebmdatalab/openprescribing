@@ -213,6 +213,7 @@ class TestAdvancedSearchView(TestCase):
         search = ["nm", "contains", "acebutolol"]
         rsp = self._get(search, ["unavailable"])
         self.assertContains(rsp, "Found 2 Actual Medicinal Products")
+        self.assertContains(rsp, "Analyse prescribing")
 
     def test_compound_search(self):
         search = [
@@ -225,6 +226,7 @@ class TestAdvancedSearchView(TestCase):
         ]
         rsp = self._get(search, ["unavailable"])
         self.assertContains(rsp, "Found 1 Actual Medicinal Product")
+        self.assertContains(rsp, "Analyse prescribing")
 
     def _get(self, search, include=None):
         params = {"search": json.dumps(search), "include": include or []}
