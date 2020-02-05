@@ -50,7 +50,7 @@
 <h2>Found {{ objs|length }} {{ obj_type_human_plural }}</h2>
 <p>
   {% if analyse_url %}
-    <a href="{{ analyse_url }}">Analyse prescribing for these drugs</a>
+    <a href="{{ analyse_url }}" class="btn btn-primary">Analyse prescribing for these drugs</a>
   {% else %}
     There are too many results to analyse prescribing
   {% endif %}}
