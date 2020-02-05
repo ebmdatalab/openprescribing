@@ -1,5 +1,3 @@
-import json
-
 from .build_search_query import build_query_obj
 from .build_rules import build_rules
 from .models import VTM, VMP, VMPP, AMP, AMPP
@@ -55,7 +53,7 @@ def search_by_snomed_code(q):
     return []
 
 
-def advanced_search(cls, search_params):
+def advanced_search(cls, search, include):
     """Perform a search against all dm+d objects of a particular type.
 
     Parameters:
@@ -73,9 +71,6 @@ def advanced_search(cls, search_params):
              https://querybuilder.js.org/#method-setRules)
       too_many_results: flag indicating whether more than 10,000 results were returned
     """
-
-    search = json.loads(search_params["search"])
-    include = search_params["include"]
 
     rules = build_rules(search)
     query_obj = build_query_obj(cls, search)
