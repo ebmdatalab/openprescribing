@@ -879,9 +879,5 @@ def build_factory():
         "0904010AVBBAAAA",  # Mrs Crimble's_W/F Dutch Apple Cake
     ]
     factory = DataFactory()
-    month = factory.create_months("2018-10-01", 1)[0]
-    practice = factory.create_practices(1)[0]
-    for bnf_code in bnf_codes:
-        presentation = factory.create_presentation(bnf_code)
-        factory.create_prescription(presentation, practice, month)
+    factory.create_prescribing_for_bnf_codes(bnf_codes)
     return factory

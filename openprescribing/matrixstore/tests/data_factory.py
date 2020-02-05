@@ -148,6 +148,13 @@ class DataFactory(object):
                     )
         return prescribing
 
+    def create_prescribing_for_bnf_codes(self, bnf_codes):
+        month = self.create_months("2018-10-01", 1)[0]
+        practice = self.create_practices(1)[0]
+        for bnf_code in bnf_codes:
+            presentation = self.create_presentation(bnf_code)
+            self.create_prescription(presentation, practice, month)
+
     def update_bnf_code(self, presentation):
         new_bnf_code = self.create_bnf_code(self.next_id())
         self.bnf_map.append(
