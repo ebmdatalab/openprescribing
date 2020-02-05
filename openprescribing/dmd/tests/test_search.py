@@ -117,7 +117,7 @@ class TestAdvancedSearchHelpers(TestCase):
         q2 = Q(nm__icontains="gluten") & Q(glu_f=False)
         expected_query_obj = q1 | q2
 
-        self.assertTreesEqual(build_query_obj(VMP, self.search), expected_query_obj)
+        self.assertEqual(build_query_obj(VMP, self.search), expected_query_obj)
 
     def test_build_rules(self):
         expected_rules = {
@@ -141,17 +141,3 @@ class TestAdvancedSearchHelpers(TestCase):
         }
 
         self.assertEqual(build_rules(self.search), expected_rules)
-
-    def assertTreesEqual(self, t1, t2):
-        # Once we upgrade to 2.0, we can drop this as Q.__eq__ will be defined.
-        if not isinstance(t1, Q):
-            self.assertEqual(t1, t2)
-            return
-
-        self.assertEqual(t1.__class__, t2.__class__)
-        self.assertEqual(t1.connector, t2.connector)
-        self.assertEqual(t1.negated, t2.negated)
-        self.assertEqual(len(t1.children), len(t2.children))
-
-        for c1, c2 in zip(t1.children, t2.children):
-            self.assertTreesEqual(c1, c2)
