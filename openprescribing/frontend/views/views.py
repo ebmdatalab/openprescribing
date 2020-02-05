@@ -1165,7 +1165,7 @@ def _get_or_create_bookmark(request, bookmark_cls):
     form.full_clean()
     email = form.cleaned_data["email"].lower()
     user, _ = User.objects.get_or_create(username=email, defaults={"email": email})
-    bookmark_args = {k: v for k, v in form.cleaned_data.items() if k != "email" and v}
+    bookmark_args = {k: v or None for k, v in form.cleaned_data.items() if k != "email"}
     bookmark, _ = bookmark_cls.objects.get_or_create(user=user, **bookmark_args)
     return bookmark
 
