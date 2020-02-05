@@ -5,10 +5,14 @@ from django.test import TestCase
 from dmd.models import DtPaymentCategory
 from frontend.models import Presentation, TariffPrice
 from frontend.tests.data_factory import DataFactory
+from matrixstore.tests.data_factory import DataFactory as MSDataFactory
 from matrixstore.tests.decorators import (
     copy_fixtures_to_matrixstore,
     patch_global_matrixstore,
     matrixstore_from_postgres,
+)
+from matrixstore.tests.contextmanagers import (
+    patched_global_matrixstore_from_data_factory,
 )
 
 
@@ -224,4 +228,15 @@ class TestAdvancedSearchView(TestCase):
 
     def _get(self, search, include=None):
         params = {"search": json.dumps(search), "include": include or []}
-        return self.client.get("/dmd/advanced-search/amp/", params)
+
+        bnf_codes = [
+            "0204000C0AAAAAA",  # Acebut HCl_Cap 100mg
+            "0204000C0BBAAAA",  # Sectral_Cap 100mg
+            "0204000D0AAAAAA",  # Practolol_Inj 2mg/ml 5ml Amp
+        ]
+
+        factory = MSDataFactory()
+        factory.create_prescribing_for_bnf_codes(bnf_codes)
+
+        with patched_global_matrixstore_from_data_factory(factory):
+            return self.client.get("/dmd/advanced-search/amp/", params)

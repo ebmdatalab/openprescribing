@@ -1,6 +1,7 @@
 # coding=utf8
 
 import colorsys
+import json
 from copy import copy
 from urllib.parse import urlencode
 
@@ -312,7 +313,9 @@ def advanced_search_view(request, obj_type):
     if "search" in request.GET:
         form = AdvancedSearchForm(request.GET)
         if form.is_valid():
-            results = advanced_search(cls, form.cleaned_data)
+            search = json.loads(form.cleaned_data["search"])
+            include = form.cleaned_data["include"]
+            results = advanced_search(cls, search, include)
             objs = results["objs"]
             rules = results["rules"]
             too_many_results = results["too_many_results"]
