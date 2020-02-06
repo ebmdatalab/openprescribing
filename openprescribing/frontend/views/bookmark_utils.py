@@ -27,7 +27,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import NCSOConcessionBookmark
-from frontend.models import Practice, PCT
+from frontend.models import Practice, PCN, PCT
 from frontend.views.spending_utils import (
     ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
@@ -256,6 +256,8 @@ class InterestingMeasureFinder(object):
     def __init__(self, org, interesting_saving=1000, interesting_change_window=12):
         if isinstance(org, Practice):
             self.measure_filter_for_org = {"practice": org}
+        elif isinstance(org, PCN):
+            self.measure_filter_for_org = {"pcn": org, "practice": None}
         elif isinstance(org, PCT):
             self.measure_filter_for_org = {"pct": org, "practice": None}
         else:

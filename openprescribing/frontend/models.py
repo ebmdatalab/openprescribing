@@ -863,7 +863,7 @@ class OrgBookmark(models.Model):
         elif self.practice is not None:
             return "practice"
         elif self.pcn is not None:
-            return "pcn"
+            return "PCN"
         else:
             return "all_england"
 

@@ -84,6 +84,19 @@ class OrgBookmarkForm(forms.Form):
     pcn_id = forms.CharField(widget=forms.HiddenInput(), required=False)
 
 
+class NCSOConcessionBookmarkForm(forms.Form):
+    email = forms.EmailField(
+        label="",
+        error_messages={
+            "required": "This can't be blank!",
+            "invalid": "Please enter a valid email address",
+        },
+        widget=forms.TextInput(attrs={"placeholder": "Email address", "size": "35"}),
+    )
+    pct_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    practice_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+
 class FeedbackForm(forms.Form):
 
     # This incredibly crude captcha technique has proved enough in the past to

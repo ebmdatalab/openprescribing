@@ -39,6 +39,7 @@ from frontend.forms import BookmarkListForm
 from frontend.forms import FeedbackForm
 from frontend.forms import OrgBookmarkForm
 from frontend.forms import SearchBookmarkForm
+from frontend.forms import NCSOConcessionBookmarkForm
 from frontend.measure_tags import MEASURE_TAGS
 from frontend.models import Chemical
 from frontend.models import EmailMessage
@@ -1128,7 +1129,7 @@ def bookmarks(request, key):
 BOOKMARK_CLS_TO_FORM_CLS = {
     OrgBookmark: OrgBookmarkForm,
     SearchBookmark: SearchBookmarkForm,
-    NCSOConcessionBookmark: OrgBookmarkForm,
+    NCSOConcessionBookmark: NCSOConcessionBookmarkForm,
 }
 
 
