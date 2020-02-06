@@ -138,6 +138,21 @@ class TestAlertViews(TestCase):
         self.assertEqual(bookmark.pct, None)
         self.assertEqual(bookmark.org_type(), "all_england")
 
+    def test_all_england_bookmark_created_when_user_has_another_org_bookmark(self):
+        # Regression test for #2440
+
+        self._post_org_signup("P87629")
+        self.assertEqual(OrgBookmark.objects.count(), 1)
+        # We don't follow the redirect, because we don't have the necessary test data for
+        # testing the all-england page.
+        response = self._post_org_signup("all_england", follow=False)
+        self.assertRedirects(response, "/all-england/", fetch_redirect_response=False)
+        self.assertEqual(OrgBookmark.objects.count(), 2)
+        bookmark = OrgBookmark.objects.last()
+        self.assertEqual(bookmark.practice, None)
+        self.assertEqual(bookmark.pct, None)
+        self.assertEqual(bookmark.org_type(), "all_england")
+
     def test_pcn_bookmark_created(self):
         self.assertEqual(OrgBookmark.objects.count(), 0)
         form_data = {
