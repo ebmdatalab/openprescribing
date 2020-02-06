@@ -112,6 +112,7 @@
 - name: Install virtualenv
   become: yes
   pip:
+    executable: pip3
     name: virtualenv
 
 - name: Allow password authentication for local socket users and allow connections other than localhost
