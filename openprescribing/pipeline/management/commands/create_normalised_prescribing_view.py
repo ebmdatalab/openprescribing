@@ -19,7 +19,7 @@ class Command(BaseCommand):
           ccgs.stp_id AS stp,
           practices.ccg_id AS pct,
           prescribing.practice AS practice,
-          COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code)
+          TRIM(COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code))
             AS bnf_code,
           prescribing.bnf_name AS bnf_name,
           prescribing.items AS items,
