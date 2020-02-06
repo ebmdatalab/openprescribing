@@ -426,7 +426,10 @@ def get_num_or_denom_bnf_codes(measure, num_or_denom, end_date):
         substitutions = None
 
     results = Client().query(sql, substitutions=substitutions)
-    return [row[0] for row in results.rows]
+
+    # Before 2017, the published prescribing data included trailing spaces in
+    # certain BNF codes.  We strip those here.  See #2447.
+    return sorted({row[0].strip() for row in results.rows})
 
 
 def build_num_or_denom_fields(measure, num_or_denom):
