@@ -12,6 +12,7 @@ from frontend.models import OrgBookmark
 from frontend.models import Profile
 from frontend.models import SearchBookmark
 from frontend.models import User
+from frontend.models import Practice, PCT
 
 from common.alert_utils import EmailErrorDeferrer
 from frontend.views import bookmark_utils
@@ -161,10 +162,15 @@ class Command(BaseCommand):
             )
 
     def send_org_bookmark_email(self, org_bookmark, now_month, options):
-        stats = bookmark_utils.InterestingMeasureFinder(
-            practice=org_bookmark.practice or options["practice"],
-            pct=org_bookmark.pct or options["ccg"],
-        ).context_for_org_email()
+        if org_bookmark.practice or options["practice"]:
+            org = org_bookmark.practice or Practice.objects.get(pk=options["practice"])
+        elif org_bookmark.pct or options["ccg"]:
+            org = org_bookmark.pct or PCT.objects.get(pk=options["ccg"])
+        else:
+            assert False
+
+        stats = bookmark_utils.InterestingMeasureFinder(org).context_for_org_email()
+
         try:
             msg = bookmark_utils.make_org_email(org_bookmark, stats, tag=now_month)
             msg = EmailMessage.objects.create_from_message(msg)

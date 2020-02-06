@@ -27,6 +27,7 @@ from frontend.models import ImportLog
 from frontend.models import Measure
 from frontend.models import MeasureValue
 from frontend.models import NCSOConcessionBookmark
+from frontend.models import Practice, PCT
 from frontend.views.spending_utils import (
     ncso_spending_for_entity,
     ncso_spending_breakdown_for_entity,
@@ -252,16 +253,14 @@ def percentiles_without_jaggedness(df2, is_percentage=False):
 
 
 class InterestingMeasureFinder(object):
-    def __init__(
-        self,
-        practice=None,
-        pct=None,
-        interesting_saving=1000,
-        interesting_change_window=12,
-    ):
-        assert practice or pct
-        self.practice = practice
-        self.pct = pct
+    def __init__(self, org, interesting_saving=1000, interesting_change_window=12):
+        if isinstance(org, Practice):
+            self.measure_filter_for_org = {"practice": org}
+        elif isinstance(org, PCT):
+            self.measure_filter_for_org = {"pct": org, "practice": None}
+        else:
+            assert False, "Unexpected org {}".format(org)
+
         self.interesting_change_window = interesting_change_window
         self.interesting_saving = interesting_saving
 
@@ -276,11 +275,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(period),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         invert_percentile_for_comparison = False
         if best_or_worst == "worst":
             invert_percentile_for_comparison = True
@@ -338,11 +333,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(window_plus),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), "percentile"
         )
@@ -407,11 +398,7 @@ class InterestingMeasureFinder(object):
             "month__gte": self.months_ago(period),
             "measure__include_in_alerts": True,
         }
-        if self.practice:
-            measure_filter["practice"] = self.practice
-        else:
-            measure_filter["pct"] = self.pct
-            measure_filter["practice"] = None
+        measure_filter.update(self.measure_filter_for_org)
         df = self.measurevalues_dataframe(
             MeasureValue.objects.filter(**measure_filter), "cost_savings"
         )
