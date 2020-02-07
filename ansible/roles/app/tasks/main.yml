@@ -9,6 +9,7 @@
 
 - name: install virtualenvwrapper
   pip:
+    executable: pip3
     name: virtualenvwrapper
 
 - name: Create the .virtualenvs directory
@@ -65,11 +66,10 @@
   npm:
     path: "{{ apps_root }}/media/js"
 
-- name: Install ipdb (pinned for python 2.7)
+- name: Install ipdb
   pip:
     name: ipdb
     virtualenv: "{{ virtualenv_path }}"
-    version: 0.10.2
 
 - name: Make manage.py executable
   file:
