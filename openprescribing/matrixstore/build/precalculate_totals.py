@@ -72,4 +72,4 @@ def prepare_matrix_value(matrix):
     if is_integer(matrix):
         matrix = convert_to_smallest_int_type(matrix)
     data = serialize_compressed(matrix)
-    return sqlite3.Binary(data)
+    return data

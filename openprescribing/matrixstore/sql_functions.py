@@ -1,5 +1,3 @@
-import sqlite3
-
 from scipy.sparse import csc_matrix, _sparsetools
 
 from .matrix_ops import zeros_like
@@ -25,7 +23,7 @@ class MatrixSum(object):
 
     def finalize(self):
         if self.accumulator is not None:
-            return sqlite3.Binary(serialize(self.accumulator))
+            return serialize(self.accumulator)
 
 
 def fast_in_place_add(ndarray, matrix):

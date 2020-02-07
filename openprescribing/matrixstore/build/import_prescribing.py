@@ -180,10 +180,10 @@ def format_as_sql_rows(matrices, connection):
                 "Writing data for %s (%s/%s)", row.bnf_code, count, num_presentations
             )
         yield (
-            sqlite3.Binary(serialize_compressed(row.items)),
-            sqlite3.Binary(serialize_compressed(row.quantity)),
-            sqlite3.Binary(serialize_compressed(row.actual_cost)),
-            sqlite3.Binary(serialize_compressed(row.net_cost)),
+            serialize_compressed(row.items),
+            serialize_compressed(row.quantity),
+            serialize_compressed(row.actual_cost),
+            serialize_compressed(row.net_cost),
             row.bnf_code,
         )
     logger.info("Finished writing data for %s presentations", count)
