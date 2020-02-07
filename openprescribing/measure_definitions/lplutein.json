@@ -19,6 +19,7 @@
     "cost",
     "efficacy",
     "eye",
+    "iif",
     "lowpriority"
   ],
   "numerator_type": "bnf_cost",
