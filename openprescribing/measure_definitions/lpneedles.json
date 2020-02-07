@@ -21,6 +21,7 @@
     "cost",
     "efficacy",
     "diabetes",
+    "iif",
     "lowpriority"
   ],
   "numerator_type": "custom",

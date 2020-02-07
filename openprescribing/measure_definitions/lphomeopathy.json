@@ -19,6 +19,7 @@
   "tags": [
     "cost",
     "efficacy",
+    "iif",
     "lowpriority"
   ],
   "numerator_type": "bnf_cost",

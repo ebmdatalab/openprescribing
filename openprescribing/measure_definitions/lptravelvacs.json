@@ -20,6 +20,7 @@
   "low_is_good": true,
   "tags": [
     "cost",
+    "iif",
     "lowpriority"
   ],
   "numerator_type": "bnf_cost",
