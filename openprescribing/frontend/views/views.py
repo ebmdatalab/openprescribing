@@ -832,9 +832,6 @@ def price_per_unit_by_presentation(request, entity_code, bnf_code):
         "date": date.strftime("%Y-%m-%d"),
     }
 
-    if "trim" in request.GET:
-        params["trim"] = request.GET["trim"]
-
     bubble_data_url = _build_api_url("bubble", params)
 
     context = {
@@ -864,9 +861,6 @@ def all_england_price_per_unit_by_presentation(request, bnf_code):
         "bnf_code": presentation.bnf_code,
         "date": date.strftime("%Y-%m-%d"),
     }
-
-    if "trim" in request.GET:
-        params["trim"] = request.GET["trim"]
 
     bubble_data_url = _build_api_url("bubble", params)
 
