@@ -33,14 +33,14 @@ class TestSerializer(SimpleTestCase):
     def test_sqlite_roundtrip(self):
         obj = {"hello": 123}
         data = serialize(obj)
-        new_data = roundtrip_through_sqlite(sqlite3.Binary(data))
+        new_data = roundtrip_through_sqlite(data)
         new_obj = deserialize(new_data)
         self.assertEqual(new_obj, obj)
 
     def test_sqlite_roundtrip_with_compression(self):
         obj = {"hello": "world" * 256}
         data = serialize_compressed(obj)
-        new_data = roundtrip_through_sqlite(sqlite3.Binary(data))
+        new_data = roundtrip_through_sqlite(data)
         new_obj = deserialize(new_data)
         self.assertEqual(new_obj, obj)
 

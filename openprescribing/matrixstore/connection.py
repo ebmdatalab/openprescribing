@@ -1,5 +1,6 @@
 import os.path
 import sqlite3
+import urllib.parse
 
 from .serializer import deserialize
 from .sql_functions import MatrixSum
@@ -26,10 +27,10 @@ class MatrixStore(object):
     def from_file(cls, path):
         if not os.path.exists(path):
             raise RuntimeError("No SQLite file at: " + path)
+        encoded_path = urllib.parse.quote(os.path.abspath(path))
         connection = sqlite3.connect(
-            path,
-            # Given that we treat the file as read-only we can happily share
-            # the connection across threads, should we want to
+            "file://{}?immutable=1&mode=ro".format(encoded_path),
+            uri=True,
             check_same_thread=False,
         )
         # Enable mmapped I/O by making sure the max mmap size (0 by default)

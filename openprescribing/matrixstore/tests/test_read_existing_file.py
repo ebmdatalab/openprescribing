@@ -111,9 +111,7 @@ class TestReadExistingFile(SimpleTestCase):
                 data = serialize_compressed(value)
             else:
                 raise RuntimeError("Invalid key")
-            connection.execute(
-                "INSERT INTO data VALUES (?, ?)", [key, sqlite3.Binary(data)]
-            )
+            connection.execute("INSERT INTO data VALUES (?, ?)", [key, data])
         for key, value in cls.get_environment_metadata():
             connection.execute(
                 "INSERT INTO environment_metadata VALUES (?, ?)", [key, value]
