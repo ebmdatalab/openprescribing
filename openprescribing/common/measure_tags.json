@@ -53,7 +53,7 @@
   },
   "iif": {
     "name": "NHS England Investment and Impact Fund",
-    "description": "The <a href=\"https://www.england.nhs.uk/wp-content/uploads/2020/02/update-to-the-gp-contract-agreement-2021-2324.pdf\">Investment and Impact Fund</a> is an NHS England scheme that rewards Primary Care Networks (PCNs) for delivering objectives in the NHS Long Term Plan. These measures are all included in the IIF and PCNs can use them to review the success of any interventions they make. Please note that some of the prescribing measures (e.g. gastroprotective prescribing) are not displayed here as the NHS does not publish the information."
+    "description": "The <a href=\"https://www.england.nhs.uk/wp-content/uploads/2020/02/update-to-the-gp-contract-agreement-2021-2324.pdf\">Investment and Impact Fund</a> is an NHS England scheme that rewards Primary Care Networks (PCNs) for delivering objectives in the NHS Long Term Plan. These measures are all included in the IIF and PCNs can use them to review the success of any interventions they make. Please note that some of the prescribing measures (e.g. gastroprotective prescribing) are not displayed here as the NHS does not publish the information, you can <a href=\"https://ebmdatalab.net/nhs-england-investment-and-impact-fund-a-new-dashboard-on-openprescribing/\">read more about this on our blog here</a>."
   },
   "lowpriority": {
     "name": "NHS England Low Priority",
