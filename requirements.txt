@@ -96,7 +96,7 @@ tqdm==4.42.1
 unicodecsv==0.14.1        # via djangorestframework-csv
 uritemplate==3.0.1        # via google-api-python-client
 urllib3==1.25.8           # via requests, selenium
-watchdog==0.10.1          # via when-changed
+watchdog==0.10.2          # via when-changed
 when-changed==0.3.0
 xlrd==1.2.0
 
