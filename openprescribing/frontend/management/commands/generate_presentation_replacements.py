@@ -47,17 +47,6 @@ For each old code -> new code mapping, in reverse order of date
 * Create a table of mappings from old codes to the most recent current
   code (taking into account multlple code changes)
 
-* Create a View in bigquery that joins with this table to produce a
-  version of the prescribing data with only the most current BNF
-  codes; this is used to generate our local version of the prescribing
-  data, our measures, and so on, henceforward.  Specifically, due to
-  limitations of BigQuery, there are two views:
-
-  * `embdatalab:hscic.normalised_prescribing_legacy`: to be queried
-    using BigQuery legacy SQL
-  * `embdatalab:hscic.normalised_prescribing_standard`: to be queried
-    using BigQuery standard SQL
-
 * Replace all the codes that have new normalised versions in all local
   version of the prescribing data.  (If this command ever needs
   running again, some time could be saved by applying this only to
