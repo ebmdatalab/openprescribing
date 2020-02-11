@@ -43,15 +43,12 @@ class Command(BaseCommand):
 
         client = Client("hscic")
 
-        for table_name, legacy in [
-            ("normalised_prescribing_legacy", True),
-            ("normalised_prescribing_standard", False),
-        ]:
+        if kwargs["recreate"]:
+            try:
+                client.delete_table("normalised_prescribing_standard")
+            except NotFound:
+                pass
 
-            if kwargs["recreate"]:
-                try:
-                    client.delete_table(table_name)
-                except NotFound:
-                    pass
-
-            client.create_table_with_view(table_name, sql, legacy)
+        client.create_table_with_view(
+            "normalised_prescribing_standard", sql, legacy=False
+        )
