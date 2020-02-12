@@ -1430,8 +1430,6 @@ def _home_page_context_for_entity(request, entity):
         extreme_measure = Measure.objects.get(pk=extreme_measurevalue["measure_id"])
     else:
         extreme_measure = None
-    ppu_date = _specified_or_last_date(request, "ppu")
-    total_possible_savings = _total_savings(entity, ppu_date)
     measures_count = Measure.objects.count()
 
     specific_measures = [
@@ -1485,8 +1483,7 @@ def _home_page_context_for_entity(request, entity):
         "measures_for_one_entity_url": "measures_for_one_{}".format(
             entity_type.lower().replace(" ", "_")
         ),
-        "possible_savings": total_possible_savings,
-        "date": ppu_date,
+        "date": prescribing_date,
         "measure_options": measure_options,
         "measure_tags": [
             (k, v) for (k, v) in sorted(MEASURE_TAGS.items()) if k != "core"
