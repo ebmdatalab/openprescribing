@@ -176,7 +176,7 @@ class TestFrontendHomepageViews(TestCase):
     ]
 
     def setUp(self):
-        ImportLog.objects.create(category="prescribing", current_at="2015-09-01")
+        ImportLog.objects.create(category="prescribing", current_at="2014-11-01")
 
     def test_call_regional_team_homepage(self):
         response = self.client.get("/regional-team/Y01/")
