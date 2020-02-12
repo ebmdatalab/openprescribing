@@ -21,7 +21,7 @@ class Command(BaseCommand):
           prescribing.practice AS practice,
           TRIM(COALESCE(bnf_map.current_bnf_code, prescribing.bnf_code))
             AS bnf_code,
-          prescribing.bnf_name AS bnf_name,
+          TRIM(prescribing.bnf_name) AS bnf_name,
           prescribing.items AS items,
           prescribing.net_cost AS net_cost,
           prescribing.actual_cost AS actual_cost,
