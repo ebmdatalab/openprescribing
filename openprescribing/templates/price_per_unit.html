@@ -63,7 +63,7 @@
       </p>
     </div>
     <p>
-      We have identified about <strong>£<span id="total-savings">0</span> of possible savings</strong>
+      We have identified about <strong>£<span id="total-savings"><span class="text-muted">(&hellip;)</span></span> of possible savings</strong>
       {% if presentation %} for {{ presentation.product_name }}{% endif %} in
       {% if entity.ccg %}
         <a href="{% url 'practice_price_per_unit' highlight %}?date={{ date|date:"Y-m-d" }}">{{entity_name }}</a>
